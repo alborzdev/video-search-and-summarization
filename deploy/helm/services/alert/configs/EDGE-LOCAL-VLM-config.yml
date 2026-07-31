@@ -18,7 +18,7 @@
 {{- $kafkaHost := ternary (printf "%s-kafka-kafka" .Release.Name) "kafka-kafka" $pfx }}
 {{- $redisHost := ternary (printf "%s-redis" .Release.Name) "redis" $pfx }}
 {{- $esHost := ternary (printf "%s-elasticsearch" .Release.Name) "elasticsearch" $pfx }}
-{{- $cosmosHost := ternary (printf "%s-nvidia-cosmos-reason2-8b" .Release.Name) "nvidia-cosmos-reason2-8b" $pfx }}
+{{- $cosmosHost := ternary (printf "%s-nvidia-cosmos3-reasoner" .Release.Name) "nvidia-cosmos3-reasoner" $pfx }}
 {{- $vstIngHost := ternary (printf "%s-vss-vios-ingress:30888" .Release.Name) "vss-vios-ingress:30888" $pfx }}
 {{- $rawSubVlm := .Values.vlmBaseUrl | default "" | toString }}
 {{- $rawGlobVlm := index $g "vlmBaseUrl" | default "" | toString }}
@@ -29,23 +29,12 @@
 {{- $vlmUrl := trim (tpl $rawVlmPick .) }}
 {{- $subVn := trim (default "" .Values.vlmName) }}
 {{- $globVn := trim (default "" (index $g "vlmName")) }}
-{{- $vlmNameStr := $subVn | default $globVn | default "nvidia/cosmos-reason2-8b" }}
-{{- $eh := index $g "externalHost" | default "" | trim }}
-{{- $es := index $g "externalScheme" | default "http" }}
-{{- $ep := index $g "externalPort" | default "" | trim }}
-{{- $globalVstCandidate := "" }}
-{{- if ne $eh "" }}
-{{- $globalVstCandidate = ternary (printf "%s://%s:%s" $es $eh $ep) (printf "%s://%s" $es $eh) (ne $ep "") }}
-{{- end }}
+{{- $vlmNameStr := $subVn | default $globVn | default "nvidia/cosmos3-nano-reasoner" }}
 {{- $internalVst := printf "http://%s" $vstIngHost }}
+{{- /* vstBaseUrl: optional explicit override via tpl; when empty, always use in-cluster VST (Docker parity: ${VST_INTERNAL_URL}). */}}
 {{- $rawVst := .Values.vstBaseUrl | default "" | toString }}
 {{- $subVst := trim (tpl $rawVst .) }}
-{{- $remoteVlmConfigured := or (ne (trim (default "" (index $g "vlmBaseUrl"))) "") (ne (trim (default "" .Values.vlmBaseUrl)) "") }}
-{{- $vstBaseDefault := $internalVst }}
-{{- if and $remoteVlmConfigured (ne $globalVstCandidate "") }}
-{{- $vstBaseDefault = $globalVstCandidate }}
-{{- end }}
-{{- $vstBase := $subVst | default $vstBaseDefault }}
+{{- $vstBase := $subVst | default $internalVst }}
 # Helm-templated EDGE-LOCAL-VLM config (DGX-SPARK, IGX-THOR, AGX-THOR with local VLM)
 # Base directory for media used during alert review (optional)
 ALERT_REVIEW_MEDIA_BASE_DIR: {{ .Values.alertReviewMediaBaseDir | default "" | quote }}

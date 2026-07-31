@@ -143,7 +143,7 @@ services:
         fi
 
   bp-configurator-3d:
-    image: nvcr.io/nvidia/vss-core/vss-configurator:3.2.0
+    image: nvcr.io/nvidia/vss-core/vss-configurator:3.2.1
     container_name: vss-configurator
     network_mode: "host"
     profiles: ["bp_wh_kafka_3d","bp_wh_redis_3d", "bp_wh_auto_calib_3d"]
@@ -174,7 +174,7 @@ services:
       WDM_REDIS_HOST: localhost
       WDM_REDIS_PORT: 6379
       WDM_REDIS_STREAM_NAME: vst.event
-      WDM_REDIS_MSG_KEY: sensor.id
+      WDM_REDIS_MSG_KEY: value
       WDM_KFK_MSG_KEY: vst.event
       WDM_KFK_BOOTSTRAP_URL: localhost:9092
       WDM_KFK_TOPIC: mdx-notification

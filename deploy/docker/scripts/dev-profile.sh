@@ -330,7 +330,7 @@ function get_rtvi_vllm_gpu_memory_utilization() {
 function get_rtvi_vlm_max_model_len() {
   local _hardware_profile="${1}"
   case "${_hardware_profile}" in
-    RTXPRO4500BW) echo "20480" ;;
+    RTXPRO4500BW) echo "18000" ;;
     *) echo "" ;;
   esac
 }
@@ -539,7 +539,7 @@ function usage() {
   echo "                                   • One of (local):"
   echo "                                     - nvidia/cosmos-reason1-7b"
   echo "                                     - nvidia/cosmos-reason2-8b"
-  echo "                                     - nvidia/cosmos3-reasoner          (set NIM_MODEL_SIZE=nano|super)"
+  echo "                                     - nvidia/cosmos3-reasoner          (NIM_MODEL_SIZE=nano|super → VLM_NAME=nvidia/cosmos3-{size}-reasoner)"
   echo "                                     - Qwen/Qwen3-VL-8B-Instruct"
   echo "                                   • For a local bundled VLM, not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
   echo "                                   • When --use-remote-vlm is passed, any model name can be passed"
@@ -1294,6 +1294,11 @@ function state_up() {
   set_env_var "VSS_APPS_DIR" "${deployment_directory}"
   set_env_var "VSS_DATA_DIR" "${data_directory}"
   set_env_var "HOST_IP" "${host_ip}"
+  # Forward the proprietary-codec setting (default on) into generated.env so the
+  # agent/RTVI compose services, which read ${INSTALL_PROPRIETARY_CODECS:-true}
+  # via --env-file, install the patent-encumbered codecs at startup by default.
+  # Export INSTALL_PROPRIETARY_CODECS=false to keep them off at runtime too.
+  set_env_var "INSTALL_PROPRIETARY_CODECS" "${INSTALL_PROPRIETARY_CODECS:-true}"
   set_env_var "VST_CONFIG_PATH" "${deployment_directory}/services/vios/configs"
   set_env_var "VSS_AGENT_CONFIG_FILE" "/vss-agent/deploy/docker/developer-profiles/dev-profile-${profile}/vss-agent/configs/config.yml"
   if [[ -f "${_profile_dir}/vss-agent/configs/va_mcp_server_config.yml" ]]; then
@@ -1304,22 +1309,30 @@ function state_up() {
   fi
 
   # ===== Brev secure links =====
-  # Brev secure links use a hostname of the form <port>-<env>.brevlab.com (e.g. 7777-<id>.brevlab.com)
-  # — the haproxy port is prefixed directly. Older launchables used to add a trailing "0" giving
-  # 77770-<id>.brevlab.com; that form is legacy. Point HAProxy and browser-facing compose vars at the
-  # current-form host with https/wss; keep URL templates in profile .env
-  # (${VSS_PUBLIC_HTTP_PROTOCOL}://${VSS_PUBLIC_HOST}:${VSS_PUBLIC_PORT}, etc.) so one origin is used.
-  # VST_INGRESS_ENDPOINT intentionally omits the scheme because the VST stream-processing service
-  # prepends http:// when generating /picture/url and clip URLs.
+  # Brev secure links use <prefix>-<env>.<domain>. During the phased tunnel
+  # migration, Netbird identifies Skybridge; Cloudflare remains the fallback.
+  # An explicit BREV_LINK_DOMAIN always overrides automatic detection.
   if [[ -n "${BREV_ENV_ID:-}" ]]; then
     local _proxy_port="${PROXY_PORT:-7777}"
-    echo "[INFO] Brev environment detected (${BREV_ENV_ID}). Setting HAProxy ingress to secure-link host (port ${_proxy_port}, prefix ${_proxy_port})..."
-    set_env_var "HAPROXY_PORT" '${PROXY_PORT:-7777}'
+    local _link_prefix="${BREV_LINK_PREFIX:-${_proxy_port}}"
+    local _link_domain
+    if [[ -n "${BREV_LINK_DOMAIN:-}" ]]; then
+      _link_domain="${BREV_LINK_DOMAIN}"
+    elif netbird status >/dev/null 2>&1; then
+      _link_domain="apps.run.brev.nvidia.com"
+    else
+      _link_domain="brevlab.com"
+    fi
+    local _secure_link_host="${_link_prefix}-${BREV_ENV_ID}.${_link_domain}"
+    echo "[INFO] Brev environment detected (${BREV_ENV_ID}). Setting HAProxy ingress to ${_secure_link_host}..."
+    set_env_var "BREV_ENV_ID" "${BREV_ENV_ID}"
+    set_env_var "BREV_LINK_PREFIX" "${_link_prefix}"
+    set_env_var "BREV_LINK_DOMAIN" "${_link_domain}"
+    set_env_var "HAPROXY_PORT" "${_proxy_port}"
     set_env_var "VSS_PUBLIC_HTTP_PROTOCOL" "https"
     set_env_var "VSS_PUBLIC_WS_PROTOCOL" "wss"
-    set_env_var "VSS_PUBLIC_HOST" '${PROXY_PORT:-7777}-${BREV_ENV_ID}.brevlab.com'
+    set_env_var "VSS_PUBLIC_HOST" "${_secure_link_host}"
     set_env_var "VSS_PUBLIC_PORT" "443"
-    # set_env_var "VST_INGRESS_ENDPOINT" '${PROXY_PORT:-7777}-${BREV_ENV_ID}.brevlab.com/vst'
   fi
 
   set_env_var "NGC_CLI_API_KEY" "${ngc_cli_api_key}" "true"
@@ -1395,8 +1408,14 @@ function state_up() {
     set_env_var "VLM_NAME" "${_vlm_name}"
     set_env_var "VLM_NAME_SLUG" "none"
   elif [[ -n "${vlm}" ]]; then
-    set_env_var "VLM_NAME" "${vlm}"
     set_env_var "VLM_NAME_SLUG" "$(get_vlm_slug "${vlm}")"
+    if [[ "${vlm}" == "nvidia/cosmos3-reasoner" ]]; then
+      local _nim_model_size="${NIM_MODEL_SIZE:-$(get_env_value "${_source_env}" "NIM_MODEL_SIZE")}"
+      _nim_model_size="${_nim_model_size:-nano}"
+      set_env_var "VLM_NAME" "nvidia/cosmos3-${_nim_model_size}-reasoner"
+    else
+      set_env_var "VLM_NAME" "${vlm}"
+    fi
   fi
   if [[ "${vlm_mode}" == "remote" ]]; then
     set_env_var "VLM_NAME_SLUG" "none"
@@ -1419,7 +1438,7 @@ function state_up() {
   fi
 
   # Alerts/LVS + remote VLM: override VLM_PORT to the standard NIM port (30082) and
-  # switch rtvi-vlm to openai-compat mode (cosmos-reason2 is only valid when the
+  # switch rtvi-vlm to openai-compat mode (cosmos-reason3 is only valid when the
   # local rtvi-vlm container is serving the integrated checkpoint).
   # The rtvi-vlm container defaults to 8018 for local deployments;
   # for remote we fall back to 30082 so any VLM_BASE_URL-unset consumer uses the conventional port.
@@ -1464,10 +1483,10 @@ function state_up() {
   # Alerts or base profile on IGX-THOR or AGX-THOR: set VLM name/slug, base URL, and RTVI-related env (fixed configuration)
   if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && [[ "${profile}" == "base" ]] && [[ "${vlm_mode}" != "remote" ]]; then
     set_env_var "VLM_NAME_SLUG" "none"
-    set_env_var "VLM_NAME" "nim_nvidia_cosmos-reason2-8b_hf-1208"
+    set_env_var "VLM_NAME" "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
     set_env_var "VLM_BASE_URL" "http://${host_ip}:8018"
-    set_env_var "RTVI_VLM_MODEL_PATH" "ngc:nim/nvidia/cosmos-reason2-8b:hf-1208"
-    set_env_var "RTVI_VLM_MODEL_TO_USE" "cosmos-reason2"
+    set_env_var "RTVI_VLM_MODEL_PATH" "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
+    set_env_var "RTVI_VLM_MODEL_TO_USE" "cosmos-reason3"
     set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "${RTVI_VLLM_GPU_MEMORY_UTILIZATION:-0.35}"
   fi
   # Alerts/LVS profile for ALL hardware profiles: set VLM name/slug, base URL, and RTVI-related env (fixed configuration)
@@ -1508,8 +1527,8 @@ function state_up() {
       set_env_var "RT_VLM_DEVICE_ID" "0"
     fi
     if [[ "${hardware_profile}" == "RTXPRO4500BW" ]] && [[ "${vlm_mode}" != "remote" ]]; then
-      set_env_var "RTVI_VLM_MODEL_PATH" "ngc:nim/nvidia/cosmos-reason2-8b:hf-1208"
-      set_env_var "VLM_NAME" "nim_nvidia_cosmos-reason2-8b_hf-1208"
+      set_env_var "RTVI_VLM_MODEL_PATH" "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
+      set_env_var "VLM_NAME" "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
     fi
   fi
   # Base profile only on IGX-THOR or AGX-THOR: set VLM_MODEL_TYPE to rtvi

@@ -336,7 +336,7 @@ Default LVS model wiring:
 | Component | Local Compose behavior | Default model name |
 |-----------|------------------------|--------------------|
 | LLM | Starts the **`nvidia-nemotron-nano-9b-v2`** NIM container on **`LLM_PORT=30081`** when `LLM_MODE` is `local` or `local_shared`. | `nvidia/nvidia-nemotron-nano-9b-v2` |
-| VLM / RT-VLM | Starts **`rtvi-vlm`** on **`RTVI_VLM_PORT=8018`**. The LVS profile sets **`VLM_NAME_SLUG=none`**, so Compose does not start a separate Cosmos VLM NIM by default; RT-VLM loads the integrated checkpoint. | `nim_nvidia_cosmos-reason2-8b_hf-1208` |
+| VLM / RT-VLM | Starts **`rtvi-vlm`** on **`RTVI_VLM_PORT=8018`**. The LVS profile sets **`VLM_NAME_SLUG=none`**, so Compose does not start a separate Cosmos VLM NIM by default; RT-VLM loads the integrated checkpoint. | `nim_nvidia_cosmos3-nano-reasoner_bf16-final` |
 
 For external endpoints, including operator-hosted vLLM services running on the same
 machine, use the helper flags instead of editing Compose files directly:
@@ -351,7 +351,7 @@ export VLM_ENDPOINT_URL='<REMOTE VLM SERVICE ROOT, no trailing /v1>'
   --use-remote-llm \
   --use-remote-vlm \
   --llm nvidia/nvidia-nemotron-nano-9b-v2 \
-  --vlm nim_nvidia_cosmos-reason2-8b_hf-1208
+  --vlm nim_nvidia_cosmos3-nano-reasoner_bf16-final
 ```
 
 For an OpenAI-compatible vLLM endpoint, pass `--llm-model-type vllm` and

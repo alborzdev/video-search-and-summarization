@@ -23,7 +23,7 @@ replicas: 1
 
 image:
   repository: nvcr.io/nvidia/vss-core/vss-behavior-analytics
-  tag: "3.2.0"
+  tag: "3.2.1"
   pullPolicy: IfNotPresent
 
 port: 8080

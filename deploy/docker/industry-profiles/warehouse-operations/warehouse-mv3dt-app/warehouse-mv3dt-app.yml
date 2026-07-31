@@ -120,7 +120,7 @@ services:
         fi
 
   bp-configurator-mv3dt:
-    image: nvcr.io/nvidia/vss-core/vss-configurator:3.2.0
+    image: nvcr.io/nvidia/vss-core/vss-configurator:3.2.1
     container_name: vss-configurator-mv3dt
     network_mode: "host"
     profiles: ["bp_wh_kafka_mv3dt", "bp_wh_redis_mv3dt", "bp_wh_auto_calib_mv3dt"]
@@ -151,7 +151,7 @@ services:
       WDM_REDIS_HOST: localhost
       WDM_REDIS_PORT: 6379
       WDM_REDIS_STREAM_NAME: vst.event
-      WDM_REDIS_MSG_KEY: sensor.id
+      WDM_REDIS_MSG_KEY: value
       WDM_KFK_MSG_KEY: vst.event
       WDM_KFK_BOOTSTRAP_URL: localhost:9092
       WDM_KFK_TOPIC: mdx-notification
@@ -250,7 +250,7 @@ services:
     extends:
       file: $VSS_APPS_DIR/services/rtvi/rtvi-cv/rtvi-cv-mv3dt/compose.yaml
       service: perception
-    image: ${PERCEPTION_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-cv}:${PERCEPTION_TAG:-3.2.0}
+    image: ${PERCEPTION_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-cv}:${PERCEPTION_TAG:-3.2.1}
     profiles: ["bp_wh_kafka_mv3dt", "bp_wh_redis_mv3dt"]
     container_name: vss-rtvi-cv-mv3dt
 
@@ -275,7 +275,7 @@ services:
       OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4318}
       OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER:-otlp}
-    command: ["bash", "-c", "./ds-start-mv3dt.sh"]
+    command: ["./ds-start-mv3dt.sh"]
     depends_on:
       sensor-ms-mv3dt:
         condition: service_started
