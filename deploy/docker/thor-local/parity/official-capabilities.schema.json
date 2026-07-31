@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json",
+  "title": "Thor VSS official capability contract",
+  "type": "object",
+  "required": ["schema_version", "target", "sources", "capabilities", "source_discrepancies"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {
+      "type": "object",
+      "required": ["product_version", "ga_commit", "main_commit", "captured_on"],
+      "additionalProperties": false,
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "ga_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "main_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "captured_on": {"type": "string", "format": "date"}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "uri", "version", "locator_policy", "claim_set_sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+          "kind": {"enum": ["versioned_official_docs", "release_notes", "tagged_repository", "main_repository"]},
+          "uri": {"type": "string", "minLength": 1},
+          "version": {"type": "string", "minLength": 1},
+          "locator_policy": {"type": "string", "minLength": 1},
+          "claim_set_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "feature_id", "kind", "title", "source_claims", "acceptance_class", "thor_state", "runtime_state", "contract", "scenario_ids", "gap"],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "required": ["runtime_state"],
+              "properties": {"runtime_state": {"const": "passed_current"}}
+            },
+            "then": {"required": ["runtime_evidence"]}
+          }
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+          "feature_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+          "kind": {"enum": ["api", "calibration", "configuration", "deployment", "evaluation", "model", "model_customization", "performance", "protocol", "runtime_behavior", "security", "tooling"]},
+          "title": {"type": "string", "minLength": 1},
+          "source_claims": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["source_id", "locator"],
+              "additionalProperties": false,
+              "properties": {
+                "source_id": {"type": "string"},
+                "locator": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+          "thor_state": {"enum": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"]},
+          "runtime_state": {"enum": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]},
+          "contract": {"type": "object", "minProperties": 1},
+          "scenario_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "runtime_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "required": ["path", "sha256"],
+              "additionalProperties": false,
+              "properties": {
+                "path": {"type": "string", "pattern": "^deploy/docker/thor-local/"},
+                "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+              }
+            }
+          },
+          "gap": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "source_discrepancies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source_ids", "resolution"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "source_ids": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+          "resolution": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

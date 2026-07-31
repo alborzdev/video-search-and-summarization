@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "observed_on": "2026-07-31",
+  "target_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+  "host": "NVIDIA Jetson AGX Thor Developer Kit",
+  "observation_scope": "read-only static artifact and image inventory; no runtime calls",
+  "runtime_qualification": "not-run",
+  "official_model_state": [
+    {
+      "kind": "llm",
+      "model_id": "nvidia/nvidia-nemotron-nano-9b-v2",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    },
+    {
+      "kind": "llm",
+      "model_id": "nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    },
+    {
+      "kind": "llm",
+      "model_id": "nvidia/nemotron-3-nano",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    },
+    {
+      "kind": "llm",
+      "model_id": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    },
+    {
+      "kind": "llm",
+      "model_id": "openai/gpt-oss-20b",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    },
+    {
+      "kind": "vlm",
+      "model_id": "nvidia/cosmos3-nano-reasoner",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    },
+    {
+      "kind": "vlm",
+      "model_id": "nvidia/cosmos-reason2-8b",
+      "exact_artifact_state": "staged-hf-snapshot-only",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run",
+      "note": "The locked RT-VLM Hugging Face snapshot is present; the Agent NIM backend is not staged."
+    },
+    {
+      "kind": "vlm",
+      "model_id": "Qwen/Qwen3-VL-8B-Instruct",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run",
+      "note": "A different FP8 repository is staged locally; it is not the exact official model ID."
+    },
+    {
+      "kind": "vlm-ambiguous",
+      "model_id": "nvidia/cosmos3-super-reasoner",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    },
+    {
+      "kind": "vlm-ambiguous",
+      "model_id": "nvidia/cosmos-reason1-7b",
+      "exact_artifact_state": "absent",
+      "agent_backend_state": "absent",
+      "runtime_qualification": "not-run"
+    }
+  ],
+  "non_official_local_alternates": [
+    {
+      "kind": "llm",
+      "model_id": "Qwen/Qwen3.6-35B-A3B-FP8",
+      "revision": "95a723d08a9490559dae23d0cff1d9466213d989",
+      "state": "staged-and-locked",
+      "runtime_qualification": "not-claimed-by-this-lane"
+    },
+    {
+      "kind": "vlm",
+      "model_id": "Qwen/Qwen3-VL-8B-Instruct-FP8",
+      "revision": "9cdc6310a8cb770ce18efaf4e9935334512aee45",
+      "state": "staged-and-locked",
+      "runtime_qualification": "not-claimed-by-this-lane"
+    },
+    {
+      "kind": "vlm",
+      "model_id": "nvidia/Cosmos-Reason2-8B",
+      "revision": "a9fae2cf89dc64db96b12860417f0eb403013bb9",
+      "state": "staged-and-locked-for-rt-vlm-only",
+      "runtime_qualification": "not-claimed-by-this-lane"
+    }
+  ],
+  "capability_state": {
+    "remote_llm_endpoint_wiring": "implemented-not-runtime-qualified-by-this-lane",
+    "remote_vlm_endpoint_wiring": "implemented-not-runtime-qualified-by-this-lane",
+    "custom_vlm_weights": "supported-upstream-no-operator-artifact-declared",
+    "fully_local_official_agent_pair": "blocked-official-thor-boundary-and-artifacts-absent"
+  },
+  "evidence_commands": [
+    "find /home/nvidia/.cache/huggingface/hub -maxdepth 1 -type d -name 'models--*' -printf '%f\\n' | sort",
+    "docker image ls --format '{{.Repository}}:{{.Tag}} {{.ID}}' | sort",
+    "docker ps --format '{{.Names}} {{.Image}}' | sort",
+    "python3 deploy/docker/thor-local/agent-models/validate.py"
+  ]
+}

@@ -1,0 +1,99 @@
+# Pull-free, opt-in NVIDIA Thor official edge model lane.
+services:
+  nemotron-edge:
+    image: ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8
+    container_name: vss-nemotron-edge-4b
+    profiles: ["bp_developer_thor_full_2d"]
+    network_mode: host
+    runtime: nvidia
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HOME: /runtime/huggingface
+      XDG_CACHE_HOME: /runtime/cache
+      NVIDIA_VISIBLE_DEVICES: "0"
+      NVIDIA_DRIVER_CAPABILITIES: all
+    volumes:
+      - ${THOR_OFFICIAL_EDGE4B_SNAPSHOT:?Set the exact verified Edge4B snapshot path}:/models/edge4b:ro
+    tmpfs:
+      - /tmp:size=2g,mode=1777,exec,nosuid,nodev
+      - /runtime:size=8g,mode=0700,exec,nosuid,nodev
+    command:
+      - python3
+      - -m
+      - vllm.entrypoints.openai.api_server
+      - --model
+      - /models/edge4b
+      - --tokenizer
+      - /models/edge4b
+      - --served-model-name
+      - nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8
+      - --trust-remote-code
+      - --host
+      - 127.0.0.1
+      - --port
+      - "30081"
+      - --gpu-memory-utilization
+      - "0.25"
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - qwen3_coder
+    healthcheck:
+      test:
+        - CMD
+        - python3
+        - -c
+        - >-
+          import urllib.request,sys;
+          sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:30081/v1/models',timeout=5).status == 200 else 1)
+      interval: 15s
+      timeout: 8s
+      retries: 60
+      start_period: 300s
+    restart: unless-stopped
+
+  rtvi-vlm:
+    image: nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504
+    environment:
+      VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
+      VIA_VLM_ENDPOINT: ""
+      VIA_VLM_API_KEY: ""
+      NGC_API_KEY: ""
+      VLM_MODEL_TO_USE: cosmos-reason3
+      MODEL_PATH: ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final
+      VLLM_GPU_MEMORY_UTILIZATION: "0.35"
+      VLM_BATCH_SIZE: "1"
+      NUM_VLM_PROCS: "1"
+    volumes:
+      - ${THOR_OFFICIAL_COSMOS3_CACHE_DIR:?Set the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache:ro
+
+  vss-agent:
+    environment:
+      LLM_MODE: remote
+      LLM_MODEL_TYPE: vllm
+      LLM_NAME: nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8
+      LLM_BASE_URL: http://127.0.0.1:30081
+      VLM_MODE: local_shared
+      VLM_MODEL_TYPE: rtvi
+      VLM_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
+      VLM_BASE_URL: http://127.0.0.1:8018
+      VSS_AGENT_CONFIG_FILE: /vss-agent/deploy/docker/thor-local/official-edge/config_edge.yml
+    command:
+      - serve
+      - --config_file
+      - /vss-agent/deploy/docker/thor-local/official-edge/config_edge.yml
+      - --host
+      - ${VSS_AGENT_HOST}
+      - --port
+      - ${VSS_AGENT_PORT}
+    depends_on:
+      nemotron-edge:
+        condition: service_healthy
+      rtvi-vlm:
+        condition: service_healthy

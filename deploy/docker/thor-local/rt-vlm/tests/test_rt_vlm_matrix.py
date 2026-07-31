@@ -37,8 +37,31 @@ class MatrixTests(unittest.TestCase):
             RTVLM_DIR / "artifacts.lock.json",
             REPO_ROOT,
         )
-        self.assertEqual(11, len(document["advertised_rt_vlm_variants"]))
+        self.assertEqual(18, len(document["advertised_rt_vlm_variants"]))
+        self.assertEqual(
+            list(matrix.EXPECTED_VARIANTS),
+            [item["key"] for item in document["advertised_rt_vlm_variants"]],
+        )
         self.assertFalse(document["local_artifacts"][0]["runtime_qualified_on_thor"])
+
+    def test_official_docs_oracle_is_immutable_and_exact(self):
+        oracle_path = RTVLM_DIR / "official-vss-3.2.1-models.json"
+        oracle = json.loads(oracle_path.read_text())
+        self.assertEqual(matrix.OFFICIAL_ORACLE_SHA256, matrix._sha256(oracle_path))
+        self.assertEqual(matrix.OFFICIAL_DOCS_URL, oracle["authority"]["url"])
+        self.assertEqual(matrix.OFFICIAL_DOCS_RELEASE, oracle["authority"]["release"])
+        self.assertEqual(18, len(oracle["models"]))
+        self.assertEqual(
+            [value[1] for value in matrix.EXPECTED_VARIANTS.values()],
+            [item["model_path"] for item in oracle["models"]],
+        )
+
+    def test_docs_vs_checkout_skew_is_exact(self):
+        document = json.loads((RTVLM_DIR / "model-matrix.json").read_text())
+        skew = document["docs_vs_checkout_skew"]
+        self.assertEqual(18, skew["official_docs_count"])
+        self.assertEqual(11, skew["checkout_readme_count"])
+        self.assertEqual(list(matrix.DOCS_ONLY_KEYS), skew["official_docs_only_keys"])
 
     def test_runtime_overclaim_is_rejected(self):
         document = json.loads((RTVLM_DIR / "model-matrix.json").read_text())
@@ -51,11 +74,30 @@ class MatrixTests(unittest.TestCase):
                     path, RTVLM_DIR / "artifacts.lock.json", REPO_ROOT
                 )
 
-    def test_cosmos3_super_remains_explicitly_unresolved(self):
+    def test_documented_family_drift_is_rejected(self):
+        document = json.loads((RTVLM_DIR / "official-vss-3.2.1-models.json").read_text())
+        document["models"][0]["family"] = "Cosmos Reason3"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            oracle = root / "official-vss-3.2.1-models.json"
+            oracle.write_text(json.dumps(document), encoding="utf-8")
+            self.assertNotEqual(matrix.OFFICIAL_ORACLE_SHA256, matrix._sha256(oracle))
+
+    def test_generic_base_profile_super_route_remains_distinct(self):
         document = json.loads((RTVLM_DIR / "model-matrix.json").read_text())
         super_entry = document["adjacent_profile_variants"][0]
         self.assertIsNone(super_entry["artifact_id"])
         self.assertIn("unknown_unqualified", super_entry["thor_status"])
+        self.assertEqual(
+            4,
+            len(
+                [
+                    item
+                    for item in document["advertised_rt_vlm_variants"]
+                    if item["family"] == "cosmos-reason3-super"
+                ]
+            ),
+        )
 
 
 class MemoryBudgetTests(unittest.TestCase):

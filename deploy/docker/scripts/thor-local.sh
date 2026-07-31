@@ -1160,6 +1160,16 @@ refresh_runtime_env() {
   echo "[OK] Thor-full runtime environment generated without a registry login."
 }
 
+require_docker_cgroup_driver() {
+  # NVIDIA VSS 3.2.1 Prerequisites > Configure Docker requires cgroupfs:
+  # https://docs.nvidia.com/vss/3.2.1/prerequisites.html#configure-docker
+  local cgroup_driver
+  cgroup_driver="$(docker info --format '{{.CgroupDriver}}' 2>/dev/null)" ||
+    die "Docker daemon is unavailable"
+  [[ "${cgroup_driver}" == "cgroupfs" ]] ||
+    die "Docker cgroup driver is '${cgroup_driver:-unknown}'; NVIDIA VSS edge deployment requires 'cgroupfs'. Merge 'native.cgroupdriver=cgroupfs' into /etc/docker/daemon.json and restart Docker, then retry."
+}
+
 preflight() {
   require_command curl
   require_command docker
@@ -1175,6 +1185,7 @@ preflight() {
   grep -q "^# R38 " /etc/nv_tegra_release 2>/dev/null || die "Jetson Linux R38.x was not detected"
   nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | grep -qi thor || die "NVIDIA Thor GPU was not detected"
   docker info >/dev/null 2>&1 || die "Docker daemon is unavailable"
+  require_docker_cgroup_driver
   [[ -x /usr/bin/tegrastats ]] || die "Jetson tegrastats is missing or not executable: /usr/bin/tegrastats"
   [[ -x /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 ]] || die "Jetson AArch64 runtime loader is missing"
   [[ -r /lib/aarch64-linux-gnu/libc.so.6 && -r /lib/aarch64-linux-gnu/libm.so.6 ]] ||
@@ -2009,6 +2020,18 @@ doctor_check_network_security() {
   fi
 }
 
+doctor_check_docker_prerequisite() {
+  local cgroup_driver
+  if ! command -v docker >/dev/null 2>&1 ||
+     ! cgroup_driver="$(docker info --format '{{.CgroupDriver}}' 2>/dev/null)"; then
+    doctor_fail "Docker daemon is unavailable; cgroup-driver readiness cannot be verified."
+  elif [[ "${cgroup_driver}" == "cgroupfs" ]]; then
+    doctor_pass "Docker uses NVIDIA VSS-required cgroupfs cgroups."
+  else
+    doctor_fail "Docker cgroup driver is '${cgroup_driver:-unknown}'; merge 'native.cgroupdriver=cgroupfs' into /etc/docker/daemon.json and restart Docker."
+  fi
+}
+
 doctor_check_kernel() {
   if "${script_dir}/dev-profile.sh" check-kernel-settings >/dev/null 2>&1; then
     doctor_pass "Required VSS kernel settings are active."
@@ -2275,6 +2298,7 @@ doctor() {
   printf 'Thor VSS doctor (read-only; no external network calls)\n\n'
   doctor_check_runtime_security
   doctor_check_network_security
+  doctor_check_docker_prerequisite
   doctor_check_kernel
   doctor_check_gpu_and_resources
   doctor_check_compose

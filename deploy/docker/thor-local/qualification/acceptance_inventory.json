@@ -2,7 +2,7 @@
   "blockers": [
     {
       "id": "phase1-execution-disabled",
-      "reason": "Phase 0 validates and emits plans only; no action executor is present.",
+      "reason": "Phase 0 scenarios remain plan-only; only the separately declared RT-VLM/RT-Embed file-lifecycle canary has an executor.",
       "scope": "phase0"
     },
     {
@@ -69,6 +69,31 @@
       "id": "external-enterprise-rag-required",
       "reason": "Enterprise RAG requires an operator-provided external service and credentials.",
       "scope": "external"
+    },
+    {
+      "id": "official-capability-runtime-unqualified",
+      "reason": "The newly enumerated official documentation contracts have not produced exact current Thor runtime evidence.",
+      "scope": "runtime"
+    },
+    {
+      "id": "external-brev-required",
+      "reason": "Brev Launchable acceptance requires an operator-provided NVIDIA Brev environment.",
+      "scope": "external"
+    },
+    {
+      "id": "external-security-controls-required",
+      "reason": "Authentication, TLS termination, rate limiting, and external access controls require operator-managed infrastructure.",
+      "scope": "external"
+    },
+    {
+      "id": "external-managed-model-endpoint-required",
+      "reason": "Named remote LLM/VLM acceptance requires operator-provided endpoints, credentials, entitlements, and hosting capacity.",
+      "scope": "external"
+    },
+    {
+      "id": "docker-cgroupfs-prerequisite",
+      "reason": "The official VSS prerequisite requires native.cgroupdriver=cgroupfs; this Thor currently reports systemd and remediation requires an operator-approved Docker daemon restart that interrupts containers.",
+      "scope": "runtime"
     }
   ],
   "coverage": {
@@ -810,6 +835,269 @@
         "feature_id": "offline-security",
         "scenario_ids": [
           "offline-tool-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified",
+          "memory-capacity-gate",
+          "alternate-vlm-assets-missing"
+        ],
+        "capabilities_sha256": "4dbd0c9f94d130a191a97071fe70628229465ecf37f2e45c898cd2c75893bf94",
+        "disposition": "planned",
+        "expected_capability_count": 14,
+        "feature_id": "official-agent-models",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "2e71b12c4ce8621195257495ff795dcec89729911b4347c6de9455431833d6be",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "configuration-control-plane",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "ce5145f91f70bab354cdf1a4295778925a4fd6c6b0a1c71bb96525e23067dcdd",
+        "disposition": "planned",
+        "expected_capability_count": 4,
+        "feature_id": "agent-evaluation",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "6aedd9315d587edc666da20eb51721abc7f70ccf7eda06df4295302ba799b710",
+        "disposition": "planned",
+        "expected_capability_count": 5,
+        "feature_id": "model-customization",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "85dacdcf842aa4238520237ce9efcf8698753e899171ec56230092a971444315",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "calibration-toolchains",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "external-kubernetes-required"
+        ],
+        "capabilities_sha256": "0ff9722fca3edc486348effefdc6e138c00b2303f58008ba521f494e8b855ab7",
+        "disposition": "external-optional",
+        "expected_capability_count": 1,
+        "feature_id": "vlm-autoscaling",
+        "scenario_ids": [
+          "external-integration-boundaries"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "external-brev-required"
+        ],
+        "capabilities_sha256": "822918ea162d385b0bf7aa46bcf81fe74ad707423c418d5b067744145ea94b62",
+        "disposition": "external-optional",
+        "expected_capability_count": 1,
+        "feature_id": "brev-launchable",
+        "scenario_ids": [
+          "external-integration-boundaries"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "external-security-controls-required"
+        ],
+        "capabilities_sha256": "0016b96ffccab9e2224e401309e8f5197e3f081f2ff102c3fe9d5a4333288ad8",
+        "disposition": "external-optional",
+        "expected_capability_count": 1,
+        "feature_id": "secure-deployment-boundary",
+        "scenario_ids": [
+          "external-integration-boundaries"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified",
+          "scale-envelope-unproven"
+        ],
+        "capabilities_sha256": "da34e8103366d82649b24994b0e97f686a2b50c967146fb6d69abdf2aad4177b",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "performance-envelopes",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "4753999f5f60486f73dca85bbedf64890b2618599dce9634c0c0e4279443a460",
+        "disposition": "planned",
+        "expected_capability_count": 2,
+        "feature_id": "mv3dt-config-utils",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "373e55c7b7b2a3feb07f6782960f9856a7e1406ecdc1cab58bec14bb0799f7c5",
+        "disposition": "planned",
+        "expected_capability_count": 5,
+        "feature_id": "extended-api-surfaces",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "1a5948bc8d7786929ddc384c3ebc82b9df5da78ae77d494e96add724be58f067",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "non-rest-protocols",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "fe0c5f263f5348476e3a983b3f484032fb7cd8edd106f39788d8066898085154",
+        "disposition": "planned",
+        "expected_capability_count": 32,
+        "feature_id": "release-behavior-contracts",
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified",
+          "docker-cgroupfs-prerequisite"
+        ],
+        "capabilities_sha256": "80f9dcda537c73fc2adb3ff0cd914dfb4fbdef51094e42617713c4c681703adc",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "official-platform-prerequisites",
+        "scenario_ids": ["official-capability-contracts"],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "official-capability-runtime-unqualified"
+        ],
+        "capabilities_sha256": "6ecac1afcc8bc8ae0ef8292d2adc12b194b46840a2daa7d32b44c990428f12dd",
+        "disposition": "planned",
+        "expected_capability_count": 3,
+        "feature_id": "official-thor-support-boundary",
+        "scenario_ids": ["official-capability-contracts"],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "66753b9ff483539e931ec1f83a922e1311519f850e14de3884f3297a1850306c",
+        "disposition": "planned",
+        "expected_capability_count": 14,
+        "feature_id": "core-api-operation-contracts",
+        "scenario_ids": ["rest-api-operation-matrix", "mcp-tool-operation-matrix"],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "operator-lifecycle-approval",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "f1cf896c12ea407479452fe5939e639d60caf1085e9fbca78ea617988784fd27",
+        "disposition": "planned",
+        "expected_capability_count": 3,
+        "feature_id": "agent-operability-surfaces",
+        "scenario_ids": ["skill-catalog-workflows", "mcp-tool-operation-matrix"],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "external-managed-model-endpoint-required"
+        ],
+        "capabilities_sha256": "1b1885d7b3357b3fbf6c11b1cfc369783e82247390ce232abea58100654e310f",
+        "disposition": "external-optional",
+        "expected_capability_count": 13,
+        "feature_id": "official-remote-agent-models",
+        "scenario_ids": [
+          "external-integration-boundaries"
         ],
         "selector": "all-current-capabilities"
       }
@@ -2023,10 +2311,40 @@
       "actions": [
         {
           "blocker_ids": [
+            "phase1-execution-disabled"
+          ],
+          "id": "verify-official-capability-ledger",
+          "kind": "offline-check",
+          "safety_class": "observe"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required",
+        "official-capability-runtime-unqualified",
+        "memory-capacity-gate",
+        "alternate-vlm-assets-missing",
+        "scale-envelope-unproven",
+        "docker-cgroupfs-prerequisite"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Validate the versioned official-doc capability ledger and retain every unqualified model, prerequisite, Thor support boundary, component, API/MCP operation, protocol, evaluator, skill/harness, calibration, tooling, behavior, and performance contract as plan-only open work.",
+      "fixture_ids": [],
+      "id": "official-capability-contracts",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
             "phase1-execution-disabled",
             "external-slack-required",
             "external-kubernetes-required",
-            "external-enterprise-rag-required"
+            "external-enterprise-rag-required",
+            "external-brev-required",
+            "external-security-controls-required",
+            "external-managed-model-endpoint-required"
           ],
           "id": "external-boundary-check",
           "kind": "external-check",
@@ -2038,11 +2356,14 @@
         "external-slack-required",
         "external-kubernetes-required",
         "external-enterprise-rag-required",
+        "external-brev-required",
+        "external-security-controls-required",
+        "external-managed-model-endpoint-required",
         "current-runtime-evidence-required"
       ],
       "cleanup": [],
       "cleanup_order": [],
-      "description": "Record but never emulate user-managed Slack, Kubernetes, and Enterprise RAG systems.",
+      "description": "Record but never emulate user-managed Slack, Kubernetes, Enterprise RAG, Brev, named managed model endpoints, or deployment security-control systems.",
       "fixture_ids": [],
       "id": "external-integration-boundaries",
       "owned_resources": []
@@ -2052,7 +2373,8 @@
         {
           "blocker_ids": [
             "phase1-execution-disabled",
-            "operation-classification-required"
+            "operation-classification-required",
+            "operator-lifecycle-approval"
           ],
           "id": "classify-skill-actions",
           "kind": "surface-matrix",
@@ -2062,11 +2384,12 @@
       "blocker_ids": [
         "phase1-execution-disabled",
         "operation-classification-required",
+        "operator-lifecycle-approval",
         "current-runtime-evidence-required"
       ],
       "cleanup": [],
       "cleanup_order": [],
-      "description": "Assign every installed VSS skill to an end-to-end acceptance workflow.",
+      "description": "Plan assignment of every documented VSS skill and validated harness to an end-to-end acceptance workflow; no harness is executed in Phase 0.",
       "fixture_ids": [],
       "id": "skill-catalog-workflows",
       "owned_resources": []
@@ -2090,7 +2413,7 @@
       ],
       "cleanup": [],
       "cleanup_order": [],
-      "description": "Assign every current REST operation while blocking unsafe execution until semantic classification.",
+      "description": "Plan every current REST operation from the digest-bound core service manifests while blocking execution until semantic classification.",
       "fixture_ids": [],
       "id": "rest-api-operation-matrix",
       "owned_resources": []
@@ -2100,7 +2423,8 @@
         {
           "blocker_ids": [
             "phase1-execution-disabled",
-            "operation-classification-required"
+            "operation-classification-required",
+            "operator-lifecycle-approval"
           ],
           "id": "classify-mcp-tools-and-prompts",
           "kind": "surface-matrix",
@@ -2110,11 +2434,12 @@
       "blocker_ids": [
         "phase1-execution-disabled",
         "operation-classification-required",
+        "operator-lifecycle-approval",
         "current-runtime-evidence-required"
       ],
       "cleanup": [],
       "cleanup_order": [],
-      "description": "Assign every current MCP tool and prompt while blocking unsafe execution until semantic classification.",
+      "description": "Plan every current MCP tool and prompt, including VA-MCP, LVS MCP, and Orchestrator MCP, while blocking execution until semantic classification and lifecycle approval.",
       "fixture_ids": [],
       "id": "mcp-tool-operation-matrix",
       "owned_resources": []

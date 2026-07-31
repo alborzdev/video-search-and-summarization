@@ -324,7 +324,7 @@
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml", "deploy/docker/thor-local/Dockerfile.vios-mcp", "deploy/docker/thor-local/vios-mcp", "deploy/docker/thor-local/compose.yml", "deploy/docker/thor-local/qualification/api_inventory.json", "deploy/docker/thor-local/qualification/runtime.py", "deploy/docker/thor-local/qualification/runtime_inventory.json", "deploy/docker/thor-local/qualification/tests/test_runtime.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-runtime-qualification.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-mcp-local.md"],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The offline tier passes 326 declared REST operations (325 normalized routes) plus all 38 tools and five prompts across 17 surfaces. The GET-only loopback tier defines 32 probes across 22 services. An isolated ARM64 VIOS MCP handshake enumerated its exact 22 tools/five prompts, but the stopped unified stack still needs every REST route, MCP tool/prompt, and VIOS-backed tool path exercised."
+      "gap": "The scoped core ledger passes 326 declared REST operations (325 normalized routes) plus all 38 tools and five prompts across 17 surfaces. It is not the complete product API: configuration and calibration surfaces are tracked separately by extended-api-surfaces. The GET-only loopback tier defines 32 probes across 22 services; the stopped unified stack still needs every inventoried route, tool, prompt, and VIOS-backed path exercised."
     },
     {
       "id": "infra-observability",
@@ -417,6 +417,602 @@
       "thor_state": "wired",
       "runtime_state": "not_qualified",
       "gap": "The protected runtime, all 29 selected image locks, host assets, exact embedding/model trees, local provider snapshots/containers, and active cache cleaner pass offline verification. Current pull-free restart proof still requires enough memory to start the VLM/stack plus the physical-interface firewall."
+    },
+    {
+      "id": "official-agent-models",
+      "acceptance_class": "required_local",
+      "category": "model",
+      "advertised": [
+        "RT-VLM and agent default Cosmos3 Nano BF16",
+        "Agent LLM Nemotron Nano 9B v2 default",
+        "Agent LLM Nemotron Nano 9B v2 FP8",
+        "Agent LLM Nemotron 3 Nano",
+        "Agent LLM Llama 3.3 Nemotron Super 49B v1.5",
+        "Agent LLM GPT-OSS 20B",
+        "Agent VLM Cosmos Reason2 8B",
+        "Agent VLM Qwen3-VL-8B Instruct",
+        "Agent VLM Cosmos3 Nano Reasoner",
+        "Agent VLM Cosmos3 Super Reasoner",
+        "Agent VLM custom weights directory",
+        "Agent OpenAI-compatible model endpoints",
+        "Thor Edge Nemotron 3 Nano 4B FP8 LLM",
+        "Thor Edge Cosmos3 Nano served VLM identity"
+      ],
+      "official_capability_ids": [
+        "model.rt-vlm.default-cosmos3-nano-bf16",
+        "model.agent-llm.nemotron-nano-9b-v2",
+        "model.agent-llm.nemotron-nano-9b-v2-fp8",
+        "model.agent-llm.nemotron-3-nano",
+        "model.agent-llm.llama-3.3-nemotron-super-49b",
+        "model.agent-llm.gpt-oss-20b",
+        "model.agent-vlm.cosmos-reason2-8b",
+        "model.agent-vlm.qwen3-vl-8b",
+        "model.agent-vlm.cosmos3-nano",
+        "model.agent-vlm.cosmos3-super",
+        "model.agent-vlm.custom-weights",
+        "model.agent.openai-compatible-endpoints",
+        "model.edge.nemotron-3-nano-4b-fp8",
+        "model.edge.cosmos3-nano-served-id"
+      ],
+      "source_evidence": [
+        "deploy/docker/services/nim",
+        "deploy/docker/developer-profiles/dev-profile-base",
+        "skills/vss-deploy-profile/references/edge.md"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/thor-local/models/artifacts.lock.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "The official agent and Edge model set is now exact and fail-closed, but Thor currently selects alternate Qwen providers. Stage, content-lock, memory-admit, and runtime-qualify each exact model before claiming model parity."
+    },
+    {
+      "id": "configuration-control-plane",
+      "acceptance_class": "alternate_local_lane",
+      "category": "configuration",
+      "advertised": [
+        "VSS Configurator profile configuration manager",
+        "VSS Configurator sensor configuration manager",
+        "SDRC Docker stream distribution and stable assignment",
+        "SDRC stream-ID routing through Envoy",
+        "SDRC autonomous stream-session restoration",
+        "DeepStream Configurator init-style pipeline adaptation"
+      ],
+      "official_capability_ids": [
+        "config.vss-configurator.profile-manager",
+        "config.vss-configurator.sensor-manager",
+        "config.sdrc.docker-distribution",
+        "config.sdrc.envoy-routing",
+        "config.sdrc.session-restoration",
+        "config.deepstream.init-adaptor"
+      ],
+      "source_evidence": [
+        "deploy/docker/services/infra/sdrc",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "The service definitions are retained in the checkout, but the VSS Configurator, SDRC routing/recovery, and DeepStream init-adaptor behaviors have no sample-free Thor runtime qualification."
+    },
+    {
+      "id": "agent-evaluation",
+      "acceptance_class": "required_local",
+      "category": "evaluation",
+      "advertised": [
+        "Agent report evaluator",
+        "Agent question-answering evaluator",
+        "Agent trajectory evaluator",
+        "Agent multi-turn evaluation datasets"
+      ],
+      "official_capability_ids": [
+        "evaluation.agent.report",
+        "evaluation.agent.qa",
+        "evaluation.agent.trajectory",
+        "evaluation.agent.multi-turn"
+      ],
+      "source_evidence": [
+        "services/agent/src/vss_agents/evaluators",
+        "deploy/docker/developer-profiles/dev-profile-base/eval",
+        "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "All evaluator implementations and configs are present, but no Thor-local report, QA, trajectory, or multi-turn evaluation run has produced current evidence."
+    },
+    {
+      "id": "model-customization",
+      "acceptance_class": "alternate_local_lane",
+      "category": "model",
+      "advertised": [
+        "Fine-tuned SigLIP2 object embeddings",
+        "Fine-tuned Cosmos-Embed1 video embeddings",
+        "Fine-tuned Sparse4D perception model",
+        "Fine-tuned RT-DETR perception model",
+        "Embedding dimension, re-index, and similarity validation"
+      ],
+      "official_capability_ids": [
+        "customization.siglip2",
+        "customization.cosmos-embed1",
+        "customization.sparse4d",
+        "customization.rt-detr",
+        "customization.embedding-reindex-validation"
+      ],
+      "source_evidence": [
+        "services/rtvi/rt-cv",
+        "services/rtvi/rt-embed",
+        "README.md"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "Custom-weight integration surfaces exist, but no fine-tuned SigLIP2, Cosmos-Embed1, Sparse4D, or RT-DETR artifact has been qualified with vector-size, re-index, and similarity-scale oracles on Thor."
+    },
+    {
+      "id": "calibration-toolchains",
+      "acceptance_class": "alternate_local_lane",
+      "category": "calibration",
+      "advertised": [
+        "SDG camera-calibration workflow",
+        "Legacy 2D camera calibration toolkit",
+        "Legacy GIS calibration project",
+        "Legacy Cartesian calibration project",
+        "Legacy multi-camera tracking calibration project",
+        "Legacy image calibration project"
+      ],
+      "official_capability_ids": [
+        "calibration.sdg.workflow",
+        "calibration.legacy.core",
+        "calibration.legacy.gis",
+        "calibration.legacy.cartesian",
+        "calibration.legacy.multi-camera",
+        "calibration.legacy.image"
+      ],
+      "source_evidence": [
+        "tools/sdg-postprocessing",
+        "deploy/docker/industry-profiles/smartcities/compose.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "SDG post-processing and the legacy calibration image selection are preserved, but the distinct SDG calibration workflow and the four legacy calibration project types/UI have no Thor runtime evidence."
+    },
+    {
+      "id": "vlm-autoscaling",
+      "acceptance_class": "external_optional",
+      "category": "deployment",
+      "advertised": [
+        "Kubernetes HPA for VLM NIM latency autoscaling"
+      ],
+      "official_capability_ids": [
+        "deployment.vlm-autoscaling.hpa"
+      ],
+      "source_evidence": [
+        "deploy/helm"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional",
+      "runtime_state": "not_applicable",
+      "external_dependency": "A Kubernetes cluster with HPA, Prometheus Adapter, NVIDIA NIM Operator, and ReadWriteMany storage.",
+      "boundary_reason": "The official autoscaling workflow is Kubernetes-only; the Thor target is single-node Docker Compose.",
+      "gap": "Preserve the Kubernetes manifests and documentation contract; do not claim single-node Compose autoscaling."
+    },
+    {
+      "id": "brev-launchable",
+      "acceptance_class": "external_optional",
+      "category": "deployment",
+      "advertised": [
+        "Brev Launchable deployment"
+      ],
+      "official_capability_ids": [
+        "deployment.brev.launchable"
+      ],
+      "source_evidence": [
+        "deploy/docker/scripts/deploy_vss_launchable.ipynb"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional",
+      "runtime_state": "not_applicable",
+      "external_dependency": "A user-managed NVIDIA Brev environment and its secure-link/runtime services.",
+      "boundary_reason": "Brev is an alternative hosted deployment environment rather than a service that can be emulated by the local Thor stack.",
+      "gap": "The launchable notebook remains available, but Brev platform acceptance is outside local Thor runtime parity."
+    },
+    {
+      "id": "secure-deployment-boundary",
+      "acceptance_class": "external_optional",
+      "category": "platform",
+      "advertised": [
+        "External authentication, TLS, rate limiting, and access controls"
+      ],
+      "official_capability_ids": [
+        "security.external-ingress-controls"
+      ],
+      "source_evidence": [
+        "deploy/docker/services/infra/haproxy",
+        "README.md"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional",
+      "runtime_state": "not_applicable",
+      "external_dependency": "Operator-managed authentication, TLS termination, rate limiting, and external access-control infrastructure.",
+      "boundary_reason": "VSS documents these controls as deployment-infrastructure responsibilities and does not ship a complete identity or certificate authority.",
+      "gap": "Keep the official external security boundary explicit; local loopback/offline hardening is tracked separately."
+    },
+    {
+      "id": "performance-envelopes",
+      "acceptance_class": "alternate_local_lane",
+      "category": "scale",
+      "advertised": [
+        "Alert Verification performance envelope",
+        "Video Summarization performance envelope",
+        "Search performance envelope",
+        "RT-CV performance envelope",
+        "RT-VLM performance envelope",
+        "RT-Embed performance envelope",
+        "VIOS performance envelope"
+      ],
+      "official_capability_ids": [
+        "performance.alert-verification",
+        "performance.video-summarization",
+        "performance.search",
+        "performance.rt-cv",
+        "performance.rt-vlm",
+        "performance.rt-embed",
+        "performance.vios"
+      ],
+      "source_evidence": [
+        "services/alert",
+        "services/video-summarization",
+        "services/rtvi",
+        "services/vios"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "NVIDIA reference-hardware envelopes are inventoried but are not Thor claims. Define bounded Thor fixtures and measure each service separately before recording any Thor envelope."
+    },
+    {
+      "id": "mv3dt-config-utils",
+      "acceptance_class": "alternate_local_lane",
+      "category": "tooling",
+      "advertised": [
+        "MV3DT per-camera camInfo generator",
+        "MV3DT MQTT FOV-overlap topology generator"
+      ],
+      "official_capability_ids": [
+        "tool.mv3dt.cam-info-generator",
+        "tool.mv3dt.pub-sub-generator"
+      ],
+      "source_evidence": [
+        "tools/rtvi-cv-mv3dt-utils"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "The two offline generators are present but lack deterministic Thor qualification for projection/class-prior output and FOV-overlap MQTT topology."
+    },
+    {
+      "id": "extended-api-surfaces",
+      "acceptance_class": "alternate_local_lane",
+      "category": "api",
+      "advertised": [
+        "VSS Configurator sensor-management API surface",
+        "SDRC controller, router, and workload-coordinator APIs",
+        "DeepStream Configurator POST /config",
+        "Auto-calibration REST operation surface",
+        "Legacy calibration UI/server API surface"
+      ],
+      "official_capability_ids": [
+        "api.vss-configurator.sensor",
+        "api.sdrc.control-plane",
+        "api.deepstream-configurator.post-config",
+        "api.auto-calibration.operations",
+        "api.legacy-calibration.ui-server"
+      ],
+      "source_evidence": [
+        "deploy/docker/services/infra/sdrc",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app",
+        "deploy/docker/services/auto-calibration",
+        "deploy/docker/industry-profiles/smartcities/compose.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "These five official surfaces are now explicitly outside the scoped 17-surface route ledger. Export exact schemas/operations and add loopback-safe acceptance before increasing API totals."
+    },
+    {
+      "id": "non-rest-protocols",
+      "acceptance_class": "required_local",
+      "category": "api",
+      "advertised": [
+        "Agent streaming and recovery WebSocket",
+        "Real-time alert delivery WebSocket",
+        "RT-VLM token and caption SSE streams",
+        "Kafka NvSchema event publication",
+        "Redis event-stream publication",
+        "VIOS live WebRTC playback",
+        "VIOS replay WebRTC playback"
+      ],
+      "official_capability_ids": [
+        "protocol.agent.websocket",
+        "protocol.alert.websocket",
+        "protocol.rt-vlm.sse",
+        "protocol.kafka.nvschema",
+        "protocol.redis.events",
+        "protocol.vios.webrtc-live",
+        "protocol.vios.webrtc-replay"
+      ],
+      "source_evidence": [
+        "services/agent",
+        "services/alert",
+        "services/rtvi",
+        "services/vios"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Protocol support is wired or source-present, but exact WebSocket, SSE, Kafka/NvSchema, Redis, and WebRTC event/handshake oracles have not been exercised on the current Thor runtime."
+    },
+    {
+      "id": "release-behavior-contracts",
+      "acceptance_class": "required_local",
+      "category": "service",
+      "advertised": [
+        "RT-Embed duplicate stream and camera IDs return HTTP 409",
+        "RT-VLM per-domain URL authentication headers",
+        "RT-VLM bounded URL redirects",
+        "RT-VLM bounded URL download size",
+        "RT-VLM domain-scoped TLS verification exceptions",
+        "RT-VLM generation token cap",
+        "RT-VLM user-prompt character cap",
+        "RT-VLM system-prompt character cap",
+        "RT-VLM configurable MoE backend",
+        "RT-VLM bounded asynchronous Kafka send queue",
+        "RT-CV smart vision-encoder inference default",
+        "RT-CV optical-flow-assisted prediction default",
+        "VIOS per-camera timestamps for 3D multi-camera playback",
+        "VIOS floor-map SVG and JPEG support on Thor",
+        "VIOS conflict-aware sensor-add contracts",
+        "VIOS byte-identical full-file download bypass",
+        "RT-VLM duplicate stream and camera IDs return HTTP 409",
+        "RT-VLM repeated RTSP caption requests create independent jobs",
+        "RT-VLM caption deletion stops all active jobs for a stream",
+        "RT-VLM generate-captions endpoint replaces the 3.1 alerts suffix",
+        "RT-Embed accepts RFC 2397 base64 data URLs for video embeddings",
+        "RT-Embed NGC model downloads require the NGC_API_KEY contract",
+        "RT-Embed Cosmos-Embed1 TensorRT precision selection",
+        "RT-Embed Cosmos-Embed1 TensorRT extra build arguments",
+        "RT-Embed GOP-aware file decode optimization defaults on",
+        "RT-Embed bounded asynchronous Kafka send queue",
+        "RT-Embed file URL ingestion is denied without an absolute-directory allowlist",
+        "RT-Embed domain-scoped URL TLS verification exceptions",
+        "RT-Embed bounded URL redirects",
+        "RT-Embed bounded URL download size",
+        "RT-Embed per-domain URL authentication headers",
+        "RT-Embed uploaded-asset age eviction contract"
+      ],
+      "official_capability_ids": [
+        "behavior.rt-embed.duplicate-id-409",
+        "behavior.rt-vlm.url-auth",
+        "behavior.rt-vlm.url-redirect-limit",
+        "behavior.rt-vlm.url-size-limit",
+        "behavior.rt-vlm.url-tls-exception",
+        "behavior.rt-vlm.generation-token-cap",
+        "behavior.rt-vlm.user-prompt-cap",
+        "behavior.rt-vlm.system-prompt-cap",
+        "behavior.rt-vlm.moe-backend",
+        "behavior.rt-vlm.kafka-queue-bound",
+        "behavior.rt-cv.smart-infer",
+        "behavior.rt-cv.ofa-predict",
+        "behavior.vios.per-camera-timestamps",
+        "behavior.vios.floor-map-formats",
+        "behavior.vios.sensor-add-conflicts",
+        "behavior.vios.byte-identical-download",
+        "behavior.rt-vlm.duplicate-id-409",
+        "behavior.rt-vlm.independent-rtsp-jobs",
+        "behavior.rt-vlm.delete-stops-all-stream-jobs",
+        "behavior.rt-vlm.generate-captions-endpoint-rename",
+        "behavior.rt-embed.base64-data-url",
+        "behavior.rt-embed.ngc-scheme-key",
+        "behavior.rt-embed.trt-precision",
+        "behavior.rt-embed.trt-extra-args",
+        "behavior.rt-embed.gop-decode-opt",
+        "behavior.rt-embed.kafka-queue-bound",
+        "behavior.rt-embed.file-url-allowlist",
+        "behavior.rt-embed.url-tls-exception",
+        "behavior.rt-embed.url-redirect-limit",
+        "behavior.rt-embed.url-size-limit",
+        "behavior.rt-embed.url-auth",
+        "behavior.rt-embed.asset-max-age"
+      ],
+      "source_evidence": [
+        "services/rtvi/rt-vlm",
+        "services/rtvi/rt-embed",
+        "services/rtvi/rt-cv",
+        "services/vios"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "The 3.2.1 request limits, error statuses, optimization defaults, URL security controls, and VIOS behavioral contracts are source-present but lack individual current Thor runtime oracles."
+    },
+    {
+      "id": "official-platform-prerequisites",
+      "acceptance_class": "required_local",
+      "category": "platform",
+      "advertised": [
+        "VSS validated GPU platform set includes AGX Thor and IGX Thor",
+        "AGX Thor requires Jetson Linux BSP 38.4 and NVIDIA driver 580.00",
+        "VSS Docker, Compose, container-toolkit, and NGC CLI version contract",
+        "VSS kernel network settings and Thor MAXN, max-clocks, cache-cleaner contract",
+        "VSS requires Docker native.cgroupdriver=cgroupfs",
+        "VSS minimum host capacity and browser port 7777 access contract",
+        "VSS NGC Personal API key and Hugging Face read-token prerequisite"
+      ],
+      "official_capability_ids": [
+        "prereq.platform.validated-gpus",
+        "prereq.platform.agx-thor-software",
+        "prereq.platform.toolchain-versions",
+        "prereq.platform.kernel-and-thor-runtime",
+        "prereq.platform.docker-cgroupfs",
+        "prereq.platform.capacity-and-access",
+        "prereq.platform.credentials"
+      ],
+      "source_evidence": ["deploy/docker/scripts/dev-profile.sh", "deploy/docker/scripts/thor-capacity-check.sh"],
+      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/thor-local/parity/official-capabilities.json"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Most host contracts are statically checked, but Docker still uses the unsupported systemd cgroup driver and the documented 1 TB storage minimum is not met."
+    },
+    {
+      "id": "official-thor-support-boundary",
+      "acceptance_class": "required_local",
+      "category": "platform",
+      "advertised": [
+        "Official AGX and IGX Thor support is limited to base and alerts remote-LLM profiles",
+        "Official fully local all-workflow Thor deployment is future-planned, not VSS 3.2.1 support",
+        "Thor-local all-profile offline operation is an explicit custom extension lane"
+      ],
+      "official_capability_ids": [
+        "boundary.thor.official-profiles",
+        "boundary.thor.fully-local-future",
+        "boundary.thor.custom-all-local-extension"
+      ],
+      "source_evidence": ["deploy/docker/scripts/dev-profile.sh"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full", "deploy/docker/thor-local/parity/official-capabilities.json"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "The custom all-local goal is explicitly separated from NVIDIA's narrower 3.2.1 Thor support statement; its profiles still require individual runtime qualification."
+    },
+    {
+      "id": "core-api-operation-contracts",
+      "acceptance_class": "required_local",
+      "category": "api",
+      "advertised": [
+        "RT-VLM 27-operation REST surface",
+        "RT-Embed 24-operation REST surface",
+        "RT-CV 9-operation REST surface",
+        "Video Summarization 17-operation REST surface",
+        "Alerts 19-operation REST and WebSocket-health surface",
+        "VST Sensor 28-operation REST surface",
+        "VST Live 20-operation REST surface",
+        "VST Replay 21-operation REST surface",
+        "VST Record 16-operation REST surface",
+        "VST Proxy 7-operation REST surface",
+        "VST Storage 26-declared and 25-normalized-operation REST surface",
+        "Video Analytics API 56-operation REST surface",
+        "Video Analytics MCP 7-tool operation surface",
+        "Video Summarization MCP documentation 13-tool versus repository 9-tool discrepancy"
+      ],
+      "official_capability_ids": [
+        "api.core.rt-vlm-27",
+        "api.core.rt-embed-24",
+        "api.core.rt-cv-9",
+        "api.core.lvs-17",
+        "api.core.alerts-19",
+        "api.core.vst-sensor-28",
+        "api.core.vst-live-20",
+        "api.core.vst-replay-21",
+        "api.core.vst-record-16",
+        "api.core.vst-proxy-7",
+        "api.core.vst-storage-26-25",
+        "api.core.video-analytics-56",
+        "api.core.va-mcp-7",
+        "api.core.lvs-mcp-doc-13-repo-9"
+      ],
+      "source_evidence": ["services/rtvi", "services/video-summarization", "services/alert", "services/vios", "services/analytics", "services/agent/src/vss_agents/video_analytics"],
+      "thor_evidence": ["deploy/docker/thor-local/qualification/api_inventory.json", "deploy/docker/thor-local/qualification/expected", "deploy/docker/thor-local/parity/official-capabilities.json"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Operation manifests are exact and digest-bound, but execution remains plan-only; the four docs-only LVS file-management MCP tools are an explicit upstream/source gap."
+    },
+    {
+      "id": "agent-operability-surfaces",
+      "acceptance_class": "alternate_local_lane",
+      "category": "tooling",
+      "advertised": [
+        "VSS Early Access Agent Skills 16-skill catalog",
+        "VSS Skills validated agent harness set",
+        "VSS Orchestrator MCP 9-tool operation surface"
+      ],
+      "official_capability_ids": [
+        "tooling.agent-skills.catalog-16",
+        "tooling.agent-harnesses.validated-4",
+        "api.orchestrator-mcp.tools-9"
+      ],
+      "source_evidence": ["skills", "services/agent/src/vss_agents/orchestrator/tools.py", "deploy/docker/scripts/vss_orchestrator_mcp_config.yml"],
+      "thor_evidence": ["deploy/docker/thor-local/install-vss-skills.sh", "deploy/docker/thor-local/openclaw", "deploy/docker/thor-local/parity/official-capabilities.json"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "The catalog, validated harness names, and nine orchestrator tools are exact; cross-harness and lifecycle-changing tool runtime evidence is still absent."
+    },
+    {
+      "id": "official-remote-agent-models",
+      "acceptance_class": "external_optional",
+      "category": "model",
+      "advertised": [
+        "Managed remote Agent LLM Nemotron 3 Nano 30B A3B",
+        "Managed remote Agent LLM GPT-OSS 120B",
+        "Managed remote Agent LLM GLM5",
+        "Frontier remote Agent LLM GPT-5.2",
+        "Frontier remote Agent LLM GPT-4.1",
+        "Frontier remote Agent VLM GPT-5.2",
+        "Frontier remote Agent VLM GPT-4.1",
+        "Managed remote Agent VLM Reka Flash",
+        "Self-hosted remote Agent VLM Cosmos3 Reasoner NIM 1.7",
+        "Self-hosted remote Agent VLM Cosmos Reason2 8B NIM",
+        "Self-hosted remote Agent VLM Cosmos Reason2 2B NIM",
+        "Self-hosted remote Agent VLM Qwen3-VL-8B vLLM",
+        "Self-hosted remote Agent VLM Nemotron 3 Nano Omni NVFP4"
+      ],
+      "official_capability_ids": [
+        "model.remote-agent-llm.nemotron-3-nano-30b-a3b",
+        "model.remote-agent-llm.gpt-oss-120b",
+        "model.remote-agent-llm.glm5",
+        "model.remote-agent-llm.gpt-5.2",
+        "model.remote-agent-llm.gpt-4.1",
+        "model.remote-agent-vlm.gpt-5.2",
+        "model.remote-agent-vlm.gpt-4.1",
+        "model.remote-agent-vlm.reka-flash",
+        "model.remote-agent-vlm.cosmos3-reasoner-1.7",
+        "model.remote-agent-vlm.cosmos-reason2-8b-latest",
+        "model.remote-agent-vlm.cosmos-reason2-2b-latest",
+        "model.remote-agent-vlm.qwen3-vl-8b-vllm",
+        "model.remote-agent-vlm.nemotron-omni-nvfp4"
+      ],
+      "source_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-base",
+        "deploy/docker/services/nim"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional",
+      "runtime_state": "not_applicable",
+      "external_dependency": "Operator-provided managed or self-hosted model endpoints, credentials, provider entitlements, and any required hosting hardware.",
+      "boundary_reason": "These named models are advertised endpoint options; VSS supplies clients and recipes but does not supply the managed providers or additional model-hosting machines.",
+      "gap": "Keep every named remote LLM/VLM option explicit without treating a generic OpenAI-compatible adapter as exact-model qualification."
     }
   ],
   "skills": [

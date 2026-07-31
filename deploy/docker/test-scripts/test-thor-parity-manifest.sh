@@ -8,16 +8,20 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../.." && pwd)"
 verifier="${repo_root}/deploy/docker/thor-local/parity/verify_manifest.py"
+official_verifier="${repo_root}/deploy/docker/thor-local/parity/verify_official_capabilities.py"
+official_tests="${repo_root}/deploy/docker/thor-local/parity/tests/test_official_capabilities.py"
 skill_installer="${repo_root}/deploy/docker/thor-local/install-vss-skills.sh"
 spatialai_qualifier="${repo_root}/deploy/docker/thor-local/qualification/qualify-spatialai.sh"
 
 python3 "${verifier}"
+python3 "${official_verifier}"
+python3 "${official_tests}"
 
 report="$(python3 "${verifier}" --report)"
-grep -q "Ledger: 36 families, 224 advertised capabilities, 16 skills" <<<"${report}"
-grep -q "Thor state: external_optional=3, partial=18, wired=15" <<<"${report}"
-grep -q "Runtime: blocked=2, not_applicable=3, not_qualified=18, passed_current=2, passed_prior=8, static_only=3" <<<"${report}"
-grep -q "Completion: 2/33 local families passed current" <<<"${report}"
+grep -q "Ledger: 54 families, 355 advertised capabilities, 16 skills" <<<"${report}"
+grep -q "Thor state: external_optional=7, partial=26, source_only=6, wired=15" <<<"${report}"
+grep -q "Runtime: blocked=2, not_applicable=7, not_qualified=32, passed_current=2, passed_prior=8, static_only=3" <<<"${report}"
+grep -q "Completion: 2/47 local families passed current" <<<"${report}"
 grep -q "smart-city: partial/static_only" <<<"${report}"
 grep -q "warehouse-2d: partial/static_only" <<<"${report}"
 grep -q "rt-cv-3d-sparse4d: partial/not_qualified" <<<"${report}"
@@ -31,10 +35,16 @@ grep -q "infra-observability: partial/not_qualified" <<<"${report}"
 grep -q "nemoclaw-openclaw: partial/not_qualified" <<<"${report}"
 jq -e '.features[] | select(.id == "synthetic-data-tools") | .thor_state == "wired" and .runtime_state == "passed_current"' \
   "${repo_root}/deploy/docker/thor-local/parity/manifest.json" >/dev/null
-grep -q "Acceptance: alternate_local_lane=13, external_optional=3, required_local=20" <<<"${report}"
+grep -q "Acceptance: alternate_local_lane=20, external_optional=7, required_local=27" <<<"${report}"
 grep -q "alert-notifications-slack: external_optional/not_applicable" <<<"${report}"
 grep -q "helm: external_optional/not_applicable" <<<"${report}"
 grep -q "enterprise-rag: external_optional/not_applicable" <<<"${report}"
+grep -q "vlm-autoscaling: external_optional/not_applicable" <<<"${report}"
+grep -q "brev-launchable: external_optional/not_applicable" <<<"${report}"
+grep -q "secure-deployment-boundary: external_optional/not_applicable" <<<"${report}"
+grep -q "official-remote-agent-models: external_optional/not_applicable" <<<"${report}"
+jq -e '.scope.complete_product_api == false and (.scope.excluded_official_surfaces | length) == 5' \
+  "${repo_root}/deploy/docker/thor-local/qualification/api_inventory.json" >/dev/null
 
 open_report="$(sed -n '/^Open parity work:/,/^External optional boundaries:/p' <<<"${report}")"
 ! grep -q "alert-notifications-slack" <<<"${open_report}"
@@ -48,14 +58,14 @@ complete_output="$(python3 "${verifier}" --require-complete 2>&1)"
 complete_status=$?
 set -e
 [[ ${complete_status} -eq 2 ]]
-grep -q "INCOMPLETE: 31 local feature families remain open" <<<"${complete_output}"
+grep -q "INCOMPLETE: 45 local feature families remain open" <<<"${complete_output}"
 
 bash -n "${spatialai_qualifier}"
 "${spatialai_qualifier}" --help | grep -q 'does not download a dataset'
 grep -q "torch==2.13.0+cpu" "${spatialai_qualifier}"
 grep -q "pytorch3d.git@33824be" "${spatialai_qualifier}"
 
-echo "PASS: the exhaustive Thor parity ledger is valid and keeps known gaps explicit"
+echo "PASS: the reviewed Thor parity ledger is valid and keeps known gaps explicit"
 
 dense_caption_source="${repo_root}/services/video-summarization/src/via_stream_handler.py"
 dense_caption_image_patch="${repo_root}/deploy/docker/thor-local/patches/patch_lvs_llm_provider.py"

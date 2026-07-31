@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/protocol-cases.schema.json",
+  "title": "Thor VSS exact non-REST protocol cases",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target_commit", "contract_set_sha256", "cases"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "contract_set_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "cases": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "type", "required", "contract"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "minLength": 1},
+        "required": {"type": "boolean"},
+        "contract": {"type": "string", "minLength": 1}
+      }
+    },
+    "wireSchema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["encoding", "fields", "additional_fields"],
+      "properties": {
+        "encoding": {"type": "string", "minLength": 1},
+        "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}},
+        "additional_fields": {"enum": ["allowed", "ignored", "rejected", "opaque"]}
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "actor", "action", "terminal"],
+      "properties": {
+        "order": {"type": "integer", "minimum": 1},
+        "actor": {"enum": ["client", "service", "broker", "browser", "operator"]},
+        "action": {"type": "string", "minLength": 1},
+        "terminal": {"type": "boolean"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "git_blob_oid", "content_sha256", "locator"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "git_blob_oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "vector": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "network_scope", "deadline_seconds", "max_events", "fixture", "expected"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+        "network_scope": {"const": "loopback_only"},
+        "deadline_seconds": {"type": "integer", "minimum": 1, "maximum": 60},
+        "max_events": {"type": "integer", "minimum": 1, "maximum": 32},
+        "fixture": {},
+        "expected": {"type": "string", "minLength": 1}
+      }
+    },
+    "negativeVector": {
+      "allOf": [
+        {"$ref": "#/$defs/vector"},
+        {
+          "type": "object",
+          "required": ["adjacent_mutation", "expected_rejection"],
+          "properties": {
+            "adjacent_mutation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["operation", "path"],
+              "properties": {
+                "operation": {"enum": ["remove", "replace", "truncate"]},
+                "path": {"type": "string", "pattern": "^/"},
+                "value": {}
+              }
+            },
+            "expected_rejection": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id", "case_id", "protocol", "runtime_state", "runtime_evidence",
+        "endpoint_or_topic", "method_or_handshake", "auth", "headers", "request_schema",
+        "response_schema", "sequence", "terminal_and_error_semantics", "ordering_and_timing",
+        "positive_vector", "adjacent_negative_vectors", "mutation", "sources", "source_limitations"
+      ],
+      "properties": {
+        "capability_id": {"type": "string", "pattern": "^protocol\\."},
+        "case_id": {"type": "string", "pattern": "^protocol-case\\."},
+        "protocol": {"enum": ["websocket", "sse", "kafka", "redis-streams", "webrtc"]},
+        "runtime_state": {"const": "unexecuted"},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "endpoint_or_topic": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "method_or_handshake": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "auth": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "headers": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "request_schema": {"$ref": "#/$defs/wireSchema"},
+        "response_schema": {"$ref": "#/$defs/wireSchema"},
+        "sequence": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/step"}},
+        "terminal_and_error_semantics": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "ordering_and_timing": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "positive_vector": {"$ref": "#/$defs/vector"},
+        "adjacent_negative_vectors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/negativeVector"}},
+        "mutation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["class", "ownership", "cleanup"],
+          "properties": {
+            "class": {"enum": ["connection_only", "transient_namespaced"]},
+            "ownership": {"type": "string", "minLength": 1},
+            "cleanup": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+          }
+        },
+        "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+        "source_limitations": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  }
+}

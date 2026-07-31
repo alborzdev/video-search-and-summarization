@@ -9,9 +9,21 @@
     "rt_vlm_readme": {
       "path": "services/rtvi/rt-vlm/README.md",
       "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+    },
+    "official_vss_3_2_1_docs_oracle": {
+      "path": "deploy/docker/thor-local/rt-vlm/official-vss-3.2.1-models.json",
+      "sha256": "872c986a19ef30dfdf9f71e6ab8c9e9cb80a847a096e4442e1579b65703affb7"
     }
   },
   "advertised_rt_vlm_variants": [
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos-reason2-8b:hf-1208",
+      "family": "cosmos-reason2",
+      "key": "cosmos_reason2_8b_hf_1208",
+      "selector": "cosmos-reason2",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
     {
       "artifact_id": "ngc:nim/nvidia/cosmos-reason2-8b:0303-fp8-dynamic-kv8",
       "family": "cosmos-reason2",
@@ -45,6 +57,14 @@
       "thor_status": "missing_exact_artifact_unqualified"
     },
     {
+      "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-fp8-final_format_fix",
+      "family": "cosmos-reason3-nano",
+      "key": "cosmos3_nano_modelopt_fp8",
+      "selector": "cosmos-reason3",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
       "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
       "family": "cosmos-reason3-nano",
       "key": "cosmos3_nano_bf16",
@@ -53,7 +73,47 @@
       "thor_status": "missing_exact_artifact_unqualified"
     },
     {
-      "artifact_id": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning",
+      "artifact_id": "git:https://huggingface.co/nvidia/Cosmos3-Nano-Reasoner",
+      "family": "cosmos-reason3-nano",
+      "key": "cosmos3_nano_diffuser",
+      "selector": "cosmos-reason3",
+      "source_kind": "huggingface",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos3-super-reasoner:modelopt-nvfp4-full-quantize-final_format_fix",
+      "family": "cosmos-reason3-super",
+      "key": "cosmos3_super_modelopt_nvfp4",
+      "selector": "cosmos-reason3",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos3-super-reasoner:modelopt-fp8-final_format_fix",
+      "family": "cosmos-reason3-super",
+      "key": "cosmos3_super_modelopt_fp8",
+      "selector": "cosmos-reason3",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos3-super-reasoner:bf16-final",
+      "family": "cosmos-reason3-super",
+      "key": "cosmos3_super_bf16",
+      "selector": "cosmos-reason3",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "git:https://huggingface.co/nvidia/Cosmos3-Super-Reasoner",
+      "family": "cosmos-reason3-super",
+      "key": "cosmos3_super_diffuser",
+      "selector": "cosmos-reason3",
+      "source_kind": "huggingface",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "git:https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning",
       "family": "nemotron-omni",
       "key": "nemotron3_nano_omni_reasoning",
       "selector": "vllm-compatible",
@@ -61,7 +121,7 @@
       "thor_status": "missing_exact_artifact_unqualified"
     },
     {
-      "artifact_id": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
+      "artifact_id": "git:https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
       "family": "nemotron-omni",
       "key": "nemotron3_nano_omni_reasoning_fp8",
       "selector": "vllm-compatible",
@@ -69,7 +129,7 @@
       "thor_status": "missing_exact_artifact_unqualified"
     },
     {
-      "artifact_id": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+      "artifact_id": "git:https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct",
       "family": "qwen3-vl",
       "key": "qwen3_vl_30b_a3b_instruct",
       "selector": "vllm-compatible",
@@ -77,7 +137,7 @@
       "thor_status": "missing_exact_artifact_unqualified"
     },
     {
-      "artifact_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+      "artifact_id": "git:https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct",
       "family": "qwen3-omni",
       "key": "qwen3_omni_30b_a3b_instruct",
       "selector": "vllm-compatible",
@@ -85,7 +145,7 @@
       "thor_status": "missing_exact_artifact_unqualified"
     },
     {
-      "artifact_id": "Qwen/Qwen3.5-27B",
+      "artifact_id": "git:https://huggingface.co/Qwen/Qwen3.5-27B",
       "family": "qwen3.5",
       "key": "qwen3_5_27b",
       "selector": "vllm-compatible",
@@ -101,6 +161,20 @@
       "thor_status": "missing_exact_artifact_unqualified"
     }
   ],
+  "docs_vs_checkout_skew": {
+    "official_docs_count": 18,
+    "checkout_readme_count": 11,
+    "official_docs_only_keys": [
+      "cosmos_reason2_8b_hf_1208",
+      "cosmos3_nano_modelopt_fp8",
+      "cosmos3_nano_diffuser",
+      "cosmos3_super_modelopt_nvfp4",
+      "cosmos3_super_modelopt_fp8",
+      "cosmos3_super_bf16",
+      "cosmos3_super_diffuser"
+    ],
+    "interpretation": "The versioned NVIDIA VSS 3.2.1 documentation is the completeness superset; the reviewed checkout README omits these seven entries. This records documentation/source skew and does not establish Thor runtime support."
+  },
   "remote_compatible": {
     "artifact_id": null,
     "selector": "openai-compat",
@@ -114,7 +188,7 @@
       "key": "cosmos3_super_nim",
       "nim_image": "nvcr.io/nim/nvidia/cosmos3-reasoner:1.7",
       "nim_model_size": "super",
-      "route": "base-profile-compose-nim-not-rt-vlm-matrix",
+      "route": "separate-base-profile-generic-nim-route-not-an-exact-rt-vlm-checkpoint-entry",
       "thor_status": "artifact_revision_size_and_thor_recipe_unknown_unqualified"
     }
   ],

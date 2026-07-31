@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/candidates/wave2/candidate.schema.json",
+  "title": "VSS 3.2.1 Thor parity wave-2 candidate package",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "target",
+    "scope",
+    "expected_counts",
+    "sources",
+    "new_capabilities",
+    "enrichments",
+    "discrepancies_and_boundaries"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "plain_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]+$"
+    },
+    "source_claim": {
+      "type": "object",
+      "required": ["source_id", "locator"],
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {"$ref": "#/$defs/plain_id"},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "manifest_binding": {
+      "type": "object",
+      "required": ["path", "semantic_coverage", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "string",
+              "pattern": "^deploy/docker/thor-local/qualification/expected/[a-z0-9-]+\\.json$"
+            }
+          ]
+        },
+        "semantic_coverage": {"const": false},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "capability_status": {
+      "type": "object",
+      "required": ["acceptance_class", "thor_state", "runtime_state"],
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_class": {
+          "enum": ["required_local", "alternate_local_lane", "external_optional"]
+        },
+        "thor_state": {
+          "enum": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"]
+        },
+        "runtime_state": {
+          "enum": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {
+      "type": "object",
+      "required": ["product_version", "ga_commit", "main_commit", "captured_on"],
+      "additionalProperties": false,
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "ga_commit": {"const": "7640d91728a1a78b4664a7b336947f80bfa78d59"},
+        "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "captured_on": {"const": "2026-07-31"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": ["warehouse_sample_bundle", "warehouse_custom_data", "live_files_untouched"],
+      "additionalProperties": false,
+      "properties": {
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "warehouse_custom_data": {"const": "in_scope"},
+        "live_files_untouched": {"const": true}
+      }
+    },
+    "expected_counts": {
+      "type": "object",
+      "required": ["new_capabilities", "enrichments", "discrepancies_and_boundaries"],
+      "additionalProperties": false,
+      "properties": {
+        "new_capabilities": {"const": 30},
+        "enrichments": {"const": 9},
+        "discrepancies_and_boundaries": {"const": 14}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "uri", "version", "locator_policy", "claim_set_sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/plain_id"},
+          "kind": {
+            "enum": ["versioned_official_docs", "tagged_repository", "main_repository"]
+          },
+          "uri": {"type": "string", "minLength": 1},
+          "version": {"type": "string", "minLength": 1},
+          "locator_policy": {"type": "string", "minLength": 1},
+          "claim_set_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "new_capabilities": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "feature_id",
+          "kind",
+          "title",
+          "source_claims",
+          "status",
+          "contract",
+          "scenario_ids",
+          "expected_manifest_binding",
+          "gap"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/plain_id"},
+          "feature_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+          "kind": {
+            "enum": ["calibration", "configuration", "deployment", "evaluation", "model", "runtime_behavior", "security", "tooling"]
+          },
+          "title": {"type": "string", "minLength": 1},
+          "source_claims": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/$defs/source_claim"}
+          },
+          "status": {"$ref": "#/$defs/capability_status"},
+          "contract": {"type": "object", "minProperties": 1},
+          "scenario_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "#/$defs/plain_id"}
+          },
+          "expected_manifest_binding": {"$ref": "#/$defs/manifest_binding"},
+          "gap": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "enrichments": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "required": ["target_id", "source_claims_add", "contract_merge", "merge_note"],
+        "additionalProperties": false,
+        "properties": {
+          "target_id": {"$ref": "#/$defs/plain_id"},
+          "source_claims_add": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/$defs/source_claim"}
+          },
+          "contract_merge": {"type": "object", "minProperties": 1},
+          "merge_note": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "discrepancies_and_boundaries": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "source_claims", "resolution", "must_not_claim"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/plain_id"},
+          "category": {"enum": ["discrepancy", "boundary", "scoped_default", "known_limitation"]},
+          "source_claims": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/$defs/source_claim"}
+          },
+          "resolution": {"type": "string", "minLength": 1},
+          "must_not_claim": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

@@ -3,12 +3,13 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-"""Compile the safe, plan-only Thor VSS stateful acceptance contract.
+"""Compile the safe default Thor VSS stateful acceptance contract.
 
-Phase 0 deliberately has no execution mode.  It validates the complete plan,
-expands coverage against the current parity/API ledgers, and emits a redacted
-JSON plan.  Small transport and ledger primitives live here so their safety
-properties can be qualified before a later execution phase uses them.
+Phase 0 is deliberately plan-only. It validates the inventoried plan, expands
+coverage against the current parity/API ledgers, and emits redacted JSON with
+no network or process activity. Explicit ``execute`` and ``recover`` commands
+delegate only to the separately declared RT-VLM/RT-Embed file-lifecycle canary;
+they do not make the remaining Phase 0 scenarios executable.
 """
 
 from __future__ import annotations

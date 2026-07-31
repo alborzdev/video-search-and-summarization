@@ -1,0 +1,900 @@
+{
+  "schema_version": 1,
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d91728a1a78b4664a7b336947f80bfa78d59",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "scope": {
+    "warehouse_sample_bundle": "excluded",
+    "warehouse_custom_data": "in_scope",
+    "live_files_untouched": true
+  },
+  "expected_counts": {
+    "new_capabilities": 30,
+    "enrichments": 9,
+    "discrepancies_and_boundaries": 14
+  },
+  "sources": [
+    {
+      "id": "agent-config-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Configuration.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered documentation line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "f8afac015ae9c6292e4cdf25edd2cfe75f3a89efce519ad0fb3d24579b67aa37"
+    },
+    {
+      "id": "agent-customization-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Customization.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered documentation line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "262aba14e7dbe1398f9b60c5dd8b49ad54f526087904642926e832c6b6db6f42"
+    },
+    {
+      "id": "agent-report-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-report-generation.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered documentation line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "d68360115d2e4df21d570894b802f76f53d2b8aa308e95de90f0b94df36676a8"
+    },
+    {
+      "id": "agent-observability-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-Observability.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered documentation line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "848e6c3bbdd19d02900906fb3db8a72798a73a02c20bcde769f8be918517be55"
+    },
+    {
+      "id": "agent-eval-detail-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Evaluation.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered evaluator, dataset, execution, and artifact line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "3bbae97e1b4a4353b4dd09105a496c006742b894ae33410232334216d32368f4"
+    },
+    {
+      "id": "rt-embed-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/real-time-embedding.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered model and configuration line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "352a95b7f11a18802a21379f6e4ef56d591b8d0cd44a05312fe04a1ab46d91ed"
+    },
+    {
+      "id": "cosmos-embed1-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/models/cosmos-embed1.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered model-card and integration line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "2cf7016d9714395a020f52cbb334dfbb88c9fae005a852fe3d964b23a7315f39"
+    },
+    {
+      "id": "siglip2-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/models/clip-object-embeddings.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered model-card, export, and integration line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "cad489b73038982062daf4c88bc6fd12b41ee1a631fcbe4d667813b970dc99ec"
+    },
+    {
+      "id": "sparse4d-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/models/sparse4d.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered model-card, dataset, export, and integration line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "6988524a75da19bab4aaf61fb2a53f38cfd05512f208f47a798f060dcc2e7324"
+    },
+    {
+      "id": "rt-detr-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/models/rt-detr.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered model-card, dataset, export, and integration line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "4919e6a045f520a6b87eb4d13d6f8ea98240a475e4f49dfb64e31ab03e3690d0"
+    },
+    {
+      "id": "autocalib-overview-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/auto-calibration.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered feature and workflow line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "6674483d4c8cc89ed36f4bb79580cc29e715297546daf0e7b8e97bb295c34f96"
+    },
+    {
+      "id": "autocalib-getting-started-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/autocalib-getting-started.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered input, platform, and deployment line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "e1a62b4d5dd19130670731d9ab4aee7a48e979547f4203e71546fb7e1f40fa9f"
+    },
+    {
+      "id": "autocalib-workflow-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/autocalib-workflow-steps.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered project and video-configuration line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "58e42133ade98d070810e502369e72d9de1ec899c132df3c7c1d6a69ccbb0633"
+    },
+    {
+      "id": "autocalib-custom-data-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/autocalib-custom-dataset.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered input, alignment, and ground-truth schema line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "293c2f974503da6fbe7b6ec10c7b488a02797362f518728632ae40de1330b653"
+    },
+    {
+      "id": "warehouse-behavior-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Behavior-Analytics.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered configuration and runtime-override line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "43ca5096464cce9bb193d12b0493e2cab16245f65721f426485aedd98ada832b"
+    },
+    {
+      "id": "warehouse-alerting-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/alerting-service.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered mode, rule, verdict, and configuration line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "d13a609d10049cce92fc588621779787dd63d57a328b7e26c6dbd1834527d3f8"
+    },
+    {
+      "id": "warehouse-agents-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/agents.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered hierarchy, tool, and query line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "02aeae33fb182ca8cb4fe460f314187e561d8508136945bde860bf13d154825c"
+    },
+    {
+      "id": "warehouse-ui-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/vss-warehouse-ui.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered enabled/disabled surface line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "b87e01b7690e12d73361df7afb867ed6109440af6881cf5179a79eae7b5a2f81"
+    },
+    {
+      "id": "helm-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/helm-deployment.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered profiles, prerequisites, and readiness line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "d6f70d38a75d1c88b784f718807eb1471c632d704f9275fcb62f0986c99cd130"
+    },
+    {
+      "id": "secure-deployment-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/secure-deployment.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered trust-boundary and recommended-control line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "dfd831fe561a3fbc4ca45ada821b8f9f6df44ab115b67abf0baf265c8a33c111"
+    },
+    {
+      "id": "known-limitations-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/Known-Limitations.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered security limitation line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "b06c66b1752b8c616a36eb45fdb599e5fb3eca7aafe170f8f3da3741999b0bb2"
+    },
+    {
+      "id": "warehouse-limitations-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Known-Limitations.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered Warehouse and AutoMagicCalib limitation line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "7e284d222203b270dfba22e5eeeb153d835cbf8644bf56ef5b79366434570d6c"
+    },
+    {
+      "id": "agent-known-issues-doc-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Known-Issues.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered audio, initialization, restart, timestamp, and chart issue line ranges captured on 2026-07-31.",
+      "claim_set_sha256": "3ac3b86c4b4945566223c03220f7f52e2b57859b2de038b3a086985f34647a10"
+    },
+    {
+      "id": "edge-doc-wave2-3.2.1",
+      "kind": "versioned_official_docs",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/edge-deployment.html",
+      "version": "3.2.1",
+      "locator_policy": "Rendered Thor local-inference deployment model scope captured on 2026-07-31.",
+      "claim_set_sha256": "f5902e53bf16c62e738ba888e2a1aae4a5d09c04a0cee9c04a5b5fa7dadfc83a"
+    },
+    {
+      "id": "tagged-repository-wave2-3.2.1",
+      "kind": "tagged_repository",
+      "uri": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/tree/v3.2.1",
+      "version": "7640d91728a1a78b4664a7b336947f80bfa78d59",
+      "locator_policy": "Exact tagged source/config paths and values.",
+      "claim_set_sha256": "741dc76718493a3d87b55f1fc6d996f8e58ffdb94635f02a600a864a0f27500a"
+    },
+    {
+      "id": "main-repository-wave2-7732edf8",
+      "kind": "main_repository",
+      "uri": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/tree/7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "version": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "locator_policy": "Exact pinned main source/config paths and values; wave-2 surfaces are unchanged from v3.2.1.",
+      "claim_set_sha256": "27fd565f2b022d0240b63edd2f2b0af8c1327e86585cdbb98176e6550a485676"
+    }
+  ],
+  "new_capabilities": [
+    {
+      "id": "configuration.agent.file-llm-schema",
+      "feature_id": "base-agent-workflow",
+      "kind": "configuration",
+      "title": "Agent configuration file and LLM schema",
+      "source_claims": [
+        {"source_id": "agent-config-doc-3.2.1", "locator": "File Structure and LLM Configuration lines 160-196"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "wired", "runtime_state": "static_only"},
+      "contract": {
+        "top_level_sections": ["general", "object_stores", "function_groups", "functions", "llms", "workflow"],
+        "nim_llm": {"required_fields": ["_type", "model_name", "base_url"], "type": "nim", "base_url_suffix": "/v1", "optional_fields": ["max_tokens", "temperature"]},
+        "effective_profile_values_are_authoritative": true
+      },
+      "scenario_ids": ["official-capability-contracts", "core-agent-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "semantic_coverage": false, "reason": "The Agent manifest inventories HTTP operations, not YAML field semantics."},
+      "gap": "Checked-in Thor configuration exists, but no field-level schema oracle verifies the selected profile."
+    },
+    {
+      "id": "configuration.agent.mcp-client",
+      "feature_id": "base-agent-workflow",
+      "kind": "configuration",
+      "title": "Agent MCP client transport and include contract",
+      "source_claims": [
+        {"source_id": "agent-config-doc-3.2.1", "locator": "MCP Clients lines 197-228"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "wired", "runtime_state": "static_only"},
+      "contract": {"type": "mcp_client", "transports": ["streamable-http", "sse", "stdio"], "required_fields": ["server.transport", "server.url", "include"], "include_type": "list"},
+      "scenario_ids": ["official-capability-contracts", "core-agent-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "semantic_coverage": false, "reason": "The Agent REST manifest does not prove MCP transport or include resolution."},
+      "gap": "Configured MCP clients have not been qualified across every supported transport."
+    },
+    {
+      "id": "configuration.agent.extension-points",
+      "feature_id": "base-agent-workflow",
+      "kind": "tooling",
+      "title": "Agent custom functions and MCP extension points",
+      "source_claims": [
+        {"source_id": "agent-customization-doc-3.2.1", "locator": "Custom Functions and Adding Custom MCP Servers lines 163-220"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"custom_function_registration": "functions.<name>._type", "tool_exposure": "workflow.tool_names", "custom_mcp_registration": "function_groups.<name>", "tool_discovery_command": "nat mcp client tool list --url <url>"},
+      "scenario_ids": ["official-capability-contracts"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "No expected manifest exercises user-authored Python or MCP extensions."},
+      "gap": "Extension source is present, but no Thor custom-function or custom-MCP fixture is qualified."
+    },
+    {
+      "id": "configuration.agent.knowledge-retrieval-backends",
+      "feature_id": "base-agent-workflow",
+      "kind": "configuration",
+      "title": "Agent pluggable knowledge-retrieval backends",
+      "source_claims": [
+        {"source_id": "agent-customization-doc-3.2.1", "locator": "Adding a Knowledge Layer lines 237-253"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "static_only"},
+      "contract": {
+        "type": "knowledge_retrieval",
+        "common_fields": ["backend", "top_k", "backend_config"],
+        "backends": {
+          "frag_api": ["rag_url", "collection_name", "api_key?", "verify_ssl?", "timeout?"],
+          "es_caption": ["elasticsearch_url", "index=default_*", "api_key?", "verify_ssl?", "timeout?"],
+          "frag_lib_experimental": ["milvus_uri", "collection_name", "embedder_base_url", "embedder_model_name", "llm_base_url", "llm_model_name"],
+          "langchain_experimental": ["persist_dir", "collection_name", "embed_model", "embed_base_url", "embed_api_key"],
+          "llama_index_experimental": ["persist_dir", "collection_name", "embed_model", "embed_base_url", "embed_api_key"]
+        },
+        "es_caption_filter": "stream_id_not_stream_name",
+        "experimental_install": "uv sync --extra <backend>"
+      },
+      "scenario_ids": ["official-capability-contracts"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "No REST operation manifest validates retrieval backend semantics."},
+      "gap": "The local Elasticsearch backend is configured statically; external and experimental backends are not runtime-qualified."
+    },
+    {
+      "id": "configuration.agent.hierarchy",
+      "feature_id": "base-agent-workflow",
+      "kind": "configuration",
+      "title": "Agent top-level and report sub-agent hierarchy",
+      "source_claims": [
+        {"source_id": "agent-config-doc-3.2.1", "locator": "Agents and Top Agent lines 417-484"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "wired", "runtime_state": "static_only"},
+      "contract": {"agent_types": ["report_agent", "multi_report_agent", "top_agent"], "workflow_fields": ["llm_name", "log_level", "max_retries", "max_iterations", "llm_reasoning", "tool_names", "subagent_names", "prompt"]},
+      "scenario_ids": ["official-capability-contracts", "core-agent-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "semantic_coverage": false, "reason": "HTTP route coverage does not prove tool/sub-agent routing."},
+      "gap": "Hierarchy is wired, but routing among all advertised agents is not currently qualified."
+    },
+    {
+      "id": "runtime.agent.report-profile-contracts",
+      "feature_id": "base-agent-workflow",
+      "kind": "runtime_behavior",
+      "title": "Base, LVS, and search report-generation profile contracts",
+      "source_claims": [
+        {"source_id": "agent-report-doc-3.2.1", "locator": "Base, LVS, and Search Profile sections lines 164-385"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified"},
+      "contract": {
+        "base": {"max_frames_documented": 60, "max_fps": 2, "min_pixels_documented": 1568, "max_pixels_documented": 208544, "reasoning": false, "stream_mode": false, "report_prompt_key": "vlm_prompt", "enable_audio_default": false},
+        "lvs": {"chunk_duration_seconds": 10, "connect_timeout_ms": 5000, "read_timeout_ms": 600000, "temperature": 0.4, "max_tokens": 512, "hitl": true},
+        "search": {"max_frames": 120, "max_fps": 2, "reasoning": true, "requires_embedding_endpoint_and_index": true},
+        "acceptance_rule": "selected_checked_in_profile_values_override_documentation_examples"
+      },
+      "scenario_ids": ["official-capability-contracts", "core-agent-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "semantic_coverage": false, "reason": "The route manifest does not distinguish report profiles or prompt settings."},
+      "gap": "No current run proves each report profile with its selected effective configuration."
+    },
+    {
+      "id": "runtime.agent.report-artifacts",
+      "feature_id": "base-agent-workflow",
+      "kind": "runtime_behavior",
+      "title": "Agent report output and persistence contract",
+      "source_claims": [
+        {"source_id": "agent-report-doc-3.2.1", "locator": "Custom Templates and Output Storage lines 386-450"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified"},
+      "contract": {"formats": ["markdown", "pdf"], "served_under": "/static", "default_storage": "in_memory_ephemeral", "persistent_settings": {"save_local_copy": true, "output_dir": "/opt/reports", "host_volume_required": true}},
+      "scenario_ids": ["official-capability-contracts", "core-agent-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "semantic_coverage": false, "reason": "The Agent route manifest does not validate output formats or restart persistence."},
+      "gap": "Report creation, PDF output, and persistence across restart lack current Thor evidence."
+    },
+    {
+      "id": "observability.agent.phoenix-traces",
+      "feature_id": "infra-observability",
+      "kind": "runtime_behavior",
+      "title": "Agent Phoenix distributed-trace contract",
+      "source_claims": [
+        {"source_id": "agent-observability-doc-3.2.1", "locator": "Overview through Container Logs lines 160-318"},
+        {"source_id": "agent-config-doc-3.2.1", "locator": "Telemetry lines 486-504"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "wired", "runtime_state": "not_qualified"},
+      "contract": {"type": "phoenix", "otlp_endpoint_suffix": "/v1/traces", "ui_path": "/phoenix", "summary_metrics": ["total_traces", "total_tokens", "latency_p50", "latency_p99"], "trace_hierarchy": ["workflow", "llm_tool_selection", "tool_call", "llm_final_response"], "span_fields": ["status", "kind", "name", "input", "output", "start_timestamp", "latency", "tokens"]},
+      "scenario_ids": ["official-capability-contracts", "observability-scale-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "The observability scenario currently queries Prometheus targets only."},
+      "gap": "Static Phoenix wiring and prior POST evidence exist; the complete current trace hierarchy is unqualified."
+    },
+    {
+      "id": "evaluation.agent.execution-artifacts",
+      "feature_id": "agent-evaluation",
+      "kind": "evaluation",
+      "title": "Agent evaluation execution filters and output artifacts",
+      "source_claims": [
+        {"source_id": "agent-eval-detail-doc-3.2.1", "locator": "Running Evaluation and Output Files lines 581-702"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"command": "nat eval --config_file <config>", "precondition": "referenced_videos_uploaded", "dataset_filter_values": ["all", "qa", "trajectory", "report"], "dataset_filter_rule": "comma_combinations_allowed_except_all_cannot_combine", "output_files": ["workflow_output.json", "report_evaluator_output.json", "qa_evaluator_output.json", "trajectory_evaluator_output.json", "latency_summary.json"]},
+      "scenario_ids": ["official-capability-contracts"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "No expected manifest validates evaluation execution or artifacts."},
+      "gap": "No Thor evaluation invocation has produced the complete advertised output set."
+    },
+    {
+      "id": "model.rt-embed.cosmos-embed1-448p",
+      "feature_id": "rt-embed",
+      "kind": "model",
+      "title": "RT-Embed Cosmos-Embed1 448p base variant",
+      "source_claims": [
+        {"source_id": "rt-embed-doc-3.2.1", "locator": "Supported Models lines 197-207"},
+        {"source_id": "cosmos-embed1-doc-3.2.1", "locator": "Model variants lines 175-184"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"repository": "nvidia/Cosmos-Embed1-448p", "resolution": [448, 448], "frames": 8, "embedding_dimension": 768, "default_scope": "rt_embed_service"},
+      "scenario_ids": ["official-capability-contracts", "model-alternate-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/rt-embed.json", "semantic_coverage": false, "reason": "The 24-operation manifest does not prove a specific model variant."},
+      "gap": "The exact 448p base artifact is not staged or qualified on Thor."
+    },
+    {
+      "id": "model.rt-embed.cosmos-embed1-336p",
+      "feature_id": "rt-embed",
+      "kind": "model",
+      "title": "RT-Embed Cosmos-Embed1 336p variant",
+      "source_claims": [
+        {"source_id": "rt-embed-doc-3.2.1", "locator": "Supported Models lines 197-207"},
+        {"source_id": "cosmos-embed1-doc-3.2.1", "locator": "Model variants lines 175-184"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"repository": "nvidia/Cosmos-Embed1-336p", "resolution": [336, 336], "frames": 8, "embedding_dimension": 768, "default_scope": null},
+      "scenario_ids": ["official-capability-contracts", "model-alternate-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/rt-embed.json", "semantic_coverage": false, "reason": "The API manifest is model-agnostic."},
+      "gap": "The exact 336p artifact is not staged or qualified on Thor."
+    },
+    {
+      "id": "model.rt-embed.cosmos-embed1-224p",
+      "feature_id": "rt-embed",
+      "kind": "model",
+      "title": "RT-Embed Cosmos-Embed1 224p variant",
+      "source_claims": [
+        {"source_id": "rt-embed-doc-3.2.1", "locator": "Supported Models lines 197-207"},
+        {"source_id": "cosmos-embed1-doc-3.2.1", "locator": "Model variants lines 175-184"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"repository": "nvidia/Cosmos-Embed1-224p", "resolution": [224, 224], "frames": 8, "embedding_dimension": 256, "reindex_when_switching_to_768_dimensions": true, "default_scope": null},
+      "scenario_ids": ["official-capability-contracts", "model-alternate-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/rt-embed.json", "semantic_coverage": false, "reason": "The API manifest is model-agnostic and does not validate reindexing."},
+      "gap": "The exact 224p artifact and its 256-dimensional index lane are not staged or qualified."
+    },
+    {
+      "id": "model.rt-embed.cosmos-embed1-448p-anomaly",
+      "feature_id": "rt-embed",
+      "kind": "model",
+      "title": "RT-Embed Cosmos-Embed1 448p anomaly-detection variant",
+      "source_claims": [
+        {"source_id": "rt-embed-doc-3.2.1", "locator": "Supported Models lines 197-207"},
+        {"source_id": "cosmos-embed1-doc-3.2.1", "locator": "Model variants lines 175-184"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "services/rtvi/rt-embed/docker/compose.yaml and Thor exact artifact lock integration"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "wired", "runtime_state": "passed_prior"},
+      "contract": {"repository": "nvidia/Cosmos-Embed1-448p-anomaly-detection", "resolution": [448, 448], "frames": 8, "embedding_dimension": 768, "training": "lora", "default_scope": "search_workflow", "exact_artifact_lock_required": true},
+      "scenario_ids": ["official-capability-contracts", "model-alternate-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/rt-embed.json", "semantic_coverage": false, "reason": "The API manifest does not prove the loaded model revision."},
+      "gap": "The exact artifact passed prior offline verification, but current runtime media and embedding semantics need requalification."
+    },
+    {
+      "id": "configuration.rt-embed.model-source",
+      "feature_id": "rt-embed",
+      "kind": "configuration",
+      "title": "RT-Embed custom model-source and Triton repository paths",
+      "source_claims": [
+        {"source_id": "rt-embed-doc-3.2.1", "locator": "Model Configuration lines 523-537"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "services/rtvi/rt-embed/docker/compose.yaml lines 37-39 and src/scripts/start_rtvi_embed.sh"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "wired", "runtime_state": "static_only"},
+      "contract": {"model_path_schemes": ["ngc", "git", "local"], "model_path_default": "git:https://huggingface.co/nvidia/Cosmos-Embed1-448p", "model_implementation_path_default": "/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1", "model_repository_script_path_default": "/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1/create_triton_model_repo.py"},
+      "scenario_ids": ["official-capability-contracts", "model-alternate-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/rt-embed.json", "semantic_coverage": false, "reason": "The API manifest does not exercise alternate model-source layouts."},
+      "gap": "Configuration wiring exists, but a user-supplied custom model and Triton repository have not been qualified."
+    },
+    {
+      "id": "calibration.auto.workflow-six-step",
+      "feature_id": "auto-calibration",
+      "kind": "calibration",
+      "title": "Auto Calibration six-step project workflow",
+      "source_claims": [
+        {"source_id": "autocalib-overview-doc-3.2.1", "locator": "Key Features and Workflow Overview lines 171-225"},
+        {"source_id": "autocalib-workflow-doc-3.2.1", "locator": "Project Setup and project states lines 164-264"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "blocked"},
+      "contract": {"steps": ["project_setup", "video_configuration", "parameters", "manual_alignment", "execute", "results"], "project_states": ["INIT", "READY", "RUNNING", "COMPLETED", "ERROR"], "methods": {"AMC": "primary", "VGGT": "optional"}, "exports": ["mv3dt", "world_coordinates", "camera_intrinsics_extrinsics"]},
+      "scenario_ids": ["official-capability-contracts", "auto-calibration-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "The existing 26-operation skill catalog is not a workflow result oracle."},
+      "gap": "The backend image is absent and no calibration project has completed on Thor."
+    },
+    {
+      "id": "calibration.auto.input-contract",
+      "feature_id": "auto-calibration",
+      "kind": "calibration",
+      "title": "Auto Calibration synchronized custom-video input contract",
+      "source_claims": [
+        {"source_id": "autocalib-getting-started-doc-3.2.1", "locator": "Tracklet-Based Calibration Input Video Requirements lines 163-201"},
+        {"source_id": "autocalib-workflow-doc-3.2.1", "locator": "Video Configuration lines 265-302"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "blocked"},
+      "contract": {"moving_people_required": true, "recommended_unique_people_min": 10, "recommended_duration_seconds_min": 300, "uploaded_format": "mp4", "uploaded_resolution": [1920, 1080], "multi_camera_synchronized": true, "camera_order": "overlapping_fov_chain", "recommended_overlap_percent_min": 30, "tracklet_frames_min": 90, "matches_per_pair_min": 6, "robust_two_view_fallback_matches_min": 3, "file_and_rtsp_mutually_exclusive": true, "rtsp_requires_vios": true},
+      "scenario_ids": ["official-capability-contracts", "auto-calibration-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "No expected manifest validates media suitability or calibration convergence."},
+      "gap": "Strict launch contracts exist, but no operator custom dataset has completed calibration."
+    },
+    {
+      "id": "calibration.auto.alignment-schema",
+      "feature_id": "auto-calibration",
+      "kind": "calibration",
+      "title": "Auto Calibration alignment-data schema",
+      "source_claims": [
+        {"source_id": "autocalib-custom-data-doc-3.2.1", "locator": "Input Requirements and Alignment Data lines 162-228"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"floor_map_format": "png", "file_name": "alignment_data.json", "point_sets_min": 4, "coordinate_space": "original_pixels", "point_set_shape": "one_[x,y]_per_camera_plus_one_layout_[x,y]"},
+      "scenario_ids": ["official-capability-contracts", "auto-calibration-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "No expected manifest validates alignment geometry."},
+      "gap": "The exact alignment schema is documented but lacks a Thor artifact oracle."
+    },
+    {
+      "id": "calibration.auto.ground-truth-schema",
+      "feature_id": "auto-calibration",
+      "kind": "calibration",
+      "title": "Auto Calibration ground-truth evaluation schema",
+      "source_claims": [
+        {"source_id": "autocalib-custom-data-doc-3.2.1", "locator": "Ground Truth ZIP and JSON schema lines 250-384"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"zip_members": ["calibration.json", "ground_truth.json"], "sensor_required": ["id", "intrinsicMatrix_3x3", "extrinsicMatrix_3x4", "cameraMatrix_3x4", "frame_dimensions"], "sensor_ids_must_match_bbox_keys": true, "ground_truth_frame_object_required": ["object_id", "type", "name", "location_3d", "visible_2d_bounding_boxes_by_sensor"]},
+      "scenario_ids": ["official-capability-contracts", "auto-calibration-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "No expected manifest validates calibration evaluation data."},
+      "gap": "No ground-truth ZIP has been evaluated on the Thor lane."
+    },
+    {
+      "id": "boundary.auto-calibration.thor-extension",
+      "feature_id": "auto-calibration",
+      "kind": "deployment",
+      "title": "Auto Calibration unsupported Thor extension boundary",
+      "source_claims": [
+        {"source_id": "autocalib-getting-started-doc-3.2.1", "locator": "Prerequisites and System Requirements lines 202-218"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "blocked"},
+      "contract": {"official_architecture": "x86_64", "official_os": "Ubuntu 24.04", "official_driver": "590", "must_not_claim_official_thor_support": true, "thor_lane": "custom_unsupported_extension"},
+      "scenario_ids": ["official-capability-contracts", "auto-calibration-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "Platform support is a documentation boundary, not an API contract."},
+      "gap": "The custom Thor lane cannot become officially supported through local qualification."
+    },
+    {
+      "id": "behavior.auto-calibration.known-limitations",
+      "feature_id": "auto-calibration",
+      "kind": "runtime_behavior",
+      "title": "Auto Calibration documented runtime limitations",
+      "source_claims": [
+        {"source_id": "warehouse-limitations-doc-3.2.1", "locator": "Camera Calibration with AutoMagicCalib lines 198-212"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"floor_map_required": true, "valid_scale_factor_required": true, "tracking_target": "person_only", "roi_tripwire_scope": "per_sensor", "three_d_global_roi_tripwire_requires_manual_move": true, "image_mode_supported": false},
+      "scenario_ids": ["official-capability-contracts", "auto-calibration-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "Known limitations must remain explicit rather than be inferred from operations."},
+      "gap": "These upstream limitations remain applicable to any local lane."
+    },
+    {
+      "id": "configuration.warehouse.behavior-analytics",
+      "feature_id": "warehouse-2d",
+      "kind": "configuration",
+      "title": "Warehouse Behavior Analytics custom-data configuration",
+      "source_claims": [
+        {"source_id": "warehouse-behavior-doc-3.2.1", "locator": "Configurations and runtime overrides lines 160-378"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "static_only"},
+      "contract": {"broker_types": ["kafka", "redisStream", "mqtt"], "broker_default": "kafka", "topics": ["mdx-raw", "mdx-frames", "mdx-behavior", "mdx-notification", "mdx-events", "mdx-incidents"], "defaults": {"in3dMode": false, "compactFrame": false, "objectConfidenceThreshold": 0.5, "clusteringThreshold": 0.9, "location": "bottom_center", "behaviorStateTimeout": 10, "behaviorValidInterval": 6, "behaviorWatermarkSec": 30, "behaviorMaxPoints": 200, "proximityDetectionEnable": false, "proximityDetectionThreshold": 1.8, "incidentTTL": 3600, "incidentThreshold": 1, "fovObjectType": "Person", "tripwireMinPoints": 5, "sensorMinFrames": 5}, "worker_zero_disables": true, "per_sensor_overrides_default": true},
+      "scenario_ids": ["official-capability-contracts", "industry-profile-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/video-analytics.json", "semantic_coverage": false, "reason": "The Video Analytics REST surface does not prove Behavior Analytics configuration semantics."},
+      "gap": "The custom Redis graph is static-only; one- and three-camera operator-data runs remain unqualified."
+    },
+    {
+      "id": "runtime.warehouse.alert-modes-rules",
+      "feature_id": "warehouse-2d",
+      "kind": "runtime_behavior",
+      "title": "Warehouse alert modes, rules, and verdicts",
+      "source_claims": [
+        {"source_id": "warehouse-alerting-doc-3.2.1", "locator": "Overview and Alert Verification lines 165-216"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "not_qualified"},
+      "contract": {"modes": {"verification": "candidate_clip_plus_metadata", "realtime": "continuous_chunk_monitoring"}, "shared_component": "alert_bridge", "rules": {"proximity violation": "Near Miss", "load_quality": "Damaged/Unstable/Falling Boxes", "pathway_obstruction": "Pathway Obstructions", "spillover": "Spillover", "ppe": "PPE Violation"}, "verification_verdicts": ["confirmed", "rejected", "unverified"], "config_required": ["version=1.0", "alert_type", "output_category", "prompts.system", "prompts.user"], "outputs": ["elasticsearch", "kafka_optional"]},
+      "scenario_ids": ["official-capability-contracts", "industry-profile-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/alerts.json", "semantic_coverage": false, "reason": "The 19-operation Alerts manifest does not validate rule behavior or verdicts."},
+      "gap": "Static rule configs exist, but neither verification nor realtime custom-data behavior is currently qualified."
+    },
+    {
+      "id": "runtime.warehouse.agent-hierarchy",
+      "feature_id": "warehouse-2d",
+      "kind": "runtime_behavior",
+      "title": "Warehouse agent hierarchy, tools, and query classes",
+      "source_claims": [
+        {"source_id": "warehouse-agents-doc-3.2.1", "locator": "Agent Architecture, Tools, and Supported Queries lines 160-241"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "not_qualified"},
+      "contract": {"recommended_llm": "nvidia/nvidia-nemotron-nano-9b-v2", "recommended_vlm": "nvidia/cosmos3-nano-reasoner", "hierarchy": ["top_agent", "report_agent", "multi_report_agent"], "top_tools": ["vst_sensor_list", "vst_picture_url", "get_fov_counts_with_chart"], "analytics_tools": ["video_analytics__get_incidents", "video_analytics__get_incident", "video_analytics__get_fov_histogram", "video_analytics__get_sensor_ids"], "storage_tools": ["vst_video_url", "vst_picture_url", "vst_sensor_list"], "report_tools": ["video_understanding", "template_report_gen", "chart_generator", "multi_incident_formatter"], "query_classes": ["sensor_discovery", "snapshots", "incident_listing", "reports", "occupancy_metrics", "multi_step"]},
+      "scenario_ids": ["official-capability-contracts", "industry-profile-workflows", "core-agent-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "semantic_coverage": false, "reason": "Agent HTTP operations do not prove Warehouse tool routing or answers."},
+      "gap": "The Warehouse Agent configuration is present, but custom-data queries and reports lack runtime evidence."
+    },
+    {
+      "id": "runtime.warehouse.ui-surfaces",
+      "feature_id": "warehouse-2d",
+      "kind": "runtime_behavior",
+      "title": "Warehouse enabled and disabled UI surfaces",
+      "source_claims": [
+        {"source_id": "warehouse-ui-doc-3.2.1", "locator": "Reference Agentic UI and examples lines 160-190"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "partial", "runtime_state": "not_qualified"},
+      "contract": {"enabled": ["global_chat_sidebar", "alerts_tab", "dashboard_tab"], "disabled": ["search_tab", "video_management_tab"], "alerts_views": ["view_alerts", "manage_alerts"], "generate_report_routes_metadata_to_chat": true, "dashboard_backend": "kibana"},
+      "scenario_ids": ["official-capability-contracts", "industry-profile-workflows", "ui-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "The browser UI driver remains pending."},
+      "gap": "No current browser-driven Warehouse UI acceptance exists."
+    },
+    {
+      "id": "deployment.helm.developer-profiles",
+      "feature_id": "helm",
+      "kind": "deployment",
+      "title": "Helm deployment for four developer profiles",
+      "source_claims": [
+        {"source_id": "helm-doc-3.2.1", "locator": "Available profiles, prerequisites, and deployment lines 160-212"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "deploy/helm/developer-profiles and deploy/helm/services"}
+      ],
+      "status": {"acceptance_class": "external_optional", "thor_state": "external_optional", "runtime_state": "not_applicable"},
+      "contract": {"profiles": ["base", "alerts", "search", "lvs"], "kubernetes_minimum": "1.34", "helm_major": 3, "required": ["gpu_operator", "storage_class", "ngc_api_key"], "nim_operator_condition": "in_cluster_llm_or_vlm", "ready_condition": "all_release_pods_running_and_ready"},
+      "scenario_ids": ["external-integration-boundaries"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "Thor Compose acceptance has no user-managed Kubernetes cluster."},
+      "gap": "Charts are preserved, but no Kubernetes runtime is part of this Thor target."
+    },
+    {
+      "id": "security.trusted-network-boundary",
+      "feature_id": "offline-security",
+      "kind": "security",
+      "title": "Trusted isolated VSS network boundary",
+      "source_claims": [
+        {"source_id": "secure-deployment-doc-3.2.1", "locator": "Deployment Scope and Reference Segmentation Pattern lines 160-174"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "wired", "runtime_state": "not_qualified"},
+      "contract": {"trusted_isolated_network_required": true, "must_not_publicly_expose": ["agent_ui", "agent_api", "mcp", "nim", "database", "broker", "vios_vst"], "allowed_ingress": ["tcp_7777_from_trusted_client_or_proxy", "ssh_from_admin_cidrs"], "internal_service_traffic": "docker_bridge_or_private_subnet"},
+      "scenario_ids": ["official-capability-contracts", "observability-scale-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "Loopback/static configuration does not prove physical-interface firewall enforcement."},
+      "gap": "Loopback ingress is wired; trusted-CIDR and physical-interface enforcement need runtime proof."
+    },
+    {
+      "id": "security.external-edge-controls",
+      "feature_id": "offline-security",
+      "kind": "security",
+      "title": "External deployment security controls",
+      "source_claims": [
+        {"source_id": "secure-deployment-doc-3.2.1", "locator": "Recommended Controls and Firewall Intent lines 175-195"}
+      ],
+      "status": {"acceptance_class": "external_optional", "thor_state": "external_optional", "runtime_state": "not_applicable"},
+      "contract": {"user_managed_controls": ["vpn_or_authenticated_reverse_proxy", "tls", "approved_cidr_filtering", "rate_limits", "request_timeouts", "proxy_firewall_container_application_logs"]},
+      "scenario_ids": ["external-integration-boundaries"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "These controls belong to user-managed infrastructure and must not be emulated locally."},
+      "gap": "External controls are outside the single-node Thor Compose acceptance boundary."
+    },
+    {
+      "id": "security.known-unmitigated-limitations",
+      "feature_id": "offline-security",
+      "kind": "security",
+      "title": "Known unmitigated VSS security limitations",
+      "source_claims": [
+        {"source_id": "known-limitations-doc-3.2.1", "locator": "Security Considerations lines 163-172"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "static_only"},
+      "contract": {"inter_component_tls_complete": false, "digital_signatures_or_macs": false, "authentication_authorization_consistent": false, "rate_limits_and_timeouts_complete": false, "infrastructure_hardening_required": true, "must_not_claim_remediated": true},
+      "scenario_ids": ["official-capability-contracts", "external-integration-boundaries"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "Known missing controls are boundary invariants, not passing test cases."},
+      "gap": "Network isolation mitigates exposure but does not remediate the documented missing controls."
+    },
+    {
+      "id": "behavior.warehouse.known-limitations",
+      "feature_id": "warehouse-2d",
+      "kind": "runtime_behavior",
+      "title": "Warehouse perception, agent, and real-camera limitations",
+      "source_claims": [
+        {"source_id": "warehouse-limitations-doc-3.2.1", "locator": "Perception, Agents, and real-camera sections lines 164-197"}
+      ],
+      "status": {"acceptance_class": "alternate_local_lane", "thor_state": "source_only", "runtime_state": "not_qualified"},
+      "contract": {"truncated_bbox_can_reduce_proximity_accuracy": true, "mv3dt_duplicate_bbox_possible": true, "forklift_rider_false_proximity_possible": true, "optimal_vlm_clip_seconds": [5, 300], "report_timestamps_may_be_inaccurate": true, "real_camera_3d_thoroughly_tested": false},
+      "scenario_ids": ["official-capability-contracts", "industry-profile-workflows"],
+      "expected_manifest_binding": {"path": null, "semantic_coverage": false, "reason": "Known accuracy limitations are not represented by REST operation inventories."},
+      "gap": "These limitations remain applicable to custom-data Warehouse qualification."
+    },
+    {
+      "id": "behavior.agent.known-issues",
+      "feature_id": "base-agent-workflow",
+      "kind": "runtime_behavior",
+      "title": "Agent audio, restart, timestamp, and empty-chart known issues",
+      "source_claims": [
+        {"source_id": "agent-known-issues-doc-3.2.1", "locator": "All known issues lines 161-218"}
+      ],
+      "status": {"acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified"},
+      "contract": {"non_omni_audio_fallback": "jpeg_frames_without_audio", "omni_name_must_match_models_endpoint_id": true, "hf_429_mitigation": "HF_TOKEN", "shared_gpu_cosmos_restart": "full_blueprint_redeploy", "dedicated_gpu_cosmos_restart": "container_restart_allowed", "snapshot_timestamp": "approximate_nearby_frame", "zero_count_chart": "may_render_empty"},
+      "scenario_ids": ["official-capability-contracts", "core-agent-workflows"],
+      "expected_manifest_binding": {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "semantic_coverage": false, "reason": "Agent routes do not encode the documented failure modes."},
+      "gap": "The known-issue behaviors are not covered by current Thor runtime regression tests."
+    }
+  ],
+  "enrichments": [
+    {
+      "target_id": "evaluation.agent.report",
+      "source_claims_add": [
+        {"source_id": "agent-eval-detail-doc-3.2.1", "locator": "Report Evaluator lines 179-328"}
+      ],
+      "contract_merge": {"type": "report_evaluator", "evaluation_method_id": "report", "config_fields": ["eval_metrics_config_path", "object_store", "report_url_pattern", "include_vlm_output", "vlm_related_fields"], "metrics": ["exact_match", "f1", "regex", "non_empty", "llm_judge"], "dynamic_field_discovery": true, "aggregation_methods": ["average", "dynamic"], "judge_defaults": {"max_tokens": 2048, "temperature": 0}},
+      "merge_note": "Merge exact evaluator fields into the existing generic report-evaluator contract; retain required_local/source_only/not_qualified."
+    },
+    {
+      "target_id": "evaluation.agent.qa",
+      "source_claims_add": [
+        {"source_id": "agent-eval-detail-doc-3.2.1", "locator": "Question Answer Evaluator lines 330-375"}
+      ],
+      "contract_merge": {"type": "customized_qa_evaluator", "evaluation_method_id": "qa", "supports_llm_judge_reasoning": true, "prompt_variables": ["question", "answer", "reference"], "criteria": ["factual_correctness", "completeness", "semantic_equivalence"]},
+      "merge_note": "Replace the broad focus list with the exact type, prompt, and scoring contract."
+    },
+    {
+      "target_id": "evaluation.agent.trajectory",
+      "source_claims_add": [
+        {"source_id": "agent-eval-detail-doc-3.2.1", "locator": "Trajectory Evaluator lines 376-484"}
+      ],
+      "contract_merge": {"type": "customized_trajectory_evaluator", "evaluation_method_id": "trajectory", "track_agent_selected_tools_only": true, "modes": ["with_reference", "without_reference"], "tool_call_schema": ["step", "name", "params"], "same_step_means_parallel": true, "no_reference_context": ["tool_schemas", "conversation_history"]},
+      "merge_note": "Merge both prompt modes and structured trajectory semantics into the existing claim."
+    },
+    {
+      "target_id": "evaluation.agent.multi-turn",
+      "source_claims_add": [
+        {"source_id": "agent-eval-detail-doc-3.2.1", "locator": "Dataset and Multi-Turn Evaluation lines 485-665"}
+      ],
+      "contract_merge": {"dataset_type": "json", "required_fields": ["id", "query", "evaluation_method"], "ground_truth_required_for": ["qa", "report"], "optional_fields": ["trajectory_ground_truth", "conversation"], "turns_sequential": true, "conversations_parallel": true, "result_id_template": "{dataset-id}_{turn-id}"},
+      "merge_note": "Extend the conversation-context claim with exact dataset and execution semantics."
+    },
+    {
+      "target_id": "customization.siglip2",
+      "source_claims_add": [
+        {"source_id": "siglip2-doc-3.2.1", "locator": "Dataset, model types, export, and integration lines 173-221 and 311-382"}
+      ],
+      "contract_merge": {"dataset_layouts": ["parallel_images_captions", "webdataset"], "fixed_model_examples": ["siglip2-so400m-patch16-256", "siglip2-so400m-patch16-384", "siglip2-giant-opt-patch16-384"], "naflex_onnx_tensorrt_export_supported": false, "actions": ["train", "evaluate", "inference", "export", "gen_trt_engine"], "deployment_artifacts": ["combined_onnx", "tokenizer_directory"], "deepstream_keys": ["onnx-model-path", "tokenizer-dir"], "validation": ["rest_text_embedding", "kafka_dimensions", "downstream_behavior_analytics"]},
+      "merge_note": "Replace generic artifact types with the deployable fixed-resolution and integration contract."
+    },
+    {
+      "target_id": "customization.cosmos-embed1",
+      "source_claims_add": [
+        {"source_id": "cosmos-embed1-doc-3.2.1", "locator": "Architecture through RT-Embedding integration lines 161-382"}
+      ],
+      "contract_merge": {"metadata_formats": ["json", "jsonl"], "actions": ["train", "evaluate", "inference", "export"], "export_modes": ["video", "text", "combined", "hugging_face"], "lora_supported": true, "integration_variables": ["MODEL_PATH", "MODEL_IMPLEMENTATION_PATH", "MODEL_REPOSITORY_SCRIPT_PATH"], "post_integration_tests": ["rtsp_ingest", "file_ingest", "kafka_consumers"]},
+      "merge_note": "Add exact TAO export and RT-Embed integration requirements."
+    },
+    {
+      "target_id": "customization.sparse4d",
+      "source_claims_add": [
+        {"source_id": "sparse4d-doc-3.2.1", "locator": "Model versions and Dataset Preparation/Export lines 160-178 and 707-846"}
+      ],
+      "contract_merge": {"version": "2.2", "backbones": {"default": "resnet50", "alternate": "resnet101"}, "dataset_conversion": "AICity_to_OVPKL", "anchor_artifact": "anchor_init_kmeans900.npy", "export": {"format": "onnx", "width": 960, "height": 544, "opset": 17, "batch_size": -1}, "integration": "perception_microservice", "artifact_class_map_must_match_anchor": true},
+      "merge_note": "Add exact model, anchor, export, and fail-closed class-map pairing."
+    },
+    {
+      "target_id": "customization.rt-detr",
+      "source_claims_add": [
+        {"source_id": "rt-detr-doc-3.2.1", "locator": "Release, dataset, export, and integration lines 167-181, 239-286, and 654-684"}
+      ],
+      "contract_merge": {"model_version": "1.0.2", "backbone": "resnet50", "input": [640, 640], "class_count": 7, "custom_data": {"annotated_images_per_class_min": 1000, "recommended_images": 5000, "annotation_format": "coco", "split_percent": {"train": "70-80", "validation": "10-15", "test": "10-15"}}, "export": {"opset": 17, "serialize_nvdsinfer": true, "default_precision": "fp32", "optional_precision": "fp16_modelopt"}, "integration": "perception_microservice"},
+      "merge_note": "Add exact v1.0.2 custom-data and DeepStream export contract."
+    },
+    {
+      "target_id": "customization.embedding-reindex-validation",
+      "source_claims_add": [
+        {"source_id": "cosmos-embed1-doc-3.2.1", "locator": "Model variants and integration lines 175-184 and 375-382"},
+        {"source_id": "siglip2-doc-3.2.1", "locator": "RT-CV integration lines 371-382"}
+      ],
+      "contract_merge": {"reindex_triggers": ["embedding_dimension_change", "embedding_semantics_change", "embedding_geometry_change"], "required_oracles": ["vector_size", "reindex_completion", "similarity_threshold_scale", "rest_embedding_output", "kafka_consumer_compatibility", "downstream_search_or_behavior_analytics"]},
+      "merge_note": "Make reindex and downstream semantic validation explicit rather than generic."
+    }
+  ],
+  "discrepancies_and_boundaries": [
+    {
+      "id": "agent-video-understanding-defaults-three-way",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "agent-config-doc-3.2.1", "locator": "video_understanding snippet/table lines 230-260"},
+        {"source_id": "agent-report-doc-3.2.1", "locator": "Base Profile lines 164-220"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml and services/agent/src/vss_agents/tools/video_understanding.py"}
+      ],
+      "resolution": "Documentation advertises 60/1568/208544, the base config selects 30/3136/8388608, and Pydantic source defaults are 24/1568/345600. Validate the selected profile's effective values.",
+      "must_not_claim": "Do not claim documentation prose values are the deployed Thor defaults."
+    },
+    {
+      "id": "agent-video-report-prompt-singular-vs-plural",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "agent-report-doc-3.2.1", "locator": "Customizing vlm_prompt lines 247-257"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "services/agent/src/vss_agents/tools/video_report_gen.py and template_report_gen.py"}
+      ],
+      "resolution": "Use singular video_report_gen.vlm_prompt. Plural vlm_prompts is valid only for template_report_gen.",
+      "must_not_claim": "Do not configure video_report_gen with the plural key from the prose typo."
+    },
+    {
+      "id": "agent-evaluation-max-concurrency-example",
+      "category": "scoped_default",
+      "source_claims": [
+        {"source_id": "agent-eval-detail-doc-3.2.1", "locator": "Running Evaluation example lines 581-665"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml eval.general.max_concurrency"}
+      ],
+      "resolution": "The documentation's value 10 is an example; the checked-in base profile selects 5.",
+      "must_not_claim": "Do not require max_concurrency=10 for compliance."
+    },
+    {
+      "id": "agent-mcp-tool-name-normalization",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "agent-config-doc-3.2.1", "locator": "MCP include examples lines 197-228"},
+        {"source_id": "warehouse-agents-doc-3.2.1", "locator": "Video Analytics Tools lines 188-215"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "Thor-full Agent config and services/agent video_analytics tests"}
+      ],
+      "resolution": "Normalize dotted and NAT double-underscore forms before comparison; the Thor profile uses names such as video_analytics__get_incidents.",
+      "must_not_claim": "Do not report a missing tool solely because documentation and runtime use different name normalization."
+    },
+    {
+      "id": "rt-embed-scoped-model-defaults",
+      "category": "scoped_default",
+      "source_claims": [
+        {"source_id": "rt-embed-doc-3.2.1", "locator": "Supported Models lines 197-207"}
+      ],
+      "resolution": "Cosmos-Embed1-448p is the service default; Cosmos-Embed1-448p-anomaly-detection is the search-workflow default.",
+      "must_not_claim": "Do not describe either model as the universal default."
+    },
+    {
+      "id": "rt-embed-repository-script-env-table-omission",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "rt-embed-doc-3.2.1", "locator": "Model Configuration lines 523-537"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "services/rtvi/rt-embed/docker/compose.yaml and src/scripts/start_rtvi_embed.sh"}
+      ],
+      "resolution": "The environment table omits MODEL_REPOSITORY_SCRIPT_PATH; Compose supplies the exact default and the startup script consumes it.",
+      "must_not_claim": "Do not omit the Triton repository script path from custom-model acceptance."
+    },
+    {
+      "id": "sparse4d-v2.2-class-list-pallet-truck",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "sparse4d-doc-3.2.1", "locator": "Model Card and Model Versions lines 160-178"}
+      ],
+      "resolution": "The opening class list has six classes while the v2.2 release entry says pallet_truck was added. Bind the class map and anchor to the exact artifact and fail closed on mismatch.",
+      "must_not_claim": "Do not infer the deployed class set from the opening prose alone."
+    },
+    {
+      "id": "model-pages-retain-vss-3.2.0-labels",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "siglip2-doc-3.2.1", "locator": "SigLIP 2 at a glance lines 167-192"},
+        {"source_id": "sparse4d-doc-3.2.1", "locator": "Model Versions lines 168-178"},
+        {"source_id": "rt-detr-doc-3.2.1", "locator": "Model versions lines 239-248"},
+        {"source_id": "main-repository-wave2-7732edf8", "locator": "Pinned main differs from v3.2.1 only outside these model documentation surfaces"}
+      ],
+      "resolution": "Use the v3.2.1 URL/tag and exact artifact version as authority; retained VSS 3.2.0 prose is stale labeling.",
+      "must_not_claim": "Do not downgrade the comparison target to VSS 3.2.0."
+    },
+    {
+      "id": "autocalibration-official-x86-only-thor-custom",
+      "category": "boundary",
+      "source_claims": [
+        {"source_id": "autocalib-getting-started-doc-3.2.1", "locator": "Prerequisites and System Requirements lines 202-218"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "deploy/docker/services/auto-calibration"}
+      ],
+      "resolution": "Official Auto Calibration support requires x86_64, Ubuntu 24.04, and driver 590. The Thor implementation is an alternate custom unsupported lane.",
+      "must_not_claim": "must_not_claim_official_thor_support=true"
+    },
+    {
+      "id": "autocalibration-host-port-effective-config",
+      "category": "scoped_default",
+      "source_claims": [
+        {"source_id": "autocalib-getting-started-doc-3.2.1", "locator": "Deployment environment and port note lines 272-285"},
+        {"source_id": "tagged-repository-wave2-3.2.1", "locator": "deploy/docker/services/auto-calibration Compose defaults"}
+      ],
+      "resolution": "The guide configures host port 8000 and notes Compose may default to 8010. Tests must use the effective configured port.",
+      "must_not_claim": "Do not hard-code either port without resolving the selected environment."
+    },
+    {
+      "id": "warehouse-real-camera-no-tooling-stale",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "warehouse-limitations-doc-3.2.1", "locator": "Using Real Cameras in 3D Blueprint lines 195-197"},
+        {"source_id": "autocalib-overview-doc-3.2.1", "locator": "Auto Calibration capabilities lines 160-225"}
+      ],
+      "resolution": "Preserve the statement that real-camera 3D is not thoroughly tested, but treat 'no tooling' as stale because AutoMagicCalib is documented in the same release.",
+      "must_not_claim": "Do not claim real-camera 3D is production-qualified merely because calibration tooling exists."
+    },
+    {
+      "id": "warehouse-thor-local-nim-vs-local-inference",
+      "category": "boundary",
+      "source_claims": [
+        {"source_id": "warehouse-limitations-doc-3.2.1", "locator": "Agents local NIM limitation lines 178-187"},
+        {"source_id": "edge-doc-wave2-3.2.1", "locator": "AGX/IGX Thor local model deployment recipe"}
+      ],
+      "resolution": "Scope the Warehouse limitation to local NIM containers. Edge deployment uses local vLLM/RT-VLM paths and does not establish local NIM support.",
+      "must_not_claim": "Do not generalize 'local NIM unsupported' into 'all local Thor inference unsupported'."
+    },
+    {
+      "id": "warehouse-alert-vlm-model-prose-conflict",
+      "category": "discrepancy",
+      "source_claims": [
+        {"source_id": "warehouse-alerting-doc-3.2.1", "locator": "General model note line 185 and Near Miss prose line 200"}
+      ],
+      "resolution": "The page says all rules use Cosmos3 Nano but the Near Miss prose names Cosmos Reason 2. Assert the configured runtime model ID per rule.",
+      "must_not_claim": "Do not use either blanket prose statement as runtime model evidence."
+    },
+    {
+      "id": "security-isolation-is-mitigation-not-remediation",
+      "category": "known_limitation",
+      "source_claims": [
+        {"source_id": "known-limitations-doc-3.2.1", "locator": "Security Considerations lines 163-172"},
+        {"source_id": "secure-deployment-doc-3.2.1", "locator": "Secure Deployment Recipe lines 160-195"}
+      ],
+      "resolution": "Loopback, firewalling, VPN, and proxy controls mitigate exposure; they do not add missing inter-component TLS, signatures/MACs, consistent auth, or complete rate limits/timeouts.",
+      "must_not_claim": "Do not claim the documented VSS security weaknesses are remediated."
+    }
+  ]
+}

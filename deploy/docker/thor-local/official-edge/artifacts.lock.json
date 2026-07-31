@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "lock_state": "incomplete_fail_closed",
+  "artifacts": {
+    "edge4b": {
+      "kind": "huggingface_snapshot",
+      "identity": {
+        "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+        "revision": null
+      },
+      "state": "missing_exact_artifact_unqualified",
+      "tree": null
+    },
+    "cosmos3_nano_bf16": {
+      "kind": "ngc_model_cache",
+      "identity": {
+        "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
+      },
+      "state": "missing_exact_artifact_unqualified",
+      "tree": null
+    }
+  }
+}

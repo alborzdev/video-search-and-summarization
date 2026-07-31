@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "contract_id": "vss-3.2.1-thor-official-edge",
+  "reviewed_upstream": {
+    "repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization.git",
+    "tag": "v3.2.1",
+    "tag_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "versioned_documentation": {
+    "url": "https://docs.nvidia.com/vss/3.2.1/edge-deployment.html",
+    "last_updated": "2026-07-16",
+    "verified_on": "2026-07-31",
+    "thor_section_lines": "223-253",
+    "llm_repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "documented_image_tag": "ghcr.io/nvidia-ai-iot/vllm:latest-jetson-thor",
+    "registry_manifest_digest_verified_on_2026_07_31": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+    "gpu_memory_utilization": "0.25",
+    "agent_config": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_edge.yml"
+  },
+  "documentation_discrepancy": {
+    "precedence": "versioned_vss_3.2.1_documentation",
+    "checkout_skill_model": "nvidia/NVIDIA-Nemotron-Edge-4B-v2.1-EA-020126_FP8",
+    "checkout_skill_state": "older_fallback_unqualified",
+    "official_lane_model": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "resolved": false,
+    "reason": "The byte-anchored checkout skill and the later versioned 3.2.1 documentation advertise different Thor 4B repositories. This lane follows the later versioned documentation and does not equate the repositories."
+  },
+  "source_anchors": [
+    {
+      "path": "skills/vss-deploy-profile/references/edge.md",
+      "commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "git_blob": "c555a177ae0246e10e95713b96548405f5a87148",
+      "sha256": "42aeb9219da180ffd24aca1c4feace67bd139aa619ddbefe93171d95abd9354a",
+      "worktree_must_match": true
+    },
+    {
+      "path": "skills/vss-deploy-profile/references/base.md",
+      "commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "git_blob": "c0879add3d65fea8291159018b098ecae25680b7",
+      "sha256": "af83c8fc649e534c87a6da5344afce84158d231d7b366ba52d792ea9656a02d1",
+      "worktree_must_match": true
+    },
+    {
+      "path": "skills/vss-deploy-profile/references/alerts.md",
+      "commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "git_blob": "cd4e9878e25a04ca01d84497bebef8172aab6f5f",
+      "sha256": "72a7fe6c18247620a62fd853b9bf1ad36b8b918f1b871d2a190f2959f5ac2f08",
+      "worktree_must_match": true
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_edge.yml",
+      "commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "git_blob": "2a6ff9d345dc8c4d62abfd47053e1ddfd8c7c3ce",
+      "sha256": "c053a4683deea64f2241f4da4bd3d238a46f09aca971386633478225cf18eec4",
+      "worktree_must_match": true
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-base/.env",
+      "commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "git_blob": "e462cd91e9d9f401afeba8170e89c99a1e2b3def",
+      "sha256": "508e04f8d35afd6deefe2fa8c1c37e0ba5b408168b8d81763eb630d3b47f2b6b",
+      "worktree_must_match": true
+    },
+    {
+      "path": "deploy/docker/services/rtvi/rtvi-vlm/rtvi-vlm-docker-compose.yml",
+      "commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "git_blob": "1061ae3789d2aabdf89d8ab1f29f55290ecda460",
+      "sha256": "dbf5fb44c8a410b3f45e0179795752545e77399dac8ce5d766761ff6987fb57a",
+      "worktree_must_match": false
+    },
+    {
+      "path": "deploy/docker/scripts/dev-profile.sh",
+      "commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "git_blob": "4e7bf53f3d0025ff0d1b182e7170dfb443fd32da",
+      "sha256": "99d21f72bcb166e7d361f064fc7fa6b679f03362b33862e620fddcb95e48700d",
+      "worktree_must_match": false
+    }
+  ],
+  "llm": {
+    "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "adapter_mode": "remote",
+    "provider_type": "vllm",
+    "base_url": "http://127.0.0.1:30081",
+    "gpu_memory_utilization": "0.25",
+    "tool_call_parser": "qwen3_coder",
+    "agent_config": "/vss-agent/deploy/docker/thor-local/official-edge/config_edge.yml"
+  },
+  "vlm": {
+    "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+    "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "selector": "cosmos-reason3",
+    "adapter_mode": "local_shared",
+    "provider_type": "rtvi",
+    "base_url": "http://127.0.0.1:8018",
+    "gpu_memory_utilization": "0.35"
+  },
+  "unified_memory": {
+    "llm_fraction": "0.25",
+    "vlm_fraction": "0.35",
+    "minimum_reserve_fraction": "0.20",
+    "minimum_available_fraction_before_launch": "0.80"
+  },
+  "images": {
+    "edge4b_vllm": {
+      "documented_tag": "ghcr.io/nvidia-ai-iot/vllm:latest-jetson-thor",
+      "reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+      "manifest_digest": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+      "image_id": null,
+      "state": "missing_exact_image_unqualified"
+    },
+    "rt_vlm": {
+      "reference": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "state": "locked_exact"
+    }
+  },
+  "alternate_lane": {
+    "id": "qwen-openai-compat",
+    "preserved": true,
+    "note": "The existing datasheet-chat/datasheet-vision lane is unchanged and remains a separate local adapter lane."
+  }
+}

@@ -1,0 +1,400 @@
+{
+  "schema_version": 1,
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+  "cases": [
+    {
+      "capability_id": "protocol.agent.websocket",
+      "case_id": "protocol-case.agent.websocket",
+      "protocol": "websocket",
+      "runtime_state": "unexecuted",
+      "runtime_evidence": [],
+      "endpoint_or_topic": ["ws://127.0.0.1:<gateway-port>/websocket", "optional query: session=<URL-encoded session cookie>"],
+      "method_or_handshake": ["HTTP Upgrade to WebSocket", "client sends one UTF-8 JSON text frame", "service sends ordered UTF-8 JSON text frames"],
+      "auth": ["No Authorization header is defined by the checked-in UI contract", "When present, the UI copies the session cookie into the session query parameter"],
+      "headers": ["Upgrade: websocket", "Connection: Upgrade"],
+      "request_schema": {
+        "encoding": "UTF-8 JSON text frame",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "type", "type": "string", "required": true, "contract": "literal user_message"},
+          {"path": "schema_type", "type": "string", "required": false, "contract": "configured webSocketSchema; may be empty"},
+          {"path": "id", "type": "string", "required": true, "contract": "client-generated message UUID"},
+          {"path": "conversation_id", "type": "string", "required": true, "contract": "non-empty selected conversation ID"},
+          {"path": "content.messages", "type": "array<object>", "required": true, "contract": "one or more role/content messages"},
+          {"path": "content.messages[].role", "type": "string", "required": true, "contract": "user or assistant history role"},
+          {"path": "content.messages[].content", "type": "array<object>", "required": true, "contract": "typed content parts"},
+          {"path": "content.messages[].content[].type", "type": "string", "required": true, "contract": "text, with image used for attachments"},
+          {"path": "content.messages[].content[].text", "type": "string", "required": true, "contract": "text part payload"},
+          {"path": "timestamp", "type": "string", "required": true, "contract": "client ISO-8601 timestamp"}
+        ]
+      },
+      "response_schema": {
+        "encoding": "UTF-8 JSON text frame",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "type", "type": "enum<string>", "required": true, "contract": "system_response_message | system_intermediate_message | system_interaction_message | error"},
+          {"path": "conversation_id", "type": "string", "required": true, "contract": "non-empty and equal to the request conversation_id"},
+          {"path": "status", "type": "enum<string>", "required": true, "contract": "system_response_message uses in_progress or complete"},
+          {"path": "content.text", "type": "string", "required": false, "contract": "response delta, interaction prompt, or error text"},
+          {"path": "content.name", "type": "string", "required": false, "contract": "intermediate-step name"},
+          {"path": "content.payload", "type": "string", "required": false, "contract": "intermediate-step payload"},
+          {"path": "content.input_type", "type": "string", "required": false, "contract": "interaction type such as oauth_consent"}
+        ]
+      },
+      "sequence": [
+        {"order": 1, "actor": "client", "action": "upgrade /websocket and include the optional session query", "terminal": false},
+        {"order": 2, "actor": "client", "action": "send one namespaced user_message JSON frame", "terminal": false},
+        {"order": 3, "actor": "service", "action": "send zero or more matching in_progress/intermediate/interaction frames", "terminal": false},
+        {"order": 4, "actor": "service", "action": "send system_response_message with matching conversation_id and status complete, or an error frame/close", "terminal": true}
+      ],
+      "terminal_and_error_semantics": ["status=complete is terminal and need not contain content.text", "type=error carries content.text and/or content.error but the UI source does not define a close code", "frames without a valid type or non-empty conversation_id are rejected client-side", "frames for another conversation_id are ignored"],
+      "ordering_and_timing": ["UI appends only in_progress content and treats complete after preceding deltas", "UI reconnect bound is three retries with a 1000 ms delay", "No server response deadline or heartbeat interval is defined in checked-in source"],
+      "positive_vector": {
+        "id": "agent-ws-one-turn",
+        "network_scope": "loopback_only",
+        "deadline_seconds": 30,
+        "max_events": 16,
+        "fixture": {"type": "user_message", "schema_type": "", "id": "00000000-0000-4000-8000-000000000001", "conversation_id": "vss-protocol-case-agent-001", "content": {"messages": [{"role": "user", "content": [{"type": "text", "text": "Reply with exactly: protocol-case-ok"}]}]}, "timestamp": "2026-07-31T00:00:00Z"},
+        "expected": "Only matching-conversation frames are accepted; zero or more in_progress frames precede exactly one complete terminal frame"
+      },
+      "adjacent_negative_vectors": [
+        {"id": "agent-ws-missing-conversation", "network_scope": "loopback_only", "deadline_seconds": 10, "max_events": 4, "fixture": {"type": "user_message"}, "expected": "No valid completion can be correlated", "adjacent_mutation": {"operation": "remove", "path": "/conversation_id"}, "expected_rejection": "client validator rejects any inbound response without a non-empty conversation_id"}
+      ],
+      "mutation": {"class": "transient_namespaced", "ownership": "Own only conversation vss-protocol-case-agent-001 and its WebSocket", "cleanup": ["close the owned WebSocket", "discard only the owned vss-protocol-case-agent-001 conversation state"]},
+      "sources": [
+        {"path": "deploy/docker/services/ui/compose.yml", "git_blob_oid": "9a46c08552b2155746d811a17ffc5be640c0a115", "content_sha256": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3", "locator": "lines 36 and 60 select /websocket"},
+        {"path": "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/Chat.tsx", "git_blob_oid": "a8052a3a0b00b9a816e42220f083dd05ecdab296", "content_sha256": "91ae0fde8223e998f3bd4f32a2006e8a968a79ffb77518b33388dc276a68d945", "locator": "connectWebSocket and wsMessage construction/send"},
+        {"path": "services/ui/packages/nemo-agent-toolkit-ui/types/websocket.ts", "git_blob_oid": "66e471c64bb940daff2fd0aeb26e343496458393", "content_sha256": "58025ab9a569324457be3517108aeea039352004c36b6f1e861fc2a414cc3cb1", "locator": "WebSocketInbound types, guards, completion and validation"}
+      ],
+      "source_limitations": ["The WebSocket server implementation is supplied by the pinned agent runtime dependency rather than this checkout; this case pins the deployed route and exact checked-in client contract only", "No server-side auth, heartbeat, close-code, or response deadline contract is present in checked-in source"]
+    },
+    {
+      "capability_id": "protocol.alert.websocket",
+      "case_id": "protocol-case.alert.websocket",
+      "protocol": "websocket",
+      "runtime_state": "unexecuted",
+      "runtime_evidence": [],
+      "endpoint_or_topic": ["ws://127.0.0.1:<alert-port>/ws/alerts", "source streams default to alert-bridge-input-stream and alert-bridge-enhanced-stream"],
+      "method_or_handshake": ["HTTP Upgrade to WebSocket", "optional client JSON ping/get_status text frames", "service broadcasts JSON alert text frames"],
+      "auth": ["No endpoint dependency or Authorization check is declared on the FastAPI WebSocket route"],
+      "headers": ["Upgrade: websocket", "Connection: Upgrade"],
+      "request_schema": {
+        "encoding": "UTF-8 JSON text frame",
+        "additional_fields": "ignored",
+        "fields": [
+          {"path": "type", "type": "enum<string>", "required": true, "contract": "ping | get_status; unknown types are logged and ignored"}
+        ]
+      },
+      "response_schema": {
+        "encoding": "UTF-8 JSON text frame",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "type", "type": "enum<string>", "required": true, "contract": "alert | pong | status | service_disabled"},
+          {"path": "alert_type", "type": "enum<string>", "required": false, "contract": "alert frames use original when stream name contains input, otherwise enhanced"},
+          {"path": "stream_name", "type": "string", "required": false, "contract": "source Redis stream"},
+          {"path": "message_id", "type": "string", "required": false, "contract": "Redis stream entry ID"},
+          {"path": "timestamp", "type": "string", "required": true, "contract": "UTC ISO-8601 string with Z suffix"},
+          {"path": "data", "type": "object<string,string>", "required": false, "contract": "raw Redis fields passthrough for alert frames"},
+          {"path": "total_connections", "type": "integer", "required": false, "contract": "status response connection count"}
+        ]
+      },
+      "sequence": [
+        {"order": 1, "actor": "client", "action": "upgrade /ws/alerts", "terminal": false},
+        {"order": 2, "actor": "client", "action": "send type=ping and require type=pong before injection", "terminal": false},
+        {"order": 3, "actor": "operator", "action": "XADD one owned field map to an owned configured input stream", "terminal": false},
+        {"order": 4, "actor": "service", "action": "broadcast exactly one alert frame, then XACK only after callback returns", "terminal": false},
+        {"order": 5, "actor": "client", "action": "close the owned WebSocket after the matching message_id", "terminal": true}
+      ],
+      "terminal_and_error_semantics": ["If disabled, service accepts, sends service_disabled, then closes with code 1013 and reason WebSocket service disabled", "Non-JSON client text is ignored", "A broadcast failure removes that connection; a callback failure prevents XACK so the message remains pending"],
+      "ordering_and_timing": ["XREADGROUP reads new entries with >, count defaults to 1, and block time defaults to 1000 ms", "Broadcast callback completes before XACK", "Reconnect delay defaults to 5 seconds", "No end-to-end alert delivery deadline is defined by source"],
+      "positive_vector": {"id": "alert-ws-one-owned-entry", "network_scope": "loopback_only", "deadline_seconds": 15, "max_events": 4, "fixture": {"stream": "vss-protocol-case-alert-input", "fields": {"case_id": "vss-protocol-case-alert-001", "value": "one"}, "client_frame": {"type": "ping"}}, "expected": "pong is observed, then exactly one type=alert frame preserves both Redis fields and the owned message ID"},
+      "adjacent_negative_vectors": [
+        {"id": "alert-ws-non-json", "network_scope": "loopback_only", "deadline_seconds": 5, "max_events": 2, "fixture": "not-json", "expected": "No application response", "adjacent_mutation": {"operation": "replace", "path": "/client_frame", "value": "not-json"}, "expected_rejection": "route catches JSONDecodeError and does not call handle_client_message"}
+      ],
+      "mutation": {"class": "transient_namespaced", "ownership": "Own only streams/groups prefixed vss-protocol-case-alert- and the opened socket", "cleanup": ["close the owned WebSocket", "delete only the owned Redis consumer group", "delete only the owned vss-protocol-case-alert-* streams"]},
+      "sources": [
+        {"path": "services/alert/alert-agent-web/app/websocket/websocket_routes.py", "git_blob_oid": "87d007f133d1b03ce4173ddac7cbd533fb547f6d", "content_sha256": "a1da545e448d76ed4f6c1586f21169329a7d2ac6dc5d542f0abb5bf844cf4068", "locator": "/ws/alerts, disabled close, receive loop, ping/get_status"},
+        {"path": "services/alert/alert-agent-web/app/websocket/redis_consumer.py", "git_blob_oid": "5edb115135e87baac6975dfa24c9a685ce928d28", "content_sha256": "67c4ce4bee7a00285bc04251677c801932942386af405cf68a0123cc239b8d87", "locator": "stream defaults, XREADGROUP bounds, alert envelope, callback-before-XACK"},
+        {"path": "services/alert/alert-agent-web/app/websocket/connection_manager.py", "git_blob_oid": "d6d9cff1c801204d3b6e45b21250ee59c89033fe", "content_sha256": "4b4d771f91c1b984ce21c5fb751f00fbaf515f4929e839284338a6a60234f766", "locator": "accept, JSON text broadcast, failed-connection cleanup"}
+      ],
+      "source_limitations": ["The runtime configuration must redirect both alert streams into the owned namespace; this static case does not modify live configuration", "The route does not declare a maximum inbound frame size or delivery deadline"]
+    },
+    {
+      "capability_id": "protocol.rt-vlm.sse",
+      "case_id": "protocol-case.rt-vlm.sse",
+      "protocol": "sse",
+      "runtime_state": "unexecuted",
+      "runtime_evidence": [],
+      "endpoint_or_topic": ["POST http://127.0.0.1:<rt-vlm-port>/v1/generate_captions"],
+      "method_or_handshake": ["HTTP POST application/json with stream=true", "HTTP 200 text/event-stream", "data-only SSE events terminate with data: [DONE]"],
+      "auth": ["No Authorization dependency is declared on this endpoint"],
+      "headers": ["Content-Type: application/json", "Accept: text/event-stream", "x-stream-id: <owned asset UUID> when routed through LVS; RT-VLM endpoint itself does not require it"],
+      "request_schema": {
+        "encoding": "JSON request body",
+        "additional_fields": "rejected",
+        "fields": [
+          {"path": "id", "type": "UUID | array<UUID>", "required": true, "contract": "one owned file/live-stream asset for this vector; list maximum 50"},
+          {"path": "prompt", "type": "string", "required": true, "contract": "non-blank; default maximum 10240 characters"},
+          {"path": "model", "type": "string", "required": true, "contract": "maximum 256 characters"},
+          {"path": "stream", "type": "boolean", "required": true, "contract": "literal true"},
+          {"path": "stream_options.include_usage", "type": "boolean", "required": false, "contract": "true requests one usage event before [DONE]"},
+          {"path": "chunk_duration", "type": "integer", "required": false, "contract": "0..3600 seconds"},
+          {"path": "max_tokens", "type": "integer", "required": false, "contract": "1..configured MAX_GENERATION_TOKENS"}
+        ]
+      },
+      "response_schema": {
+        "encoding": "SSE data field containing JSON, plus literal [DONE]",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "id", "type": "UUID/string", "required": true, "contract": "request ID, stable across JSON events"},
+          {"path": "model", "type": "string", "required": true, "contract": "loaded model ID"},
+          {"path": "created", "type": "integer", "required": true, "contract": "queue-time Unix seconds"},
+          {"path": "media_info", "type": "object|null", "required": false, "contract": "present on caption events, null on usage event"},
+          {"path": "chunk_responses", "type": "array<object>", "required": false, "contract": "caption event chunks"},
+          {"path": "chunk_responses[].chunk_id", "type": "integer", "required": true, "contract": "zero-based, 0..100000"},
+          {"path": "chunk_responses[].start_time", "type": "string", "required": true, "contract": "offset or ISO/NTP timestamp"},
+          {"path": "chunk_responses[].end_time", "type": "string", "required": true, "contract": "offset or ISO/NTP timestamp"},
+          {"path": "chunk_responses[].content", "type": "string", "required": true, "contract": "caption, maximum 100000 characters"},
+          {"path": "usage", "type": "object|null", "required": false, "contract": "optional final usage totals before [DONE]"}
+        ]
+      },
+      "sequence": [
+        {"order": 1, "actor": "client", "action": "POST one owned asset request with stream=true", "terminal": false},
+        {"order": 2, "actor": "service", "action": "send zero or more JSON caption data events in pipeline response order", "terminal": false},
+        {"order": 3, "actor": "service", "action": "if requested and state remains available, send one usage JSON data event", "terminal": false},
+        {"order": 4, "actor": "service", "action": "send literal data: [DONE]", "terminal": true}
+      ],
+      "terminal_and_error_semantics": ["[DONE] is the success terminal marker", "FAILED processing emits a JSON object with id/model/created/usage:null and then [DONE]", "A second reader for the same request within 3 seconds receives HTTP 409 Conflict", "disconnect polling failure closes the generator; outer setup failure publishes an error and returns an HTTP ServiceException"],
+      "ordering_and_timing": ["Caption events preserve the order returned by get_response(request_id, 1)", "EventSourceResponse uses send_timeout=5 seconds and ping=1 second", "Status logging is at most every 10 seconds unless data or status changes", "No total processing deadline is defined for generate_captions"],
+      "positive_vector": {"id": "rt-vlm-sse-one-owned-clip", "network_scope": "loopback_only", "deadline_seconds": 60, "max_events": 32, "fixture": {"id": "00000000-0000-4000-8000-000000000003", "prompt": "Return a concise literal caption.", "model": "<loaded-local-model-id>", "stream": true, "stream_options": {"include_usage": true}, "chunk_duration": 2, "max_tokens": 16}, "expected": "All JSON events share id/model/created, caption chunk IDs are nondecreasing, one usage event follows captions, and [DONE] is last"},
+      "adjacent_negative_vectors": [
+        {"id": "rt-vlm-sse-blank-prompt", "network_scope": "loopback_only", "deadline_seconds": 10, "max_events": 2, "fixture": {"prompt": " "}, "expected": "HTTP validation rejection and no SSE stream", "adjacent_mutation": {"operation": "replace", "path": "/prompt", "value": " "}, "expected_rejection": "VlmQuery prompt validator rejects blank text"}
+      ],
+      "mutation": {"class": "transient_namespaced", "ownership": "Own only asset/request vss-protocol-case-rt-vlm-000000000003", "cleanup": ["close the SSE response", "delete only the pre-created owned asset after its request map is terminal"]},
+      "sources": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/captions.py", "git_blob_oid": "80b5414d323e4a515c860559609c00e3bea73c21", "content_sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0", "locator": "VlmQuery request fields/validators and VlmCaptionResponse fields"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "git_blob_oid": "21d43499d3b8d3096c6c83f1f4d3c7a742422b1a", "content_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d", "locator": "generate_captions route, message_generator ordering, 409, usage, [DONE], send_timeout/ping"}
+      ],
+      "source_limitations": ["The exact number and latency of caption events depend on the local model and media", "The source defines no total success deadline"]
+    },
+    {
+      "capability_id": "protocol.kafka.nvschema",
+      "case_id": "protocol-case.kafka.nvschema",
+      "protocol": "kafka",
+      "runtime_state": "unexecuted",
+      "runtime_evidence": [],
+      "endpoint_or_topic": ["Kafka topic mdx-alerts by default for nv.Behavior", "Kafka topic mdx-incidents by default for nv.Incident"],
+      "method_or_handshake": ["Kafka producer.produce(topic, value=<protobuf bytes>, key=<derived string>)", "producer.flush() before accepted response"],
+      "auth": ["Broker authentication is configuration-dependent and not defined in alert_service.py"],
+      "headers": [],
+      "request_schema": {
+        "encoding": "Protocol Buffers v3 binary nv.Behavior",
+        "additional_fields": "rejected",
+        "fields": [
+          {"path": "id", "type": "string field 1", "required": false, "contract": "proto3 has no wire-required fields; fixture sets an owned ID and producer uses it as key"},
+          {"path": "timestamp", "type": "google.protobuf.Timestamp field 2", "required": false, "contract": "fixture sets a valid UTC start"},
+          {"path": "end", "type": "google.protobuf.Timestamp field 3", "required": false, "contract": "fixture sets end >= timestamp"},
+          {"path": "sensor.id", "type": "string nested field", "required": false, "contract": "fallback producer key when id is empty"},
+          {"path": "event", "type": "nv.Event field 19", "required": false, "contract": "optional event details"},
+          {"path": "info", "type": "map<string,string> field 25", "required": false, "contract": "fixture carries case ownership tag"}
+        ]
+      },
+      "response_schema": {
+        "encoding": "Kafka record metadata plus decoded Protocol Buffers v3",
+        "additional_fields": "opaque",
+        "fields": [
+          {"path": "topic", "type": "string", "required": true, "contract": "owned test topic configured in place of mdx-alerts, never a production topic"},
+          {"path": "key", "type": "bytes/string", "required": true, "contract": "equals nv.Behavior.id for the positive fixture"},
+          {"path": "value", "type": "bytes", "required": true, "contract": "parses as nv.Behavior and reserializes without unknown contract fields"}
+        ]
+      },
+      "sequence": [
+        {"order": 1, "actor": "operator", "action": "create/use one owned topic and bounded earliest-offset consumer", "terminal": false},
+        {"order": 2, "actor": "client", "action": "publish one serialized nv.Behavior keyed by its owned id and flush", "terminal": false},
+        {"order": 3, "actor": "broker", "action": "deliver exactly one matching record to the owned consumer", "terminal": false},
+        {"order": 4, "actor": "client", "action": "decode, compare semantic fields, and stop after the one matching record", "terminal": true}
+      ],
+      "terminal_and_error_semantics": ["Producer success is only established after flush returns and the owned consumer decodes the record", "Invalid protobuf bytes raise DecodeError in protobuf submission paths and map to HTTP 400 before publish", "Other producer/setup exceptions map to internal error and must not be counted as a pass"],
+      "ordering_and_timing": ["One producer call precedes flush; this source does not promise cross-partition ordering", "The test uses one key and one record so partition-local order is sufficient", "No producer delivery timeout is set in this source; the case imposes its own 20-second bound"],
+      "positive_vector": {"id": "kafka-one-nvschema-behavior", "network_scope": "loopback_only", "deadline_seconds": 20, "max_events": 1, "fixture": {"topic": "vss-protocol-case-kafka-nvschema", "key": "vss-protocol-case-kafka-001", "protobuf_json": {"id": "vss-protocol-case-kafka-001", "timestamp": "2026-07-31T00:00:00Z", "end": "2026-07-31T00:00:01Z", "sensor": {"id": "vss-protocol-case-sensor"}, "info": {"owner": "vss-protocol-case-kafka-001"}}}, "expected": "Exactly one record is decoded as nv.Behavior with the same id/timestamps/sensor/info and matching Kafka key"},
+      "adjacent_negative_vectors": [
+        {"id": "kafka-invalid-protobuf", "network_scope": "loopback_only", "deadline_seconds": 10, "max_events": 1, "fixture": {"value_hex": "ff"}, "expected": "No record is published by the protobuf submission path", "adjacent_mutation": {"operation": "replace", "path": "/protobuf_bytes", "value": "ff"}, "expected_rejection": "nv.Behavior.ParseFromString raises DecodeError and submission returns invalid_payload"}
+      ],
+      "mutation": {"class": "transient_namespaced", "ownership": "Own only topic/group vss-protocol-case-kafka-*", "cleanup": ["close the owned consumer and producer", "delete only the owned consumer group metadata", "delete the owned vss-protocol-case-kafka-* topic only when the harness created it"]},
+      "sources": [
+        {"path": "services/alert/alert-agent-web/app/core/alert_service.py", "git_blob_oid": "091e4f714c1d8d401e8fa288b9c3150523937b17", "content_sha256": "b2cbe05f5fce3c50b4e4b0ed1e336ed88019d92e7958a266392f97a6d6a74a24", "locator": "topic defaults, protobuf parse, key derivation, produce and flush"},
+        {"path": "services/alert/mdx/anomaly/protobuf/ext_pb2.py", "git_blob_oid": "c06235bc885881b1aece49f5e993cdc316dabd65", "content_sha256": "a51bbe015b433d61e8bcad654f1e1e081fd75be30283b85eec7a57bfd6b14536", "locator": "generated nv.Behavior and nv.Incident protobuf descriptor"}
+      ],
+      "source_limitations": ["Proto3 declares no required wire fields; semantic fixture requirements are test requirements, not protobuf-required claims", "Broker auth, acknowledgements, replication, and delivery-timeout settings are external configuration"]
+    },
+    {
+      "capability_id": "protocol.redis.events",
+      "case_id": "protocol-case.redis.events",
+      "protocol": "redis-streams",
+      "runtime_state": "unexecuted",
+      "runtime_evidence": [],
+      "endpoint_or_topic": ["Redis stream mdx-events for configured logical key events", "loopback Redis DB 0 by default"],
+      "method_or_handshake": ["XADD <stream> MAXLEN ~ <maxLen> key <bytes> value <bytes> headers <JSON string>", "XREADGROUP GROUP <group> <consumer> COUNT <readCount> BLOCK <readBlockMs> STREAMS <stream> >", "XACK after decoded messages are collected"],
+      "auth": ["No Redis password or TLS is configured by the pinned behavior-analytics config"],
+      "headers": [],
+      "request_schema": {
+        "encoding": "Redis Streams field map",
+        "additional_fields": "ignored",
+        "fields": [
+          {"path": "key", "type": "bytes", "required": true, "contract": "empty bytes when caller key is absent"},
+          {"path": "value", "type": "bytes", "required": true, "contract": "caller-supplied serialized event payload"},
+          {"path": "headers", "type": "UTF-8 JSON object string", "required": true, "contract": "{} when absent; string values decode back to bytes"}
+        ]
+      },
+      "response_schema": {
+        "encoding": "Redis XREADGROUP response converted to StreamMessage",
+        "additional_fields": "opaque",
+        "fields": [
+          {"path": "key", "type": "bytes|null", "required": false, "contract": "raw key field"},
+          {"path": "value", "type": "bytes", "required": true, "contract": "entries without value are skipped"},
+          {"path": "headers", "type": "map<string,bytes>", "required": true, "contract": "decoded JSON header values"},
+          {"path": "timestamp", "type": "integer", "required": true, "contract": "milliseconds parsed from the Redis entry ID prefix, -1 on parse failure"}
+        ]
+      },
+      "sequence": [
+        {"order": 1, "actor": "operator", "action": "create an owned stream/group namespace only", "terminal": false},
+        {"order": 2, "actor": "client", "action": "XADD one key/value/headers envelope with approximate maxLen=10000", "terminal": false},
+        {"order": 3, "actor": "client", "action": "XREADGROUP new entries with count<=200 and block<=100 ms in pinned config", "terminal": false},
+        {"order": 4, "actor": "client", "action": "decode the envelope then XACK the returned entry ID", "terminal": true}
+      ],
+      "terminal_and_error_semantics": ["Unknown logical destination/source keys raise ValueError before broker access", "Entries without a value field are acknowledged but omitted from returned StreamMessages", "Malformed headers JSON raises before XACK, leaving the entry pending", "BUSYGROUP during setup means the group already exists; other response errors fail setup"],
+      "ordering_and_timing": ["XREADGROUP uses > for new entries and preserves the broker response order within each returned stream batch", "Pinned config readCount=200, readBlockMs=100, producer maxLen=10000", "Consumer-group setup retries connection errors three times with a default 30-second interval in code; the bounded vector assumes the already-ready local broker"],
+      "positive_vector": {"id": "redis-one-events-envelope", "network_scope": "loopback_only", "deadline_seconds": 10, "max_events": 1, "fixture": {"stream": "vss-protocol-case-redis-events", "group": "vss-protocol-case-redis-group", "fields": {"key": "vss-protocol-case-redis-001", "value": "{\"case_id\":\"vss-protocol-case-redis-001\"}", "headers": "{\"content-type\":\"application/json\"}"}}, "expected": "Exactly one StreamMessage preserves key/value/header, timestamp equals entry-ID milliseconds, and XPENDING is zero after XACK"},
+      "adjacent_negative_vectors": [
+        {"id": "redis-malformed-headers", "network_scope": "loopback_only", "deadline_seconds": 5, "max_events": 1, "fixture": {"headers": "{"}, "expected": "Decode fails and the owned entry remains pending for explicit cleanup", "adjacent_mutation": {"operation": "truncate", "path": "/fields/headers", "value": "{"}, "expected_rejection": "json.loads rejects malformed headers before XACK"}
+      ],
+      "mutation": {"class": "transient_namespaced", "ownership": "Own only stream/group/consumer vss-protocol-case-redis-*", "cleanup": ["XACK or XDEL only the owned entry when needed", "destroy only the owned group", "delete only the owned vss-protocol-case-redis-* stream", "close the owned Redis connections"]},
+      "sources": [
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_redis_stream.py", "git_blob_oid": "de04c9ec26b4114afb141ce8f45634b979c15c90", "content_sha256": "6166976af25c8ee37fcc6ec80875289840f44b5dc8752cfbab780c126609589e", "locator": "XADD envelope, maxLen and header serialization"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_redis_stream.py", "git_blob_oid": "e1b28e7b9eea7e3b89e5c3febd06bcc535937092", "content_sha256": "aa492dc6a84be49025564759d04280291548017d37ca2872a4bd4c0180531a44", "locator": "XREADGROUP, decode, timestamp extraction, XACK, group lifecycle"},
+        {"path": "deploy/docker/services/analytics/behavior-analytics/configs/vss-behavior-analytics-config.json", "git_blob_oid": "6abf9d58bfd039bdc802bfff0c9647d50b34ef55", "content_sha256": "efb28dd9c1129f6c3fe2e12c22f4f2a7ed208885a9e57e8e2cfd03312cf6983d", "locator": "mdx-events mapping and pinned readCount/readBlockMs/maxLen"}
+      ],
+      "source_limitations": ["The value bytes are intentionally opaque to the Redis transport", "Authentication and TLS are not defined by this pinned config"]
+    },
+    {
+      "capability_id": "protocol.vios.webrtc-live",
+      "case_id": "protocol-case.vios.webrtc-live",
+      "protocol": "webrtc",
+      "runtime_state": "unexecuted",
+      "runtime_evidence": [],
+      "endpoint_or_topic": ["GET /api/v1/live/iceServers", "POST /api/v1/live/stream/start", "GET|POST /api/v1/live/iceCandidate", "POST /api/v1/live/stream/stop"],
+      "method_or_handshake": ["browser creates RTCPeerConnection and SDP offer", "POST start returns SDP answer and mediaSessionId", "client and service exchange ICE candidates", "browser setRemoteDescription(answer), ontrack receives media", "POST stop releases peer resources"],
+      "auth": ["Bearer token is required by the OpenAPI security contract for start, client ICE POST, and stop", "iceServers and server ICE GET do not declare bearerAuth"],
+      "headers": ["Authorization: Bearer <redacted token> on secured calls", "Content-Type: application/json", "streamId: <owned compatible stream ID> on stop/ICE calls"],
+      "request_schema": {
+        "encoding": "JSON signaling requests plus SDP/ICE",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "streamId", "type": "string", "required": false, "contract": "root start stream identifier; [A-Za-z0-9_-], maximum 100; omitted only for composite"},
+          {"path": "peerId", "type": "UUID string", "required": true, "contract": "owned peer UUID, maximum 100"},
+          {"path": "options.quality", "type": "enum<string>", "required": true, "contract": "low | medium | high | auto"},
+          {"path": "options.rtptransport", "type": "enum<string>", "required": true, "contract": "udp | tcp"},
+          {"path": "options.timeout", "type": "integer", "required": true, "contract": "source declares no min/max"},
+          {"path": "sessionDescription.type", "type": "string", "required": true, "contract": "offer for client-offer start flow"},
+          {"path": "sessionDescription.sdp", "type": "string", "required": true, "contract": "browser offer SDP, maximum 65535"},
+          {"path": "candidate.candidate", "type": "string", "required": true, "contract": "ICE candidate, maximum 500"},
+          {"path": "candidate.sdpMLineIndex", "type": "integer", "required": true, "contract": "0..100"},
+          {"path": "candidate.sdpMid", "type": "string", "required": true, "contract": "maximum 128"}
+        ]
+      },
+      "response_schema": {
+        "encoding": "JSON signaling responses and RTP media on the WebRTC peer connection",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "type", "type": "string", "required": true, "contract": "start response answer"},
+          {"path": "sdp", "type": "string", "required": true, "contract": "service SDP answer, maximum 65535"},
+          {"path": "mediaSessionId", "type": "string", "required": false, "contract": "[A-Za-z0-9_-], maximum 100; required by cleanup vector"},
+          {"path": "iceCandidates[]", "type": "array<object>", "required": false, "contract": "each has candidate, sdpMLineIndex 0..100, sdpMid"},
+          {"path": "media.track.kind", "type": "string", "required": true, "contract": "video track observed through browser ontrack"}
+        ]
+      },
+      "sequence": [
+        {"order": 1, "actor": "client", "action": "GET ICE servers and construct a loopback-safe RTCPeerConnection", "terminal": false},
+        {"order": 2, "actor": "browser", "action": "create/set local SDP offer", "terminal": false},
+        {"order": 3, "actor": "client", "action": "POST start with owned streamId/peerId/options/offer and set returned answer remotely", "terminal": false},
+        {"order": 4, "actor": "client", "action": "POST local ICE candidates and poll service ICE candidates until connected", "terminal": false},
+        {"order": 5, "actor": "browser", "action": "observe at least one decoded video frame with nondecreasing presentation timestamps", "terminal": false},
+        {"order": 6, "actor": "client", "action": "POST stop using owned streamId, peerId, mediaSessionId, then close RTCPeerConnection", "terminal": true}
+      ],
+      "terminal_and_error_semantics": ["Success requires answer application, connected peer state, decoded video, and explicit stop", "Missing/empty peerId or candidate returns InvalidParameterError in the implementation", "Wrong HTTP methods return MethodNotAllowedError", "The OpenAPI Error body is the failure terminal for signaling calls"],
+      "ordering_and_timing": ["SDP offer precedes answer; answer is applied before media acceptance; ICE may be exchanged asynchronously", "GET iceCandidate is polled until connected; source defines no poll interval", "Pinned Thor VST config sets webrtc_peer_conn_timeout_sec=10, but this case does not pin that mutable deployment file as protocol source", "Case deadline is 30 seconds and at most 16 signaling/media observations"] ,
+      "positive_vector": {"id": "vios-live-one-loopback-source", "network_scope": "loopback_only", "deadline_seconds": 30, "max_events": 16, "fixture": {"streamId": "vss-protocol-case-live-001", "peerId": "00000000-0000-4000-8000-000000000005", "options": {"quality": "auto", "rtptransport": "udp", "timeout": 10}, "sessionDescription": {"type": "offer", "sdp": "<browser-generated recvonly offer>"}}, "expected": "answer is applied, ICE connects without non-loopback discovery, at least one video frame decodes, then explicit stop succeeds"},
+      "adjacent_negative_vectors": [
+        {"id": "vios-live-missing-peer", "network_scope": "loopback_only", "deadline_seconds": 10, "max_events": 2, "fixture": {"streamId": "vss-protocol-case-live-001"}, "expected": "Start is rejected and no peer resource is retained", "adjacent_mutation": {"operation": "remove", "path": "/peerId"}, "expected_rejection": "StreamStartRequest requires peerId"}
+      ],
+      "mutation": {"class": "transient_namespaced", "ownership": "Own only peer/stream vss-protocol-case-live-001 and peer UUID 00000000-0000-4000-8000-000000000005", "cleanup": ["POST stop only for the returned owned mediaSessionId", "close only the owned RTCPeerConnection", "do not delete or alter the pre-existing sensor/source"]},
+      "sources": [
+        {"path": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml", "git_blob_oid": "ba76c845cd7217f3897c9c90052bcc3dd6293eb6", "content_sha256": "3ac10b1edbe86efd761986f6288a14a0bcc6bf2497c140b01afeaa6b9ddafcee", "locator": "version 1.0.0 start/stop/ICE paths and StreamStart/AddIceCandidate schemas"},
+        {"path": "services/vios/src/modules/webrtc_live/LivePeerConnection.cpp", "git_blob_oid": "3edaf80713bfa6984b17b4d33e4a168343fb14f4", "content_sha256": "3fc0b76b21ff9f402482789dcabd61665c3a9e1ecf84bc77b6d70e328a9c72c8", "locator": "live route methods, setAnswer/ICE validation and cleanup dispatch"}
+      ],
+      "source_limitations": ["The docs also describe a server-offer WebSocket/setAnswer flow; this case intentionally pins the separately documented client-offer POST start flow", "No exact ICE polling interval, frame-count success rule, or end-to-end deadline is defined by the service"]
+    },
+    {
+      "capability_id": "protocol.vios.webrtc-replay",
+      "case_id": "protocol-case.vios.webrtc-replay",
+      "protocol": "webrtc",
+      "runtime_state": "unexecuted",
+      "runtime_evidence": [],
+      "endpoint_or_topic": ["GET /api/v1/replay/iceServers", "POST /api/v1/replay/stream/start", "GET|POST /api/v1/replay/iceCandidate", "POST /api/v1/replay/stream/seek", "GET /api/v1/replay/stream/seek", "POST /api/v1/replay/stream/stop"],
+      "method_or_handshake": ["browser creates RTCPeerConnection and SDP offer", "POST start returns SDP answer and mediaSessionId", "ICE exchange establishes replay media", "POST absolute seek and GET position", "POST stop releases resources"],
+      "auth": ["Bearer token is required by the OpenAPI security contract for start, client ICE POST, seek POST, and stop", "iceServers, server ICE GET, and seek GET do not declare bearerAuth"],
+      "headers": ["Authorization: Bearer <redacted token> on secured calls", "Content-Type: application/json", "streamId: <owned compatible replay stream ID> on stream/ICE/seek calls"],
+      "request_schema": {
+        "encoding": "JSON signaling/seek requests plus SDP/ICE",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "streamId", "type": "string", "required": true, "contract": "[A-Za-z0-9_-], maximum 100"},
+          {"path": "startTime", "type": "date-time string", "required": false, "contract": "initial replay start bound, maximum 128"},
+          {"path": "endTime", "type": "date-time string", "required": false, "contract": "initial replay end bound, maximum 128"},
+          {"path": "peerId", "type": "UUID string", "required": true, "contract": "owned peer UUID"},
+          {"path": "options.quality", "type": "enum<string>", "required": true, "contract": "low | medium | high | auto"},
+          {"path": "options.rtptransport", "type": "enum<string>", "required": true, "contract": "udp | tcp"},
+          {"path": "options.timeout", "type": "integer", "required": true, "contract": "source declares no min/max"},
+          {"path": "sessionDescription.type", "type": "string", "required": true, "contract": "offer"},
+          {"path": "sessionDescription.sdp", "type": "string", "required": true, "contract": "maximum 65535"},
+          {"path": "seek.mediaSessionId", "type": "string", "required": true, "contract": "returned session ID"},
+          {"path": "seek.action", "type": "enum<string>", "required": true, "contract": "seekForward | seekBackward | fastForward | rewind"},
+          {"path": "seek.value", "type": "number | date-time string", "required": false, "contract": "seconds for relative seek or ISO UTC for absolute seek"}
+        ]
+      },
+      "response_schema": {
+        "encoding": "JSON signaling/position responses and RTP replay media",
+        "additional_fields": "allowed",
+        "fields": [
+          {"path": "type", "type": "string", "required": true, "contract": "start response answer"},
+          {"path": "sdp", "type": "string", "required": true, "contract": "service SDP answer, maximum 65535"},
+          {"path": "mediaSessionId", "type": "string", "required": false, "contract": "[A-Za-z0-9_-], maximum 100; required by seek/cleanup vector"},
+          {"path": "seek.position", "type": "int64", "required": true, "contract": "current position returned by seek GET; units are implementation-defined"},
+          {"path": "media.track.kind", "type": "string", "required": true, "contract": "video track observed through browser ontrack"}
+        ]
+      },
+      "sequence": [
+        {"order": 1, "actor": "client", "action": "GET ICE servers and create a loopback-safe peer", "terminal": false},
+        {"order": 2, "actor": "browser", "action": "create/set local recvonly SDP offer", "terminal": false},
+        {"order": 3, "actor": "client", "action": "POST replay start with owned stream/peer/time window/options/offer and apply answer", "terminal": false},
+        {"order": 4, "actor": "client", "action": "exchange ICE and observe decoded replay frames", "terminal": false},
+        {"order": 5, "actor": "client", "action": "POST seekForward with a bounded numeric value, then GET position", "terminal": false},
+        {"order": 6, "actor": "browser", "action": "observe decoded frames after the seek without timestamp regression relative to reported position semantics", "terminal": false},
+        {"order": 7, "actor": "client", "action": "POST stop and close the owned peer", "terminal": true}
+      ],
+      "terminal_and_error_semantics": ["Success requires connected replay, pre-seek frames, successful seek, post-seek frames, and explicit stop", "Missing peerId/candidate returns InvalidParameterError; wrong methods return MethodNotAllowedError", "Seek source maps seekBackward/seekForward to internal seek_backward/seek_forward and forwards value as a string", "Position units are explicitly undefined; the oracle must compare consistency, not assume seconds or milliseconds"],
+      "ordering_and_timing": ["Offer precedes answer and ICE connection; seek occurs only after initial decoded media", "The case uses one seekForward value=2 and a 30-second total bound", "No service-defined ICE poll interval, seek completion deadline, or frame threshold exists", "Post-seek media must be observed after the seek response in client event order"] ,
+      "positive_vector": {"id": "vios-replay-one-seek", "network_scope": "loopback_only", "deadline_seconds": 30, "max_events": 20, "fixture": {"streamId": "vss-protocol-case-replay-001", "peerId": "00000000-0000-4000-8000-000000000007", "startTime": "2026-07-31T00:00:00Z", "endTime": "2026-07-31T00:00:10Z", "options": {"quality": "auto", "rtptransport": "udp", "timeout": 10}, "sessionDescription": {"type": "offer", "sdp": "<browser-generated recvonly offer>"}, "seek": {"action": "seekForward", "value": 2}}, "expected": "Replay connects and decodes, seek succeeds with a queryable position, post-seek frames arrive, and explicit stop succeeds"},
+      "adjacent_negative_vectors": [
+        {"id": "vios-replay-bad-seek-action", "network_scope": "loopback_only", "deadline_seconds": 10, "max_events": 2, "fixture": {"seek": {"action": "seekSideways", "value": 2}}, "expected": "Seek is rejected without changing the owned peer position", "adjacent_mutation": {"operation": "replace", "path": "/seek/action", "value": "seekSideways"}, "expected_rejection": "StreamSeek action enum excludes seekSideways"}
+      ],
+      "mutation": {"class": "transient_namespaced", "ownership": "Own only peer/stream vss-protocol-case-replay-001 and peer UUID 00000000-0000-4000-8000-000000000007", "cleanup": ["POST stop only for the returned owned mediaSessionId", "close only the owned RTCPeerConnection", "do not delete or alter the pre-existing recording/sensor"]},
+      "sources": [
+        {"path": "services/vios/doc/api/vst_replay_stream_ms/swagger.yaml", "git_blob_oid": "c0cb2a5e2d40b5b3016b3cfa8ec63e65203b8810", "content_sha256": "db7060eef77799b0992123f99749e84f6cf2b48c0e747d3917ce880a8642b6e0", "locator": "version 1.0.0 replay start/stop/ICE/seek paths and schemas"},
+        {"path": "services/vios/src/modules/webrtc_replay/ReplayPeerConnection.cpp", "git_blob_oid": "1c72de30030b302c28988f4120005c21c49e88e3", "content_sha256": "6b9e9cf81cf176631e7f094de99bfe473b1d967a883b6f0593ad17be30d7301e", "locator": "replay route methods, setAnswer/ICE validation, seek action mapping, stop dispatch"}
+      ],
+      "source_limitations": ["The docs also expose server-offer setAnswer; this case pins client-offer POST start", "Seek position units and exact post-seek timestamp relationship are implementation-defined, so the future runtime oracle must record observed values without unit assumptions"]
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/vss/thor/capability-oracles.schema.json",
+  "title": "Thor official capability acceptance oracles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target", "policy", "oracles"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "main_commit", "captured_on"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "main_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "captured_on": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_scope", "pass_rule", "generic_oracle_prohibited", "warehouse_sample_bundle"],
+      "properties": {
+        "claim_scope": {"type": "string", "minLength": 1},
+        "pass_rule": {"type": "string", "minLength": 1},
+        "generic_oracle_prohibited": {"const": true},
+        "warehouse_sample_bundle": {"type": "string", "minLength": 1}
+      }
+    },
+    "oracles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/oracle"}
+    }
+  },
+  "$defs": {
+    "plainId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id", "oracle_id", "profile", "mode", "ledger_binding", "reviewed_scenario_ids",
+        "fixture", "expected_observations", "assertions", "admission_prerequisites",
+        "execution_bounds", "cleanup", "acceptance_readiness", "current_state", "evidence"
+      ],
+      "properties": {
+        "capability_id": {"$ref": "#/$defs/plainId"},
+        "oracle_id": {"$ref": "#/$defs/plainId"},
+        "profile": {"$ref": "#/$defs/plainId"},
+        "mode": {"enum": ["static", "config", "runtime", "api", "protocol", "model", "deploy"]},
+        "protocol_case_binding": {
+          "type": "object", "additionalProperties": false,
+          "required": ["path", "file_sha256", "contract_set_sha256", "target_commit", "case_id", "case_sha256", "positive_vector_id", "negative_vector_ids", "source_hashes"],
+          "properties": {
+            "path": {"const": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json"},
+            "file_sha256": {"const": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"},
+            "contract_set_sha256": {"const": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21"},
+            "target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "case_id": {"$ref": "#/$defs/plainId"},
+            "case_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "positive_vector_id": {"$ref": "#/$defs/plainId"},
+            "negative_vector_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}},
+            "source_hashes": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["path", "git_blob_oid", "content_sha256"],
+                "properties": {
+                  "path": {"type": "string", "minLength": 1},
+                  "git_blob_oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+                  "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                }
+              }
+            }
+          }
+        },
+        "ledger_binding": {
+          "type": "object", "additionalProperties": false,
+          "required": ["feature_id", "kind", "title", "source_claims", "acceptance_class", "thor_state", "runtime_state", "contract", "gap"],
+          "properties": {
+            "feature_id": {"$ref": "#/$defs/plainId"},
+            "kind": {"type": "string", "minLength": 1},
+            "title": {"type": "string", "minLength": 1},
+            "source_claims": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+            "acceptance_class": {"type": "string", "minLength": 1},
+            "thor_state": {"type": "string", "minLength": 1},
+            "runtime_state": {"type": "string", "minLength": 1},
+            "contract": {"type": "object", "minProperties": 1},
+            "gap": {"type": "string", "minLength": 1}
+          }
+        },
+        "reviewed_scenario_ids": {
+          "type": "array", "minItems": 2, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/plainId"}
+        },
+        "fixture": {
+          "type": "object", "additionalProperties": false,
+          "required": ["id", "kind", "availability", "source", "warehouse_sample_bundle", "materialization", "input"],
+          "properties": {
+            "id": {"$ref": "#/$defs/plainId"},
+            "kind": {"enum": ["generated_custom_media", "generated_minimal_contract", "operator_external_contract"]},
+            "availability": {"enum": ["not_staged", "operator_required"]},
+            "source": {"type": "string", "minLength": 1},
+            "warehouse_sample_bundle": {"const": false},
+            "materialization": {
+              "type": "object", "additionalProperties": false,
+              "required": ["path", "generator", "sha256"],
+              "properties": {
+                "path": {"type": ["string", "null"]},
+                "generator": {"type": ["string", "null"]},
+                "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+              }
+            },
+            "input": {
+              "type": "object", "additionalProperties": false,
+              "required": ["capability_id", "contract", "namespace", "action"],
+              "properties": {
+                "capability_id": {"$ref": "#/$defs/plainId"},
+                "contract": {"type": "object", "minProperties": 1},
+                "namespace": {"$ref": "#/$defs/plainId"},
+                "action": {"type": "string", "minLength": 12}
+              }
+            }
+          }
+        },
+        "expected_observations": {
+          "type": "array", "minItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "description"],
+            "properties": {
+              "id": {"$ref": "#/$defs/plainId"},
+              "description": {"type": "string", "minLength": 12}
+            }
+          }
+        },
+        "assertions": {
+          "type": "array", "minItems": 2,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "observation", "operator", "expected"],
+            "properties": {
+              "id": {"$ref": "#/$defs/plainId"},
+              "observation": {"type": "string", "minLength": 1},
+              "operator": {"enum": ["equals", "recorded_pass"]},
+              "expected": {}
+            }
+          }
+        },
+        "admission_prerequisites": {
+          "type": "array", "minItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "condition", "bounded"],
+            "properties": {
+              "id": {"$ref": "#/$defs/plainId"},
+              "condition": {"type": "string", "minLength": 12},
+              "bounded": {"const": true}
+            }
+          }
+        },
+        "execution_bounds": {
+          "type": "object", "additionalProperties": false,
+          "required": ["executor", "collectors", "network_scope", "max_duration_seconds", "max_requests", "workload", "model_staging", "warehouse_sample_bundle"],
+          "properties": {
+            "executor": {"type": ["string", "null"]},
+            "collectors": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+            "network_scope": {"enum": ["loopback-or-compose-internal", "operator-approved external endpoint"]},
+            "max_duration_seconds": {"type": "integer", "minimum": 1, "maximum": 1800},
+            "max_requests": {"type": "integer", "minimum": 0, "maximum": 10000},
+            "workload": {
+              "type": "object", "additionalProperties": false,
+              "required": ["units", "requests_per_unit", "overhead_requests", "calculated_max_requests", "phases"],
+              "properties": {
+                "units": {"type": "integer", "minimum": 1, "maximum": 10000},
+                "requests_per_unit": {"type": "integer", "minimum": 1, "maximum": 100},
+                "overhead_requests": {"type": "integer", "minimum": 0, "maximum": 100},
+                "calculated_max_requests": {"type": "integer", "minimum": 1, "maximum": 10000},
+                "phases": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}}
+              }
+            },
+            "model_staging": {"const": "prerequisite_only"},
+            "warehouse_sample_bundle": {"const": "excluded"}
+          }
+        },
+        "cleanup": {
+          "type": "object", "additionalProperties": false,
+          "required": ["mutation", "targets", "allowlist", "pre_state", "restore", "executor", "postcondition_collectors", "postconditions"],
+          "properties": {
+            "mutation": {"enum": ["none_by_default", "read_only", "temporary_files_only", "namespaced_and_reversible"]},
+            "targets": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}},
+            "allowlist": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}},
+            "pre_state": {"type": "string", "minLength": 12},
+            "restore": {"type": "string", "minLength": 12},
+            "executor": {"type": ["string", "null"]},
+            "postcondition_collectors": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+            "postconditions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 12}}
+          }
+        },
+        "acceptance_readiness": {
+          "type": "object", "additionalProperties": false,
+          "required": ["classification", "blockers"],
+          "properties": {
+            "classification": {"enum": ["planning_index_only", "executor_ready"]},
+            "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 12}}
+          }
+        },
+        "current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
+        "evidence": {"type": "array", "maxItems": 0}
+      }
+    }
+  }
+}

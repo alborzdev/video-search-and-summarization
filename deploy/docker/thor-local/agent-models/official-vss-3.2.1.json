@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "release": {
+    "product": "NVIDIA Video Search and Summarization",
+    "version": "3.2.1",
+    "upstream_tag_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "captured_on": "2026-07-31",
+    "scope": "VSS Agent reasoning LLM and video-understanding VLM model contract"
+  },
+  "sources": [
+    {
+      "id": "llm-docs",
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-llm.html",
+      "locator": "Local LLM customization and remote LLM sections; page last updated 2026-07-16"
+    },
+    {
+      "id": "vlm-docs",
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-vlm.html",
+      "locator": "Local VLM customization, remote VLM, and Nemotron Omni sections"
+    },
+    {
+      "id": "release-notes",
+      "url": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
+      "locator": "VSS 3.2.1 Key Features and Enhancements"
+    },
+    {
+      "id": "prerequisites",
+      "url": "https://docs.nvidia.com/vss/3.2.1/prerequisites.html",
+      "locator": "Development Profile GPU Requirements and VLM Custom Weights"
+    },
+    {
+      "id": "tag-base-env",
+      "url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/7640d917047cf7b0fd3085eefb8282754b56bc94/deploy/docker/developer-profiles/dev-profile-base/.env",
+      "sha256": "508e04f8d35afd6deefe2fa8c1c37e0ba5b408168b8d81763eb630d3b47f2b6b"
+    },
+    {
+      "id": "tag-agent-config",
+      "url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/7640d917047cf7b0fd3085eefb8282754b56bc94/deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml",
+      "sha256": "e89664e421bac7b8869b9dfa1e4149930e11b935bf6dc01351392a6557bb4c79"
+    }
+  ],
+  "llm": {
+    "selector": "--llm",
+    "default_model_id": "nvidia/nvidia-nemotron-nano-9b-v2",
+    "local_models": [
+      {
+        "model_id": "nvidia/nvidia-nemotron-nano-9b-v2",
+        "profile_slug": "nvidia-nemotron-nano-9b-v2",
+        "official_role": "default",
+        "official_local_verification": "verified"
+      },
+      {
+        "model_id": "nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8",
+        "profile_slug": "nvidia-nemotron-nano-9b-v2-fp8",
+        "official_role": "supported-alternate",
+        "official_local_verification": "not-verified"
+      },
+      {
+        "model_id": "nvidia/nemotron-3-nano",
+        "profile_slug": "nemotron-3-nano",
+        "official_role": "supported-alternate",
+        "official_local_verification": "not-verified"
+      },
+      {
+        "model_id": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "profile_slug": "llama-3.3-nemotron-super-49b-v1.5",
+        "official_role": "supported-alternate",
+        "official_local_verification": "not-verified"
+      },
+      {
+        "model_id": "openai/gpt-oss-20b",
+        "profile_slug": "gpt-oss-20b",
+        "official_role": "supported-alternate",
+        "official_local_verification": "not-verified"
+      }
+    ],
+    "remote_contract": {
+      "model_set": "open-ended",
+      "protocol": "OpenAI-compatible",
+      "named_examples": {
+        "hosted_nim": [
+          "nvidia/nemotron-3-nano-30b-a3b",
+          "openai/gpt-oss-120b",
+          "z-ai/glm5"
+        ],
+        "frontier_openai": [
+          "gpt-5.2",
+          "gpt-4.1"
+        ],
+        "downloadable_nim_images": [
+          "nvcr.io/nim/nvidia/nemotron-3-nano:latest",
+          "nvcr.io/nim/nvidia/llama-3.3-nemotron-super-49b-v1.5:latest",
+          "nvcr.io/nim/openai/gpt-oss-20b:latest"
+        ],
+        "self_hosted_vllm": [
+          "OpenAI/gpt-oss-20b",
+          "Qwen/Qwen3-8B"
+        ]
+      },
+      "qualification_rule": "Examples are not an exhaustive allowlist and do not imply Thor qualification."
+    }
+  },
+  "vlm": {
+    "selector": "--vlm",
+    "default_model_id": "nvidia/cosmos3-nano-reasoner",
+    "explicit_local_models": [
+      {
+        "model_id": "nvidia/cosmos3-nano-reasoner",
+        "profile_slug": "cosmos3-reasoner",
+        "nim_model_size": "nano",
+        "official_role": "default",
+        "official_local_verification": "verified"
+      },
+      {
+        "model_id": "nvidia/cosmos-reason2-8b",
+        "profile_slug": "cosmos-reason2-8b",
+        "nim_model_size": null,
+        "official_role": "supported-alternate",
+        "official_local_verification": "not-verified"
+      },
+      {
+        "model_id": "Qwen/Qwen3-VL-8B-Instruct",
+        "profile_slug": "qwen3-vl-8b-instruct",
+        "nim_model_size": null,
+        "official_role": "supported-alternate",
+        "official_local_verification": "not-verified"
+      }
+    ],
+    "repository_only_or_ambiguous_local_references": [
+      {
+        "model_id": "nvidia/cosmos3-super-reasoner",
+        "profile_slug": "cosmos3-reasoner",
+        "nim_model_size": "super",
+        "classification": "repository-declared-local-option-not-in-docs-supported-list",
+        "resolved": false
+      },
+      {
+        "model_id": "nvidia/cosmos-reason1-7b",
+        "profile_slug": "cosmos-reason1-7b",
+        "nim_model_size": null,
+        "classification": "tag-env-option-omitted-from-3.2.1-docs-supported-list",
+        "resolved": false
+      }
+    ],
+    "custom_weights": {
+      "supported": true,
+      "setting": "VLM_CUSTOM_WEIGHTS",
+      "deploy_flag": "--vlm-custom-weights",
+      "model_identity": "operator-supplied",
+      "qualification_rule": "Custom weights require their own immutable artifact and runtime evidence."
+    },
+    "remote_contract": {
+      "model_set": "open-ended",
+      "protocol": "provider-specific or OpenAI-compatible as documented",
+      "named_examples": {
+        "frontier_openai": [
+          "gpt-5.2",
+          "gpt-4.1"
+        ],
+        "reka": [
+          "reka-flash"
+        ],
+        "downloadable_nim_images": [
+          "nvcr.io/nim/nvidia/cosmos3-reasoner:1.7",
+          "nvcr.io/nim/nvidia/cosmos-reason2-8b:latest",
+          "nvcr.io/nim/nvidia/cosmos-reason2-2b:latest"
+        ],
+        "self_hosted_vllm": [
+          "Qwen/Qwen3-VL-8B-Instruct"
+        ],
+        "audio_enabled_omni_checkpoint": [
+          "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4"
+        ]
+      },
+      "omni_vllm_settings": {
+        "max_model_len": 131072,
+        "tensor_parallel_size": 1,
+        "trust_remote_code": true,
+        "video_pruning_rate": 0.5,
+        "max_num_seqs": 384,
+        "video_fps": 2,
+        "video_num_frames": 256,
+        "reasoning_parser": "nemotron_v3",
+        "enable_auto_tool_choice": true,
+        "tool_call_parser": "qwen3_coder",
+        "kv_cache_dtype": "fp8",
+        "enable_flashinfer_autotune": false
+      },
+      "qualification_rule": "Examples are not an exhaustive allowlist and do not imply Thor qualification."
+    }
+  },
+  "thor_platform_boundary": {
+    "platforms": [
+      "AGX-THOR",
+      "IGX-THOR"
+    ],
+    "official_3_2_1_configuration": "remote-LLM",
+    "listed_agent_profiles": [
+      "base",
+      "alerts-alert-verification",
+      "alerts-real-time"
+    ],
+    "fully_local_all_agent_workflows_supported": false,
+    "official_note": "Fully local deployment for all agent workflows is planned for a future release."
+  },
+  "ambiguities": [
+    {
+      "id": "cosmos3-super-local-list-skew",
+      "resolution": "unresolved-fail-closed",
+      "detail": "The VLM page and tag env describe super size settings, but the page's explicit alternate list omits the super model ID."
+    },
+    {
+      "id": "cosmos-reason1-tag-doc-skew",
+      "resolution": "unresolved-fail-closed",
+      "detail": "The v3.2.1 tag env lists Cosmos Reason1 7B while the versioned VLM page's explicit supported list does not."
+    },
+    {
+      "id": "remote-model-set-open-ended",
+      "resolution": "bounded-as-examples",
+      "detail": "Official remote sections permit compatible endpoints; their named models are examples, not a complete compatibility list."
+    },
+    {
+      "id": "mutable-latest-container-tags",
+      "resolution": "unresolved-fail-closed",
+      "detail": "Several official remote examples use :latest; no immutable digest is asserted by this lane."
+    }
+  ]
+}

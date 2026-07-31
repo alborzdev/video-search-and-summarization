@@ -5,6 +5,16 @@ The current upstream feature-by-feature acceptance state is tracked in the
 and current runtime proof are recorded separately so an imported upstream
 feature cannot be mistaken for a locally qualified one.
 
+Run the unified static-only milestone from the repository root:
+
+```bash
+bash deploy/docker/test-scripts/test-thor-static-parity-milestone.sh
+```
+
+It validates the doctor contract, parity ledgers, official RT-VLM and Agent
+model inventories, and the official Edge contract. It performs no deployment,
+container lifecycle operation, image pull/build, or artifact download.
+
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 
 The resource-isolated minimal Redis warehouse-2D milestone is documented in
@@ -19,6 +29,13 @@ large optional NVIDIA sample bundle, and produces an exact pull-free launch
 command without executing it.
 
 ## Local model contract
+
+The Qwen servers below are the qualified Thor-local alternate lane, not aliases
+for every exact model named by NVIDIA. See the fail-closed
+[Agent model inventory](agent-models/README.md), the full official
+[RT-VLM model matrix](rt-vlm/README.md), and the opt-in
+[official Thor Edge model lane](official-edge/README.md) for exact identities,
+staging state, and known qualification blockers.
 
 The default deployment expects OpenAI-compatible model servers on the Thor host:
 

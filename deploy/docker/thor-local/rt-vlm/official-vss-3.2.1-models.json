@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "authority": {
+    "publisher": "NVIDIA",
+    "product": "Video Search and Summarization",
+    "release": "3.2.1",
+    "section": "Real-Time VLM Microservice > Supported Models",
+    "url": "https://docs.nvidia.com/vss/3.2.1/real-time-vlm.html"
+  },
+  "captured_on": "2026-07-31",
+  "models": [
+    {"key":"cosmos_reason2_8b_hf_1208","family":"Cosmos Reason2","selector":"cosmos-reason2","model_path":"ngc:nim/nvidia/cosmos-reason2-8b:hf-1208"},
+    {"key":"cosmos_reason2_8b_0303_fp8_dynamic_kv8","family":"Cosmos Reason2","selector":"cosmos-reason2","model_path":"ngc:nim/nvidia/cosmos-reason2-8b:0303-fp8-dynamic-kv8"},
+    {"key":"cosmos_reason2_8b_hf_0303","family":"Cosmos Reason2","selector":"cosmos-reason2","model_path":"ngc:nim/nvidia/cosmos-reason2-8b:hf-0303"},
+    {"key":"cosmos_reason2_8b_0303_fp4_dynamic_kv8","family":"Cosmos Reason2","selector":"cosmos-reason2","model_path":"ngc:nim/nvidia/cosmos-reason2-8b:0303-fp4-dynamic-kv8"},
+    {"key":"cosmos3_nano_modelopt_nvfp4","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-nvfp4-full-quantize-final_format_fix"},
+    {"key":"cosmos3_nano_modelopt_fp8","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-fp8-final_format_fix"},
+    {"key":"cosmos3_nano_bf16","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"},
+    {"key":"cosmos3_nano_diffuser","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"git:https://huggingface.co/nvidia/Cosmos3-Nano-Reasoner"},
+    {"key":"cosmos3_super_modelopt_nvfp4","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"ngc:nim/nvidia/cosmos3-super-reasoner:modelopt-nvfp4-full-quantize-final_format_fix"},
+    {"key":"cosmos3_super_modelopt_fp8","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"ngc:nim/nvidia/cosmos3-super-reasoner:modelopt-fp8-final_format_fix"},
+    {"key":"cosmos3_super_bf16","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"ngc:nim/nvidia/cosmos3-super-reasoner:bf16-final"},
+    {"key":"cosmos3_super_diffuser","family":"Cosmos Reason3","selector":"cosmos-reason3","model_path":"git:https://huggingface.co/nvidia/Cosmos3-Super-Reasoner"},
+    {"key":"nemotron3_nano_omni_reasoning","family":"Nemotron Omni","selector":"vllm-compatible","model_path":"git:https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning"},
+    {"key":"nemotron3_nano_omni_reasoning_fp8","family":"Nemotron Omni","selector":"vllm-compatible","model_path":"git:https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8"},
+    {"key":"qwen3_vl_30b_a3b_instruct","family":"Qwen","selector":"vllm-compatible","model_path":"git:https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct"},
+    {"key":"qwen3_omni_30b_a3b_instruct","family":"Qwen","selector":"vllm-compatible","model_path":"git:https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct"},
+    {"key":"qwen3_5_27b","family":"Qwen","selector":"vllm-compatible","model_path":"git:https://huggingface.co/Qwen/Qwen3.5-27B"},
+    {"key":"cosmos_reason1_7b_1_1_fp8_dynamic","family":"Cosmos Reason1","selector":"cosmos-reason1","model_path":"ngc:nim/nvidia/cosmos-reason1-7b:1.1-fp8-dynamic"}
+  ],
+  "notes": {
+    "default_model_key": "cosmos3_nano_bf16",
+    "gb200_excluded_model_key": "cosmos_reason2_8b_0303_fp4_dynamic_kv8",
+    "tested_cosmos3_variant_key": "cosmos3_nano_bf16",
+    "cosmos3_quantized_hallucination_warning_keys": [
+      "cosmos3_nano_modelopt_fp8",
+      "cosmos3_nano_modelopt_nvfp4"
+    ],
+    "omni_requires_trust_remote_code": true,
+    "omni_audio_flag": "VLM_MODEL_SUPPORTS_AUDIO=true"
+  }
+}

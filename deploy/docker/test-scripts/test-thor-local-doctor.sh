@@ -34,8 +34,56 @@ source_mode_loads_without_dispatch() {
     declare -F doctor >/dev/null
     declare -F doctor_check_runtime_security >/dev/null
     declare -F doctor_check_network_security >/dev/null
+    declare -F doctor_check_docker_prerequisite >/dev/null
+    declare -F require_docker_cgroup_driver >/dev/null
     declare -F ensure_operator_runtime_directories >/dev/null
   ' _ "${thor_local}"
+}
+
+doctor_reports_cgroup_driver() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    docker() {
+      [[ "$1" == info && "$2" == --format ]] || return 91
+      printf "systemd\n"
+    }
+    doctor_reset
+    doctor_check_docker_prerequisite >"$2/doctor-cgroup.out"
+    [[ ${doctor_failures} -eq 1 ]] &&
+      grep -q "Docker cgroup driver is.*systemd" "$2/doctor-cgroup.out" &&
+      grep -q "native.cgroupdriver=cgroupfs" "$2/doctor-cgroup.out"
+  ' _ "${thor_local}" "${temporary_root}"
+}
+
+cgroupfs_driver_is_accepted() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    docker() {
+      [[ "$1" == info && "$2" == --format ]] || return 91
+      printf "cgroupfs\n"
+    }
+    require_docker_cgroup_driver
+  ' _ "${thor_local}"
+}
+
+systemd_driver_is_rejected_with_remediation() {
+  local output status
+  set +e
+  output="$(THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    docker() {
+      [[ "$1" == info && "$2" == --format ]] || return 91
+      printf "systemd\n"
+    }
+    require_docker_cgroup_driver
+  ' _ "${thor_local}" 2>&1)"
+  status=$?
+  set -e
+  [[ ${status} -ne 0 ]] &&
+    grep -q "Docker cgroup driver is.*systemd" <<<"${output}" &&
+    grep -q "native.cgroupdriver=cgroupfs" <<<"${output}" &&
+    grep -q "/etc/docker/daemon.json" <<<"${output}" &&
+    grep -q "restart Docker" <<<"${output}"
 }
 
 severity_contract_is_stable() {
@@ -78,6 +126,9 @@ doctor_is_explicitly_offline_and_secret_safe() {
 check "shell syntax" bash -n "${thor_local}"
 check "help exposes the operator doctor" help_has_doctor
 check "source-only mode loads doctor helpers without dispatch" source_mode_loads_without_dispatch
+check "preflight accepts NVIDIA's required cgroupfs driver" cgroupfs_driver_is_accepted
+check "preflight rejects systemd cgroups with exact remediation" systemd_driver_is_rejected_with_remediation
+check "doctor reports a noncompliant Docker cgroup driver" doctor_reports_cgroup_driver
 check "warnings exit zero and failures exit nonzero" severity_contract_is_stable
 check "startup provisioner creates a private report directory" report_directory_is_private
 check "doctor is offline-only and does not disclose secrets" doctor_is_explicitly_offline_and_secret_safe

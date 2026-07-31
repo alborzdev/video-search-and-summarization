@@ -17,6 +17,10 @@ from typing import Any
 
 
 EXPECTED_VARIANTS = {
+    "cosmos_reason2_8b_hf_1208": (
+        "cosmos-reason2",
+        "ngc:nim/nvidia/cosmos-reason2-8b:hf-1208",
+    ),
     "cosmos_reason2_8b_0303_fp8_dynamic_kv8": (
         "cosmos-reason2",
         "ngc:nim/nvidia/cosmos-reason2-8b:0303-fp8-dynamic-kv8",
@@ -33,31 +37,111 @@ EXPECTED_VARIANTS = {
         "cosmos-reason3",
         "ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-nvfp4-full-quantize-final_format_fix",
     ),
+    "cosmos3_nano_modelopt_fp8": (
+        "cosmos-reason3",
+        "ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-fp8-final_format_fix",
+    ),
     "cosmos3_nano_bf16": (
         "cosmos-reason3",
         "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
     ),
+    "cosmos3_nano_diffuser": (
+        "cosmos-reason3",
+        "git:https://huggingface.co/nvidia/Cosmos3-Nano-Reasoner",
+    ),
+    "cosmos3_super_modelopt_nvfp4": (
+        "cosmos-reason3",
+        "ngc:nim/nvidia/cosmos3-super-reasoner:modelopt-nvfp4-full-quantize-final_format_fix",
+    ),
+    "cosmos3_super_modelopt_fp8": (
+        "cosmos-reason3",
+        "ngc:nim/nvidia/cosmos3-super-reasoner:modelopt-fp8-final_format_fix",
+    ),
+    "cosmos3_super_bf16": (
+        "cosmos-reason3",
+        "ngc:nim/nvidia/cosmos3-super-reasoner:bf16-final",
+    ),
+    "cosmos3_super_diffuser": (
+        "cosmos-reason3",
+        "git:https://huggingface.co/nvidia/Cosmos3-Super-Reasoner",
+    ),
     "nemotron3_nano_omni_reasoning": (
         "vllm-compatible",
-        "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning",
+        "git:https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning",
     ),
     "nemotron3_nano_omni_reasoning_fp8": (
         "vllm-compatible",
-        "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
+        "git:https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
     ),
     "qwen3_vl_30b_a3b_instruct": (
         "vllm-compatible",
-        "Qwen/Qwen3-VL-30B-A3B-Instruct",
+        "git:https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct",
     ),
     "qwen3_omni_30b_a3b_instruct": (
         "vllm-compatible",
-        "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+        "git:https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct",
     ),
-    "qwen3_5_27b": ("vllm-compatible", "Qwen/Qwen3.5-27B"),
+    "qwen3_5_27b": (
+        "vllm-compatible",
+        "git:https://huggingface.co/Qwen/Qwen3.5-27B",
+    ),
     "cosmos_reason1_7b_1_1_fp8_dynamic": (
         "cosmos-reason1",
         "ngc:nim/nvidia/cosmos-reason1-7b:1.1-fp8-dynamic",
     ),
+}
+OFFICIAL_DOCS_URL = "https://docs.nvidia.com/vss/3.2.1/real-time-vlm.html"
+OFFICIAL_DOCS_RELEASE = "3.2.1"
+OFFICIAL_ORACLE_SHA256 = "872c986a19ef30dfdf9f71e6ab8c9e9cb80a847a096e4442e1579b65703affb7"
+DOCS_ONLY_KEYS = (
+    "cosmos_reason2_8b_hf_1208",
+    "cosmos3_nano_modelopt_fp8",
+    "cosmos3_nano_diffuser",
+    "cosmos3_super_modelopt_nvfp4",
+    "cosmos3_super_modelopt_fp8",
+    "cosmos3_super_bf16",
+    "cosmos3_super_diffuser",
+)
+CHECKOUT_README_KEYS = set(EXPECTED_VARIANTS) - set(DOCS_ONLY_KEYS)
+EXPECTED_FAMILIES = {
+    "cosmos_reason2_8b_hf_1208": "Cosmos Reason2",
+    "cosmos_reason2_8b_0303_fp8_dynamic_kv8": "Cosmos Reason2",
+    "cosmos_reason2_8b_hf_0303": "Cosmos Reason2",
+    "cosmos_reason2_8b_0303_fp4_dynamic_kv8": "Cosmos Reason2",
+    "cosmos3_nano_modelopt_nvfp4": "Cosmos Reason3",
+    "cosmos3_nano_modelopt_fp8": "Cosmos Reason3",
+    "cosmos3_nano_bf16": "Cosmos Reason3",
+    "cosmos3_nano_diffuser": "Cosmos Reason3",
+    "cosmos3_super_modelopt_nvfp4": "Cosmos Reason3",
+    "cosmos3_super_modelopt_fp8": "Cosmos Reason3",
+    "cosmos3_super_bf16": "Cosmos Reason3",
+    "cosmos3_super_diffuser": "Cosmos Reason3",
+    "nemotron3_nano_omni_reasoning": "Nemotron Omni",
+    "nemotron3_nano_omni_reasoning_fp8": "Nemotron Omni",
+    "qwen3_vl_30b_a3b_instruct": "Qwen",
+    "qwen3_omni_30b_a3b_instruct": "Qwen",
+    "qwen3_5_27b": "Qwen",
+    "cosmos_reason1_7b_1_1_fp8_dynamic": "Cosmos Reason1",
+}
+EXPECTED_MATRIX_FAMILIES = {
+    "cosmos_reason2_8b_hf_1208": "cosmos-reason2",
+    "cosmos_reason2_8b_0303_fp8_dynamic_kv8": "cosmos-reason2",
+    "cosmos_reason2_8b_hf_0303": "cosmos-reason2",
+    "cosmos_reason2_8b_0303_fp4_dynamic_kv8": "cosmos-reason2",
+    "cosmos3_nano_modelopt_nvfp4": "cosmos-reason3-nano",
+    "cosmos3_nano_modelopt_fp8": "cosmos-reason3-nano",
+    "cosmos3_nano_bf16": "cosmos-reason3-nano",
+    "cosmos3_nano_diffuser": "cosmos-reason3-nano",
+    "cosmos3_super_modelopt_nvfp4": "cosmos-reason3-super",
+    "cosmos3_super_modelopt_fp8": "cosmos-reason3-super",
+    "cosmos3_super_bf16": "cosmos-reason3-super",
+    "cosmos3_super_diffuser": "cosmos-reason3-super",
+    "nemotron3_nano_omni_reasoning": "nemotron-omni",
+    "nemotron3_nano_omni_reasoning_fp8": "nemotron-omni",
+    "qwen3_vl_30b_a3b_instruct": "qwen3-vl",
+    "qwen3_omni_30b_a3b_instruct": "qwen3-omni",
+    "qwen3_5_27b": "qwen3.5",
+    "cosmos_reason1_7b_1_1_fp8_dynamic": "cosmos-reason1",
 }
 EXPECTED_LOCAL = {
     "cosmos_reason2_8b_bf16_hf": (
@@ -120,6 +204,7 @@ def validate_matrix(
     if not isinstance(contracts, dict) or set(contracts) != {
         "rt_vlm_readme",
         "cosmos3_nim_compose",
+        "official_vss_3_2_1_docs_oracle",
     }:
         raise MatrixError("source_contracts inventory differs")
     for name, contract in contracts.items():
@@ -140,6 +225,55 @@ def validate_matrix(
             raise MatrixError(f"reviewed source bytes differ: {relative}")
         source_text[name] = source.read_text(encoding="utf-8")
 
+    oracle_contract = contracts["official_vss_3_2_1_docs_oracle"]
+    if oracle_contract["sha256"] != OFFICIAL_ORACLE_SHA256:
+        raise MatrixError("official VSS 3.2.1 docs oracle digest differs from reviewed code")
+    oracle = _load(repo_root / oracle_contract["path"])
+    if oracle.get("schema_version") != 1:
+        raise MatrixError("official VSS docs oracle schema_version must be 1")
+    authority = oracle.get("authority")
+    if not isinstance(authority, dict) or any(
+        authority.get(key) != value
+        for key, value in {
+            "publisher": "NVIDIA",
+            "product": "Video Search and Summarization",
+            "release": OFFICIAL_DOCS_RELEASE,
+            "section": "Real-Time VLM Microservice > Supported Models",
+            "url": OFFICIAL_DOCS_URL,
+        }.items()
+    ):
+        raise MatrixError("official VSS docs oracle authority differs")
+    oracle_models = oracle.get("models")
+    if not isinstance(oracle_models, list) or len(oracle_models) != 18:
+        raise MatrixError("official VSS 3.2.1 docs oracle must contain exactly 18 models")
+    if [item.get("key") for item in oracle_models if isinstance(item, dict)] != list(
+        EXPECTED_VARIANTS
+    ):
+        raise MatrixError("official VSS docs model order or identity differs")
+    oracle_by_key = {item["key"]: item for item in oracle_models}
+    for key, (selector, model_path) in EXPECTED_VARIANTS.items():
+        row = oracle_by_key[key]
+        if set(row) != {"key", "family", "selector", "model_path"}:
+            raise MatrixError(f"official VSS docs row shape differs: {key}")
+        if (
+            row["family"] != EXPECTED_FAMILIES[key]
+            or row["selector"] != selector
+            or row["model_path"] != model_path
+        ):
+            raise MatrixError(f"official VSS docs row differs: {key}")
+    if oracle.get("notes") != {
+        "default_model_key": "cosmos3_nano_bf16",
+        "gb200_excluded_model_key": "cosmos_reason2_8b_0303_fp4_dynamic_kv8",
+        "tested_cosmos3_variant_key": "cosmos3_nano_bf16",
+        "cosmos3_quantized_hallucination_warning_keys": [
+            "cosmos3_nano_modelopt_fp8",
+            "cosmos3_nano_modelopt_nvfp4",
+        ],
+        "omni_requires_trust_remote_code": True,
+        "omni_audio_flag": "VLM_MODEL_SUPPORTS_AUDIO=true",
+    }:
+        raise MatrixError("official VSS docs notes differ")
+
     variants = matrix.get("advertised_rt_vlm_variants")
     if not isinstance(variants, list):
         raise MatrixError("advertised_rt_vlm_variants must be an array")
@@ -148,14 +282,36 @@ def validate_matrix(
         raise MatrixError("advertised RT-VLM variant inventory differs")
     for key, (selector, artifact_id) in EXPECTED_VARIANTS.items():
         item = indexed[key]
-        if item.get("selector") != selector or item.get("artifact_id") != artifact_id:
+        if (
+            item.get("family") != EXPECTED_MATRIX_FAMILIES[key]
+            or item.get("selector") != selector
+            or item.get("artifact_id") != artifact_id
+        ):
             raise MatrixError(f"advertised variant differs: {key}")
         if item.get("thor_status") != "missing_exact_artifact_unqualified":
             raise MatrixError(f"Thor status overclaims exact artifact coverage: {key}")
-        if artifact_id not in source_text["rt_vlm_readme"]:
+        if oracle_by_key[key]["model_path"] != artifact_id:
             raise MatrixError(
-                f"advertised artifact is absent from reviewed README: {artifact_id}"
+                f"matrix variant is absent from the official VSS docs oracle: {artifact_id}"
             )
+        checkout_needle = artifact_id.removeprefix("git:https://huggingface.co/")
+        present_in_checkout = checkout_needle in source_text["rt_vlm_readme"]
+        if key in CHECKOUT_README_KEYS and not present_in_checkout:
+            raise MatrixError(f"expected checkout README model is absent: {key}")
+        if key in DOCS_ONLY_KEYS and present_in_checkout:
+            raise MatrixError(f"recorded docs-vs-checkout skew no longer exists: {key}")
+
+    skew = matrix.get("docs_vs_checkout_skew")
+    if not isinstance(skew, dict) or any(
+        (
+            skew.get("official_docs_count") != 18,
+            skew.get("checkout_readme_count") != 11,
+            skew.get("official_docs_only_keys") != list(DOCS_ONLY_KEYS),
+            not isinstance(skew.get("interpretation"), str),
+            "does not establish Thor runtime support" not in skew.get("interpretation", ""),
+        )
+    ):
+        raise MatrixError("docs-vs-checkout skew contract differs")
 
     remote = matrix.get("remote_compatible")
     if not isinstance(remote, dict) or remote != {
@@ -176,7 +332,7 @@ def validate_matrix(
         "friendly_model_id": "nvidia/cosmos3-super-reasoner",
         "nim_image": "nvcr.io/nim/nvidia/cosmos3-reasoner:1.7",
         "nim_model_size": "super",
-        "route": "base-profile-compose-nim-not-rt-vlm-matrix",
+        "route": "separate-base-profile-generic-nim-route-not-an-exact-rt-vlm-checkpoint-entry",
         "thor_status": "artifact_revision_size_and_thor_recipe_unknown_unqualified",
     }
     if not isinstance(super_entry, dict) or any(

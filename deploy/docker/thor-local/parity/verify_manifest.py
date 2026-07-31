@@ -11,6 +11,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from verify_official_capabilities import validate as validate_official_capabilities
+
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parents[3]
@@ -135,6 +137,8 @@ def validate() -> dict:
             fail(f"{skill['id']}: invalid thor_state")
         if skill.get("runtime_state") not in allowed_runtime:
             fail(f"{skill['id']}: invalid runtime_state")
+
+    validate_official_capabilities(manifest=data)
 
     return data
 

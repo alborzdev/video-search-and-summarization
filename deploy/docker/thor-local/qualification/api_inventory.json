@@ -1,6 +1,18 @@
 {
   "schema_version": 1,
   "target": "VSS 3.2.1 Thor-local static API contract",
+  "scope": {
+    "classification": "core-agent-media-analytics-vios",
+    "complete_product_api": false,
+    "excluded_official_surfaces": [
+      "auto-calibration",
+      "deepstream-configurator",
+      "legacy-calibration",
+      "sdrc-controller-router-workload-coordinator",
+      "vss-configurator-sensor-management"
+    ],
+    "reason": "The exact operation totals below cover the 17 enumerated core REST/MCP surfaces only. The excluded official configuration and calibration surfaces remain open in official-capabilities.json."
+  },
   "routing_source": "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
   "safety": {
     "default_mode": "offline-read-only",
