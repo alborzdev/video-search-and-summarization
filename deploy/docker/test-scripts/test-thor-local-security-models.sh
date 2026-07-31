@@ -132,6 +132,18 @@ model_provisioner_is_pinned_and_offline() {
     ! grep -Eq 'docker (pull|rm)|docker container rm' "${model_provisioner}"
 }
 
+memory_gate_rejects_an_overcommit() {
+  ! THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    require_memory_headroom "unit-test overcommit" 999999
+  ' _ "${thor_local}" >/dev/null 2>&1
+}
+
+startup_paths_apply_memory_gates() {
+  grep -q 'require_memory_headroom "starting ${role} ${expected_model}"' "${thor_local}" &&
+    grep -q 'require_memory_headroom "starting the Thor VSS stack"' "${thor_local}"
+}
+
 check "shell syntax" bash -n "${thor_local}"
 check "model provisioner shell syntax" bash -n "${model_provisioner}"
 check "help exposes model and security contracts" help_exposes_contract_and_security
@@ -142,6 +154,8 @@ check "operator docs state Moondream and LAN limitations" documentation_is_hones
 check "model endpoints default to loopback or the private Docker bridge" private_model_endpoint_contract
 check "physical model endpoints are rejected from the operator contract" physical_model_endpoint_is_rejected
 check "model provisioner pins image and revisions and remains offline" model_provisioner_is_pinned_and_offline
+check "memory gate rejects an unsafe unified-memory overcommit" memory_gate_rejects_an_overcommit
+check "model and stack startup paths apply memory gates" startup_paths_apply_memory_gates
 
 if (( failures > 0 )); then
   printf '%d security/model test(s) failed\n' "${failures}" >&2

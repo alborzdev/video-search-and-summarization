@@ -69,6 +69,8 @@ export THOR_LOCAL_LLM_CONTAINER="${THOR_LOCAL_LLM_CONTAINER:-datasheet-vllm-30}"
 export THOR_LOCAL_VLM_CONTAINER="${THOR_LOCAL_VLM_CONTAINER:-cti-vss-qwen3-vl}"
 export THOR_LOCAL_MODEL_START_TIMEOUT_SECONDS="${THOR_LOCAL_MODEL_START_TIMEOUT_SECONDS:-900}"
 export THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS="${THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS:-120}"
+export THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START="${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START:-50}"
+export THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START="${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START:-20}"
 export OPENAI_API_KEY="${OPENAI_API_KEY:-local}"
 export VSS_AGENT_PORT="${VSS_AGENT_PORT:-8100}"
 export VSS_UI_PORT="${VSS_UI_PORT:-3001}"
@@ -191,6 +193,8 @@ Optional environment overrides:
   THOR_LOCAL_LLM_CONTAINER, THOR_LOCAL_VLM_CONTAINER,
   THOR_LOCAL_MODEL_START_TIMEOUT_SECONDS, VSS_AGENT_PORT, VSS_UI_PORT, HAPROXY_PORT,
   THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS,
+  THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START (defaults 50) and
+  THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START (defaults 20),
   VST_PORT, SENSOR_HTTP_PORT, STREAM_PROCESSOR_HTTP_PORT,
   RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT,
   VIDEO_ANALYTICS_API_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
@@ -404,6 +408,8 @@ ensure_local_model_is_running() {
     die "${role} endpoint is unavailable and its THOR_LOCAL_*_CONTAINER is 'none'; start the operator-managed model server first"
   docker container inspect "${container_name}" >/dev/null 2>&1 ||
     die "Configured ${role} container does not exist: ${container_name}"
+  require_memory_headroom "starting ${role} ${expected_model}" \
+    "${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START}"
   echo "[INFO] Starting ${role} container ${container_name}..."
   docker start "${container_name}" >/dev/null
   wait_for_model "${role}" "${endpoint}" "${expected_model}"
@@ -440,6 +446,21 @@ require_valid_port() {
   if [[ ! "${port}" =~ ^[0-9]+$ ]] || (( port < 1 || port > 65535 )); then
     die "${name} must be an integer from 1 through 65535; found '${port}'"
   fi
+}
+
+available_memory_gb() {
+  awk '/^MemAvailable:/ {print int($2 / 1024 / 1024); exit}' /proc/meminfo
+}
+
+require_memory_headroom() {
+  local operation="$1"
+  local required_gb="$2"
+  local available_gb
+  available_gb="$(available_memory_gb)"
+  [[ "${available_gb}" =~ ^[0-9]+$ ]] ||
+    die "Cannot determine unified-memory headroom before ${operation}"
+  (( available_gb >= required_gb )) ||
+    die "Only ${available_gb} GiB unified memory is available before ${operation}; require ${required_gb} GiB. Stop unrelated GPU workloads and retry."
 }
 
 require_local_model_endpoint() {
@@ -527,6 +548,10 @@ validate_thor_full_contract() {
     die "THOR_LOCAL_MODEL_START_TIMEOUT_SECONDS must be a positive integer"
   [[ "${THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS}" =~ ^[1-9][0-9]*$ ]] ||
     die "THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS must be a positive integer"
+  [[ "${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START}" =~ ^[1-9][0-9]*$ ]] ||
+    die "THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START must be a positive integer"
+  [[ "${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START}" =~ ^[1-9][0-9]*$ ]] ||
+    die "THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START must be a positive integer"
   [[ "${VLM_MAX_FRAMES_PER_REQUEST}" =~ ^[1-9][0-9]*$ ]] ||
     die "VLM_MAX_FRAMES_PER_REQUEST must be a positive integer"
   (( VLM_MAX_FRAMES_PER_REQUEST <= 16 )) ||
@@ -666,6 +691,8 @@ print_runtime_contract() {
     VLM_NAME_SLUG none \
     THOR_LOCAL_LLM_MODEL "${THOR_LOCAL_LLM_MODEL}" \
     THOR_LOCAL_VLM_MODEL "${THOR_LOCAL_VLM_MODEL}" \
+    THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START "${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START}" \
+    THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START "${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START}" \
     THOR_LOCAL_ALERT_BRIDGE_IMAGE "${THOR_LOCAL_ALERT_BRIDGE_IMAGE}" \
     THOR_LOCAL_RTVI_VLM_IMAGE "${THOR_LOCAL_RTVI_VLM_IMAGE}" \
     OPENAI_API_KEY "${OPENAI_API_KEY}" \
@@ -829,6 +856,7 @@ Thor-local environment contract:
   LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}, MCP=${LVS_ENABLE_MCP}@${LVS_MCP_PORT}
   Live alerts: ${REALTIME_ALERT_CHUNK_DURATION}s chunks/${REALTIME_ALERT_CHUNK_OVERLAP_DURATION}s overlap, ${REALTIME_ALERT_FRAMES_PER_CHUNK} fixed frames at ${REALTIME_ALERT_VLM_INPUT_WIDTH}x${REALTIME_ALERT_VLM_INPUT_HEIGHT}, reasoning=${REALTIME_ALERT_ENABLE_REASONING}, max_tokens=${REALTIME_ALERT_MAX_TOKENS}
   Alert extensions: direct_media=${ALERT_DIRECT_MEDIA_ENABLED}, enrichment=${ALERT_ENRICHMENT_ENABLED}, always_on=${ALERT_ALWAYS_ON_ENABLED}, websocket=${ALERT_WEBSOCKET_ENABLED}
+  Memory gates: model_start=${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START} GiB, stack_start=${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START} GiB
   Data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, Kibana=${KIBANA_PORT}
   Runtime env: ${generated_env}
   Registry credentials: removed from runtime env and offline Compose process
@@ -1587,6 +1615,10 @@ PY
 }
 
 start_offline_stack() {
+  if ! expected_container_running vss-agent; then
+    require_memory_headroom "starting the Thor VSS stack" \
+      "${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START}"
+  fi
   ensure_operator_runtime_directories
   compose up --detach --pull never --no-build --force-recreate
   assert_no_registry_credentials_in_containers
