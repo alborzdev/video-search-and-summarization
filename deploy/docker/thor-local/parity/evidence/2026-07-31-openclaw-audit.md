@@ -2,7 +2,7 @@
 
 ## Result
 
-The OpenClaw plugin, NemoClaw sandbox policy, non-Brev loopback UI path, local OpenAI-compatible provider path, orchestrator MCP registration, alert-hook configuration, and all 16 current VSS skills are present in source. The Thor-local model endpoint is live, but the lane is **not runtime-qualified** because the pinned toolchain is not persistently installed at the normal host prefix, the sandbox image is absent, and no sandbox exists yet. A temporary strict offline install was used only to verify the partial cache.
+The OpenClaw plugin, NemoClaw sandbox policy, non-Brev loopback UI path, local OpenAI-compatible provider path, orchestrator MCP registration, alert-hook configuration, and all 16 current VSS skills are present in source. The exact ARM64 toolchain, complete cache, persistent user-local installation, sandbox image, and Thor-local model provider all verify. The lane is still **not runtime-qualified** because no sandbox exists and no chat/tool/MCP/hook/alert lifecycle gate has run.
 
 This is an alternate local control plane. It does not require the warehouse sample dataset.
 
@@ -16,14 +16,15 @@ This is an alternate local control plane. It does not require the warehouse samp
 
 ## Thor-local evidence
 
-Normal-prefix checks on 2026-07-31:
+Persistent-prefix checks on 2026-07-31:
 
 ```text
-node      /home/nvidia/.local/bin/node  v22.23.1
-npm       /home/nvidia/.local/bin/npm   10.9.8
-openclaw  MISSING
-nemoclaw  MISSING
-openshell MISSING
+prefix    /home/nvidia/.local/share/vss/openclaw-toolchain (110M)
+node      v22.23.1
+nemoclaw  v0.0.48
+openshell 0.0.39
+sandbox   ghcr.io/nvidia/openshell-community/sandboxes/openclaw@sha256:b3d832b596ab6b7184a9dcb4ae93337ca32851a4f93b00765cc12de26baa3a9a
+provider  datasheet-chat
 ```
 
 The already-running local provider is bound to the Docker host bridge and is reachable without a cloud API:
@@ -52,15 +53,14 @@ Do not mark this family `passed_current` until a fresh Thor run records every ga
 9. With hooks enabled and a generated secret, send one synthetic authenticated hook and record its accepted run id.
 10. With an alerts stack running, send one synthetic VSS alert through the OpenClaw notification integration and verify it appears in the OpenClaw dashboard/chat. This is the end-to-end acceptance gate; config presence alone is insufficient.
 
-## Remaining blocker
+## Remaining runtime gate
 
-A verified seven-file partial cache and temporary offline prefix now cover the
-pinned framework binaries, but the exact sandbox image archive is not staged.
-Completing the cache requires fetching that immutable image; persistent install
-and sandbox creation remain lifecycle actions. No image pull, credential use,
-container start/stop, or synthetic notification was performed. Once the user
-approves that install/deploy phase, the existing local `datasheet-chat`
-endpoint removes the cloud-model dependency.
+The complete 1.6 GiB cache and exact sandbox image are staged, so this family
+is no longer artifact-blocked. Sandbox creation remains an explicit lifecycle
+action. No sandbox, chat, tool call, orchestrator MCP session, hook, or
+synthetic notification was created during verification. Once the user approves
+that deploy phase, the existing local `datasheet-chat` endpoint removes the
+cloud-model dependency.
 
 ## Focused static verification
 

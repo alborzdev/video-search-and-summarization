@@ -61,10 +61,21 @@ deploy/docker/thor-local/provision-local-models.sh provision
 deploy/docker/thor-local/provision-local-models.sh status
 ```
 
-Provisioning is additive and idempotent. It never removes or recreates an
-existing container; a mismatched existing container stops the operation with
-an explicit error. Containers are created stopped and are started sequentially
-by `thor-local.sh restart` after the unified-memory cache cleaner is active.
+Provisioning is additive and idempotent. Before accepting either snapshot it
+checks the committed [model artifact lock](models/README.md): exact membership,
+resolved blob SHA-256 and size, safe Hugging Face links, immutable repository
+revision, model configuration, SafeTensors index, and every tensor header. It
+never removes or recreates an existing container; a mismatched existing
+container stops the operation with an explicit error. Containers are created
+stopped and are started sequentially by `thor-local.sh restart` after the
+unified-memory cache cleaner is active.
+
+`thor-local.sh verify-offline` applies the same fail-closed lock to the complete
+Cosmos-Embed model volume and its TensorRT/Triton repository, including every
+file, the Hugging Face download revision, batch-8 Thor FP16 engine selection,
+and Triton input/output semantics. It streams the named volumes through
+disposable, networkless, read-only helpers with volume copy-up disabled, so
+verification still works after `compose down` and leaves no helper behind.
 
 Moondream's native `caption` and `query` skills are useful for one still image,
 but they are not this multi-image OpenAI chat contract. A stock Moondream
@@ -127,7 +138,7 @@ The base profile exposes:
 - Grafana: `http://127.0.0.1:35000`
 
 Prometheus, Grafana, node-exporter, cAdvisor, and a Thor-only `tegrastats`
-exporter are selected in the current 32-service graph and bind only to
+exporter are selected in the current 33-service graph and bind only to
 loopback in the Thor contract. Prometheus uses a Thor-specific scrape set with
 bounded retention; Grafana provisions a local-only dashboard and disables
 update, news, plugin, snapshot, and analytics network features. The exporter

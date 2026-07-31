@@ -24,6 +24,9 @@ domain_pack_tool="${domain_pack_dir}/domain_pack.py"
 qualification_tool="${deployment_dir}/thor-local/qualification/qualify.py"
 runtime_qualification_tool="${deployment_dir}/thor-local/qualification/runtime.py"
 local_model_provisioner="${deployment_dir}/thor-local/provision-local-models.sh"
+model_artifact_verifier="${deployment_dir}/thor-local/models/verify_artifacts.py"
+model_artifact_lock="${deployment_dir}/thor-local/models/artifacts.lock.json"
+vios_mcp_wheelhouse_stager="${deployment_dir}/thor-local/vios-mcp/stage-wheelhouse.sh"
 domain_pack_state="${THOR_LOCAL_DOMAIN_STATE_FILE:-${deployment_dir}/thor-local/.domain-pack-state.json}"
 domain_pack_current_file="${THOR_LOCAL_DOMAIN_CURRENT_FILE:-${deployment_dir}/thor-local/.domain-pack-current}"
 
@@ -80,6 +83,8 @@ export HAPROXY_PORT="${HAPROXY_PORT:-7777}"
 export VSS_PUBLIC_PORT="${VSS_PUBLIC_PORT:-${HAPROXY_PORT}}"
 export VST_PORT="${VST_PORT:-30888}"
 export VST_INGRESS_HTTP_PORT="${VST_INGRESS_HTTP_PORT:-${VST_PORT}}"
+export VST_MCP_PORT="${VST_MCP_PORT:-8001}"
+export VIOS_MCP_ENDPOINT="${VIOS_MCP_ENDPOINT:-http://127.0.0.1:${VST_MCP_PORT}/mcp}"
 export SENSOR_HTTP_PORT="${SENSOR_HTTP_PORT:-30000}"
 export STREAM_PROCESSOR_HTTP_PORT="${STREAM_PROCESSOR_HTTP_PORT:-30001}"
 export RTVI_EMBED_PORT="${RTVI_EMBED_PORT:-8017}"
@@ -125,6 +130,7 @@ export THOR_LOCAL_LVS_IMAGE="${THOR_LOCAL_LVS_IMAGE:-cti-vss-video-summarization
 export THOR_LOCAL_ALERT_BRIDGE_IMAGE="${THOR_LOCAL_ALERT_BRIDGE_IMAGE:-cti-vss-alert-bridge:thor-local}"
 export THOR_LOCAL_RTVI_VLM_IMAGE="${THOR_LOCAL_RTVI_VLM_IMAGE:-cti-vss-rt-vlm:thor-local}"
 export THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE="${THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE:-cti-vss-behavior-analytics:thor-local}"
+export THOR_LOCAL_VIOS_MCP_IMAGE="${THOR_LOCAL_VIOS_MCP_IMAGE:-cti-vss-vios-mcp:thor-local}"
 export VLM_MAX_FRAMES_PER_REQUEST="${VLM_MAX_FRAMES_PER_REQUEST:-4}"
 export VLM_WARMUP_ENABLED=false
 export REALTIME_ALERT_CHUNK_DURATION="${REALTIME_ALERT_CHUNK_DURATION:-10}"
@@ -220,7 +226,7 @@ Optional environment overrides:
   THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS,
   THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START (defaults 50) and
   THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START (defaults 20),
-  VST_PORT, SENSOR_HTTP_PORT, STREAM_PROCESSOR_HTTP_PORT,
+  VST_PORT, VST_MCP_PORT, VIOS_MCP_ENDPOINT, SENSOR_HTTP_PORT, STREAM_PROCESSOR_HTTP_PORT,
   RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT,
   VIDEO_ANALYTICS_API_PORT, SMARTCITY_MAP_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
   VSS_VA_MCP_PORT, BACKEND_PORT, KIBANA_PORT, PHOENIX_PORT,
@@ -248,6 +254,8 @@ Optional environment overrides:
   (defaults 1024) bound local summary aggregation.
   LVS_ENABLE_MCP (defaults true) and LVS_MCP_PORT (defaults 38112) expose
   the released local LVS SSE MCP server.
+  VST_MCP_PORT (defaults 8001) and VIOS_MCP_ENDPOINT expose the source-shipped
+  VIOS FastMCP gateway on loopback; VST_MCP_URL remains the legacy REST root.
   VIA_DEV_API (defaults true) exposes the file-management and VLM-caption
   routes required by the complete released LVS MCP tool set.
   REALTIME_ALERT_CHUNK_DURATION, REALTIME_ALERT_CHUNK_OVERLAP_DURATION,
@@ -608,6 +616,8 @@ validate_thor_full_contract() {
     die "BACKEND_PORT must remain 38111 while the versioned Thor Prometheus config scrapes LVS on that port"
   [[ "${TEGRASTATS_PORT}" == "19101" ]] ||
     die "TEGRASTATS_PORT must remain 19101 while the versioned Thor Prometheus config scrapes tegrastats on that port"
+  [[ "${VIOS_MCP_ENDPOINT}" == "http://127.0.0.1:${VST_MCP_PORT}/mcp" ]] ||
+    die "VIOS_MCP_ENDPOINT must remain the loopback VIOS MCP endpoint http://127.0.0.1:${VST_MCP_PORT}/mcp"
   [[ "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "true" || "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "false" ]] ||
     die "THOR_LOCAL_FORCE_BOOTSTRAP must be true or false"
   [[ "${THOR_FULL_STAGE_TIMEOUT_SECONDS}" =~ ^[1-9][0-9]*$ ]] ||
@@ -705,6 +715,7 @@ validate_thor_full_contract() {
     "VSS_UI_PORT:${VSS_UI_PORT}" \
     "HAPROXY_PORT:${HAPROXY_PORT}" \
     "VST_PORT:${VST_PORT}" \
+    "VST_MCP_PORT:${VST_MCP_PORT}" \
     "SENSOR_HTTP_PORT:${SENSOR_HTTP_PORT}" \
     "STREAM_PROCESSOR_HTTP_PORT:${STREAM_PROCESSOR_HTTP_PORT}" \
     "RTVI_EMBED_PORT:${RTVI_EMBED_PORT}" \
@@ -776,6 +787,7 @@ print_runtime_contract() {
     THOR_LOCAL_ALERT_BRIDGE_IMAGE "${THOR_LOCAL_ALERT_BRIDGE_IMAGE}" \
     THOR_LOCAL_RTVI_VLM_IMAGE "${THOR_LOCAL_RTVI_VLM_IMAGE}" \
     THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE "${THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE}" \
+    THOR_LOCAL_VIOS_MCP_IMAGE "${THOR_LOCAL_VIOS_MCP_IMAGE}" \
     OPENAI_API_KEY "${OPENAI_API_KEY}" \
     VLM_WARMUP_ENABLED false \
     REALTIME_ALERT_CHUNK_DURATION "${REALTIME_ALERT_CHUNK_DURATION}" \
@@ -804,6 +816,8 @@ print_runtime_contract() {
     VSS_PUBLIC_PORT "${VSS_PUBLIC_PORT}" \
     VST_PORT "${VST_PORT}" \
     VST_INGRESS_HTTP_PORT "${VST_INGRESS_HTTP_PORT}" \
+    VST_MCP_PORT "${VST_MCP_PORT}" \
+    VIOS_MCP_ENDPOINT "${VIOS_MCP_ENDPOINT}" \
     SENSOR_HTTP_PORT "${SENSOR_HTTP_PORT}" \
     STREAM_PROCESSOR_HTTP_PORT "${STREAM_PROCESSOR_HTTP_PORT}" \
     SENSOR_MODULE_ENDPOINT "http://localhost:${SENSOR_HTTP_PORT}" \
@@ -947,7 +961,7 @@ Thor-local environment contract:
   VA-MCP LLM adapter: ${THOR_LOCAL_VA_MCP_LLM_MODEL_TYPE} (same local model endpoint)
   VLM: ${THOR_LOCAL_VLM_MODEL} via ${THOR_LOCAL_VLM_MODEL_TYPE} at ${VLM_ENDPOINT_URL} (container ${THOR_LOCAL_VLM_CONTAINER})
   RTVI-VLM upstream: ${VLM_CONTAINER_ENDPOINT_URL}/v1 (bridge-to-host)
-  Runtime ports: agent=${VSS_AGENT_PORT}, UI=${VSS_UI_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}
+  Runtime ports: agent=${VSS_AGENT_PORT}, UI=${VSS_UI_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, VIOS-MCP=${VST_MCP_PORT}
   Intelligence ports: embed=${RTVI_EMBED_PORT} (batch ${RTVI_EMBED_BATCH_SIZE}), RTVI-VLM=${RTVI_VLM_PORT} (batch ${RTVI_VLM_BATCH_SIZE}, processes ${RTVI_VLM_NUM_VLM_PROCS}), perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, LVS=${BACKEND_PORT}
   RTVI timestamps: prompt=${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}, absolute_metadata=${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}
   LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}, MCP=${LVS_ENABLE_MCP}@${LVS_MCP_PORT}
@@ -1183,6 +1197,7 @@ preflight() {
   require_available_port "${VSS_UI_PORT}" vss-agent-ui
   require_available_port "${HAPROXY_PORT}" vss-haproxy-ingress
   require_available_port "${VST_PORT}" vss-vios-ingress
+  require_available_port "${VST_MCP_PORT}" vss-vios-mcp
   require_available_port "${SENSOR_HTTP_PORT}" vss-vios-sensor
   require_available_port "${STREAM_PROCESSOR_HTTP_PORT}" vss-vios-streamprocessing
   require_available_port "${RTVI_EMBED_PORT}" vss-rtvi-embed
@@ -1218,7 +1233,7 @@ preflight() {
   fi
 
   echo "[OK] AGX Thor platform and local model endpoints are ready."
-  echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}."
+  echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, VIOS-MCP=${VST_MCP_PORT}."
   echo "[OK] Planned intelligence ports: embed=${RTVI_EMBED_PORT}, RTVI-VLM=${RTVI_VLM_PORT}, perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, LVS=${BACKEND_PORT}."
   echo "[OK] Planned data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, Kibana=${KIBANA_PORT} (enabled=${THOR_FULL_ENABLE_KIBANA}), Phoenix=${PHOENIX_HOST}:${PHOENIX_PORT}, Logstash API=127.0.0.1:${LOGSTASH_API_PORT}."
   echo "[OK] Planned observability ports (loopback): Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT}, tegrastats=${TEGRASTATS_PORT}."
@@ -1398,46 +1413,68 @@ service = config["services"]["rtvi-embed"]
 print(volumes["rtvi-ngc-model-cache"]["name"])
 print(volumes["rtvi-triton-model-repo"]["name"])
 print(service["image"])
+print(service["environment"]["MODEL_PATH"])
 '
 }
 
+stream_embedding_volume_tree() {
+  local volume="$1"
+  local archive_root="$2"
+  local image="$3"
+
+  # Verification must also work immediately after `compose down`, when only
+  # the named volumes and locked image remain. Use a disposable, networkless,
+  # read-only helper and disable volume copy-up so neither source volume can be
+  # modified while its exact subtree is streamed to the host verifier.
+  docker run --rm --pull never --network none --read-only \
+    --cap-drop ALL --security-opt no-new-privileges:true \
+    --entrypoint /bin/tar \
+    --mount "type=volume,src=${volume},dst=/artifact,readonly,volume-nocopy" \
+    "${image}" -C /artifact -cf - "${archive_root}"
+}
+
 staged_embedding_cache_is_present() {
-  local ngc_volume triton_volume embed_image
+  local ngc_volume triton_volume embed_image source_spec
+  local ngc_root triton_root ngc_path triton_path
   local -a cache_contract=()
   mapfile -t cache_contract < <(embedding_cache_contract) || return 1
-  (( ${#cache_contract[@]} == 3 )) || return 1
+  (( ${#cache_contract[@]} == 4 )) || return 1
   ngc_volume="${cache_contract[0]}"
   triton_volume="${cache_contract[1]}"
   embed_image="${cache_contract[2]}"
+  source_spec="${cache_contract[3]}"
+  ngc_root="Cosmos-Embed1-448p-anomaly-detection"
+  triton_root="cosmos-embed1-448p-anomaly-detection"
+  ngc_path="/opt/nvidia/rtvi/.rtvi/ngc_model_cache/${ngc_root}"
+  triton_path="/tmp/triton_model_repo/${triton_root}"
 
+  [[ -r "${model_artifact_verifier}" && -r "${model_artifact_lock}" ]] || return 1
   docker volume inspect "${ngc_volume}" "${triton_volume}" >/dev/null 2>&1 || return 1
   docker image inspect "${embed_image}" >/dev/null 2>&1 || return 1
 
-  docker run --rm --network none --entrypoint /bin/bash \
-    --mount "type=volume,src=${ngc_volume},dst=/ngc,readonly" \
-    --mount "type=volume,src=${triton_volume},dst=/triton,readonly" \
-    -e "RTVI_EMBED_BATCH_SIZE=${RTVI_EMBED_BATCH_SIZE}" \
-    "${embed_image}" -ec '
-      model=/ngc/Cosmos-Embed1-448p-anomaly-detection
-      test -s "$model/model.safetensors.index.json"
-      test -s "$model/config.json"
-      test -s "$model/tokenizer.json"
-      test "$(find "$model" -maxdepth 1 -name "model-*-of-00010.safetensors" -size +200M | wc -l)" -eq 10
-      root=/triton/cosmos-embed1-448p-anomaly-detection
-      video="$root/video_embeddings/1/cosmos_embed1_video_NVIDIA_Thor_${RTVI_EMBED_BATCH_SIZE}_fp16.engine"
-      text="$root/text_embeddings/1/cosmos_embed1_text_NVIDIA_Thor_${RTVI_EMBED_BATCH_SIZE}_fp16.engine"
-      test -f "$video" && test "$(stat -c %s "$video")" -gt 1000000000
-      test -f "$text" && test "$(stat -c %s "$text")" -gt 100000000
-      test -s "$root/video_embeddings/config.pbtxt"
-      test -s "$root/text_embeddings/config.pbtxt"
-    ' >/dev/null 2>&1
+  stream_embedding_volume_tree "${ngc_volume}" "${ngc_root}" "${embed_image}" |
+    python3 "${model_artifact_verifier}" verify-tar \
+      --lock "${model_artifact_lock}" \
+      --artifact cosmos_embed_model \
+      --source-spec "${source_spec}" \
+      --image "${embed_image}" \
+      --container-path "${ngc_path}" \
+      --batch-size "${RTVI_EMBED_BATCH_SIZE}" || return 1
+  stream_embedding_volume_tree "${triton_volume}" "${triton_root}" "${embed_image}" |
+    python3 "${model_artifact_verifier}" verify-tar \
+      --lock "${model_artifact_lock}" \
+      --artifact cosmos_embed_triton \
+      --source-spec "${source_spec}" \
+      --image "${embed_image}" \
+      --container-path "${triton_path}" \
+      --batch-size "${RTVI_EMBED_BATCH_SIZE}" || return 1
 }
 
 require_staged_embedding_cache() {
   if ! staged_embedding_cache_is_present; then
-    die "Cosmos-Embed model shards or Thor batch-${RTVI_EMBED_BATCH_SIZE} engines are absent from the persistent Docker volumes; restage while connected"
+    die "Cosmos-Embed model or Thor batch-${RTVI_EMBED_BATCH_SIZE} Triton repository differs from the exact reviewed artifact lock; restage and review while connected"
   fi
-  echo "[OK] Cosmos-Embed model shards and Thor batch-${RTVI_EMBED_BATCH_SIZE} engines are staged."
+  echo "[OK] Exact Cosmos-Embed model and Thor batch-${RTVI_EMBED_BATCH_SIZE} Triton repository are staged."
 }
 
 require_staged_local_models() {
@@ -1513,7 +1550,7 @@ security_internal_ports() {
     "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 "${KIBANA_PORT}" "${LOGSTASH_API_PORT}" \
     "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" \
     30554 30555 30556 30557 30558 30559 30560 30561 30562 30563 30564 \
-    "${VST_PORT}" "${BACKEND_PORT}" "${LVS_MCP_PORT}" \
+    "${VST_PORT}" "${VST_MCP_PORT}" "${BACKEND_PORT}" "${LVS_MCP_PORT}" \
     "${PROMETHEUS_PORT}" "${GRAFANA_PORT}" "${NODE_EXPORTER_PORT}" "${CADVISOR_PORT}" "${TEGRASTATS_PORT}" | sort -n -u
 }
 
@@ -1825,6 +1862,13 @@ critical_http_endpoints_are_ready() {
       pending=1
     fi
   done
+  local vios_mcp_status
+  vios_mcp_status="$(curl --connect-timeout 2 --max-time 5 --silent --output /dev/null --write-out '%{http_code}' \
+    -H 'Accept: application/json' "${VIOS_MCP_ENDPOINT}" 2>/dev/null || true)"
+  if [[ "${vios_mcp_status}" != "200" && "${vios_mcp_status}" != "400" && "${vios_mcp_status}" != "406" ]]; then
+    echo "[WAIT] VIOS MCP: ${VIOS_MCP_ENDPOINT} is not ready (HTTP ${vios_mcp_status:-connection-failed})."
+    pending=1
+  fi
   if ! rtvi_vlm_upstream_is_ready; then
     echo "[WAIT] rtvi-vlm upstream: ${VLM_CONTAINER_ENDPOINT_URL%/}/v1/models is not reachable from the proxy container."
     pending=1
@@ -2174,6 +2218,7 @@ doctor_check_endpoints() {
   doctor_http_status "Cosmos-Embed" "http://127.0.0.1:${RTVI_EMBED_PORT}/v1/ready" 200
   doctor_http_status "RTVI-VLM proxy" "http://127.0.0.1:${RTVI_VLM_PORT}/v1/health/ready" 200
   doctor_http_status "VST/VIOS" "http://127.0.0.1:${VST_PORT}/health" 200
+  doctor_http_status "VIOS MCP" "${VIOS_MCP_ENDPOINT}" 200 400 406
   doctor_http_status "Elasticsearch search backend" "http://127.0.0.1:${VSS_ES_PORT}/_cluster/health" 200
   if [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" ]]; then
     doctor_http_status "Kibana" "http://127.0.0.1:${KIBANA_PORT}/kibana/api/status" 200
@@ -2287,6 +2332,9 @@ case "${command_name}" in
       # Connected staging depends on the NGC CLI. Check it before
       # dev-profile.sh can tear down an existing deployment.
       require_command ngc
+      [[ -x "${vios_mcp_wheelhouse_stager}" ]] ||
+        die "Missing executable VIOS MCP wheelhouse stager: ${vios_mcp_wheelhouse_stager}"
+      "${vios_mcp_wheelhouse_stager}"
 
       bootstrap_docker_config="$(mktemp -d "${TMPDIR:-/tmp}/thor-local-docker-config.XXXXXX")"
       chmod 700 "${bootstrap_docker_config}"

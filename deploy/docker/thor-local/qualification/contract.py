@@ -373,6 +373,110 @@ def extract_va_mcp_tools(path: Path) -> list[dict[str, Any]]:
     ]
 
 
+def _fastmcp_decorator_kind(
+    decorator: ast.expr, *, instance_name: str
+) -> tuple[str, ast.Call] | None:
+    if (
+        not isinstance(decorator, ast.Call)
+        or not isinstance(decorator.func, ast.Attribute)
+        or not isinstance(decorator.func.value, ast.Name)
+        or decorator.func.value.id != instance_name
+        or decorator.func.attr not in {"prompt", "tool"}
+    ):
+        return None
+    return decorator.func.attr, decorator
+
+
+def _fastmcp_declared_name(
+    call: ast.Call, *, default: str, path: Path, line_number: int
+) -> str:
+    if call.args:
+        raise ContractError(
+            f"unsupported positional FastMCP decorator arguments in "
+            f"{path}:{line_number}"
+        )
+    name_values = [keyword.value for keyword in call.keywords if keyword.arg == "name"]
+    if len(name_values) > 1:
+        raise ContractError(f"duplicate FastMCP name in {path}:{line_number}")
+    if not name_values:
+        return default
+    try:
+        name = ast.literal_eval(name_values[0])
+    except (ValueError, TypeError) as exc:
+        raise ContractError(
+            f"FastMCP name must be a literal string in {path}:{line_number}"
+        ) from exc
+    if not isinstance(name, str) or not name:
+        raise ContractError(
+            f"FastMCP name must be a non-empty literal string in {path}:{line_number}"
+        )
+    return name
+
+
+def _fastmcp_input_schema_hash(
+    node: ast.FunctionDef | ast.AsyncFunctionDef,
+) -> str:
+    """Hash the Python signature FastMCP uses to derive its input schema."""
+
+    return shape_hash(ast.dump(node.args, annotate_fields=True, include_attributes=False))
+
+
+def extract_fastmcp_declarations(
+    path: Path, *, instance_name: str = "mcp"
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Extract top-level ``@mcp.tool`` and ``@mcp.prompt`` declarations.
+
+    Importing a FastMCP server can initialize settings, logging, transports, or
+    backend clients. Static AST extraction keeps the Thor contract qualifier
+    offline and side-effect free while still pinning every declaration name and
+    input signature. The complete source digest in the manifest covers handler
+    bodies and decorator prose.
+    """
+
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    declarations: dict[str, list[dict[str, Any]]] = {"prompt": [], "tool": []}
+    names: dict[str, set[str]] = {"prompt": set(), "tool": set()}
+    for node in tree.body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        matching = [
+            result
+            for decorator in node.decorator_list
+            if (
+                result := _fastmcp_decorator_kind(
+                    decorator, instance_name=instance_name
+                )
+            )
+            is not None
+        ]
+        if not matching:
+            continue
+        if len(matching) != 1:
+            raise ContractError(
+                f"multiple FastMCP declarations on {path}:{node.lineno}"
+            )
+        kind, call = matching[0]
+        name = _fastmcp_declared_name(
+            call, default=node.name, path=path, line_number=node.lineno
+        )
+        if name in names[kind]:
+            raise ContractError(f"duplicate FastMCP {kind} name {name!r} in {path}")
+        names[kind].add(name)
+        declarations[kind].append(
+            {
+                "name": name,
+                "input_schema_hash": _fastmcp_input_schema_hash(node),
+            }
+        )
+
+    if not declarations["tool"] and not declarations["prompt"]:
+        raise ContractError(f"no FastMCP declarations found in {path}")
+    return (
+        sorted(declarations["tool"], key=lambda item: item["name"]),
+        sorted(declarations["prompt"], key=lambda item: item["name"]),
+    )
+
+
 def build_rest_manifest(
     surface_id: str,
     operations: Iterable[dict[str, Any]],
@@ -405,18 +509,22 @@ def build_mcp_manifest(
     tools: Iterable[dict[str, Any]],
     *,
     source_files: Iterable[tuple[str, Path]],
+    prompts: Iterable[dict[str, Any]] = (),
 ) -> dict[str, Any]:
-    normalized = sorted(tools, key=lambda item: item["name"])
+    normalized_tools = sorted(tools, key=lambda item: item["name"])
+    normalized_prompts = sorted(prompts, key=lambda item: item["name"])
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "surface": surface_id,
         "kind": "mcp",
-        "tool_count": len(normalized),
+        "tool_count": len(normalized_tools),
+        "prompt_count": len(normalized_prompts),
         "source_files": [
             {"path": relative, "sha256": file_sha256(absolute)}
             for relative, absolute in sorted(source_files)
         ],
-        "tools": normalized,
+        "tools": normalized_tools,
+        "prompts": normalized_prompts,
     }
 
 
@@ -475,6 +583,25 @@ def compare_manifest(expected: dict[str, Any], actual: dict[str, Any]) -> list[s
             differences.append("extra tools: " + ", ".join(extra))
         if changed:
             differences.append("changed tool schemas: " + ", ".join(changed))
+        expected_prompts = {
+            item["name"]: item for item in expected.get("prompts", [])
+        }
+        actual_prompts = {item["name"]: item for item in actual.get("prompts", [])}
+        missing_prompts = sorted(expected_prompts.keys() - actual_prompts.keys())
+        extra_prompts = sorted(actual_prompts.keys() - expected_prompts.keys())
+        changed_prompts = sorted(
+            key
+            for key in expected_prompts.keys() & actual_prompts.keys()
+            if expected_prompts[key] != actual_prompts[key]
+        )
+        if missing_prompts:
+            differences.append("missing prompts: " + ", ".join(missing_prompts))
+        if extra_prompts:
+            differences.append("extra prompts: " + ", ".join(extra_prompts))
+        if changed_prompts:
+            differences.append(
+                "changed prompt schemas: " + ", ".join(changed_prompts)
+            )
     if expected.get("source_files") != actual.get("source_files"):
         differences.append("source file digest changed")
     if not differences:

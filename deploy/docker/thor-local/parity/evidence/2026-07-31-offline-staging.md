@@ -28,7 +28,7 @@ Results:
   alternate lanes built successfully, including both Next.js applications,
   the checksum-locked offline Logstash derivative, both immutable VIOS codec
   derivatives, the audio-codec RT-VLM derivative, and all shared UI packages.
-- All 28 unique images selected by the resolved 32-service Compose profile are
+- All 29 unique images selected by the resolved 33-service Compose profile are
   present and recorded by content ID in the protected mode-`0600` runtime
   environment. The tegrastats exporter reuses the locked VSS Agent image and
   introduces no new image identity.
@@ -36,21 +36,23 @@ Results:
   sensor, and released LVS images are the ARM64 3.2.1 variants. The Video
   Analytics API remains at NVIDIA's intentional 3.2.0 release pin.
 - Host RT-CV/Search model checksums match the versioned contract.
-- All ten Cosmos-Embed shards and the Thor batch-8 video/text TensorRT engines
-  pass the network-isolated cache verifier.
+- The exact Cosmos-Embed revision/model tree and Thor batch-8 video/text
+  Triton configs/TensorRT engines pass the semantic artifact-lock verifier.
 - The local vLLM image is pinned to
   `sha256:6402d5ac90223b9ba4434228f98aec798c5a8b942e770ee47528b4148e923105`.
 - The local text snapshot is pinned to Qwen revision
   `95a723d08a9490559dae23d0cff1d9466213d989`; the local vision snapshot is
-  pinned to revision `9cdc6310a8cb770ce18efaf4e9935334512aee45`.
+  pinned to revision `9cdc6310a8cb770ce18efaf4e9935334512aee45`. Exact
+  snapshot membership, resolved blob hashes, config semantics, index maps,
+  and all SafeTensors headers pass.
 - The private-bridge text provider and the stopped, additive
   `cti-vss-qwen3-vl` vision provider both match their exact image, model ID,
   served-name, and bind-address contracts.
 - The verifier concluded that restart requires no image pull, build, NGC key,
   Hugging Face access, or model download.
-- The protected runtime was refreshed again after the VIOS/audio derivative
-  builds and the tegrastats port addition; the subsequent offline verifier
-  passed all 28 selected image locks and all pinned host/model assets.
+- The protected runtime was refreshed again after the LVS and VIOS MCP
+  derivatives; the subsequent offline verifier passed all 29 selected image
+  locks and all pinned host/model assets.
 
 ## Static regression checks
 
@@ -66,7 +68,7 @@ The following suites passed after the staging/model-lane changes:
 ## Deliberately open runtime gates
 
 - The root-owned cache cleaner is active, and the refreshed offline verifier
-  passed at capture time. The vision provider and current 32-service stack
+  passed at capture time. The vision provider and current 33-service stack
   remain stopped because only
   about 34 GiB unified memory is available while the fail-closed vision-model
   start gate requires 50 GiB; API, UI, inference, alerts, search, and restart

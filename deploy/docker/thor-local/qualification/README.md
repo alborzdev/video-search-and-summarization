@@ -29,7 +29,8 @@ baseline. The qualifier independently re-derives manifests from:
 - Python route decorators for RT-VLM, RT-Embed, and LVS;
 - the RT-CV API reference;
 - the pinned NAT 1.6.0 route model plus VSS Agent config/source routes; and
-- VA/LVS MCP declarations.
+- VA/LVS MCP declarations; and
+- the VST/VIOS FastMCP gateway's 22 tools and five prompts.
 
 OpenAPI prose such as descriptions and examples is ignored. Its validation
 shape, method, path, operation ID, and component definitions are retained.
@@ -38,6 +39,22 @@ schema changes still fail qualification without requiring PyYAML on an offline
 host. VIOS paths are normalized to their deployed `/vst/api/v1/...` form.
 Parameter names are normalized separately when finding runtime route
 collisions.
+
+MCP manifest schema version 2 records tools and prompts independently. For
+FastMCP source, the qualifier parses top-level `@mcp.tool` and `@mcp.prompt`
+decorators with Python's AST and hashes the function signature that derives
+each input schema. It never imports the server module, so settings and backend
+clients cannot create side effects during offline qualification. The complete
+source-file hashes continue to protect decorator metadata and handler bodies.
+
+Upstream includes the VST/VIOS MCP Python service and both stdio and
+streamable-HTTP entry points but omits it from the released Compose graph.
+Thor closes that packaging gap with a checksum-locked Linux/AArch64 wheel
+closure, an exact Python base-image digest, a networkless derivative build,
+and a read-only, loopback-only Compose service on `VST_MCP_PORT` (8001 by
+default). Its direct `/mcp` endpoint is listed in `runtime_inventory.json`;
+the static contract still derives all 22 tools and five prompts from source
+without importing the service.
 
 ## Locally captured live documents
 
@@ -72,7 +89,7 @@ transport outage produces `result: "unavailable"` and exit 2, making a stopped
 stack distinguishable from a broken contract without treating it as a pass.
 An OpenAPI endpoint marked optional is skipped only when it returns 404 or 405.
 `runtime_inventory.json` defines the health, OpenAPI, MCP, UI, ingress,
-VIOS, Elasticsearch, Kibana, Phoenix, Logstash, Prometheus, Grafana,
+VIOS, VIOS MCP, Elasticsearch, Kibana, Phoenix, Logstash, Prometheus, Grafana,
 node-exporter, cAdvisor, and the Thor `tegrastats` exporter GET probes and their
 default Thor-local ports. A valid port environment variable listed there
 overrides its default. The deployment contract requires `TEGRASTATS_PORT=19101`

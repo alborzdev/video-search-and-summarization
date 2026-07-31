@@ -20,6 +20,7 @@ from contract import (  # noqa: E402
     build_mcp_manifest,
     build_rest_manifest,
     compare_manifest,
+    extract_fastmcp_declarations,
     extract_lvs_mcp_tools,
     extract_markdown_routes,
     extract_python_routes,
@@ -199,15 +200,20 @@ def derive_surface(surface: dict[str, Any]) -> dict[str, Any]:
         )
 
     if kind == "mcp":
+        prompts: list[dict[str, Any]] = []
         if extractor == "lvs_mcp":
             tools = extract_lvs_mcp_tools(sources[0][1])
         elif extractor == "va_mcp":
             tools = extract_va_mcp_tools(sources[0][1])
+        elif extractor == "fastmcp_python":
+            tools, prompts = extract_fastmcp_declarations(sources[0][1])
         else:
             raise ContractError(
                 f"{surface_id}: unsupported MCP extractor {extractor!r}"
             )
-        return build_mcp_manifest(surface_id, tools, source_files=sources)
+        return build_mcp_manifest(
+            surface_id, tools, source_files=sources, prompts=prompts
+        )
 
     raise ContractError(f"{surface_id}: unsupported surface kind {kind!r}")
 
@@ -283,6 +289,7 @@ def _validate_totals(
             item["normalized_unique_operation_count"] for item in rest
         ),
         "mcp_tools": sum(item["tool_count"] for item in mcp),
+        "mcp_prompts": sum(item["prompt_count"] for item in mcp),
     }
     expected = inventory.get("expected_totals")
     if actual != expected:
@@ -382,20 +389,20 @@ def run_contract(
         try:
             manifest = derive_surface(surface)
             actual[surface_id] = manifest
-            expected_count_key = (
-                "expected_operation_count"
+            count_keys = (
+                (("expected_operation_count", "declared_operation_count"),)
                 if surface["kind"] == "rest"
-                else "expected_tool_count"
-            )
-            actual_count_key = (
-                "declared_operation_count"
-                if surface["kind"] == "rest"
-                else "tool_count"
-            )
-            if manifest[actual_count_key] != surface[expected_count_key]:
-                raise ContractError(
-                    f"inventory expects {surface[expected_count_key]}, derived {manifest[actual_count_key]}"
+                else (
+                    ("expected_tool_count", "tool_count"),
+                    ("expected_prompt_count", "prompt_count"),
                 )
+            )
+            for expected_count_key, actual_count_key in count_keys:
+                if manifest[actual_count_key] != surface[expected_count_key]:
+                    raise ContractError(
+                        f"inventory expects {surface[expected_count_key]} for "
+                        f"{expected_count_key}, derived {manifest[actual_count_key]}"
+                    )
             expected_path = _expected_path(surface, expected_dir)
             if regenerate:
                 expected_path.write_text(
@@ -450,7 +457,8 @@ def run_contract(
             f"PASS: {action} {len(surfaces)} Thor VSS API surfaces offline — "
             f"{totals['declared_rest_operations']} declared REST operations "
             f"({totals['normalized_unique_rest_operations']} normalized unique) and "
-            f"{totals['mcp_tools']} MCP tools"
+            f"{totals['mcp_tools']} MCP tools plus "
+            f"{totals['mcp_prompts']} MCP prompts"
         )
         if inventory.get("known_contract_differences"):
             print(

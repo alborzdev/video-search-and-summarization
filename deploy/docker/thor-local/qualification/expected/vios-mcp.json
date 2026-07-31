@@ -1,0 +1,137 @@
+{
+  "kind": "mcp",
+  "prompt_count": 5,
+  "prompts": [
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "picture_for_camera"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "picture_url_for_camera"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "sensors_count"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "sensors_recording_status"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "video_for_sensor"
+    }
+  ],
+  "schema_version": 2,
+  "source_files": [
+    {
+      "path": "services/vios/mcp/pyproject.toml",
+      "sha256": "c47fc4159ef9eafcddbd6028d91879f4be5cee0df1614f1cfcf5dfd4bf9d8c63"
+    },
+    {
+      "path": "services/vios/mcp/src/__main__.py",
+      "sha256": "006335ab67afb0c3ed3bc17dc9de2a6a87d3cad7e1170bcef7f4ee23874ca6d5"
+    },
+    {
+      "path": "services/vios/mcp/src/config.py",
+      "sha256": "a00f7506c538552b04db9a0890beaf4410ed1c6ac89c150d08cfd63886813a2c"
+    },
+    {
+      "path": "services/vios/mcp/src/server.py",
+      "sha256": "54eb8f509d1653892c5bca9d24ca9976b776501d584727333b81d1fe3549c9d2"
+    }
+  ],
+  "surface": "vios-mcp",
+  "tool_count": 22,
+  "tools": [
+    {
+      "input_schema_hash": "93e623a2f864d289272bf7fece788225fc5af5811ac1ce1c30d449a741ad2e4b",
+      "name": "get_live_picture_base64"
+    },
+    {
+      "input_schema_hash": "9f0b7f9b53274d7159c3bdd216caca26a5e748ce20fccf9616cc9b3a0ff05f5e",
+      "name": "get_live_picture_url"
+    },
+    {
+      "input_schema_hash": "e9c4f5c725e37a4d4a795ec95cb31811ca02968a4b987fbbb03c550bd16ae122",
+      "name": "get_replay_picture_base64"
+    },
+    {
+      "input_schema_hash": "03ca719b26d23d1640119f95041c92629b73812ea467c66491c65542e7cf9fc2",
+      "name": "get_replay_picture_url"
+    },
+    {
+      "input_schema_hash": "cfc40fc99ad39ef3fc1244ff5e2a8bc63854cc541e87780a7de8048895385a37",
+      "name": "get_video_storage_url"
+    },
+    {
+      "input_schema_hash": "257b7d9cd3e6a86b9e70677f48f415c27b93747441795c5fdc60a15dc9a61f03",
+      "name": "record_stream_start"
+    },
+    {
+      "input_schema_hash": "257b7d9cd3e6a86b9e70677f48f415c27b93747441795c5fdc60a15dc9a61f03",
+      "name": "record_stream_status"
+    },
+    {
+      "input_schema_hash": "257b7d9cd3e6a86b9e70677f48f415c27b93747441795c5fdc60a15dc9a61f03",
+      "name": "record_stream_stop"
+    },
+    {
+      "input_schema_hash": "257b7d9cd3e6a86b9e70677f48f415c27b93747441795c5fdc60a15dc9a61f03",
+      "name": "record_stream_timelines"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "sensor_health_check"
+    },
+    {
+      "input_schema_hash": "2f9d888dc757bf9d232968aea1c2f980c9d2bbaecc05a05c2d42fce684f7bd18",
+      "name": "sensor_info_by_id"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "sensor_list"
+    },
+    {
+      "input_schema_hash": "2f9d888dc757bf9d232968aea1c2f980c9d2bbaecc05a05c2d42fce684f7bd18",
+      "name": "sensor_network_by_id"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "sensor_scan"
+    },
+    {
+      "input_schema_hash": "2f9d888dc757bf9d232968aea1c2f980c9d2bbaecc05a05c2d42fce684f7bd18",
+      "name": "sensor_settings_by_id"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "sensor_status"
+    },
+    {
+      "input_schema_hash": "2f9d888dc757bf9d232968aea1c2f980c9d2bbaecc05a05c2d42fce684f7bd18",
+      "name": "sensor_status_by_id"
+    },
+    {
+      "input_schema_hash": "ed42c94d2a1080987a9598a8bd28e4e4ce10bfe665ddd93b60db2fa1de50fd3b",
+      "name": "storage_file_list"
+    },
+    {
+      "input_schema_hash": "2f9d888dc757bf9d232968aea1c2f980c9d2bbaecc05a05c2d42fce684f7bd18",
+      "name": "storage_file_list_by_sensor"
+    },
+    {
+      "input_schema_hash": "20271907675190681d2118c409d74e7bfc261189df423c4ad76e211b3515e269",
+      "name": "storage_file_path"
+    },
+    {
+      "input_schema_hash": "63433963b04b77f4c17b9b8a79ca4fe70834f05ac66f3fb0335ececf62aa2f59",
+      "name": "storage_file_path_by_sensor"
+    },
+    {
+      "input_schema_hash": "97c2e5f8e162f61bf6b0299642ebb46cffc6f14a2060ec56a0afa794b29f6c04",
+      "name": "storage_file_upload"
+    }
+  ]
+}

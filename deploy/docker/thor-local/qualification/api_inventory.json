@@ -12,7 +12,8 @@
   "expected_totals": {
     "declared_rest_operations": 326,
     "normalized_unique_rest_operations": 325,
-    "mcp_tools": 16
+    "mcp_tools": 38,
+    "mcp_prompts": 5
   },
   "known_contract_differences": {
     "lvs_openapi": {
@@ -392,6 +393,7 @@
       "extractor": "va_mcp",
       "expected_manifest": "va-mcp.json",
       "expected_tool_count": 7,
+      "expected_prompt_count": 0,
       "direct": {
         "port_env": "VSS_VA_MCP_PORT",
         "default_port": 9901,
@@ -417,6 +419,7 @@
       "extractor": "lvs_mcp",
       "expected_manifest": "lvs-mcp.json",
       "expected_tool_count": 9,
+      "expected_prompt_count": 0,
       "direct": {
         "port_env": "LVS_MCP_PORT",
         "default_port": 38112,
@@ -426,6 +429,38 @@
       "public": null,
       "sources": [
         "services/video-summarization/src/lvs_mcp.py"
+      ]
+    },
+    {
+      "id": "vios-mcp",
+      "kind": "mcp",
+      "extractor": "fastmcp_python",
+      "expected_manifest": "vios-mcp.json",
+      "expected_tool_count": 22,
+      "expected_prompt_count": 5,
+      "direct": {
+        "port_env": "VST_MCP_PORT",
+        "default_port": 8001,
+        "transport": "streamable-http",
+        "path": "/mcp"
+      },
+      "public": null,
+      "source_transport": {
+        "default_port": 8000,
+        "transport": "streamable-http",
+        "path": "/mcp",
+        "alternate_transport": "stdio"
+      },
+      "thor_runtime": {
+        "state": "wired-local-derivative",
+        "runtime_inventory": true,
+        "reason": "Thor supplies the omitted service with an exact Python base digest, checksum-locked Linux/AArch64 wheel closure, networkless image build, loopback-only Compose endpoint, and read-only runtime probe."
+      },
+      "sources": [
+        "services/vios/mcp/src/server.py",
+        "services/vios/mcp/src/config.py",
+        "services/vios/mcp/src/__main__.py",
+        "services/vios/mcp/pyproject.toml"
       ]
     }
   ]

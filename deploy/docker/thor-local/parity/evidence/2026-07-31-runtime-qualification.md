@@ -20,12 +20,13 @@ deploy/docker/scripts/thor-local.sh qualify --tier runtime
 ```
 
 It issued only GET requests to loopback, with proxies disabled and no container
-or VSS-state mutation. After the tegrastats source lane was added, the stopped
-stack produced exactly 30 `unavailable` probes, zero passed, zero failed, zero
-skipped, and exit status `2`. This current stopped-stack baseline includes the
-exporter's `/readyz` and proves the qualifier does not turn absence into a
-false pass. It remains unqualified runtime evidence. The expanded inventory
-also adds Kibana
+or VSS-state mutation. After the LVS semantic and VIOS MCP lanes were added,
+the stopped stack produced exactly 32 `unavailable` probes, zero passed, zero
+failed, zero skipped, and exit status `2`. This current stopped-stack baseline
+covers 22 services, including the exporter's `/readyz`, the VIOS `/mcp`
+transport, and `/v1/files?purpose=invalid`, and proves the qualifier does not
+turn absence into a false pass. It remains unqualified runtime evidence. The
+expanded inventory also includes Kibana
 `/kibana/api/status`, Phoenix `/readyz`, the Logstash node API, the provisioned
 Grafana dashboard, and a bounded Prometheus `/api/v1/targets` contract. The
 last check now requires exactly the seven versioned Thor jobs once each with
@@ -35,5 +36,5 @@ The ordinary preflight currently stops at the local VLM provider because
 `cti-vss-qwen3-vl` is not running. Thor has about 34 GiB available unified
 memory while the fail-closed VLM start gate requires 50 GiB. Unrelated GPU
 containers must be temporarily stopped with operator approval before the
-local VLM and complete stack can be started and the 30 probes promoted to
+local VLM and complete stack can be started and the 32 probes promoted to
 current runtime passes.

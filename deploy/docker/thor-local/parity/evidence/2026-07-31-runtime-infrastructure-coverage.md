@@ -5,8 +5,10 @@
 The source-safe runtime tier now covers all selected HTTP-readable
 infrastructure surfaces: Elasticsearch, Kibana, Phoenix, Logstash,
 Prometheus, Grafana, node-exporter, cAdvisor, and the Thor tegrastats exporter.
-The complete inventory is 21 services and 30 GET-only loopback probes. No
-container was started, stopped, built, or downloaded during this work.
+The complete inventory is 22 services and 32 GET-only loopback probes. The two
+new probes cover the VIOS MCP transport and LVS invalid-purpose 422 semantic
+contract. No application-stack container was started or stopped by the
+runtime-tier capture.
 
 Prometheus qualification is not a generic HTTP check. A bounded read of
 `/api/v1/targets` requires exactly one healthy target for each versioned job:
@@ -70,11 +72,12 @@ Static results:
 
 ```text
 All Thor runtime-infrastructure static contracts passed.
-Ran 23 tests ... OK
+Full Thor qualification suite: 62 tests ... OK
 ```
 
 The final command ran against the deliberately stopped stack and returned
-`result: unavailable`, exactly 30 unavailable probes, zero
+`result: unavailable`, exactly 32 unavailable probes, zero
 passes/failures/skips, and exit status 2. That current count includes the
-tegrastats exporter. It remains absence evidence, not a runtime pass; current
-live qualification still requires the operator-approved unified stack start.
+tegrastats exporter, VIOS MCP, and LVS semantic probe. It remains absence
+evidence, not a runtime pass; current live qualification still requires the
+operator-approved unified stack start.

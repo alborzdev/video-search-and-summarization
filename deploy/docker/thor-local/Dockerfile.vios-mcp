@@ -1,0 +1,32 @@
+ARG PYTHON_BASE_IMAGE=python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+FROM ${PYTHON_BASE_IMAGE}
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONPATH=/app
+
+WORKDIR /app
+
+COPY deploy/docker/thor-local/vios-mcp/requirements-linux-aarch64.txt /opt/vios-mcp-contract/requirements.txt
+COPY deploy/docker/thor-local/vios-mcp/wheels-linux-aarch64.lock.json /opt/vios-mcp-contract/wheels.lock.json
+COPY deploy/docker/thor-local/vios-mcp/verify_wheelhouse.py /opt/vios-mcp-contract/verify_wheelhouse.py
+COPY deploy/docker/thor-local/vios-mcp/wheelhouse/ /opt/vios-mcp-contract/wheelhouse/
+RUN python /opt/vios-mcp-contract/verify_wheelhouse.py \
+      --lock /opt/vios-mcp-contract/wheels.lock.json \
+      --requirements /opt/vios-mcp-contract/requirements.txt \
+      --wheelhouse /opt/vios-mcp-contract/wheelhouse && \
+    python -m pip install --no-index --no-deps \
+      --find-links /opt/vios-mcp-contract/wheelhouse \
+      --requirement /opt/vios-mcp-contract/requirements.txt && \
+    python -m pip check && \
+    rm -rf /opt/vios-mcp-contract/wheelhouse
+
+COPY services/vios/mcp/src /app/src
+
+USER 65534:65534
+EXPOSE 8001
+
+ENTRYPOINT ["python", "-m", "src"]
+CMD ["--transport", "http", "--host", "127.0.0.1", "--port", "8001"]

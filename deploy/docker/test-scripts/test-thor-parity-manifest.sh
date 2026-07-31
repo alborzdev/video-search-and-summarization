@@ -14,9 +14,9 @@ spatialai_qualifier="${repo_root}/deploy/docker/thor-local/qualification/qualify
 python3 "${verifier}"
 
 report="$(python3 "${verifier}" --report)"
-grep -q "Ledger: 36 families, 223 advertised capabilities, 16 skills" <<<"${report}"
+grep -q "Ledger: 36 families, 224 advertised capabilities, 16 skills" <<<"${report}"
 grep -q "Thor state: external_optional=3, partial=18, wired=15" <<<"${report}"
-grep -q "Runtime: blocked=3, not_applicable=3, not_qualified=17, passed_current=2, passed_prior=8, static_only=3" <<<"${report}"
+grep -q "Runtime: blocked=2, not_applicable=3, not_qualified=18, passed_current=2, passed_prior=8, static_only=3" <<<"${report}"
 grep -q "Completion: 2/33 local families passed current" <<<"${report}"
 grep -q "smart-city: partial/static_only" <<<"${report}"
 grep -q "warehouse-2d: partial/static_only" <<<"${report}"
@@ -28,7 +28,7 @@ grep -q "auto-calibration: partial/blocked" <<<"${report}"
 grep -q "vios-codecs-audio: wired/not_qualified" <<<"${report}"
 grep -q "vios-ui: wired/not_qualified" <<<"${report}"
 grep -q "infra-observability: partial/not_qualified" <<<"${report}"
-grep -q "nemoclaw-openclaw: partial/blocked" <<<"${report}"
+grep -q "nemoclaw-openclaw: partial/not_qualified" <<<"${report}"
 jq -e '.features[] | select(.id == "synthetic-data-tools") | .thor_state == "wired" and .runtime_state == "passed_current"' \
   "${repo_root}/deploy/docker/thor-local/parity/manifest.json" >/dev/null
 grep -q "Acceptance: alternate_local_lane=13, external_optional=3, required_local=20" <<<"${report}"

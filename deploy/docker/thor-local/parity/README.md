@@ -25,6 +25,18 @@ Print the current gap report:
 python3 deploy/docker/thor-local/parity/verify_manifest.py --report
 ```
 
+Compile the complete stateful acceptance plan without executing it:
+
+```bash
+python3 deploy/docker/thor-local/qualification/acceptance.py
+```
+
+This Phase 0 planner fail-closes unless every current feature capability,
+skill, REST operation, MCP tool, and MCP prompt has a scenario and explicit
+blockers. It has no execution option and reports zero network requests,
+processes, or mutations. See `qualification/ACCEPTANCE.md` for its owned
+namespace, exact-target cleanup, fixture, and append-only ledger contracts.
+
 `manifest.json` is intentionally conservative. `source_only`, `partial`,
 `static_only`, `not_qualified`, and `blocked` are open work, not parity. A
 feature may become `wired` only when the Thor Compose/config path selects it;

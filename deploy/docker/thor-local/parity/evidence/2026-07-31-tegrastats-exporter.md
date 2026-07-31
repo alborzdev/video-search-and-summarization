@@ -45,8 +45,8 @@ Ran 9 tests ... OK
 Ran 23 tests ... OK
 ```
 
-`docker compose config --services` resolves 32 Thor services, including the
+`docker compose config --services` now resolves 33 Thor services, including the
 exporter. These are source/config/parser facts only. No container was started
 or stopped, so the exporter, its scrape, the seven-job target gate, and the
-30-probe inventory remain runtime-unqualified until the operator-approved
+32-probe inventory remain runtime-unqualified until the operator-approved
 unified qualification run.

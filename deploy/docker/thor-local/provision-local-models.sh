@@ -10,8 +10,8 @@
 set -euo pipefail
 umask 077
 
-script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-thor_local="${script_dir}/../scripts/thor-local.sh"
+provisioner_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+thor_local="${provisioner_dir}/../scripts/thor-local.sh"
 
 export THOR_LOCAL_SOURCE_ONLY=true
 # shellcheck source=../scripts/thor-local.sh
@@ -19,6 +19,8 @@ source "${thor_local}"
 
 model_image="${THOR_LOCAL_VLLM_IMAGE:-ghcr.io/nvidia-ai-iot/vllm@sha256:6402d5ac90223b9ba4434228f98aec798c5a8b942e770ee47528b4148e923105}"
 model_cache="${THOR_LOCAL_HF_CACHE_DIR:-${HOME}/.cache/huggingface}"
+model_artifact_verifier="${provisioner_dir}/models/verify_artifacts.py"
+model_artifact_lock="${provisioner_dir}/models/artifacts.lock.json"
 llm_repository="${THOR_LOCAL_LLM_REPOSITORY:-Qwen/Qwen3.6-35B-A3B-FP8}"
 llm_revision="${THOR_LOCAL_LLM_REVISION:-95a723d08a9490559dae23d0cff1d9466213d989}"
 vlm_repository="${THOR_LOCAL_VLM_REPOSITORY:-Qwen/Qwen3-VL-8B-Instruct-FP8}"
@@ -36,9 +38,10 @@ Usage: provision-local-models.sh <status|provision>
   status     Verify the pinned image, model snapshots, and configured containers.
   provision  Create only missing configured containers from already-staged assets.
 
-The command never pulls, removes, or recreates containers. Model names,
-container names, endpoints, cache path, image digest, and revisions can be
-overridden with the THOR_LOCAL_* variables documented in this script.
+The command never pulls, removes, recreates, or downloads. Container names,
+endpoints, and cache path can be overridden with THOR_LOCAL_* variables. The
+model repositories and revisions are accepted only when they match the
+reviewed artifacts.lock.json identity; changing them requires a reviewed lock.
 EOF
 }
 
@@ -71,13 +74,21 @@ require_snapshot() {
   local role="$1"
   local repository="$2"
   local revision="$3"
-  local snapshot
+  local artifact="$4"
+  local snapshot repository_root
   snapshot="$(snapshot_directory "${repository}" "${revision}")"
-  [[ -s "${snapshot}/config.json" ]] ||
-    die "${role} snapshot is not staged at ${snapshot}"
-  find -L "${snapshot}" -maxdepth 1 -name '*.safetensors' -type f -size +100M -print -quit |
-    grep -q . || die "${role} snapshot has no staged model weights at ${snapshot}"
-  echo "[OK] ${role} snapshot is staged at revision ${revision}."
+  repository_root="$(dirname -- "$(dirname -- "${snapshot}")")"
+  [[ -r "${model_artifact_verifier}" && -r "${model_artifact_lock}" ]] ||
+    die "Missing Thor model artifact verifier or reviewed lock"
+  python3 "${model_artifact_verifier}" verify-hf \
+    --lock "${model_artifact_lock}" \
+    --artifact "${artifact}" \
+    --snapshot "${snapshot}" \
+    --repository-root "${repository_root}" \
+    --repository "${repository}" \
+    --revision "${revision}" ||
+    die "${role} snapshot differs from the exact reviewed artifact lock"
+  echo "[OK] ${role} snapshot exactly matches revision ${revision}."
 }
 
 container_matches() {
@@ -180,8 +191,8 @@ create_vlm() {
 }
 
 status() {
-  require_snapshot LLM "${llm_repository}" "${llm_revision}"
-  require_snapshot VLM "${vlm_repository}" "${vlm_revision}"
+  require_snapshot LLM "${llm_repository}" "${llm_revision}" qwen_llm
+  require_snapshot VLM "${vlm_repository}" "${vlm_revision}" qwen_vlm
   container_matches LLM "${THOR_LOCAL_LLM_CONTAINER}" "${llm_repository}" \
     "${llm_revision}" "${THOR_LOCAL_LLM_MODEL}" "${LLM_ENDPOINT_URL}" ||
     die "Configured LLM container does not exist: ${THOR_LOCAL_LLM_CONTAINER}"
@@ -191,8 +202,8 @@ status() {
 }
 
 provision() {
-  require_snapshot LLM "${llm_repository}" "${llm_revision}"
-  require_snapshot VLM "${vlm_repository}" "${vlm_revision}"
+  require_snapshot LLM "${llm_repository}" "${llm_revision}" qwen_llm
+  require_snapshot VLM "${vlm_repository}" "${vlm_revision}" qwen_vlm
   docker image inspect "${model_image}" >/dev/null 2>&1 ||
     die "Pinned vLLM image is not staged; this offline command will not pull it: ${model_image}"
   if ! docker container inspect "${THOR_LOCAL_LLM_CONTAINER}" >/dev/null 2>&1; then

@@ -1,0 +1,2125 @@
+{
+  "blockers": [
+    {
+      "id": "phase1-execution-disabled",
+      "reason": "Phase 0 validates and emits plans only; no action executor is present.",
+      "scope": "phase0"
+    },
+    {
+      "id": "operation-classification-required",
+      "reason": "Every current REST operation and MCP tool is assigned, but individual mutation ownership and exact cleanup semantics must be classified before execution.",
+      "scope": "classification"
+    },
+    {
+      "id": "current-runtime-evidence-required",
+      "reason": "The current Thor runtime has not produced fresh stateful acceptance evidence for this assignment.",
+      "scope": "runtime"
+    },
+    {
+      "id": "operator-lifecycle-approval",
+      "reason": "Starting, stopping, or switching a VSS profile requires explicit operator approval and a restore plan.",
+      "scope": "runtime"
+    },
+    {
+      "id": "memory-capacity-gate",
+      "reason": "Local model and profile startup must first pass the Thor memory-capacity gate.",
+      "scope": "capacity"
+    },
+    {
+      "id": "scale-envelope-unproven",
+      "reason": "The advertised upstream stream envelope has not been demonstrated on Thor.",
+      "scope": "capacity"
+    },
+    {
+      "id": "alternate-vlm-assets-missing",
+      "reason": "The complete immutable Cosmos and alternate local VLM snapshot matrix is not staged.",
+      "scope": "asset"
+    },
+    {
+      "id": "warehouse-assets-missing",
+      "reason": "Custom aligned warehouse videos, calibration, and model assets are not staged.",
+      "scope": "asset"
+    },
+    {
+      "id": "auto-calibration-assets-missing",
+      "reason": "The auto-calibration backend image and optional VGGT refinement assets are not staged.",
+      "scope": "asset"
+    },
+    {
+      "id": "omni-assets-missing",
+      "reason": "The immutable Nemotron Omni model snapshot is not staged.",
+      "scope": "asset"
+    },
+    {
+      "id": "browser-ui-driver-pending",
+      "reason": "A bounded loopback-only browser driver is not part of Phase 0.",
+      "scope": "runtime"
+    },
+    {
+      "id": "external-slack-required",
+      "reason": "Slack delivery requires a user-managed workspace, application, token, and destination.",
+      "scope": "external"
+    },
+    {
+      "id": "external-kubernetes-required",
+      "reason": "Helm acceptance requires an operator-provided Kubernetes cluster.",
+      "scope": "external"
+    },
+    {
+      "id": "external-enterprise-rag-required",
+      "reason": "Enterprise RAG requires an operator-provided external service and credentials.",
+      "scope": "external"
+    }
+  ],
+  "coverage": {
+    "api_surfaces": [
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 44,
+        "items_sha256": "a4079e9696f1abad7ca6b18b77be195a317316d3ef244b45c040709a8848582b",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "agent"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 27,
+        "items_sha256": "51be3f2633cf62b4d4c10dfac722f2c8bfb88b05653c355f51a77c9d59ae156b",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "rt-vlm"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 24,
+        "items_sha256": "81031349f4ad9582908ba819b9a98ff99e3ca5e2781a56149223029e99f336e9",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "rt-embed"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 9,
+        "items_sha256": "4df65c6dcfe951c8eda31dfec9b8c92b5cb595302826fab7a6403c97534d95f0",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "rt-cv"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 19,
+        "items_sha256": "5b9a1d233e84e1dd3648eb07d691b80a579345a7624809412fd6aa5152eec424",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "alerts"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 17,
+        "items_sha256": "4156e760431ce88f40f254ae8bc1e0bd6540cf2d289cedfe3b5de40bae81e2d4",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "lvs"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 56,
+        "items_sha256": "17dc6519f7d1b9ca341cb63520eaf3f0396a5db32e18e5c6f32898133af923ea",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "video-analytics"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 20,
+        "items_sha256": "8ce8c3d9a1c261b470ec977a057ebcd33f18e2c4171f780e3453435cd0b50d1f",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "vios-live"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 21,
+        "items_sha256": "b9eef78422c4309e6d6fbdb090538d5fe9802b024442cb92e54a07600f91a1aa",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "vios-replay"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 7,
+        "items_sha256": "12ea0f242876e542e4978c88804ad066fb061e534189a78ff0921d5ddb37aff6",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "vios-proxy"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 28,
+        "items_sha256": "ae18de8ddca2fcf349efafe1df67384b78ec79177e0c44daf85d2dc893480113",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "vios-sensor"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 26,
+        "items_sha256": "f4b47be74eeff718fc5c3843fceba684681d22d1593d8fb47959705494358bc4",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "vios-storage"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 12,
+        "items_sha256": "bad2313602a70a45221d1d227be505ea49e16fc8b59c93b5ffd635ef15883af5",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "vios-stream-bridge"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 16,
+        "items_sha256": "dd6683922caf49a6bf21d28e3f532efc90b48df30140844f78fd348a202fdb6c",
+        "scenario_id": "rest-api-operation-matrix",
+        "selector": "all-current-operations",
+        "surface_id": "vios-recorder"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 7,
+        "expected_prompt_count": 0,
+        "items_sha256": "857354f73e9774cb008edd06e03206cb5caed6279f9e19cb58b34db6959b069f",
+        "prompt_names": [],
+        "prompts_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scenario_id": "mcp-tool-operation-matrix",
+        "selector": "all-current-tools-and-prompts",
+        "surface_id": "va-mcp"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 9,
+        "expected_prompt_count": 0,
+        "items_sha256": "b570e235f31e85789dc0b6e05c70bd40fdfe206618c0658f5b16df65118d3cfc",
+        "prompt_names": [],
+        "prompts_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "scenario_id": "mcp-tool-operation-matrix",
+        "selector": "all-current-tools-and-prompts",
+        "surface_id": "lvs-mcp"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "operation-classification-required",
+          "current-runtime-evidence-required"
+        ],
+        "expected_item_count": 22,
+        "expected_prompt_count": 5,
+        "items_sha256": "638e797e84c4ec85abb99fdee652f743af187b9d5fd3c6c9c2fbb8adec00bb44",
+        "prompt_names": [
+          "picture_for_camera",
+          "picture_url_for_camera",
+          "sensors_count",
+          "sensors_recording_status",
+          "video_for_sensor"
+        ],
+        "prompts_sha256": "7d11d3f61f6209942bf9c978012d44920063080aa6558b6b4008489e7a55b686",
+        "scenario_id": "mcp-tool-operation-matrix",
+        "selector": "all-current-tools-and-prompts",
+        "surface_id": "vios-mcp"
+      }
+    ],
+    "features": [
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "2cfa05957c4d80ce5498c5ec0a8c22ed1504ce4f9494b3ac6aca9bd44702c913",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "base-agent-workflow",
+        "scenario_ids": [
+          "core-agent-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "c38111089dc10c6fdfcd75c9d9a2af0691c02aee791c410572e0fbbde74fcbbc",
+        "disposition": "planned",
+        "expected_capability_count": 9,
+        "feature_id": "video-summarization-file",
+        "scenario_ids": [
+          "core-agent-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "8c7a1ca498f146e00cab1f70aeb9af2eb40b74e09f63da86b5fe4255fa03b51a",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "video-summarization-live",
+        "scenario_ids": [
+          "core-agent-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "a0ae2ae469d0ac30387299b65d9cbcffd11f1f2a25fedab9629a3d3962c5d63d",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "semantic-search",
+        "scenario_ids": [
+          "search-archive-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "scale-envelope-unproven"
+        ],
+        "capabilities_sha256": "5a8f12022b7e612e1eeb69f43deeb8edd43c0e6a6bdd4aada2897096abb35fb5",
+        "disposition": "planned",
+        "expected_capability_count": 2,
+        "feature_id": "search-scale",
+        "scenario_ids": [
+          "observability-scale-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "c9da80d4c054c65a75ab36a8c92d6ab79066e041c54c20a66d6e4680933d16cb",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "alert-verification",
+        "scenario_ids": [
+          "alert-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "d68c77213cd84e2e8a193e5b2f2380653db4334e14810fc2274d2e16fbe913de",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "realtime-alerts",
+        "scenario_ids": [
+          "alert-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "external-slack-required"
+        ],
+        "capabilities_sha256": "08ce4d50b7bbc38b1102e33612d2c78191b2560e341311802b2a63bc9de07d8d",
+        "disposition": "external-optional",
+        "expected_capability_count": 1,
+        "feature_id": "alert-notifications-slack",
+        "scenario_ids": [
+          "external-integration-boundaries"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "e60d4fb50a74dcf7ecbf4dfa46550a52c78cb0f76f12871d460167beb220bdc8",
+        "disposition": "planned",
+        "expected_capability_count": 11,
+        "feature_id": "rt-vlm-media",
+        "scenario_ids": [
+          "rtvi-media-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "c98ae81293b8a49d3f7d4f9332d9126238c9af04543d2e72116521d8ff987883",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "rt-vlm-api",
+        "scenario_ids": [
+          "rtvi-media-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "memory-capacity-gate",
+          "alternate-vlm-assets-missing",
+          "omni-assets-missing"
+        ],
+        "capabilities_sha256": "09a2e74a7ede91abfb9deafb2ee93f171d51eb4a1299443a7c046088dafb8912",
+        "disposition": "planned",
+        "expected_capability_count": 5,
+        "feature_id": "rt-vlm-models",
+        "scenario_ids": [
+          "model-alternate-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "065983a82a4bb9ebde1fd8f34d34ba11add806317b3ba2c590a99d142bf02907",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "rt-vlm-performance-observability",
+        "scenario_ids": [
+          "rtvi-media-workflows",
+          "observability-scale-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "cb813e8066059d3b6a1654c7d8a29e6f50dff9521de090614ba63e7dada72ad5",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "rt-embed",
+        "scenario_ids": [
+          "rtvi-media-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "a0cf8d253423560b00bf40541a8b5a4e2462747db4961dc0dcc273d66012f011",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "rt-cv-2d",
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "warehouse-assets-missing"
+        ],
+        "capabilities_sha256": "74cf4e6051327ee64f5b8b000098962f752675f4c1ce0c41672a5d877991d39d",
+        "disposition": "planned",
+        "expected_capability_count": 2,
+        "feature_id": "rt-cv-3d-sparse4d",
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "warehouse-assets-missing"
+        ],
+        "capabilities_sha256": "d0ffb1a3c1cdd8281715e432033f431f54293f7ffebd357fef4cbd81dbf5501d",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "rt-cv-3d-mv3dt",
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "9257c2aef38e609aebd3a0873ea62313df56ac0167f1d731baf8d80706940ae1",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "behavior-analytics",
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "b01d3c054ae5caeac43ad5fdd31ea1f6936c9b39c09e8ca22219c8cdf5dbe8f9",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "video-analytics-api",
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "auto-calibration-assets-missing"
+        ],
+        "capabilities_sha256": "b23b9638b278559a87c2452f5fb8e4b5fda3022da1bf21991fdac90fe49dde9d",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "auto-calibration",
+        "scenario_ids": [
+          "auto-calibration-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "c427d329c1adf3c878c900e8391fd9731ead02167ce31bf2503637eecc782fbb",
+        "disposition": "planned",
+        "expected_capability_count": 9,
+        "feature_id": "vios-core",
+        "scenario_ids": [
+          "analytics-vios-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "4690a9326c5f0af3ebd66fb33a415383f58e8d91bd9be19d08f73cd9ba04b8ec",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "vios-codecs-audio",
+        "scenario_ids": [
+          "analytics-vios-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "memory-capacity-gate",
+          "omni-assets-missing"
+        ],
+        "capabilities_sha256": "04896c0d68f6d29804c553828df6ea25c63266fd16a048581e59820abb4d1b4e",
+        "disposition": "planned",
+        "expected_capability_count": 3,
+        "feature_id": "audio-understanding",
+        "scenario_ids": [
+          "model-alternate-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "browser-ui-driver-pending"
+        ],
+        "capabilities_sha256": "e13222ee921dd2e63af374afcb17a9d1d8490fb037bdc90e729af6b327ece8d5",
+        "disposition": "planned",
+        "expected_capability_count": 7,
+        "feature_id": "vios-ui",
+        "scenario_ids": [
+          "ui-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "browser-ui-driver-pending"
+        ],
+        "capabilities_sha256": "ca4f70b0ba5349f71ef6b521d9adf8983151cf9babdba329d63a981183243f2b",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "main-ui",
+        "scenario_ids": [
+          "ui-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "0b01f28228064e4c9db1780a06476f6ec9572e5c39de1f9e19e7b01ccdfc01f9",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "smart-city",
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "578e9c88d241aeb980896835443b20f5a4eb7a254be4fdf4e5e58570c4c54fec",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "warehouse-2d",
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "warehouse-assets-missing"
+        ],
+        "capabilities_sha256": "9ccc1116cda98f25ac90248ee1dfb09612d27c96b8b4f8bb4db26dd55852d512",
+        "disposition": "planned",
+        "expected_capability_count": 5,
+        "feature_id": "warehouse-3d-and-mv3dt",
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "f40e52837c7903d2419842e245ae4366d6198f39b4c6a80ca5060e300e0ec1c9",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "agent-and-mcp-apis",
+        "scenario_ids": [
+          "rest-api-operation-matrix",
+          "mcp-tool-operation-matrix"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "58bab132b566937ad64702550e507e84ad7c85b26c008d32ba932514d4a5e8c0",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "infra-observability",
+        "scenario_ids": [
+          "observability-scale-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled"
+        ],
+        "capabilities_sha256": "e9c5961f2f43669ff5b1089abb8754d9e9db0ec4a40bf1ccea27f5a66af724d6",
+        "disposition": "planned",
+        "expected_capability_count": 8,
+        "feature_id": "spatial-ai-utils",
+        "scenario_ids": [
+          "offline-tool-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled"
+        ],
+        "capabilities_sha256": "c34ff24315df85cff0fea612af4cff1a5b691dee3e190a19e7ccadb8ff765e3d",
+        "disposition": "planned",
+        "expected_capability_count": 4,
+        "feature_id": "synthetic-data-tools",
+        "scenario_ids": [
+          "offline-tool-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "856e5cac43b36e17bbd81168048082111f5e2a10fbee1a07752f6d0207fad935",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "docker-compose",
+        "scenario_ids": [
+          "offline-tool-workflows",
+          "industry-profile-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "external-kubernetes-required"
+        ],
+        "capabilities_sha256": "1484ec4d1dc0556da245f6cdd7623be6f7c727b348a456d310b52d6f82707529",
+        "disposition": "external-optional",
+        "expected_capability_count": 2,
+        "feature_id": "helm",
+        "scenario_ids": [
+          "external-integration-boundaries"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "e213fb6a1efe6a2efaef4c26f2ebd241f643dc1d3f9b2102504d07960683f5c0",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "nemoclaw-openclaw",
+        "scenario_ids": [
+          "openclaw-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "external-enterprise-rag-required"
+        ],
+        "capabilities_sha256": "958f73abead050d3f382ccffddbb7df97754510dab7429acffda683fd151588f",
+        "disposition": "external-optional",
+        "expected_capability_count": 2,
+        "feature_id": "enterprise-rag",
+        "scenario_ids": [
+          "external-integration-boundaries"
+        ],
+        "selector": "all-current-capabilities"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "capabilities_sha256": "452ebb67c27d982b90cd4ff12e32d4e7d2ed2ed55cf48ef9215d902040b5040b",
+        "disposition": "planned",
+        "expected_capability_count": 6,
+        "feature_id": "offline-security",
+        "scenario_ids": [
+          "offline-tool-workflows"
+        ],
+        "selector": "all-current-capabilities"
+      }
+    ],
+    "skills": [
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-ask-video"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-deploy-dense-captioning"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-deploy-detection-tracking-2d"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "warehouse-assets-missing"
+        ],
+        "scenario_id": "industry-profile-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-deploy-detection-tracking-3d"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-deploy-profile"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-deploy-video-embedding"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "auto-calibration-assets-missing"
+        ],
+        "scenario_id": "auto-calibration-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-generate-video-calibration"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-generate-video-report"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required",
+          "external-enterprise-rag-required"
+        ],
+        "scenario_id": "external-integration-boundaries",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-generate-video-report-rag"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-manage-alerts"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-manage-video-io-storage"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-query-analytics"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-search-archive"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-setup-behavior-analytics"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-setup-video-analytics-api"
+      },
+      {
+        "blocker_ids": [
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
+        ],
+        "scenario_id": "skill-catalog-workflows",
+        "selector": "complete-skill-workflow",
+        "skill_id": "vss-summarize-video"
+      }
+    ]
+  },
+  "execution_enabled": false,
+  "mode": "plan-only",
+  "policies": {
+    "cleanup": {
+      "continue_after_failure": true,
+      "exact_created_target_only": true,
+      "order": "strict-lifo",
+      "record_every_attempt": true
+    },
+    "ledger": {
+      "append_only_writes": true,
+      "format": "jsonl-sha256-chain-v1",
+      "fsync_each_record": true,
+      "mode": "0600",
+      "refuse_symlink_or_hardlink": true
+    },
+    "namespace": {
+      "max_length": 63,
+      "owned_resources_only": true,
+      "prefix": "thor-vss-accept-",
+      "resource_template": "${namespace}-<resource>"
+    },
+    "safety_classes": [
+      {
+        "approval": "none",
+        "id": "observe",
+        "mutates": false,
+        "phase0_executable": false
+      },
+      {
+        "approval": "explicit-run",
+        "id": "owned-create",
+        "mutates": true,
+        "phase0_executable": false
+      },
+      {
+        "approval": "explicit-run",
+        "id": "owned-update",
+        "mutates": true,
+        "phase0_executable": false
+      },
+      {
+        "approval": "explicit-run",
+        "id": "owned-delete",
+        "mutates": true,
+        "phase0_executable": false
+      },
+      {
+        "approval": "operator",
+        "id": "service-lifecycle",
+        "mutates": true,
+        "phase0_executable": false
+      },
+      {
+        "approval": "operator",
+        "id": "external-side-effect",
+        "mutates": true,
+        "phase0_executable": false
+      },
+      {
+        "approval": "operator",
+        "id": "unclassified-blocked",
+        "mutates": null,
+        "phase0_executable": false
+      }
+    ],
+    "transport": {
+      "allowed_schemes": [
+        "http"
+      ],
+      "ambient_proxies": false,
+      "follow_redirects": false,
+      "loopback_only": true,
+      "max_body_bytes": 1048576,
+      "max_sse_bytes": 262144,
+      "max_sse_events": 128,
+      "max_sse_seconds": 15,
+      "numeric_ip_only": true
+    }
+  },
+  "scenarios": [
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "upload-agent-video",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "agent-video",
+          "path": "/api/v1/videos",
+          "register_target_from": "upload-agent-video.response.video_id",
+          "request_name_from": "agent-video.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "upload-agent-video.response.video_id",
+          "id": "complete-agent-video",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "agent-video",
+          "path": "/api/v1/videos/{video_id}/complete",
+          "safety_class": "owned-update",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "agent-chat-report",
+          "kind": "http",
+          "method": "POST",
+          "path": "/chat/stream",
+          "safety_class": "observe",
+          "sse": {
+            "max_bytes": 262144,
+            "max_events": 128,
+            "max_seconds": 15
+          },
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "upload-lvs-file",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "lvs-file",
+          "path": "/files",
+          "register_target_from": "upload-lvs-file.response.file_id",
+          "request_name_from": "lvs-file.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:38111",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "summarize-lvs-file",
+          "kind": "http",
+          "method": "POST",
+          "path": "/v1/summarize",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:38111",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "upload-lvs-file.response.file_id",
+          "id": "delete-lvs-file",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "lvs-file",
+          "path": "/files/{file_id}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:38111",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "upload-agent-video.response.video_id",
+          "id": "delete-agent-video",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "agent-video",
+          "path": "/api/v1/videos/{video_id}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "cleanup_order": [
+        "delete-lvs-file",
+        "delete-agent-video"
+      ],
+      "description": "Plan bounded upload, chat, report, and summarization behavior with exact owned cleanup.",
+      "fixture_ids": [
+        "tiny-h264-aac"
+      ],
+      "id": "core-agent-workflows",
+      "owned_resources": [
+        {
+          "cleaned_by": "delete-agent-video",
+          "created_by": "upload-agent-video",
+          "id": "agent-video",
+          "kind": "agent-video",
+          "name_template": "${namespace}-agent-video",
+          "target_from": "upload-agent-video.response.video_id"
+        },
+        {
+          "cleaned_by": "delete-lvs-file",
+          "created_by": "upload-lvs-file",
+          "id": "lvs-file",
+          "kind": "lvs-file",
+          "name_template": "${namespace}-lvs-file",
+          "target_from": "upload-lvs-file.response.file_id"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "ingest-search-video",
+          "kind": "http",
+          "method": "PUT",
+          "owned_resource": "search-video",
+          "path": "/api/v1/videos-for-search/{filename}",
+          "register_target_from": "ingest-search-video.response.video_id",
+          "request_name_from": "search-video.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "search-text-fusion",
+          "kind": "http",
+          "method": "POST",
+          "path": "/api/v1/search/full",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "search-image",
+          "kind": "http",
+          "method": "POST",
+          "path": "/api/v1/embed_search/full",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "ingest-search-video.response.video_id",
+          "id": "delete-search-video",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "search-video",
+          "path": "/api/v1/videos/{video_id}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8100",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "cleanup_order": [
+        "delete-search-video"
+      ],
+      "description": "Plan archive ingestion plus text, attribute, fusion, image, critic, and follow-up search.",
+      "fixture_ids": [
+        "tiny-h264-aac",
+        "tiny-blue-image"
+      ],
+      "id": "search-archive-workflows",
+      "owned_resources": [
+        {
+          "cleaned_by": "delete-search-video",
+          "created_by": "ingest-search-video",
+          "id": "search-video",
+          "kind": "search-archive",
+          "name_template": "${namespace}-search-video",
+          "target_from": "ingest-search-video.response.video_id"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "create-alert-rule",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "alert-rule",
+          "path": "/api/v1/realtime",
+          "register_target_from": "create-alert-rule.response.alert_rule_id",
+          "request_name_from": "alert-rule.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:9080",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "create-alert-rule.response.alert_rule_id",
+          "id": "replay-alert-rule",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "alert-rule",
+          "path": "/api/v1/realtime/replay",
+          "safety_class": "owned-update",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:9080",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "query-alert-incidents",
+          "kind": "http",
+          "method": "GET",
+          "path": "/api/v1/realtime/incidents",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:9080",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "create-alert-rule.response.alert_rule_id",
+          "id": "delete-alert-rule",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "alert-rule",
+          "path": "/api/v1/realtime/{alert_rule_id}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:9080",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "cleanup_order": [
+        "delete-alert-rule"
+      ],
+      "description": "Plan verification, realtime rule lifecycle, replay, incident, and delivery checks.",
+      "fixture_ids": [
+        "tiny-h264-aac"
+      ],
+      "id": "alert-workflows",
+      "owned_resources": [
+        {
+          "cleaned_by": "delete-alert-rule",
+          "created_by": "create-alert-rule",
+          "id": "alert-rule",
+          "kind": "alert-rule",
+          "name_template": "${namespace}-alert-rule",
+          "target_from": "create-alert-rule.response.alert_rule_id"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "upload-vlm-file",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "vlm-file",
+          "path": "/v1/files",
+          "register_target_from": "upload-vlm-file.response.file_id",
+          "request_name_from": "vlm-file.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8018",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "add-vlm-stream",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "vlm-stream",
+          "path": "/v1/stream/add",
+          "register_target_from": "add-vlm-stream.response.stream_id",
+          "request_name_from": "vlm-stream.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8018",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "vlm-chat-sse",
+          "kind": "http",
+          "method": "POST",
+          "path": "/v1/chat/completions",
+          "safety_class": "observe",
+          "sse": {
+            "max_bytes": 262144,
+            "max_events": 128,
+            "max_seconds": 15
+          },
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8018",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "upload-embed-file",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "embed-file",
+          "path": "/v1/files",
+          "register_target_from": "upload-embed-file.response.file_id",
+          "request_name_from": "embed-file.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8017",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "add-embed-stream",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "embed-stream",
+          "path": "/v1/stream/add",
+          "register_target_from": "add-embed-stream.response.stream_id",
+          "request_name_from": "embed-stream.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8017",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "generate-embeddings",
+          "kind": "http",
+          "method": "POST",
+          "path": "/v1/generate_video_embeddings",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8017",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "add-embed-stream.response.stream_id",
+          "id": "remove-embed-stream",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "embed-stream",
+          "path": "/v1/stream/remove",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8017",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "upload-embed-file.response.file_id",
+          "id": "delete-embed-file",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "embed-file",
+          "path": "/v1/files/{file_id}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8017",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "add-vlm-stream.response.stream_id",
+          "id": "remove-vlm-stream",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "vlm-stream",
+          "path": "/v1/stream/remove",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8018",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "upload-vlm-file.response.file_id",
+          "id": "delete-vlm-file",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "vlm-file",
+          "path": "/v1/files/{file_id}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8018",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "cleanup_order": [
+        "remove-embed-stream",
+        "delete-embed-file",
+        "remove-vlm-stream",
+        "delete-vlm-file"
+      ],
+      "description": "Plan RT-VLM and RT-Embed file, stream, chat, caption, audio, and embedding matrices.",
+      "fixture_ids": [
+        "tiny-h264-aac",
+        "tiny-blue-image"
+      ],
+      "id": "rtvi-media-workflows",
+      "owned_resources": [
+        {
+          "cleaned_by": "delete-vlm-file",
+          "created_by": "upload-vlm-file",
+          "id": "vlm-file",
+          "kind": "rt-vlm-file",
+          "name_template": "${namespace}-vlm-file",
+          "target_from": "upload-vlm-file.response.file_id"
+        },
+        {
+          "cleaned_by": "remove-vlm-stream",
+          "created_by": "add-vlm-stream",
+          "id": "vlm-stream",
+          "kind": "rt-vlm-stream",
+          "name_template": "${namespace}-vlm-stream",
+          "target_from": "add-vlm-stream.response.stream_id"
+        },
+        {
+          "cleaned_by": "delete-embed-file",
+          "created_by": "upload-embed-file",
+          "id": "embed-file",
+          "kind": "rt-embed-file",
+          "name_template": "${namespace}-embed-file",
+          "target_from": "upload-embed-file.response.file_id"
+        },
+        {
+          "cleaned_by": "remove-embed-stream",
+          "created_by": "add-embed-stream",
+          "id": "embed-stream",
+          "kind": "rt-embed-stream",
+          "name_template": "${namespace}-embed-stream",
+          "target_from": "add-embed-stream.response.stream_id"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "create-vios-sensor",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "vios-sensor",
+          "path": "/vst/api/v1/sensor/add",
+          "register_target_from": "create-vios-sensor.response.sensor_id",
+          "request_name_from": "vios-sensor.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:30888",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "start-vios-recording",
+          "kind": "http",
+          "method": "POST",
+          "owned_resource": "vios-recording",
+          "path": "/vst/api/v1/record/stream/add",
+          "register_target_from": "start-vios-recording.response.stream_id",
+          "request_name_from": "vios-recording.name_template",
+          "safety_class": "owned-create",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:30888",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "query-vios-timelines",
+          "kind": "http",
+          "method": "GET",
+          "path": "/vst/api/v1/record/timelines",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:30888",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "id": "query-video-analytics",
+          "kind": "http",
+          "method": "GET",
+          "path": "/incidents",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:8081",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "start-vios-recording.response.stream_id",
+          "id": "delete-vios-recording",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "vios-recording",
+          "path": "/vst/api/v1/record/{streamId}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:30888",
+            "proxies": false,
+            "redirects": false
+          }
+        },
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required"
+          ],
+          "exact_target_from": "create-vios-sensor.response.sensor_id",
+          "id": "delete-vios-sensor",
+          "kind": "http",
+          "method": "DELETE",
+          "owned_resource": "vios-sensor",
+          "path": "/vst/api/v1/sensor/{sensorId}",
+          "safety_class": "owned-delete",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:30888",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "cleanup_order": [
+        "delete-vios-recording",
+        "delete-vios-sensor"
+      ],
+      "description": "Plan sensor, recording, replay, codec, timeline, analytics, and incident acceptance.",
+      "fixture_ids": [
+        "tiny-h264-aac",
+        "tiny-hevc-aac"
+      ],
+      "id": "analytics-vios-workflows",
+      "owned_resources": [
+        {
+          "cleaned_by": "delete-vios-sensor",
+          "created_by": "create-vios-sensor",
+          "id": "vios-sensor",
+          "kind": "vios-sensor",
+          "name_template": "${namespace}-vios-sensor",
+          "target_from": "create-vios-sensor.response.sensor_id"
+        },
+        {
+          "cleaned_by": "delete-vios-recording",
+          "created_by": "start-vios-recording",
+          "id": "vios-recording",
+          "kind": "vios-recording",
+          "name_template": "${namespace}-vios-recording",
+          "target_from": "start-vios-recording.response.stream_id"
+        }
+      ]
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "operator-lifecycle-approval",
+            "warehouse-assets-missing"
+          ],
+          "id": "switch-industry-profile",
+          "kind": "service-lifecycle",
+          "safety_class": "service-lifecycle"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "operator-lifecycle-approval",
+        "warehouse-assets-missing",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Plan custom-data 2D, Smart City, Sparse4D, MV3DT, and behavior-analytics profile runs.",
+      "fixture_ids": [
+        "tiny-h264-aac"
+      ],
+      "id": "industry-profile-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "operator-lifecycle-approval",
+            "memory-capacity-gate",
+            "alternate-vlm-assets-missing",
+            "omni-assets-missing"
+          ],
+          "id": "switch-local-model",
+          "kind": "service-lifecycle",
+          "safety_class": "service-lifecycle"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "operator-lifecycle-approval",
+        "memory-capacity-gate",
+        "alternate-vlm-assets-missing",
+        "omni-assets-missing",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Plan mutually exclusive local VLM and native-audio model acceptance.",
+      "fixture_ids": [
+        "tiny-h264-aac"
+      ],
+      "id": "model-alternate-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "operator-lifecycle-approval",
+            "auto-calibration-assets-missing"
+          ],
+          "id": "run-calibration-project",
+          "kind": "service-lifecycle",
+          "safety_class": "service-lifecycle"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "operator-lifecycle-approval",
+        "auto-calibration-assets-missing",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Plan deterministic calibration projects and artifact-oracle checks.",
+      "fixture_ids": [
+        "tiny-h264-aac"
+      ],
+      "id": "auto-calibration-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "current-runtime-evidence-required",
+            "scale-envelope-unproven"
+          ],
+          "id": "query-prometheus-targets",
+          "kind": "http",
+          "method": "GET",
+          "path": "/api/v1/targets",
+          "safety_class": "observe",
+          "transport": {
+            "max_body_bytes": 1048576,
+            "origin": "http://127.0.0.1:9090",
+            "proxies": false,
+            "redirects": false
+          }
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required",
+        "scale-envelope-unproven"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Plan metrics, traces, targets, capacity, restart, and bounded stream-envelope checks.",
+      "fixture_ids": [],
+      "id": "observability-scale-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "browser-ui-driver-pending",
+            "operation-classification-required"
+          ],
+          "id": "drive-loopback-ui",
+          "kind": "ui-check",
+          "safety_class": "unclassified-blocked"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "browser-ui-driver-pending",
+        "current-runtime-evidence-required",
+        "operation-classification-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Plan main and VIOS UI route, media, and interaction checks.",
+      "fixture_ids": [
+        "tiny-h264-aac"
+      ],
+      "id": "ui-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled"
+          ],
+          "id": "qualify-offline-tools",
+          "kind": "offline-check",
+          "safety_class": "observe"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Plan source-only qualification for Compose, security, spatial, and synthetic-data utilities.",
+      "fixture_ids": [],
+      "id": "offline-tool-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "operator-lifecycle-approval"
+          ],
+          "id": "run-openclaw-sandbox",
+          "kind": "service-lifecycle",
+          "safety_class": "service-lifecycle"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "operator-lifecycle-approval",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Plan pinned sandbox, chat, tool, MCP, hook, and cleanup checks.",
+      "fixture_ids": [],
+      "id": "openclaw-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "external-slack-required",
+            "external-kubernetes-required",
+            "external-enterprise-rag-required"
+          ],
+          "id": "external-boundary-check",
+          "kind": "external-check",
+          "safety_class": "external-side-effect"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "external-slack-required",
+        "external-kubernetes-required",
+        "external-enterprise-rag-required",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Record but never emulate user-managed Slack, Kubernetes, and Enterprise RAG systems.",
+      "fixture_ids": [],
+      "id": "external-integration-boundaries",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "operation-classification-required"
+          ],
+          "id": "classify-skill-actions",
+          "kind": "surface-matrix",
+          "safety_class": "unclassified-blocked"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "operation-classification-required",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Assign every installed VSS skill to an end-to-end acceptance workflow.",
+      "fixture_ids": [],
+      "id": "skill-catalog-workflows",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "operation-classification-required"
+          ],
+          "id": "classify-rest-operations",
+          "kind": "surface-matrix",
+          "safety_class": "unclassified-blocked"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "operation-classification-required",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Assign every current REST operation while blocking unsafe execution until semantic classification.",
+      "fixture_ids": [],
+      "id": "rest-api-operation-matrix",
+      "owned_resources": []
+    },
+    {
+      "actions": [
+        {
+          "blocker_ids": [
+            "phase1-execution-disabled",
+            "operation-classification-required"
+          ],
+          "id": "classify-mcp-tools-and-prompts",
+          "kind": "surface-matrix",
+          "safety_class": "unclassified-blocked"
+        }
+      ],
+      "blocker_ids": [
+        "phase1-execution-disabled",
+        "operation-classification-required",
+        "current-runtime-evidence-required"
+      ],
+      "cleanup": [],
+      "cleanup_order": [],
+      "description": "Assign every current MCP tool and prompt while blocking unsafe execution until semantic classification.",
+      "fixture_ids": [],
+      "id": "mcp-tool-operation-matrix",
+      "owned_resources": []
+    }
+  ],
+  "schema_version": 1,
+  "target": "VSS 3.2.1 + current upstream Thor-local complete stateful acceptance"
+}

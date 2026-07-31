@@ -125,11 +125,23 @@ class RuntimeQualificationTests(unittest.TestCase):
         services = config["services"]
         probes = [probe for service in services for probe in service["probes"]]
 
-        self.assertEqual(len(services), 21)
-        self.assertEqual(len(probes), 30)
+        self.assertEqual(len(services), 22)
+        self.assertEqual(len(probes), 32)
+        vios_mcp = next(service for service in services if service["id"] == "vios-mcp")
+        self.assertEqual(vios_mcp["port_env"], "VST_MCP_PORT")
+        self.assertEqual(vios_mcp["default_port"], 8001)
+        self.assertEqual(vios_mcp["probes"][0]["path"], "/mcp")
+        self.assertEqual(vios_mcp["probes"][0]["expected_status"], [200, 400, 406])
         self.assertNotIn("local-llm", {service["id"] for service in services})
         self.assertNotIn("local-vlm", {service["id"] for service in services})
         self.assertTrue(all(probe.get("method", "GET") == "GET" for probe in probes))
+        lvs = next(service for service in services if service["id"] == "lvs")
+        semantic = next(
+            probe for probe in lvs["probes"] if probe["id"] == "files-invalid-purpose"
+        )
+        self.assertEqual(semantic["kind"], "semantic")
+        self.assertEqual(semantic["query"], {"purpose": "invalid"})
+        self.assertEqual(semantic["expected_status"], [422])
 
     def test_prometheus_targets_require_exact_healthy_job_set(self) -> None:
         jobs = [
@@ -295,6 +307,40 @@ class RuntimeQualificationTests(unittest.TestCase):
         )
         self.assertEqual(openapi_result["comparison"]["missing_route_count"], 0)
         self.assertEqual(openapi_result["comparison"]["extra_route_count"], 0)
+
+    def test_semantic_probe_encodes_query_but_redacts_its_value(self) -> None:
+        secret = "invalid-private-purpose"
+        routes = {
+            f"/v1/files?purpose={secret}": (
+                422,
+                {"Content-Type": "application/json"},
+                b'{"detail":"redacted by qualifier"}',
+            )
+        }
+        probes = [
+            {
+                "id": "invalid-purpose",
+                "kind": "semantic",
+                "path": "/v1/files",
+                "query": {"purpose": secret},
+                "expected_status": [422],
+            }
+        ]
+        with (
+            tempfile.TemporaryDirectory() as temp,
+            mock_http_server(routes) as (origin, server),
+        ):
+            config, expected = write_fixture(Path(temp), probes)
+            report = runtime.run_runtime(
+                config,
+                expected,
+                endpoint_assignments=[f"mock={origin}"],
+                timeout=1,
+            )
+        self.assertEqual(report["result"], "pass")
+        self.assertEqual(report["probes"][0]["query_keys"], ["purpose"])
+        self.assertNotIn(secret, json.dumps(report))
+        self.assertEqual(server.request_methods, ["GET"])  # type: ignore[attr-defined]
 
     def test_optional_openapi_404_is_skipped(self) -> None:
         probes = [
@@ -476,6 +522,16 @@ class RuntimeQualificationTests(unittest.TestCase):
             config.write_text(json.dumps(bad_config), encoding="utf-8")
             non_get = runtime.run_runtime(config, expected)
             self.assertEqual(non_get["probes"][0]["error"], "configuration_error")
+
+            bad_config["services"][0]["probes"][0]["method"] = "GET"
+            bad_config["services"][0]["probes"][0]["query"] = {
+                "purpose": "line\nbreak"
+            }
+            config.write_text(json.dumps(bad_config), encoding="utf-8")
+            invalid_query = runtime.run_runtime(config, expected)
+            self.assertEqual(
+                invalid_query["probes"][0]["error"], "configuration_error"
+            )
 
     def test_cli_always_emits_json(self) -> None:
         routes = {"/health": (200, {}, b"")}

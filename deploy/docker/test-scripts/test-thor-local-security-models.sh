@@ -9,6 +9,8 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../.." && pwd)"
 thor_local="${repo_root}/deploy/docker/scripts/thor-local.sh"
 model_provisioner="${repo_root}/deploy/docker/thor-local/provision-local-models.sh"
+model_verifier="${repo_root}/deploy/docker/thor-local/models/verify_artifacts.py"
+model_lock="${repo_root}/deploy/docker/thor-local/models/artifacts.lock.json"
 temporary_root="$(mktemp -d)"
 trap 'rm -rf -- "${temporary_root}"' EXIT
 failures=0
@@ -132,6 +134,61 @@ model_provisioner_is_pinned_and_offline() {
     ! grep -Eq 'docker (pull|rm)|docker container rm' "${model_provisioner}"
 }
 
+model_artifact_lock_is_exact_and_semantic() {
+  python3 - "${model_lock}" <<'PY'
+import json
+import sys
+
+lock = json.load(open(sys.argv[1], encoding="utf-8"))
+assert lock["schema_version"] == 1
+artifacts = lock["artifacts"]
+assert set(artifacts) == {
+    "qwen_llm",
+    "qwen_vlm",
+    "cosmos_embed_model",
+    "cosmos_embed_triton",
+}
+assert artifacts["qwen_llm"]["provenance"]["revision"] == "95a723d08a9490559dae23d0cff1d9466213d989"
+assert artifacts["qwen_vlm"]["provenance"]["revision"] == "9cdc6310a8cb770ce18efaf4e9935334512aee45"
+assert artifacts["cosmos_embed_model"]["provenance"]["revision"] == "3b1455ed97c7b1d5419c0c3129b7199ca4cd9382"
+assert len(artifacts["qwen_llm"]["tree"]["files"]) == 52
+assert len(artifacts["qwen_vlm"]["tree"]["files"]) == 11
+assert len(artifacts["cosmos_embed_model"]["tree"]["files"]) == 76
+assert len(artifacts["cosmos_embed_triton"]["tree"]["files"]) == 10
+for artifact in artifacts.values():
+    assert artifact["semantics"]["type"] in {
+        "indexed_safetensors_model",
+        "triton_tensorrt_repository",
+    }
+    for entry in artifact["tree"]["files"]:
+        assert len(entry["sha256"]) == 64
+PY
+}
+
+model_verification_paths_are_fail_closed_and_read_only() {
+  grep -q 'verify-hf' "${model_provisioner}" &&
+    grep -q 'artifacts.lock.json' "${model_provisioner}" &&
+    grep -q 'qwen_llm' "${model_provisioner}" &&
+    grep -q 'qwen_vlm' "${model_provisioner}" &&
+    grep -q -- '--artifact "${artifact}"' "${model_provisioner}" &&
+    grep -q 'stream_embedding_volume_tree' "${thor_local}" &&
+    grep -q 'docker run --rm --pull never --network none --read-only' "${thor_local}" &&
+    grep -q -- '--cap-drop ALL --security-opt no-new-privileges:true' "${thor_local}" &&
+    grep -q 'readonly,volume-nocopy' "${thor_local}" &&
+    grep -q -- '--artifact cosmos_embed_model' "${thor_local}" &&
+    grep -q -- '--artifact cosmos_embed_triton' "${thor_local}" &&
+    grep -q 'indexed_safetensors_model' "${model_verifier}" &&
+    grep -q 'triton_tensorrt_repository' "${model_verifier}"
+}
+
+embedding_verification_survives_compose_down() {
+  local function_body
+  function_body="$(sed -n '/^staged_embedding_cache_is_present()/,/^}/p' "${thor_local}")"
+  grep -q 'docker volume inspect' <<<"${function_body}" &&
+    grep -q 'docker image inspect' <<<"${function_body}" &&
+    ! grep -Eq 'docker (container inspect|cp)|container_name' <<<"${function_body}"
+}
+
 model_probe_fails_without_a_python_traceback() {
   local output status
   set +e
@@ -169,6 +226,11 @@ check "operator docs state Moondream and LAN limitations" documentation_is_hones
 check "model endpoints default to loopback or the private Docker bridge" private_model_endpoint_contract
 check "physical model endpoints are rejected from the operator contract" physical_model_endpoint_is_rejected
 check "model provisioner pins image and revisions and remains offline" model_provisioner_is_pinned_and_offline
+check "model artifact lock covers all four exact semantic trees" model_artifact_lock_is_exact_and_semantic
+check "model verification paths are fail-closed and read-only" model_verification_paths_are_fail_closed_and_read_only
+check "embedding verification remains valid after compose down" embedding_verification_survives_compose_down
+check "model artifact adversarial verifier suite" \
+  python3 -m pytest -q "${repo_root}/deploy/docker/thor-local/models/tests/test_verify_artifacts.py"
 check "failed model probes stay concise and traceback-free" model_probe_fails_without_a_python_traceback
 check "memory gate rejects an unsafe unified-memory overcommit" memory_gate_rejects_an_overcommit
 check "model and stack startup paths apply memory gates" startup_paths_apply_memory_gates

@@ -125,6 +125,16 @@
           "path": "/openapi.json",
           "expected_status": [200],
           "expected_manifest": "lvs.json"
+        },
+        {
+          "id": "files-invalid-purpose",
+          "kind": "semantic",
+          "method": "GET",
+          "path": "/v1/files",
+          "query": {
+            "purpose": "invalid"
+          },
+          "expected_status": [422]
         }
       ]
     },
@@ -162,6 +172,21 @@
           "method": "GET",
           "path": "/health",
           "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "vios-mcp",
+      "port_env": "VST_MCP_PORT",
+      "default_port": 8001,
+      "probes": [
+        {
+          "id": "transport",
+          "kind": "mcp",
+          "mode": "http",
+          "method": "GET",
+          "path": "/mcp",
+          "expected_status": [200, 400, 406]
         }
       ]
     },

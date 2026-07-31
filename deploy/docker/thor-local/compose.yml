@@ -182,6 +182,59 @@ services:
       streamprocessing-ms:
         condition: service_healthy
 
+  # NVIDIA ships this FastMCP gateway in the 3.2.1 source tree but omits it
+  # from the released Compose graph. Build its complete dependency closure
+  # from a checksum-locked AArch64 wheelhouse, expose only Thor loopback, and
+  # retain FastMCP's DNS-rebinding protection. The similarly named
+  # VST_MCP_URL remains the Agent's legacy VIOS REST endpoint.
+  vios-mcp:
+    image: ${THOR_LOCAL_VIOS_MCP_IMAGE:-cti-vss-vios-mcp:thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-mcp
+      network: none
+      args:
+        PYTHON_BASE_IMAGE: ${VIOS_MCP_PYTHON_BASE_IMAGE:-python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c}
+    container_name: vss-vios-mcp
+    network_mode: host
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:size=8m,mode=1777
+    environment:
+      MCP_GATEWAY_CPP_API_BASE_URL: http://127.0.0.1:${VST_PORT:-30888}/vst
+      MCP_GATEWAY_SERVER_HOST: 127.0.0.1
+      MCP_GATEWAY_SERVER_PORT: "${VST_MCP_PORT:-8001}"
+      MCP_GATEWAY_ALLOW_ALL_HOSTS: "false"
+    command:
+      - --transport
+      - http
+      - --host
+      - 127.0.0.1
+      - --port
+      - "${VST_MCP_PORT:-8001}"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import http.client,sys;
+          c=http.client.HTTPConnection('127.0.0.1',${VST_MCP_PORT:-8001},timeout=3);
+          c.request('GET','/mcp',headers={'Accept':'application/json'});
+          sys.exit(0 if c.getresponse().status in (200,400,406) else 1)
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    depends_on:
+      vst-ingress:
+        condition: service_healthy
+    restart: always
+
   vss-haproxy-ingress:
     environment:
       PHOENIX_HOST: 127.0.0.1

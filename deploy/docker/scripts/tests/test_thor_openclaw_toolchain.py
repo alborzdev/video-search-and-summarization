@@ -49,7 +49,9 @@ class ThorOpenClawToolchainTest(unittest.TestCase):
             "openclaw": {
                 "archive_filename": "sandbox.tar",
                 "arm64_config_digest": "sha256:" + "a" * 64,
+                "sandbox_image": "example.invalid/openclaw@sha256:" + "b" * 64,
             },
+            "platform": "linux/arm64",
         }
         lock = root / "input-lock.json"
         lock.write_text(json.dumps(lock_data, sort_keys=True) + "\n")
@@ -198,6 +200,60 @@ class ThorOpenClawToolchainTest(unittest.TestCase):
             with self.assertRaisesRegex(toolchain.ToolchainError, "not air-gap complete"):
                 toolchain.verify_manifest(lock, cache, require_image=True)
 
+    def test_partial_cache_can_be_promoted_without_repeating_npm(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            lock_path, cache, _ = self._cache_fixture(Path(tmp))
+            lock = toolchain.load_json(lock_path)
+            args = type("Args", (), {"lock": lock_path, "cache": cache})
+            commands: list[list[str]] = []
+
+            def fake_run(argv: list[str], **_kwargs):
+                commands.append(argv)
+                if argv[:2] == ["docker", "save"]:
+                    output = Path(argv[argv.index("--output") + 1])
+                    output.write_bytes(b"verified sandbox archive")
+                return toolchain.subprocess.CompletedProcess(argv, 0, "", "")
+
+            with (
+                mock.patch.object(toolchain, "ensure_platform"),
+                mock.patch.object(toolchain, "run", side_effect=fake_run),
+                mock.patch.object(toolchain, "require_local_image_identity"),
+                mock.patch.object(toolchain, "verify_sandbox_archive"),
+            ):
+                self.assertEqual(toolchain.cmd_stage_sandbox_image(lock, args), 0)
+                complete, _ = toolchain.verify_manifest(
+                    lock_path, cache, require_image=True
+                )
+                self.assertTrue(complete["sandbox_image_staged"])
+                self.assertEqual(toolchain.cmd_stage_sandbox_image(lock, args), 0)
+
+            self.assertEqual(
+                commands,
+                [
+                    ["docker", "pull", "--platform", "linux/arm64", lock["openclaw"]["sandbox_image"]],
+                    [
+                        "docker",
+                        "save",
+                        "--output",
+                        mock.ANY,
+                        lock["openclaw"]["sandbox_image"],
+                    ],
+                ],
+            )
+
+    def test_image_promotion_validates_partial_cache_before_docker(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            lock_path, cache, files = self._cache_fixture(Path(tmp))
+            files["package"].write_bytes(b"tampered")
+            args = type("Args", (), {"lock": lock_path, "cache": cache})
+            with (
+                mock.patch.object(toolchain, "ensure_platform"),
+                mock.patch.object(toolchain, "run") as docker_run,
+                self.assertRaisesRegex(toolchain.ToolchainError, "SHA-256 mismatch"),
+            ):
+                toolchain.cmd_stage_sandbox_image(toolchain.load_json(lock_path), args)
+            docker_run.assert_not_called()
+
     def test_manifest_requires_exact_committed_artifact_set(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             lock, cache, _ = self._cache_fixture(Path(tmp))
@@ -313,6 +369,124 @@ class ThorOpenClawToolchainTest(unittest.TestCase):
                     bundle.addfile(member, io.BytesIO(payload))
             with self.assertRaisesRegex(toolchain.ToolchainError, "diff ID"):
                 toolchain.verify_sandbox_archive(lock, archive)
+
+    def test_oci_sandbox_archive_is_bound_to_index_manifest_and_blobs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            archive = root / "sandbox-oci.tar"
+            layer = b"compressed-layer"
+            layer_digest = toolchain.hashlib.sha256(layer).hexdigest()
+            diff_id = toolchain.hashlib.sha256(b"uncompressed-layer").hexdigest()
+            config = json.dumps(
+                {
+                    "architecture": "arm64",
+                    "os": "linux",
+                    "rootfs": {"diff_ids": [f"sha256:{diff_id}"]},
+                },
+                sort_keys=True,
+            ).encode()
+            config_digest = toolchain.hashlib.sha256(config).hexdigest()
+            image_manifest = json.dumps(
+                {
+                    "schemaVersion": 2,
+                    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+                    "config": {
+                        "digest": f"sha256:{config_digest}",
+                        "size": len(config),
+                    },
+                    "layers": [
+                        {"digest": f"sha256:{layer_digest}", "size": len(layer)}
+                    ],
+                },
+                sort_keys=True,
+            ).encode()
+            manifest_digest = toolchain.hashlib.sha256(image_manifest).hexdigest()
+            image_index = json.dumps(
+                {
+                    "schemaVersion": 2,
+                    "mediaType": "application/vnd.oci.image.index.v1+json",
+                    "manifests": [
+                        {
+                            "digest": f"sha256:{manifest_digest}",
+                            "size": len(image_manifest),
+                            "platform": {"architecture": "arm64", "os": "linux"},
+                        }
+                    ],
+                },
+                sort_keys=True,
+            ).encode()
+            index_digest = toolchain.hashlib.sha256(image_index).hexdigest()
+            index_json = json.dumps(
+                {
+                    "schemaVersion": 2,
+                    "mediaType": "application/vnd.oci.image.index.v1+json",
+                    "manifests": [
+                        {"digest": f"sha256:{index_digest}", "size": len(image_index)}
+                    ],
+                },
+                sort_keys=True,
+            ).encode()
+            config_name = f"blobs/sha256/{config_digest}"
+            layer_name = f"blobs/sha256/{layer_digest}"
+            docker_manifest = json.dumps(
+                [{"Config": config_name, "RepoTags": None, "Layers": [layer_name]}]
+            ).encode()
+            entries = {
+                "manifest.json": docker_manifest,
+                "index.json": index_json,
+                "oci-layout": b'{"imageLayoutVersion":"1.0.0"}',
+                f"blobs/sha256/{index_digest}": image_index,
+                f"blobs/sha256/{manifest_digest}": image_manifest,
+                config_name: config,
+                layer_name: layer,
+            }
+            with tarfile.open(archive, "w") as bundle:
+                for name, payload in entries.items():
+                    member = tarfile.TarInfo(name)
+                    member.size = len(payload)
+                    bundle.addfile(member, io.BytesIO(payload))
+            lock = {
+                "openclaw": {
+                    "sandbox_image": f"example.invalid/image@sha256:{index_digest}",
+                    "arm64_manifest_digest": f"sha256:{manifest_digest}",
+                    "arm64_config_digest": f"sha256:{config_digest}",
+                }
+            }
+            toolchain.verify_sandbox_archive(lock, archive)
+
+            entries[f"blobs/sha256/{'f' * 64}"] = b"unreferenced"
+            with tarfile.open(archive, "w") as bundle:
+                for name, payload in entries.items():
+                    member = tarfile.TarInfo(name)
+                    member.size = len(payload)
+                    bundle.addfile(member, io.BytesIO(payload))
+            with self.assertRaisesRegex(toolchain.ToolchainError, "unreferenced"):
+                toolchain.verify_sandbox_archive(lock, archive)
+
+    def test_local_image_identity_accepts_docker_index_id(self) -> None:
+        digest = "sha256:" + "a" * 64
+        config = "sha256:" + "b" * 64
+        image = f"example.invalid/openclaw@{digest}"
+        lock = {
+            "openclaw": {
+                "sandbox_image": image,
+                "arm64_config_digest": config,
+            }
+        }
+        inspected = json.dumps(
+            [
+                {
+                    "Architecture": "arm64",
+                    "Os": "linux",
+                    "Id": digest,
+                    "Descriptor": {"digest": digest},
+                    "RepoDigests": [image],
+                }
+            ]
+        )
+        result = toolchain.subprocess.CompletedProcess([], 0, inspected, "")
+        with mock.patch.object(toolchain, "run", return_value=result):
+            toolchain.require_local_image_identity(lock)
 
     def test_verify_host_is_read_only_and_reports_blockers(self) -> None:
         lock = toolchain.load_json(_LOCK)

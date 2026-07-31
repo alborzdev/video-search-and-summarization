@@ -1,6 +1,8 @@
 {
   "kind": "mcp",
-  "schema_version": 1,
+  "prompt_count": 0,
+  "prompts": [],
+  "schema_version": 2,
   "source_files": [
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml",

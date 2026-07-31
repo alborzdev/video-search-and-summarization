@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Stage, install, and inspect the pinned Thor NemoClaw/OpenClaw toolchain.
 
-The stage phase is the only phase that uses the network. The install phase
-forces npm offline and writes only below an explicit user-local prefix. It
-never creates a sandbox or starts/stops a container.
+The stage commands are the only phases that use the network. The install phase
+forces npm offline and writes only below an explicit user-local prefix. No
+command creates a sandbox or starts/stops a container.
 """
 
 from __future__ import annotations
@@ -310,6 +310,171 @@ def _read_tar_member(bundle: tarfile.TarFile, member: tarfile.TarInfo, limit: in
     return data
 
 
+def _oci_blob_path(digest: object) -> str:
+    if not isinstance(digest, str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
+        raise ToolchainError("OCI archive contains an invalid digest")
+    return f"blobs/sha256/{digest.removeprefix('sha256:')}"
+
+
+def _read_tar_json(
+    bundle: tarfile.TarFile,
+    members: dict[str, tarfile.TarInfo],
+    name: str,
+) -> dict:
+    member = members.get(name)
+    if member is None:
+        raise ToolchainError(f"Docker archive is missing {name}")
+    try:
+        value = json.loads(_read_tar_member(bundle, member, 2 * 1024 * 1024))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ToolchainError(f"Docker archive member is invalid JSON: {name}") from exc
+    if not isinstance(value, dict):
+        raise ToolchainError(f"Docker archive JSON member must be an object: {name}")
+    return value
+
+
+def _require_oci_blob(
+    bundle: tarfile.TarFile,
+    members: dict[str, tarfile.TarInfo],
+    descriptor: dict,
+) -> str:
+    if not isinstance(descriptor, dict):
+        raise ToolchainError("OCI archive contains an invalid descriptor")
+    name = _oci_blob_path(descriptor.get("digest"))
+    member = members.get(name)
+    size = descriptor.get("size")
+    if (
+        member is None
+        or not member.isfile()
+        or not isinstance(size, int)
+        or isinstance(size, bool)
+        or size < 0
+        or member.size != size
+    ):
+        raise ToolchainError(f"OCI archive descriptor size mismatch: {name}")
+    handle = bundle.extractfile(member)
+    if handle is None:
+        raise ToolchainError(f"cannot read Docker archive blob: {name}")
+    digest = hashlib.sha256()
+    for chunk in iter(lambda: handle.read(8 * 1024 * 1024), b""):
+        digest.update(chunk)
+    if digest.hexdigest() != name.rsplit("/", 1)[1]:
+        raise ToolchainError(f"OCI archive blob digest mismatch: {name}")
+    return name
+
+
+def _verify_oci_sandbox_archive(
+    lock: dict,
+    bundle: tarfile.TarFile,
+    members: dict[str, tarfile.TarInfo],
+    entry: dict,
+) -> None:
+    layout = _read_tar_json(bundle, members, "oci-layout")
+    if layout != {"imageLayoutVersion": "1.0.0"}:
+        raise ToolchainError("Docker archive has an unsupported OCI layout")
+
+    image_digest = lock["openclaw"]["sandbox_image"].rsplit("@", 1)[-1]
+    index = _read_tar_json(bundle, members, "index.json")
+    roots = index.get("manifests")
+    if (
+        index.get("schemaVersion") != 2
+        or index.get("mediaType") != "application/vnd.oci.image.index.v1+json"
+        or not isinstance(roots, list)
+        or len(roots) != 1
+        or not isinstance(roots[0], dict)
+        or roots[0].get("digest") != image_digest
+    ):
+        raise ToolchainError("Docker OCI archive root does not match the committed image")
+
+    referenced = {_require_oci_blob(bundle, members, roots[0])}
+    image_index = _read_tar_json(bundle, members, next(iter(referenced)))
+    descriptors = image_index.get("manifests")
+    if (
+        image_index.get("schemaVersion") != 2
+        or image_index.get("mediaType") != "application/vnd.oci.image.index.v1+json"
+        or not isinstance(descriptors, list)
+        or not descriptors
+    ):
+        raise ToolchainError("committed Docker image is not a valid OCI index")
+
+    target_manifest: dict | None = None
+    target_count = 0
+    for descriptor in descriptors:
+        if not isinstance(descriptor, dict):
+            raise ToolchainError("Docker OCI index contains an invalid descriptor")
+        descriptor_name = _oci_blob_path(descriptor.get("digest"))
+        platform_value = descriptor.get("platform")
+        is_target = (
+            isinstance(platform_value, dict)
+            and platform_value.get("os") == "linux"
+            and platform_value.get("architecture") == "arm64"
+        )
+        if is_target:
+            target_count += 1
+            if descriptor.get("digest") != lock["openclaw"]["arm64_manifest_digest"]:
+                raise ToolchainError("Docker OCI archive ARM64 manifest identity changed")
+        if descriptor_name not in members:
+            if is_target:
+                raise ToolchainError("Docker OCI archive is missing the ARM64 manifest")
+            continue
+
+        referenced.add(_require_oci_blob(bundle, members, descriptor))
+        manifest = _read_tar_json(bundle, members, descriptor_name)
+        config_descriptor = manifest.get("config")
+        layer_descriptors = manifest.get("layers")
+        if (
+            manifest.get("schemaVersion") != 2
+            or manifest.get("mediaType") != "application/vnd.oci.image.manifest.v1+json"
+            or not isinstance(config_descriptor, dict)
+            or not isinstance(layer_descriptors, list)
+            or not layer_descriptors
+        ):
+            raise ToolchainError("Docker OCI archive contains an invalid image manifest")
+        referenced.add(_require_oci_blob(bundle, members, config_descriptor))
+        for layer_descriptor in layer_descriptors:
+            referenced.add(_require_oci_blob(bundle, members, layer_descriptor))
+        if is_target:
+            target_manifest = manifest
+
+    if target_count != 1 or target_manifest is None:
+        raise ToolchainError("Docker OCI archive must contain one Linux ARM64 manifest")
+
+    config_descriptor = target_manifest["config"]
+    if config_descriptor.get("digest") != lock["openclaw"]["arm64_config_digest"]:
+        raise ToolchainError("Docker OCI archive config does not match committed ARM64 image")
+    config_name = _oci_blob_path(config_descriptor["digest"])
+    config = _read_tar_json(bundle, members, config_name)
+    layer_descriptors = target_manifest["layers"]
+    diff_ids = (
+        config.get("rootfs", {}).get("diff_ids")
+        if isinstance(config.get("rootfs"), dict)
+        else None
+    )
+    if (
+        config.get("architecture") != "arm64"
+        or config.get("os") != "linux"
+        or not isinstance(diff_ids, list)
+        or len(diff_ids) != len(layer_descriptors)
+        or any(
+            not isinstance(item, str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", item)
+            for item in diff_ids
+        )
+    ):
+        raise ToolchainError("Docker OCI archive has an invalid ARM64 image config")
+
+    expected_layers = [_oci_blob_path(item.get("digest")) for item in layer_descriptors]
+    if entry.get("Config") != config_name or entry.get("Layers") != expected_layers:
+        raise ToolchainError("Docker save manifest does not select the committed ARM64 image")
+
+    discovered = {
+        name
+        for name, member in members.items()
+        if name.startswith("blobs/sha256/") and member.isfile()
+    }
+    if discovered != referenced:
+        raise ToolchainError("Docker OCI archive contains unreferenced or missing blobs")
+
+
 def verify_sandbox_archive(lock: dict, archive: Path) -> None:
     """Verify a docker-save archive before it is ever passed to docker load.
 
@@ -350,6 +515,11 @@ def verify_sandbox_archive(lock: dict, archive: Path) -> None:
             layers = entry.get("Layers")
             if entry.get("RepoTags") not in (None, []):
                 raise ToolchainError("Docker archive must not assign mutable repository tags")
+            if isinstance(config_name, str) and re.fullmatch(
+                r"blobs/sha256/[0-9a-f]{64}", config_name
+            ):
+                _verify_oci_sandbox_archive(lock, bundle, members, entry)
+                return
             if not isinstance(config_name, str) or not re.fullmatch(r"[0-9a-f]{64}\.json", config_name):
                 raise ToolchainError("Docker archive has an invalid config identity")
             expected_config = lock["openclaw"]["arm64_config_digest"]
@@ -402,8 +572,12 @@ def require_local_image_identity(lock: dict) -> None:
         raise ToolchainError("docker returned invalid sandbox image metadata") from exc
     if inspected.get("Architecture") != "arm64" or inspected.get("Os") != "linux":
         raise ToolchainError("staged sandbox image is not Linux ARM64")
-    if inspected.get("Id") != lock["openclaw"]["arm64_config_digest"]:
-        raise ToolchainError("staged sandbox image config does not match the committed identity")
+    image_digest = image.rsplit("@", 1)[-1]
+    descriptor = inspected.get("Descriptor")
+    if not isinstance(descriptor, dict) or descriptor.get("digest") != image_digest:
+        raise ToolchainError("staged sandbox image descriptor does not match the committed identity")
+    if inspected.get("Id") not in {image_digest, lock["openclaw"]["arm64_config_digest"]}:
+        raise ToolchainError("staged sandbox image identity is unexpected")
     if image not in (inspected.get("RepoDigests") or []):
         raise ToolchainError("staged sandbox image does not retain the committed repository digest")
 
@@ -569,6 +743,83 @@ def cmd_stage(lock: dict, args: argparse.Namespace) -> int:
     print(f"staged cache: {cache}")
     if not image_staged:
         print("PARTIAL: sandbox image archive was skipped; cache is not air-gap complete")
+    return 0
+
+
+def cmd_stage_sandbox_image(lock: dict, args: argparse.Namespace) -> int:
+    """Promote an exact verified partial cache without repeating npm staging."""
+
+    ensure_platform(lock)
+    cache = args.cache.resolve()
+    manifest, _ = verify_manifest(args.lock, cache, require_image=False)
+    if manifest["sandbox_image_staged"]:
+        verify_manifest(args.lock, cache, require_image=True)
+        print(f"PASS: sandbox image is already staged in complete cache at {cache}")
+        return 0
+
+    image_ref = lock["openclaw"]["sandbox_image"]
+    run(["docker", "pull", "--platform", lock["platform"], image_ref])
+    require_local_image_identity(lock)
+
+    artifacts = cache / "artifacts"
+    artifacts.mkdir(parents=True, exist_ok=True)
+    archive = artifacts / lock["openclaw"]["archive_filename"]
+    if archive.exists() or archive.is_symlink():
+        raise ToolchainError(
+            "partial cache contains an unlisted sandbox archive; refusing to replace it"
+        )
+
+    archive_temp: Path | None = None
+    manifest_temp: Path | None = None
+    manifest_published = False
+    try:
+        with tempfile.NamedTemporaryFile(
+            dir=artifacts,
+            prefix=f".{archive.name}.",
+            suffix=".partial",
+            delete=False,
+        ) as handle:
+            archive_temp = Path(handle.name)
+        archive_temp.unlink()
+        run(["docker", "save", "--output", str(archive_temp), image_ref])
+        verify_sandbox_archive(lock, archive_temp)
+        archive_temp.replace(archive)
+        archive_temp = None
+
+        tracked = [cache / item["path"] for item in manifest["artifacts"]]
+        tracked.append(archive)
+        updated = {
+            **manifest,
+            "sandbox_image_staged": True,
+            "artifacts": manifest_entries(cache, tracked),
+        }
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=cache,
+            prefix=f".{MANIFEST_NAME}.",
+            suffix=".partial",
+            delete=False,
+        ) as handle:
+            manifest_temp = Path(handle.name)
+            json.dump(updated, handle, indent=2, sort_keys=True)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        manifest_temp.replace(cache / MANIFEST_NAME)
+        manifest_temp = None
+        manifest_published = True
+        verify_manifest(args.lock, cache, require_image=True)
+    except Exception:
+        if archive_temp is not None:
+            archive_temp.unlink(missing_ok=True)
+        if manifest_temp is not None:
+            manifest_temp.unlink(missing_ok=True)
+        if not manifest_published:
+            archive.unlink(missing_ok=True)
+        raise
+
+    print(f"PASS: promoted partial cache to complete image-bearing cache at {cache}")
     return 0
 
 
@@ -858,6 +1109,8 @@ def parser() -> argparse.ArgumentParser:
         default="https://registry.npmjs.org/",
         help="explicit HTTPS staging registry; recorded for offline cache identity",
     )
+    stage_image = sub.add_parser("stage-sandbox-image", parents=[common])
+    stage_image.add_argument("--cache", type=Path, required=True)
     verify_cache = sub.add_parser("verify-cache", parents=[common])
     verify_cache.add_argument("--cache", type=Path, required=True)
     verify_cache.add_argument("--allow-missing-image", action="store_true")
@@ -880,6 +1133,7 @@ def main(argv: list[str] | None = None) -> int:
     handlers = {
         "plan": cmd_plan,
         "stage": cmd_stage,
+        "stage-sandbox-image": cmd_stage_sandbox_image,
         "verify-cache": cmd_verify_cache,
         "install": cmd_install,
         "verify-host": cmd_verify_host,

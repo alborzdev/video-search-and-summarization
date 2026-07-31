@@ -9,10 +9,11 @@ user-local, npm is forced offline, and no global package install, credential,
 container lifecycle, hook, message, or sandbox action is required to prepare or
 verify the binaries.
 
-This lane is **not runtime-qualified**. The exact OpenClaw sandbox image was
-verified as Linux/ARM64 upstream but deliberately was not pulled during this
-source-only run. No sandbox currently exists, so chat/tool/MCP/hook/alert gates
-remain pending.
+The complete cache, persistent user-local installation, exact Linux/ARM64
+sandbox image, and local provider now pass `verify-host`. This removes the
+artifact blocker, but it does **not** constitute runtime qualification. No
+OpenShell sandbox was created and no chat, tool, orchestrator MCP, hook, or
+alert workflow was invoked; those lifecycle gates remain pending.
 
 ## Locked compatibility set
 
@@ -59,62 +60,48 @@ locked ARM64 manifest.
 
 ## Fresh Thor evidence
 
-After tightening the exact-set and pre-load identity gate, the source/binary
-stage was rerun with the sandbox image deliberately omitted:
+The resilient image-only continuation path completed the earlier interrupted
+connected stage without rerunning npm. It first verified the exact partial
+cache, pulled the locked Linux/ARM64 image identity, saved and
+cryptographically verified Docker's OCI archive layout, then atomically
+promoted the cache manifest. Current identities are:
 
 ```text
-staged cache: /tmp/vss-openclaw-clean-mirror-cache-v0.0.48
-PARTIAL: sandbox image archive was skipped; cache is not air-gap complete
-cache size: 155M
-packed CLI SHA-256: bd134423f87f51c72a6ab7499fe46f334a48087849f2ed2ab3b23b3c5e45bfd0
-toolchain lock SHA-256: 3f0efb6b64741135d5551802ccbadd919a4a368b1b3ea2cd738b32d252a48ece
-exact tracked files: 7
+complete cache       .cache/vss-openclaw-complete-v0.0.48
+cache size           1.6G
+cache manifest       ff42fa878957f20b153b1f4d0dfbefb8eac98fb254d1741ca8156b4d01857b84
+sandbox archive      d90a4a9bda8f5d758167d610ce6c5119457355f62ed4307057ca7c20a1da6a7e
+sandbox archive size 1460780544 bytes
+persistent prefix    /home/nvidia/.local/share/vss/openclaw-toolchain
+prefix size          110M
 ```
 
-The cache was then verified and installed into a new temporary prefix with npm
-offline mode forced:
+The current cache and persistent installation verify as:
 
 ```text
-PASS: verified partial-no-image cache
-PASS: installed pinned user-local toolchain
-nemoclaw v0.0.48
-openshell 0.0.39
-PASS: OpenShell messaging credential rewrite strings present
-installed size: 110M
-```
-
-The refreshed cache records `https://registry.npmjs.org/` as its explicit
-registry identity. Artifact integrity is enforced by NVIDIA's committed npm
-lock hashes plus the committed packed-CLI hash; verification and the later
-install used npm's forced-offline mode.
-
-The current read-only host result using that temporary prefix is:
-
-```text
+PASS: verified complete cache
 PASS platform: linux/arm64
 PASS node: v22.23.1
 PASS nemoclaw: nemoclaw v0.0.48
 PASS openshell: openshell 0.0.39
-BLOCKED sandbox-image: exact locked image is not present
+PASS sandbox-image: ghcr.io/nvidia/openshell-community/sandboxes/openclaw@sha256:b3d832b596ab6b7184a9dcb4ae93337ca32851a4f93b00765cc12de26baa3a9a
 PASS local-provider: datasheet-chat
+READY FOR RUNTIME ACCEPTANCE
 ```
 
-The normal host prefix remains untouched; the refreshed strict-cache install
-exists only at `/tmp/vss-openclaw-strict-installed-v0.0.48`. The local model
-discovery endpoint returned the expected `datasheet-chat` id without sending an
-inference request.
+The local model discovery endpoint returned the expected `datasheet-chat` id
+without sending an inference request. No sandbox or application container was
+started by these OpenClaw verification commands.
 
 ## Remaining runtime gates
 
-1. Run a complete stage including the pinned image, then install into the chosen
-   persistent user-local prefix and load the image.
-2. With explicit lifecycle authorization, onboard the `vss-thor` sandbox using
+1. With explicit lifecycle authorization, onboard the `vss-thor` sandbox using
    the emitted custom-provider environment.
-3. Qualify normal chat plus tool calling, active VSS policy, plugin doctor, all
+2. Qualify normal chat plus tool calling, active VSS policy, plugin doctor, all
    16 repository skills, `_nemoclaw` overlay, and loopback UI health.
-4. Start the host orchestrator MCP and prove one read-only profile/tool call.
-5. Generate a hook secret and qualify one synthetic authenticated hook.
-6. With the alerts stack running, qualify one end-to-end synthetic VSS alert in
+3. Start the host orchestrator MCP and prove one read-only profile/tool call.
+4. Generate a hook secret and qualify one synthetic authenticated hook.
+5. With the alerts stack running, qualify one end-to-end synthetic VSS alert in
    OpenClaw dashboard/chat.
 
 No runtime gate above was inferred from source or install success.
@@ -126,14 +113,14 @@ python3 -m unittest -v \
   deploy/docker/scripts/tests/test_thor_openclaw_toolchain.py
 
 python3 deploy/docker/thor-local/openclaw/toolchain.py verify-cache \
-  --cache /tmp/vss-openclaw-clean-mirror-cache-v0.0.48 \
-  --allow-missing-image
+  --cache .cache/vss-openclaw-complete-v0.0.48
 
 python3 deploy/docker/thor-local/openclaw/toolchain.py verify-host \
-  --prefix /tmp/vss-openclaw-strict-installed-v0.0.48
+  --prefix /home/nvidia/.local/share/vss/openclaw-toolchain
 ```
 
-The focused suite now passes 17 tests plus three subtests, including adversarial
-empty/unlisted cache manifests, archive traversal, exact Docker-save
-config/layer validation, mutable `RepoTags` rejection, provider-environment
-shell quoting, and committed ARM64 config identity checks.
+The focused suite now passes 21 tests, including adversarial empty/unlisted
+cache manifests, archive traversal, exact classic and OCI Docker-save
+descriptor/config/layer validation, modern image-store identity handling,
+mutable `RepoTags` rejection, provider-environment shell quoting, and
+committed ARM64 config identity checks.

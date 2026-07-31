@@ -495,6 +495,7 @@ LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 ru
   "RTVI_VLM_ENDPOINT" "http://127.0.0.1:8001/v1" "RTVI_VLM_MODEL_PATH" "none" \
   "RTVI_VLM_BATCH_SIZE" "1" "RTVI_VLM_NUM_VLM_PROCS" "1" "RTVI_VLM_API_KEY" "" \
   "RTVI_EMBED_PORT" "8017" "RTVI_VLM_PORT" "8018" "RTVI_CV_PORT" "9000" "VSS_VA_MCP_PORT" "9901" \
+  "VST_MCP_PORT" "8001" "VIOS_MCP_ENDPOINT" 'http://127.0.0.1:${VST_MCP_PORT}/mcp' \
   "LVS_BACKEND_URL" 'http://${HOST_IP}:38111' "VSS_ES_PORT" "9200" "NUM_STREAMS" "1" "NUM_SENSORS" "1"
 run_dry_run_up_and_check_generated_env "generated.env base IGX-THOR VLM and RTVI vars and device IDs" "base" \
  -i 127.0.0.1 -H IGX-THOR -d -- \
@@ -955,6 +956,8 @@ if grep -q 'profile="${THOR_LOCAL_PROFILE:-thor-full}"' "${_thor_local}" &&
    grep -q 'LVS_LLM_ENABLE_THINKING "${LVS_LLM_ENABLE_THINKING}"' "${_thor_local}" &&
    grep -q 'LVS_LLM_MAX_TOKENS "${LVS_LLM_MAX_TOKENS}"' "${_thor_local}" &&
    grep -q 'LVS_MCP_PORT "${LVS_MCP_PORT}"' "${_thor_local}" &&
+   grep -q 'VST_MCP_PORT "${VST_MCP_PORT}"' "${_thor_local}" &&
+   grep -q 'VIOS_MCP_ENDPOINT "${VIOS_MCP_ENDPOINT}"' "${_thor_local}" &&
    grep -q 'LVS_ENABLE_MCP "${LVS_ENABLE_MCP}"' "${_thor_local}" &&
    grep -q 'Dockerfile.video-summarization' "${REPO_ROOT}/deploy/docker/thor-local/compose.yml" &&
    grep -q 'provider: !ENV ${LVS_LLM_MODEL_TYPE:openai}' "${REPO_ROOT}/deploy/docker/services/video-summarization/configs/config.yaml" &&
@@ -974,6 +977,7 @@ else
 fi
 
 if grep -q 'require_available_port "${VST_PORT}" vss-vios-ingress' "${_thor_local}" &&
+   grep -q 'require_available_port "${VST_MCP_PORT}" vss-vios-mcp' "${_thor_local}" &&
    grep -q 'require_available_port "${RTVI_EMBED_PORT}" vss-rtvi-embed' "${_thor_local}" &&
    grep -q 'require_available_port "${LVS_MCP_PORT}" vss-lvs' "${_thor_local}" &&
    grep -q 'require_available_port "${RTVI_VLM_PORT}" vss-rtvi-vlm' "${_thor_local}" &&
@@ -1009,8 +1013,12 @@ if grep -q 'verify-offline)' "${_thor_local}" &&
    grep -q 'siglip_v2_v1.1_weights.bin' "${_thor_local}" &&
    grep -q 'require_staged_embedding_cache' "${_thor_local}" &&
    grep -q 'require_staged_local_models' "${_thor_local}" &&
-   grep -q -- '--network none' "${_thor_local}" &&
-   grep -q 'cosmos_embed1_video_NVIDIA_Thor_${RTVI_EMBED_BATCH_SIZE}_fp16.engine' "${_thor_local}"; then
+   grep -q 'model_artifact_lock=' "${_thor_local}" &&
+   grep -q 'stream_embedding_volume_tree' "${_thor_local}" &&
+   grep -q 'docker run --rm --pull never --network none --read-only' "${_thor_local}" &&
+   grep -q 'readonly,volume-nocopy' "${_thor_local}" &&
+   grep -q -- '--artifact cosmos_embed_model' "${_thor_local}" &&
+   grep -q -- '--artifact cosmos_embed_triton' "${_thor_local}"; then
   echo "PASS: Thor offline verifier pins images, host models, local providers, and embedding caches"
   ((TESTS_PASSED++)) || true
 else

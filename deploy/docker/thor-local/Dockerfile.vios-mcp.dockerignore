@@ -1,0 +1,15 @@
+**
+!deploy/
+!deploy/docker/
+!deploy/docker/thor-local/
+!deploy/docker/thor-local/vios-mcp/
+!deploy/docker/thor-local/vios-mcp/requirements-linux-aarch64.txt
+!deploy/docker/thor-local/vios-mcp/wheels-linux-aarch64.lock.json
+!deploy/docker/thor-local/vios-mcp/verify_wheelhouse.py
+!deploy/docker/thor-local/vios-mcp/wheelhouse/
+!deploy/docker/thor-local/vios-mcp/wheelhouse/**
+!services/
+!services/vios/
+!services/vios/mcp/
+!services/vios/mcp/src/
+!services/vios/mcp/src/**

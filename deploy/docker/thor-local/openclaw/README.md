@@ -65,6 +65,21 @@ For a source-and-binaries-only audit that deliberately omits the potentially
 large image archive, pass `--skip-sandbox-image`. Such a cache is explicitly
 partial and only verifies with `--allow-missing-image`.
 
+If npm staging already produced a verified partial cache, add only the locked
+sandbox image without repeating any npm or source download:
+
+```bash
+python3 deploy/docker/thor-local/openclaw/toolchain.py stage-sandbox-image \
+  --cache "$cache"
+python3 deploy/docker/thor-local/openclaw/toolchain.py verify-cache --cache "$cache"
+```
+
+The promotion verifies the exact partial manifest before contacting Docker,
+pulls by immutable digest and platform, validates the local repository/config
+identity, verifies every saved layer, and atomically publishes the complete
+cache manifest. It is idempotent for an already complete cache and never loads,
+creates, or starts a sandbox.
+
 ## Install offline, user-local
 
 Disconnect the destination from the network (or otherwise enforce an air gap),

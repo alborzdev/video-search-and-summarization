@@ -19,7 +19,7 @@ import time
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlsplit
+from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 sys.dont_write_bytecode = True
@@ -33,6 +33,7 @@ DEFAULT_EXPECTED_DIR = SCRIPT_DIR / "expected"
 MAX_OPENAPI_BYTES = 4 * 1024 * 1024
 MAX_JSON_BYTES = 1024 * 1024
 PORT_ENV_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
+QUERY_KEY_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]{0,63}$")
 SAFE_ERROR_CODES = {
     "configuration_error",
     "connection_refused",
@@ -174,6 +175,25 @@ def _validate_expected_jobs(value: Any) -> list[str]:
     return jobs
 
 
+def _validate_query(value: Any) -> dict[str, str]:
+    if value is None:
+        return {}
+    if not isinstance(value, dict) or len(value) > 16:
+        raise RuntimeConfigError("configuration_error")
+    query: dict[str, str] = {}
+    for key, item in value.items():
+        if (
+            not isinstance(key, str)
+            or not QUERY_KEY_RE.fullmatch(key)
+            or not isinstance(item, str)
+            or len(item) > 256
+            or any(ord(character) < 0x20 or ord(character) == 0x7F for character in item)
+        ):
+            raise RuntimeConfigError("configuration_error")
+        query[key] = item
+    return query
+
+
 def load_runtime_config(path: Path) -> dict[str, Any]:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -221,11 +241,13 @@ def load_runtime_config(path: Path) -> dict[str, Any]:
                 "openapi",
                 "prometheus-targets",
                 "reachability",
+                "semantic",
             }:
                 raise RuntimeConfigError("configuration_error")
             if probe.get("method", "GET") != "GET":
                 raise RuntimeConfigError("configuration_error")
             _validate_path(probe.get("path"))
+            _validate_query(probe.get("query"))
             _validate_expected_status(probe.get("expected_status", [200]))
             if probe.get("availability", "required") not in {"required", "optional"}:
                 raise RuntimeConfigError("configuration_error")
@@ -304,11 +326,14 @@ def _request(
     timeout: float,
     *,
     accept: str,
+    query: dict[str, str] | None = None,
 ) -> Any:
     safe_origin = _validate_origin(origin)
     safe_path = _validate_path(path)
+    safe_query = _validate_query(query)
+    suffix = f"?{urlencode(safe_query)}" if safe_query else ""
     request = Request(
-        f"{safe_origin}{safe_path}",
+        f"{safe_origin}{safe_path}{suffix}",
         headers={
             "Accept": accept,
             "User-Agent": "vss-thor-runtime-qualification/1",
@@ -321,7 +346,7 @@ def _request(
 def _base_probe_record(
     service_id: str, probe: dict[str, Any], port: int
 ) -> dict[str, Any]:
-    return {
+    record = {
         "availability": probe.get("availability", "required"),
         "id": f"{service_id}:{probe['id']}",
         "kind": probe["kind"],
@@ -330,6 +355,10 @@ def _base_probe_record(
         "port": port,
         "service": service_id,
     }
+    query = _validate_query(probe.get("query"))
+    if query:
+        record["query_keys"] = sorted(query)
+    return record
 
 
 def _finish_probe(
@@ -361,7 +390,14 @@ def _status_probe(
         else:
             accept = "application/json"
         try:
-            response = _request(opener, origin, probe["path"], timeout, accept=accept)
+            response = _request(
+                opener,
+                origin,
+                probe["path"],
+                timeout,
+                accept=accept,
+                query=probe.get("query"),
+            )
             http_status = int(response.status)
         except HTTPError as exc:
             response = exc

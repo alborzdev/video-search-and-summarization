@@ -25,8 +25,23 @@ inventory = json.loads(
     (thor_dir / "qualification/runtime_inventory.json").read_text(encoding="utf-8")
 )
 services = {service["id"]: service for service in inventory["services"]}
-assert len(services) == 21
-assert sum(len(service["probes"]) for service in services.values()) == 30
+assert len(services) == 22
+assert sum(len(service["probes"]) for service in services.values()) == 32
+assert services["vios-mcp"] == {
+    "id": "vios-mcp",
+    "port_env": "VST_MCP_PORT",
+    "default_port": 8001,
+    "probes": [
+        {
+            "id": "transport",
+            "kind": "mcp",
+            "mode": "http",
+            "method": "GET",
+            "path": "/mcp",
+            "expected_status": [200, 400, 406],
+        }
+    ],
+}
 assert services["kibana"]["probes"] == [
     {
         "id": "status",
@@ -104,6 +119,7 @@ environment.update(
         "PHOENIX_PORT": "6006",
         "LOGSTASH_API_PORT": "9600",
         "TEGRASTATS_PORT": "19101",
+        "VST_MCP_PORT": "8001",
         "MONITORING_BIND_ADDRESS": "127.0.0.1",
         "PROMETHEUS_CONFIG_FILE": str(
             thor_dir / "observability/prometheus.yml"
@@ -133,6 +149,31 @@ resolved = json.loads(
     ).stdout
 )
 resolved_services = resolved["services"]
+vios_mcp = resolved_services["vios-mcp"]
+assert vios_mcp["image"] == "cti-vss-vios-mcp:thor-local"
+assert vios_mcp["network_mode"] == "host"
+assert vios_mcp["read_only"] is True
+assert vios_mcp["cap_drop"] == ["ALL"]
+assert vios_mcp["security_opt"] == ["no-new-privileges:true"]
+assert vios_mcp["environment"] == {
+    "MCP_GATEWAY_ALLOW_ALL_HOSTS": "false",
+    "MCP_GATEWAY_CPP_API_BASE_URL": "http://127.0.0.1:30888/vst",
+    "MCP_GATEWAY_SERVER_HOST": "127.0.0.1",
+    "MCP_GATEWAY_SERVER_PORT": "8001",
+}
+assert vios_mcp["depends_on"]["vst-ingress"] == {
+    "condition": "service_healthy",
+    "required": True,
+}
+assert vios_mcp["command"] == [
+    "--transport",
+    "http",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8001",
+]
+assert "/mcp" in vios_mcp["healthcheck"]["test"][-1]
 for name in ("kibana", "phoenix", "logstash"):
     assert name in resolved_services
 

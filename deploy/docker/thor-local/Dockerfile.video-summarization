@@ -5,7 +5,9 @@ SHELL ["/usr/local/bin/bash", "-c"]
 USER root
 
 COPY deploy/docker/thor-local/patches/patch_lvs_llm_provider.py /tmp/patch_lvs_llm_provider.py
-RUN /usr/local/bin/python3 /tmp/patch_lvs_llm_provider.py
+COPY deploy/docker/thor-local/patches/patch_lvs_files_purpose.py /tmp/patch_lvs_files_purpose.py
+RUN /usr/local/bin/python3 /tmp/patch_lvs_llm_provider.py && \
+    /usr/local/bin/python3 /tmp/patch_lvs_files_purpose.py
 COPY services/video-summarization/src/lvs_mcp.py /opt/nvidia/via/via-engine/lvs_mcp.py
 
 USER lvsuser
