@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+ARG RTVI_VLM_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1
+FROM ${RTVI_VLM_BASE_IMAGE}
+
+USER root
+
+# Both the exact package bytes and their generated manifest are staged before
+# build.  Verification and extraction run with build networking disabled.
+COPY deploy/docker/thor-local/audio/codec_bundle.py /usr/local/libexec/vss-thor/codec_bundle.py
+COPY deploy/docker/thor-local/audio/codec-bundle.lock.json /usr/local/libexec/vss-thor/codec-bundle.lock.json
+COPY deploy/docker/thor-local/audio/install-codec-bundle.sh /usr/local/libexec/vss-thor/install-codec-bundle.sh
+COPY deploy/docker/thor-local/audio/rtvi-vlm-offline-entrypoint.sh /usr/local/bin/rtvi-vlm-offline-entrypoint
+COPY deploy/docker/thor-local/audio/rtvi-vlm-codecs/bundle/ /tmp/rtvi-vlm-codec-bundle/
+COPY services/rtvi/rt-vlm/src/ /opt/nvidia/rtvi/rtvi/
+COPY services/rtvi/rt-vlm/src/ /opt/nvidia/rtvi/src/
+
+RUN python3 /usr/local/libexec/vss-thor/codec_bundle.py verify --frozen \
+      --bundle /tmp/rtvi-vlm-codec-bundle \
+    && /usr/local/libexec/vss-thor/install-codec-bundle.sh \
+      /tmp/rtvi-vlm-codec-bundle /opt/nvidia/rtvi/thor-codecs \
+    && rm -rf /tmp/rtvi-vlm-codec-bundle \
+    && chmod 0555 \
+      /usr/local/bin/rtvi-vlm-offline-entrypoint \
+      /usr/local/libexec/vss-thor/codec_bundle.py \
+      /usr/local/libexec/vss-thor/install-codec-bundle.sh \
+    && chown -R 1001:1001 /opt/nvidia/rtvi/rtvi /opt/nvidia/rtvi/src
+
+LABEL com.nvidia.vss.thor.rtvi-vlm-base="3.2.1" \
+      com.nvidia.vss.thor.rtvi-vlm-codecs="ubuntu-noble-arm64-offline" \
+      com.nvidia.vss.thor.audio-runtime="staged-not-qualified"
+
+USER vss:1001
+WORKDIR /opt/nvidia/rtvi
+ENTRYPOINT ["/usr/local/bin/rtvi-vlm-offline-entrypoint"]

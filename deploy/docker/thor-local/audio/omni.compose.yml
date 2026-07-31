@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Explicit alternate lane for native audio understanding. This file is never
+# part of the default Thor COMPOSE_FILE, so the qualified image-only Qwen lane
+# remains unchanged unless an operator deliberately adds this overlay.
+services:
+  rtvi-vlm:
+    image: ${THOR_LOCAL_RTVI_AUDIO_IMAGE:-cti-vss-rt-vlm:3.2.1-thor-audio-offline}
+    # Compose null merges do not erase a parent build block. !reset is
+    # deliberate: this runtime overlay may only use the prebuilt offline image.
+    build: !reset null
+    environment:
+      VLM_MODEL_TO_USE: vllm-compatible
+      MODEL_PATH: /opt/nvidia/rtvi/models/omni
+      VLM_MODEL_SUPPORTS_AUDIO: "true"
+      VLM_TRUST_REMOTE_CODE: "true"
+      INSTALL_PROPRIETARY_CODECS: "false"
+      VLM_BATCH_SIZE: "1"
+      NUM_VLM_PROCS: "1"
+      NUM_GPUS: "1"
+      VLLM_MAX_NUM_SEQS: "1"
+      VLLM_GPU_MEMORY_UTILIZATION: ${THOR_LOCAL_OMNI_GPU_MEMORY_UTILIZATION:-0.70}
+      VLM_MAX_MODEL_LEN: ${THOR_LOCAL_OMNI_MAX_MODEL_LEN:-32768}
+      RTVI_EXTRA_ARGS: --max-live-streams 1
+      VIA_VLM_ENDPOINT: ""
+      VIA_VLM_API_KEY: ""
+      VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME: ""
+      NGC_API_KEY: ""
+      HF_TOKEN: ""
+      HF_HUB_OFFLINE: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      NVIDIA_API_KEY: NOAPIKEYSET
+      OPENAI_API_KEY: NOAPIKEYSET
+    volumes:
+      - ${THOR_LOCAL_OMNI_MODEL_DIR:?Set THOR_LOCAL_OMNI_MODEL_DIR to the verified absolute snapshot path}:/opt/nvidia/rtvi/models/omni:ro
+
+  # The agent must address RT-VLM itself, preserve audio in VIOS clips, and
+  # never run its startup-time PyPI codec installer in this offline lane.
+  vss-agent:
+    environment:
+      VLM_MODE: local
+      VLM_MODEL_TYPE: rtvi
+      VLM_NAME: ${THOR_LOCAL_OMNI_MODEL_ID:?Set THOR_LOCAL_OMNI_MODEL_ID to the exact /v1/models id}
+      VLM_BASE_URL: http://127.0.0.1:${RTVI_VLM_PORT:-8018}
+      RTVI_VLM_BASE_URL: http://127.0.0.1:${RTVI_VLM_PORT:-8018}
+      ENABLE_AUDIO: "true"
+      INSTALL_PROPRIETARY_CODECS: "false"
+      NVIDIA_API_KEY: ""
+      OPENAI_API_KEY: local
+
+  lvs-server:
+    environment:
+      ENABLE_AUDIO: "true"
+      RTVI_VLM_URL: http://127.0.0.1:${RTVI_VLM_PORT:-8018}
+      VIA_VLM_ENDPOINT: http://127.0.0.1:${RTVI_VLM_PORT:-8018}/v1/
+      NVIDIA_API_KEY: ""
+      OPENAI_API_KEY: local
+
+  alert-bridge:
+    environment:
+      VLM_MODE: local
+      VLM_NAME: ${THOR_LOCAL_OMNI_MODEL_ID:?Set THOR_LOCAL_OMNI_MODEL_ID to the exact /v1/models id}
+      VLM_BASE_URL: http://127.0.0.1:${RTVI_VLM_PORT:-8018}
+      RTVI_VLM_BASE_URL: http://127.0.0.1:${RTVI_VLM_PORT:-8018}
+      RTVI_VLM_MODEL_TO_USE: ${THOR_LOCAL_OMNI_MODEL_ID:?Set THOR_LOCAL_OMNI_MODEL_ID to the exact /v1/models id}
+      REALTIME_ALERT_ENABLE_AUDIO: "true"

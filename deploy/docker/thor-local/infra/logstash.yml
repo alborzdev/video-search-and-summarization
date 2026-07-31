@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+pipeline.workers: 1
+pipeline.ordered: true
+pipeline.ecs_compatibility: disabled
+xpack.monitoring.elasticsearch.hosts: ["http://localhost:9200"]
+api.http.host: "127.0.0.1"
+api.http.port: 9600

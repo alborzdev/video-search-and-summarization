@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "vss_release": "3.2.1",
+  "platform": "linux/arm64",
+  "images": {
+    "backend": {
+      "source_ref": "nvcr.io/nvidia/vss-core/vss-auto-calibration:3.2.1",
+      "immutable_ref": null,
+      "expected_image_id": null,
+      "required": true,
+      "status": "blocked_pending_authorized_staging_and_digest_capture",
+      "compressed_size_gb_reported_approximate": 14.07
+    },
+    "ui": {
+      "source_ref": "nvcr.io/nvidia/vss-core/vss-auto-calibration-ui:3.2.1",
+      "immutable_ref": "nvcr.io/nvidia/vss-core/vss-auto-calibration-ui@sha256:e86c16ac9e88241dabd35e6f44c2d5086a77551a3e3654b4905e51bbf4cdf6a4",
+      "expected_image_id": "sha256:e86c16ac9e88241dabd35e6f44c2d5086a77551a3e3654b4905e51bbf4cdf6a4",
+      "required": true,
+      "status": "locked"
+    }
+  },
+  "models": {
+    "vggt": {
+      "repository": "facebook/VGGT-1B-Commercial",
+      "filename": "vggt_1B_commercial.pt",
+      "relative_path": "auto-calib/vggt/vggt_1B_commercial.pt",
+      "expected_sha256": null,
+      "required_for_base_amc": false,
+      "required_for_vggt_refinement": true,
+      "status": "blocked_pending_license_acceptance_authorized_download_and_checksum_capture"
+    }
+  },
+  "notes": [
+    "A null immutable_ref or expected_sha256 is a hard unavailable state, never a wildcard.",
+    "The backend image is intentionally not pulled by Thor qualification tooling.",
+    "VGGT is optional for base AMC and must not block base calibration."
+  ]
+}

@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Thor-local overlay for the upstream auto-calibration Compose graph. Resolve it
+# after services/auto-calibration/compose.yml. The launcher must provide an
+# immutable backend reference; there is deliberately no mutable-tag default.
+services:
+  vss-auto-calibration:
+    image: ${THOR_AMC_BACKEND_IMAGE:?set THOR_AMC_BACKEND_IMAGE to the audited backend @sha256 reference}
+    command:
+      - uvicorn
+      - main:app
+      - --host
+      - ${THOR_AMC_BIND_ADDRESS:-127.0.0.1}
+      - --port
+      - ${VSS_AUTO_CALIBRATION_PORT:-8010}
+    restart: "no"
+    logging:
+      driver: local
+      options:
+        max-size: 20m
+        max-file: "3"
+
+  vss-auto-calibration-ui:
+    image: ${THOR_AMC_UI_IMAGE:-nvcr.io/nvidia/vss-core/vss-auto-calibration-ui@sha256:e86c16ac9e88241dabd35e6f44c2d5086a77551a3e3654b4905e51bbf4cdf6a4}
+    ports: !override
+      - ${THOR_AMC_UI_BIND_ADDRESS:-127.0.0.1}:${VSS_AUTO_CALIBRATION_UI_PORT:-5000}:5000
+    environment:
+      API_URL: ${VSS_AUTO_CALIBRATION_MS_API_URL:-http://127.0.0.1:${VSS_AUTO_CALIBRATION_PORT:-8010}/v1}
+    restart: "no"
+    logging:
+      driver: local
+      options:
+        max-size: 10m
+        max-file: "3"

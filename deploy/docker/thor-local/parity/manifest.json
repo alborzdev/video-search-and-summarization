@@ -112,10 +112,10 @@
       "category": "service",
       "advertised": ["file upload", "HTTP/S", "S3", "allowlisted file URI", "inline data URI", "RTSP", "dense captions", "incidents", "categories", "reasoning", "audio transcript"],
       "source_evidence": ["services/rtvi/rt-vlm/src", "services/rtvi/rt-vlm/README.md"],
-      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md"],
       "thor_state": "partial",
       "runtime_state": "not_qualified",
-      "gap": "The local OpenAI-compatible image VLM path is wired; audio and several media variants need current runtime tests."
+      "gap": "The local OpenAI-compatible image path and opt-in native-audio Omni source lane are wired. Stage the Omni assets and exercise every file/URL/data/RTSP media variant, dense captions, incidents/categories/reasoning, and audio at runtime."
     },
     {
       "id": "rt-vlm-api",
@@ -134,10 +134,10 @@
       "category": "model",
       "advertised": ["Cosmos Reason 1/2", "Cosmos 3 Nano/Super", "Nemotron Omni", "Qwen 3.5 and MoE", "remote OpenAI-compatible endpoint"],
       "source_evidence": ["services/rtvi/rt-vlm"],
-      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/provision-local-models.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/provision-local-models.sh", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/audio/omni_snapshot.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md"],
       "thor_state": "partial",
       "runtime_state": "not_qualified",
-      "gap": "The pinned private-bridge Qwen text/vision pair is staged offline; run its current inference contract, then add and qualify Cosmos and Omni as mutually exclusive replacement lanes."
+      "gap": "The pinned private-bridge Qwen pair and immutable audio-codec RT-VLM derivative are staged offline; the Omni snapshot/overlay contract is source-complete but its model snapshot is unstaged. Run Qwen's current contract, stage/qualify Omni, and add similarly immutable mutually exclusive Cosmos Reason1/2/3 Nano/Super snapshots before claiming the full advertised model matrix."
     },
     {
       "id": "rt-vlm-performance-observability",
@@ -178,10 +178,10 @@
       "category": "service",
       "advertised": ["Sparse4D multi-camera 3D detection and tracking", "shared RT-CV lifecycle/health/metrics"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"],
-      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/scripts/thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "deploy/docker/test-scripts/test-thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/WAREHOUSE_MV3DT.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-mv3dt-launcher.md"],
+      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/scripts/thor-warehouse-sparse4d.sh", "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py", "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh", "deploy/docker/thor-local/WAREHOUSE_SPARSE4D.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-sparse4d-launcher.md"],
       "thor_state": "partial",
-      "runtime_state": "static_only",
-      "gap": "Official single-GPU AGX-Thor tuning and the ARM64 RT-CV image are staged. Stage the Sparse4D ONNX/anchor plus aligned four-camera operator data, then qualify the isolated minimal and extended lanes."
+      "runtime_state": "not_qualified",
+      "gap": "The sample-free launcher now enforces exact 19/31-service Redis graphs, private snapshots, pull-free startup, and strict four-camera/model/calibration contracts. Stage the missing Sparse4D v2.2 ONNX and (900,11) anchor plus aligned operator data, then run preflight and runtime qualification."
     },
     {
       "id": "rt-cv-3d-mv3dt",
@@ -189,10 +189,10 @@
       "category": "service",
       "advertised": ["per-camera RT-DETR", "MV3DT BEV fusion", "BodyPose3DNet", "four-camera calibrated multiview tracking", "Compose deployment", "associated skill"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app", "services/rtvi/rt-cv"],
-      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md"],
+      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/scripts/thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "deploy/docker/test-scripts/test-thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/WAREHOUSE_MV3DT.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-mv3dt-launcher.md"],
       "thor_state": "partial",
-      "runtime_state": "static_only",
-      "gap": "Official single-GPU AGX-Thor tuning plus the ARM64 RT-CV and BEV Fusion images are staged. Safely stage BodyPose ONNX, rebuild compatible engines, provide aligned four-camera calibration/data, and qualify minimal and extended lanes."
+      "runtime_state": "not_qualified",
+      "gap": "The sample-free custom-data launcher enforces exact 20/28-service Redis graphs, private snapshots, pull-free startup, synchronized H.264/H.265 media, finite calibration/projection matrices, top-view metadata, and ONNX-only model inputs. Provide the missing matching videos/calibration/models, then run preflight and runtime qualification."
     },
     {
       "id": "behavior-analytics",
@@ -222,10 +222,10 @@
       "category": "calibration",
       "advertised": ["single and multi-camera calibration", "file and RTSP through VIOS", "camera pose/focal/lens distortion/rectification", "VGGT frame selection", "global ROI/tripwire", "image-coordinate export"],
       "source_evidence": ["deploy/docker/services/auto-calibration", "skills/vss-generate-video-calibration"],
-      "thor_evidence": ["deploy/docker/test-scripts/test-auto-calibration-compose.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-audit.md"],
+      "thor_evidence": ["deploy/docker/scripts/thor-auto-calibration.sh", "deploy/docker/thor-local/auto-calibration/artifact-inventory.json", "deploy/docker/thor-local/auto-calibration/compose.yml", "deploy/docker/thor-local/auto-calibration/tool.py", "deploy/docker/thor-local/auto-calibration/tests/test_tool.py", "deploy/docker/test-scripts/test-thor-auto-calibration.sh", "deploy/docker/test-scripts/test-auto-calibration-compose.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-thor-lane.md"],
       "thor_state": "partial",
       "runtime_state": "blocked",
-      "gap": "The ARM64 UI image and endpoint contract are staged/qualified, but the approximately 14.07 GB backend image and 4.7 GB gated VGGT checkpoint are absent. Stage them with valid credentials, then qualify isolated single/multicamera file and RTSP workflows using the small AMC fixture or equivalent custom synchronized data."
+      "gap": "The sample-free lane now has strict MP4/RTSP input contracts, immutable artifact inventory, loopback-only Compose, and GET-only coverage of all 26 skill-advertised operations. The backend image is absent and unlocked, VGGT is absent (optional for base AMC but required for refinement), and no real synchronized project has been run; stage those assets and qualify operator-owned data or the small AMC fixture."
     },
     {
       "id": "vios-core",
@@ -233,10 +233,10 @@
       "category": "storage",
       "advertised": ["camera discovery and sensor management", "file upload and registration", "file-to-RTSP republish", "recording schedules and timelines", "clip and raw/full-file download", "snapshots", "live/replay WebRTC", "RTSP proxy and stream bridge", "QoS and storage caps"],
       "source_evidence": ["services/vios", "services/vios/doc/api"],
-      "thor_evidence": ["deploy/docker/services/vios", "deploy/docker/thor-local/Dockerfile.vios-streamprocessing"],
+      "thor_evidence": ["deploy/docker/services/vios", "deploy/docker/thor-local/Dockerfile.vios-streamprocessing", "deploy/docker/thor-local/Dockerfile.vios-nvstreamer", "deploy/docker/thor-local/vios-codecs/vios_media.py", "deploy/docker/test-scripts/test-thor-vios-media-offline.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-media-offline.md"],
       "thor_state": "wired",
       "runtime_state": "passed_prior",
-      "gap": "All selected 3.2.1 VIOS images, including the Thor codec-repaired stream processor, are staged; run the seven Swagger surfaces including raw download, pictures, QoS and recording."
+      "gap": "All selected 3.2.1 VIOS images, including immutable networkless codec-repaired streamprocessor and NvStreamer derivatives, are staged and pass offline preflight; run the seven Swagger surfaces including raw download, pictures, QoS and recording on the current runtime."
     },
     {
       "id": "vios-codecs-audio",
@@ -244,10 +244,10 @@
       "category": "media",
       "advertised": ["B-frame handling", "HEVC multislice/RFC7798", "H.264/H.265", "audio recording", "audio RTSP republish", "CPU multimedia support"],
       "source_evidence": ["services/vios"],
-      "thor_evidence": ["deploy/docker/services/vios/scripts/user_additional_install.sh"],
-      "thor_state": "partial",
+      "thor_evidence": ["deploy/docker/services/vios/scripts/user_additional_install.sh", "deploy/docker/thor-local/audio/codec-bundle.lock.json", "deploy/docker/thor-local/vios-codecs/vios_media.py", "deploy/docker/thor-local/vios-codecs/install-codec-bundle.sh", "deploy/docker/thor-local/vios-codecs/vios-offline-entrypoint.sh", "deploy/docker/thor-local/Dockerfile.vios-streamprocessing", "deploy/docker/thor-local/Dockerfile.vios-nvstreamer", "deploy/docker/test-scripts/test-thor-vios-media-offline.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-media-offline.md"],
+      "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "Stage required ARM64 codec assets/wheels with checksums and prove each codec without startup-time internet access."
+      "gap": "The exact locked 59-package ARM64 bundle and both immutable networkless VIOS derivatives are staged and pass source/bundle/image preflight. Exercise B-frame republish, multislice HEVC/RFC7798, H.264/H.265, AAC record/republish/extract, and the isolated CPU software path on the current runtime."
     },
     {
       "id": "audio-understanding",
@@ -255,10 +255,10 @@
       "category": "model",
       "advertised": ["audio-aware Base workflow", "audio transcript per RT-VLM chunk", "audio-aware summarization and alerts"],
       "source_evidence": ["deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "services/rtvi/rt-vlm"],
-      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "services/agent/tests/unit_test/test_thor_full_profile_config.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-audio-audit.md"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "services/agent/tests/unit_test/test_thor_full_profile_config.py", "deploy/docker/thor-local/audio/README.md", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/audio/thor-omni-audio.sh", "deploy/docker/thor-local/audio/Dockerfile.rtvi-vlm-codecs", "deploy/docker/thor-local/audio/codec-bundle.lock.json", "deploy/docker/thor-local/audio/codec_bundle.py", "deploy/docker/thor-local/audio/install-codec-bundle.sh", "deploy/docker/thor-local/audio/rtvi-vlm-offline-entrypoint.sh", "deploy/docker/thor-local/audio/omni_snapshot.py", "deploy/docker/test-scripts/test-thor-audio-offline.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-audio-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md"],
       "thor_state": "partial",
       "runtime_state": "blocked",
-      "gap": "All bundled Thor agent paths now propagate the audio flag, but the default Qwen/OpenAI-compatible lane is image-only. Stage a pinned Omni snapshot and codec-ready offline RT-VLM derivative, add a mutually exclusive memory-gated audio profile, and qualify it with a tiny known-speech fixture."
+      "gap": "The exact locked 59-package ARM64 bundle and 3.2.1 audio-codec RT-VLM derivative are staged; the pinned Omni inventory and mutually exclusive memory-gated overlay pass source checks. Stage the FP8 Omni snapshot, free at least 80 GiB, add a tiny known-speech fixture, then qualify H.264/AAC through RT-VLM, agent, LVS, and alerts."
     },
     {
       "id": "vios-ui",
@@ -310,10 +310,10 @@
       "category": "industry",
       "advertised": ["Sparse4D 3D warehouse", "MV3DT multiview warehouse", "BEV fusion", "auto-calibration variants", "top-view visualization"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app", "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app"],
-      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md"],
+      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/scripts/thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "deploy/docker/test-scripts/test-thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/WAREHOUSE_MV3DT.md", "deploy/docker/scripts/thor-warehouse-sparse4d.sh", "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh", "deploy/docker/thor-local/WAREHOUSE_SPARSE4D.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-mv3dt-launcher.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-sparse4d-launcher.md"],
       "thor_state": "partial",
-      "runtime_state": "static_only",
-      "gap": "The custom-data Redis MV3DT lane now has a fail-closed AGX-Thor launcher, exact 20/28-service graphs, private immutable snapshots, and pull-free startup contract without the excluded sample bundle. Stage matching synchronized operator videos/calibration plus the remaining model assets, then runtime-qualify MV3DT and the separate Sparse4D 3D lane."
+      "runtime_state": "not_qualified",
+      "gap": "The custom-data Redis MV3DT and Sparse4D lanes now have fail-closed AGX-Thor launchers, exact 20/28 and 19/31-service graphs, private immutable snapshots, and pull-free contracts without the excluded sample bundle. Stage each lane's missing model assets plus matching synchronized operator video/calibration, then runtime-qualify both."
     },
     {
       "id": "agent-and-mcp-apis",
@@ -324,7 +324,7 @@
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml", "deploy/docker/thor-local/qualification/runtime.py", "deploy/docker/thor-local/qualification/runtime_inventory.json", "deploy/docker/thor-local/qualification/tests/test_runtime.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-runtime-qualification.md"],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The offline tier passes 326 declared REST operations (325 normalized routes) across 16 surfaces plus all 16 VA/LVS MCP tools. The GET-only loopback tier checks 24 health/OpenAPI/MCP/observability probes without mutating state; the stopped-stack baseline is 24 unavailable, so rerun it and exercise every route/tool after deployment."
+      "gap": "The offline tier passes 326 declared REST operations (325 normalized routes) across 16 surfaces plus all 16 VA/LVS MCP tools. The GET-only loopback tier now checks 30 health/OpenAPI/MCP/infrastructure probes without mutating state; the stopped-stack baseline is 30 unavailable and zero failed, so rerun it and exercise every route/tool after deployment."
     },
     {
       "id": "infra-observability",
@@ -332,10 +332,10 @@
       "category": "platform",
       "advertised": ["API gateway", "Kafka", "Redis", "Elasticsearch/Kibana", "Prometheus/Grafana", "Phoenix/OpenTelemetry", "NvSchema", "broker debugging tools"],
       "source_evidence": ["deploy/docker/services/infra", "libs/nvschema", "tools/message-broker-consumers"],
-      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/infra/haproxy/haproxy.cfg.template", "deploy/docker/services/monitoring/compose.yml", "deploy/docker/thor-local/observability/prometheus.yml", "deploy/docker/test-scripts/test-thor-observability.sh", "deploy/docker/services/infra/elk/logstash/Dockerfile.protobuf-offline", "deploy/docker/services/infra/elk/logstash/offline-packs/logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip.expected.sha256", "deploy/docker/test-scripts/test-thor-logstash-offline.sh", "tools/message-broker-consumers/tests/test_consumers.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-observability-wiring.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-logstash-offline-pack.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-broker-consumer-qualification.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-infrastructure-audit.md"],
+      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/infra/haproxy/haproxy.cfg.template", "deploy/docker/services/infra/elk/kibana/configs/kibana.yml", "deploy/docker/services/monitoring/compose.yml", "deploy/docker/thor-local/observability/prometheus.yml", "deploy/docker/thor-local/observability/tegrastats_exporter.py", "deploy/docker/thor-local/observability/tests/test_tegrastats_exporter.py", "deploy/docker/thor-local/infra/logstash.yml", "deploy/docker/test-scripts/test-thor-observability.sh", "deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh", "deploy/docker/services/infra/elk/logstash/Dockerfile.protobuf-offline", "deploy/docker/services/infra/elk/logstash/offline-packs/logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip.expected.sha256", "deploy/docker/test-scripts/test-thor-logstash-offline.sh", "deploy/docker/thor-local/qualification/runtime_inventory.json", "tools/message-broker-consumers/tests/test_consumers.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-observability-wiring.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-logstash-offline-pack.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-broker-consumer-qualification.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-infrastructure-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-runtime-infrastructure-coverage.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-tegrastats-exporter.md"],
       "thor_state": "partial",
       "runtime_state": "not_qualified",
-      "gap": "Prometheus/Grafana/node/cAdvisor and the checksum-locked offline Logstash derivative are now staged as exact ARM64 images, and bounded broker consumers pass source tests. Prove live metrics targets/dashboard/Phoenix traces, pull-free Kafka protobuf ingestion into Elasticsearch, loopback firewall scope, finite Kafka/Redis captures, and DCGM or a tegrastats fallback."
+      "gap": "The 30-probe GET-only contract covers exact seven-job Prometheus targets, the Grafana dashboard, Kibana, Phoenix, Logstash, and a fail-closed local tegrastats exporter; external telemetry/registries are disabled and service ingress is loopback-bound. Prove the live probe/scrape set, traces, pull-free Kafka protobuf ingestion, bounded broker captures, and physical-interface firewall scope."
     },
     {
       "id": "spatial-ai-utils",
@@ -354,10 +354,10 @@
       "category": "tooling",
       "advertised": ["semantic label helpers", "dataset checks", "RGB/depth/video conversion", "ground-truth conversion"],
       "source_evidence": ["tools/sdg-postprocessing"],
-      "thor_evidence": ["tools/sdg-postprocessing/tests/test_sdg_regressions.py"],
-      "thor_state": "partial",
-      "runtime_state": "static_only",
-      "gap": "Five Thor regression tests and synthetic CLI fixtures cover camera discovery, HDF5 control flow, velocity math, and video/depth checks. A complete offline Python 3.10 dependency cache is still required for native h5py/USD execution, and Isaac Sim-only semantic helpers need their dedicated runtime."
+      "thor_evidence": ["tools/sdg-postprocessing/thor/README.md", "tools/sdg-postprocessing/thor/conda-linux-aarch64.lock", "tools/sdg-postprocessing/thor/requirements-pip.txt", "tools/sdg-postprocessing/thor/wheels-linux-aarch64.sha256", "tools/sdg-postprocessing/thor/materialize_local_lock.py", "tools/sdg-postprocessing/thor/verify_offline_cache.py", "tools/sdg-postprocessing/thor/stage-offline-cache.sh", "tools/sdg-postprocessing/thor/create-offline-env.sh", "tools/sdg-postprocessing/thor/test-thor-sdg-offline.sh", "tools/sdg-postprocessing/thor/qualify-thor-env.sh", "tools/sdg-postprocessing/semantic_labeling/box_check.py", "tools/sdg-postprocessing/semantic_labeling/remove_label.py", "tools/sdg-postprocessing/utils/export_xform_semantics.py", "tools/sdg-postprocessing/tests/test_sdg_regressions.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-sdg-thor-offline.md"],
+      "thor_state": "wired",
+      "runtime_state": "passed_current",
+      "gap": "No open Thor gap in this alternate tooling lane: the 178-package/21-wheel cache created the exact Python 3.10/OpenUSD 26.05 ARM64 environment offline, and native depth, HDF5, H.264/B-frame, semantic-label, Xform-export, removal, and regression fixtures pass."
     },
     {
       "id": "docker-compose",
@@ -365,10 +365,10 @@
       "category": "deployment",
       "advertised": ["Base Compose", "Search Compose", "LVS Compose", "Alerts Compose", "Warehouse Compose", "Smart City launchable Compose"],
       "source_evidence": ["deploy/docker/compose.yml"],
-      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/scripts/thor-local.sh"],
+      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/scripts/thor-local.sh", "deploy/docker/thor-local/warehouse-2d.compose.yml", "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "deploy/docker/thor-local/auto-calibration/compose.yml", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh"],
       "thor_state": "partial",
       "runtime_state": "static_only",
-      "gap": "The unified 2D and alternate Smart City image sets resolve, build, and pass static/offline contracts; start and qualify them, then add resource-isolated calibration, 3D and audio lanes."
+      "gap": "The 32-service unified 2D graph plus Smart City, MV3DT, Sparse4D, auto-calibration, and audio replacement graphs pass their static/offline contracts. Stage each alternate lane's remaining models/operator data and runtime-qualify the graphs under their resource-isolation gates."
     },
     {
       "id": "helm",
@@ -389,10 +389,10 @@
       "category": "deployment",
       "advertised": ["NemoClaw/OpenClaw sandbox", "VSS sandbox policy", "VSS skills upload", "orchestrator MCP", "local OpenAI-compatible provider option", "OpenClaw alert notification integration"],
       "source_evidence": ["deploy/docker/scripts/nemoclaw", "assets/vss_nemoclaw_policy.yaml", ".openclaw"],
-      "thor_evidence": ["deploy/docker/scripts/nemoclaw/init_nemoclaw.sh", "assets/vss_nemoclaw_policy.yaml", ".openclaw", "deploy/docker/scripts/tests/test_init_nemoclaw.py", "deploy/docker/scripts/tests/test_openclaw_package.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-openclaw-audit.md"],
+      "thor_evidence": ["deploy/docker/scripts/nemoclaw/init_nemoclaw.sh", "assets/vss_nemoclaw_policy.yaml", ".openclaw", "deploy/docker/thor-local/openclaw/toolchain.py", "deploy/docker/thor-local/openclaw/toolchain.lock.json", "deploy/docker/thor-local/openclaw/README.md", "deploy/docker/scripts/tests/test_init_nemoclaw.py", "deploy/docker/scripts/tests/test_openclaw_package.py", "deploy/docker/scripts/tests/test_thor_openclaw_toolchain.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-openclaw-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-openclaw-offline-toolchain.md"],
       "thor_state": "partial",
       "runtime_state": "blocked",
-      "gap": "The installer, all 16 skills, policy, MCP/hook wiring, non-Brev UI path, and Thor-local provider recipe pass static checks; the local model answers its contract. Install a pinned NemoClaw/OpenShell/OpenClaw toolchain, create the sandbox, and complete chat/tool/MCP/hook/alert runtime acceptance."
+      "gap": "The VSS-compatible NemoClaw 0.0.48/OpenShell 0.0.39/OpenClaw 2026.4.24 ARM64 lock, 155 MiB partial cache, forced-offline install, policy, 16 skills, and datasheet-chat provider contract pass. Stage/load the exact sandbox image, install persistently, then create the sandbox and complete chat/tool/MCP/hook/alert runtime acceptance."
     },
     {
       "id": "enterprise-rag",
@@ -416,17 +416,17 @@
       "thor_evidence": ["deploy/docker/thor-local/README.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md"],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The protected runtime, 3.2.1 content lock, host assets, embedding engines, and local provider snapshots/containers pass offline verification; current restart proof still requires the cache cleaner and physical-interface firewall."
+      "gap": "The protected runtime, all 28 selected image locks, host assets, embedding engines, local provider snapshots/containers, and active cache cleaner pass offline verification. Current pull-free restart proof still requires enough memory to start the VLM/stack plus the physical-interface firewall."
     }
   ],
   "skills": [
     {"id": "vss-ask-video", "thor_state": "wired", "runtime_state": "passed_prior"},
     {"id": "vss-deploy-dense-captioning", "thor_state": "partial", "runtime_state": "not_qualified"},
     {"id": "vss-deploy-detection-tracking-2d", "thor_state": "wired", "runtime_state": "passed_prior"},
-    {"id": "vss-deploy-detection-tracking-3d", "thor_state": "source_only", "runtime_state": "blocked"},
+    {"id": "vss-deploy-detection-tracking-3d", "thor_state": "partial", "runtime_state": "not_qualified"},
     {"id": "vss-deploy-profile", "thor_state": "partial", "runtime_state": "not_qualified"},
     {"id": "vss-deploy-video-embedding", "thor_state": "wired", "runtime_state": "passed_prior"},
-    {"id": "vss-generate-video-calibration", "thor_state": "source_only", "runtime_state": "blocked"},
+    {"id": "vss-generate-video-calibration", "thor_state": "partial", "runtime_state": "blocked"},
     {"id": "vss-generate-video-report", "thor_state": "wired", "runtime_state": "passed_prior"},
     {"id": "vss-generate-video-report-rag", "thor_state": "blocked_upstream", "runtime_state": "blocked"},
     {"id": "vss-manage-alerts", "thor_state": "partial", "runtime_state": "passed_prior"},

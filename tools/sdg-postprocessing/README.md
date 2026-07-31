@@ -41,6 +41,23 @@ This repository aims to:
     ffmpeg -version
     ```
 
+### Jetson Thor: checksum-locked offline environment
+
+PyPI does not publish `usd-core==26.5` for Linux ARM64. The Thor lane uses the
+equivalent OpenUSD 26.05 conda-forge ARM64 build, retains every other exact pin,
+and stages a byte-verified cache for pull-free replay. A committed 21-entry
+wheel lock pins exact Linux ARM64 filenames and SHA-256 digests independently
+of the generated cache checksum sidecar:
+
+```bash
+tools/sdg-postprocessing/thor/stage-offline-cache.sh  # connected staging, once
+tools/sdg-postprocessing/thor/create-offline-env.sh   # offline create + qualification
+```
+
+See [`thor/README.md`](thor/README.md) for cache overrides and the native
+qualification contract. The semantic-label and Xform helpers accept `--stage`
+for headless Thor operation as well as the Isaac Sim Script Editor workflow.
+
 ---
 
 ## Get Started
@@ -69,7 +86,8 @@ Steps (example: labeling boxes):
   - To clear all labels and start over, use `semantic_labeling/remove_label.py` in the Script Editor; then repeat the steps above.
 
 **Notes**:
-- Above codes need to excuted in **IsaacSim Editor Script**.
+- The same helpers can run in **Isaac Sim Editor Script** or headlessly on Thor
+  against a USD file; see `semantic_labeling/*.py --help`.
 - Always back up or work on a copy of your USD stage before bulk labeling.
 - Use consistent semantic types and values; the example uses type `class` and category names as data.
 - Keep category names stable across scenes to simplify downstream filtering.

@@ -85,7 +85,7 @@ backend bk_smartcity_map_strip
 backend bk_phoenix_strip
     http-request replace-path ^/phoenix/(.*) /\1
     http-request replace-path ^/phoenix$ /
-    server s1 "${HOST_IP}:${PHOENIX_PORT}" check
+    server s1 "${PHOENIX_HOST}:${PHOENIX_PORT}" check
 
 frontend fe_http
     bind "${HAPROXY_BIND_ADDR}:${HAPROXY_PORT}"

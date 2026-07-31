@@ -17,3 +17,13 @@ monitoring.ui.container.elasticsearch.enabled: true
 # in a deliberately unauthenticated, air-gapped deployment.
 xpack.intercepts.enabled: false
 xpack.product_intercept.enabled: false
+
+# The VSS dashboards are local operational surfaces. Kibana 9.3.3 defaults
+# usage telemetry and its remote newsfeed on, so make the air-gapped contract
+# explicit rather than relying on failed outbound requests.
+telemetry.optIn: false
+telemetry.allowChangingOptInStatus: false
+telemetry.tracing.enabled: false
+telemetry.metrics.enabled: false
+newsfeed.enabled: false
+xpack.fleet.isAirGapped: true

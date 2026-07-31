@@ -21,7 +21,19 @@ from pathlib import Path
 
 import yaml
 
-compose = yaml.safe_load(Path(sys.argv[1]).read_text(encoding="utf-8"))
+
+class ComposeLoader(yaml.SafeLoader):
+    pass
+
+
+ComposeLoader.add_constructor(
+    "!override", lambda loader, node: loader.construct_sequence(node)
+)
+
+
+compose = yaml.load(
+    Path(sys.argv[1]).read_text(encoding="utf-8"), Loader=ComposeLoader
+)
 service = compose["services"]["logstash"]
 build = service["build"]
 assert service["command"] == [], service["command"]

@@ -1,0 +1,17 @@
+# syntax=docker/dockerfile:1
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+ARG LOGSTASH_BASE_IMAGE=docker.elastic.co/logstash/logstash:9.3.3@sha256:a7ad817ec23e2f9c41f8fcd09bcce3c87710890f93612d4fd51de45074d7af2e
+FROM ${LOGSTASH_BASE_IMAGE}
+
+USER root
+COPY deploy/docker/services/infra/elk/logstash/gems/logstash-input-redis_stream-3.1.0-java.gem /tmp/logstash-input-redis_stream-3.1.0-java.gem
+RUN printf '%s  %s\n' \
+      'ef29e5c3056057a872c78369a7a672f48d9fe1434e8eff654d3ad0b68ba85183' \
+      '/tmp/logstash-input-redis_stream-3.1.0-java.gem' \
+      | sha256sum --check --status \
+    && /usr/share/logstash/bin/logstash-plugin install \
+      file:///tmp/logstash-input-redis_stream-3.1.0-java.gem \
+    && rm -f /tmp/logstash-input-redis_stream-3.1.0-java.gem
+USER 1000

@@ -125,11 +125,118 @@ class RuntimeQualificationTests(unittest.TestCase):
         services = config["services"]
         probes = [probe for service in services for probe in service["probes"]]
 
-        self.assertEqual(len(services), 17)
-        self.assertEqual(len(probes), 24)
+        self.assertEqual(len(services), 21)
+        self.assertEqual(len(probes), 30)
         self.assertNotIn("local-llm", {service["id"] for service in services})
         self.assertNotIn("local-vlm", {service["id"] for service in services})
         self.assertTrue(all(probe.get("method", "GET") == "GET" for probe in probes))
+
+    def test_prometheus_targets_require_exact_healthy_job_set(self) -> None:
+        jobs = [
+            "prometheus",
+            "cadvisor",
+            "node-exporter",
+            "tegrastats-exporter",
+            "rtvi-vlm",
+            "rtvi-embed",
+            "lvs",
+        ]
+        payload = {
+            "status": "success",
+            "data": {
+                "activeTargets": [
+                    {"labels": {"job": job}, "health": "up"} for job in jobs
+                ]
+            },
+        }
+        probes = [
+            {
+                "id": "targets",
+                "kind": "prometheus-targets",
+                "path": "/api/v1/targets",
+                "expected_jobs": jobs,
+            }
+        ]
+        routes = {
+            "/api/v1/targets": (
+                200,
+                {"Content-Type": "application/json"},
+                json.dumps(payload).encode(),
+            )
+        }
+        with (
+            tempfile.TemporaryDirectory() as temp,
+            mock_http_server(routes) as (origin, server),
+        ):
+            config, expected = write_fixture(Path(temp), probes)
+            report = runtime.run_runtime(
+                config,
+                expected,
+                endpoint_assignments=[f"mock={origin}"],
+                timeout=1,
+            )
+
+        self.assertEqual(report["result"], "pass")
+        self.assertEqual(server.request_methods, ["GET"])  # type: ignore[attr-defined]
+        self.assertEqual(
+            report["probes"][0]["comparison"],
+            {
+                "active_target_count": 7,
+                "expected_target_count": 7,
+                "extra_job_count": 0,
+                "missing_job_count": 0,
+                "repeated_job_count": 0,
+                "unhealthy_target_count": 0,
+            },
+        )
+
+    def test_prometheus_target_drift_is_counted_and_redacted(self) -> None:
+        secret = "private-target-name"
+        jobs = ["prometheus", "lvs"]
+        payload = {
+            "status": "success",
+            "data": {
+                "activeTargets": [
+                    {"labels": {"job": "prometheus"}, "health": "up"},
+                    {"labels": {"job": "lvs"}, "health": "down"},
+                    {"labels": {"job": secret}, "health": "up"},
+                ]
+            },
+        }
+        probes = [
+            {
+                "id": "targets",
+                "kind": "prometheus-targets",
+                "path": "/api/v1/targets",
+                "expected_jobs": jobs,
+            }
+        ]
+        routes = {
+            "/api/v1/targets": (
+                200,
+                {"Content-Type": "application/json"},
+                json.dumps(payload).encode(),
+            )
+        }
+        with (
+            tempfile.TemporaryDirectory() as temp,
+            mock_http_server(routes) as (origin, _),
+        ):
+            config, expected = write_fixture(Path(temp), probes)
+            report = runtime.run_runtime(
+                config,
+                expected,
+                endpoint_assignments=[f"mock={origin}"],
+                timeout=1,
+            )
+
+        serialized = json.dumps(report)
+        self.assertEqual(report["result"], "fail")
+        self.assertEqual(report["probes"][0]["error"], "contract_drift")
+        self.assertEqual(report["probes"][0]["comparison"]["extra_job_count"], 1)
+        self.assertEqual(report["probes"][0]["comparison"]["unhealthy_target_count"], 1)
+        self.assertIn("drift_fingerprint", report["probes"][0]["comparison"])
+        self.assertNotIn(secret, serialized)
 
     def test_health_openapi_and_mcp_probes_pass_with_get_only(self) -> None:
         document = openapi_document("/widgets")

@@ -217,6 +217,48 @@
       ]
     },
     {
+      "id": "kibana",
+      "port_env": "KIBANA_PORT",
+      "default_port": 5601,
+      "probes": [
+        {
+          "id": "status",
+          "kind": "health",
+          "method": "GET",
+          "path": "/kibana/api/status",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "phoenix",
+      "port_env": "PHOENIX_PORT",
+      "default_port": 6006,
+      "probes": [
+        {
+          "id": "ready",
+          "kind": "health",
+          "method": "GET",
+          "path": "/readyz",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "logstash",
+      "port_env": "LOGSTASH_API_PORT",
+      "default_port": 9600,
+      "probes": [
+        {
+          "id": "node-api",
+          "kind": "health",
+          "method": "GET",
+          "path": "/",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
       "id": "prometheus",
       "port_env": "PROMETHEUS_PORT",
       "default_port": 9090,
@@ -227,6 +269,22 @@
           "method": "GET",
           "path": "/-/ready",
           "expected_status": [200]
+        },
+        {
+          "id": "targets",
+          "kind": "prometheus-targets",
+          "method": "GET",
+          "path": "/api/v1/targets",
+          "expected_status": [200],
+          "expected_jobs": [
+            "prometheus",
+            "cadvisor",
+            "node-exporter",
+            "tegrastats-exporter",
+            "rtvi-vlm",
+            "rtvi-embed",
+            "lvs"
+          ]
         }
       ]
     },
@@ -240,6 +298,13 @@
           "kind": "health",
           "method": "GET",
           "path": "/api/health",
+          "expected_status": [200]
+        },
+        {
+          "id": "thor-dashboard",
+          "kind": "reachability",
+          "method": "GET",
+          "path": "/api/dashboards/uid/thor-vss-observability",
           "expected_status": [200]
         }
       ]
@@ -268,6 +333,20 @@
           "kind": "health",
           "method": "GET",
           "path": "/healthz",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "tegrastats-exporter",
+      "port_env": "TEGRASTATS_PORT",
+      "default_port": 19101,
+      "probes": [
+        {
+          "id": "ready",
+          "kind": "health",
+          "method": "GET",
+          "path": "/readyz",
           "expected_status": [200]
         }
       ]

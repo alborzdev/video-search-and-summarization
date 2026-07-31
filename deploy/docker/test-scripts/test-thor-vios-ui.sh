@@ -15,6 +15,15 @@ from pathlib import Path
 
 import yaml
 
+
+class ComposeLoader(yaml.SafeLoader):
+    pass
+
+
+ComposeLoader.add_constructor(
+    "!override", lambda loader, node: loader.construct_sequence(node)
+)
+
 root = Path(sys.argv[1])
 docker_dir = root / "deploy/docker"
 released_config_path = docker_dir / "services/vios/configs/vst_config.json"
@@ -35,7 +44,10 @@ serialized = json.dumps(thor).lower()
 for forbidden in ("google.com", "twilio.com", "stun1.l.google"):
     assert forbidden not in serialized, forbidden
 
-overlay = yaml.safe_load((docker_dir / "thor-local/compose.yml").read_text(encoding="utf-8"))
+overlay = yaml.load(
+    (docker_dir / "thor-local/compose.yml").read_text(encoding="utf-8"),
+    Loader=ComposeLoader,
+)
 services = overlay["services"]
 expected_mount = (
     "${THOR_LOCAL_VST_CONFIG_FILE:-${VSS_REPO_ROOT}/deploy/docker/thor-local/"

@@ -97,6 +97,9 @@ export LVS_MCP_PORT="${LVS_MCP_PORT:-38112}"
 export LVS_ENABLE_MCP="${LVS_ENABLE_MCP:-true}"
 export VIA_DEV_API="${VIA_DEV_API:-true}"
 export KIBANA_PORT="${KIBANA_PORT:-5601}"
+export PHOENIX_HOST="${PHOENIX_HOST:-127.0.0.1}"
+export PHOENIX_PORT="${PHOENIX_PORT:-6006}"
+export LOGSTASH_API_PORT="${LOGSTASH_API_PORT:-9600}"
 export THOR_FULL_ENABLE_KIBANA="${THOR_FULL_ENABLE_KIBANA:-true}"
 export MONITORING_BIND_ADDRESS="${MONITORING_BIND_ADDRESS:-127.0.0.1}"
 export PROMETHEUS_CONFIG_FILE="${PROMETHEUS_CONFIG_FILE:-${deployment_dir}/thor-local/observability/prometheus.yml}"
@@ -104,6 +107,7 @@ export PROMETHEUS_PORT="${PROMETHEUS_PORT:-9090}"
 export GRAFANA_PORT="${GRAFANA_PORT:-35000}"
 export NODE_EXPORTER_PORT="${NODE_EXPORTER_PORT:-19100}"
 export CADVISOR_PORT="${CADVISOR_PORT:-18080}"
+export TEGRASTATS_PORT="${TEGRASTATS_PORT:-19101}"
 export THOR_FULL_STAGE_TIMEOUT_SECONDS="${THOR_FULL_STAGE_TIMEOUT_SECONDS:-1800}"
 export THOR_FULL_READINESS_TIMEOUT_SECONDS="${THOR_FULL_READINESS_TIMEOUT_SECONDS:-1200}"
 export RTVI_EMBED_BATCH_SIZE="${RTVI_EMBED_BATCH_SIZE:-8}"
@@ -219,9 +223,10 @@ Optional environment overrides:
   VST_PORT, SENSOR_HTTP_PORT, STREAM_PROCESSOR_HTTP_PORT,
   RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT,
   VIDEO_ANALYTICS_API_PORT, SMARTCITY_MAP_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
-  VSS_VA_MCP_PORT, BACKEND_PORT, KIBANA_PORT,
+  VSS_VA_MCP_PORT, BACKEND_PORT, KIBANA_PORT, PHOENIX_PORT,
   MONITORING_BIND_ADDRESS, PROMETHEUS_CONFIG_FILE,
   PROMETHEUS_PORT, GRAFANA_PORT, NODE_EXPORTER_PORT, CADVISOR_PORT,
+  TEGRASTATS_PORT (fixed at 19101 by the checked-in Prometheus target),
   VLM_MAX_FRAMES_PER_REQUEST, VST_VIDEO_STORAGE_SIZE_MB.
   NPM_CONFIG_REGISTRY (defaults to https://registry.npmmirror.com).
   NEXT_PUBLIC_APP_TITLE, NEXT_PUBLIC_APP_SUBTITLE,
@@ -595,8 +600,14 @@ validate_thor_full_contract() {
     die "MONITORING_BIND_ADDRESS must remain 127.0.0.1 for Thor-local"
   [[ "${PROMETHEUS_CONFIG_FILE}" == "${deployment_dir}/thor-local/observability/prometheus.yml" ]] ||
     die "PROMETHEUS_CONFIG_FILE must use the versioned Thor-local target set"
+  [[ "${PHOENIX_HOST}" == "127.0.0.1" ]] ||
+    die "PHOENIX_HOST must remain 127.0.0.1 for Thor-local"
+  [[ "${LOGSTASH_API_PORT}" == "9600" ]] ||
+    die "LOGSTASH_API_PORT must remain 9600 while the versioned Thor Logstash config uses that port"
   [[ "${BACKEND_PORT}" == "38111" ]] ||
     die "BACKEND_PORT must remain 38111 while the versioned Thor Prometheus config scrapes LVS on that port"
+  [[ "${TEGRASTATS_PORT}" == "19101" ]] ||
+    die "TEGRASTATS_PORT must remain 19101 while the versioned Thor Prometheus config scrapes tegrastats on that port"
   [[ "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "true" || "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "false" ]] ||
     die "THOR_LOCAL_FORCE_BOOTSTRAP must be true or false"
   [[ "${THOR_FULL_STAGE_TIMEOUT_SECONDS}" =~ ^[1-9][0-9]*$ ]] ||
@@ -708,10 +719,13 @@ validate_thor_full_contract() {
     "BACKEND_PORT:${BACKEND_PORT}" \
     "LVS_MCP_PORT:${LVS_MCP_PORT}" \
     "KIBANA_PORT:${KIBANA_PORT}" \
+    "PHOENIX_PORT:${PHOENIX_PORT}" \
+    "LOGSTASH_API_PORT:${LOGSTASH_API_PORT}" \
     "PROMETHEUS_PORT:${PROMETHEUS_PORT}" \
     "GRAFANA_PORT:${GRAFANA_PORT}" \
     "NODE_EXPORTER_PORT:${NODE_EXPORTER_PORT}" \
-    "CADVISOR_PORT:${CADVISOR_PORT}"; do
+    "CADVISOR_PORT:${CADVISOR_PORT}" \
+    "TEGRASTATS_PORT:${TEGRASTATS_PORT}"; do
     name="${item%%:*}"
     port="${item#*:}"
     require_valid_port "${name}" "${port}"
@@ -836,12 +850,17 @@ print_runtime_contract() {
     THOR_LOCAL_LVS_IMAGE "${THOR_LOCAL_LVS_IMAGE}" \
     MODEL_ROOT_DIR "${data_directory}/models" \
     KIBANA_PORT "${KIBANA_PORT}" \
+    PHOENIX_HOST "${PHOENIX_HOST}" \
+    PHOENIX_PORT "${PHOENIX_PORT}" \
+    PHOENIX_ENDPOINT "http://127.0.0.1:${PHOENIX_PORT}" \
+    LOGSTASH_API_PORT "${LOGSTASH_API_PORT}" \
     MONITORING_BIND_ADDRESS "${MONITORING_BIND_ADDRESS}" \
     PROMETHEUS_CONFIG_FILE "${PROMETHEUS_CONFIG_FILE}" \
     PROMETHEUS_PORT "${PROMETHEUS_PORT}" \
     GRAFANA_PORT "${GRAFANA_PORT}" \
     NODE_EXPORTER_PORT "${NODE_EXPORTER_PORT}" \
     CADVISOR_PORT "${CADVISOR_PORT}" \
+    TEGRASTATS_PORT "${TEGRASTATS_PORT}" \
     NUM_STREAMS 1 \
     NUM_SENSORS 1 \
     ENABLE_CRITIC true \
@@ -936,7 +955,8 @@ Thor-local environment contract:
   Live alerts: ${REALTIME_ALERT_CHUNK_DURATION}s chunks/${REALTIME_ALERT_CHUNK_OVERLAP_DURATION}s overlap, ${REALTIME_ALERT_FRAMES_PER_CHUNK} fixed frames at ${REALTIME_ALERT_VLM_INPUT_WIDTH}x${REALTIME_ALERT_VLM_INPUT_HEIGHT}, reasoning=${REALTIME_ALERT_ENABLE_REASONING}, max_tokens=${REALTIME_ALERT_MAX_TOKENS}
   Alert extensions: direct_media=${ALERT_DIRECT_MEDIA_ENABLED}, enrichment=${ALERT_ENRICHMENT_ENABLED}, always_on=${ALERT_ALWAYS_ON_ENABLED}, websocket=${ALERT_WEBSOCKET_ENABLED}
   Memory gates: model_start=${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START} GiB, stack_start=${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START} GiB
-  Data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, Kibana=${KIBANA_PORT}
+  Data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, Kibana=${KIBANA_PORT}, Phoenix=${PHOENIX_HOST}:${PHOENIX_PORT}, Logstash API=127.0.0.1:${LOGSTASH_API_PORT}
+  Observability ports: Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT}, tegrastats=${TEGRASTATS_PORT}
   Runtime env: ${generated_env}
   Registry credentials: removed from runtime env and offline Compose process
 EOF
@@ -1137,6 +1157,14 @@ preflight() {
   grep -q "^# R38 " /etc/nv_tegra_release 2>/dev/null || die "Jetson Linux R38.x was not detected"
   nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | grep -qi thor || die "NVIDIA Thor GPU was not detected"
   docker info >/dev/null 2>&1 || die "Docker daemon is unavailable"
+  [[ -x /usr/bin/tegrastats ]] || die "Jetson tegrastats is missing or not executable: /usr/bin/tegrastats"
+  [[ -x /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 ]] || die "Jetson AArch64 runtime loader is missing"
+  [[ -r /lib/aarch64-linux-gnu/libc.so.6 && -r /lib/aarch64-linux-gnu/libm.so.6 ]] ||
+    die "Jetson tegrastats runtime libraries are missing"
+  /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1 \
+    --library-path /lib/aarch64-linux-gnu \
+    /usr/bin/tegrastats --help 2>&1 | grep -q '^Usage: tegrastats' ||
+    die "Jetson tegrastats does not execute with its mounted host runtime"
 
   if ! "${script_dir}/dev-profile.sh" check-kernel-settings; then
     die "Required kernel settings are incomplete. Run '${script_dir}/thor-local.sh kernel-settings' once, then retry."
@@ -1175,10 +1203,13 @@ preflight() {
   if [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" ]]; then
     require_available_port "${KIBANA_PORT}" kibana
   fi
+  require_available_port "${PHOENIX_PORT}" phoenix
+  require_available_port "${LOGSTASH_API_PORT}" logstash
   require_available_port "${PROMETHEUS_PORT}" prometheus
   require_available_port "${GRAFANA_PORT}" grafana
   require_available_port "${NODE_EXPORTER_PORT}" node-exporter
   require_available_port "${CADVISOR_PORT}" cadvisor
+  require_available_port "${TEGRASTATS_PORT}" tegrastats-exporter
 
   local free_gb
   free_gb="$(df -Pk "${deployment_dir}" | awk 'NR==2 {print int($4/1024/1024)}')"
@@ -1189,8 +1220,8 @@ preflight() {
   echo "[OK] AGX Thor platform and local model endpoints are ready."
   echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}."
   echo "[OK] Planned intelligence ports: embed=${RTVI_EMBED_PORT}, RTVI-VLM=${RTVI_VLM_PORT}, perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, LVS=${BACKEND_PORT}."
-  echo "[OK] Planned data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, Kibana=${KIBANA_PORT} (enabled=${THOR_FULL_ENABLE_KIBANA})."
-  echo "[OK] Planned observability ports (loopback): Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT}."
+  echo "[OK] Planned data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, Kibana=${KIBANA_PORT} (enabled=${THOR_FULL_ENABLE_KIBANA}), Phoenix=${PHOENIX_HOST}:${PHOENIX_PORT}, Logstash API=127.0.0.1:${LOGSTASH_API_PORT}."
+  echo "[OK] Planned observability ports (loopback): Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT}, tegrastats=${TEGRASTATS_PORT}."
   echo "[OK] VLM frame request limit: ${VLM_MAX_FRAMES_PER_REQUEST}."
 }
 
@@ -1474,16 +1505,16 @@ security_internal_ports() {
   # safer than rewriting their inter-service topology. Ports 3000 and 8000 are
   # included because Docker DNAT exposes those container targets in FORWARD.
   printf '%s\n' \
-    80 1935 3000 "${VSS_UI_PORT}" 4000 5201 6006 6379 \
+    80 1935 3000 "${VSS_UI_PORT}" 4000 5201 "${PHOENIX_PORT}" 6379 \
     "$(endpoint_port "${LLM_ENDPOINT_URL}")" \
     "$(endpoint_port "${VLM_ENDPOINT_URL}")" \
     8000 "${RTVI_EMBED_PORT}" "${RTVI_VLM_PORT}" "${VIDEO_ANALYTICS_API_PORT}" "${SMARTCITY_MAP_PORT}" \
     "${VSS_AGENT_PORT}" 8554 8787 8888 8889 8892 "${RTVI_CV_PORT}" \
-    "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 9600 \
+    "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 "${KIBANA_PORT}" "${LOGSTASH_API_PORT}" \
     "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" \
     30554 30555 30556 30557 30558 30559 30560 30561 30562 30563 30564 \
     "${VST_PORT}" "${BACKEND_PORT}" "${LVS_MCP_PORT}" \
-    "${PROMETHEUS_PORT}" "${GRAFANA_PORT}" "${NODE_EXPORTER_PORT}" "${CADVISOR_PORT}" | sort -n -u
+    "${PROMETHEUS_PORT}" "${GRAFANA_PORT}" "${NODE_EXPORTER_PORT}" "${CADVISOR_PORT}" "${TEGRASTATS_PORT}" | sort -n -u
 }
 
 listener_scope() {
@@ -2144,6 +2175,11 @@ doctor_check_endpoints() {
   doctor_http_status "RTVI-VLM proxy" "http://127.0.0.1:${RTVI_VLM_PORT}/v1/health/ready" 200
   doctor_http_status "VST/VIOS" "http://127.0.0.1:${VST_PORT}/health" 200
   doctor_http_status "Elasticsearch search backend" "http://127.0.0.1:${VSS_ES_PORT}/_cluster/health" 200
+  if [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" ]]; then
+    doctor_http_status "Kibana" "http://127.0.0.1:${KIBANA_PORT}/kibana/api/status" 200
+  fi
+  doctor_http_status "Phoenix" "http://127.0.0.1:${PHOENIX_PORT}/readyz" 200
+  doctor_http_status "Logstash" "http://127.0.0.1:${LOGSTASH_API_PORT}/" 200
   doctor_http_status "Alert bridge" "http://127.0.0.1:${ALERT_BRIDGE_PORT}/health" 200
   doctor_json_contract "Alert verification API" "http://127.0.0.1:${ALERT_BRIDGE_PORT}/api/v1/verification/config" \
     'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if payload.get("status") == "success" and isinstance(payload.get("configs"), list) else 1)'
@@ -2158,6 +2194,7 @@ doctor_check_endpoints() {
   doctor_http_status "Grafana" "http://127.0.0.1:${GRAFANA_PORT}/api/health" 200
   doctor_http_status "Node exporter" "http://127.0.0.1:${NODE_EXPORTER_PORT}/metrics" 200
   doctor_http_status "cAdvisor" "http://127.0.0.1:${CADVISOR_PORT}/healthz" 200
+  doctor_http_status "Thor tegrastats exporter" "http://127.0.0.1:${TEGRASTATS_PORT}/readyz" 200
   if [[ "${LVS_ENABLE_MCP}" == "true" ]]; then
     if ss -H -ltn "sport = :${LVS_MCP_PORT}" | grep -q .; then
       doctor_pass "Video summarization MCP is listening on ${LVS_MCP_PORT}."

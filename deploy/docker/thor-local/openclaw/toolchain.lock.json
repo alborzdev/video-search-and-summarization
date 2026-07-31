@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "compatibility_source": "deploy/docker/scripts/deploy_nemoclaw_vss.ipynb",
+  "platform": "linux/arm64",
+  "runtime": {
+    "node_minimum": "22.16.0",
+    "npm_major_minimum": 10
+  },
+  "nemoclaw": {
+    "tag": "v0.0.48",
+    "commit": "449f6f4e7f28cd6dbee075836c502b10f1b270ca",
+    "version_output": "nemoclaw v0.0.48",
+    "source": {
+      "filename": "nemoclaw-449f6f4e7f28cd6dbee075836c502b10f1b270ca.tar.gz",
+      "url": "https://github.com/NVIDIA/NemoClaw/archive/449f6f4e7f28cd6dbee075836c502b10f1b270ca.tar.gz",
+      "sha256": "8be985bea7e42b1bd106e7703cc0086efa4b21fd3c3d0b8496a707291160e39f"
+    },
+    "package_filename": "nemoclaw-0.1.0.tgz",
+    "package_sha256": "bd134423f87f51c72a6ab7499fe46f334a48087849f2ed2ab3b23b3c5e45bfd0",
+    "root_package_lock_sha256": "e2589fb00d2a2d0e22f996746d5d4971e031a5ac951238e6bda20771e2c52135",
+    "plugin_package_lock_sha256": "1cdb023ded4ff743702281adb702161f1d4d7705b4c0156f695601c4bcccabfb"
+  },
+  "openshell": {
+    "version": "0.0.39",
+    "version_output_pattern": "0.0.39",
+    "release_base_url": "https://github.com/NVIDIA/OpenShell/releases/download/v0.0.39",
+    "artifacts": [
+      {
+        "filename": "openshell-aarch64-unknown-linux-musl.tar.gz",
+        "sha256": "67a439935445875a7e55ae47e84bcb9f20dcf4946ba701585580287ba49f38f5"
+      },
+      {
+        "filename": "openshell-gateway-aarch64-unknown-linux-gnu.tar.gz",
+        "sha256": "eab554cfbb0d3ccab3dae8d0ebd2bdd0f24b0e08362fb214edb3260073073b64"
+      },
+      {
+        "filename": "openshell-sandbox-aarch64-unknown-linux-gnu.tar.gz",
+        "sha256": "428b4283f61270ca1d186f292c4900c67e9290b3e404069dceab890b7582c787"
+      }
+    ]
+  },
+  "openclaw": {
+    "version": "2026.4.24",
+    "sandbox_image": "ghcr.io/nvidia/openshell-community/sandboxes/openclaw@sha256:b3d832b596ab6b7184a9dcb4ae93337ca32851a4f93b00765cc12de26baa3a9a",
+    "arm64_manifest_digest": "sha256:f0975cb409beb3dd87915ca48c4935fa540dbeb55e222e108493980c1573bc8d",
+    "arm64_config_digest": "sha256:d4f437133b8775703f67213f2ed79362bfbff31f291d3f9db68aaea4bc5a66a7",
+    "archive_filename": "openclaw-sandbox-linux-arm64.tar"
+  },
+  "provider": {
+    "model": "datasheet-chat",
+    "host_probe_url": "http://172.17.0.1:8000/v1/models",
+    "sandbox_base_url": "http://host.openshell.internal:8000/v1",
+    "api_key": "local"
+  }
+}

@@ -4,18 +4,23 @@
 ARG VST_STREAM_PROCESSOR_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1
 FROM ${VST_STREAM_PROCESSOR_BASE_IMAGE}
 
-# The released ARM64 image retains the GStreamer package records, but omits
-# codec shared libraries such as libavcodec.so. NVIDIA's normal Compose path
-# repairs those files at every container start. Bake that vendor-provided
-# repair into the image once so normal starts never need apt or network access.
-COPY deploy/docker/services/vios/scripts/user_additional_install.sh /tmp/user_additional_install.sh
+# The released ARM64 image retains the GStreamer package records but omits
+# codec bytes. Consume the checksum-locked bundle prepared through signed
+# Ubuntu metadata. Neither this build nor the runtime can use a package mirror.
+COPY deploy/docker/thor-local/vios-codecs/install-codec-bundle.sh /usr/local/libexec/vss-thor/install-vios-codecs
+COPY deploy/docker/thor-local/vios-codecs/vios-offline-entrypoint.sh /usr/local/bin/vios-offline-entrypoint
+COPY deploy/docker/thor-local/audio/codec-bundle.lock.json /tmp/vios-codec-lock.json
+COPY deploy/docker/thor-local/vios-codecs/bundle/ /tmp/vios-codec-bundle/
 
 USER root
-# libgstmplex is present too, but its library is omitted and is not covered by
-# the vendor repair script's package list.
-RUN /bin/bash /tmp/user_additional_install.sh \
-    && apt-get install --reinstall --no-install-recommends -y libmplex2-2.1-0 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /root/.cache/gstreamer-1.0 /tmp/user_additional_install.sh
+RUN /usr/local/libexec/vss-thor/install-vios-codecs \
+      /tmp/vios-codec-bundle / install /tmp/vios-codec-lock.json \
+    && rm -rf /tmp/vios-codec-bundle /tmp/vios-codec-lock.json \
+    && chmod 0555 /usr/local/bin/vios-offline-entrypoint \
+    && rm -f /usr/local/libexec/vss-thor/install-vios-codecs
 
-ENTRYPOINT ["/home/vst/vst_release/launch_vst"]
+LABEL com.nvidia.vss.thor.vios-codecs="ubuntu-noble-arm64-offline" \
+      com.nvidia.vss.thor.vios-codec-package-set="c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f" \
+      com.nvidia.vss.thor.vios-runtime-network-install="disabled"
+
+ENTRYPOINT ["/usr/local/bin/vios-offline-entrypoint"]

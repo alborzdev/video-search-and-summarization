@@ -2,7 +2,7 @@
 
 ## Result
 
-The OpenClaw plugin, NemoClaw sandbox policy, non-Brev loopback UI path, local OpenAI-compatible provider path, orchestrator MCP registration, alert-hook configuration, and all 16 current VSS skills are present in source. The Thor-local model endpoint is live, but the lane is **not runtime-qualified** because `openclaw`, `nemoclaw`, and `openshell` are not installed on this host and no sandbox exists yet.
+The OpenClaw plugin, NemoClaw sandbox policy, non-Brev loopback UI path, local OpenAI-compatible provider path, orchestrator MCP registration, alert-hook configuration, and all 16 current VSS skills are present in source. The Thor-local model endpoint is live, but the lane is **not runtime-qualified** because the pinned toolchain is not persistently installed at the normal host prefix, the sandbox image is absent, and no sandbox exists yet. A temporary strict offline install was used only to verify the partial cache.
 
 This is an alternate local control plane. It does not require the warehouse sample dataset.
 
@@ -16,7 +16,7 @@ This is an alternate local control plane. It does not require the warehouse samp
 
 ## Thor-local evidence
 
-Read-only checks on 2026-07-31:
+Normal-prefix checks on 2026-07-31:
 
 ```text
 node      /home/nvidia/.local/bin/node  v22.23.1
@@ -54,7 +54,13 @@ Do not mark this family `passed_current` until a fresh Thor run records every ga
 
 ## Remaining blocker
 
-Installing the pinned framework requires an external package/source download and creates a sandbox. That action was outside this audit's authorization, so no install, pull, credential use, container start/stop, or synthetic notification was performed. Once the user approves that install/deploy phase, the existing local `datasheet-chat` endpoint removes the cloud-model dependency.
+A verified seven-file partial cache and temporary offline prefix now cover the
+pinned framework binaries, but the exact sandbox image archive is not staged.
+Completing the cache requires fetching that immutable image; persistent install
+and sandbox creation remain lifecycle actions. No image pull, credential use,
+container start/stop, or synthetic notification was performed. Once the user
+approves that install/deploy phase, the existing local `datasheet-chat`
+endpoint removes the cloud-model dependency.
 
 ## Focused static verification
 

@@ -9,8 +9,9 @@ unqualified.
 
 ## Static result
 
-- The resolved Thor-full graph grows from 27 to 31 services by selecting
-  `prometheus`, `grafana`, `node-exporter`, and `cadvisor`.
+- The resolved Thor-full graph grows from 27 to 32 services by selecting
+  `prometheus`, `grafana`, `node-exporter`, `cadvisor`, and the Thor-only
+  `tegrastats-exporter`.
 - `dcgm-exporter` remains limited to its existing datacenter/warehouse
   profiles. It has not been proven compatible with this Jetson/Thor runtime,
   so the Thor profile does not silently claim that GPU-specific lane.
@@ -31,16 +32,25 @@ unqualified.
 - Scrape targets are profile-safe. The shared warehouse configuration keeps
   DCGM and contains no Thor-only service targets. The separate
   `deploy/docker/thor-local/observability/prometheus.yml` contains no DCGM
-  target and scrapes Prometheus, node-exporter, cAdvisor, RT-VLM, RT-Embed,
-  and LVS. `PROMETHEUS_CONFIG_FILE` can select this file at Compose resolution,
-  or the Thor overlay can mount it at `/etc/prometheus/prometheus.yml`.
+  target and scrapes Prometheus, node-exporter, cAdvisor, the tegrastats
+  exporter, RT-VLM, RT-Embed, and LVS. `PROMETHEUS_CONFIG_FILE` can select
+  this file at Compose resolution, or the Thor overlay can mount it at
+  `/etc/prometheus/prometheus.yml`.
+- The tegrastats exporter reuses the already locked ARM64 VSS Agent image and
+  the host's L4T `/usr/bin/tegrastats`; it adds no package, image, or runtime
+  download. The binary is invoked with read-only mounts of its exact host
+  AArch64 loader, libc, and libm, isolating it from the image's Python runtime.
+  Its HTTP server is hardcoded to loopback, while the deployment contract pins
+  `TEGRASTATS_PORT=19101`; it rejects samples
+  over 16 KiB, caps CPU/temperature/power label counts, and returns unready
+  until the child process has supplied a fresh recognized sample.
 - Grafana provisions the Prometheus datasource with the stable `prometheus`
   UID expected by the new Thor dashboard. Provisioning mounts are read-only,
   update/news/plugin checks and external snapshots are disabled, and the
   dashboard has no external URLs.
 - The new `Thor-local VSS Observability` dashboard reports target state,
   scrape duration, and samples per scrape for the local VSS services and
-  exporters, including LVS.
+  exporters, including LVS and the tegrastats target.
 
 ## Metrics endpoint audit
 
@@ -67,6 +77,7 @@ Initial observation on AGX Thor before image staging:
 
 ```text
 All Thor observability static contracts passed.
+Ran 9 tests ... OK
 SKIP: runtime images are not staged (test never pulls):
   ghcr.io/google/cadvisor:0.56.2
   grafana/grafana:13.0.1-ubuntu
@@ -102,7 +113,8 @@ but never downloaded.
 
 1. Start the user-approved Thor deployment and prove Prometheus `/-/ready`,
    Grafana `/api/health`, successful provisioning of the dashboard, and `up=1`
-   for Prometheus, node-exporter, cAdvisor, RT-VLM, RT-Embed, and LVS.
+   for Prometheus, node-exporter, cAdvisor, tegrastats, RT-VLM, RT-Embed, and
+   LVS.
 2. Exercise an agent request and prove the trace reaches the existing local
    Phoenix `/v1/traces` endpoint. RT-VLM and RT-Embed OTLP exporters remain
    disabled until their direct local-Phoenix route is runtime-qualified;

@@ -116,7 +116,7 @@
   "source_files": [
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
-      "sha256": "e6db944287402e4fdc922032cbe70a576b4c1ca1b2feb32f4a3bf620e2656501"
+      "sha256": "1b90d64978aebe07eb6bf73c512d78ae18bdb22222ef41a383d6bcdb419cfe29"
     },
     {
       "path": "deploy/docker/services/video-summarization/compose.yml",

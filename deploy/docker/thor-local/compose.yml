@@ -23,6 +23,20 @@ services:
     command: []
     environment:
       STREAM_TYPE: kafka
+    volumes:
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/infra/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          bash -ec 'exec 3<>/dev/tcp/127.0.0.1/9600;
+          printf "GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" >&3;
+          read -r status <&3;
+          [[ "$${status}" == HTTP/*" 200 "* ]]'
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
 
   # Every active Thor service shares the host network and reaches Redis over
   # loopback. Override the broad upstream listener so the unauthenticated
@@ -42,16 +56,101 @@ services:
       retries: 20
       start_period: 2s
 
+  # Phoenix 14.15.0 enables telemetry pixels and external UI resources by
+  # default. Thor is an offline operator profile, so disable both and keep the
+  # trace/UI service on loopback. /readyz also proves its SQLite store works.
+  phoenix:
+    # A loopback bind inside the default bridge is unreachable from host-mode
+    # HAProxy and Agent. Join the host network so 127.0.0.1 is the shared Thor
+    # loopback, and remove the inherited bridge port publication.
+    network_mode: host
+    ports: !override []
+    environment:
+      PHOENIX_HOST: 127.0.0.1
+      PHOENIX_PORT: "${PHOENIX_PORT:-6006}"
+      PHOENIX_TELEMETRY_ENABLED: "false"
+      PHOENIX_ALLOW_EXTERNAL_RESOURCES: "false"
+      PHOENIX_ENABLE_PROMETHEUS: "false"
+    healthcheck:
+      test:
+        - CMD
+        - /usr/bin/python3.13
+        - -c
+        - >-
+          import urllib.request,sys;
+          sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:${PHOENIX_PORT:-6006}/readyz', timeout=3).getcode() == 200 else sys.exit(1)
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  # Jetson does not expose the datacenter DCGM contract. Reuse the already
+  # locked VSS Agent Python runtime to translate the host's L4T tegrastats
+  # stream without adding an image or package. The exporter hardcodes a
+  # loopback listener, bounds line/label cardinality, and stays unready until
+  # it has a fresh parsed sample.
+  tegrastats-exporter:
+    image: nvcr.io/nvidia/vss-core/vss-agent:${VSS_AGENT_VERSION}
+    container_name: tegrastats-exporter
+    entrypoint:
+      - /usr/local/bin/python3
+      - /opt/thor-observability/tegrastats_exporter.py
+    command:
+      - --port
+      - "${TEGRASTATS_PORT:-19101}"
+      - --interval-ms
+      - "${TEGRASTATS_INTERVAL_MS:-1000}"
+      - --loader
+      - /opt/tegrastats-runtime/ld-linux-aarch64.so.1
+      - --library-path
+      - /opt/tegrastats-runtime
+    network_mode: host
+    pid: host
+    runtime: nvidia
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/observability/tegrastats_exporter.py:/opt/thor-observability/tegrastats_exporter.py:ro
+      - /usr/bin/tegrastats:/usr/local/bin/tegrastats:ro
+      - /lib/aarch64-linux-gnu/ld-linux-aarch64.so.1:/opt/tegrastats-runtime/ld-linux-aarch64.so.1:ro
+      - /lib/aarch64-linux-gnu/libc.so.6:/opt/tegrastats-runtime/libc.so.6:ro
+      - /lib/aarch64-linux-gnu/libm.so.6:/opt/tegrastats-runtime/libm.so.6:ro
+      - /sys:/sys:ro
+    tmpfs:
+      - /tmp:size=4m,mode=1777
+    healthcheck:
+      test:
+        - CMD
+        - /usr/local/bin/python3
+        - -c
+        - >-
+          import urllib.request,sys;
+          sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:${TEGRASTATS_PORT:-19101}/readyz', timeout=3).getcode() == 200 else sys.exit(1)
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    restart: always
+    logging:
+      driver: local
+      options:
+        max-size: "${MONITORING_LOG_MAX_SIZE:-10m}"
+        max-file: "${MONITORING_LOG_MAX_FILES:-3}"
+
   streamprocessing-ms:
     image: ${THOR_LOCAL_VST_STREAM_PROCESSOR_IMAGE:-vss-vios-streamprocessing:3.2.1-thor-local}
     build:
       context: ${VSS_REPO_ROOT}
       dockerfile: deploy/docker/thor-local/Dockerfile.vios-streamprocessing
+      network: none
       args:
         VST_STREAM_PROCESSOR_BASE_IMAGE: ${VST_STREAM_PROCESSOR_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1}
-    # Codecs are repaired once in the derived image. Bypass the upstream
-    # startup wrapper, which otherwise performs apt operations on every boot.
-    entrypoint: ["/home/vst/vst_release/launch_vst"]
+    # The derivative consumes a checksum-locked local bundle during a
+    # networkless build and refuses any runtime package-install fallback.
+    entrypoint: ["/usr/local/bin/vios-offline-entrypoint"]
     environment:
       VST_INSTALL_ADDITIONAL_PACKAGES: "false"
     # The released config falls back to public Google STUN. A loopback STUN
@@ -84,6 +183,8 @@ services:
         condition: service_healthy
 
   vss-haproxy-ingress:
+    environment:
+      PHOENIX_HOST: 127.0.0.1
     depends_on:
       vst-ingress:
         condition: service_healthy
@@ -93,11 +194,14 @@ services:
   vss-agent:
     environment:
       PYTHONPATH: /vss-agent/thor-local-src
+      PHOENIX_ENDPOINT: http://127.0.0.1:${PHOENIX_PORT:-6006}
     volumes:
       - ${VSS_REPO_ROOT}/services/agent/src:/vss-agent/thor-local-src:ro
       - ${VSS_DATA_DIR}/agent-reports:/vss-agent/agent_reports:rw
     depends_on:
       vst-ingress:
+        condition: service_healthy
+      phoenix:
         condition: service_healthy
 
   # Jetson/Thor requires the NVIDIA runtime itself; a generic GPU device

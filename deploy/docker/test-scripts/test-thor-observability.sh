@@ -18,15 +18,27 @@ from pathlib import Path
 
 import yaml
 
+
+class ComposeLoader(yaml.SafeLoader):
+    pass
+
+
+ComposeLoader.add_constructor(
+    "!override", lambda loader, node: loader.construct_sequence(node)
+)
+
 root = Path(sys.argv[1])
 docker_dir = root / "deploy/docker"
 monitoring_dir = docker_dir / "services/monitoring"
 compose_path = monitoring_dir / "compose.yml"
 thor_prometheus_path = docker_dir / "thor-local/observability/prometheus.yml"
+thor_overlay_path = docker_dir / "thor-local/compose.yml"
 
 with compose_path.open(encoding="utf-8") as stream:
     source = yaml.safe_load(stream)
 services = source["services"]
+with thor_overlay_path.open(encoding="utf-8") as stream:
+    thor_overlay = yaml.load(stream, Loader=ComposeLoader)["services"]
 
 thor_profile = "bp_developer_thor_full_2d"
 thor_services = {"prometheus", "grafana", "node-exporter", "cadvisor"}
@@ -59,6 +71,78 @@ for service_name in thor_services:
 # DCGM is intentionally not selected on Jetson/Thor. It remains available to
 # the datacenter warehouse profiles where NVIDIA DCGM is supported.
 assert thor_profile not in services["dcgm-exporter"]["profiles"]
+
+tegrastats = thor_overlay["tegrastats-exporter"]
+assert tegrastats["image"] == "nvcr.io/nvidia/vss-core/vss-agent:${VSS_AGENT_VERSION}"
+assert tegrastats["entrypoint"] == [
+    "/usr/local/bin/python3",
+    "/opt/thor-observability/tegrastats_exporter.py",
+]
+assert tegrastats["command"] == [
+    "--port",
+    "${TEGRASTATS_PORT:-19101}",
+    "--interval-ms",
+    "${TEGRASTATS_INTERVAL_MS:-1000}",
+    "--loader",
+    "/opt/tegrastats-runtime/ld-linux-aarch64.so.1",
+    "--library-path",
+    "/opt/tegrastats-runtime",
+]
+assert tegrastats["network_mode"] == "host"
+assert tegrastats["pid"] == "host"
+assert tegrastats["runtime"] == "nvidia"
+assert tegrastats["read_only"] is True
+assert tegrastats["cap_drop"] == ["ALL"]
+assert tegrastats["security_opt"] == ["no-new-privileges:true"]
+assert "/usr/bin/tegrastats:/usr/local/bin/tegrastats:ro" in tegrastats["volumes"]
+assert "/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1:/opt/tegrastats-runtime/ld-linux-aarch64.so.1:ro" in tegrastats["volumes"]
+assert "/lib/aarch64-linux-gnu/libc.so.6:/opt/tegrastats-runtime/libc.so.6:ro" in tegrastats["volumes"]
+assert "/lib/aarch64-linux-gnu/libm.so.6:/opt/tegrastats-runtime/libm.so.6:ro" in tegrastats["volumes"]
+assert "/sys:/sys:ro" in tegrastats["volumes"]
+assert tegrastats["healthcheck"]["test"][0:3] == ["CMD", "/usr/local/bin/python3", "-c"]
+assert "127.0.0.1:${TEGRASTATS_PORT:-19101}/readyz" in tegrastats["healthcheck"]["test"][3]
+assert tegrastats["logging"] == {
+    "driver": "local",
+    "options": {
+        "max-file": "${MONITORING_LOG_MAX_FILES:-3}",
+        "max-size": "${MONITORING_LOG_MAX_SIZE:-10m}",
+    },
+}
+
+# Prove the mounted Jetson executable and its isolated host runtime agree
+# without starting a container. The same four files are mounted read-only.
+if platform.machine().lower() in {"aarch64", "arm64"}:
+    host_tegrastats = Path("/usr/bin/tegrastats")
+    host_loader = Path("/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1")
+    host_libc = Path("/lib/aarch64-linux-gnu/libc.so.6")
+    host_libm = Path("/lib/aarch64-linux-gnu/libm.so.6")
+    for host_file in (host_tegrastats, host_loader, host_libc, host_libm):
+        assert host_file.is_file(), host_file
+    dynamic = subprocess.run(
+        ["readelf", "-d", str(host_tegrastats)],
+        check=True,
+        stdout=subprocess.PIPE,
+        text=True,
+    ).stdout
+    assert "Shared library: [libm.so.6]" in dynamic
+    assert "Shared library: [libc.so.6]" in dynamic
+    assert "Shared library: [ld-linux-aarch64.so.1]" in dynamic
+    assert dynamic.count("Shared library:") == 3
+    help_result = subprocess.run(
+        [
+            str(host_loader),
+            "--library-path",
+            str(host_libc.parent),
+            str(host_tegrastats),
+            "--help",
+        ],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        timeout=5,
+    )
+    assert "Usage: tegrastats" in help_result.stdout
 
 prometheus = services["prometheus"]
 assert "--storage.tsdb.retention.time=${PROMETHEUS_RETENTION_TIME:-7d}" in prometheus["command"]
@@ -124,11 +208,15 @@ assert {
     "prometheus",
     "cadvisor",
     "node-exporter",
+    "tegrastats-exporter",
     "rtvi-vlm",
     "rtvi-embed",
     "lvs",
 } == thor_jobs.keys()
 assert "dcgm-exporter" not in thor_jobs
+assert thor_jobs["tegrastats-exporter"]["static_configs"] == [
+    {"targets": ["host.docker.internal:19101"]}
+]
 assert thor_jobs["rtvi-vlm"]["metrics_path"] == "/v1/metrics"
 assert thor_jobs["rtvi-vlm"]["static_configs"] == [{"targets": ["rtvi-vlm:8000"]}]
 assert thor_jobs["rtvi-embed"]["metrics_path"] == "/v1/metrics"
@@ -194,6 +282,7 @@ environment.update(
         "GRAFANA_PORT": "35000",
         "NODE_EXPORTER_PORT": "19100",
         "CADVISOR_PORT": "18080",
+        "TEGRASTATS_PORT": "19101",
     }
 )
 command = [
@@ -221,6 +310,7 @@ resolved = json.loads(
 )
 resolved_services = resolved["services"]
 assert thor_services <= resolved_services.keys()
+assert "tegrastats-exporter" in resolved_services
 assert "dcgm-exporter" not in resolved_services
 for service_name in thor_services:
     published = resolved_services[service_name]["ports"][0]
@@ -237,6 +327,45 @@ prometheus_config_mount = next(
 )
 assert prometheus_config_mount["source"] == str(thor_prometheus_path)
 assert prometheus_config_mount["read_only"] is True
+
+resolved_tegrastats = resolved_services["tegrastats-exporter"]
+assert resolved_tegrastats["network_mode"] == "host"
+assert resolved_tegrastats["pid"] == "host"
+assert "ports" not in resolved_tegrastats
+assert resolved_tegrastats["read_only"] is True
+assert resolved_tegrastats["image"] == resolved_services["vss-agent"]["image"]
+assert resolved_tegrastats["command"] == [
+    "--port",
+    "19101",
+    "--interval-ms",
+    "1000",
+    "--loader",
+    "/opt/tegrastats-runtime/ld-linux-aarch64.so.1",
+    "--library-path",
+    "/opt/tegrastats-runtime",
+]
+assert resolved_tegrastats["logging"] == {
+    "driver": "local",
+    "options": {"max-file": "3", "max-size": "10m"},
+}
+exporter_image = subprocess.run(
+    [
+        "docker",
+        "image",
+        "inspect",
+        "--format",
+        "{{json .Config}}",
+        resolved_tegrastats["image"],
+    ],
+    check=False,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.DEVNULL,
+    text=True,
+)
+if exporter_image.returncode == 0:
+    exporter_image_config = json.loads(exporter_image.stdout)
+    assert exporter_image_config["Entrypoint"][0] == "/usr/local/bin/python3"
+    assert exporter_image_config["User"] == "1000:1000"
 
 # On an ARM64 runner, any already-staged image must itself be ARM64. Missing
 # images are reported, never pulled, so this static test remains offline-safe.
@@ -262,3 +391,25 @@ if missing_images:
     for image in missing_images:
         print(f"  {image}")
 PY
+
+python3 -m unittest discover \
+  -s "${repo_root}/deploy/docker/thor-local/observability/tests" \
+  -p 'test_*.py'
+
+THOR_LOCAL_SOURCE_ONLY=true bash -c \
+  'source "$1"; validate_thor_full_contract' \
+  _ "${repo_root}/deploy/docker/scripts/thor-local.sh"
+
+if THOR_LOCAL_SOURCE_ONLY=true TEGRASTATS_PORT=19102 bash -c \
+  'source "$1"; validate_thor_full_contract' \
+  _ "${repo_root}/deploy/docker/scripts/thor-local.sh" >/dev/null 2>&1; then
+  echo "TEGRASTATS_PORT drift unexpectedly passed the Thor contract" >&2
+  exit 1
+fi
+
+if THOR_LOCAL_SOURCE_ONLY=true NODE_EXPORTER_PORT=19101 bash -c \
+  'source "$1"; validate_thor_full_contract' \
+  _ "${repo_root}/deploy/docker/scripts/thor-local.sh" >/dev/null 2>&1; then
+  echo "Monitoring port collision unexpectedly passed the Thor contract" >&2
+  exit 1
+fi

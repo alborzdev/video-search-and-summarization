@@ -24,11 +24,14 @@ deploy/docker/scripts/thor-local.sh verify-offline
 
 Results:
 
-- All ten Thor-derived production images built successfully, including both
-  Next.js applications, the checksum-locked offline Logstash derivative, and
-  all shared UI packages.
-- All 28 unique images selected by the current 31-service Compose profile are present and
-  recorded by content ID in the protected mode-`0600` runtime environment.
+- All Thor-derived production images required by the unified graph and staged
+  alternate lanes built successfully, including both Next.js applications,
+  the checksum-locked offline Logstash derivative, both immutable VIOS codec
+  derivatives, the audio-codec RT-VLM derivative, and all shared UI packages.
+- All 28 unique images selected by the resolved 32-service Compose profile are
+  present and recorded by content ID in the protected mode-`0600` runtime
+  environment. The tegrastats exporter reuses the locked VSS Agent image and
+  introduces no new image identity.
 - NVIDIA's agent, behavior analytics, RT-CV, RT-Embed, VIOS ingress, VIOS
   sensor, and released LVS images are the ARM64 3.2.1 variants. The Video
   Analytics API remains at NVIDIA's intentional 3.2.0 release pin.
@@ -45,6 +48,9 @@ Results:
   served-name, and bind-address contracts.
 - The verifier concluded that restart requires no image pull, build, NGC key,
   Hugging Face access, or model download.
+- The protected runtime was refreshed again after the VIOS/audio derivative
+  builds and the tegrastats port addition; the subsequent offline verifier
+  passed all 28 selected image locks and all pinned host/model assets.
 
 ## Static regression checks
 
@@ -60,7 +66,8 @@ The following suites passed after the staging/model-lane changes:
 ## Deliberately open runtime gates
 
 - The root-owned cache cleaner is active, and the refreshed offline verifier
-  passes. The vision provider and 31-service stack remain stopped because only
+  passed at capture time. The vision provider and current 32-service stack
+  remain stopped because only
   about 34 GiB unified memory is available while the fail-closed vision-model
   start gate requires 50 GiB; API, UI, inference, alerts, search, and restart
   qualification are therefore not yet current.

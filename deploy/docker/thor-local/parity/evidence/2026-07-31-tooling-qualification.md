@@ -24,7 +24,8 @@ in `release/pyproject.toml`.
 
 ## Synthetic-data post-processing tools
 
-Five focused Thor regression tests now cover:
+The final Thor source suite contains nine passing tests (one host-only case is
+skipped in the isolated source run) covering:
 
 - HDF5 wrapper invocation from an unrelated working directory;
 - HDF5 conversion control flow, concurrency helpers, dtypes, and compression;
@@ -32,12 +33,10 @@ Five focused Thor regression tests now cover:
 - canonical `_World_Cameras_Camera*` plus legacy `Camera*` depth discovery; and
 - canonical plus legacy video discovery and B-frame checks.
 
-Result: `5 passed in 0.18s`. Shell syntax and all 16 SDG Python sources also
-passed parsing checks. Additional tiny synthetic fixtures exercised NPY-to-PNG,
-RGB-to-MP4, ffprobe B-frame validation, calibration helpers, and sanity-check
-failure detection.
-
-The SDG family remains partial: the checked-in requirements target Python 3.10,
-and this Thor does not yet cache the complete pinned h5py/USD environment for
-offline native HDF5/ground-truth conversion. Isaac Sim semantic-label helpers
-also require their intended Isaac Sim runtime.
+The exact offline cache contains 178 locked Linux/AArch64 conda packages and 21
+filename/hash-locked wheels. It created a Python 3.10.20/OpenUSD 26.05/ffmpeg
+8.1.2 environment without network access. The native qualifier passed depth to
+PNG, HDF5, RGB to zero-B-frame H.264, semantic add/export/remove, and OpenUSD
+fixture gates. The authoritative final result and commands are recorded in
+`2026-07-31-sdg-thor-offline.md`; the manifest therefore records this alternate
+tooling family as `wired/passed_current`.

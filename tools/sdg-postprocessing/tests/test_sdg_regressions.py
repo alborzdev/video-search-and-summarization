@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -199,3 +200,103 @@ def test_video_check_accepts_canonical_and_legacy_camera_names(tmp_path: Path) -
     assert f"No B-frames found in: {dataset / '_World_Cameras_Camera' / 'video.mp4'}" in report
     assert f"No B-frames found in: {dataset / 'Camera01' / 'video.mp4'}" in report
     assert len(ffprobe_log.read_text().splitlines()) == 2
+
+
+def test_headless_openusd_semantic_label_roundtrip(tmp_path: Path) -> None:
+    Usd = pytest.importorskip("pxr.Usd")
+    UsdGeom = pytest.importorskip("pxr.UsdGeom")
+    UsdSemantics = pytest.importorskip("pxr.UsdSemantics")
+
+    box_check = load_module(SDG_ROOT / "semantic_labeling" / "box_check.py")
+    remove_label = load_module(SDG_ROOT / "semantic_labeling" / "remove_label.py")
+    exporter = load_module(SDG_ROOT / "utils" / "export_xform_semantics.py")
+
+    stage_path = tmp_path / "scene.usda"
+    stage = Usd.Stage.CreateNew(str(stage_path))
+    world = UsdGeom.Xform.Define(stage, "/World")
+    world.AddRotateXYZOp().Set((10.0, 20.0, 30.0))
+    visible = UsdGeom.Mesh.Define(stage, "/World/FlatBox_body").GetPrim()
+    hidden_parent = UsdGeom.Xform.Define(stage, "/World/Hidden")
+    hidden_parent.CreateVisibilityAttr().Set(UsdGeom.Tokens.invisible)
+    UsdGeom.Mesh.Define(stage, "/World/Hidden/CardBox")
+
+    categorized, hidden = box_check.categorize_boxes(stage, apply_labels=True)
+
+    assert categorized == {"flatbox": ["/World/FlatBox_body"]}
+    assert hidden == ["/World/Hidden/CardBox"]
+    assert list(
+        UsdSemantics.LabelsAPI.Get(visible, "class").GetLabelsAttr().Get()
+    ) == ["flatbox"]
+    exported = exporter.collect_semantics(stage)
+    assert exported["/World/FlatBox_body"] == {
+        "xform_path": "/World",
+        "rotate": [10.0, 20.0, 30.0],
+    }
+    assert remove_label.remove_all_semantics(stage) == 1
+    assert not UsdSemantics.LabelsAPI.GetDirectTaxonomies(visible)
+
+
+def test_thor_local_conda_lock_preserves_literal_epoch_filename(tmp_path: Path) -> None:
+    materializer = load_module(SDG_ROOT / "thor" / "materialize_local_lock.py")
+    package_dir = tmp_path / "packages"
+    package_dir.mkdir()
+    package = package_dir / "x264-1!164.3095-h4e544f5_2.tar.bz2"
+    package.touch()
+    source = tmp_path / "source.lock"
+    source.write_text(
+        "@EXPLICIT\n"
+        "https://conda.example/linux-aarch64/"
+        "x264-1%21164.3095-h4e544f5_2.tar.bz2#"
+        + "a" * 64
+        + "\n"
+    )
+    output = tmp_path / "local.lock"
+
+    assert materializer.materialize(source, package_dir, output) == 1
+
+    rendered = output.read_text()
+    assert "x264-1!164.3095-h4e544f5_2.tar.bz2#" in rendered
+    assert "%21" not in rendered
+
+
+def write_wheel_contract(
+    tmp_path: Path, *, wheel_name: str = "example_pkg-1.2.3-py3-none-any.whl"
+) -> tuple[object, Path, Path, Path]:
+    verifier = load_module(SDG_ROOT / "thor" / "verify_offline_cache.py")
+    cache = tmp_path / "cache"
+    wheels = cache / "wheels"
+    wheels.mkdir(parents=True)
+    artifact = wheels / wheel_name
+    artifact.write_bytes(b"locked wheel bytes")
+    requirements = tmp_path / "requirements.txt"
+    requirements.write_text("example-pkg==1.2.3\n", encoding="utf-8")
+    lock = tmp_path / "wheels.sha256"
+    digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+    lock.write_text(f"{digest}  wheels/{wheel_name}\n", encoding="utf-8")
+    return verifier, cache, requirements, lock
+
+
+def test_thor_wheel_lock_rejects_missing_wheel(tmp_path: Path) -> None:
+    verifier, cache, requirements, lock = write_wheel_contract(tmp_path)
+    (cache / "wheels/example_pkg-1.2.3-py3-none-any.whl").unlink()
+
+    with pytest.raises(ValueError, match="Committed wheel inventory mismatch"):
+        verifier.verify_wheels(cache, requirements, lock)
+
+
+def test_thor_wheel_lock_rejects_substituted_wheel(tmp_path: Path) -> None:
+    verifier, cache, requirements, lock = write_wheel_contract(tmp_path)
+    original = cache / "wheels/example_pkg-1.2.3-py3-none-any.whl"
+    original.rename(cache / "wheels/example_pkg-1.2.3-evil-any.whl")
+
+    with pytest.raises(ValueError, match="Committed wheel inventory mismatch"):
+        verifier.verify_wheels(cache, requirements, lock)
+
+
+def test_thor_wheel_lock_rejects_tampered_bytes(tmp_path: Path) -> None:
+    verifier, cache, requirements, lock = write_wheel_contract(tmp_path)
+    artifact = cache / "wheels/example_pkg-1.2.3-py3-none-any.whl"
+    artifact.write_bytes(b"different wheel bytes")
+
+    with pytest.raises(ValueError, match="Committed wheel checksum mismatch"):
+        verifier.verify_wheels(cache, requirements, lock)

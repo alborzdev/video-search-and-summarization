@@ -11,18 +11,19 @@ Current Thor-local state:
 - the backend reports approximately 14.07 GB of compressed layers;
 - the gated `vggt_1B_commercial.pt` checkpoint is absent and is approximately
   4.7 GB; and
-- the existing 77 GiB free-disk envelope is sufficient for the downloads, but
-  the backend's expanded footprint must be measured before staging.
+- about 68 GiB of filesystem space remained at the final audit checkpoint, so
+  capacity must be rechecked against the backend's unknown expanded footprint
+  before staging.
 
-The registry currently denies the backend manifest request without a valid
-`vss-core` NGC credential, and the VGGT checkpoint requires its separate
-license/token. These are artifact-access prerequisites, not a warehouse-data
-dependency.
+The backend requires valid `vss-core` NGC access, and the optional VGGT
+refinement checkpoint requires its separate license/token. These are
+artifact-access prerequisites, not a warehouse-data dependency; VGGT does not
+block base AMC.
 
 The checked-in UI Compose now honors the documented
 `VSS_AUTO_CALIBRATION_MS_API_URL`, preserves the legacy unprefixed fallback,
-and passes a three-case resolved-Compose regression test. Full runtime
-acceptance still needs the backend/checkpoint plus synchronized cameras,
-alignment, and layout inputs. The official four-camera AMC fixture is about
-154 MB and distinct from the excluded warehouse bundle; equivalent custom
-operator data is also valid.
+and passes a three-case resolved-Compose regression test. Base runtime
+acceptance still needs the backend plus synchronized cameras, alignment, and
+layout inputs; VGGT is additionally required only for refinement acceptance.
+The official four-camera AMC fixture is about 154 MB and distinct from the
+excluded warehouse bundle; equivalent custom operator data is also valid.

@@ -126,12 +126,28 @@ The base profile exposes:
 - Prometheus: `http://127.0.0.1:9090`
 - Grafana: `http://127.0.0.1:35000`
 
-Prometheus, Grafana, node-exporter, and cAdvisor are selected in the current
-31-service graph and bind only to loopback in the Thor contract. Prometheus
-uses a Thor-specific scrape set with bounded retention; Grafana provisions a
-local-only dashboard and disables update, news, plugin, snapshot, and analytics
-network features. DCGM is not claimed on Jetson: qualify it or a `tegrastats`
-exporter before adding GPU telemetry to the dashboard.
+Prometheus, Grafana, node-exporter, cAdvisor, and a Thor-only `tegrastats`
+exporter are selected in the current 32-service graph and bind only to
+loopback in the Thor contract. Prometheus uses a Thor-specific scrape set with
+bounded retention; Grafana provisions a local-only dashboard and disables
+update, news, plugin, snapshot, and analytics network features. The exporter
+reuses the locked VSS Agent Python image and the host's L4T `tegrastats`
+binary and its exact host AArch64 loader/libc/libm, so it adds no package or
+image download and does not depend on the image's C runtime. It exposes only
+bounded numeric CPU, memory, temperature, power, EMC, and GPU fields and stays
+unhealthy if samples are missing or stale. DCGM remains excluded because its
+datacenter contract is not qualified on Jetson AGX Thor.
+
+The direct Phoenix and Logstash management APIs also bind only to loopback in
+the Thor profile. Phoenix uses host networking with its inherited bridge ports
+removed, making that loopback reachable to host-mode HAProxy and Agent.
+Phoenix telemetry pixels and external UI resources are disabled, and its
+`/readyz` healthcheck includes the local database. Kibana
+retains its host binding because the bridged UI server needs
+`host.docker.internal` for dashboard discovery; the Thor firewall contract
+protects that port. Kibana usage telemetry, OpenTelemetry export, the remote
+newsfeed, and Fleet registry activity are disabled by its air-gapped config,
+while the runtime qualifier verifies Kibana status and the Logstash node API.
 
 Thor also replaces the shared Logstash startup-time Rubygems install with a
 checksum-locked ARM64 derivative. Its codec pack is staged once while
@@ -158,7 +174,9 @@ covers the protected runtime contract, kernel and cache-cleaner prerequisites,
 Thor GPU temperature/utilization, unified-memory and disk pressure, every
 selected Compose service (including successful one-shot containers), the local
 LLM and VLM model IDs, UI and ingress, VSS/search, Cosmos-Embed, VST/VIOS,
-Elasticsearch, alert verification/realtime alerts, and video summarization.
+Elasticsearch, Kibana, Phoenix, Logstash, alert verification/realtime alerts,
+video summarization, Prometheus targets, Grafana/dashboard provisioning,
+node-exporter, cAdvisor, and fresh `tegrastats` telemetry.
 
 Warnings such as modest unified-memory headroom do not make the command fail.
 The command exits nonzero only when it finds a real blocker, such as an absent

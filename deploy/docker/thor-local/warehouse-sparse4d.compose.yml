@@ -1,0 +1,87 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Thor runtime/offline overrides for a custom-data Redis Sparse4D lane.
+services:
+  redis:
+    command: ["redis-server", "/config/redis.conf", "--bind", "127.0.0.1", "--protected-mode", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 2s
+
+  bp-configurator-3d-init:
+    image: ${THOR_SPARSE4D_CONFIGURATOR_INIT_IMAGE:-cti-vss-sparse4d-configurator-init:3.2.1-thor-local}
+
+  broker-health-check:
+    image: ${THOR_SPARSE4D_BROKER_HEALTH_IMAGE:-cti-vss-sparse4d-broker-health:3.2.1-thor-local}
+
+  nvstreamer-3d:
+    image: ${THOR_SPARSE4D_NVSTREAMER_IMAGE:-vss-vios-nvstreamer:3.2.1-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-nvstreamer
+      network: none
+      args:
+        VST_NVSTREAMER_BASE_IMAGE: nvcr.io/nvidia/vss-core/vss-vios-nvstreamer:${NVSTREAMER_IMAGE_TAG:-3.2.1}
+    runtime: nvidia
+    entrypoint: ["/usr/local/bin/vios-offline-entrypoint"]
+    environment:
+      NVSTREAMER_INSTALL_ADDITIONAL_PACKAGES: "false"
+
+  sensor-ms-3d:
+    environment:
+      LD_LIBRARY_PATH: /usr/lib/aarch64-linux-gnu/nvidia:/usr/lib/aarch64-linux-gnu:/home/vst/vst_release/prebuilts/aarch64:/home/vst/vst_release/prebuilts/aarch64/gst-plugins:/home/vst/vst_release/prebuilts/aarch64/sbsa
+
+  streamprocessing-ms-3d:
+    image: ${THOR_SPARSE4D_VST_STREAM_PROCESSOR_IMAGE:-vss-vios-streamprocessing:3.2.1-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-streamprocessing
+      network: none
+      args:
+        VST_STREAM_PROCESSOR_BASE_IMAGE: nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1
+    entrypoint: ["/usr/local/bin/vios-offline-entrypoint"]
+    environment:
+      VST_INSTALL_ADDITIONAL_PACKAGES: "false"
+
+  perception-3d:
+    runtime: nvidia
+    environment:
+      TRANSFORMERS_OFFLINE: "1"
+      HF_HUB_OFFLINE: "1"
+      OTEL_SDK_DISABLED: "true"
+
+  # Runtime plugin installation is replaced by an image containing the local
+  # redis_stream gem. The launcher never builds it and requires it pre-staged.
+  logstash:
+    image: ${THOR_SPARSE4D_LOGSTASH_IMAGE:-vss-logstash-redis:9.3.3-input-3.1.0-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.logstash-redis-offline
+      network: none
+      args:
+        LOGSTASH_BASE_IMAGE: docker.elastic.co/logstash/logstash:9.3.3@sha256:a7ad817ec23e2f9c41f8fcd09bcce3c87710890f93612d4fd51de45074d7af2e
+    command: []
+    environment:
+      STREAM_TYPE: redis
+
+  elasticsearch:
+    image: ${THOR_SPARSE4D_ELASTICSEARCH_IMAGE:-cti-vss-sparse4d-elasticsearch:3.2.1-thor-local}
+
+  elasticsearch-init-container:
+    image: ${THOR_SPARSE4D_ELASTIC_INIT_IMAGE:-cti-vss-sparse4d-elastic-init:3.2.1-thor-local}
+
+  kibana-init-container-3d:
+    image: ${THOR_SPARSE4D_KIBANA_INIT_IMAGE:-cti-vss-sparse4d-kibana-init:3.2.1-thor-local}
+
+  import-calibration-output-container-3d:
+    image: ${THOR_SPARSE4D_CALIBRATION_IMPORT_IMAGE:-cti-vss-sparse4d-calibration-import:3.2.1-thor-local}
+
+  # The published DCGM exporter is not qualified for Jetson's integrated GPU.
+  # Keep the other extended observability services and fail closed on a graph
+  # that accidentally re-enables it.
+  dcgm-exporter:
+    profiles: !override ["thor-sparse4d-dcgm-disabled"]

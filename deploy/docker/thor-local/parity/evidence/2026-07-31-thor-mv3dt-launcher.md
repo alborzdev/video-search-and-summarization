@@ -72,7 +72,7 @@ All passed. No containers were started, stopped, pulled, built, or reset.
 
 ## Runtime acceptance still open
 
-This milestone is `wired/static_only`, not runtime-qualified. Thor does not
+This milestone is `partial/not_qualified`. Thor does not
 currently have a matching operator-owned synchronized multi-camera video and
 calibration set staged in this lane. Runtime qualification also requires the
 single GPU to be free of unrelated workloads and every resolved ARM64 image to

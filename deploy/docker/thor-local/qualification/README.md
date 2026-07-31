@@ -72,8 +72,19 @@ transport outage produces `result: "unavailable"` and exit 2, making a stopped
 stack distinguishable from a broken contract without treating it as a pass.
 An OpenAPI endpoint marked optional is skipped only when it returns 404 or 405.
 `runtime_inventory.json` defines the health, OpenAPI, MCP, UI, ingress,
-VIOS, and Elasticsearch GET probes and their default Thor-local ports. A valid
-port environment variable listed there overrides its default.
+VIOS, Elasticsearch, Kibana, Phoenix, Logstash, Prometheus, Grafana,
+node-exporter, cAdvisor, and the Thor `tegrastats` exporter GET probes and their
+default Thor-local ports. A valid port environment variable listed there
+overrides its default. The deployment contract requires `TEGRASTATS_PORT=19101`
+so the loopback-only exporter and checked-in Prometheus target cannot drift.
+
+The Prometheus target probe is stronger than endpoint reachability: it reads
+the bounded `/api/v1/targets` JSON document and requires the exact versioned
+Thor job set (`prometheus`, `node-exporter`, `cadvisor`, `rtvi-vlm`,
+`rtvi-embed`, `lvs`, and `tegrastats-exporter`) to be present once each with
+`health: up`. Its report contains counts and a drift fingerprint, never live
+scrape URLs or response bodies. The Grafana tier also requests the provisioned
+`thor-vss-observability` dashboard by its checked-in UID.
 
 The host-managed LLM and VLM intentionally bind to Docker's private bridge,
 not loopback, so this loopback-only tier does not contact them directly. Use

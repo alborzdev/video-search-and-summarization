@@ -75,7 +75,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "up{job=~\"prometheus|node-exporter|cadvisor|rtvi-vlm|rtvi-embed|lvs\"}",
+          "expr": "up{job=~\"prometheus|node-exporter|cadvisor|tegrastats-exporter|rtvi-vlm|rtvi-embed|lvs\"}",
           "legendFormat": "{{job}} / {{instance}}",
           "range": true,
           "refId": "A"
@@ -169,7 +169,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "scrape_duration_seconds{job=~\"prometheus|node-exporter|cadvisor|rtvi-vlm|rtvi-embed|lvs\"}",
+          "expr": "scrape_duration_seconds{job=~\"prometheus|node-exporter|cadvisor|tegrastats-exporter|rtvi-vlm|rtvi-embed|lvs\"}",
           "legendFormat": "{{job}} / {{instance}}",
           "range": true,
           "refId": "A"
@@ -258,7 +258,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "scrape_samples_scraped{job=~\"prometheus|node-exporter|cadvisor|rtvi-vlm|rtvi-embed|lvs\"}",
+          "expr": "scrape_samples_scraped{job=~\"prometheus|node-exporter|cadvisor|tegrastats-exporter|rtvi-vlm|rtvi-embed|lvs\"}",
           "legendFormat": "{{job}} / {{instance}}",
           "range": true,
           "refId": "A"

@@ -31,6 +31,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CONFIG = SCRIPT_DIR / "runtime_inventory.json"
 DEFAULT_EXPECTED_DIR = SCRIPT_DIR / "expected"
 MAX_OPENAPI_BYTES = 4 * 1024 * 1024
+MAX_JSON_BYTES = 1024 * 1024
 PORT_ENV_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 SAFE_ERROR_CODES = {
     "configuration_error",
@@ -160,6 +161,19 @@ def _validate_expected_status(value: Any) -> list[int]:
     return statuses
 
 
+def _validate_expected_jobs(value: Any) -> list[str]:
+    if not isinstance(value, list) or not value:
+        raise RuntimeConfigError("configuration_error")
+    jobs: list[str] = []
+    for item in value:
+        if not _is_plain_name(item):
+            raise RuntimeConfigError("configuration_error")
+        jobs.append(item)
+    if len(set(jobs)) != len(jobs):
+        raise RuntimeConfigError("configuration_error")
+    return jobs
+
+
 def load_runtime_config(path: Path) -> dict[str, Any]:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -201,7 +215,13 @@ def load_runtime_config(path: Path) -> dict[str, Any]:
             local_ids.add(probe_id)
             probe_ids.add(qualified_id)
             kind = probe.get("kind")
-            if kind not in {"health", "mcp", "openapi", "reachability"}:
+            if kind not in {
+                "health",
+                "mcp",
+                "openapi",
+                "prometheus-targets",
+                "reachability",
+            }:
                 raise RuntimeConfigError("configuration_error")
             if probe.get("method", "GET") != "GET":
                 raise RuntimeConfigError("configuration_error")
@@ -215,6 +235,10 @@ def load_runtime_config(path: Path) -> dict[str, Any]:
                 if not _is_plain_name(probe.get("expected_manifest")):
                     raise RuntimeConfigError("configuration_error")
                 _validate_path(probe.get("path_prefix", ""), allow_empty=True)
+            if kind == "prometheus-targets":
+                if probe.get("expected_status", [200]) != [200]:
+                    raise RuntimeConfigError("configuration_error")
+                _validate_expected_jobs(probe.get("expected_jobs"))
     return value
 
 
@@ -549,6 +573,102 @@ def _openapi_probe(
             response.close()
 
 
+def _prometheus_targets_probe(
+    opener: Any,
+    origin: str,
+    port: int,
+    service_id: str,
+    probe: dict[str, Any],
+    timeout: float,
+) -> dict[str, Any]:
+    """Prove the versioned target set is present and every target is up."""
+
+    started = time.monotonic()
+    record = _base_probe_record(service_id, probe, port)
+    response: Any = None
+    try:
+        try:
+            response = _request(
+                opener,
+                origin,
+                probe["path"],
+                timeout,
+                accept="application/json",
+            )
+            http_status = int(response.status)
+        except HTTPError as exc:
+            response = exc
+            http_status = int(exc.code)
+        record["http_status"] = http_status
+        if http_status != 200:
+            raise RuntimeResponseError("http_error")
+
+        body = _read_bounded(response, MAX_JSON_BYTES)
+        try:
+            document = json.loads(body)
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise RuntimeResponseError("invalid_json") from exc
+        if not isinstance(document, dict) or document.get("status") != "success":
+            raise RuntimeResponseError("invalid_response")
+        data = document.get("data")
+        targets = data.get("activeTargets") if isinstance(data, dict) else None
+        if not isinstance(targets, list):
+            raise RuntimeResponseError("invalid_response")
+
+        live: list[tuple[str, str]] = []
+        for target in targets:
+            if not isinstance(target, dict):
+                raise RuntimeResponseError("invalid_response")
+            labels = target.get("labels")
+            job = labels.get("job") if isinstance(labels, dict) else None
+            health = target.get("health")
+            if not _is_plain_name(job) or not isinstance(health, str):
+                raise RuntimeResponseError("invalid_response")
+            live.append((job, health))
+
+        expected = set(_validate_expected_jobs(probe.get("expected_jobs")))
+        live_jobs = {job for job, _ in live}
+        missing = sorted(expected - live_jobs)
+        extra = sorted(live_jobs - expected)
+        unhealthy = sorted(
+            (job, health) for job, health in live if job in expected and health != "up"
+        )
+        repeated = sorted(
+            job for job in live_jobs if sum(item[0] == job for item in live) > 1
+        )
+        drift_values: list[Any] = [
+            ["missing", missing],
+            ["extra", extra],
+            ["unhealthy", unhealthy],
+            ["repeated", repeated],
+        ]
+        comparison: dict[str, Any] = {
+            "active_target_count": len(live),
+            "expected_target_count": len(expected),
+            "extra_job_count": len(extra),
+            "missing_job_count": len(missing),
+            "repeated_job_count": len(repeated),
+            "unhealthy_target_count": len(unhealthy),
+        }
+        if missing or extra or unhealthy or repeated:
+            comparison["drift_fingerprint"] = _drift_fingerprint(drift_values)
+            record["comparison"] = comparison
+            raise RuntimeResponseError("contract_drift")
+        record["comparison"] = comparison
+        return _finish_probe(record, started, "pass")
+    except Exception as exc:  # every probe failure must remain redacted
+        error = _classify_error(exc)
+        http_status = getattr(exc, "code", None)
+        fields: dict[str, Any] = {"error": error}
+        if isinstance(http_status, int):
+            fields["http_status"] = http_status
+        status = "unavailable" if error in UNAVAILABLE_ERROR_CODES else "fail"
+        return _finish_probe(record, started, status, **fields)
+    finally:
+        if response is not None:
+            response.close()
+
+
 def _configuration_failure() -> dict[str, Any]:
     return {
         "probes": [
@@ -613,6 +733,15 @@ def run_runtime(
                         probe,
                         timeout,
                         expected_dir,
+                    )
+                elif probe["kind"] == "prometheus-targets":
+                    result = _prometheus_targets_probe(
+                        opener,
+                        origin,
+                        port,
+                        service_id,
+                        probe,
+                        timeout,
                     )
                 else:
                     result = _status_probe(

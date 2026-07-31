@@ -14,8 +14,7 @@
 # limitations under the License.
 
 """
-Export parent Xform rotation data for Mesh prims with authored Semantics from the
-currently opened USD stage in Isaac Sim to a JSON file.
+Export parent Xform rotation data for Mesh prims with authored semantic labels.
 
 How to use in Isaac Sim Script Editor:
 1) Set USER_OUTPUT_PATH below, or pass a path to run(output_path).
@@ -23,19 +22,49 @@ How to use in Isaac Sim Script Editor:
    - If you pass a FILE path ending with '.json', it will be used as-is.
 2) Run this script in the Script Editor. A JSON will be written to the resolved path.
 
-You may also import this module elsewhere and call run(output_path).
+For a headless OpenUSD run, pass ``--stage scene.usd --output output.json``.
+You may also import this module elsewhere and call ``run(output_path, stage_path)``.
 """
 
-from pxr import Semantics, UsdGeom, Gf, Usd
-import omni.usd
+import argparse
 import json
 import os
 from typing import Any, Dict, Optional
 
+from pxr import Gf, Usd, UsdGeom
+
+try:
+    from pxr import UsdSemantics
+except ImportError:  # Isaac Sim releases before the current LabelsAPI schema.
+    UsdSemantics = None
+
+try:
+    from pxr import Semantics as LegacySemantics
+except ImportError:  # The deprecated NVIDIA schema is not part of plain OpenUSD.
+    LegacySemantics = None
+
 # User-editable output path. If left empty, you must pass output_path to run().
 USER_OUTPUT_PATH = ""
 
-stage = omni.usd.get_context().get_stage()
+def get_stage(stage_path: Optional[str] = None) -> Usd.Stage:
+    """Open a stage path or return the current Isaac Sim stage."""
+
+    if stage_path:
+        stage = Usd.Stage.Open(os.path.expanduser(stage_path))
+        if not stage:
+            raise ValueError(f"Unable to open USD stage: {stage_path}")
+        return stage
+    try:
+        import omni.usd  # type: ignore[import-not-found]
+    except ImportError as exc:
+        raise RuntimeError(
+            "No stage was supplied and Isaac Sim's omni.usd module is unavailable; "
+            "pass --stage PATH."
+        ) from exc
+    stage = omni.usd.get_context().get_stage()
+    if not stage:
+        raise RuntimeError("Isaac Sim does not currently have an open USD stage")
+    return stage
 
 def to_serializable(val: Any) -> Any:
     """
@@ -111,8 +140,16 @@ def collect_semantics(stage: Usd.Stage) -> Dict[str, Dict[str, Any]]:
     output_dict: Dict[str, Dict[str, Any]] = {}
     for prim in stage.Traverse():
         if prim.GetTypeName() == "Mesh":
-            sem = Semantics.SemanticsAPI.Get(prim, "Semantics")
-            if sem and sem.GetSemanticDataAttr().HasAuthoredValueOpinion():
+            has_labels = bool(
+                UsdSemantics is not None
+                and UsdSemantics.LabelsAPI.GetDirectTaxonomies(prim)
+            )
+            if not has_labels and LegacySemantics is not None:
+                legacy = LegacySemantics.SemanticsAPI.Get(prim, "Semantics")
+                has_labels = bool(
+                    legacy and legacy.GetSemanticDataAttr().HasAuthoredValueOpinion()
+                )
+            if has_labels:
                 xform_prim = _find_parent_xform(prim)
                 if xform_prim:
                     rotate = _get_xform_rotation(xform_prim)
@@ -162,7 +199,9 @@ def resolve_output_path(user_path: Optional[str] = None) -> str:
         return path
     return os.path.join(path, "output_xform.json")
 
-def run(output_path: Optional[str] = None) -> None:
+def run(
+    output_path: Optional[str] = None, stage_path: Optional[str] = None
+) -> None:
     """
     Entry point to collect semantics and write them to JSON.
 
@@ -173,16 +212,33 @@ def run(output_path: Optional[str] = None) -> None:
     Returns:
         None
     """
-    stage = omni.usd.get_context().get_stage()
+    stage = get_stage(stage_path)
     data = collect_semantics(stage)
     resolved = resolve_output_path(output_path)
-    os.makedirs(os.path.dirname(resolved), exist_ok=True)
-    with open(resolved, "w") as f:
+    parent = os.path.dirname(resolved)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(resolved, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
     print(f"Xform JSON written to: {resolved}")
 
 
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--stage", help="USD file to inspect; omit only inside Isaac Sim Script Editor"
+    )
+    parser.add_argument(
+        "--output",
+        default=USER_OUTPUT_PATH,
+        help="output JSON path (required unless USER_OUTPUT_PATH is set)",
+    )
+    args = parser.parse_args()
+    if not args.output:
+        parser.error("--output is required unless USER_OUTPUT_PATH is set")
+    run(args.output, args.stage)
+    return 0
+
+
 if __name__ == "__main__":
-    run()
-
-
+    raise SystemExit(main())
