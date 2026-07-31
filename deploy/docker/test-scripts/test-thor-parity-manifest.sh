@@ -15,6 +15,7 @@ python3 "${verifier}"
 
 report="$(python3 "${verifier}" --report)"
 grep -q "Ledger: 36 families, 223 advertised capabilities, 16 skills" <<<"${report}"
+grep -q "Completion: 1/33 local families passed current" <<<"${report}"
 grep -q "smart-city: partial/static_only" <<<"${report}"
 grep -q "warehouse-2d: partial/static_only" <<<"${report}"
 grep -q "warehouse-3d-and-mv3dt: source_only/blocked" <<<"${report}"
@@ -31,6 +32,13 @@ open_report="$(sed -n '/^Open parity work:/,/^External optional boundaries:/p' <
 ! grep -q "enterprise-rag" <<<"${open_report}"
 ! grep -q "helm" <<<"${open_report}"
 ! grep -q "spatial-ai-utils" <<<"${open_report}"
+
+set +e
+complete_output="$(python3 "${verifier}" --require-complete 2>&1)"
+complete_status=$?
+set -e
+[[ ${complete_status} -eq 2 ]]
+grep -q "INCOMPLETE: 32 local feature families remain open" <<<"${complete_output}"
 
 bash -n "${spatialai_qualifier}"
 "${spatialai_qualifier}" --help | grep -q 'does not download a dataset'

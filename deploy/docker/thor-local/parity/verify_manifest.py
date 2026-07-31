@@ -145,6 +145,16 @@ def report(data: dict) -> None:
     runtime_counts = Counter(feature["runtime_state"] for feature in features)
     acceptance_counts = Counter(feature["acceptance_class"] for feature in features)
     advertised_count = sum(len(feature["advertised"]) for feature in features)
+    local_features = [
+        feature
+        for feature in features
+        if feature["acceptance_class"] != "external_optional"
+    ]
+    completed_local = sum(
+        feature["thor_state"] == "wired"
+        and feature["runtime_state"] == "passed_current"
+        for feature in local_features
+    )
     print(
         f"Target: {data['upstream']['latest_ga']} + upstream/main "
         f"{data['upstream']['target_commit'][:12]}"
@@ -159,6 +169,7 @@ def report(data: dict) -> None:
         "Acceptance: "
         + ", ".join(f"{key}={value}" for key, value in sorted(acceptance_counts.items()))
     )
+    print(f"Completion: {completed_local}/{len(local_features)} local families passed current")
     print("\nOpen parity work:")
     for feature in features:
         if feature["acceptance_class"] == "external_optional":
@@ -177,9 +188,24 @@ def report(data: dict) -> None:
             )
 
 
+def open_local_features(data: dict) -> list[dict]:
+    return [
+        feature
+        for feature in data["features"]
+        if feature["acceptance_class"] != "external_optional"
+        and (
+            feature["thor_state"] != "wired"
+            or feature["runtime_state"] != "passed_current"
+        )
+    ]
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", action="store_true", help="print status counts and all open gaps")
+    parser.add_argument(
+        "--require-complete",
+        action="store_true",
+        help="exit 2 unless every local acceptance family is wired and passed_current",
+    )
     args = parser.parse_args()
     try:
         data = validate()
@@ -189,6 +215,14 @@ def main() -> int:
     print("PASS: Thor VSS parity manifest is structurally complete and matches this checkout")
     if args.report:
         report(data)
+    if args.require_complete:
+        open_features = open_local_features(data)
+        if open_features:
+            print(
+                f"INCOMPLETE: {len(open_features)} local feature families remain open",
+                file=sys.stderr,
+            )
+            return 2
     return 0
 
 
