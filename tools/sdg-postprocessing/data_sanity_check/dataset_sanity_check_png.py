@@ -40,7 +40,11 @@ def sanity_check(dataset_path: str, total_frames: int, output_log_file: str) -> 
     log_lines = []  # List to store log lines for writing to a file
 
     # List all camera directories
-    camera_dirs = [os.path.join(dataset_path, d) for d in os.listdir(dataset_path) if d.startswith("Camera")]
+    camera_dirs = [
+        os.path.join(dataset_path, d)
+        for d in os.listdir(dataset_path)
+        if d.startswith(("_World_Cameras_Camera", "Camera"))
+    ]
     camera_dirs.sort()
     
     print(f"Found {len(camera_dirs)} camera directories.")

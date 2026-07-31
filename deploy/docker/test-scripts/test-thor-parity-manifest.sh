@@ -9,6 +9,7 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../.." && pwd)"
 verifier="${repo_root}/deploy/docker/thor-local/parity/verify_manifest.py"
 skill_installer="${repo_root}/deploy/docker/thor-local/install-vss-skills.sh"
+spatialai_qualifier="${repo_root}/deploy/docker/thor-local/qualification/qualify-spatialai.sh"
 
 python3 "${verifier}"
 
@@ -28,6 +29,12 @@ open_report="$(sed -n '/^Open parity work:/,/^External optional boundaries:/p' <
 ! grep -q "alert-notifications-slack" <<<"${open_report}"
 ! grep -q "enterprise-rag" <<<"${open_report}"
 ! grep -q "helm" <<<"${open_report}"
+! grep -q "spatial-ai-utils" <<<"${open_report}"
+
+bash -n "${spatialai_qualifier}"
+"${spatialai_qualifier}" --help | grep -q 'does not download a dataset'
+grep -q "torch==2.13.0+cpu" "${spatialai_qualifier}"
+grep -q "pytorch3d.git@33824be" "${spatialai_qualifier}"
 
 echo "PASS: the exhaustive Thor parity ledger is valid and keeps known gaps explicit"
 

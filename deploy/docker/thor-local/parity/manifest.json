@@ -343,10 +343,10 @@
       "category": "tooling",
       "advertised": ["calibration and camera grouping", "3D/2D geometry", "multiview visualization", "detection mAP", "tracking HOTA/CLEAR/identity/count", "NVSchema conversion", "video/frame tools", "AWS/GCS validation"],
       "source_evidence": ["libs/analytics/spatialai-data-utils"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
-      "runtime_state": "not_qualified",
-      "gap": "CPU/source tooling is present but no Thor validation lane installs or exercises its optional dependency sets."
+      "thor_evidence": ["deploy/docker/thor-local/qualification/qualify-spatialai.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-tooling-qualification.md"],
+      "thor_state": "wired",
+      "runtime_state": "passed_current",
+      "gap": "No open Thor gap in this tooling family: all 1902 tests pass with the complete eval, visualization, CPU PyTorch, and pinned PyTorch3D dependency set."
     },
     {
       "id": "synthetic-data-tools",
@@ -354,10 +354,10 @@
       "category": "tooling",
       "advertised": ["semantic label helpers", "dataset checks", "RGB/depth/video conversion", "ground-truth conversion"],
       "source_evidence": ["tools/sdg-postprocessing"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
-      "runtime_state": "not_qualified",
-      "gap": "Developer tooling is present but is not installed or tested in a local Thor tools environment."
+      "thor_evidence": ["tools/sdg-postprocessing/tests/test_sdg_regressions.py"],
+      "thor_state": "partial",
+      "runtime_state": "static_only",
+      "gap": "Five Thor regression tests and synthetic CLI fixtures cover camera discovery, HDF5 control flow, velocity math, and video/depth checks. A complete offline Python 3.10 dependency cache is still required for native h5py/USD execution, and Isaac Sim-only semantic helpers need their dedicated runtime."
     },
     {
       "id": "docker-compose",

@@ -16,14 +16,15 @@
 # limitations under the License.
 
 BASE_DIR=$1
-SCRIPT_PATH="./convert_single_camera_rgb_depth_to_h5.py"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_PATH="${SCRIPT_DIR}/convert_single_camera_rgb_depth_to_h5.py"
 
 if [ -z "$BASE_DIR" ]; then
     echo "❗ Base directory not specified."
     exit 1
 fi
 
-for cam_dir in "$BASE_DIR"/Camera*; do
+for cam_dir in "$BASE_DIR"/_World_Cameras_Camera* "$BASE_DIR"/Camera*; do
     if [ -d "$cam_dir" ]; then
 
         if [ -f "$cam_dir/convert_done.txt" ]; then

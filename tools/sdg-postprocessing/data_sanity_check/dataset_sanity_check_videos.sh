@@ -50,8 +50,8 @@ check_bframes() {
     fi
 }
 
-# Loop through all Camera* folders and check for video.mp4
-find "$base_dir" -type d -name "Camera*" | while read -r camera_folder; do
+# Loop through canonical and legacy camera folders and check for video.mp4
+find "$base_dir" -type d \( -name "_World_Cameras_Camera*" -o -name "Camera*" \) | while read -r camera_folder; do
     video_path="$camera_folder/video.mp4"
     if [ -f "$video_path" ]; then
         check_bframes "$video_path"

@@ -140,10 +140,13 @@ def process_frames(frame_files: Dict[str, List[Dict[str, Any]]], step: int = 30)
         >>> print(speeds)
         {'Frame 0 -> Frame 1': {'obj1': [1.414, 1.0]}}
     """
+    if step <= 0:
+        raise ValueError("step must be greater than zero")
+
     speeds_per_frame = {}
     for i in range(0, len(frame_files) - step, step):
-        frame1 = gt_data[str(i)]
-        frame2 = gt_data[str(i+1)]
+        frame1 = frame_files[str(i)]
+        frame2 = frame_files[str(i + step)]
 
         speeds = {}
         calculate_speed(frame1, frame2, speeds, step)

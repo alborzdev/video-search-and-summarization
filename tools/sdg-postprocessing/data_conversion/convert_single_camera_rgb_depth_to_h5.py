@@ -18,8 +18,9 @@ import h5py
 import cv2
 import numpy as np
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 from typing import Tuple
-import numpy as np
 
 def read_image(filepath: str) -> Tuple[str, np.ndarray]:
     """
