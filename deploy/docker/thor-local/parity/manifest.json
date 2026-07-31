@@ -1,0 +1,397 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-07-31",
+  "upstream": {
+    "repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "latest_ga": "v3.2.1",
+    "latest_ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "target_branch": "main",
+    "target_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "nightly_observed": "nightly-20260731",
+    "nightly_is_acceptance_target": false
+  },
+  "status_contract": {
+    "thor_state": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"],
+    "runtime_state": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]
+  },
+  "features": [
+    {
+      "id": "base-agent-workflow",
+      "category": "workflow",
+      "advertised": ["short-video retrieval", "visual question answering", "VLM report generation", "templated reports", "large-file chunked upload", "local/shared/remote model layouts", "public media URL rewriting"],
+      "source_evidence": ["services/agent", "deploy/docker/developer-profiles/dev-profile-base"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/services/infra/haproxy/haproxy.cfg.template"],
+      "thor_state": "wired",
+      "runtime_state": "passed_prior",
+      "gap": "Rebuild the 3.2.1 agent/UI derivatives and repeat upload, Q&A, report, URL, restart, and deletion tests."
+    },
+    {
+      "id": "video-summarization-file",
+      "category": "workflow",
+      "advertised": ["chunked dense captions", "file summarization", "multi-video report", "structured output", "object/event/scenario focus", "reasoning", "partial-video offsets", "recommended configuration", "Prometheus metrics"],
+      "source_evidence": ["services/video-summarization", "deploy/docker/developer-profiles/dev-profile-lvs"],
+      "thor_evidence": ["deploy/docker/thor-local/Dockerfile.video-summarization", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml"],
+      "thor_state": "wired",
+      "runtime_state": "passed_prior",
+      "gap": "Rebuild on 3.2.1 and prove multi-video single-call routing plus every summarization/report request option."
+    },
+    {
+      "id": "video-summarization-live",
+      "category": "workflow",
+      "advertised": ["live captions", "live stream summaries", "stream reports", "caption-backed Q&A", "Elasticsearch caption storage", "SSE MCP server"],
+      "source_evidence": ["services/video-summarization/src", "services/video-summarization/src/lvs_mcp.py"],
+      "thor_evidence": ["deploy/docker/services/video-summarization/compose.yml"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Thor now enables the local SSE MCP server; qualify its tools and live APIs, then decide the separate dense-caption cache and embedding lanes."
+    },
+    {
+      "id": "semantic-search",
+      "category": "workflow",
+      "advertised": ["natural-language action/event search", "CV attribute search", "multi-embedding fusion", "search by image", "follow-up Q&A", "query/time/source/count refinement", "default critic VLM", "file and RTSP archive management"],
+      "source_evidence": ["deploy/docker/developer-profiles/dev-profile-search", "services/ui"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml"],
+      "thor_state": "wired",
+      "runtime_state": "passed_prior",
+      "gap": "Stage 3.2.1 RT-CV/RT-Embed images and re-run text, attribute, fused, critic, follow-up, and image-search cases."
+    },
+    {
+      "id": "search-scale",
+      "category": "scale",
+      "advertised": ["configuration up to 100 streams", "16 concurrent 1080p streams tested by NVIDIA"],
+      "source_evidence": ["deploy/docker/developer-profiles/dev-profile-search"],
+      "thor_evidence": ["deploy/docker/thor-local/README.md"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Thor's qualified envelope is one conservative stream and two supervised demo streams; upstream scale figures are not Thor claims."
+    },
+    {
+      "id": "alert-verification",
+      "category": "workflow",
+      "advertised": ["CV perception to behavior analytics to VLM verification", "post-alert verification", "contextualization", "multi-category classification", "on-demand verification", "custom VLM parsing", "non-blocking multithreaded execution"],
+      "source_evidence": ["services/alert", "deploy/docker/developer-profiles/dev-profile-alerts"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml", "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"],
+      "thor_state": "partial",
+      "runtime_state": "passed_prior",
+      "gap": "Rebuild the alert derivative with the complete current source and prove every checked-in Alert OpenAPI operation."
+    },
+    {
+      "id": "realtime-alerts",
+      "category": "workflow",
+      "advertised": ["live-stream VLM rules", "rule CRUD", "rule replay", "always-on lifecycle", "incident retrieval", "WebSocket delivery", "natural-language alert management"],
+      "source_evidence": ["services/alert/openapi.json", "services/alert/realtime"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vlm-as-verifier/configs/realtime-config.yml", "deploy/docker/scripts/thor-local.sh"],
+      "thor_state": "partial",
+      "runtime_state": "passed_prior",
+      "gap": "Core rules/replay are wired; always-on rules and WebSocket broadcast are disabled and need bounded local qualification."
+    },
+    {
+      "id": "alert-notifications",
+      "category": "integration",
+      "advertised": ["Slack notification", "OpenClaw notification"],
+      "source_evidence": ["services/alert", "deploy/docker/scripts/nemoclaw"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"],
+      "thor_state": "external_optional",
+      "runtime_state": "not_applicable",
+      "gap": "Slack is inherently external; OpenClaw needs a local sandbox/provider adaptation and is currently disabled."
+    },
+    {
+      "id": "rt-vlm-media",
+      "category": "service",
+      "advertised": ["file upload", "HTTP/S", "S3", "allowlisted file URI", "inline data URI", "RTSP", "dense captions", "incidents", "categories", "reasoning", "audio transcript"],
+      "source_evidence": ["services/rtvi/rt-vlm/src", "services/rtvi/rt-vlm/README.md"],
+      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "The local OpenAI-compatible image VLM path is wired; audio and several media variants need current runtime tests."
+    },
+    {
+      "id": "rt-vlm-api",
+      "category": "api",
+      "advertised": ["OpenAI-compatible chat/completions", "text-only chat", "multimodal multi-turn chat", "token SSE", "original stream API", "CV-compatible stream API", "file API", "health/metadata/models/metrics"],
+      "source_evidence": ["services/rtvi/rt-vlm/src"],
+      "thor_evidence": ["deploy/docker/services/rtvi/rtvi-vlm/rtvi-vlm-docker-compose.yml"],
+      "thor_state": "wired",
+      "runtime_state": "not_qualified",
+      "gap": "Export live OpenAPI/route metadata and exercise every operation through the supported local ingress or a documented loopback-only service port."
+    },
+    {
+      "id": "rt-vlm-models",
+      "category": "model",
+      "advertised": ["Cosmos Reason 1/2", "Cosmos 3 Nano/Super", "Nemotron Omni", "Qwen 3.5 and MoE", "remote OpenAI-compatible endpoint"],
+      "source_evidence": ["services/rtvi/rt-vlm"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Thor currently selects one local Qwen-compatible endpoint; qualify supported local models as mutually exclusive replacement lanes, not co-resident services."
+    },
+    {
+      "id": "rt-vlm-performance-observability",
+      "category": "service",
+      "advertised": ["efficient video sampling", "GOP-aware decode", "decoder reuse", "vLLM tuning", "asset limits and expiry", "Kafka/Redis error publication", "Prometheus and OpenTelemetry", "absolute timestamp metadata"],
+      "source_evidence": ["services/rtvi/rt-vlm/src"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/scripts/thor-local.sh"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Timestamp prompt controls are pinned by the Thor contract; prove custom templates and model-gated absolute metadata at runtime."
+    },
+    {
+      "id": "rt-embed",
+      "category": "service",
+      "advertised": ["video/image/text embedding", "live RTSP", "URL and inline base64 video", "Cosmos-Embed1", "Kafka/Redis/OpenTelemetry", "original and CV-compatible stream APIs", "health/metadata/models/metrics"],
+      "source_evidence": ["services/rtvi/rt-embed"],
+      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/rtvi/rtvi-embed"],
+      "thor_state": "wired",
+      "runtime_state": "passed_prior",
+      "gap": "Stage the 3.2.1 image, rebuild batch-8 Thor engines if required, and exercise all media/API variants offline."
+    },
+    {
+      "id": "rt-cv-2d",
+      "category": "service",
+      "advertised": ["file and stream detection/tracking", "warehouse and Smart City RT-DETR/GDINO", "RADIO-CLIP", "SigLIP2 re-identification", "on-demand image embedding", "dynamic stream lifecycle", "health and metrics", "Thor VPI tracker tuning"],
+      "source_evidence": ["services/rtvi/rt-cv"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_state": "partial",
+      "runtime_state": "passed_prior",
+      "gap": "The unified lane selects fusion 2D; Smart City detector behavior and the full RT-CV API still need separate proof."
+    },
+    {
+      "id": "rt-cv-3d-sparse4d",
+      "category": "service",
+      "advertised": ["Sparse4D multi-camera 3D detection and tracking", "shared RT-CV lifecycle/health/metrics"],
+      "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "blocked",
+      "gap": "The upstream profile assumes H100 and multiple GPU IDs; adapt images/assets and qualify this as an isolated Thor lane."
+    },
+    {
+      "id": "rt-cv-3d-mv3dt",
+      "category": "service",
+      "advertised": ["per-camera RT-DETR", "MV3DT BEV fusion", "BodyPose3DNet", "four-camera calibrated multiview tracking", "Compose deployment", "associated skill"],
+      "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app", "services/rtvi/rt-cv"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "blocked",
+      "gap": "Stage BEV/BodyPose assets and ARM64 images, provide four-camera calibration, and qualify with other GPU-heavy services stopped."
+    },
+    {
+      "id": "behavior-analytics",
+      "category": "analytics",
+      "advertised": ["2D/3D/MV3DT/Smart City/warehouse/playback/fusion apps", "events and incidents", "trajectories and occupancy", "tripwires and ROIs", "proximity and clustering", "Kafka/Redis/MQTT dynamic configuration and calibration"],
+      "source_evidence": ["services/analytics/behavior-analytics"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml"],
+      "thor_state": "partial",
+      "runtime_state": "passed_prior",
+      "gap": "Fusion and Thor candidate apps are selected; remaining app modes follow the unqualified industry lanes."
+    },
+    {
+      "id": "video-analytics-api",
+      "category": "api",
+      "advertised": ["speed/flow/travel time/occupancy/space metrics", "objects and locations", "frames/BEV/alerts/proximity", "behaviors/incidents/clustering", "tripwire/ROI/AMR events", "dynamic config and audit", "calibration/road network/USD/images", "sensor lookup"],
+      "source_evidence": ["services/analytics/video-analytics-api/src/app/specification/openapi.json"],
+      "thor_evidence": ["deploy/docker/services/analytics/video-analytics-api/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Thor still consumes a 3.2.0 API image and exposes only a subset of VA-MCP tools to its top agent; prove all 56 operations."
+    },
+    {
+      "id": "auto-calibration",
+      "category": "calibration",
+      "advertised": ["single and multi-camera calibration", "file and RTSP through VIOS", "camera pose/focal/lens distortion/rectification", "VGGT frame selection", "global ROI/tripwire", "image-coordinate export"],
+      "source_evidence": ["deploy/docker/services/auto-calibration", "skills/vss-generate-video-calibration"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "blocked",
+      "gap": "The 3.2.1 calibration images and vggt_1B model are not staged; qualify separately before integration."
+    },
+    {
+      "id": "vios-core",
+      "category": "storage",
+      "advertised": ["camera discovery and sensor management", "file upload and registration", "file-to-RTSP republish", "recording schedules and timelines", "clip and raw/full-file download", "snapshots", "live/replay WebRTC", "RTSP proxy and stream bridge", "QoS and storage caps"],
+      "source_evidence": ["services/vios", "services/vios/doc/api"],
+      "thor_evidence": ["deploy/docker/services/vios", "deploy/docker/thor-local/Dockerfile.vios-streamprocessing"],
+      "thor_state": "wired",
+      "runtime_state": "passed_prior",
+      "gap": "Stage/rebuild all 3.2.1 VIOS images, then run the seven Swagger surfaces including raw download, pictures, QoS and recording."
+    },
+    {
+      "id": "vios-codecs-audio",
+      "category": "media",
+      "advertised": ["B-frame handling", "HEVC multislice/RFC7798", "H.264/H.265", "audio recording", "audio RTSP republish", "CPU multimedia support"],
+      "source_evidence": ["services/vios"],
+      "thor_evidence": ["deploy/docker/services/vios/scripts/user_additional_install.sh"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Stage required ARM64 codec assets/wheels with checksums and prove each codec without startup-time internet access."
+    },
+    {
+      "id": "audio-understanding",
+      "category": "model",
+      "advertised": ["audio-aware Base workflow", "audio transcript per RT-VLM chunk", "audio-aware summarization and alerts"],
+      "source_evidence": ["deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "services/rtvi/rt-vlm"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_state": "partial",
+      "runtime_state": "blocked",
+      "gap": "Audio is disabled and the current local VLM is image-only; add an Omni-capable mutually exclusive local model lane and requalify memory."
+    },
+    {
+      "id": "vios-ui",
+      "category": "ui",
+      "advertised": ["sensor and stream management", "recording schedules", "media management/upload", "live/replay/video wall", "calibration", "QoS/system/stream stats", "debug and playback automation"],
+      "source_evidence": ["services/vios/ui"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "VIOS service APIs are wired but its separate full UI is not selected by the unified Thor profile."
+    },
+    {
+      "id": "main-ui",
+      "category": "ui",
+      "advertised": ["streaming agent chat", "WebSocket recovery", "HITL", "search and search-by-image", "alerts and realtime rule creation", "chunked upload and RTSP management", "Dashboard", "Map"],
+      "source_evidence": ["services/ui"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_state": "partial",
+      "runtime_state": "passed_prior",
+      "gap": "Search/Alerts/Dashboard/Video Management/sidebar chat are enabled; Map is disabled pending a local tiles/provider design."
+    },
+    {
+      "id": "smart-city",
+      "category": "industry",
+      "advertised": ["traffic RT-DETR", "traffic behavior analytics", "geo/map matching", "calibration toolkit/import", "ITS analytics API/UI", "Smart City reports and VA-MCP", "Kibana dashboard", "ten-sensor sample profile"],
+      "source_evidence": ["deploy/docker/industry-profiles/smartcities", "deploy/docker/scripts/deploy_smartcities_launchable.ipynb"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "blocked",
+      "gap": "Upstream relies on notebook rsync and NGC sample-data steps and Google Maps; package a non-destructive one-stream Thor lane with a local/no-map mode."
+    },
+    {
+      "id": "warehouse-2d",
+      "category": "industry",
+      "advertised": ["single-camera 2D warehouse", "Kafka and Redis paths", "PPE/load-quality/spillover/pathway rules", "dynamic analytics/configuration", "API/UI/dashboard", "playback"],
+      "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app", "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "Download and checksum the 3.2.0 warehouse app-data package, adapt the minimal profile, and qualify it as a separate Thor lane."
+    },
+    {
+      "id": "warehouse-3d-and-mv3dt",
+      "category": "industry",
+      "advertised": ["Sparse4D 3D warehouse", "MV3DT multiview warehouse", "BEV fusion", "auto-calibration variants", "top-view visualization"],
+      "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app", "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "blocked",
+      "gap": "Upstream is multi-GPU/H100-oriented; stage ARM64-compatible images/models and qualify isolated 3D and four-camera MV3DT lanes."
+    },
+    {
+      "id": "agent-and-mcp-apis",
+      "category": "api",
+      "advertised": ["NAT generate/chat", "health", "upload handshake and completion", "video delete", "RTSP add/delete", "VA-MCP", "LVS MCP"],
+      "source_evidence": ["services/agent", "services/video-summarization/src/lvs_mcp.py"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml"],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "Core agent and VA-MCP are selected, LVS MCP is off, and the top agent exposes only part of VA-MCP; add route-level contract tests."
+    },
+    {
+      "id": "infra-observability",
+      "category": "platform",
+      "advertised": ["API gateway", "Kafka", "Redis", "Elasticsearch/Kibana", "Prometheus/Grafana", "Phoenix/OpenTelemetry", "NvSchema", "broker debugging tools"],
+      "source_evidence": ["deploy/docker/services/infra", "libs/nvschema", "tools/message-broker-consumers"],
+      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/infra/haproxy/haproxy.cfg.template"],
+      "thor_state": "partial",
+      "runtime_state": "passed_prior",
+      "gap": "Most services are selected; Grafana and some debugging surfaces are not. Current runtime and firewall proof are absent."
+    },
+    {
+      "id": "spatial-ai-utils",
+      "category": "tooling",
+      "advertised": ["calibration and camera grouping", "3D/2D geometry", "multiview visualization", "detection mAP", "tracking HOTA/CLEAR/identity/count", "NVSchema conversion", "video/frame tools", "AWS/GCS validation"],
+      "source_evidence": ["libs/analytics/spatialai-data-utils"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "CPU/source tooling is present but no Thor validation lane installs or exercises its optional dependency sets."
+    },
+    {
+      "id": "synthetic-data-tools",
+      "category": "tooling",
+      "advertised": ["semantic label helpers", "dataset checks", "RGB/depth/video conversion", "ground-truth conversion"],
+      "source_evidence": ["tools/sdg-postprocessing"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "not_qualified",
+      "gap": "Developer tooling is present but is not installed or tested in a local Thor tools environment."
+    },
+    {
+      "id": "docker-compose",
+      "category": "deployment",
+      "advertised": ["Base Compose", "Search Compose", "LVS Compose", "Alerts Compose", "Warehouse Compose", "Smart City launchable Compose"],
+      "source_evidence": ["deploy/docker/compose.yml"],
+      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/scripts/thor-local.sh"],
+      "thor_state": "partial",
+      "runtime_state": "static_only",
+      "gap": "Unified 2D Compose resolves; add resource-isolated Thor lanes for Smart City, warehouse, calibration, 3D and audio."
+    },
+    {
+      "id": "helm",
+      "category": "deployment",
+      "advertised": ["Helm for four developer workflows", "Helm for most standalone services"],
+      "source_evidence": ["deploy/helm"],
+      "thor_evidence": [],
+      "thor_state": "external_optional",
+      "runtime_state": "not_applicable",
+      "gap": "Charts are preserved exactly; this single-node Compose deployment has no Kubernetes cluster, StorageClass, kubectl or Helm runtime."
+    },
+    {
+      "id": "nemoclaw-openclaw",
+      "category": "deployment",
+      "advertised": ["NemoClaw/OpenClaw sandbox", "VSS sandbox policy", "VSS skills upload", "orchestrator MCP", "local OpenAI-compatible provider option"],
+      "source_evidence": ["deploy/docker/scripts/nemoclaw", "assets/vss_nemoclaw_policy.yaml", ".openclaw"],
+      "thor_evidence": [],
+      "thor_state": "source_only",
+      "runtime_state": "blocked",
+      "gap": "The installer assumes a NemoClaw-ready Brev/Ubuntu host and cloud defaults; adapt paths and bootstrap a local provider/sandbox on Thor."
+    },
+    {
+      "id": "enterprise-rag",
+      "category": "workflow",
+      "advertised": ["RAG report generation", "frag retrieval integration"],
+      "source_evidence": ["deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_rag.yml", "skills/vss-generate-video-report-rag"],
+      "thor_evidence": [],
+      "thor_state": "blocked_upstream",
+      "runtime_state": "blocked",
+      "gap": "The repository carries RAG configuration and a skill but no local Enterprise RAG server; a new local retrieval backend is required."
+    },
+    {
+      "id": "offline-security",
+      "category": "platform",
+      "advertised": ["offline restart", "content-addressed image locks", "model checksums", "credential scrubbing", "loopback ingress", "physical-interface firewall"],
+      "source_evidence": ["deploy/docker/scripts/thor-local.sh"],
+      "thor_evidence": ["deploy/docker/thor-local/README.md"],
+      "thor_state": "wired",
+      "runtime_state": "not_qualified",
+      "gap": "The runtime env is stale, the 3.2.1 lock cannot yet be produced, the cache cleaner is stopped, and the firewall is absent."
+    }
+  ],
+  "skills": [
+    {"id": "vss-ask-video", "thor_state": "wired", "runtime_state": "passed_prior"},
+    {"id": "vss-deploy-dense-captioning", "thor_state": "partial", "runtime_state": "not_qualified"},
+    {"id": "vss-deploy-detection-tracking-2d", "thor_state": "wired", "runtime_state": "passed_prior"},
+    {"id": "vss-deploy-detection-tracking-3d", "thor_state": "source_only", "runtime_state": "blocked"},
+    {"id": "vss-deploy-profile", "thor_state": "partial", "runtime_state": "not_qualified"},
+    {"id": "vss-deploy-video-embedding", "thor_state": "wired", "runtime_state": "passed_prior"},
+    {"id": "vss-generate-video-calibration", "thor_state": "source_only", "runtime_state": "blocked"},
+    {"id": "vss-generate-video-report", "thor_state": "wired", "runtime_state": "passed_prior"},
+    {"id": "vss-generate-video-report-rag", "thor_state": "blocked_upstream", "runtime_state": "blocked"},
+    {"id": "vss-manage-alerts", "thor_state": "partial", "runtime_state": "passed_prior"},
+    {"id": "vss-manage-video-io-storage", "thor_state": "wired", "runtime_state": "passed_prior"},
+    {"id": "vss-query-analytics", "thor_state": "partial", "runtime_state": "not_qualified"},
+    {"id": "vss-search-archive", "thor_state": "partial", "runtime_state": "passed_prior"},
+    {"id": "vss-setup-behavior-analytics", "thor_state": "partial", "runtime_state": "passed_prior"},
+    {"id": "vss-setup-video-analytics-api", "thor_state": "wired", "runtime_state": "not_qualified"},
+    {"id": "vss-summarize-video", "thor_state": "partial", "runtime_state": "passed_prior"}
+  ]
+}

@@ -502,6 +502,11 @@ workflow:
     2. VIDEO OR STREAM REPORTS: If "report" refers to uploaded media or a live
        stream rather than an incident, call report_agent directly. It supports
        uploaded sensor_id values and live media_type='rtsp' with offset times.
+       For multiple uploaded videos, pass every sensor ID as one list in a
+       SINGLE report_agent call. Never split a multi-video report into separate
+       sequential or parallel calls. If lvs_config_media was called for a name,
+       or vst_video_list reports media_type='rtsp', pass media_type='rtsp'; do
+       not infer that it is uploaded media merely because the user said video.
     3. SEARCH: For requests to find video, events, actions, objects, visual
        attributes, or object IDs, always call search_agent with query unchanged,
        agent_mode=true, and use_attribute_search=true. Pass request_options only

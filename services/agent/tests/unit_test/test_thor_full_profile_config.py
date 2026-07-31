@@ -143,6 +143,17 @@ def test_top_agent_must_execute_resolved_media_plan_before_answering() -> None:
     assert "Never expose a plan, checklist" in workflow["response_format_prompt"]
 
 
+def test_multi_video_reports_use_one_report_agent_call() -> None:
+    """Keep the 3.2.1 multi-video routing fix in the independent Thor prompt."""
+
+    prompt = _load_config()["workflow"]["prompt"]
+
+    assert "For multiple uploaded videos" in prompt
+    assert "SINGLE report_agent call" in prompt
+    assert "Never split a multi-video report" in prompt
+    assert "media_type='rtsp'" in prompt
+
+
 def test_quick_video_questions_have_a_bounded_thor_frame_budget() -> None:
     function = _load_config()["functions"]["video_understanding"]
 

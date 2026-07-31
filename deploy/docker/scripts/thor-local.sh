@@ -82,6 +82,8 @@ export KAFKA_PORT="${KAFKA_PORT:-9092}"
 export VSS_ES_PORT="${VSS_ES_PORT:-9200}"
 export VSS_VA_MCP_PORT="${VSS_VA_MCP_PORT:-9901}"
 export BACKEND_PORT="${BACKEND_PORT:-38111}"
+export LVS_MCP_PORT="${LVS_MCP_PORT:-38112}"
+export LVS_ENABLE_MCP="${LVS_ENABLE_MCP:-true}"
 export KIBANA_PORT="${KIBANA_PORT:-5601}"
 export THOR_FULL_ENABLE_KIBANA="${THOR_FULL_ENABLE_KIBANA:-true}"
 export THOR_FULL_STAGE_TIMEOUT_SECONDS="${THOR_FULL_STAGE_TIMEOUT_SECONDS:-1800}"
@@ -89,6 +91,12 @@ export THOR_FULL_READINESS_TIMEOUT_SECONDS="${THOR_FULL_READINESS_TIMEOUT_SECOND
 export RTVI_EMBED_BATCH_SIZE="${RTVI_EMBED_BATCH_SIZE:-8}"
 export RTVI_VLM_BATCH_SIZE="${RTVI_VLM_BATCH_SIZE:-1}"
 export RTVI_VLM_NUM_VLM_PROCS="${RTVI_VLM_NUM_VLM_PROCS:-1}"
+export RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT="${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT:-true}"
+export RTVI_TIMESTAMP_PROMPT_PREFIX_FILE_SOURCE="${RTVI_TIMESTAMP_PROMPT_PREFIX_FILE_SOURCE:-}"
+export RTVI_TIMESTAMP_PROMPT_SUFFIX_FILE_SOURCE="${RTVI_TIMESTAMP_PROMPT_SUFFIX_FILE_SOURCE:-}"
+export RTVI_TIMESTAMP_PROMPT_PREFIX_RTSP_SOURCE="${RTVI_TIMESTAMP_PROMPT_PREFIX_RTSP_SOURCE:-}"
+export RTVI_TIMESTAMP_PROMPT_SUFFIX_RTSP_SOURCE="${RTVI_TIMESTAMP_PROMPT_SUFFIX_RTSP_SOURCE:-}"
+export RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS="${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS:-false}"
 export LVS_LLM_ENABLE_THINKING="${LVS_LLM_ENABLE_THINKING:-false}"
 export LVS_LLM_MAX_TOKENS="${LVS_LLM_MAX_TOKENS:-1024}"
 export THOR_LOCAL_LVS_IMAGE="${THOR_LOCAL_LVS_IMAGE:-cti-vss-video-summarization:thor-local}"
@@ -187,8 +195,14 @@ Optional environment overrides:
   RTVI_EMBED_BATCH_SIZE (defaults to 8 for the single-stream Thor profile).
   RTVI_VLM_BATCH_SIZE and RTVI_VLM_NUM_VLM_PROCS (both fixed at 1 for
   the single-stream, OpenAI-compatible local VLM profile).
+  RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT (defaults true), the four
+  RTVI_TIMESTAMP_PROMPT_{PREFIX,SUFFIX}_{FILE,RTSP}_SOURCE templates, and
+  RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS (defaults false) expose the 3.2.1
+  timestamp contract. Enable absolute metadata only for a compatible model.
   LVS_LLM_ENABLE_THINKING (defaults false) and LVS_LLM_MAX_TOKENS
   (defaults 1024) bound local summary aggregation.
+  LVS_ENABLE_MCP (defaults true) and LVS_MCP_PORT (defaults 38112) expose
+  the released local LVS SSE MCP server.
   REALTIME_ALERT_CHUNK_DURATION, REALTIME_ALERT_CHUNK_OVERLAP_DURATION,
   REALTIME_ALERT_FRAMES_PER_CHUNK, REALTIME_ALERT_USE_FPS,
   REALTIME_ALERT_VLM_INPUT_WIDTH, REALTIME_ALERT_VLM_INPUT_HEIGHT,
@@ -466,8 +480,14 @@ validate_thor_full_contract() {
     die "RTVI_VLM_BATCH_SIZE must be 1 for the single-stream local Qwen VLM profile"
   [[ "${RTVI_VLM_NUM_VLM_PROCS}" == "1" ]] ||
     die "RTVI_VLM_NUM_VLM_PROCS must be 1 for the OpenAI-compatible RTVI routing contract"
+  [[ "${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}" == "true" || "${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}" == "false" ]] ||
+    die "RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT must be true or false"
+  [[ "${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}" == "true" || "${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}" == "false" ]] ||
+    die "RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS must be true or false"
   [[ "${LVS_LLM_ENABLE_THINKING}" == "true" || "${LVS_LLM_ENABLE_THINKING}" == "false" ]] ||
     die "LVS_LLM_ENABLE_THINKING must be true or false"
+  [[ "${LVS_ENABLE_MCP}" == "true" || "${LVS_ENABLE_MCP}" == "false" ]] ||
+    die "LVS_ENABLE_MCP must be true or false"
   [[ "${LVS_LLM_MAX_TOKENS}" =~ ^[1-9][0-9]*$ ]] ||
     die "LVS_LLM_MAX_TOKENS must be a positive integer"
   (( LVS_LLM_MAX_TOKENS <= 4096 )) ||
@@ -536,6 +556,7 @@ validate_thor_full_contract() {
     "VSS_ES_PORT:${VSS_ES_PORT}" \
     "VSS_VA_MCP_PORT:${VSS_VA_MCP_PORT}" \
     "BACKEND_PORT:${BACKEND_PORT}" \
+    "LVS_MCP_PORT:${LVS_MCP_PORT}" \
     "KIBANA_PORT:${KIBANA_PORT}"; do
     name="${item%%:*}"
     port="${item#*:}"
@@ -621,6 +642,12 @@ print_runtime_contract() {
     RTVI_VLM_MODEL_PATH none \
     RTVI_VLM_BATCH_SIZE "${RTVI_VLM_BATCH_SIZE}" \
     RTVI_VLM_NUM_VLM_PROCS "${RTVI_VLM_NUM_VLM_PROCS}" \
+    RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT "${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}" \
+    RTVI_TIMESTAMP_PROMPT_PREFIX_FILE_SOURCE "${RTVI_TIMESTAMP_PROMPT_PREFIX_FILE_SOURCE}" \
+    RTVI_TIMESTAMP_PROMPT_SUFFIX_FILE_SOURCE "${RTVI_TIMESTAMP_PROMPT_SUFFIX_FILE_SOURCE}" \
+    RTVI_TIMESTAMP_PROMPT_PREFIX_RTSP_SOURCE "${RTVI_TIMESTAMP_PROMPT_PREFIX_RTSP_SOURCE}" \
+    RTVI_TIMESTAMP_PROMPT_SUFFIX_RTSP_SOURCE "${RTVI_TIMESTAMP_PROMPT_SUFFIX_RTSP_SOURCE}" \
+    RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS "${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}" \
     RTVI_CV_PORT "${RTVI_CV_PORT}" \
     COSMOS_EMBED_PORT "${RTVI_EMBED_PORT}" \
     COSMOS_EMBED_ENDPOINT "http://127.0.0.1:${RTVI_EMBED_PORT}" \
@@ -639,6 +666,8 @@ print_runtime_contract() {
     VST_MCP_URL "http://127.0.0.1:${VST_PORT}" \
     BACKEND_PORT "${BACKEND_PORT}" \
     LVS_BACKEND_URL "http://127.0.0.1:${BACKEND_PORT}" \
+    LVS_MCP_PORT "${LVS_MCP_PORT}" \
+    LVS_ENABLE_MCP "${LVS_ENABLE_MCP}" \
     LVS_LLM_ENABLE_THINKING "${LVS_LLM_ENABLE_THINKING}" \
     LVS_LLM_MAX_TOKENS "${LVS_LLM_MAX_TOKENS}" \
     THOR_LOCAL_LVS_IMAGE "${THOR_LOCAL_LVS_IMAGE}" \
@@ -729,7 +758,8 @@ Thor-local environment contract:
   RTVI-VLM upstream: ${VLM_CONTAINER_ENDPOINT_URL}/v1 (bridge-to-host)
   Runtime ports: agent=${VSS_AGENT_PORT}, UI=${VSS_UI_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}
   Intelligence ports: embed=${RTVI_EMBED_PORT} (batch ${RTVI_EMBED_BATCH_SIZE}), RTVI-VLM=${RTVI_VLM_PORT} (batch ${RTVI_VLM_BATCH_SIZE}, processes ${RTVI_VLM_NUM_VLM_PROCS}), perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, LVS=${BACKEND_PORT}
-  LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}
+  RTVI timestamps: prompt=${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}, absolute_metadata=${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}
+  LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}, MCP=${LVS_ENABLE_MCP}@${LVS_MCP_PORT}
   Live alerts: ${REALTIME_ALERT_CHUNK_DURATION}s chunks/${REALTIME_ALERT_CHUNK_OVERLAP_DURATION}s overlap, ${REALTIME_ALERT_FRAMES_PER_CHUNK} fixed frames at ${REALTIME_ALERT_VLM_INPUT_WIDTH}x${REALTIME_ALERT_VLM_INPUT_HEIGHT}, reasoning=${REALTIME_ALERT_ENABLE_REASONING}, max_tokens=${REALTIME_ALERT_MAX_TOKENS}
   Data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, Kibana=${KIBANA_PORT}
   Runtime env: ${generated_env}
@@ -961,6 +991,9 @@ preflight() {
   require_available_port "${VSS_ES_PORT}" elasticsearch
   require_available_port "${VSS_VA_MCP_PORT}" vss-va-mcp
   require_available_port "${BACKEND_PORT}" vss-lvs
+  if [[ "${LVS_ENABLE_MCP}" == "true" ]]; then
+    require_available_port "${LVS_MCP_PORT}" vss-lvs
+  fi
   if [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" ]]; then
     require_available_port "${KIBANA_PORT}" kibana
   fi
@@ -1258,7 +1291,7 @@ security_internal_ports() {
     "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 9600 \
     "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" \
     30554 30555 30556 30557 30558 30559 30560 30561 30562 30563 30564 \
-    "${VST_PORT}" "${BACKEND_PORT}" | sort -n -u
+    "${VST_PORT}" "${BACKEND_PORT}" "${LVS_MCP_PORT}" | sort -n -u
 }
 
 listener_scope() {
@@ -1916,6 +1949,13 @@ doctor_check_endpoints() {
   doctor_json_contract "Realtime alert API" "http://127.0.0.1:${ALERT_BRIDGE_PORT}/api/v1/realtime" \
     'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if payload.get("status") == "success" and isinstance(payload.get("rules"), list) else 1)'
   doctor_http_status "Video summarization" "http://127.0.0.1:${BACKEND_PORT}/v1/ready" 200
+  if [[ "${LVS_ENABLE_MCP}" == "true" ]]; then
+    if ss -H -ltn "sport = :${LVS_MCP_PORT}" | grep -q .; then
+      doctor_pass "Video summarization MCP is listening on ${LVS_MCP_PORT}."
+    else
+      doctor_fail "Video summarization MCP is not listening on ${LVS_MCP_PORT}."
+    fi
+  fi
 }
 
 doctor_finish() {

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "${script_dir}/../../.." && pwd)"
+verifier="${repo_root}/deploy/docker/thor-local/parity/verify_manifest.py"
+skill_installer="${repo_root}/deploy/docker/thor-local/install-vss-skills.sh"
+
+python3 "${verifier}"
+
+report="$(python3 "${verifier}" --report)"
+grep -q "Ledger: 36 families, 223 advertised capabilities, 16 skills" <<<"${report}"
+grep -q "smart-city: source_only/blocked" <<<"${report}"
+grep -q "warehouse-3d-and-mv3dt: source_only/blocked" <<<"${report}"
+grep -q "audio-understanding: partial/blocked" <<<"${report}"
+grep -q "nemoclaw-openclaw: source_only/blocked" <<<"${report}"
+grep -q "enterprise-rag: blocked_upstream/blocked" <<<"${report}"
+
+echo "PASS: the exhaustive Thor parity ledger is valid and keeps known gaps explicit"
+
+test_skills_dir="$(mktemp -d "${TMPDIR:-/tmp}/thor-vss-skills.XXXXXX")"
+cleanup() {
+  rm -rf -- "${test_skills_dir}"
+}
+trap cleanup EXIT
+VSS_SKILLS_DEST="${test_skills_dir}" bash "${skill_installer}" install >/dev/null
+VSS_SKILLS_DEST="${test_skills_dir}" bash "${skill_installer}" status >/dev/null
+[[ "$(find "${test_skills_dir}" -mindepth 1 -maxdepth 1 -type l | wc -l)" -eq 16 ]]
+echo "PASS: the VSS skill installer creates exactly 16 safe, idempotent links"

@@ -922,7 +922,8 @@ if grep -q "UI: port 3001, title 'THOR LOCAL VSS', subtitle 'OFFLINE VIDEO INTEL
    grep -q "Blueprint: bp_developer_thor_full (AGX-THOR, mode 2d)" <<<"${_thor_contract_out}" &&
    grep -q "Compose profile: bp_developer_thor_full_2d" <<<"${_thor_contract_out}" &&
    grep -q "Intelligence ports: embed=8017 (batch 8), RTVI-VLM=8018 (batch 1, processes 1), perception=9000, analytics=8081, alerts=9080, LVS=38111" <<<"${_thor_contract_out}" &&
-   grep -q "LVS aggregation: provider=vllm, thinking=false, max_tokens=1024" <<<"${_thor_contract_out}" &&
+   grep -q "RTVI timestamps: prompt=true, absolute_metadata=false" <<<"${_thor_contract_out}" &&
+   grep -q "LVS aggregation: provider=vllm, thinking=false, max_tokens=1024, MCP=true@38112" <<<"${_thor_contract_out}" &&
    grep -q "Live alerts: 10s chunks/2s overlap, 4 fixed frames at 512x512, reasoning=false, max_tokens=128" <<<"${_thor_contract_out}" &&
    grep -q "Data ports: Kafka=9092, Elasticsearch=9200, VA-MCP=9901, Kibana=5601" <<<"${_thor_contract_out}" &&
    ! grep -q "must-not-appear" <<<"${_thor_contract_out}"; then
@@ -948,9 +949,13 @@ if grep -q 'profile="${THOR_LOCAL_PROFILE:-thor-full}"' "${_thor_local}" &&
    grep -q 'docker exec vss-rtvi-vlm' "${_thor_local}" &&
    grep -q 'RTVI_EMBED_BATCH_SIZE "${RTVI_EMBED_BATCH_SIZE}"' "${_thor_local}" &&
    grep -q 'RTVI_VLM_BATCH_SIZE "${RTVI_VLM_BATCH_SIZE}"' "${_thor_local}" &&
+   grep -q 'RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT "${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}"' "${_thor_local}" &&
+   grep -q 'RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS "${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}"' "${_thor_local}" &&
    grep -q 'RTVI_VLM_NUM_VLM_PROCS "${RTVI_VLM_NUM_VLM_PROCS}"' "${_thor_local}" &&
    grep -q 'LVS_LLM_ENABLE_THINKING "${LVS_LLM_ENABLE_THINKING}"' "${_thor_local}" &&
    grep -q 'LVS_LLM_MAX_TOKENS "${LVS_LLM_MAX_TOKENS}"' "${_thor_local}" &&
+   grep -q 'LVS_MCP_PORT "${LVS_MCP_PORT}"' "${_thor_local}" &&
+   grep -q 'LVS_ENABLE_MCP "${LVS_ENABLE_MCP}"' "${_thor_local}" &&
    grep -q 'Dockerfile.video-summarization' "${REPO_ROOT}/deploy/docker/thor-local/compose.yml" &&
    grep -q 'provider: !ENV ${LVS_LLM_MODEL_TYPE:openai}' "${REPO_ROOT}/deploy/docker/services/video-summarization/configs/config.yaml" &&
    grep -q "RTVI_VLM_API_KEY ''" "${_thor_local}" &&
@@ -970,6 +975,7 @@ fi
 
 if grep -q 'require_available_port "${VST_PORT}" vss-vios-ingress' "${_thor_local}" &&
    grep -q 'require_available_port "${RTVI_EMBED_PORT}" vss-rtvi-embed' "${_thor_local}" &&
+   grep -q 'require_available_port "${LVS_MCP_PORT}" vss-lvs' "${_thor_local}" &&
    grep -q 'require_available_port "${RTVI_VLM_PORT}" vss-rtvi-vlm' "${_thor_local}" &&
    grep -q 'require_available_port "${RTVI_CV_PORT}" vss-rtvi-cv' "${_thor_local}" &&
    grep -q 'require_available_port "${KAFKA_PORT}" kafka' "${_thor_local}" &&
@@ -1674,22 +1680,22 @@ else
 fi
 
 # --- Brev: HAProxy + VSS_PUBLIC_HOST in generated.env (agent_ui uses HAPROXY_* / VSS_PUBLIC_HOST only; no BREV_* compose vars) ---
-# Brev writes template literals ${PROXY_PORT:-7777} and ${BREV_ENV_ID} for docker compose to expand at runtime.
+# Brev resolves its ingress coordinates when generating the runtime environment.
 BREV_ENV_ID=test-env run_dry_run_up_and_check_generated_env "generated.env Brev HAProxy + VSS_PUBLIC_HOST" "base" \
  -i 127.0.0.1 -d -- \
-  "HAPROXY_PORT" '${PROXY_PORT:-7777}' \
+  "HAPROXY_PORT" "7777" \
   "VSS_PUBLIC_HTTP_PROTOCOL" "https" \
   "VSS_PUBLIC_WS_PROTOCOL" "wss" \
-  "VSS_PUBLIC_HOST" '${PROXY_PORT:-7777}-${BREV_ENV_ID}.brevlab.com' \
+  "VSS_PUBLIC_HOST" '7777-test-env.brevlab.com' \
   "VSS_PUBLIC_PORT" "443"
 
-# Brev with custom PROXY_PORT in env: same literals in generated.env (compose expands using env)
-BREV_ENV_ID=test-env PROXY_PORT=8080 run_dry_run_up_and_check_generated_env "generated.env Brev with custom PROXY_PORT (templates unchanged)" "base" \
+# Brev with custom PROXY_PORT resolves the custom port into the generated environment.
+BREV_ENV_ID=test-env PROXY_PORT=8080 run_dry_run_up_and_check_generated_env "generated.env Brev with custom PROXY_PORT" "base" \
  -i 127.0.0.1 -d -- \
-  "HAPROXY_PORT" '${PROXY_PORT:-7777}' \
+  "HAPROXY_PORT" "8080" \
   "VSS_PUBLIC_HTTP_PROTOCOL" "https" \
   "VSS_PUBLIC_WS_PROTOCOL" "wss" \
-  "VSS_PUBLIC_HOST" '${PROXY_PORT:-7777}-${BREV_ENV_ID}.brevlab.com' \
+  "VSS_PUBLIC_HOST" '8080-test-env.brevlab.com' \
   "VSS_PUBLIC_PORT" "443"
 
 # Non-Brev: profile HAProxy defaults (script does not inject https/wss or Brev host templates)

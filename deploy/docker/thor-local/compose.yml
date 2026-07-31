@@ -24,12 +24,12 @@ services:
       start_period: 2s
 
   streamprocessing-ms:
-    image: ${THOR_LOCAL_VST_STREAM_PROCESSOR_IMAGE:-vss-vios-streamprocessing:3.2.0-thor-local}
+    image: ${THOR_LOCAL_VST_STREAM_PROCESSOR_IMAGE:-vss-vios-streamprocessing:3.2.1-thor-local}
     build:
       context: ${VSS_REPO_ROOT}
       dockerfile: deploy/docker/thor-local/Dockerfile.vios-streamprocessing
       args:
-        VST_STREAM_PROCESSOR_BASE_IMAGE: ${VST_STREAM_PROCESSOR_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.0}
+        VST_STREAM_PROCESSOR_BASE_IMAGE: ${VST_STREAM_PROCESSOR_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1}
     # Codecs are repaired once in the derived image. Bypass the upstream
     # startup wrapper, which otherwise performs apt operations on every boot.
     entrypoint: ["/home/vst/vst_release/launch_vst"]
@@ -97,7 +97,7 @@ services:
       context: ${VSS_REPO_ROOT}/services/rtvi/rt-vlm
       dockerfile: docker/Dockerfile
       args:
-        BASE_IMAGE: ${RTVI_VLM_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.0}
+        BASE_IMAGE: ${RTVI_VLM_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1}
     environment:
       VLM_BATCH_SIZE: "${RTVI_VLM_BATCH_SIZE:-1}"
       NUM_VLM_PROCS: "${RTVI_VLM_NUM_VLM_PROCS:-1}"
@@ -141,7 +141,7 @@ services:
       context: ${VSS_REPO_ROOT}
       dockerfile: deploy/docker/thor-local/Dockerfile.video-summarization
       args:
-        LVS_BASE_IMAGE: ${LVS_IMAGE:-nvcr.io/nvidia/vss-core/vss-video-summarization}:${LVS_TAG:-3.2.0}
+        LVS_BASE_IMAGE: ${LVS_IMAGE:-nvcr.io/nvidia/vss-core/vss-video-summarization}:${LVS_TAG:-3.2.1}
     environment:
       LVS_LLM_MODEL_TYPE: ${LLM_MODEL_TYPE:-openai}
       LVS_LLM_ENABLE_THINKING: ${LVS_LLM_ENABLE_THINKING:-false}

@@ -1,5 +1,10 @@
 # Thor-local deployment
 
+The current upstream feature-by-feature acceptance state is tracked in the
+[machine-checked parity ledger](parity/README.md). Source presence, Thor wiring,
+and current runtime proof are recorded separately so an imported upstream
+feature cannot be mistaken for a locally qualified one.
+
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 
 ## Local model contract
@@ -189,9 +194,9 @@ This is an application-envelope measurement, not a universal camera-count
 claim. Both inputs were copies of one local H.264 sample, so the result does
 not cover adverse RTSP networks, higher resolutions, different codecs,
 simultaneous Q&A/report/VLM traffic, or another model pair. Re-run it after any
-such change. VIOS 3.2.0 can retain stale names in `/sensor/list` after deletion;
-the cleanup proof uses the authoritative per-sensor stream lookup and
-DeepStream stream-info endpoint instead.
+such change. The cleanup proof uses the authoritative per-sensor stream lookup
+and DeepStream stream-info endpoint instead of relying only on the cached
+sensor-list view.
 
 ## Single-device network security
 
