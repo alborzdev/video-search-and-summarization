@@ -24,9 +24,10 @@ deploy/docker/scripts/thor-local.sh verify-offline
 
 Results:
 
-- All nine Thor-derived production images built successfully, including both
-  Next.js applications and all shared UI packages.
-- All 24 images selected by the 27-service Compose profile are present and
+- All ten Thor-derived production images built successfully, including both
+  Next.js applications, the checksum-locked offline Logstash derivative, and
+  all shared UI packages.
+- All 28 unique images selected by the current 31-service Compose profile are present and
   recorded by content ID in the protected mode-`0600` runtime environment.
 - NVIDIA's agent, behavior analytics, RT-CV, RT-Embed, VIOS ingress, VIOS
   sensor, and released LVS images are the ARM64 3.2.1 variants. The Video
@@ -49,7 +50,7 @@ Results:
 
 The following suites passed after the staging/model-lane changes:
 
-- `test-dev-profile.sh`: 196 passed, 0 failed
+- `test-dev-profile.sh`: 198 passed, 0 failed
 - `test-thor-local-doctor.sh`: all passed
 - `test-thor-local-security-models.sh`: all passed
 - `test-thor-parity-manifest.sh`: all passed, including all 16 VSS skills
@@ -58,11 +59,12 @@ The following suites passed after the staging/model-lane changes:
 
 ## Deliberately open runtime gates
 
-- The cache cleaner must be started with operator `sudo` after this reboot.
-- The vision provider and the 27-service stack remain stopped until that guard
-  is active; API, UI, inference, alerts, search, and restart qualification are
-  therefore not yet current.
+- The root-owned cache cleaner is active, and the refreshed offline verifier
+  passes. The vision provider and 31-service stack remain stopped because only
+  about 34 GiB unified memory is available while the fail-closed vision-model
+  start gate requires 50 GiB; API, UI, inference, alerts, search, and restart
+  qualification are therefore not yet current.
 - The physical-interface firewall has not yet been applied.
-- Smart City, warehouse custom-data, 3D, calibration, audio/Omni, Cosmos 3,
-  RAG, and NemoClaw lanes remain separate open parity work in `manifest.json`.
-  NVIDIA's optional warehouse sample bundle is excluded from acceptance.
+- Alternate lanes and optional integrations retain their exact current states
+  in `manifest.json`; source/static closure is not promoted to a runtime pass.
+  NVIDIA's optional warehouse sample bundle remains excluded from acceptance.

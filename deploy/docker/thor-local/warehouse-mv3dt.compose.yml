@@ -1,0 +1,80 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Thor runtime/offline overrides for the custom-data Redis MV3DT lane.
+services:
+  redis:
+    command: ["redis-server", "/config/redis.conf", "--bind", "127.0.0.1", "--protected-mode", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 2s
+
+  bp-configurator-mv3dt-init:
+    image: ${THOR_MV3DT_CONFIGURATOR_INIT_IMAGE:-cti-vss-mv3dt-configurator-init:3.2.1-thor-local}
+
+  broker-health-check:
+    image: ${THOR_MV3DT_BROKER_HEALTH_IMAGE:-cti-vss-mv3dt-broker-health:3.2.1-thor-local}
+
+  nvstreamer-mv3dt:
+    image: ${THOR_MV3DT_NVSTREAMER_IMAGE:-vss-vios-nvstreamer:3.2.1-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-nvstreamer
+      args:
+        VST_NVSTREAMER_BASE_IMAGE: nvcr.io/nvidia/vss-core/vss-vios-nvstreamer:${NVSTREAMER_IMAGE_TAG:-3.2.1}
+    runtime: nvidia
+    entrypoint: ["/home/vst/vst_release/launch_vst"]
+    environment:
+      NVSTREAMER_INSTALL_ADDITIONAL_PACKAGES: "false"
+
+  sensor-ms-mv3dt:
+    environment:
+      LD_LIBRARY_PATH: /usr/lib/aarch64-linux-gnu/nvidia:/usr/lib/aarch64-linux-gnu:/home/vst/vst_release/prebuilts/aarch64:/home/vst/vst_release/prebuilts/aarch64/gst-plugins:/home/vst/vst_release/prebuilts/aarch64/sbsa
+
+  streamprocessing-ms-mv3dt:
+    image: ${THOR_MV3DT_VST_STREAM_PROCESSOR_IMAGE:-vss-vios-streamprocessing:3.2.1-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-streamprocessing
+      args:
+        VST_STREAM_PROCESSOR_BASE_IMAGE: nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1
+    entrypoint: ["/home/vst/vst_release/launch_vst"]
+    environment:
+      VST_INSTALL_ADDITIONAL_PACKAGES: "false"
+
+  vss-rtvi-cv-mv3dt:
+    runtime: nvidia
+    environment:
+      TRANSFORMERS_OFFLINE: "1"
+      HF_HUB_OFFLINE: "1"
+      OTEL_SDK_DISABLED: "true"
+
+  vss-rtvi-cv-bev-fusion:
+    environment:
+      BROKER_TYPE: redis
+      REDIS_HOST: 127.0.0.1
+
+  # The base command installs logstash-codec-protobuf from Rubygems on every
+  # recreation. Use the prebuilt offline derivative and stock entrypoint.
+  logstash:
+    image: ${THOR_LOCAL_LOGSTASH_IMAGE:-vss-logstash-protobuf:9.3.3-codec-1.3.0-thor-local}
+    command: []
+    environment:
+      STREAM_TYPE: kafka
+
+  # Extended-only build services receive deterministic image names so a
+  # qualified offline start can use --no-build --pull never.
+  elasticsearch:
+    image: ${THOR_MV3DT_ELASTICSEARCH_IMAGE:-cti-vss-mv3dt-elasticsearch:3.2.1-thor-local}
+
+  elasticsearch-init-container:
+    image: ${THOR_MV3DT_ELASTIC_INIT_IMAGE:-cti-vss-mv3dt-elastic-init:3.2.1-thor-local}
+
+  kibana-init-container-mv3dt:
+    image: ${THOR_MV3DT_KIBANA_INIT_IMAGE:-cti-vss-mv3dt-kibana-init:3.2.1-thor-local}
+
+  import-calibration-output-container-mv3dt:
+    image: ${THOR_MV3DT_CALIBRATION_IMPORT_IMAGE:-cti-vss-mv3dt-calibration-import:3.2.1-thor-local}

@@ -24,14 +24,19 @@ import argparse
 import logging
 import os
 
-from confluent_kafka import Consumer, KafkaException
+from confluent_kafka import Consumer, KafkaError
 
-from base_consumer import BaseMessageConsumer
+from base_consumer import (
+    BaseMessageConsumer,
+    DEFAULT_POLL_TIMEOUT_SECONDS,
+    non_negative_float_arg,
+    non_negative_int_arg,
+    positive_float_arg,
+    parse_source_names,
+)
 
 # Kafka-specific constants
 DEFAULT_KAFKA_BROKER = 'localhost:9092'
-POLL_TIMEOUT_MS = 1000  # 1 second
-
 logger = logging.getLogger(__name__)
 
 
@@ -44,7 +49,7 @@ class KafkaMessageConsumer(BaseMessageConsumer):
     
     def get_source_names(self):
         """Get list of topics from args"""
-        return [t.strip() for t in self.args.topics.split(',')]
+        return parse_source_names(self.args.topics, 'Kafka topic')
     
     def create_connection(self, source_name, consumer_group, **kwargs):
         """Create Kafka consumer connection"""
@@ -54,8 +59,8 @@ class KafkaMessageConsumer(BaseMessageConsumer):
             'bootstrap.servers': kafka_broker,
             'group.id': consumer_group,
             'auto.offset.reset': 'earliest',
-            'enable.auto.commit': True,
-            'auto.commit.interval.ms': 5000,
+            'enable.auto.commit': False,
+            'enable.auto.offset.store': False,
             'session.timeout.ms': 30000,
             'max.poll.interval.ms': 300000
         }
@@ -67,13 +72,14 @@ class KafkaMessageConsumer(BaseMessageConsumer):
     def consume_messages(self, connection, source_name, consumer_group, **kwargs):
         """Consume messages from Kafka topic"""
         # Poll for a single message
-        msg = connection.poll(timeout=POLL_TIMEOUT_MS / 1000.0)
+        poll_timeout = kwargs.get('poll_timeout_seconds', DEFAULT_POLL_TIMEOUT_SECONDS)
+        msg = connection.poll(timeout=poll_timeout)
         
         if msg is None:
             return  # No messages available
         
         if msg.error():
-            if msg.error().code() == KafkaException._PARTITION_EOF:
+            if msg.error().code() == KafkaError._PARTITION_EOF:
                 # End of partition, not an error
                 return
             else:
@@ -83,13 +89,14 @@ class KafkaMessageConsumer(BaseMessageConsumer):
                 yield ('__kafka_error__', None)
                 return
         
-        # Yield the message (no message ID needed for Kafka with auto-commit)
-        if msg.value():
-            yield (None, msg.value())
+        # Carry the message object as the acknowledgment handle. The base class
+        # commits it only after decode, JSON write, and flush all succeed.
+        yield (msg, msg.value())
     
     def acknowledge_messages(self, connection, source_name, consumer_group, message_ids):
-        """Kafka uses auto-commit, so no explicit acknowledgment needed"""
-        pass
+        """Synchronously commit records after their output has been flushed."""
+        for message in message_ids:
+            connection.commit(message=message, asynchronous=False)
     
     def close_connection(self, connection):
         """Close the Kafka consumer"""
@@ -115,7 +122,7 @@ class KafkaMessageConsumer(BaseMessageConsumer):
 def main(args):
     """Main function to run the Kafka consumer"""
     consumer = KafkaMessageConsumer(args)
-    consumer.run()
+    return consumer.run()
 
 
 if __name__ == '__main__':
@@ -128,6 +135,13 @@ if __name__ == '__main__':
                         help=f'Kafka broker address (default: {DEFAULT_KAFKA_BROKER})')
     parser.add_argument('--consumer-group', default='kafka-json-dumper',
                         help='Kafka consumer group name (default: kafka-json-dumper)')
+    parser.add_argument('--max-messages', type=non_negative_int_arg, default=0,
+                        help='Maximum messages to read per topic; 0 means unlimited (default: 0)')
+    parser.add_argument('--timeout-seconds', type=non_negative_float_arg, default=0.0,
+                        help='Maximum runtime per topic; 0 means unlimited (default: 0)')
+    parser.add_argument('--poll-timeout-seconds', type=positive_float_arg,
+                        default=DEFAULT_POLL_TIMEOUT_SECONDS,
+                        help=f'Maximum Kafka poll wait (default: {DEFAULT_POLL_TIMEOUT_SECONDS:g})')
     
     args = parser.parse_args()
-    main(args)
+    raise SystemExit(0 if main(args) else 1)

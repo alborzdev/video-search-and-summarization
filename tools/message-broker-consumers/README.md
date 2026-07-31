@@ -34,6 +34,7 @@ The consumers follow an object-oriented design with a common base class (`BaseMe
 - **Multiprocessing**: Each stream/topic is processed in its own process for true parallelism
 - **Protobuf Support**: Automatically decodes Protocol Buffer messages based on stream/topic name
 - **Configurable**: Customizable connection parameters and consumer groups
+- **Bounded Capture**: Optional per-source message and runtime limits for reproducible qualification
 - **Separate Output Files**: Each stream/topic writes to its own `.txt` file (JSON Lines format)
 - **Graceful Shutdown**: Proper signal handling for clean process termination
 - **Progress Monitoring**: Real-time stats and periodic status updates
@@ -69,10 +70,58 @@ pip install -r requirements.txt
 
 Both consumers automatically detect the message type based on the stream/topic name:
 
-- **Frame messages**: `mdx-raw`, `mdx-bev`, `mdx-frames`
-- **Behavior messages**: `mdx-behavior`, `mdx-events`, `mdx-alerts`, `mdx-behavior-plus`
-- **SpaceUtilization messages**: `mdx-space-utilization`
-- **Incident messages**: `mdx-incidents`
+- **Frame protobuf**: `mdx-raw`, `mdx-bev`, `mdx-frames`, `mdx-rtls`, `mdx-rtls-region-1`
+- **Behavior protobuf**: `mdx-behavior`, `mdx-events`, `mdx-alerts`, `mdx-behavior-plus`, `mdx-vlm-alerts`
+- **SpaceUtilization protobuf**: `mdx-space-utilization`
+- **Incident protobuf**: `mdx-incidents`, `mdx-vlm-incidents`, `vision-llm-events-incidents`
+- **VisionLLM protobuf**: `mdx-vlm`, `mdx-vlm-captions`, `mdx-embed`, `mdx-embed-filtered`, `mdx-structured-events-summary`, `vision-llm-messages`, `vision-embed-messages`
+- **JSON analytics/notifications/errors**: `mdx-mtmc`, `mdx-amr`, `mdx-notification`, `mdx-vlm-errors`, `mdx-embed-errors`, `vision-llm-errors`, `vision-embed-errors`
+
+These mappings follow producers and schemas included in this repository. The tool
+does not guess a wire format for an unknown or renamed topic. Add an explicit
+mapping in `base_consumer.py` when a custom topic's schema is known.
+
+Every topic currently provisioned by `deploy/docker/services/infra/compose.yml`
+has an authoritative mapping above. A focused test compares the Compose topic
+set with the decoder registry so a future provisioned topic cannot be silently
+omitted.
+
+### Bounded qualification captures
+
+Both consumers retain their original unlimited behavior by default. For a
+finite, reproducible capture, set one or both bounds:
+
+```bash
+python3 kafka_to_file.py \
+  --topics mdx-raw,mdx-vlm-captions \
+  --max-messages 10 \
+  --timeout-seconds 30 \
+  --poll-timeout-seconds 0.5
+```
+
+- `--max-messages`: maximum messages read per source; `0` is unlimited.
+- `--timeout-seconds`: per-source polling deadline; `0` is unlimited.
+- `--poll-timeout-seconds`: maximum wait for one broker read. A finite runtime
+  clips this wait to the remaining time.
+
+When both limits are enabled, the first limit reached stops that source. A
+broker batch already returned before the deadline is processed and acknowledged;
+Redis batches are also capped to the remaining message count. Message limits
+count records read, including records whose payload fails decoding, while the
+output contains only successfully decoded records. A connection, broker, or
+decode error makes that child exit non-zero and the top-level command returns
+status `1`, so a bounded capture can be used as an acceptance check.
+
+Kafka auto-commit and auto-offset-store are disabled. Each Kafka record is
+committed synchronously only after decode, JSONL write, and flush succeed. A
+failed record is therefore not committed by this utility; restarting with the
+same consumer group can replay it. Processing stops on a decode, output, or
+commit failure so a later offset cannot commit past the failed record. Redis
+stream IDs are acknowledged at the same point. A bounded capture stops
+immediately on a Kafka broker error instead of waiting forever for a
+message-count limit that cannot advance. Kafka tombstones (`None`) and empty
+payloads are explicit, uncommitted failures; empty protobuf bytes are not
+accepted as a valid all-default message.
 
 ---
 
@@ -117,6 +166,9 @@ python3 redis_to_file.py \
 - `--redis-host`: Redis server hostname (default: `localhost`)
 - `--redis-port`: Redis server port (default: `6379`)
 - `--consumer-group`: Redis consumer group name (default: `redis-json-dumper`)
+- `--max-messages`: Maximum records read per stream (`0` means unlimited)
+- `--timeout-seconds`: Per-stream polling deadline (`0` means unlimited)
+- `--poll-timeout-seconds`: Maximum blocking-read wait in seconds (default: `1`)
 
 ---
 
@@ -159,12 +211,17 @@ python3 kafka_to_file.py \
 - `--output-dir`: Directory for output JSON Lines files (default: `kafka_dumps`)
 - `--kafka-broker`: Kafka broker address (default: `localhost:9092`)
 - `--consumer-group`: Kafka consumer group name (default: `kafka-json-dumper`)
+- `--max-messages`: Maximum records read per topic (`0` means unlimited)
+- `--timeout-seconds`: Per-topic polling deadline (`0` means unlimited)
+- `--poll-timeout-seconds`: Maximum poll wait in seconds (default: `1`)
 
 ---
 
 ## Output Format
 
-Both consumers extract the message content from protobuf data and write it directly as JSON lines.
+Both consumers decode source-defined protobuf or JSON data and write it directly
+as JSON lines. Decode errors include the source and exception but never the raw
+payload, which may be large or sensitive.
 
 Example output (one message per line):
 ```json

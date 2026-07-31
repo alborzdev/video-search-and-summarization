@@ -98,6 +98,12 @@ export LVS_ENABLE_MCP="${LVS_ENABLE_MCP:-true}"
 export VIA_DEV_API="${VIA_DEV_API:-true}"
 export KIBANA_PORT="${KIBANA_PORT:-5601}"
 export THOR_FULL_ENABLE_KIBANA="${THOR_FULL_ENABLE_KIBANA:-true}"
+export MONITORING_BIND_ADDRESS="${MONITORING_BIND_ADDRESS:-127.0.0.1}"
+export PROMETHEUS_CONFIG_FILE="${PROMETHEUS_CONFIG_FILE:-${deployment_dir}/thor-local/observability/prometheus.yml}"
+export PROMETHEUS_PORT="${PROMETHEUS_PORT:-9090}"
+export GRAFANA_PORT="${GRAFANA_PORT:-35000}"
+export NODE_EXPORTER_PORT="${NODE_EXPORTER_PORT:-19100}"
+export CADVISOR_PORT="${CADVISOR_PORT:-18080}"
 export THOR_FULL_STAGE_TIMEOUT_SECONDS="${THOR_FULL_STAGE_TIMEOUT_SECONDS:-1800}"
 export THOR_FULL_READINESS_TIMEOUT_SECONDS="${THOR_FULL_READINESS_TIMEOUT_SECONDS:-1200}"
 export RTVI_EMBED_BATCH_SIZE="${RTVI_EMBED_BATCH_SIZE:-8}"
@@ -214,6 +220,8 @@ Optional environment overrides:
   RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT,
   VIDEO_ANALYTICS_API_PORT, SMARTCITY_MAP_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
   VSS_VA_MCP_PORT, BACKEND_PORT, KIBANA_PORT,
+  MONITORING_BIND_ADDRESS, PROMETHEUS_CONFIG_FILE,
+  PROMETHEUS_PORT, GRAFANA_PORT, NODE_EXPORTER_PORT, CADVISOR_PORT,
   VLM_MAX_FRAMES_PER_REQUEST, VST_VIDEO_STORAGE_SIZE_MB.
   NPM_CONFIG_REGISTRY (defaults to https://registry.npmmirror.com).
   NEXT_PUBLIC_APP_TITLE, NEXT_PUBLIC_APP_SUBTITLE,
@@ -583,6 +591,12 @@ validate_thor_full_contract() {
   esac
   [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" || "${THOR_FULL_ENABLE_KIBANA}" == "false" ]] ||
     die "THOR_FULL_ENABLE_KIBANA must be true or false"
+  [[ "${MONITORING_BIND_ADDRESS}" == "127.0.0.1" ]] ||
+    die "MONITORING_BIND_ADDRESS must remain 127.0.0.1 for Thor-local"
+  [[ "${PROMETHEUS_CONFIG_FILE}" == "${deployment_dir}/thor-local/observability/prometheus.yml" ]] ||
+    die "PROMETHEUS_CONFIG_FILE must use the versioned Thor-local target set"
+  [[ "${BACKEND_PORT}" == "38111" ]] ||
+    die "BACKEND_PORT must remain 38111 while the versioned Thor Prometheus config scrapes LVS on that port"
   [[ "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "true" || "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "false" ]] ||
     die "THOR_LOCAL_FORCE_BOOTSTRAP must be true or false"
   [[ "${THOR_FULL_STAGE_TIMEOUT_SECONDS}" =~ ^[1-9][0-9]*$ ]] ||
@@ -693,7 +707,11 @@ validate_thor_full_contract() {
     "VSS_VA_MCP_PORT:${VSS_VA_MCP_PORT}" \
     "BACKEND_PORT:${BACKEND_PORT}" \
     "LVS_MCP_PORT:${LVS_MCP_PORT}" \
-    "KIBANA_PORT:${KIBANA_PORT}"; do
+    "KIBANA_PORT:${KIBANA_PORT}" \
+    "PROMETHEUS_PORT:${PROMETHEUS_PORT}" \
+    "GRAFANA_PORT:${GRAFANA_PORT}" \
+    "NODE_EXPORTER_PORT:${NODE_EXPORTER_PORT}" \
+    "CADVISOR_PORT:${CADVISOR_PORT}"; do
     name="${item%%:*}"
     port="${item#*:}"
     require_valid_port "${name}" "${port}"
@@ -818,6 +836,12 @@ print_runtime_contract() {
     THOR_LOCAL_LVS_IMAGE "${THOR_LOCAL_LVS_IMAGE}" \
     MODEL_ROOT_DIR "${data_directory}/models" \
     KIBANA_PORT "${KIBANA_PORT}" \
+    MONITORING_BIND_ADDRESS "${MONITORING_BIND_ADDRESS}" \
+    PROMETHEUS_CONFIG_FILE "${PROMETHEUS_CONFIG_FILE}" \
+    PROMETHEUS_PORT "${PROMETHEUS_PORT}" \
+    GRAFANA_PORT "${GRAFANA_PORT}" \
+    NODE_EXPORTER_PORT "${NODE_EXPORTER_PORT}" \
+    CADVISOR_PORT "${CADVISOR_PORT}" \
     NUM_STREAMS 1 \
     NUM_SENSORS 1 \
     ENABLE_CRITIC true \
@@ -1151,6 +1175,10 @@ preflight() {
   if [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" ]]; then
     require_available_port "${KIBANA_PORT}" kibana
   fi
+  require_available_port "${PROMETHEUS_PORT}" prometheus
+  require_available_port "${GRAFANA_PORT}" grafana
+  require_available_port "${NODE_EXPORTER_PORT}" node-exporter
+  require_available_port "${CADVISOR_PORT}" cadvisor
 
   local free_gb
   free_gb="$(df -Pk "${deployment_dir}" | awk 'NR==2 {print int($4/1024/1024)}')"
@@ -1162,6 +1190,7 @@ preflight() {
   echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}."
   echo "[OK] Planned intelligence ports: embed=${RTVI_EMBED_PORT}, RTVI-VLM=${RTVI_VLM_PORT}, perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, LVS=${BACKEND_PORT}."
   echo "[OK] Planned data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, Kibana=${KIBANA_PORT} (enabled=${THOR_FULL_ENABLE_KIBANA})."
+  echo "[OK] Planned observability ports (loopback): Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT}."
   echo "[OK] VLM frame request limit: ${VLM_MAX_FRAMES_PER_REQUEST}."
 }
 
@@ -1453,7 +1482,8 @@ security_internal_ports() {
     "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 9600 \
     "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" \
     30554 30555 30556 30557 30558 30559 30560 30561 30562 30563 30564 \
-    "${VST_PORT}" "${BACKEND_PORT}" "${LVS_MCP_PORT}" | sort -n -u
+    "${VST_PORT}" "${BACKEND_PORT}" "${LVS_MCP_PORT}" \
+    "${PROMETHEUS_PORT}" "${GRAFANA_PORT}" "${NODE_EXPORTER_PORT}" "${CADVISOR_PORT}" | sort -n -u
 }
 
 listener_scope() {
@@ -2124,6 +2154,10 @@ doctor_check_endpoints() {
       'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if payload.get("status") == "healthy" and payload.get("service") == "websocket" else 1)'
   fi
   doctor_http_status "Video summarization" "http://127.0.0.1:${BACKEND_PORT}/v1/ready" 200
+  doctor_http_status "Prometheus" "http://127.0.0.1:${PROMETHEUS_PORT}/-/ready" 200
+  doctor_http_status "Grafana" "http://127.0.0.1:${GRAFANA_PORT}/api/health" 200
+  doctor_http_status "Node exporter" "http://127.0.0.1:${NODE_EXPORTER_PORT}/metrics" 200
+  doctor_http_status "cAdvisor" "http://127.0.0.1:${CADVISOR_PORT}/healthz" 200
   if [[ "${LVS_ENABLE_MCP}" == "true" ]]; then
     if ss -H -ltn "sport = :${LVS_MCP_PORT}" | grep -q .; then
       doctor_pass "Video summarization MCP is listening on ${LVS_MCP_PORT}."

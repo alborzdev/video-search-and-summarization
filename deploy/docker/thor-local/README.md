@@ -12,6 +12,12 @@ The resource-isolated minimal Redis warehouse-2D milestone is documented in
 validates a private mutable Configurator snapshot; it intentionally has no
 container lifecycle or artifact-download command yet.
 
+The separate custom-data Redis MV3DT lane is documented in
+[`WAREHOUSE_MV3DT.md`](WAREHOUSE_MV3DT.md). It accepts two to seven synchronized
+operator camera files plus calibration and ONNX assets, explicitly rejects the
+large optional NVIDIA sample bundle, and produces an exact pull-free launch
+command without executing it.
+
 ## Local model contract
 
 The default deployment expects OpenAI-compatible model servers on the Thor host:
@@ -116,6 +122,21 @@ The base profile exposes:
 - UI: `http://127.0.0.1:3001`
 - public ingress: `http://127.0.0.1:7777`
 - agent API: `http://127.0.0.1:8100`
+- VIOS/VST UI through the public ingress: `http://127.0.0.1:7777/vst`
+- Prometheus: `http://127.0.0.1:9090`
+- Grafana: `http://127.0.0.1:35000`
+
+Prometheus, Grafana, node-exporter, and cAdvisor are selected in the current
+31-service graph and bind only to loopback in the Thor contract. Prometheus
+uses a Thor-specific scrape set with bounded retention; Grafana provisions a
+local-only dashboard and disables update, news, plugin, snapshot, and analytics
+network features. DCGM is not claimed on Jetson: qualify it or a `tegrastats`
+exporter before adding GPU telemetry to the dashboard.
+
+Thor also replaces the shared Logstash startup-time Rubygems install with a
+checksum-locked ARM64 derivative. Its codec pack is staged once while
+connected, then installed into the derivative with build networking disabled;
+offline restart uses the baked plugin and an empty Compose command.
 
 Video Management supports file upload and RTSP registration. The base agent can ask questions about uploaded videos and stored RTSP time ranges, and can generate summaries and reports with the local models.
 

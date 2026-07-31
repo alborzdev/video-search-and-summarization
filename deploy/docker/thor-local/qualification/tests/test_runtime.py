@@ -125,8 +125,8 @@ class RuntimeQualificationTests(unittest.TestCase):
         services = config["services"]
         probes = [probe for service in services for probe in service["probes"]]
 
-        self.assertEqual(len(services), 13)
-        self.assertEqual(len(probes), 20)
+        self.assertEqual(len(services), 17)
+        self.assertEqual(len(probes), 24)
         self.assertNotIn("local-llm", {service["id"] for service in services})
         self.assertNotIn("local-vlm", {service["id"] for service in services})
         self.assertTrue(all(probe.get("method", "GET") == "GET" for probe in probes))

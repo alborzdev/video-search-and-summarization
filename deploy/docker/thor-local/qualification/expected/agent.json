@@ -279,7 +279,7 @@
   "source_files": [
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
-      "sha256": "28f87aef26fd0d862ef0af946b8eb8f14bed630bb7268682b7c05b3e37b5a354"
+      "sha256": "d465b9b45416b38639894ee477ce12c238ec48518ea365a7ba32c7ace4ac483c"
     },
     {
       "path": "deploy/docker/services/agent/compose.yml",

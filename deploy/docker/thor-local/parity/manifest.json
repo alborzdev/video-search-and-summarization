@@ -178,7 +178,7 @@
       "category": "service",
       "advertised": ["Sparse4D multi-camera 3D detection and tracking", "shared RT-CV lifecycle/health/metrics"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"],
-      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md"],
+      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/scripts/thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "deploy/docker/test-scripts/test-thor-warehouse-mv3dt.sh", "deploy/docker/thor-local/WAREHOUSE_MV3DT.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-mv3dt-launcher.md"],
       "thor_state": "partial",
       "runtime_state": "static_only",
       "gap": "Official single-GPU AGX-Thor tuning and the ARM64 RT-CV image are staged. Stage the Sparse4D ONNX/anchor plus aligned four-camera operator data, then qualify the isolated minimal and extended lanes."
@@ -313,7 +313,7 @@
       "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md"],
       "thor_state": "partial",
       "runtime_state": "static_only",
-      "gap": "Official seven-stream single-GPU AGX-Thor tuning and principal ARM64 images are present. Stage the remaining models and aligned custom camera/calibration data, then qualify both isolated and extended 3D lanes."
+      "gap": "The custom-data Redis MV3DT lane now has a fail-closed AGX-Thor launcher, exact 20/28-service graphs, private immutable snapshots, and pull-free startup contract without the excluded sample bundle. Stage matching synchronized operator videos/calibration plus the remaining model assets, then runtime-qualify MV3DT and the separate Sparse4D 3D lane."
     },
     {
       "id": "agent-and-mcp-apis",
@@ -321,10 +321,10 @@
       "category": "api",
       "advertised": ["NAT generate/chat", "health", "upload handshake and completion", "video delete", "RTSP add/delete", "VA-MCP", "LVS MCP"],
       "source_evidence": ["services/agent", "services/video-summarization/src/lvs_mcp.py"],
-      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml", "deploy/docker/thor-local/qualification/runtime.py", "deploy/docker/thor-local/qualification/runtime_inventory.json", "deploy/docker/thor-local/qualification/tests/test_runtime.py"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml", "deploy/docker/thor-local/qualification/runtime.py", "deploy/docker/thor-local/qualification/runtime_inventory.json", "deploy/docker/thor-local/qualification/tests/test_runtime.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-runtime-qualification.md"],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The offline tier passes 326 declared REST operations (325 normalized routes) across 16 surfaces plus all 16 VA/LVS MCP tools. A separate GET-only loopback tier now checks 20 live health/OpenAPI/MCP probes without mutating state; the stopped stack reports all 20 unavailable, so run it and exercise every route/tool after deployment."
+      "gap": "The offline tier passes 326 declared REST operations (325 normalized routes) across 16 surfaces plus all 16 VA/LVS MCP tools. The GET-only loopback tier checks 24 health/OpenAPI/MCP/observability probes without mutating state; the stopped-stack baseline is 24 unavailable, so rerun it and exercise every route/tool after deployment."
     },
     {
       "id": "infra-observability",
@@ -332,10 +332,10 @@
       "category": "platform",
       "advertised": ["API gateway", "Kafka", "Redis", "Elasticsearch/Kibana", "Prometheus/Grafana", "Phoenix/OpenTelemetry", "NvSchema", "broker debugging tools"],
       "source_evidence": ["deploy/docker/services/infra", "libs/nvschema", "tools/message-broker-consumers"],
-      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/infra/haproxy/haproxy.cfg.template"],
+      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/infra/haproxy/haproxy.cfg.template", "deploy/docker/services/monitoring/compose.yml", "deploy/docker/thor-local/observability/prometheus.yml", "deploy/docker/test-scripts/test-thor-observability.sh", "deploy/docker/services/infra/elk/logstash/Dockerfile.protobuf-offline", "deploy/docker/services/infra/elk/logstash/offline-packs/logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip.expected.sha256", "deploy/docker/test-scripts/test-thor-logstash-offline.sh", "tools/message-broker-consumers/tests/test_consumers.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-observability-wiring.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-logstash-offline-pack.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-broker-consumer-qualification.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-infrastructure-audit.md"],
       "thor_state": "partial",
-      "runtime_state": "passed_prior",
-      "gap": "Most services are selected; Grafana and some debugging surfaces are not. Current runtime and firewall proof are absent."
+      "runtime_state": "not_qualified",
+      "gap": "Prometheus/Grafana/node/cAdvisor and the checksum-locked offline Logstash derivative are now staged as exact ARM64 images, and bounded broker consumers pass source tests. Prove live metrics targets/dashboard/Phoenix traces, pull-free Kafka protobuf ingestion into Elasticsearch, loopback firewall scope, finite Kafka/Redis captures, and DCGM or a tegrastats fallback."
     },
     {
       "id": "spatial-ai-utils",

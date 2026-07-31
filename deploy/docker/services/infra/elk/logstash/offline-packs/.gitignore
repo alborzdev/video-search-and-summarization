@@ -1,0 +1,5 @@
+*.zip
+*.sha256
+!.gitignore
+!README.md
+!logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip.expected.sha256

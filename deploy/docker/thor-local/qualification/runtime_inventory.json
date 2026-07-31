@@ -217,6 +217,62 @@
       ]
     },
     {
+      "id": "prometheus",
+      "port_env": "PROMETHEUS_PORT",
+      "default_port": 9090,
+      "probes": [
+        {
+          "id": "ready",
+          "kind": "health",
+          "method": "GET",
+          "path": "/-/ready",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "grafana",
+      "port_env": "GRAFANA_PORT",
+      "default_port": 35000,
+      "probes": [
+        {
+          "id": "health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/api/health",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "node-exporter",
+      "port_env": "NODE_EXPORTER_PORT",
+      "default_port": 19100,
+      "probes": [
+        {
+          "id": "metrics",
+          "kind": "reachability",
+          "method": "GET",
+          "path": "/metrics",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "cadvisor",
+      "port_env": "CADVISOR_PORT",
+      "default_port": 18080,
+      "probes": [
+        {
+          "id": "health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/healthz",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
       "id": "ui",
       "port_env": "VSS_UI_PORT",
       "default_port": 3001,

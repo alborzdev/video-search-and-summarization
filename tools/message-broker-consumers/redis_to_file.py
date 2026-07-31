@@ -26,7 +26,15 @@ import os
 
 import redis
 
-from base_consumer import BaseMessageConsumer, BATCH_SIZE
+from base_consumer import (
+    BATCH_SIZE,
+    BaseMessageConsumer,
+    DEFAULT_POLL_TIMEOUT_SECONDS,
+    non_negative_float_arg,
+    non_negative_int_arg,
+    positive_float_arg,
+    parse_source_names,
+)
 
 # Redis-specific constants
 DEFAULT_REDIS_HOST = 'localhost'
@@ -44,7 +52,7 @@ class RedisMessageConsumer(BaseMessageConsumer):
     
     def get_source_names(self):
         """Get list of streams from args"""
-        return [s.strip() for s in self.args.streams.split(',')]
+        return parse_source_names(self.args.streams, 'Redis stream')
     
     def create_connection(self, source_name, consumer_group, **kwargs):
         """Create Redis connection and ensure consumer group exists"""
@@ -73,13 +81,17 @@ class RedisMessageConsumer(BaseMessageConsumer):
         # Generate a unique consumer name for this process
         consumer_name = f"consumer-{source_name}-{os.getpid()}"
         
+        max_messages = kwargs.get('max_messages')
+        batch_size = min(BATCH_SIZE, max_messages) if max_messages else BATCH_SIZE
+        poll_timeout = kwargs.get('poll_timeout_seconds', DEFAULT_POLL_TIMEOUT_SECONDS)
+
         # Read messages from Redis
         messages = connection.xreadgroup(
             consumer_group,
             consumer_name,
             {source_name: '>'},
-            count=BATCH_SIZE,
-            block=1000  # Block for 1 second if no messages
+            count=batch_size,
+            block=max(1, int(poll_timeout * 1000))
         )
         
         if not messages:
@@ -123,7 +135,7 @@ class RedisMessageConsumer(BaseMessageConsumer):
 def main(args):
     """Main function to run the Redis consumer"""
     consumer = RedisMessageConsumer(args)
-    consumer.run()
+    return consumer.run()
 
 
 if __name__ == '__main__':
@@ -138,6 +150,13 @@ if __name__ == '__main__':
                         help=f'Redis port (default: {DEFAULT_REDIS_PORT})')
     parser.add_argument('--consumer-group', default='redis-json-dumper',
                         help='Redis consumer group name (default: redis-json-dumper)')
+    parser.add_argument('--max-messages', type=non_negative_int_arg, default=0,
+                        help='Maximum messages to read per stream; 0 means unlimited (default: 0)')
+    parser.add_argument('--timeout-seconds', type=non_negative_float_arg, default=0.0,
+                        help='Maximum runtime per stream; 0 means unlimited (default: 0)')
+    parser.add_argument('--poll-timeout-seconds', type=positive_float_arg,
+                        default=DEFAULT_POLL_TIMEOUT_SECONDS,
+                        help=f'Maximum Redis blocking-read wait (default: {DEFAULT_POLL_TIMEOUT_SECONDS:g})')
     
     args = parser.parse_args()
-    main(args)
+    raise SystemExit(0 if main(args) else 1)
