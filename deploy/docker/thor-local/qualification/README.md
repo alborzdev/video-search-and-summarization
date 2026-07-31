@@ -108,6 +108,22 @@ not loopback, so this loopback-only tier does not contact them directly. Use
 the separate read-only `deploy/docker/scripts/thor-local.sh model-check`
 contract once both local model containers are running.
 
+## Explicit stateful canary
+
+The default stateful acceptance command is an inert compiler:
+
+```bash
+deploy/docker/scripts/thor-local.sh acceptance plan
+```
+
+An explicitly opted-in Phase-1 canary exercises only client-addressed file
+create/read/content/delete lifecycle on the loopback RT-VLM and RT-Embed APIs.
+It never starts or stops containers and all other planned REST, MCP, profile,
+UI, stream, inference, and external actions remain blocked. See
+[`ACCEPTANCE.md`](ACCEPTANCE.md) for the approval token, private evidence
+directory, exact source-fingerprint acknowledgement, crash recovery, and
+fake-loopback test contract.
+
 For tests or a deliberately remapped local port, override an origin explicitly:
 
 ```bash

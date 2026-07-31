@@ -1,8 +1,9 @@
 # Thor-local AutoMagicCalib lane
 
-This is a sample-free, pull-free qualification lane for the VSS 3.2.1
-AutoMagicCalib (AMC) service. It uses custom synchronized MP4s or operator-owned
-RTSP cameras and does not require the warehouse sample bundle.
+This is a warehouse-bundle-free qualification lane for the VSS 3.2.1
+AutoMagicCalib (AMC) service. It uses custom synchronized MP4s, operator-owned
+RTSP cameras, or the small official AMC fixture. It does not require the
+excluded warehouse sample bundle.
 
 The lane does not start or stop containers. It validates inputs, inventories
 local artifacts, renders a hardened Compose overlay, and performs GET-only
@@ -17,14 +18,60 @@ runtime qualification after an operator has separately authorized deployment.
 - Backend: official 3.2.1 source tag is known, but the image is not staged and
   its immutable ARM64 digest/image ID have not been captured. This is a hard
   unavailable state, not a wildcard.
+- Official AMC fixture: staged outside the repository at
+  `~/.cache/vss/auto-calibration/official/0cfd2b790fd77598b0543340a65c2a0e1d192327/sdg_08_2_sample_data_010926.zip`.
+  Its exact size is 160,499,115 bytes and its SHA-256 is
+  `0dceb0cc8324f5775b0c2007efe7a3e7c36fda10c5964b88e20712b002d98bdb`.
+  This fixture is required for the official base-AMC acceptance run, but not
+  merely to start AMC and not for custom operator data.
 - VGGT: `vggt_1B_commercial.pt` is absent and its checksum is unset. VGGT is
-  optional for base AMC; only refinement needs it.
+  optional for base AMC; only the separate refinement acceptance run needs it.
 
 Inspect that state without registry access:
 
 ```bash
 deploy/docker/scripts/thor-auto-calibration.sh inventory
 deploy/docker/scripts/thor-auto-calibration.sh plan
+```
+
+## Official small AMC fixture
+
+The canonical source is pinned to commit
+`0cfd2b790fd77598b0543340a65c2a0e1d192327` of
+`NVIDIA-AI-IOT/auto-magic-calib`:
+
+<https://github.com/NVIDIA-AI-IOT/auto-magic-calib/blob/0cfd2b790fd77598b0543340a65c2a0e1d192327/assets/sdg_08_2_sample_data_010926.zip>
+
+The connected command downloads only that commit-addressed 160 MB LFS object.
+It requires room for the complete archive plus a 512 MiB free-space reserve,
+downloads to a same-directory temporary file, verifies the outer size/hash and
+the complete archive oracle, fsyncs it, and atomically publishes it. It never
+extracts into or writes a binary into the repository.
+
+```bash
+deploy/docker/scripts/thor-auto-calibration.sh stage-official-fixture
+```
+
+The offline command performs the same fail-closed verification without any
+network request or extraction:
+
+```bash
+deploy/docker/scripts/thor-auto-calibration.sh verify-official-fixture
+```
+
+The lock covers all ten outer ZIP members, including the four `cam_XX.mp4`
+files, four-camera/three-point alignment JSON, 879x1308 layout PNG, and nested
+ground-truth ZIP. The nested ZIP is itself locked to exactly
+`calibration.json` and `ground_truth.json`. Unsafe paths, duplicate names,
+links, encryption, metadata drift, size drift, and member-content drift fail
+verification.
+
+Override the external cache root only when needed:
+
+```bash
+deploy/docker/scripts/thor-auto-calibration.sh \
+  --fixture-cache-root /absolute/external/cache \
+  verify-official-fixture
 ```
 
 The backend tag reportedly represents about 14.07 GB of compressed layers.

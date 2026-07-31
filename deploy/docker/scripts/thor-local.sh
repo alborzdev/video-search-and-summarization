@@ -23,6 +23,7 @@ domain_pack_dir="${deployment_dir}/thor-local/domain-packs"
 domain_pack_tool="${domain_pack_dir}/domain_pack.py"
 qualification_tool="${deployment_dir}/thor-local/qualification/qualify.py"
 runtime_qualification_tool="${deployment_dir}/thor-local/qualification/runtime.py"
+stateful_acceptance_tool="${deployment_dir}/thor-local/qualification/acceptance.py"
 local_model_provisioner="${deployment_dir}/thor-local/provision-local-models.sh"
 model_artifact_verifier="${deployment_dir}/thor-local/models/verify_artifacts.py"
 model_artifact_lock="${deployment_dir}/thor-local/models/artifacts.lock.json"
@@ -187,6 +188,9 @@ Commands:
   qualify --tier contract|runtime
              Verify checked-in contracts offline, or probe a running stack through
              bounded, GET-only loopback requests. Neither tier mutates VSS state.
+  acceptance [plan|execute|recover] ...
+             Compile the inert stateful plan by default. The narrowly scoped RTVI
+             file canary requires the explicit execute/recover opt-in contract.
   kernel-check
              Check required VSS kernel settings without changing the host.
   kernel-settings
@@ -2293,6 +2297,11 @@ qualify_contract() {
   python3 "${qualification_tool}" "$@"
 }
 
+stateful_acceptance() {
+  require_command python3
+  python3 "${stateful_acceptance_tool}" "$@"
+}
+
 if [[ "${THOR_LOCAL_SOURCE_ONLY:-false}" == "true" ]]; then
   return 0 2>/dev/null || exit 0
 fi
@@ -2306,6 +2315,10 @@ case "${command_name}" in
   qualify)
     shift
     qualify_contract "$@"
+    ;;
+  acceptance)
+    shift
+    stateful_acceptance "$@"
     ;;
   kernel-check)
     "${script_dir}/dev-profile.sh" check-kernel-settings

@@ -10,6 +10,8 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../.." && pwd)"
 runner="${repo_root}/deploy/docker/thor-local/qualification/acceptance.py"
 tests="${repo_root}/deploy/docker/thor-local/qualification/tests/test_acceptance.py"
+executor_tests="${repo_root}/deploy/docker/thor-local/qualification/tests/test_acceptance_executor.py"
+operator_wrapper="${repo_root}/deploy/docker/scripts/thor-local.sh"
 
 failures=0
 
@@ -61,12 +63,18 @@ help_has_no_execution_mode() {
   ! grep -Eq -- '(^|[[:space:]])--(execute|run|apply)([=[:space:]]|$)' <<< "${output}"
 }
 
+wrapper_exposes_explicit_acceptance_command() {
+  "${operator_wrapper}" help 2>&1 | grep -q 'acceptance \[plan|execute|recover\]'
+}
+
 check "stateful acceptance Python unit tests" python3 "${tests}"
+check "Phase 1 fake-loopback executor tests" python3 "${executor_tests}"
 check "default acceptance plan is complete and inert" plan_is_complete_and_inert
 check "Phase 0 exposes no execution option" help_has_no_execution_mode
+check "operator wrapper exposes explicit acceptance command" wrapper_exposes_explicit_acceptance_command
 
 if (( failures > 0 )); then
   printf '%d stateful acceptance test(s) failed\n' "${failures}" >&2
   exit 1
 fi
-printf 'All Thor stateful acceptance Phase 0 tests passed.\n'
+printf 'All Thor stateful acceptance Phase 0 and isolated Phase 1 tests passed.\n'

@@ -91,6 +91,30 @@ def _get_mm_processor_cache_gb() -> float:
     return _parse_float_env("VLLM_MM_INPUT_CACHE_GIB", 1.0)
 
 
+def _get_runtime_state_dir(model_path: str) -> str:
+    """Return the writable directory used for vLLM cache and init locking.
+
+    Historically these files lived inside ``model_path``.  An explicit
+    ``VLM_RUNTIME_STATE_DIR`` lets an immutable checkpoint remain mounted
+    read-only without changing the default behavior for existing deployments.
+    """
+    configured = (os.environ.get("VLM_RUNTIME_STATE_DIR", "") or "").strip()
+    if configured and not os.path.isabs(configured):
+        raise ValueError("VLM_RUNTIME_STATE_DIR must be an absolute path")
+    # Preserve support for callers that historically supplied a relative model
+    # path: only the derived runtime-state location is made absolute.
+    runtime_state_dir = configured or os.path.abspath(model_path)
+    try:
+        os.makedirs(runtime_state_dir, mode=0o700, exist_ok=True)
+    except OSError as exc:
+        raise RuntimeError(
+            f"Cannot prepare writable VLM runtime state directory {runtime_state_dir}: {exc}"
+        ) from exc
+    if not os.path.isdir(runtime_state_dir) or not os.access(runtime_state_dir, os.W_OK):
+        raise RuntimeError(f"VLM runtime state directory is not writable: {runtime_state_dir}")
+    return runtime_state_dir
+
+
 CPU_COPY_OTHER_THREAD = True
 
 
@@ -472,7 +496,8 @@ class VllmCompatible(BaseVlmModel):
 
         # Initialize the actual model components
         logger.info("Using VLLM model for vllm-compatible")
-        os.environ["VLLM_CACHE_ROOT"] = os.path.join(self.model_path, ".vllm")
+        runtime_state_dir = _get_runtime_state_dir(self.model_path)
+        os.environ["VLLM_CACHE_ROOT"] = os.path.join(runtime_state_dir, "vllm-cache")
 
         _maybe_register_cosmos3_vllm_shim(self._model_architecture)
 
@@ -482,7 +507,7 @@ class VllmCompatible(BaseVlmModel):
 
         self._num_time_tokens = 0
         self._model_name = "vllm-compatible"
-        model_lock_path = self.model_path + "/.lock"
+        model_lock_path = os.path.join(runtime_state_dir, "model-init.lock")
         with FileLock(model_lock_path):
             logger.info("Initializing VllmCompatible model from: %s", self.model_path)
             gpu_memory_utilization_env = os.environ.get("VLLM_GPU_MEMORY_UTILIZATION", "0.7")

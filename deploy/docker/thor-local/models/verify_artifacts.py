@@ -372,22 +372,52 @@ def _verify_model_semantics(
     tensor_headers: Mapping[str, Mapping[str, Any]],
 ) -> None:
     semantics = artifact.get("semantics")
-    if not isinstance(semantics, dict) or semantics.get("type") != "indexed_safetensors_model":
-        raise VerificationError("model artifact lacks indexed SafeTensors semantics")
+    if not isinstance(semantics, dict) or semantics.get("type") not in {
+        "indexed_safetensors_model",
+        "single_safetensors_model",
+    }:
+        raise VerificationError("model artifact lacks supported SafeTensors semantics")
     config_path = semantics.get("config_path")
-    index_path = semantics.get("index_path")
-    if config_path not in captured or index_path not in captured:
-        raise VerificationError("model config or SafeTensors index was not captured")
+    if config_path not in captured:
+        raise VerificationError("model config was not captured")
     config = _json_bytes(captured[config_path], config_path)
-    index = _json_bytes(captured[index_path], index_path)
-    if not isinstance(config, dict) or not isinstance(index, dict):
-        raise VerificationError("model config and index must be JSON objects")
+    if not isinstance(config, dict):
+        raise VerificationError("model config must be a JSON object")
     expected_config = semantics.get("expected_config")
     if not isinstance(expected_config, dict) or not expected_config:
         raise VerificationError("model semantic lock lacks expected_config")
     for path, expected in expected_config.items():
         if _json_path(config, path) != expected:
             raise VerificationError(f"model config semantic differs at {path}")
+
+    if semantics["type"] == "single_safetensors_model":
+        weight_path = semantics.get("weight_path")
+        if not isinstance(weight_path, str) or set(tensor_headers) != {weight_path}:
+            raise VerificationError("single SafeTensors weight membership differs")
+        expected_weight_count = semantics.get("weight_count")
+        if not isinstance(expected_weight_count, int) or expected_weight_count <= 0:
+            raise VerificationError("single SafeTensors semantic lock lacks weight_count")
+        if len(tensor_headers[weight_path]) != expected_weight_count:
+            raise VerificationError("single SafeTensors tensor count differs")
+        expected_tensor_bytes = semantics.get("tensor_bytes")
+        actual_tensor_bytes = sum(
+            metadata["data_offsets"][1] - metadata["data_offsets"][0]
+            for metadata in tensor_headers[weight_path].values()
+        )
+        if (
+            not isinstance(expected_tensor_bytes, int)
+            or expected_tensor_bytes <= 0
+            or actual_tensor_bytes != expected_tensor_bytes
+        ):
+            raise VerificationError("single SafeTensors tensor bytes differ")
+        return
+
+    index_path = semantics.get("index_path")
+    if index_path not in captured:
+        raise VerificationError("SafeTensors index was not captured")
+    index = _json_bytes(captured[index_path], index_path)
+    if not isinstance(index, dict):
+        raise VerificationError("SafeTensors index must be a JSON object")
     if set(index) != {"metadata", "weight_map"}:
         raise VerificationError("SafeTensors index keys must be exactly metadata and weight_map")
     metadata = index["metadata"]
@@ -427,7 +457,15 @@ def _verify_model_semantics(
             total_tensor_bytes += offsets[1] - offsets[0]
     if header_tensor_count != len(weight_map):
         raise VerificationError("SafeTensors headers and index tensor membership differ")
-    if expected_total is not None and total_tensor_bytes != expected_total:
+    # A few upstream checkpoints publish a literal metadata.total_size=0 even
+    # though their SafeTensors payload is non-empty.  An explicit false keeps
+    # locking that exact index value while relying on the full file hashes,
+    # parsed SafeTensors headers, tensor membership, and shard mapping instead
+    # of treating the known-bad advisory total as authoritative.
+    verify_total = semantics.get("metadata_total_size_authoritative", True)
+    if not isinstance(verify_total, bool):
+        raise VerificationError("metadata_total_size_authoritative must be boolean")
+    if expected_total is not None and verify_total and total_tensor_bytes != expected_total:
         raise VerificationError("SafeTensors tensor bytes differ from index total_size")
     download_revision = semantics.get("download_metadata_revision")
     if download_revision is not None:

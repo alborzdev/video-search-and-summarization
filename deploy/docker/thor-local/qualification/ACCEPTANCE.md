@@ -55,8 +55,80 @@ credentials, payloads, response bodies, or URLs.
 
 The ledger is recovery evidence, not permission to delete. Cleanup still has
 to match the namespace, logical resource, creation action, and exact registered
-locator in the validated plan. Failed cleanup attempts are recorded and later
-cleanup continues in LIFO order.
+locator in the validated plan. A failed cleanup of the newest resource is
+recorded and stops cleanup; an older resource is never deleted through a newer
+resource that may still depend on it.
+
+## Phase 1: owned RTVI file-lifecycle canary
+
+Phase 1 is deliberately limited to client-addressed file lifecycle on RT-VLM
+and RT-Embed. It does not start or stop containers, follow a returned URL,
+invoke inference, operate streams, call MCP tools, or execute another planned
+scenario. The default command above remains Phase 0 and makes no request.
+
+First compile the current plan and copy its `source_fingerprint`. Then use a
+private operator-owned directory with exact mode `0700`:
+
+```bash
+install -d -m 0700 /tmp/vss-acceptance-evidence
+
+python3 deploy/docker/thor-local/qualification/acceptance.py execute \
+  --scenario rtvi-file-lifecycle \
+  --run-id rtvi-000001 \
+  --confirm-stateful rtvi-file-lifecycle \
+  --ack-source-fingerprint <CURRENT_SOURCE_FINGERPRINT> \
+  --evidence-dir /tmp/vss-acceptance-evidence
+```
+
+Execution is sequential and numeric-loopback-only. For each service it:
+
+1. materializes and hashes the embedded H.264/AAC fixture, then runs the fixed
+   `/usr/bin/ffprobe` oracle;
+2. derives a stable UUID from the run, scenario, and logical resource;
+3. proves that exact UUID is absent;
+4. writes a durable `create-intent` before the multipart upload;
+5. requires the service to echo the exact UUID and namespaced ownership fields;
+6. reads the exact object and verifies the downloaded media SHA-256; and
+7. deletes only the predetermined UUID, verifies absence, and cleans resources
+   in strict LIFO order.
+
+The optional `--endpoint SERVICE=ORIGIN` override accepts only numeric loopback
+HTTP origins and exists for isolated testing or deliberate local port remaps.
+It cannot target a hostname, LAN address, HTTPS endpoint, or userinfo URL.
+
+Phase 1 writes a mode-`0600` hash-chained ledger with schema version 2 before
+the first mutation and fsyncs both new files and their parent directory. A
+create intent remains cleanup-eligible even if the HTTP response is lost or
+malformed. Because the resource UUID is derived rather than learned from the
+response, an interrupted process can recompute the exact cleanup target without
+storing a URL, credential, or raw response:
+
+```bash
+python3 deploy/docker/thor-local/qualification/acceptance.py recover \
+  --scenario rtvi-file-lifecycle \
+  --run-id rtvi-000001 \
+  --confirm-stateful rtvi-file-lifecycle \
+  --evidence-dir /tmp/vss-acceptance-evidence
+```
+
+Recovery validates the entire ledger chain and current scenario/source
+fingerprints before making a request. It also binds the canonical effective
+origin of each service into a separate execution fingerprint. Recovery must
+use the same default ports or repeat the exact `--endpoint` mappings from the
+original execution; a changed loopback service mapping is rejected before any
+request. The operator acknowledgement remains tied to the reviewed plan source
+fingerprint rather than the host-specific execution fingerprint. Cleanup stops
+on the newest failed resource and can be retried with `recover`; if interruption
+occurred after `cleanup-started`, recovery resumes that exact top cleanup
+without appending a second start event. It never falls through to an older
+resource or performs a list/prefix/broad delete.
+
+The private JSON report records both reviewed source and effective-execution
+fingerprints, operation results, status codes, durations, fixture and response
+hashes, oracle names, cleanup result, final ledger digest, and
+residual-resource count. It omits request/response bodies, raw locators, URLs,
+headers, and credentials. A report is runtime evidence for this canary only;
+it does not automatically promote a parity-manifest feature.
 
 ## Tests
 
@@ -66,16 +138,17 @@ Run the isolated suite:
 deploy/docker/test-scripts/test-thor-stateful-acceptance.sh
 ```
 
-The tests use only checked-in JSON and temporary local ledger files. They do
-not open sockets, spawn processes, call Docker, change service lifecycle, or
-mutate VSS. Adversarial cases cover remote/userinfo origins, redirects and
-proxy policy, response and SSE limits, fixture tampering, namespace escape,
-foreign resources, non-LIFO or inexact cleanup, missing coverage and blockers,
-ledger mode/link/chain corruption, and redacted configuration failure.
+Phase 0 tests use only checked-in JSON and temporary local ledger files. They
+do not open sockets, spawn processes, call Docker, change service lifecycle, or
+mutate VSS. Phase 1 tests use two ephemeral numeric-loopback fake HTTP servers
+and the embedded fixture; they never contact VSS or Docker. Adversarial cases
+cover remote origins, redirects, oversized and lost responses, wrong echoed
+IDs, pre-existing resources, exact cleanup after an uncertain create,
+stop-on-top cleanup failure, recovery, and ledger tampering.
 
-Phase 1 integration must add an explicit execution subcommand and operator
-opt-in; it must not make planning executable by default. Before enabling any
-REST operation, MCP tool, or MCP prompt, replace its
-`operation-classification-required` blocker with an exact semantic safety
-class, owned-resource mapping where applicable, response oracle, and cleanup
-locator.
+Every Phase 0 HTTP action is now bound to an exact reviewed REST operation or
+runtime probe. All operations outside the four file routes per RTVI service
+remain non-executable. Before expanding Phase 1 to another REST operation, MCP
+tool, or MCP prompt, replace its `operation-classification-required` blocker
+with an exact semantic safety class, owned-resource mapping where applicable,
+request builder, response oracle, and crash-recoverable cleanup locator.

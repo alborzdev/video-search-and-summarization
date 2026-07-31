@@ -248,6 +248,49 @@ def test_safetensors_header_must_agree_with_index_after_relocking(tmp_path: Path
         verify_hf(lock, snapshot, repo_root)
 
 
+def test_non_authoritative_zero_index_total_keeps_all_other_checks(tmp_path: Path) -> None:
+    lock, snapshot, repo_root = hf_fixture(tmp_path)
+    replacement = json.dumps(
+        {"metadata": {"total_size": 0}, "weight_map": {"weight": "model.safetensors"}},
+        sort_keys=True,
+    ).encode()
+    replace_locked_symlink(lock, snapshot, repo_root, "model.safetensors.index.json", replacement)
+    semantics = lock["artifacts"]["fixture"]["semantics"]
+    semantics["metadata_total_size"] = 0
+    semantics["metadata_total_size_authoritative"] = False
+    verify_hf(lock, snapshot, repo_root)
+
+    semantics["metadata_total_size_authoritative"] = True
+    with pytest.raises(artifacts.VerificationError, match="tensor bytes"):
+        verify_hf(lock, snapshot, repo_root)
+
+
+def test_single_safetensors_semantics_are_content_and_shape_locked(tmp_path: Path) -> None:
+    lock, snapshot, repo_root = hf_fixture(tmp_path)
+    (snapshot / "model.safetensors.index.json").unlink()
+    lock["artifacts"]["fixture"]["tree"]["files"] = [
+        entry
+        for entry in lock["artifacts"]["fixture"]["tree"]["files"]
+        if entry["path"] != "model.safetensors.index.json"
+    ]
+    lock["artifacts"]["fixture"]["semantics"] = {
+        "type": "single_safetensors_model",
+        "config_path": "config.json",
+        "weight_path": "model.safetensors",
+        "expected_config": {
+            "architectures": ["TestForGeneration"],
+            "model_type": "test",
+            "quantization_config.quant_method": "fp8",
+        },
+        "weight_count": 1,
+        "tensor_bytes": 4,
+    }
+    verify_hf(lock, snapshot, repo_root)
+    lock["artifacts"]["fixture"]["semantics"]["weight_count"] = 2
+    with pytest.raises(artifacts.VerificationError, match="tensor count"):
+        verify_hf(lock, snapshot, repo_root)
+
+
 def triton_config(batch_size: int = 8) -> bytes:
     return f'''name: "text_embeddings"
 platform: "tensorrt_plan"

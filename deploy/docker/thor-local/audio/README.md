@@ -107,18 +107,28 @@ python3 deploy/docker/thor-local/audio/omni_snapshot.py lock \
   --output /absolute/private/models/nemotron-omni-fp8.manifest.json
 ```
 
-The inventory rejects symlinks, unpinned revisions, missing config/tokenizer
-metadata, missing SafeTensors, and missing remote implementation Python. It
-proves later byte-for-byte reproducibility; the operator remains responsible
-for establishing the initial snapshot's provenance from the named revision.
+The inventory accepts either a materialized regular-file tree or the canonical
+Hugging Face `snapshots/<revision> -> ../../blobs/<identity>` layout. Canonical
+links must remain inside the exact repository blob store and their resolved
+bytes are hashed; all other links are rejected. This avoids a second full copy
+of a 30B checkpoint without weakening byte verification. Unpinned revisions,
+missing config/tokenizer metadata, missing SafeTensors, unsupported executor
+architectures, and missing remote implementation Python are rejected. The
+operator remains responsible for establishing the initial snapshot's
+provenance from the named revision.
 
 ## Read-only gate and launch rendering
 
-The conservative 80 GiB `MemAvailable` gate is an admission floor, not a
-performance or support claim. It forces the default Qwen VLM to be stopped and
-prevents a 30B FP8 load while the host has the roughly 34 GiB observed during
-this audit. NVIDIA publishes no exact AGX Thor memory envelope for this model,
-so runtime qualification must measure and may raise the floor.
+The 80 GiB `MemAvailable` gate is an additional admission floor, not a
+performance or support claim. The default utilization is 0.45 and the gate
+also enforces `available >= (utilization + 0.20) * MemTotal`, preserving the
+documented fixed 20% unified-memory reserve. Increasing utilization therefore
+raises the required available memory instead of weakening the reserve. The
+model remains read-only; vLLM cache and initialization locks live in an
+ephemeral, executable tmpfs selected by `VLM_RUNTIME_STATE_DIR` because vLLM
+may execute compiled cache objects. NVIDIA publishes no exact
+AGX Thor memory envelope for either distinct Omni identifier, so runtime
+qualification must measure and may raise the floor.
 
 ```bash
 export THOR_LOCAL_OMNI_MODEL_DIR=/absolute/private/models/nemotron-omni-fp8

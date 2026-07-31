@@ -14,10 +14,12 @@ base_compose="${deployment_dir}/compose.yml"
 thor_compose="${deployment_dir}/thor-local/compose.yml"
 audio_compose="${script_dir}/omni.compose.yml"
 snapshot_tool="${script_dir}/omni_snapshot.py"
+budget_tool="${repo_root}/deploy/docker/thor-local/rt-vlm/memory_budget.py"
 generated_env="${THOR_LOCAL_GENERATED_ENV_FILE:-${deployment_dir}/thor-local/generated.env}"
 audio_image="${THOR_LOCAL_RTVI_AUDIO_IMAGE:-cti-vss-rt-vlm:3.2.1-thor-audio-offline}"
 default_vlm_container="${THOR_LOCAL_DEFAULT_VLM_CONTAINER:-cti-vss-qwen3-vl}"
 minimum_memory_gib="${THOR_LOCAL_OMNI_MIN_AVAILABLE_MEMORY_GIB:-80}"
+utilization="${THOR_LOCAL_OMNI_GPU_MEMORY_UTILIZATION:-0.45}"
 
 usage() {
   cat <<'EOF'
@@ -50,12 +52,11 @@ require_contract() {
   fi
 
   if [[ "${minimum_memory_gib}" =~ ^[0-9]+$ ]] && (( minimum_memory_gib >= 80 )); then
-    available_kib=$(awk '/^MemAvailable:/ {print $2}' /proc/meminfo)
-    required_kib=$((minimum_memory_gib * 1024 * 1024))
-    if (( available_kib >= required_kib )); then
-      pass "available unified memory meets ${minimum_memory_gib} GiB conservative gate"
+    if PYTHONDONTWRITEBYTECODE=1 python3 "${budget_tool}" \
+        --utilization "${utilization}" --minimum-gib "${minimum_memory_gib}" >/dev/null; then
+      pass "unified memory meets the ${minimum_memory_gib} GiB floor and preserves the fixed 20% reserve at utilization ${utilization}"
     else
-      fail "available unified memory is $((available_kib / 1024 / 1024)) GiB; ${minimum_memory_gib} GiB is required before model start"
+      fail "unified memory cannot meet the ${minimum_memory_gib} GiB floor plus fixed 20% reserve at utilization ${utilization}"
     fi
   else
     fail "THOR_LOCAL_OMNI_MIN_AVAILABLE_MEMORY_GIB cannot weaken the 80 GiB floor"
@@ -135,6 +136,7 @@ print_launch_command() {
     "VSS_REPO_ROOT=${repo_root}" \
     "THOR_LOCAL_OMNI_MODEL_DIR=${THOR_LOCAL_OMNI_MODEL_DIR}" \
     "THOR_LOCAL_OMNI_MODEL_ID=${THOR_LOCAL_OMNI_MODEL_ID}" \
+    "THOR_LOCAL_OMNI_GPU_MEMORY_UTILIZATION=${utilization}" \
     "THOR_LOCAL_RTVI_AUDIO_IMAGE=${audio_image}" \
     docker compose --env-file "${generated_env}" \
     -f "${base_compose}" -f "${thor_compose}" -f "${audio_compose}" \

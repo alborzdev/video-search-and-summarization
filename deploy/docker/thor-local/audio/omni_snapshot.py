@@ -24,8 +24,10 @@ from pathlib import Path
 SCHEMA_VERSION = 1
 SUPPORTED_REPOSITORIES = {
     "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
+    "nvidia/Nemotron-Nano-V3-Omni-GA0420-FP8",
 }
 REQUIRED_METADATA = {"config.json", "tokenizer_config.json"}
+SUPPORTED_ARCHITECTURES = {"NemotronH_Nano_VL_V2", "NemotronH_Nano_Omni_Reasoning_V3"}
 
 
 class SnapshotError(RuntimeError):
@@ -40,7 +42,29 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _safe_files(root: Path) -> list[Path]:
+def _validate_hf_symlink(root: Path, path: Path, repository: str, revision: str) -> None:
+    target = os.readlink(path)
+    match = re.fullmatch(r"\.\./\.\./blobs/([0-9a-f]{40}|[0-9a-f]{64})", target)
+    if match is None:
+        raise SnapshotError(f"model snapshot has a non-canonical Hugging Face symlink: {path}")
+    repository_root = root.parent.parent
+    expected_root_name = f"models--{repository.replace('/', '--')}"
+    if (
+        root.name != revision
+        or root.parent.name != "snapshots"
+        or repository_root.name != expected_root_name
+    ):
+        raise SnapshotError("symlink-backed snapshot is outside its exact Hugging Face cache layout")
+    try:
+        resolved = path.resolve(strict=True)
+        blob_root = (repository_root / "blobs").resolve(strict=True)
+    except OSError as exc:
+        raise SnapshotError(f"model snapshot contains a broken symlink: {path}: {exc}") from exc
+    if resolved.parent != blob_root or resolved.name != match.group(1):
+        raise SnapshotError(f"model snapshot symlink escapes its Hugging Face blob store: {path}")
+
+
+def _safe_files(root: Path, repository: str, revision: str) -> list[Path]:
     if not root.is_absolute():
         raise SnapshotError("model directory must be an absolute path")
     if not root.is_dir():
@@ -49,12 +73,14 @@ def _safe_files(root: Path) -> list[Path]:
     files: list[Path] = []
     for directory, dirnames, filenames in os.walk(root, followlinks=False):
         current = Path(directory)
-        for name in [*dirnames, *filenames]:
+        for name in dirnames:
             candidate = current / name
             if candidate.is_symlink():
-                raise SnapshotError(f"model snapshot contains a symlink: {candidate}")
+                raise SnapshotError(f"model snapshot contains a linked directory: {candidate}")
         for name in filenames:
             candidate = current / name
+            if candidate.is_symlink():
+                _validate_hf_symlink(root, candidate, repository, revision)
             mode = candidate.stat().st_mode
             if not stat.S_ISREG(mode):
                 raise SnapshotError(f"model snapshot contains a non-regular file: {candidate}")
@@ -92,6 +118,10 @@ def validate_snapshot_shape(root: Path, files: list[Path]) -> dict[str, object]:
         raise SnapshotError("config.json must define at least one architecture")
     if not isinstance(model_type, str) or not model_type.strip():
         raise SnapshotError("config.json must define a non-empty model_type")
+    if not set(architectures).issubset(SUPPORTED_ARCHITECTURES):
+        raise SnapshotError(
+            "config.json architecture is not one of the RT-VLM Nemotron Omni executors"
+        )
     return {"architectures": architectures, "model_type": model_type}
 
 
@@ -101,20 +131,22 @@ def build_manifest(root: Path, repository: str, revision: str) -> dict[str, obje
         raise SnapshotError(f"unsupported repository {repository!r}; supported: {supported}")
     if not re.fullmatch(r"[0-9a-f]{40}", revision):
         raise SnapshotError("model revision must be a full lowercase 40-character Git commit")
-    files = _safe_files(root)
+    files = _safe_files(root, repository, revision)
     config = validate_snapshot_shape(root, files)
     entries = []
     total_bytes = 0
     for path in files:
         size = path.stat().st_size
         total_bytes += size
-        entries.append(
-            {
-                "path": path.relative_to(root).as_posix(),
-                "sha256": sha256_file(path),
-                "size": size,
-            }
-        )
+        entry = {
+            "path": path.relative_to(root).as_posix(),
+            "sha256": sha256_file(path),
+            "size": size,
+        }
+        if path.is_symlink():
+            target = os.readlink(path)
+            entry.update({"type": "symlink", "target": target, "blob": Path(target).name})
+        entries.append(entry)
     return {
         "schema_version": SCHEMA_VERSION,
         "repository": repository,

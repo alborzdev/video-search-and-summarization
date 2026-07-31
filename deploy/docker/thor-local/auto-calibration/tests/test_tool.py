@@ -3,12 +3,17 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
+import stat
 import subprocess
 import tempfile
 import unittest
+import warnings
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "tool.py"
@@ -28,6 +33,32 @@ def probe(*, duration: float = 180.0, width: int = 1920, height: int = 1080) -> 
         "duration_seconds": duration,
         "start_time_seconds": 0.0,
     }
+
+
+def write_test_zip(path: Path, members: list[tuple[str, bytes, int]]) -> list[dict]:
+    with ZipFile(path, "w") as archive:
+        for name, payload, mode in members:
+            info = ZipInfo(name)
+            info.create_system = 3
+            info.external_attr = mode << 16
+            info.compress_type = ZIP_DEFLATED
+            archive.writestr(info, payload)
+    expected = []
+    with ZipFile(path, "r") as archive:
+        for info in archive.infolist():
+            expected.append(
+                {
+                    "path": info.filename,
+                    "kind": "directory" if info.is_dir() else "file",
+                    "size_bytes": info.file_size,
+                    "compressed_size_bytes": info.compress_size,
+                    "crc32": f"{info.CRC:08x}",
+                    "sha256": TOOL._zip_member_sha256(archive, info),
+                    "compression_method": info.compress_type,
+                    "unix_mode": f"{((info.external_attr >> 16) & 0xFFFF):06o}",
+                }
+            )
+    return expected
 
 
 class VideoValidationTests(unittest.TestCase):
@@ -57,7 +88,9 @@ class VideoValidationTests(unittest.TestCase):
             first.touch()
             second.touch()
             values = {first.name: probe(), second.name: probe(duration=179.0)}
-            with mock.patch.object(TOOL, "_probe_video", side_effect=lambda path: values[path.name]):
+            with mock.patch.object(
+                TOOL, "_probe_video", side_effect=lambda path: values[path.name]
+            ):
                 with self.assertRaisesRegex(TOOL.ValidationError, "duration differs"):
                     TOOL.validate_video_dir(root)
 
@@ -65,7 +98,7 @@ class VideoValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             (root / "cam_00.mp4").touch()
-            (root / "alignment_data.json").write_text("{}\n", encoding="utf-8")
+            (root / "alignment_data.json").write_text("[[[1, 2]]]\n", encoding="utf-8")
             (root / "layout.png").write_bytes(b"\x89PNG\r\n\x1a\nfixture")
             with mock.patch.object(TOOL, "_probe_video", return_value=probe()):
                 result = TOOL.validate_video_dir(root)
@@ -104,7 +137,9 @@ class RtspValidationTests(unittest.TestCase):
                 json.dumps(
                     {
                         "duration_seconds": 59,
-                        "streams": [{"camera_name": "cam_00", "rtsp_url": "rtsp://camera/live"}],
+                        "streams": [
+                            {"camera_name": "cam_00", "rtsp_url": "rtsp://camera/live"}
+                        ],
                     }
                 ),
                 encoding="utf-8",
@@ -115,14 +150,16 @@ class RtspValidationTests(unittest.TestCase):
     def test_resolves_local_rtsp_attachments(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
-            (root / "alignment_data.json").write_text("{}\n", encoding="utf-8")
+            (root / "alignment_data.json").write_text("[[[1, 2]]]\n", encoding="utf-8")
             (root / "layout.png").write_bytes(b"\x89PNG\r\n\x1a\nfixture")
             plan = root / "rtsp.json"
             plan.write_text(
                 json.dumps(
                     {
                         "duration_seconds": 180,
-                        "streams": [{"camera_name": "cam_00", "rtsp_url": "rtsp://camera/live"}],
+                        "streams": [
+                            {"camera_name": "cam_00", "rtsp_url": "rtsp://camera/live"}
+                        ],
                         "alignment_json": "alignment_data.json",
                         "layout_png": "layout.png",
                     }
@@ -139,21 +176,45 @@ class RtspValidationTests(unittest.TestCase):
                 json.dumps(
                     {
                         "duration_seconds": 180,
-                        "streams": [{"camera_name": "cam_00", "rtsp_url": "rtsp://camera:not-a-port/live"}],
+                        "streams": [
+                            {
+                                "camera_name": "cam_00",
+                                "rtsp_url": "rtsp://camera:not-a-port/live",
+                            }
+                        ],
                     }
                 ),
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(TOOL.ValidationError, "invalid RTSP port") as raised:
+            with self.assertRaisesRegex(
+                TOOL.ValidationError, "invalid RTSP port"
+            ) as raised:
                 TOOL.validate_rtsp_plan(plan)
         self.assertNotIn("not-a-port", str(raised.exception))
 
 
 class ArtifactAndComposeTests(unittest.TestCase):
+    def test_official_fixture_identity_is_exact_and_separate_from_warehouse(
+        self,
+    ) -> None:
+        fixture = TOOL._official_fixture_declaration()
+        self.assertEqual(fixture["commit"], "0cfd2b790fd77598b0543340a65c2a0e1d192327")
+        self.assertEqual(fixture["expected_size_bytes"], 160499115)
+        self.assertEqual(
+            fixture["expected_sha256"],
+            "0dceb0cc8324f5775b0c2007efe7a3e7c36fda10c5964b88e20712b002d98bdb",
+        )
+        self.assertEqual(fixture["archive"]["member_count"], 10)
+        self.assertTrue(fixture["required_for_base_amc_acceptance"])
+        self.assertFalse(fixture["required_for_service_start"])
+        self.assertNotIn("warehouse-app-data", fixture["download_url"])
+
     def test_backend_lock_fields_are_atomic(self) -> None:
         declared = json.loads(TOOL.INVENTORY_PATH.read_text(encoding="utf-8"))
         backend = declared["images"]["backend"]
-        self.assertEqual(backend["immutable_ref"] is None, backend["expected_image_id"] is None)
+        self.assertEqual(
+            backend["immutable_ref"] is None, backend["expected_image_id"] is None
+        )
         self.assertTrue(backend["required"])
         if backend["immutable_ref"] is not None:
             self.assertIn("@sha256:", backend["immutable_ref"])
@@ -201,6 +262,202 @@ class ArtifactAndComposeTests(unittest.TestCase):
         self.assertEqual(ui_service["restart"], "no")
 
 
+class OfficialFixtureTests(unittest.TestCase):
+    def test_offline_verifier_rejects_outer_size_before_zip_parsing(self) -> None:
+        fixture = {
+            **TOOL._official_fixture_declaration(),
+            "expected_size_bytes": 4,
+            "expected_sha256": hashlib.sha256(b"bad").hexdigest(),
+        }
+        with (
+            tempfile.TemporaryDirectory() as raw,
+            mock.patch.object(
+                TOOL, "_official_fixture_declaration", return_value=fixture
+            ),
+        ):
+            path = Path(raw) / "fixture.zip"
+            path.write_bytes(b"bad")
+            with self.assertRaisesRegex(TOOL.ValidationError, "size differs"):
+                TOOL.verify_official_fixture(Path(raw), fixture_path=path)
+
+    def test_offline_verifier_rejects_outer_digest_before_zip_parsing(self) -> None:
+        fixture = {
+            **TOOL._official_fixture_declaration(),
+            "expected_size_bytes": 3,
+            "expected_sha256": "0" * 64,
+        }
+        with (
+            tempfile.TemporaryDirectory() as raw,
+            mock.patch.object(
+                TOOL, "_official_fixture_declaration", return_value=fixture
+            ),
+        ):
+            path = Path(raw) / "fixture.zip"
+            path.write_bytes(b"bad")
+            with self.assertRaisesRegex(TOOL.ValidationError, "digest differs"):
+                TOOL.verify_official_fixture(Path(raw), fixture_path=path)
+
+    def test_zip_member_oracle_accepts_exact_safe_archive(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "safe.zip"
+            expected = write_test_zip(
+                path,
+                [
+                    ("fixture/", b"", stat.S_IFDIR | 0o755),
+                    ("fixture/value.json", b'{"ok": true}\n', stat.S_IFREG | 0o644),
+                ],
+            )
+            with ZipFile(path) as archive:
+                observed = TOOL._verify_zip_members(
+                    archive,
+                    expected,
+                    label="test ZIP",
+                    expected_count=2,
+                    expected_uncompressed=sum(item["size_bytes"] for item in expected),
+                    expected_compressed=sum(
+                        item["compressed_size_bytes"] for item in expected
+                    ),
+                )
+        self.assertEqual(observed, expected)
+
+    def test_zip_member_oracle_rejects_path_traversal(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "unsafe.zip"
+            expected = write_test_zip(
+                path, [("../escape", b"bad", stat.S_IFREG | 0o644)]
+            )
+            with ZipFile(path) as archive:
+                with self.assertRaisesRegex(TOOL.ValidationError, "unsafe member path"):
+                    TOOL._verify_zip_members(
+                        archive,
+                        expected,
+                        label="test ZIP",
+                        expected_count=1,
+                        expected_uncompressed=3,
+                        expected_compressed=expected[0]["compressed_size_bytes"],
+                    )
+
+    def test_zip_member_oracle_rejects_symbolic_link(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "unsafe.zip"
+            expected = write_test_zip(path, [("link", b"target", stat.S_IFLNK | 0o777)])
+            with ZipFile(path) as archive:
+                with self.assertRaisesRegex(TOOL.ValidationError, "symbolic-link"):
+                    TOOL._verify_zip_members(
+                        archive,
+                        expected,
+                        label="test ZIP",
+                        expected_count=1,
+                        expected_uncompressed=6,
+                        expected_compressed=expected[0]["compressed_size_bytes"],
+                    )
+
+    def test_zip_member_oracle_rejects_duplicate_names(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "duplicate.zip"
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", UserWarning)
+                with ZipFile(path, "w") as archive:
+                    archive.writestr("same", b"one")
+                    archive.writestr("same", b"two")
+            with ZipFile(path) as archive:
+                with self.assertRaisesRegex(TOOL.ValidationError, "duplicate"):
+                    TOOL._verify_zip_members(
+                        archive,
+                        [],
+                        label="test ZIP",
+                        expected_count=2,
+                        expected_uncompressed=6,
+                        expected_compressed=sum(
+                            item.compress_size for item in archive.infolist()
+                        ),
+                    )
+
+    def test_atomic_stage_downloads_verifies_and_publishes(self) -> None:
+        fixture_bytes = b"fixture"
+        fixture = {
+            **TOOL._official_fixture_declaration(),
+            "filename": "fixture.zip",
+            "cache_relative_path": "vss/amc/test/fixture.zip",
+            "expected_size_bytes": len(fixture_bytes),
+            "expected_sha256": hashlib.sha256(fixture_bytes).hexdigest(),
+        }
+
+        def download(_url: str, target: Path) -> None:
+            target.write_bytes(fixture_bytes)
+
+        def verify(_root: Path, *, fixture_path: Path | None = None) -> dict:
+            assert fixture_path is not None
+            self.assertEqual(fixture_path.read_bytes(), fixture_bytes)
+            return {"state": "locked", "sha256": fixture["expected_sha256"]}
+
+        with (
+            tempfile.TemporaryDirectory() as raw,
+            mock.patch.object(
+                TOOL, "_official_fixture_declaration", return_value=fixture
+            ),
+            mock.patch.object(TOOL, "_download_official_fixture", side_effect=download),
+            mock.patch.object(TOOL, "verify_official_fixture", side_effect=verify),
+        ):
+            result = TOOL.stage_official_fixture(Path(raw), 0)
+            target = Path(raw) / fixture["cache_relative_path"]
+            self.assertEqual(target.read_bytes(), fixture_bytes)
+            self.assertEqual(
+                result["publish_state"], "downloaded_verified_and_published"
+            )
+            self.assertEqual(list(target.parent.glob("*.partial")), [])
+
+    def test_atomic_stage_fails_disk_guard_before_download(self) -> None:
+        fixture = {
+            **TOOL._official_fixture_declaration(),
+            "filename": "fixture.zip",
+            "cache_relative_path": "vss/amc/test/fixture.zip",
+            "expected_size_bytes": 100,
+        }
+        with (
+            tempfile.TemporaryDirectory() as raw,
+            mock.patch.object(
+                TOOL, "_official_fixture_declaration", return_value=fixture
+            ),
+            mock.patch.object(
+                TOOL.shutil, "disk_usage", return_value=SimpleNamespace(free=99)
+            ),
+            mock.patch.object(TOOL, "_download_official_fixture") as download,
+        ):
+            with self.assertRaisesRegex(TOOL.Unavailable, "insufficient free space"):
+                TOOL.stage_official_fixture(Path(raw), 0)
+        download.assert_not_called()
+
+    def test_atomic_stage_removes_partial_on_verification_failure(self) -> None:
+        fixture = {
+            **TOOL._official_fixture_declaration(),
+            "filename": "fixture.zip",
+            "cache_relative_path": "vss/amc/test/fixture.zip",
+            "expected_size_bytes": 3,
+        }
+
+        def download(_url: str, target: Path) -> None:
+            target.write_bytes(b"bad")
+
+        with (
+            tempfile.TemporaryDirectory() as raw,
+            mock.patch.object(
+                TOOL, "_official_fixture_declaration", return_value=fixture
+            ),
+            mock.patch.object(TOOL, "_download_official_fixture", side_effect=download),
+            mock.patch.object(
+                TOOL,
+                "verify_official_fixture",
+                side_effect=TOOL.ValidationError("bad fixture"),
+            ),
+        ):
+            with self.assertRaisesRegex(TOOL.ValidationError, "bad fixture"):
+                TOOL.stage_official_fixture(Path(raw), 0)
+            target = Path(raw) / fixture["cache_relative_path"]
+            self.assertFalse(target.exists())
+            self.assertEqual(list(target.parent.glob("*.partial")), [])
+
+
 class RuntimeContractTests(unittest.TestCase):
     def test_contract_covers_complete_skill_advertised_surface(self) -> None:
         self.assertEqual(len(TOOL.REQUIRED_OPENAPI), 26)
@@ -225,22 +482,32 @@ class RuntimeContractTests(unittest.TestCase):
 
     def test_get_only_qualification_checks_declared_operations(self) -> None:
         paths = {path: {method: {}} for path, method in TOOL.REQUIRED_OPENAPI.items()}
-        with mock.patch.object(
-            TOOL,
-            "_get_json",
-            side_effect=[(200, {"code": 0}), (200, {"paths": paths})],
-        ), mock.patch.object(TOOL, "_get_status", return_value=200):
-            result = TOOL.qualify_runtime("http://127.0.0.1:8010/v1", "http://127.0.0.1:5000", None, 0.1)
+        with (
+            mock.patch.object(
+                TOOL,
+                "_get_json",
+                side_effect=[(200, {"code": 0}), (200, {"paths": paths})],
+            ),
+            mock.patch.object(TOOL, "_get_status", return_value=200),
+        ):
+            result = TOOL.qualify_runtime(
+                "http://127.0.0.1:8010/v1", "http://127.0.0.1:5000", None, 0.1
+            )
         self.assertEqual(result["method"], "GET-only")
-        self.assertEqual(result["openapi_required_operations"], len(TOOL.REQUIRED_OPENAPI))
+        self.assertEqual(
+            result["openapi_required_operations"], len(TOOL.REQUIRED_OPENAPI)
+        )
 
     def test_accepts_numeric_ipv4_and_ipv6_loopback_origins(self) -> None:
         paths = {path: {method: {}} for path, method in TOOL.REQUIRED_OPENAPI.items()}
-        with mock.patch.object(
-            TOOL,
-            "_get_json",
-            side_effect=[(200, {"code": 0}), (200, {"paths": paths}), (200, [])],
-        ), mock.patch.object(TOOL, "_get_status", return_value=200):
+        with (
+            mock.patch.object(
+                TOOL,
+                "_get_json",
+                side_effect=[(200, {"code": 0}), (200, {"paths": paths}), (200, [])],
+            ),
+            mock.patch.object(TOOL, "_get_status", return_value=200),
+        ):
             result = TOOL.qualify_runtime(
                 "http://[::1]:8010/v1/",
                 "http://127.0.0.2:5000/",
@@ -276,7 +543,11 @@ class RuntimeContractTests(unittest.TestCase):
             (" http://127.0.0.1:8010/v1", "http://127.0.0.1:5000", None),
             ("http://[::1%25lo]:8010/v1", "http://127.0.0.1:5000", None),
             ("http://127.0.0.1:8010/v1", "http://127.0.0.1:5000/admin", None),
-            ("http://127.0.0.1:8010/v1", "http://127.0.0.1:5000", "http://127.0.0.1:30888/vst"),
+            (
+                "http://127.0.0.1:8010/v1",
+                "http://127.0.0.1:5000",
+                "http://127.0.0.1:30888/vst",
+            ),
         ]
         for backend, ui, vios in cases:
             with self.subTest(backend=backend, ui=ui, vios=vios):

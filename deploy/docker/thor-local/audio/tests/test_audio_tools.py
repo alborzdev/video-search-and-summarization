@@ -223,6 +223,36 @@ class OmniSnapshotTests(unittest.TestCase):
             with self.assertRaises(omni_snapshot.SnapshotError):
                 omni_snapshot.build_manifest(root.resolve(), "Qwen/Qwen3-VL-8B-Instruct", self.revision)
 
+    def test_distinct_ga0420_repository_is_supported_without_aliasing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_snapshot(root)
+            repository = "nvidia/Nemotron-Nano-V3-Omni-GA0420-FP8"
+            manifest = omni_snapshot.build_manifest(root.resolve(), repository, self.revision)
+            self.assertEqual(repository, manifest["repository"])
+
+    def test_canonical_huggingface_links_are_hashed_without_materializing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory) / "models--nvidia--Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8"
+            root = cache / "snapshots" / self.revision
+            blobs = cache / "blobs"
+            root.mkdir(parents=True)
+            blobs.mkdir()
+            materialized = Path(directory) / "materialized"
+            materialized.mkdir()
+            self.make_snapshot(materialized)
+            for source in materialized.iterdir():
+                data = source.read_bytes()
+                digest = __import__("hashlib").sha256(data).hexdigest()
+                (blobs / digest).write_bytes(data)
+                (root / source.name).symlink_to(f"../../blobs/{digest}")
+            manifest = omni_snapshot.build_manifest(root.resolve(), self.repository, self.revision)
+            self.assertTrue(all(entry.get("type") == "symlink" for entry in manifest["files"]))
+            self.assertEqual(
+                manifest,
+                omni_snapshot.build_manifest(root.resolve(), self.repository, self.revision),
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

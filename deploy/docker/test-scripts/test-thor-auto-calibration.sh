@@ -22,6 +22,12 @@ assert p["host_architecture"] == "aarch64"
 assert p["images"]["ui"]["state"] == "locked"
 assert p["images"]["backend"]["state"] in {"unstaged_unlocked", "present_unlocked", "locked"}
 assert p["models"]["vggt"]["state"] in {"absent", "present_unlocked", "locked"}
+fixture = p["fixtures"]["official_amc"]
+assert fixture["state"] in {"absent", "locked"}
+assert fixture["expected_size_bytes"] == 160499115
+assert fixture["expected_sha256"] == "0dceb0cc8324f5775b0c2007efe7a3e7c36fda10c5964b88e20712b002d98bdb"
+assert fixture["required_for_base_amc_acceptance"] is True
+assert fixture["required_for_service_start"] is False
 ' "${fixture_dir}/inventory.json"
 
 media_dir="${fixture_dir}/media"

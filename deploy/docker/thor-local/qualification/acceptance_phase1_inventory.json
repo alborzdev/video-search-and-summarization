@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "mode": "explicit-stateful-canary",
+  "default_execution_enabled": false,
+  "scenario": {
+    "id": "rtvi-file-lifecycle",
+    "description": "Create, verify, download, and exactly delete one client-addressed file in RT-VLM and RT-Embed.",
+    "fixture_id": "tiny-h264-aac",
+    "services": [
+      {
+        "id": "rt-vlm",
+        "default_origin": "http://127.0.0.1:8018",
+        "resource_id": "vlm-file",
+        "operations": {
+          "create": "rest:rt-vlm:POST:/v1/files",
+          "inspect": "rest:rt-vlm:GET:/v1/files/{file_id}",
+          "content": "rest:rt-vlm:GET:/v1/files/{file_id}/content",
+          "delete": "rest:rt-vlm:DELETE:/v1/files/{file_id}"
+        }
+      },
+      {
+        "id": "rt-embed",
+        "default_origin": "http://127.0.0.1:8017",
+        "resource_id": "embed-file",
+        "operations": {
+          "create": "rest:rt-embed:POST:/v1/files",
+          "inspect": "rest:rt-embed:GET:/v1/files/{file_id}",
+          "content": "rest:rt-embed:GET:/v1/files/{file_id}/content",
+          "delete": "rest:rt-embed:DELETE:/v1/files/{file_id}"
+        }
+      }
+    ],
+    "policy": {
+      "approval_token": "rtvi-file-lifecycle",
+      "client_addressed_ids": true,
+      "concurrency": 1,
+      "cleanup": "strict-lifo-stop-on-top-failure",
+      "follow_redirects": false,
+      "loopback_only": true,
+      "max_request_bytes": 2097152,
+      "max_response_bytes": 1048576,
+      "proxies": false
+    }
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "reviewed_upstream_revision": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+  "source_contracts": {
+    "cosmos3_nim_compose": {
+      "path": "deploy/docker/services/nim/cosmos3-reasoner/compose.yml",
+      "sha256": "7b234cf3aa1b2769c5168ef90eb5144809882269cbc5ba033e094afa5d33ceaf"
+    },
+    "rt_vlm_readme": {
+      "path": "services/rtvi/rt-vlm/README.md",
+      "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+    }
+  },
+  "advertised_rt_vlm_variants": [
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos-reason2-8b:0303-fp8-dynamic-kv8",
+      "family": "cosmos-reason2",
+      "key": "cosmos_reason2_8b_0303_fp8_dynamic_kv8",
+      "selector": "cosmos-reason2",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos-reason2-8b:hf-0303",
+      "family": "cosmos-reason2",
+      "key": "cosmos_reason2_8b_hf_0303",
+      "selector": "cosmos-reason2",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos-reason2-8b:0303-fp4-dynamic-kv8",
+      "family": "cosmos-reason2",
+      "key": "cosmos_reason2_8b_0303_fp4_dynamic_kv8",
+      "selector": "cosmos-reason2",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-nvfp4-full-quantize-final_format_fix",
+      "family": "cosmos-reason3-nano",
+      "key": "cosmos3_nano_modelopt_nvfp4",
+      "selector": "cosmos-reason3",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "family": "cosmos-reason3-nano",
+      "key": "cosmos3_nano_bf16",
+      "selector": "cosmos-reason3",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning",
+      "family": "nemotron-omni",
+      "key": "nemotron3_nano_omni_reasoning",
+      "selector": "vllm-compatible",
+      "source_kind": "huggingface",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
+      "family": "nemotron-omni",
+      "key": "nemotron3_nano_omni_reasoning_fp8",
+      "selector": "vllm-compatible",
+      "source_kind": "huggingface",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+      "family": "qwen3-vl",
+      "key": "qwen3_vl_30b_a3b_instruct",
+      "selector": "vllm-compatible",
+      "source_kind": "huggingface",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+      "family": "qwen3-omni",
+      "key": "qwen3_omni_30b_a3b_instruct",
+      "selector": "vllm-compatible",
+      "source_kind": "huggingface",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "Qwen/Qwen3.5-27B",
+      "family": "qwen3.5",
+      "key": "qwen3_5_27b",
+      "selector": "vllm-compatible",
+      "source_kind": "huggingface",
+      "thor_status": "missing_exact_artifact_unqualified"
+    },
+    {
+      "artifact_id": "ngc:nim/nvidia/cosmos-reason1-7b:1.1-fp8-dynamic",
+      "family": "cosmos-reason1",
+      "key": "cosmos_reason1_7b_1_1_fp8_dynamic",
+      "selector": "cosmos-reason1",
+      "source_kind": "ngc-model",
+      "thor_status": "missing_exact_artifact_unqualified"
+    }
+  ],
+  "remote_compatible": {
+    "artifact_id": null,
+    "selector": "openai-compat",
+    "thor_status": "adapter_present_endpoint_specific_unqualified"
+  },
+  "adjacent_profile_variants": [
+    {
+      "artifact_id": null,
+      "family": "cosmos-reason3-super",
+      "friendly_model_id": "nvidia/cosmos3-super-reasoner",
+      "key": "cosmos3_super_nim",
+      "nim_image": "nvcr.io/nim/nvidia/cosmos3-reasoner:1.7",
+      "nim_model_size": "super",
+      "route": "base-profile-compose-nim-not-rt-vlm-matrix",
+      "thor_status": "artifact_revision_size_and_thor_recipe_unknown_unqualified"
+    }
+  ],
+  "distinct_omni_examples": [
+    {
+      "repository": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
+      "relationship": "current RT-VLM supported-model table entry"
+    },
+    {
+      "repository": "nvidia/Nemotron-Nano-V3-Omni-GA0420-FP8",
+      "relationship": "distinct LVS example identifier; no equivalence or revision mapping is asserted"
+    }
+  ],
+  "local_artifacts": [
+    {
+      "advertised_variant_equivalence": "unproven; do not equate this Hugging Face revision with the NGC hf-0303 tag",
+      "artifact_lock_key": "cosmos_reason2_8b_bf16_hf",
+      "logical_bytes": 17545907076,
+      "repository": "nvidia/Cosmos-Reason2-8B",
+      "revision": "a9fae2cf89dc64db96b12860417f0eb403013bb9",
+      "runtime_qualified_on_thor": false,
+      "status": "content_locked_family_lane_only"
+    },
+    {
+      "advertised_variant_equivalence": "not advertised by the reviewed RT-VLM model table",
+      "artifact_lock_key": "cosmos_reason2_2b_bf16_hf",
+      "logical_bytes": 4888970298,
+      "repository": "nvidia/Cosmos-Reason2-2B",
+      "revision": "3dafcf35a57ce708a32241e06d6533c9c3ee0ab8",
+      "runtime_qualified_on_thor": false,
+      "status": "content_locked_nonadvertised_reference"
+    }
+  ]
+}

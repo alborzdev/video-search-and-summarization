@@ -61,6 +61,8 @@ jq -e '
   ($r.environment.VLM_MODEL_TO_USE == "vllm-compatible") and
   ($r.environment.VLM_MODEL_SUPPORTS_AUDIO == "true") and
   ($r.environment.VLM_TRUST_REMOTE_CODE == "true") and
+  ($r.environment.VLM_RUNTIME_STATE_DIR == "/opt/nvidia/rtvi/runtime/omni") and
+  ($r.environment.VLLM_GPU_MEMORY_UTILIZATION == "0.45") and
   ($r.environment.INSTALL_PROPRIETARY_CODECS == "false") and
   ($r.environment.VLM_BATCH_SIZE == "1") and
   ($r.environment.NUM_VLM_PROCS == "1") and
@@ -73,6 +75,8 @@ jq -e '
   ($r.environment.HF_HUB_OFFLINE == "1") and
   ($r.environment.TRANSFORMERS_OFFLINE == "1") and
   ([$r.volumes[] | select(.target == "/opt/nvidia/rtvi/models/omni")][0].read_only == true) and
+  ([ $r.tmpfs[] | contains("/opt/nvidia/rtvi/runtime") ] | any) and
+  ([ $r.tmpfs[] | contains("noexec") ] | any | not) and
   ($a.environment.VLM_MODEL_TYPE == "rtvi") and
   ($a.environment.VLM_NAME == "static-omni-model-id") and
   ($a.environment.ENABLE_AUDIO == "true") and
@@ -81,5 +85,14 @@ jq -e '
   ($b.environment.VLM_NAME == "static-omni-model-id") and
   ($b.environment.REALTIME_ALERT_ENABLE_AUDIO == "true")
 ' "${resolved}" >/dev/null
+
+# The only model-directory rewrite helpers are guarded for quantized
+# Qwen3-VL/Cosmos3. Neither the Nemotron Omni architectures nor the locked
+# BF16 Cosmos Reason2 snapshot take these branches; their model mounts remain
+# read-only while cache and lock state use VLM_RUNTIME_STATE_DIR.
+grep -Fq 'runtime_state_dir = _get_runtime_state_dir(self.model_path)' \
+  "${repo_root}/services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py"
+grep -Fq 'model_lock_path = os.path.join(runtime_state_dir, "model-init.lock")' \
+  "${repo_root}/services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py"
 
 echo "Thor RT-VLM codec and Omni audio static contracts passed"

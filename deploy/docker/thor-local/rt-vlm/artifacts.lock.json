@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "artifacts": {
+    "cosmos_reason2_2b_bf16_hf": {
+      "kind": "huggingface_snapshot",
+      "provenance": {
+        "cache_layout": "huggingface_hub_v1",
+        "repository": "nvidia/Cosmos-Reason2-2B",
+        "revision": "3dafcf35a57ce708a32241e06d6533c9c3ee0ab8",
+        "source_url": "https://huggingface.co/nvidia/Cosmos-Reason2-2B"
+      },
+      "semantics": {
+        "config_path": "config.json",
+        "expected_config": {
+          "architectures": ["Qwen3VLForConditionalGeneration"],
+          "model_type": "qwen3_vl",
+          "text_config.model_type": "qwen3_vl_text",
+          "text_config.num_hidden_layers": 28,
+          "vision_config.depth": 24,
+          "vision_config.model_type": "qwen3_vl"
+        },
+        "tensor_bytes": 4877393920,
+        "type": "single_safetensors_model",
+        "weight_count": 626,
+        "weight_path": "model.safetensors"
+      },
+      "tree": {
+        "directories": [],
+        "files": [
+          {"blob":"e49e75bdda104c8de941eb20e0b3765184fb27bc","mode":420,"path":"chat_template.json","sha256":"6f8a6a55027e3da5160105556cda5dd69f6423f1c32645f6730d32de7773d0c4","size":5502,"target":"../../blobs/e49e75bdda104c8de941eb20e0b3765184fb27bc","type":"symlink"},
+          {"blob":"0cd8c646eb55794594b14fefcd1d3acea5cc000f","mode":420,"path":"config.json","sha256":"bec4b3d446efa05807365c9e1cec03ac590836879d02f3a6da879971154bdd3b","size":1505,"target":"../../blobs/0cd8c646eb55794594b14fefcd1d3acea5cc000f","type":"symlink"},
+          {"blob":"7bb37933d2d86e4ceaabcc6540be989658f238e9","mode":420,"path":"generation_config.json","sha256":"1e241830b48b397cb0900101421df5450baddc7adf01e5fc86b5615865f3bae4","size":269,"target":"../../blobs/7bb37933d2d86e4ceaabcc6540be989658f238e9","type":"symlink"},
+          {"blob":"20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0","mode":420,"path":"merges.txt","sha256":"599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3","size":1671839,"target":"../../blobs/20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0","type":"symlink"},
+          {"blob":"fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede","mode":420,"path":"model.safetensors","sha256":"fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede","size":4877470304,"target":"../../blobs/fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede","type":"symlink"},
+          {"blob":"2ea84a437d448ff71b08df68fdd949d5cc4ebb64","mode":420,"path":"preprocessor_config.json","sha256":"27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516","size":390,"target":"../../blobs/2ea84a437d448ff71b08df68fdd949d5cc4ebb64","type":"symlink"},
+          {"blob":"c6cc1014128b19d1fc46b1d30a23e3b1d35db421","mode":420,"path":"tokenizer.json","sha256":"a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7","size":7032403,"target":"../../blobs/c6cc1014128b19d1fc46b1d30a23e3b1d35db421","type":"symlink"},
+          {"blob":"d3d3763207692c78780f4bf42d4dadf49a5c8012","mode":420,"path":"tokenizer_config.json","sha256":"c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399","size":10868,"target":"../../blobs/d3d3763207692c78780f4bf42d4dadf49a5c8012","type":"symlink"},
+          {"blob":"3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe","mode":420,"path":"video_preprocessor_config.json","sha256":"7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13","size":385,"target":"../../blobs/3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe","type":"symlink"},
+          {"blob":"4783fe10ac3adce15ac8f358ef5462739852c569","mode":420,"path":"vocab.json","sha256":"ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910","size":2776833,"target":"../../blobs/4783fe10ac3adce15ac8f358ef5462739852c569","type":"symlink"}
+        ]
+      }
+    },
+    "cosmos_reason2_8b_bf16_hf": {
+      "kind": "huggingface_snapshot",
+      "provenance": {
+        "cache_layout": "huggingface_hub_v1",
+        "repository": "nvidia/Cosmos-Reason2-8B",
+        "revision": "a9fae2cf89dc64db96b12860417f0eb403013bb9",
+        "source_url": "https://huggingface.co/nvidia/Cosmos-Reason2-8B"
+      },
+      "semantics": {
+        "config_path": "config.json",
+        "expected_config": {
+          "architectures": ["Qwen3VLForConditionalGeneration"],
+          "model_type": "qwen3_vl",
+          "text_config.model_type": "qwen3_vl_text",
+          "text_config.num_hidden_layers": 36,
+          "vision_config.depth": 27,
+          "vision_config.model_type": "qwen3_vl"
+        },
+        "index_path": "model.safetensors.index.json",
+        "metadata_total_size": 0,
+        "metadata_total_size_authoritative": false,
+        "shard_count": 4,
+        "type": "indexed_safetensors_model",
+        "weight_count": 750
+      },
+      "tree": {
+        "directories": [],
+        "files": [
+          {"blob":"1081bacf1af7c7c6de4a585ce02cd0fd34e382da","mode":420,"path":"chat_template.json","sha256":"5c72a170d2a4a1a3bc5adad2e689ae28138a9700e5b8c96c0266331e86c0acce","size":5499,"target":"../../blobs/1081bacf1af7c7c6de4a585ce02cd0fd34e382da","type":"symlink"},
+          {"blob":"0e2df614c5fe1ad2b6b540c8625bebf2d7ec43ca","mode":420,"path":"config.json","sha256":"5cd452860dc1e9c29dd71cc3cef7f39b338b7a40793f7a260655c2d3568f3661","size":1474,"target":"../../blobs/0e2df614c5fe1ad2b6b540c8625bebf2d7ec43ca","type":"symlink"},
+          {"blob":"e116347d7ef42621c7a5957f82c015c38d939c1f","mode":420,"path":"generation_config.json","sha256":"8469742d1fce0de951c8909b26a2c0c0d8490837ce476efb114da9e0cefc4d44","size":269,"target":"../../blobs/e116347d7ef42621c7a5957f82c015c38d939c1f","type":"symlink"},
+          {"blob":"20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0","mode":420,"path":"merges.txt","sha256":"599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3","size":1671839,"target":"../../blobs/20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0","type":"symlink"},
+          {"blob":"01317e222b5a83509f2a8fc6c4b3296e777f32675bf8e2acd4eb21d71b2b9d12","mode":420,"path":"model-00001-of-00004.safetensors","sha256":"01317e222b5a83509f2a8fc6c4b3296e777f32675bf8e2acd4eb21d71b2b9d12","size":5283287392,"target":"../../blobs/01317e222b5a83509f2a8fc6c4b3296e777f32675bf8e2acd4eb21d71b2b9d12","type":"symlink"},
+          {"blob":"e0f6b4a69ee441a8fbdf53586c5d888d8378cca1828a305641391c72e9ea08c9","mode":420,"path":"model-00002-of-00004.safetensors","sha256":"e0f6b4a69ee441a8fbdf53586c5d888d8378cca1828a305641391c72e9ea08c9","size":5301856744,"target":"../../blobs/e0f6b4a69ee441a8fbdf53586c5d888d8378cca1828a305641391c72e9ea08c9","type":"symlink"},
+          {"blob":"c10b2eaf46cc2067ad29cd467739d29d9477350ad6cd250bae8f63a632790c04","mode":420,"path":"model-00003-of-00004.safetensors","sha256":"c10b2eaf46cc2067ad29cd467739d29d9477350ad6cd250bae8f63a632790c04","size":5360576128,"target":"../../blobs/c10b2eaf46cc2067ad29cd467739d29d9477350ad6cd250bae8f63a632790c04","type":"symlink"},
+          {"blob":"0748d520eab0fb5db39c9ea99c2b57dfd5d1e572da382a4fbb85dd50d6dfd166","mode":420,"path":"model-00004-of-00004.safetensors","sha256":"0748d520eab0fb5db39c9ea99c2b57dfd5d1e572da382a4fbb85dd50d6dfd166","size":1588619104,"target":"../../blobs/0748d520eab0fb5db39c9ea99c2b57dfd5d1e572da382a4fbb85dd50d6dfd166","type":"symlink"},
+          {"blob":"f919cf9106bfa88f76c5ba5783e141613eb94b13","mode":420,"path":"model.safetensors.index.json","sha256":"31e5064be5695aee8fc2721d45ac431875a964d6de0e3ff3de50dc38619f9d41","size":67748,"target":"../../blobs/f919cf9106bfa88f76c5ba5783e141613eb94b13","type":"symlink"},
+          {"blob":"2ea84a437d448ff71b08df68fdd949d5cc4ebb64","mode":420,"path":"preprocessor_config.json","sha256":"27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516","size":390,"target":"../../blobs/2ea84a437d448ff71b08df68fdd949d5cc4ebb64","type":"symlink"},
+          {"blob":"c6cc1014128b19d1fc46b1d30a23e3b1d35db421","mode":420,"path":"tokenizer.json","sha256":"a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7","size":7032403,"target":"../../blobs/c6cc1014128b19d1fc46b1d30a23e3b1d35db421","type":"symlink"},
+          {"blob":"d3d3763207692c78780f4bf42d4dadf49a5c8012","mode":420,"path":"tokenizer_config.json","sha256":"c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399","size":10868,"target":"../../blobs/d3d3763207692c78780f4bf42d4dadf49a5c8012","type":"symlink"},
+          {"blob":"3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe","mode":420,"path":"video_preprocessor_config.json","sha256":"7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13","size":385,"target":"../../blobs/3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe","type":"symlink"},
+          {"blob":"4783fe10ac3adce15ac8f358ef5462739852c569","mode":420,"path":"vocab.json","sha256":"ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910","size":2776833,"target":"../../blobs/4783fe10ac3adce15ac8f358ef5462739852c569","type":"symlink"}
+        ]
+      }
+    }
+  }
+}

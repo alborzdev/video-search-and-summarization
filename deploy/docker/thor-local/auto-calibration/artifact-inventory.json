@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "vss_release": "3.2.1",
   "platform": "linux/arm64",
   "images": {
@@ -30,9 +30,186 @@
       "status": "blocked_pending_license_acceptance_authorized_download_and_checksum_capture"
     }
   },
+  "fixtures": {
+    "official_amc": {
+      "repository": "NVIDIA-AI-IOT/auto-magic-calib",
+      "commit": "0cfd2b790fd77598b0543340a65c2a0e1d192327",
+      "repository_path": "assets/sdg_08_2_sample_data_010926.zip",
+      "canonical_url": "https://github.com/NVIDIA-AI-IOT/auto-magic-calib/blob/0cfd2b790fd77598b0543340a65c2a0e1d192327/assets/sdg_08_2_sample_data_010926.zip",
+      "download_url": "https://media.githubusercontent.com/media/NVIDIA-AI-IOT/auto-magic-calib/0cfd2b790fd77598b0543340a65c2a0e1d192327/assets/sdg_08_2_sample_data_010926.zip",
+      "filename": "sdg_08_2_sample_data_010926.zip",
+      "cache_relative_path": "vss/auto-calibration/official/0cfd2b790fd77598b0543340a65c2a0e1d192327/sdg_08_2_sample_data_010926.zip",
+      "expected_size_bytes": 160499115,
+      "expected_sha256": "0dceb0cc8324f5775b0c2007efe7a3e7c36fda10c5964b88e20712b002d98bdb",
+      "required_for_service_start": false,
+      "required_for_base_amc_acceptance": true,
+      "status": "content_locked_external_cache",
+      "archive": {
+        "member_count": 10,
+        "total_uncompressed_bytes": 160637220,
+        "total_compressed_bytes": 160496711,
+        "members": [
+          {
+            "path": "sdg_08_2_sample_data_010926/",
+            "kind": "directory",
+            "size_bytes": 0,
+            "compressed_size_bytes": 0,
+            "crc32": "00000000",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "compression_method": 0,
+            "unix_mode": "040755"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/GT.zip",
+            "kind": "file",
+            "size_bytes": 2106900,
+            "compressed_size_bytes": 2090673,
+            "crc32": "14d0a53a",
+            "sha256": "ed46296bed9d5d9b794a53837c8f0ca6423008fd9efadffae93ee5a6aeb5b528",
+            "compression_method": 8,
+            "unix_mode": "100644"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/alignment_data/",
+            "kind": "directory",
+            "size_bytes": 0,
+            "compressed_size_bytes": 0,
+            "crc32": "00000000",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "compression_method": 0,
+            "unix_mode": "040755"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/alignment_data/layout.png",
+            "kind": "file",
+            "size_bytes": 1159172,
+            "compressed_size_bytes": 1159527,
+            "crc32": "a0ec19a6",
+            "sha256": "6d597e71dcb93d3a56c7a576c4dd1ddb0c0e9c3732adb410d318dbfccc2d6804",
+            "compression_method": 8,
+            "unix_mode": "100644"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/alignment_data/alignment_data.json",
+            "kind": "file",
+            "size_bytes": 446,
+            "compressed_size_bytes": 112,
+            "crc32": "83675eaa",
+            "sha256": "7275eae406eeb6fc0472314c93b89fca9b7c850ea0c506b7a3d98e5702964b8d",
+            "compression_method": 8,
+            "unix_mode": "100644"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/videos/",
+            "kind": "directory",
+            "size_bytes": 0,
+            "compressed_size_bytes": 0,
+            "crc32": "00000000",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "compression_method": 0,
+            "unix_mode": "040755"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/videos/cam_00.mp4",
+            "kind": "file",
+            "size_bytes": 42833082,
+            "compressed_size_bytes": 42803275,
+            "crc32": "77f94cb5",
+            "sha256": "9b7da2fe8d0bfe621a83225e4386884b990a438483bc4323ba6fb7f4b2826bf6",
+            "compression_method": 8,
+            "unix_mode": "100644"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/videos/cam_01.mp4",
+            "kind": "file",
+            "size_bytes": 39171857,
+            "compressed_size_bytes": 39140506,
+            "crc32": "61e93787",
+            "sha256": "b8a0998423b8e5f09215288758af4843d83a6e7fce0a42d7ecff1a5c88b47955",
+            "compression_method": 8,
+            "unix_mode": "100644"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/videos/cam_02.mp4",
+            "kind": "file",
+            "size_bytes": 40506797,
+            "compressed_size_bytes": 40476254,
+            "crc32": "56d229a0",
+            "sha256": "1fc830f5755ae6f1f651ae12a9afb32f54f23edf1583e1ea9f5af6d55ae8f015",
+            "compression_method": 8,
+            "unix_mode": "100644"
+          },
+          {
+            "path": "sdg_08_2_sample_data_010926/videos/cam_03.mp4",
+            "kind": "file",
+            "size_bytes": 34858966,
+            "compressed_size_bytes": 34826364,
+            "crc32": "9f202225",
+            "sha256": "1e8880d7f967cb50d9604152eec3ac731b99eb809e3b0a53afc5af638d18df65",
+            "compression_method": 8,
+            "unix_mode": "100644"
+          }
+        ],
+        "content_oracle": {
+          "alignment": {
+            "path": "sdg_08_2_sample_data_010926/alignment_data/alignment_data.json",
+            "json_type": "array",
+            "camera_count": 4,
+            "points_per_camera": 3
+          },
+          "layout": {
+            "path": "sdg_08_2_sample_data_010926/alignment_data/layout.png",
+            "format": "png",
+            "width": 879,
+            "height": 1308
+          },
+          "videos": {
+            "count": 4,
+            "paths": [
+              "sdg_08_2_sample_data_010926/videos/cam_00.mp4",
+              "sdg_08_2_sample_data_010926/videos/cam_01.mp4",
+              "sdg_08_2_sample_data_010926/videos/cam_02.mp4",
+              "sdg_08_2_sample_data_010926/videos/cam_03.mp4"
+            ],
+            "iso_base_media_brand": "isom"
+          },
+          "ground_truth": {
+            "path": "sdg_08_2_sample_data_010926/GT.zip",
+            "max_buffer_bytes": 41943040,
+            "member_count": 2,
+            "total_uncompressed_bytes": 34385642,
+            "total_compressed_bytes": 2106500,
+            "members": [
+              {
+                "path": "calibration.json",
+                "kind": "file",
+                "size_bytes": 8252,
+                "compressed_size_bytes": 1437,
+                "crc32": "477ff5ee",
+                "sha256": "416ce8b0c91a0317f6360ce1c49ef17471828741666283d7cbb677b4eb8d0547",
+                "compression_method": 8,
+                "unix_mode": "100644"
+              },
+              {
+                "path": "ground_truth.json",
+                "kind": "file",
+                "size_bytes": 34377390,
+                "compressed_size_bytes": 2105063,
+                "crc32": "f678425d",
+                "sha256": "19f38b72041536448577aff171f9cc838256e6e16895af93749c2bfa97f344b0",
+                "compression_method": 8,
+                "unix_mode": "100644"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
   "notes": [
     "A null immutable_ref or expected_sha256 is a hard unavailable state, never a wildcard.",
     "The backend image is intentionally not pulled by Thor qualification tooling.",
-    "VGGT is optional for base AMC and must not block base calibration."
+    "VGGT is optional for base AMC and must not block base calibration.",
+    "The official AMC fixture is content-locked in an external cache and is independent of the excluded warehouse sample bundle."
   ]
 }

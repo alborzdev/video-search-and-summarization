@@ -238,15 +238,22 @@ class AcceptancePlanTests(unittest.TestCase):
             self.validate(inventory=inventory)
 
         unbound_create = copy.deepcopy(self.inventory)
-        del unbound_create["scenarios"][0]["actions"][0]["request_name_from"]
+        scenario = unbound_create["scenarios"][0]
+        create_id = scenario["owned_resources"][0]["created_by"]
+        create_action = next(
+            item for item in scenario["actions"] if item["id"] == create_id
+        )
+        del create_action["request_name_from"]
         with self.assertRaises(acceptance.AcceptanceConfigError):
             self.validate(inventory=unbound_create)
 
     def test_cleanup_must_be_exact_reverse_creation_order(self) -> None:
         inventory = copy.deepcopy(self.inventory)
-        core = inventory["scenarios"][0]
-        core["cleanup"] = list(reversed(core["cleanup"]))
-        core["cleanup_order"] = [item["id"] for item in core["cleanup"]]
+        scenario = next(
+            item for item in inventory["scenarios"] if len(item["cleanup"]) > 1
+        )
+        scenario["cleanup"] = list(reversed(scenario["cleanup"]))
+        scenario["cleanup_order"] = [item["id"] for item in scenario["cleanup"]]
         with self.assertRaises(acceptance.AcceptanceConfigError):
             self.validate(inventory=inventory)
 
@@ -270,6 +277,19 @@ class AcceptancePlanTests(unittest.TestCase):
         executable["policies"]["safety_classes"][0]["phase0_executable"] = True
         with self.assertRaises(acceptance.AcceptanceConfigError):
             self.validate(inventory=executable)
+
+    def test_every_http_action_is_bound_to_its_exact_reviewed_operation(self) -> None:
+        missing = copy.deepcopy(self.inventory)
+        del missing["scenarios"][0]["actions"][0]["operation_ref"]
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            self.validate(inventory=missing)
+
+        mismatched = copy.deepcopy(self.inventory)
+        mismatched["scenarios"][0]["actions"][0]["operation_ref"] = (
+            "rest:agent:POST:/chat/stream"
+        )
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            self.validate(inventory=mismatched)
 
     def test_feature_skill_and_api_drift_each_fail_coverage(self) -> None:
         missing_feature = copy.deepcopy(self.inventory)

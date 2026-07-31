@@ -112,7 +112,7 @@
       "category": "service",
       "advertised": ["file upload", "HTTP/S", "S3", "allowlisted file URI", "inline data URI", "RTSP", "dense captions", "incidents", "categories", "reasoning", "audio transcript"],
       "source_evidence": ["services/rtvi/rt-vlm/src", "services/rtvi/rt-vlm/README.md"],
-      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md"],
+      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json", "deploy/docker/thor-local/qualification/acceptance_executor.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md"],
       "thor_state": "partial",
       "runtime_state": "not_qualified",
       "gap": "The local OpenAI-compatible image path and opt-in native-audio Omni source lane are wired. Stage the Omni assets and exercise every file/URL/data/RTSP media variant, dense captions, incidents/categories/reasoning, and audio at runtime."
@@ -123,7 +123,7 @@
       "category": "api",
       "advertised": ["OpenAI-compatible chat/completions", "text-only chat", "multimodal multi-turn chat", "token SSE", "original stream API", "CV-compatible stream API", "file API", "health/metadata/models/metrics"],
       "source_evidence": ["services/rtvi/rt-vlm/src"],
-      "thor_evidence": ["deploy/docker/services/rtvi/rtvi-vlm/rtvi-vlm-docker-compose.yml"],
+      "thor_evidence": ["deploy/docker/services/rtvi/rtvi-vlm/rtvi-vlm-docker-compose.yml", "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json", "deploy/docker/thor-local/qualification/acceptance_executor.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md"],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
       "gap": "Export live OpenAPI/route metadata and exercise every operation through the supported local ingress or a documented loopback-only service port."
@@ -134,10 +134,10 @@
       "category": "model",
       "advertised": ["Cosmos Reason 1/2", "Cosmos 3 Nano/Super", "Nemotron Omni", "Qwen 3.5 and MoE", "remote OpenAI-compatible endpoint"],
       "source_evidence": ["services/rtvi/rt-vlm"],
-      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/provision-local-models.sh", "deploy/docker/thor-local/models/artifacts.lock.json", "deploy/docker/thor-local/models/verify_artifacts.py", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/audio/omni_snapshot.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/provision-local-models.sh", "deploy/docker/thor-local/models/artifacts.lock.json", "deploy/docker/thor-local/models/verify_artifacts.py", "deploy/docker/thor-local/rt-vlm/model-matrix.json", "deploy/docker/thor-local/rt-vlm/artifacts.lock.json", "deploy/docker/thor-local/rt-vlm/model_matrix.py", "deploy/docker/thor-local/rt-vlm/cr2-bf16.compose.yml", "deploy/docker/thor-local/rt-vlm/thor-cr2-bf16.sh", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/audio/omni_snapshot.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-model-matrix.md"],
       "thor_state": "partial",
       "runtime_state": "not_qualified",
-      "gap": "The private-bridge Qwen pair now passes exact membership/hash/config/index/SafeTensors locks and the audio-codec RT-VLM derivative is staged offline; the Omni snapshot/overlay contract is source-complete but its model snapshot is unstaged. Run Qwen inference through current VSS workflows, stage/qualify Omni, and add similarly immutable mutually exclusive Cosmos Reason1/2/3 Nano/Super snapshots before claiming the full advertised model matrix."
+      "gap": "The exact 11-variant advertised matrix is source-anchored and keeps every missing exact artifact unqualified. Existing official CR2 8B/2B snapshots are byte/semantic locked, and the inactive CR2 plus Omni overlays keep model trees read-only with corrected memory admission. The 8B Hugging Face revision is not claimed equivalent to NGC hf-0303, 2B is non-advertised, and current memory blocks launch; runtime-qualify each staged lane and obtain/lock the remaining exact advertised artifacts before claiming full model parity."
     },
     {
       "id": "rt-vlm-performance-observability",
@@ -156,7 +156,7 @@
       "category": "service",
       "advertised": ["video/image/text embedding", "live RTSP", "URL and inline base64 video", "Cosmos-Embed1", "Kafka/Redis/OpenTelemetry", "original and CV-compatible stream APIs", "health/metadata/models/metrics"],
       "source_evidence": ["services/rtvi/rt-embed"],
-      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/rtvi/rtvi-embed", "deploy/docker/thor-local/models/artifacts.lock.json", "deploy/docker/thor-local/models/verify_artifacts.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md"],
+      "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/rtvi/rtvi-embed", "deploy/docker/thor-local/models/artifacts.lock.json", "deploy/docker/thor-local/models/verify_artifacts.py", "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json", "deploy/docker/thor-local/qualification/acceptance_executor.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md"],
       "thor_state": "wired",
       "runtime_state": "passed_prior",
       "gap": "The 3.2.1 image, exact Cosmos revision/model tree, and Thor batch-8 Triton configs/engines pass semantic offline verification; exercise all media/API variants in the current runtime. Batch-64 files are integrity-locked but not runtime-qualified."
@@ -222,10 +222,10 @@
       "category": "calibration",
       "advertised": ["single and multi-camera calibration", "file and RTSP through VIOS", "camera pose/focal/lens distortion/rectification", "VGGT frame selection", "global ROI/tripwire", "image-coordinate export"],
       "source_evidence": ["deploy/docker/services/auto-calibration", "skills/vss-generate-video-calibration"],
-      "thor_evidence": ["deploy/docker/scripts/thor-auto-calibration.sh", "deploy/docker/thor-local/auto-calibration/artifact-inventory.json", "deploy/docker/thor-local/auto-calibration/compose.yml", "deploy/docker/thor-local/auto-calibration/tool.py", "deploy/docker/thor-local/auto-calibration/tests/test_tool.py", "deploy/docker/test-scripts/test-thor-auto-calibration.sh", "deploy/docker/test-scripts/test-auto-calibration-compose.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-thor-lane.md"],
+      "thor_evidence": ["deploy/docker/scripts/thor-auto-calibration.sh", "deploy/docker/thor-local/auto-calibration/artifact-inventory.json", "deploy/docker/thor-local/auto-calibration/compose.yml", "deploy/docker/thor-local/auto-calibration/tool.py", "deploy/docker/thor-local/auto-calibration/tests/test_tool.py", "deploy/docker/test-scripts/test-thor-auto-calibration.sh", "deploy/docker/test-scripts/test-auto-calibration-compose.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-audit.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-thor-lane.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-official-fixture.md"],
       "thor_state": "partial",
       "runtime_state": "blocked",
-      "gap": "The sample-free lane now has strict MP4/RTSP input contracts, immutable artifact inventory, loopback-only Compose, and GET-only coverage of all 26 skill-advertised operations. The backend image is absent and unlocked, VGGT is absent (optional for base AMC but required for refinement), and no real synchronized project has been run; stage those assets and qualify operator-owned data or the small AMC fixture."
+      "gap": "The warehouse-bundle-free lane has strict MP4/RTSP contracts, loopback-only Compose, GET-only coverage of all 26 skill-advertised operations, and the official 160,499,115-byte AMC fixture staged under an exact archive/content lock. The backend image is absent and unlocked, VGGT is absent (optional for base AMC but required for refinement), and no calibration job has run; stage the backend, qualify the official fixture or operator data, then separately qualify refinement if VGGT is provided."
     },
     {
       "id": "vios-core",
@@ -365,10 +365,10 @@
       "category": "deployment",
       "advertised": ["Base Compose", "Search Compose", "LVS Compose", "Alerts Compose", "Warehouse Compose", "Smart City launchable Compose"],
       "source_evidence": ["deploy/docker/compose.yml"],
-      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/scripts/thor-local.sh", "deploy/docker/thor-local/warehouse-2d.compose.yml", "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "deploy/docker/thor-local/auto-calibration/compose.yml", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh"],
+      "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/scripts/thor-local.sh", "deploy/docker/thor-local/warehouse-2d.compose.yml", "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "deploy/docker/thor-local/auto-calibration/compose.yml", "deploy/docker/thor-local/audio/omni.compose.yml", "deploy/docker/thor-local/rt-vlm/cr2-bf16.compose.yml", "deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh"],
       "thor_state": "partial",
       "runtime_state": "static_only",
-      "gap": "The 33-service unified 2D graph, including the locally packaged VIOS MCP, plus Smart City, MV3DT, Sparse4D, auto-calibration, and audio replacement graphs pass their static/offline contracts. Stage each alternate lane's remaining models/operator data and runtime-qualify the graphs under their resource-isolation gates."
+      "gap": "The 33-service unified 2D graph, including the locally packaged VIOS MCP, plus Smart City, MV3DT, Sparse4D, auto-calibration, audio, and inactive CR2 replacement graphs pass static/offline contracts. Stage each alternate lane's remaining models/operator data and runtime-qualify the graphs under their resource-isolation gates."
     },
     {
       "id": "helm",

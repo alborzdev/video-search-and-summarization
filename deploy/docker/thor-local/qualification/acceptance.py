@@ -40,6 +40,8 @@ DEFAULT_FIXTURES = SCRIPT_DIR / "fixtures.json"
 DEFAULT_PARITY_MANIFEST = REPO_ROOT / "deploy/docker/thor-local/parity/manifest.json"
 DEFAULT_API_INVENTORY = SCRIPT_DIR / "api_inventory.json"
 DEFAULT_EXPECTED_DIR = SCRIPT_DIR / "expected"
+DEFAULT_RUNTIME_INVENTORY = SCRIPT_DIR / "runtime_inventory.json"
+DEFAULT_PHASE1_INVENTORY = SCRIPT_DIR / "acceptance_phase1_inventory.json"
 
 PLAIN_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,62}$")
 RUN_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{5,31}$")
@@ -47,7 +49,7 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 UTC_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 RESOURCE_TEMPLATE_RE = re.compile(r"^\$\{namespace\}-[a-z0-9][a-z0-9-]{0,13}$")
 TARGET_FROM_RE = re.compile(
-    r"^(?P<action>[a-z0-9][a-z0-9-]{0,62})\.response\."
+    r"^(?P<action>[a-z0-9][a-z0-9-]{0,62})\.(?:request|response)\."
     r"(?P<field>[a-zA-Z][a-zA-Z0-9_.]{0,127})$"
 )
 SAFE_PATH_RE = re.compile(r"^/[^\x00-\x20\x7f?#]*$")
@@ -510,6 +512,7 @@ def _validate_action(
     blockers: set[str],
     resources: set[str],
     limits: dict[str, int],
+    operation_bindings: dict[str, tuple[str, str]],
     cleanup: bool,
 ) -> str:
     if not isinstance(action, dict):
@@ -568,6 +571,11 @@ def _validate_action(
         path = action.get("path")
         if not isinstance(path, str) or not SAFE_PATH_RE.fullmatch(path):
             raise AcceptanceConfigError("configuration_error")
+        operation_ref = action.get("operation_ref")
+        if not isinstance(operation_ref, str) or operation_bindings.get(
+            operation_ref
+        ) != (method, path):
+            raise AcceptanceConfigError("configuration_error")
         sse = action.get("sse")
         if sse is not None:
             if sse != {
@@ -587,6 +595,7 @@ def _validate_scenario(
     blocker_ids: set[str],
     fixture_ids: set[str],
     limits: dict[str, int],
+    operation_bindings: dict[str, tuple[str, str]],
 ) -> str:
     if not isinstance(scenario, dict):
         raise AcceptanceConfigError("configuration_error")
@@ -637,6 +646,7 @@ def _validate_scenario(
             blockers=scenario_blockers,
             resources=set(resources),
             limits=limits,
+            operation_bindings=operation_bindings,
             cleanup=False,
         )
         if action_id in action_by_id:
@@ -650,6 +660,7 @@ def _validate_scenario(
             blockers=scenario_blockers,
             resources=set(resources),
             limits=limits,
+            operation_bindings=operation_bindings,
             cleanup=True,
         )
         if action_id in action_by_id:
@@ -716,6 +727,68 @@ def _items_fingerprint(items: list[Any]) -> str:
     return hashlib.sha256(
         json.dumps(canonical_items, separators=(",", ":")).encode()
     ).hexdigest()
+
+
+def _build_operation_bindings(
+    api_inventory: dict[str, Any],
+    runtime_inventory: dict[str, Any],
+    expected_dir: Path,
+) -> dict[str, tuple[str, str]]:
+    """Bind each executable HTTP declaration to one reviewed operation."""
+
+    result: dict[str, tuple[str, str]] = {}
+    surfaces = api_inventory.get("surfaces")
+    if not isinstance(surfaces, list):
+        raise AcceptanceConfigError("configuration_error")
+    for surface in surfaces:
+        if not isinstance(surface, dict) or surface.get("kind") != "rest":
+            continue
+        surface_id = _plain_id(surface.get("id"))
+        expected_name = surface.get("expected_manifest")
+        if (
+            not isinstance(expected_name, str)
+            or Path(expected_name).name != expected_name
+        ):
+            raise AcceptanceConfigError("configuration_error")
+        expected = load_json(expected_dir / expected_name)
+        operations = expected.get("operations")
+        if not isinstance(operations, list):
+            raise AcceptanceConfigError("configuration_error")
+        for operation in operations:
+            if not isinstance(operation, dict):
+                raise AcceptanceConfigError("configuration_error")
+            method = operation.get("method")
+            path = operation.get("path")
+            if not isinstance(method, str) or not isinstance(path, str):
+                raise AcceptanceConfigError("configuration_error")
+            ref = f"rest:{surface_id}:{method}:{path}"
+            if ref in result:
+                raise AcceptanceConfigError("configuration_error")
+            result[ref] = (method, path)
+
+    services = runtime_inventory.get("services")
+    if not isinstance(services, list):
+        raise AcceptanceConfigError("configuration_error")
+    for service in services:
+        if not isinstance(service, dict):
+            raise AcceptanceConfigError("configuration_error")
+        service_id = _plain_id(service.get("id"))
+        probes = service.get("probes")
+        if not isinstance(probes, list):
+            raise AcceptanceConfigError("configuration_error")
+        for probe in probes:
+            if not isinstance(probe, dict):
+                raise AcceptanceConfigError("configuration_error")
+            probe_id = _plain_id(probe.get("id"))
+            method = probe.get("method", "GET")
+            path = probe.get("path")
+            if not isinstance(method, str) or not isinstance(path, str):
+                raise AcceptanceConfigError("configuration_error")
+            ref = f"runtime:{service_id}:{probe_id}"
+            if ref in result:
+                raise AcceptanceConfigError("configuration_error")
+            result[ref] = (method, path)
+    return result
 
 
 def _validate_coverage(
@@ -948,6 +1021,7 @@ def validate_inventory(
     manifest: dict[str, Any],
     api_inventory: dict[str, Any],
     expected_dir: Path,
+    runtime_inventory: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if inventory.get("schema_version") != 1 or inventory.get("mode") != "plan-only":
         raise AcceptanceConfigError("configuration_error")
@@ -958,6 +1032,11 @@ def validate_inventory(
     if not isinstance(policies, dict):
         raise AcceptanceConfigError("configuration_error")
     limits = _validate_transport_policy(policies.get("transport"))
+    if runtime_inventory is None:
+        runtime_inventory = load_json(DEFAULT_RUNTIME_INVENTORY)
+    operation_bindings = _build_operation_bindings(
+        api_inventory, runtime_inventory, expected_dir
+    )
     namespace_policy = policies.get("namespace")
     if namespace_policy != {
         "prefix": "thor-vss-accept-",
@@ -979,8 +1058,8 @@ def validate_inventory(
     if cleanup_policy != {
         "order": "strict-lifo",
         "exact_created_target_only": True,
-        "continue_after_failure": True,
         "record_every_attempt": True,
+        "stop_on_top_failure": True,
     }:
         raise AcceptanceConfigError("configuration_error")
     _validate_safety_classes(policies.get("safety_classes"))
@@ -1023,6 +1102,7 @@ def validate_inventory(
             blocker_ids=set(blockers),
             fixture_ids=set(fixture_by_id),
             limits=limits,
+            operation_bindings=operation_bindings,
         )
         if scenario_id in scenarios:
             raise AcceptanceConfigError("configuration_error")
@@ -1049,6 +1129,8 @@ def compile_plan(
     fixtures_path: Path = DEFAULT_FIXTURES,
     manifest_path: Path = DEFAULT_PARITY_MANIFEST,
     api_inventory_path: Path = DEFAULT_API_INVENTORY,
+    runtime_inventory_path: Path = DEFAULT_RUNTIME_INVENTORY,
+    phase1_inventory_path: Path = DEFAULT_PHASE1_INVENTORY,
     expected_dir: Path = DEFAULT_EXPECTED_DIR,
     run_id: str = "plan-000001",
 ) -> dict[str, Any]:
@@ -1057,8 +1139,15 @@ def compile_plan(
     fixtures = load_json(fixtures_path)
     manifest = load_json(manifest_path)
     api_inventory = load_json(api_inventory_path)
+    runtime_inventory = load_json(runtime_inventory_path)
+    phase1_inventory = load_json(phase1_inventory_path)
     validation = validate_inventory(
-        inventory, fixtures, manifest, api_inventory, expected_dir
+        inventory,
+        fixtures,
+        manifest,
+        api_inventory,
+        expected_dir,
+        runtime_inventory,
     )
     scenario_plans = []
     for scenario in inventory["scenarios"]:
@@ -1079,6 +1168,8 @@ def compile_plan(
                 "fixtures": fixtures,
                 "inventory": inventory,
                 "manifest": manifest,
+                "phase1": phase1_inventory,
+                "runtime": runtime_inventory,
             },
             sort_keys=True,
             separators=(",", ":"),
@@ -1377,11 +1468,24 @@ def append_ledger_event(
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] in {"execute", "recover"}:
+        from acceptance_executor import main as executor_main
+
+        return executor_main(argv)
+    if argv and argv[0] == "plan":
+        argv = argv[1:]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inventory", type=Path, default=DEFAULT_INVENTORY)
     parser.add_argument("--fixtures", type=Path, default=DEFAULT_FIXTURES)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_PARITY_MANIFEST)
     parser.add_argument("--api-inventory", type=Path, default=DEFAULT_API_INVENTORY)
+    parser.add_argument(
+        "--runtime-inventory", type=Path, default=DEFAULT_RUNTIME_INVENTORY
+    )
+    parser.add_argument(
+        "--phase1-inventory", type=Path, default=DEFAULT_PHASE1_INVENTORY
+    )
     parser.add_argument("--expected-dir", type=Path, default=DEFAULT_EXPECTED_DIR)
     parser.add_argument("--run-id", default="plan-000001")
     args = parser.parse_args(argv)
@@ -1391,6 +1495,8 @@ def main(argv: list[str] | None = None) -> int:
             fixtures_path=args.fixtures,
             manifest_path=args.manifest,
             api_inventory_path=args.api_inventory,
+            runtime_inventory_path=args.runtime_inventory,
+            phase1_inventory_path=args.phase1_inventory,
             expected_dir=args.expected_dir,
             run_id=args.run_id,
         )

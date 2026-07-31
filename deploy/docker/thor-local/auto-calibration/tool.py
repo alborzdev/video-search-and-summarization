@@ -1,23 +1,29 @@
 #!/usr/bin/env python3
-"""Sample-free, pull-free Thor qualification for VSS AutoMagicCalib."""
+"""Warehouse-bundle-free Thor qualification for VSS AutoMagicCalib."""
 
 from __future__ import annotations
 
 import argparse
 import fractions
 import hashlib
+import io
 import ipaddress
 import json
 import os
 import platform
 import re
+import shutil
+import stat
+import struct
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
+from zipfile import BadZipFile, LargeZipFile, ZipFile, ZipInfo
 
 
 HERE = Path(__file__).resolve().parent
@@ -26,6 +32,12 @@ INVENTORY_PATH = HERE / "artifact-inventory.json"
 UPSTREAM_COMPOSE = DOCKER_ROOT / "services" / "auto-calibration" / "compose.yml"
 THOR_COMPOSE = HERE / "compose.yml"
 CAMERA_RE = re.compile(r"^cam_(\d{2})\.mp4$")
+DEFAULT_FIXTURE_CACHE_ROOT = Path(
+    os.environ.get("VSS_AMC_FIXTURE_CACHE_ROOT")
+    or os.environ.get("XDG_CACHE_HOME")
+    or Path.home() / ".cache"
+)
+DEFAULT_FIXTURE_FREE_RESERVE_BYTES = 512 * 1024 * 1024
 REQUIRED_OPENAPI: dict[str, str] = {
     "/v1/ready": "get",
     "/v1/create_project": "post",
@@ -81,7 +93,9 @@ def _run(command: list[str], *, timeout: int = 30) -> subprocess.CompletedProces
             timeout=timeout,
         )
     except FileNotFoundError as exc:
-        raise Unavailable(f"required executable is not installed: {command[0]}") from exc
+        raise Unavailable(
+            f"required executable is not installed: {command[0]}"
+        ) from exc
     except subprocess.TimeoutExpired as exc:
         raise Unavailable(f"command timed out: {command[0]}") from exc
 
@@ -94,7 +108,9 @@ def _docker_inspect(reference: str) -> dict[str, Any] | None:
         payload = json.loads(result.stdout)
         return payload[0]
     except (json.JSONDecodeError, IndexError, TypeError) as exc:
-        raise ValidationError(f"docker returned malformed inspect data for {reference}") from exc
+        raise ValidationError(
+            f"docker returned malformed inspect data for {reference}"
+        ) from exc
 
 
 def _sha256(path: Path) -> str:
@@ -105,7 +121,435 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def inspect_inventory(data_root: Path) -> dict[str, Any]:
+def _official_fixture_declaration() -> dict[str, Any]:
+    declared = _load_json(INVENTORY_PATH)
+    try:
+        fixture = declared["fixtures"]["official_amc"]
+    except (KeyError, TypeError) as exc:
+        raise ValidationError("official AMC fixture declaration is absent") from exc
+    required_strings = (
+        "repository",
+        "commit",
+        "repository_path",
+        "canonical_url",
+        "download_url",
+        "filename",
+        "cache_relative_path",
+        "expected_sha256",
+    )
+    if any(
+        not isinstance(fixture.get(key), str) or not fixture[key]
+        for key in required_strings
+    ):
+        raise ValidationError(
+            "official AMC fixture declaration has an empty identity field"
+        )
+    if not re.fullmatch(r"[0-9a-f]{40}", fixture["commit"]):
+        raise ValidationError("official AMC fixture commit is not a full Git commit")
+    if not re.fullmatch(r"[0-9a-f]{64}", fixture["expected_sha256"]):
+        raise ValidationError("official AMC fixture SHA-256 is invalid")
+    if (
+        not isinstance(fixture.get("expected_size_bytes"), int)
+        or fixture["expected_size_bytes"] <= 0
+    ):
+        raise ValidationError("official AMC fixture size is invalid")
+    if not fixture.get("required_for_base_amc_acceptance"):
+        raise ValidationError(
+            "official AMC fixture must be required for base AMC acceptance"
+        )
+    if fixture.get("required_for_service_start"):
+        raise ValidationError(
+            "official AMC fixture must not be required merely to start AMC"
+        )
+    expected_download = (
+        "https://media.githubusercontent.com/media/"
+        f"{fixture['repository']}/{fixture['commit']}/{fixture['repository_path']}"
+    )
+    if fixture["download_url"] != expected_download:
+        raise ValidationError(
+            "official AMC fixture download URL is not commit-addressed"
+        )
+    return fixture
+
+
+def _official_fixture_path(cache_root: Path, fixture: dict[str, Any]) -> Path:
+    relative = Path(fixture["cache_relative_path"])
+    if (
+        relative.is_absolute()
+        or not relative.parts
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
+        raise ValidationError(
+            "official AMC fixture cache path must be a safe relative path"
+        )
+    root = cache_root.expanduser().resolve()
+    return root / relative
+
+
+def _safe_zip_name(info: ZipInfo, label: str) -> None:
+    name = info.filename
+    pure = PurePosixPath(name)
+    path_segments = name[:-1].split("/") if name.endswith("/") else name.split("/")
+    if (
+        not name
+        or "\x00" in name
+        or "\\" in name
+        or pure.is_absolute()
+        or any(part in {"", ".", ".."} for part in path_segments)
+        or (pure.parts and ":" in pure.parts[0])
+    ):
+        raise ValidationError(f"{label} contains an unsafe member path")
+    if info.flag_bits & 0x1:
+        raise ValidationError(f"{label} contains an encrypted member")
+    mode = (info.external_attr >> 16) & 0xFFFF
+    if stat.S_ISLNK(mode):
+        raise ValidationError(f"{label} contains a symbolic-link member")
+    if info.is_dir() != name.endswith("/"):
+        raise ValidationError(f"{label} contains an ambiguous directory member")
+    if info.is_dir() and mode and not stat.S_ISDIR(mode):
+        raise ValidationError(f"{label} directory metadata has a non-directory mode")
+    if not info.is_dir() and mode and not stat.S_ISREG(mode):
+        raise ValidationError(f"{label} file metadata has a non-file mode")
+
+
+def _zip_member_sha256(archive: ZipFile, info: ZipInfo) -> str:
+    digest = hashlib.sha256()
+    with archive.open(info, "r") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _verify_zip_members(
+    archive: ZipFile,
+    expected_members: list[dict[str, Any]],
+    *,
+    label: str,
+    expected_count: int,
+    expected_uncompressed: int,
+    expected_compressed: int,
+) -> list[dict[str, Any]]:
+    infos = archive.infolist()
+    names = [info.filename for info in infos]
+    if len(names) != len(set(names)):
+        raise ValidationError(f"{label} contains duplicate member names")
+    if len(infos) != expected_count or len(expected_members) != expected_count:
+        raise ValidationError(f"{label} member count differs from the content lock")
+    if names != [item.get("path") for item in expected_members]:
+        raise ValidationError(
+            f"{label} membership or member order differs from the content lock"
+        )
+    if sum(info.file_size for info in infos) != expected_uncompressed:
+        raise ValidationError(
+            f"{label} uncompressed byte total differs from the content lock"
+        )
+    if sum(info.compress_size for info in infos) != expected_compressed:
+        raise ValidationError(
+            f"{label} compressed byte total differs from the content lock"
+        )
+
+    observed: list[dict[str, Any]] = []
+    for info, expected in zip(infos, expected_members, strict=True):
+        _safe_zip_name(info, label)
+        kind = "directory" if info.is_dir() else "file"
+        mode = f"{((info.external_attr >> 16) & 0xFFFF):06o}"
+        crc32 = f"{info.CRC:08x}"
+        checks = {
+            "kind": kind,
+            "size_bytes": info.file_size,
+            "compressed_size_bytes": info.compress_size,
+            "crc32": crc32,
+            "compression_method": info.compress_type,
+            "unix_mode": mode,
+        }
+        for key, actual in checks.items():
+            if expected.get(key) != actual:
+                raise ValidationError(
+                    f"{label} member metadata differs for {info.filename}"
+                )
+        member_sha256 = _zip_member_sha256(archive, info)
+        if expected.get("sha256") != member_sha256:
+            raise ValidationError(f"{label} member digest differs for {info.filename}")
+        observed.append({"path": info.filename, **checks, "sha256": member_sha256})
+    return observed
+
+
+def _read_bounded_member(
+    archive: ZipFile, path: str, maximum: int, label: str
+) -> bytes:
+    try:
+        info = archive.getinfo(path)
+    except KeyError as exc:
+        raise ValidationError(f"{label} content-oracle member is absent") from exc
+    if info.file_size > maximum:
+        raise ValidationError(f"{label} content-oracle member exceeds its read bound")
+    with archive.open(info, "r") as handle:
+        payload = handle.read(maximum + 1)
+    if len(payload) > maximum:
+        raise ValidationError(f"{label} content-oracle member exceeds its read bound")
+    return payload
+
+
+def _read_member_prefix(archive: ZipFile, path: str, length: int, label: str) -> bytes:
+    try:
+        info = archive.getinfo(path)
+    except KeyError as exc:
+        raise ValidationError(f"{label} content-oracle member is absent") from exc
+    if info.is_dir() or info.file_size < length:
+        raise ValidationError(f"{label} content-oracle member is too short")
+    with archive.open(info, "r") as handle:
+        return handle.read(length)
+
+
+def _verify_fixture_content(
+    archive: ZipFile, fixture: dict[str, Any]
+) -> dict[str, Any]:
+    oracle = fixture["archive"]["content_oracle"]
+
+    alignment_oracle = oracle["alignment"]
+    alignment_bytes = _read_bounded_member(
+        archive, alignment_oracle["path"], 1024 * 1024, "alignment"
+    )
+    try:
+        alignment = json.loads(alignment_bytes)
+    except json.JSONDecodeError as exc:
+        raise ValidationError("official AMC alignment is not valid JSON") from exc
+    if alignment_oracle["json_type"] != "array" or not isinstance(alignment, list):
+        raise ValidationError(
+            "official AMC alignment root differs from the content oracle"
+        )
+    if len(alignment) != alignment_oracle["camera_count"]:
+        raise ValidationError(
+            "official AMC alignment camera count differs from the content oracle"
+        )
+    points_per_camera = alignment_oracle["points_per_camera"]
+    if any(
+        not isinstance(points, list)
+        or len(points) != points_per_camera
+        or any(
+            not isinstance(point, list)
+            or len(point) != 2
+            or any(
+                not isinstance(value, (int, float)) or isinstance(value, bool)
+                for value in point
+            )
+            for point in points
+        )
+        for points in alignment
+    ):
+        raise ValidationError(
+            "official AMC alignment point structure differs from the content oracle"
+        )
+
+    layout_oracle = oracle["layout"]
+    layout_head = _read_member_prefix(archive, layout_oracle["path"], 32, "layout")
+    if (
+        len(layout_head) < 24
+        or layout_head[:16] != b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR"
+    ):
+        raise ValidationError("official AMC layout is not a canonical PNG")
+    width, height = struct.unpack(">II", layout_head[16:24])
+    if (width, height) != (layout_oracle["width"], layout_oracle["height"]):
+        raise ValidationError(
+            "official AMC layout dimensions differ from the content oracle"
+        )
+
+    video_oracle = oracle["videos"]
+    if len(video_oracle["paths"]) != video_oracle["count"]:
+        raise ValidationError("official AMC video declaration count is inconsistent")
+    expected_brand = video_oracle["iso_base_media_brand"].encode("ascii")
+    for path in video_oracle["paths"]:
+        head = _read_member_prefix(archive, path, 32, "video")
+        if len(head) < 12 or head[4:8] != b"ftyp" or head[8:12] != expected_brand:
+            raise ValidationError(
+                "official AMC video container signature differs from the content oracle"
+            )
+
+    ground_truth_oracle = oracle["ground_truth"]
+    ground_truth_bytes = _read_bounded_member(
+        archive,
+        ground_truth_oracle["path"],
+        ground_truth_oracle["max_buffer_bytes"],
+        "ground-truth ZIP",
+    )
+    try:
+        with ZipFile(io.BytesIO(ground_truth_bytes), "r") as ground_truth:
+            ground_truth_members = _verify_zip_members(
+                ground_truth,
+                ground_truth_oracle["members"],
+                label="nested ground-truth ZIP",
+                expected_count=ground_truth_oracle["member_count"],
+                expected_uncompressed=ground_truth_oracle["total_uncompressed_bytes"],
+                expected_compressed=ground_truth_oracle["total_compressed_bytes"],
+            )
+    except (BadZipFile, LargeZipFile) as exc:
+        raise ValidationError(
+            "official AMC ground-truth member is not a safe ZIP"
+        ) from exc
+
+    return {
+        "alignment_camera_count": len(alignment),
+        "alignment_points_per_camera": points_per_camera,
+        "layout_width": width,
+        "layout_height": height,
+        "video_count": len(video_oracle["paths"]),
+        "video_brand": video_oracle["iso_base_media_brand"],
+        "ground_truth_members": ground_truth_members,
+    }
+
+
+def verify_official_fixture(
+    cache_root: Path, *, fixture_path: Path | None = None
+) -> dict[str, Any]:
+    fixture = _official_fixture_declaration()
+    target = fixture_path or _official_fixture_path(cache_root, fixture)
+    if target.is_symlink():
+        raise ValidationError(
+            "official AMC fixture cache target must not be a symbolic link"
+        )
+    if not target.is_file():
+        raise Unavailable(f"official AMC fixture is absent: {target}")
+    size = target.stat().st_size
+    if size != fixture["expected_size_bytes"]:
+        raise ValidationError("official AMC fixture size differs from the content lock")
+    archive_sha256 = _sha256(target)
+    if archive_sha256 != fixture["expected_sha256"]:
+        raise ValidationError(
+            "official AMC fixture digest differs from the content lock"
+        )
+    archive_oracle = fixture["archive"]
+    try:
+        with ZipFile(target, "r") as archive:
+            members = _verify_zip_members(
+                archive,
+                archive_oracle["members"],
+                label="official AMC fixture ZIP",
+                expected_count=archive_oracle["member_count"],
+                expected_uncompressed=archive_oracle["total_uncompressed_bytes"],
+                expected_compressed=archive_oracle["total_compressed_bytes"],
+            )
+            content = _verify_fixture_content(archive, fixture)
+    except (BadZipFile, LargeZipFile) as exc:
+        raise ValidationError("official AMC fixture is not a safe ZIP") from exc
+    return {
+        "state": "locked",
+        "path": str(target.resolve()),
+        "repository": fixture["repository"],
+        "commit": fixture["commit"],
+        "repository_path": fixture["repository_path"],
+        "canonical_url": fixture["canonical_url"],
+        "size_bytes": size,
+        "sha256": archive_sha256,
+        "archive": {
+            "member_count": len(members),
+            "total_uncompressed_bytes": sum(item["size_bytes"] for item in members),
+            "total_compressed_bytes": sum(
+                item["compressed_size_bytes"] for item in members
+            ),
+            "members": members,
+        },
+        "content": content,
+        "extracted": False,
+    }
+
+
+def _download_official_fixture(url: str, target: Path) -> None:
+    result = _run(
+        [
+            "curl",
+            "--fail-with-body",
+            "--proto",
+            "=https",
+            "--silent",
+            "--show-error",
+            "--connect-timeout",
+            "20",
+            "--max-time",
+            "900",
+            "--speed-limit",
+            "1024",
+            "--speed-time",
+            "60",
+            "--output",
+            str(target),
+            "--write-out",
+            "%{url_effective}\n%{http_code}",
+            url,
+        ],
+        timeout=930,
+    )
+    if result.returncode != 0:
+        raise Unavailable("official AMC fixture download failed")
+    output = result.stdout.strip().splitlines()
+    if output != [url, "200"]:
+        raise ValidationError(
+            "official AMC fixture download left the commit-addressed origin"
+        )
+
+
+def stage_official_fixture(
+    cache_root: Path, minimum_free_after_bytes: int
+) -> dict[str, Any]:
+    if minimum_free_after_bytes < 0:
+        raise ValidationError("minimum free space after staging cannot be negative")
+    fixture = _official_fixture_declaration()
+    target = _official_fixture_path(cache_root, fixture)
+    if target.is_symlink():
+        raise ValidationError(
+            "official AMC fixture cache target must not be a symbolic link"
+        )
+    if target.exists():
+        verified = verify_official_fixture(cache_root, fixture_path=target)
+        verified["publish_state"] = "already_staged"
+        verified["network_used"] = False
+        return verified
+
+    target.parent.mkdir(parents=True, exist_ok=True, mode=0o755)
+    free_before = shutil.disk_usage(target.parent).free
+    required_free = fixture["expected_size_bytes"] + minimum_free_after_bytes
+    if free_before < required_free:
+        raise Unavailable(
+            "insufficient free space for atomic official AMC fixture staging: "
+            f"need {required_free} bytes, have {free_before}"
+        )
+
+    descriptor, temporary_raw = tempfile.mkstemp(
+        prefix=f".{fixture['filename']}.", suffix=".partial", dir=target.parent
+    )
+    os.close(descriptor)
+    temporary = Path(temporary_raw)
+    try:
+        _download_official_fixture(fixture["download_url"], temporary)
+        verified_temporary = verify_official_fixture(cache_root, fixture_path=temporary)
+        with temporary.open("r+b") as handle:
+            handle.flush()
+            os.fsync(handle.fileno())
+        temporary.chmod(0o644)
+        os.replace(temporary, target)
+        directory_descriptor = os.open(target.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory_descriptor)
+        finally:
+            os.close(directory_descriptor)
+        verified = verify_official_fixture(cache_root, fixture_path=target)
+        if verified["sha256"] != verified_temporary["sha256"]:
+            raise ValidationError(
+                "published official AMC fixture changed after atomic rename"
+            )
+        verified.update(
+            publish_state="downloaded_verified_and_published",
+            network_used=True,
+            free_bytes_before=free_before,
+            minimum_free_after_bytes=minimum_free_after_bytes,
+        )
+        return verified
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def inspect_inventory(
+    data_root: Path, fixture_cache_root: Path = DEFAULT_FIXTURE_CACHE_ROOT
+) -> dict[str, Any]:
     declared = _load_json(INVENTORY_PATH)
     result: dict[str, Any] = {
         "schema_version": declared["schema_version"],
@@ -114,6 +558,7 @@ def inspect_inventory(data_root: Path) -> dict[str, Any]:
         "host_architecture": platform.machine(),
         "images": {},
         "models": {},
+        "fixtures": {},
     }
     for name, item in declared["images"].items():
         immutable_ref = item.get("immutable_ref")
@@ -170,6 +615,35 @@ def inspect_inventory(data_root: Path) -> dict[str, Any]:
                 size_bytes=path.stat().st_size,
             )
         result["models"][name] = details
+
+    fixture = _official_fixture_declaration()
+    fixture_path = _official_fixture_path(fixture_cache_root, fixture)
+    fixture_details: dict[str, Any] = {
+        "path": str(fixture_path),
+        "repository": fixture["repository"],
+        "commit": fixture["commit"],
+        "repository_path": fixture["repository_path"],
+        "expected_size_bytes": fixture["expected_size_bytes"],
+        "expected_sha256": fixture["expected_sha256"],
+        "required_for_service_start": fixture["required_for_service_start"],
+        "required_for_base_amc_acceptance": fixture["required_for_base_amc_acceptance"],
+    }
+    if not fixture_path.exists() and not fixture_path.is_symlink():
+        fixture_details["state"] = "absent"
+    else:
+        try:
+            verified = verify_official_fixture(
+                fixture_cache_root, fixture_path=fixture_path
+            )
+            fixture_details.update(
+                state="locked",
+                size_bytes=verified["size_bytes"],
+                sha256=verified["sha256"],
+                member_count=verified["archive"]["member_count"],
+            )
+        except (Unavailable, ValidationError) as exc:
+            fixture_details.update(state="verification_failed", reason=str(exc))
+    result["fixtures"]["official_amc"] = fixture_details
     return result
 
 
@@ -179,7 +653,9 @@ def _parse_rate(value: str | None) -> float:
     try:
         return float(fractions.Fraction(value))
     except (ValueError, ZeroDivisionError) as exc:
-        raise ValidationError(f"invalid frame-rate value from ffprobe: {value}") from exc
+        raise ValidationError(
+            f"invalid frame-rate value from ffprobe: {value}"
+        ) from exc
 
 
 def _probe_video(path: Path) -> dict[str, Any]:
@@ -211,18 +687,24 @@ def _probe_video(path: Path) -> dict[str, Any]:
             "width": int(stream["width"]),
             "height": int(stream["height"]),
             "fps": _parse_rate(stream.get("avg_frame_rate")),
-            "frames": int(stream["nb_frames"]) if stream.get("nb_frames", "N/A") != "N/A" else None,
+            "frames": int(stream["nb_frames"])
+            if stream.get("nb_frames", "N/A") != "N/A"
+            else None,
             "duration_seconds": duration,
             "start_time_seconds": start_time,
         }
     except (json.JSONDecodeError, KeyError, IndexError, TypeError, ValueError) as exc:
-        raise ValidationError(f"ffprobe returned incomplete video metadata for {path.name}") from exc
+        raise ValidationError(
+            f"ffprobe returned incomplete video metadata for {path.name}"
+        ) from exc
 
 
 def validate_video_dir(video_dir: Path) -> dict[str, Any]:
     if not video_dir.is_dir():
         raise ValidationError(f"video directory does not exist: {video_dir}")
-    candidates = sorted(path for path in video_dir.iterdir() if path.suffix.lower() == ".mp4")
+    candidates = sorted(
+        path for path in video_dir.iterdir() if path.suffix.lower() == ".mp4"
+    )
     if not candidates:
         raise ValidationError(f"no MP4 files found in {video_dir}")
     names: list[tuple[int, Path]] = []
@@ -234,11 +716,16 @@ def validate_video_dir(video_dir: Path) -> dict[str, Any]:
         else:
             unexpected.append(path.name)
     if unexpected:
-        raise ValidationError("MP4 names must be cam_00.mp4, cam_01.mp4, ...; invalid: " + ", ".join(unexpected))
+        raise ValidationError(
+            "MP4 names must be cam_00.mp4, cam_01.mp4, ...; invalid: "
+            + ", ".join(unexpected)
+        )
     expected_indices = list(range(len(names)))
     actual_indices = [index for index, _ in names]
     if actual_indices != expected_indices:
-        raise ValidationError(f"camera indices must be contiguous from 00; got {actual_indices}")
+        raise ValidationError(
+            f"camera indices must be contiguous from 00; got {actual_indices}"
+        )
 
     probes = {path.name: _probe_video(path) for _, path in names}
     baseline = probes[names[0][1].name]
@@ -251,9 +738,13 @@ def validate_video_dir(video_dir: Path) -> dict[str, Any]:
         if abs(current["fps"] - baseline["fps"]) > 0.01:
             errors.append(f"{path.name} frame rate differs from cam_00.mp4")
         if abs(current["duration_seconds"] - baseline["duration_seconds"]) > 0.1:
-            errors.append(f"{path.name} duration differs from cam_00.mp4 by more than 100 ms")
+            errors.append(
+                f"{path.name} duration differs from cam_00.mp4 by more than 100 ms"
+            )
         if abs(current["start_time_seconds"] - baseline["start_time_seconds"]) > 0.1:
-            errors.append(f"{path.name} container start time differs from cam_00.mp4 by more than 100 ms")
+            errors.append(
+                f"{path.name} container start time differs from cam_00.mp4 by more than 100 ms"
+            )
     if errors:
         raise ValidationError("; ".join(errors))
 
@@ -261,24 +752,45 @@ def validate_video_dir(video_dir: Path) -> dict[str, Any]:
     if (baseline["width"], baseline["height"]) != (1920, 1080):
         warnings.append("1920x1080 is recommended for a calibration run")
     if baseline["duration_seconds"] < 120:
-        warnings.append("2-3 minutes of moving objects is recommended for a calibration run")
-    warnings.append("matching container timing does not prove physical camera synchronization")
+        warnings.append(
+            "2-3 minutes of moving objects is recommended for a calibration run"
+        )
+    warnings.append(
+        "matching container timing does not prove physical camera synchronization"
+    )
 
     scan_dirs = [video_dir, video_dir.parent]
     attachment_names = {
-        "settings": ["calibration_settings.json", "settings.json", "config.json", "calibration_config.json"],
+        "settings": [
+            "calibration_settings.json",
+            "settings.json",
+            "config.json",
+            "calibration_config.json",
+        ],
         "alignment": ["alignment_data.json"],
         "layout": ["layout.png"],
     }
     attachments: dict[str, list[str]] = {}
     for label, filenames in attachment_names.items():
-        hits = sorted({str(directory / filename) for directory in scan_dirs for filename in filenames if (directory / filename).is_file()})
+        hits = sorted(
+            {
+                str(directory / filename)
+                for directory in scan_dirs
+                for filename in filenames
+                if (directory / filename).is_file()
+            }
+        )
         attachments[label] = hits
-    for label in ("settings", "alignment"):
-        for raw_path in attachments[label]:
-            value = _load_json(Path(raw_path))
-            if not isinstance(value, dict):
-                raise ValidationError(f"{label} JSON must contain an object: {raw_path}")
+    for raw_path in attachments["settings"]:
+        value = _load_json(Path(raw_path))
+        if not isinstance(value, dict):
+            raise ValidationError(f"settings JSON must contain an object: {raw_path}")
+    for raw_path in attachments["alignment"]:
+        value = _load_json(Path(raw_path))
+        if not isinstance(value, (dict, list)) or not value:
+            raise ValidationError(
+                f"alignment JSON must contain a non-empty object or array: {raw_path}"
+            )
     for raw_path in attachments["layout"]:
         with Path(raw_path).open("rb") as handle:
             if handle.read(8) != b"\x89PNG\r\n\x1a\n":
@@ -289,7 +801,8 @@ def validate_video_dir(video_dir: Path) -> dict[str, Any]:
         "camera_count": len(names),
         "videos": probes,
         "attachments": attachments,
-        "api_upload_ready": len(attachments["alignment"]) == 1 and len(attachments["layout"]) == 1,
+        "api_upload_ready": len(attachments["alignment"]) == 1
+        and len(attachments["layout"]) == 1,
         "warnings": warnings,
     }
 
@@ -324,7 +837,9 @@ def validate_rtsp_plan(path: Path) -> dict[str, Any]:
         except ValueError as exc:
             raise ValidationError(f"stream {name} must use a valid RTSP URL") from exc
         if parsed.scheme not in {"rtsp", "rtsps"} or not hostname:
-            raise ValidationError(f"stream {name} must use a valid rtsp:// or rtsps:// URL")
+            raise ValidationError(
+                f"stream {name} must use a valid rtsp:// or rtsps:// URL"
+            )
         try:
             port = parsed.port
         except ValueError as exc:
@@ -335,12 +850,17 @@ def validate_rtsp_plan(path: Path) -> dict[str, Any]:
                 "scheme": parsed.scheme,
                 "host_present": True,
                 "port": port,
-                "credentials_present": parsed.username is not None or parsed.password is not None,
+                "credentials_present": parsed.username is not None
+                or parsed.password is not None,
                 "sensor_id_present": stream.get("sensor_id") is not None,
             }
         )
     attachments: dict[str, str | None] = {}
-    for key, kind in (("settings_json", "json"), ("alignment_json", "json"), ("layout_png", "png")):
+    for key, kind in (
+        ("settings_json", "json"),
+        ("alignment_json", "json"),
+        ("layout_png", "png"),
+    ):
         raw_path = plan.get(key)
         if raw_path is None:
             attachments[key] = None
@@ -354,8 +874,14 @@ def validate_rtsp_plan(path: Path) -> dict[str, Any]:
             raise ValidationError(f"{key} does not exist: {attachment}")
         if kind == "json":
             value = _load_json(attachment)
-            if not isinstance(value, dict):
+            if key == "settings_json" and not isinstance(value, dict):
                 raise ValidationError(f"{key} must contain a JSON object: {attachment}")
+            if key == "alignment_json" and (
+                not isinstance(value, (dict, list)) or not value
+            ):
+                raise ValidationError(
+                    f"{key} must contain a non-empty JSON object or array: {attachment}"
+                )
         else:
             with attachment.open("rb") as handle:
                 if handle.read(8) != b"\x89PNG\r\n\x1a\n":
@@ -368,8 +894,12 @@ def validate_rtsp_plan(path: Path) -> dict[str, Any]:
         "camera_count": len(streams),
         "streams": safe_streams,
         "attachments": attachments,
-        "api_upload_ready": attachments["alignment_json"] is not None and attachments["layout_png"] is not None,
-        "warnings": ["URL credentials are intentionally redacted", "reachability is checked only during GET-only qualification"],
+        "api_upload_ready": attachments["alignment_json"] is not None
+        and attachments["layout_png"] is not None,
+        "warnings": [
+            "URL credentials are intentionally redacted",
+            "reachability is checked only during GET-only qualification",
+        ],
     }
 
 
@@ -407,7 +937,9 @@ def create_fixture(output: Path, seconds: int, size: str, fps: int) -> dict[str,
         ]
         result = _run(command, timeout=90)
         if result.returncode != 0:
-            raise Unavailable(f"ffmpeg could not create {target.name}: {result.stderr.strip()}")
+            raise Unavailable(
+                f"ffmpeg could not create {target.name}: {result.stderr.strip()}"
+            )
     metadata = {
         "scope": "media-contract preflight only; not an AMC accuracy or completion fixture",
         "camera_count": 2,
@@ -420,12 +952,22 @@ def create_fixture(output: Path, seconds: int, size: str, fps: int) -> dict[str,
             "no alignment_data.json or layout.png",
         ],
     }
-    (output / "fixture.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    (output / "fixture.json").write_text(
+        json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
+    )
     return {"fixture_dir": str(output.resolve()), **metadata}
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
-    def redirect_request(self, request: Any, file_pointer: Any, code: int, message: str, headers: Any, new_url: str) -> None:
+    def redirect_request(
+        self,
+        request: Any,
+        file_pointer: Any,
+        code: int,
+        message: str,
+        headers: Any,
+        new_url: str,
+    ) -> None:
         return None
 
 
@@ -434,7 +976,9 @@ def _local_opener() -> urllib.request.OpenerDirector:
 
 
 def _get_json(url: str, label: str, timeout: float) -> tuple[int, Any]:
-    request = urllib.request.Request(url, method="GET", headers={"Accept": "application/json"})
+    request = urllib.request.Request(
+        url, method="GET", headers={"Accept": "application/json"}
+    )
     try:
         with _local_opener().open(request, timeout=timeout) as response:
             body = response.read(8 * 1024 * 1024)
@@ -477,7 +1021,9 @@ def _numeric_loopback_origin(raw: str, label: str, allowed_paths: set[str]) -> s
         hostname = parsed.hostname
         port = parsed.port
     except (TypeError, ValueError) as exc:
-        raise ValidationError(f"{label} must be a valid numeric loopback origin") from exc
+        raise ValidationError(
+            f"{label} must be a valid numeric loopback origin"
+        ) from exc
     if parsed.scheme not in {"http", "https"}:
         raise ValidationError(f"{label} must use http or https")
     if parsed.username is not None or parsed.password is not None:
@@ -509,7 +1055,9 @@ def _missing_openapi_operations(openapi_paths: dict[str, Any]) -> list[str]:
         if not isinstance(path, str) or not isinstance(methods, dict):
             continue
         normalized = _normalized_openapi_path(path)
-        available.setdefault(normalized, set()).update(str(method).lower() for method in methods)
+        available.setdefault(normalized, set()).update(
+            str(method).lower() for method in methods
+        )
     missing = []
     for path, method in REQUIRED_OPENAPI.items():
         if method not in available.get(_normalized_openapi_path(path), set()):
@@ -517,18 +1065,32 @@ def _missing_openapi_operations(openapi_paths: dict[str, Any]) -> list[str]:
     return missing
 
 
-def qualify_runtime(backend_url: str, ui_url: str, vios_url: str | None, timeout: float) -> dict[str, Any]:
-    backend_origin = _numeric_loopback_origin(backend_url, "AMC backend origin", {"", "/", "/v1", "/v1/"})
+def qualify_runtime(
+    backend_url: str, ui_url: str, vios_url: str | None, timeout: float
+) -> dict[str, Any]:
+    backend_origin = _numeric_loopback_origin(
+        backend_url, "AMC backend origin", {"", "/", "/v1", "/v1/"}
+    )
     ui_origin = _numeric_loopback_origin(ui_url, "AMC UI origin", {"", "/"})
     vios_origin = (
-        _numeric_loopback_origin(vios_url, "VIOS origin", {"", "/"}) if vios_url is not None else None
+        _numeric_loopback_origin(vios_url, "VIOS origin", {"", "/"})
+        if vios_url is not None
+        else None
     )
     backend = f"{backend_origin}/v1"
-    ready_status, ready = _get_json(f"{backend}/ready", "AMC readiness endpoint", timeout)
+    ready_status, ready = _get_json(
+        f"{backend}/ready", "AMC readiness endpoint", timeout
+    )
     if ready_status != 200 or not isinstance(ready, dict) or ready.get("code") != 0:
         raise ValidationError("AMC readiness contract did not return code 0")
-    openapi_status, openapi = _get_json(f"{backend_origin}/openapi.json", "AMC OpenAPI endpoint", timeout)
-    if openapi_status != 200 or not isinstance(openapi, dict) or not isinstance(openapi.get("paths"), dict):
+    openapi_status, openapi = _get_json(
+        f"{backend_origin}/openapi.json", "AMC OpenAPI endpoint", timeout
+    )
+    if (
+        openapi_status != 200
+        or not isinstance(openapi, dict)
+        or not isinstance(openapi.get("paths"), dict)
+    ):
         raise ValidationError("AMC OpenAPI document is missing paths")
     missing = _missing_openapi_operations(openapi["paths"])
     if missing:
@@ -544,7 +1106,9 @@ def qualify_runtime(backend_url: str, ui_url: str, vios_url: str | None, timeout
     }
     if vios_origin:
         vios_status, sensors = _get_json(
-            f"{vios_origin}/vst/api/v1/sensor/list", "VIOS sensor-list endpoint", timeout
+            f"{vios_origin}/vst/api/v1/sensor/list",
+            "VIOS sensor-list endpoint",
+            timeout,
         )
         if vios_status != 200:
             raise ValidationError(f"VIOS sensor list returned HTTP {vios_status}")
@@ -554,45 +1118,68 @@ def qualify_runtime(backend_url: str, ui_url: str, vios_url: str | None, timeout
 
 def _assert_base_artifacts(inventory: dict[str, Any], require_vggt: bool) -> None:
     if inventory["host_architecture"] not in {"aarch64", "arm64"}:
-        raise ValidationError(f"Thor lane requires ARM64; host is {inventory['host_architecture']}")
-    bad = [name for name, item in inventory["images"].items() if item["required"] and item["state"] != "locked"]
+        raise ValidationError(
+            f"Thor lane requires ARM64; host is {inventory['host_architecture']}"
+        )
+    bad = [
+        name
+        for name, item in inventory["images"].items()
+        if item["required"] and item["state"] != "locked"
+    ]
     if bad:
-        raise Unavailable("required images are not staged and content-locked: " + ", ".join(bad))
+        raise Unavailable(
+            "required images are not staged and content-locked: " + ", ".join(bad)
+        )
     if require_vggt and inventory["models"]["vggt"]["state"] != "locked":
-        raise Unavailable("VGGT refinement requested but vggt_1B_commercial.pt is not content-locked")
+        raise Unavailable(
+            "VGGT refinement requested but vggt_1B_commercial.pt is not content-locked"
+        )
 
 
 def preflight(args: argparse.Namespace) -> dict[str, Any]:
-    inventory = inspect_inventory(args.data_root)
-    inputs = validate_video_dir(args.input) if args.mode == "videos" else validate_rtsp_plan(args.input)
+    inventory = inspect_inventory(args.data_root, args.fixture_cache_root)
+    inputs = (
+        validate_video_dir(args.input)
+        if args.mode == "videos"
+        else validate_rtsp_plan(args.input)
+    )
     _assert_base_artifacts(inventory, args.require_vggt)
     projects = args.projects_dir
     if not projects.is_dir():
         raise Unavailable(f"projects directory is absent: {projects}")
     if not os.access(projects, os.W_OK | os.X_OK):
-        raise Unavailable(f"projects directory is not writable by the current user: {projects}")
+        raise Unavailable(
+            f"projects directory is not writable by the current user: {projects}"
+        )
     if not inputs["api_upload_ready"]:
-        raise Unavailable("input is valid, but alignment_data.json and layout.png are required before API upload")
+        raise Unavailable(
+            "input is valid, but alignment_data.json and layout.png are required before API upload"
+        )
     return {
         "inventory": inventory,
         "inputs": inputs,
         "projects_dir": str(projects.resolve()),
-        "warnings": ["current-user writability does not replace the post-start container UID 1000 write test"],
+        "warnings": [
+            "current-user writability does not replace the post-start container UID 1000 write test"
+        ],
         "state": "ready_for_user_authorized_launch",
     }
 
 
-def print_plan(data_root: Path) -> dict[str, Any]:
-    inventory = inspect_inventory(data_root)
+def print_plan(data_root: Path, fixture_cache_root: Path) -> dict[str, Any]:
+    inventory = inspect_inventory(data_root, fixture_cache_root)
     backend = inventory["images"]["backend"]
     ui = inventory["images"]["ui"]
+    official_fixture = inventory["fixtures"]["official_amc"]
     return {
         "scope": "standalone AMC backend and UI; no warehouse sample bundle",
         "compose_files": [str(UPSTREAM_COMPOSE), str(THOR_COMPOSE)],
         "backend_image": backend,
         "ui_image": ui,
+        "official_fixture": official_fixture,
         "base_modes": ["custom synchronized MP4", "RTSP capture through VIOS"],
         "base_amc_requires_vggt": False,
+        "official_fixture_requires_warehouse_bundle": False,
         "launch_policy": "no lifecycle action is performed; preflight must pass before an operator runs compose with --pull never --no-build",
     }
 
@@ -605,31 +1192,69 @@ def build_parser() -> argparse.ArgumentParser:
         default=Path(os.environ.get("VSS_DATA_DIR", DOCKER_ROOT / "data-dir")),
         help="VSS data root (default: VSS_DATA_DIR or deploy/docker/data-dir)",
     )
+    parser.add_argument(
+        "--fixture-cache-root",
+        type=Path,
+        default=DEFAULT_FIXTURE_CACHE_ROOT,
+        help="external cache root for the content-locked official AMC fixture",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
-    subparsers.add_parser("inventory", help="inspect declared artifacts without network access")
-    subparsers.add_parser("plan", help="show the sample-free standalone lane")
+    subparsers.add_parser(
+        "inventory", help="inspect declared artifacts without network access"
+    )
+    subparsers.add_parser("plan", help="show the warehouse-bundle-free standalone lane")
+    subparsers.add_parser(
+        "verify-official-fixture",
+        help="offline verification of the content-locked official AMC fixture",
+    )
+    stage_fixture = subparsers.add_parser(
+        "stage-official-fixture",
+        help="download, verify, and atomically publish the commit-addressed official AMC fixture",
+    )
+    stage_fixture.add_argument(
+        "--minimum-free-after-bytes",
+        type=int,
+        default=DEFAULT_FIXTURE_FREE_RESERVE_BYTES,
+        help="minimum bytes that must remain free after the atomic fixture download",
+    )
 
-    videos = subparsers.add_parser("validate-videos", help="validate custom synchronized MP4 containers")
+    videos = subparsers.add_parser(
+        "validate-videos", help="validate custom synchronized MP4 containers"
+    )
     videos.add_argument("input", type=Path)
-    rtsp = subparsers.add_parser("validate-rtsp", help="validate and redact a custom RTSP JSON plan")
+    rtsp = subparsers.add_parser(
+        "validate-rtsp", help="validate and redact a custom RTSP JSON plan"
+    )
     rtsp.add_argument("input", type=Path)
 
-    fixture = subparsers.add_parser("fixture", help="create a tiny media-contract-only fixture")
+    fixture = subparsers.add_parser(
+        "fixture", help="create a tiny media-contract-only fixture"
+    )
     fixture.add_argument("output", type=Path)
     fixture.add_argument("--seconds", type=int, default=6)
     fixture.add_argument("--size", default="640x360")
     fixture.add_argument("--fps", type=int, default=15)
 
-    pf = subparsers.add_parser("preflight", help="fail closed before any operator-authorized launch")
+    pf = subparsers.add_parser(
+        "preflight", help="fail closed before any operator-authorized launch"
+    )
     pf.add_argument("--mode", choices=("videos", "rtsp"), required=True)
     pf.add_argument("--input", type=Path, required=True)
-    pf.add_argument("--projects-dir", type=Path, default=DOCKER_ROOT / "services" / "auto-calibration" / "projects")
+    pf.add_argument(
+        "--projects-dir",
+        type=Path,
+        default=DOCKER_ROOT / "services" / "auto-calibration" / "projects",
+    )
     pf.add_argument("--require-vggt", action="store_true")
 
-    qualify = subparsers.add_parser("qualify", help="run GET-only readiness and API-contract probes")
+    qualify = subparsers.add_parser(
+        "qualify", help="run GET-only readiness and API-contract probes"
+    )
     qualify.add_argument("--backend-url", default="http://127.0.0.1:8010/v1")
     qualify.add_argument("--ui-url", default="http://127.0.0.1:5000")
-    qualify.add_argument("--vios-url", help="also verify VIOS sensor-list reachability for RTSP mode")
+    qualify.add_argument(
+        "--vios-url", help="also verify VIOS sensor-list reachability for RTSP mode"
+    )
     qualify.add_argument("--timeout", type=float, default=2.0)
     return parser
 
@@ -638,9 +1263,15 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         if args.command == "inventory":
-            payload = inspect_inventory(args.data_root)
+            payload = inspect_inventory(args.data_root, args.fixture_cache_root)
         elif args.command == "plan":
-            payload = print_plan(args.data_root)
+            payload = print_plan(args.data_root, args.fixture_cache_root)
+        elif args.command == "verify-official-fixture":
+            payload = verify_official_fixture(args.fixture_cache_root)
+        elif args.command == "stage-official-fixture":
+            payload = stage_official_fixture(
+                args.fixture_cache_root, args.minimum_free_after_bytes
+            )
         elif args.command == "validate-videos":
             payload = validate_video_dir(args.input)
         elif args.command == "validate-rtsp":
@@ -650,16 +1281,24 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "preflight":
             payload = preflight(args)
         elif args.command == "qualify":
-            payload = qualify_runtime(args.backend_url, args.ui_url, args.vios_url, args.timeout)
+            payload = qualify_runtime(
+                args.backend_url, args.ui_url, args.vios_url, args.timeout
+            )
         else:  # pragma: no cover
             raise AssertionError(args.command)
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 0
     except Unavailable as exc:
-        print(json.dumps({"state": "unavailable", "reason": str(exc)}, indent=2), file=sys.stderr)
+        print(
+            json.dumps({"state": "unavailable", "reason": str(exc)}, indent=2),
+            file=sys.stderr,
+        )
         return 2
     except ValidationError as exc:
-        print(json.dumps({"state": "failed", "reason": str(exc)}, indent=2), file=sys.stderr)
+        print(
+            json.dumps({"state": "failed", "reason": str(exc)}, indent=2),
+            file=sys.stderr,
+        )
         return 1
 
 
