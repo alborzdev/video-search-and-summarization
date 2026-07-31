@@ -13,8 +13,14 @@ The default deployment expects OpenAI-compatible model servers on the Thor host:
 
 | Role | Endpoint | Model | Notes |
 | --- | --- | --- | --- |
-| LLM | `http://127.0.0.1:8000` | `datasheet-chat` | Qwen text model |
-| VLM | `http://127.0.0.1:8001` | `datasheet-vision` | Qwen vision model, up to four images per request |
+| LLM | `http://DOCKER_BRIDGE:8000` | `datasheet-chat` | Qwen text model |
+| VLM | `http://DOCKER_BRIDGE:8003` | `datasheet-vision` | Qwen vision model, up to four images per request |
+
+`DOCKER_BRIDGE` is detected from `docker0` (normally `172.17.0.1`) and is
+private to this host. This lets both host-network VSS services and bridged RTVI
+reach the same local models without publishing either endpoint on a physical
+LAN interface. When Docker has no default bridge, the launcher falls back to
+loopback and rewrites only RTVI's VLM route to `HOST_IP`.
 
 Both defaults use the dedicated `vllm` provider profile. Set
 `THOR_LOCAL_LLM_MODEL_TYPE` or `THOR_LOCAL_VLM_MODEL_TYPE` to `nim`, `openai`,
@@ -36,6 +42,19 @@ using footage or a cloud service:
 tiny generated pixels, a bounded response, and the protected local API key; it
 does not print prompts, model output, or credentials.
 
+The exact qualified Qwen snapshots and ARM64 vLLM image can be provisioned
+from already-staged local assets without a pull or model download:
+
+```bash
+deploy/docker/thor-local/provision-local-models.sh provision
+deploy/docker/thor-local/provision-local-models.sh status
+```
+
+Provisioning is additive and idempotent. It never removes or recreates an
+existing container; a mismatched existing container stops the operation with
+an explicit error. Containers are created stopped and are started sequentially
+by `thor-local.sh restart` after the unified-memory cache cleaner is active.
+
 Moondream's native `caption` and `query` skills are useful for one still image,
 but they are not this multi-image OpenAI chat contract. A stock Moondream
 server therefore is not a drop-in VLM for live chunks, verification, or video
@@ -43,14 +62,13 @@ reports. It can be used only behind an adapter that implements the contract
 and defines ordered multi-image behavior; otherwise keep Qwen-VL (or another
 qualified multi-image VLM) for the full product.
 
-The VSS agent uses host networking and reaches the operator model URLs through
-loopback. RTVI-VLM uses a Compose bridge, so the launcher rewrites only that
-proxy's upstream authority to `HOST_IP` while preserving the same VLM port and
-path. That bridge requirement means a VLM server may need to listen beyond
-loopback. Use the physical-interface firewall below to retain bridge access
-without making the model or internal VSS APIs reachable from a tradeshow LAN.
-Override the endpoint or model variables documented by `scripts/thor-local.sh
-help` when using another OpenAI-compatible provider.
+The VSS agent uses host networking and reaches the operator models through
+loopback or the private Docker bridge. RTVI-VLM uses a Compose bridge, so the
+launcher preserves a private bridge endpoint or rewrites only a loopback
+authority to `HOST_IP` while keeping the same VLM port and path. Use the
+physical-interface firewall below whenever a model must listen on `HOST_IP`.
+Override the endpoint or model variables documented by
+`scripts/thor-local.sh help` when using another OpenAI-compatible provider.
 
 Sampled video frames are divided into ordered groups of `VLM_MAX_FRAMES_PER_REQUEST` before VLM inference. The segment responses are labeled and passed back to the agent for synthesis, so a provider with a small multimodal limit does not silently lose later frames.
 
@@ -71,7 +89,8 @@ OpenAI providers do not receive the vLLM chat-template extension.
 From `deploy/docker`:
 
 ```bash
-./scripts/thor-local.sh preflight
+sudo -b /usr/local/bin/sys-cache-cleaner.sh
+./thor-local/provision-local-models.sh provision
 install -d -m 700 ~/.config/cti-vss
 read -rsp 'NGC API key: ' NGC_CLI_API_KEY; echo
 printf '%s\n' "$NGC_CLI_API_KEY" > ~/.config/cti-vss/ngc-api-key
@@ -79,6 +98,11 @@ chmod 600 ~/.config/cti-vss/ngc-api-key
 unset NGC_CLI_API_KEY
 ./scripts/thor-local.sh up
 ```
+
+The model provisioner is offline-only and requires the pinned vLLM image and
+Qwen snapshots to have been staged on the host already. It validates those
+assets before creating anything. `up` starts the model containers sequentially
+and runs the full preflight before entering connected VSS image/model staging.
 
 The `read -s` prompt does not echo the key, and the protected key file lives outside the repository. Do not paste the key into chat or put it in a repository file. The generated profile environment is ignored by Git but should still be treated as a secret-bearing local artifact.
 

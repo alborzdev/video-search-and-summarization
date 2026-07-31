@@ -916,9 +916,9 @@ _thor_contract_out="$(NGC_CLI_API_KEY=must-not-appear NGC_API_KEY=also-must-not-
 set -e
 if grep -q "UI: port 3001, title 'THOR LOCAL VSS', subtitle 'OFFLINE VIDEO INTELLIGENCE'" <<<"${_thor_contract_out}" &&
    grep -q "RTSP add control: true" <<<"${_thor_contract_out}" &&
-   grep -q "LLM: datasheet-chat via vllm at http://127.0.0.1:8000" <<<"${_thor_contract_out}" &&
-   grep -q "VLM: datasheet-vision via vllm at http://127.0.0.1:8001" <<<"${_thor_contract_out}" &&
-   grep -Eq "RTVI-VLM upstream: http://[^/]+:8001/v1 \(bridge-to-host\)" <<<"${_thor_contract_out}" &&
+   grep -Eq "LLM: datasheet-chat via vllm at http://[^/]+:8000" <<<"${_thor_contract_out}" &&
+   grep -Eq "VLM: datasheet-vision via vllm at http://[^/]+:8003" <<<"${_thor_contract_out}" &&
+   grep -Eq "RTVI-VLM upstream: http://[^/]+:8003/v1 \(bridge-to-host\)" <<<"${_thor_contract_out}" &&
    grep -q "Blueprint: bp_developer_thor_full (AGX-THOR, mode 2d)" <<<"${_thor_contract_out}" &&
    grep -q "Compose profile: bp_developer_thor_full_2d" <<<"${_thor_contract_out}" &&
    grep -q "Intelligence ports: embed=8017 (batch 8), RTVI-VLM=8018 (batch 1, processes 1), perception=9000, analytics=8081, alerts=9080, LVS=38111" <<<"${_thor_contract_out}" &&
@@ -1008,12 +1008,13 @@ if grep -q 'verify-offline)' "${_thor_local}" &&
    grep -q "docker image inspect --format '{{.Id}}'" "${_thor_local}" &&
    grep -q 'siglip_v2_v1.1_weights.bin' "${_thor_local}" &&
    grep -q 'require_staged_embedding_cache' "${_thor_local}" &&
+   grep -q 'require_staged_local_models' "${_thor_local}" &&
    grep -q -- '--network none' "${_thor_local}" &&
    grep -q 'cosmos_embed1_video_NVIDIA_Thor_${RTVI_EMBED_BATCH_SIZE}_fp16.engine' "${_thor_local}"; then
-  echo "PASS: Thor offline verifier pins images and host artifacts and validates network-isolated embedding caches"
+  echo "PASS: Thor offline verifier pins images, host models, local providers, and embedding caches"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: Thor offline verifier must validate image IDs, host digests, and the persistent Cosmos-Embed cache"
+  echo "FAIL: Thor offline verifier must validate image IDs, host digests, local providers, and the persistent Cosmos-Embed cache"
   ((TESTS_FAILED++)) || true
 fi
 
@@ -1028,7 +1029,7 @@ else
 fi
 
 if grep -q 'THOR_LOCAL_LLM_CONTAINER="${THOR_LOCAL_LLM_CONTAINER:-datasheet-vllm-30}"' "${_thor_local}" &&
-   grep -q 'THOR_LOCAL_VLM_CONTAINER="${THOR_LOCAL_VLM_CONTAINER:-datasheet-qwen3-vl}"' "${_thor_local}" &&
+   grep -q 'THOR_LOCAL_VLM_CONTAINER="${THOR_LOCAL_VLM_CONTAINER:-cti-vss-qwen3-vl}"' "${_thor_local}" &&
    grep -q 'ensure_local_model_is_running LLM' "${_thor_local}" &&
    grep -q 'ensure_local_model_is_running VLM' "${_thor_local}" &&
    grep -q 'wait_for_model' "${_thor_local}"; then

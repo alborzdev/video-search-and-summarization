@@ -8,6 +8,7 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../.." && pwd)"
 thor_local="${repo_root}/deploy/docker/scripts/thor-local.sh"
+model_provisioner="${repo_root}/deploy/docker/thor-local/provision-local-models.sh"
 temporary_root="$(mktemp -d)"
 trap 'rm -rf -- "${temporary_root}"' EXIT
 failures=0
@@ -105,12 +106,42 @@ documentation_is_honest_about_moondream() {
     grep -q "physical-interface firewall" "${repo_root}/deploy/docker/thor-local/README.md"
 }
 
+private_model_endpoint_contract() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    validate_thor_full_contract
+    [[ "$LLM_ENDPOINT_URL" == http://127.0.0.1:* || "$LLM_ENDPOINT_URL" == http://172.17.0.1:* ]]
+  ' _ "${thor_local}"
+}
+
+physical_model_endpoint_is_rejected() {
+  local physical_ip
+  physical_ip="$(ip route get 1.1.1.1 | awk '/src/ {for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}')"
+  [[ -n "${physical_ip}" ]] || return 1
+  ! LLM_ENDPOINT_URL="http://${physical_ip}:18000" THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    validate_thor_full_contract
+  ' _ "${thor_local}" >/dev/null 2>&1
+}
+
+model_provisioner_is_pinned_and_offline() {
+  grep -q 'ghcr.io/nvidia-ai-iot/vllm@sha256:6402d5ac90223b9ba4434228f98aec798c5a8b942e770ee47528b4148e923105' "${model_provisioner}" &&
+    grep -q '95a723d08a9490559dae23d0cff1d9466213d989' "${model_provisioner}" &&
+    grep -q '9cdc6310a8cb770ce18efaf4e9935334512aee45' "${model_provisioner}" &&
+    grep -q 'HF_HUB_OFFLINE=1' "${model_provisioner}" &&
+    ! grep -Eq 'docker (pull|rm)|docker container rm' "${model_provisioner}"
+}
+
 check "shell syntax" bash -n "${thor_local}"
+check "model provisioner shell syntax" bash -n "${model_provisioner}"
 check "help exposes model and security contracts" help_exposes_contract_and_security
 check "firewall plan is interface-scoped and does not touch SSH" firewall_plan_is_narrow
 check "firewall refuses loopback/container interfaces" firewall_rejects_container_interfaces
 check "mock provider contract requires four images and hides API key from argv" mock_model_contract_accepts_four_images_without_key_in_argv
 check "operator docs state Moondream and LAN limitations" documentation_is_honest_about_moondream
+check "model endpoints default to loopback or the private Docker bridge" private_model_endpoint_contract
+check "physical model endpoints are rejected from the operator contract" physical_model_endpoint_is_rejected
+check "model provisioner pins image and revisions and remains offline" model_provisioner_is_pinned_and_offline
 
 if (( failures > 0 )); then
   printf '%d security/model test(s) failed\n' "${failures}" >&2

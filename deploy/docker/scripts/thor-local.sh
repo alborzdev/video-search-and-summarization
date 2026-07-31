@@ -21,6 +21,7 @@ generated_env="${THOR_LOCAL_GENERATED_ENV_FILE:-${deployment_dir}/thor-local/gen
 ngc_key_file="${NGC_CLI_API_KEY_FILE:-${HOME}/.config/cti-vss/ngc-api-key}"
 domain_pack_dir="${deployment_dir}/thor-local/domain-packs"
 domain_pack_tool="${domain_pack_dir}/domain_pack.py"
+local_model_provisioner="${deployment_dir}/thor-local/provision-local-models.sh"
 domain_pack_state="${THOR_LOCAL_DOMAIN_STATE_FILE:-${deployment_dir}/thor-local/.domain-pack-state.json}"
 domain_pack_current_file="${THOR_LOCAL_DOMAIN_CURRENT_FILE:-${deployment_dir}/thor-local/.domain-pack-current}"
 
@@ -30,11 +31,16 @@ data_directory="${VSS_DATA_DIR}"
 export HOST_IP="${HOST_IP:-$(ip route get 1.1.1.1 | awk '/src/ {for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}')}"
 export EXTERNAL_IP="${EXTERNAL_IP:-${HOST_IP}}"
 export COMPOSE_FILE="${deployment_dir}/compose.yml:${deployment_dir}/thor-local/compose.yml"
-export LLM_ENDPOINT_URL="${LLM_ENDPOINT_URL:-http://127.0.0.1:8000}"
-export VLM_ENDPOINT_URL="${VLM_ENDPOINT_URL:-http://127.0.0.1:8001}"
-# Host-network services can use the loopback-only operator endpoint directly.
-# RTVI-VLM runs on a Compose bridge, so give that proxy the same endpoint with
-# only the loopback authority rewritten to Thor's private host address.
+docker_bridge_ip="$(ip -4 -o address show docker0 2>/dev/null | awk 'NR == 1 {split($4, address, "/"); print address[1]}')"
+export THOR_LOCAL_MODEL_BIND_HOST="${THOR_LOCAL_MODEL_BIND_HOST:-${docker_bridge_ip:-127.0.0.1}}"
+# Bind operator-managed model servers to Docker's private host bridge when it
+# exists. Host-network VSS services and bridged RTVI can both reach this
+# address, while the models remain absent from physical/LAN interfaces.
+export LLM_ENDPOINT_URL="${LLM_ENDPOINT_URL:-http://${THOR_LOCAL_MODEL_BIND_HOST}:8000}"
+export VLM_ENDPOINT_URL="${VLM_ENDPOINT_URL:-http://${THOR_LOCAL_MODEL_BIND_HOST}:8003}"
+# Host-network services can use the operator endpoint directly. RTVI-VLM runs
+# on a Compose bridge, so rewrite a loopback-only endpoint to Thor's private
+# host address; a Docker-bridge endpoint already works from both sides.
 export VLM_CONTAINER_ENDPOINT_URL="${VLM_CONTAINER_ENDPOINT_URL:-${VLM_ENDPOINT_URL}}"
 VLM_CONTAINER_ENDPOINT_URL="$(python3 - "${VLM_CONTAINER_ENDPOINT_URL}" "${HOST_IP}" <<'PY'
 import ipaddress
@@ -60,7 +66,7 @@ export THOR_LOCAL_LLM_MODEL_TYPE="${THOR_LOCAL_LLM_MODEL_TYPE:-vllm}"
 export THOR_LOCAL_VLM_MODEL_TYPE="${THOR_LOCAL_VLM_MODEL_TYPE:-vllm}"
 export THOR_LOCAL_VA_MCP_LLM_MODEL_TYPE="${THOR_LOCAL_VA_MCP_LLM_MODEL_TYPE:-openai}"
 export THOR_LOCAL_LLM_CONTAINER="${THOR_LOCAL_LLM_CONTAINER:-datasheet-vllm-30}"
-export THOR_LOCAL_VLM_CONTAINER="${THOR_LOCAL_VLM_CONTAINER:-datasheet-qwen3-vl}"
+export THOR_LOCAL_VLM_CONTAINER="${THOR_LOCAL_VLM_CONTAINER:-cti-vss-qwen3-vl}"
 export THOR_LOCAL_MODEL_START_TIMEOUT_SECONDS="${THOR_LOCAL_MODEL_START_TIMEOUT_SECONDS:-900}"
 export THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS="${THOR_LOCAL_MODEL_CONTRACT_TIMEOUT_SECONDS:-120}"
 export OPENAI_API_KEY="${OPENAI_API_KEY:-local}"
@@ -175,6 +181,7 @@ Commands:
 
 Optional environment overrides:
   LLM_ENDPOINT_URL, VLM_ENDPOINT_URL, VLM_CONTAINER_ENDPOINT_URL,
+  THOR_LOCAL_MODEL_BIND_HOST,
   THOR_LOCAL_LLM_MODEL, THOR_LOCAL_VLM_MODEL, THOR_LOCAL_LLM_MODEL_TYPE,
   THOR_LOCAL_VLM_MODEL_TYPE, THOR_LOCAL_VA_MCP_LLM_MODEL_TYPE,
   THOR_LOCAL_LLM_CONTAINER, THOR_LOCAL_VLM_CONTAINER,
@@ -428,11 +435,13 @@ require_valid_port() {
   fi
 }
 
-require_loopback_endpoint() {
+require_local_model_endpoint() {
   local name="$1"
   local endpoint="$2"
   python3 - "${name}" "${endpoint}" <<'PY'
 import ipaddress
+import json
+import subprocess
 import sys
 from urllib.parse import urlparse
 
@@ -441,14 +450,57 @@ parsed = urlparse(endpoint)
 if parsed.scheme not in {"http", "https"} or not parsed.hostname:
     raise SystemExit(f"[ERROR] {name} must be an HTTP(S) URL; found {endpoint!r}")
 try:
-    loopback = ipaddress.ip_address(parsed.hostname).is_loopback
+    address = ipaddress.ip_address(parsed.hostname)
 except ValueError:
-    loopback = parsed.hostname.lower() == "localhost"
-if not loopback:
-    raise SystemExit(
-        f"[ERROR] {name} must remain on this Thor's loopback interface; found {endpoint!r}"
+    if parsed.hostname.lower() == "localhost":
+        raise SystemExit(0)
+    raise SystemExit(f"[ERROR] {name} must use a literal local address or localhost; found {endpoint!r}")
+if address.is_loopback:
+    raise SystemExit(0)
+
+try:
+    interfaces = json.loads(
+        subprocess.run(
+            ["ip", "-j", "address", "show"],
+            check=True,
+            text=True,
+            stdout=subprocess.PIPE,
+        ).stdout
     )
+except (OSError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+    raise SystemExit(f"[ERROR] cannot validate {name} against local interfaces: {exc}")
+
+for interface in interfaces:
+    interface_name = interface.get("ifname", "")
+    if not (
+        interface_name == "docker0"
+        or interface_name.startswith("br-")
+        or interface_name.startswith("l4tbr")
+    ):
+        continue
+    for info in interface.get("addr_info", []):
+        if info.get("local") == str(address):
+            raise SystemExit(0)
+
+raise SystemExit(
+    f"[ERROR] {name} must remain on loopback or a local Docker bridge; found {endpoint!r}"
+)
 PY
+}
+
+require_rtvi_model_endpoint() {
+  local endpoint="$1"
+  if [[ "${endpoint}" == "http://${HOST_IP}" ||
+        "${endpoint}" == "http://${HOST_IP}:"* ||
+        "${endpoint}" == "http://${HOST_IP}/"* ||
+        "${endpoint}" == "https://${HOST_IP}" ||
+        "${endpoint}" == "https://${HOST_IP}:"* ||
+        "${endpoint}" == "https://${HOST_IP}/"* ]]; then
+    return 0
+  fi
+  if ! require_local_model_endpoint VLM_CONTAINER_ENDPOINT_URL "${endpoint}"; then
+    die "VLM_CONTAINER_ENDPOINT_URL must use this Thor's HOST_IP or a local Docker bridge; found '${endpoint}'"
+  fi
 }
 
 validate_thor_full_contract() {
@@ -529,15 +581,9 @@ validate_thor_full_contract() {
   [[ "${THOR_LOCAL_VA_MCP_LLM_MODEL_TYPE}" =~ ^(nim|openai)$ ]] ||
     die "THOR_LOCAL_VA_MCP_LLM_MODEL_TYPE must be nim or openai because the standalone VA-MCP image does not register vllm"
 
-  require_loopback_endpoint LLM_ENDPOINT_URL "${LLM_ENDPOINT_URL}"
-  require_loopback_endpoint VLM_ENDPOINT_URL "${VLM_ENDPOINT_URL}"
-  [[ "${VLM_CONTAINER_ENDPOINT_URL}" == "http://${HOST_IP}" ||
-     "${VLM_CONTAINER_ENDPOINT_URL}" == "http://${HOST_IP}:"* ||
-     "${VLM_CONTAINER_ENDPOINT_URL}" == "http://${HOST_IP}/"* ||
-     "${VLM_CONTAINER_ENDPOINT_URL}" == "https://${HOST_IP}" ||
-     "${VLM_CONTAINER_ENDPOINT_URL}" == "https://${HOST_IP}:"* ||
-     "${VLM_CONTAINER_ENDPOINT_URL}" == "https://${HOST_IP}/"* ]] ||
-    die "VLM_CONTAINER_ENDPOINT_URL must use this Thor's HOST_IP (${HOST_IP}); found '${VLM_CONTAINER_ENDPOINT_URL}'"
+  require_local_model_endpoint LLM_ENDPOINT_URL "${LLM_ENDPOINT_URL}"
+  require_local_model_endpoint VLM_ENDPOINT_URL "${VLM_ENDPOINT_URL}"
+  require_rtvi_model_endpoint "${VLM_CONTAINER_ENDPOINT_URL}"
 
   local -A seen_ports=()
   for item in \
@@ -1226,12 +1272,20 @@ require_staged_embedding_cache() {
   echo "[OK] Cosmos-Embed model shards and Thor batch-${RTVI_EMBED_BATCH_SIZE} engines are staged."
 }
 
+require_staged_local_models() {
+  [[ -x "${local_model_provisioner}" ]] ||
+    die "Missing executable local model verifier: ${local_model_provisioner}"
+  "${local_model_provisioner}" status
+  echo "[OK] Pinned local model image, snapshots, and container contracts are staged."
+}
+
 verify_offline_stage() {
   require_runtime_env
   require_staged_images
   require_staged_assets
   require_host_asset_checksums
   require_staged_embedding_cache
+  require_staged_local_models
   echo "[OK] Offline stage is complete; restart needs no image pull, build, NGC key, or model download."
 }
 

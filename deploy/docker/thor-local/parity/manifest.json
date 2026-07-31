@@ -23,7 +23,7 @@
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/services/infra/haproxy/haproxy.cfg.template"],
       "thor_state": "wired",
       "runtime_state": "passed_prior",
-      "gap": "Rebuild the 3.2.1 agent/UI derivatives and repeat upload, Q&A, report, URL, restart, and deletion tests."
+      "gap": "The 3.2.1 agent and production UI images are staged; repeat upload, Q&A, report, URL, restart, and deletion tests on the current runtime."
     },
     {
       "id": "video-summarization-file",
@@ -33,7 +33,7 @@
       "thor_evidence": ["deploy/docker/thor-local/Dockerfile.video-summarization", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml"],
       "thor_state": "wired",
       "runtime_state": "passed_prior",
-      "gap": "Rebuild on 3.2.1 and prove multi-video single-call routing plus every summarization/report request option."
+      "gap": "The 3.2.1 local summarization derivative is staged; prove multi-video single-call routing plus every summarization/report request option on the current runtime."
     },
     {
       "id": "video-summarization-live",
@@ -53,7 +53,7 @@
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml"],
       "thor_state": "wired",
       "runtime_state": "passed_prior",
-      "gap": "Stage 3.2.1 RT-CV/RT-Embed images and re-run text, attribute, fused, critic, follow-up, and image-search cases."
+      "gap": "The 3.2.1 RT-CV/RT-Embed images and Thor engines are staged; re-run text, attribute, fused, critic, follow-up, and image-search cases."
     },
     {
       "id": "search-scale",
@@ -73,7 +73,7 @@
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml", "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"],
       "thor_state": "partial",
       "runtime_state": "passed_prior",
-      "gap": "Rebuild the alert derivative with the complete current source and prove every checked-in Alert OpenAPI operation."
+      "gap": "The alert derivative is rebuilt from the current source; prove every checked-in Alert OpenAPI operation on the current runtime."
     },
     {
       "id": "realtime-alerts",
@@ -120,10 +120,10 @@
       "category": "model",
       "advertised": ["Cosmos Reason 1/2", "Cosmos 3 Nano/Super", "Nemotron Omni", "Qwen 3.5 and MoE", "remote OpenAI-compatible endpoint"],
       "source_evidence": ["services/rtvi/rt-vlm"],
-      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/thor-local/provision-local-models.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md"],
       "thor_state": "partial",
       "runtime_state": "not_qualified",
-      "gap": "Thor currently selects one local Qwen-compatible endpoint; qualify supported local models as mutually exclusive replacement lanes, not co-resident services."
+      "gap": "The pinned private-bridge Qwen text/vision pair is staged offline; run its current inference contract, then add and qualify Cosmos and Omni as mutually exclusive replacement lanes."
     },
     {
       "id": "rt-vlm-performance-observability",
@@ -143,7 +143,7 @@
       "thor_evidence": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/rtvi/rtvi-embed"],
       "thor_state": "wired",
       "runtime_state": "passed_prior",
-      "gap": "Stage the 3.2.1 image, rebuild batch-8 Thor engines if required, and exercise all media/API variants offline."
+      "gap": "The 3.2.1 image, model shards, and Thor batch-8 engines pass offline verification; exercise all media/API variants in the current runtime."
     },
     {
       "id": "rt-cv-2d",
@@ -213,7 +213,7 @@
       "thor_evidence": ["deploy/docker/services/vios", "deploy/docker/thor-local/Dockerfile.vios-streamprocessing"],
       "thor_state": "wired",
       "runtime_state": "passed_prior",
-      "gap": "Stage/rebuild all 3.2.1 VIOS images, then run the seven Swagger surfaces including raw download, pictures, QoS and recording."
+      "gap": "All selected 3.2.1 VIOS images, including the Thor codec-repaired stream processor, are staged; run the seven Swagger surfaces including raw download, pictures, QoS and recording."
     },
     {
       "id": "vios-codecs-audio",
@@ -333,7 +333,7 @@
       "thor_evidence": ["deploy/docker/thor-local/compose.yml", "deploy/docker/scripts/thor-local.sh"],
       "thor_state": "partial",
       "runtime_state": "static_only",
-      "gap": "Unified 2D Compose resolves; add resource-isolated Thor lanes for Smart City, warehouse, calibration, 3D and audio."
+      "gap": "The complete unified 2D image set builds and passes its content-addressed offline lock; start/qualify it, then add resource-isolated Thor lanes for Smart City, warehouse, calibration, 3D and audio."
     },
     {
       "id": "helm",
@@ -370,10 +370,10 @@
       "category": "platform",
       "advertised": ["offline restart", "content-addressed image locks", "model checksums", "credential scrubbing", "loopback ingress", "physical-interface firewall"],
       "source_evidence": ["deploy/docker/scripts/thor-local.sh"],
-      "thor_evidence": ["deploy/docker/thor-local/README.md"],
+      "thor_evidence": ["deploy/docker/thor-local/README.md", "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md"],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The runtime env is stale, the 3.2.1 lock cannot yet be produced, the cache cleaner is stopped, and the firewall is absent."
+      "gap": "The protected runtime, 3.2.1 content lock, host assets, embedding engines, and local provider snapshots/containers pass offline verification; current restart proof still requires the cache cleaner and physical-interface firewall."
     }
   ],
   "skills": [
