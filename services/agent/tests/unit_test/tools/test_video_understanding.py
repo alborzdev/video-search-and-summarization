@@ -14,6 +14,7 @@
 # limitations under the License.
 """Unit tests for video_understanding module."""
 
+from langchain_core.messages import HumanMessage
 import pytest
 
 from vss_agents.tools.video_understanding import VideoUnderstandingConfig
@@ -23,6 +24,7 @@ from vss_agents.tools.video_understanding import _is_omni_audio_model
 from vss_agents.tools.video_understanding import _parse_thinking_from_content
 from vss_agents.tools.video_understanding import _should_use_video_base64
 from vss_agents.tools.video_understanding import _should_use_video_file_base64
+from vss_agents.tools.video_understanding import _split_vlm_image_messages
 
 
 class TestParseThinkingFromContent:
@@ -322,6 +324,51 @@ class TestBuildVlmMessages:
         assert content[1]["video_url"]["url"].startswith("data:video/mp4;base64,")
 
 
+class TestSplitVlmImageMessages:
+    """Test provider-capability-aware sampled-frame batching."""
+
+    def test_splits_images_and_preserves_order(self):
+        message = HumanMessage(
+            content=[
+                {"type": "text", "text": "What happened?"},
+                *[
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,frame-{index}"}}
+                    for index in range(9)
+                ],
+            ]
+        )
+
+        batches = _split_vlm_image_messages([message], max_frames_per_request=4)
+
+        assert len(batches) == 3
+        assert [len(batch[0].content) - 2 for batch in batches] == [4, 4, 1]
+        image_urls = [
+            item["image_url"]["url"] for batch in batches for item in batch[0].content if item["type"] == "image_url"
+        ]
+        assert image_urls == [f"data:image/jpeg;base64,frame-{index}" for index in range(9)]
+        assert "Temporal segment 1 of 3" in batches[0][0].content[1]["text"]
+
+    def test_does_not_split_within_limit(self):
+        message = HumanMessage(
+            content=[
+                {"type": "text", "text": "What happened?"},
+                {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64,frame"}},
+            ]
+        )
+
+        assert _split_vlm_image_messages([message], max_frames_per_request=4) == [[message]]
+
+    def test_does_not_split_video_url_payload(self):
+        message = HumanMessage(
+            content=[
+                {"type": "text", "text": "What happened?"},
+                {"type": "video_url", "video_url": {"url": "http://vst/video.mp4"}},
+            ]
+        )
+
+        assert _split_vlm_image_messages([message], max_frames_per_request=4) == [[message]]
+
+
 class TestEffectiveSystemPrompt:
     """Test Omni audio system prompt extension."""
 
@@ -363,3 +410,8 @@ class TestVideoUnderstandingConfig:
 
     def test_remote_vlm_base64_toggle_is_not_exposed(self):
         assert "use_base64_for_remote_vlm" not in VideoUnderstandingConfig.model_fields
+
+    def test_frame_request_limit_is_positive(self):
+        assert VideoUnderstandingConfig(vlm_name="nim_vlm").max_frames_per_request == 30
+        with pytest.raises(ValueError):
+            VideoUnderstandingConfig(vlm_name="nim_vlm", max_frames_per_request=0)

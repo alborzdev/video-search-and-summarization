@@ -6,11 +6,12 @@ const Button = React.forwardRef(({ children, onClick, disabled, ...rest }, ref) 
 );
 Button.displayName = 'Button';
 
-const TextInput = React.forwardRef(({ onValueChange, ...rest }, ref) =>
+const TextInput = React.forwardRef(({ onValueChange, attributes, ...rest }, ref) =>
   React.createElement('input', {
     ref,
     onChange: (e) => onValueChange?.(e.target.value),
     ...rest,
+    ...attributes?.TextInputValue,
   })
 );
 TextInput.displayName = 'TextInput';

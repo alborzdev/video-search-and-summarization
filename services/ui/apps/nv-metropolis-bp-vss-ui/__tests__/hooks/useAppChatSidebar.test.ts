@@ -89,6 +89,22 @@ describe('useAppChatSidebar', () => {
     expect(result.current.collapsed).toBe(true);
   });
 
+  it('keeps the collapsed-state setter stable across state changes', () => {
+    getChatSidebarOpenDefaultMock.mockReturnValue(false);
+    getChatSidebarOpenFromSessionMock.mockReturnValue(null);
+    getChatSidebarWidthFromSessionMock.mockReturnValue(null);
+
+    const { result } = renderHook(() => useAppChatSidebar());
+    const initialSetter = result.current.setCollapsed;
+
+    act(() => {
+      result.current.setCollapsed(false);
+    });
+
+    expect(result.current.collapsed).toBe(false);
+    expect(result.current.setCollapsed).toBe(initialSetter);
+  });
+
   it('resizes sidebar width using pointer capture (pointermove over iframe-safe path)', () => {
     getChatSidebarOpenDefaultMock.mockReturnValue(true);
     getChatSidebarOpenFromSessionMock.mockReturnValue(null);

@@ -1,0 +1,12 @@
+**
+!services/
+services/*
+!services/ui/
+!services/ui/**
+services/ui/**/node_modules/
+services/ui/**/.next/
+services/ui/**/.turbo/
+services/ui/**/lib/
+services/ui/**/coverage/
+services/ui/**/.eslintcache
+services/ui/npm-debug.log*

@@ -119,6 +119,12 @@ describe('SearchComponent', () => {
     expect(document.body).toBeInTheDocument();
   });
 
+  it('keeps manual search available while the global chat sidebar is open', () => {
+    render(<SearchComponent {...defaultProps} chatSidebarCollapsed={false} />);
+
+    expect(screen.getByPlaceholderText('Search Files')).toBeEnabled();
+  });
+
   /**
    * Callback prop test
    * This test demonstrates how to test callback props
@@ -132,4 +138,3 @@ describe('SearchComponent', () => {
     expect(mockOnThemeChange).toBeDefined();
   });
 });
-

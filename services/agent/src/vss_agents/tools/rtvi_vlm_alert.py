@@ -127,7 +127,8 @@ class RTVIVLMAlertOutput(BaseModel):
     )
 
 
-# In-memory mapping of sensor_name -> alert_rule_id (for stop action)
+# Fast-path cache of sensor_name -> alert_rule_id. Alert Bridge remains the
+# durable source of truth, so stop can recover rules after an agent restart.
 _sensor_to_alert_rule_id: dict[str, str] = {}
 
 
@@ -329,11 +330,47 @@ async def rtvi_vlm_alert(config: RTVIVLMAlertConfig, builder: Builder) -> AsyncG
                     alert_rule_id = _sensor_to_alert_rule_id.get(sensor_name)
 
                     if not alert_rule_id:
-                        return RTVIVLMAlertOutput(
-                            success=False,
-                            sensor_name=sensor_name,
-                            message=f"No active alert found for sensor '{sensor_name}'. "
-                            f"Active sensors: {list(_sensor_to_alert_rule_id.keys())}",
+                        # The local cache is intentionally non-durable. Recover
+                        # the rule from Alert Bridge so a rule created before an
+                        # agent restart can still be stopped by sensor name.
+                        async with session.get(f"{base_url}/api/v1/realtime") as response:
+                            body = await response.text()
+                            if response.status != 200:
+                                return RTVIVLMAlertOutput(
+                                    success=False,
+                                    sensor_name=sensor_name,
+                                    message=f"Failed to list active alert rules (HTTP {response.status}): {body}",
+                                )
+
+                            try:
+                                result = json.loads(body)
+                            except json.JSONDecodeError:
+                                return RTVIVLMAlertOutput(
+                                    success=False,
+                                    sensor_name=sensor_name,
+                                    message=f"Invalid JSON response from Alert Bridge: {body}",
+                                )
+
+                        matching_rules = [
+                            rule
+                            for rule in result.get("rules", [])
+                            if rule.get("sensor_name") == sensor_name and rule.get("id")
+                        ]
+                        if not matching_rules:
+                            return RTVIVLMAlertOutput(
+                                success=False,
+                                sensor_name=sensor_name,
+                                message=f"No active alert found for sensor '{sensor_name}'.",
+                            )
+
+                        # Alert Bridge returns active rules newest-first when
+                        # backed by durable storage. Use the first exact match.
+                        alert_rule_id = matching_rules[0]["id"]
+                        _sensor_to_alert_rule_id[sensor_name] = alert_rule_id
+                        logger.info(
+                            "Recovered realtime alert rule %s for sensor %s from Alert Bridge",
+                            alert_rule_id,
+                            sensor_name,
                         )
 
                     logger.info(f"Deleting realtime alert rule {alert_rule_id} for sensor {sensor_name}")

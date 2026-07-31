@@ -337,6 +337,20 @@ class TestTimestampFormatDetection:
         assert model.start_timestamp == 0.0
         assert model.end_timestamp == 25.0
 
+    @pytest.mark.parametrize("sentinel", ["", " ", "None", "none", "null", "NULL"])
+    def test_non_stream_model_normalizes_omitted_offset_strings(self, sentinel):
+        """Tool-call serializers may encode an omitted offset as a string sentinel."""
+        model = VideoUnderstandingOffsetInput.model_validate(
+            {
+                "sensor_id": "test_video",
+                "start_timestamp": "0",
+                "end_timestamp": sentinel,
+                "user_prompt": "Describe the video",
+            }
+        )
+        assert model.start_timestamp == 0.0
+        assert model.end_timestamp is None
+
     def test_non_stream_model_rejects_iso_timestamps(self):
         """VideoUnderstandingOffsetInput should reject ISO timestamp strings.
 

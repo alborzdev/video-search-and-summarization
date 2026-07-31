@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "site-security",
+  "name": "Site Security",
+  "description": "Perimeter, restricted-area, and access investigation for campuses and secured facilities.",
+  "branding": {
+    "title": "THOR SITE INTELLIGENCE",
+    "subtitle": "PRIVATE ON-DEVICE SECURITY AI"
+  },
+  "terminology": {
+    "source": "security camera",
+    "event": "security event",
+    "subject": "individual"
+  },
+  "demo_questions": [
+    "Build a chronological account of people and vehicles entering the scene.",
+    "Who approaches a doorway, gate, fence, or restricted area?",
+    "Find the clearest visual evidence related to access or perimeter activity."
+  ],
+  "search_prompts": [
+    "person near a gate or entrance",
+    "individual crossing a visible boundary",
+    "person lingering near a restricted area"
+  ],
+  "verification_rules": [
+    {
+      "alert_type": "fov count violation",
+      "prompt": "Across these time-ordered frames, is a person visibly beyond a barrier or inside an area clearly marked as restricted? Return only JSON. Set prediction_answer to YES or NO and reasoning to one concise evidence-based sentence.",
+      "system_prompt": "You verify physical-security events from chronological camera frames. Use only visible evidence and do not infer identity or intent. Return one valid JSON object with keys prediction_answer and reasoning. prediction_answer must be exactly YES or NO.",
+      "enrichment_prompt": null,
+      "output_category": "Restricted Area Presence",
+      "vlm_params": {
+        "num_frames": 4
+      }
+    }
+  ]
+}

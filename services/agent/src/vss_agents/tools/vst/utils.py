@@ -250,6 +250,9 @@ async def delete_vst_sensor(vst_url: str, sensor_id: str) -> tuple[bool, str]:
             if response.status in (200, 204):
                 logger.info("VST sensor deleted: %s", scrub_log(sensor_id))
                 return True, "OK"
+            if response.status == 404:
+                logger.info("VST sensor already absent: %s", scrub_log(sensor_id))
+                return True, "Already absent"
             text = await response.text()
             return False, f"VST returned {response.status}: {text}"
     except Exception as e:
@@ -483,11 +486,12 @@ async def add_sensor(
     payload: dict[str, str] = {
         "sensorUrl": sensor_url,
         "name": name,
+        # VIOS declares both fields in its sensor-add contract. Empty strings
+        # are valid for an unauthenticated source and avoid schema-dependent
+        # behavior in sensor service releases.
+        "username": username,
+        "password": password,
     }
-    if username:
-        payload["username"] = username
-    if password:
-        payload["password"] = password
     if location:
         payload["location"] = location
     if tags:
@@ -525,6 +529,61 @@ async def add_sensor(
             error = f"VST add sensor request failed: {e!s}"
             logger.error(error, exc_info=True)
             return False, error, None
+
+
+async def add_proxy_stream(
+    sensor_id: str,
+    sensor_url: str,
+    name: str,
+    streamprocessor_url: str,
+) -> tuple[bool, str, str | None]:
+    """Create the VIOS live/VOD proxy for a previously registered sensor.
+
+    Some standalone VIOS deployments have no SDR controller consuming the
+    sensor service's ``camera_proxy`` event. In those deployments the caller
+    can explicitly provision the streamprocessor and use the returned live
+    RTSP URL without waiting for an event consumer that is not present.
+    """
+    url = f"{streamprocessor_url.rstrip('/')}/api/v1/proxy/stream/add"
+    payload = {"id": sensor_id, "url": sensor_url, "name": name}
+    logger.info("Creating VIOS proxy stream: POST %s", url)
+
+    try:
+        async with aiohttp.ClientSession() as session, session.post(url, json=payload) as response:
+            if response.status not in (200, 201):
+                body = await response.text()
+                return False, f"VIOS streamprocessor returned {response.status}: {body}", None
+
+            result = await response.json(content_type=None)
+            rtsp_url = result.get("url")
+            if not isinstance(rtsp_url, str) or not rtsp_url.startswith("rtsp://"):
+                return False, f"VIOS streamprocessor response missing live RTSP URL: {result}", None
+            logger.info("VIOS proxy stream created: %s", sensor_id)
+            return True, "OK", rtsp_url
+    except Exception as e:
+        error = f"VIOS streamprocessor add request failed: {e!s}"
+        logger.error(error, exc_info=True)
+        return False, error, None
+
+
+async def delete_proxy_stream(sensor_id: str | None, streamprocessor_url: str) -> tuple[bool, str]:
+    """Best-effort removal of a directly provisioned VIOS proxy stream."""
+    if not sensor_id:
+        return True, "No sensor ID"
+
+    url = f"{streamprocessor_url.rstrip('/')}/api/v1/proxy/stream/{sensor_id}"
+    logger.info("Deleting VIOS proxy stream: DELETE %s", url)
+    try:
+        async with aiohttp.ClientSession() as session, session.delete(url) as response:
+            if response.status in (200, 204, 404):
+                logger.info("VIOS proxy stream deleted: %s", sensor_id)
+                return True, "OK"
+            body = await response.text()
+            return False, f"VIOS streamprocessor returned {response.status}: {body}"
+    except Exception as e:
+        error = f"VIOS streamprocessor delete request failed: {e!s}"
+        logger.error(error, exc_info=True)
+        return False, error
 
 
 async def delete_sensor(sensor_id: str | None, vst_internal_url: str | None = None) -> tuple[bool, str]:

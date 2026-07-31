@@ -96,7 +96,14 @@ vlm:
   #   The module is auto-imported at startup. The parser function must accept
   #   (text: str, json_config: Optional[Dict]) and return a VLMResponse.
   #
-  response_format: "auto"
+  response_format: "${ALERT_VERIFICATION_RESPONSE_FORMAT}"
+  media_mode: "${ALERT_VERIFICATION_MEDIA_MODE}"
+  snapshot_frames: ${ALERT_VERIFICATION_SNAPSHOT_FRAMES}
+  json_parser:
+    verdict_field: "prediction_answer"
+    reasoning_fields:
+      - "reasoning"
+      - "explanation"
   # custom_parser_module: "custom_parsers.my_parser"  # dotted Python module path
 
   # Pluggable response parser: external parser class for custom use cases.
@@ -211,14 +218,14 @@ event_bridge:
 
 prompt:
   prefer_payload_prompt: false
-  override_prompts_on_start: true
+  override_prompts_on_start: ${ALERT_VERIFICATION_OVERRIDE_PROMPTS}
 
 # Alert Type Configuration
 alert_type_config_file: "alert_type_config.json"
 
 # Alert Agent Configuration - Processing Settings
 alert_agent:
-  num_workers: 10                                # Number of worker threads
+  num_workers: ${ALERT_VERIFICATION_NUM_WORKERS} # Number of worker threads
   max_allowed_stream_size: 2                    # Maximum stream size in minutes
   default_stream_interval: 1                    # Default stream interval in minutes
   vst_pass_through_mode: false                   # Use local media files instead of VST stream lookup
@@ -231,10 +238,10 @@ alert_agent:
     # with a bounded sensor fleet and a known series budget (~10k per target).
     per_sensor_labels: false
   async_io:
-    enabled: true                               # Guardrail: keep sync behavior by default
-    vst_enabled: true                           # Guardrail: async-submit VST lookup path
-    elastic_enabled: true                       # Guardrail: async-submit Elastic sink publishing path
-    redis_enabled: true                         # Guardrail: async-submit Redis dedup/read operations
+    enabled: ${ALERT_VERIFICATION_ASYNC_IO}      # Guardrail: keep sync behavior by default
+    vst_enabled: ${ALERT_VERIFICATION_ASYNC_IO}  # Guardrail: async-submit VST lookup path
+    elastic_enabled: ${ALERT_VERIFICATION_ASYNC_IO} # Guardrail: async-submit Elastic sink publishing path
+    redis_enabled: ${ALERT_VERIFICATION_ASYNC_IO} # Guardrail: async-submit Redis dedup/read operations
     external_timeout_seconds: 30                 # Timeout for async-submitted VST/Elastic/Redis operations
     sink_warn_in_flight: 20                      # Warning threshold for in-flight async sink operations
 

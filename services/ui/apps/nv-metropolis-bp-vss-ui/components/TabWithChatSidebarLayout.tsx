@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconMessageCircle, IconLoader2, IconChevronRight } from '@tabler/icons-react';
 import type { AppChatSidebarApi } from '../hooks/useAppChatSidebar';
 
@@ -40,6 +40,25 @@ export function TabWithChatSidebarLayout({
 }: TabWithChatSidebarLayoutProps) {
   const { collapsed, setCollapsed, effectiveWidth, handleResizeStart } =
     sidebarApi;
+  const [isNarrowViewport, setIsNarrowViewport] = useState(false);
+
+  useEffect(() => {
+    const narrowViewport = window.matchMedia('(max-width: 767px)');
+    const syncViewport = (matches: boolean) => {
+      setIsNarrowViewport(matches);
+      // A fixed-width chat panel can reduce the main workspace to only a few
+      // pixels on a phone. Start it collapsed on narrow screens; when opened
+      // below it renders as a full-screen overlay instead of sharing a row.
+      if (matches) setCollapsed(true);
+    };
+
+    syncViewport(narrowViewport.matches);
+    const handleBreakpointChange = (event: MediaQueryListEvent) => {
+      syncViewport(event.matches);
+    };
+    narrowViewport.addEventListener('change', handleBreakpointChange);
+    return () => narrowViewport.removeEventListener('change', handleBreakpointChange);
+  }, [setCollapsed]);
 
   const handleOpenSidebar = () => {
     onOpenSidebar?.();
@@ -70,7 +89,7 @@ export function TabWithChatSidebarLayout({
             <button
               data-testid="chat-sidebar-open"
               type="button"
-              className={`fixed bottom-10 right-10 z-50 flex h-[72px] w-[72px] min-h-[72px] min-w-[72px] shrink-0 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-[#76b900] dark:focus:ring-offset-black ${
+              className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 min-h-14 min-w-14 shrink-0 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-[#76b900] dark:focus:ring-offset-black md:bottom-10 md:right-10 md:h-[72px] md:w-[72px] md:min-h-[72px] md:min-w-[72px] ${
                 highlightIcon ? 'text-white animate-pulse' : 'text-black'
               }`}
               style={{
@@ -100,7 +119,9 @@ export function TabWithChatSidebarLayout({
               type="button"
               onClick={() => setCollapsed(true)}
               className="absolute z-50 flex h-7 w-7 items-center justify-center rounded-full bg-white dark:bg-neutral-800 shadow-md border border-neutral-300 dark:border-neutral-600 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
-              style={{ top: '50%', transform: 'translateY(-50%)', right: effectiveWidth - 14 }}
+              style={isNarrowViewport
+                ? { top: 12, right: 12 }
+                : { top: '50%', transform: 'translateY(-50%)', right: effectiveWidth - 14 }}
               aria-label="Collapse Chat sidebar"
               title="Collapse Chat sidebar"
             >
@@ -109,10 +130,10 @@ export function TabWithChatSidebarLayout({
           )}
           {/* Sidebar panel: takes fixed width; in DOM when enabled, display:none when collapsed to avoid chat re-mount */}
           <div
-            className="relative z-20 flex min-h-0 flex-shrink-0 flex-row self-stretch overflow-hidden border-l border-gray-300 dark:border-gray-600 bg-white dark:bg-black shadow-sm"
+            className="absolute inset-0 z-40 flex min-h-0 flex-shrink-0 flex-row self-stretch overflow-hidden border-l border-gray-300 bg-white shadow-sm dark:border-gray-600 dark:bg-black md:relative md:inset-auto md:z-20"
             style={{
-              width: collapsed ? 0 : effectiveWidth,
-              minWidth: collapsed ? 0 : undefined,
+              width: collapsed ? 0 : (isNarrowViewport ? '100%' : effectiveWidth),
+              minWidth: collapsed ? 0 : (isNarrowViewport ? '100%' : undefined),
               display: collapsed ? 'none' : undefined,
             }}
           >
@@ -120,7 +141,7 @@ export function TabWithChatSidebarLayout({
               role="separator"
               aria-orientation="vertical"
               aria-label="Resize Chat sidebar"
-              className="flex w-1.5 flex-shrink-0 cursor-col-resize touch-none select-none border-r border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 hover:bg-neutral-300 dark:hover:bg-neutral-800 active:bg-neutral-400 dark:active:bg-neutral-700 focus:outline-none"
+              className="hidden w-1.5 flex-shrink-0 cursor-col-resize touch-none select-none border-r border-neutral-200 bg-neutral-100 hover:bg-neutral-300 active:bg-neutral-400 focus:outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:active:bg-neutral-700 md:flex"
               onPointerDown={(e) => handleResizeStart(e, effectiveWidth)}
               title="Drag to resize"
             />

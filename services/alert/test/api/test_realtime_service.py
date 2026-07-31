@@ -349,6 +349,36 @@ class TestStopAlert:
         assert code == 200
         mock_rtvi_client.stop_stream.assert_awaited()
 
+    @pytest.mark.asyncio
+    async def test_delete_drains_captions_before_deleting_stream(
+        self, realtime_service, mock_rtvi_client,
+    ):
+        """RTVI returns 409 if a stream is deleted while captions use it."""
+        create_data, _ = await realtime_service.start_alert(make_config())
+
+        captions_stopped = False
+
+        async def stop_captions(_stream_id):
+            nonlocal captions_stopped
+            # Force a scheduling point that exposed the former gather race.
+            await asyncio.sleep(0)
+            captions_stopped = True
+            return {"status": "stopped"}
+
+        async def stop_stream(_stream_id):
+            assert captions_stopped, "stream deleted before captions drained"
+            return {"status": "deleted"}
+
+        mock_rtvi_client.stop_captions.side_effect = stop_captions
+        mock_rtvi_client.stop_stream.side_effect = stop_stream
+
+        data, code = await realtime_service.stop_alert(create_data["id"])
+
+        assert code == 200
+        assert data["status"] == ResponseStatus.SUCCESS
+        mock_rtvi_client.stop_captions.assert_awaited_once()
+        mock_rtvi_client.stop_stream.assert_awaited_once()
+
 
 # ---------------------------------------------------------------------------
 # list_alerts
@@ -635,6 +665,46 @@ class TestRTVIVLMClientGenerateCaptions:
         _, kwargs = client._client.post.call_args
         payload = kwargs["json"]
         assert payload["alert_category"] == "Worker PPE Violation"
+
+
+class TestRTVIVLMClientTeardown:
+    """RTVI teardown calls allow in-flight local VLM work to drain."""
+
+    @pytest.mark.asyncio
+    async def test_stop_captions_uses_long_running_timeout(self):
+        from unittest.mock import AsyncMock, MagicMock
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        client = RTVIVLMClient("http://rtvi", timeout=10)
+        response = MagicMock()
+        response.text = ""
+        response.raise_for_status = MagicMock()
+        client._client = AsyncMock()
+        client._client.delete.return_value = response
+
+        await client.stop_captions("stream-1")
+
+        client._client.delete.assert_awaited_once_with(
+            "http://rtvi/generate_captions/stream-1", timeout=120,
+        )
+
+    @pytest.mark.asyncio
+    async def test_stop_stream_preserves_larger_configured_timeout(self):
+        from unittest.mock import AsyncMock, MagicMock
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        client = RTVIVLMClient("http://rtvi", timeout=180)
+        response = MagicMock()
+        response.text = ""
+        response.raise_for_status = MagicMock()
+        client._client = AsyncMock()
+        client._client.delete.return_value = response
+
+        await client.stop_stream("stream-1")
+
+        client._client.delete.assert_awaited_once_with(
+            "http://rtvi/streams/delete/stream-1", timeout=180,
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -2347,6 +2417,38 @@ class TestStreamReuse:
         mock_rtvi_client.stop_stream.assert_not_awaited()
 
         await persistent_service.stop_alert(data_b["id"])
+        mock_rtvi_client.stop_stream.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_persistent_delete_drains_captions_before_stream_delete(
+        self, persistent_service, mock_rtvi_client,
+    ):
+        """The ES-backed delete path obeys the same RTVI lifecycle order."""
+        mock_rtvi_client.get_stream_info.return_value = [
+            {"id": "test-sensor-001", "liveStreamUrl": SAMPLE_RTSP_URL},
+        ]
+        data, _ = await persistent_service.start_alert(make_config())
+
+        captions_stopped = False
+
+        async def stop_captions(_stream_id):
+            nonlocal captions_stopped
+            await asyncio.sleep(0)
+            captions_stopped = True
+            return {"status": "stopped"}
+
+        async def stop_stream(_stream_id):
+            assert captions_stopped, "stream deleted before captions drained"
+            return {"status": "deleted"}
+
+        mock_rtvi_client.stop_captions.side_effect = stop_captions
+        mock_rtvi_client.stop_stream.side_effect = stop_stream
+
+        result, code = await persistent_service.stop_alert(data["id"])
+
+        assert code == 200
+        assert result["status"] == ResponseStatus.SUCCESS
+        mock_rtvi_client.stop_captions.assert_awaited_once()
         mock_rtvi_client.stop_stream.assert_awaited_once()
 
 

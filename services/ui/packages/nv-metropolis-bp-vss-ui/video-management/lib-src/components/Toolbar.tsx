@@ -144,7 +144,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   return (
     <div className="min-w-0 max-w-full overflow-x-auto overflow-y-clip border-b border-gray-200 dark:border-gray-800">
       {/* One wrapping flex row — no flex-1 + justify-end strip */}
-      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-2 px-6 pt-6 pb-4">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
         <input
           ref={fileInputRef}
           type="file"

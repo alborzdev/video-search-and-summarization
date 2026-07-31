@@ -3,6 +3,16 @@
   "version": "0.1.1",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "server": [
+        "./lib/server.d.ts"
+      ],
+      "app": [
+        "./lib/app.d.ts"
+      ]
+    }
+  },
   "exports": {
     ".": {
       "import": "./lib/index.js",
@@ -25,7 +35,7 @@
   ],
   "scripts": {
     "build": "next build && npm run build:lib",
-    "build:lib": "rm -rf lib && swc lib-src pages components hooks utils types constants styles -d lib --config-file .swcrc && mv lib/lib-src/* lib/ && rmdir lib/lib-src && (test -f lib/contexts/RuntimeConfigContext.js && sed -i 's|\"../../utils|\"../utils|g' lib/contexts/RuntimeConfigContext.js || true) && cp lib-src/index.d.ts lib/index.d.ts && cp -r public lib/public && mkdir -p lib/styles && cp .next/static/css/*.css lib/styles/globals.css && cp next-i18next.config.js lib/",
+    "build:lib": "rm -rf lib && swc lib-src pages components hooks utils types constants styles -d lib --config-file .swcrc && mv lib/lib-src/* lib/ && rmdir lib/lib-src && (test -f lib/contexts/RuntimeConfigContext.js && sed -i 's|\"../../utils|\"../utils|g' lib/contexts/RuntimeConfigContext.js || true) && cp lib-src/index.d.ts lib-src/server.d.ts lib-src/app.d.ts lib/ && cp -r public lib/public && mkdir -p lib/styles && cp .next/static/css/*.css lib/styles/globals.css && cp next-i18next.config.js lib/",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",

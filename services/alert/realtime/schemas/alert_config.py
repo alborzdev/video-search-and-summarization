@@ -21,6 +21,8 @@ Typed configuration dataclass for real-time VLM alert rules.
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Tuple
 
+from realtime.defaults import DEFAULTS
+
 
 # Single source of truth for the optional RTVI VLM fields that are omitted
 # from the ES document and the generate_captions payload when None.
@@ -115,25 +117,27 @@ class AlertRuleConfig:
     # VLM parameters
     system_prompt: str = ""
     model: str = ""
-    chunk_duration: int = 30
-    chunk_overlap_duration: int = 5
-    num_frames_per_second_or_fixed_frames_chunk: int = 10
-    use_fps_for_chunking: bool = True
-    vlm_input_width: int = 256
-    vlm_input_height: int = 256
-    enable_reasoning: bool = True
+    chunk_duration: int = DEFAULTS.chunk_duration
+    chunk_overlap_duration: int = DEFAULTS.chunk_overlap_duration
+    num_frames_per_second_or_fixed_frames_chunk: int = (
+        DEFAULTS.frames_per_second_or_fixed_chunk
+    )
+    use_fps_for_chunking: bool = DEFAULTS.use_fps_for_chunking
+    vlm_input_width: int = DEFAULTS.vlm_input_width
+    vlm_input_height: int = DEFAULTS.vlm_input_height
+    enable_reasoning: bool = DEFAULTS.enable_reasoning
     # Extended RTVI VLM generate_captions options — all optional.
     # When None the field is omitted from the RTVI request payload so
     # RTVI applies its server-side defaults.
     api_type: Optional[str] = None
     response_format: Optional[Dict[str, Any]] = None
     stream_options: Optional[Dict[str, Any]] = None
-    max_tokens: Optional[int] = None
+    max_tokens: Optional[int] = DEFAULTS.max_tokens
     temperature: Optional[float] = None
     top_p: Optional[float] = None
     top_k: Optional[int] = None
     ignore_eos: Optional[bool] = None
     seed: Optional[int] = None
     media_info: Optional[Dict[str, Any]] = None
-    enable_audio: Optional[bool] = None
+    enable_audio: Optional[bool] = DEFAULTS.enable_audio
     mm_processor_kwargs: Optional[Dict[str, Any]] = None

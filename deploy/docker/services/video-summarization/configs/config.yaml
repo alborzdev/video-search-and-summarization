@@ -60,7 +60,9 @@ tools:
     params:
       model: !ENV ${LVS_LLM_MODEL_NAME}
       base_url: !ENV ${LVS_LLM_BASE_URL}
-      max_tokens: 10240
+      provider: !ENV ${LVS_LLM_MODEL_TYPE:openai}
+      enable_thinking: !ENV ${LVS_LLM_ENABLE_THINKING:false}
+      max_tokens: !ENV ${LVS_LLM_MAX_TOKENS:1024}
       temperature: 0.2
       top_p: 0.7
       api_key: !ENV ${NVIDIA_API_KEY}

@@ -1,0 +1,10 @@
+ARG LVS_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-video-summarization:3.2.0
+FROM ${LVS_BASE_IMAGE}
+
+SHELL ["/usr/local/bin/bash", "-c"]
+USER root
+
+COPY deploy/docker/thor-local/patches/patch_lvs_llm_provider.py /tmp/patch_lvs_llm_provider.py
+RUN /usr/local/bin/python3 /tmp/patch_lvs_llm_provider.py
+
+USER lvsuser

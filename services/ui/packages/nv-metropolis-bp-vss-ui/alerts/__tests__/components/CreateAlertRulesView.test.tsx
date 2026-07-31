@@ -41,7 +41,7 @@ describe('CreateAlertRulesView realtime rules', () => {
             Promise.resolve(
               JSON.stringify([
                 {
-                  'stream-key-1': [
+                  '8c7338ec-2266-4eea-aeb4-c568d8944b05': [
                     {
                       name: 'warehouse-cam-1',
                       url: liveRtspUrl,

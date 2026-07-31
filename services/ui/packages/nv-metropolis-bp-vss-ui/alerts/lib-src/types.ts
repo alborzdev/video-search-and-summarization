@@ -26,11 +26,7 @@ export interface AlertData {
  */
 export type AlertsView = 'view' | 'create';
 
-/**
- * Kind of alert exposed by the Create Alert Rules editor. Only `real-time`
- * has a working implementation today; `verification` is reserved for the
- * disabled placeholder tab and is wired up in a follow-up.
- */
+/** Kind of alert exposed by the Create Alert Rules editor. */
 export type AlertRulesType = 'real-time' | 'verification';
 
 /**
@@ -86,6 +82,44 @@ export interface RealtimeAlertRuleDraft {
   prompt: string;
   saving?: boolean;
   error?: string;
+}
+
+/**
+ * Per-rule overrides accepted by the candidate-verification API. The editor
+ * currently exposes only `num_frames`, but keeps every supported field typed
+ * so editing a rule does not discard overrides authored through the API.
+ */
+export interface VerificationVlmParams {
+  base_url?: string;
+  model?: string;
+  max_tokens?: number;
+  temperature?: number;
+  request_timeout?: number;
+  use_vlm_media_defaults?: boolean;
+  do_resize?: boolean;
+  min_pixels?: number;
+  max_pixels?: number;
+  num_frames?: number;
+  enable_sampling?: boolean;
+  sampling_fps?: number;
+  cr1_optimization?: boolean;
+  max_retries?: number;
+  chunk_duration?: number;
+  num_frames_per_second_or_fixed_frames_chunk?: number;
+  enable_reasoning?: boolean;
+}
+
+/** Candidate-verification configuration returned by `/verification/config`. */
+export interface VerificationAlertConfig {
+  /** Normalized server key used by GET/PUT/DELETE paths. */
+  alert_type: string;
+  prompt: string;
+  system_prompt: string | null;
+  enrichment_prompt: string | null;
+  vlm_params: VerificationVlmParams | null;
+  output_category: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 /**
@@ -179,4 +213,3 @@ export type VlmVerdict = typeof VLM_VERDICT[keyof typeof VLM_VERDICT];
 export const isValidVlmVerdict = (value: string): value is VlmVerdict => {
   return Object.values(VLM_VERDICT).includes(value as VlmVerdict);
 };
-

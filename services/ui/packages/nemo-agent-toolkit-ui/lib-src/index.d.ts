@@ -40,8 +40,8 @@ export interface ChatSidebarControlHandlers {
 export type CallerInfo = string;
 
 export interface NemoAgentToolkitAppProps {
-  theme: string;
-  onThemeChange?: (theme: string) => void;
+  theme?: 'light' | 'dark';
+  onThemeChange?: (theme: 'light' | 'dark') => void;
   isActive?: boolean;
   initialStateOverride?: Partial<HomeInitialState>;
   /** Optional storage key prefix (e.g. "searchTab") so this instance uses separate sessionStorage; pass at instantiation for reusability. */
@@ -58,9 +58,11 @@ export interface NemoAgentToolkitAppProps {
   /** Optional: called when a message is submitted programmatically (e.g. for attention/highlight). */
   onMessageSubmitted?: () => void;
   /** Optional: called when chat is ready; receives a function the embedder can call to add a query context item to the chat input. */
-  onAddQueryContextReady?: (addItem: (item: { id: string; label: string; type: string; data: Record<string, unknown> }) => void) => void;
+  onAddQueryContextReady?: (addItem: (item: { id: string; label: string; contextType: string; data: Record<string, unknown> }) => void) => void;
   /** Optional: called when a chat video upload batch completes with at least one success. */
   onChatVideoUploadComplete?: (payload: ChatVideoUploadCompletePayload) => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export type { ChatVideoUploadCompletePayload } from '../types/chatVideoUpload';
@@ -210,4 +212,3 @@ export {
 
 // Re-export next-i18next config
 export const nextI18nConfig: any;
-

@@ -38,6 +38,7 @@ from nat.data_models.api_server import Usage
 from nat.data_models.component_ref import FunctionRef
 from nat.data_models.component_ref import LLMRef
 from nat.data_models.function import FunctionBaseConfig
+from pydantic import AwareDatetime
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
@@ -857,7 +858,8 @@ async def execute_core_search(
     """
     decomposed: DecomposedQuery | None = None
     original_query = search_input.query
-    if search_input.agent_mode and agent_llm:
+    reference_object = search_input.reference_object
+    if search_input.agent_mode and agent_llm and reference_object is None:
         try:
             yield AgentMessageChunk(
                 type=AgentMessageChunkType.TOOL_CALL, content=f"Decomposing query: '{search_input.query}'"
@@ -969,8 +971,17 @@ async def execute_core_search(
                 content=f"Decomposition failed, using original query: {e!s}",
             )
 
-    # ===== OBJECT_ID PATH: Direct behavior KNN (bypasses embed_search + fusion) =====
-    if decomposed and decomposed.object_ids:
+    # ===== OBJECT PATH: Direct behavior KNN (bypasses LLM/embed_search/fusion) =====
+    # ``reference_object`` is the deterministic UI path. The decomposed object-ID
+    # path remains for backwards-compatible natural-language searches.
+    object_ids = (
+        [reference_object.object_id]
+        if reference_object is not None
+        else [str(object_id) for object_id in decomposed.object_ids]
+        if decomposed and decomposed.object_ids
+        else []
+    )
+    if object_ids:
         if not getattr(config, "behavior_es_endpoint", None):
             raise ValueError("behavior_es_endpoint config is required for object_id re-search")
 
@@ -978,7 +989,7 @@ async def execute_core_search(
 
         yield AgentMessageChunk(
             type=AgentMessageChunkType.TOOL_CALL,
-            content=f"Searching for similar objects to: {decomposed.object_ids}",
+            content=f"Searching for similar objects to: {object_ids}",
         )
 
         from vss_agents.tools.attribute_search import AttributeSearchResult
@@ -1000,10 +1011,10 @@ async def execute_core_search(
             f"Object-id behavior search index(es): {object_search_index} (source_type={search_input.source_type})"
         )
 
-        async def _safe_object_search(oid: int) -> list[AttributeSearchResult]:
+        async def _safe_object_search(oid: str) -> list[AttributeSearchResult]:
             try:
                 return await search_by_object_embedding(
-                    object_id=str(oid),
+                    object_id=oid,
                     behavior_index=object_search_index,
                     es=es,
                     top_k=top_k,
@@ -1012,22 +1023,34 @@ async def execute_core_search(
                     timestamp_start=search_input.timestamp_start,
                     timestamp_end=search_input.timestamp_end,
                     source_type=search_input.source_type,
+                    reference_sensor_name=reference_object.sensor_name if reference_object is not None else None,
+                    reference_timestamp=reference_object.timestamp if reference_object is not None else None,
                 )
+            except ValueError:
+                if reference_object is not None:
+                    raise
+                logger.warning(f"Object ID {oid} was not found or had no embedding")
+                return []
             except Exception as e:
                 logger.warning(f"Object ID {oid} search failed: {e}")
                 return []
 
         with TimeMeasure("search: object_ids behavior KNN"):
-            results_list = await asyncio.gather(*[_safe_object_search(oid) for oid in decomposed.object_ids])
+            try:
+                results_list = await asyncio.gather(*[_safe_object_search(oid) for oid in object_ids])
+            except ValueError as error:
+                yield SearchOutput(data=[], search_messages=[str(error)])
+                return
 
         all_results: list[AttributeSearchResult] = []
         for obj_results in results_list:
             all_results.extend(obj_results)
 
-        # Deduplicate by object_id, keep highest similarity
-        seen: dict = {}
+        # Tracker IDs are only unique within a sensor, so preserve the same ID
+        # observed on another source while collapsing true duplicates.
+        seen: dict[tuple[str, str], AttributeSearchResult] = {}
         for r in all_results:
-            key = str(r.metadata.object_id)
+            key = (r.metadata.sensor_id, str(r.metadata.object_id))
             if key not in seen or r.metadata.behavior_score > seen[key].metadata.behavior_score:
                 seen[key] = r
         attr_results = sorted(seen.values(), key=lambda r: r.metadata.behavior_score, reverse=True)[:top_k]
@@ -1568,6 +1591,32 @@ class SearchConfig(FunctionBaseConfig, name="search"):
     )
 
 
+class ReferenceObject(BaseModel):
+    """Exact tracked object selected from a rendered video frame."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    object_id: str = Field(
+        ...,
+        min_length=1,
+        description="Tracker object ID shown in the selected bounding box.",
+    )
+    sensor_name: str = Field(
+        ...,
+        min_length=1,
+        description="MDX sensor name indexed in the behavior document's sensor.id field.",
+    )
+    sensor_id: str = Field(
+        ...,
+        min_length=1,
+        description="VST stream UUID for provenance and playback identity.",
+    )
+    timestamp: AwareDatetime = Field(
+        ...,
+        description="Timezone-aware ISO-8601 frame timestamp, for example 2025-01-01T00:00:31.250Z.",
+    )
+
+
 class SearchInput(BaseModel):
     """Input for the Search tool"""
 
@@ -1581,6 +1630,11 @@ class SearchInput(BaseModel):
     source_type: Literal["rtsp", "video_file"] = Field(
         ...,
         description="Type of video source: 'rtsp' for live streams or 'video_file' for uploaded video files.",
+    )
+
+    reference_object: ReferenceObject | None = Field(
+        default=None,
+        description="Exact selected object used as the visual similarity seed. Bypasses LLM query decomposition.",
     )
 
     video_sources: list[str] | None = Field(

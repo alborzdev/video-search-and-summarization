@@ -505,6 +505,70 @@ async def _fetch_object_embedding(
     return [float(v) for v in vector]
 
 
+async def _fetch_reference_object_embedding(
+    object_id: str,
+    sensor_name: str,
+    timestamp: datetime,
+    behavior_index: str | list[str],
+    es: AsyncElasticsearch,
+) -> list[float]:
+    """Fetch the embedding for one unambiguously identified tracked object.
+
+    Object IDs are assigned by a tracker and are not globally unique. A selected
+    object is therefore resolved by the composite identity supplied by the UI:
+    indexed sensor name, object ID, and a timestamp contained by the behavior
+    segment. If overlapping segments exist, stable sorting selects the segment
+    with the latest start time.
+
+    Args:
+        object_id: Tracker object ID selected by the user.
+        sensor_name: MDX sensor name stored in ``sensor.id.keyword``.
+        timestamp: Timezone-aware instant at which the object was selected.
+        behavior_index: Behavior index name(s) to search.
+        es: Shared AsyncElasticsearch client.
+
+    Returns:
+        The selected behavior segment's embedding vector.
+
+    Raises:
+        ValueError: If the exact object segment is missing or has no embedding.
+    """
+    search_index_str = behavior_index if isinstance(behavior_index, str) else ",".join(behavior_index)
+    timestamp_iso = timestamp.isoformat()
+    query = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {"term": {"object.id.keyword": object_id}},
+                    {"term": {"sensor.id.keyword": sensor_name}},
+                    {"range": {"timestamp": {"lte": timestamp_iso}}},
+                    {"range": {"end": {"gte": timestamp_iso}}},
+                ]
+            }
+        },
+        "size": 1,
+        "sort": [
+            {"timestamp": {"order": "desc"}},
+            {"end": {"order": "asc"}},
+            {"Id.keyword": {"order": "asc"}},
+        ],
+        "_source": ["embeddings.vector"],
+    }
+    response = await es.search(index=search_index_str, body=query)
+    hits = response["hits"]["hits"]
+    reference = f"object ID '{object_id}' on sensor '{sensor_name}' at '{timestamp_iso}'"
+    if not hits:
+        raise ValueError(f"Reference {reference} not found in behavior index '{search_index_str}'")
+
+    embeddings = hits[0]["_source"].get("embeddings", {})
+    if isinstance(embeddings, list):
+        embeddings = embeddings[0] if embeddings else {}
+    vector = embeddings.get("vector", [])
+    if not vector:
+        raise ValueError(f"Reference {reference} has no embedding vector")
+    return [float(v) for v in vector]
+
+
 async def search_by_object_embedding(
     object_id: str,
     behavior_index: str | list[str],
@@ -515,6 +579,8 @@ async def search_by_object_embedding(
     timestamp_start: datetime | None = None,
     timestamp_end: datetime | None = None,
     source_type: str = "video_file",
+    reference_sensor_name: str | None = None,
+    reference_timestamp: datetime | None = None,
 ) -> list["AttributeSearchResult"]:
     """Search for similar objects using a known object's embedding from the behavior index.
 
@@ -531,11 +597,32 @@ async def search_by_object_embedding(
         timestamp_start: Optional start time filter
         timestamp_end: Optional end time filter
         source_type: Type of video source: video_file or rtsp
+        reference_sensor_name: Indexed sensor name for deterministic seed lookup.
+            Must be supplied together with ``reference_timestamp``.
+        reference_timestamp: Time at which the seed object was selected. Must be
+            supplied together with ``reference_sensor_name``.
 
     Returns:
         List of AttributeSearchResult sorted by similarity
     """
-    embedding = await _fetch_object_embedding(object_id, behavior_index, es)
+    has_reference_sensor = reference_sensor_name is not None
+    has_reference_timestamp = reference_timestamp is not None
+    if has_reference_sensor != has_reference_timestamp:
+        raise ValueError("reference_sensor_name and reference_timestamp must be supplied together")
+
+    if reference_sensor_name is not None and reference_timestamp is not None:
+        embedding = await _fetch_reference_object_embedding(
+            object_id=object_id,
+            sensor_name=reference_sensor_name,
+            timestamp=reference_timestamp,
+            behavior_index=behavior_index,
+            es=es,
+        )
+        candidate_top_k = top_k + 1
+    else:
+        embedding = await _fetch_object_embedding(object_id, behavior_index, es)
+        candidate_top_k = top_k
+
     results = await search_by_attributes(
         query_embedding=embedding,
         index=behavior_index,
@@ -543,10 +630,17 @@ async def search_by_object_embedding(
         timestamp_start=timestamp_start,
         timestamp_end=timestamp_end,
         video_sources=video_sources,
-        top_k=top_k,
+        top_k=candidate_top_k,
         min_similarity=min_similarity,
         source_type=source_type,
     )
+
+    if reference_sensor_name is not None:
+        results = [
+            result
+            for result in results
+            if not (result.metadata.sensor_id == reference_sensor_name and str(result.metadata.object_id) == object_id)
+        ]
     return results[:top_k]
 
 

@@ -68,6 +68,10 @@ class VlmParams(BaseModel):
     chunk_duration: Optional[int] = None
     num_frames_per_second_or_fixed_frames_chunk: Optional[int] = None
     enable_reasoning: Optional[bool] = None
+    media_mode: Optional[Literal["video", "snapshots"]] = None
+    snapshot_frames: Optional[int] = None
+    response_format: Optional[str] = None
+    json_parser: Optional[Dict[str, Any]] = None
 
 
 class AlertTypeConfig(BaseModel):

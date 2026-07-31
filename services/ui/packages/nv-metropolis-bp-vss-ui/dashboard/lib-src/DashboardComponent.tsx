@@ -30,6 +30,7 @@ export interface SavedDashboard {
 interface DashboardData {
   kibanaBaseUrl?: string | null;
   dashboards?: SavedDashboard[];
+  defaultDashboardId?: string | null;
 }
 
 export interface DashboardSidebarControlHandlers {
@@ -80,13 +81,18 @@ export const DashboardComponent: React.FC<DashboardComponentProps> = ({
   // Get data from server-side props
   const kibanaBaseUrl = dashboardData?.kibanaBaseUrl || '';
   const dashboards = dashboardData?.dashboards || [];
+  const defaultDashboardId = dashboardData?.defaultDashboardId || null;
 
-  // Auto-select first dashboard when dashboards are loaded
+  // Select the configured dashboard when it exists, while retaining the first
+  // available dashboard as a portable fallback for profiles that do not set one.
   useEffect(() => {
     if (dashboards.length > 0 && !selectedDashboardId) {
-      setSelectedDashboardId(dashboards[0].id);
+      const configuredDashboard = dashboards.find(
+        (dashboard) => dashboard.id === defaultDashboardId,
+      );
+      setSelectedDashboardId(configuredDashboard?.id || dashboards[0].id);
     }
-  }, [dashboards, selectedDashboardId]);
+  }, [dashboards, defaultDashboardId, selectedDashboardId]);
 
   // Generate the dashboard URL based on selection
   const getDashboardEmbedUrl = useCallback((): string | null => {
@@ -102,7 +108,7 @@ export const DashboardComponent: React.FC<DashboardComponentProps> = ({
 
     if (selectedDashboardId) {
       // Embed the selected dashboard
-      return `${baseUrl}/app/dashboards#/view/${selectedDashboardId}`;
+      return `${baseUrl}/app/dashboards#/view/${encodeURIComponent(selectedDashboardId)}?embed=true`;
     }
 
     // Fallback to default dashboards page
@@ -206,15 +212,22 @@ export const DashboardComponent: React.FC<DashboardComponentProps> = ({
       return;
     }
 
-    // Set a timeout to force show the iframe if onLoad doesn't fire
-    // This handles cases where X-Frame-Options blocks the iframe but the content still loads
+    // Hidden tabs are mounted by the host app, but the iframe is intentionally
+    // deferred until the operator opens Dashboard. Do not start a load timeout
+    // for an iframe that does not exist yet.
+    if (!hasLoadedOnce) {
+      return;
+    }
+
+    // Browsers do not consistently deliver iframe load events for a sandboxed,
+    // proxied application. Keep a silent fallback so a slow but healthy dashboard
+    // is still displayed; network failures continue through onError.
     const loadTimeout = setTimeout(() => {
-      console.warn('Dashboard iframe onLoad event did not fire within 3 seconds. This may indicate X-Frame-Options or CSP blocking. Showing iframe anyway.');
       setIsLoading(false);
-    }, 3000);
+    }, 10_000);
 
     return () => clearTimeout(loadTimeout);
-  }, [kibanaBaseUrl, sanitizedUrl, selectedDashboardId]);
+  }, [kibanaBaseUrl, sanitizedUrl, selectedDashboardId, hasLoadedOnce]);
 
   return (
     <div 

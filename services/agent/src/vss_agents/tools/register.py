@@ -15,6 +15,7 @@
 from . import attribute_search
 from . import chart_generator
 from . import embed_search
+from . import filesystem_object_store
 from . import fov_counts_with_chart
 from . import geolocation
 from . import incidents
@@ -38,6 +39,7 @@ __all__ = [
     "attribute_search",
     "chart_generator",
     "embed_search",
+    "filesystem_object_store",
     "fov_counts_with_chart",
     "geolocation",
     "incidents",

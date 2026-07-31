@@ -1,0 +1,7 @@
+**
+!deploy/
+!deploy/docker/
+!deploy/docker/services/
+!deploy/docker/services/vios/
+!deploy/docker/services/vios/scripts/
+!deploy/docker/services/vios/scripts/user_additional_install.sh

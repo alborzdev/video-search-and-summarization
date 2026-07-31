@@ -84,3 +84,11 @@ class TestVideoReportAgentInput:
         input_data = VideoReportAgentInput(sensor_id="vst-sensor-001")
         assert input_data.sensor_id == "vst-sensor-001"
         assert input_data.user_query == "Generate a detailed report of the video."
+
+    def test_json_encoded_sensor_id_list_is_normalized(self):
+        input_data = VideoReportAgentInput(sensor_id='["video-one", "video-two"]')
+        assert input_data.sensor_id == ["video-one", "video-two"]
+
+    def test_non_json_bracketed_sensor_name_is_preserved(self):
+        input_data = VideoReportAgentInput(sensor_id="[warehouse-camera]")
+        assert input_data.sensor_id == "[warehouse-camera]"

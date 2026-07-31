@@ -21,7 +21,31 @@ interface UseSearchOptions {
 }
 
 function buildRequestBody(searchParams: SearchParams): Record<string, unknown> {
-  const { query, startDate, endDate, videoSources, similarity, topK = 10, agentMode = false, sourceType = 'video_file' } = searchParams;
+  const {
+    query,
+    startDate,
+    endDate,
+    videoSources,
+    similarity,
+    topK = 10,
+    agentMode = false,
+    sourceType = 'video_file',
+    referenceObject,
+  } = searchParams;
+  if (referenceObject) {
+    return {
+      query: query || 'Find visually similar objects',
+      top_k: topK,
+      agent_mode: false,
+      source_type: sourceType,
+      reference_object: {
+        object_id: referenceObject.objectId,
+        sensor_name: referenceObject.sensorName,
+        sensor_id: referenceObject.sensorId,
+        timestamp: referenceObject.timestamp,
+      },
+    };
+  }
   if (agentMode) {
     return { agent_mode: agentMode, query, top_k: topK, source_type: sourceType };
   }
@@ -89,7 +113,7 @@ export const useSearch = ({ agentApiUrl, params = {} }: UseSearchOptions) => {
     const { signal } = abortControllerRef.current;
     
     try {
-      if (!searchParams.query) {
+      if (!searchParams.query && !searchParams.referenceObject) {
         setSearchResults([]);
         setLoading(false);
         return;

@@ -54,15 +54,16 @@ def _make_client(default_model: str) -> VLMClient:
     client.request_timeout = 5
     client.use_vlm_media_defaults = False
     client.client = MagicMock()
-    client.client.chat.completions.create = MagicMock(return_value=MagicMock(
-        choices=[MagicMock(message=MagicMock(content="ok"))],
-        usage=None,
-    ))
+    client.client.chat.completions.create = MagicMock(
+        return_value=MagicMock(
+            choices=[MagicMock(message=MagicMock(content="ok"))],
+            usage=None,
+        )
+    )
     return client
 
 
 class TestModelOverrideShapesPayload:
-
     def test_get_model_type_uses_override(self):
         # detect_model_type now returns the unified COSMOS_REASON for both
         # cosmos-reason1 and cosmos-reason2 prefixes (CR1/CR2 are kept as
@@ -106,7 +107,9 @@ class TestModelOverrideShapesPayload:
             "video", "https://example/video.mp4", "user prompt"
         )
         cr1_messages = client._build_messages_with_media(
-            "video", "https://example/video.mp4", "user prompt",
+            "video",
+            "https://example/video.mp4",
+            "user prompt",
             model_override="nvidia/cosmos-reason1-7b",
         )
 
@@ -127,3 +130,29 @@ class TestModelOverrideShapesPayload:
         )
         kwargs = client.client.chat.completions.create.call_args.kwargs
         assert kwargs["model"] == "nvidia/cosmos-reason1-7b"
+
+    def test_json_response_format_requests_strict_json_object(self):
+        client = _make_client("datasheet-vision")
+        client._create_chat(
+            messages=[{"role": "user", "content": []}],
+            video=False,
+            config_overrides={"response_format": "json"},
+        )
+        kwargs = client.client.chat.completions.create.call_args.kwargs
+        assert kwargs["response_format"] == {"type": "json_object"}
+
+    def test_auto_response_format_keeps_provider_default(self):
+        client = _make_client("datasheet-vision")
+        client._create_chat(messages=[{"role": "user", "content": []}], video=False)
+        kwargs = client.client.chat.completions.create.call_args.kwargs
+        assert "response_format" not in kwargs
+
+    def test_per_alert_request_timeout_overrides_client_default(self):
+        client = _make_client("datasheet-vision")
+        client._create_chat(
+            messages=[{"role": "user", "content": []}],
+            video=False,
+            config_overrides={"request_timeout": 60},
+        )
+        kwargs = client.client.chat.completions.create.call_args.kwargs
+        assert kwargs["timeout"] == 60

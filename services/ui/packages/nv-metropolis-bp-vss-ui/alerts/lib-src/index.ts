@@ -18,10 +18,17 @@ export { AlertsComponent } from './AlertsComponent';
 export type { AlertsComponentProps } from './AlertsComponent';
 export { Controls } from './components/Controls';
 export { CreateAlertRulesView } from './components/CreateAlertRulesView';
+export { useVerificationAlertConfigs } from './hooks/useVerificationAlertConfigs';
+export type {
+  CreateVerificationAlertConfigInput,
+  UpdateVerificationAlertConfigInput,
+} from './hooks/useVerificationAlertConfigs';
 export type {
   AlertsSidebarControlHandlers,
   AlertsView,
   AlertRulesType,
   RealtimeAlertRule,
   RealtimeAlertRuleDraft,
+  VerificationAlertConfig,
+  VerificationVlmParams,
 } from './types';

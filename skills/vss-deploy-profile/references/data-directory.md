@@ -8,11 +8,14 @@ The stack mounts several subdirs of `$VSS_DATA_DIR` into containers that each
 run as a different uid. Docker auto-creates empty bind-mount paths as
 `root:root`, which is read-only for the container processes.
 
-Run this verbatim before `docker compose up`:
+The deployment helper provisions only missing directories with a shared
+setgid group. Existing service-owned paths and files are deliberately left
+unchanged. Prefer `dev-profile.sh up`, which applies this safely. For a manual
+Compose workflow, use the equivalent non-recursive preparation below:
 
 ```bash
 DATA=$VSS_DATA_DIR      # e.g. <repo>/data
-mkdir -p \
+install -d -m 2770 -g "${VSS_DATA_GID:-1000}" \
   "$DATA/data_log/analytics_cache" \
   "$DATA/data_log/calibration_toolkit" \
   "$DATA/data_log/elastic/data" \
@@ -22,19 +25,18 @@ mkdir -p \
   "$DATA/data_log/redis/log" \
   "$DATA/agent_eval/dataset" \
   "$DATA/agent_eval/results"
-# Profile-specific subdirs:
-#   alerts → mkdir -p "$DATA/data_log/vss_video_analytics_api" "$DATA/videos/dev-profile-alerts" "$DATA/models/rtdetr-its" "$DATA/models/gdino"
-#   search → mkdir -p "$DATA/models"
-chmod -R 777 "$DATA/data_log" "$DATA/agent_eval"
-# If you created $DATA/models above, also: chmod -R 777 "$DATA/models"
+# Profile-specific paths should use the same install command and mode:
+#   alerts → data_log/vss_video_analytics_api, videos/dev-profile-alerts,
+#            models/rtdetr-its, models/gdino
+#   search → models
 ```
 
-> **FORBIDDEN: `chown -R ubuntu:ubuntu $VSS_DATA_DIR` (or any recursive chown).**
+> **FORBIDDEN: recursive `chown` or `chmod 777` under `$VSS_DATA_DIR`.**
 >
-> This is "good housekeeping" to a shell-admin instinct but is **the** deploy-
-> breaking command in this stack. You will observe a "healthy" deploy
-> (containers Up, endpoints 200) while the video pipeline is silently broken.
-> Use `chmod -R 777` on the specific subdirs above — nothing else.
+> The services intentionally own persisted children under different UIDs.
+> Recursively replacing ownership or granting world-write access can both
+> break that contract and expose video/model data. Set group access only when
+> a directory is first created; do not rewrite existing persisted contents.
 
 **If postgres is already broken** (common when redeploying without a clean
 `data-dir`):

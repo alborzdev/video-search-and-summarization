@@ -18,6 +18,8 @@
  */
 export declare function fetchSearchData(): Promise<{
     systemStatus: string;
-    agentApiUrl: string | undefined;
-    vstApiUrl: string | undefined;
+    agentApiUrl: string | null;
+    vstApiUrl: string | null;
+    mdxWebApiUrl: string | null;
+    mediaWithObjectsBbox: boolean;
 }>;

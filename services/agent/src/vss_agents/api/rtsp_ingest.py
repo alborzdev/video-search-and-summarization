@@ -37,7 +37,9 @@ from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
 
+from vss_agents.tools.vst.utils import add_proxy_stream as vst_add_proxy_stream
 from vss_agents.tools.vst.utils import add_sensor as vst_add_sensor
+from vss_agents.tools.vst.utils import delete_proxy_stream as vst_delete_proxy_stream
 from vss_agents.tools.vst.utils import delete_sensor as vst_delete_sensor
 from vss_agents.tools.vst.utils import delete_storage as vst_delete_storage
 from vss_agents.tools.vst.utils import get_rtsp_url as vst_get_rtsp_url
@@ -66,6 +68,7 @@ class ServiceConfig:
     def __init__(
         self,
         vst_internal_url: str,
+        vst_streamprocessor_url: str = "",
         rtvi_cv_base_url: str = "",
         rtvi_embed_base_url: str = "",
         rtvi_vlm_base_url: str = "",
@@ -75,6 +78,7 @@ class ServiceConfig:
         enable_audio: bool = False,
     ):
         self.vst_url = vst_internal_url.rstrip("/")
+        self.vst_streamprocessor_url = vst_streamprocessor_url.rstrip("/") if vst_streamprocessor_url else ""
         self.rtvi_cv_url = rtvi_cv_base_url.rstrip("/") if rtvi_cv_base_url else ""
         self.rtvi_embed_url = rtvi_embed_base_url.rstrip("/") if rtvi_embed_base_url else ""
         self.rtvi_vlm_url = rtvi_vlm_base_url.rstrip("/") if rtvi_vlm_base_url else ""
@@ -100,6 +104,7 @@ def _resolve_service_config(config: Any) -> ServiceConfig:
 
     return ServiceConfig(
         vst_internal_url=vst_internal_url,
+        vst_streamprocessor_url=getattr(streaming_config, "vst_streamprocessor_url", "") or "",
         rtvi_cv_base_url=getattr(streaming_config, "rtvi_cv_base_url", "") or "",
         rtvi_embed_base_url=getattr(streaming_config, "rtvi_embed_base_url", "") or "",
         rtvi_vlm_base_url=getattr(streaming_config, "rtvi_vlm_base_url", "") or "",
@@ -191,7 +196,15 @@ async def add_to_vst(config: ServiceConfig, request: AddStreamRequest) -> tuple[
 
     assert sensor_id is not None, "sensor_id should be set after successful VST add"
 
-    success, msg, rtsp_url = await vst_get_rtsp_url(sensor_id, config.vst_url)
+    if config.vst_streamprocessor_url:
+        success, msg, rtsp_url = await vst_add_proxy_stream(
+            sensor_id=sensor_id,
+            sensor_url=source_url,
+            name=request.name,
+            streamprocessor_url=config.vst_streamprocessor_url,
+        )
+    else:
+        success, msg, rtsp_url = await vst_get_rtsp_url(sensor_id, config.vst_url)
     if not success:
         return False, msg, sensor_id, None
 
@@ -199,8 +212,21 @@ async def add_to_vst(config: ServiceConfig, request: AddStreamRequest) -> tuple[
 
 
 async def cleanup_vst_sensor(config: ServiceConfig, sensor_id: str | None) -> tuple[bool, str]:
-    """Delete sensor from VST using shared util."""
-    return await vst_delete_sensor(sensor_id, config.vst_url)
+    """Delete a directly provisioned proxy, then delete its VST sensor."""
+    proxy_success = True
+    proxy_msg = "OK"
+    if config.vst_streamprocessor_url:
+        proxy_success, proxy_msg = await vst_delete_proxy_stream(sensor_id, config.vst_streamprocessor_url)
+
+    sensor_success, sensor_msg = await vst_delete_sensor(sensor_id, config.vst_url)
+    if proxy_success and sensor_success:
+        return True, "OK"
+    failures = []
+    if not proxy_success:
+        failures.append(f"proxy: {proxy_msg}")
+    if not sensor_success:
+        failures.append(f"sensor: {sensor_msg}")
+    return False, "; ".join(failures)
 
 
 async def cleanup_vst_storage(config: ServiceConfig, sensor_id: str | None) -> tuple[bool, str]:
@@ -457,6 +483,22 @@ async def start_embedding_generation(
 # ============================================================================
 
 
+def _is_missing_rtvi_resource(response: httpx.Response) -> bool:
+    """Return whether an RTVI delete response means the resource is gone.
+
+    RTVI currently reports an unknown stream as HTTP 400 with a
+    ``No such resource`` message, while other implementations may use 404.
+    Both are successful outcomes for an idempotent delete. Other 400-class
+    responses remain failures so malformed requests are not hidden.
+    """
+    if response.status_code == 404:
+        return True
+    if response.status_code != 400:
+        return False
+    response_text = response.text.casefold()
+    return "no such resource" in response_text or "resource not found" in response_text
+
+
 async def cleanup_rtvi_cv(
     client: httpx.AsyncClient, config: ServiceConfig, sensor_id: str, name: str = "", sensor_url: str = ""
 ) -> tuple[bool, str]:
@@ -508,6 +550,9 @@ async def cleanup_rtvi_embed_stream(
         if response.status_code in (200, 204):
             logger.info(f"RTVI-embed stream removed: {stream_id}")
             return True, "OK"
+        if _is_missing_rtvi_resource(response):
+            logger.info("RTVI-embed stream already absent: %s", stream_id)
+            return True, "Already absent"
         return False, f"RTVI-embed returned {response.status_code}: {response.text}"
     except Exception as e:
         return False, str(e)
@@ -530,6 +575,9 @@ async def cleanup_rtvi_embed_generation(
         if response.status_code in (200, 204):
             logger.info(f"Embedding generation stopped: {stream_id}")
             return True, "OK"
+        if _is_missing_rtvi_resource(response):
+            logger.info("RTVI-embed generation already absent: %s", stream_id)
+            return True, "Already absent"
         return False, f"RTVI-embed returned {response.status_code}: {response.text}"
     except Exception as e:
         return False, str(e)
@@ -552,6 +600,9 @@ async def cleanup_rtvi_vlm_stream(
         if response.status_code in (200, 204):
             logger.info(f"RTVI-VLM stream removed: {stream_id}")
             return True, "OK"
+        if _is_missing_rtvi_resource(response):
+            logger.info("RTVI-VLM stream already absent: %s", stream_id)
+            return True, "Already absent"
         return False, f"RTVI-VLM returned {response.status_code}: {response.text}"
     except Exception as e:
         return False, str(e)
@@ -602,6 +653,13 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
             success, msg, sensor_id, rtsp_url = await add_to_vst(config, request)
 
         if not success:
+            # Sensor creation may have succeeded before proxy activation
+            # failed. Roll back both resources instead of leaking an offline
+            # sensor and returning an unhandled retry exception.
+            if sensor_id is not None:
+                await cleanup_vst_sensor(config, sensor_id)
+                if config.delete_vst_storage_on_stream_remove:
+                    await cleanup_vst_storage(config, sensor_id)
             return AddStreamResponse(
                 status="failure",
                 message=f"Failed at VST: {msg}",
@@ -612,13 +670,15 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
         assert sensor_id is not None, "sensor_id should be set after successful VST add"
         assert rtsp_url is not None, "rtsp_url should be set after successful VST add"
 
-        # LVS mode is determined by whether an RTVI-VLM URL is configured: when
-        # set, the stream is registered with RTVI-VLM only (LVS path); otherwise
-        # the search path (RTVI-CV + RTVI-embed) is used.
-        is_lvs_mode = bool(config.rtvi_vlm_url)
+        # Integrations are additive. A unified deployment registers the same
+        # VST proxy with RTVI-VLM for live alerts/captioning and with
+        # RTVI-CV/Embed for semantic search. Single-purpose profiles continue
+        # to configure only the URLs they need.
+        rtvi_vlm_added = False
+        search_path_configured = bool(config.rtvi_cv_url or config.rtvi_embed_url)
 
         async with httpx.AsyncClient(timeout=60.0) as client:
-            if is_lvs_mode:
+            if config.rtvi_vlm_url:
                 with TimeMeasure("rtsp_stream: add to RTVI-VLM"):
                     success, msg, _rtvi_vlm_stream_id = await add_to_rtvi_vlm(
                         client, config, sensor_id, request.name, rtsp_url
@@ -631,7 +691,9 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                         message=f"Failed at RTVI-VLM: {msg}",
                         error=msg,
                     )
+                rtvi_vlm_added = True
 
+            if not search_path_configured:
                 return AddStreamResponse(
                     status="success",
                     message=f"Stream '{request.name}' added successfully",
@@ -642,7 +704,9 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
             with TimeMeasure("rtsp_stream: add to RTVI-CV"):
                 success, msg = await add_to_rtvi_cv(client, config, sensor_id, request.name, rtsp_url)
             if not success:
-                # Rollback: cleanup VST sensor and storage
+                # Rollback all integrations completed before the failure.
+                if rtvi_vlm_added:
+                    await cleanup_rtvi_vlm_stream(client, config, sensor_id)
                 await cleanup_vst_sensor(config, sensor_id)
                 await cleanup_vst_storage(config, sensor_id)
                 return AddStreamResponse(
@@ -661,6 +725,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                 # Rollback: cleanup RTVI-CV and VST (sensor + storage)
                 if rtvi_cv_added:
                     await cleanup_rtvi_cv(client, config, sensor_id, request.name, rtsp_url)
+                if rtvi_vlm_added:
+                    await cleanup_rtvi_vlm_stream(client, config, sensor_id)
                 await cleanup_vst_sensor(config, sensor_id)
                 await cleanup_vst_storage(config, sensor_id)
                 return AddStreamResponse(
@@ -681,6 +747,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                     await cleanup_rtvi_embed_stream(client, config, rtvi_embed_stream_id)
                 if rtvi_cv_added:
                     await cleanup_rtvi_cv(client, config, sensor_id, request.name, rtsp_url)
+                if rtvi_vlm_added:
+                    await cleanup_rtvi_vlm_stream(client, config, sensor_id)
                 await cleanup_vst_sensor(config, sensor_id)
                 await cleanup_vst_storage(config, sensor_id)
                 return AddStreamResponse(
@@ -719,7 +787,8 @@ def register_rtsp_ingest_routes(app: FastAPI, config: Any) -> None:
             "RTSP ingest route registered "
             f"(rtvi_embed={'on' if service_config.rtvi_embed_url else 'off'}, "
             f"rtvi_cv={'on' if service_config.rtvi_cv_url else 'off'}, "
-            f"rtvi_vlm={'on' if service_config.rtvi_vlm_url else 'off'})"
+            f"rtvi_vlm={'on' if service_config.rtvi_vlm_url else 'off'}, "
+            f"direct_proxy={'on' if service_config.vst_streamprocessor_url else 'off'})"
         )
     except Exception as e:
         logger.error(f"Failed to register RTSP ingest route: {e}", exc_info=True)

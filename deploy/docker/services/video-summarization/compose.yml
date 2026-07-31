@@ -18,7 +18,7 @@ services:
     image: ${CONTAINER_IMAGE:-nvcr.io/nvidia/vss-core/vss-video-summarization:3.2.0}
     container_name: vss-lvs
 
-    profiles: ["bp_developer_lvs_2d"]
+    profiles: ["bp_developer_lvs_2d", "bp_developer_thor_full_2d"]
 
     network_mode: host
 

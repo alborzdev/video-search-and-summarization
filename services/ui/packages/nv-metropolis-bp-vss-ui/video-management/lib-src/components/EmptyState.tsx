@@ -78,7 +78,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onFilesSelected, enableV
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`rounded-lg border-2 border-dashed text-center transition-colors cursor-pointer w-[580px] py-[60px] px-12 ${
+        className={`w-[calc(100%-2rem)] max-w-[580px] cursor-pointer rounded-lg border-2 border-dashed px-4 py-10 text-center transition-colors sm:px-12 sm:py-[60px] ${
           isDragOver
             ? 'border-green-500 bg-green-50 dark:bg-green-500/10'
             : 'border-gray-400 dark:border-gray-600 bg-transparent hover:border-gray-500'

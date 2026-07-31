@@ -5,6 +5,7 @@ import { formatDatetime } from '../utils/Formatter';
 
 // Centralized default constant - exported for use in other components
 export const DEFAULT_TOP_K = 10;
+export const DEFAULT_MIN_COSINE_SIMILARITY = -1;
 
 const TOP_K_STORAGE_KEY = 'vss_filter_topK';
 
@@ -34,7 +35,7 @@ export const useFilter = ({vstApiUrl}: FilterProps) => {
     startDate: null,
     endDate: null,
     videoSources: [],
-    similarity: 0,
+    similarity: DEFAULT_MIN_COSINE_SIMILARITY,
     agentMode: false,
     query: '',
     topK: getStoredTopK()
@@ -97,8 +98,12 @@ export const useFilter = ({vstApiUrl}: FilterProps) => {
     if (videoSources && videoSources.length > 0) {
       tags.push({key: 'videoSources', title: 'Video sources', value: videoSources.join(', ')});
     }
-    if (similarity) {
-      tags.push({key: 'similarity', title: 'Similarity', value: Number(similarity)?.toFixed(2)});
+    const similarityNumber = Number(similarity);
+    if (
+      Number.isFinite(similarityNumber) &&
+      similarityNumber > DEFAULT_MIN_COSINE_SIMILARITY
+    ) {
+      tags.push({key: 'similarity', title: 'Similarity', value: similarityNumber.toFixed(2)});
     }
     // Always include topK tag (robust to numeric 0 or other non-truthy but valid numbers)
     if (topK !== undefined && topK !== null) {

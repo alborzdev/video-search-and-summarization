@@ -205,6 +205,12 @@ class VideoUnderstandingConfig(FunctionBaseConfig, name="video_understanding"):
         default=2,
         description="Maximum frames per second to sample. num_frames = min(video_length * max_fps, max_frames)",
     )
+    max_frames_per_request: int = Field(
+        default=30,
+        ge=1,
+        description="Maximum sampled JPEG frames sent in one VLM request. "
+        "Longer frame sequences are split into ordered temporal segments.",
+    )
     min_pixels: int = Field(
         1568,
         description="The minimum number of pixels for 2 frames from the video, 28x28=784 will be converted to one video token",
@@ -339,6 +345,14 @@ class VideoUnderstandingOffsetInput(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def validate_start_and_end_time(cls, info: dict) -> dict:
+        # Tool-calling LLMs sometimes serialize an omitted optional argument as
+        # the string "None"/"null" (or an empty string). Treat those values as
+        # genuinely absent so the first tool call does not fail and retry.
+        for key in ("start_timestamp", "end_timestamp"):
+            value = info.get(key)
+            if isinstance(value, str) and value.strip().lower() in {"", "none", "null"}:
+                info[key] = None
+
         start = info.get("start_timestamp")
         end = info.get("end_timestamp")
 
@@ -432,6 +446,48 @@ async def _build_vlm_messages(
             ]
         )
     ]
+
+
+def _split_vlm_image_messages(
+    messages: list[HumanMessage],
+    max_frames_per_request: int,
+) -> list[list[HumanMessage]]:
+    """Split a sampled-frame message into provider-sized temporal segments.
+
+    Video URL payloads and other message shapes are returned unchanged. The
+    caller invokes each returned batch in order and combines their observations.
+    """
+    if len(messages) != 1 or max_frames_per_request < 1:
+        return [messages]
+
+    content = messages[0].content
+    if not isinstance(content, list):
+        return [messages]
+
+    text_items = [item for item in content if isinstance(item, dict) and item.get("type") == "text"]
+    image_items = [item for item in content if isinstance(item, dict) and item.get("type") == "image_url"]
+    other_items = [
+        item for item in content if not isinstance(item, dict) or item.get("type") not in {"text", "image_url"}
+    ]
+    if other_items or len(image_items) <= max_frames_per_request:
+        return [messages]
+
+    total_segments = (len(image_items) + max_frames_per_request - 1) // max_frames_per_request
+    batches: list[list[HumanMessage]] = []
+    for segment_index in range(total_segments):
+        start = segment_index * max_frames_per_request
+        segment_images = image_items[start : start + max_frames_per_request]
+        segment_context = {
+            "type": "text",
+            "text": (
+                f"Temporal segment {segment_index + 1} of {total_segments}. "
+                "Describe or answer only from these frames. Do not infer that an event is absent "
+                "from other segments."
+            ),
+        }
+        batches.append([HumanMessage(content=[*text_items, segment_context, *segment_images])])
+
+    return batches
 
 
 @register_function(config_type=VideoUnderstandingConfig, framework_wrappers=[LLMFrameworkEnum.LANGCHAIN])
@@ -685,31 +741,60 @@ async def video_understanding(config: VideoUnderstandingConfig, builder: Builder
             max_fps=config.max_fps,
         )
 
-        # Retry logic for VLM call — only retry transient errors (connection/timeout/5xx).
-        # Client errors like 400 (e.g. unsupported video format) are not retryable.
-        async for retry in create_retry_strategy(retries=3, exceptions=_VLM_RETRYABLE_ERRORS):
-            with retry:
-                try:
-                    response = await vlm_chain.ainvoke({"messages": messages})
-                    logger.debug(f"Response: {response}")
-                    break
-                except Exception as e:
-                    logger.error(f"Error understanding video {video_understanding_input.sensor_id}: {e}")
-                    raise e
+        message_batches = _split_vlm_image_messages(messages, config.max_frames_per_request)
+        if len(message_batches) > 1:
+            logger.info(
+                "Splitting %s sampled frames into %s VLM requests (max_frames_per_request=%s)",
+                num_frames,
+                len(message_batches),
+                config.max_frames_per_request,
+            )
 
-        content = str(response.content) if response.content is not None else ""
-        # Filter thinking traces
-        if config.filter_thinking:
-            thinking, answer = _parse_thinking_from_content(content)
-            if thinking:
-                logger.info(
-                    f"Filtered out thinking trace ({len(thinking)} chars), returning answer ({len(answer)} chars)"
-                )
-                return answer
-            else:
-                logger.info("No thinking traces found in response")
+        batch_contents: list[str] = []
+        for batch_index, message_batch in enumerate(message_batches, start=1):
+            response: Any | None = None
+            # Retry only transient connection/timeout/5xx errors. Client errors
+            # such as unsupported media or provider limits are not retryable.
+            async for retry in create_retry_strategy(retries=3, exceptions=_VLM_RETRYABLE_ERRORS):
+                with retry:
+                    try:
+                        response = await vlm_chain.ainvoke({"messages": message_batch})
+                        logger.debug("VLM response for temporal segment %s: %s", batch_index, response)
+                        break
+                    except Exception as e:
+                        logger.error(
+                            "Error understanding video %s segment %s/%s: %s",
+                            video_understanding_input.sensor_id,
+                            batch_index,
+                            len(message_batches),
+                            e,
+                        )
+                        raise
 
-        return content
+            if response is None:
+                raise RuntimeError(f"VLM returned no response for temporal segment {batch_index}")
+
+            content = str(response.content) if response.content is not None else ""
+            if config.filter_thinking:
+                thinking, answer = _parse_thinking_from_content(content)
+                if thinking:
+                    logger.info(
+                        "Filtered thinking trace from segment %s (%s chars), returning %s answer chars",
+                        batch_index,
+                        len(thinking),
+                        len(answer),
+                    )
+                    content = answer
+                else:
+                    logger.info("No thinking traces found in segment %s response", batch_index)
+            batch_contents.append(content)
+
+        if len(batch_contents) == 1:
+            return batch_contents[0]
+        return "\n\n".join(
+            f"[Temporal segment {index}/{len(batch_contents)}]\n{content}"
+            for index, content in enumerate(batch_contents, start=1)
+        )
 
     # Register the tool with the appropriate input schema based on time_format:
     #   - "offset": accepts float offsets (seconds since start of stream).

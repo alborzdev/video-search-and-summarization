@@ -17,7 +17,7 @@ services:
   alert-bridge:
     image: nvcr.io/nvidia/vss-core/vss-alert-verification:3.2.0
     container_name: vss-alert-bridge
-    profiles: ["bp_wh_2d","bp_developer_alerts_2d_cv", "bp_developer_alerts_2d_vlm"]
+    profiles: ["bp_wh_2d","bp_developer_alerts_2d_cv", "bp_developer_alerts_2d_vlm", "bp_developer_thor_full_2d"]
     network_mode: host
     restart: unless-stopped
     environment:
@@ -33,6 +33,12 @@ services:
       RTVI_VLM_BASE_URL: ${RTVI_VLM_BASE_URL:-http://${HOST_IP}:8018}
       CONFIG_PATH: /app/runtime/config.yml
       ALWAYS_ON_RULES_CONFIG: /app/configs/realtime-config.yml
+      ALERT_VERIFICATION_MEDIA_MODE: ${ALERT_VERIFICATION_MEDIA_MODE:-video}
+      ALERT_VERIFICATION_SNAPSHOT_FRAMES: ${ALERT_VERIFICATION_SNAPSHOT_FRAMES:-4}
+      ALERT_VERIFICATION_RESPONSE_FORMAT: ${ALERT_VERIFICATION_RESPONSE_FORMAT:-auto}
+      ALERT_VERIFICATION_NUM_WORKERS: ${ALERT_VERIFICATION_NUM_WORKERS:-10}
+      ALERT_VERIFICATION_ASYNC_IO: ${ALERT_VERIFICATION_ASYNC_IO:-true}
+      ALERT_VERIFICATION_OVERRIDE_PROMPTS: ${ALERT_VERIFICATION_OVERRIDE_PROMPTS:-true}
     volumes:
       - ${VLM_AS_VERIFIER_CONFIG_FILE_REALTIME:-/path/to/realtime-config.yml}:/app/configs/realtime-config.yml:ro
       - ${VLM_AS_VERIFIER_CONFIG_FILE:-/path/to/config.yml}:/app/configs/config.yml:ro
@@ -88,5 +94,3 @@ services:
       - /app/runtime/config.yml
       - --
     command: ["/usr/local/bin/python", "enhance_alert_with_vlm.py", "--config", "/app/runtime/config.yml"]
-
-

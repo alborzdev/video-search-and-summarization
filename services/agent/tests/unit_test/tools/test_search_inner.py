@@ -412,6 +412,128 @@ class TestSearchInner:
         )
 
     @pytest.mark.asyncio
+    async def test_structured_reference_bypasses_llm_and_preserves_cross_sensor_ids(self, mock_builder, monkeypatch):
+        """A bbox selection uses its exact seed identity without query decomposition."""
+        from datetime import UTC
+        from datetime import datetime
+
+        from vss_agents.tools import attribute_search as attribute_search_module
+        from vss_agents.tools import search as search_module
+        from vss_agents.tools.attribute_search import AttributeSearchMetadata
+        from vss_agents.tools.attribute_search import AttributeSearchResult
+
+        config = SearchConfig(
+            embed_search_tool="embed_search",
+            agent_mode_llm="gpt-4o",
+            vst_internal_url="http://vst-internal:30888",
+            behavior_es_endpoint="http://es:9200",
+            behavior_index="mdx-behavior-2025-01-01",
+            default_max_results=2,
+        )
+        mock_embed = AsyncMock()
+        mock_builder.get_function.return_value = mock_embed
+        mock_llm = AsyncMock()
+        mock_builder.get_llm.return_value = mock_llm
+
+        mock_decompose = AsyncMock()
+        monkeypatch.setattr(search_module, "decompose_query", mock_decompose)
+        monkeypatch.setattr(search_module.VSSESClient, "get_es_client", AsyncMock(return_value=object()))
+
+        def result(sensor_id: str, score: float) -> AttributeSearchResult:
+            return AttributeSearchResult(
+                metadata=AttributeSearchMetadata(
+                    sensor_id=sensor_id,
+                    object_id="42",
+                    object_type="person",
+                    frame_timestamp="2025-01-01T00:00:31.250Z",
+                    behavior_score=score,
+                )
+            )
+
+        mock_object_search = AsyncMock(
+            return_value=[
+                result("warehouse-west", 0.9),
+                result("warehouse-north", 0.8),
+            ]
+        )
+        monkeypatch.setattr(attribute_search_module, "search_by_object_embedding", mock_object_search)
+        monkeypatch.setattr(attribute_search_module, "enrich_attribute_results", AsyncMock())
+
+        gen = search.__wrapped__(config, mock_builder)
+        function_info = await gen.__anext__()
+        inner_fn = function_info.single_fn
+        timestamp = datetime(2025, 1, 1, 0, 0, 31, 250000, tzinfo=UTC)
+
+        output = await inner_fn(
+            SearchInput(
+                query="find visually similar objects",
+                source_type="video_file",
+                agent_mode=True,
+                reference_object={
+                    "object_id": "42",
+                    "sensor_name": "warehouse-east",
+                    "sensor_id": "7f8fcbf4-9e1b-41b9-bf52-1e6ce1ca9f6c",
+                    "timestamp": timestamp,
+                },
+            )
+        )
+
+        assert isinstance(output, SearchOutput)
+        assert [(item.sensor_id, item.object_ids) for item in output.data] == [
+            ("warehouse-west", ["42"]),
+            ("warehouse-north", ["42"]),
+        ]
+        mock_decompose.assert_not_awaited()
+        mock_llm.ainvoke.assert_not_awaited()
+        mock_embed.ainvoke.assert_not_awaited()
+        assert mock_object_search.await_args.kwargs["object_id"] == "42"
+        assert mock_object_search.await_args.kwargs["behavior_index"] == "mdx-behavior-2025-01-01"
+        assert mock_object_search.await_args.kwargs["reference_sensor_name"] == "warehouse-east"
+        assert mock_object_search.await_args.kwargs["reference_timestamp"] == timestamp
+
+    @pytest.mark.asyncio
+    async def test_structured_reference_not_found_returns_actionable_message(self, mock_builder, monkeypatch):
+        from vss_agents.tools import attribute_search as attribute_search_module
+        from vss_agents.tools import search as search_module
+
+        config = SearchConfig(
+            embed_search_tool="embed_search",
+            agent_mode_llm="gpt-4o",
+            vst_internal_url="http://vst-internal:30888",
+            behavior_es_endpoint="http://es:9200",
+        )
+        mock_embed = AsyncMock()
+        mock_builder.get_function.return_value = mock_embed
+        mock_builder.get_llm.return_value = AsyncMock()
+        monkeypatch.setattr(search_module.VSSESClient, "get_es_client", AsyncMock(return_value=object()))
+
+        async def missing_reference(**_kwargs: object) -> list[object]:
+            raise ValueError("Reference object ID '42' on sensor 'warehouse-east' was not found")
+
+        monkeypatch.setattr(attribute_search_module, "search_by_object_embedding", missing_reference)
+
+        gen = search.__wrapped__(config, mock_builder)
+        function_info = await gen.__anext__()
+        inner_fn = function_info.single_fn
+        output = await inner_fn(
+            SearchInput(
+                query="find visually similar objects",
+                source_type="video_file",
+                agent_mode=False,
+                reference_object={
+                    "object_id": "42",
+                    "sensor_name": "warehouse-east",
+                    "sensor_id": "7f8fcbf4-9e1b-41b9-bf52-1e6ce1ca9f6c",
+                    "timestamp": "2025-01-01T00:00:31.250Z",
+                },
+            )
+        )
+
+        assert output.data == []
+        assert output.search_messages == ["Reference object ID '42' on sensor 'warehouse-east' was not found"]
+        mock_embed.ainvoke.assert_not_awaited()
+
+    @pytest.mark.asyncio
     async def test_search_agent_mode_json_code_block(self, config, mock_builder):
         embed_output = _make_embed_output_with_results(
             [

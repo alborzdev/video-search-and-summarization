@@ -1,0 +1,163 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Small overlay for source-level Thor development. The released agent image
+# supplies the runtime, while PYTHONPATH selects the checked-out source so local
+# fixes can be qualified before a new immutable image is built.
+services:
+  # Every active Thor service shares the host network and reaches Redis over
+  # loopback. Override the broad upstream listener so the unauthenticated
+  # event bus is never exposed on a LAN interface.
+  redis:
+    command:
+      - redis-server
+      - /config/redis.conf
+      - --bind
+      - 127.0.0.1
+      - --protected-mode
+      - "yes"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 2s
+
+  streamprocessing-ms:
+    image: ${THOR_LOCAL_VST_STREAM_PROCESSOR_IMAGE:-vss-vios-streamprocessing:3.2.0-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-streamprocessing
+      args:
+        VST_STREAM_PROCESSOR_BASE_IMAGE: ${VST_STREAM_PROCESSOR_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.0}
+    # Codecs are repaired once in the derived image. Bypass the upstream
+    # startup wrapper, which otherwise performs apt operations on every boot.
+    entrypoint: ["/home/vst/vst_release/launch_vst"]
+    environment:
+      VST_INSTALL_ADDITIONAL_PACKAGES: "false"
+    depends_on:
+      centralizedb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # The released ARM64 sensor image prepends the generic library directory to
+  # LD_LIBRARY_PATH. On JetPack 7 that directory contains a zero-byte
+  # libcuda.so.1 compatibility placeholder, while the injected Thor driver is
+  # under the nvidia subdirectory. Prefer the real driver so GStreamer can load
+  # the NVIDIA video decode/convert plugins used by RTSP and file ingestion.
+  sensor-ms:
+    environment:
+      LD_LIBRARY_PATH: /usr/lib/aarch64-linux-gnu/nvidia:/usr/lib/aarch64-linux-gnu:/home/vst/vst_release/prebuilts/aarch64:/home/vst/vst_release/prebuilts/aarch64/gst-plugins:/home/vst/vst_release/prebuilts/aarch64/sbsa
+
+  # Do not advertise ingress before both sensor control and the actual video
+  # processor can serve requests.
+  vst-ingress:
+    depends_on:
+      streamprocessing-ms:
+        condition: service_healthy
+
+  vss-haproxy-ingress:
+    depends_on:
+      vst-ingress:
+        condition: service_healthy
+      vss-agent:
+        condition: service_healthy
+
+  vss-agent:
+    environment:
+      PYTHONPATH: /vss-agent/thor-local-src
+    volumes:
+      - ${VSS_REPO_ROOT}/services/agent/src:/vss-agent/thor-local-src:ro
+      - ${VSS_DATA_DIR}/agent-reports:/vss-agent/agent_reports:rw
+    depends_on:
+      vst-ingress:
+        condition: service_healthy
+
+  # Jetson/Thor requires the NVIDIA runtime itself; a generic GPU device
+  # reservation alone causes the Jetson container runtime hook to reject it.
+  rtvi-embed:
+    runtime: nvidia
+    # The upstream auto-size selects 64 and allocates roughly 20 GiB of
+    # activation memory. This profile has one stream and co-resident local
+    # LLM/VLM endpoints, so batch 8 preserves throughput headroom without
+    # exhausting Thor's unified memory.
+    environment:
+      VLM_BATCH_SIZE: "${RTVI_EMBED_BATCH_SIZE:-8}"
+
+  # The local OpenAI-compatible Qwen endpoint accepts one sequence at a time.
+  # Pin RTVI to the same concurrency contract: the released launcher otherwise
+  # auto-selects batch 128 from Thor's total unified memory and advertises ten
+  # VLM processes even though openai-compat creates only one. Blank the model
+  # API variables here so the NGC credential used by connected staging can
+  # never be copied into the long-running local proxy container.
+  rtvi-vlm:
+    image: ${THOR_LOCAL_RTVI_VLM_IMAGE:-cti-vss-rt-vlm:thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}/services/rtvi/rt-vlm
+      dockerfile: docker/Dockerfile
+      args:
+        BASE_IMAGE: ${RTVI_VLM_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.0}
+    environment:
+      VLM_BATCH_SIZE: "${RTVI_VLM_BATCH_SIZE:-1}"
+      NUM_VLM_PROCS: "${RTVI_VLM_NUM_VLM_PROCS:-1}"
+      VIA_VLM_API_KEY: "${RTVI_VLM_API_KEY:-}"
+      NGC_API_KEY: ""
+
+  # Preserve NVIDIA's released Alert Bridge while replacing only its default
+  # schema modules. This lets API, agent, and UI callers omit hardware tuning
+  # fields without accidentally asking a four-image local VLM for 300 frames.
+  alert-bridge:
+    image: ${THOR_LOCAL_ALERT_BRIDGE_IMAGE:-cti-vss-alert-bridge:thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.alert-bridge
+      args:
+        ALERT_BRIDGE_BASE_IMAGE: ${ALERT_BRIDGE_IMAGE:-nvcr.io/nvidia/vss-core/vss-alert-verification:3.2.0}
+    environment:
+      VLM_WARMUP_ENABLED: "false"
+      REALTIME_ALERT_CHUNK_DURATION: ${REALTIME_ALERT_CHUNK_DURATION:-10}
+      REALTIME_ALERT_CHUNK_OVERLAP_DURATION: ${REALTIME_ALERT_CHUNK_OVERLAP_DURATION:-2}
+      REALTIME_ALERT_FRAMES_PER_CHUNK: ${REALTIME_ALERT_FRAMES_PER_CHUNK:-4}
+      REALTIME_ALERT_USE_FPS: ${REALTIME_ALERT_USE_FPS:-false}
+      REALTIME_ALERT_VLM_INPUT_WIDTH: ${REALTIME_ALERT_VLM_INPUT_WIDTH:-512}
+      REALTIME_ALERT_VLM_INPUT_HEIGHT: ${REALTIME_ALERT_VLM_INPUT_HEIGHT:-512}
+      REALTIME_ALERT_ENABLE_REASONING: ${REALTIME_ALERT_ENABLE_REASONING:-false}
+      REALTIME_ALERT_MAX_TOKENS: ${REALTIME_ALERT_MAX_TOKENS:-128}
+      REALTIME_ALERT_ENABLE_AUDIO: ${REALTIME_ALERT_ENABLE_AUDIO:-false}
+      ALERT_VERIFICATION_MEDIA_MODE: snapshots
+      ALERT_VERIFICATION_SNAPSHOT_FRAMES: "4"
+      ALERT_VERIFICATION_RESPONSE_FORMAT: json
+      ALERT_VERIFICATION_NUM_WORKERS: "1"
+      ALERT_VERIFICATION_ASYNC_IO: "false"
+      ALERT_VERIFICATION_OVERRIDE_PROMPTS: "false"
+
+  # Add a tiny provider-aware patch on top of NVIDIA's released LVS image.
+  # Generic OpenAI/NIM requests remain unchanged; local vLLM can explicitly
+  # disable Qwen thinking so a one-event summary cannot consume 10k tokens.
+  lvs-server:
+    image: ${THOR_LOCAL_LVS_IMAGE:-cti-vss-video-summarization:thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.video-summarization
+      args:
+        LVS_BASE_IMAGE: ${LVS_IMAGE:-nvcr.io/nvidia/vss-core/vss-video-summarization}:${LVS_TAG:-3.2.0}
+    environment:
+      LVS_LLM_MODEL_TYPE: ${LLM_MODEL_TYPE:-openai}
+      LVS_LLM_ENABLE_THINKING: ${LVS_LLM_ENABLE_THINKING:-false}
+      LVS_LLM_MAX_TOKENS: ${LVS_LLM_MAX_TOKENS:-1024}
+
+  vss-ui:
+    image: vss-agent-ui:thor-local
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: services/ui/Dockerfile
+      args:
+        BUILD_TYPE: prod
+        NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}
+        RUNTIME_IMAGE_PROD: node:22.22.3-bookworm-slim
+        RUNTIME_IMAGE_DEV: node:22.22.3-bookworm-slim
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      DASHBOARD_KIBANA_INTERNAL_URL: http://host.docker.internal:${KIBANA_PORT:-5601}/kibana

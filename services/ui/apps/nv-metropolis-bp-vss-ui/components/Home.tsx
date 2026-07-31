@@ -309,6 +309,24 @@ export default function Home({ alertsData, searchData, dashboardData, mapData, v
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  // Keep the desktop navigation persistent, but treat it as an off-canvas
+  // drawer on narrow screens so the 260px rail never crushes application
+  // content. Re-evaluate only when crossing the breakpoint, not on every
+  // resize event.
+  useEffect(() => {
+    const narrowViewport = window.matchMedia('(max-width: 767px)');
+    const syncSidebarWithViewport = (matches: boolean) => {
+      setSidebarCollapsed(matches);
+    };
+
+    syncSidebarWithViewport(narrowViewport.matches);
+    const handleBreakpointChange = (event: MediaQueryListEvent) => {
+      syncSidebarWithViewport(event.matches);
+    };
+    narrowViewport.addEventListener('change', handleBreakpointChange);
+    return () => narrowViewport.removeEventListener('change', handleBreakpointChange);
+  }, []);
+
   // Set initial active tab - start with first visible tab for SSR compatibility
   const [activeTab, setActiveTabInternal] = useState(() => {
     // For SSR, return first visible tab or 'chat' as fallback
@@ -317,6 +335,13 @@ export default function Home({ alertsData, searchData, dashboardData, mapData, v
   
   const setActiveTab = React.useCallback((newTab: string) => {
     setActiveTabInternal(newTab);
+  }, []);
+
+  const handleSelectTab = React.useCallback((newTab: string) => {
+    setActiveTabInternal(newTab);
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      setSidebarCollapsed(true);
+    }
   }, []);
 
   // State for holding mode-specific control handlers
@@ -772,13 +797,16 @@ export default function Home({ alertsData, searchData, dashboardData, mapData, v
         }}
       >
         {/* Header content */}
-        <div className="h-full px-6 flex items-center justify-between relative">
-          <div className="flex items-center space-x-2 flex-1 min-w-0">
+        <div className="relative flex h-full items-center justify-between px-2 sm:px-6">
+          <div className="flex min-w-0 flex-1 items-center space-x-1 sm:space-x-2">
             {visibleTabs.length > 0 && (
               <button
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
                 className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors flex-shrink-0"
                 title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+                aria-label={sidebarCollapsed ? 'Open navigation' : 'Close navigation'}
+                aria-controls="primary-navigation"
+                aria-expanded={!sidebarCollapsed}
               >
                 <IconMenu2 size={20} />
               </button>
@@ -796,16 +824,16 @@ export default function Home({ alertsData, searchData, dashboardData, mapData, v
                 className={`h-5 w-auto transition-opacity duration-150 ${isDark ? 'opacity-0 absolute' : 'opacity-100'}`}
               />
             </div>
-            <div className="flex-shrink-0 w-[2px] h-[19px] bg-black dark:bg-white" />
+            <div className="hidden h-[19px] w-[2px] flex-shrink-0 bg-black dark:bg-white sm:block" />
             <h4
-              className="font-bold text-gray-900 dark:text-gray-100 truncate text-xl font-sans"
+              className="min-w-0 truncate font-sans text-base font-bold text-gray-900 dark:text-gray-100 sm:text-xl"
               title={APPLICATION_TITLE}
             >
               {APPLICATION_TITLE}
             </h4>
-            <div className="flex-shrink-0 w-[2px] h-[19px] bg-black dark:bg-white" />
+            <div className="hidden h-[19px] w-[2px] flex-shrink-0 bg-black dark:bg-white lg:block" />
             {APPLICATION_SUBTITLE && (
-              <div className="flex items-center">
+              <div className="hidden min-w-0 items-center lg:flex">
                 <span className="text-sm text-black dark:text-white">
                   {APPLICATION_SUBTITLE}
                 </span>
@@ -827,10 +855,20 @@ export default function Home({ alertsData, searchData, dashboardData, mapData, v
       </header>
 
       <div className="relative flex min-h-0 min-w-0 flex-1 overflow-hidden">
+        {!sidebarCollapsed && visibleTabs.length > 0 && (
+          <button
+            type="button"
+            aria-label="Close navigation"
+            className="absolute inset-0 z-30 block bg-black/60 md:hidden"
+            onClick={() => setSidebarCollapsed(true)}
+          />
+        )}
+
         {/* Left Sidebar with Tabs - Only show if there are visible tabs */}
         {visibleTabs.length > 0 && (
           <aside 
-            className={`bg-white dark:bg-neutral-900 border-r border-gray-300 dark:border-gray-600 flex flex-col shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-0 min-w-0 border-r-0' : ''}`}
+            id="primary-navigation"
+            className={`z-40 flex shrink-0 flex-col overflow-hidden border-r border-gray-300 bg-white shadow-xl transition-all duration-300 ease-in-out dark:border-gray-600 dark:bg-neutral-900 md:relative md:shadow-none ${sidebarCollapsed ? 'w-0 min-w-0 border-r-0' : 'absolute inset-y-0 left-0 md:static'}`}
             style={sidebarCollapsed ? { width: 0, minWidth: 0, maxWidth: 0 } : {
               width: '260px',
               minWidth: '260px', 
@@ -850,7 +888,7 @@ export default function Home({ alertsData, searchData, dashboardData, mapData, v
                     <button
                       key={tab.id}
                       data-testid={`sidebar-tab-${tab.id}`}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => handleSelectTab(tab.id)}
                       title={tab.alt}
                       className={`
                         w-full flex items-center px-3 py-1.5 text-sm rounded

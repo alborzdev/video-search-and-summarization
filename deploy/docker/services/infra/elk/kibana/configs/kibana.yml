@@ -11,3 +11,9 @@ server.rewriteBasePath: true
 server.shutdownTimeout: "5s"
 elasticsearch.hosts: [ "http://localhost:9200" ]
 monitoring.ui.container.elasticsearch.enabled: true
+
+# This deployment uses Kibana only as an embedded, local VSS analytics surface.
+# Disable product-survey flows that otherwise emit failing background requests
+# in a deliberately unauthenticated, air-gapped deployment.
+xpack.intercepts.enabled: false
+xpack.product_intercept.enabled: false

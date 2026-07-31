@@ -157,16 +157,18 @@ export function useAppChatSidebar(): AppChatSidebarApi {
       ? Math.min(maxW, Math.max(minW, sidebarState.width))
       : sidebarState.width;
 
+  const setCollapsed = React.useCallback((value: boolean) => {
+    setChatSidebarOpenInSession(!value);
+    setSidebarState((prev) => ({
+      ...prev,
+      collapsed: value,
+    }));
+  }, []);
+
   return React.useMemo(
     () => ({
       collapsed: sidebarState.collapsed,
-      setCollapsed: (value: boolean) => {
-        setChatSidebarOpenInSession(!value);
-        setSidebarState((prev) => ({
-          ...prev,
-          collapsed: value,
-        }));
-      },
+      setCollapsed,
       effectiveWidth,
       handleResizeStart,
       contentAreaCallbackRef,
@@ -177,6 +179,7 @@ export function useAppChatSidebar(): AppChatSidebarApi {
       effectiveWidth,
       handleResizeStart,
       contentAreaCallbackRef,
+      setCollapsed,
     ],
   );
 }

@@ -24,14 +24,26 @@ services:
     - bp_wh_2d
     - bp_developer_alerts_2d_cv
     - bp_developer_alerts_2d_vlm
+    - bp_developer_thor_full_2d
     volumes:
     - ${VSS_APPS_DIR}:/vss-agent/deploy/docker:ro
     environment:
     - HOST_IP=${HOST_IP}
+    # The MCP config is rendered by NAT inside this separate container. Pass
+    # every variable it references instead of relying on the main agent's
+    # environment, which is not shared between containers.
+    - VST_INTERNAL_URL=${VST_INTERNAL_URL}
     - VST_MCP_URL=${VST_MCP_URL}
     - VSS_AGENT_HOST=${VSS_AGENT_HOST}
     - VSS_VA_MCP_PORT=${VSS_VA_MCP_PORT}
     - VSS_ES_PORT=${VSS_ES_PORT}
+    - ELASTIC_SEARCH_ENDPOINT=${ELASTIC_SEARCH_ENDPOINT}
+    - LLM_MODEL_TYPE=${LLM_MODEL_TYPE}
+    - VA_MCP_LLM_MODEL_TYPE=${VA_MCP_LLM_MODEL_TYPE:-openai}
+    - LLM_NAME=${LLM_NAME}
+    - LLM_BASE_URL=${LLM_BASE_URL:-http://${HOST_IP}:${LLM_PORT}}
+    - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
+    - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     # HuggingFace token for authenticated downloads (higher rate limits)
     - HF_TOKEN=${HF_TOKEN:-}
     command:
@@ -71,11 +83,12 @@ services:
     - bp_developer_lvs_2d
     - bp_developer_alerts_2d_cv
     - bp_developer_alerts_2d_vlm
+    - bp_developer_thor_full_2d
     environment:
       LLM_MODE: ${LLM_MODE} # remote / local / local_shared
       VLM_MODE: ${VLM_MODE} # remote / local / local_shared
       LLM_MODEL_TYPE: ${LLM_MODEL_TYPE} # nim / openai
-      VLM_MODEL_TYPE: ${VLM_MODEL_TYPE} # nim / openai
+      VLM_MODEL_TYPE: ${VLM_MODEL_TYPE} # nim / openai / vllm / rtvi
 
       # NAT Configuration
       HOST_IP: ${HOST_IP}
@@ -96,6 +109,9 @@ services:
       VST_INTERNAL_URL: ${VST_INTERNAL_URL}
       VST_EXTERNAL_URL: ${VST_EXTERNAL_URL}
       VST_MCP_URL: ${VST_MCP_URL}
+      # Optional standalone VIOS control path. Base/Thor uses it because no
+      # SDR controller consumes camera_proxy events in that profile.
+      STREAM_PROCESSOR_MODULE_ENDPOINT: ${STREAM_PROCESSOR_MODULE_ENDPOINT:-}
 
       # MCP Server
       VIDEO_ANALYSIS_MCP_URL: http://${VSS_AGENT_HOST}:${VSS_VA_MCP_PORT}
@@ -105,6 +121,7 @@ services:
       LLM_BASE_URL: ${LLM_BASE_URL:-http://${HOST_IP}:${LLM_PORT}}
       VLM_NAME: ${VLM_NAME}
       VLM_BASE_URL: ${VLM_BASE_URL:-http://${HOST_IP}:${VLM_PORT}}
+      VLM_MAX_FRAMES_PER_REQUEST: ${VLM_MAX_FRAMES_PER_REQUEST:-30}
       RTVI_VLM_BASE_URL: ${RTVI_VLM_BASE_URL}
       ALERT_BRIDGE_URL: ${ALERT_BRIDGE_URL:-http://${HOST_IP}:${ALERT_BRIDGE_PORT:-9080}}
 

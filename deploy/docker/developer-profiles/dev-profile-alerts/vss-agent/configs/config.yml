@@ -17,6 +17,9 @@ general:
   use_uvloop: true
   front_end:
     _type: vss_fastapi
+    step_adaptor:
+      mode: custom
+      custom_event_types: [TOOL_START, TOOL_END]
     runner_class: vss_agents.api.custom_fastapi_worker.CustomFastApiFrontEndWorker
     object_store: ${VSS_AGENT_OBJECT_STORE_TYPE}  # Set to local_object_store or remote_object_store
     # Configuration for streaming video ingest endpoint
@@ -59,6 +62,7 @@ functions:
     _type: video_understanding
     vlm_name: ${VLM_MODEL_TYPE:-nim}_vlm
     max_frames: 30
+    max_frames_per_request: ${VLM_MAX_FRAMES_PER_REQUEST:-30}
     min_pixels: 3136
     max_pixels: 12845056
     reasoning: true
@@ -71,6 +75,7 @@ functions:
     _type: video_understanding
     vlm_name: ${VLM_MODEL_TYPE:-nim}_vlm
     max_frames: 30
+    max_frames_per_request: ${VLM_MAX_FRAMES_PER_REQUEST:-30}
     min_pixels: 3136
     max_pixels: 12845056
     reasoning: true
@@ -138,6 +143,8 @@ functions:
     _type: template_report_gen
     object_store: ${VSS_AGENT_OBJECT_STORE_TYPE}
     base_url: ${VSS_AGENT_REPORTS_BASE_URL}
+    template_path: ${VSS_AGENT_TEMPLATE_PATH}
+    template_name: ${VSS_AGENT_TEMPLATE_NAME}
     llm_name: ${LLM_MODEL_TYPE:-nim}_llm
     video_understanding_tool: video_understanding_iso
     picture_url_tool: vst_picture_url

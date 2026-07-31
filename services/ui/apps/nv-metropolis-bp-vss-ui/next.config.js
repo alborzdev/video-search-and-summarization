@@ -19,13 +19,6 @@ const nextConfig = {
     '@nv-metropolis-bp-vss-ui/video-management',
     '@nemo-agent-toolkit/ui',
   ],
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
-  },
   experimental: {
     serverActions: {
       bodySizeLimit: '5mb',

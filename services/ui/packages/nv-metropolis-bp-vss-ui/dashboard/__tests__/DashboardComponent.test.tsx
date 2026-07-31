@@ -68,3 +68,80 @@ describe('DashboardComponent', () => {
 
     expect(screen.getByTitle('Kibana Dashboard')).toBe(iframe);
   });
+
+  it('does not warn about an iframe fallback before the Dashboard tab is opened', () => {
+    const warning = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    render(
+      <DashboardComponent
+        isActive={false}
+        dashboardData={{ kibanaBaseUrl: 'https://kibana.example.com' }}
+      />,
+    );
+    act(() => {
+      jest.advanceTimersByTime(10_000);
+    });
+
+    expect(screen.queryByTitle('Kibana Dashboard')).not.toBeInTheDocument();
+    expect(warning).not.toHaveBeenCalled();
+    warning.mockRestore();
+  });
+
+  it('silently shows the iframe when its load event does not fire', () => {
+    const warning = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    render(
+      <DashboardComponent
+        dashboardData={{ kibanaBaseUrl: 'https://kibana.example.com' }}
+      />,
+    );
+    expect(screen.getByTitle('Kibana Dashboard')).toHaveStyle({ display: 'none' });
+
+    act(() => {
+      jest.advanceTimersByTime(10_000);
+    });
+
+    expect(screen.getByTitle('Kibana Dashboard')).toHaveStyle({ display: 'block' });
+    expect(warning).not.toHaveBeenCalled();
+    warning.mockRestore();
+  });
+
+  it('uses Kibana embed mode and safely encodes a selected dashboard id', () => {
+    render(
+      <DashboardComponent
+        dashboardData={{
+          kibanaBaseUrl: 'https://kibana.example.com/kibana',
+          dashboards: [
+            { id: 'warehouse/dashboard', attributes: { title: 'Warehouse' } },
+          ],
+        }}
+      />,
+    );
+
+    const iframe = screen.getByTitle('Kibana Dashboard');
+    expect(iframe).toHaveAttribute(
+      'src',
+      'https://kibana.example.com/kibana/app/dashboards#/view/warehouse%2Fdashboard?embed=true',
+    );
+  });
+
+  it('selects the configured default dashboard when it is available', () => {
+    render(
+      <DashboardComponent
+        dashboardData={{
+          kibanaBaseUrl: 'https://kibana.example.com/kibana',
+          defaultDashboardId: 'thor-vss-overview',
+          dashboards: [
+            { id: 'warehouse', attributes: { title: 'Warehouse' } },
+            { id: 'thor-vss-overview', attributes: { title: 'Thor VSS Overview' } },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByTitle('Kibana Dashboard')).toHaveAttribute(
+      'src',
+      'https://kibana.example.com/kibana/app/dashboards#/view/thor-vss-overview?embed=true',
+    );
+  });
+});

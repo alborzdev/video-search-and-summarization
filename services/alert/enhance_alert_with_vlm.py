@@ -52,6 +52,7 @@ from vst.exceptions import (
     VSTTimeoutError,
     VSTUnavailableError,
 )
+from vst.snapshot_sampler import VSTSnapshotError, VSTSnapshotSampler
 from mdx.anomaly.sink.vlm_enhanced_sink import build_vlm_enhanced_sink
 from models.responses import (
     AlertBridgeResponse,
@@ -1499,6 +1500,48 @@ class AnomalyEnhancer(AsyncDispatchMixin, AsyncExternalIOMixin, AsyncVLMModeMixi
             category = message.get('category', '')
             merged_vlm = self._get_merged_vlm_config(category)
 
+            snapshot_urls = None
+            if merged_vlm.get('media_mode', 'video') == 'snapshots':
+                try:
+                    snapshot_urls = VSTSnapshotSampler(self._vst_handler).sample(
+                        sensor_name=sensor_id,
+                        start_time=effective_start_time,
+                        end_time=effective_end_time,
+                        frame_count=int(merged_vlm.get('snapshot_frames', 4)),
+                    )
+                    message.setdefault('info', {})['snapshotUrls'] = snapshot_urls
+                except VSTSnapshotError as snapshot_error:
+                    logger.error(
+                        "VST snapshot sampling failed [sensor=%s category=%s]: %s",
+                        sensor_id,
+                        category,
+                        snapshot_error,
+                    )
+                    merge_info_with_response(
+                        message,
+                        AlertBridgeResponse(
+                            vlm_response=None,
+                            video_source=storage_video_url,
+                            verification_response_code=502,
+                            verification_response_status=str(snapshot_error),
+                            verdict="verification-failed",
+                            error_source=ERROR_SOURCE_MEDIA_DOWNLOAD,
+                        ),
+                        latency=latency,
+                        include_latency=self.include_latency_info,
+                    )
+                    publish_future = self._publish_error_with_mode(
+                        message, user_prompt, system_prompt, {}
+                    )
+                    self._complete_event_after_publish(
+                        publish_future,
+                        worker_start_time,
+                        message,
+                        latency,
+                        failure_reason="snapshot_sampling",
+                    )
+                    return
+
             if merged_vlm.get('dynamic_frame_count', False):
                 num_frames = self.set_max_frames(effective_start_time, effective_end_time)
             else:
@@ -1527,14 +1570,22 @@ class AnomalyEnhancer(AsyncDispatchMixin, AsyncExternalIOMixin, AsyncVLMModeMixi
                                 attempt + 1, max_retries + 1, self.vlm_media_source_using_base64,
                                 sensor_id, message.get('category', 'N/A'), message.get('timestamp', 'N/A'), message.get('end', 'N/A'))
                     start = time.time()
-                    vlm_response: ChatCompletionMessage = self._analyze_video_url_with_mode(
-                        vlm_video_url,
-                        user_prompt,
-                        system_prompt,
-                        num_frames=num_frames,
-                        use_base64=self.vlm_media_source_using_base64,
-                        config_overrides=merged_vlm,
-                    )
+                    if snapshot_urls:
+                        vlm_response = self.vlm_client.analyze_multiple_image_urls(
+                            snapshot_urls,
+                            user_prompt,
+                            system_prompt,
+                            config_overrides=merged_vlm,
+                        )
+                    else:
+                        vlm_response = self._analyze_video_url_with_mode(
+                            vlm_video_url,
+                            user_prompt,
+                            system_prompt,
+                            num_frames=num_frames,
+                            use_base64=self.vlm_media_source_using_base64,
+                            config_overrides=merged_vlm,
+                        )
                     duration = round(time.time() - start, 3)
                     latency['vlmRequest'] = {'success': vlm_response is not None, 'duration': duration}
                     observe_vlm_duration(duration, sensor_id)

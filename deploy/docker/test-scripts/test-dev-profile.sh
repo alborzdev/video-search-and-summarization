@@ -27,6 +27,9 @@ TESTS_FAILED=0
 CLEANUP_PIDS=()
 CLEANUP_RESTORES=()  # elements: "backup_file|dest_path"
 CLEANUP_DIRS=()
+TEST_VSS_DATA_DIR="$(mktemp -d)"
+CLEANUP_DIRS+=("${TEST_VSS_DATA_DIR}")
+export VSS_DATA_DIR="${TEST_VSS_DATA_DIR}"
 cleanup() {
   local p pair b d
   set +e
@@ -452,6 +455,8 @@ run_negative_test "IGX-THOR only valid for base or alerts (not lvs)" 1 up -p lvs
 run_negative_test "IGX-THOR only valid for base or alerts (not search)" 1 up -p search -i 127.0.0.1 -H IGX-THOR
 run_negative_test "AGX-THOR only valid for base or alerts (not lvs)" 1 up -p lvs -i 127.0.0.1 -H AGX-THOR
 run_negative_test "AGX-THOR only valid for base or alerts (not search)" 1 up -p search -i 127.0.0.1 -H AGX-THOR
+run_negative_test "thor-full requires remote LLM and VLM flags" 1 up -p thor-full -i 127.0.0.1 -H AGX-THOR -d
+LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_negative_test "thor-full rejects non-AGX Thor hardware" 1 up -p thor-full -i 127.0.0.1 -H IGX-THOR --use-remote-llm --llm datasheet-chat --use-remote-vlm --vlm datasheet-vision -d
 run_negative_test "invalid mode for alerts" 1 up -p alerts -m invalid
 run_negative_test "mode only accepted for alerts profile" 1 up -p base -m verification
 run_negative_test "down with extra option not allowed" 1 down --profile base
@@ -469,9 +474,28 @@ LLM_ENDPOINT_URL=http://127.0.0.1:8000 run_negative_test "edge hardware rejects 
 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_dry_run_up_and_check_generated_env "generated.env edge hardware LLM_DEVICE_ID VLM_DEVICE_ID=0 (DGX-SPARK remote+local_shared)" "base" \
  -i 127.0.0.1 -H DGX-SPARK --use-remote-vlm --vlm y -d -- \
   "LLM_DEVICE_ID" "0" "VLM_DEVICE_ID" "0"
-# Base on IGX-THOR: same VLM constraints as alerts on IGX-THOR (no --use-remote-vlm, etc.)
-LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_negative_test "base on IGX-THOR rejects --use-remote-vlm" 1 up -p base -i 127.0.0.1 -H IGX-THOR --use-remote-llm --llm x --use-remote-vlm --vlm y -d
-LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_negative_test "base on AGX-THOR rejects --use-remote-vlm" 1 up -p base -i 127.0.0.1 -H AGX-THOR --use-remote-llm --llm x --use-remote-vlm --vlm y -d
+# Base on IGX-THOR / AGX-THOR: operator-hosted endpoints override the bundled VLM defaults.
+LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_dry_run_up_and_check_generated_env "generated.env base IGX-THOR allows operator-hosted vLLM" "base" \
+ -i 127.0.0.1 -H IGX-THOR --use-remote-llm --llm datasheet-chat --llm-model-type openai --use-remote-vlm --vlm datasheet-vision --vlm-model-type vllm -d -- \
+  "LLM_MODE" "remote" "LLM_NAME" "datasheet-chat" "LLM_MODEL_TYPE" "openai" "LLM_BASE_URL" "http://127.0.0.1:8000" \
+  "VLM_MODE" "remote" "VLM_NAME" "datasheet-vision" "VLM_NAME_SLUG" "none" "VLM_MODEL_TYPE" "vllm" \
+  "VLM_BASE_URL" "http://127.0.0.1:8001" "RTVI_VLM_ENDPOINT" "http://127.0.0.1:8001/v1" "RTVI_VLM_MODEL_PATH" "none" \
+  "COMPOSE_PROFILES" '${BP_PROFILE}_${MODE},llm_${LLM_MODE}_${LLM_NAME_SLUG},vlm_${VLM_MODE}_${VLM_NAME_SLUG}'
+LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_dry_run_up_and_check_generated_env "generated.env base AGX-THOR allows operator-hosted vLLM" "base" \
+ -i 127.0.0.1 -H AGX-THOR --use-remote-llm --llm datasheet-chat --llm-model-type openai --use-remote-vlm --vlm datasheet-vision --vlm-model-type vllm -d -- \
+  "LLM_MODE" "remote" "LLM_NAME" "datasheet-chat" "LLM_MODEL_TYPE" "openai" "LLM_BASE_URL" "http://127.0.0.1:8000" \
+  "VLM_MODE" "remote" "VLM_NAME" "datasheet-vision" "VLM_NAME_SLUG" "none" "VLM_MODEL_TYPE" "vllm" \
+  "VLM_BASE_URL" "http://127.0.0.1:8001" "RTVI_VLM_ENDPOINT" "http://127.0.0.1:8001/v1" "RTVI_VLM_MODEL_PATH" "none" \
+  "COMPOSE_PROFILES" '${BP_PROFILE}_${MODE},llm_${LLM_MODE}_${LLM_NAME_SLUG},vlm_${VLM_MODE}_${VLM_NAME_SLUG}'
+LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_dry_run_up_and_check_generated_env "generated.env thor-full unified local inference contract" "thor-full" \
+ -i 127.0.0.1 -H AGX-THOR --use-remote-llm --llm datasheet-chat --llm-model-type vllm --use-remote-vlm --vlm datasheet-vision --vlm-model-type vllm -d -- \
+  "MODE" "2d" "BP_PROFILE" "bp_developer_thor_full" "HARDWARE_PROFILE" "AGX-THOR" "COMPOSE_PROFILES" "bp_developer_thor_full_2d" \
+  "LLM_MODE" "remote" "LLM_NAME" "datasheet-chat" "LLM_MODEL_TYPE" "vllm" "LLM_BASE_URL" "http://127.0.0.1:8000" \
+  "VLM_MODE" "remote" "VLM_NAME" "datasheet-vision" "VLM_MODEL_TYPE" "vllm" "VLM_BASE_URL" "http://127.0.0.1:8001" \
+  "RTVI_VLM_ENDPOINT" "http://127.0.0.1:8001/v1" "RTVI_VLM_MODEL_PATH" "none" \
+  "RTVI_VLM_BATCH_SIZE" "1" "RTVI_VLM_NUM_VLM_PROCS" "1" "RTVI_VLM_API_KEY" "" \
+  "RTVI_EMBED_PORT" "8017" "RTVI_VLM_PORT" "8018" "RTVI_CV_PORT" "9000" "VSS_VA_MCP_PORT" "9901" \
+  "LVS_BACKEND_URL" 'http://${HOST_IP}:38111' "VSS_ES_PORT" "9200" "NUM_STREAMS" "1" "NUM_SENSORS" "1"
 run_dry_run_up_and_check_generated_env "generated.env base IGX-THOR VLM and RTVI vars and device IDs" "base" \
  -i 127.0.0.1 -H IGX-THOR -d -- \
   "LLM_DEVICE_ID" "0" "VLM_DEVICE_ID" "0" "VLM_NAME_SLUG" "none" "VLM_NAME" "nim_nvidia_cosmos-reason2-8b_hf-1208" "VLM_BASE_URL" "http://127.0.0.1:8018" "VLM_MODEL_TYPE" "rtvi" "RTVI_VLM_MODEL_PATH" "ngc:nim/nvidia/cosmos-reason2-8b:hf-1208" "RTVI_VLM_MODEL_TO_USE" "cosmos-reason2" "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "0.35"
@@ -570,8 +594,14 @@ run_dry_run_up_and_check_generated_env "generated.env lvs RTXPRO4500BW RTVI tuni
 run_dry_run_up_and_check_generated_env "generated.env alerts OTHER RTVI_VLLM_GPU_MEMORY_UTILIZATION=0.7" "alerts" \
   -i 127.0.0.1 -m verification -H OTHER -d -- \
   "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "0.7"
-run_negative_test "alerts on IGX-THOR rejects --use-remote-vlm" 1 up -p alerts -i 127.0.0.1 -m verification -H IGX-THOR --use-remote-vlm --vlm y -d
-run_negative_test "alerts on AGX-THOR rejects --use-remote-vlm" 1 up -p alerts -i 127.0.0.1 -m verification -H AGX-THOR --use-remote-vlm --vlm y -d
+VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_dry_run_up_and_check_generated_env "generated.env alerts IGX-THOR allows operator-hosted vLLM" "alerts" \
+ -i 127.0.0.1 -m verification -H IGX-THOR --use-remote-vlm --vlm datasheet-vision --vlm-model-type vllm -d -- \
+  "VLM_MODE" "remote" "VLM_NAME" "datasheet-vision" "VLM_NAME_SLUG" "none" "VLM_MODEL_TYPE" "vllm" \
+  "VLM_BASE_URL" "http://127.0.0.1:8001" "RTVI_VLM_ENDPOINT" "http://127.0.0.1:8001/v1" "RTVI_VLM_MODEL_PATH" "none"
+VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_dry_run_up_and_check_generated_env "generated.env alerts AGX-THOR allows operator-hosted vLLM" "alerts" \
+ -i 127.0.0.1 -m verification -H AGX-THOR --use-remote-vlm --vlm datasheet-vision --vlm-model-type vllm -d -- \
+  "VLM_MODE" "remote" "VLM_NAME" "datasheet-vision" "VLM_NAME_SLUG" "none" "VLM_MODEL_TYPE" "vllm" \
+  "VLM_BASE_URL" "http://127.0.0.1:8001" "RTVI_VLM_ENDPOINT" "http://127.0.0.1:8001/v1" "RTVI_VLM_MODEL_PATH" "none"
 run_negative_test "alerts on IGX-THOR rejects --vlm" 1 up -p alerts -i 127.0.0.1 -m verification -H IGX-THOR --vlm nvidia/cosmos-reason2-8b -d
 run_negative_test "alerts on AGX-THOR rejects --vlm" 1 up -p alerts -i 127.0.0.1 -m verification -H AGX-THOR --vlm nvidia/cosmos-reason2-8b -d
 run_negative_test "alerts on IGX-THOR rejects --vlm-device-id" 1 up -p alerts -i 127.0.0.1 -m real-time -H IGX-THOR --vlm-device-id 0 -d
@@ -727,45 +757,359 @@ ENABLE_CRITIC=FALSE run_dry_run_up_and_check_generated_env "generated.env search
 _out_setup="$(mktemp)"
 cd "${REPO_ROOT}"
 timeout "${TEST_TIMEOUT}" "$DEV_PROFILE" up -p base -i 127.0.0.1 -d > "${_out_setup}" 2>&1
-if grep -q "Creating data directories" "${_out_setup}" && grep -q "Setting permissions on data_log" "${_out_setup}"; then
-  echo "PASS: up dry-run output includes data directory setup"
+if grep -q "Provisioning data directories" "${_out_setup}" && grep -q "mode=2770; preserve if present" "${_out_setup}"; then
+  echo "PASS: up dry-run output includes non-recursive data directory provisioning"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: up dry-run output missing data directory setup (Creating data directories / Setting permissions on data_log)"
+  echo "FAIL: up dry-run output missing secure non-recursive data directory provisioning"
   ((TESTS_FAILED++)) || true
 fi
-if grep -q "Setting permissions on agent_eval" "${_out_setup}"; then
-  echo "PASS: up dry-run output includes agent_eval directory setup"
+if grep -q "${TEST_VSS_DATA_DIR}/agent_eval/dataset" "${_out_setup}" &&
+   ! grep -qE 'chmod -R 777 .*(data_log|agent_eval)' "${_out_setup}"; then
+  echo "PASS: agent_eval is provisioned without recursive world-writable chmod"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: up dry-run output missing agent_eval directory setup (Setting permissions on agent_eval)"
+  echo "FAIL: agent_eval provisioning is missing or retains recursive chmod 777"
   ((TESTS_FAILED++)) || true
 fi
-if grep "data-directory:" "${_out_setup}" | grep -q "data-dir"; then
-  echo "PASS: up dry-run data-directory path is deploy/docker/data-dir"
+if grep "data-directory:" "${_out_setup}" | grep -Fq "${TEST_VSS_DATA_DIR}"; then
+  echo "PASS: up dry-run honors isolated VSS_DATA_DIR"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: up dry-run data-directory path missing or not deploy/docker/data-dir"
+  echo "FAIL: up dry-run does not honor isolated VSS_DATA_DIR"
   ((TESTS_FAILED++)) || true
 fi
-# VSS kernel settings are applied only when not in dry-run; dry-run must not show the message
-if ! grep -q "Applying VSS Linux kernel settings" "${_out_setup}"; then
+
+# Unit-test first-run creation and restart preservation without touching Docker
+# or the repository's live deploy/docker/data-dir.
+_permission_test_root="$(mktemp -d)"
+CLEANUP_DIRS+=("${_permission_test_root}")
+set +e
+VSS_DEV_PROFILE_SOURCE_ONLY=true bash -c '
+  source "$1"
+  dry_run=false
+  data_group_id="$(id -g)"
+  provision_runtime_directory "$2/data_log/redis/data"
+  printf persisted > "$2/data_log/redis/data/sentinel"
+  chmod 0640 "$2/data_log/redis/data/sentinel"
+  provision_runtime_directory "$2/data_log/redis/data"
+' _ "${DEV_PROFILE}" "${_permission_test_root}" >"${_permission_test_root}/provision.out" 2>"${_permission_test_root}/provision.err"
+_permission_test_exit=$?
+set -e
+if [[ ${_permission_test_exit} -eq 0 ]] &&
+   [[ "$(stat -c '%a' "${_permission_test_root}/data_log/redis/data")" == "2770" ]] &&
+   [[ "$(stat -c '%g' "${_permission_test_root}/data_log/redis/data")" == "$(id -g)" ]] &&
+   [[ "$(stat -c '%a' "${_permission_test_root}/data_log/redis/data/sentinel")" == "640" ]]; then
+  echo "PASS: first-run directories use setgid group access and restart preserves service-owned contents"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: secure runtime directory provisioning or preservation contract failed"
+  sed 's/^/    /' "${_permission_test_root}/provision.out" "${_permission_test_root}/provision.err"
+  ((TESTS_FAILED++)) || true
+fi
+# VSS kernel settings are checked/applied only when not in dry-run; dry-run must not show the message
+if ! grep -q "Checking required VSS Linux kernel settings" "${_out_setup}"; then
   echo "PASS: up dry-run does not apply VSS kernel settings (step skipped in dry-run)"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: up dry-run must not run VSS kernel settings (Applying VSS Linux kernel settings should not appear in dry-run)"
+  echo "FAIL: up dry-run must not run VSS kernel settings (kernel check should not appear in dry-run)"
   ((TESTS_FAILED++)) || true
 fi
 rm -f "${_out_setup}"
 
-# VSS kernel settings: script must define set_vss_linux_kernel_settings and write 99-vss.conf (non-dry-run only)
-if grep -q "function set_vss_linux_kernel_settings" "${DEV_PROFILE}" && grep -q "99-vss.conf" "${DEV_PROFILE}"; then
-  echo "PASS: dev-profile.sh defines set_vss_linux_kernel_settings and 99-vss.conf"
+# VSS kernel settings: script must define checks and persist 99-vss.conf (non-dry-run only)
+if grep -q "function set_vss_linux_kernel_settings" "${DEV_PROFILE}" && grep -q "function check_vss_linux_kernel_settings" "${DEV_PROFILE}" && grep -q "99-vss.conf" "${DEV_PROFILE}"; then
+  echo "PASS: dev-profile.sh defines kernel setting check/apply functions and 99-vss.conf"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: dev-profile.sh must define set_vss_linux_kernel_settings and reference 99-vss.conf"
+  echo "FAIL: dev-profile.sh must define kernel setting check/apply functions and reference 99-vss.conf"
   ((TESTS_FAILED++)) || true
 fi
+
+# Active settings must make both check and apply paths succeed without sudo.
+_mock_kernel_dir="$(mktemp -d)"
+CLEANUP_DIRS+=("${_mock_kernel_dir}")
+_mock_sudo_log="${_mock_kernel_dir}/sudo.log"
+cat > "${_mock_kernel_dir}/sysctl" <<'EOF'
+#!/bin/bash
+if [[ "${1:-}" != "-n" ]]; then
+  echo "unexpected mock sysctl invocation: $*" >&2
+  exit 90
+fi
+case "${2:-}" in
+  net.ipv6.conf.all.disable_ipv6|net.ipv6.conf.default.disable_ipv6|net.ipv6.conf.lo.disable_ipv6) printf '1\n' ;;
+  net.core.rmem_max)
+    if [[ "${MOCK_VSS_SYSCTL_MISMATCH:-false}" == "true" ]]; then printf '212992\n'; else printf '5242880\n'; fi
+    ;;
+  net.core.wmem_max) printf '5242880\n' ;;
+  net.ipv4.tcp_rmem) printf '4096\t87380  16777216\n' ;;
+  net.ipv4.tcp_wmem) printf '4096 65536 16777216\n' ;;
+  *) echo "unknown sysctl key: ${2:-}" >&2; exit 91 ;;
+esac
+EOF
+cat > "${_mock_kernel_dir}/sudo" <<'EOF'
+#!/bin/bash
+echo "sudo was invoked: $*" >> "${MOCK_SUDO_LOG:?}"
+exit 92
+EOF
+chmod +x "${_mock_kernel_dir}/sysctl" "${_mock_kernel_dir}/sudo"
+
+_kernel_out="$(mktemp)"
+_kernel_err="$(mktemp)"
+set +e
+PATH="${_mock_kernel_dir}:${PATH}" MOCK_SUDO_LOG="${_mock_sudo_log}" "${DEV_PROFILE}" check-kernel-settings >"${_kernel_out}" 2>"${_kernel_err}"
+_kernel_check_exit=$?
+PATH="${_mock_kernel_dir}:${PATH}" MOCK_SUDO_LOG="${_mock_sudo_log}" "${DEV_PROFILE}" kernel-settings >>"${_kernel_out}" 2>>"${_kernel_err}"
+_kernel_apply_exit=$?
+set -e
+if [[ ${_kernel_check_exit} -eq 0 && ${_kernel_apply_exit} -eq 0 ]] && grep -q "already active; skipping privileged update" "${_kernel_out}" && [[ ! -s "${_mock_sudo_log}" ]]; then
+  echo "PASS: active VSS kernel settings skip sudo on repeated apply"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: active VSS kernel settings must pass and skip sudo"
+  cat "${_kernel_out}" "${_kernel_err}" | sed 's/^/    /'
+  [[ -s "${_mock_sudo_log}" ]] && sed 's/^/    /' "${_mock_sudo_log}"
+  ((TESTS_FAILED++)) || true
+fi
+
+set +e
+PATH="${_mock_kernel_dir}:${PATH}" MOCK_VSS_SYSCTL_MISMATCH=true "${DEV_PROFILE}" check-kernel-settings >"${_kernel_out}" 2>"${_kernel_err}"
+_kernel_mismatch_exit=$?
+set -e
+if [[ ${_kernel_mismatch_exit} -eq 1 ]] && grep -q "net.core.rmem_max: current=212992; required=5242880" "${_kernel_err}"; then
+  echo "PASS: kernel check reports the exact active-value mismatch"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: kernel check must fail with the exact current and required values"
+  cat "${_kernel_out}" "${_kernel_err}" | sed 's/^/    /'
+  ((TESTS_FAILED++)) || true
+fi
+
+_thor_local="${REPO_ROOT}/deploy/docker/scripts/thor-local.sh"
+if "${_thor_local}" help 2>&1 | grep -q "kernel-settings" && grep -q "thor-local.sh kernel-settings.*once, then retry" "${_thor_local}"; then
+  echo "PASS: Thor-local help and preflight provide the one-time kernel-settings command"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor-local must expose kernel-settings and exact preflight guidance"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'generated_env="${THOR_LOCAL_GENERATED_ENV_FILE:-${deployment_dir}/thor-local/generated.env}"' "${_thor_local}" &&
+   grep -q 'profile_generated_env="${deployment_dir}/developer-profiles/dev-profile-${profile}/generated.env"' "${_thor_local}" &&
+   grep -q '^umask 077$' "${_thor_local}" &&
+   grep -q 'NGC_CLI_API_KEY=' "${_thor_local}" &&
+   grep -q 'require_command ngc' "${_thor_local}" &&
+   grep -q 'trap cleanup_connected_bootstrap EXIT' "${_thor_local}" &&
+   grep -q 'rm -f -- "${profile_generated_env}"' "${_thor_local}" &&
+   grep -q 'env -u NGC_CLI_API_KEY -u NGC_API_KEY' "${_thor_local}" &&
+   grep -q 'require_runtime_env' "${_thor_local}" &&
+   grep -q 'chmod 600 "${runtime_tmp}"' "${_thor_local}"; then
+  echo "PASS: Thor-local fails before bootstrap without NGC and always removes its credential-bearing transient env"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor-local must guard NGC bootstrap and isolate/remove credential-bearing env files"
+  ((TESTS_FAILED++)) || true
+fi
+
+set +e
+_thor_contract_out="$(NGC_CLI_API_KEY=must-not-appear NGC_API_KEY=also-must-not-appear "${_thor_local}" contract 2>&1)"
+set -e
+if grep -q "UI: port 3001, title 'THOR LOCAL VSS', subtitle 'OFFLINE VIDEO INTELLIGENCE'" <<<"${_thor_contract_out}" &&
+   grep -q "RTSP add control: true" <<<"${_thor_contract_out}" &&
+   grep -q "LLM: datasheet-chat via vllm at http://127.0.0.1:8000" <<<"${_thor_contract_out}" &&
+   grep -q "VLM: datasheet-vision via vllm at http://127.0.0.1:8001" <<<"${_thor_contract_out}" &&
+   grep -Eq "RTVI-VLM upstream: http://[^/]+:8001/v1 \(bridge-to-host\)" <<<"${_thor_contract_out}" &&
+   grep -q "Blueprint: bp_developer_thor_full (AGX-THOR, mode 2d)" <<<"${_thor_contract_out}" &&
+   grep -q "Compose profile: bp_developer_thor_full_2d" <<<"${_thor_contract_out}" &&
+   grep -q "Intelligence ports: embed=8017 (batch 8), RTVI-VLM=8018 (batch 1, processes 1), perception=9000, analytics=8081, alerts=9080, LVS=38111" <<<"${_thor_contract_out}" &&
+   grep -q "LVS aggregation: provider=vllm, thinking=false, max_tokens=1024" <<<"${_thor_contract_out}" &&
+   grep -q "Live alerts: 10s chunks/2s overlap, 4 fixed frames at 512x512, reasoning=false, max_tokens=128" <<<"${_thor_contract_out}" &&
+   grep -q "Data ports: Kafka=9092, Elasticsearch=9200, VA-MCP=9901, Kibana=5601" <<<"${_thor_contract_out}" &&
+   ! grep -q "must-not-appear" <<<"${_thor_contract_out}"; then
+  echo "PASS: Thor-local non-secret contract retains UI, RTSP, model endpoint, and profile defaults"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor-local non-secret environment contract is incomplete or leaked an NGC key"
+  sed 's/^/    /' <<<"${_thor_contract_out}"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'profile="${THOR_LOCAL_PROFILE:-thor-full}"' "${_thor_local}" &&
+   grep -q 'COMPOSE_PROFILES="${THOR_LOCAL_COMPOSE_PROFILES:-bp_developer_thor_full_2d}"' "${_thor_local}" &&
+   grep -q 'VSS_UI_PORT "${VSS_UI_PORT}"' "${_thor_local}" &&
+   grep -q 'NEXT_PUBLIC_APP_TITLE "${NEXT_PUBLIC_APP_TITLE}"' "${_thor_local}" &&
+   grep -q 'NEXT_PUBLIC_APP_SUBTITLE "${NEXT_PUBLIC_APP_SUBTITLE}"' "${_thor_local}" &&
+   grep -q 'NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_ENABLE "${NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_ENABLE}"' "${_thor_local}" &&
+   grep -q 'LLM_BASE_URL "${LLM_ENDPOINT_URL}"' "${_thor_local}" &&
+   grep -q 'VLM_BASE_URL "${VLM_ENDPOINT_URL}"' "${_thor_local}" &&
+   grep -q 'VLM_CONTAINER_ENDPOINT_URL "${VLM_CONTAINER_ENDPOINT_URL}"' "${_thor_local}" &&
+   grep -q 'RTVI_VLM_ENDPOINT "${VLM_CONTAINER_ENDPOINT_URL%/}/v1"' "${_thor_local}" &&
+   grep -q '^rtvi_vlm_upstream_is_ready()' "${_thor_local}" &&
+   grep -q 'docker exec vss-rtvi-vlm' "${_thor_local}" &&
+   grep -q 'RTVI_EMBED_BATCH_SIZE "${RTVI_EMBED_BATCH_SIZE}"' "${_thor_local}" &&
+   grep -q 'RTVI_VLM_BATCH_SIZE "${RTVI_VLM_BATCH_SIZE}"' "${_thor_local}" &&
+   grep -q 'RTVI_VLM_NUM_VLM_PROCS "${RTVI_VLM_NUM_VLM_PROCS}"' "${_thor_local}" &&
+   grep -q 'LVS_LLM_ENABLE_THINKING "${LVS_LLM_ENABLE_THINKING}"' "${_thor_local}" &&
+   grep -q 'LVS_LLM_MAX_TOKENS "${LVS_LLM_MAX_TOKENS}"' "${_thor_local}" &&
+   grep -q 'Dockerfile.video-summarization' "${REPO_ROOT}/deploy/docker/thor-local/compose.yml" &&
+   grep -q 'provider: !ENV ${LVS_LLM_MODEL_TYPE:openai}' "${REPO_ROOT}/deploy/docker/services/video-summarization/configs/config.yaml" &&
+   grep -q "RTVI_VLM_API_KEY ''" "${_thor_local}" &&
+   grep -q 'VIA_VLM_API_KEY: "${RTVI_VLM_API_KEY:-}"' "${REPO_ROOT}/deploy/docker/thor-local/compose.yml" &&
+   grep -q 'NGC_API_KEY: ""' "${REPO_ROOT}/deploy/docker/thor-local/compose.yml" &&
+   grep -q 'Dockerfile.alert-bridge' "${REPO_ROOT}/deploy/docker/thor-local/compose.yml" &&
+   grep -q 'REALTIME_ALERT_FRAMES_PER_CHUNK "${REALTIME_ALERT_FRAMES_PER_CHUNK}"' "${_thor_local}" &&
+   grep -q '^replay_persisted_alert_rules()' "${_thor_local}" &&
+   grep -q 'LVS_BACKEND_URL "http://127.0.0.1:${BACKEND_PORT}"' "${_thor_local}" &&
+   grep -q 'ELASTIC_SEARCH_ENDPOINT "http://127.0.0.1:${VSS_ES_PORT}"' "${_thor_local}"; then
+  echo "PASS: protected runtime env explicitly pins the Thor-local Compose contract"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: protected runtime env does not explicitly pin all Thor-local defaults"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'require_available_port "${VST_PORT}" vss-vios-ingress' "${_thor_local}" &&
+   grep -q 'require_available_port "${RTVI_EMBED_PORT}" vss-rtvi-embed' "${_thor_local}" &&
+   grep -q 'require_available_port "${RTVI_VLM_PORT}" vss-rtvi-vlm' "${_thor_local}" &&
+   grep -q 'require_available_port "${RTVI_CV_PORT}" vss-rtvi-cv' "${_thor_local}" &&
+   grep -q 'require_available_port "${KAFKA_PORT}" kafka' "${_thor_local}" &&
+   grep -q 'require_available_port "${BACKEND_PORT}" vss-lvs' "${_thor_local}"; then
+  echo "PASS: Thor-full preflight covers the complete host service port contract"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor-full preflight is missing one or more required service ports"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'require_staged_images' "${_thor_local}" &&
+   grep -q 'require_staged_assets' "${_thor_local}" &&
+   grep -q 'wait_for_connected_staging' "${_thor_local}" &&
+   grep -q 'wait_for_stack_ready' "${_thor_local}" &&
+   grep -q 'stack_container_states_are_ready' "${_thor_local}" &&
+   grep -q 'critical_http_endpoints_are_ready' "${_thor_local}" &&
+   grep -q 'compose up --detach --pull never --no-build' "${_thor_local}" &&
+   grep -q 'rm -f "${profile_generated_env}"' "${_thor_local}"; then
+  echo "PASS: Thor-full connected bootstrap and offline restart fail closed on unstaged artifacts"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor-full offline staging contract is incomplete"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'verify-offline)' "${_thor_local}" &&
+   grep -q 'print_required_host_asset_checksums' "${_thor_local}" &&
+   grep -q 'THOR_LOCAL_IMAGE_LOCK' "${_thor_local}" &&
+   grep -q "docker image inspect --format '{{.Id}}'" "${_thor_local}" &&
+   grep -q 'siglip_v2_v1.1_weights.bin' "${_thor_local}" &&
+   grep -q 'require_staged_embedding_cache' "${_thor_local}" &&
+   grep -q -- '--network none' "${_thor_local}" &&
+   grep -q 'cosmos_embed1_video_NVIDIA_Thor_${RTVI_EMBED_BATCH_SIZE}_fp16.engine' "${_thor_local}"; then
+  echo "PASS: Thor offline verifier pins images and host artifacts and validates network-isolated embedding caches"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor offline verifier must validate image IDs, host digests, and the persistent Cosmos-Embed cache"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'THOR_LOCAL_FORCE_BOOTSTRAP="${THOR_LOCAL_FORCE_BOOTSTRAP:-false}"' "${_thor_local}" &&
+   grep -q 'offline_stage_is_complete' "${_thor_local}" &&
+   grep -q 'skipping connected downloads and builds' "${_thor_local}"; then
+  echo "PASS: repeated Thor up reuses a complete offline stage unless bootstrap is explicitly forced"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: repeated Thor up must not destructively re-enter connected staging"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'THOR_LOCAL_LLM_CONTAINER="${THOR_LOCAL_LLM_CONTAINER:-datasheet-vllm-30}"' "${_thor_local}" &&
+   grep -q 'THOR_LOCAL_VLM_CONTAINER="${THOR_LOCAL_VLM_CONTAINER:-datasheet-qwen3-vl}"' "${_thor_local}" &&
+   grep -q 'ensure_local_model_is_running LLM' "${_thor_local}" &&
+   grep -q 'ensure_local_model_is_running VLM' "${_thor_local}" &&
+   grep -q 'wait_for_model' "${_thor_local}"; then
+  echo "PASS: Thor reboot startup brings local model containers up sequentially and waits for exact model IDs"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor restart must safely recover operator-managed local models after reboot"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'bootstrap_docker_config=.*mktemp -d' "${_thor_local}" &&
+   grep -q 'DOCKER_CONFIG="${bootstrap_docker_config}"' "${_thor_local}" &&
+   grep -q 'assert_no_registry_credentials_in_containers' "${_thor_local}" &&
+   grep -q 'compose up --detach --pull never --no-build --force-recreate' "${_thor_local}" &&
+   grep -q 'Removing credential-bearing bootstrap containers' "${_thor_local}"; then
+  echo "PASS: connected Thor bootstrap isolates Docker login and scrubs or removes credential-bearing containers"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor bootstrap must not persist NGC credentials in Docker client or container metadata"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'default_data_directory="${deployment_dir}/data-dir"' "${_thor_local}" &&
+   grep -q 'data_directory="${VSS_DATA_DIR}"' "${_thor_local}" &&
+   grep -q 'MODEL_ROOT_DIR "${data_directory}/models"' "${_thor_local}"; then
+  echo "PASS: Thor model staging and verification consistently follow VSS_DATA_DIR"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor VSS_DATA_DIR override must cover model staging and offline verification"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'require_edge_cache_cleaner' "${_thor_local}" &&
+   grep -q 'sudo -b /usr/local/bin/sys-cache-cleaner.sh' "${_thor_local}" &&
+   grep -q 'Thor cache cleaner: ready' "${_thor_local}"; then
+  echo "PASS: Thor preflight fails closed when the edge cache cleaner is absent"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor preflight must enforce the edge cache-cleaner prerequisite"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q 'data_directory="${VSS_DATA_DIR:-${deployment_directory}/data-dir}"' "${DEV_PROFILE}" &&
+   grep -q 'VSS_DATA_DIR="${mock_dir}/data-dir"' "${BASH_SOURCE[0]}"; then
+  echo "PASS: destructive NGC failure tests isolate model staging from production data"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: NGC failure tests must use a disposable VSS_DATA_DIR"
+  ((TESTS_FAILED++)) || true
+fi
+
+_agent_compose="${REPO_ROOT}/deploy/docker/services/agent/compose.yml"
+if sed -n '/^  vss-va-mcp:/,/^  vss-agent:/p' "${_agent_compose}" |
+   grep -q -- '- VST_INTERNAL_URL=${VST_INTERNAL_URL}' &&
+   sed -n '/^  vss-va-mcp:/,/^  vss-agent:/p' "${_agent_compose}" |
+   grep -q -- '- ELASTIC_SEARCH_ENDPOINT=${ELASTIC_SEARCH_ENDPOINT}' &&
+   sed -n '/^  vss-va-mcp:/,/^  vss-agent:/p' "${_agent_compose}" |
+   grep -q -- '- LLM_NAME=${LLM_NAME}'; then
+  echo "PASS: Video Analytics MCP receives every variable referenced by its NAT config"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Video Analytics MCP is missing required VIOS, Elasticsearch, or LLM environment"
+  ((TESTS_FAILED++)) || true
+fi
+
+_thor_overlay="${REPO_ROOT}/deploy/docker/thor-local/compose.yml"
+if grep -A2 '^  rtvi-embed:$' "${_thor_overlay}" | grep -q 'runtime: nvidia'; then
+  echo "PASS: Thor overlay forces the NVIDIA runtime for RTVI embedding"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor overlay must force runtime=nvidia for RTVI embedding on Jetson"
+  ((TESTS_FAILED++)) || true
+fi
+
+set +e
+PATH="${_mock_kernel_dir}:${PATH}" "${_thor_local}" kernel-check >"${_kernel_out}" 2>"${_kernel_err}"
+_thor_kernel_check_exit=$?
+set -e
+if [[ ${_thor_kernel_check_exit} -eq 0 ]] && grep -q "net.ipv4.tcp_wmem=4096 65536 16777216" "${_kernel_out}"; then
+  echo "PASS: thor-local kernel-check delegates to the unprivileged active-value check"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: thor-local kernel-check did not report active settings"
+  cat "${_kernel_out}" "${_kernel_err}" | sed 's/^/    /'
+  ((TESTS_FAILED++)) || true
+fi
+rm -f "${_kernel_out}" "${_kernel_err}"
 
 # Alerts profile: dry-run must include NGC model download steps (rtdetr-its, trafficcamnet, gdino/mask_grounding_dino)
 _out_alerts="$(mktemp)"
@@ -790,6 +1134,23 @@ else
   ((TESTS_FAILED++)) || true
 fi
 rm -f "${_out_search}"
+
+# Thor-full stages both alert and search host assets during the one connected
+# bootstrap; later restarts must not need NGC.
+_out_thor_full="$(mktemp)"
+LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 timeout "${TEST_TIMEOUT}" "${DEV_PROFILE}" up -p thor-full -i 127.0.0.1 -H AGX-THOR \
+  --use-remote-llm --llm datasheet-chat --llm-model-type openai \
+  --use-remote-vlm --vlm datasheet-vision --vlm-model-type vllm -d >"${_out_thor_full}" 2>&1
+if grep -q "trafficcamnet_transformer_lite" "${_out_thor_full}" &&
+   grep -q "mask_grounding_dino" "${_out_thor_full}" &&
+   grep -q "rtdetr_2d_warehouse" "${_out_thor_full}"; then
+  echo "PASS: thor-full dry-run stages alert and search model assets"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: thor-full dry-run did not stage the complete alert/search model set"
+  ((TESTS_FAILED++)) || true
+fi
+rm -f "${_out_thor_full}"
 
 # NGC download failures must stop before kernel setup, docker login, or compose.
 run_ngc_download_fail_fast_test() {
@@ -873,7 +1234,7 @@ fi
 EOF
   chmod +x "${mock_dir}"/*
 
-  local ngc_profiles=(base lvs search alerts)
+  local ngc_profiles=(base lvs search alerts thor-full)
   local ngc_gen_envs=()
   local ngc_backups=()
   local ngc_profile ngc_gen_env ngc_backup
@@ -895,7 +1256,11 @@ EOF
   err_file="$(mktemp)"
   cd "${REPO_ROOT}"
   set +e
-  NGC_FAIL_SCENARIO="${scenario}" NGC_MOCK_STATE_FILE="${ngc_state_file}" PATH="${mock_dir}:${PATH}" timeout "${TEST_TIMEOUT}" "$DEV_PROFILE" up "${args[@]}" > "${out_file}" 2> "${err_file}"
+  NGC_FAIL_SCENARIO="${scenario}" \
+    NGC_MOCK_STATE_FILE="${ngc_state_file}" \
+    VSS_DATA_DIR="${mock_dir}/data-dir" \
+    PATH="${mock_dir}:${PATH}" \
+    timeout "${TEST_TIMEOUT}" "$DEV_PROFILE" up "${args[@]}" > "${out_file}" 2> "${err_file}"
   exit_code=$?
   set -e
   failed=0
@@ -915,8 +1280,9 @@ EOF
     echo "FAIL: ${name} (docker login/compose up path was reached)"
     ((failed++)) || true
   fi
-  if grep -q "Applying VSS Linux kernel settings" "${out_file}" "${err_file}" || grep -q "MOCK_SUDO_REACHED bash -c" "${out_file}" "${err_file}" || grep -q "MOCK_SUDO_REACHED sysctl" "${out_file}" "${err_file}" || grep -q "MOCK_BASH_REACHED" "${out_file}" "${err_file}" || grep -q "MOCK_SYSCTL_REACHED" "${out_file}" "${err_file}"; then
+  if grep -q "Checking required VSS Linux kernel settings" "${out_file}" "${err_file}" || grep -Eq "MOCK_SUDO_REACHED (mkdir -p /etc/sysctl.d|tee /etc/sysctl.d/99-vss.conf|sysctl --system)" "${out_file}" "${err_file}" || grep -q "MOCK_BASH_REACHED" "${out_file}" "${err_file}" || grep -q "MOCK_SYSCTL_REACHED" "${out_file}" "${err_file}"; then
     echo "FAIL: ${name} (kernel settings path was reached)"
+    grep -E "Checking required VSS Linux kernel settings|MOCK_(SUDO|BASH|SYSCTL)_REACHED" "${out_file}" "${err_file}" | sed 's/^/    /' || true
     ((failed++)) || true
   fi
 
@@ -1210,7 +1576,7 @@ run_dry_run_up_and_check_generated_env "generated.env alerts prefixes IGX-THOR l
 run_dry_run_up_and_check_generated_env "generated.env alerts prefixes AGX-THOR local VLM" "alerts" \
  -i 127.0.0.1 -H AGX-THOR -m real-time -d -- \
   "PERCEPTION_DOCKERFILE_PREFIX" "EDGE-" "VLM_AS_VERIFIER_CONFIG_FILE_PREFIX" "EDGE-LOCAL-VLM-"
-# Both-remote alerts prefix check (OTHER allows remote+remote; IGX-THOR does not accept --use-remote-vlm for alerts)
+# Both-remote alerts prefix check on a non-edge hardware profile.
 LLM_ENDPOINT_URL=http://127.0.0.1:9999 VLM_ENDPOINT_URL=http://127.0.0.1:9998 run_dry_run_up_and_check_generated_env "generated.env alerts prefixes both remote (OTHER)" "alerts" \
  -i 127.0.0.1 -H OTHER -m real-time --use-remote-llm --llm x --use-remote-vlm --vlm y -d -- \
   "PERCEPTION_DOCKERFILE_PREFIX" "" "VLM_AS_VERIFIER_CONFIG_FILE_PREFIX" ""

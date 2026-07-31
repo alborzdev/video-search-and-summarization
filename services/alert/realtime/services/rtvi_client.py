@@ -166,7 +166,10 @@ class RTVIVLMClient:
         """DELETE to RTVI VLM /streams/delete/{stream_id} to stop a running stream."""
         url = f"{self.base_url}/streams/delete/{rtvi_stream_id}"
         logger.info("Calling RTVI VLM streams/delete: %s", url)
-        resp = await self._client.delete(url)
+        # Stream removal may wait for decoder/VLM work already in flight to
+        # drain.  The normal control-plane timeout is too short for that
+        # lifecycle operation on a busy local model.
+        resp = await self._client.delete(url, timeout=max(self.timeout, 120))
         resp.raise_for_status()
         if resp.text.strip():
             return resp.json()
@@ -255,7 +258,10 @@ class RTVIVLMClient:
         """DELETE /generate_captions/{stream_id} to stop caption generation."""
         url = f"{self.base_url}/generate_captions/{stream_id}"
         logger.info("Calling RTVI VLM stop generate_captions: %s", url)
-        resp = await self._client.delete(url)
+        # RTVI drains queued chunks before completing caption shutdown.  Use
+        # the same long-running request floor as generate_captions so callers
+        # do not mistake normal draining for a failed teardown.
+        resp = await self._client.delete(url, timeout=max(self.timeout, 120))
         resp.raise_for_status()
         if resp.text.strip():
             return resp.json()

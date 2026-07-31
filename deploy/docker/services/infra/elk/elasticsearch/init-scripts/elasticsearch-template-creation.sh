@@ -129,7 +129,7 @@ setup_elasticsearch_templates(){
         }
       }'
 
-    if [[ "${BP_PROFILE:-}" == "bp_developer_search" ]]; then
+    if [[ "${BP_PROFILE:-}" == "bp_developer_search" || "${BP_PROFILE:-}" == "bp_developer_thor_full" ]]; then
       create_index_template "mdx_behavior_template" '{
           "index_patterns": ["mdx-behavior-*"],
           "priority": 502,
@@ -446,7 +446,7 @@ setup_elasticsearch_templates(){
       }'
 
 #   if rawDataSchema is in json format then comment the following template
-    if [[ "${BP_PROFILE:-}" == "bp_developer_search" ]]; then
+    if [[ "${BP_PROFILE:-}" == "bp_developer_search" || "${BP_PROFILE:-}" == "bp_developer_thor_full" ]]; then
       create_index_template "mdx_raw_template" '{
           "index_patterns": ["mdx-raw-*"],
           "priority": 512,

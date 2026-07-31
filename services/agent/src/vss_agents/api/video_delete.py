@@ -28,6 +28,7 @@ import logging
 from typing import Any
 
 from elasticsearch import AsyncElasticsearch
+from elasticsearch import NotFoundError
 from fastapi import APIRouter
 from fastapi import FastAPI
 import httpx
@@ -179,6 +180,12 @@ async def _delete_es_documents(es_endpoint: str, index_pattern: str, id_value: s
             scrub_log(id_value),
         )
         return True, f"Deleted {deleted} documents"
+    except NotFoundError:
+        # Deletion is intentionally idempotent. Profiles do not necessarily
+        # create every optional analytics index, so an absent index means
+        # there is nothing left to remove rather than a partial failure.
+        logger.info("ES index '%s' does not exist; nothing to delete", index_pattern)
+        return True, "Index not present"
     except Exception as e:
         logger.error(f"ES delete_by_query failed for index '{index_pattern}': {e}", exc_info=True)
         return False, str(e)

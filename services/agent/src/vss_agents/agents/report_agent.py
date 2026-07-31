@@ -165,6 +165,36 @@ class VideoReportAgentInput(BaseModel):
         ),
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_json_encoded_sensor_ids(cls, data: Any) -> Any:
+        """Normalize JSON-array strings emitted by nested tool-call serializers.
+
+        The top agent may correctly choose a list of video names but serialize
+        that list while crossing the sub-agent boundary. Without normalization,
+        ``'["camera-1"]'`` is accepted by the ``str | list[str]`` union as one
+        literal sensor name and VST lookup can never succeed.
+        """
+        if not isinstance(data, dict):
+            return data
+
+        sensor_id = data.get("sensor_id")
+        if not isinstance(sensor_id, str):
+            return data
+
+        candidate = sensor_id.strip()
+        if not (candidate.startswith("[") and candidate.endswith("]")):
+            return data
+
+        try:
+            decoded = json.loads(candidate)
+        except json.JSONDecodeError:
+            return data
+
+        if isinstance(decoded, list) and decoded and all(isinstance(item, str) and item.strip() for item in decoded):
+            data["sensor_id"] = [item.strip() for item in decoded]
+        return data
+
 
 class ReportAgentConfig(FunctionBaseConfig, name="report_agent"):
     """Config for the single incident report agent."""

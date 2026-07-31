@@ -2238,10 +2238,16 @@ class RealtimeAlertService:
         ctx: Dict[str, Any],
         stop_stream: bool = True,
     ) -> None:
-        """Stop captions and (when ``stop_stream``) the stream concurrently.
+        """Stop captions and then (when ``stop_stream``) delete the stream.
 
-        Best-effort — both calls tolerate failures so neither blocks
-        nor aborts the other. ``stop_stream=False`` skips the
+        RTVI rejects ``/streams/delete/{id}`` with ``409 Resource ... is
+        currently being used`` while caption generation is still draining,
+        which is especially reproducible for streams this service reused
+        rather than created.  Keep teardown best-effort, but respect the
+        upstream lifecycle: wait for ``/generate_captions/{id}`` to finish
+        before deleting the underlying stream.  A captions failure is still
+        swallowed by :meth:`_safe_stop_captions`, so it does not prevent the
+        stream-delete attempt. ``stop_stream=False`` skips the
         ``/streams/delete`` call entirely so the underlying RTVI
         stream is left running for any other alert rules that are
         still reusing it. The caller is expected to compute that flag
@@ -2249,15 +2255,14 @@ class RealtimeAlertService:
         ``owns_rtvi_stream`` attribute (see
         :meth:`_count_other_rules_for_stream`).
         """
-        coros = [self._safe_stop_captions(rtvi_stream_id, ctx)]
+        await self._safe_stop_captions(rtvi_stream_id, ctx)
         if stop_stream:
-            coros.append(self._safe_stop_stream_with_ctx(rtvi_stream_id, ctx))
+            await self._safe_stop_stream_with_ctx(rtvi_stream_id, ctx)
         else:
             logger.info(
                 "Skipping stop_stream — other rules still use this RTVI stream",
                 extra=ctx,
             )
-        await asyncio.gather(*coros)
 
     async def _safe_teardown_rtvi_with_outcome(
         self,
@@ -2316,17 +2321,18 @@ class RealtimeAlertService:
                 )
                 return False
 
+        captions_ok = await _stop_captions()
         if stop_stream:
-            captions_ok, stream_ok = await asyncio.gather(
-                _stop_captions(), _stop_stream(),
-            )
+            # RTVI owns the stream lifecycle contract: an active caption
+            # query keeps the asset busy and makes streams/delete return 409.
+            # Always let caption teardown drain before deleting the asset.
+            stream_ok = await _stop_stream()
             return "success" if captions_ok and stream_ok else "partial"
 
         logger.info(
             "Skipping stop_stream — other rules still use this RTVI stream",
             extra=ctx,
         )
-        captions_ok = await _stop_captions()
         return "success" if captions_ok else "partial"
 
     async def _refresh_rules_count_gauge(self) -> None:

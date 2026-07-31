@@ -4,7 +4,7 @@
  * Agent API RTSP add/delete - single API calls that handle VST and RTVI services internally
  *
  * API Endpoints:
- * - Add:    POST   /api/v1/rtsp-streams/add     { sensorUrl, name }
+ * - Add:    POST   /api/v1/rtsp-streams/add     { sensorUrl, name, username, password }
  * - Delete: DELETE /api/v1/rtsp-streams/delete/{sensorName}
  */
 
@@ -14,6 +14,8 @@
 export interface AddRtspStreamRequest {
   sensorUrl: string;
   name?: string;
+  username?: string;
+  password?: string;
 }
 
 /**
@@ -51,30 +53,36 @@ export async function addRtspStream(
   signal?: AbortSignal
 ): Promise<AddRtspStreamResult> {
   if (signal?.aborted) {
-    throw new Error('Add RTSP stream was cancelled');
+    throw new Error("Add RTSP stream was cancelled");
   }
 
   const response = await fetch(`${agentApiUrl}/rtsp-streams/add`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       sensorUrl: request.sensorUrl,
       ...(request.name ? { name: request.name } : {}),
+      username: request.username ?? "",
+      password: request.password ?? "",
     }),
     signal,
   });
 
   if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(text || `Failed to add RTSP stream: ${response.statusText}`);
+    const text = await response.text().catch(() => "");
+    throw new Error(
+      text || `Failed to add RTSP stream: ${response.statusText}`
+    );
   }
 
   const result: AddRtspStreamResult = await response.json();
 
-  if (result.status === 'failure') {
-    throw new Error(result.message || result.error || 'Failed to add RTSP stream');
+  if (result.status === "failure") {
+    throw new Error(
+      result.message || result.error || "Failed to add RTSP stream"
+    );
   }
 
   return result;
@@ -94,26 +102,33 @@ export async function deleteRtspStream(
   signal?: AbortSignal
 ): Promise<DeleteRtspStreamResult> {
   if (signal?.aborted) {
-    throw new Error('Delete RTSP stream was cancelled');
+    throw new Error("Delete RTSP stream was cancelled");
   }
 
-  const response = await fetch(`${agentApiUrl}/rtsp-streams/delete/${encodeURIComponent(sensorName)}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    signal,
-  });
+  const response = await fetch(
+    `${agentApiUrl}/rtsp-streams/delete/${encodeURIComponent(sensorName)}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      signal,
+    }
+  );
 
   if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(text || `Failed to delete RTSP stream: ${response.statusText}`);
+    const text = await response.text().catch(() => "");
+    throw new Error(
+      text || `Failed to delete RTSP stream: ${response.statusText}`
+    );
   }
 
   const result: DeleteRtspStreamResult = await response.json();
 
-  if (result.status === 'failure') {
-    throw new Error(result.message || result.error || 'Failed to delete RTSP stream');
+  if (result.status === "failure") {
+    throw new Error(
+      result.message || result.error || "Failed to delete RTSP stream"
+    );
   }
 
   return result;

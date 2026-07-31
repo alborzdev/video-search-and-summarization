@@ -78,7 +78,7 @@ export interface SearchComponentProps {
   registerSidebarChatEventSubscriber?: (
     handler: (event: { type: 'messageSubmitted' } | { type: 'answerComplete' }) => void
   ) => void | (() => void);
-  /** When false, the Chat sidebar is open; used to disable search content when sidebar is open or query is running. */
+  /** @deprecated Kept for host-app compatibility; manual search remains available while Chat is open. */
   chatSidebarCollapsed?: boolean;
   /** When true, a message was submitted in the Chat sidebar and the response has not yet finished; keeps search content disabled. */
   chatSidebarBusy?: boolean;
@@ -95,6 +95,15 @@ export interface SearchParams {
   agentMode?: boolean;
   topK?: number;
   sourceType?: string;
+  referenceObject?: ReferenceObject;
+}
+
+/** Exact object identity selected from a rendered Search by Image frame. */
+export interface ReferenceObject {
+  objectId: string;
+  sensorName: string;
+  sensorId: string;
+  timestamp: string;
 }
 
 export interface FilterTag {

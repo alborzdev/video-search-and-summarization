@@ -357,6 +357,125 @@ class TestFetchObjectEmbedding:
         assert call_kwargs.kwargs["index"] == "idx-a,idx-b"
 
 
+class TestFetchReferenceObjectEmbedding:
+    """Test deterministic composite lookup for a selected object."""
+
+    @pytest.mark.asyncio
+    async def test_uses_sensor_object_and_containing_interval(self):
+        from datetime import UTC
+        from datetime import datetime
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools.attribute_search import _fetch_reference_object_embedding
+
+        mock_client = AsyncMock()
+        mock_client.search.return_value = {"hits": {"hits": [{"_source": {"embeddings": {"vector": [1, 2.5]}}}]}}
+        timestamp = datetime(2025, 1, 1, 0, 0, 31, 250000, tzinfo=UTC)
+
+        result = await _fetch_reference_object_embedding(
+            object_id="42",
+            sensor_name="warehouse-east",
+            timestamp=timestamp,
+            behavior_index=["mdx-behavior-*", "-mdx-behavior-2025-01-01"],
+            es=mock_client,
+        )
+
+        assert result == [1.0, 2.5]
+        call = mock_client.search.await_args
+        assert call.kwargs["index"] == "mdx-behavior-*,-mdx-behavior-2025-01-01"
+        body = call.kwargs["body"]
+        assert body["query"]["bool"]["filter"] == [
+            {"term": {"object.id.keyword": "42"}},
+            {"term": {"sensor.id.keyword": "warehouse-east"}},
+            {"range": {"timestamp": {"lte": "2025-01-01T00:00:31.250000+00:00"}}},
+            {"range": {"end": {"gte": "2025-01-01T00:00:31.250000+00:00"}}},
+        ]
+        assert body["sort"][-1] == {"Id.keyword": {"order": "asc"}}
+        assert all("_id" not in sort_clause for sort_clause in body["sort"])
+
+    @pytest.mark.asyncio
+    async def test_missing_exact_reference_identifies_composite(self):
+        from datetime import UTC
+        from datetime import datetime
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools.attribute_search import _fetch_reference_object_embedding
+
+        mock_client = AsyncMock()
+        mock_client.search.return_value = {"hits": {"hits": []}}
+
+        with pytest.raises(ValueError, match=r"object ID '42'.*sensor 'warehouse-east'.*not found"):
+            await _fetch_reference_object_embedding(
+                object_id="42",
+                sensor_name="warehouse-east",
+                timestamp=datetime(2025, 1, 1, tzinfo=UTC),
+                behavior_index="test-index",
+                es=mock_client,
+            )
+
+    @pytest.mark.asyncio
+    async def test_structured_knn_excludes_only_exact_seed_and_backfills(self, monkeypatch):
+        from datetime import UTC
+        from datetime import datetime
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools import attribute_search as attribute_search_module
+        from vss_agents.tools.attribute_search import AttributeSearchMetadata
+        from vss_agents.tools.attribute_search import AttributeSearchResult
+        from vss_agents.tools.attribute_search import search_by_object_embedding
+
+        def result(sensor_id: str, object_id: str, score: float) -> AttributeSearchResult:
+            return AttributeSearchResult(
+                metadata=AttributeSearchMetadata(
+                    sensor_id=sensor_id,
+                    object_id=object_id,
+                    object_type="person",
+                    frame_timestamp="2025-01-01T00:00:00Z",
+                    behavior_score=score,
+                )
+            )
+
+        mock_fetch = AsyncMock(return_value=[0.1, 0.2])
+        mock_search = AsyncMock(
+            return_value=[
+                result("warehouse-east", "42", 1.0),
+                result("warehouse-west", "42", 0.9),
+                result("warehouse-east", "77", 0.8),
+            ]
+        )
+        monkeypatch.setattr(attribute_search_module, "_fetch_reference_object_embedding", mock_fetch)
+        monkeypatch.setattr(attribute_search_module, "search_by_attributes", mock_search)
+
+        results = await search_by_object_embedding(
+            object_id="42",
+            behavior_index="test-index",
+            es=AsyncMock(),
+            top_k=2,
+            reference_sensor_name="warehouse-east",
+            reference_timestamp=datetime(2025, 1, 1, tzinfo=UTC),
+        )
+
+        assert [(item.metadata.sensor_id, item.metadata.object_id) for item in results] == [
+            ("warehouse-west", "42"),
+            ("warehouse-east", "77"),
+        ]
+        assert mock_search.await_args.kwargs["top_k"] == 3
+
+    @pytest.mark.asyncio
+    async def test_structured_lookup_parameters_are_atomic(self):
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools.attribute_search import search_by_object_embedding
+
+        with pytest.raises(ValueError, match="must be supplied together"):
+            await search_by_object_embedding(
+                object_id="42",
+                behavior_index="test-index",
+                es=AsyncMock(),
+                reference_sensor_name="warehouse-east",
+            )
+
+
 class TestDecomposeQueryObjectIds:
     """Test that decompose_query correctly passes object_ids."""
 

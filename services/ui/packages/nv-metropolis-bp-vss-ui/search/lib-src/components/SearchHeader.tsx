@@ -7,7 +7,7 @@ import { Search as SearchIcon, Funnel as FunnelIcon, Close as CloseIcon, InfoRou
 import { IconRefresh } from '@tabler/icons-react';
 import { FilterDialog } from './FilterPopover';
 import { SearchParams, StreamInfo, FilterTag } from '../types';
-import { DEFAULT_TOP_K } from '../hooks/useFilter';
+import { DEFAULT_MIN_COSINE_SIMILARITY, DEFAULT_TOP_K } from '../hooks/useFilter';
 
 interface SearchHeaderProps {
     onUpdateSearchParams: (params: SearchParams) => void;
@@ -196,7 +196,7 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({ onUpdateSearchParams
       startDate: { startDate: null },
       endDate: { endDate: null },
       videoSources: { videoSources: [] },
-      similarity: { similarity: '' },
+      similarity: { similarity: DEFAULT_MIN_COSINE_SIMILARITY },
       topK: { topK: DEFAULT_TOP_K }
     }), []);
     
@@ -260,7 +260,13 @@ export const SearchHeader: React.FC<SearchHeaderProps> = ({ onUpdateSearchParams
     }, [filterParams, tagResetValues, setFilterParams, removeFilterTag]);
       
     const onClearAll = useCallback(() => {
-      const newParams = { ...filterParams, startDate: null, endDate: null, videoSources: [], similarity: 0 };
+      const newParams = {
+        ...filterParams,
+        startDate: null,
+        endDate: null,
+        videoSources: [],
+        similarity: DEFAULT_MIN_COSINE_SIMILARITY,
+      };
       removeFilterTag(null);
       setFilterParams(newParams);
     }, [filterParams, removeFilterTag, setFilterParams]);

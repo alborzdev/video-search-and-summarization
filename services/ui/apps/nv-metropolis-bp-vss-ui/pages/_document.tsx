@@ -23,11 +23,11 @@ export default function Document(props: Props) {
         <link rel="icon" type="image/jpeg" href="/favicon.jpg" />
         <link
           rel="stylesheet"
-          href="https://webassets.nvidia.com/kaizen-ui-foundations/0.600.0/theme.css"
+          href="/vendor/kaizen/0.600.0/theme.css"
         />
         <link
           rel="stylesheet"
-          href="https://webassets.nvidia.com/kaizen-ui-foundations/0.600.0/components.css"
+          href="/vendor/kaizen/0.600.0/components.css"
         />
       </Head>
       <body>

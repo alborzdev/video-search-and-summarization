@@ -23,7 +23,13 @@ repo_root="$( cd -- "${script_dir}/../../.." &> /dev/null && pwd )"
 desired_state=""
 profile=""
 deployment_directory="${repo_root}/deploy/docker"
-data_directory="${deployment_directory}/data-dir"
+# Runtime data is canonical by default but may be redirected explicitly for
+# isolated tests and disposable deployments. Never force destructive model
+# staging tests to operate on the production data directory.
+data_directory="${VSS_DATA_DIR:-${deployment_directory}/data-dir}"
+# NVIDIA's persistent service images use GID 1000 (Elasticsearch/Kafka and
+# Redis' shared group). The operator may override this for a remapped runtime.
+data_group_id="${VSS_DATA_GID:-1000}"
 hardware_profile=""
 host_ip="$(ip route get 1.1.1.1 | awk '/src/ {for (i=1;i<=NF;i++) if ($i=="src") print $(i+1)}')"
 external_ip=""
@@ -51,7 +57,7 @@ vlm_custom_weights=""
 # Optional env file paths (absolute or relative to CWD)
 llm_env_file=""
 vlm_env_file=""
-# Remote LLM/VLM model type (nim, openai)
+# External model type (LLM/VLM: nim/openai/vllm)
 llm_model_type=""
 vlm_model_type=""
 
@@ -329,23 +335,89 @@ function get_rtvi_vlm_max_model_len() {
   esac
 }
 
-# Apply VSS kernel settings (IPv6 disable, TCP buffer sizes). Persistent across reboots via /etc/sysctl.d/99-vss.conf.
-function set_vss_linux_kernel_settings() {
-  local _sudo=""
-  if [[ "$(id -u)" -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
-    _sudo="sudo"
-  fi
-  $_sudo mkdir -p /etc/sysctl.d
-  $_sudo bash -c "printf '%s\n' \
+# Required VSS kernel settings (IPv6 disable, TCP buffer sizes). Keep this list
+# in one place so checks and the persistent sysctl file cannot drift apart.
+function print_vss_linux_kernel_settings() {
+  printf '%s\n' \
     'net.ipv6.conf.all.disable_ipv6 = 1' \
     'net.ipv6.conf.default.disable_ipv6 = 1' \
     'net.ipv6.conf.lo.disable_ipv6 = 1' \
     'net.core.rmem_max = 5242880' \
     'net.core.wmem_max = 5242880' \
     'net.ipv4.tcp_rmem = 4096 87380 16777216' \
-    'net.ipv4.tcp_wmem = 4096 65536 16777216' \
-    > /etc/sysctl.d/99-vss.conf"
-  $_sudo sysctl --system
+    'net.ipv4.tcp_wmem = 4096 65536 16777216'
+}
+
+function normalize_sysctl_value() {
+  local _value="${1}"
+  local -a _parts=()
+  read -r -a _parts <<< "${_value}"
+  printf '%s' "${_parts[*]}"
+}
+
+# Quiet predicate used by repeated `up` calls. Reading active sysctls is
+# unprivileged, so an already-configured host never needs to invoke sudo.
+function vss_linux_kernel_settings_are_active() {
+  local _line _key _expected _actual
+  while IFS= read -r _line; do
+    _key="${_line%% = *}"
+    _expected="${_line#* = }"
+    _actual="$(sysctl -n "${_key}" 2>/dev/null)" || return 1
+    _actual="$(normalize_sysctl_value "${_actual}")"
+    [[ "${_actual}" == "${_expected}" ]] || return 1
+  done < <(print_vss_linux_kernel_settings)
+}
+
+function check_vss_linux_kernel_settings() {
+  local _line _key _expected _actual _normalized
+  local _failed=0
+  while IFS= read -r _line; do
+    _key="${_line%% = *}"
+    _expected="${_line#* = }"
+    if _actual="$(sysctl -n "${_key}" 2>/dev/null)"; then
+      _normalized="$(normalize_sysctl_value "${_actual}")"
+    else
+      _normalized="<unavailable>"
+    fi
+    if [[ "${_normalized}" == "${_expected}" ]]; then
+      echo "[OK] ${_key}=${_expected}"
+    else
+      echo "[ERROR] ${_key}: current=${_normalized}; required=${_expected}" >&2
+      _failed=1
+    fi
+  done < <(print_vss_linux_kernel_settings)
+  return "${_failed}"
+}
+
+# Apply and persist VSS kernel settings. This is deliberately idempotent: when
+# the active values already match, it returns before checking for or invoking
+# sudo. That keeps routine restarts non-interactive.
+function set_vss_linux_kernel_settings() {
+  local -a _sudo=()
+  if vss_linux_kernel_settings_are_active; then
+    echo "[INFO] Required VSS Linux kernel settings are already active; skipping privileged update."
+    return 0
+  fi
+
+  if [[ "$(id -u)" -ne 0 ]]; then
+    if ! command -v sudo >/dev/null 2>&1; then
+      echo "[ERROR] Required VSS Linux kernel settings are not active and sudo is unavailable." >&2
+      echo "[ERROR] Run as root: ${script_dir}/dev-profile.sh kernel-settings" >&2
+      return 1
+    fi
+    _sudo=(sudo)
+  fi
+
+  "${_sudo[@]}" mkdir -p /etc/sysctl.d
+  print_vss_linux_kernel_settings | "${_sudo[@]}" tee /etc/sysctl.d/99-vss.conf >/dev/null
+  "${_sudo[@]}" sysctl --system
+
+  if ! vss_linux_kernel_settings_are_active; then
+    echo "[ERROR] VSS Linux kernel settings remain incomplete after sysctl --system." >&2
+    check_vss_linux_kernel_settings || true
+    return 1
+  fi
+  echo "[OK] Required VSS Linux kernel settings are active and persisted in /etc/sysctl.d/99-vss.conf."
 }
 
 function run_required_step() {
@@ -371,12 +443,42 @@ function require_downloaded_model_file() {
   fi
 }
 
+# Provision a bind-mount root once, without walking or changing an existing
+# service-owned tree. Setgid keeps new entries in the shared service group;
+# group rwx is sufficient for the non-root NVIDIA/infra containers and avoids
+# the former world-writable chmod -R 777 contract.
+function provision_runtime_directory() {
+  local _directory="${1:?runtime directory is required}"
+
+  if [[ ! "${data_group_id}" =~ ^[0-9]+$ ]]; then
+    echo "[ERROR] VSS_DATA_GID must be a numeric group ID, got: ${data_group_id}" >&2
+    return 1
+  fi
+
+  if [[ "${dry_run}" == "true" ]]; then
+    echo "[DRY-RUN] provision new directory ${_directory} (group=${data_group_id}, mode=2770; preserve if present)"
+    return 0
+  fi
+
+  if [[ -e "${_directory}" ]]; then
+    if [[ ! -d "${_directory}" ]]; then
+      echo "[ERROR] Required runtime directory path is not a directory: ${_directory}" >&2
+      return 1
+    fi
+    return 0
+  fi
+
+  install -d -m 2770 -g "${data_group_id}" "${_directory}"
+  echo "[INFO] Provisioned runtime directory: ${_directory} (group=${data_group_id}, mode=2770)"
+}
+
 function usage() {
   echo "Usage: ${0} (up|down) [options]"
+  echo "   or: ${0} (check-kernel-settings|kernel-settings)"
   echo "   or: ${0} (-h|--help)"
   echo ""
   echo "Positional arguments:"
-  echo "  desired-state                    up or down"
+  echo "  desired-state                    up, down, check-kernel-settings, or kernel-settings"
   echo ""
   echo "NOTE: The following are read from the environment (no CLI options):"
   echo "  • NGC_CLI_API_KEY     — required for 'up'"
@@ -394,6 +496,7 @@ function usage() {
   echo "                                     - lvs"
   echo "                                     - search"
   echo "                                     - alerts"
+  echo "                                     - thor-full"
   echo "                                   • Required for 'up'"
   echo "  -H, --hardware-profile           Hardware profile."
   echo "                                   • One of:"
@@ -405,7 +508,7 @@ function usage() {
   echo "                                     - IGX-THOR"
   echo "                                     - AGX-THOR"
   echo "                                     - OTHER"
-  echo "                                   • DGX-SPARK, IGX-THOR, and AGX-THOR only valid when profile is base or alerts"
+  echo "                                   • DGX-SPARK, IGX-THOR, and AGX-THOR only valid when profile is base, alerts, or thor-full"
   echo "                                   • DGX-SPARK, IGX-THOR, AGX-THOR: --llm-device-id, --vlm-device-id not accepted"
   echo "  -i, --host-ip                    Host IP."
   echo "                                   • Default: primary IP from ip route"
@@ -428,7 +531,7 @@ function usage() {
   echo "                                   • Not allowed when --use-remote-llm is passed"
   echo "                                   • DGX-SPARK, IGX-THOR, AGX-THOR: not accepted"
   echo "  --use-remote-llm                 Use remote LLM; requires LLM_ENDPOINT_URL on the host (both are required together)."
-  echo "  --llm-model-type                 LLM backend type when --use-remote-llm is passed: nim or openai."
+  echo "  --llm-model-type                 LLM backend type when --use-remote-llm is passed: nim, openai, or vllm."
   echo "  --llm-env-file                   Path to LLM env file. Absolute or relative to CWD."
   echo "                                   • Not allowed when --use-remote-llm is passed"
   echo ""
@@ -438,14 +541,14 @@ function usage() {
   echo "                                     - nvidia/cosmos-reason2-8b"
   echo "                                     - nvidia/cosmos3-reasoner          (set NIM_MODEL_SIZE=nano|super)"
   echo "                                     - Qwen/Qwen3-VL-8B-Instruct"
-  echo "                                   • Not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
+  echo "                                   • For a local bundled VLM, not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
   echo "                                   • When --use-remote-vlm is passed, any model name can be passed"
   echo "  --vlm-device-id                  VLM device ID."
   echo "                                   • Not allowed when --use-remote-vlm is passed"
   echo "                                   • DGX-SPARK, IGX-THOR, AGX-THOR: not accepted"
   echo "  --use-remote-vlm                 Use remote VLM; requires VLM_ENDPOINT_URL on the host (both are required together)."
-  echo "                                   • Not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
-  echo "  --vlm-model-type                 VLM backend type when --use-remote-vlm is passed: nim or openai."
+  echo "                                   • The endpoint may be an operator-hosted service on the same machine"
+  echo "  --vlm-model-type                 VLM backend type when --use-remote-vlm is passed: nim, openai, or vllm."
   echo "  --vlm-env-file                   Path to VLM env file. Absolute or relative to CWD."
   echo "                                   • Not allowed when --use-remote-vlm is passed"
   echo "                                   • Not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
@@ -649,10 +752,10 @@ function process_args() {
     fi
 
     # Validate profile value
-    _valid_profiles=('base' 'lvs' 'search' 'alerts')
+    _valid_profiles=('base' 'lvs' 'search' 'alerts' 'thor-full')
     if [[ -n "${profile}" ]]; then
       if ! contains_element "${profile}" "${_valid_profiles[@]}"; then
-        echo "[ERROR] Invalid profile: ${profile}. Must be one of: base, lvs, search, alerts"
+        echo "[ERROR] Invalid profile: ${profile}. Must be one of: base, lvs, search, alerts, thor-full"
         ((_all_good++))
       fi
     fi
@@ -718,10 +821,11 @@ function process_args() {
         fi
       fi
 
-      # DGX-SPARK, IGX-THOR, AGX-THOR (edge_hardware_profiles): only valid for base and alerts; device ID options not accepted
+      # Edge hardware profiles use fixed device placement. thor-full is the
+      # unified AGX Thor profile and deliberately shares this validation path.
       if contains_element "${hardware_profile}" "${edge_hardware_profiles[@]}"; then
-        if [[ "${profile}" != "base" ]] && [[ "${profile}" != "alerts" ]]; then
-          echo "[ERROR] Hardware profile '${hardware_profile}' is only valid for profile base or alerts, not '${profile}'"
+        if [[ "${profile}" != "base" ]] && [[ "${profile}" != "alerts" ]] && [[ "${profile}" != "thor-full" ]]; then
+          echo "[ERROR] Hardware profile '${hardware_profile}' is only valid for profile base, alerts, or thor-full, not '${profile}'"
           ((_all_good++))
         fi
         if contains_element "llm-device-id" "${options_provided[@]}"; then
@@ -736,24 +840,42 @@ function process_args() {
         vlm_device_id="0"
       fi
 
-      # Alerts or base profile on IGX-THOR or AGX-THOR: VLM options are not accepted (VLM is fixed for this configuration).
+      # The unified profile is a qualified AGX Thor deployment backed by the
+      # operator's local OpenAI-compatible servers. Requiring both remote flags
+      # prevents a direct dev-profile invocation from accidentally selecting
+      # and loading the bundled NIMs on the same device.
+      if [[ "${profile}" == "thor-full" ]]; then
+        if [[ "${hardware_profile}" != "AGX-THOR" ]]; then
+          echo "[ERROR] Profile thor-full requires hardware profile AGX-THOR"
+          ((_all_good++))
+        fi
+        if ! contains_element "use-remote-llm" "${options_provided[@]}"; then
+          echo "[ERROR] Profile thor-full requires --use-remote-llm with LLM_ENDPOINT_URL"
+          ((_all_good++))
+        fi
+        if ! contains_element "use-remote-vlm" "${options_provided[@]}"; then
+          echo "[ERROR] Profile thor-full requires --use-remote-vlm with VLM_ENDPOINT_URL"
+          ((_all_good++))
+        fi
+      fi
+
+      # Alerts or base profile on IGX-THOR or AGX-THOR: the bundled VLM is fixed for this configuration.
+      # Operator-hosted VLM endpoints remain supported through --use-remote-vlm.
       # Note: --vlm-device-id is already rejected for all IGX-THOR/AGX-THOR/DGX-SPARK in the edge_hardware_profiles block above.
       if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && ([[ "${profile}" == "alerts" ]] || [[ "${profile}" == "base" ]]); then
-        if contains_element "use-remote-vlm" "${options_provided[@]}"; then
-          echo "[ERROR] --use-remote-vlm is not accepted for ${profile} profile with hardware profile ${hardware_profile}"
-          ((_all_good++))
-        fi
-        if contains_element "vlm" "${options_provided[@]}"; then
-          echo "[ERROR] --vlm is not accepted for ${profile} profile with hardware profile ${hardware_profile}"
-          ((_all_good++))
-        fi
-        if contains_element "vlm-model-type" "${options_provided[@]}"; then
-          echo "[ERROR] --vlm-model-type is not accepted for ${profile} profile with hardware profile ${hardware_profile}"
-          ((_all_good++))
-        fi
-        if contains_element "vlm-env-file" "${options_provided[@]}"; then
-          echo "[ERROR] --vlm-env-file is not accepted for ${profile} profile with hardware profile ${hardware_profile}"
-          ((_all_good++))
+        if ! contains_element "use-remote-vlm" "${options_provided[@]}"; then
+          if contains_element "vlm" "${options_provided[@]}"; then
+            echo "[ERROR] --vlm is only accepted with --use-remote-vlm for ${profile} profile with hardware profile ${hardware_profile}"
+            ((_all_good++))
+          fi
+          if contains_element "vlm-model-type" "${options_provided[@]}"; then
+            echo "[ERROR] --vlm-model-type is only accepted with --use-remote-vlm for ${profile} profile with hardware profile ${hardware_profile}"
+            ((_all_good++))
+          fi
+          if contains_element "vlm-env-file" "${options_provided[@]}"; then
+            echo "[ERROR] --vlm-env-file is not accepted for ${profile} profile with hardware profile ${hardware_profile}"
+            ((_all_good++))
+          fi
         fi
       fi
 
@@ -921,9 +1043,9 @@ function process_args() {
         fi
         # When --use-remote-llm is passed, validate llm-model-type value if provided
         if contains_element "llm-model-type" "${options_provided[@]}" && [[ -n "${llm_model_type}" ]]; then
-          _valid_llm_types=('nim' 'openai')
+          _valid_llm_types=('nim' 'openai' 'vllm')
           if ! contains_element "${llm_model_type}" "${_valid_llm_types[@]}"; then
-            echo "[ERROR] Invalid llm-model-type: ${llm_model_type}. Must be one of: nim, openai"
+            echo "[ERROR] Invalid llm-model-type: ${llm_model_type}. Must be one of: nim, openai, vllm"
             ((_all_good++))
           fi
         fi
@@ -959,9 +1081,9 @@ function process_args() {
         fi
         # When --use-remote-vlm is passed, validate vlm-model-type value if provided
         if contains_element "vlm-model-type" "${options_provided[@]}" && [[ -n "${vlm_model_type}" ]]; then
-          _valid_vlm_types=('nim' 'openai')
+          _valid_vlm_types=('nim' 'openai' 'vllm')
           if ! contains_element "${vlm_model_type}" "${_valid_vlm_types[@]}"; then
-            echo "[ERROR] Invalid vlm-model-type: ${vlm_model_type}. Must be one of: nim, openai"
+            echo "[ERROR] Invalid vlm-model-type: ${vlm_model_type}. Must be one of: nim, openai, vllm"
             ((_all_good++))
           fi
         fi
@@ -1205,7 +1327,7 @@ function state_up() {
   if [[ -n "${mode_env}" ]]; then
     set_env_var "MODE" "${mode_env}"
   fi
-  if [[ "${profile}" == "alerts" ]]; then
+  if [[ "${profile}" == "alerts" ]] || [[ "${profile}" == "thor-full" ]]; then
     set_alerts_ui_subtitle_from_mode "${_generated_env}"
   fi
 
@@ -1321,7 +1443,7 @@ function state_up() {
   # Search profile: critic agent is enabled by default. Host ENABLE_CRITIC case-insensitive false → write ENABLE_CRITIC=false and force VLM_NAME_SLUG=none (skip local VLM).
   # Otherwise write ENABLE_CRITIC=true (VLM_NAME_SLUG is not overridden here; remote VLM block already sets it to none when --use-remote-vlm is passed).
   # Brev 2-GPU local-VLM critic deployments are rejected during argument validation.
-  if [[ "${profile}" == "search" ]]; then
+  if [[ "${profile}" == "search" ]] || [[ "${profile}" == "thor-full" ]]; then
     if [[ "${ENABLE_CRITIC+set}" == "set" ]] && [[ "${ENABLE_CRITIC,,}" == "false" ]]; then
       set_env_var "ENABLE_CRITIC" "false"
       set_env_var "VLM_NAME_SLUG" "none"
@@ -1340,7 +1462,7 @@ function state_up() {
   fi
 
   # Alerts or base profile on IGX-THOR or AGX-THOR: set VLM name/slug, base URL, and RTVI-related env (fixed configuration)
-  if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && ([[ "${profile}" == "base" ]]); then
+  if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && [[ "${profile}" == "base" ]] && [[ "${vlm_mode}" != "remote" ]]; then
     set_env_var "VLM_NAME_SLUG" "none"
     set_env_var "VLM_NAME" "nim_nvidia_cosmos-reason2-8b_hf-1208"
     set_env_var "VLM_BASE_URL" "http://${host_ip}:8018"
@@ -1392,8 +1514,14 @@ function state_up() {
   fi
   # Base profile only on IGX-THOR or AGX-THOR: set VLM_MODEL_TYPE to rtvi
   # (alerts defaults to VLM_MODEL_TYPE=rtvi via its source .env, so it does not need this override)
-  if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && [[ "${profile}" == "base" ]]; then
+  if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && [[ "${profile}" == "base" ]] && [[ "${vlm_mode}" != "remote" ]]; then
     set_env_var "VLM_MODEL_TYPE" "rtvi"
+  fi
+  # The Thor-specific base Compose profile starts rtvi-vlm. When the operator
+  # explicitly supplies a VLM endpoint, use the generic base service profile so
+  # the bundled Cosmos checkpoint is not loaded as an unnecessary second VLM.
+  if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && [[ "${profile}" == "base" ]] && [[ "${vlm_mode}" == "remote" ]]; then
+    set_env_var "COMPOSE_PROFILES" '${BP_PROFILE}_${MODE},llm_${LLM_MODE}_${LLM_NAME_SLUG},vlm_${VLM_MODE}_${VLM_NAME_SLUG}'
   fi
 
   # When hardware profile is DGX-SPARK: for any env var that has a commented line with sbsa in the value,
@@ -1413,31 +1541,36 @@ function state_up() {
 
   echo "[INFO] Generated environment file: ${_generated_env}"
 
-  # Create required directories
-  echo "[INFO] Creating data directories..."
-  mkdir -p "${data_directory}/data_log/analytics_cache"
-  mkdir -p "${data_directory}/data_log/calibration_toolkit"
-  mkdir -p "${data_directory}/data_log/elastic/data"
-  mkdir -p "${data_directory}/data_log/elastic/logs"
-  mkdir -p "${data_directory}/data_log/kafka"
-  mkdir -p "${data_directory}/data_log/redis/data"
-  mkdir -p "${data_directory}/data_log/redis/log"
-  mkdir -p "${data_directory}/agent_eval/dataset/"
-  mkdir -p "${data_directory}/agent_eval/results/"
+  # Create only missing bind-mount roots. Existing persisted trees belong to
+  # their services and must never be traversed or permission-rewritten here.
+  echo "[INFO] Provisioning data directories..."
+  local _runtime_directory
+  for _runtime_directory in \
+    "${data_directory}/data_log/analytics_cache" \
+    "${data_directory}/data_log/calibration_toolkit" \
+    "${data_directory}/data_log/elastic/data" \
+    "${data_directory}/data_log/elastic/logs" \
+    "${data_directory}/data_log/kafka" \
+    "${data_directory}/data_log/redis/data" \
+    "${data_directory}/data_log/redis/log" \
+    "${data_directory}/agent_eval/dataset" \
+    "${data_directory}/agent_eval/results"; do
+    provision_runtime_directory "${_runtime_directory}"
+  done
 
-  # Create alerts-specific directories and download models
-  if [[ "${profile}" == "alerts" ]]; then
+  # Create alert-analysis directories and stage its host-mounted models. The
+  # unified Thor profile activates the same perception workloads.
+  if [[ "${profile}" == "alerts" ]] || [[ "${profile}" == "thor-full" ]]; then
     echo "[INFO] Creating alerts-specific directories..."
 
+    provision_runtime_directory "${data_directory}/data_log/vss_video_analytics_api"
+    provision_runtime_directory "${data_directory}/videos/dev-profile-alerts"
+
     if [[ "${dry_run}" == "true" ]]; then
-      echo "[DRY-RUN] mkdir -p ${data_directory}/data_log/vss_video_analytics_api"
-      echo "[DRY-RUN] mkdir -p ${data_directory}/videos/dev-profile-alerts"
       echo "[DRY-RUN] mkdir -p ${deployment_directory}/engines/gdino"
       echo "[DRY-RUN] mkdir -p ${deployment_directory}/engines/rtdetr-its"
       echo "[DRY-RUN] chmod -R 777 ${deployment_directory}/engines"
     else
-      mkdir -p "${data_directory}/data_log/vss_video_analytics_api"
-      mkdir -p "${data_directory}/videos/dev-profile-alerts"
       mkdir -p "${deployment_directory}/engines/gdino"
       mkdir -p "${deployment_directory}/engines/rtdetr-its"
       chmod -R 777 "${deployment_directory}/engines"
@@ -1502,14 +1635,11 @@ function state_up() {
     fi
   fi
 
-  if [[ "${profile}" == "search" ]]; then
+  # Search and thor-full both require the RT-DETR warehouse artifact. The
+  # vision encoder is staged by the idempotent perception init container.
+  if [[ "${profile}" == "search" ]] || [[ "${profile}" == "thor-full" ]]; then
     echo "[INFO] Creating search-specific directories..."
-
-    if [[ "${dry_run}" == "true" ]]; then
-      echo "[DRY-RUN] mkdir -p ${data_directory}/data_log/vss_video_analytics_api"
-    else
-      mkdir -p "${data_directory}/data_log/vss_video_analytics_api"
-    fi
+    provision_runtime_directory "${data_directory}/data_log/vss_video_analytics_api"
 
     # Download RT-DETR model from NGC (host-staged, bind-mounted into container).
     echo "[INFO] Downloading RT-DETR model from NGC..."
@@ -1544,17 +1674,10 @@ function state_up() {
     fi
   fi
 
-  # Set permissions on data_log directory
-  echo "[INFO] Setting permissions on data_log directory..."
-  chmod -R 777 "${data_directory}/data_log"
-
-  # Set permissions on agent_eval directory
-  echo "[INFO] Setting permissions on agent_eval directory..."
-  chmod -R 777 "${data_directory}/agent_eval"
-
-  # VSS kernel settings (non-dry-run only)
+  # VSS kernel settings (non-dry-run only). The setter checks active values
+  # first and returns without sudo when the host is already configured.
   if [[ "${dry_run}" != "true" ]]; then
-    echo "[INFO] Applying VSS Linux kernel settings..."
+    echo "[INFO] Checking required VSS Linux kernel settings..."
     set_vss_linux_kernel_settings
   fi
 
@@ -1563,9 +1686,9 @@ function state_up() {
   if [[ "${dry_run}" == "true" ]]; then
     echo "[DRY-RUN] docker login --username '\$oauthtoken' --password <ngc-cli-api-key> nvcr.io"
   else
-    docker login \
+    printf '%s' "${ngc_cli_api_key}" | docker login \
       --username '$oauthtoken' \
-      --password "${ngc_cli_api_key}" \
+      --password-stdin \
       nvcr.io
   fi
 
@@ -1586,10 +1709,11 @@ function state_up() {
 }
 
 function state_down() {
+  local preserve_data="${1:-false}"
   local _profile_dir_names _profile_dir_name _generated_env
 
   echo "[INFO] Cleaning up generated.env files from all profiles..."
-  _profile_dir_names=('base' 'lvs' 'search' 'alerts')
+  _profile_dir_names=('base' 'lvs' 'search' 'alerts' 'thor-full')
   for _profile_dir_name in "${_profile_dir_names[@]}"; do
     _generated_env="${deployment_directory}/developer-profiles/dev-profile-${_profile_dir_name}/generated.env"
     if [[ -f "${_generated_env}" ]]; then
@@ -1602,23 +1726,41 @@ function state_down() {
     fi
   done
 
-  echo "[INFO] Bringing down docker compose project 'mdx' (with volumes)..."
-  if [[ "${dry_run}" == "true" ]]; then
+  if [[ "${preserve_data}" == "true" ]]; then
+    echo "[INFO] Bringing down docker compose project 'mdx' while preserving volumes..."
+  else
+    echo "[INFO] Bringing down docker compose project 'mdx' (with volumes)..."
+  fi
+  if [[ "${dry_run}" == "true" ]] && [[ "${preserve_data}" == "true" ]]; then
+    echo "[DRY-RUN] docker compose -p mdx down --remove-orphans"
+  elif [[ "${dry_run}" == "true" ]]; then
     echo "[DRY-RUN] docker compose -p mdx down -v --remove-orphans"
+  elif [[ "${preserve_data}" == "true" ]]; then
+    docker compose -p mdx down --remove-orphans
   else
     docker compose -p mdx down -v --remove-orphans
   fi
 
-  echo "[INFO] Removing dangling docker volumes..."
-  if [[ "${dry_run}" == "true" ]]; then
-    echo "[DRY-RUN] docker volume ls -q -f \"dangling=true\" | xargs docker volume rm"
-  else
-    dangling_volumes=$(docker volume ls -q -f "dangling=true")
-    if [[ -n "${dangling_volumes}" ]]; then
-      echo "${dangling_volumes}" | xargs docker volume rm
+  if [[ "${VSS_PRUNE_DANGLING_VOLUMES:-true}" == "true" ]]; then
+    echo "[INFO] Removing dangling docker volumes..."
+    if [[ "${dry_run}" == "true" ]]; then
+      echo "[DRY-RUN] docker volume ls -q -f \"dangling=true\" | xargs docker volume rm"
     else
-      echo "[INFO] No dangling volumes to remove"
+      dangling_volumes=$(docker volume ls -q -f "dangling=true")
+      if [[ -n "${dangling_volumes}" ]]; then
+        echo "${dangling_volumes}" | xargs docker volume rm
+      else
+        echo "[INFO] No dangling volumes to remove"
+      fi
     fi
+  else
+    echo "[INFO] Preserving dangling Docker volumes (VSS_PRUNE_DANGLING_VOLUMES=false)"
+  fi
+
+  if [[ "${preserve_data}" == "true" ]]; then
+    echo "[INFO] Preserving VSS data directory and generated runtime artifacts"
+    echo "[INFO] State down completed"
+    return
   fi
 
   echo "[INFO] Deleting data directory: ${data_directory}..."
@@ -1677,13 +1819,27 @@ function state_down() {
   echo "[INFO] State down completed"
 }
 
+# Allow focused shell unit tests to source provisioning helpers without
+# executing a deployment.
+if [[ "${VSS_DEV_PROFILE_SOURCE_ONLY:-false}" == "true" ]]; then
+  return 0 2>/dev/null || exit 0
+fi
+
 # Main execution
+if [[ "${1:-}" == "check-kernel-settings" ]]; then
+  check_vss_linux_kernel_settings
+  exit $?
+elif [[ "${1:-}" == "kernel-settings" ]]; then
+  set_vss_linux_kernel_settings
+  exit $?
+fi
+
 validate_args "${@}"
 process_args "${@}"
 print_args
 
 if [[ "${desired_state}" == "up" ]]; then
-  state_down
+  state_down "${VSS_PRESERVE_DATA_ON_UP:-false}"
   state_up
 elif [[ "${desired_state}" == "down" ]]; then
   state_down

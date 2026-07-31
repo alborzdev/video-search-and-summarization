@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "alerts": [
+    {
+      "alert_type": "FOV Count Violation",
+      "output_category": "Ladder PPE Violation",
+      "output_verdict_description": {
+        "confirmed": "A person is on the ladder without both a hardhat and safety vest.",
+        "rejected": "The sampled frames do not show the configured ladder PPE violation."
+      },
+      "prompts": {
+        "system": "You verify safety incidents from chronological camera frames. Return only one valid JSON object with keys prediction_answer and reasoning. prediction_answer must be exactly YES or NO.",
+        "user": "Across these time-ordered frames, is any person on the ladder without both a hardhat and a safety vest? Return only JSON. Set prediction_answer to YES or NO and reasoning to one concise evidence-based sentence."
+      },
+      "vlm_params": {
+        "max_tokens": 128,
+        "request_timeout": 60,
+        "temperature": 0.0,
+        "num_frames": 4,
+        "media_mode": "snapshots",
+        "snapshot_frames": 4,
+        "response_format": "json",
+        "json_parser": {
+          "verdict_field": "prediction_answer",
+          "reasoning_fields": ["reasoning", "explanation"]
+        }
+      }
+    }
+  ]
+}

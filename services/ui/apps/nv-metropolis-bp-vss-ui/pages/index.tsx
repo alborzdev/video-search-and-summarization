@@ -13,7 +13,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { fetchAlertsData, fetchSearchData, fetchDashboardData, fetchMapData, fetchVideoManagementData } = await import('@nv-metropolis-bp-vss-ui/all/server');
     
     // Get base props from NemoAgentToolkit (includes i18n translations)
-    const nemoProps = await getNemoAgentToolkitSSProps(context);
+    const nemoResult = await getNemoAgentToolkitSSProps(context);
+
+    // Preserve redirects and not-found responses from the embedded toolkit.
+    // Only the props result can be merged into this page's props.
+    if (!('props' in nemoResult)) {
+      return nemoResult;
+    }
+    const nemoProps = await nemoResult.props;
     
     // Fetch data for our new components in parallel for better performance
     const [alertsData, searchData, dashboardData, mapData, videoManagementData] = await Promise.all([
@@ -27,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // Chain/Merge all props
     return {
       props: {
-        ...nemoProps.props,        // Spread NemoAgentToolkit props (i18n, etc.)
+        ...nemoProps,              // Spread NemoAgentToolkit props (i18n, etc.)
         alertsData,                // Add Alerts data from package
         searchData,                // Add Search data from package
         dashboardData,             // Add Dashboard data from package

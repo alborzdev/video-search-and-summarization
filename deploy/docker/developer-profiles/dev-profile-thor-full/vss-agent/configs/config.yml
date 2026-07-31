@@ -1,0 +1,570 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Unified Thor profile: uploaded/live reporting, semantic search, and
+# real-time VLM alerts share one top agent while retaining focused subagents.
+general:
+  use_uvloop: true
+  front_end:
+    _type: vss_fastapi
+    step_adaptor:
+      mode: custom
+      custom_event_types: [TOOL_START, TOOL_END]
+    runner_class: vss_agents.api.custom_fastapi_worker.CustomFastApiFrontEndWorker
+    object_store: ${VSS_AGENT_OBJECT_STORE_TYPE}
+    streaming_ingest:
+      vst_internal_url: ${VST_INTERNAL_URL}
+      vst_external_url: ${VST_EXTERNAL_URL}
+      # Thor-full intentionally omits SDRC, so the agent owns VIOS proxy
+      # activation and transactional teardown for RTSP sources.
+      vst_streamprocessor_url: ${STREAM_PROCESSOR_MODULE_ENDPOINT:-}
+      delete_vst_storage_on_stream_remove: false
+      rtvi_vlm_base_url: ${RTVI_VLM_BASE_URL}
+      rtvi_embed_base_url: http://${HOST_IP}:${RTVI_EMBED_PORT}
+      rtvi_embed_model: ${RTVI_EMBED_MODEL:-cosmos-embed1-448p}
+      rtvi_embed_chunk_duration: 5
+      rtvi_cv_base_url: http://${HOST_IP}:${RTVI_CV_PORT}
+      elasticsearch_url: ${ELASTIC_SEARCH_ENDPOINT}
+      rtvi_embed_es_index: ${ELASTIC_SEARCH_INDEX}
+      enable_audio: ${ENABLE_AUDIO:-false}
+    endpoints:
+    - path: /api/v1/search
+      method: POST
+      description: Search for videos by natural-language query
+      function_name: search
+    - path: /api/v1/attribute_search
+      method: POST
+      description: Search for objects by visual attributes
+      function_name: attribute_search
+    - path: /api/v1/embed_search
+      method: POST
+      description: Run direct video embedding search
+      function_name: embed_search
+    - path: /api/v1/critic
+      method: POST
+      description: Verify candidate video clips with the VLM critic
+      function_name: critic_agent
+    cors:
+      allow_origins: ['*']
+      allow_methods: ['*']
+      allow_headers: ['*']
+      allow_credentials: false
+  telemetry:
+    tracing:
+      phoenix:
+        _type: phoenix
+        endpoint: ${PHOENIX_ENDPOINT}/v1/traces
+        project: DEV-THOR-FULL-vss-agent-${VSS_AGENT_VERSION}
+
+object_stores:
+  local_object_store:
+    _type: filesystem
+    root_path: /vss-agent/agent_reports
+
+function_groups:
+  video_analytics_mcp:
+    _type: mcp_client
+    server:
+      transport: streamable-http
+      url: ${VIDEO_ANALYSIS_MCP_URL}/mcp
+    include:
+    - video_analytics__get_incidents
+    - video_analytics__get_incident
+    - video_analytics__get_sensor_ids
+
+functions:
+  # Shared offset-based video analysis for uploaded media and search critic.
+  video_understanding:
+    _type: video_understanding
+    vlm_name: ${VLM_MODEL_TYPE:-nim}_vlm
+    # Quick interactive questions stay bounded to four local Qwen requests.
+    # Long-form coverage routes through the 10-second LVS chunk pipeline below.
+    max_frames: 16
+    max_fps: 1
+    max_frames_per_request: ${VLM_MAX_FRAMES_PER_REQUEST:-30}
+    min_pixels: 3136
+    max_pixels: 12845056
+    reasoning: false
+    video_url_tool: vst_video_clip
+    time_format: offset
+    vlm_mode: ${VLM_MODE}
+    vst_internal_url: ${VST_INTERNAL_URL}
+    system_prompt: |
+      You are a monitoring system analyzing video footage. Describe events in
+      detail or directly answer the user's question. Respond in English and
+      plain text, use seconds-from-start timestamps, and never invent events.
+
+  # ISO analysis is reserved for live incidents whose timestamps are absolute.
+  video_understanding_iso:
+    _type: video_understanding
+    vlm_name: ${VLM_MODEL_TYPE:-nim}_vlm
+    max_frames: 30
+    max_frames_per_request: ${VLM_MAX_FRAMES_PER_REQUEST:-30}
+    min_pixels: 3136
+    max_pixels: 12845056
+    reasoning: true
+    video_url_tool: vst_video_url
+    time_format: iso
+    vlm_mode: ${VLM_MODE}
+    vst_internal_url: ${VST_INTERNAL_URL}
+
+  vst_video_duration:
+    _type: vst.duration
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+
+  vst_video_clip:
+    _type: vst.video_clip
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    time_format: offset
+    enable_audio: ${ENABLE_AUDIO:-false}
+
+  vst_snapshot:
+    _type: vst.snapshot
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+
+  vst_video_list:
+    _type: vst.video_list
+    vst_internal_url: ${VST_INTERNAL_URL}
+
+  get_sensor_names:
+    _type: vst.sensor_list
+    vst_internal_url: ${VST_INTERNAL_URL}
+
+  vst_video_url:
+    _type: vst.video_clip
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    overlay_config: true
+    time_format: iso
+    enable_audio: ${ENABLE_AUDIO:-false}
+
+  vst_picture_url:
+    _type: vst.snapshot
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    overlay_config: true
+    time_format: iso
+
+  # Long-video summarization for uploaded video and live streams.
+  lvs_video_understanding:
+    _type: lvs_video_understanding
+    lvs_backend_url: ${LVS_BACKEND_URL}
+    model: ${VLM_NAME}
+    video_url_tool: vst_video_clip
+    vst_internal_url: ${VST_INTERNAL_URL}
+    conn_timeout_ms: 5000
+    read_timeout_ms: 600000
+    chunk_duration: 10
+    num_frames_per_chunk: 20
+    vlm_input_width: 1280
+    vlm_input_height: 720
+    enable_audio: ${ENABLE_AUDIO:-false}
+    hitl_scenario_template: |
+      Scenario (REQUIRED): Enter a scenario such as traffic monitoring or
+      warehouse monitoring, or press Submit to keep the current value.
+    hitl_events_template: |
+      Events (REQUIRED): Enter a comma-separated list of events to detect, or
+      press Submit to keep the current value.
+    hitl_objects_template: |
+      Objects of interest (OPTIONAL): Enter a comma-separated list or "skip".
+    hitl_confirmation_template: |
+      Press Submit to proceed, type /redo to modify values, or /cancel.
+    default_scenario: traffic monitoring
+    default_events:
+    - accident
+    - pedestrian crossing
+    - vehicle crossing
+    - traffic violation
+
+  lvs_config_media:
+    _type: lvs_config_media
+    lvs_backend_url: ${LVS_BACKEND_URL}
+    vst_internal_url: ${VST_INTERNAL_URL}
+    model: ${VLM_NAME}
+    conn_timeout_ms: 5000
+    read_timeout_ms: 600000
+    chunk_duration: 10
+    num_frames_per_chunk: 10
+    use_fps_for_chunking: false
+    vlm_input_width: 1280
+    vlm_input_height: 720
+    enable_audio: ${ENABLE_AUDIO:-false}
+    hitl_scenario_template: |
+      Scenario (REQUIRED): Enter a scenario such as traffic monitoring or
+      warehouse monitoring, or press Submit to keep the current value.
+    hitl_events_template: |
+      Events (REQUIRED): Enter a comma-separated list of events to detect, or
+      press Submit to keep the current value.
+    hitl_objects_template: |
+      Objects of interest (OPTIONAL): Enter a comma-separated list or "skip".
+    default_scenario: traffic monitoring
+    default_events:
+    - accident
+    - pedestrian crossing
+    - vehicle crossing
+    - traffic violation
+
+  lvs_stream_understanding:
+    _type: lvs_stream_understanding
+    lvs_backend_url: ${LVS_BACKEND_URL}
+    vst_internal_url: ${VST_INTERNAL_URL}
+    model: ${VLM_NAME}
+    conn_timeout_ms: 5000
+    read_timeout_ms: 600000
+
+  lvs_caption_retrieval:
+    _type: knowledge_retrieval
+    backend: es_caption
+    top_k: 5
+    backend_config:
+      elasticsearch_url: ${ELASTIC_SEARCH_ENDPOINT}
+      index: default_*
+      default_doc_type: raw_events
+      api_key: ''
+      verify_ssl: false
+      timeout: 30
+
+  video_report_gen:
+    _type: video_report_gen
+    object_store: ${VSS_AGENT_OBJECT_STORE_TYPE}
+    base_url: ${VSS_AGENT_REPORTS_BASE_URL}
+    video_understanding_tool: video_understanding
+    lvs_video_understanding_tool: lvs_video_understanding
+    lvs_stream_understanding_tool: lvs_stream_understanding
+    video_url_tool: vst_video_clip
+    picture_url_tool: vst_snapshot
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    enable_audio: ${ENABLE_AUDIO:-false}
+    vlm_prompt: |
+      Describe all visible people, vehicles, equipment, objects, actions, and
+      environmental conditions. Format each event as [start-end] description.
+    hitl_enabled: true
+    hitl_prompt_llm: ${LLM_MODEL_TYPE:-nim}_llm
+    hitl_vlm_prompt_template: |
+      Press Submit to approve, enter a replacement prompt, use
+      /generate <description>, /refine <instructions>, or /cancel.
+    hitl_generate_system_prompt: |
+      Create a concise VLM video-analysis prompt with chronological [Xs-Ys]
+      timestamps. Output only the prompt.
+    hitl_refine_system_prompt: |
+      Modify the current prompt according to the user's instructions while
+      preserving [Xs-Ys] timestamps. Current prompt: {current_prompt}
+      Output only the modified prompt.
+
+  report_agent:
+    _type: report_agent
+    log_level: INFO
+    video_report_tool: video_report_gen
+
+  # Search endpoints and subagent share the same underlying search tools.
+  search:
+    _type: search
+    embed_search_tool: embed_search
+    attribute_search_tool: attribute_search
+    agent_mode_llm: ${LLM_MODEL_TYPE:-nim}_llm
+    use_attribute_search: true
+    critic_agent: critic_agent
+    enable_critic: ${ENABLE_CRITIC:-true}
+    search_max_iterations: 1
+    default_max_results: 10
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    embed_confidence_threshold: 0.1
+    behavior_es_endpoint: ${ELASTIC_SEARCH_ENDPOINT}
+
+  search_agent:
+    _type: search_agent
+    embed_search_tool: embed_search
+    attribute_search_tool: attribute_search
+    agent_mode_llm: ${LLM_MODEL_TYPE:-nim}_llm
+    use_attribute_search: true
+    critic_agent: critic_agent
+    enable_critic: ${ENABLE_CRITIC:-true}
+    search_max_iterations: 1
+    default_max_results: 10
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    embed_confidence_threshold: 0.1
+    behavior_es_endpoint: ${ELASTIC_SEARCH_ENDPOINT}
+
+  embed_search:
+    _type: embed_search
+    cosmos_embed_endpoint: ${COSMOS_EMBED_ENDPOINT}
+    es_endpoint: ${ELASTIC_SEARCH_ENDPOINT}
+    es_index: ${ELASTIC_SEARCH_INDEX}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    vst_internal_url: ${VST_INTERNAL_URL}
+    default_max_results: 100
+
+  attribute_search:
+    _type: attribute_search
+    rtvi_cv_endpoint: http://${HOST_IP}:${RTVI_CV_PORT}
+    es_endpoint: ${ELASTIC_SEARCH_ENDPOINT}
+    behavior_index: mdx-behavior-2025-01-01
+    frames_index: mdx-raw-2025-01-01
+    enable_frame_lookup: false
+    vst_external_url: ${VST_EXTERNAL_URL}
+    vst_internal_url: ${VST_INTERNAL_URL}
+
+  critic_agent:
+    _type: critic_agent
+    max_concurrent_verifications: 5
+    num_videos_to_evaluate: 5
+    video_analysis_tool: video_understanding
+    time_format: offset
+
+  # Incident report generation from Video Analytics MCP data.
+  template_report_gen:
+    _type: template_report_gen
+    object_store: ${VSS_AGENT_OBJECT_STORE_TYPE}
+    base_url: ${VSS_AGENT_REPORTS_BASE_URL}
+    template_path: ${VSS_AGENT_TEMPLATE_PATH}
+    template_name: ${VSS_AGENT_TEMPLATE_NAME}
+    llm_name: ${LLM_MODEL_TYPE:-nim}_llm
+    video_understanding_tool: video_understanding_iso
+    picture_url_tool: vst_picture_url
+    video_url_tool: vst_video_url
+    vst_internal_url: ${VST_INTERNAL_URL}
+    vst_external_url: ${VST_EXTERNAL_URL}
+    vlm_prompts:
+    - Describe the incident, objects involved, contributing factors, and responses.
+    - Describe lighting, weather, environmental conditions, and visible hazards.
+    report_prompt: |
+      Fill the following Markdown incident-report template using only the
+      supplied incident metadata and video-analysis evidence. Preserve its
+      headings and table. Clearly distinguish the configured alert category
+      from the VLM verification verdict, and never claim a rejected candidate
+      was confirmed. Use Unknown or N/A for unavailable values.
+
+      Template:
+      {template}
+
+  incident_report_agent:
+    _type: report_agent
+    log_level: INFO
+    get_incidents_tool: video_analytics_mcp.video_analytics.get_incidents
+    get_incident_tool: video_analytics_mcp.video_analytics.get_incident
+    template_report_tool: template_report_gen
+
+  rtvi_vlm_alert:
+    _type: rtvi_vlm_alert
+    alert_bridge_url: ${ALERT_BRIDGE_URL}
+    vst_internal_url: ${VST_INTERNAL_URL}
+    va_get_incidents_tool: video_analytics_mcp.video_analytics.get_incidents
+    default_model: ${VLM_NAME}
+    timeout: 180
+
+  rtvi_prompt_gen:
+    _type: prompt_gen
+    llm_name: ${LLM_MODEL_TYPE:-nim}_prompt_gen_llm
+    prompt: |
+      Generate a Yes/No video detection prompt for {user_query} with intent
+      {user_intent}. Return exactly:
+      prompt: [detection question ending with "Answer in Yes or No"]
+      system_prompt: You are a helpful assistant.
+
+llms:
+  nim_llm:
+    _type: nim
+    model_name: ${LLM_NAME}
+    base_url: ${LLM_BASE_URL}/v1
+    max_tokens: 4096
+    temperature: 0.0
+
+  openai_llm:
+    _type: openai
+    model_name: ${LLM_NAME}
+    base_url: ${LLM_BASE_URL}/v1
+    max_tokens: ${LLM_MAX_TOKENS:-2048}
+    temperature: 0.0
+
+  vllm_llm:
+    _type: openai
+    model_name: ${LLM_NAME}
+    base_url: ${LLM_BASE_URL}/v1
+    max_tokens: ${LLM_MAX_TOKENS:-2048}
+    temperature: 0.0
+    # Local Qwen-family models otherwise spend the whole request budget in
+    # hidden reasoning before emitting the tool call the VSS workflow needs.
+    # Keep the vLLM extension isolated from generic OpenAI and NIM providers.
+    model_kwargs:
+      extra_body:
+        chat_template_kwargs:
+          enable_thinking: ${LLM_ENABLE_THINKING:-false}
+
+  nim_vlm:
+    _type: nim
+    model_name: ${VLM_NAME}
+    base_url: ${VLM_BASE_URL}/v1
+    temperature: 0.0
+    max_tokens: 4096
+
+  openai_vlm:
+    _type: openai
+    model_name: ${VLM_NAME}
+    base_url: ${VLM_BASE_URL}/v1
+    temperature: 0.0
+    max_tokens: 4096
+
+  vllm_vlm:
+    _type: openai
+    model_name: ${VLM_NAME}
+    base_url: ${VLM_BASE_URL}/v1
+    temperature: 0.0
+    max_tokens: 4096
+
+  rtvi_vlm:
+    _type: openai
+    model_name: ${VLM_NAME}
+    base_url: ${RTVI_VLM_BASE_URL}/v1
+    temperature: 0.0
+    max_tokens: 4096
+    model_kwargs:
+      extra_body:
+        num_frames_per_second_or_fixed_frames_chunk: 20
+        use_fps_for_chunking: false
+        vlm_input_width: 1280
+        vlm_input_height: 720
+
+  nim_prompt_gen_llm:
+    _type: nim
+    model_name: ${LLM_NAME}
+    base_url: ${LLM_BASE_URL}/v1
+    max_tokens: 256
+    temperature: 0.0
+
+  openai_prompt_gen_llm:
+    _type: openai
+    model_name: ${LLM_NAME}
+    base_url: ${LLM_BASE_URL}/v1
+    max_tokens: 256
+    temperature: 0.0
+
+  vllm_prompt_gen_llm:
+    _type: openai
+    model_name: ${LLM_NAME}
+    base_url: ${LLM_BASE_URL}/v1
+    max_tokens: 256
+    temperature: 0.0
+    model_kwargs:
+      extra_body:
+        chat_template_kwargs:
+          enable_thinking: ${LLM_ENABLE_THINKING:-false}
+
+workflow:
+  _type: top_agent
+  llm_name: ${LLM_MODEL_TYPE:-nim}_llm
+  log_level: INFO
+  max_iterations: 30
+  max_history: 10
+  llm_reasoning: false
+  planning_enabled: true
+  tool_names:
+  - video_understanding
+  - video_understanding_iso
+  - lvs_video_understanding
+  - lvs_config_media
+  - lvs_stream_understanding
+  - lvs_caption_retrieval
+  - vst_video_clip
+  - vst_snapshot
+  - vst_video_list
+  - vst_video_duration
+  - get_sensor_names
+  - rtvi_vlm_alert
+  - rtvi_prompt_gen
+  subagent_names:
+  - report_agent
+  - search_agent
+  - incident_report_agent
+  prompt: |
+    You are the routing agent for a unified video surveillance system on an
+    NVIDIA Thor device. Route every request according to these priorities.
+
+    1. INCIDENT REPORTS: For a report about a detected alert or incident, call
+       incident_report_agent. Do not call report_agent for incidents.
+    2. VIDEO OR STREAM REPORTS: If "report" refers to uploaded media or a live
+       stream rather than an incident, call report_agent directly. It supports
+       uploaded sensor_id values and live media_type='rtsp' with offset times.
+    3. SEARCH: For requests to find video, events, actions, objects, visual
+       attributes, or object IDs, always call search_agent with query unchanged,
+       agent_mode=true, and use_attribute_search=true. Pass request_options only
+       automatically. Re-run search_agent for refined or repeated searches;
+       return its complete result without filtering.
+    4. REAL-TIME ALERTS: To start custom monitoring, call rtvi_prompt_gen first,
+       then rtvi_vlm_alert(action='start', sensor_name=..., prompt=...,
+       system_prompt=...). For generic monitoring, call rtvi_vlm_alert start
+       directly. To stop, call it with action='stop'. To list incidents, call it
+       with action='get_incidents' and optional ISO time filters.
+    5. SUMMARIZATION: Use lvs_video_understanding for uploaded videos and
+       lvs_stream_understanding for live streams. Use lvs_caption_retrieval as
+       the default content-query path for a configured live stream, falling back
+       to lvs_stream_understanding when it returns no chunks.
+    6. CAPTION CONFIGURATION: Call lvs_config_media only when the user explicitly
+       asks to start/configure captioning. Never start it as an implicit fallback.
+    7. DIRECT MEDIA: Use vst_video_clip for playback, vst_snapshot for images,
+       vst_video_list for current media and type resolution, and
+       vst_video_duration for duration. Never synthesize media URLs.
+    8. QUICK ANALYSIS: Use video_understanding for short uploaded-video questions.
+       Use video_understanding_iso only for incident windows with ISO timestamps.
+
+    When a media name could be uploaded or live, call vst_video_list and route by
+    media_type unless the current conversation already established its type.
+    If a required sensor or media name is missing, list available media and ask
+    the user to select one. Do not answer dynamic availability or search requests
+    from conversation history.
+
+    EXECUTION COMPLETENESS:
+    - A plan, checklist, proposed tool call, or incomplete step is never a final
+      answer. Execute every required step before responding to the user.
+    - After vst_video_list resolves a named source, immediately call the content
+      tool selected by the rules above in the same request. Do not repeat the
+      remaining plan or ask for confirmation.
+    - For example, "Describe uploaded video pit-POV in one sentence" requires
+      vst_video_list followed by video_understanding; return the concise tool
+      result, not either tool-call description.
+    - Stop early only for a genuine tool error or missing user choice, and state
+      that concrete problem rather than exposing the plan.
+
+  tool_call_prompt: |
+    - Always include every required tool parameter.
+    - Fix validation errors and retry, but stop after three failed attempts.
+    - Use ISO timestamps with milliseconds and Z for incident tools.
+    - Use numeric second offsets for uploaded-video and LVS stream tools.
+
+  response_format_prompt: |
+    - Return direct, professional answers without exposing internal reasoning.
+    - Never expose a plan, checklist, reasoning trace, or proposed tool call as
+      the final answer. A response is final only after all required tools ran.
+    - Convert structured tool output to readable markdown.
+    - Use only exact URLs returned by tools; never construct or modify a URL.
+    - Render exact returned video URLs with <video> and image URLs with <image>.
+    - Cite live caption events by friendly stream name and ISO timestamp.
+
+  postprocessing:
+    enabled: false
+    validation_order:
+    - [url_validator]
+    validators:
+      url_validator:
+        internal_ip: ${HOST_IP}
+        timeout: 10.0
+        feedback_template: |
+          The following URLs are not accessible: {issues}
+          Remove hallucinated URLs or call the appropriate media tool.

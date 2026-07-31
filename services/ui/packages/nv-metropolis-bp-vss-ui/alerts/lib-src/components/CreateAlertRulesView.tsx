@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 /**
- * CreateAlertRulesView - Real-time alert rule configuration editor.
+ * CreateAlertRulesView - Real-time and candidate-verification rule editor.
  *
  * Lists rules from `GET /realtime`, creates them via `POST /realtime`,
  * and removes them with `DELETE /realtime/{id}`. All paths are relative to
  * the configured alerts API base URL (which carries the API version prefix).
- * Users supply only `live_stream_url`, `alert_type`, and `prompt`.
- *
- * The "Alert Verification" sub-view is hidden until its implementation is wired up.
+ * Users supply only `live_stream_url`, `alert_type`, and `prompt` for real-time
+ * rules. Candidate-verification configs use the `/verification/config` CRUD API.
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -20,7 +19,7 @@ import {
   IconArrowUp,
   IconArrowDown,
   IconBolt,
-  // IconShieldCheck, // Alert Verification tab (coming soon) — hidden from UI
+  IconShieldCheck,
   IconDeviceFloppy,
   IconAlertCircle,
   IconLoader2,
@@ -31,6 +30,7 @@ import {
 import { AlertRulesType, RealtimeAlertRuleDraft, RealtimeAlertRule } from '../types';
 import { useRealtimeAlertRules } from '../hooks/useRealtimeAlertRules';
 import { VstStreamThumbnail } from './VstStreamThumbnail';
+import { VerificationAlertsTab } from './VerificationAlertsTab';
 import {
   deriveSensorNameFromLiveStreamUrl,
   fetchVstLiveStreamCatalog,
@@ -59,14 +59,11 @@ const KIND_TABS: Array<{
   disabledReason?: string;
 }> = [
   { id: 'real-time', label: 'Real-time Alerts', icon: <IconBolt size={14} /> },
-  // Alert Verification sub-view — not yet implemented; hidden from Manage Rules UI.
-  // {
-  //   id: 'verification',
-  //   label: 'Alert Verification',
-  //   icon: <IconShieldCheck size={14} />,
-  //   disabled: true,
-  //   disabledReason: 'Coming soon',
-  // },
+  {
+    id: 'verification',
+    label: 'Candidate Verification',
+    icon: <IconShieldCheck size={14} />,
+  },
 ];
 
 const generateDraftId = () =>
@@ -79,11 +76,37 @@ export const CreateAlertRulesView: React.FC<CreateAlertRulesViewProps> = ({
   alertsApiUrl,
   vstApiUrl,
 }) => {
-  // `onAddNew` is the sidebar's "+ Create alert rule" handler; only the
-  // realtime tab uses it today (it appends a new draft row via a module-level
-  // bridge — see `triggerRealtimeAddDraft`). `void` it here so future-tab
-  // wiring isn't blocked by an unused-prop lint.
+  // The sidebar invokes the module-level add bridge. Keeping the prop in this
+  // component's public contract avoids breaking existing hosts.
   void onAddNew;
+  const [selectedKind, setSelectedKind] = useState<AlertRulesType>(activeKind);
+  const kindTabRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
+
+  useEffect(() => {
+    setSelectedKind(activeKind);
+  }, [activeKind]);
+
+  const registerActiveAddAction = useCallback((action: (() => void) | null) => {
+    activeAlertRuleAddRef.current = action;
+  }, []);
+
+  const handleKindTabKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
+      let nextIndex: number | null = null;
+      if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % KIND_TABS.length;
+      if (event.key === 'ArrowLeft') {
+        nextIndex = (currentIndex - 1 + KIND_TABS.length) % KIND_TABS.length;
+      }
+      if (event.key === 'Home') nextIndex = 0;
+      if (event.key === 'End') nextIndex = KIND_TABS.length - 1;
+      if (nextIndex == null) return;
+      event.preventDefault();
+      const nextTab = KIND_TABS[nextIndex];
+      setSelectedKind(nextTab.id);
+      kindTabRefs.current[nextIndex]?.focus();
+    },
+    [],
+  );
   // --- shared styles ---------------------------------------------------------
   const inputClass = `w-full rounded-md px-3 py-1.5 text-sm focus:outline-none transition-colors ${
     isDark
@@ -91,7 +114,7 @@ export const CreateAlertRulesView: React.FC<CreateAlertRulesViewProps> = ({
       : 'bg-white border border-gray-300 text-gray-800 placeholder-gray-400 focus:border-green-500 focus:ring-1 focus:ring-green-200'
   }`;
 
-  const readOnlyCellClass = `text-sm break-all ${
+  const readOnlyCellClass = `text-sm break-words ${
     isDark ? 'text-neutral-200' : 'text-gray-800'
   }`;
 
@@ -100,8 +123,6 @@ export const CreateAlertRulesView: React.FC<CreateAlertRulesViewProps> = ({
   }`;
 
   // --- kind tabs -------------------------------------------------------------
-  // Decorative only: only `real-time` is shown today. Tabs are not interactive —
-  // selected state reflects `activeKind` for visual continuity.
   const kindTabs = (
     <div
       className={`flex-shrink-0 px-6 pt-4 border-b ${
@@ -109,8 +130,8 @@ export const CreateAlertRulesView: React.FC<CreateAlertRulesViewProps> = ({
       }`}
     >
       <div role="tablist" aria-label="Alert kind" className="flex items-end gap-1">
-        {KIND_TABS.map((tab) => {
-          const isSelected = activeKind === tab.id && !tab.disabled;
+        {KIND_TABS.map((tab, index) => {
+          const isSelected = selectedKind === tab.id && !tab.disabled;
           const baseClass = 'flex items-center gap-2 px-4 py-2 text-sm border-b-2 -mb-px';
           if (tab.disabled) {
             return (
@@ -132,10 +153,19 @@ export const CreateAlertRulesView: React.FC<CreateAlertRulesViewProps> = ({
             );
           }
           return (
-            <div
+            <button
               key={tab.id}
+              ref={(element) => {
+                kindTabRefs.current[index] = element;
+              }}
+              id={`create-alert-kind-${tab.id}`}
+              type="button"
               role="tab"
               aria-selected={isSelected}
+              aria-controls={`create-alert-kind-panel-${tab.id}`}
+              tabIndex={isSelected ? 0 : -1}
+              onClick={() => setSelectedKind(tab.id)}
+              onKeyDown={(event) => handleKindTabKeyDown(event, index)}
               data-testid={`create-alert-kind-${tab.id}`}
               className={`${baseClass} ${
                 isSelected
@@ -148,22 +178,45 @@ export const CreateAlertRulesView: React.FC<CreateAlertRulesViewProps> = ({
             >
               {tab.icon}
               {tab.label}
-            </div>
+            </button>
           );
         })}
       </div>
     </div>
   );
 
-  const body = (
-    <RealtimeAlertsTab
-      isDark={isDark}
-      alertsApiUrl={alertsApiUrl}
-      vstApiUrl={vstApiUrl}
-      inputClass={inputClass}
-      readOnlyCellClass={readOnlyCellClass}
-      thClass={thClass}
-    />
+  const body = selectedKind === 'real-time' ? (
+    <div
+      id="create-alert-kind-panel-real-time"
+      role="tabpanel"
+      aria-labelledby="create-alert-kind-real-time"
+      className="flex min-h-0 flex-1 flex-col"
+    >
+      <RealtimeAlertsTab
+        isDark={isDark}
+        alertsApiUrl={alertsApiUrl}
+        vstApiUrl={vstApiUrl}
+        inputClass={inputClass}
+        readOnlyCellClass={readOnlyCellClass}
+        thClass={thClass}
+      />
+    </div>
+  ) : (
+    <div
+      id="create-alert-kind-panel-verification"
+      role="tabpanel"
+      aria-labelledby="create-alert-kind-verification"
+      className="flex min-h-0 flex-1 flex-col"
+    >
+      <VerificationAlertsTab
+        isDark={isDark}
+        alertsApiUrl={alertsApiUrl}
+        inputClass={inputClass}
+        readOnlyCellClass={readOnlyCellClass}
+        thClass={thClass}
+        registerAddAction={registerActiveAddAction}
+      />
+    </div>
   );
 
   return (
@@ -300,10 +353,10 @@ const RealtimeAlertsTab: React.FC<RealtimeAlertsTabProps> = ({
   // sidebar's "+ Add New Alert" button (handled in AlertsComponent) can add a
   // draft row without us hoisting all draft state up. Cleared on unmount.
   useEffect(() => {
-    realtimeAddDraftRef.current = addDraft;
+    activeAlertRuleAddRef.current = addDraft;
     return () => {
-      if (realtimeAddDraftRef.current === addDraft) {
-        realtimeAddDraftRef.current = null;
+      if (activeAlertRuleAddRef.current === addDraft) {
+        activeAlertRuleAddRef.current = null;
       }
     };
   }, [addDraft]);
@@ -1083,20 +1136,20 @@ const SensorPicker: React.FC<SensorPickerProps> = ({
 };
 
 // ---------------------------------------------------------------------------
-// Bridge: lets the sidebar's "+ Create alert rule" button append a draft row
-// in the realtime tab without lifting all draft state up to AlertsComponent.
+// Bridge: lets the sidebar's "+ Create alert rule" button open a draft in the
+// currently selected rule tab without lifting editor state to AlertsComponent.
 // AlertsComponent calls `triggerRealtimeAddDraft()` after switching into the
 // create view; that hits the ref set by RealtimeAlertsTab's mount effect and
 // invokes its `addDraft` callback.
 // ---------------------------------------------------------------------------
-const realtimeAddDraftRef: { current: (() => void) | null } = { current: null };
+const activeAlertRuleAddRef: { current: (() => void) | null } = { current: null };
 
+/** Backward-compatible export used by AlertsComponent's sidebar action. */
 export const triggerRealtimeAddDraft = (): boolean => {
-  const fn = realtimeAddDraftRef.current;
+  const fn = activeAlertRuleAddRef.current;
   if (fn) {
     fn();
     return true;
   }
   return false;
 };
-

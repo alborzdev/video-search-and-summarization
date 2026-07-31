@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
-import React, { useState } from 'react';
-import { Button, TextInput } from '@nvidia/foundations-react-core';
-import { parseApiError } from '../utils';
-import { addRtspStream } from '../rtspStream';
+
+import { addRtspStream } from "../rtspStream";
+import { parseApiError } from "../utils";
+import { Button, TextInput } from "@nvidia/foundations-react-core";
+import React, { useState } from "react";
 
 const POPUP_OVERLAY_VIEWPORT =
-  'fixed inset-0 z-50 flex items-center justify-center bg-black/50';
+  "fixed inset-0 z-50 flex items-center justify-center bg-black/50";
 /** Covers only the parent `relative` region (e.g. Video Management main pane), not the whole browser window */
 const POPUP_OVERLAY_CONTAINED =
-  'absolute inset-0 z-40 flex items-center justify-center bg-black/50';
+  "absolute inset-0 z-40 flex items-center justify-center bg-black/50";
 
 interface AddRtspDialogProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ interface AddRtspDialogProps {
   onClose: () => void;
   onSuccess?: () => void;
   /** `contained` = overlay only the nearest positioned ancestor (Video Management pane). Default `viewport` = full window. */
-  overlay?: 'viewport' | 'contained';
+  overlay?: "viewport" | "contained";
 }
 
 export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
@@ -24,22 +25,28 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
   agentApiUrl,
   onClose,
   onSuccess,
-  overlay = 'viewport',
+  overlay = "viewport",
 }) => {
-  const [rtspUrl, setRtspUrl] = useState('');
-  const [sensorName, setSensorName] = useState('');
+  const [rtspUrl, setRtspUrl] = useState("");
+  const [sensorName, setSensorName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [userEditedName, setUserEditedName] = useState(false); // Track if user manually edited the name
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const extractNameFromUrl = (url: string): string =>
-    url.split('?')[0].split('/').filter((p) => p.trim()).pop() ?? '';
+    url
+      .split("?")[0]
+      .split("/")
+      .filter((p) => p.trim())
+      .pop() ?? "";
 
   const handleRtspUrlChange = (value: string) => {
     setRtspUrl(value);
     if (error) setError(null);
     // Auto-fill sensor name if user hasn't manually edited it and URL is valid
-    if (!userEditedName && value.trim().startsWith('rtsp://')) {
+    if (!userEditedName && value.trim().startsWith("rtsp://")) {
       setSensorName(extractNameFromUrl(value.trim()));
     }
   };
@@ -51,8 +58,10 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
   };
 
   const handleClose = () => {
-    setRtspUrl('');
-    setSensorName('');
+    setRtspUrl("");
+    setSensorName("");
+    setUsername("");
+    setPassword("");
     setUserEditedName(false);
     setError(null);
     setIsSubmitting(false);
@@ -62,16 +71,15 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
   const handleSubmit = async () => {
     const trimmed = rtspUrl.trim();
     const trimmedName = sensorName.trim();
-    const validationError =
-      !trimmed
-        ? 'RTSP URL is required.'
-        : !trimmed.startsWith('rtsp://')
-          ? 'RTSP URL must start with "rtsp://".'
-          : !trimmedName
-            ? 'Sensor Name is required.'
-            : !agentApiUrl
-              ? 'Agent API URL not configured.'
-              : null;
+    const validationError = !trimmed
+      ? "RTSP URL is required."
+      : !trimmed.startsWith("rtsp://")
+      ? 'RTSP URL must start with "rtsp://".'
+      : !trimmedName
+      ? "Sensor Name is required."
+      : !agentApiUrl
+      ? "Agent API URL not configured."
+      : null;
     if (validationError) {
       setError(validationError);
       return;
@@ -80,16 +88,21 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
     setError(null);
     setIsSubmitting(true);
     try {
-      await addRtspStream(agentApiUrl!, { sensorUrl: trimmed, name: trimmedName });
+      await addRtspStream(agentApiUrl!, {
+        sensorUrl: trimmed,
+        name: trimmedName,
+        username: username.trim(),
+        password,
+      });
       handleClose();
       onSuccess?.();
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.error('Error adding RTSP sensor via agent API:', err);
+      console.error("Error adding RTSP sensor via agent API:", err);
       setError(
         parseApiError(
-          err instanceof Error ? err.message : '',
-          'Failed to add RTSP. Please check the URL and try again.'
+          err instanceof Error ? err.message : "",
+          "Failed to add RTSP. Please check the URL and try again."
         )
       );
     } finally {
@@ -100,7 +113,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
   if (!isOpen) return null;
 
   const overlayClass =
-    overlay === 'contained' ? POPUP_OVERLAY_CONTAINED : POPUP_OVERLAY_VIEWPORT;
+    overlay === "contained" ? POPUP_OVERLAY_CONTAINED : POPUP_OVERLAY_VIEWPORT;
 
   return (
     <div className={overlayClass} onClick={handleClose}>
@@ -108,6 +121,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
         data-testid="add-rtsp-dialog"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="add-rtsp-dialog-title"
         className="relative z-50 mx-4 w-full max-w-[720px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-black"
         onClick={(e) => e.stopPropagation()}
       >
@@ -130,7 +144,10 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
               <line x1="8" y1="21" x2="16" y2="21" />
               <line x1="12" y1="17" x2="12" y2="21" />
             </svg>
-            <span className="text-sm font-medium uppercase tracking-wide text-gray-800 dark:text-gray-200">
+            <span
+              id="add-rtsp-dialog-title"
+              className="text-sm font-medium uppercase tracking-wide text-gray-800 dark:text-gray-200"
+            >
               ADD RTSP
             </span>
           </div>
@@ -147,7 +164,10 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
         <div className="p-6 space-y-5">
           {/* RTSP URL (required) */}
           <div>
-            <label className="block text-sm mb-3 text-gray-700 dark:text-gray-300">
+            <label
+              className="block text-sm mb-3 text-gray-700 dark:text-gray-300"
+              htmlFor="add-rtsp-url"
+            >
               RTSP URL <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -155,11 +175,16 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
                 value={rtspUrl}
                 onValueChange={(val: string) => handleRtspUrlChange(val)}
                 placeholder="rtsp://cam-warehouse.example.com:554/warehouse/cam01"
+                attributes={{
+                  TextInputValue: {
+                    id: "add-rtsp-url",
+                    required: true,
+                    "aria-required": "true",
+                  },
+                }}
               />
             </div>
-            <p
-              className="text-xs flex items-center gap-2 mt-3 text-gray-500"
-            >
+            <p className="text-xs flex items-center gap-2 mt-3 text-gray-500">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-500 flex-shrink-0" />
               e.g. rtsp://192.168.1.10:554/stream1
             </p>
@@ -167,40 +192,96 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
 
           {/* Sensor Name (required) */}
           <div>
-            <label className="block text-sm mb-3 text-gray-700 dark:text-gray-300" htmlFor="add-rtsp-sensor-name">
-              Sensor Name <span className="text-red-500" aria-hidden="true">*</span>
+            <label
+              className="block text-sm mb-3 text-gray-700 dark:text-gray-300"
+              htmlFor="add-rtsp-sensor-name"
+            >
+              Sensor Name{" "}
+              <span className="text-red-500" aria-hidden="true">
+                *
+              </span>
             </label>
             <TextInput
-              id="add-rtsp-sensor-name"
               value={sensorName}
               onValueChange={(val: string) => handleSensorNameChange(val)}
               placeholder="e.g. Warehouse Camera 01"
-              required
-              aria-required="true"
+              attributes={{
+                TextInputValue: {
+                  id: "add-rtsp-sensor-name",
+                  required: true,
+                  "aria-required": "true",
+                },
+              }}
             />
           </div>
 
+          <fieldset className="space-y-3">
+            <legend className="text-sm text-gray-700 dark:text-gray-300">
+              Authentication{" "}
+              <span className="text-xs text-gray-500">(optional)</span>
+            </legend>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  className="mb-2 block text-sm text-gray-700 dark:text-gray-300"
+                  htmlFor="add-rtsp-username"
+                >
+                  Username
+                </label>
+                <TextInput
+                  value={username}
+                  onValueChange={(value: string) => setUsername(value)}
+                  placeholder="Camera username"
+                  attributes={{
+                    TextInputValue: {
+                      id: "add-rtsp-username",
+                      autoComplete: "username",
+                    },
+                  }}
+                />
+              </div>
+              <div>
+                <label
+                  className="mb-2 block text-sm text-gray-700 dark:text-gray-300"
+                  htmlFor="add-rtsp-password"
+                >
+                  Password
+                </label>
+                <TextInput
+                  value={password}
+                  onValueChange={(value: string) => setPassword(value)}
+                  placeholder="Camera password"
+                  attributes={{
+                    TextInputValue: {
+                      id: "add-rtsp-password",
+                      type: "password",
+                      autoComplete: "current-password",
+                    },
+                  }}
+                />
+              </div>
+            </div>
+            <p className="text-xs text-gray-500">
+              Credentials are sent only to the local VSS agent.
+            </p>
+          </fieldset>
+
           {error && (
             <div className="max-h-24 overflow-auto rounded p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-              <p className="text-sm text-red-600 dark:text-red-400 break-words whitespace-pre-wrap">{error}</p>
+              <p className="text-sm text-red-600 dark:text-red-400 break-words whitespace-pre-wrap">
+                {error}
+              </p>
             </div>
           )}
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-600">
-          <Button
-            kind="secondary"
-            onClick={handleClose}
-          >
+          <Button kind="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button
-            kind="primary"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Adding...' : 'Add RTSP'}
+          <Button kind="primary" onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Adding..." : "Add RTSP"}
           </Button>
         </div>
       </div>

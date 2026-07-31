@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useFilter, DEFAULT_TOP_K } from '../../lib-src/hooks/useFilter';
+import {
+  useFilter,
+  DEFAULT_MIN_COSINE_SIMILARITY,
+  DEFAULT_TOP_K,
+} from '../../lib-src/hooks/useFilter';
 
 interface FilterTag {
   key: string;
@@ -34,6 +38,7 @@ describe('useFilter', () => {
 
   it('exports DEFAULT_TOP_K constant', () => {
     expect(DEFAULT_TOP_K).toBe(10);
+    expect(DEFAULT_MIN_COSINE_SIMILARITY).toBe(-1);
   });
 
   it('initializes with default state', () => {
@@ -45,7 +50,7 @@ describe('useFilter', () => {
       startDate: null,
       endDate: null,
       videoSources: [],
-      similarity: 0,
+      similarity: DEFAULT_MIN_COSINE_SIMILARITY,
       agentMode: false,
       query: '',
       topK: DEFAULT_TOP_K,
@@ -145,7 +150,7 @@ describe('useFilter', () => {
           startDate: null,
           endDate: null,
           videoSources: [],
-          similarity: 0,
+          similarity: DEFAULT_MIN_COSINE_SIMILARITY,
           topK: 10,
         });
       });

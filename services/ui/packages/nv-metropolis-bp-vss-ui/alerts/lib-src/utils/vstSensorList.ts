@@ -156,14 +156,19 @@ export const fetchVstLiveStreamCatalog = async (
   if (Array.isArray(data)) {
     for (const item of data) {
       if (!item || typeof item !== 'object') continue;
-      for (const streams of Object.values(item) as unknown[]) {
+      for (const [catalogStreamId, streams] of Object.entries(item)) {
         if (!Array.isArray(streams) || streams.length === 0) continue;
         const info = streams[0] as Record<string, unknown>;
         const name = typeof info.name === 'string' ? info.name : undefined;
         const url = typeof info.url === 'string' ? info.url : undefined;
         const streamId =
           typeof info.streamId === 'string' ? info.streamId : undefined;
-        if (name && url && streamId) {
+        // VST can retain a tombstoned catalog record after sensor removal.
+        // Those records point at an old stream while remaining keyed by the
+        // removed sensor id; selecting one produces a dead RTSP URL and 500
+        // thumbnails. A live catalog entry is internally consistent: its
+        // outer key and advertised streamId are identical.
+        if (name && url && streamId && catalogStreamId === streamId) {
           result.push({ name, url, streamId });
         }
       }

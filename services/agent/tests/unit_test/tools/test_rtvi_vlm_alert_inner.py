@@ -221,7 +221,15 @@ class TestRTVIVLMAlertInner:
     async def test_stop_no_active_alert(self, config, mock_builder):
         _sensor_to_alert_rule_id.pop("MISSING_SENSOR", None)
 
+        mock_list_resp = MagicMock()
+        mock_list_resp.status = 200
+        mock_list_resp.text = AsyncMock(return_value='{"status":"success","rules":[],"count":0}')
+        mock_list_cm = AsyncMock()
+        mock_list_cm.__aenter__ = AsyncMock(return_value=mock_list_resp)
+        mock_list_cm.__aexit__ = AsyncMock(return_value=False)
+
         mock_session = MagicMock()
+        mock_session.get.return_value = mock_list_cm
         mock_session_cm = AsyncMock()
         mock_session_cm.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session_cm.__aexit__ = AsyncMock(return_value=False)
@@ -234,6 +242,54 @@ class TestRTVIVLMAlertInner:
 
         assert result.success is False
         assert "No active alert" in result.message
+
+    @pytest.mark.asyncio
+    async def test_stop_recovers_rule_after_agent_restart(self, config, mock_builder):
+        """Stop resolves the durable rule when the process-local cache is empty."""
+        _sensor_to_alert_rule_id.pop("PERSISTED_SENSOR", None)
+
+        mock_list_resp = MagicMock()
+        mock_list_resp.status = 200
+        mock_list_resp.text = AsyncMock(
+            return_value=json.dumps(
+                {
+                    "status": "success",
+                    "rules": [
+                        {"id": "persisted-rule-uuid", "sensor_name": "PERSISTED_SENSOR"},
+                        {"id": "other-rule-uuid", "sensor_name": "OTHER_SENSOR"},
+                    ],
+                    "count": 2,
+                }
+            )
+        )
+        mock_list_cm = AsyncMock()
+        mock_list_cm.__aenter__ = AsyncMock(return_value=mock_list_resp)
+        mock_list_cm.__aexit__ = AsyncMock(return_value=False)
+
+        mock_delete_resp = MagicMock()
+        mock_delete_resp.status = 200
+        mock_delete_resp.text = AsyncMock(return_value='{"status":"success"}')
+        mock_delete_cm = AsyncMock()
+        mock_delete_cm.__aenter__ = AsyncMock(return_value=mock_delete_resp)
+        mock_delete_cm.__aexit__ = AsyncMock(return_value=False)
+
+        mock_session = MagicMock()
+        mock_session.get.return_value = mock_list_cm
+        mock_session.delete.return_value = mock_delete_cm
+
+        mock_session_cm = AsyncMock()
+        mock_session_cm.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session_cm.__aexit__ = AsyncMock(return_value=False)
+
+        with patch("vss_agents.tools.rtvi_vlm_alert.aiohttp.ClientSession", return_value=mock_session_cm):
+            with patch("vss_agents.tools.rtvi_vlm_alert.aiohttp.ClientTimeout"):
+                inner_fn = await self._get_inner_fn(config, mock_builder)
+                result = await inner_fn(RTVIVLMAlertInput(action="stop", sensor_name="PERSISTED_SENSOR"))
+
+        assert result.success is True
+        assert result.alert_rule_id == "persisted-rule-uuid"
+        mock_session.delete.assert_called_once_with("http://localhost:9080/api/v1/realtime/persisted-rule-uuid")
+        assert "PERSISTED_SENSOR" not in _sensor_to_alert_rule_id
 
     @pytest.mark.asyncio
     async def test_stop_success(self, config, mock_builder):

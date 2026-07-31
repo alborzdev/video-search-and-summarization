@@ -57,9 +57,17 @@ class TestVlmParams:
             sampling_fps=8,
             cr1_optimization=False,
             max_retries=3,
+            media_mode="snapshots",
+            snapshot_frames=4,
+            response_format="json",
+            json_parser={"verdict_field": "prediction_answer"},
         )
         dumped = vp.model_dump(exclude_none=True)
-        assert len(dumped) == 13
+        assert len(dumped) == 17
+
+    def test_rejects_unknown_media_mode(self):
+        with pytest.raises(ValidationError):
+            VlmParams(media_mode="audio")
 
 
 class TestAlertTypeConfigVlmParams:
@@ -116,8 +124,15 @@ class TestVlmParamsMergeLogic:
     """Tests for VLM parameter merge logic (per-alert-type VLM config overrides)."""
 
     def test_override_specific_fields(self):
-        global_cfg = {"max_tokens": 4096, "temperature": 0.6, "num_frames": 5, "model": "cosmos"}
-        overrides = VlmParams(max_tokens=2048, temperature=0.4).model_dump(exclude_none=True)
+        global_cfg = {
+            "max_tokens": 4096,
+            "temperature": 0.6,
+            "num_frames": 5,
+            "model": "cosmos",
+        }
+        overrides = VlmParams(max_tokens=2048, temperature=0.4).model_dump(
+            exclude_none=True
+        )
         merged = dict(global_cfg)
         merged.update(overrides)
         assert merged["max_tokens"] == 2048

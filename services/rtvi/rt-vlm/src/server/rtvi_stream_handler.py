@@ -17,6 +17,7 @@ import json
 import math
 import os
 import queue
+import re
 import shutil
 import time
 import uuid
@@ -56,6 +57,41 @@ from vlm_pipeline import VlmPipeline, PipelineChunkResult  # isort:skip
 
 REASONING_INFO_KEY = "reasoning"
 REASONING_DESCRIPTION_INFO_KEY = "reasoningDescription"
+
+_INCIDENT_POSITIVE_RE = re.compile(r"\b(?:yes|true)\b", re.IGNORECASE)
+_INCIDENT_NEGATIVE_RE = re.compile(
+    r"(?:^|[\s{\[,])(?:no|false|none)(?:\b|\s)|"
+    r"\b(?:not\s+(?:visible|present|detected)|no\s+(?:incident|person|event|anomal))",
+    re.IGNORECASE,
+)
+_RFC3339_TIMESTAMP_RE = re.compile(
+    r"\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})\b"
+)
+
+
+def _incident_trigger_tokens(response: str) -> list[str]:
+    """Return evidence that an alert-model response represents an incident.
+
+    NVIDIA's original implementation searched for the substrings ``yes`` and
+    ``true``.  That misses the timestamp-only occurrence lists returned by
+    Qwen-family VLMs and can match unrelated words such as ``yesterday``.
+    Realtime alert prompts may legitimately return either an explicit boolean
+    verdict or one or more RFC3339 occurrence timestamps.  Explicit negative
+    language wins over timestamps so explanatory negative answers cannot
+    become incidents merely because they repeat input metadata.
+    """
+
+    if not response:
+        return []
+
+    positive_words = [match.group(0).lower() for match in _INCIDENT_POSITIVE_RE.finditer(response)]
+    if positive_words:
+        return list(dict.fromkeys(positive_words))
+    if _INCIDENT_NEGATIVE_RE.search(response):
+        return []
+    if _RFC3339_TIMESTAMP_RE.search(response):
+        return ["timestamp"]
+    return []
 
 
 def _add_reasoning_to_info(info: MutableMapping[str, str], reasoning: str) -> None:
@@ -1523,8 +1559,7 @@ class RTVIStreamHandler:
         if chunk_result.vlm_model_output and chunk_result.vlm_model_output.output:
             # string response = 4;
             query_msg.response = chunk_result.vlm_model_output.output
-            lower_response = chunk_result.vlm_model_output.output.lower()
-            trigger_tokens = [token for token in ("yes", "true") if token in lower_response]
+            trigger_tokens = _incident_trigger_tokens(chunk_result.vlm_model_output.output)
             triggered = bool(trigger_tokens)
             if triggered:
                 incident = self._build_incident_message(

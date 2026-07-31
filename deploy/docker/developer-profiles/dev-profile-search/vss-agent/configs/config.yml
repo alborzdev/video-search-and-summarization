@@ -17,6 +17,9 @@ general:
   use_uvloop: false
   front_end:
     _type: vss_fastapi
+    step_adaptor:
+      mode: custom
+      custom_event_types: [TOOL_START, TOOL_END]
     object_store: ${VSS_AGENT_OBJECT_STORE_TYPE}  # Set to local_object_store or remote_object_store
     runner_class: vss_agents.api.custom_fastapi_worker.CustomFastApiFrontEndWorker
     streaming_ingest:
@@ -136,6 +139,7 @@ functions:
     vlm_name: ${VLM_MODEL_TYPE:-nim}_vlm
     max_frames: 60
     max_fps: 2  # for CR1, max fps is 2
+    max_frames_per_request: ${VLM_MAX_FRAMES_PER_REQUEST:-30}
     min_pixels: 3136
     max_pixels: 12845056
     reasoning: false

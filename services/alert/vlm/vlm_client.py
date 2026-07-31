@@ -184,6 +184,16 @@ class _VLMClientBase:
         if effective_temperature is not None:
             kwargs["temperature"] = effective_temperature
 
+        effective_response_format = overrides.get(
+            "response_format", self.config.get("response_format", "auto")
+        )
+        if effective_response_format == "json":
+            kwargs["response_format"] = {"type": "json_object"}
+
+        effective_timeout = overrides.get("request_timeout")
+        if effective_timeout is not None:
+            kwargs["timeout"] = effective_timeout
+
         return kwargs
 
     def _prepare_local_media(

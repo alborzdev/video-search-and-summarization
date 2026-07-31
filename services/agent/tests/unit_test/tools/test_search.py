@@ -28,6 +28,7 @@ from vss_agents.tools.embed_search import QueryInput
 from vss_agents.tools.embed_search import _str_input_converter
 from vss_agents.tools.search import QUERY_DECOMPOSITION_PROMPT
 from vss_agents.tools.search import DecomposedQuery
+from vss_agents.tools.search import ReferenceObject
 from vss_agents.tools.search import SearchConfig
 from vss_agents.tools.search import SearchInput
 from vss_agents.tools.search import SearchOutput
@@ -190,6 +191,57 @@ class TestSearchInput:
         assert input_data.timestamp_end is None
         assert input_data.top_k is None  # return all mathing results
         assert input_data.min_cosine_similarity == 0.0
+
+    def test_structured_reference_object(self):
+        input_data = SearchInput(
+            query="find visually similar objects",
+            source_type="rtsp",
+            agent_mode=True,
+            reference_object={
+                "object_id": " 42 ",
+                "sensor_name": " warehouse-east ",
+                "sensor_id": " 7f8fcbf4-9e1b-41b9-bf52-1e6ce1ca9f6c ",
+                "timestamp": "2025-01-01T00:00:31.250Z",
+            },
+        )
+
+        assert isinstance(input_data.reference_object, ReferenceObject)
+        assert input_data.reference_object.object_id == "42"
+        assert input_data.reference_object.sensor_name == "warehouse-east"
+        assert input_data.reference_object.sensor_id == "7f8fcbf4-9e1b-41b9-bf52-1e6ce1ca9f6c"
+        assert input_data.reference_object.timestamp == datetime(2025, 1, 1, 0, 0, 31, 250000, tzinfo=UTC)
+
+    @pytest.mark.parametrize("field", ["object_id", "sensor_name", "sensor_id"])
+    def test_reference_object_rejects_empty_identity_fields(self, field):
+        reference = {
+            "object_id": "42",
+            "sensor_name": "warehouse-east",
+            "sensor_id": "7f8fcbf4-9e1b-41b9-bf52-1e6ce1ca9f6c",
+            "timestamp": "2025-01-01T00:00:31.250Z",
+        }
+        reference[field] = "   "
+
+        with pytest.raises(ValidationError):
+            SearchInput(
+                query="find visually similar objects",
+                source_type="video_file",
+                agent_mode=False,
+                reference_object=reference,
+            )
+
+    def test_reference_object_requires_timezone_aware_timestamp(self):
+        with pytest.raises(ValidationError, match="timezone"):
+            SearchInput(
+                query="find visually similar objects",
+                source_type="video_file",
+                agent_mode=False,
+                reference_object={
+                    "object_id": "42",
+                    "sensor_name": "warehouse-east",
+                    "sensor_id": "7f8fcbf4-9e1b-41b9-bf52-1e6ce1ca9f6c",
+                    "timestamp": "2025-01-01T00:00:31.250",
+                },
+            )
 
     def test_missing_query_raises(self):
         with pytest.raises(ValidationError):

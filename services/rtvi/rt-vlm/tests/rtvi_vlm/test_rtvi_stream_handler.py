@@ -36,7 +36,11 @@ import pytest
 
 from common.chunk_info import ChunkInfo
 from models.base_vlm_model import VlmModelOutput
-from server.rtvi_stream_handler import RequestInfo, RTVIStreamHandler
+from server.rtvi_stream_handler import (
+    RequestInfo,
+    RTVIStreamHandler,
+    _incident_trigger_tokens,
+)
 from tests.tests_common import TempEnv
 from utils.asset_manager import Asset
 from vlm_pipeline.vlm_pipeline import PipelineChunkResult, VlmModelType
@@ -46,6 +50,26 @@ from vlm_pipeline.vlm_pipeline import PipelineChunkResult, VlmModelType
 # other rtvi_vlm test files.
 
 API_PREFIX = "/v1"
+
+
+@pytest.mark.parametrize(
+    ("response", "expected"),
+    [
+        ("Yes, a person is visible.", ["yes"]),
+        ('{"detected": true}', ["true"]),
+        (
+            "2026-07-15T02:07:36.564Z\n2026-07-15T02:07:39.064Z",
+            ["timestamp"],
+        ),
+        ("No person is visible at 2026-07-15T02:07:36.564Z.", []),
+        ("Nothing happened yesterday.", []),
+        ("The claim is untrue.", []),
+    ],
+)
+def test_incident_trigger_tokens(response, expected):
+    """Boolean and timestamp alert contracts are parsed without substrings."""
+
+    assert _incident_trigger_tokens(response) == expected
 
 
 class TestStreamHandlerInitialization:

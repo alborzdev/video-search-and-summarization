@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "general",
+  "name": "General Video Intelligence",
+  "description": "A neutral, cross-industry demonstration of local video search, investigation, and alerts.",
+  "branding": {
+    "title": "THOR LOCAL VSS",
+    "subtitle": "OFFLINE VIDEO INTELLIGENCE"
+  },
+  "terminology": {
+    "source": "camera",
+    "event": "alert",
+    "subject": "person"
+  },
+  "demo_questions": [
+    "Summarize the important activity in this video in chronological order.",
+    "When do people enter or leave the scene, and what are they doing?",
+    "Find the strongest visual evidence for any unusual activity."
+  ],
+  "search_prompts": [
+    "person entering the monitored area",
+    "person carrying an object",
+    "unusual activity near equipment"
+  ],
+  "verification_rules": [
+    {
+      "alert_type": "fov count violation",
+      "prompt": "Across these time-ordered frames, is a person clearly present in the monitored zone? Return only JSON. Set prediction_answer to YES or NO and reasoning to one concise evidence-based sentence.",
+      "system_prompt": "You verify visible events from chronological camera frames. Return only one valid JSON object with keys prediction_answer and reasoning. prediction_answer must be exactly YES or NO.",
+      "enrichment_prompt": null,
+      "output_category": "Person in Monitored Zone",
+      "vlm_params": {
+        "num_frames": 4
+      }
+    }
+  ]
+}

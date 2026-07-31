@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+ARG VST_STREAM_PROCESSOR_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.0
+FROM ${VST_STREAM_PROCESSOR_BASE_IMAGE}
+
+# The released ARM64 image retains the GStreamer package records, but omits
+# codec shared libraries such as libavcodec.so. NVIDIA's normal Compose path
+# repairs those files at every container start. Bake that vendor-provided
+# repair into the image once so normal starts never need apt or network access.
+COPY deploy/docker/services/vios/scripts/user_additional_install.sh /tmp/user_additional_install.sh
+
+USER root
+# libgstmplex is present too, but its library is omitted and is not covered by
+# the vendor repair script's package list.
+RUN /bin/bash /tmp/user_additional_install.sh \
+    && apt-get install --reinstall --no-install-recommends -y libmplex2-2.1-0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /root/.cache/gstreamer-1.0 /tmp/user_additional_install.sh
+
+ENTRYPOINT ["/home/vst/vst_release/launch_vst"]

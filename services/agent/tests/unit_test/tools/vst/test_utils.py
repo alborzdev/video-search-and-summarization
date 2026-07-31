@@ -23,6 +23,9 @@ import pytest
 
 from vss_agents.tools.vst.timeline import get_timeline
 from vss_agents.tools.vst.utils import VSTError
+from vss_agents.tools.vst.utils import add_proxy_stream
+from vss_agents.tools.vst.utils import add_sensor
+from vss_agents.tools.vst.utils import delete_proxy_stream
 from vss_agents.tools.vst.utils import delete_vst_sensor
 from vss_agents.tools.vst.utils import delete_vst_storage
 from vss_agents.tools.vst.utils import get_name_to_stream_id_map
@@ -128,6 +131,73 @@ async def no_retry_generator(*_args, **_kwargs):
             return False  # Don't suppress exceptions
 
     yield NoRetryContext()
+
+
+class TestDirectProxyLifecycle:
+    """Standalone VIOS sensor/proxy requests honor the native API contract."""
+
+    @pytest.mark.asyncio
+    async def test_sensor_add_includes_empty_auth_fields(self):
+        response = create_mock_response(200, "")
+        response.json = AsyncMock(return_value={"sensorId": "sensor-1"})
+        session = MagicMock()
+        session.post = MagicMock(return_value=response)
+        session.__aenter__ = AsyncMock(return_value=session)
+        session.__aexit__ = AsyncMock(return_value=None)
+
+        with patch("vss_agents.tools.vst.utils.aiohttp.ClientSession", return_value=session):
+            success, message, sensor_id = await add_sensor(
+                sensor_url="rtsp://camera.local/main",
+                name="camera-1",
+                vst_internal_url="http://vst:30888",
+            )
+
+        assert (success, message, sensor_id) == (True, "OK", "sensor-1")
+        assert session.post.call_args.kwargs["json"] == {
+            "sensorUrl": "rtsp://camera.local/main",
+            "name": "camera-1",
+            "username": "",
+            "password": "",
+        }
+
+    @pytest.mark.asyncio
+    async def test_proxy_add_returns_live_rtsp_url(self):
+        response = create_mock_response(200, "")
+        response.json = AsyncMock(return_value={"url": "rtsp://vst:30554/live/sensor-1"})
+        session = MagicMock()
+        session.post = MagicMock(return_value=response)
+        session.__aenter__ = AsyncMock(return_value=session)
+        session.__aexit__ = AsyncMock(return_value=None)
+
+        with patch("vss_agents.tools.vst.utils.aiohttp.ClientSession", return_value=session):
+            result = await add_proxy_stream(
+                sensor_id="sensor-1",
+                sensor_url="rtsp://camera.local/main",
+                name="camera-1",
+                streamprocessor_url="http://streamprocessor:30001/",
+            )
+
+        assert result == (True, "OK", "rtsp://vst:30554/live/sensor-1")
+        assert session.post.call_args.args[0] == "http://streamprocessor:30001/api/v1/proxy/stream/add"
+        assert session.post.call_args.kwargs["json"] == {
+            "id": "sensor-1",
+            "url": "rtsp://camera.local/main",
+            "name": "camera-1",
+        }
+
+    @pytest.mark.asyncio
+    async def test_proxy_delete_is_idempotent_for_missing_stream(self):
+        response = create_mock_response(404, "not found")
+        session = MagicMock()
+        session.delete = MagicMock(return_value=response)
+        session.__aenter__ = AsyncMock(return_value=session)
+        session.__aexit__ = AsyncMock(return_value=None)
+
+        with patch("vss_agents.tools.vst.utils.aiohttp.ClientSession", return_value=session):
+            result = await delete_proxy_stream("sensor-1", "http://streamprocessor:30001")
+
+        assert result == (True, "OK")
+        assert session.delete.call_args.args[0] == "http://streamprocessor:30001/api/v1/proxy/stream/sensor-1"
 
 
 class TestGetNameToStreamIdMap:
@@ -347,6 +417,21 @@ class TestDeleteVSTResources:
         assert mock_session.delete.call_args.args[0] == (
             "http://localhost:30888/vst/api/v1/sensor/..%2F..%2Fcamera%201"
         )
+
+    @pytest.mark.asyncio
+    async def test_delete_vst_sensor_missing_is_successful_noop(self):
+        """Deleting an already-absent sensor is idempotent."""
+        mock_delete_response = create_mock_response(404, '{"error_code":"CameraNotFoundError"}')
+        mock_session = MagicMock()
+        mock_session.delete = MagicMock(return_value=mock_delete_response)
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=None)
+
+        with patch("vss_agents.tools.vst.utils.aiohttp.ClientSession", return_value=mock_session):
+            success, message = await delete_vst_sensor("http://localhost:30888", "missing-sensor")
+
+        assert success is True
+        assert message == "Already absent"
 
     @pytest.mark.asyncio
     async def test_delete_vst_storage_quotes_sensor_id_and_passes_timeline_params(self):

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "industrial-safety",
+  "name": "Industrial Safety",
+  "description": "PPE, work-zone, and equipment-safety investigation for factories, warehouses, and industrial sites.",
+  "branding": {
+    "title": "THOR SAFETY INTELLIGENCE",
+    "subtitle": "ON-DEVICE INDUSTRIAL VIDEO AI"
+  },
+  "terminology": {
+    "source": "worksite camera",
+    "event": "safety incident",
+    "subject": "worker"
+  },
+  "demo_questions": [
+    "Create a chronological safety summary and cite the relevant moments.",
+    "Which workers approach equipment, ladders, or restricted work zones?",
+    "Is there visible evidence of missing PPE or unsafe behavior?"
+  ],
+  "search_prompts": [
+    "worker without visible safety equipment",
+    "person climbing or standing near a ladder",
+    "worker entering a restricted equipment zone"
+  ],
+  "verification_rules": [
+    {
+      "alert_type": "fov count violation",
+      "prompt": "Across these time-ordered frames, is any person on the ladder without both a hardhat and a safety vest? Return only JSON. Set prediction_answer to YES or NO and reasoning to one concise evidence-based sentence.",
+      "system_prompt": "You verify safety incidents from chronological camera frames. Return only one valid JSON object with keys prediction_answer and reasoning. prediction_answer must be exactly YES or NO.",
+      "enrichment_prompt": null,
+      "output_category": "Ladder PPE Violation",
+      "vlm_params": {
+        "num_frames": 4
+      }
+    }
+  ]
+}

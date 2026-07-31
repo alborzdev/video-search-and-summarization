@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: MIT
 export declare function fetchDashboardData(): Promise<{
     systemStatus: string;
-    dashboardUrl: string | undefined;
+    kibanaBaseUrl: string | null;
+    dashboards: Array<{
+        id: string;
+        attributes: {
+            title: string;
+            description?: string;
+        };
+    }>;
+    defaultDashboardId: string | null;
 }>;
-//# sourceMappingURL=server.d.ts.map

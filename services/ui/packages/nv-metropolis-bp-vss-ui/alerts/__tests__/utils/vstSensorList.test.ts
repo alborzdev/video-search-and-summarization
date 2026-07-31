@@ -42,7 +42,7 @@ describe('vstSensorList', () => {
     global.fetch = jest.fn().mockResolvedValue(
       textResponse([
         {
-          'stream-key-1': [
+          '8c7338ec-2266-4eea-aeb4-c568d8944b05': [
             {
               name: 'warehouse-cam-1',
               url: 'rtsp://10.24.142.82:30554/live/8c7338ec-2266-4eea-aeb4-c568d8944b05',
@@ -51,11 +51,20 @@ describe('vstSensorList', () => {
           ],
         },
         {
-          'stream-key-2': [
+          'mp4-stream-id': [
             {
               name: 'sample.mp4',
               url: 'rtsp://10.24.142.82:30554/sample.mp4',
               streamId: 'mp4-stream-id',
+            },
+          ],
+        },
+        {
+          'removed-sensor-id': [
+            {
+              name: 'warehouse-cam-1',
+              url: 'rtsp://10.24.142.82:30554/live/stale-stream-id',
+              streamId: 'stale-stream-id',
             },
           ],
         },
@@ -91,7 +100,7 @@ describe('vstSensorList', () => {
     global.fetch = jest.fn().mockResolvedValue(
       textResponse([
         {
-          'stream-key-1': [
+          '8c7338ec-2266-4eea-aeb4-c568d8944b05': [
             {
               name: 'warehouse-cam-1',
               url: 'rtsp://10.24.142.82:30554/live/8c7338ec-2266-4eea-aeb4-c568d8944b05',

@@ -118,6 +118,46 @@ describe('useSearch', () => {
     expect(body.timestamp_start).toBeUndefined();
   });
 
+  it('sends an exact Search by Image reference without invoking agent mode', async () => {
+    global.fetch = mockFetchResponse({ data: [] });
+
+    renderHook(() =>
+      useSearch({
+        agentApiUrl: 'http://api.test',
+        params: {
+          query: 'Objects visually similar to the selected Person',
+          agentMode: true,
+          sourceType: 'video_file',
+          topK: 7,
+          referenceObject: {
+            objectId: '42',
+            sensorName: 'pit-POV',
+            sensorId: 'sensor-uuid',
+            timestamp: '2025-01-01T00:00:02.147Z',
+          },
+        },
+      })
+    );
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled();
+    });
+
+    const body = JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body);
+    expect(body).toEqual({
+      query: 'Objects visually similar to the selected Person',
+      top_k: 7,
+      agent_mode: false,
+      source_type: 'video_file',
+      reference_object: {
+        object_id: '42',
+        sensor_name: 'pit-POV',
+        sensor_id: 'sensor-uuid',
+        timestamp: '2025-01-01T00:00:02.147Z',
+      },
+    });
+  });
+
   it('handles HTTP error responses', async () => {
     global.fetch = mockFetchResponse({ error: 'Server error' }, false, 500);
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();

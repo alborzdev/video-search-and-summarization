@@ -49,6 +49,7 @@ from realtime import (
     ResponseStatus,
     RuleStatus,
 )
+from realtime.defaults import DEFAULTS
 
 
 class RealtimeAlertRequest(BaseModel):
@@ -198,17 +199,17 @@ class RealtimeAlertRequest(BaseModel):
         ),
     )
     chunk_duration: int = Field(
-        default=30,
+        default=DEFAULTS.chunk_duration,
         ge=1,
         description="Duration (seconds) of each video chunk sent to VLM",
     )
     chunk_overlap_duration: int = Field(
-        default=5,
+        default=DEFAULTS.chunk_overlap_duration,
         ge=0,
         description="Overlap (seconds) between consecutive chunks",
     )
     num_frames_per_second_or_fixed_frames_chunk: int = Field(
-        default=10,
+        default=DEFAULTS.frames_per_second_or_fixed_chunk,
         ge=1,
         validation_alias=AliasChoices(
             "num_frames_per_second_or_fixed_frames_chunk",
@@ -220,24 +221,24 @@ class RealtimeAlertRequest(BaseModel):
         ),
     )
     use_fps_for_chunking: bool = Field(
-        default=True,
+        default=DEFAULTS.use_fps_for_chunking,
         description=(
             "RTVI VLM: if true, num_frames_per_second_or_fixed_frames_chunk is FPS; "
             "if false, fixed frame count per chunk"
         ),
     )
     vlm_input_width: int = Field(
-        default=256,
+        default=DEFAULTS.vlm_input_width,
         ge=1,
         description="RTVI: VLM input image width",
     )
     vlm_input_height: int = Field(
-        default=256,
+        default=DEFAULTS.vlm_input_height,
         ge=1,
         description="RTVI: VLM input image height",
     )
     enable_reasoning: bool = Field(
-        default=True,
+        default=DEFAULTS.enable_reasoning,
         description="RTVI: enable VLM reasoning",
     )
     # Extended RTVI VLM options — all optional.
@@ -256,7 +257,7 @@ class RealtimeAlertRequest(BaseModel):
         description="RTVI: streaming options (e.g. {\"include_usage\": true})",
     )
     max_tokens: Optional[int] = Field(
-        default=None,
+        default=DEFAULTS.max_tokens,
         ge=1,
         description="RTVI: maximum tokens to generate",
     )
@@ -292,7 +293,7 @@ class RealtimeAlertRequest(BaseModel):
         ),
     )
     enable_audio: Optional[bool] = Field(
-        default=None,
+        default=DEFAULTS.enable_audio,
         description="RTVI: include audio in VLM analysis",
     )
     mm_processor_kwargs: Optional[Dict[str, Any]] = Field(

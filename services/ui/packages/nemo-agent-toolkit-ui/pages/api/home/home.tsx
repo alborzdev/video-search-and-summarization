@@ -108,7 +108,7 @@ export interface NemoAgentToolkitAppProps {
    * Optional: called when the chat is ready; receives a function the embedder can call
    * to add a query context item (e.g. search result) to the chat input area.
    */
-  onAddQueryContextReady?: (addItem: (item: { id: string; label: string; type: string; data: Record<string, unknown> }) => void) => void;
+  onAddQueryContextReady?: (addItem: (item: { id: string; label: string; contextType: string; data: Record<string, unknown> }) => void) => void;
 
   /**
    * Optional: called when a chat video upload batch completes with at least one successful file.

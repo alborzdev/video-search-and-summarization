@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# The Thor-full profile activates the shared VST, Search, Alerts, and LVS
+# services through their existing profile lists. This file owns only resources
+# that must be composed specifically for the unified runtime.
+services:
+  # RT-CV already publishes tracked objects to mdx-raw. This second,
+  # uniquely-grouped CPU consumer derives only the missing FOV aggregate and
+  # reuses Behavior Analytics' standard incident state machine. It does not
+  # start Grounding DINO or any additional GPU inference pipeline.
+  vss-behavior-analytics-thor-candidates:
+    extends:
+      file: ${VSS_APPS_DIR}/services/analytics/behavior-analytics/compose.yml
+      service: vss-behavior-analytics-base
+    profiles: ["bp_developer_thor_full_2d"]
+    container_name: vss-behavior-analytics-thor-candidates
+    volumes:
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-full/vss-behavior-analytics/configs/vss-candidate-alerts-config.json:/resources/vss-candidate-alerts-config.json:ro
+      - ${VSS_REPO_ROOT}/services/analytics/behavior-analytics/apps/thor_candidate:/behavior-analytics/apps/thor_candidate:ro
+    command: python3 apps/thor_candidate/main_thor_candidate_app.py --config /resources/vss-candidate-alerts-config.json
+    depends_on:
+      broker-health-check:
+        condition: service_completed_successfully
+
+  kibana-init-container-thor-full:
+    build:
+      context: ${VSS_APPS_DIR}
+      dockerfile: developer-profiles/dev-profile-thor-full/Dockerfiles/kibana-dashboard.Dockerfile
+      network: host
+    network_mode: host
+    profiles: ["bp_developer_thor_full_2d"]
+    container_name: vss-kibana-init-thor-full
+    command: bash /opt/mdx/init-scripts/kibana-import-dashboards.sh
+    depends_on:
+      kibana:
+        condition: service_healthy
+    restart: "no"

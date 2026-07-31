@@ -54,7 +54,6 @@ export const SearchComponent: React.FC<SearchComponentProps> = ({
   submitChatMessage,
   registerChatAnswerHandler,
   registerSidebarChatEventSubscriber,
-  chatSidebarCollapsed = true,
   chatSidebarBusy = false,
   addChatQueryContext,
 }) => {
@@ -130,13 +129,24 @@ export const SearchComponent: React.FC<SearchComponentProps> = ({
   );
 
   const handleSearchByImageConfirm = React.useCallback((objectId: string) => {
-    if (!submitChatMessage) return;
-    const prompt = `Find similar objects matching object_id=${objectId}`;
-    submitChatMessage(prompt);
+    if (!searchByImageFrameData) return;
+    const selectedObject = searchByImageFrameData.objects.find((item) => item.id === objectId);
+    onUpdateSearchParams({
+      ...filterParams,
+      query: `Objects visually similar to the selected ${selectedObject?.type?.trim() || 'object'}`,
+      agentMode: false,
+      referenceObject: {
+        objectId,
+        sensorName: searchByImageFrameData.sensorName,
+        sensorId: searchByImageFrameData.sensorId,
+        timestamp: searchByImageFrameData.timestamp,
+      },
+    });
+    setAgentSearchResults(null);
     cancelSearchByImage();
     closeVideoModal();
     setActiveVideoData(null);
-  }, [submitChatMessage, cancelSearchByImage, closeVideoModal]);
+  }, [searchByImageFrameData, onUpdateSearchParams, filterParams, cancelSearchByImage, closeVideoModal]);
 
   const refetchStreamsRef = React.useRef(refetchStreams);
   const getPendingQueryRef = React.useRef<() => string>(() => '');
@@ -349,7 +359,7 @@ export const SearchComponent: React.FC<SearchComponentProps> = ({
           onCancelSearch={cancelSearch}
           onGetPendingQuery={handleGetPendingQuery}
           submitChatMessage={wrappedSubmitChatMessage}
-          contentDisabled={!chatSidebarCollapsed || loading || chatSidebarBusy}
+          contentDisabled={loading || chatSidebarBusy}
         />
       </div>
       <div className="flex-1 overflow-auto">
@@ -380,4 +390,3 @@ export const SearchComponent: React.FC<SearchComponentProps> = ({
 
 // Re-export types for convenience
 export type { SearchData, SearchComponentProps } from './types';
-

@@ -58,9 +58,24 @@ if ! command -v ngc &>/dev/null; then
   echo "##### NGC CLI not found, installing... #####"
   export DEBIAN_FRONTEND=noninteractive
   apt-get update -qq && apt-get install -y -qq wget unzip > /dev/null
+  case "$(uname -m)" in
+    aarch64|arm64)
+      NGC_CLI_ARCHIVE="ngccli_arm64.zip"
+      ;;
+    x86_64|amd64)
+      NGC_CLI_ARCHIVE="ngccli_linux.zip"
+      ;;
+    *)
+      echo "ERROR: Unsupported NGC CLI architecture: $(uname -m)" >&2
+      exit 1
+      ;;
+  esac
   cd /tmp
-  wget -q https://ngc.nvidia.com/downloads/ngccli_linux.zip -O ngccli_linux.zip
-  unzip -q ngccli_linux.zip && chmod +x ngc-cli/ngc
+  rm -rf ngc-cli "${NGC_CLI_ARCHIVE}"
+  wget -q \
+    "https://api.ngc.nvidia.com/v2/resources/nvidia/ngc-apps/ngc_cli/versions/4.10.0/files/${NGC_CLI_ARCHIVE}" \
+    -O "${NGC_CLI_ARCHIVE}"
+  unzip -qo "${NGC_CLI_ARCHIVE}" && chmod +x ngc-cli/ngc
   export PATH="/tmp/ngc-cli:$PATH"
   cd -
   ngc --version

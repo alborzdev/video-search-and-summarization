@@ -1,0 +1,21 @@
+# syntax=docker/dockerfile:1.7
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+ARG ALERT_BRIDGE_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-alert-verification:3.2.0
+FROM ${ALERT_BRIDGE_BASE_IMAGE}
+
+# Keep NVIDIA's released runtime and dependencies intact. Only replace the
+# small alert modules needed by the Thor profile so the branch
+# remains easy to rebase onto future VSS releases.
+COPY services/alert/realtime/defaults.py /app/realtime/defaults.py
+COPY services/alert/realtime/schemas/alert_config.py /app/realtime/schemas/alert_config.py
+COPY services/alert/realtime/services/rtvi_client.py /app/realtime/services/rtvi_client.py
+COPY services/alert/realtime/services/realtime_service.py /app/realtime/services/realtime_service.py
+COPY services/alert/alert-agent-web/app/api/realtime_schemas.py /app/alert-agent-web/app/api/realtime_schemas.py
+COPY services/alert/enhance_alert_with_vlm.py /app/enhance_alert_with_vlm.py
+COPY services/alert/vlm/vlm_client.py /app/vlm/vlm_client.py
+COPY services/alert/vst/snapshot_sampler.py /app/vst/snapshot_sampler.py
+COPY services/alert/handlers/prompt_handler/alert_type_config_loader.py /app/handlers/prompt_handler/alert_type_config_loader.py
+
+USER 65532:65532

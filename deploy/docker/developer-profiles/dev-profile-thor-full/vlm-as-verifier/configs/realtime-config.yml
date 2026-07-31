@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# The unified Thor profile creates real-time rules through the UI or agent.
+# Keep the always-on collection explicit and empty so Alert Bridge never needs
+# a placeholder host path and does not silently activate an unrequested rule.
+# Alert Bridge only validates a non-empty list when `alert_agent.always_on` is
+# explicitly enabled; the unified profile leaves that feature disabled.
+always_on_rules: []

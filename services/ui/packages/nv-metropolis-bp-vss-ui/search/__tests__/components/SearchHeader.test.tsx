@@ -13,7 +13,7 @@ const defaultProps = {
     startDate: null,
     endDate: null,
     videoSources: [],
-    similarity: 0,
+    similarity: -1,
     agentMode: false,
     query: '',
     topK: 10,

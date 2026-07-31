@@ -17,10 +17,10 @@ services:
 
   vss-ui:
     image: nvcr.io/nvidia/vss-core/vss-agent-ui:3.2.0
-    profiles: ["bp_wh_2d","bp_developer_base_2d","bp_developer_search_2d","bp_developer_lvs_2d","bp_developer_alerts_2d_cv", "bp_developer_alerts_2d_vlm"]
+    profiles: ["bp_wh_2d","bp_developer_base_2d","bp_developer_search_2d","bp_developer_lvs_2d","bp_developer_alerts_2d_cv", "bp_developer_alerts_2d_vlm", "bp_developer_thor_full_2d"]
     container_name: vss-agent-ui
     ports:
-      - 3000:3000
+      - "${VSS_UI_PORT:-3000}:3000"
     restart: always
     depends_on:
       vss-agent:
@@ -34,7 +34,7 @@ services:
       NEXT_PUBLIC_CHAT_SIDEBAR_OPEN_DEFAULT: ${NEXT_PUBLIC_CHAT_SIDEBAR_OPEN_DEFAULT:-false}
       NEXT_PUBLIC_SIDEBAR_CHAT_WORKFLOW: ${NEXT_PUBLIC_SIDEBAR_CHAT_WORKFLOW:-Vision Agent}
       NEXT_PUBLIC_SIDEBAR_CHAT_WEBSOCKET_CHAT_COMPLETION_URL: ${VSS_PUBLIC_WS_PROTOCOL}://${VSS_PUBLIC_HOST}:${VSS_PUBLIC_PORT}/websocket
-      NEXT_PUBLIC_SIDEBAR_CHAT_HTTP_CHAT_COMPLETION_URL: http://${HOST_IP}:${VSS_AGENT_PORT:-8000}/chat/stream
+      NEXT_PUBLIC_SIDEBAR_CHAT_HTTP_CHAT_COMPLETION_URL: ${VSS_PUBLIC_HTTP_PROTOCOL}://${VSS_PUBLIC_HOST}:${VSS_PUBLIC_PORT}/chat/stream
       NEXT_PUBLIC_SIDEBAR_CHAT_WEB_SOCKET_DEFAULT_ON: ${NEXT_PUBLIC_SIDEBAR_CHAT_WEB_SOCKET_DEFAULT_ON:-false}
       NEXT_PUBLIC_SIDEBAR_CHAT_CHAT_HISTORY_DEFAULT_ON: ${NEXT_PUBLIC_SIDEBAR_CHAT_CHAT_HISTORY_DEFAULT_ON:-true}
       NEXT_PUBLIC_SIDEBAR_CHAT_ENABLE_INTERMEDIATE_STEPS: ${NEXT_PUBLIC_SIDEBAR_CHAT_ENABLE_INTERMEDIATE_STEPS:-true}
@@ -58,7 +58,7 @@ services:
       NEXT_PUBLIC_ENABLE_CHAT_TAB: ${NEXT_PUBLIC_ENABLE_CHAT_TAB:-false}
       NEXT_PUBLIC_WORKFLOW: '${NEXT_PUBLIC_WORKFLOW:-Vision Agent}'
       NEXT_PUBLIC_WEBSOCKET_CHAT_COMPLETION_URL: ${VSS_PUBLIC_WS_PROTOCOL}://${VSS_PUBLIC_HOST}:${VSS_PUBLIC_PORT}/websocket
-      NEXT_PUBLIC_HTTP_CHAT_COMPLETION_URL: http://${HOST_IP}:${VSS_AGENT_PORT:-8000}/chat/stream
+      NEXT_PUBLIC_HTTP_CHAT_COMPLETION_URL: ${VSS_PUBLIC_HTTP_PROTOCOL}://${VSS_PUBLIC_HOST}:${VSS_PUBLIC_PORT}/chat/stream
       NEXT_PUBLIC_WEB_SOCKET_DEFAULT_ON: ${NEXT_PUBLIC_WEB_SOCKET_DEFAULT_ON:-false}
       NEXT_PUBLIC_RIGHT_MENU_OPEN: ${NEXT_PUBLIC_RIGHT_MENU_OPEN:-false}
       NEXT_PUBLIC_ENABLE_INTERMEDIATE_STEPS: ${NEXT_PUBLIC_ENABLE_INTERMEDIATE_STEPS:-true}
@@ -97,6 +97,7 @@ services:
       # === Dashboard Tab Configuration ===
       NEXT_PUBLIC_ENABLE_DASHBOARD_TAB: ${NEXT_PUBLIC_ENABLE_DASHBOARD_TAB:-true}
       NEXT_PUBLIC_DASHBOARD_TAB_KIBANA_BASE_URL: ${VSS_PUBLIC_HTTP_PROTOCOL}://${VSS_PUBLIC_HOST}:${VSS_PUBLIC_PORT}/kibana
+      NEXT_PUBLIC_DASHBOARD_TAB_DEFAULT_DASHBOARD_ID: ${NEXT_PUBLIC_DASHBOARD_TAB_DEFAULT_DASHBOARD_ID:-}
       # === End of Dashboard Tab Configuration ===
 
       # === SMC Map Tab Configuration ===

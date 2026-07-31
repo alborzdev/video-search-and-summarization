@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "id": "retail",
+  "name": "Retail Operations",
+  "description": "Customer-flow, queue, stocking, and store-operations investigation without cloud inference.",
+  "branding": {
+    "title": "THOR RETAIL INTELLIGENCE",
+    "subtitle": "LOCAL STORE OPERATIONS AI"
+  },
+  "terminology": {
+    "source": "store camera",
+    "event": "store event",
+    "subject": "customer"
+  },
+  "demo_questions": [
+    "Summarize customer and staff activity in chronological order.",
+    "When does the busiest period occur, and what visual evidence supports it?",
+    "Identify interactions near shelves, displays, entrances, or checkout areas."
+  ],
+  "search_prompts": [
+    "customer waiting near checkout",
+    "staff member stocking a shelf",
+    "person entering or leaving the store"
+  ],
+  "verification_rules": [
+    {
+      "alert_type": "fov count violation",
+      "prompt": "Across these time-ordered frames, is a person clearly waiting in or approaching a checkout queue? Return only JSON. Set prediction_answer to YES or NO and reasoning to one concise evidence-based sentence.",
+      "system_prompt": "You verify retail operations events from chronological camera frames. Use only visible evidence. Return one valid JSON object with keys prediction_answer and reasoning. prediction_answer must be exactly YES or NO.",
+      "enrichment_prompt": null,
+      "output_category": "Checkout Queue Activity",
+      "vlm_params": {
+        "num_frames": 4
+      }
+    }
+  ]
+}
