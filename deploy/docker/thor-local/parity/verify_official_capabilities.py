@@ -586,7 +586,32 @@ def validate(
     if len(discrepancy_ids) != len(discrepancies):
         raise CapabilityContractError("invalid source discrepancy record")
     for discrepancy in discrepancies:
-        if not set(discrepancy.get("source_ids", [])) <= set(source_ids) or len(discrepancy.get("source_ids", [])) < 2 or not discrepancy.get("resolution"):
+        discrepancy_source_ids = discrepancy.get("source_ids", [])
+        observations = discrepancy.get("observations", [])
+        observation_sides = {
+            (
+                item.get("source_id"),
+                item.get("locator"),
+                item.get("claim"),
+            )
+            for item in observations
+            if isinstance(item, dict)
+        }
+        if (
+            not discrepancy_source_ids
+            or len(discrepancy_source_ids) != len(set(discrepancy_source_ids))
+            or not set(discrepancy_source_ids) <= set(source_ids)
+            or not isinstance(observations, list)
+            or len(observations) < 2
+            or len(observation_sides) != len(observations)
+            or {item[0] for item in observation_sides} != set(discrepancy_source_ids)
+            or any(
+                not all(isinstance(value, str) and value for value in item)
+                for item in observation_sides
+            )
+            or not discrepancy.get("resolution")
+            or not discrepancy.get("must_not_claim")
+        ):
             raise CapabilityContractError(f"{discrepancy['id']}: invalid discrepancy")
 
     return {

@@ -180,10 +180,42 @@ class OfficialCapabilityTests(unittest.TestCase):
             copy.deepcopy(self.manifest),
             copy.deepcopy(self.acceptance),
         )
-        self.assertEqual(counts["sources"], 33)
-        self.assertEqual(counts["capabilities"], 131)
-        self.assertEqual(counts["feature_families"], 18)
-        self.assertEqual(counts["discrepancies"], 4)
+        self.assertEqual(counts["sources"], 55)
+        self.assertEqual(counts["capabilities"], 161)
+        self.assertEqual(counts["feature_families"], 25)
+        self.assertEqual(counts["discrepancies"], 18)
+
+    def test_single_source_discrepancy_retains_two_exact_sides(self) -> None:
+        discrepancy = next(
+            item
+            for item in self.ledger["source_discrepancies"]
+            if item["id"] == "rt-embed-scoped-model-defaults"
+        )
+        self.assertEqual(discrepancy["source_ids"], ["rt-embed-doc-3.2.1"])
+        self.assertEqual(len(discrepancy["observations"]), 2)
+        self.assertEqual(
+            {item["locator"] for item in discrepancy["observations"]},
+            {"Supported Models lines 197-202", "Supported Models lines 203-207"},
+        )
+        self.assertIn("Do not", discrepancy["must_not_claim"])
+
+    def test_discrepancy_cannot_collapse_to_one_observation(self) -> None:
+        ledger = copy.deepcopy(self.ledger)
+        discrepancy = next(
+            item
+            for item in ledger["source_discrepancies"]
+            if item["id"] == "warehouse-alert-vlm-model-prose-conflict"
+        )
+        discrepancy["observations"].pop()
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError,
+            "observations.*too short|invalid discrepancy",
+        ):
+            verifier.validate(
+                ledger,
+                copy.deepcopy(self.manifest),
+                copy.deepcopy(self.acceptance),
+            )
 
     def test_every_source_must_back_a_precise_claim(self) -> None:
         ledger = copy.deepcopy(self.ledger)

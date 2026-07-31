@@ -71,7 +71,7 @@
       "additionalProperties": false,
       "properties": {
         "product_version": {"const": "3.2.1"},
-        "ga_commit": {"const": "7640d91728a1a78b4664a7b336947f80bfa78d59"},
+        "ga_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
         "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
         "captured_on": {"const": "2026-07-31"}
       }

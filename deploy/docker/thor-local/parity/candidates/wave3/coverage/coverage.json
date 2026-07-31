@@ -1,0 +1,2318 @@
+{
+  "schema_version": 1,
+  "target": {
+    "product": "NVIDIA VSS",
+    "version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "reviewed_main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "docs_index_binding": {
+    "index_url": "https://docs.nvidia.com/vss/3.2.1/index.html",
+    "target_file": "deploy/docker/thor-local/parity/candidates/wave3/coverage/docs-index-targets.json",
+    "target_file_sha256": "825cbcfd90f7aa8c35290c7eb179f2e6af4775bc192ef5b3f7763559b7fd2850",
+    "target_count": 152,
+    "canonical_target_set_sha256": "b70c4d6979c3ea2b60e41a5352704aba8e14c39773bde8159e1c725242265f28",
+    "hash_canonicalization": "SHA-256 of compact canonical JSON for the lexicographically sorted URL array"
+  },
+  "live_input_bindings": {
+    "official_capability_ledger": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "sha256": "e33eff2cc03f7770e0513a061732ec860ccb241721e40b9d60d6dbb2b0dafee8",
+      "source_count": 55,
+      "capability_count": 161
+    },
+    "current_source_lock": {
+      "path": "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+      "sha256": "6cbd019f1138a468614f2dbba562b3039a1a3495f260bdadd20bf5c828832717",
+      "record_count": 53,
+      "index_linked_record_count": 52,
+      "release_notes_locked": true,
+      "aggregate_sha256": "adbd613b2f36f16fa06deb4aa104948e275a164a33ff5f18750053a8fa1d5aa8"
+    },
+    "api_inventory": {
+      "path": "deploy/docker/thor-local/qualification/api_inventory.json",
+      "sha256": "e16246d4d981ee99e582ebaa067ca5ae304a07f773c2b0c7fab4b0e0b88ba85d"
+    },
+    "qualification_implementation": {
+      "path": "deploy/docker/thor-local/qualification/qualify.py",
+      "sha256": "626a27f96ea106e02038e8d01b38950dbb2fb72cf004b09c103927a46033c497"
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "sha256": "5462c555436b96ec3c2fab9f3af3223fce26b064d85ee4cfd1c38128bceff56b"
+    },
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "sha256": "24f2ee284abc795cdc14537319f99c2b0655718ab541f1381132085cf20cff26"
+    },
+    "operation_manifests": {
+      "canonical_binding_set_sha256": "36a9f09a992b02d9332cdd883ea48b695114209c3502534c953a75aefa4fd332",
+      "files": [
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/agent.json",
+          "sha256": "086cc29db4abe15ff6021e16234a83e5b64345313a7cc73a154a49262e4c43a3"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/alerts.json",
+          "sha256": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+          "sha256": "31c7dba0a429ba6a8619db8231be579a5a8543fd19714adf0d6d8872d0cc89c3"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/lvs.json",
+          "sha256": "b24523d144442d32aee25908b7bac24da49b0117fd27ac15061fe4242c2a035c"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/rt-cv.json",
+          "sha256": "109e513991c1a28a6fa365bdfc72e5fedb4ab21f9249624776599fd98cab61f4"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+          "sha256": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+          "sha256": "2f64f1e9bb208ea3fd9a4b0aaa581bee852cbd819a3b753e53eb6325c6d1121b"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/va-mcp.json",
+          "sha256": "474e7763171c27274312e5bc71bfb6f0f4806a90feebb2fc1e4a2b50bd55f849"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/video-analytics.json",
+          "sha256": "dfdb099af3148e8a1c380ddff78de3d3c660514db5391af9ecc9c3ebaed2adc8"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-live.json",
+          "sha256": "62ee3362cbe7ab2d0745ed1b191a6ffa68b2ac4a7d0c484489729367b071724e"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-mcp.json",
+          "sha256": "93b6d03588203a5e72a99dda87506d414523c9a94afe19586b720c471374b65e"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-proxy.json",
+          "sha256": "6fb5bf826c6c32210767d2dba14a78311f9290f764c08f41859c6ee6cf2f5987"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-recorder.json",
+          "sha256": "d3035b87a0d406308698ff8aba13c4b99e1019b265e22f519d8bb1e187d351e0"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-replay.json",
+          "sha256": "f6c0be691224056e55f62a3f54d1022422608225d9c834b633695a2fb2c9cdf8"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-sensor.json",
+          "sha256": "8e3f779b8567761509b1da4f0327412fd74d98c57d47f79be2c1253e35ec0820"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-storage.json",
+          "sha256": "0f6867eb98243fae9bc99d97dda03109db52fe8889210adbf9408a86731113ac"
+        },
+        {
+          "path": "deploy/docker/thor-local/qualification/expected/vios-stream-bridge.json",
+          "sha256": "fa56f00f1d95beffe7faaa678a1cf5c0463ec0dedb7e367dfe5300afa584ac66"
+        }
+      ]
+    }
+  },
+  "source_lock_transition": {
+    "audit_start": {
+      "record_count": 52,
+      "index_linked_record_count": 51,
+      "release_notes_locked": false,
+      "aggregate_sha256": "e24ca86cbec8512583f6e1286f12fa5a182ea34554867c8f88d3adcbced1933f"
+    },
+    "current": {
+      "record_count": 53,
+      "index_linked_record_count": 52,
+      "release_notes_locked": true,
+      "aggregate_sha256": "adbd613b2f36f16fa06deb4aa104948e275a164a33ff5f18750053a8fa1d5aa8"
+    },
+    "interpretation": "Adding release-notes.html to the byte lock closes one provenance-byte gap only; release-note semantic transcription remains incomplete."
+  },
+  "classification_counts": {
+    "total_index_linked_targets": 152,
+    "covered_live": 51,
+    "semantic_omission": 59,
+    "navigation_duplicate_reference": 34,
+    "external_license_sample_dependency": 8,
+    "represented_limitation_boundary_only": 0
+  },
+  "release_note_audit": {
+    "v3_2_1_top_level_feature_bullets": 3,
+    "v3_2_1_feature_bullets_represented": 1,
+    "v3_2_1_feature_bullets_missing": 2,
+    "v3_2_1_missing_contracts": [
+      "Smart City Industry profile updated to 3.2.0 microservices",
+      "CPU-based multimedia support updated"
+    ],
+    "v3_2_0_global_feature_bullets": 7,
+    "v3_2_0_agent_workflow_top_level_bullets": 65,
+    "v3_2_0_system_component_top_level_bullets": 122,
+    "v3_2_0_global_known_issue_bullets": 7,
+    "v3_2_0_top_level_bullet_total": 201,
+    "combined_v3_2_1_and_v3_2_0_top_level_bullet_total": 204,
+    "live_capability_records_referencing_release_notes": 34,
+    "counting_rule": "Conservative top-level list items only; nested sub-bullets are excluded, and capability records are not assumed to map one-to-one to bullets.",
+    "complete_transcription": false
+  },
+  "api_semantic_audit": {
+    "surface_count": 17,
+    "declared_rest_operations": 326,
+    "normalized_unique_rest_operations": 325,
+    "rest_operations_with_schema_hash": 75,
+    "rest_operations_with_null_schema_hash": 251,
+    "mcp_tools": 38,
+    "mcp_prompts": 5,
+    "capability_oracles": 161,
+    "executor_ready_capability_oracles": 0,
+    "live_openapi_comparison": "method_path_set_only",
+    "schema_hash_meaning": "static OpenAPI shape where available, not behavior",
+    "route_or_schema_hash_is_semantic_test": false,
+    "byte_lock_is_semantic_test": false
+  },
+  "pages": [
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/API-Reference.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/Calibration-Camera-Positioning-Guide.html",
+      "category": "semantic_omission",
+      "reason": "The page defines calibration prerequisites, schema, workflow, quality constraints, or recovery behavior not exhaustively represented in the live ledger.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact calibration inputs, schema fields, invariants, outputs, failure modes, and support boundaries",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/JSON-Schema.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/Known-Limitations.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "known-limitations-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "security.known-unmitigated-limitations"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/License-Information.html",
+      "category": "external_license_sample_dependency",
+      "reason": "Legal/license terms are not a local runtime capability.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain as a legal boundary; do not convert license text into a runtime pass claim",
+      "candidate_wave": "none_legal",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/NvSchema.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/Protobuf-Schema.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/VSS-Agents.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-harnesses.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-harnesses-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "tooling.agent-harnesses.validated-4"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-skills.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-skills-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "tooling.agent-skills.catalog-16"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-alert-verification.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-lvs.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-rt-alert.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-search.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflows.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/alert-verification-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "alerts-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.alerts-19"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/alert-verification-service.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/analytics-microservices.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/api-gateway-mcp.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/auto-calibration.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "autocalib-overview-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "calibration.auto.workflow-six-step"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-custom-dataset.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "autocalib-custom-data-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "calibration.auto.alignment-schema",
+        "calibration.auto.ground-truth-schema"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-getting-started.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "autocalib-getting-started-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "boundary.auto-calibration.thor-extension",
+        "calibration.auto.input-contract"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-troubleshooting.html",
+      "category": "semantic_omission",
+      "reason": "The page defines calibration prerequisites, schema, workflow, quality constraints, or recovery behavior not exhaustively represented in the live ledger.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact calibration inputs, schema fields, invariants, outputs, failure modes, and support boundaries",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-workflow-steps.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "autocalib-workflow-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "calibration.auto.input-contract",
+        "calibration.auto.workflow-six-step"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/behavior-analytics.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/calibration-schema.html",
+      "category": "semantic_omission",
+      "reason": "The page defines calibration prerequisites, schema, workflow, quality constraints, or recovery behavior not exhaustively represented in the live ledger.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact calibration inputs, schema fields, invariants, outputs, failure modes, and support boundaries",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/calibration.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/cloud-brev.html",
+      "category": "external_license_sample_dependency",
+      "reason": "Brev is an NVIDIA-hosted deployment environment already treated as an external optional boundary.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain the external_optional Brev boundary and do not emulate hosted status locally",
+      "candidate_wave": "live_external_boundary",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/configuration-management.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/database.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/deepstream-configurator.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "deepstream-configurator-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.deepstream-configurator.post-config",
+        "config.deepstream.init-adaptor"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/deployments.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/edge-deployment.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "edge-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "model.edge.cosmos3-nano-served-id",
+        "model.edge.nemotron-3-nano-4b-fp8"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/elk.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/faq.html",
+      "category": "semantic_omission",
+      "reason": "The FAQ contains supported-format, deployment, networking, model, and failure-mode contracts not preserved by a dedicated live source claim set.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract operational boundaries and failure-mode contracts without treating advice as runtime proof",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/genindex.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/getting-started.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/helm-deployment.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "helm-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "deployment.helm.developer-profiles"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/industry-examples.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/kafka.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/legacy-calibration.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "legacy-calibration-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.legacy-calibration.ui-server",
+        "calibration.legacy.cartesian",
+        "calibration.legacy.core",
+        "calibration.legacy.gis",
+        "calibration.legacy.image",
+        "calibration.legacy.multi-camera"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/licenses.html",
+      "category": "external_license_sample_dependency",
+      "reason": "Legal/license terms are not a local runtime capability.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain as a legal boundary; do not convert license text into a runtime pass claim",
+      "candidate_wave": "none_legal",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/long-video-summarization-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "lvs-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.lvs-17"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/long-video-summarization.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "lvs-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.lvs-mcp-doc-13-repo-9"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/message-broker.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/middleware.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/models/clip-object-embeddings.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "siglip2-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "customization.embedding-reindex-validation",
+        "customization.siglip2"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/models/cosmos-embed1.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "cosmos-embed1-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "customization.cosmos-embed1",
+        "customization.embedding-reindex-validation",
+        "model.rt-embed.cosmos-embed1-224p",
+        "model.rt-embed.cosmos-embed1-336p",
+        "model.rt-embed.cosmos-embed1-448p",
+        "model.rt-embed.cosmos-embed1-448p-anomaly"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/models/index.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/models/model-customization.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "model-customization-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "customization.cosmos-embed1",
+        "customization.embedding-reindex-validation",
+        "customization.rt-detr",
+        "customization.siglip2",
+        "customization.sparse4d"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/models/rt-detr.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "rt-detr-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "customization.rt-detr"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/models/sparse4d.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "sparse4d-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "customization.sparse4d"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-configuration.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-deploy-vss-and-skills.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-troubleshooting.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/object-detection-tracking-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "rt-cv-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.rt-cv-9"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/object-detection-tracking.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/observability.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-alert-verification.html",
+      "category": "semantic_omission",
+      "reason": "The live ledger has only a generic performance-envelope record sourced from index navigation; this page\u2019s test configuration and metric matrix are not preserved.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "capture exact reference hardware, workload, concurrency, latency, throughput, accuracy, and measurement-scope contracts; require independent Thor remeasurement",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-lvs.html",
+      "category": "semantic_omission",
+      "reason": "The live ledger has only a generic performance-envelope record sourced from index navigation; this page\u2019s test configuration and metric matrix are not preserved.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "capture exact reference hardware, workload, concurrency, latency, throughput, accuracy, and measurement-scope contracts; require independent Thor remeasurement",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-cv.html",
+      "category": "semantic_omission",
+      "reason": "The live ledger has only a generic performance-envelope record sourced from index navigation; this page\u2019s test configuration and metric matrix are not preserved.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "capture exact reference hardware, workload, concurrency, latency, throughput, accuracy, and measurement-scope contracts; require independent Thor remeasurement",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-embed.html",
+      "category": "semantic_omission",
+      "reason": "The live ledger has only a generic performance-envelope record sourced from index navigation; this page\u2019s test configuration and metric matrix are not preserved.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "capture exact reference hardware, workload, concurrency, latency, throughput, accuracy, and measurement-scope contracts; require independent Thor remeasurement",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-vlm.html",
+      "category": "semantic_omission",
+      "reason": "The live ledger has only a generic performance-envelope record sourced from index navigation; this page\u2019s test configuration and metric matrix are not preserved.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "capture exact reference hardware, workload, concurrency, latency, throughput, accuracy, and measurement-scope contracts; require independent Thor remeasurement",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-search.html",
+      "category": "semantic_omission",
+      "reason": "The live ledger has only a generic performance-envelope record sourced from index navigation; this page\u2019s test configuration and metric matrix are not preserved.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "capture exact reference hardware, workload, concurrency, latency, throughput, accuracy, and measurement-scope contracts; require independent Thor remeasurement",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-vios.html",
+      "category": "semantic_omission",
+      "reason": "The live ledger has only a generic performance-envelope record sourced from index navigation; this page\u2019s test configuration and metric matrix are not preserved.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "capture exact reference hardware, workload, concurrency, latency, throughput, accuracy, and measurement-scope contracts; require independent Thor remeasurement",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/prerequisites.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "prerequisites-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "boundary.thor.custom-all-local-extension",
+        "boundary.thor.fully-local-future",
+        "boundary.thor.official-profiles",
+        "prereq.platform.agx-thor-software",
+        "prereq.platform.capacity-and-access",
+        "prereq.platform.credentials",
+        "prereq.platform.docker-cgroupfs",
+        "prereq.platform.kernel-and-thor-runtime",
+        "prereq.platform.toolchain-versions",
+        "prereq.platform.validated-gpus"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/quickstart.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/real-time-embedding-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "rt-embed-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.rt-embed-24"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/real-time-embedding.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "rt-embed-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "configuration.rt-embed.model-source",
+        "model.rt-embed.cosmos-embed1-224p",
+        "model.rt-embed.cosmos-embed1-336p",
+        "model.rt-embed.cosmos-embed1-448p",
+        "model.rt-embed.cosmos-embed1-448p-anomaly"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/real-time-vlm-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "rt-vlm-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.rt-vlm-27"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/real-time-vlm.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "rt-vlm-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "protocol.rt-vlm.sse"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/redis.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/release-notes-ver-2.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Prior-major-version release notes are reference history, not the VSS 3.2.1 parity denominator.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
+      "category": "semantic_omission",
+      "reason": "The current release-note page is live-linked and byte-locked, but the ledger is not a complete transcription: two of three VSS 3.2.1 feature bullets and numerous VSS 3.2.0 workflow/component contracts remain absent.",
+      "live_source_ids": [
+        "release-notes-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.alerts-19",
+        "behavior.rt-cv.ofa-predict",
+        "behavior.rt-cv.smart-infer",
+        "behavior.rt-embed.asset-max-age",
+        "behavior.rt-embed.base64-data-url",
+        "behavior.rt-embed.duplicate-id-409",
+        "behavior.rt-embed.file-url-allowlist",
+        "behavior.rt-embed.gop-decode-opt",
+        "behavior.rt-embed.kafka-queue-bound",
+        "behavior.rt-embed.ngc-scheme-key",
+        "behavior.rt-embed.trt-extra-args",
+        "behavior.rt-embed.trt-precision",
+        "behavior.rt-embed.url-auth",
+        "behavior.rt-embed.url-redirect-limit",
+        "behavior.rt-embed.url-size-limit",
+        "behavior.rt-embed.url-tls-exception",
+        "behavior.rt-vlm.delete-stops-all-stream-jobs",
+        "behavior.rt-vlm.duplicate-id-409",
+        "behavior.rt-vlm.generate-captions-endpoint-rename",
+        "behavior.rt-vlm.generation-token-cap",
+        "behavior.rt-vlm.independent-rtsp-jobs",
+        "behavior.rt-vlm.kafka-queue-bound",
+        "behavior.rt-vlm.moe-backend",
+        "behavior.rt-vlm.system-prompt-cap",
+        "behavior.rt-vlm.url-auth",
+        "behavior.rt-vlm.url-redirect-limit",
+        "behavior.rt-vlm.url-size-limit",
+        "behavior.rt-vlm.url-tls-exception",
+        "behavior.rt-vlm.user-prompt-cap",
+        "behavior.vios.byte-identical-download",
+        "behavior.vios.floor-map-formats",
+        "behavior.vios.per-camera-timestamps",
+        "behavior.vios.sensor-add-conflicts",
+        "model.rt-vlm.default-cosmos3-nano-bf16"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "extract every current-release feature, enhancement, limitation, tag-policy, deprecation, and cross-page discrepancy as precise claims",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/sdg-calibration.html",
+      "category": "semantic_omission",
+      "reason": "The page defines calibration prerequisites, schema, workflow, quality constraints, or recovery behavior not exhaustively represented in the live ledger.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact calibration inputs, schema fields, invariants, outputs, failure modes, and support boundaries",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/sdrc.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "sdrc-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.sdrc.control-plane",
+        "config.sdrc.docker-distribution",
+        "config.sdrc.envoy-routing",
+        "config.sdrc.session-restoration"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/search.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "JavaScript documentation search page is navigation only.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/secure-deployment.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "secure-deployment-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "security.external-edge-controls",
+        "security.trusted-network-boundary"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Blueprint-deep-dive.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Calibration.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Deployment.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/FAQ.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Placeholder explicitly states that the section will be expanded in a future release.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Introduction.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Known-Limitations.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/License-Information.html",
+      "category": "external_license_sample_dependency",
+      "reason": "Legal/license terms are not a local runtime capability.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain as a legal boundary; do not convert license text into a runtime pass claim",
+      "candidate_wave": "none_legal",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Model-Fine-Tuning.html",
+      "category": "external_license_sample_dependency",
+      "reason": "The page describes model-training, simulation, synthetic-data, or sample-dependent work requiring systems or assets outside the core Thor-local runtime.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "add a precise external_optional workflow/boundary record without requiring the excluded Warehouse sample bundle",
+      "candidate_wave": "wave3_external_boundary",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Operations.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Prerequisites.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Quickstart-Guide.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Simulation-SDG.html",
+      "category": "external_license_sample_dependency",
+      "reason": "The page describes model-training, simulation, synthetic-data, or sample-dependent work requiring systems or assets outside the core Thor-local runtime.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "add a precise external_optional workflow/boundary record without requiring the excluded Warehouse sample bundle",
+      "candidate_wave": "wave3_external_boundary",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Smartcity-Development-Workflow.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Troubleshooting-Guide.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Placeholder explicitly states that the section will be expanded in a future release.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/smartcity-toc.html",
+      "category": "semantic_omission",
+      "reason": "The Smart City page is absent as a direct source and contains profile, prerequisite, workflow, deployment, calibration, version, or limitation semantics; sample/external dependencies must remain explicit.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data-capable local contracts, external boundaries, and the documented v3.1 versus v3.2 source discrepancy",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-api-server.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "video-analytics-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.video-analytics-56"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-mcp.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "video-analytics-mcp-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.va-mcp-7"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vios-microservices.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vios-nvstreamer.html",
+      "category": "semantic_omission",
+      "reason": "The page defines microservice, middleware, schema, messaging, storage, observability, or model behavior not exhaustively represented by current source links or method/path manifests.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact models, inputs, configuration, message/schema fields, operations, outputs, errors, and protocol semantics",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vision-microservices.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Configuration.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-config-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "configuration.agent.file-llm-schema",
+        "configuration.agent.hierarchy",
+        "configuration.agent.mcp-client",
+        "observability.agent.phoenix-traces"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Customization.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-customization-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "configuration.agent.extension-points",
+        "configuration.agent.knowledge-retrieval-backends"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Evaluation.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-eval-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "evaluation.agent.execution-artifacts",
+        "evaluation.agent.multi-turn",
+        "evaluation.agent.qa",
+        "evaluation.agent.report",
+        "evaluation.agent.trajectory"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Known-Issues.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-known-issues-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "behavior.agent.known-issues"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Overview.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Profiles.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/Video-Analytics-MCP-Server.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-llm.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-llm-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "model.agent-llm.gpt-oss-20b",
+        "model.agent-llm.llama-3.3-nemotron-super-49b",
+        "model.agent-llm.nemotron-3-nano",
+        "model.agent-llm.nemotron-nano-9b-v2",
+        "model.agent-llm.nemotron-nano-9b-v2-fp8",
+        "model.agent.openai-compatible-endpoints",
+        "model.remote-agent-llm.glm5",
+        "model.remote-agent-llm.gpt-4.1",
+        "model.remote-agent-llm.gpt-5.2",
+        "model.remote-agent-llm.gpt-oss-120b",
+        "model.remote-agent-llm.nemotron-3-nano-30b-a3b"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-vlm.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-vlm-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "model.agent-vlm.cosmos-reason2-8b",
+        "model.agent-vlm.cosmos3-nano",
+        "model.agent-vlm.cosmos3-super",
+        "model.agent-vlm.custom-weights",
+        "model.agent-vlm.qwen3-vl-8b",
+        "model.remote-agent-vlm.cosmos-reason2-2b-latest",
+        "model.remote-agent-vlm.cosmos-reason2-8b-latest",
+        "model.remote-agent-vlm.cosmos3-reasoner-1.7",
+        "model.remote-agent-vlm.gpt-4.1",
+        "model.remote-agent-vlm.gpt-5.2",
+        "model.remote-agent-vlm.nemotron-omni-nvfp4",
+        "model.remote-agent-vlm.qwen3-vl-8b-vllm",
+        "model.remote-agent-vlm.reka-flash"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-Observability.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-observability-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "observability.agent.phoenix-traces"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-api.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Generated API-reference shell has no independent rendered semantic body; the substantive sibling/API source must carry any operation contracts.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-report-generation.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "agent-report-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "runtime.agent.report-artifacts",
+        "runtime.agent.report-profile-contracts"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-configurator.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vss-configurator-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.vss-configurator.sensor",
+        "config.vss-configurator.profile-manager",
+        "config.vss-configurator.sensor-manager"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-orchestrator-mcp.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "orchestrator-mcp-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.orchestrator-mcp.tools-9",
+        "boundary.thor.official-profiles"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-scale.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vlm-autoscaling-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "deployment.vlm-autoscaling.hpa"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-ui.html",
+      "category": "semantic_omission",
+      "reason": "The page advertises agent/profile/workflow/UI or NemoClaw deployment and behavior semantics beyond current direct source claims and route inventories.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract exact profile composition, operations, configuration, lifecycle, outputs, limitations, and cleanup contracts",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-vios.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-live-stream-management-api-reference.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Generated API-reference shell has no independent rendered semantic body; the substantive sibling/API source must carry any operation contracts.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-live-stream-management-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vst-live-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.vst-live-20"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-proxy-stream-management-api-reference.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Generated API-reference shell has no independent rendered semantic body; the substantive sibling/API source must carry any operation contracts.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-proxy-stream-management-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vst-proxy-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.vst-proxy-7"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-record-stream-management-api-reference.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Generated API-reference shell has no independent rendered semantic body; the substantive sibling/API source must carry any operation contracts.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-record-stream-management-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vst-record-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.vst-record-16"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-replay-stream-management-api-reference.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Generated API-reference shell has no independent rendered semantic body; the substantive sibling/API source must carry any operation contracts.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-replay-stream-management-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vst-replay-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.vst-replay-21"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-sensor-management-api-reference.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Generated API-reference shell has no independent rendered semantic body; the substantive sibling/API source must carry any operation contracts.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-sensor-management-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vst-sensor-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.vst-sensor-28"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-storage-management-api-reference.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Generated API-reference shell has no independent rendered semantic body; the substantive sibling/API source must carry any operation contracts.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-storage-management-api.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "vst-storage-api-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "api.core.vst-storage-26-25"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Accuracy-Performance-Benchmarks.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Appendix-toc.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Behavior-Analytics.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "warehouse-behavior-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "configuration.warehouse.behavior-analytics"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/FAQ.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Introduction.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Known-Limitations.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "warehouse-limitations-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "behavior.auto-calibration.known-limitations",
+        "behavior.warehouse.known-limitations"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/License-Information.html",
+      "category": "external_license_sample_dependency",
+      "reason": "Legal/license terms are not a local runtime capability.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain as a legal boundary; do not convert license text into a runtime pass claim",
+      "candidate_wave": "none_legal",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Models.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Perception.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Prerequisites.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Quickstart-Guide.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Release-Notes.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Simulation-and-Synthetic-Data-Generation.html",
+      "category": "external_license_sample_dependency",
+      "reason": "The page describes model-training, simulation, synthetic-data, or sample-dependent work requiring systems or assets outside the core Thor-local runtime.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "add a precise external_optional workflow/boundary record without requiring the excluded Warehouse sample bundle",
+      "candidate_wave": "wave3_external_boundary",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/System-Sizing-Guide.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Troubleshooting-Guide.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/agents.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "warehouse-agents-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "runtime.warehouse.agent-hierarchy"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/alerting-service.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "warehouse-alerting-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "runtime.warehouse.alert-modes-rules"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/blueprint-profiles.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/microservices-configs-and-outputs.html",
+      "category": "navigation_duplicate_reference",
+      "reason": "Navigation, overview, or duplicate reference hub with no independent semantic contract identified beyond linked substantive pages.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "retain this denominator classification and re-evaluate if the rendered page gains independent semantics",
+      "candidate_wave": "none_navigation",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/vss-warehouse-ui.html",
+      "category": "covered_live",
+      "reason": "A current live source and at least one capability claim link this page, and its current raw HTML bytes are in the source lock; this does not prove exhaustive semantic extraction.",
+      "live_source_ids": [
+        "warehouse-ui-doc-3.2.1"
+      ],
+      "live_capability_ids": [
+        "runtime.warehouse.ui-surfaces"
+      ],
+      "source_lock_state": "byte_locked_current",
+      "required_action": "retain byte-drift monitoring and independently audit page-to-claim completeness",
+      "candidate_wave": "live_claim_linked",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/warehouse-toc.html",
+      "category": "semantic_omission",
+      "reason": "The Warehouse page is absent as a direct source and contains profile, prerequisite, custom-data, release, sizing, benchmark, troubleshooting, or lifecycle semantics beyond the four live Warehouse claims.",
+      "live_source_ids": [],
+      "live_capability_ids": [],
+      "source_lock_state": "not_in_current_source_lock",
+      "required_action": "extract custom-data contracts while keeping the optional approximately 100 GB sample bundle excluded",
+      "candidate_wave": "wave3_semantic_inventory",
+      "semantic_proof_from_byte_lock": false,
+      "semantic_proof_from_route_hash": false
+    }
+  ]
+}

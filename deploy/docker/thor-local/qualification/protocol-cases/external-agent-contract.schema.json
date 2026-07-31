@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/external-agent-endpoint-contract.schema.json",
+  "title": "Externally supplied Agent WebSocket server contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "endpoint_path",
+    "request_type",
+    "response_types",
+    "terminal_status",
+    "source_identity",
+    "disconnect_discards_conversation"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "case_id": {"const": "protocol-case.agent.websocket"},
+    "endpoint_path": {"const": "/websocket"},
+    "request_type": {"const": "user_message"},
+    "response_types": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "system_response_message",
+          "system_intermediate_message",
+          "system_interaction_message",
+          "error"
+        ]
+      }
+    },
+    "terminal_status": {"const": "complete"},
+    "source_identity": {"type": "string", "minLength": 1},
+    "disconnect_discards_conversation": {"const": true}
+  }
+}

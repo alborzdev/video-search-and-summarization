@@ -324,12 +324,13 @@
           "phase1-execution-disabled",
           "current-runtime-evidence-required"
         ],
-        "capabilities_sha256": "2cfa05957c4d80ce5498c5ec0a8c22ed1504ce4f9494b3ac6aca9bd44702c913",
+        "capabilities_sha256": "3e17369ddcaae5bd51e44c77ced97bcd2dda752f89fef1b51646fb7a94e5bfef",
         "disposition": "planned",
-        "expected_capability_count": 7,
+        "expected_capability_count": 15,
         "feature_id": "base-agent-workflow",
         "scenario_ids": [
-          "core-agent-workflows"
+          "core-agent-workflows",
+          "official-capability-contracts"
         ],
         "selector": "all-current-capabilities"
       },
@@ -498,11 +499,13 @@
           "phase1-execution-disabled",
           "current-runtime-evidence-required"
         ],
-        "capabilities_sha256": "cb813e8066059d3b6a1654c7d8a29e6f50dff9521de090614ba63e7dada72ad5",
+        "capabilities_sha256": "263e1df6bbfa348bc1a36b70db559c8f586608d94502457e17c7acc007cc6ee5",
         "disposition": "planned",
-        "expected_capability_count": 7,
+        "expected_capability_count": 12,
         "feature_id": "rt-embed",
         "scenario_ids": [
+          "model-alternate-workflows",
+          "official-capability-contracts",
           "rtvi-media-workflows"
         ],
         "selector": "all-current-capabilities"
@@ -586,12 +589,13 @@
           "current-runtime-evidence-required",
           "auto-calibration-assets-missing"
         ],
-        "capabilities_sha256": "b23b9638b278559a87c2452f5fb8e4b5fda3022da1bf21991fdac90fe49dde9d",
+        "capabilities_sha256": "35f4fd2a045ccb58aa34fe0087fea2e034bdbff1656d553894568e9be867f52d",
         "disposition": "planned",
-        "expected_capability_count": 6,
+        "expected_capability_count": 12,
         "feature_id": "auto-calibration",
         "scenario_ids": [
-          "auto-calibration-workflows"
+          "auto-calibration-workflows",
+          "official-capability-contracts"
         ],
         "selector": "all-current-capabilities"
       },
@@ -688,12 +692,15 @@
           "phase1-execution-disabled",
           "current-runtime-evidence-required"
         ],
-        "capabilities_sha256": "578e9c88d241aeb980896835443b20f5a4eb7a254be4fdf4e5e58570c4c54fec",
+        "capabilities_sha256": "413465300a7d1e00ae2603abf8feebebc716503ae4515d65ade2ca67afbbd2a9",
         "disposition": "planned",
-        "expected_capability_count": 6,
+        "expected_capability_count": 11,
         "feature_id": "warehouse-2d",
         "scenario_ids": [
-          "industry-profile-workflows"
+          "core-agent-workflows",
+          "industry-profile-workflows",
+          "official-capability-contracts",
+          "ui-workflows"
         ],
         "selector": "all-current-capabilities"
       },
@@ -732,12 +739,13 @@
           "phase1-execution-disabled",
           "current-runtime-evidence-required"
         ],
-        "capabilities_sha256": "58bab132b566937ad64702550e507e84ad7c85b26c008d32ba932514d4a5e8c0",
+        "capabilities_sha256": "f1ff3d062204559001ec93e436e31e8f17940abf496b9f8bb27f3cecc0d9fa58",
         "disposition": "planned",
-        "expected_capability_count": 8,
+        "expected_capability_count": 9,
         "feature_id": "infra-observability",
         "scenario_ids": [
-          "observability-scale-workflows"
+          "observability-scale-workflows",
+          "official-capability-contracts"
         ],
         "selector": "all-current-capabilities"
       },
@@ -787,9 +795,9 @@
           "phase1-execution-disabled",
           "external-kubernetes-required"
         ],
-        "capabilities_sha256": "1484ec4d1dc0556da245f6cdd7623be6f7c727b348a456d310b52d6f82707529",
+        "capabilities_sha256": "66f757a43b818f79cd676e3e3c7ffe50c163f379aed28fc2980ed5c6fda0b080",
         "disposition": "external-optional",
-        "expected_capability_count": 2,
+        "expected_capability_count": 3,
         "feature_id": "helm",
         "scenario_ids": [
           "external-integration-boundaries"
@@ -829,11 +837,14 @@
           "phase1-execution-disabled",
           "current-runtime-evidence-required"
         ],
-        "capabilities_sha256": "452ebb67c27d982b90cd4ff12e32d4e7d2ed2ed55cf48ef9215d902040b5040b",
+        "capabilities_sha256": "4d0f3a104cfd20e3ac165e0412d6f43321f183e8bdc81a442ac6d93a381c660a",
         "disposition": "planned",
-        "expected_capability_count": 6,
+        "expected_capability_count": 9,
         "feature_id": "offline-security",
         "scenario_ids": [
+          "external-integration-boundaries",
+          "observability-scale-workflows",
+          "official-capability-contracts",
           "offline-tool-workflows"
         ],
         "selector": "all-current-capabilities"
@@ -876,9 +887,9 @@
           "current-runtime-evidence-required",
           "official-capability-runtime-unqualified"
         ],
-        "capabilities_sha256": "ce5145f91f70bab354cdf1a4295778925a4fd6c6b0a1c71bb96525e23067dcdd",
+        "capabilities_sha256": "4d815b7896d26748a21a22aa1f280319f34f62869865ee175caae54a10e518e6",
         "disposition": "planned",
-        "expected_capability_count": 4,
+        "expected_capability_count": 5,
         "feature_id": "agent-evaluation",
         "scenario_ids": [
           "official-capability-contracts"
@@ -1044,7 +1055,9 @@
         "disposition": "planned",
         "expected_capability_count": 7,
         "feature_id": "official-platform-prerequisites",
-        "scenario_ids": ["official-capability-contracts"],
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
         "selector": "all-current-capabilities"
       },
       {
@@ -1057,7 +1070,9 @@
         "disposition": "planned",
         "expected_capability_count": 3,
         "feature_id": "official-thor-support-boundary",
-        "scenario_ids": ["official-capability-contracts"],
+        "scenario_ids": [
+          "official-capability-contracts"
+        ],
         "selector": "all-current-capabilities"
       },
       {
@@ -1070,7 +1085,10 @@
         "disposition": "planned",
         "expected_capability_count": 14,
         "feature_id": "core-api-operation-contracts",
-        "scenario_ids": ["rest-api-operation-matrix", "mcp-tool-operation-matrix"],
+        "scenario_ids": [
+          "mcp-tool-operation-matrix",
+          "rest-api-operation-matrix"
+        ],
         "selector": "all-current-capabilities"
       },
       {
@@ -1084,7 +1102,10 @@
         "disposition": "planned",
         "expected_capability_count": 3,
         "feature_id": "agent-operability-surfaces",
-        "scenario_ids": ["skill-catalog-workflows", "mcp-tool-operation-matrix"],
+        "scenario_ids": [
+          "mcp-tool-operation-matrix",
+          "skill-catalog-workflows"
+        ],
         "selector": "all-current-capabilities"
       },
       {

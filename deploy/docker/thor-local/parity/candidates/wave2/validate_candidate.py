@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-"""Fail-closed validation for the isolated VSS wave-2 candidate package."""
+"""Fail-closed validation for the VSS wave-2 extraction and merge lifecycle."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ EXPECTED_COUNTS = {
 
 
 class CandidateContractError(ValueError):
-    """The isolated candidate package is inconsistent or unsafe to merge."""
+    """The candidate package or its live merge is inconsistent."""
 
 
 def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -148,6 +148,17 @@ def _validate_expected_manifest(
         )
 
 
+def _is_subset(expected: Any, actual: Any) -> bool:
+    if isinstance(expected, dict):
+        return isinstance(actual, dict) and all(
+            key in actual and _is_subset(value, actual[key])
+            for key, value in expected.items()
+        )
+    if isinstance(expected, list):
+        return isinstance(actual, list) and all(value in actual for value in expected)
+    return expected == actual
+
+
 def validate(
     package: dict[str, Any] | None = None,
     *,
@@ -207,10 +218,13 @@ def validate(
         if isinstance(item, dict)
     }
     overlap = set(new_ids) & live_capability_ids
-    if overlap:
+    if overlap and overlap != set(new_ids):
         raise CandidateContractError(
-            f"new capability already exists in live ledger: {sorted(overlap)[0]}"
+            f"partial live merge detected at capability: {sorted(overlap)[0]}"
         )
+    merged = overlap == set(new_ids)
+    if package["target"] != live_ledger.get("target"):
+        raise CandidateContractError("candidate and live target identities differ")
     missing_enrichments = set(enrichment_ids) - live_capability_ids
     if missing_enrichments:
         raise CandidateContractError(
@@ -303,6 +317,78 @@ def validate(
         if source["claim_set_sha256"] != computed_hashes[source["id"]]:
             raise CandidateContractError(f"{source['id']}: source claim hash drift")
 
+    if merged:
+        live_source_by_uri = {
+            item.get("uri"): item
+            for item in live_ledger.get("sources", [])
+            if isinstance(item, dict)
+        }
+        source_uri_by_id = {item["id"]: item["uri"] for item in package["sources"]}
+        if not set(source_uri_by_id.values()) <= set(live_source_by_uri):
+            raise CandidateContractError("merged live ledger is missing a wave-2 source")
+        live_capability_by_id = {
+            item["id"]: item for item in live_ledger["capabilities"]
+        }
+        feature_by_id = {item["id"]: item for item in live_manifest["features"]}
+        coverage_by_id = {
+            item["feature_id"]: item
+            for item in live_acceptance["coverage"]["features"]
+        }
+        for proposed in package["new_capabilities"]:
+            live = live_capability_by_id[proposed["id"]]
+            for key in ("acceptance_class", "thor_state", "runtime_state"):
+                if live.get(key) != proposed["status"][key]:
+                    raise CandidateContractError(
+                        f"{proposed['id']}: merged live {key} drift"
+                    )
+            if not _is_subset(proposed["contract"], live.get("contract")):
+                raise CandidateContractError(
+                    f"{proposed['id']}: merged live contract drift"
+                )
+            if (
+                live["contract"].get("related_expected_manifest_semantic_coverage")
+                is not False
+            ):
+                raise CandidateContractError(
+                    f"{proposed['id']}: live API manifest implies semantic coverage"
+                )
+            live_claim_uris = {
+                next(
+                    item["uri"]
+                    for item in live_ledger["sources"]
+                    if item["id"] == claim["source_id"]
+                )
+                for claim in live["source_claims"]
+            }
+            expected_claim_uris = {
+                source_uri_by_id[claim["source_id"]]
+                for claim in proposed["source_claims"]
+            }
+            if not expected_claim_uris <= live_claim_uris:
+                raise CandidateContractError(
+                    f"{proposed['id']}: merged live source-claim drift"
+                )
+            feature = feature_by_id[proposed["feature_id"]]
+            if (
+                proposed["id"] not in feature.get("official_capability_ids", [])
+                or proposed["title"] not in feature.get("advertised", [])
+                or not set(proposed["scenario_ids"])
+                <= set(coverage_by_id[proposed["feature_id"]]["scenario_ids"])
+            ):
+                raise CandidateContractError(
+                    f"{proposed['id']}: merged manifest/acceptance cross-link drift"
+                )
+        live_discrepancies = {
+            item.get("id")
+            for item in live_ledger.get("source_discrepancies", [])
+            if isinstance(item, dict)
+        }
+        proposed_discrepancies = {
+            item["id"] for item in package["discrepancies_and_boundaries"]
+        }
+        if not proposed_discrepancies <= live_discrepancies:
+            raise CandidateContractError("merged live discrepancy coverage drift")
+
     return {
         "sources": len(package["sources"]),
         "new_capabilities": len(package["new_capabilities"]),
@@ -331,7 +417,7 @@ def main() -> int:
     ) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
-    print("PASS: isolated wave-2 candidate is strict, counted, and merge-safe")
+    print("PASS: wave-2 extraction is strict, counted, and lifecycle-safe")
     if args.report:
         print(", ".join(f"{key}={value}" for key, value in counts.items()))
     return 0

@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/parity/source-lock/source-lock.schema.json",
+  "title": "VSS 3.2.1 official documentation byte source lock",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "product_version",
+    "captured_on",
+    "inputs",
+    "fetch_policy",
+    "interpretation",
+    "records",
+    "summary"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nullable_sha256": {
+      "oneOf": [{"type": "null"}, {"$ref": "#/$defs/sha256"}]
+    },
+    "nullable_string": {
+      "oneOf": [{"type": "null"}, {"type": "string", "minLength": 1}]
+    },
+    "nullable_integer": {
+      "oneOf": [{"type": "null"}, {"type": "integer", "minimum": 0}]
+    }
+  },
+  "properties": {
+    "schema_version": {"const": 2},
+    "product_version": {"const": "3.2.1"},
+    "captured_on": {"type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "inputs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"enum": ["live_ledger", "wave2_candidate"]},
+          "path": {"type": "string", "pattern": "^deploy/docker/thor-local/parity/"},
+          "sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "fetch_policy": {
+      "type": "object",
+      "required": [
+        "tool",
+        "options",
+        "environment",
+        "trust",
+        "redirect_mode",
+        "max_redirects",
+        "accepted_content_types",
+        "requested_content_encoding",
+        "accepted_content_encoding",
+        "store_response_bodies"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "type": "object",
+          "required": ["name", "path", "version"],
+          "additionalProperties": false,
+          "properties": {
+            "name": {"const": "curl"},
+            "path": {"const": "/usr/bin/curl"},
+            "version": {"type": "string", "minLength": 1}
+          }
+        },
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "environment": {
+          "type": "object",
+          "required": ["mode", "variables", "proxy_mode", "curl_config_mode"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": {"const": "process_environment_replaced"},
+            "variables": {
+              "const": {
+                "LANG": "C",
+                "LC_ALL": "C",
+                "NO_PROXY": "*",
+                "no_proxy": "*",
+                "PATH": "/usr/bin:/bin"
+              }
+            },
+            "proxy_mode": {"const": "direct_no_proxy"},
+            "curl_config_mode": {"const": "disabled"}
+          }
+        },
+        "trust": {
+          "type": "object",
+          "required": ["mode", "custom_ca_environment", "certificate_verification_disabled"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": {"const": "curl_compiled_default_system_ca_store"},
+            "custom_ca_environment": {"const": false},
+            "certificate_verification_disabled": {"const": false}
+          }
+        },
+        "redirect_mode": {"const": "manual_same_host_https_version_path_only"},
+        "max_redirects": {"const": 5},
+        "accepted_content_types": {
+          "const": ["text/html", "application/xhtml+xml"]
+        },
+        "requested_content_encoding": {"const": "identity"},
+        "accepted_content_encoding": {"const": "identity"},
+        "store_response_bodies": {"const": false}
+      }
+    },
+    "interpretation": {
+      "type": "object",
+      "required": ["source_kind", "hash_scope", "semantic_extraction_proof"],
+      "additionalProperties": false,
+      "properties": {
+        "source_kind": {"const": "mutable_versioned_web_document"},
+        "hash_scope": {"const": "raw_response_body_bytes_only"},
+        "semantic_extraction_proof": {"const": false}
+      }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "url",
+          "referenced_by",
+          "outcome",
+          "final_url",
+          "http_status",
+          "content_type",
+          "content_encoding",
+          "byte_count",
+          "sha256",
+          "failure"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "url": {"type": "string", "format": "uri", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/"},
+          "referenced_by": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["live_ledger", "wave2_candidate", "audited_index"]}
+          },
+          "outcome": {"enum": ["success", "failure"]},
+          "final_url": {"type": "string", "format": "uri", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/"},
+          "http_status": {"$ref": "#/$defs/nullable_integer"},
+          "content_type": {"$ref": "#/$defs/nullable_string"},
+          "content_encoding": {"$ref": "#/$defs/nullable_string"},
+          "byte_count": {"$ref": "#/$defs/nullable_integer"},
+          "sha256": {"$ref": "#/$defs/nullable_sha256"},
+          "failure": {"$ref": "#/$defs/nullable_string"}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"outcome": {"const": "success"}}},
+            "then": {
+              "properties": {
+                "http_status": {"const": 200},
+                "content_type": {"type": "string", "minLength": 1},
+                "content_encoding": {"const": "identity"},
+                "byte_count": {"type": "integer", "minimum": 1},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "failure": {"type": "null"}
+              }
+            },
+            "else": {
+              "properties": {
+                "byte_count": {"type": "null"},
+                "sha256": {"type": "null"},
+                "failure": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["url_count", "success_count", "failure_count", "aggregate_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "url_count": {"type": "integer", "minimum": 1},
+        "success_count": {"type": "integer", "minimum": 0},
+        "failure_count": {"type": "integer", "minimum": 0},
+        "aggregate_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

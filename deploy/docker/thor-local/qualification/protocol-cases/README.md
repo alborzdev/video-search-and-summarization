@@ -42,13 +42,61 @@ python3 -m unittest discover \
   -s deploy/docker/thor-local/qualification/protocol-cases/tests -v
 ruff check \
   deploy/docker/thor-local/qualification/protocol-cases/validate_protocol_cases.py \
-  deploy/docker/thor-local/qualification/protocol-cases/tests/test_protocol_cases.py
+  deploy/docker/thor-local/qualification/protocol-cases/protocol_case_executor.py \
+  deploy/docker/thor-local/qualification/protocol-cases/tests/test_protocol_cases.py \
+  deploy/docker/thor-local/qualification/protocol-cases/tests/test_protocol_case_executor.py
 ```
 
 No command above starts a container, touches a broker, calls a data plane, or
-downloads an artifact. A future runtime harness must use the declared owned
-namespaces and cleanup rules and must preserve its structured evidence before
-any case can advance.
+downloads an artifact.
+
+## Bounded executor
+
+`protocol_case_executor.py` is inert by default. With no arguments (or with
+`plan`) it only reads local contracts and prints plans. It has no process,
+container, or service-lifecycle primitive. No runtime case was executed while
+adding it.
+
+```bash
+python3 deploy/docker/thor-local/qualification/protocol-cases/protocol_case_executor.py
+python3 deploy/docker/thor-local/qualification/protocol-cases/protocol_case_executor.py \
+  plan --case-id protocol-case.redis.events
+```
+
+The plan currently reports five activation-ready cases and two blocked cases.
+Four ready cases exercise a product protocol. Redis is the fifth, but it is
+explicitly `transport_fixture_only` and its evidence always has
+`can_advance_capability: false`: XADD followed by XREADGROUP validates the
+envelope and Redis mechanics, not that VSS Behavior Analytics emitted it.
+Kafka is blocked because producing the fixture from the harness would both
+leave a durable record in a pre-existing topic and test the broker rather than
+VSS's NvSchema publisher. It needs a bounded VSS product trigger plus an
+absent, disposable, namespaced topic that the harness creates, deletes, and
+verifies absent afterward. Agent WebSocket remains blocked until a local,
+SHA-pinned external server contract also guarantees that disconnect discards
+the owned conversation.
+
+Execution is a separate explicit subcommand and requires a request conforming
+to `execution-request.schema.json`, including the exact acknowledgement
+`I_ACK_VSS_PROTOCOL_CASE_LIFECYCLE_AND_MUTATIONS`. Admission accepts only
+numeric loopback IP literals or exact compose-service allowlist names. It
+rejects proxies and redirects, endpoint discovery outside the admitted class,
+non-loopback ICE candidates, unknown vectors, non-owned namespaces, excessive
+bounds, credential-name drift, and evidence paths outside this lane. Do not run
+this command merely to inspect a plan:
+
+```bash
+python3 deploy/docker/thor-local/qualification/protocol-cases/protocol_case_executor.py \
+  execute --request /path/to/operator-reviewed-request.json
+```
+
+Runtime evidence conforms to `runtime-evidence.schema.json` and binds the
+target commit, whole contract file, contract set, case, vector, request, and
+every pinned source. Payloads are represented by byte counts and SHA-256, not
+stored verbatim. Evidence records pre-state, strict operation and cleanup
+bounds, LIFO cleanup, evidence class, and whether it may advance the product
+capability. Evidence files are created exclusively with mode `0600` and are
+never overwritten.
 
 ## Oracle cross-link
 

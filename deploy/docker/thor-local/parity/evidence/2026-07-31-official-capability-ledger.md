@@ -9,8 +9,8 @@ Mode: static, read-only audit; no container lifecycle or artifact download
 - Current upstream `main`: `7732edf8fb38ef896b20f2a0a6a701a4db10dc57`
 - Versioned documentation target: VSS 3.2.1
 
-`official-capabilities.json` records 131 reviewed claims from 33 versioned or
-commit-pinned source records and cross-links them into 18 manifest families and
+`official-capabilities.json` records 161 reviewed claims from 55 deduplicated
+versioned or commit-pinned source records and cross-links them into 25 manifest families and
 Phase 0 planning. The claim-set hashes protect the checked-in transcription;
 they are not hashes of NVIDIA's remote HTML, and the generic scenario is not a
 capability-specific runtime oracle. No new claim is marked `passed_current`.
@@ -39,6 +39,14 @@ capability-specific runtime oracle. No new claim is marked `passed_current`.
   RT-Embed, RT-CV, Video Summarization, Alerts, all six documented VST service
   groups, Video Analytics API, VA-MCP, and LVS MCP.
 - Agent Skills, validated harnesses, and all nine Orchestrator MCP operations.
+- Agent configuration/MCP/report hierarchy and persistence, evaluation output
+  artifacts, Phoenix trace structure, and known issues.
+- Exact RT-Embed Cosmos-Embed1 variants and scoped defaults; Auto Calibration
+  workflow/input/output schemas; Warehouse behavior, alerts, agents, and UI;
+  Helm developer profiles; and secure-deployment limitations.
+- Eighteen structured discrepancy/boundary records. Every record retains at
+  least two exact source/locator/claim observations, even when both sides occur
+  in a single official page.
 
 ## Deliberate boundaries
 

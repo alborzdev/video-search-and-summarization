@@ -20,15 +20,33 @@ python3 -m unittest discover \
 
 # Exact protocol vectors are source-pinned but deliberately unexecuted.
 python3 "${thor_local_root}/qualification/protocol-cases/validate_protocol_cases.py"
+python3 "${thor_local_root}/qualification/protocol-cases/protocol_case_executor.py" \
+  plan >/dev/null
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/protocol-cases/tests" \
-  -p 'test_protocol_cases.py' -v
+  -p 'test_protocol*.py' -v
 
-# Wave 2 remains an inert proposal package and does not change the live ledger.
+# Wave 2 remains immutable extraction provenance and validates its full live merge.
 python3 "${thor_local_root}/parity/candidates/wave2/validate_candidate.py" --report
 python3 -m unittest discover \
   -s "${thor_local_root}/parity/candidates/wave2" \
   -p 'test_candidate.py' -v
+
+# The 53-page lock detects raw response-body drift only; a byte match is not
+# proof of correct semantic extraction or Thor implementation.
+python3 "${thor_local_root}/parity/source-lock/source_lock.py" validate
+python3 -m unittest discover \
+  -s "${thor_local_root}/parity/source-lock/tests" \
+  -p 'test_source_lock.py' -v
+
+# Wave 3 binds the complete documentation-index denominator and keeps all
+# still-untranscribed semantic pages explicit. It is an inert coverage audit,
+# not evidence that the omitted capabilities are implemented or qualified.
+python3 "${thor_local_root}/parity/candidates/wave3/coverage/validate_coverage.py" \
+  --report
+python3 -m unittest discover \
+  -s "${thor_local_root}/parity/candidates/wave3/coverage/tests" \
+  -p 'test_coverage.py' -v
 
 python3 "${thor_local_root}/rt-vlm/model_matrix.py" \
   --matrix "${thor_local_root}/rt-vlm/model-matrix.json" \

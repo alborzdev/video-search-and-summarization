@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/wave3/coverage.schema.json",
+  "title": "VSS 3.2.1 Wave-3 documentation coverage denominator",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "target",
+    "docs_index_binding",
+    "live_input_bindings",
+    "source_lock_transition",
+    "classification_counts",
+    "release_note_audit",
+    "api_semantic_audit",
+    "pages"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {"$ref": "#/$defs/target"},
+    "docs_index_binding": {"$ref": "#/$defs/docs_index_binding"},
+    "live_input_bindings": {"$ref": "#/$defs/live_input_bindings"},
+    "source_lock_transition": {"$ref": "#/$defs/source_lock_transition"},
+    "classification_counts": {"$ref": "#/$defs/classification_counts"},
+    "release_note_audit": {"$ref": "#/$defs/release_note_audit"},
+    "api_semantic_audit": {"$ref": "#/$defs/api_semantic_audit"},
+    "pages": {
+      "type": "array",
+      "minItems": 152,
+      "maxItems": 152,
+      "items": {"$ref": "#/$defs/page"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repo_path": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+$"},
+    "string_array": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "file_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repo_path"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product", "version", "ga_commit", "reviewed_main_commit", "captured_on"],
+      "properties": {
+        "product": {"const": "NVIDIA VSS"},
+        "version": {"const": "3.2.1"},
+        "ga_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "reviewed_main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "captured_on": {"const": "2026-07-31"}
+      }
+    },
+    "docs_index_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index_url", "target_file", "target_file_sha256", "target_count", "canonical_target_set_sha256", "hash_canonicalization"],
+      "properties": {
+        "index_url": {"const": "https://docs.nvidia.com/vss/3.2.1/index.html"},
+        "target_file": {"const": "deploy/docker/thor-local/parity/candidates/wave3/coverage/docs-index-targets.json"},
+        "target_file_sha256": {"$ref": "#/$defs/sha256"},
+        "target_count": {"const": 152},
+        "canonical_target_set_sha256": {"const": "b70c4d6979c3ea2b60e41a5352704aba8e14c39773bde8159e1c725242265f28"},
+        "hash_canonicalization": {"type": "string", "minLength": 1}
+      }
+    },
+    "live_input_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["official_capability_ledger", "current_source_lock", "api_inventory", "qualification_implementation", "capability_oracles", "acceptance_inventory", "operation_manifests"],
+      "properties": {
+        "official_capability_ledger": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "source_count", "capability_count"],
+          "properties": {
+            "path": {"$ref": "#/$defs/repo_path"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "source_count": {"const": 55},
+            "capability_count": {"const": 161}
+          }
+        },
+        "current_source_lock": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "record_count", "index_linked_record_count", "release_notes_locked", "aggregate_sha256"],
+          "properties": {
+            "path": {"$ref": "#/$defs/repo_path"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "record_count": {"const": 53},
+            "index_linked_record_count": {"const": 52},
+            "release_notes_locked": {"const": true},
+            "aggregate_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "api_inventory": {"$ref": "#/$defs/file_binding"},
+        "qualification_implementation": {"$ref": "#/$defs/file_binding"},
+        "capability_oracles": {"$ref": "#/$defs/file_binding"},
+        "acceptance_inventory": {"$ref": "#/$defs/file_binding"},
+        "operation_manifests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["canonical_binding_set_sha256", "files"],
+          "properties": {
+            "canonical_binding_set_sha256": {"$ref": "#/$defs/sha256"},
+            "files": {"type": "array", "minItems": 17, "maxItems": 17, "items": {"$ref": "#/$defs/file_binding"}}
+          }
+        }
+      }
+    },
+    "lock_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_count", "index_linked_record_count", "release_notes_locked", "aggregate_sha256"],
+      "properties": {
+        "record_count": {"type": "integer", "minimum": 0},
+        "index_linked_record_count": {"type": "integer", "minimum": 0},
+        "release_notes_locked": {"type": "boolean"},
+        "aggregate_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "source_lock_transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audit_start", "current", "interpretation"],
+      "properties": {
+        "audit_start": {"$ref": "#/$defs/lock_state"},
+        "current": {"$ref": "#/$defs/lock_state"},
+        "interpretation": {"type": "string", "minLength": 1}
+      }
+    },
+    "classification_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_index_linked_targets", "covered_live", "semantic_omission", "navigation_duplicate_reference", "external_license_sample_dependency", "represented_limitation_boundary_only"],
+      "properties": {
+        "total_index_linked_targets": {"const": 152},
+        "covered_live": {"const": 51},
+        "semantic_omission": {"const": 59},
+        "navigation_duplicate_reference": {"const": 34},
+        "external_license_sample_dependency": {"const": 8},
+        "represented_limitation_boundary_only": {"const": 0}
+      }
+    },
+    "release_note_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["v3_2_1_top_level_feature_bullets", "v3_2_1_feature_bullets_represented", "v3_2_1_feature_bullets_missing", "v3_2_1_missing_contracts", "v3_2_0_global_feature_bullets", "v3_2_0_agent_workflow_top_level_bullets", "v3_2_0_system_component_top_level_bullets", "v3_2_0_global_known_issue_bullets", "v3_2_0_top_level_bullet_total", "combined_v3_2_1_and_v3_2_0_top_level_bullet_total", "live_capability_records_referencing_release_notes", "counting_rule", "complete_transcription"],
+      "properties": {
+        "v3_2_1_top_level_feature_bullets": {"const": 3},
+        "v3_2_1_feature_bullets_represented": {"const": 1},
+        "v3_2_1_feature_bullets_missing": {"const": 2},
+        "v3_2_1_missing_contracts": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "v3_2_0_global_feature_bullets": {"const": 7},
+        "v3_2_0_agent_workflow_top_level_bullets": {"const": 65},
+        "v3_2_0_system_component_top_level_bullets": {"const": 122},
+        "v3_2_0_global_known_issue_bullets": {"const": 7},
+        "v3_2_0_top_level_bullet_total": {"const": 201},
+        "combined_v3_2_1_and_v3_2_0_top_level_bullet_total": {"const": 204},
+        "live_capability_records_referencing_release_notes": {"const": 34},
+        "counting_rule": {"type": "string", "minLength": 1},
+        "complete_transcription": {"const": false}
+      }
+    },
+    "api_semantic_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surface_count", "declared_rest_operations", "normalized_unique_rest_operations", "rest_operations_with_schema_hash", "rest_operations_with_null_schema_hash", "mcp_tools", "mcp_prompts", "capability_oracles", "executor_ready_capability_oracles", "live_openapi_comparison", "schema_hash_meaning", "route_or_schema_hash_is_semantic_test", "byte_lock_is_semantic_test"],
+      "properties": {
+        "surface_count": {"const": 17},
+        "declared_rest_operations": {"const": 326},
+        "normalized_unique_rest_operations": {"const": 325},
+        "rest_operations_with_schema_hash": {"const": 75},
+        "rest_operations_with_null_schema_hash": {"const": 251},
+        "mcp_tools": {"const": 38},
+        "mcp_prompts": {"const": 5},
+        "capability_oracles": {"const": 161},
+        "executor_ready_capability_oracles": {"const": 0},
+        "live_openapi_comparison": {"const": "method_path_set_only"},
+        "schema_hash_meaning": {"type": "string", "minLength": 1},
+        "route_or_schema_hash_is_semantic_test": {"const": false},
+        "byte_lock_is_semantic_test": {"const": false}
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "category", "reason", "live_source_ids", "live_capability_ids", "source_lock_state", "required_action", "candidate_wave", "semantic_proof_from_byte_lock", "semantic_proof_from_route_hash"],
+      "properties": {
+        "url": {"type": "string", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/[A-Za-z0-9_./-]+\\.html$"},
+        "category": {"enum": ["covered_live", "semantic_omission", "navigation_duplicate_reference", "external_license_sample_dependency"]},
+        "reason": {"type": "string", "minLength": 1},
+        "live_source_ids": {"$ref": "#/$defs/string_array"},
+        "live_capability_ids": {"$ref": "#/$defs/string_array"},
+        "source_lock_state": {"enum": ["byte_locked_current", "not_in_current_source_lock"]},
+        "required_action": {"type": "string", "minLength": 1},
+        "candidate_wave": {"enum": ["live_claim_linked", "wave3_semantic_inventory", "wave3_external_boundary", "live_external_boundary", "none_navigation", "none_legal"]},
+        "semantic_proof_from_byte_lock": {"const": false},
+        "semantic_proof_from_route_hash": {"const": false}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"category": {"const": "covered_live"}}},
+          "then": {
+            "properties": {
+              "live_source_ids": {"minItems": 1},
+              "live_capability_ids": {"minItems": 1},
+              "source_lock_state": {"const": "byte_locked_current"},
+              "candidate_wave": {"const": "live_claim_linked"}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

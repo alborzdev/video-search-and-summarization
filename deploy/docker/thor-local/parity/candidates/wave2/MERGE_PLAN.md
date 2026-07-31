@@ -1,14 +1,15 @@
 # Safe Merge Plan
 
-This candidate must not be copied wholesale into the live ledger. The live
-ledger, manifest, acceptance inventory, and oracle catalog form a cross-linked
-contract and must move together in a later reviewed change.
+This candidate was not copied wholesale into the live ledger. The live ledger,
+manifest, acceptance inventory, and compiler-generated oracle catalog form a
+cross-linked contract and were moved together with `merge_live.py`. This file
+retains the reviewed order and acceptance boundaries for future audit.
 
 ## Preconditions
 
 1. Run `validate_candidate.py --report` and the focused tests.
 2. Confirm the live target still points at VSS 3.2.1 GA commit
-   `7640d91728a1a78b4664a7b336947f80bfa78d59` and reviewed main commit
+   `7640d917047cf7b0fd3085eefb8282754b56bc94` and reviewed main commit
    `7732edf8fb38ef896b20f2a0a6a701a4db10dc57`.
 3. Re-check that no proposed new ID has entered the live ledger and all nine
    enrichment targets still exist.
@@ -57,7 +58,7 @@ contract and must move together in a later reviewed change.
 - Security: preserve `must_not_claim_remediated=true` even after network-boundary
   tests pass.
 
-## Final validation after a future merge
+## Final validation after the merge
 
 Run the live ledger validator, capability-oracle validator/tests, acceptance
 planner/tests, parity manifest suite, static milestone wrapper, Ruff, and

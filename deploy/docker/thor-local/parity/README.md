@@ -38,6 +38,23 @@ documentation/repository discrepancies. Validate it directly:
 python3 deploy/docker/thor-local/parity/verify_official_capabilities.py --report
 ```
 
+The live 161-capability ledger is an intermediate denominator, not an exhaustive
+claim that all official documentation has been transcribed. A post-merge audit
+of the 152 distinct HTML targets linked by the versioned documentation index
+found 59 substantive semantic/workflow/configuration/benchmark pages that still
+need claim extraction, alongside 34 navigation/duplicate/reference pages and 8
+external/license/sample-dependency pages. The machine-readable Wave 3 coverage
+package under `candidates/wave3/coverage/` binds those counts to the exact index
+target set. Until those omissions are reviewed and merged, both feature and
+runtime parity remain open.
+
+That direct-index denominator is also not the final documentation graph. A
+recursive same-version follow-up reached a 172-page fixed point (including
+`index.html`) and found 19 additional Warehouse descendant pages that are not
+in the 152 direct-link set or the live ledger. Those descendants remain open
+until their recursive-crawl evidence and claim extraction are reviewed; the
+152-page package must not be described as whole-site coverage.
+
 `official-capabilities.schema.json` documents the on-disk format. The validator
 requires every reviewed claim to be cross-linked from exactly one manifest
 family and from an acceptance scenario. Its per-source hashes protect the
@@ -45,6 +62,14 @@ locally reviewed claim sets; they do not content-pin or re-fetch NVIDIA's remote
 HTML. Adding a claim without an explicit status, gap, scenario, and blocker
 therefore fails the normal parity verifier. A generic plan-only scenario records
 an open gap, not capability-specific runtime acceptance.
+
+`source-lock/` separately records raw response-body SHA-256 metadata for the 53
+deduplicated versioned NVIDIA documentation and release-notes pages referenced by
+the live ledger and Wave 2 provenance. Its offline validator is part of the unified static
+wrapper. A byte match detects page drift only; it is not proof that extraction
+is semantically correct or that Thor implements the claim. See
+[`source-lock/README.md`](source-lock/README.md) for validation and deliberate
+network-refresh commands.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and
@@ -57,7 +82,7 @@ record with the exact ledger semantics, scenario and prospective fixture
 identity, required observations/assertions, arithmetic work bounds, admission
 gates, and intended mutation ownership. These prose-derived requirements are
 useful for implementation review but do not provide fixture files/generators,
-commands/requests, collectors, or executable cleanup. All 131 entries are
+commands/requests, collectors, or executable cleanup. All 161 entries are
 therefore explicitly `planning_index_only`; the executor-ready count is zero.
 The seven planned modes are static, config, runtime, API, protocol, model, and
 deploy.
@@ -89,10 +114,13 @@ and every source content/blob hash. The standalone protocol validator remains
 static-only; all seven cases are unexecuted. Future executor evidence must
 repeat those bindings and a passing cleanup result.
 
-`candidates/wave2/` is validated by the unified static wrapper as an inert
-proposal package. Its 30 proposed capabilities and 9 enrichments do not change
-the live 131-capability denominator unless its separate merge plan is reviewed
-and applied later.
+`candidates/wave2/` preserves the reviewed extraction provenance for the 30
+capabilities, 9 enrichments, and 14 discrepancy/boundary records now merged
+into the live 161-capability denominator. Its validator accepts only a wholly
+unmerged or wholly merged lifecycle and rejects partial application. The live
+ledger deduplicates four same-URI sources and requires at least two structured
+source/locator/claim observations for every discrepancy, including two claims
+within a single NVIDIA page.
 
 Compile the complete stateful acceptance plan without executing it:
 

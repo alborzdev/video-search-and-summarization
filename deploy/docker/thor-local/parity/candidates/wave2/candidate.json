@@ -2,7 +2,7 @@
   "schema_version": 1,
   "target": {
     "product_version": "3.2.1",
-    "ga_commit": "7640d91728a1a78b4664a7b336947f80bfa78d59",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
     "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
     "captured_on": "2026-07-31"
   },
@@ -213,7 +213,7 @@
       "id": "tagged-repository-wave2-3.2.1",
       "kind": "tagged_repository",
       "uri": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/tree/v3.2.1",
-      "version": "7640d91728a1a78b4664a7b336947f80bfa78d59",
+      "version": "7640d917047cf7b0fd3085eefb8282754b56bc94",
       "locator_policy": "Exact tagged source/config paths and values.",
       "claim_set_sha256": "741dc76718493a3d87b55f1fc6d996f8e58ffdb94635f02a600a864a0f27500a"
     },

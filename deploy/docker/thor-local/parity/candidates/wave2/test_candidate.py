@@ -49,14 +49,25 @@ class Wave2CandidateTests(unittest.TestCase):
             ):
                 validator.load_json(path)
 
-    def test_new_capability_cannot_overlap_live_ledger(self) -> None:
-        package = copy.deepcopy(self.package)
-        package["new_capabilities"][0]["id"] = "evaluation.agent.report"
+    def test_partial_live_merge_is_rejected(self) -> None:
+        live_ledger = copy.deepcopy(self.live_ledger)
+        proposed_ids = {item["id"] for item in self.package["new_capabilities"]}
+        first_id = self.package["new_capabilities"][0]["id"]
+        live_ledger["capabilities"] = [
+            item
+            for item in live_ledger["capabilities"]
+            if item["id"] not in proposed_ids or item["id"] == first_id
+        ]
         with self.assertRaisesRegex(
             validator.CandidateContractError,
-            "already exists in live ledger",
+            "partial live merge detected",
         ):
-            self._validate(package)
+            validator.validate(
+                copy.deepcopy(self.package),
+                live_ledger=live_ledger,
+                live_manifest=copy.deepcopy(self.live_manifest),
+                live_acceptance=copy.deepcopy(self.live_acceptance),
+            )
 
     def test_enrichment_target_must_exist(self) -> None:
         package = copy.deepcopy(self.package)
@@ -64,6 +75,15 @@ class Wave2CandidateTests(unittest.TestCase):
         with self.assertRaisesRegex(
             validator.CandidateContractError,
             "enrichment target missing",
+        ):
+            self._validate(package)
+
+    def test_candidate_target_must_equal_live_target(self) -> None:
+        package = copy.deepcopy(self.package)
+        package["target"]["main_commit"] = "0" * 40
+        with self.assertRaisesRegex(
+            validator.CandidateContractError,
+            "schema violation|target identities differ",
         ):
             self._validate(package)
 

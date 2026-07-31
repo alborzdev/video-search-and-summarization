@@ -1,14 +1,16 @@
 # VSS 3.2.1 Wave-2 Candidate Package
 
-This directory is an isolated, machine-readable proposal for the second
-official-documentation coverage wave. It deliberately does not alter the live
-capability ledger, parity manifest, acceptance inventory, capability oracles,
-or wrapper scripts.
+This directory preserves the machine-readable extraction package for the
+second official-documentation coverage wave. The reviewed package has now been
+merged into the live capability ledger, parity manifest, acceptance inventory,
+and compiler-generated capability oracles. `merge_live.py` is the idempotent
+translation used for that merge; the candidate payload remains immutable
+provenance.
 
 The payload is pinned to:
 
 - VSS `3.2.1`
-- GA commit `7640d91728a1a78b4664a7b336947f80bfa78d59`
+- peeled GA commit `7640d917047cf7b0fd3085eefb8282754b56bc94`
 - reviewed main commit `7732edf8fb38ef896b20f2a0a6a701a4db10dc57`
 - capture date `2026-07-31`
 
@@ -55,4 +57,4 @@ canonicalization is implemented by `source_claim_hashes()` in the validator.
 Any locator or contract change therefore requires intentional source-hash
 review.
 
-See [MERGE_PLAN.md](MERGE_PLAN.md) for the safe, non-automatic merge procedure.
+See [MERGE_PLAN.md](MERGE_PLAN.md) for the ordered procedure that was applied.

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/wave3/docs-index-targets.schema.json",
+  "title": "VSS 3.2.1 docs-index HTML target denominator",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "index_url",
+    "captured_on",
+    "extraction_rule",
+    "target_count",
+    "target_set_sha256",
+    "targets"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "index_url": {"const": "https://docs.nvidia.com/vss/3.2.1/index.html"},
+    "captured_on": {"const": "2026-07-31"},
+    "extraction_rule": {"type": "string", "minLength": 1},
+    "target_count": {"const": 152},
+    "target_set_sha256": {"const": "b70c4d6979c3ea2b60e41a5352704aba8e14c39773bde8159e1c725242265f28"},
+    "targets": {
+      "type": "array",
+      "minItems": 152,
+      "maxItems": 152,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/[A-Za-z0-9_./-]+\\.html$"
+      }
+    }
+  }
+}
