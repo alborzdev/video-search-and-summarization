@@ -27,7 +27,8 @@ services:
     ipc: host
 
     environment:
-      - API_URL=${AUTO_CALIBRATION_MS_API_URL:-http://${HOST_IP}:${VSS_AUTO_CALIBRATION_PORT:-8010}/v1}
+      # VSS_AUTO_CALIBRATION_MS_API_URL is the documented, profile-wide name.
+      # Keep the older unprefixed variable as a fallback for existing operators.
+      - API_URL=${VSS_AUTO_CALIBRATION_MS_API_URL:-${AUTO_CALIBRATION_MS_API_URL:-http://${HOST_IP}:${VSS_AUTO_CALIBRATION_PORT:-8010}/v1}}
 
     restart: unless-stopped
-

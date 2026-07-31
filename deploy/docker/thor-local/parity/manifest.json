@@ -222,10 +222,10 @@
       "category": "calibration",
       "advertised": ["single and multi-camera calibration", "file and RTSP through VIOS", "camera pose/focal/lens distortion/rectification", "VGGT frame selection", "global ROI/tripwire", "image-coordinate export"],
       "source_evidence": ["deploy/docker/services/auto-calibration", "skills/vss-generate-video-calibration"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
+      "thor_evidence": ["deploy/docker/test-scripts/test-auto-calibration-compose.sh", "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-audit.md"],
+      "thor_state": "partial",
       "runtime_state": "blocked",
-      "gap": "The 3.2.1 calibration images and vggt_1B model are not staged; qualify separately before integration."
+      "gap": "The ARM64 UI image and endpoint contract are staged/qualified, but the approximately 14.07 GB backend image and 4.7 GB gated VGGT checkpoint are absent. Stage them with valid credentials, then qualify isolated single/multicamera file and RTSP workflows using the small AMC fixture or equivalent custom synchronized data."
     },
     {
       "id": "vios-core",
@@ -255,10 +255,10 @@
       "category": "model",
       "advertised": ["audio-aware Base workflow", "audio transcript per RT-VLM chunk", "audio-aware summarization and alerts"],
       "source_evidence": ["deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "services/rtvi/rt-vlm"],
-      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/.env", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "services/agent/tests/unit_test/test_thor_full_profile_config.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-audio-audit.md"],
       "thor_state": "partial",
       "runtime_state": "blocked",
-      "gap": "Audio is disabled and the current local VLM is image-only; add an Omni-capable mutually exclusive local model lane and requalify memory."
+      "gap": "All bundled Thor agent paths now propagate the audio flag, but the default Qwen/OpenAI-compatible lane is image-only. Stage a pinned Omni snapshot and codec-ready offline RT-VLM derivative, add a mutually exclusive memory-gated audio profile, and qualify it with a tiny known-speech fixture."
     },
     {
       "id": "vios-ui",

@@ -232,3 +232,24 @@ def test_quick_video_questions_have_a_bounded_thor_frame_budget() -> None:
     assert function["max_frames"] == 16
     assert function["max_fps"] == 1
     assert function["max_frames_per_request"] == "${VLM_MAX_FRAMES_PER_REQUEST:-30}"
+
+
+def test_thor_audio_flag_reaches_every_audio_aware_agent_path() -> None:
+    config = _load_config()
+    functions = config["functions"]
+    expected_value = "${ENABLE_AUDIO:-false}"
+
+    audio_flags = {
+        "general.front_end.streaming_ingest": config["general"]["front_end"][
+            "streaming_ingest"
+        ]["enable_audio"],
+        "functions.video_understanding": functions["video_understanding"]["enable_audio"],
+        "functions.video_understanding_iso": functions["video_understanding_iso"]["enable_audio"],
+        "functions.vst_video_clip": functions["vst_video_clip"]["enable_audio"],
+        "functions.vst_video_url": functions["vst_video_url"]["enable_audio"],
+        "functions.lvs_video_understanding": functions["lvs_video_understanding"]["enable_audio"],
+        "functions.lvs_config_media": functions["lvs_config_media"]["enable_audio"],
+        "functions.video_report_gen": functions["video_report_gen"]["enable_audio"],
+    }
+
+    assert set(audio_flags.values()) == {expected_value}
