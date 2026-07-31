@@ -19,7 +19,15 @@ grep -q "warehouse-2d: partial/static_only" <<<"${report}"
 grep -q "warehouse-3d-and-mv3dt: source_only/blocked" <<<"${report}"
 grep -q "audio-understanding: partial/blocked" <<<"${report}"
 grep -q "nemoclaw-openclaw: source_only/blocked" <<<"${report}"
-grep -q "enterprise-rag: blocked_upstream/blocked" <<<"${report}"
+grep -q "Acceptance: alternate_local_lane=14, external_optional=3, required_local=19" <<<"${report}"
+grep -q "alert-notifications-slack: external_optional/not_applicable" <<<"${report}"
+grep -q "helm: external_optional/not_applicable" <<<"${report}"
+grep -q "enterprise-rag: external_optional/not_applicable" <<<"${report}"
+
+open_report="$(sed -n '/^Open parity work:/,/^External optional boundaries:/p' <<<"${report}")"
+! grep -q "alert-notifications-slack" <<<"${open_report}"
+! grep -q "enterprise-rag" <<<"${open_report}"
+! grep -q "helm" <<<"${open_report}"
 
 echo "PASS: the exhaustive Thor parity ledger is valid and keeps known gaps explicit"
 

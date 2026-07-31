@@ -12,11 +12,13 @@
   },
   "status_contract": {
     "thor_state": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"],
-    "runtime_state": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]
+    "runtime_state": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"],
+    "acceptance_class": ["required_local", "alternate_local_lane", "external_optional"]
   },
   "features": [
     {
       "id": "base-agent-workflow",
+      "acceptance_class": "required_local",
       "category": "workflow",
       "advertised": ["short-video retrieval", "visual question answering", "VLM report generation", "templated reports", "large-file chunked upload", "local/shared/remote model layouts", "public media URL rewriting"],
       "source_evidence": ["services/agent", "deploy/docker/developer-profiles/dev-profile-base"],
@@ -27,6 +29,7 @@
     },
     {
       "id": "video-summarization-file",
+      "acceptance_class": "required_local",
       "category": "workflow",
       "advertised": ["chunked dense captions", "file summarization", "multi-video report", "structured output", "object/event/scenario focus", "reasoning", "partial-video offsets", "recommended configuration", "Prometheus metrics"],
       "source_evidence": ["services/video-summarization", "deploy/docker/developer-profiles/dev-profile-lvs"],
@@ -37,6 +40,7 @@
     },
     {
       "id": "video-summarization-live",
+      "acceptance_class": "required_local",
       "category": "workflow",
       "advertised": ["live captions", "live stream summaries", "stream reports", "caption-backed Q&A", "Elasticsearch caption storage", "SSE MCP server"],
       "source_evidence": ["services/video-summarization/src", "services/video-summarization/src/lvs_mcp.py"],
@@ -47,6 +51,7 @@
     },
     {
       "id": "semantic-search",
+      "acceptance_class": "required_local",
       "category": "workflow",
       "advertised": ["natural-language action/event search", "CV attribute search", "multi-embedding fusion", "search by image", "follow-up Q&A", "query/time/source/count refinement", "default critic VLM", "file and RTSP archive management"],
       "source_evidence": ["deploy/docker/developer-profiles/dev-profile-search", "services/ui"],
@@ -57,6 +62,7 @@
     },
     {
       "id": "search-scale",
+      "acceptance_class": "required_local",
       "category": "scale",
       "advertised": ["configuration up to 100 streams", "16 concurrent 1080p streams tested by NVIDIA"],
       "source_evidence": ["deploy/docker/developer-profiles/dev-profile-search"],
@@ -67,6 +73,7 @@
     },
     {
       "id": "alert-verification",
+      "acceptance_class": "required_local",
       "category": "workflow",
       "advertised": ["CV perception to behavior analytics to VLM verification", "post-alert verification", "contextualization", "multi-category classification", "on-demand verification", "custom VLM parsing", "non-blocking multithreaded execution"],
       "source_evidence": ["services/alert", "deploy/docker/developer-profiles/dev-profile-alerts"],
@@ -77,6 +84,7 @@
     },
     {
       "id": "realtime-alerts",
+      "acceptance_class": "required_local",
       "category": "workflow",
       "advertised": ["live-stream VLM rules", "rule CRUD", "rule replay", "always-on lifecycle", "incident retrieval", "WebSocket delivery", "natural-language alert management"],
       "source_evidence": ["services/alert/openapi.json", "services/alert/realtime"],
@@ -86,17 +94,21 @@
       "gap": "Realtime rules, persistence/replay, always-on lifecycle, and WebSocket broadcast are selected; exercise them with bounded local rules and verify restart recovery."
     },
     {
-      "id": "alert-notifications",
+      "id": "alert-notifications-slack",
+      "acceptance_class": "external_optional",
       "category": "integration",
-      "advertised": ["Slack notification", "OpenClaw notification"],
-      "source_evidence": ["services/alert", "deploy/docker/scripts/nemoclaw"],
+      "advertised": ["Slack notification"],
+      "source_evidence": ["services/alert"],
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"],
       "thor_state": "external_optional",
       "runtime_state": "not_applicable",
-      "gap": "Slack is inherently external; OpenClaw needs a local sandbox/provider adaptation and is currently disabled."
+      "external_dependency": "A user-managed Slack workspace, app, token, and destination channel.",
+      "boundary_reason": "VSS ships the notification integration but cannot provide or locally emulate the third-party Slack service.",
+      "gap": "Optional Slack delivery remains available when the user supplies a Slack workspace and credentials; it is outside local Thor inference acceptance."
     },
     {
       "id": "rt-vlm-media",
+      "acceptance_class": "required_local",
       "category": "service",
       "advertised": ["file upload", "HTTP/S", "S3", "allowlisted file URI", "inline data URI", "RTSP", "dense captions", "incidents", "categories", "reasoning", "audio transcript"],
       "source_evidence": ["services/rtvi/rt-vlm/src", "services/rtvi/rt-vlm/README.md"],
@@ -107,6 +119,7 @@
     },
     {
       "id": "rt-vlm-api",
+      "acceptance_class": "required_local",
       "category": "api",
       "advertised": ["OpenAI-compatible chat/completions", "text-only chat", "multimodal multi-turn chat", "token SSE", "original stream API", "CV-compatible stream API", "file API", "health/metadata/models/metrics"],
       "source_evidence": ["services/rtvi/rt-vlm/src"],
@@ -117,6 +130,7 @@
     },
     {
       "id": "rt-vlm-models",
+      "acceptance_class": "alternate_local_lane",
       "category": "model",
       "advertised": ["Cosmos Reason 1/2", "Cosmos 3 Nano/Super", "Nemotron Omni", "Qwen 3.5 and MoE", "remote OpenAI-compatible endpoint"],
       "source_evidence": ["services/rtvi/rt-vlm"],
@@ -127,6 +141,7 @@
     },
     {
       "id": "rt-vlm-performance-observability",
+      "acceptance_class": "required_local",
       "category": "service",
       "advertised": ["efficient video sampling", "GOP-aware decode", "decoder reuse", "vLLM tuning", "asset limits and expiry", "Kafka/Redis error publication", "Prometheus and OpenTelemetry", "absolute timestamp metadata"],
       "source_evidence": ["services/rtvi/rt-vlm/src"],
@@ -137,6 +152,7 @@
     },
     {
       "id": "rt-embed",
+      "acceptance_class": "required_local",
       "category": "service",
       "advertised": ["video/image/text embedding", "live RTSP", "URL and inline base64 video", "Cosmos-Embed1", "Kafka/Redis/OpenTelemetry", "original and CV-compatible stream APIs", "health/metadata/models/metrics"],
       "source_evidence": ["services/rtvi/rt-embed"],
@@ -147,6 +163,7 @@
     },
     {
       "id": "rt-cv-2d",
+      "acceptance_class": "alternate_local_lane",
       "category": "service",
       "advertised": ["file and stream detection/tracking", "warehouse and Smart City RT-DETR/GDINO", "RADIO-CLIP", "SigLIP2 re-identification", "on-demand image embedding", "dynamic stream lifecycle", "health and metrics", "Thor VPI tracker tuning"],
       "source_evidence": ["services/rtvi/rt-cv"],
@@ -157,6 +174,7 @@
     },
     {
       "id": "rt-cv-3d-sparse4d",
+      "acceptance_class": "alternate_local_lane",
       "category": "service",
       "advertised": ["Sparse4D multi-camera 3D detection and tracking", "shared RT-CV lifecycle/health/metrics"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"],
@@ -167,6 +185,7 @@
     },
     {
       "id": "rt-cv-3d-mv3dt",
+      "acceptance_class": "alternate_local_lane",
       "category": "service",
       "advertised": ["per-camera RT-DETR", "MV3DT BEV fusion", "BodyPose3DNet", "four-camera calibrated multiview tracking", "Compose deployment", "associated skill"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app", "services/rtvi/rt-cv"],
@@ -177,6 +196,7 @@
     },
     {
       "id": "behavior-analytics",
+      "acceptance_class": "alternate_local_lane",
       "category": "analytics",
       "advertised": ["2D/3D/MV3DT/Smart City/warehouse/playback/fusion apps", "events and incidents", "trajectories and occupancy", "tripwires and ROIs", "proximity and clustering", "Kafka/Redis/MQTT dynamic configuration and calibration"],
       "source_evidence": ["services/analytics/behavior-analytics"],
@@ -187,6 +207,7 @@
     },
     {
       "id": "video-analytics-api",
+      "acceptance_class": "required_local",
       "category": "api",
       "advertised": ["speed/flow/travel time/occupancy/space metrics", "objects and locations", "frames/BEV/alerts/proximity", "behaviors/incidents/clustering", "tripwire/ROI/AMR events", "dynamic config and audit", "calibration/road network/USD/images", "sensor lookup"],
       "source_evidence": ["services/analytics/video-analytics-api/src/app/specification/openapi.json"],
@@ -197,6 +218,7 @@
     },
     {
       "id": "auto-calibration",
+      "acceptance_class": "alternate_local_lane",
       "category": "calibration",
       "advertised": ["single and multi-camera calibration", "file and RTSP through VIOS", "camera pose/focal/lens distortion/rectification", "VGGT frame selection", "global ROI/tripwire", "image-coordinate export"],
       "source_evidence": ["deploy/docker/services/auto-calibration", "skills/vss-generate-video-calibration"],
@@ -207,6 +229,7 @@
     },
     {
       "id": "vios-core",
+      "acceptance_class": "required_local",
       "category": "storage",
       "advertised": ["camera discovery and sensor management", "file upload and registration", "file-to-RTSP republish", "recording schedules and timelines", "clip and raw/full-file download", "snapshots", "live/replay WebRTC", "RTSP proxy and stream bridge", "QoS and storage caps"],
       "source_evidence": ["services/vios", "services/vios/doc/api"],
@@ -217,6 +240,7 @@
     },
     {
       "id": "vios-codecs-audio",
+      "acceptance_class": "required_local",
       "category": "media",
       "advertised": ["B-frame handling", "HEVC multislice/RFC7798", "H.264/H.265", "audio recording", "audio RTSP republish", "CPU multimedia support"],
       "source_evidence": ["services/vios"],
@@ -227,6 +251,7 @@
     },
     {
       "id": "audio-understanding",
+      "acceptance_class": "alternate_local_lane",
       "category": "model",
       "advertised": ["audio-aware Base workflow", "audio transcript per RT-VLM chunk", "audio-aware summarization and alerts"],
       "source_evidence": ["deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "services/rtvi/rt-vlm"],
@@ -237,6 +262,7 @@
     },
     {
       "id": "vios-ui",
+      "acceptance_class": "alternate_local_lane",
       "category": "ui",
       "advertised": ["sensor and stream management", "recording schedules", "media management/upload", "live/replay/video wall", "calibration", "QoS/system/stream stats", "debug and playback automation"],
       "source_evidence": ["services/vios/ui"],
@@ -247,6 +273,7 @@
     },
     {
       "id": "main-ui",
+      "acceptance_class": "required_local",
       "category": "ui",
       "advertised": ["streaming agent chat", "WebSocket recovery", "HITL", "search and search-by-image", "alerts and realtime rule creation", "chunked upload and RTSP management", "Dashboard", "Map"],
       "source_evidence": ["services/ui"],
@@ -257,6 +284,7 @@
     },
     {
       "id": "smart-city",
+      "acceptance_class": "alternate_local_lane",
       "category": "industry",
       "advertised": ["traffic RT-DETR", "traffic behavior analytics", "geo/map matching", "calibration toolkit/import", "ITS analytics API/UI", "Smart City reports and VA-MCP", "Kibana dashboard", "ten-sensor sample profile"],
       "source_evidence": ["deploy/docker/industry-profiles/smartcities", "deploy/docker/scripts/deploy_smartcities_launchable.ipynb"],
@@ -267,6 +295,7 @@
     },
     {
       "id": "warehouse-2d",
+      "acceptance_class": "alternate_local_lane",
       "category": "industry",
       "advertised": ["single-camera 2D warehouse", "Kafka and Redis paths", "PPE/load-quality/spillover/pathway rules", "dynamic analytics/configuration", "API/UI/dashboard", "playback"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app", "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator"],
@@ -277,6 +306,7 @@
     },
     {
       "id": "warehouse-3d-and-mv3dt",
+      "acceptance_class": "alternate_local_lane",
       "category": "industry",
       "advertised": ["Sparse4D 3D warehouse", "MV3DT multiview warehouse", "BEV fusion", "auto-calibration variants", "top-view visualization"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app", "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app"],
@@ -287,16 +317,18 @@
     },
     {
       "id": "agent-and-mcp-apis",
+      "acceptance_class": "required_local",
       "category": "api",
       "advertised": ["NAT generate/chat", "health", "upload handshake and completion", "video delete", "RTSP add/delete", "VA-MCP", "LVS MCP"],
       "source_evidence": ["services/agent", "services/video-summarization/src/lvs_mcp.py"],
-      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml"],
+      "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml", "deploy/docker/thor-local/qualification/runtime.py", "deploy/docker/thor-local/qualification/runtime_inventory.json", "deploy/docker/thor-local/qualification/tests/test_runtime.py"],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The offline acceptance tier passes 326 declared REST operations (325 normalized routes) across 16 surfaces plus all 16 VA/LVS MCP tools; capture live documents and exercise every route/tool against the running stack."
+      "gap": "The offline tier passes 326 declared REST operations (325 normalized routes) across 16 surfaces plus all 16 VA/LVS MCP tools. A separate GET-only loopback tier now checks 20 live health/OpenAPI/MCP probes without mutating state; the stopped stack reports all 20 unavailable, so run it and exercise every route/tool after deployment."
     },
     {
       "id": "infra-observability",
+      "acceptance_class": "required_local",
       "category": "platform",
       "advertised": ["API gateway", "Kafka", "Redis", "Elasticsearch/Kibana", "Prometheus/Grafana", "Phoenix/OpenTelemetry", "NvSchema", "broker debugging tools"],
       "source_evidence": ["deploy/docker/services/infra", "libs/nvschema", "tools/message-broker-consumers"],
@@ -307,6 +339,7 @@
     },
     {
       "id": "spatial-ai-utils",
+      "acceptance_class": "alternate_local_lane",
       "category": "tooling",
       "advertised": ["calibration and camera grouping", "3D/2D geometry", "multiview visualization", "detection mAP", "tracking HOTA/CLEAR/identity/count", "NVSchema conversion", "video/frame tools", "AWS/GCS validation"],
       "source_evidence": ["libs/analytics/spatialai-data-utils"],
@@ -317,6 +350,7 @@
     },
     {
       "id": "synthetic-data-tools",
+      "acceptance_class": "alternate_local_lane",
       "category": "tooling",
       "advertised": ["semantic label helpers", "dataset checks", "RGB/depth/video conversion", "ground-truth conversion"],
       "source_evidence": ["tools/sdg-postprocessing"],
@@ -327,6 +361,7 @@
     },
     {
       "id": "docker-compose",
+      "acceptance_class": "required_local",
       "category": "deployment",
       "advertised": ["Base Compose", "Search Compose", "LVS Compose", "Alerts Compose", "Warehouse Compose", "Smart City launchable Compose"],
       "source_evidence": ["deploy/docker/compose.yml"],
@@ -337,18 +372,22 @@
     },
     {
       "id": "helm",
+      "acceptance_class": "external_optional",
       "category": "deployment",
       "advertised": ["Helm for four developer workflows", "Helm for most standalone services"],
       "source_evidence": ["deploy/helm"],
       "thor_evidence": [],
       "thor_state": "external_optional",
       "runtime_state": "not_applicable",
+      "external_dependency": "A user-managed Kubernetes cluster, StorageClass, kubectl, and Helm runtime.",
+      "boundary_reason": "Helm is an alternative deployment target; this Thor acceptance target is the supported single-node Docker Compose deployment.",
       "gap": "Charts are preserved exactly; this single-node Compose deployment has no Kubernetes cluster, StorageClass, kubectl or Helm runtime."
     },
     {
       "id": "nemoclaw-openclaw",
+      "acceptance_class": "alternate_local_lane",
       "category": "deployment",
-      "advertised": ["NemoClaw/OpenClaw sandbox", "VSS sandbox policy", "VSS skills upload", "orchestrator MCP", "local OpenAI-compatible provider option"],
+      "advertised": ["NemoClaw/OpenClaw sandbox", "VSS sandbox policy", "VSS skills upload", "orchestrator MCP", "local OpenAI-compatible provider option", "OpenClaw alert notification integration"],
       "source_evidence": ["deploy/docker/scripts/nemoclaw", "assets/vss_nemoclaw_policy.yaml", ".openclaw"],
       "thor_evidence": [],
       "thor_state": "source_only",
@@ -357,16 +396,20 @@
     },
     {
       "id": "enterprise-rag",
+      "acceptance_class": "external_optional",
       "category": "workflow",
       "advertised": ["RAG report generation", "frag retrieval integration"],
       "source_evidence": ["deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_rag.yml", "skills/vss-generate-video-report-rag"],
       "thor_evidence": [],
-      "thor_state": "blocked_upstream",
-      "runtime_state": "blocked",
-      "gap": "The repository carries RAG configuration and a skill but no local Enterprise RAG server; a new local retrieval backend is required."
+      "thor_state": "external_optional",
+      "runtime_state": "not_applicable",
+      "external_dependency": "A separately deployed NVIDIA Enterprise RAG server implementing the configured retrieval endpoint.",
+      "boundary_reason": "The VSS repository ships an Enterprise RAG integration client and workflow, not the Enterprise RAG product or server.",
+      "gap": "The integration remains available for a user-supplied Enterprise RAG endpoint; the external server is not part of local VSS product parity."
     },
     {
       "id": "offline-security",
+      "acceptance_class": "required_local",
       "category": "platform",
       "advertised": ["offline restart", "content-addressed image locks", "model checksums", "credential scrubbing", "loopback ingress", "physical-interface firewall"],
       "source_evidence": ["deploy/docker/scripts/thor-local.sh"],

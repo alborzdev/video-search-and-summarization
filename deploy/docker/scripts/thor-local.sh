@@ -22,6 +22,7 @@ ngc_key_file="${NGC_CLI_API_KEY_FILE:-${HOME}/.config/cti-vss/ngc-api-key}"
 domain_pack_dir="${deployment_dir}/thor-local/domain-packs"
 domain_pack_tool="${domain_pack_dir}/domain_pack.py"
 qualification_tool="${deployment_dir}/thor-local/qualification/qualify.py"
+runtime_qualification_tool="${deployment_dir}/thor-local/qualification/runtime.py"
 local_model_provisioner="${deployment_dir}/thor-local/provision-local-models.sh"
 domain_pack_state="${THOR_LOCAL_DOMAIN_STATE_FILE:-${deployment_dir}/thor-local/.domain-pack-state.json}"
 domain_pack_current_file="${THOR_LOCAL_DOMAIN_CURRENT_FILE:-${deployment_dir}/thor-local/.domain-pack-current}"
@@ -167,8 +168,9 @@ Commands:
   model-check
              Exercise the local OpenAI-compatible LLM and four-image VLM contract.
   contract   Show the effective non-secret Thor-local environment contract.
-  qualify --tier contract
-             Verify all checked-in REST/MCP API contracts offline and read-only.
+  qualify --tier contract|runtime
+             Verify checked-in contracts offline, or probe a running stack through
+             bounded, GET-only loopback requests. Neither tier mutates VSS state.
   kernel-check
              Check required VSS kernel settings without changing the host.
   kernel-settings
@@ -284,8 +286,23 @@ require_edge_cache_cleaner() {
 model_is_served() {
   local endpoint="$1"
   local expected_model="$2"
-  curl --connect-timeout 3 --max-time 10 --fail --silent --show-error "${endpoint}/v1/models" |
-    python3 -c 'import json,sys; expected=sys.argv[1]; data=json.load(sys.stdin).get("data", []); sys.exit(0 if expected in {item.get("id") for item in data} else 1)' "${expected_model}"
+  local response
+  response="$(
+    curl --connect-timeout 3 --max-time 10 --fail --silent --show-error \
+      "${endpoint}/v1/models"
+  )" || return 1
+  python3 -c '
+import json
+import sys
+
+try:
+    payload = json.load(sys.stdin)
+    models = payload.get("data", []) if isinstance(payload, dict) else []
+    served = {item.get("id") for item in models if isinstance(item, dict)}
+except (json.JSONDecodeError, OSError, TypeError):
+    raise SystemExit(1)
+raise SystemExit(0 if sys.argv[1] in served else 1)
+' "${expected_model}" <<< "${response}"
 }
 
 openai_chat_contract() {
@@ -2152,6 +2169,11 @@ qualify_contract() {
       die "thor-local.sh qualify is read-only; run the qualification Python tool directly for reviewed regeneration"
   done
   require_command python3
+  if [[ "${1:-}" == "--tier" && "${2:-}" == "runtime" ]]; then
+    shift 2
+    python3 "${runtime_qualification_tool}" "$@"
+    return
+  fi
   python3 "${qualification_tool}" "$@"
 }
 

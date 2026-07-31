@@ -71,6 +71,7 @@ def validate() -> dict:
 
     allowed_thor = set(data["status_contract"]["thor_state"])
     allowed_runtime = set(data["status_contract"]["runtime_state"])
+    allowed_acceptance = set(data["status_contract"]["acceptance_class"])
     features = data.get("features", [])
     if len(features) < 30:
         fail("the advertised feature ledger must contain at least 30 feature families")
@@ -87,6 +88,23 @@ def validate() -> dict:
             fail(f"{feature_id}: invalid thor_state {feature.get('thor_state')!r}")
         if feature.get("runtime_state") not in allowed_runtime:
             fail(f"{feature_id}: invalid runtime_state {feature.get('runtime_state')!r}")
+        acceptance_class = feature.get("acceptance_class")
+        if acceptance_class not in allowed_acceptance:
+            fail(f"{feature_id}: invalid acceptance_class {acceptance_class!r}")
+        if acceptance_class == "external_optional":
+            if feature["thor_state"] != "external_optional":
+                fail(f"{feature_id}: external_optional must use thor_state=external_optional")
+            if feature["runtime_state"] != "not_applicable":
+                fail(f"{feature_id}: external_optional must use runtime_state=not_applicable")
+            if not feature.get("external_dependency"):
+                fail(f"{feature_id}: external_optional requires external_dependency")
+            if not feature.get("boundary_reason"):
+                fail(f"{feature_id}: external_optional requires boundary_reason")
+        elif feature["thor_state"] == "external_optional" or feature["runtime_state"] == "not_applicable":
+            fail(
+                f"{feature_id}: local acceptance classes cannot use "
+                "external_optional/not_applicable states"
+            )
         if not feature.get("source_evidence"):
             fail(f"{feature_id}: source_evidence is empty")
         for evidence_type in ("source_evidence", "thor_evidence"):
@@ -125,6 +143,7 @@ def report(data: dict) -> None:
     features = data["features"]
     thor_counts = Counter(feature["thor_state"] for feature in features)
     runtime_counts = Counter(feature["runtime_state"] for feature in features)
+    acceptance_counts = Counter(feature["acceptance_class"] for feature in features)
     advertised_count = sum(len(feature["advertised"]) for feature in features)
     print(
         f"Target: {data['upstream']['latest_ga']} + upstream/main "
@@ -136,12 +155,25 @@ def report(data: dict) -> None:
     )
     print("Thor state: " + ", ".join(f"{key}={value}" for key, value in sorted(thor_counts.items())))
     print("Runtime: " + ", ".join(f"{key}={value}" for key, value in sorted(runtime_counts.items())))
+    print(
+        "Acceptance: "
+        + ", ".join(f"{key}={value}" for key, value in sorted(acceptance_counts.items()))
+    )
     print("\nOpen parity work:")
     for feature in features:
+        if feature["acceptance_class"] == "external_optional":
+            continue
         if feature["thor_state"] != "wired" or feature["runtime_state"] != "passed_current":
             print(
                 f"- {feature['id']}: {feature['thor_state']}/{feature['runtime_state']} — "
                 f"{feature['gap']}"
+            )
+    print("\nExternal optional boundaries:")
+    for feature in features:
+        if feature["acceptance_class"] == "external_optional":
+            print(
+                f"- {feature['id']}: {feature['thor_state']}/{feature['runtime_state']} — "
+                f"{feature['boundary_reason']} Dependency: {feature['external_dependency']}"
             )
 
 

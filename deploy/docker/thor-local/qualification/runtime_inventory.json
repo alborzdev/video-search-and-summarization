@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "target": "VSS 3.2.1 Thor-local read-only runtime APIs",
+  "services": [
+    {
+      "id": "agent",
+      "port_env": "VSS_AGENT_PORT",
+      "default_port": 8100,
+      "probes": [
+        {
+          "id": "health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/health",
+          "expected_status": [200]
+        },
+        {
+          "id": "openapi",
+          "kind": "openapi",
+          "method": "GET",
+          "path": "/openapi.json",
+          "expected_status": [200],
+          "availability": "optional",
+          "expected_manifest": "agent.json"
+        }
+      ]
+    },
+    {
+      "id": "rt-vlm",
+      "port_env": "RTVI_VLM_PORT",
+      "default_port": 8018,
+      "probes": [
+        {
+          "id": "ready",
+          "kind": "health",
+          "method": "GET",
+          "path": "/v1/health/ready",
+          "expected_status": [200]
+        },
+        {
+          "id": "openapi",
+          "kind": "openapi",
+          "method": "GET",
+          "path": "/openapi.json",
+          "expected_status": [200],
+          "expected_manifest": "rt-vlm.json"
+        }
+      ]
+    },
+    {
+      "id": "rt-embed",
+      "port_env": "RTVI_EMBED_PORT",
+      "default_port": 8017,
+      "probes": [
+        {
+          "id": "ready",
+          "kind": "health",
+          "method": "GET",
+          "path": "/v1/ready",
+          "expected_status": [200]
+        },
+        {
+          "id": "openapi",
+          "kind": "openapi",
+          "method": "GET",
+          "path": "/openapi.json",
+          "expected_status": [200],
+          "expected_manifest": "rt-embed.json"
+        }
+      ]
+    },
+    {
+      "id": "rt-cv",
+      "port_env": "RTVI_CV_PORT",
+      "default_port": 9000,
+      "probes": [
+        {
+          "id": "ready",
+          "kind": "health",
+          "method": "GET",
+          "path": "/api/v1/ready",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "alerts",
+      "port_env": "ALERT_BRIDGE_PORT",
+      "default_port": 9080,
+      "probes": [
+        {
+          "id": "health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/health",
+          "expected_status": [200]
+        },
+        {
+          "id": "openapi",
+          "kind": "openapi",
+          "method": "GET",
+          "path": "/openapi.json",
+          "expected_status": [200],
+          "availability": "optional",
+          "expected_manifest": "alerts.json"
+        }
+      ]
+    },
+    {
+      "id": "lvs",
+      "port_env": "BACKEND_PORT",
+      "default_port": 38111,
+      "probes": [
+        {
+          "id": "ready",
+          "kind": "health",
+          "method": "GET",
+          "path": "/v1/ready",
+          "expected_status": [200]
+        },
+        {
+          "id": "openapi",
+          "kind": "openapi",
+          "method": "GET",
+          "path": "/openapi.json",
+          "expected_status": [200],
+          "expected_manifest": "lvs.json"
+        }
+      ]
+    },
+    {
+      "id": "video-analytics",
+      "port_env": "VIDEO_ANALYTICS_API_PORT",
+      "default_port": 8081,
+      "probes": [
+        {
+          "id": "live",
+          "kind": "health",
+          "method": "GET",
+          "path": "/livez",
+          "expected_status": [200]
+        },
+        {
+          "id": "openapi",
+          "kind": "openapi",
+          "method": "GET",
+          "path": "/openapi.json",
+          "expected_status": [200],
+          "availability": "optional",
+          "expected_manifest": "video-analytics.json"
+        }
+      ]
+    },
+    {
+      "id": "vios",
+      "port_env": "VST_PORT",
+      "default_port": 30888,
+      "probes": [
+        {
+          "id": "health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/health",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "va-mcp",
+      "port_env": "VSS_VA_MCP_PORT",
+      "default_port": 9901,
+      "probes": [
+        {
+          "id": "health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/health",
+          "expected_status": [200]
+        },
+        {
+          "id": "transport",
+          "kind": "mcp",
+          "mode": "http",
+          "method": "GET",
+          "path": "/mcp",
+          "expected_status": [200, 400, 406]
+        }
+      ]
+    },
+    {
+      "id": "lvs-mcp",
+      "port_env": "LVS_MCP_PORT",
+      "default_port": 38112,
+      "probes": [
+        {
+          "id": "transport",
+          "kind": "mcp",
+          "mode": "sse",
+          "method": "GET",
+          "path": "/sse",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "elasticsearch",
+      "port_env": "VSS_ES_PORT",
+      "default_port": 9200,
+      "probes": [
+        {
+          "id": "cluster-health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/_cluster/health",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "port_env": "VSS_UI_PORT",
+      "default_port": 3001,
+      "probes": [
+        {
+          "id": "root",
+          "kind": "reachability",
+          "method": "GET",
+          "path": "/",
+          "expected_status": [200, 301, 302, 307, 308]
+        }
+      ]
+    },
+    {
+      "id": "public-ingress",
+      "port_env": "HAPROXY_PORT",
+      "default_port": 7777,
+      "probes": [
+        {
+          "id": "root",
+          "kind": "reachability",
+          "method": "GET",
+          "path": "/",
+          "expected_status": [200, 301, 302, 307, 308]
+        }
+      ]
+    }
+  ]
+}

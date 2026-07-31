@@ -49,9 +49,50 @@ python3 deploy/docker/thor-local/qualification/qualify.py \
   --live-openapi alerts=/tmp/alerts-openapi.json
 ```
 
-URLs are intentionally unsupported. A later runtime qualification tier can
-own loopback HTTP/MCP collection without weakening this contract tier's
-offline guarantee.
+URLs are intentionally unsupported here. The separate runtime tier below owns
+loopback HTTP/MCP collection without weakening this contract tier's offline
+guarantee.
+
+## Read-only runtime qualification
+
+`runtime.py` is isolated from the offline qualifier above. Run it only after
+the operator has started the Thor-local stack:
+
+```bash
+deploy/docker/scripts/thor-local.sh qualify --tier runtime
+```
+
+The wrapper supplies the same Thor-local port defaults and environment
+overrides as the deployment. Running `runtime.py` directly remains supported
+for isolated tests.
+
+It always emits JSON. A readiness response or live OpenAPI contract failure
+produces `result: "fail"` and exit 1. A connection refusal, timeout, or other
+transport outage produces `result: "unavailable"` and exit 2, making a stopped
+stack distinguishable from a broken contract without treating it as a pass.
+An OpenAPI endpoint marked optional is skipped only when it returns 404 or 405.
+`runtime_inventory.json` defines the health, OpenAPI, MCP, UI, ingress,
+VIOS, and Elasticsearch GET probes and their default Thor-local ports. A valid
+port environment variable listed there overrides its default.
+
+The host-managed LLM and VLM intentionally bind to Docker's private bridge,
+not loopback, so this loopback-only tier does not contact them directly. Use
+the separate read-only `deploy/docker/scripts/thor-local.sh model-check`
+contract once both local model containers are running.
+
+For tests or a deliberately remapped local port, override an origin explicitly:
+
+```bash
+python3 deploy/docker/thor-local/qualification/runtime.py \
+  --endpoint agent=http://127.0.0.1:18100
+```
+
+Only numeric IPv4/IPv6 loopback HTTP origins are accepted. The qualifier
+disables ambient proxies and redirects, issues only GET requests, never calls
+Docker or another process, never invokes an MCP tool, and never creates,
+updates, or deletes a VSS resource. Error output contains stable categories,
+HTTP status codes, counts, and drift fingerprints; response bodies, redirect
+locations, raw exceptions, and live route names are not included.
 
 ## Updating a reviewed contract
 

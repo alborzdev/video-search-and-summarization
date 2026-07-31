@@ -26,7 +26,7 @@ check() {
 }
 
 help_has_qualification() {
-  "${thor_local}" help 2>&1 | grep -q 'qualify --tier contract'
+  "${thor_local}" help 2>&1 | grep -q 'qualify --tier contract|runtime'
 }
 
 source_mode_exposes_qualification() {
@@ -51,6 +51,11 @@ operator_wrapper_rejects_regeneration() {
   grep -q 'qualify is read-only' <<< "${output}"
 }
 
+runtime_wrapper_routes_without_probing() {
+  "${thor_local}" qualify --tier runtime --help 2>&1 |
+    grep -q 'isolated, read-only runtime qualification'
+}
+
 json_result_is_machine_readable() {
   python3 "${qualifier}" --tier contract --json |
     python3 -c 'import json,sys; value=json.load(sys.stdin); raise SystemExit(0 if value.get("result") == "pass" and value.get("offline") is True else 1)'
@@ -62,6 +67,7 @@ check "source-only mode exposes qualification helper" source_mode_exposes_qualif
 check "qualification unit tests" python3 -m unittest discover -s "${tests}" -p 'test_*.py'
 check "Thor-local qualification command is offline" contract_command_is_offline
 check "operator wrapper rejects manifest regeneration" operator_wrapper_rejects_regeneration
+check "operator wrapper exposes read-only runtime qualification" runtime_wrapper_routes_without_probing
 check "qualification JSON is machine-readable" json_result_is_machine_readable
 
 if (( failures > 0 )); then

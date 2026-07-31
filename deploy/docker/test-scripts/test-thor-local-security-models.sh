@@ -132,6 +132,21 @@ model_provisioner_is_pinned_and_offline() {
     ! grep -Eq 'docker (pull|rm)|docker container rm' "${model_provisioner}"
 }
 
+model_probe_fails_without_a_python_traceback() {
+  local output status
+  set +e
+  output="$(THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    curl() { printf "not-json"; }
+    model_is_served http://127.0.0.1:1 expected-model
+  ' _ "${thor_local}" 2>&1)"
+  status=$?
+  set -e
+  [[ ${status} -ne 0 ]] &&
+    ! grep -q 'Traceback' <<< "${output}" &&
+    ! grep -q 'JSONDecodeError' <<< "${output}"
+}
+
 memory_gate_rejects_an_overcommit() {
   ! THOR_LOCAL_SOURCE_ONLY=true bash -c '
     source "$1"
@@ -154,6 +169,7 @@ check "operator docs state Moondream and LAN limitations" documentation_is_hones
 check "model endpoints default to loopback or the private Docker bridge" private_model_endpoint_contract
 check "physical model endpoints are rejected from the operator contract" physical_model_endpoint_is_rejected
 check "model provisioner pins image and revisions and remains offline" model_provisioner_is_pinned_and_offline
+check "failed model probes stay concise and traceback-free" model_probe_fails_without_a_python_traceback
 check "memory gate rejects an unsafe unified-memory overcommit" memory_gate_rejects_an_overcommit
 check "model and stack startup paths apply memory gates" startup_paths_apply_memory_gates
 
