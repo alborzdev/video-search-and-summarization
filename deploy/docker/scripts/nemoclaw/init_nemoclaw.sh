@@ -11,7 +11,7 @@ NEMOCLAW_REPO_DIR="${NEMOCLAW_REPO_DIR:-${HOME}/NemoClaw}"
 NEMOCLAW_SANDBOX_NAME="${NEMOCLAW_SANDBOX_NAME:-demo}"
 # NEMOCLAW_PROVIDER selects the Nemoclaw onboard/install provider. Required — no default.
 # Accepted values: "build" (NVIDIA Endpoints / integrate.api.nvidia.com) or "custom" (OpenAI-compatible endpoint).
-NEMOCLAW_PROVIDER="${NEMOCLAW_PROVIDER:?NEMOCLAW_PROVIDER is required}"
+NEMOCLAW_PROVIDER="${NEMOCLAW_PROVIDER:-}"
 # Custom-provider settings — required when NEMOCLAW_PROVIDER=custom (OpenAI-compatible endpoint).
 NEMOCLAW_ENDPOINT_URL="${NEMOCLAW_ENDPOINT_URL:-}"
 COMPATIBLE_API_KEY="${COMPATIBLE_API_KEY:-}"
@@ -45,8 +45,9 @@ node_major_version() {
 usage() {
   cat <<'EOF'
 Usage:
-  bash init_nemoclaw.sh [--nvidia-api-key <KEY>] [options]
-  NVIDIA_API_KEY=<key> bash init_nemoclaw.sh [options]
+  bash init_nemoclaw.sh --provider <build|custom> [options]
+  NEMOCLAW_PROVIDER=<build|custom> bash init_nemoclaw.sh [options]
+  NEMOCLAW_PROVIDER=build NVIDIA_API_KEY=<key> bash init_nemoclaw.sh [options]
 
   When NEMOCLAW_PROVIDER=build, the NVIDIA API key is resolved in this order:
     1. --nvidia-api-key flag (overrides env)
@@ -55,6 +56,7 @@ Usage:
   When NEMOCLAW_PROVIDER=custom, NVIDIA_API_KEY is ignored — use --endpoint-url and --compatible-api-key.
 
 Options:
+  --provider NAME             Provider: build or custom (env: NEMOCLAW_PROVIDER)
   --nvidia-api-key KEY        NVIDIA API key (required when NEMOCLAW_PROVIDER=build; ignored for "custom")
   --sandbox-name NAME         Sandbox name (default: demo)
   --model NAME                NVIDIA model ID (default: nvidia/nemotron-3-super-120b-a12b)
@@ -82,6 +84,10 @@ parse_args() {
 
   while [ "$#" -gt 0 ]; do
     case "$1" in
+      --provider)
+        NEMOCLAW_PROVIDER="$2"
+        shift 2
+        ;;
       --nvidia-api-key)
         NVIDIA_API_KEY="$2"
         shift 2
@@ -145,7 +151,7 @@ parse_args() {
 
   # NVIDIA_API_KEY is only required for the "build" provider (NVIDIA Endpoints).
   # In "custom" mode the OpenAI-compatible endpoint uses COMPATIBLE_API_KEY instead,
-  # which is validated separately in validate_custom_provider_settings().
+  # which is validated separately in validate_provider_settings().
   if [ "${NEMOCLAW_PROVIDER}" = "build" ] && [ -z "${NVIDIA_API_KEY:-}" ]; then
     read -rsp "Enter your NVIDIA API key: " NVIDIA_API_KEY
     printf '\n'
@@ -501,12 +507,48 @@ install_vss_openclaw_plugin() {
   ensure_dashboard_forward || return 1
 }
 
-validate_custom_provider() {
-  if [ "${NEMOCLAW_PROVIDER}" != "custom" ]; then
-    return 0
-  fi
+validate_provider_settings() {
+  case "${NEMOCLAW_PROVIDER}" in
+    build)
+      return 0
+      ;;
+    custom)
+      ;;
+    "")
+      log "ERROR: NEMOCLAW_PROVIDER is required (or pass --provider build|custom)."
+      exit 1
+      ;;
+    *)
+      log "ERROR: NEMOCLAW_PROVIDER=${NEMOCLAW_PROVIDER} is invalid (expected 'build' or 'custom')."
+      exit 1
+      ;;
+  esac
+
   if [ -z "${NEMOCLAW_ENDPOINT_URL}" ]; then
     log "ERROR: NEMOCLAW_PROVIDER=custom requires NEMOCLAW_ENDPOINT_URL (or --endpoint-url)."
+    exit 1
+  fi
+  if ! python3 - "${NEMOCLAW_ENDPOINT_URL}" <<'PY'
+import sys
+from urllib.parse import urlsplit
+
+try:
+    parsed = urlsplit(sys.argv[1])
+    port = parsed.port
+except ValueError:
+    raise SystemExit(1)
+if (
+    parsed.scheme not in {"http", "https"}
+    or not parsed.hostname
+    or parsed.username is not None
+    or parsed.password is not None
+    or parsed.fragment
+    or port is not None and not 1 <= port <= 65535
+):
+    raise SystemExit(1)
+PY
+  then
+    log "ERROR: NEMOCLAW_ENDPOINT_URL must be a valid http:// or https:// URL with a host and no embedded credentials or fragment."
     exit 1
   fi
   if [ -z "${COMPATIBLE_API_KEY}" ]; then
@@ -628,7 +670,7 @@ main() {
 }
 
 parse_args "$@"
-validate_custom_provider
+validate_provider_settings
 export NEMOCLAW_SANDBOX_NAME NEMOCLAW_PROVIDER OPENSHELL_PROVIDER_NAME NEMOCLAW_MODEL NEMOCLAW_NON_INTERACTIVE NEMOCLAW_ACCEPT_THIRD_PARTY_SOFTWARE
 export NEMOCLAW_ENDPOINT_URL COMPATIBLE_API_KEY
 export NEMOCLAW_REPO_DIR OPENCLAW_CONFIG_UPDATE_SCRIPT NEMOCLAW_POLICY_FILE

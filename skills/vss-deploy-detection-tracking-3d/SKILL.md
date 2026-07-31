@@ -125,10 +125,16 @@ Pick from `nvidia-smi --query-gpu=name --format=csv,noheader`:
 | RTX PRO 6000 Blackwell | `RTXPRO6000BW` | 18 |
 | H100 (NVL, SXM HBM3) | `H100` | 13 |
 | L40S | `L40S` | 7 |
-| IGX Thor | `IGX-THOR` | 4 |
-| DGX Spark | `DGX-SPARK` | 4 |
+| IGX Thor | `IGX-THOR` | 7 |
+| Jetson AGX Thor | `AGX-THOR` | 7 |
+| DGX Spark | `DGX-SPARK` | 7 |
 
-If the user's GPU is not listed here, check `industry-profiles/warehouse-operations/.env` for available `HARDWARE_PROFILE` values, then confirm the matching profile exists in `blueprint-configurator/blueprint_config.yml` before using it. Do not infer a stream count from the slug alone.
+The checked-in `blueprint-configurator/blueprint_config.yml` is authoritative
+for this repository version. If the user's GPU is not listed here, check
+`industry-profiles/warehouse-operations/.env` for available
+`HARDWARE_PROFILE` values, then confirm the matching profile and mode exist in
+that configurator before using it. Do not infer a stream count from the slug
+alone.
 
 **The per-GPU MV3DT cap is enforced at deploy time.** `vss-configurator-mv3dt` computes `final_stream_count = min(NUM_STREAMS, max_streams_supported)` and applies a `keep_count` file-management op against `${VSS_DATA_DIR}/videos/${SAMPLE_VIDEO_DATASET}/` so only `final_stream_count` `.mp4` files remain (sorted lexicographically, last N kept). If your GPU's MV3DT supported stream count (above table) is below your camera count, perception / `mdx-raw` / `mdx-bev` run with the supported stream count. Either pick a GPU with a higher supported stream count or surface the cap explicitly to the user so they're aware which streams will be processed.
 

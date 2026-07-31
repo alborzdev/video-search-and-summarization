@@ -2,7 +2,7 @@
 
 > **Note:** OpenClaw is the upstream framework name; the NemoClaw branding refers to the NVIDIA-curated skill bundle on top of OpenClaw.
 
-NVIDIA Video Search & Summarization agent for [OpenClaw](https://github.com/openclaw/openclaw). Provides 6 skills covering the full VSS lifecycle: NGC setup, prerequisites, base deployment, live video streams, semantic search, and alerts.
+NVIDIA Video Search & Summarization agent for [OpenClaw](https://github.com/openclaw/openclaw). The package stages the repository's complete VSS skill set at pack time, so the OpenClaw bundle stays aligned with the checkout rather than maintaining a second, stale skill list.
 
 ---
 
@@ -24,7 +24,7 @@ The following must be in place before VSS can deploy containers. The agent will 
 sudo usermod -aG docker $USER && newgrp docker
 ```
 
-Once OpenClaw is running, ask the agent: _"check prerequisites"_ to run a full automated check.
+Once OpenClaw is running, ask the agent to use `vss-deploy-profile` to check prerequisites for the profile you want to deploy.
 
 ---
 
@@ -66,15 +66,25 @@ On first gateway start after install, the plugin automatically copies workspace 
 openclaw skills list | grep -E "ngc|vss"
 ```
 
-Expected output:
+Expected output includes the VSS skills shipped by the current checkout. For VSS 3.2.1 that is:
 
 ```
-ngc               Install, configure, or verify NVIDIA NGC CLI and API key access
-vss-prerequisites Check and install VSS system requirements
-vss-base          Deploy and manage VSS base profile
-vss-lvs           Deploy and manage VSS live video stream profile
-vss-search        Run semantic video search queries
-vss-alerts        Configure and manage VSS alert rules
+vss-ask-video
+vss-deploy-dense-captioning
+vss-deploy-detection-tracking-2d
+vss-deploy-detection-tracking-3d
+vss-deploy-profile
+vss-deploy-video-embedding
+vss-generate-video-calibration
+vss-generate-video-report
+vss-generate-video-report-rag
+vss-manage-alerts
+vss-manage-video-io-storage
+vss-query-analytics
+vss-search-archive
+vss-setup-behavior-analytics
+vss-setup-video-analytics-api
+vss-summarize-video
 ```
 
 ---
@@ -89,9 +99,11 @@ Start a new OpenClaw session. The BOOTSTRAP flow runs automatically and the agen
 
 | Skill | Trigger phrases |
 |---|---|
-| `ngc` | "set up NGC", "configure NGC key", "NGC not found" |
-| `vss-prerequisites` | "check prerequisites", "install requirements" |
-| `vss-base` | "deploy VSS", "start VSS base" |
-| `vss-lvs` | "deploy live stream", "start LVS profile" |
-| `vss-search` | "search videos", "find footage of …" |
-| `vss-alerts` | "create alert", "configure alert rules" |
+| `vss-deploy-profile` | "deploy VSS", "check profile prerequisites", "start search/lvs/warehouse" |
+| `vss-search-archive` | "search archived video", "ingest this video for search" |
+| `vss-summarize-video` | "summarize this recorded video" |
+| `vss-manage-alerts` | "create an alert", "monitor incidents", "notify OpenClaw" |
+| `vss-ask-video` | "what happened in this clip?" |
+| `vss-query-analytics` | "show analytics metrics/incidents" |
+
+The Skills tab is the source of truth for the full installed list; each skill's `SKILL.md` owns its trigger boundary and workflow.

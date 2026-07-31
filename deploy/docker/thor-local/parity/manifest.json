@@ -178,10 +178,10 @@
       "category": "service",
       "advertised": ["Sparse4D multi-camera 3D detection and tracking", "shared RT-CV lifecycle/health/metrics"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
-      "runtime_state": "blocked",
-      "gap": "The upstream profile assumes H100 and multiple GPU IDs; adapt images/assets and qualify this as an isolated Thor lane."
+      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md"],
+      "thor_state": "partial",
+      "runtime_state": "static_only",
+      "gap": "Official single-GPU AGX-Thor tuning and the ARM64 RT-CV image are staged. Stage the Sparse4D ONNX/anchor plus aligned four-camera operator data, then qualify the isolated minimal and extended lanes."
     },
     {
       "id": "rt-cv-3d-mv3dt",
@@ -189,10 +189,10 @@
       "category": "service",
       "advertised": ["per-camera RT-DETR", "MV3DT BEV fusion", "BodyPose3DNet", "four-camera calibrated multiview tracking", "Compose deployment", "associated skill"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app", "services/rtvi/rt-cv"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
-      "runtime_state": "blocked",
-      "gap": "Stage BEV/BodyPose assets and ARM64 images, provide four-camera calibration, and qualify with other GPU-heavy services stopped."
+      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md"],
+      "thor_state": "partial",
+      "runtime_state": "static_only",
+      "gap": "Official single-GPU AGX-Thor tuning plus the ARM64 RT-CV and BEV Fusion images are staged. Safely stage BodyPose ONNX, rebuild compatible engines, provide aligned four-camera calibration/data, and qualify minimal and extended lanes."
     },
     {
       "id": "behavior-analytics",
@@ -262,14 +262,14 @@
     },
     {
       "id": "vios-ui",
-      "acceptance_class": "alternate_local_lane",
+      "acceptance_class": "required_local",
       "category": "ui",
-      "advertised": ["sensor and stream management", "recording schedules", "media management/upload", "live/replay/video wall", "calibration", "QoS/system/stream stats", "debug and playback automation"],
+      "advertised": ["VIOS dashboard", "sensor and stream management", "recording schedules", "media management/upload", "live/replay/video wall", "QoS/system/stream stats", "debug and playback automation"],
       "source_evidence": ["services/vios/ui"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
+      "thor_evidence": ["deploy/docker/services/vios/foundational/docker-compose.yaml", "deploy/docker/services/vios/configs/nginx-vst-direct.conf", "deploy/docker/services/infra/haproxy/haproxy.cfg.template", "deploy/docker/thor-local/compose.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-ui-audit.md"],
+      "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "VIOS service APIs are wired but its separate full UI is not selected by the unified Thor profile."
+      "gap": "The full ARM64 VIOS SPA is selected and routed at /vst, and Thor overrides public STUN with a loopback-only config. Run browser/WebRTC/replay/video-wall/schedule/media/stats/debug acceptance with external-attempt monitoring and repeat after a pull-free restart. Calibration remains in the dedicated auto-calibration family."
     },
     {
       "id": "main-ui",
@@ -310,10 +310,10 @@
       "category": "industry",
       "advertised": ["Sparse4D 3D warehouse", "MV3DT multiview warehouse", "BEV fusion", "auto-calibration variants", "top-view visualization"],
       "source_evidence": ["deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app", "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
-      "runtime_state": "blocked",
-      "gap": "Upstream is multi-GPU/H100-oriented; stage ARM64-compatible images/models and qualify isolated 3D and four-camera MV3DT lanes."
+      "thor_evidence": ["deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml", "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md"],
+      "thor_state": "partial",
+      "runtime_state": "static_only",
+      "gap": "Official seven-stream single-GPU AGX-Thor tuning and principal ARM64 images are present. Stage the remaining models and aligned custom camera/calibration data, then qualify both isolated and extended 3D lanes."
     },
     {
       "id": "agent-and-mcp-apis",
@@ -389,10 +389,10 @@
       "category": "deployment",
       "advertised": ["NemoClaw/OpenClaw sandbox", "VSS sandbox policy", "VSS skills upload", "orchestrator MCP", "local OpenAI-compatible provider option", "OpenClaw alert notification integration"],
       "source_evidence": ["deploy/docker/scripts/nemoclaw", "assets/vss_nemoclaw_policy.yaml", ".openclaw"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
+      "thor_evidence": ["deploy/docker/scripts/nemoclaw/init_nemoclaw.sh", "assets/vss_nemoclaw_policy.yaml", ".openclaw", "deploy/docker/scripts/tests/test_init_nemoclaw.py", "deploy/docker/scripts/tests/test_openclaw_package.py", "deploy/docker/thor-local/parity/evidence/2026-07-31-openclaw-audit.md"],
+      "thor_state": "partial",
       "runtime_state": "blocked",
-      "gap": "The installer assumes a NemoClaw-ready Brev/Ubuntu host and cloud defaults; adapt paths and bootstrap a local provider/sandbox on Thor."
+      "gap": "The installer, all 16 skills, policy, MCP/hook wiring, non-Brev UI path, and Thor-local provider recipe pass static checks; the local model answers its contract. Install a pinned NemoClaw/OpenShell/OpenClaw toolchain, create the sandbox, and complete chat/tool/MCP/hook/alert runtime acceptance."
     },
     {
       "id": "enterprise-rag",

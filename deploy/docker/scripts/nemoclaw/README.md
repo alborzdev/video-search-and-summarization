@@ -1,8 +1,8 @@
 # NemoClaw VSS Installer
 
-`init_nemoclaw.sh` bootstraps a NemoClaw sandbox on a Brev instance, configures its NVIDIA-hosted model provider, uploads the repository `skills/`, and updates OpenClaw allowed origins.
+`init_nemoclaw.sh` bootstraps a NemoClaw sandbox on a local Ubuntu host (including AGX/IGX Thor), configures its model provider, installs the repository's OpenClaw plugin and complete `skills/` bundle, applies the VSS policy, and updates OpenClaw allowed origins. Brev secure links are supported but are not required; a non-Brev host uses the loopback dashboard plus an SSH tunnel for remote browsers.
 
-It supports two onboard providers, selected via the **required** `NEMOCLAW_PROVIDER` env var:
+It supports two onboard providers, selected with `NEMOCLAW_PROVIDER` or `--provider`:
 
 - `build` — NVIDIA Endpoints (`integrate.api.nvidia.com`), authenticated with `NVIDIA_API_KEY`.
 - `custom` — any OpenAI-compatible endpoint (e.g. a local vLLM), configured with `NEMOCLAW_ENDPOINT_URL` and `COMPATIBLE_API_KEY`.
@@ -11,15 +11,15 @@ It supports two onboard providers, selected via the **required** `NEMOCLAW_PROVI
 
 When you run `init_nemoclaw.sh`, it:
 
-1. Runs NemoClaw onboarding if `nemoclaw` is already available, or falls back to `/home/ubuntu/NemoClaw/install.sh`.
-2. Configures the OpenShell inference provider to use the remote NVIDIA-hosted model API.
+1. Runs NemoClaw onboarding if `nemoclaw` is already available, or falls back to `$HOME/NemoClaw/install.sh`.
+2. Configures the OpenShell inference provider to use NVIDIA Endpoints or the selected OpenAI-compatible endpoint.
 3. Applies the VSS sandbox policy from `assets/vss_nemoclaw_policy.yaml`.
-4. Uploads the repository `skills/` into the sandbox workspace.
+4. Packs and installs the OpenClaw plugin with the repository's current `skills/`.
 5. Updates OpenClaw's allowed origins and prints the final OpenClaw UI URL when available.
 
 ## Expected Environment
 
-This script is meant to run on a NemoClaw-ready Ubuntu machine, typically a Brev instance, with this repository already checked out.
+This script is meant to run on a NemoClaw-ready Ubuntu machine with this repository already checked out. It is not architecture-specific; the model endpoint selected for OpenClaw must support the host. On Thor, use the `custom` provider with a local OpenAI-compatible server to keep inference local.
 
 The following repo content is expected to exist:
 
@@ -32,11 +32,11 @@ The following host tools or resources are also expected:
 - `python3`
 - `docker`
 - `sudo`
-- a working NemoClaw install source at `/home/ubuntu/NemoClaw/install.sh`, unless `nemoclaw` is already in `PATH`
+- a working NemoClaw install source at `$HOME/NemoClaw/install.sh`, unless `nemoclaw` is already in `PATH`
 
 ## Usage
 
-`NEMOCLAW_PROVIDER` is required. The script exits immediately if it is unset.
+Choose a provider with `NEMOCLAW_PROVIDER` or `--provider`. The script exits before making changes if neither is set.
 
 ### `build` provider (NVIDIA Endpoints)
 
@@ -62,10 +62,9 @@ NEMOCLAW_PROVIDER=build \
 
 ```bash
 NEMOCLAW_PROVIDER=custom \
-NEMOCLAW_ENDPOINT_URL=http://host.docker.internal:8000/v1 \
-NEMOCLAW_MODEL=Qwen/Qwen3.6-35B-A3B-FP8 \
-COMPATIBLE_API_KEY=nemoclaw-local-qwen \
-NVIDIA_API_KEY="$NVIDIA_API_KEY" \
+NEMOCLAW_ENDPOINT_URL=http://host.openshell.internal:8000/v1 \
+NEMOCLAW_MODEL=datasheet-chat \
+COMPATIBLE_API_KEY=EMPTY \
   bash deploy/docker/scripts/nemoclaw/init_nemoclaw.sh demo
 ```
 
@@ -75,11 +74,18 @@ Equivalent with CLI flags:
 NEMOCLAW_PROVIDER=custom \
   bash deploy/docker/scripts/nemoclaw/init_nemoclaw.sh \
     --sandbox-name demo \
-    --model Qwen/Qwen3.6-35B-A3B-FP8 \
-    --endpoint-url http://host.docker.internal:8000/v1 \
-    --compatible-api-key nemoclaw-local-qwen \
-    --nvidia-api-key "$NVIDIA_API_KEY"
+    --model datasheet-chat \
+    --endpoint-url http://host.openshell.internal:8000/v1 \
+    --compatible-api-key EMPTY
 ```
+
+`host.openshell.internal` is the policy-approved host alias inside the sandbox. The local server must listen on a host/bridge address reachable through that alias, not only on host loopback. Before onboarding, verify the server from the host and use the returned model id as `NEMOCLAW_MODEL`:
+
+```bash
+curl -fsS http://172.17.0.1:8000/v1/models | jq -r '.data[].id'
+```
+
+The bridge address above is the Thor reference deployment's bind address. If the server uses another local address or port, probe that address and add the selected port to the `vss-backend` policy before onboarding.
 
 ### Background run on a Brev instance
 
@@ -93,6 +99,7 @@ nohup env NEMOCLAW_PROVIDER=build NVIDIA_API_KEY="$NVIDIA_API_KEY" \
 
 | Option | Description | Default |
 |---|---|---|
+| `--provider NAME` | `build` or `custom`; equivalent to `NEMOCLAW_PROVIDER` | required |
 | `--sandbox-name NAME` | Target sandbox name | `demo` |
 | `--model NAME` | NemoClaw inference model | `nvidia/nemotron-3-super-120b-a12b` |
 | `--nvidia-base-url URL` | NVIDIA API base URL for the `build` provider | `https://integrate.api.nvidia.com/v1` |
@@ -146,8 +153,8 @@ If the config update succeeds, the helper also prints:
 
 - Verify `NEMOCLAW_PROVIDER` is set (`build` or `custom`) — the script exits immediately if it is unset.
 - For `NEMOCLAW_PROVIDER=custom`, verify both `NEMOCLAW_ENDPOINT_URL` and `COMPATIBLE_API_KEY` are set (or pass `--endpoint-url` / `--compatible-api-key`).
-- Verify `NVIDIA_API_KEY` is set before running the installer.
-- If NemoClaw onboarding fails, verify `nemoclaw` is resolvable or that `/home/ubuntu/NemoClaw/install.sh` exists and is executable.
+- For the `build` provider, verify `NVIDIA_API_KEY` is set before running the installer; the `custom` provider does not use it.
+- If NemoClaw onboarding fails, verify `nemoclaw` is resolvable or that `$HOME/NemoClaw/install.sh` exists and is executable.
 - If the custom policy is skipped, confirm `assets/vss_nemoclaw_policy.yaml` exists or pass `--policy-file`.
 - If the skills upload is skipped, verify the repo checkout includes `skills/`.
 - If the skills upload cannot determine a gateway container, set `VSS_CONTAINER_NAME` explicitly.

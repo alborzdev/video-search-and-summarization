@@ -51,7 +51,7 @@ Map the detected GPU name to a hardware profile:
 
 If `nvidia-smi` fails or returns no GPU, guide driver setup:
 
-> "I can't detect a GPU. You may need to install the NVIDIA driver first. Use the `vss-prerequisites` skill to check and fix this."
+> "I can't detect a GPU. You may need to install the NVIDIA driver first. Use the prerequisite flow in `vss-deploy-profile` to check and fix this."
 
 ### 2c. Check NGC CLI
 
@@ -59,9 +59,9 @@ If `nvidia-smi` fails or returns no GPU, guide driver setup:
 ngc --version
 ```
 
-- If installed and `NGC_CLI_API_KEY` is already in the environment → verify access (see `ngc` skill)
+- If installed and `NGC_CLI_API_KEY` is already in the environment → verify access using the credential gate in `vss-deploy-profile`
 - If installed but no key → ask: "Do you have an NGC API key? I'll need it to pull models and containers."
-- If not installed → use the `ngc` skill to install and configure it
+- If not installed → follow the NGC CLI prerequisite guidance in `vss-deploy-profile`
 
 After user provides the NGC_CLI_API_KEY store it to ~/.ngc/.env for future usage. 
 Also asks about NGC_CLI_ORG , if other than default "nvidia", also stores that to ~/.ngc/.env like NGC_CLI_ORG
@@ -70,7 +70,7 @@ Also asks about NGC_CLI_ORG , if other than default "nvidia", also stores that t
 
 ## Step 3: Run Prerequisite Checks
 
-Use the `vss-prerequisites` skill to verify Docker, NVIDIA Container Toolkit, and NGC access. Fix any failures before continuing.
+Use `vss-deploy-profile` to verify Docker, NVIDIA Container Toolkit, and NGC access for the selected profile. Fix any failures before continuing.
 
 ---
 

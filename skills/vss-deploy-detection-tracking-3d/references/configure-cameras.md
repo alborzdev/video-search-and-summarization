@@ -164,13 +164,14 @@ Before propagating `NUM_STREAMS`, confirm the GPU can actually run that many MV3
 HARDWARE_PROFILE_VAL=$(grep '^HARDWARE_PROFILE=' "${ENV_FILE:-${VSS_APPS_DIR}/industry-profiles/warehouse-operations/.env}" | cut -d= -f2)
 echo "HARDWARE_PROFILE=${HARDWARE_PROFILE_VAL}"
 
-# Lookup public MV3DT supported stream count from the Warehouse Quickstart Guide.
+# Mirror the authoritative MV3DT limits in this checkout's blueprint_config.yml.
 case "${HARDWARE_PROFILE_VAL}" in
   RTXPRO6000BW)  CAP=18 ;;
   H100)          CAP=13 ;;
   L40S)          CAP=7  ;;
-  IGX-THOR)      CAP=4  ;;
-  DGX-SPARK)     CAP=4  ;;
+  IGX-THOR)      CAP=7  ;;
+  AGX-THOR)      CAP=7  ;;
+  DGX-SPARK)     CAP=7  ;;
   *)             CAP="?"; echo "WARN: HARDWARE_PROFILE=${HARDWARE_PROFILE_VAL} is not in the public MV3DT table; check .env and blueprint_config.yml before proceeding" ;;
 esac
 

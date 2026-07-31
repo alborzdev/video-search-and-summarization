@@ -35,6 +35,11 @@ services:
     entrypoint: ["/home/vst/vst_release/launch_vst"]
     environment:
       VST_INSTALL_ADDITIONAL_PACKAGES: "false"
+    # The released config falls back to public Google STUN. A loopback STUN
+    # target preserves host ICE candidates while proving the Thor lane makes
+    # no external WebRTC discovery calls.
+    volumes:
+      - ${THOR_LOCAL_VST_CONFIG_FILE:-${VSS_REPO_ROOT}/deploy/docker/thor-local/vios/vst_config.json}:/home/vst/vst_release/configs/vst_config.json:ro
     depends_on:
       centralizedb:
         condition: service_healthy
@@ -49,6 +54,8 @@ services:
   sensor-ms:
     environment:
       LD_LIBRARY_PATH: /usr/lib/aarch64-linux-gnu/nvidia:/usr/lib/aarch64-linux-gnu:/home/vst/vst_release/prebuilts/aarch64:/home/vst/vst_release/prebuilts/aarch64/gst-plugins:/home/vst/vst_release/prebuilts/aarch64/sbsa
+    volumes:
+      - ${THOR_LOCAL_VST_CONFIG_FILE:-${VSS_REPO_ROOT}/deploy/docker/thor-local/vios/vst_config.json}:/home/vst/vst_release/configs/vst_config.json:ro
 
   # Do not advertise ingress before both sensor control and the actual video
   # processor can serve requests.
