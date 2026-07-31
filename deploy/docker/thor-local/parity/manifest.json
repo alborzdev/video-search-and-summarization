@@ -260,10 +260,10 @@
       "category": "industry",
       "advertised": ["traffic RT-DETR", "traffic behavior analytics", "geo/map matching", "calibration toolkit/import", "ITS analytics API/UI", "Smart City reports and VA-MCP", "Kibana dashboard", "ten-sensor sample profile"],
       "source_evidence": ["deploy/docker/industry-profiles/smartcities", "deploy/docker/scripts/deploy_smartcities_launchable.ipynb"],
-      "thor_evidence": [],
-      "thor_state": "source_only",
-      "runtime_state": "blocked",
-      "gap": "Upstream relies on notebook rsync and NGC sample-data steps and Google Maps; package a non-destructive one-stream Thor lane with a local/no-map mode."
+      "thor_evidence": ["services/analytics/behavior-analytics/src/mdx/analytics/core/utils/crs.py", "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/utils/test_road_network_file_loading.py"],
+      "thor_state": "partial",
+      "runtime_state": "static_only",
+      "gap": "Offline GraphML/XML road-network loading is implemented and unit-qualified; package and exercise the non-destructive one-stream Thor lane, local map, dashboard, calibration import, reports, and alert rules."
     },
     {
       "id": "warehouse-2d",

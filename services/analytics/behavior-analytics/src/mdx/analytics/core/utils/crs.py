@@ -205,8 +205,12 @@ class RoadNetworkGraph:
                     graph = self._graph_from_polygon(self.osm_query_polygon)
                 if self.osm_load_method == "from_place":
                     graph = self._graph_from_place(self.osm_query_place)
+                if self.osm_load_method == "from_file":
+                    graph = self._graph_from_file(self.osm_query_file)
             except Exception as e:
                 logger.warning(f"An exception occurred when pulling content from openStreetMap: {e}")
+                if self.osm_load_method == "from_file":
+                    raise
 
         return graph
 
@@ -247,6 +251,43 @@ class RoadNetworkGraph:
         logger.info(f"Creating road network with type={self.osm_type} from OSM by the given place: {place}..")
         graph = ox.graph_from_place(place, network_type=self.osm_type, simplify=self.osm_simplify)
         logger.info("Road network created.")
+        return graph
+
+    def _graph_from_file(self, file_path: str) -> MultiDiGraph:
+        """
+        Create a road network graph from a local GraphML or OSM XML file.
+
+        GraphML is the preferred offline format because it preserves an OSMnx
+        graph without requiring a network query. Raw OSM XML is also supported
+        for externally downloaded extracts. PBF is deliberately rejected
+        because OSMnx cannot load it directly.
+
+        :param str file_path: Path to a local ``.graphml``, ``.osm``, or ``.xml`` file
+        :return MultiDiGraph: NetworkX MultiDiGraph containing the road network
+        :raises FileNotFoundError: If the configured file does not exist
+        :raises ValueError: If the configured file format is unsupported
+        """
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"Road network file does not exist: {file_path}")
+
+        normalized_path = file_path.lower()
+        logger.info(f"Creating road network from local file: {file_path}..")
+        if normalized_path.endswith((".graphml", ".graphml.gz")):
+            graph = ox.load_graphml(file_path)
+        elif normalized_path.endswith((".osm", ".xml", ".osm.gz", ".xml.gz", ".osm.bz2", ".xml.bz2")):
+            bidirectional = self.osm_type in ox.settings.bidirectional_network_types
+            graph = ox.graph_from_xml(
+                file_path,
+                bidirectional=bidirectional,
+                simplify=self.osm_simplify,
+                retain_all=False,
+            )
+        else:
+            raise ValueError(
+                "Unsupported road network file format. Use OSMnx GraphML or OSM XML; "
+                f"got: {file_path}"
+            )
+        logger.info("Road network created from local file.")
         return graph
 
 
