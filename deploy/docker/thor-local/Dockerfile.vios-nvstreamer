@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+ARG VST_NVSTREAMER_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-vios-nvstreamer:3.2.1
+FROM ${VST_NVSTREAMER_BASE_IMAGE}
+
+# Match the offline VST streamprocessor contract: repair the released ARM64
+# codec filesystem once while connected, never from a container entrypoint.
+COPY deploy/docker/services/vios/scripts/user_additional_install.sh /tmp/user_additional_install.sh
+
+USER root
+RUN /bin/bash /tmp/user_additional_install.sh \
+    && apt-get install --reinstall --no-install-recommends -y libmplex2-2.1-0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /root/.cache/gstreamer-1.0 /tmp/user_additional_install.sh
+
+ENTRYPOINT ["/home/vst/vst_release/launch_vst"]

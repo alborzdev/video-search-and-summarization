@@ -1,0 +1,133 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 16,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 2,
+    "GET": 9,
+    "POST": 5
+  },
+  "normalized_unique_operation_count": 16,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": "getSensorConfiguration",
+      "path": "/vst/api/v1/record/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/record/configuration"
+    },
+    {
+      "method": "GET",
+      "operation_id": "gethelp",
+      "path": "/vst/api/v1/record/help",
+      "schema_hash": null,
+      "source_path": "/v1/record/help"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getAllRecordStatus",
+      "path": "/vst/api/v1/record/status",
+      "schema_hash": null,
+      "source_path": "/v1/record/status"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postRecordStreamAdd",
+      "path": "/vst/api/v1/record/stream/add",
+      "schema_hash": null,
+      "source_path": "/v1/record/stream/add"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getRecordStream",
+      "path": "/vst/api/v1/record/streams",
+      "schema_hash": null,
+      "source_path": "/v1/record/streams"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getRecordingTimelines",
+      "path": "/vst/api/v1/record/timelines",
+      "schema_hash": null,
+      "source_path": "/v1/record/timelines"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getVersion",
+      "path": "/vst/api/v1/record/version",
+      "schema_hash": null,
+      "source_path": "/v1/record/version"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "deleteRecordStream",
+      "path": "/vst/api/v1/record/{streamId}",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postEventRecording",
+      "path": "/vst/api/v1/record/{streamId}/event",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/event"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "deleteRecordSchedule",
+      "path": "/vst/api/v1/record/{streamId}/schedule",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/schedule"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getRecordSchedule",
+      "path": "/vst/api/v1/record/{streamId}/schedule",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/schedule"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postRecordSchedule",
+      "path": "/vst/api/v1/record/{streamId}/schedule",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/schedule"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postRecordStreamStart",
+      "path": "/vst/api/v1/record/{streamId}/start",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/start"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getRecordState",
+      "path": "/vst/api/v1/record/{streamId}/status",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/status"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postRecordStreamStop",
+      "path": "/vst/api/v1/record/{streamId}/stop",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/stop"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getRecordTimelines",
+      "path": "/vst/api/v1/record/{streamId}/timelines",
+      "schema_hash": null,
+      "source_path": "/v1/record/{streamId}/timelines"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/vios/doc/api/vst_stream_recorder_ms/swagger.yaml",
+      "sha256": "679cd0215665ab46c3ac70f9a6509b9bcf70d2dcc511fe38faaceccc4e5dd318"
+    }
+  ],
+  "surface": "vios-recorder"
+}

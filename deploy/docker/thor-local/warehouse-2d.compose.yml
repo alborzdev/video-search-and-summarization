@@ -1,0 +1,77 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Jetson AGX Thor overlay for the minimal Redis warehouse-2D profile. The
+# launcher always combines this with a private mutable snapshot of compose.yml.
+services:
+  redis:
+    command:
+      - redis-server
+      - /config/redis.conf
+      - --bind
+      - 127.0.0.1
+      - --protected-mode
+      - "yes"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 2s
+
+  # Give Compose-built one-shots deterministic names so offline preflight can
+  # require them before any future --no-build start.
+  bp-configurator-2d-init:
+    image: ${THOR_WAREHOUSE_CONFIGURATOR_INIT_IMAGE:-cti-vss-warehouse-configurator-init:3.2.1-thor-local}
+
+  broker-health-check:
+    image: ${THOR_WAREHOUSE_BROKER_HEALTH_IMAGE:-cti-vss-warehouse-broker-health:3.2.1-thor-local}
+
+  # NvStreamer uses the same released codec repair script as VST. Bake it once
+  # into a derived image and bypass all startup-time package installation.
+  nvstreamer-2d:
+    image: ${THOR_WAREHOUSE_NVSTREAMER_IMAGE:-vss-vios-nvstreamer:3.2.1-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-nvstreamer
+      args:
+        VST_NVSTREAMER_BASE_IMAGE: nvcr.io/nvidia/vss-core/vss-vios-nvstreamer:${NVSTREAMER_IMAGE_TAG:-3.2.1}
+    runtime: nvidia
+    entrypoint: ["/home/vst/vst_release/launch_vst"]
+    environment:
+      NVSTREAMER_INSTALL_ADDITIONAL_PACKAGES: "false"
+
+  # The released ARM64 sensor image otherwise prefers a zero-byte generic
+  # libcuda compatibility file over Thor's injected driver library.
+  sensor-ms-2d:
+    environment:
+      LD_LIBRARY_PATH: /usr/lib/aarch64-linux-gnu/nvidia:/usr/lib/aarch64-linux-gnu:/home/vst/vst_release/prebuilts/aarch64:/home/vst/vst_release/prebuilts/aarch64/gst-plugins:/home/vst/vst_release/prebuilts/aarch64/sbsa
+
+  streamprocessing-ms-2d:
+    image: ${THOR_WAREHOUSE_VST_STREAM_PROCESSOR_IMAGE:-vss-vios-streamprocessing:3.2.1-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.vios-streamprocessing
+      args:
+        VST_STREAM_PROCESSOR_BASE_IMAGE: nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1
+    entrypoint: ["/home/vst/vst_release/launch_vst"]
+    environment:
+      VST_INSTALL_ADDITIONAL_PACKAGES: "false"
+    depends_on:
+      centralizedb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  perception-2d:
+    runtime: nvidia
+    environment:
+      TRANSFORMERS_OFFLINE: "1"
+      HF_HUB_OFFLINE: "1"
+
+  vst-ingress:
+    depends_on:
+      sensor-ms-2d:
+        condition: service_healthy
+      streamprocessing-ms-2d:
+        condition: service_healthy

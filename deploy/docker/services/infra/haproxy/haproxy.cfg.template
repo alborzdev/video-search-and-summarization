@@ -54,7 +54,9 @@ backend bk_behavior_analytics
 backend bk_perception_sdr
     server s1 "${HOST_IP}:${PERCEPTION_SDR_PORT}" check
 
-backend bk_va_mcp
+backend bk_va_mcp_strip
+    http-request replace-path ^/va-mcp/(.*) /\1
+    http-request replace-path ^/va-mcp$ /
     server s1 "${HOST_IP}:${VSS_VA_MCP_PORT}" check
 
 backend bk_kibana
@@ -71,6 +73,13 @@ backend bk_alert_bridge_strip
     http-request replace-path ^/alert-bridge/(.*) /\1
     http-request replace-path ^/alert-bridge$ /
     server s1 "${HOST_IP}:${ALERT_BRIDGE_PORT}" check
+
+# The static Smart City map deliberately binds only to host loopback. HAProxy
+# is host-networked, so it can publish that page without exposing port 3002.
+backend bk_smartcity_map_strip
+    http-request replace-path ^/smartcity-map/(.*) /\1
+    http-request replace-path ^/smartcity-map$ /
+    server s1 "127.0.0.1:${SMARTCITY_MAP_PORT}" check
 
 # Strip /phoenix like Phoenix examples/reverse-proxy (Traefik stripPrefix); keep PHOENIX_HOST_ROOT_PATH in sync.
 backend bk_phoenix_strip
@@ -125,6 +134,10 @@ frontend fe_http
     acl p_alert_bridge path_beg /alert-bridge/
     use_backend bk_alert_bridge_strip if h_main p_alert_bridge
 
+    acl p_smartcity_map path /smartcity-map
+    acl p_smartcity_map path_beg /smartcity-map/
+    use_backend bk_smartcity_map_strip if h_main p_smartcity_map
+
     acl p_kibana path /kibana
     acl p_kibana path_beg /kibana/
     use_backend bk_kibana if h_main p_kibana
@@ -167,6 +180,6 @@ frontend fe_http
 
     acl p_va_mcp path /va-mcp
     acl p_va_mcp path_beg /va-mcp/
-    use_backend bk_va_mcp if h_main p_va_mcp
+    use_backend bk_va_mcp_strip if h_main p_va_mcp
 
     use_backend bk_vss_ui if h_main

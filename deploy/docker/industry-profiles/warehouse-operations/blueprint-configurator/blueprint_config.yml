@@ -108,13 +108,13 @@ commons:
       - variable: BP_PROFILE
         allowed_values: ["bp_wh", "bp_wh_kafka", "bp_wh_redis", "bp_wh_auto_calib"]
 
-      # bp_wh 2d profile is not supported on IGX-THOR or DGX-SPARK
+      # bp_wh 2d profile is not supported on single-device Thor systems or DGX-SPARK
       - variable: HARDWARE_PROFILE
         condition:
           variable: BP_PROFILE
           equals: "bp_wh"
-        disallowed_values: ["IGX-THOR", "DGX-SPARK"]
-        error_message: "BP_PROFILE=bp_wh in 2d mode is not supported on IGX-THOR or DGX-SPARK"
+        disallowed_values: ["IGX-THOR", "AGX-THOR", "DGX-SPARK"]
+        error_message: "BP_PROFILE=bp_wh in 2d mode is not supported on IGX-THOR, AGX-THOR, or DGX-SPARK"
 
       # STREAM_TYPE can only be "kafka" or "redis"
       - variable: STREAM_TYPE
@@ -643,7 +643,7 @@ RTXPRO6000BW:
   mv3dt:
     max_streams_supported: 39
 
-IGX-THOR:
+IGX-THOR: &thor_warehouse_profile
   2d:
     max_streams_supported: 9
     file_operations:
@@ -706,6 +706,11 @@ IGX-THOR:
           notifications.use_message_broker_consumer: "${STREAM_TYPE}"
           onvif.max_devices_supported: ${max_streams_supported}
           overlay.enable_overlay_skip_frame: true
+
+# Jetson AGX Thor uses the same single-GPU DeepStream/VST tuning as IGX Thor.
+# Keep this as a YAML merge alias so the two profiles cannot silently drift.
+AGX-THOR:
+  <<: *thor_warehouse_profile
 
 DGX-SPARK:
   2d:

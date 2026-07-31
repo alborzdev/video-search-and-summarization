@@ -1,0 +1,70 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 7,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 2,
+    "GET": 4,
+    "POST": 1
+  },
+  "normalized_unique_operation_count": 7,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": "getProxyConfiguration",
+      "path": "/vst/api/v1/proxy/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/proxy/configuration"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getProxyQos",
+      "path": "/vst/api/v1/proxy/debug/qos",
+      "schema_hash": null,
+      "source_path": "/v1/proxy/debug/qos"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getProxyInfo",
+      "path": "/vst/api/v1/proxy/info",
+      "schema_hash": null,
+      "source_path": "/v1/proxy/info"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "deleteProxySession",
+      "path": "/vst/api/v1/proxy/session/{streamId}",
+      "schema_hash": null,
+      "source_path": "/v1/proxy/session/{streamId}"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postProxyStreamAdd",
+      "path": "/vst/api/v1/proxy/stream/add",
+      "schema_hash": null,
+      "source_path": "/v1/proxy/stream/add"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "deleteProxyStream",
+      "path": "/vst/api/v1/proxy/stream/{streamId}",
+      "schema_hash": null,
+      "source_path": "/v1/proxy/stream/{streamId}"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getProxyStreams",
+      "path": "/vst/api/v1/proxy/streams",
+      "schema_hash": null,
+      "source_path": "/v1/proxy/streams"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/vios/doc/api/vst_rtsp_proxy_stream_ms/swagger.yaml",
+      "sha256": "2d02593babf6d759b989ad49cc18de6a98be4d513e9063097e18a0cc3909a3cb"
+    }
+  ],
+  "surface": "vios-proxy"
+}

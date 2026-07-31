@@ -21,6 +21,7 @@ generated_env="${THOR_LOCAL_GENERATED_ENV_FILE:-${deployment_dir}/thor-local/gen
 ngc_key_file="${NGC_CLI_API_KEY_FILE:-${HOME}/.config/cti-vss/ngc-api-key}"
 domain_pack_dir="${deployment_dir}/thor-local/domain-packs"
 domain_pack_tool="${domain_pack_dir}/domain_pack.py"
+qualification_tool="${deployment_dir}/thor-local/qualification/qualify.py"
 local_model_provisioner="${deployment_dir}/thor-local/provision-local-models.sh"
 domain_pack_state="${THOR_LOCAL_DOMAIN_STATE_FILE:-${deployment_dir}/thor-local/.domain-pack-state.json}"
 domain_pack_current_file="${THOR_LOCAL_DOMAIN_CURRENT_FILE:-${deployment_dir}/thor-local/.domain-pack-current}"
@@ -85,6 +86,7 @@ export RTVI_VLM_PORT="${RTVI_VLM_PORT:-8018}"
 export RTVI_CV_PORT="${RTVI_CV_PORT:-9000}"
 export VIDEO_ANALYTICS_API_PORT="${VIDEO_ANALYTICS_API_PORT:-8081}"
 export MDX_PORT="${MDX_PORT:-${VIDEO_ANALYTICS_API_PORT}}"
+export SMARTCITY_MAP_PORT="${SMARTCITY_MAP_PORT:-3002}"
 export ALERT_BRIDGE_PORT="${ALERT_BRIDGE_PORT:-9080}"
 export KAFKA_PORT="${KAFKA_PORT:-9092}"
 export VSS_ES_PORT="${VSS_ES_PORT:-9200}"
@@ -92,6 +94,7 @@ export VSS_VA_MCP_PORT="${VSS_VA_MCP_PORT:-9901}"
 export BACKEND_PORT="${BACKEND_PORT:-38111}"
 export LVS_MCP_PORT="${LVS_MCP_PORT:-38112}"
 export LVS_ENABLE_MCP="${LVS_ENABLE_MCP:-true}"
+export VIA_DEV_API="${VIA_DEV_API:-true}"
 export KIBANA_PORT="${KIBANA_PORT:-5601}"
 export THOR_FULL_ENABLE_KIBANA="${THOR_FULL_ENABLE_KIBANA:-true}"
 export THOR_FULL_STAGE_TIMEOUT_SECONDS="${THOR_FULL_STAGE_TIMEOUT_SECONDS:-1800}"
@@ -110,6 +113,7 @@ export LVS_LLM_MAX_TOKENS="${LVS_LLM_MAX_TOKENS:-1024}"
 export THOR_LOCAL_LVS_IMAGE="${THOR_LOCAL_LVS_IMAGE:-cti-vss-video-summarization:thor-local}"
 export THOR_LOCAL_ALERT_BRIDGE_IMAGE="${THOR_LOCAL_ALERT_BRIDGE_IMAGE:-cti-vss-alert-bridge:thor-local}"
 export THOR_LOCAL_RTVI_VLM_IMAGE="${THOR_LOCAL_RTVI_VLM_IMAGE:-cti-vss-rt-vlm:thor-local}"
+export THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE="${THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE:-cti-vss-behavior-analytics:thor-local}"
 export VLM_MAX_FRAMES_PER_REQUEST="${VLM_MAX_FRAMES_PER_REQUEST:-4}"
 export VLM_WARMUP_ENABLED=false
 export REALTIME_ALERT_CHUNK_DURATION="${REALTIME_ALERT_CHUNK_DURATION:-10}"
@@ -144,8 +148,15 @@ export VSS_PRESERVE_DATA_ON_UP="${VSS_PRESERVE_DATA_ON_UP:-true}"
 export VSS_PRUNE_DANGLING_VOLUMES="${VSS_PRUNE_DANGLING_VOLUMES:-false}"
 export THOR_LOCAL_FORCE_BOOTSTRAP="${THOR_LOCAL_FORCE_BOOTSTRAP:-false}"
 # Thor-local uses operator-hosted model endpoints and one unified application
-# profile. Synthetic llm_remote_*/vlm_remote_* profiles own no services here.
-export COMPOSE_PROFILES="${THOR_LOCAL_COMPOSE_PROFILES:-bp_developer_thor_full_2d}"
+# profile. Perception is selected separately so the Smart City and Search
+# pipelines can never compete for Thor's one GPU/RT-CV host port.
+export COMPOSE_PROFILES="${THOR_LOCAL_COMPOSE_PROFILES:-bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d}"
+smartcity_profile_enabled=false
+case ",${COMPOSE_PROFILES}," in
+  *,bp_developer_thor_smartcity_2d,*) smartcity_profile_enabled=true ;;
+esac
+export NEXT_PUBLIC_ENABLE_MAP_TAB="${NEXT_PUBLIC_ENABLE_MAP_TAB:-${smartcity_profile_enabled}}"
+export NEXT_PUBLIC_MAP_URL="${NEXT_PUBLIC_MAP_URL:-http://127.0.0.1:${VSS_PUBLIC_PORT}/smartcity-map/}"
 
 usage() {
   cat <<'EOF'
@@ -156,6 +167,8 @@ Commands:
   model-check
              Exercise the local OpenAI-compatible LLM and four-image VLM contract.
   contract   Show the effective non-secret Thor-local environment contract.
+  qualify --tier contract
+             Verify all checked-in REST/MCP API contracts offline and read-only.
   kernel-check
              Check required VSS kernel settings without changing the host.
   kernel-settings
@@ -197,13 +210,15 @@ Optional environment overrides:
   THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START (defaults 20),
   VST_PORT, SENSOR_HTTP_PORT, STREAM_PROCESSOR_HTTP_PORT,
   RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT,
-  VIDEO_ANALYTICS_API_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
+  VIDEO_ANALYTICS_API_PORT, SMARTCITY_MAP_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
   VSS_VA_MCP_PORT, BACKEND_PORT, KIBANA_PORT,
   VLM_MAX_FRAMES_PER_REQUEST, VST_VIDEO_STORAGE_SIZE_MB.
   NPM_CONFIG_REGISTRY (defaults to https://registry.npmmirror.com).
   NEXT_PUBLIC_APP_TITLE, NEXT_PUBLIC_APP_SUBTITLE,
   NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_ENABLE.
-  THOR_LOCAL_COMPOSE_PROFILES (defaults to bp_developer_thor_full_2d).
+  THOR_LOCAL_COMPOSE_PROFILES defaults to the shared Thor-full services plus
+  bp_developer_thor_search_perception_2d. Replace that perception profile with
+  bp_developer_thor_smartcity_2d for the one-camera Smart City workload.
   THOR_FULL_ENABLE_KIBANA (defaults to true).
   THOR_FULL_STAGE_TIMEOUT_SECONDS (defaults to 1800).
   THOR_FULL_READINESS_TIMEOUT_SECONDS (defaults to 1200).
@@ -218,6 +233,8 @@ Optional environment overrides:
   (defaults 1024) bound local summary aggregation.
   LVS_ENABLE_MCP (defaults true) and LVS_MCP_PORT (defaults 38112) expose
   the released local LVS SSE MCP server.
+  VIA_DEV_API (defaults true) exposes the file-management and VLM-caption
+  routes required by the complete released LVS MCP tool set.
   REALTIME_ALERT_CHUNK_DURATION, REALTIME_ALERT_CHUNK_OVERLAP_DURATION,
   REALTIME_ALERT_FRAMES_PER_CHUNK, REALTIME_ALERT_USE_FPS,
   REALTIME_ALERT_VLM_INPUT_WIDTH, REALTIME_ALERT_VLM_INPUT_HEIGHT,
@@ -534,8 +551,19 @@ require_rtvi_model_endpoint() {
 validate_thor_full_contract() {
   local item name port value model_container
   [[ "${profile}" == "thor-full" ]] || die "THOR_LOCAL_PROFILE must be thor-full; found '${profile}'"
-  [[ "${COMPOSE_PROFILES}" == "bp_developer_thor_full_2d" ]] ||
-    die "THOR_LOCAL_COMPOSE_PROFILES must be bp_developer_thor_full_2d"
+  case "${COMPOSE_PROFILES}" in
+    bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d)
+      [[ "${NEXT_PUBLIC_ENABLE_MAP_TAB}" == "false" ]] ||
+        die "NEXT_PUBLIC_ENABLE_MAP_TAB must be false for the Thor Search perception profile"
+      ;;
+    bp_developer_thor_full_2d,bp_developer_thor_smartcity_2d)
+      [[ "${NEXT_PUBLIC_ENABLE_MAP_TAB}" == "true" ]] ||
+        die "NEXT_PUBLIC_ENABLE_MAP_TAB must be true for the Thor Smart City profile"
+      ;;
+    *)
+      die "THOR_LOCAL_COMPOSE_PROFILES must select Thor-full plus exactly one of bp_developer_thor_search_perception_2d or bp_developer_thor_smartcity_2d"
+      ;;
+  esac
   [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" || "${THOR_FULL_ENABLE_KIBANA}" == "false" ]] ||
     die "THOR_FULL_ENABLE_KIBANA must be true or false"
   [[ "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "true" || "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "false" ]] ||
@@ -572,6 +600,8 @@ validate_thor_full_contract() {
     die "LVS_LLM_ENABLE_THINKING must be true or false"
   [[ "${LVS_ENABLE_MCP}" == "true" || "${LVS_ENABLE_MCP}" == "false" ]] ||
     die "LVS_ENABLE_MCP must be true or false"
+  [[ "${VIA_DEV_API}" == "true" || "${VIA_DEV_API}" == "false" ]] ||
+    die "VIA_DEV_API must be true or false"
   [[ "${LVS_LLM_MAX_TOKENS}" =~ ^[1-9][0-9]*$ ]] ||
     die "LVS_LLM_MAX_TOKENS must be a positive integer"
   (( LVS_LLM_MAX_TOKENS <= 4096 )) ||
@@ -639,6 +669,7 @@ validate_thor_full_contract() {
     "RTVI_VLM_PORT:${RTVI_VLM_PORT}" \
     "RTVI_CV_PORT:${RTVI_CV_PORT}" \
     "VIDEO_ANALYTICS_API_PORT:${VIDEO_ANALYTICS_API_PORT}" \
+    "SMARTCITY_MAP_PORT:${SMARTCITY_MAP_PORT}" \
     "ALERT_BRIDGE_PORT:${ALERT_BRIDGE_PORT}" \
     "KAFKA_PORT:${KAFKA_PORT}" \
     "VSS_ES_PORT:${VSS_ES_PORT}" \
@@ -695,6 +726,7 @@ print_runtime_contract() {
     THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START "${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START}" \
     THOR_LOCAL_ALERT_BRIDGE_IMAGE "${THOR_LOCAL_ALERT_BRIDGE_IMAGE}" \
     THOR_LOCAL_RTVI_VLM_IMAGE "${THOR_LOCAL_RTVI_VLM_IMAGE}" \
+    THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE "${THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE}" \
     OPENAI_API_KEY "${OPENAI_API_KEY}" \
     VLM_WARMUP_ENABLED false \
     REALTIME_ALERT_CHUNK_DURATION "${REALTIME_ALERT_CHUNK_DURATION}" \
@@ -747,6 +779,7 @@ print_runtime_contract() {
     COSMOS_EMBED_ENDPOINT "http://127.0.0.1:${RTVI_EMBED_PORT}" \
     VIDEO_ANALYTICS_API_PORT "${VIDEO_ANALYTICS_API_PORT}" \
     MDX_PORT "${MDX_PORT}" \
+    SMARTCITY_MAP_PORT "${SMARTCITY_MAP_PORT}" \
     ALERT_BRIDGE_PORT "${ALERT_BRIDGE_PORT}" \
     ALERT_BRIDGE_URL "http://127.0.0.1:${ALERT_BRIDGE_PORT}" \
     KAFKA_PORT "${KAFKA_PORT}" \
@@ -762,6 +795,7 @@ print_runtime_contract() {
     LVS_BACKEND_URL "http://127.0.0.1:${BACKEND_PORT}" \
     LVS_MCP_PORT "${LVS_MCP_PORT}" \
     LVS_ENABLE_MCP "${LVS_ENABLE_MCP}" \
+    VIA_DEV_API "${VIA_DEV_API}" \
     LVS_LLM_ENABLE_THINKING "${LVS_LLM_ENABLE_THINKING}" \
     LVS_LLM_MAX_TOKENS "${LVS_LLM_MAX_TOKENS}" \
     THOR_LOCAL_LVS_IMAGE "${THOR_LOCAL_LVS_IMAGE}" \
@@ -781,6 +815,8 @@ print_runtime_contract() {
     NPM_CONFIG_REGISTRY "${NPM_CONFIG_REGISTRY}" \
     NEXT_PUBLIC_APP_TITLE "${NEXT_PUBLIC_APP_TITLE}" \
     NEXT_PUBLIC_APP_SUBTITLE "${NEXT_PUBLIC_APP_SUBTITLE}" \
+    NEXT_PUBLIC_ENABLE_MAP_TAB "${NEXT_PUBLIC_ENABLE_MAP_TAB}" \
+    NEXT_PUBLIC_MAP_URL "${NEXT_PUBLIC_MAP_URL}" \
     NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_ENABLE "${NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_ENABLE}" \
     NGC_CLI_API_KEY '' \
     NGC_API_KEY '' \
@@ -843,6 +879,7 @@ show_contract() {
 Thor-local environment contract:
   Blueprint: bp_developer_thor_full (AGX-THOR, mode 2d)
   Compose profile: ${COMPOSE_PROFILES}
+  Smart City map: enabled=${NEXT_PUBLIC_ENABLE_MAP_TAB}, URL=${NEXT_PUBLIC_MAP_URL}
   Domain pack: ${active_domain_pack_id}
   UI: port ${VSS_UI_PORT}, title '${NEXT_PUBLIC_APP_TITLE}', subtitle '${NEXT_PUBLIC_APP_SUBTITLE}'
   RTSP add control: ${NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_ENABLE}
@@ -854,6 +891,7 @@ Thor-local environment contract:
   Intelligence ports: embed=${RTVI_EMBED_PORT} (batch ${RTVI_EMBED_BATCH_SIZE}), RTVI-VLM=${RTVI_VLM_PORT} (batch ${RTVI_VLM_BATCH_SIZE}, processes ${RTVI_VLM_NUM_VLM_PROCS}), perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, LVS=${BACKEND_PORT}
   RTVI timestamps: prompt=${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}, absolute_metadata=${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}
   LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}, MCP=${LVS_ENABLE_MCP}@${LVS_MCP_PORT}
+  LVS extended routes: VIA_DEV_API=${VIA_DEV_API}
   Live alerts: ${REALTIME_ALERT_CHUNK_DURATION}s chunks/${REALTIME_ALERT_CHUNK_OVERLAP_DURATION}s overlap, ${REALTIME_ALERT_FRAMES_PER_CHUNK} fixed frames at ${REALTIME_ALERT_VLM_INPUT_WIDTH}x${REALTIME_ALERT_VLM_INPUT_HEIGHT}, reasoning=${REALTIME_ALERT_ENABLE_REASONING}, max_tokens=${REALTIME_ALERT_MAX_TOKENS}
   Alert extensions: direct_media=${ALERT_DIRECT_MEDIA_ENABLED}, enrichment=${ALERT_ENRICHMENT_ENABLED}, always_on=${ALERT_ALWAYS_ON_ENABLED}, websocket=${ALERT_WEBSOCKET_ENABLED}
   Memory gates: model_start=${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START} GiB, stack_start=${THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START} GiB
@@ -1082,6 +1120,9 @@ preflight() {
   require_available_port "${RTVI_VLM_PORT}" vss-rtvi-vlm
   require_available_port "${RTVI_CV_PORT}" vss-rtvi-cv
   require_available_port "${VIDEO_ANALYTICS_API_PORT}" vss-video-analytics-api
+  if [[ "${smartcity_profile_enabled}" == "true" ]]; then
+    require_available_port "${SMARTCITY_MAP_PORT}" vss-smartcity-map-thor
+  fi
   require_available_port "${ALERT_BRIDGE_PORT}" vss-alert-bridge
   require_available_port "${KAFKA_PORT}" kafka
   require_available_port "${VSS_ES_PORT}" elasticsearch
@@ -1390,7 +1431,7 @@ security_internal_ports() {
     80 1935 3000 "${VSS_UI_PORT}" 4000 5201 6006 6379 \
     "$(endpoint_port "${LLM_ENDPOINT_URL}")" \
     "$(endpoint_port "${VLM_ENDPOINT_URL}")" \
-    8000 "${RTVI_EMBED_PORT}" "${RTVI_VLM_PORT}" "${VIDEO_ANALYTICS_API_PORT}" \
+    8000 "${RTVI_EMBED_PORT}" "${RTVI_VLM_PORT}" "${VIDEO_ANALYTICS_API_PORT}" "${SMARTCITY_MAP_PORT}" \
     "${VSS_AGENT_PORT}" 8554 8787 8888 8889 8892 "${RTVI_CV_PORT}" \
     "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 9600 \
     "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" \
@@ -1708,6 +1749,11 @@ critical_http_endpoints_are_ready() {
   done
   if ! rtvi_vlm_upstream_is_ready; then
     echo "[WAIT] rtvi-vlm upstream: ${VLM_CONTAINER_ENDPOINT_URL%/}/v1/models is not reachable from the proxy container."
+    pending=1
+  fi
+  if [[ "${smartcity_profile_enabled}" == "true" ]] &&
+     ! curl --connect-timeout 2 --max-time 5 --fail --silent "http://127.0.0.1:${SMARTCITY_MAP_PORT}/" >/dev/null; then
+    echo "[WAIT] Smart City map: http://127.0.0.1:${SMARTCITY_MAP_PORT}/ is not ready."
     pending=1
   fi
   (( pending == 0 ))
@@ -2099,6 +2145,16 @@ doctor() {
   doctor_finish
 }
 
+qualify_contract() {
+  local argument
+  for argument in "$@"; do
+    [[ "${argument}" != "--regenerate" ]] ||
+      die "thor-local.sh qualify is read-only; run the qualification Python tool directly for reviewed regeneration"
+  done
+  require_command python3
+  python3 "${qualification_tool}" "$@"
+}
+
 if [[ "${THOR_LOCAL_SOURCE_ONLY:-false}" == "true" ]]; then
   return 0 2>/dev/null || exit 0
 fi
@@ -2108,6 +2164,10 @@ case "${command_name}" in
   contract)
     validate_thor_full_contract
     show_contract
+    ;;
+  qualify)
+    shift
+    qualify_contract "$@"
     ;;
   kernel-check)
     "${script_dir}/dev-profile.sh" check-kernel-settings

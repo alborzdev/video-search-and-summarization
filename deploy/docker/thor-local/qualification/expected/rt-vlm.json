@@ -1,0 +1,183 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 27,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 4,
+    "GET": 16,
+    "POST": 7
+  },
+  "normalized_unique_operation_count": 27,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/assets/stats",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/chat/completions",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/completions",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/files",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/files",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/files/{file_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/files/{file_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/files/{file_id}/content",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/generate_captions",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/generate_captions/{stream_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/health/live",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/health/ready",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/live",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/manifest",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/metadata",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/metrics",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/models",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/ready",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/startup",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/stream/add",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/stream/get-stream-info",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/stream/remove",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/streams/add",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/streams/delete-batch",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/streams/delete/{stream_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/streams/get-stream-info",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/version",
+      "schema_hash": null
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    }
+  ],
+  "surface": "rt-vlm"
+}

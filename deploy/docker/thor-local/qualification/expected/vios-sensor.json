@@ -1,0 +1,217 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 28,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 1,
+    "GET": 16,
+    "POST": 11
+  },
+  "normalized_unique_operation_count": 28,
+  "operations": [
+    {
+      "method": "POST",
+      "operation_id": "postSensorNew",
+      "path": "/vst/api/v1/sensor/add",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/add"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorConfiguration",
+      "path": "/vst/api/v1/sensor/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/configuration"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorConfiguration",
+      "path": "/vst/api/v1/sensor/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/configuration"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postDebugPlug",
+      "path": "/vst/api/v1/sensor/debug/plug",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/debug/plug"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getDebugStatus",
+      "path": "/vst/api/v1/sensor/debug/status",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/debug/status"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSystemStats",
+      "path": "/vst/api/v1/sensor/debug/system/stats",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/debug/system/stats"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postDebugUnplug",
+      "path": "/vst/api/v1/sensor/debug/unplug",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/debug/unplug"
+    },
+    {
+      "method": "GET",
+      "operation_id": "gethelp",
+      "path": "/vst/api/v1/sensor/help",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/help"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorList",
+      "path": "/vst/api/v1/sensor/list",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/list"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorQos",
+      "path": "/vst/api/v1/sensor/qos",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/qos"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorScan",
+      "path": "/vst/api/v1/sensor/scan",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/scan"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorStatus",
+      "path": "/vst/api/v1/sensor/status",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/status"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorStreamsAll",
+      "path": "/vst/api/v1/sensor/streams",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/streams"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getAllSensorTimelines",
+      "path": "/vst/api/v1/sensor/timelines",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/timelines"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getVersion",
+      "path": "/vst/api/v1/sensor/version",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/version"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "deleteSensorWithId",
+      "path": "/vst/api/v1/sensor/{sensorId}",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorCredentials",
+      "path": "/vst/api/v1/sensor/{sensorId}/credentials",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/credentials"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorInfo",
+      "path": "/vst/api/v1/sensor/{sensorId}/info",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/info"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorInfo",
+      "path": "/vst/api/v1/sensor/{sensorId}/info",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/info"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorNetwork",
+      "path": "/vst/api/v1/sensor/{sensorId}/network",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/network"
+    },
+    {
+      "method": "POST",
+      "operation_id": "updateSensorNetwork",
+      "path": "/vst/api/v1/sensor/{sensorId}/network",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/network"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorReboot",
+      "path": "/vst/api/v1/sensor/{sensorId}/reboot",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/reboot"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorReplace",
+      "path": "/vst/api/v1/sensor/{sensorId}/replace",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/replace"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorSettings",
+      "path": "/vst/api/v1/sensor/{sensorId}/settings",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/settings"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorSettings",
+      "path": "/vst/api/v1/sensor/{sensorId}/settings",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/settings"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorStatusWithId",
+      "path": "/vst/api/v1/sensor/{sensorId}/status",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/status"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorStreams",
+      "path": "/vst/api/v1/sensor/{sensorId}/streams",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/streams"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getSensorTimelines",
+      "path": "/vst/api/v1/sensor/{sensorId}/timelines",
+      "schema_hash": null,
+      "source_path": "/v1/sensor/{sensorId}/timelines"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/vios/doc/api/vst_sensor_management_ms/swagger.yaml",
+      "sha256": "7ff32f7c05408e9e11c3c6c5caefcd62abdbfaf225f6a47946c40a121e414207"
+    }
+  ],
+  "surface": "vios-sensor"
+}

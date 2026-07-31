@@ -19,3 +19,4 @@ include:
   - path: ./dev-profile-alerts/compose.yml
   - path: ./dev-profile-search/compose.yml
   - path: ./dev-profile-thor-full/compose.yml
+  - path: ./dev-profile-thor-smartcity/compose.yml

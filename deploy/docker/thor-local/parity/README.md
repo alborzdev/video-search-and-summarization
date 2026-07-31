@@ -37,6 +37,13 @@ Smart City map uses Google Maps. The complete local goal requires either a
 documented local replacement or an explicit `external_optional` boundary; it
 must never be represented as offline functionality.
 
+NVIDIA's versioned warehouse app-data resource is an optional reference
+fixture, not a VSS capability and not a parity gate. The roughly 100 GB sample
+bundle is excluded from this Thor acceptance target. Warehouse acceptance is
+based on the local custom-data contract (operator-provided compatible models,
+videos/streams, and calibration) plus reproducible static and runtime evidence;
+an unavailable NVIDIA sample must not turn that capability into a blocker.
+
 Register the 16 versioned NVIDIA VSS skills with Codex, or verify the current
 host registration, with:
 

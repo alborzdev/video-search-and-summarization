@@ -1,0 +1,74 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 9,
+  "kind": "rest",
+  "method_counts": {
+    "GET": 6,
+    "POST": 3
+  },
+  "normalized_unique_operation_count": 9,
+  "operations": [
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/generate_text_embeddings",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/live",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/metadata",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/metrics",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/ready",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/startup",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/stream/add",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/stream/get-stream-info",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/stream/remove",
+      "schema_hash": null
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "skills/vss-deploy-detection-tracking-2d/references/api-reference.md",
+      "sha256": "8a1ae964e574b2cf5bba4cf4190beb7abbe6d80f055bdf33c436eec5f043d382"
+    }
+  ],
+  "surface": "rt-cv"
+}

@@ -1,0 +1,46 @@
+{
+  "kind": "mcp",
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml",
+      "sha256": "38e859ca624db121c433abf79da732f1534745ff5422b622837038965658f2d8"
+    },
+    {
+      "path": "services/agent/src/vss_agents/video_analytics/tools.py",
+      "sha256": "96b23a88c8e87add00e45320659f525d381eb8837e9f4ad693c39f096d543ffe"
+    }
+  ],
+  "surface": "va-mcp",
+  "tool_count": 7,
+  "tools": [
+    {
+      "input_schema_hash": null,
+      "name": "video_analytics__analyze"
+    },
+    {
+      "input_schema_hash": null,
+      "name": "video_analytics__get_average_speeds"
+    },
+    {
+      "input_schema_hash": null,
+      "name": "video_analytics__get_fov_histogram"
+    },
+    {
+      "input_schema_hash": null,
+      "name": "video_analytics__get_incident"
+    },
+    {
+      "input_schema_hash": null,
+      "name": "video_analytics__get_incidents"
+    },
+    {
+      "input_schema_hash": null,
+      "name": "video_analytics__get_places"
+    },
+    {
+      "input_schema_hash": null,
+      "name": "video_analytics__get_sensor_ids"
+    }
+  ]
+}

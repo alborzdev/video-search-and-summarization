@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Thor Smart City — Agnew Head On</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand" aria-label="Thor Smart City operations">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <strong>THOR / SMART CITY</strong>
+            <span>Agnew head-on · Santa Clara</span>
+          </div>
+        </div>
+        <div class="system-state" role="status" aria-live="polite">
+          <span id="status-dot" class="status-dot"></span>
+          <span id="system-status">Loading local topology</span>
+          <time id="last-update">—</time>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <div class="map-stage" aria-label="Agnew road-network operations map">
+          <div class="map-label">
+            <span>LIVE ROAD GRAPH</span>
+            <strong>37.3929° N / 121.9468° W</strong>
+          </div>
+          <svg id="road-map" viewBox="0 0 1200 800" role="img" aria-labelledby="map-title map-description">
+            <title id="map-title">Agnew Head On road network</title>
+            <desc id="map-description">A local vector rendering of the selected Smart City road segments and camera.</desc>
+            <g id="grid-layer" class="grid-layer"></g>
+            <g id="road-layer" class="road-layer"></g>
+            <g id="sensor-layer" class="sensor-layer"></g>
+          </svg>
+          <div class="map-key" aria-label="Map legend">
+            <span><i class="key-road"></i>Road segment</span>
+            <span><i class="key-camera"></i>Camera</span>
+            <span><i class="key-selected"></i>Selected</span>
+          </div>
+          <div class="map-scale" aria-hidden="true"><span></span>100 m</div>
+        </div>
+
+        <aside class="inspector" aria-label="Traffic telemetry">
+          <section class="inspector-section overview">
+            <p class="eyebrow">CURRENT WINDOW</p>
+            <h1>Agnew Head On</h1>
+            <p class="muted">One camera · 39 official road segments · local-only rendering</p>
+            <div class="metric-row">
+              <div><span>AVG SPEED</span><strong id="average-speed">—</strong></div>
+              <div><span>FLOW</span><strong id="flow-rate">—</strong></div>
+            </div>
+          </section>
+
+          <section class="inspector-section selection">
+            <div class="section-heading">
+              <p class="eyebrow">SELECTION</p>
+              <button id="clear-selection" type="button">Clear</button>
+            </div>
+            <strong id="segment-id">No segment selected</strong>
+            <dl>
+              <div><dt>Direction</dt><dd id="segment-direction">—</dd></div>
+              <div><dt>Camera</dt><dd>Agnew_head_on</dd></div>
+              <div><dt>Source</dt><dd>Local GraphML</dd></div>
+            </dl>
+          </section>
+
+          <section class="inspector-section incidents">
+            <div class="section-heading">
+              <p class="eyebrow">RECENT INCIDENTS</p>
+              <span id="incident-count" class="count-badge">0</span>
+            </div>
+            <div id="incident-list" class="incident-list" aria-live="polite">
+              <p class="empty-state">Waiting for local analytics…</p>
+            </div>
+          </section>
+
+          <footer>
+            <span>DATA PLANE</span>
+            <strong id="data-source">Bundled baseline</strong>
+          </footer>
+        </aside>
+      </section>
+    </main>
+    <script src="./app.js" defer></script>
+  </body>
+</html>

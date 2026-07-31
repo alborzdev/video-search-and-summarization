@@ -1,0 +1,356 @@
+{
+  "component_schema_hash": "ebd86e60128a2b54fd602fffb65d03e3b9043ec1276b481f802a9ab94efba7a7",
+  "declared_operation_count": 56,
+  "kind": "rest",
+  "method_counts": {
+    "GET": 48,
+    "POST": 8
+  },
+  "normalized_unique_operation_count": 56,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": "controller.alerts.getAlerts",
+      "path": "/alerts",
+      "schema_hash": "381de243891747efee17160c421cefc89203e1f0247f2453e0605cd7a7298a8f"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.alerts.getSevereAlerts",
+      "path": "/alerts/severe",
+      "schema_hash": "cf054fcf8a28fd4a4b6145c7be67b35fc375c9f8ff6169aa7f78ef68dab49481"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.behavior.getBehavior",
+      "path": "/behavior",
+      "schema_hash": "fadf52171b41c0afb70bf4e8d57f036092bf8f00dcd02b27c9cd0aade9dc298e"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.behavior.getPts",
+      "path": "/behavior/pts",
+      "schema_hash": "d20d5492888dbfccde62a97a4b4385e6675909c34b510434f5907ad9ebc48683"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.clustering.addClusterLabel",
+      "path": "/clustering/add-label",
+      "schema_hash": "b88ce9bf99306f651a1a228c22aa50d2bffbe4d2c3e2136c487334c4643d9e2b"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.clustering.getClusteringResults",
+      "path": "/clustering/behavior",
+      "schema_hash": "4a938b19d3a953786599338b64d091563b08c2c2549aed3206a89fe45f314b4c"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.config.getCalibrationConfig",
+      "path": "/config/calibration",
+      "schema_hash": "c0efe75581bd824bd42e64b2705db783ba82d824f52f10fe7f71b6ae6de1c369"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.config.deleteCalibrationImages",
+      "path": "/config/calibration/delete-images",
+      "schema_hash": "2ce29e0f213afe79219dd3c3f3bc2f7641d6127993321559db65d4af5661f0c7"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.config.deleteSensorCalibration",
+      "path": "/config/calibration/delete-sensor",
+      "schema_hash": "90926edb3e3f2a773e97aeb543abf5e8a0ff4afc1aa5c5197c3e5a0bf68e213c"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.config.getCalibrationImage",
+      "path": "/config/calibration/image",
+      "schema_hash": "6113da31411e0f5e5f7f57a5c8fce7e147b6163b152479adcb533a799eed7e02"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.config.getCalibrationImageMetadata",
+      "path": "/config/calibration/image-metadata",
+      "schema_hash": "3355a4caa5dc0f9219a17b2c29738b3335eefd5c5771b5bad06695bbc18b6854"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.config.uploadCalibrationImages",
+      "path": "/config/calibration/images",
+      "schema_hash": "6c4e7899899995b7c3be22cc4ec7e09fc08d401a726e1c6258e364f01bf4cb69"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.config.getCalibrationLastModifiedTimestamp",
+      "path": "/config/calibration/last-modified-timestamp",
+      "schema_hash": "17ade46f03dd62f3d4c6099e55eec2f13f715581ee9774dc38d854c5119254ec"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.config.upsertCalibration",
+      "path": "/config/calibration/upsert",
+      "schema_hash": "2cde2c77507bd75fde95c1b494a62179e510903390128446963e0386dd38e9fc"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.config.getRoadNetworkConfig",
+      "path": "/config/road-network",
+      "schema_hash": "9bfcd0870054db4bff6d80512f4198d854ecdbd8be354d8df68fa97cda7cde3e"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.config.getUpdateStatus",
+      "path": "/config/update/status/{docType}/{referenceId}",
+      "schema_hash": "b6e5b1af5aabcf39020f10c4d179e8f4b230a73398f2aee39332dc48155486ee"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.config.update",
+      "path": "/config/update/{docType}",
+      "schema_hash": "07a1f6e4d3c2f15348529fdaad38b685e3fc8041adc9e8f058298a8565d82c5a"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.config.uploadFile",
+      "path": "/config/upload-file/{docType}",
+      "schema_hash": "dabf661ceb479554d0391a7b6d4ca65355985bf66b62c70c821ec116bbc13b48"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.config.getUsdAssetsConfig",
+      "path": "/config/usd-assets",
+      "schema_hash": "b9c9d9e7a589af14c1b250da20fc07a70a4fd5282f90e3aed511fd084f0870f0"
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/events/amr",
+      "schema_hash": "a33c6cc66df28fca6201d8c4c7df12a14e0842813768d995c13bc18841fad93d"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.events.getRoiEvents",
+      "path": "/events/roi",
+      "schema_hash": "4309a854b70794ae80cfbe06fef9012918d9a2e4bb513b7a331e4e4eb56b0a0e"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.events.getTripwireEvents",
+      "path": "/events/tripwire",
+      "schema_hash": "3847e13fe60524d45a037aa523820caad363492486b737de315abbe82efc61f5"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.frames.getRawFrames",
+      "path": "/frames",
+      "schema_hash": "723c1f247083750904fb9fab54a72b0a8ea51ebdcfce25cf3721fa77cf16dff2"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.frames.getAlerts",
+      "path": "/frames/alerts",
+      "schema_hash": "277f56aacaeb5673f259c3442d256ed38fc5fbdcb8e030b4bf9c4fb1c6e2a89a"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.frames.getBevFrames",
+      "path": "/frames/bev",
+      "schema_hash": "d2abc9bf7d7b8426a1928060232d3cbdc5333dada979cb189f32cb6c645cf197"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.frames.getEnhancedFrames",
+      "path": "/frames/enhanced",
+      "schema_hash": "67fd81f366e16a6e930845adbcd13f6a735e6a978f7047e0c50ef33d86412b82"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.frames.getHighConfidenceObjects",
+      "path": "/frames/high-confidence-objects",
+      "schema_hash": "a501564886587f924b04f36c21e418ab55823a3dee68695aa862d6cf78f3e395"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.frames.getProximityClusters",
+      "path": "/frames/proximity-detection",
+      "schema_hash": "0af5be6ac831e0807b230de16f49294afb3fa751069e13f179bb5b2a7b7c4bfa"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.frames.getPts",
+      "path": "/frames/pts",
+      "schema_hash": "a268feddd55e2e01c7cf7f8eba36379a3eea1d48c8c34e7b231e551760c41952"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.incidents.getIncidents",
+      "path": "/incidents",
+      "schema_hash": "fcb5e345fca531a747b606f7f51066d6e7df40fe41726780ecf524671249dd7e"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.incidents.getSevereIncidents",
+      "path": "/incidents/severe",
+      "schema_hash": "e44c16f2cd4da67060f8190b7918fe0b01c4f5df1519bd13c0851fefc4b9b49f"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.livez.isAlive",
+      "path": "/livez",
+      "schema_hash": "3c431137751a2a9d89c701171d5dc7de2d644bb0dd977abf01a00f7193838ae6"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getAverageSpeed",
+      "path": "/metrics/average-speed",
+      "schema_hash": "3b7e7642261b3106ebe4341bd7a6bec39e0943ca03e02702357a5c1d4220efca"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getAverageSpeedWithFlowrate",
+      "path": "/metrics/average-speed-with-flowrate",
+      "schema_hash": "6fd328a28d39d06e65199dff9de9a8884733c39afdee4a2e40ead4b944a94394"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getAverageSpeedWithTravelTime",
+      "path": "/metrics/average-speed-with-travel-time",
+      "schema_hash": "ff85c9af9088e0ff7e819d01da8e87c31c1443df3b49f2922842beeaa954cf2c"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getFlowrate",
+      "path": "/metrics/flowrate",
+      "schema_hash": "69ece46ac7eb8b24e653d651e7189074183a9b9f298d214f45d9bc56d482a5b5"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getLastProcessedTimestamp",
+      "path": "/metrics/last-processed-timestamp",
+      "schema_hash": "c00daf925f16b75fa38a7ac6fc00f6942b1a7a3057c4f7ece1f09987f661ccf3"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getFovOccupancy",
+      "path": "/metrics/occupancy/fov",
+      "schema_hash": "deffcb7a30b42f9f50ca2c71566d6f4a12ad8d3682a67e105ba5d1de6c93a807"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getFovHistogram",
+      "path": "/metrics/occupancy/fov/histogram",
+      "schema_hash": "b8bcef521be4e9e547c1496aac3a7269e3e8ff25d60f5f26d43ee4cb62518cfe"
+    },
+    {
+      "method": "POST",
+      "operation_id": "controller.metrics.resetOccupancy",
+      "path": "/metrics/occupancy/reset",
+      "schema_hash": "3d711c06aad37e8abe1c9edeb39d5f8d1980c7223b386e5059f7e9b75eb785cd"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getRoiOccupancy",
+      "path": "/metrics/occupancy/roi",
+      "schema_hash": "d77c21549ae46a60c6bd699db591c9e65887ec0ed21f3140a25b1313f08e5934"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getRoiHistogram",
+      "path": "/metrics/occupancy/roi/histogram",
+      "schema_hash": "7d5578a07d2c0484c6182b2763e35170f93a33723a5306a2dbe9c6d571f1ba54"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getOccupancyBasedOnMutuallyExclusiveRoi",
+      "path": "/metrics/occupancy/roi/mutually-exclusive",
+      "schema_hash": "89348237430d75101c4ea0519db2266689ea016676e67a4c9888adfb85124cc4"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getOccupancyTracker",
+      "path": "/metrics/occupancy/tracker",
+      "schema_hash": "c6dd8f273a3058fe54b5ca424198c9327572a718a226e800e4ea9f5599633782"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getTripwireOccupancyHistogram",
+      "path": "/metrics/occupancy/tracker/histogram",
+      "schema_hash": "c5cc8bfccd09b834f492cda49d5f6b1bf922a6bb575d9059133822f44e3a1b08"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getTripwireBasedOccupancy",
+      "path": "/metrics/occupancy/tripwire",
+      "schema_hash": "bdc1e4cc34df6fd9ce49ced4d723a46a11245b25ad6da898f09fbb3d8770bc69"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.roadNetwork.averageSegmentSpeed",
+      "path": "/metrics/road-network/segment-speed",
+      "schema_hash": "de715f58be2cd7a10d3c89cdc497234e6932ae50fe584959971adb0a27c8480f"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getSpaceUtilizationHistogram",
+      "path": "/metrics/space-utilization/histogram",
+      "schema_hash": "563793fd2b3acded87f08c177fe17e88c432d511e8b0e5ac2f6221581b5eb481"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getTripwireCounts",
+      "path": "/metrics/tripwire/counts",
+      "schema_hash": "46d65a625857a070bd4b53d42de0024f814a89def4a0e9b22e4e463d689772e8"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.metrics.getTripwireHistogram",
+      "path": "/metrics/tripwire/histogram",
+      "schema_hash": "6f1ad67aadb9fd6ba9c85caac128c0d3163abdff60bff22461d6d54599214205"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.sensor.getSensorLookup",
+      "path": "/sensor/lookup",
+      "schema_hash": "7553b40211c18d3a91c967c996e8530cf685e71e4ecbb4be6960518ac0edc09e"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.tracker.getBehaviorLocations",
+      "path": "/tracker/behavior-locations",
+      "schema_hash": "3b45230ec691b84d0645ec9e77506b9c318ba7525bd853f8dc0a572e4e558cdc"
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/tracker/last-record",
+      "schema_hash": "294e693dbb0bfe76ad2280ebba5ea4364cb86ce5f4239be1ec84e72f2e38caa6"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.tracker.getUniqueObjectCount",
+      "path": "/tracker/unique-object-count",
+      "schema_hash": "e5d073b6886ac7cbb2a8a05926f562ec305cb3517a3d987e30e24c1c96409930"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.tracker.getUniqueObjectCountWithLocations",
+      "path": "/tracker/unique-object-count-with-locations",
+      "schema_hash": "83b31908342a5e46305498b6894449d272d8a5624638b2927d988b31f7e0f02b"
+    },
+    {
+      "method": "GET",
+      "operation_id": "controller.tracker.getUniqueObjects",
+      "path": "/tracker/unique-objects",
+      "schema_hash": "dde45892315c211c870c1f529b593ea634fd782092e5b8e546644fd097ed0663"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/analytics/video-analytics-api/src/app/specification/openapi.json",
+      "sha256": "0ff2b2f412446e29149a4998e00a3c6b00c17402befa5f24d8b5b454fb625d37"
+    }
+  ],
+  "surface": "video-analytics"
+}

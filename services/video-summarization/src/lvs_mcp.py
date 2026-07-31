@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -370,10 +370,10 @@ class LvsMCPServer:
 
         # Health Check
         if name == "health_ready":
-            return {"status": "ready", "code": 200}
+            return await self._health_ready()
 
         elif name == "health_live":
-            return {"status": "alive", "code": 200}
+            return await self._health_live()
 
         # Models API
         elif name == "list_models":
@@ -465,6 +465,16 @@ class LvsMCPServer:
     async def _list_models(self) -> Dict[str, Any]:
         """List available models by calling the HTTP API."""
         return await self._call_http_api("GET", f"{API_PREFIX}/models")
+
+    async def _health_ready(self) -> Dict[str, Any]:
+        """Report readiness only after the LVS readiness route succeeds."""
+        await self._call_http_api("GET", "/v1/ready", return_text=True)
+        return {"status": "ready", "code": 200}
+
+    async def _health_live(self) -> Dict[str, Any]:
+        """Report liveness only after the LVS liveness route succeeds."""
+        await self._call_http_api("GET", "/v1/live", return_text=True)
+        return {"status": "alive", "code": 200}
 
     async def _summarize_video(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Summarize a video by calling the HTTP API."""

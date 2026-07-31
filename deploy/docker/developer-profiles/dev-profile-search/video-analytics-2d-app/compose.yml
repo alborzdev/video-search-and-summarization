@@ -72,7 +72,7 @@ services:
 
   perception-2d-init:
     image: debian:12-slim
-    profiles: ["bp_developer_search_2d", "bp_developer_thor_full_2d"]
+    profiles: ["bp_developer_search_2d", "bp_developer_thor_search_perception_2d"]
     container_name: vss-rtvi-cv-init
     network_mode: "host"
     deploy:
@@ -103,7 +103,7 @@ services:
     extends:
       file: $VSS_APPS_DIR/services/rtvi/rtvi-cv/compose.yaml
       service: perception
-    profiles: ["bp_developer_search_2d", "bp_developer_thor_full_2d"]
+    profiles: ["bp_developer_search_2d", "bp_developer_thor_search_perception_2d"]
     container_name: vss-rtvi-cv
     volumes:
         # Config file mounts (read-only staging; ds-search-start.sh copies to the writable app dir)

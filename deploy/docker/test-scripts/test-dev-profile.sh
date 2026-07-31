@@ -489,7 +489,7 @@ LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 ru
   "COMPOSE_PROFILES" '${BP_PROFILE}_${MODE},llm_${LLM_MODE}_${LLM_NAME_SLUG},vlm_${VLM_MODE}_${VLM_NAME_SLUG}'
 LLM_ENDPOINT_URL=http://127.0.0.1:8000 VLM_ENDPOINT_URL=http://127.0.0.1:8001 run_dry_run_up_and_check_generated_env "generated.env thor-full unified local inference contract" "thor-full" \
  -i 127.0.0.1 -H AGX-THOR --use-remote-llm --llm datasheet-chat --llm-model-type vllm --use-remote-vlm --vlm datasheet-vision --vlm-model-type vllm -d -- \
-  "MODE" "2d" "BP_PROFILE" "bp_developer_thor_full" "HARDWARE_PROFILE" "AGX-THOR" "COMPOSE_PROFILES" "bp_developer_thor_full_2d" \
+  "MODE" "2d" "BP_PROFILE" "bp_developer_thor_full" "HARDWARE_PROFILE" "AGX-THOR" "COMPOSE_PROFILES" "bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d" \
   "LLM_MODE" "remote" "LLM_NAME" "datasheet-chat" "LLM_MODEL_TYPE" "vllm" "LLM_BASE_URL" "http://127.0.0.1:8000" \
   "VLM_MODE" "remote" "VLM_NAME" "datasheet-vision" "VLM_MODEL_TYPE" "vllm" "VLM_BASE_URL" "http://127.0.0.1:8001" \
   "RTVI_VLM_ENDPOINT" "http://127.0.0.1:8001/v1" "RTVI_VLM_MODEL_PATH" "none" \
@@ -920,7 +920,7 @@ if grep -q "UI: port 3001, title 'THOR LOCAL VSS', subtitle 'OFFLINE VIDEO INTEL
    grep -Eq "VLM: datasheet-vision via vllm at http://[^/]+:8003" <<<"${_thor_contract_out}" &&
    grep -Eq "RTVI-VLM upstream: http://[^/]+:8003/v1 \(bridge-to-host\)" <<<"${_thor_contract_out}" &&
    grep -q "Blueprint: bp_developer_thor_full (AGX-THOR, mode 2d)" <<<"${_thor_contract_out}" &&
-   grep -q "Compose profile: bp_developer_thor_full_2d" <<<"${_thor_contract_out}" &&
+   grep -q "Compose profile: bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d" <<<"${_thor_contract_out}" &&
    grep -q "Intelligence ports: embed=8017 (batch 8), RTVI-VLM=8018 (batch 1, processes 1), perception=9000, analytics=8081, alerts=9080, LVS=38111" <<<"${_thor_contract_out}" &&
    grep -q "RTVI timestamps: prompt=true, absolute_metadata=false" <<<"${_thor_contract_out}" &&
    grep -q "LVS aggregation: provider=vllm, thinking=false, max_tokens=1024, MCP=true@38112" <<<"${_thor_contract_out}" &&
@@ -936,7 +936,7 @@ else
 fi
 
 if grep -q 'profile="${THOR_LOCAL_PROFILE:-thor-full}"' "${_thor_local}" &&
-   grep -q 'COMPOSE_PROFILES="${THOR_LOCAL_COMPOSE_PROFILES:-bp_developer_thor_full_2d}"' "${_thor_local}" &&
+   grep -q 'COMPOSE_PROFILES="${THOR_LOCAL_COMPOSE_PROFILES:-bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d}"' "${_thor_local}" &&
    grep -q 'VSS_UI_PORT "${VSS_UI_PORT}"' "${_thor_local}" &&
    grep -q 'NEXT_PUBLIC_APP_TITLE "${NEXT_PUBLIC_APP_TITLE}"' "${_thor_local}" &&
    grep -q 'NEXT_PUBLIC_APP_SUBTITLE "${NEXT_PUBLIC_APP_SUBTITLE}"' "${_thor_local}" &&
@@ -1092,6 +1092,30 @@ if sed -n '/^  vss-va-mcp:/,/^  vss-agent:/p' "${_agent_compose}" |
   ((TESTS_PASSED++)) || true
 else
   echo "FAIL: Video Analytics MCP is missing required VIOS, Elasticsearch, or LLM environment"
+  ((TESTS_FAILED++)) || true
+fi
+
+_haproxy_config="${REPO_ROOT}/deploy/docker/services/infra/haproxy/haproxy.cfg.template"
+if sed -n '/^backend bk_va_mcp_strip$/,/^$/p' "${_haproxy_config}" |
+   grep -Fq 'http-request replace-path ^/va-mcp/(.*) /\1' &&
+   grep -q 'use_backend bk_va_mcp_strip if h_main p_va_mcp' "${_haproxy_config}"; then
+  echo "PASS: public VA-MCP ingress strips its external route prefix"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: public VA-MCP ingress must strip /va-mcp before forwarding"
+  ((TESTS_FAILED++)) || true
+fi
+
+if grep -q -- '- VIA_DEV_API=${VIA_DEV_API:-false}' \
+     "${REPO_ROOT}/deploy/docker/services/video-summarization/compose.yml" &&
+   grep -q '^VIA_DEV_API=true$' \
+     "${REPO_ROOT}/deploy/docker/developer-profiles/dev-profile-thor-full/.env" &&
+   grep -q 'COPY services/video-summarization/src/lvs_mcp.py' \
+     "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization"; then
+  echo "PASS: Thor enables and packages the complete LVS MCP development tool contract"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor LVS must package its MCP fixes and enable the advertised caption tool route"
   ((TESTS_FAILED++)) || true
 fi
 

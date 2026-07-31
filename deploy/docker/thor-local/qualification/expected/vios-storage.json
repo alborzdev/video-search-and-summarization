@@ -1,0 +1,204 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 26,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 2,
+    "GET": 20,
+    "POST": 2,
+    "PUT": 2
+  },
+  "normalized_unique_operation_count": 25,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": "getStorageConfiguration",
+      "path": "/vst/api/v1/storage/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/storage/configuration"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "deleteFiles",
+      "path": "/vst/api/v1/storage/file",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file"
+    },
+    {
+      "method": "GET",
+      "operation_id": "downloadFileById",
+      "path": "/vst/api/v1/storage/file",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file"
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/vst/api/v1/storage/file",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getAllFilesList",
+      "path": "/vst/api/v1/storage/file/list",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/list"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getMediaInfo",
+      "path": "/vst/api/v1/storage/file/mediainfo",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/mediainfo"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getFilePathById",
+      "path": "/vst/api/v1/storage/file/path",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/path"
+    },
+    {
+      "method": "POST",
+      "operation_id": "addOrRemoveFilesInProtectList",
+      "path": "/vst/api/v1/storage/file/protect",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/protect"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getProtectedFiles",
+      "path": "/vst/api/v1/storage/file/protected",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/protected"
+    },
+    {
+      "method": "PUT",
+      "operation_id": null,
+      "path": "/vst/api/v1/storage/file/{filename}",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{filename}"
+    },
+    {
+      "method": "PUT",
+      "operation_id": null,
+      "path": "/vst/api/v1/storage/file/{filename}/{timestamp}",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{filename}/{timestamp}"
+    },
+    {
+      "method": "GET",
+      "operation_id": "downloadFileBySensorId",
+      "path": "/vst/api/v1/storage/file/{sensorId}",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{sensorId}"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getFileListBySensorId",
+      "path": "/vst/api/v1/storage/file/{sensorId}/list",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{sensorId}/list"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getFilePathsBySensorId",
+      "path": "/vst/api/v1/storage/file/{sensorId}/path",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{sensorId}/path"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "deleteFile",
+      "path": "/vst/api/v1/storage/file/{streamId}",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{streamId}"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getDownloadFile",
+      "path": "/vst/api/v1/storage/file/{streamId}",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{streamId}"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getVideoStorageUrl",
+      "path": "/vst/api/v1/storage/file/{streamId}/url",
+      "schema_hash": null,
+      "source_path": "/v1/storage/file/{streamId}/url"
+    },
+    {
+      "method": "GET",
+      "operation_id": "gethelp",
+      "path": "/vst/api/v1/storage/help",
+      "schema_hash": null,
+      "source_path": "/v1/storage/help"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStorageInfo",
+      "path": "/vst/api/v1/storage/info",
+      "schema_hash": null,
+      "source_path": "/v1/storage/info"
+    },
+    {
+      "method": "GET",
+      "operation_id": "totalStorageSize",
+      "path": "/vst/api/v1/storage/size",
+      "schema_hash": null,
+      "source_path": "/v1/storage/size"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStorageStreamPicture",
+      "path": "/vst/api/v1/storage/stream/{streamId}/picture",
+      "schema_hash": null,
+      "source_path": "/v1/storage/stream/{streamId}/picture"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStorageStreamPictureUrl",
+      "path": "/vst/api/v1/storage/stream/{streamId}/picture/url",
+      "schema_hash": null,
+      "source_path": "/v1/storage/stream/{streamId}/picture/url"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getAllStorageTimelines",
+      "path": "/vst/api/v1/storage/timelines",
+      "schema_hash": null,
+      "source_path": "/v1/storage/timelines"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getVersion",
+      "path": "/vst/api/v1/storage/version",
+      "schema_hash": null,
+      "source_path": "/v1/storage/version"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getRecordSize",
+      "path": "/vst/api/v1/storage/{streamId}",
+      "schema_hash": null,
+      "source_path": "/v1/storage/{streamId}"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStorageTimelinesForStream",
+      "path": "/vst/api/v1/storage/{streamId}/timelines",
+      "schema_hash": null,
+      "source_path": "/v1/storage/{streamId}/timelines"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/vios/doc/api/vst_storage_management_ms/swagger.yaml",
+      "sha256": "b37fadcab72ca7b7dc538708134b69ea67880bce47b13b609595f56873567194"
+    }
+  ],
+  "surface": "vios-storage"
+}

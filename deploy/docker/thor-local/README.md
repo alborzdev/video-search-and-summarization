@@ -7,6 +7,11 @@ feature cannot be mistaken for a locally qualified one.
 
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 
+The resource-isolated minimal Redis warehouse-2D milestone is documented in
+[`WAREHOUSE_2D.md`](WAREHOUSE_2D.md). Its helper prepares and statically
+validates a private mutable Configurator snapshot; it intentionally has no
+container lifecycle or artifact-download command yet.
+
 ## Local model contract
 
 The default deployment expects OpenAI-compatible model servers on the Thor host:

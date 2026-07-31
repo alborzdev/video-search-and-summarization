@@ -63,6 +63,6 @@ The following suites passed after the staging/model-lane changes:
   is active; API, UI, inference, alerts, search, and restart qualification are
   therefore not yet current.
 - The physical-interface firewall has not yet been applied.
-- Optional Smart City, warehouse, 3D, calibration, audio/Omni, Cosmos 3, RAG,
-  and NemoClaw lanes remain separate open parity work in `manifest.json`.
-
+- Smart City, warehouse custom-data, 3D, calibration, audio/Omni, Cosmos 3,
+  RAG, and NemoClaw lanes remain separate open parity work in `manifest.json`.
+  NVIDIA's optional warehouse sample bundle is excluded from acceptance.

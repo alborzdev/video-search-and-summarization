@@ -1,0 +1,136 @@
+{
+  "component_schema_hash": "c1fd1c96967c6c0ac16b5f0b9f991485c5abcbfe94a678cc070420ad6fc3b9f3",
+  "declared_operation_count": 19,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 2,
+    "GET": 9,
+    "POST": 7,
+    "PUT": 1
+  },
+  "normalized_unique_operation_count": 19,
+  "operations": [
+    {
+      "method": "POST",
+      "operation_id": "submit_alert_api_v1_alerts_post",
+      "path": "/api/v1/alerts",
+      "schema_hash": "ff910901d31ee6c21c4f7def6d2090450a98f3a0a3a3fa45f03eea2000e68d96"
+    },
+    {
+      "method": "GET",
+      "operation_id": "alert_submission_health_api_v1_alerts_health_get",
+      "path": "/api/v1/alerts/health",
+      "schema_hash": "172c5288537327bcdb71992d2ec28733a8ea24926b9d6349b2a1f4e054ae9e7a"
+    },
+    {
+      "method": "POST",
+      "operation_id": "submit_incident_api_v1_incidents_post",
+      "path": "/api/v1/incidents",
+      "schema_hash": "e01d0555ecbe7dbd1fa25b45ce0fe9ad79c28a7c83a8943afc5608e0ead36290"
+    },
+    {
+      "method": "GET",
+      "operation_id": "list_realtime_alerts_api_v1_realtime_get",
+      "path": "/api/v1/realtime",
+      "schema_hash": "1b48a33112e7f7d756f5028a2e20ed015f3856238aca8267440bb87505f4b343"
+    },
+    {
+      "method": "POST",
+      "operation_id": "create_realtime_alert_api_v1_realtime_post",
+      "path": "/api/v1/realtime",
+      "schema_hash": "bd0a391bab845fcbf05440fbf26c8559ae3e519b243202f457a4dd8728aa738a"
+    },
+    {
+      "method": "POST",
+      "operation_id": "always_on_realtime_api_v1_realtime_always_on_post",
+      "path": "/api/v1/realtime/always-on",
+      "schema_hash": "ba73c4ba4d429fab11fce91b91d6a126ad691f3194eba5970c633349ed1a67de"
+    },
+    {
+      "method": "GET",
+      "operation_id": "list_incidents_api_v1_realtime_incidents_get",
+      "path": "/api/v1/realtime/incidents",
+      "schema_hash": "5ece76fff53a1e5edf517283f11c9da62a30297414eb9d885295dd03164ef12a"
+    },
+    {
+      "method": "POST",
+      "operation_id": "replay_realtime_alerts_api_v1_realtime_replay_post",
+      "path": "/api/v1/realtime/replay",
+      "schema_hash": "017e2689da6fef473ceec0729658bcf7666c9fdff3d674ad220ec11461ab9d65"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "delete_realtime_alert_api_v1_realtime__alert_rule_id__delete",
+      "path": "/api/v1/realtime/{alert_rule_id}",
+      "schema_hash": "d23d375db5b815b8022198538db431d80ed9e7f7571dd45e4c850b072aec420b"
+    },
+    {
+      "method": "GET",
+      "operation_id": "get_realtime_alert_api_v1_realtime__alert_rule_id__get",
+      "path": "/api/v1/realtime/{alert_rule_id}",
+      "schema_hash": "a368e871bc53f844dc307145166532bcae8f65a68bd90b28b4491e32c60fc330"
+    },
+    {
+      "method": "GET",
+      "operation_id": "list_configs_api_v1_verification_config_get",
+      "path": "/api/v1/verification/config",
+      "schema_hash": "beb4b77e6e6124d45ed1b631a738937c27945a2c1c494b1eb6dbce261a0135bd"
+    },
+    {
+      "method": "POST",
+      "operation_id": "create_config_api_v1_verification_config_post",
+      "path": "/api/v1/verification/config",
+      "schema_hash": "b7934d342ff0aad974b1b66ff3606838b2edeb65af3232c4c64ca6c422f93cb6"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "delete_config_api_v1_verification_config__alert_type__delete",
+      "path": "/api/v1/verification/config/{alert_type}",
+      "schema_hash": "8a73c4f93b8cf5ad4df8b30b4a0c5563a6317a015da2163003c0397069326ebb"
+    },
+    {
+      "method": "GET",
+      "operation_id": "get_config_api_v1_verification_config__alert_type__get",
+      "path": "/api/v1/verification/config/{alert_type}",
+      "schema_hash": "a4bc8a7fc1693530799363b6f1eb9ca8231aa0ccfbbf83b8428640ed4b1183b9"
+    },
+    {
+      "method": "PUT",
+      "operation_id": "update_config_api_v1_verification_config__alert_type__put",
+      "path": "/api/v1/verification/config/{alert_type}",
+      "schema_hash": "0dbfcb28396d614d409c03a25dd995ee3714196b438491ae0a6224e18e04a9a8"
+    },
+    {
+      "method": "POST",
+      "operation_id": "verify_ondemand_api_v1_verification_ondemand_post",
+      "path": "/api/v1/verification/ondemand",
+      "schema_hash": "088d0aba63dbb357247e261b8b8e55bc472b4cfe182102e1363a4252f9b2d5cf"
+    },
+    {
+      "method": "GET",
+      "operation_id": "health_check_health_get",
+      "path": "/health",
+      "schema_hash": "728d5e3f92fb9e0c4487e44a0621cd66a5d11ca741ea5b232589481391069ba0"
+    },
+    {
+      "method": "GET",
+      "operation_id": "metrics_metrics_get",
+      "path": "/metrics",
+      "schema_hash": "5b36f68050691959db2dab904dc2ee732c9260d23653f871660531f8aff241af"
+    },
+    {
+      "method": "GET",
+      "operation_id": "websocket_health_ws_health_get",
+      "path": "/ws/health",
+      "schema_hash": "bca644a40a9f43baa4229b949a21fc549a5b3656e2305e2c99a57928efbd7a0d"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/alert/openapi.json",
+      "sha256": "e754ab3efedddb90199c77c0fa8d33b7e6d44663d84b51d34c5f4e8dcc39194d"
+    }
+  ],
+  "surface": "alerts"
+}

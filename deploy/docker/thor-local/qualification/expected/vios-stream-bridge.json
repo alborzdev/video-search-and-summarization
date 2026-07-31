@@ -1,0 +1,104 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 12,
+  "kind": "rest",
+  "method_counts": {
+    "GET": 7,
+    "POST": 5
+  },
+  "normalized_unique_operation_count": 12,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": "getStreambridgeConfiguration",
+      "path": "/vst/api/v1/streambridge/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/configuration"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postStreambridgeConfiguration",
+      "path": "/vst/api/v1/streambridge/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/configuration"
+    },
+    {
+      "method": "GET",
+      "operation_id": "gethelp",
+      "path": "/vst/api/v1/streambridge/help",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/help"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStreambridgeGetIceCandidate",
+      "path": "/vst/api/v1/streambridge/iceCandidate",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/iceCandidate"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postStreambridgeAddIceCandidate",
+      "path": "/vst/api/v1/streambridge/iceCandidate",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/iceCandidate"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStreambridgeGetIceServers",
+      "path": "/vst/api/v1/streambridge/iceServers",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/iceServers"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postStreambridgeSetAnswer",
+      "path": "/vst/api/v1/streambridge/setAnswer",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/setAnswer"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postStreambridgeStreamStart",
+      "path": "/vst/api/v1/streambridge/stream/start",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/stream/start"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStreambridgeStreamStatus",
+      "path": "/vst/api/v1/streambridge/stream/status",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/stream/status"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postStreambridgeStreamStop",
+      "path": "/vst/api/v1/streambridge/stream/stop",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/stream/stop"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getStreambridgeStream",
+      "path": "/vst/api/v1/streambridge/streams",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/streams"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getVersion",
+      "path": "/vst/api/v1/streambridge/version",
+      "schema_hash": null,
+      "source_path": "/v1/streambridge/version"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/vios/doc/api/vst_stream_bridge_ms/swagger.yaml",
+      "sha256": "ccbb53d33aec0d61ed680f1ba13a6e0b85fe47a6eb3815f4491929aeb7f292b6"
+    }
+  ],
+  "surface": "vios-stream-bridge"
+}

@@ -1,0 +1,160 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 20,
+  "kind": "rest",
+  "method_counts": {
+    "GET": 11,
+    "POST": 9
+  },
+  "normalized_unique_operation_count": 20,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": "getSensorConfiguration",
+      "path": "/vst/api/v1/live/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/live/configuration"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSensorConfiguration",
+      "path": "/vst/api/v1/live/configuration",
+      "schema_hash": null,
+      "source_path": "/v1/live/configuration"
+    },
+    {
+      "method": "GET",
+      "operation_id": "gethelp",
+      "path": "/vst/api/v1/live/help",
+      "schema_hash": null,
+      "source_path": "/v1/live/help"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveGetIceCandidate",
+      "path": "/vst/api/v1/live/iceCandidate",
+      "schema_hash": null,
+      "source_path": "/v1/live/iceCandidate"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postLiveAddIceCandidate",
+      "path": "/vst/api/v1/live/iceCandidate",
+      "schema_hash": null,
+      "source_path": "/v1/live/iceCandidate"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveGetIceServers",
+      "path": "/vst/api/v1/live/iceServers",
+      "schema_hash": null,
+      "source_path": "/v1/live/iceServers"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postLiveSetAnswer",
+      "path": "/vst/api/v1/live/setAnswer",
+      "schema_hash": null,
+      "source_path": "/v1/live/setAnswer"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postLiveStreamPause",
+      "path": "/vst/api/v1/live/stream/pause",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/pause"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveStreamQuery",
+      "path": "/vst/api/v1/live/stream/query",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/query"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postLiveStreamResume",
+      "path": "/vst/api/v1/live/stream/resume",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/resume"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postStreamSettings",
+      "path": "/vst/api/v1/live/stream/settings",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/settings"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postLiveStreamStart",
+      "path": "/vst/api/v1/live/stream/start",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/start"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveStreamStats",
+      "path": "/vst/api/v1/live/stream/stats",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/stats"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveStreamStatus",
+      "path": "/vst/api/v1/live/stream/status",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/status"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postLiveStreamStop",
+      "path": "/vst/api/v1/live/stream/stop",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/stop"
+    },
+    {
+      "method": "POST",
+      "operation_id": "postSwitchString",
+      "path": "/vst/api/v1/live/stream/swap",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/swap"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveStreamPicture",
+      "path": "/vst/api/v1/live/stream/{streamId}/picture",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/{streamId}/picture"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveStreamPictureUrl",
+      "path": "/vst/api/v1/live/stream/{streamId}/picture/url",
+      "schema_hash": null,
+      "source_path": "/v1/live/stream/{streamId}/picture/url"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getLiveStream",
+      "path": "/vst/api/v1/live/streams",
+      "schema_hash": null,
+      "source_path": "/v1/live/streams"
+    },
+    {
+      "method": "GET",
+      "operation_id": "getVersion",
+      "path": "/vst/api/v1/live/version",
+      "schema_hash": null,
+      "source_path": "/v1/live/version"
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml",
+      "sha256": "3ac10b1edbe86efd761986f6288a14a0bcc6bf2497c140b01afeaa6b9ddafcee"
+    }
+  ],
+  "surface": "vios-live"
+}

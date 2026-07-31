@@ -1,0 +1,322 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 44,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 3,
+    "GET": 5,
+    "POST": 34,
+    "PUT": 2
+  },
+  "normalized_unique_operation_count": 44,
+  "operations": [
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/attribute_search",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/attribute_search/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/attribute_search/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/attribute_search/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/critic",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/critic/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/critic/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/critic/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/embed_search",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/embed_search/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/embed_search/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/embed_search/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/rtsp-streams/add",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/api/v1/rtsp-streams/delete/{name}",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/videos",
+      "schema_hash": null
+    },
+    {
+      "method": "PUT",
+      "operation_id": null,
+      "path": "/api/v1/videos-for-search/{filename}",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/videos/{sensor_id}/complete",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/api/v1/videos/{video_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/auth/redirect",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/chat",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/chat/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/evaluate/item",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/executions/{execution_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/executions/{execution_id}/interactions/{interaction_id}/response",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/generate",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/generate/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/generate/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/mcp/client/tool/list",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/mcp/client/tool/list/per_user",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/static/{file_path:path}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/static/{file_path:path}",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/static/{file_path:path}",
+      "schema_hash": null
+    },
+    {
+      "method": "PUT",
+      "operation_id": null,
+      "path": "/static/{file_path:path}",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/chat",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/chat/completions",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/chat/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/workflow",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/workflow/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/workflow/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/workflow/stream",
+      "schema_hash": null
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "sha256": "28f87aef26fd0d862ef0af946b8eb8f14bed630bb7268682b7c05b3e37b5a354"
+    },
+    {
+      "path": "deploy/docker/services/agent/compose.yml",
+      "sha256": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7"
+    },
+    {
+      "path": "services/agent/pyproject.toml",
+      "sha256": "d4e32ddb05460f3928fab19309aa163b0dce69e0b59abd251c4a67ec6ae23b97"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py",
+      "sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/rtsp_delete.py",
+      "sha256": "0eb625e884390c295c95a32d58afe1f1f17da87e3d97a5a852f1f1bd9e321898"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/rtsp_ingest.py",
+      "sha256": "df9a8808222d6c70fe40dc09707c1be05f9edf4e92f55c318d954cb511d0ded0"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/video_delete.py",
+      "sha256": "d95d55aad6cd776431ea2c270a9e5796248755390b425879cc72ee8d14ae1657"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/video_ingest.py",
+      "sha256": "39416707048715db5957951efaf2e6b0b2898a1199eac0f1f9b2508b6e467af5"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/video_search_ingest.py",
+      "sha256": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77"
+    },
+    {
+      "path": "services/agent/uv.lock",
+      "sha256": "8647f8a7e8eb22ef2c9e83850ba13c2405c32222a48f78c585e5fb8015566523"
+    }
+  ],
+  "surface": "agent"
+}

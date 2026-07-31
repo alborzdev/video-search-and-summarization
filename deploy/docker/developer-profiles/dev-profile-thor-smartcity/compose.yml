@@ -1,0 +1,124 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Smart City is an alternate one-stream perception/behavior workload for the
+# shared Thor-full services. Activate it with bp_developer_thor_full_2d and
+# bp_developer_thor_smartcity_2d; never combine it with the Thor search
+# perception profile because both intentionally own GPU 0 and port 9000.
+services:
+  perception-2d-smartcity-thor:
+    extends:
+      file: ${VSS_APPS_DIR}/services/rtvi/rtvi-cv/compose.yaml
+      service: perception
+    profiles: ["bp_developer_thor_smartcity_2d"]
+    container_name: vss-rtvi-cv
+    volumes:
+      - ${VSS_DATA_DIR}/models/:/opt/storage/
+      - ${VSS_APPS_DIR}/engines/:/opt/engines/
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-alerts/deepstream/configs/:/opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app/mounted-configs/:ro
+    environment:
+      # The released RT-CV launcher uses DGX-THOR as its Jetson/Thor tuning
+      # selector even though the overall profile is named AGX-THOR.
+      HARDWARE_PROFILE: DGX-THOR
+      MODEL_TYPE: cnn
+      STREAM_TYPE: kafka
+      MODEL_NAME_2D: RTDETR
+      NUM_SENSORS: "1"
+      DS_MODEL_FAMILY: rtdetr-gdino
+      DS_TRACKER_REID: "false"
+      DS_SHOW_SENSOR_ID: "true"
+      DS_CONFIG_FILE: /opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app/configs/run_config-api-rtdetr-protobuf.txt
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9000/api/v1/health/get-dsready-state"]
+      interval: 15s
+      timeout: 5s
+      retries: 40
+      start_period: 120s
+    depends_on:
+      sensor-ms:
+        condition: service_started
+      broker-health-check:
+        condition: service_completed_successfully
+
+  vss-behavior-analytics-smartcity-thor:
+    extends:
+      file: ${VSS_APPS_DIR}/services/analytics/behavior-analytics/compose.yml
+      service: vss-behavior-analytics-base
+    profiles: ["bp_developer_thor_smartcity_2d"]
+    container_name: vss-behavior-analytics-smartcity-thor
+    image: ${THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE:-cti-vss-behavior-analytics:thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}
+      dockerfile: deploy/docker/thor-local/Dockerfile.behavior-analytics
+      args:
+        BEHAVIOR_ANALYTICS_BASE_IMAGE: ${BEHAVIOR_ANALYTICS_IMAGE:-nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1}
+    volumes:
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json:/resources/vss-behavior-analytics-config.json:ro
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/assets/calibration.json:/resources/calibration.json:ro
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/assets/agnew-head-on.graphml:/resources/agnew-head-on.graphml:ro
+    command: python3 apps/smart_city/main_smart_city_app.py --config /resources/vss-behavior-analytics-config.json --calibration /resources/calibration.json
+    depends_on:
+      broker-health-check:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2g
+        reservations:
+          cpus: "0.5"
+          memory: 512m
+
+  smartcity-calibration-import-thor:
+    image: alpine/curl:8.17.0
+    profiles: ["bp_developer_thor_smartcity_2d"]
+    container_name: vss-smartcity-calibration-import-thor
+    network_mode: host
+    restart: "no"
+    entrypoint: ["/bin/sh"]
+    command: ["/opt/smartcity/import-calibration.sh"]
+    environment:
+      VIDEO_ANALYTICS_API_URL: http://127.0.0.1:${VIDEO_ANALYTICS_API_PORT:-8081}
+      SMARTCITY_IMPORT_MAX_ATTEMPTS: ${SMARTCITY_IMPORT_MAX_ATTEMPTS:-60}
+      SMARTCITY_IMPORT_RETRY_SECONDS: ${SMARTCITY_IMPORT_RETRY_SECONDS:-2}
+    volumes:
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/scripts/import-calibration.sh:/opt/smartcity/import-calibration.sh:ro
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/assets/calibration.json:/opt/smartcity/calibration.json:ro
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/assets/road-network.json:/opt/smartcity/road-network.json:ro
+    depends_on:
+      vss-video-analytics-api-fusion:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256m
+
+  smartcity-map-thor:
+    image: alpine:3.23.4
+    profiles: ["bp_developer_thor_smartcity_2d"]
+    container_name: vss-smartcity-map-thor
+    network_mode: host
+    restart: always
+    read_only: true
+    command:
+      - /bin/sh
+      - -ec
+      - exec httpd -f -p 127.0.0.1:${SMARTCITY_MAP_PORT:-3002} -h /site
+    volumes:
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/map:/site:ro
+      - ${VSS_APPS_DIR}/developer-profiles/dev-profile-thor-smartcity/assets:/site/assets:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:${SMARTCITY_MAP_PORT:-3002}/"]
+      interval: 15s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
+    depends_on:
+      smartcity-calibration-import-thor:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128m

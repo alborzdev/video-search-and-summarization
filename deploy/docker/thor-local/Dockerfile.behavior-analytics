@@ -1,0 +1,8 @@
+ARG BEHAVIOR_ANALYTICS_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1
+FROM ${BEHAVIOR_ANALYTICS_BASE_IMAGE}
+
+# NVIDIA's 3.2.1 Smart City loader assumes an online OSMnx query. Replace
+# only the CRS helper with the repository implementation that also accepts a
+# pre-generated GraphML/XML file, keeping the released application immutable.
+COPY services/analytics/behavior-analytics/src/mdx/analytics/core/utils/crs.py \
+  /usr/local/lib/python3.13/site-packages/mdx/analytics/core/utils/crs.py

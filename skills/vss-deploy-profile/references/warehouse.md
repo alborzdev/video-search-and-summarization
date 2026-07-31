@@ -376,9 +376,9 @@ Run each check in order. **If a check fails, automatically install and re-verify
 
 #### Supported Hardware
 
-`HARDWARE_PROFILE` is a **blueprint setting**, not a string that `nvidia-smi` always prints verbatim. For **discrete GPUs**, match the GPU model from `nvidia-smi` / `lspci` to a row below. **IGX-THOR** and **DGX-SPARK** are **whole-system platforms** (kits/boards): set the profile from product/SKU or vendor docs if you already know the machine type; `nvidia-smi` shows the **on-board NVIDIA GPU name** (e.g. a Thor-class or Spark system GPU), not the text `IGX-THOR` or `DGX-SPARK`. On **DGX Spark**, unified memory can make some `nvidia-smi` memory fields show **Not Supported**; driver and device listing should still be checked per [DGX Spark user guide](https://docs.nvidia.com/dgx/dgx-spark/).
+`HARDWARE_PROFILE` is a **blueprint setting**, not a string that `nvidia-smi` always prints verbatim. For **discrete GPUs**, match the GPU model from `nvidia-smi` / `lspci` to a row below. **IGX-THOR**, **AGX-THOR**, and **DGX-SPARK** are **whole-system platforms** (kits/boards): set the profile from product/SKU or vendor docs if you already know the machine type; `nvidia-smi` shows the **on-board NVIDIA GPU name** (e.g. a Thor-class or Spark system GPU), not the platform profile string. On **DGX Spark**, unified memory can make some `nvidia-smi` memory fields show **Not Supported**; driver and device listing should still be checked per [DGX Spark user guide](https://docs.nvidia.com/dgx/dgx-spark/).
 
-Valid values: `H100, L40, L40S, L4, A6000, RTXA6000, RTXA6000ADA, RTXPRO6000BW, IGX-THOR, DGX-SPARK`. All profiles include tuned `max_streams_supported` for 2D, 3D, and MV3DT modes.
+Valid values: `H100, L40, L40S, L4, A6000, RTXA6000, RTXA6000ADA, RTXPRO6000BW, IGX-THOR, AGX-THOR, DGX-SPARK`. All profiles include tuned `max_streams_supported` for 2D, 3D, and MV3DT modes.
 
 | Discrete GPU (typical `nvidia-smi` name) | HARDWARE_PROFILE |
 |---|---|
@@ -392,6 +392,7 @@ Valid values: `H100, L40, L40S, L4, A6000, RTXA6000, RTXA6000ADA, RTXPRO6000BW, 
 | L40 | `L40` |
 | L4 | `L4` |
 | Platform: NVIDIA IGX Thor (kit / board) | `IGX-THOR` |
+| Platform: NVIDIA Jetson AGX Thor | `AGX-THOR` |
 | Platform: NVIDIA DGX Spark | `DGX-SPARK` |
 
 > **Do NOT use a higher profile on lower-profile hardware** (e.g. `H100` on an `L4`) — the env file warns against this directly.
@@ -406,7 +407,7 @@ Valid values: `H100, L40, L40S, L4, A6000, RTXA6000, RTXA6000ADA, RTXPRO6000BW, 
 nvidia-smi --query-gpu=index,name,driver_version,memory.total --format=csv,noheader
 ```
 
-Use the **`name`** column to pick **`HARDWARE_PROFILE`** from the [Supported Hardware](#supported-hardware) list. For **IGX-THOR** or **DGX-SPARK**, set `HARDWARE_PROFILE` to that value when the deployment target is that platform, even though `name` will be a GPU part name, not `IGX-THOR` / `DGX-SPARK`. The blueprint does not currently accept custom/free-form profile strings — if the host's GPU is not in the table, the deployment is unsupported on that hardware.
+Use the **`name`** column to pick **`HARDWARE_PROFILE`** from the [Supported Hardware](#supported-hardware) list. For **IGX-THOR**, **AGX-THOR**, or **DGX-SPARK**, set `HARDWARE_PROFILE` to that value when the deployment target is that platform, even though `name` will be a GPU part name rather than the platform string. The blueprint does not accept custom/free-form profile strings — if the host's GPU is not in the table, the deployment is unsupported on that hardware.
 
 **Required driver versions (match the platform):**
 
@@ -415,6 +416,7 @@ Use the **`name`** column to pick **`HARDWARE_PROFILE`** from the [Supported Har
 | x86 Ubuntu 24.04 | **580.105.08** (required) |
 | DGX-SPARK | `580.95.05` |
 | IGX-THOR | `580.00` |
+| AGX-THOR | `580.00` |
 
 ##### Install NVIDIA Driver (Ubuntu 24.04)
 
@@ -795,7 +797,7 @@ SAMPLE_VIDEO_DATASET="<dataset-name>"
 NUM_STREAMS=<3|4>
 
 # --- Hardware ---
-# Valid: H100, L40, L40S, L4, A6000, RTXA6000, RTXA6000ADA, RTXPRO6000BW, IGX-THOR, DGX-SPARK
+# Valid: H100, L40, L40S, L4, A6000, RTXA6000, RTXA6000ADA, RTXPRO6000BW, IGX-THOR, AGX-THOR, DGX-SPARK
 HARDWARE_PROFILE=H100
 
 # GPU device IDs (defaults shown — change only if you need a non-default layout)
@@ -1095,4 +1097,3 @@ When adding new cameras to the MV3DT profile, run the MV3DT utility scripts unde
 | Brev: HAProxy returns 404 | `Host:` header doesn't match `h_main` ACL — verify `VSS_PUBLIC_HOST` matches the Brev secure-link domain (`7777-<BREV_ENV_ID>.brevlab.com`) |
 | Brev: WebSocket connection refused | `VSS_PUBLIC_WS_PROTOCOL` still set to `ws` instead of `wss`, or `VSS_PUBLIC_PORT` not set to `443` |
 | Redeploy / reset without reinstall | [Redeploy](#redeploy) |
-

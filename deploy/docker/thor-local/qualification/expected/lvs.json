@@ -1,0 +1,131 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 17,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 1,
+    "GET": 8,
+    "POST": 8
+  },
+  "normalized_unique_operation_count": 17,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/files",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/files",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/files/{file_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/generate_vlm_captions",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/metrics",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/models",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/recommended_config",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/summarize",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/chat/completions",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/generate_captions",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/healthz",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/live",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/metadata",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/ready",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/startup",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/stream_summarize",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/summarize",
+      "schema_hash": null
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+      "sha256": "e6db944287402e4fdc922032cbe70a576b4c1ca1b2feb32f4a3bf620e2656501"
+    },
+    {
+      "path": "deploy/docker/services/video-summarization/compose.yml",
+      "sha256": "b94f6bd0eca9eed5b14a1941f31477b85331a120da35efcb408e448a6d3d81c6"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "sha256": "c50d5dece2472206501cedf0c7c157f1d4a848e35e4a3e2e6f0f7ef168de8cc1"
+    }
+  ],
+  "surface": "lvs"
+}

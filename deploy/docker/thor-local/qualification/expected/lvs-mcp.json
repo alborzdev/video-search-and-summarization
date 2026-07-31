@@ -1,0 +1,50 @@
+{
+  "kind": "mcp",
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "sha256": "1893ec8cd4115955e57da1645a60fe73e9f544f820647a6296deb9bb4bbef106"
+    }
+  ],
+  "surface": "lvs-mcp",
+  "tool_count": 9,
+  "tools": [
+    {
+      "input_schema_hash": "5e7a4eb709506ad8df16b751e58ed506fe356d6bf2ec50c94cbabaaa5e5193b2",
+      "name": "generate_captions"
+    },
+    {
+      "input_schema_hash": "0c4bed7d41f90c172d613f1668415bca951ad93a6505878bf52d2821b34d2756",
+      "name": "generate_vlm_captions"
+    },
+    {
+      "input_schema_hash": "efddc7bd8bbcef73a14eb1ace1ffdaec81e518ef1e13c1e9271d0b8acb694a49",
+      "name": "get_metrics"
+    },
+    {
+      "input_schema_hash": "93d9773125ce738eb0edc459f4f90ecfe416984712baf85829abbe04c4c2ee45",
+      "name": "get_recommended_config"
+    },
+    {
+      "input_schema_hash": "efddc7bd8bbcef73a14eb1ace1ffdaec81e518ef1e13c1e9271d0b8acb694a49",
+      "name": "health_live"
+    },
+    {
+      "input_schema_hash": "efddc7bd8bbcef73a14eb1ace1ffdaec81e518ef1e13c1e9271d0b8acb694a49",
+      "name": "health_ready"
+    },
+    {
+      "input_schema_hash": "efddc7bd8bbcef73a14eb1ace1ffdaec81e518ef1e13c1e9271d0b8acb694a49",
+      "name": "list_models"
+    },
+    {
+      "input_schema_hash": "fba8f0496acd3f4a381d2604b0b8a3785ff3cc8ccb8f1e61264ec9a83e888fd1",
+      "name": "stream_summarize"
+    },
+    {
+      "input_schema_hash": "ee0528592c7bceacc0849887c86f5fbd1e824489f79122d6ebce835c0efa986b",
+      "name": "summarize_video"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "component_schema_hash": null,
+  "declared_operation_count": 24,
+  "kind": "rest",
+  "method_counts": {
+    "DELETE": 4,
+    "GET": 14,
+    "POST": 6
+  },
+  "normalized_unique_operation_count": 24,
+  "operations": [
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/assets/stats",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/files",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/files",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/files/{file_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/files/{file_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/files/{file_id}/content",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/generate_text_embeddings",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/generate_video_embeddings",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/generate_video_embeddings/{stream_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/live",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/manifest",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/metadata",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/metrics",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/models",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/ready",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/startup",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/stream/add",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/stream/get-stream-info",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/stream/remove",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/streams/add",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/streams/delete-batch",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/streams/delete/{stream_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/streams/get-stream-info",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/version",
+      "schema_hash": null
+    }
+  ],
+  "schema_version": 1,
+  "source_files": [
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    }
+  ],
+  "surface": "rt-embed"
+}

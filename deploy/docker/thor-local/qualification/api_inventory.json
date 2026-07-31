@@ -1,0 +1,432 @@
+{
+  "schema_version": 1,
+  "target": "VSS 3.2.1 Thor-local static API contract",
+  "routing_source": "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+  "safety": {
+    "default_mode": "offline-read-only",
+    "network_access": false,
+    "container_lifecycle": false,
+    "runtime_mutations": false,
+    "secret_inputs": []
+  },
+  "expected_totals": {
+    "declared_rest_operations": 326,
+    "normalized_unique_rest_operations": 325,
+    "mcp_tools": 16
+  },
+  "known_contract_differences": {
+    "lvs_openapi": {
+      "document": "services/video-summarization/api_spec/openapi.json",
+      "document_missing": [
+        [
+          "DELETE",
+          "/files/{file_id}"
+        ],
+        [
+          "GET",
+          "/files"
+        ],
+        [
+          "POST",
+          "/files"
+        ],
+        [
+          "POST",
+          "/generate_vlm_captions"
+        ],
+        [
+          "POST",
+          "/v1/chat/completions"
+        ]
+      ],
+      "reason": "The current LVS source exposes graph-QA chat plus Thor-enabled development file/caption routes, while the checked-in generated OpenAPI has not yet been refreshed."
+    },
+    "vios_storage_route_collision": {
+      "reason": "Swagger declares GET /v1/storage/file/{streamId} and GET /v1/storage/file/{sensorId}; these are one normalized runtime route."
+    }
+  },
+  "surfaces": [
+    {
+      "id": "agent",
+      "kind": "rest",
+      "extractor": "agent_routes",
+      "expected_manifest": "agent.json",
+      "expected_operation_count": 44,
+      "direct": {
+        "port_env": "VSS_AGENT_PORT",
+        "default_port": 8100,
+        "base_path": "/"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/api",
+          "/chat",
+          "/static",
+          "/websocket"
+        ],
+        "rewrite": "none"
+      },
+      "config_source": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "route_sources": [
+        "services/agent/src/vss_agents/api/video_ingest.py",
+        "services/agent/src/vss_agents/api/video_search_ingest.py",
+        "services/agent/src/vss_agents/api/rtsp_ingest.py",
+        "services/agent/src/vss_agents/api/rtsp_delete.py",
+        "services/agent/src/vss_agents/api/video_delete.py"
+      ],
+      "sources": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+        "deploy/docker/services/agent/compose.yml",
+        "services/agent/pyproject.toml",
+        "services/agent/uv.lock",
+        "services/agent/src/vss_agents/api/custom_fastapi_worker.py",
+        "services/agent/src/vss_agents/api/video_ingest.py",
+        "services/agent/src/vss_agents/api/video_search_ingest.py",
+        "services/agent/src/vss_agents/api/rtsp_ingest.py",
+        "services/agent/src/vss_agents/api/rtsp_delete.py",
+        "services/agent/src/vss_agents/api/video_delete.py"
+      ]
+    },
+    {
+      "id": "rt-vlm",
+      "kind": "rest",
+      "extractor": "python_routes",
+      "expected_manifest": "rt-vlm.json",
+      "expected_operation_count": 27,
+      "substitutions": {
+        "API_PREFIX": "/v1"
+      },
+      "direct": {
+        "port_env": "RTVI_VLM_PORT",
+        "default_port": 8018,
+        "base_path": "/v1"
+      },
+      "public": null,
+      "sources": [
+        "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py"
+      ]
+    },
+    {
+      "id": "rt-embed",
+      "kind": "rest",
+      "extractor": "python_routes",
+      "expected_manifest": "rt-embed.json",
+      "expected_operation_count": 24,
+      "substitutions": {
+        "API_PREFIX": "/v1"
+      },
+      "direct": {
+        "port_env": "RTVI_EMBED_PORT",
+        "default_port": 8017,
+        "base_path": "/v1"
+      },
+      "public": null,
+      "sources": [
+        "services/rtvi/rt-embed/src/server/rtvi_embed_server.py"
+      ]
+    },
+    {
+      "id": "rt-cv",
+      "kind": "rest",
+      "extractor": "markdown_routes",
+      "expected_manifest": "rt-cv.json",
+      "expected_operation_count": 9,
+      "direct": {
+        "port_env": "RTVI_CV_PORT",
+        "default_port": 9000,
+        "base_path": "/api/v1"
+      },
+      "public": null,
+      "sources": [
+        "skills/vss-deploy-detection-tracking-2d/references/api-reference.md"
+      ]
+    },
+    {
+      "id": "alerts",
+      "kind": "rest",
+      "extractor": "openapi_json",
+      "expected_manifest": "alerts.json",
+      "expected_operation_count": 19,
+      "direct": {
+        "port_env": "ALERT_BRIDGE_PORT",
+        "default_port": 9080,
+        "base_path": "/"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/alert-bridge"
+        ],
+        "rewrite": "strip-prefix"
+      },
+      "sources": [
+        "services/alert/openapi.json"
+      ]
+    },
+    {
+      "id": "lvs",
+      "kind": "rest",
+      "extractor": "python_routes",
+      "expected_manifest": "lvs.json",
+      "expected_operation_count": 17,
+      "substitutions": {
+        "API_PREFIX": ""
+      },
+      "required_feature_flags": {
+        "VIA_DEV_API": "true"
+      },
+      "route_source": "services/video-summarization/src/via_server.py",
+      "feature_flag_sources": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/services/video-summarization/compose.yml"
+      ],
+      "direct": {
+        "port_env": "BACKEND_PORT",
+        "default_port": 38111,
+        "base_path": "/"
+      },
+      "public": null,
+      "sources": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/services/video-summarization/compose.yml",
+        "services/video-summarization/src/via_server.py"
+      ]
+    },
+    {
+      "id": "video-analytics",
+      "kind": "rest",
+      "extractor": "openapi_json",
+      "expected_manifest": "video-analytics.json",
+      "expected_operation_count": 56,
+      "direct": {
+        "port_env": "VIDEO_ANALYTICS_API_PORT",
+        "default_port": 8081,
+        "base_path": "/"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/video-analytics-api"
+        ],
+        "rewrite": "strip-prefix"
+      },
+      "sources": [
+        "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+      ]
+    },
+    {
+      "id": "vios-live",
+      "kind": "rest",
+      "extractor": "swagger_yaml",
+      "expected_manifest": "vios-live.json",
+      "expected_operation_count": 20,
+      "path_prefix": "/vst/api",
+      "direct": {
+        "port_env": "VST_PORT",
+        "default_port": 30888,
+        "base_path": "/vst/api/v1/live"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/vst"
+        ],
+        "rewrite": "none"
+      },
+      "sources": [
+        "services/vios/doc/api/vst_live_stream_ms/swagger.yaml"
+      ]
+    },
+    {
+      "id": "vios-replay",
+      "kind": "rest",
+      "extractor": "swagger_yaml",
+      "expected_manifest": "vios-replay.json",
+      "expected_operation_count": 21,
+      "path_prefix": "/vst/api",
+      "direct": {
+        "port_env": "VST_PORT",
+        "default_port": 30888,
+        "base_path": "/vst/api/v1/replay"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/vst"
+        ],
+        "rewrite": "none"
+      },
+      "sources": [
+        "services/vios/doc/api/vst_replay_stream_ms/swagger.yaml"
+      ]
+    },
+    {
+      "id": "vios-proxy",
+      "kind": "rest",
+      "extractor": "swagger_yaml",
+      "expected_manifest": "vios-proxy.json",
+      "expected_operation_count": 7,
+      "path_prefix": "/vst/api",
+      "direct": {
+        "port_env": "VST_PORT",
+        "default_port": 30888,
+        "base_path": "/vst/api/v1/proxy"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/vst"
+        ],
+        "rewrite": "none"
+      },
+      "sources": [
+        "services/vios/doc/api/vst_rtsp_proxy_stream_ms/swagger.yaml"
+      ]
+    },
+    {
+      "id": "vios-sensor",
+      "kind": "rest",
+      "extractor": "swagger_yaml",
+      "expected_manifest": "vios-sensor.json",
+      "expected_operation_count": 28,
+      "path_prefix": "/vst/api",
+      "direct": {
+        "port_env": "VST_PORT",
+        "default_port": 30888,
+        "base_path": "/vst/api/v1/sensor"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/vst"
+        ],
+        "rewrite": "none"
+      },
+      "sources": [
+        "services/vios/doc/api/vst_sensor_management_ms/swagger.yaml"
+      ]
+    },
+    {
+      "id": "vios-storage",
+      "kind": "rest",
+      "extractor": "swagger_yaml",
+      "expected_manifest": "vios-storage.json",
+      "expected_operation_count": 26,
+      "path_prefix": "/vst/api",
+      "direct": {
+        "port_env": "VST_PORT",
+        "default_port": 30888,
+        "base_path": "/vst/api/v1/storage"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/vst"
+        ],
+        "rewrite": "none"
+      },
+      "sources": [
+        "services/vios/doc/api/vst_storage_management_ms/swagger.yaml"
+      ]
+    },
+    {
+      "id": "vios-stream-bridge",
+      "kind": "rest",
+      "extractor": "swagger_yaml",
+      "expected_manifest": "vios-stream-bridge.json",
+      "expected_operation_count": 12,
+      "path_prefix": "/vst/api",
+      "direct": {
+        "port_env": "VST_PORT",
+        "default_port": 30888,
+        "base_path": "/vst/api/v1/streambridge"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/vst"
+        ],
+        "rewrite": "none"
+      },
+      "sources": [
+        "services/vios/doc/api/vst_stream_bridge_ms/swagger.yaml"
+      ]
+    },
+    {
+      "id": "vios-recorder",
+      "kind": "rest",
+      "extractor": "swagger_yaml",
+      "expected_manifest": "vios-recorder.json",
+      "expected_operation_count": 16,
+      "path_prefix": "/vst/api",
+      "direct": {
+        "port_env": "VST_PORT",
+        "default_port": 30888,
+        "base_path": "/vst/api/v1/record"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/vst"
+        ],
+        "rewrite": "none"
+      },
+      "sources": [
+        "services/vios/doc/api/vst_stream_recorder_ms/swagger.yaml"
+      ]
+    },
+    {
+      "id": "va-mcp",
+      "kind": "mcp",
+      "extractor": "va_mcp",
+      "expected_manifest": "va-mcp.json",
+      "expected_tool_count": 7,
+      "direct": {
+        "port_env": "VSS_VA_MCP_PORT",
+        "default_port": 9901,
+        "transport": "streamable-http",
+        "path": "/mcp"
+      },
+      "public": {
+        "port_env": "HAPROXY_PORT",
+        "default_port": 7777,
+        "exposed_prefixes": [
+          "/va-mcp"
+        ],
+        "rewrite": "strip-prefix"
+      },
+      "sources": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml",
+        "services/agent/src/vss_agents/video_analytics/tools.py"
+      ]
+    },
+    {
+      "id": "lvs-mcp",
+      "kind": "mcp",
+      "extractor": "lvs_mcp",
+      "expected_manifest": "lvs-mcp.json",
+      "expected_tool_count": 9,
+      "direct": {
+        "port_env": "LVS_MCP_PORT",
+        "default_port": 38112,
+        "transport": "legacy-sse",
+        "path": "/sse"
+      },
+      "public": null,
+      "sources": [
+        "services/video-summarization/src/lvs_mcp.py"
+      ]
+    }
+  ]
+}
