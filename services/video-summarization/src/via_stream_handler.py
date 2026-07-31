@@ -1402,7 +1402,9 @@ class ViaStreamHandler:
         req_info.start_time = time.time()
 
         # Dense caption cache: load from .dc.json if available
-        enable_dense_caption = bool(os.environ.get("ENABLE_DENSE_CAPTION", False))
+        enable_dense_caption = os.environ.get(
+            "ENABLE_DENSE_CAPTION", "false"
+        ).lower() in ("true", "1")
         if enable_dense_caption:
             dc_file = os.path.join(
                 os.environ.get("VIA_LOG_DIR", "/tmp/via-logs"),

@@ -1,4 +1,4 @@
-"""Add provider-aware vLLM request options to the released LVS runtime."""
+"""Apply Thor-local provider and environment fixes to the released LVS runtime."""
 
 from pathlib import Path
 import sysconfig
@@ -44,4 +44,22 @@ replace_once(
 )
 
 module.write_text(source)
+
+stream_handler = Path("/opt/nvidia/via/via-engine/via_stream_handler.py")
+stream_source = stream_handler.read_text()
+old_dense_caption = (
+    '        enable_dense_caption = bool(os.environ.get("ENABLE_DENSE_CAPTION", False))\n'
+)
+new_dense_caption = (
+    '        enable_dense_caption = os.environ.get(\n'
+    '            "ENABLE_DENSE_CAPTION", "false"\n'
+    '        ).lower() in ("true", "1")\n'
+)
+count = stream_source.count(old_dense_caption)
+if count != 1:
+    raise RuntimeError(
+        f"Expected one LVS dense-caption environment marker, found {count}"
+    )
+stream_handler.write_text(stream_source.replace(old_dense_caption, new_dense_caption, 1))
+
 Path(__file__).unlink()

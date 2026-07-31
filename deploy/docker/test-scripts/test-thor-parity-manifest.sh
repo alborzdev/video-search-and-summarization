@@ -22,6 +22,14 @@ grep -q "enterprise-rag: blocked_upstream/blocked" <<<"${report}"
 
 echo "PASS: the exhaustive Thor parity ledger is valid and keeps known gaps explicit"
 
+dense_caption_source="${repo_root}/services/video-summarization/src/via_stream_handler.py"
+dense_caption_image_patch="${repo_root}/deploy/docker/thor-local/patches/patch_lvs_llm_provider.py"
+! grep -q 'bool(os.environ.get("ENABLE_DENSE_CAPTION"' "${dense_caption_source}"
+grep -q '"ENABLE_DENSE_CAPTION", "false"' "${dense_caption_source}"
+grep -q 'old_dense_caption' "${dense_caption_image_patch}"
+grep -q '"ENABLE_DENSE_CAPTION", "false"' "${dense_caption_image_patch}"
+echo "PASS: LVS parses the false dense-caption flag as false"
+
 test_skills_dir="$(mktemp -d "${TMPDIR:-/tmp}/thor-vss-skills.XXXXXX")"
 cleanup() {
   rm -rf -- "${test_skills_dir}"
