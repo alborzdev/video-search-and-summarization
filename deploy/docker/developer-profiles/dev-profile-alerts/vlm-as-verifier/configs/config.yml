@@ -250,7 +250,7 @@ alert_agent:
     enabled: true                                # Enable URL transformation (default: true)
 
   media_download:
-    enabled: false                                # Enable direct media URL processing
+    enabled: ${ALERT_DIRECT_MEDIA_ENABLED}         # Enable direct media URL processing
     max_media_count: 5                           # Maximum number of media URLs per request
     timeout_seconds: 30                          # Download timeout per file
     max_size_mb: 50                              # Maximum file size to download
@@ -259,10 +259,10 @@ alert_agent:
 
   # Enrichment Processing Configuration
   enrichment:
-    enabled: false                               # Master switch for enrichment processing
+    enabled: ${ALERT_ENRICHMENT_ENABLED}          # Master switch for enrichment processing
 
   # Always-on VLM alert rules
-  always_on: false
+  always_on: ${ALERT_ALWAYS_ON_ENABLED}
 
 # RTVI VLM Configuration - Real-time VLM alert management
 # Alert Bridge calls this service to start/stop real-time RTSP analysis
@@ -311,7 +311,7 @@ webhook:
 
 # WebSocket Configuration - Real-time alert broadcasting
 websocket:
-  enabled: false                                 # Enable/disable WebSocket service
+  enabled: ${ALERT_WEBSOCKET_ENABLED}             # Enable/disable WebSocket service
   consumer_group_prefix: "websocket_instance"  # Prefix for consumer groups
   redis_consumer:
     block_time: 1000                           # Redis XREAD block time in milliseconds

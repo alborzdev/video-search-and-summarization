@@ -71,9 +71,9 @@
       "advertised": ["CV perception to behavior analytics to VLM verification", "post-alert verification", "contextualization", "multi-category classification", "on-demand verification", "custom VLM parsing", "non-blocking multithreaded execution"],
       "source_evidence": ["services/alert", "deploy/docker/developer-profiles/dev-profile-alerts"],
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml", "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"],
-      "thor_state": "partial",
-      "runtime_state": "passed_prior",
-      "gap": "The alert derivative is rebuilt from the current source; prove every checked-in Alert OpenAPI operation on the current runtime."
+      "thor_state": "wired",
+      "runtime_state": "not_qualified",
+      "gap": "The current alert derivative, snapshot verification, direct-media path, and enrichment path are selected; prove every checked-in Alert OpenAPI operation and both optional processing modes."
     },
     {
       "id": "realtime-alerts",
@@ -81,9 +81,9 @@
       "advertised": ["live-stream VLM rules", "rule CRUD", "rule replay", "always-on lifecycle", "incident retrieval", "WebSocket delivery", "natural-language alert management"],
       "source_evidence": ["services/alert/openapi.json", "services/alert/realtime"],
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vlm-as-verifier/configs/realtime-config.yml", "deploy/docker/scripts/thor-local.sh"],
-      "thor_state": "partial",
-      "runtime_state": "passed_prior",
-      "gap": "Core rules/replay are wired; always-on rules and WebSocket broadcast are disabled and need bounded local qualification."
+      "thor_state": "wired",
+      "runtime_state": "not_qualified",
+      "gap": "Realtime rules, persistence/replay, always-on lifecycle, and WebSocket broadcast are selected; exercise them with bounded local rules and verify restart recovery."
     },
     {
       "id": "alert-notifications",
@@ -191,9 +191,9 @@
       "advertised": ["speed/flow/travel time/occupancy/space metrics", "objects and locations", "frames/BEV/alerts/proximity", "behaviors/incidents/clustering", "tripwire/ROI/AMR events", "dynamic config and audit", "calibration/road network/USD/images", "sensor lookup"],
       "source_evidence": ["services/analytics/video-analytics-api/src/app/specification/openapi.json"],
       "thor_evidence": ["deploy/docker/services/analytics/video-analytics-api/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml"],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "Thor still consumes a 3.2.0 API image and exposes only a subset of VA-MCP tools to its top agent; prove all 56 operations."
+      "gap": "Thor selects NVIDIA's intentional 3.2.0 API image and exposes all seven local VA-MCP tools to the top agent; prove all 56 HTTP operations and seven MCP tools."
     },
     {
       "id": "auto-calibration",
@@ -291,9 +291,9 @@
       "advertised": ["NAT generate/chat", "health", "upload handshake and completion", "video delete", "RTSP add/delete", "VA-MCP", "LVS MCP"],
       "source_evidence": ["services/agent", "services/video-summarization/src/lvs_mcp.py"],
       "thor_evidence": ["deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml"],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "Core agent and VA-MCP are selected, LVS MCP is off, and the top agent exposes only part of VA-MCP; add route-level contract tests."
+      "gap": "Core agent routes, all seven VA-MCP tools, and the LVS SSE MCP server are selected; add and pass exhaustive route/tool-level runtime contract tests."
     },
     {
       "id": "infra-observability",

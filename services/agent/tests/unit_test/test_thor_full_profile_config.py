@@ -16,6 +16,7 @@
 """Structural tests for the unified NVIDIA Thor agent profile."""
 
 from collections.abc import Iterator
+import importlib.util
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +26,13 @@ REPO_ROOT = Path(__file__).resolve().parents[4]
 CONFIG_PATH = REPO_ROOT / "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml"
 VA_MCP_CONFIG_PATH = CONFIG_PATH.with_name("va_mcp_server_config.yml")
 PROFILE_ENV_PATH = CONFIG_PATH.parents[2] / ".env"
+ALERT_CONFIG_PATH = (
+    REPO_ROOT
+    / "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"
+)
+ALERT_ENV_SUBSTITUTION_PATH = (
+    REPO_ROOT / "deploy/docker/services/alert/scripts/env-substitute.py"
+)
 
 
 def _load_config() -> dict[str, Any]:
@@ -70,7 +78,8 @@ def test_unified_profile_exposes_all_capability_groups() -> None:
         "incident_report_agent",
     }
     assert set(workflow["subagent_names"]) <= functions.keys()
-    assert set(workflow["tool_names"]) <= functions.keys()
+    local_tools = {name for name in workflow["tool_names"] if "." not in name}
+    assert local_tools <= functions.keys()
     assert streaming_ingest["vst_streamprocessor_url"] == "${STREAM_PROCESSOR_MODULE_ENDPOINT:-}"
     assert streaming_ingest["rtvi_vlm_base_url"]
     assert streaming_ingest["rtvi_cv_base_url"]
@@ -107,6 +116,69 @@ def test_video_analytics_mcp_profile_uses_shared_service_environment() -> None:
     assert config["function_groups"]["video_analytics"]["es_url"] == "${ELASTIC_SEARCH_ENDPOINT}"
     assert config["llms"]["nim_llm"]["_type"] == "${VA_MCP_LLM_MODEL_TYPE:-openai}"
     assert config["llms"]["nim_llm"]["base_url"] == "${LLM_BASE_URL}/v1"
+
+
+def test_top_agent_exposes_every_local_video_analytics_mcp_tool() -> None:
+    config = _load_config()
+    expected_server_tools = {
+        "get_incident",
+        "get_incidents",
+        "get_sensor_ids",
+        "get_places",
+        "get_fov_histogram",
+        "get_average_speeds",
+        "analyze",
+    }
+    expected_remote_tools = {
+        f"video_analytics__{name}" for name in expected_server_tools
+    }
+    expected_agent_tools = {
+        f"video_analytics_mcp.{name}" for name in expected_remote_tools
+    }
+
+    with VA_MCP_CONFIG_PATH.open(encoding="utf-8") as config_file:
+        server_config = yaml.safe_load(config_file)
+
+    assert set(server_config["function_groups"]["video_analytics"]["include"]) == expected_server_tools
+    assert set(config["function_groups"]["video_analytics_mcp"]["include"]) == expected_remote_tools
+    assert expected_agent_tools <= set(config["workflow"]["tool_names"])
+    assert (
+        config["functions"]["incident_report_agent"]["get_incidents_tool"]
+        == "video_analytics_mcp.video_analytics__get_incidents"
+    )
+    assert (
+        config["functions"]["incident_report_agent"]["get_incident_tool"]
+        == "video_analytics_mcp.video_analytics__get_incident"
+    )
+
+
+def test_thor_enables_all_local_alert_extensions(monkeypatch: Any) -> None:
+    profile_env = PROFILE_ENV_PATH.read_text(encoding="utf-8").splitlines()
+    flags = {
+        "ALERT_DIRECT_MEDIA_ENABLED",
+        "ALERT_ENRICHMENT_ENABLED",
+        "ALERT_ALWAYS_ON_ENABLED",
+        "ALERT_WEBSOCKET_ENABLED",
+    }
+    for flag in flags:
+        assert f"{flag}=true" in profile_env
+        monkeypatch.setenv(flag, "true")
+
+    spec = importlib.util.spec_from_file_location(
+        "alert_env_substitute", ALERT_ENV_SUBSTITUTION_PATH
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    rendered = module.substitute_env_vars(
+        ALERT_CONFIG_PATH.read_text(encoding="utf-8")
+    )
+    config = yaml.safe_load(rendered)
+
+    assert config["alert_agent"]["media_download"]["enabled"] is True
+    assert config["alert_agent"]["enrichment"]["enabled"] is True
+    assert config["alert_agent"]["always_on"] is True
+    assert config["websocket"]["enabled"] is True
 
 
 def test_thor_profile_intentionally_enables_search_by_image() -> None:

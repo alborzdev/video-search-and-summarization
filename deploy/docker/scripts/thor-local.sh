@@ -119,6 +119,10 @@ export REALTIME_ALERT_VLM_INPUT_HEIGHT="${REALTIME_ALERT_VLM_INPUT_HEIGHT:-512}"
 export REALTIME_ALERT_ENABLE_REASONING="${REALTIME_ALERT_ENABLE_REASONING:-false}"
 export REALTIME_ALERT_MAX_TOKENS="${REALTIME_ALERT_MAX_TOKENS:-128}"
 export REALTIME_ALERT_ENABLE_AUDIO="${REALTIME_ALERT_ENABLE_AUDIO:-false}"
+export ALERT_DIRECT_MEDIA_ENABLED="${ALERT_DIRECT_MEDIA_ENABLED:-true}"
+export ALERT_ENRICHMENT_ENABLED="${ALERT_ENRICHMENT_ENABLED:-true}"
+export ALERT_ALWAYS_ON_ENABLED="${ALERT_ALWAYS_ON_ENABLED:-true}"
+export ALERT_WEBSOCKET_ENABLED="${ALERT_WEBSOCKET_ENABLED:-true}"
 export VST_VIDEO_STORAGE_SIZE_MB="${VST_VIDEO_STORAGE_SIZE_MB:-20000}"
 export NPM_CONFIG_REGISTRY="${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}"
 active_domain_pack_id="general"
@@ -215,6 +219,9 @@ Optional environment overrides:
   REALTIME_ALERT_VLM_INPUT_WIDTH, REALTIME_ALERT_VLM_INPUT_HEIGHT,
   REALTIME_ALERT_ENABLE_REASONING, REALTIME_ALERT_MAX_TOKENS, and
   REALTIME_ALERT_ENABLE_AUDIO tune the local live-alert frame contract.
+  ALERT_DIRECT_MEDIA_ENABLED, ALERT_ENRICHMENT_ENABLED,
+  ALERT_ALWAYS_ON_ENABLED, and ALERT_WEBSOCKET_ENABLED expose the released
+  local-only alert extensions (all default true in the Thor-full profile).
   VSS_DATA_DIR (defaults to deploy/docker/data-dir).
   THOR_LOCAL_FORCE_BOOTSTRAP (defaults to false).
   NGC_CLI_API_KEY_FILE (defaults to ~/.config/cti-vss/ngc-api-key).
@@ -561,6 +568,16 @@ validate_thor_full_contract() {
   [[ "${REALTIME_ALERT_ENABLE_AUDIO}" == "true" || "${REALTIME_ALERT_ENABLE_AUDIO}" == "false" ]] ||
     die "REALTIME_ALERT_ENABLE_AUDIO must be true or false"
   for item in \
+    "ALERT_DIRECT_MEDIA_ENABLED:${ALERT_DIRECT_MEDIA_ENABLED}" \
+    "ALERT_ENRICHMENT_ENABLED:${ALERT_ENRICHMENT_ENABLED}" \
+    "ALERT_ALWAYS_ON_ENABLED:${ALERT_ALWAYS_ON_ENABLED}" \
+    "ALERT_WEBSOCKET_ENABLED:${ALERT_WEBSOCKET_ENABLED}"; do
+    name="${item%%:*}"
+    value="${item#*:}"
+    [[ "${value}" == "true" || "${value}" == "false" ]] ||
+      die "${name} must be true or false"
+  done
+  for item in \
     "REALTIME_ALERT_VLM_INPUT_WIDTH:${REALTIME_ALERT_VLM_INPUT_WIDTH}" \
     "REALTIME_ALERT_VLM_INPUT_HEIGHT:${REALTIME_ALERT_VLM_INPUT_HEIGHT}" \
     "REALTIME_ALERT_MAX_TOKENS:${REALTIME_ALERT_MAX_TOKENS}"; do
@@ -662,6 +679,10 @@ print_runtime_contract() {
     REALTIME_ALERT_ENABLE_REASONING "${REALTIME_ALERT_ENABLE_REASONING}" \
     REALTIME_ALERT_MAX_TOKENS "${REALTIME_ALERT_MAX_TOKENS}" \
     REALTIME_ALERT_ENABLE_AUDIO "${REALTIME_ALERT_ENABLE_AUDIO}" \
+    ALERT_DIRECT_MEDIA_ENABLED "${ALERT_DIRECT_MEDIA_ENABLED}" \
+    ALERT_ENRICHMENT_ENABLED "${ALERT_ENRICHMENT_ENABLED}" \
+    ALERT_ALWAYS_ON_ENABLED "${ALERT_ALWAYS_ON_ENABLED}" \
+    ALERT_WEBSOCKET_ENABLED "${ALERT_WEBSOCKET_ENABLED}" \
     VSS_APPS_DIR "${deployment_dir}" \
     VSS_DATA_DIR "${VSS_DATA_DIR}" \
     HOST_IP "${HOST_IP}" \
@@ -807,6 +828,7 @@ Thor-local environment contract:
   RTVI timestamps: prompt=${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}, absolute_metadata=${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}
   LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}, MCP=${LVS_ENABLE_MCP}@${LVS_MCP_PORT}
   Live alerts: ${REALTIME_ALERT_CHUNK_DURATION}s chunks/${REALTIME_ALERT_CHUNK_OVERLAP_DURATION}s overlap, ${REALTIME_ALERT_FRAMES_PER_CHUNK} fixed frames at ${REALTIME_ALERT_VLM_INPUT_WIDTH}x${REALTIME_ALERT_VLM_INPUT_HEIGHT}, reasoning=${REALTIME_ALERT_ENABLE_REASONING}, max_tokens=${REALTIME_ALERT_MAX_TOKENS}
+  Alert extensions: direct_media=${ALERT_DIRECT_MEDIA_ENABLED}, enrichment=${ALERT_ENRICHMENT_ENABLED}, always_on=${ALERT_ALWAYS_ON_ENABLED}, websocket=${ALERT_WEBSOCKET_ENABLED}
   Data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, Kibana=${KIBANA_PORT}
   Runtime env: ${generated_env}
   Registry credentials: removed from runtime env and offline Compose process
@@ -2002,6 +2024,10 @@ doctor_check_endpoints() {
     'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if payload.get("status") == "success" and isinstance(payload.get("configs"), list) else 1)'
   doctor_json_contract "Realtime alert API" "http://127.0.0.1:${ALERT_BRIDGE_PORT}/api/v1/realtime" \
     'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if payload.get("status") == "success" and isinstance(payload.get("rules"), list) else 1)'
+  if [[ "${ALERT_WEBSOCKET_ENABLED}" == "true" ]]; then
+    doctor_json_contract "Alert WebSocket service" "http://127.0.0.1:${ALERT_BRIDGE_PORT}/ws/health" \
+      'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if payload.get("status") == "healthy" and payload.get("service") == "websocket" else 1)'
+  fi
   doctor_http_status "Video summarization" "http://127.0.0.1:${BACKEND_PORT}/v1/ready" 200
   if [[ "${LVS_ENABLE_MCP}" == "true" ]]; then
     if ss -H -ltn "sport = :${LVS_MCP_PORT}" | grep -q .; then

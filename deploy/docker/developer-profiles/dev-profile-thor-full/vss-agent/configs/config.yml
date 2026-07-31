@@ -83,6 +83,10 @@ function_groups:
     - video_analytics__get_incidents
     - video_analytics__get_incident
     - video_analytics__get_sensor_ids
+    - video_analytics__get_places
+    - video_analytics__get_fov_histogram
+    - video_analytics__get_average_speeds
+    - video_analytics__analyze
 
 functions:
   # Shared offset-based video analysis for uploaded media and search critic.
@@ -358,15 +362,15 @@ functions:
   incident_report_agent:
     _type: report_agent
     log_level: INFO
-    get_incidents_tool: video_analytics_mcp.video_analytics.get_incidents
-    get_incident_tool: video_analytics_mcp.video_analytics.get_incident
+    get_incidents_tool: video_analytics_mcp.video_analytics__get_incidents
+    get_incident_tool: video_analytics_mcp.video_analytics__get_incident
     template_report_tool: template_report_gen
 
   rtvi_vlm_alert:
     _type: rtvi_vlm_alert
     alert_bridge_url: ${ALERT_BRIDGE_URL}
     vst_internal_url: ${VST_INTERNAL_URL}
-    va_get_incidents_tool: video_analytics_mcp.video_analytics.get_incidents
+    va_get_incidents_tool: video_analytics_mcp.video_analytics__get_incidents
     default_model: ${VLM_NAME}
     timeout: 180
 
@@ -489,6 +493,13 @@ workflow:
   - get_sensor_names
   - rtvi_vlm_alert
   - rtvi_prompt_gen
+  - video_analytics_mcp.video_analytics__get_incidents
+  - video_analytics_mcp.video_analytics__get_incident
+  - video_analytics_mcp.video_analytics__get_sensor_ids
+  - video_analytics_mcp.video_analytics__get_places
+  - video_analytics_mcp.video_analytics__get_fov_histogram
+  - video_analytics_mcp.video_analytics__get_average_speeds
+  - video_analytics_mcp.video_analytics__analyze
   subagent_names:
   - report_agent
   - search_agent
@@ -528,6 +539,11 @@ workflow:
        vst_video_duration for duration. Never synthesize media URLs.
     8. QUICK ANALYSIS: Use video_understanding for short uploaded-video questions.
        Use video_understanding_iso only for incident windows with ISO timestamps.
+    9. VIDEO ANALYTICS: Use the video_analytics_mcp tools for direct incident,
+       sensor, place, field-of-view count, average-speed, and cross-incident
+       analysis questions. Prefer the specific read tool when it answers the
+       request; use video_analytics__analyze only for an aggregate natural-
+       language analysis over a bounded place/sensor and time range.
 
     When a media name could be uploaded or live, call vst_video_list and route by
     media_type unless the current conversation already established its type.
