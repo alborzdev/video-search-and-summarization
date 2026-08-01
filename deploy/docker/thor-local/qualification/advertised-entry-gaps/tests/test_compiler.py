@@ -39,30 +39,32 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
             (LANE / "classification-rules.json").read_text(encoding="utf-8")
         )
 
-    def test_exact_sixteen_family_and_eighty_seven_entry_denominator(self) -> None:
+    def test_exact_sixteen_family_and_eighty_six_entry_denominator(self) -> None:
         self.assertEqual(len(self.plan["families"]), 16)
-        self.assertEqual(len(self.plan["entries"]), 87)
+        self.assertEqual(len(self.plan["entries"]), 86)
         self.assertEqual(
             {item["family_id"] for item in self.plan["families"]},
             COMPILER.EXPECTED_FAMILY_IDS,
         )
-        self.assertEqual(len({item["entry_id"] for item in self.plan["entries"]}), 87)
+        self.assertEqual(len({item["entry_id"] for item in self.plan["entries"]}), 86)
         self.assertEqual(
-            len({item["manifest_pointer"] for item in self.plan["entries"]}), 87
+            len({item["manifest_pointer"] for item in self.plan["entries"]}), 86
         )
 
     def test_summary_is_exact_and_all_entries_remain_open(self) -> None:
         summary = self.plan["summary"]
         self.assertEqual(summary["manifest_family_count"], 55)
-        self.assertEqual(summary["families_without_official_capability_ids"], 16)
+        self.assertEqual(summary["families_with_uncovered_advertised_entries"], 16)
+        self.assertEqual(summary["families_without_official_capability_ids"], 15)
+        self.assertEqual(summary["families_with_partial_official_capability_ids"], 1)
         self.assertEqual(
-            summary["advertised_entries_without_official_capability_ids"], 87
+            summary["advertised_entries_without_official_capability_ids"], 86
         )
-        self.assertEqual(summary["open_unverified_entries"], 87)
+        self.assertEqual(summary["open_unverified_entries"], 86)
         self.assertEqual(summary["runtime_evidence_count"], 0)
         self.assertEqual(
             summary["acceptance_class_counts"],
-            {"alternate_local_lane": 26, "external_optional": 5, "required_local": 56},
+            {"alternate_local_lane": 26, "external_optional": 5, "required_local": 55},
         )
         self.assertTrue(
             all(
@@ -99,13 +101,53 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
                     item["family_canonical_sha256"], COMPILER._sha_json(family)
                 )
 
-    def test_all_sixteen_source_families_have_absent_official_id_key(self) -> None:
+    def test_fifteen_source_families_are_absent_and_vios_is_partial(self) -> None:
         for item in self.plan["families"]:
             family = self.manifest["features"][item["family_index"]]
-            self.assertNotIn("official_capability_ids", family)
-            self.assertEqual(item["official_capability_ids_state"], "absent")
             self.assertEqual(item["advertised_entry_count"], len(family["advertised"]))
-            self.assertEqual(len(item["entry_ids"]), len(family["advertised"]))
+            self.assertEqual(
+                item["uncovered_advertised_entry_count"], len(item["entry_ids"])
+            )
+            self.assertEqual(
+                item["covered_advertised_entry_count"]
+                + item["uncovered_advertised_entry_count"],
+                item["advertised_entry_count"],
+            )
+            self.assertEqual(
+                item["official_capability_ids"],
+                family.get("official_capability_ids", []),
+            )
+        partial = [
+            item
+            for item in self.plan["families"]
+            if item["official_capability_ids_state"] == "partial"
+        ]
+        self.assertEqual(len(partial), 1)
+        self.assertEqual(partial[0]["family_id"], "vios-codecs-audio")
+        self.assertEqual(
+            partial[0]["official_capability_ids"],
+            ["manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"],
+        )
+        self.assertEqual(partial[0]["covered_advertised_entry_count"], 1)
+        self.assertEqual(partial[0]["uncovered_advertised_entry_count"], 5)
+        self.assertTrue(
+            all(
+                item["official_capability_ids_state"] == "absent"
+                for item in self.plan["families"]
+                if item["family_id"] != "vios-codecs-audio"
+            )
+        )
+
+    def test_cpu_multimedia_is_removed_from_gap_plan_only(self) -> None:
+        pointers = {item["manifest_pointer"] for item in self.plan["entries"]}
+        self.assertNotIn("/features/20/advertised/5", pointers)
+        self.assertTrue(
+            {f"/features/20/advertised/{index}" for index in range(5)} <= pointers
+        )
+        self.assertNotIn(
+            "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support",
+            {item["entry_id"] for item in self.plan["entries"]},
+        )
 
     def test_family_lane_status_is_never_semantic_entry_coverage(self) -> None:
         self.assertIs(
@@ -229,6 +271,14 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
             COMPILER.RULES_CANONICAL_SHA256,
         )
         self.assertEqual(
+            locks["official_capabilities"]["raw_sha256"],
+            COMPILER.OFFICIAL_CAPABILITIES_RAW_SHA256,
+        )
+        self.assertEqual(
+            locks["official_capabilities"]["canonical_sha256"],
+            COMPILER.OFFICIAL_CAPABILITIES_CANONICAL_SHA256,
+        )
+        self.assertEqual(
             self.plan["plan_payload_sha256"], COMPILER.EXPECTED_PLAN_PAYLOAD_SHA256
         )
         self.assertEqual(
@@ -279,6 +329,18 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
                     COMPILER.compile_plan()
             finally:
                 COMPILER.MANIFEST_PATH = original_path
+
+    def test_official_capability_source_tamper_fails_closed_at_raw_lock(self) -> None:
+        original_path = COMPILER.OFFICIAL_CAPABILITIES_PATH
+        with tempfile.TemporaryDirectory() as temporary_name:
+            path = Path(temporary_name) / "official-capabilities.json"
+            path.write_bytes(original_path.read_bytes() + b"\n")
+            COMPILER.OFFICIAL_CAPABILITIES_PATH = path
+            try:
+                with self.assertRaises(COMPILER.CompileError):
+                    COMPILER.compile_plan()
+            finally:
+                COMPILER.OFFICIAL_CAPABILITIES_PATH = original_path
 
     def test_duplicate_json_keys_fail_closed(self) -> None:
         with self.assertRaises(COMPILER.CompileError):

@@ -27,6 +27,29 @@ ACCEPTANCE = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inve
 ORACLES = SCRIPT_DIR / "capability-oracles.json"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
+CPU_MULTIMEDIA_CAPABILITY_ID = (
+    "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+)
+CPU_MULTIMEDIA_SOURCE_CONTROLS = {
+    "services/vios/src/framework/media/media_utils/gst_utils.cpp":
+        "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9",
+    "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp":
+        "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787",
+    "services/vios/src/framework/utilities/config.cpp":
+        "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92",
+    "services/vios/src/framework/platform_specific/nvhwdetection.h":
+        "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0",
+    "deploy/docker/thor-local/vios/vst_config.json":
+        "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399",
+    "deploy/docker/thor-local/audio/codec-bundle.lock.json":
+        "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78",
+    "deploy/docker/thor-local/Dockerfile.vios-streamprocessing":
+        "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285",
+    "deploy/docker/thor-local/Dockerfile.vios-nvstreamer":
+        "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0",
+    "deploy/docker/thor-local/vios-codecs/vios_media.py":
+        "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b",
+}
 
 
 class CapabilityContractError(ValueError):
@@ -97,6 +120,176 @@ def _ids(values: Any, label: str) -> list[str]:
     if len(result) != len(set(result)):
         raise CapabilityContractError(f"{label}: duplicate ids")
     return result
+
+
+def _validate_cpu_multimedia_contract(
+    capability: dict[str, Any], repo_root: Path
+) -> None:
+    capability_id = capability["id"]
+    expected_identity = {
+        "feature_id": "vios-codecs-audio",
+        "kind": "runtime_behavior",
+        "title": "CPU multimedia support",
+        "acceptance_class": "required_local",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified",
+        "scenario_ids": ["analytics-vios-workflows"],
+    }
+    if any(capability.get(key) != value for key, value in expected_identity.items()):
+        raise CapabilityContractError(f"{capability_id}: canonical identity drift")
+    if "runtime_evidence" in capability:
+        raise CapabilityContractError(
+            f"{capability_id}: unqualified capability cannot contain runtime evidence"
+        )
+
+    contract = capability["contract"]
+    selectors = contract.get("selectors")
+    branch_selection = contract.get("branch_selection")
+    software = contract.get("software_elements")
+    hardware_default = contract.get("hardware_default_elements")
+    bundle = contract.get("offline_bundle")
+    derivatives = contract.get("immutable_derivatives")
+    expected_selectors = {
+        "use_software_path": {
+            "json_pointer": "/data/use_software_path",
+            "checked_in_value": False,
+            "default": False,
+        },
+        "USE_SOFTWARE_PATH": {
+            "environment_override_for": "/data/use_software_path",
+            "accepted_values": ["true", "false"],
+        },
+        "use_software_encoder": {
+            "json_pointer": "/data/use_software_encoder",
+            "checked_in_key_present": False,
+            "default": False,
+        },
+    }
+    expected_branch_selection = {
+        "decoder_gate": "m_useNvV4l2Dec",
+        "encoder_gate": "m_useNvV4l2Enc",
+        "use_software_path_directly_selects_elements": False,
+        "use_software_path_true": {
+            "m_useNvV4l2Dec": False,
+            "m_useNvV4l2Enc": False,
+        },
+        "use_software_encoder_true": {
+            "m_useNvV4l2Dec": "hardware_availability",
+            "m_useNvV4l2Enc": False,
+        },
+    }
+    expected_software = {
+        "video_decoders": {"h264": "avdec_h264", "h265": "avdec_h265"},
+        "video_encoders": {"h264": "x264enc", "h265": "x265enc"},
+        "audio_encoder": "avenc_aac",
+        "parsers": ["h264parse", "h265parse"],
+    }
+    expected_hardware_default = {
+        "video_decoder": "nvv4l2decoder",
+        "video_encoders": {
+            "h264": "nvv4l2h264enc",
+            "h265": "nvv4l2h265enc",
+        },
+    }
+    expected_bundle = {
+        "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+        "architecture": "arm64",
+        "package_count": 59,
+        "package_set_sha256":
+            "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f",
+    }
+    expected_derivatives = {
+        "runtime_network_install": "disabled",
+        "entrypoint": "/usr/local/bin/vios-offline-entrypoint",
+        "dockerfiles": [
+            "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+            "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+        ],
+    }
+    if (
+        selectors != expected_selectors
+        or branch_selection != expected_branch_selection
+        or software != expected_software
+        or hardware_default != expected_hardware_default
+        or bundle != expected_bundle
+        or derivatives != expected_derivatives
+    ):
+        raise CapabilityContractError(
+            f"{capability_id}: exact CPU path contract drift"
+        )
+
+    source_controls = contract.get("source_controls")
+    if not isinstance(source_controls, list):
+        raise CapabilityContractError(f"{capability_id}: source controls are missing")
+    observed_controls = {
+        item.get("path"): item.get("sha256")
+        for item in source_controls
+        if isinstance(item, dict)
+    }
+    if (
+        len(observed_controls) != len(source_controls)
+        or observed_controls != CPU_MULTIMEDIA_SOURCE_CONTROLS
+    ):
+        raise CapabilityContractError(f"{capability_id}: source control set drift")
+    resolved_controls: dict[str, Path] = {}
+    for relative, expected_digest in observed_controls.items():
+        required_prefix = (
+            "services/vios/"
+            if relative.startswith("services/vios/")
+            else "deploy/docker/thor-local/"
+        )
+        resolved = _resolve_repo_file(
+            repo_root,
+            relative,
+            label=f"{capability_id}.source_controls",
+            required_prefix=required_prefix,
+        )
+        if hashlib.sha256(resolved.read_bytes()).hexdigest() != expected_digest:
+            raise CapabilityContractError(f"{capability_id}: source control digest drift")
+        resolved_controls[relative] = resolved
+
+    config_path = "deploy/docker/thor-local/vios/vst_config.json"
+    config = _load(resolved_controls[config_path])
+    config_data = config.get("data", {})
+    if (
+        config_data.get("use_software_path") is not False
+        or "use_software_encoder" in config_data
+    ):
+        raise CapabilityContractError(f"{capability_id}: default CPU selector drift")
+    lock = _load(resolved_controls[bundle["lock_path"]])
+    if any(lock.get(key) != bundle[key] for key in (
+        "architecture", "package_count", "package_set_sha256"
+    )):
+        raise CapabilityContractError(f"{capability_id}: offline bundle identity drift")
+
+    required_fragments = {
+        "services/vios/src/framework/media/media_utils/gst_utils.cpp":
+            ["x264enc", "x265enc", "h264parse", "h265parse"],
+        "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp":
+            [
+                "m_useNvV4l2Dec", "m_useNvV4l2Enc", "nvv4l2decoder",
+                "nvv4l2h264enc", "nvv4l2h265enc", "avdec_h264", "avdec_h265",
+                "x264enc", "x265enc", "avenc_aac",
+            ],
+        "services/vios/src/framework/utilities/config.cpp":
+            ["use_software_path", "use_software_encoder", "USE_SOFTWARE_PATH"],
+        "services/vios/src/framework/platform_specific/nvhwdetection.h":
+            ["use_software_path", "use_software_encoder", "m_useNvV4l2Dec", "m_useNvV4l2Enc"],
+    }
+    for relative, fragments in required_fragments.items():
+        text = resolved_controls[relative].read_text(encoding="utf-8")
+        if any(fragment not in text for fragment in fragments):
+            raise CapabilityContractError(f"{capability_id}: CPU element control drift")
+    for relative in derivatives["dockerfiles"]:
+        text = resolved_controls[relative].read_text(encoding="utf-8")
+        if (
+            'com.nvidia.vss.thor.vios-runtime-network-install="disabled"'
+            not in text
+            or 'ENTRYPOINT ["/usr/local/bin/vios-offline-entrypoint"]' not in text
+        ):
+            raise CapabilityContractError(
+                f"{capability_id}: immutable derivative control drift"
+            )
 
 
 def _validate_bound_runtime_evidence(
@@ -399,6 +592,8 @@ def validate(
         if not isinstance(capability.get("contract"), dict) or not capability["contract"]:
             raise CapabilityContractError(f"{capability_id}: exact contract is required")
         contract = capability["contract"]
+        if capability_id == CPU_MULTIMEDIA_CAPABILITY_ID:
+            _validate_cpu_multimedia_contract(capability, repo_root)
         if "expected_manifest" in contract:
             expected_manifest = _resolve_repo_file(
                 repo_root,

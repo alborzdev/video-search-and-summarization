@@ -65986,6 +65986,599 @@
       },
       "current_state": "external_boundary_unexecuted",
       "evidence": []
+    },
+    {
+      "capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+      "oracle_id": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+      "profile": "behavior-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support",
+      "mode": "runtime",
+      "ledger_binding": {
+        "feature_id": "vios-codecs-audio",
+        "kind": "runtime_behavior",
+        "title": "CPU multimedia support",
+        "source_claims": [
+          {
+            "source_id": "doc.vios",
+            "locator": "VMS Stream Processing — CPU Multimedia Support"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "selectors": {
+            "use_software_path": {
+              "json_pointer": "/data/use_software_path",
+              "checked_in_value": false,
+              "default": false
+            },
+            "USE_SOFTWARE_PATH": {
+              "environment_override_for": "/data/use_software_path",
+              "accepted_values": [
+                "true",
+                "false"
+              ]
+            },
+            "use_software_encoder": {
+              "json_pointer": "/data/use_software_encoder",
+              "checked_in_key_present": false,
+              "default": false
+            }
+          },
+          "branch_selection": {
+            "decoder_gate": "m_useNvV4l2Dec",
+            "encoder_gate": "m_useNvV4l2Enc",
+            "use_software_path_directly_selects_elements": false,
+            "use_software_path_true": {
+              "m_useNvV4l2Dec": false,
+              "m_useNvV4l2Enc": false
+            },
+            "use_software_encoder_true": {
+              "m_useNvV4l2Dec": "hardware_availability",
+              "m_useNvV4l2Enc": false
+            }
+          },
+          "software_elements": {
+            "video_decoders": {
+              "h264": "avdec_h264",
+              "h265": "avdec_h265"
+            },
+            "video_encoders": {
+              "h264": "x264enc",
+              "h265": "x265enc"
+            },
+            "audio_encoder": "avenc_aac",
+            "parsers": [
+              "h264parse",
+              "h265parse"
+            ]
+          },
+          "hardware_default_elements": {
+            "video_decoder": "nvv4l2decoder",
+            "video_encoders": {
+              "h264": "nvv4l2h264enc",
+              "h265": "nvv4l2h265enc"
+            }
+          },
+          "offline_bundle": {
+            "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+            "architecture": "arm64",
+            "package_count": 59,
+            "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+          },
+          "immutable_derivatives": {
+            "runtime_network_install": "disabled",
+            "entrypoint": "/usr/local/bin/vios-offline-entrypoint",
+            "dockerfiles": [
+              "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+              "deploy/docker/thor-local/Dockerfile.vios-nvstreamer"
+            ]
+          },
+          "source_controls": [
+            {
+              "path": "services/vios/src/framework/media/media_utils/gst_utils.cpp",
+              "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"
+            },
+            {
+              "path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+              "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"
+            },
+            {
+              "path": "services/vios/src/framework/utilities/config.cpp",
+              "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"
+            },
+            {
+              "path": "services/vios/src/framework/platform_specific/nvhwdetection.h",
+              "sha256": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0"
+            },
+            {
+              "path": "deploy/docker/thor-local/vios/vst_config.json",
+              "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"
+            },
+            {
+              "path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+              "sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"
+            },
+            {
+              "path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+              "sha256": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285"
+            },
+            {
+              "path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+              "sha256": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0"
+            },
+            {
+              "path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+              "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"
+            }
+          ]
+        },
+        "gap": "The exact CPU software decoder, encoder, parser, ARM64 package, and immutable image controls are wired and statically locked. Execute a bounded use_software_path=true H.264, H.265, and AAC media workflow on the current Thor runtime before qualification."
+      },
+      "reviewed_scenario_ids": [
+        "analytics-vios-workflows",
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "fixture": {
+        "id": "fixture.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+        "kind": "generated_custom_media",
+        "availability": "not_staged",
+        "source": "bounded locally generated fixture",
+        "warehouse_sample_bundle": false,
+        "materialization": {
+          "path": null,
+          "generator": null,
+          "sha256": null
+        },
+        "input": {
+          "capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+          "contract": {
+            "selectors": {
+              "use_software_path": {
+                "json_pointer": "/data/use_software_path",
+                "checked_in_value": false,
+                "default": false
+              },
+              "USE_SOFTWARE_PATH": {
+                "environment_override_for": "/data/use_software_path",
+                "accepted_values": [
+                  "true",
+                  "false"
+                ]
+              },
+              "use_software_encoder": {
+                "json_pointer": "/data/use_software_encoder",
+                "checked_in_key_present": false,
+                "default": false
+              }
+            },
+            "branch_selection": {
+              "decoder_gate": "m_useNvV4l2Dec",
+              "encoder_gate": "m_useNvV4l2Enc",
+              "use_software_path_directly_selects_elements": false,
+              "use_software_path_true": {
+                "m_useNvV4l2Dec": false,
+                "m_useNvV4l2Enc": false
+              },
+              "use_software_encoder_true": {
+                "m_useNvV4l2Dec": "hardware_availability",
+                "m_useNvV4l2Enc": false
+              }
+            },
+            "software_elements": {
+              "video_decoders": {
+                "h264": "avdec_h264",
+                "h265": "avdec_h265"
+              },
+              "video_encoders": {
+                "h264": "x264enc",
+                "h265": "x265enc"
+              },
+              "audio_encoder": "avenc_aac",
+              "parsers": [
+                "h264parse",
+                "h265parse"
+              ]
+            },
+            "hardware_default_elements": {
+              "video_decoder": "nvv4l2decoder",
+              "video_encoders": {
+                "h264": "nvv4l2h264enc",
+                "h265": "nvv4l2h265enc"
+              }
+            },
+            "offline_bundle": {
+              "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+              "architecture": "arm64",
+              "package_count": 59,
+              "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+            },
+            "immutable_derivatives": {
+              "runtime_network_install": "disabled",
+              "entrypoint": "/usr/local/bin/vios-offline-entrypoint",
+              "dockerfiles": [
+                "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+                "deploy/docker/thor-local/Dockerfile.vios-nvstreamer"
+              ]
+            },
+            "source_controls": [
+              {
+                "path": "services/vios/src/framework/media/media_utils/gst_utils.cpp",
+                "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"
+              },
+              {
+                "path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+                "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"
+              },
+              {
+                "path": "services/vios/src/framework/utilities/config.cpp",
+                "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"
+              },
+              {
+                "path": "services/vios/src/framework/platform_specific/nvhwdetection.h",
+                "sha256": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0"
+              },
+              {
+                "path": "deploy/docker/thor-local/vios/vst_config.json",
+                "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"
+              },
+              {
+                "path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+                "sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"
+              },
+              {
+                "path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+                "sha256": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285"
+              },
+              {
+                "path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+                "sha256": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0"
+              },
+              {
+                "path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+                "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"
+              }
+            ]
+          },
+          "namespace": "vss-oracle-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support",
+          "action": "run bounded hardware-default and use_software_path=true H.264/H.265/AAC workflows, prove m_useNvV4l2Dec and m_useNvV4l2Enc select distinct nvv4l2 and CPU elements, then restore the checked-in false default"
+        }
+      },
+      "expected_observations": [
+        {
+          "id": "contract_identity",
+          "description": "The observed service/config/artifact identity exactly matches every declared contract field."
+        },
+        {
+          "id": "semantic_result",
+          "description": "run bounded hardware-default and use_software_path=true H.264/H.265/AAC workflows, prove m_useNvV4l2Dec and m_useNvV4l2Enc select distinct nvv4l2 and CPU elements, then restore the checked-in false default"
+        },
+        {
+          "id": "hardware_cpu_discrimination",
+          "description": "The false-default path records nvv4l2 decoder/encoder selection, while the opted-in path records the declared libav/x264/x265 elements for the same bounded H.264/H.265 media matrix."
+        }
+      ],
+      "assertions": [
+        {
+          "id": "contract-01",
+          "observation": "contract_identity/contract/branch_selection/decoder_gate",
+          "operator": "equals",
+          "expected": "m_useNvV4l2Dec"
+        },
+        {
+          "id": "contract-02",
+          "observation": "contract_identity/contract/branch_selection/encoder_gate",
+          "operator": "equals",
+          "expected": "m_useNvV4l2Enc"
+        },
+        {
+          "id": "contract-03",
+          "observation": "contract_identity/contract/branch_selection/use_software_encoder_true/m_useNvV4l2Dec",
+          "operator": "equals",
+          "expected": "hardware_availability"
+        },
+        {
+          "id": "contract-04",
+          "observation": "contract_identity/contract/branch_selection/use_software_encoder_true/m_useNvV4l2Enc",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-05",
+          "observation": "contract_identity/contract/branch_selection/use_software_path_directly_selects_elements",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-06",
+          "observation": "contract_identity/contract/branch_selection/use_software_path_true/m_useNvV4l2Dec",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-07",
+          "observation": "contract_identity/contract/branch_selection/use_software_path_true/m_useNvV4l2Enc",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-08",
+          "observation": "contract_identity/contract/hardware_default_elements/video_decoder",
+          "operator": "equals",
+          "expected": "nvv4l2decoder"
+        },
+        {
+          "id": "contract-09",
+          "observation": "contract_identity/contract/hardware_default_elements/video_encoders/h264",
+          "operator": "equals",
+          "expected": "nvv4l2h264enc"
+        },
+        {
+          "id": "contract-10",
+          "observation": "contract_identity/contract/hardware_default_elements/video_encoders/h265",
+          "operator": "equals",
+          "expected": "nvv4l2h265enc"
+        },
+        {
+          "id": "contract-11",
+          "observation": "contract_identity/contract/immutable_derivatives/dockerfiles",
+          "operator": "equals",
+          "expected": [
+            "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+            "deploy/docker/thor-local/Dockerfile.vios-nvstreamer"
+          ]
+        },
+        {
+          "id": "contract-12",
+          "observation": "contract_identity/contract/immutable_derivatives/entrypoint",
+          "operator": "equals",
+          "expected": "/usr/local/bin/vios-offline-entrypoint"
+        },
+        {
+          "id": "contract-13",
+          "observation": "contract_identity/contract/immutable_derivatives/runtime_network_install",
+          "operator": "equals",
+          "expected": "disabled"
+        },
+        {
+          "id": "contract-14",
+          "observation": "contract_identity/contract/offline_bundle/architecture",
+          "operator": "equals",
+          "expected": "arm64"
+        },
+        {
+          "id": "contract-15",
+          "observation": "contract_identity/contract/offline_bundle/lock_path",
+          "operator": "equals",
+          "expected": "deploy/docker/thor-local/audio/codec-bundle.lock.json"
+        },
+        {
+          "id": "contract-16",
+          "observation": "contract_identity/contract/offline_bundle/package_count",
+          "operator": "equals",
+          "expected": 59
+        },
+        {
+          "id": "contract-17",
+          "observation": "contract_identity/contract/offline_bundle/package_set_sha256",
+          "operator": "equals",
+          "expected": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+        },
+        {
+          "id": "contract-18",
+          "observation": "contract_identity/contract/selectors/USE_SOFTWARE_PATH/accepted_values",
+          "operator": "equals",
+          "expected": [
+            "true",
+            "false"
+          ]
+        },
+        {
+          "id": "contract-19",
+          "observation": "contract_identity/contract/selectors/USE_SOFTWARE_PATH/environment_override_for",
+          "operator": "equals",
+          "expected": "/data/use_software_path"
+        },
+        {
+          "id": "contract-20",
+          "observation": "contract_identity/contract/selectors/use_software_encoder/checked_in_key_present",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-21",
+          "observation": "contract_identity/contract/selectors/use_software_encoder/default",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-22",
+          "observation": "contract_identity/contract/selectors/use_software_encoder/json_pointer",
+          "operator": "equals",
+          "expected": "/data/use_software_encoder"
+        },
+        {
+          "id": "contract-23",
+          "observation": "contract_identity/contract/selectors/use_software_path/checked_in_value",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-24",
+          "observation": "contract_identity/contract/selectors/use_software_path/default",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "id": "contract-25",
+          "observation": "contract_identity/contract/selectors/use_software_path/json_pointer",
+          "operator": "equals",
+          "expected": "/data/use_software_path"
+        },
+        {
+          "id": "contract-26",
+          "observation": "contract_identity/contract/software_elements/audio_encoder",
+          "operator": "equals",
+          "expected": "avenc_aac"
+        },
+        {
+          "id": "contract-27",
+          "observation": "contract_identity/contract/software_elements/parsers",
+          "operator": "equals",
+          "expected": [
+            "h264parse",
+            "h265parse"
+          ]
+        },
+        {
+          "id": "contract-28",
+          "observation": "contract_identity/contract/software_elements/video_decoders/h264",
+          "operator": "equals",
+          "expected": "avdec_h264"
+        },
+        {
+          "id": "contract-29",
+          "observation": "contract_identity/contract/software_elements/video_decoders/h265",
+          "operator": "equals",
+          "expected": "avdec_h265"
+        },
+        {
+          "id": "contract-30",
+          "observation": "contract_identity/contract/software_elements/video_encoders/h264",
+          "operator": "equals",
+          "expected": "x264enc"
+        },
+        {
+          "id": "contract-31",
+          "observation": "contract_identity/contract/software_elements/video_encoders/h265",
+          "operator": "equals",
+          "expected": "x265enc"
+        },
+        {
+          "id": "contract-32",
+          "observation": "contract_identity/contract/source_controls",
+          "operator": "equals",
+          "expected": [
+            {
+              "path": "services/vios/src/framework/media/media_utils/gst_utils.cpp",
+              "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"
+            },
+            {
+              "path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+              "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"
+            },
+            {
+              "path": "services/vios/src/framework/utilities/config.cpp",
+              "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"
+            },
+            {
+              "path": "services/vios/src/framework/platform_specific/nvhwdetection.h",
+              "sha256": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0"
+            },
+            {
+              "path": "deploy/docker/thor-local/vios/vst_config.json",
+              "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"
+            },
+            {
+              "path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+              "sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"
+            },
+            {
+              "path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+              "sha256": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285"
+            },
+            {
+              "path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+              "sha256": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0"
+            },
+            {
+              "path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+              "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"
+            }
+          ]
+        },
+        {
+          "id": "observation-02",
+          "observation": "semantic_result",
+          "operator": "recorded_pass",
+          "expected": true
+        },
+        {
+          "id": "observation-03",
+          "observation": "hardware_cpu_discrimination",
+          "operator": "recorded_pass",
+          "expected": true
+        }
+      ],
+      "admission_prerequisites": [
+        {
+          "id": "operator-approval",
+          "condition": "explicit approval exists for any service lifecycle or external access",
+          "bounded": true
+        },
+        {
+          "id": "target-bound",
+          "condition": "execution is pinned to capability manifest-entry.vios-codecs-audio.05-cpu-multimedia-support and target commit",
+          "bounded": true
+        },
+        {
+          "id": "fixture-bound",
+          "condition": "fixture digest, namespace, duration, and request count are recorded before execution",
+          "bounded": true
+        },
+        {
+          "id": "runtime-capacity",
+          "condition": "Thor cgroup, memory, disk, GPU, port, and exact artifact/image gates pass",
+          "bounded": true
+        }
+      ],
+      "execution_bounds": {
+        "executor": null,
+        "collectors": [],
+        "network_scope": "loopback-or-compose-internal",
+        "max_duration_seconds": 900,
+        "max_requests": 2,
+        "workload": {
+          "units": 1,
+          "requests_per_unit": 2,
+          "overhead_requests": 0,
+          "calculated_max_requests": 2,
+          "phases": [
+            "positive",
+            "adjacent_negative"
+          ]
+        },
+        "model_staging": "prerequisite_only",
+        "warehouse_sample_bundle": "excluded",
+        "max_actions": 2
+      },
+      "cleanup": {
+        "mutation": "namespaced_and_reversible",
+        "targets": [
+          "vss-oracle-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support"
+        ],
+        "pre_state": "service, configuration, resource IDs, and target absence/digests must be captured before mutation",
+        "restore": "remove only recorded oracle-owned resources and restore the captured pre-test service/config state",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "every allowlisted oracle-owned resource is absent",
+          "captured service/config state and non-owned resource digests match pre-state"
+        ]
+      },
+      "acceptance_readiness": {
+        "classification": "planning_index_only",
+        "blockers": [
+          "fixture path, generator, and digest are not materialized",
+          "request/command executor and collectors are not implemented",
+          "cleanup allowlist has no machine executor or postcondition collector"
+        ]
+      },
+      "current_state": "open_unexecuted",
+      "evidence": []
     }
   ]
 }

@@ -46,11 +46,11 @@ def test_checked_plan_is_exact_deterministic_output(plan: dict) -> None:
 def test_exact_denominators_and_lane_counts(plan: dict) -> None:
     assert plan["denominators"] == compiler.EXPECTED_DENOMINATORS
     assert plan["lane_capability_counts"] == compiler.EXPECTED_LANE_COUNTS
-    assert sum(plan["lane_capability_counts"].values()) == 276
+    assert sum(plan["lane_capability_counts"].values()) == 277
     assert len(plan["lanes"]) == 8
     assert len(plan["feature_family_bindings"]) == 55
     assert len(plan["advertised_entry_bindings"]) == 500
-    assert len(plan["capability_bindings"]) == 276
+    assert len(plan["capability_bindings"]) == 277
 
 
 def test_every_capability_and_every_family_is_bound_once(plan: dict) -> None:
@@ -58,11 +58,11 @@ def test_every_capability_and_every_family_is_bound_once(plan: dict) -> None:
         binding["capability_id"] for binding in plan["capability_bindings"]
     ]
     family_ids = [binding["feature_id"] for binding in plan["feature_family_bindings"]]
-    assert len(capability_ids) == len(set(capability_ids)) == 276
+    assert len(capability_ids) == len(set(capability_ids)) == 277
     assert len(family_ids) == len(set(family_ids)) == 55
     assert (
         sum(item["capability_count"] == 0 for item in plan["feature_family_bindings"])
-        == 16
+        == 15
     )
     assert all(item["lane_ids"] for item in plan["feature_family_bindings"])
 
@@ -166,6 +166,8 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
             assert binding["entry_classification_source"] == (
                 "advertised-entry-gap-plan"
                 if gap_entry is not None
+                else "canonical-entry-capability"
+                if pointer == compiler.CPU_MULTIMEDIA_POINTER
                 else "not-applicable-family-has-capability-rows"
             )
             assert binding["default_lane_id"] == family["default_lane_id"]
@@ -177,6 +179,22 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
                 f"oracle.{capability_id}"
                 for capability_id in binding["feature_capability_ids"]
             ]
+            if pointer == compiler.CPU_MULTIMEDIA_POINTER:
+                assert binding["entry_specific_capability_ids"] == [
+                    compiler.CPU_MULTIMEDIA_CAPABILITY_ID
+                ]
+                assert binding["entry_specific_oracle_ids"] == [
+                    f"oracle.{compiler.CPU_MULTIMEDIA_CAPABILITY_ID}"
+                ]
+                assert binding["lane_binding_scope"] == (
+                    "entry_specific_canonical_capability"
+                )
+                assert binding["capability_mapping_scope"] == (
+                    "entry_specific_canonical"
+                )
+            else:
+                assert binding["entry_specific_capability_ids"] == []
+                assert binding["entry_specific_oracle_ids"] == []
             assert binding["manifest_entry_sha256"] == canonical_sha256(
                 {"json_pointer": pointer, "value": claim}
             )
@@ -189,14 +207,14 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
 
 def test_advertised_entry_semantic_and_runtime_gaps_are_explicit(plan: dict) -> None:
     bindings = plan["advertised_entry_bindings"]
-    assert sum(bool(item["feature_capability_ids"]) for item in bindings) == 413
-    assert sum(not item["feature_capability_ids"] for item in bindings) == 87
+    assert sum(bool(item["feature_capability_ids"]) for item in bindings) == 419
+    assert sum(not item["feature_capability_ids"] for item in bindings) == 81
     assert (
         sum(
             item["entry_planning_acceptance_class"] == "required_local"
             for item in bindings
         )
-        == 56
+        == 55
     )
     assert (
         sum(
@@ -216,23 +234,52 @@ def test_advertised_entry_semantic_and_runtime_gaps_are_explicit(plan: dict) -> 
         item["capability_mapping_scope"]
         for item in bindings
         if item["feature_capability_ids"]
-    } == {"feature_family_only"}
+    } == {
+        "feature_family_only",
+        "feature_family_only_with_open_entry_gap",
+        "entry_specific_canonical",
+    }
     assert {
         item["capability_mapping_scope"]
         for item in bindings
         if not item["feature_capability_ids"]
     } == {"none_family_has_zero_capability_rows"}
-    assert all(
-        item["lane_binding_scope"] == "feature_family_reviewed_not_entry_specific"
-        for item in bindings
-    )
-    assert all(not item["entry_specific_capability_ids"] for item in bindings)
-    assert all(not item["entry_specific_oracle_ids"] for item in bindings)
+    entry_specific = [
+        item for item in bindings if item["entry_specific_capability_ids"]
+    ]
+    assert len(entry_specific) == 1
+    assert entry_specific[0]["manifest_json_pointer"] == compiler.CPU_MULTIMEDIA_POINTER
+    assert entry_specific[0]["entry_specific_capability_ids"] == [
+        compiler.CPU_MULTIMEDIA_CAPABILITY_ID
+    ]
+    assert entry_specific[0]["entry_specific_oracle_ids"] == [
+        f"oracle.{compiler.CPU_MULTIMEDIA_CAPABILITY_ID}"
+    ]
     assert all(not item["runtime_evidence_records"] for item in bindings)
-    assert plan["policy"]["advertised_entry_mapping_scope"] == "feature_family_only"
+    assert plan["policy"]["advertised_entry_mapping_scope"] == (
+        "feature_family_with_canonical_entry_overrides"
+    )
     assert not plan["policy"]["advertised_entry_bindings_are_runtime_evidence"]
     assert plan["policy"]["zero_capability_family_entries_block_runtime_completeness"]
     assert not plan["policy"]["literal_runtime_feature_completeness_claim_allowed"]
+
+
+def test_cpu_multimedia_capability_is_planning_only_and_not_promoted(plan: dict) -> None:
+    binding = next(
+        item
+        for item in plan["capability_bindings"]
+        if item["capability_id"] == compiler.CPU_MULTIMEDIA_CAPABILITY_ID
+    )
+    assert binding["feature_id"] == "vios-codecs-audio"
+    assert binding["lane_id"] == "standalone-services"
+    assert binding["kind"] == "runtime_behavior"
+    assert binding["runtime_state"] == "not_qualified"
+    assert binding["oracle_id"] == f"oracle.{compiler.CPU_MULTIMEDIA_CAPABILITY_ID}"
+    assert binding["oracle_current_state"] == "open_unexecuted"
+    assert binding["deployment"]["planned_service_roles"] == ["vios"]
+    assert binding["probe"]["execution_bounds"]["executor"] is None
+    assert binding["cleanup"]["executor"] is None
+    assert binding["evidence"]["current_records"] == []
 
 
 def test_service_binding_audit_is_planning_only_and_unresolved_is_fail_closed(

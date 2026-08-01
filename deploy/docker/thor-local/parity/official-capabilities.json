@@ -661,7 +661,7 @@
       "uri": "https://docs.nvidia.com/vss/3.2.1/vios-microservices.html",
       "version": "3.2.1",
       "locator_policy": "Wave 3 Systems system extraction captured 2026-07-31.",
-      "claim_set_sha256": "f72a0b7b88e8daf0d617fc4bd549b04b518705bfa485e3d2d9531741abf67a8c"
+      "claim_set_sha256": "97c5f21a48c4ef694ee00da4282d00ecc14c7caac722a00034631835faf02ada"
     },
     {
       "id": "doc.nvstreamer",
@@ -11902,6 +11902,133 @@
         "external-integration-boundaries"
       ],
       "gap": "Cosmos Transfer and training-data generation are external dependencies."
+    },
+    {
+      "id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+      "feature_id": "vios-codecs-audio",
+      "kind": "runtime_behavior",
+      "title": "CPU multimedia support",
+      "source_claims": [
+        {
+          "source_id": "doc.vios",
+          "locator": "VMS Stream Processing — CPU Multimedia Support"
+        }
+      ],
+      "acceptance_class": "required_local",
+      "thor_state": "wired",
+      "runtime_state": "not_qualified",
+      "contract": {
+        "selectors": {
+          "use_software_path": {
+            "json_pointer": "/data/use_software_path",
+            "checked_in_value": false,
+            "default": false
+          },
+          "USE_SOFTWARE_PATH": {
+            "environment_override_for": "/data/use_software_path",
+            "accepted_values": [
+              "true",
+              "false"
+            ]
+          },
+          "use_software_encoder": {
+            "json_pointer": "/data/use_software_encoder",
+            "checked_in_key_present": false,
+            "default": false
+          }
+        },
+        "branch_selection": {
+          "decoder_gate": "m_useNvV4l2Dec",
+          "encoder_gate": "m_useNvV4l2Enc",
+          "use_software_path_directly_selects_elements": false,
+          "use_software_path_true": {
+            "m_useNvV4l2Dec": false,
+            "m_useNvV4l2Enc": false
+          },
+          "use_software_encoder_true": {
+            "m_useNvV4l2Dec": "hardware_availability",
+            "m_useNvV4l2Enc": false
+          }
+        },
+        "software_elements": {
+          "video_decoders": {
+            "h264": "avdec_h264",
+            "h265": "avdec_h265"
+          },
+          "video_encoders": {
+            "h264": "x264enc",
+            "h265": "x265enc"
+          },
+          "audio_encoder": "avenc_aac",
+          "parsers": [
+            "h264parse",
+            "h265parse"
+          ]
+        },
+        "hardware_default_elements": {
+          "video_decoder": "nvv4l2decoder",
+          "video_encoders": {
+            "h264": "nvv4l2h264enc",
+            "h265": "nvv4l2h265enc"
+          }
+        },
+        "offline_bundle": {
+          "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+          "architecture": "arm64",
+          "package_count": 59,
+          "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+        },
+        "immutable_derivatives": {
+          "runtime_network_install": "disabled",
+          "entrypoint": "/usr/local/bin/vios-offline-entrypoint",
+          "dockerfiles": [
+            "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+            "deploy/docker/thor-local/Dockerfile.vios-nvstreamer"
+          ]
+        },
+        "source_controls": [
+          {
+            "path": "services/vios/src/framework/media/media_utils/gst_utils.cpp",
+            "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"
+          },
+          {
+            "path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+            "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"
+          },
+          {
+            "path": "services/vios/src/framework/utilities/config.cpp",
+            "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"
+          },
+          {
+            "path": "services/vios/src/framework/platform_specific/nvhwdetection.h",
+            "sha256": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0"
+          },
+          {
+            "path": "deploy/docker/thor-local/vios/vst_config.json",
+            "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"
+          },
+          {
+            "path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+            "sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"
+          },
+          {
+            "path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+            "sha256": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285"
+          },
+          {
+            "path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+            "sha256": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0"
+          },
+          {
+            "path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+            "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"
+          }
+        ]
+      },
+      "scenario_ids": [
+        "analytics-vios-workflows"
+      ],
+      "gap": "The exact CPU software decoder, encoder, parser, ARM64 package, and immutable image controls are wired and statically locked. Execute a bounded use_software_path=true H.264, H.265, and AAC media workflow on the current Thor runtime before qualification."
     }
   ],
   "source_discrepancies": [

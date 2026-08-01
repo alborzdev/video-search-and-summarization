@@ -68,6 +68,13 @@ in this directory:
   server: all 13 tools register and bounded health/file operations run through
   deterministic fakes. Live SSE/MCP transport, a deployed service, VLM
   inference, Thor runtime evidence, and official promotion remain open;
+- `cpu-multimedia-ledger-successor/` preserves the published `0c9a0a3`
+  predecessor instead of relabelling its 87-gap-era evidence. Read-only local
+  Git object checks lock all eight advertised-entry wave trees, four Wave 3
+  candidate/bundle trees, two static-integration receipt trees, the immutable
+  offline-MV3DT candidate observation, and Planning Waves 5-12, then prove that
+  only the CPU multimedia gap left the current plan, becoming
+  capability/oracle 277 while staying runtime-unqualified and evidence-empty;
 - `external-entry-attestations/` turns those exact four blockers into an inert,
   credential-free collection plan and strict validator for a future sanitized
   operator receipt. Source or mocks never count as delivery; Slack and
@@ -194,6 +201,16 @@ in this directory:
   isolated LVS handler does not demonstrate one-active/one-queued behavior,
   and AVI/MOV/WebM remain outside the default UI admission path and unproven at
   runtime. No mismatch is normalized into a pass;
+- `headline-cosmos-smartcity-static-executor/` binds the two Cosmos3 Nano
+  headline model records and the Smart City version-skew record to their exact
+  canonical oracles. It executes only byte-locked file/config checks, preserves
+  all three `not_qualified` runtime states, and leaves model staging/inference
+  plus Smart City component-digest/runtime evidence open;
+- `official-vss-doc-drift-observation/` preserves the immutable July 31
+  172-page, 26,449-edge source lock while recording the reviewed August 1
+  aggregate drift: all raw hashes changed, but every page size, the URL set,
+  and graph topology matched. August bodies/hashes are unavailable, so semantic
+  equality remains explicitly unproven and no source lock is relabelled;
 - `runtime-evidence-common/` provides reusable fail-closed primitives for
   future authorized collectors: numeric-loopback/exact-path transport through
   an injected proxy/redirect-disabled opener, independent request/action
@@ -307,7 +324,7 @@ and `406 + L` normalized; the defensible lower bounds are 421 and 420, not
 complete totals.
 
 The deterministic static successors currently materialize 27 of 110
-planning requirements. All 276 full capability oracles remain
+planning requirements. All 277 full capability oracles remain
 `planning_index_only`; those 27 planning bindings plus two offline MV3DT tool
 bindings are static subsets only, with zero runtime evidence and zero
 `passed_current` promotions. The third successor updates the LVS adapter's

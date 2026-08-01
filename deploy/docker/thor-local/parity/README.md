@@ -38,7 +38,7 @@ documentation/repository discrepancies. Validate it directly:
 python3 deploy/docker/thor-local/parity/verify_official_capabilities.py --report
 ```
 
-The live 276-capability ledger is the complete reviewed VSS 3.2.1 static
+The live 277-capability ledger is the complete reviewed VSS 3.2.1 static
 denominator. Every page in the exact 172-page documentation graph is classified,
 and every reviewed claim-bearing source is merged. This is inventory closure,
 not evidence that every capability runs on this Thor. A historical audit of the
@@ -93,6 +93,10 @@ runtime-qualified counts. The optional Warehouse sample bundle remains excluded,
 while operator custom media, calibration, model, and configuration inputs remain
 in scope.
 
+A current-ledger successor adds the exact CPU multimedia advertised entry as
+capability 277 while retaining the 47 existing discrepancies. This does not
+rewrite the immutable Wave 3 merge receipt or qualify the CPU runtime path.
+
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and
 operation/tool count. This prevents a documentation URL or a stale aggregate
@@ -105,11 +109,11 @@ identity, required observations/assertions, arithmetic work bounds, admission
 gates, and intended mutation ownership. These prose-derived requirements are
 useful for implementation review but do not provide fixture files/generators,
 commands/requests, collectors, or executable cleanup for the complete contract.
-All 276 entries are therefore explicitly `planning_index_only`; the full-oracle
-executor-ready count is zero. Twenty-six live planning bindings cover bounded
+All 277 entries are therefore explicitly `planning_index_only`; the full-oracle
+executor-ready count is zero. Twenty-seven live planning bindings cover bounded
 file-only subsets, and the two MV3DT generator oracles additionally bind their
 deterministic custom-data tool observations from
-`../qualification/offline-mv3dt-tools/`. All 28 subset bindings are explicitly
+`../qualification/offline-mv3dt-tools/`. All 29 subset bindings are explicitly
 non-advancing: they cannot promote the full oracle, create runtime evidence, or
 change capability state. The seven planned modes are static, config, runtime,
 API, protocol, model, and deploy.

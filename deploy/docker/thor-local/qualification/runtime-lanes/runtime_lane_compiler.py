@@ -33,34 +33,38 @@ SOURCE_PATHS = {
     "oracle_schema": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
 }
 SOURCE_SHA256 = {
-    "advertised_gap_plan": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+    "advertised_gap_plan": "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239",
     "advertised_gap_rules": "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314",
-    "manifest": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
-    "ledger": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
-    "oracles": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2",
-    "oracle_schema": "a1af2cd99d4df2e6bdec9afdee851b717ce7b0c931718fb1d727bd8090ddcbf5",
+    "manifest": "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba",
+    "ledger": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e",
+    "oracles": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff",
+    "oracle_schema": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1",
 }
+CPU_MULTIMEDIA_CAPABILITY_ID = (
+    "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+)
+CPU_MULTIMEDIA_POINTER = "/features/20/advertised/5"
 EXPECTED_DENOMINATORS = {
     "lanes": 8,
     "feature_families": 55,
     "advertised_entries": 500,
-    "capabilities": 276,
-    "oracles": 276,
-    "capabilities_with_exactly_one_lane": 276,
+    "capabilities": 277,
+    "oracles": 277,
+    "capabilities_with_exactly_one_lane": 277,
     "feature_families_with_lane_binding": 55,
-    "feature_families_without_capability_rows": 16,
+    "feature_families_without_capability_rows": 15,
     "advertised_entries_with_lane_binding": 500,
-    "advertised_entries_in_families_with_capability_oracle_rows": 413,
-    "advertised_entries_in_families_without_capability_oracle_rows": 87,
-    "advertised_gap_entries_proposed_required_local": 56,
+    "advertised_entries_in_families_with_capability_oracle_rows": 419,
+    "advertised_entries_in_families_without_capability_oracle_rows": 81,
+    "advertised_gap_entries_proposed_required_local": 55,
     "advertised_gap_entries_proposed_alternate_local_lane": 26,
     "advertised_gap_entries_proposed_external_optional": 5,
-    "advertised_entries_with_entry_specific_capability_mapping": 0,
-    "advertised_entries_with_entry_specific_oracle_mapping": 0,
+    "advertised_entries_with_entry_specific_capability_mapping": 1,
+    "advertised_entries_with_entry_specific_oracle_mapping": 1,
     "advertised_entry_runtime_evidence_records": 0,
-    "capabilities_with_planning_only_service_binding": 272,
+    "capabilities_with_planning_only_service_binding": 273,
     "capabilities_with_unresolved_service_binding": 4,
-    "required_or_alternate_local_capabilities": 247,
+    "required_or_alternate_local_capabilities": 248,
     "runtime_probe_executors": 0,
     "cleanup_executors": 0,
     "runtime_evidence_records": 0,
@@ -71,7 +75,7 @@ EXPECTED_LANE_COUNTS = {
     "search": 4,
     "lvs": 10,
     "alerts": 26,
-    "standalone-services": 133,
+    "standalone-services": 134,
     "custom-data-warehouse": 24,
     "official-edge-model-boundary": 5,
     "external-optional": 29,
@@ -659,7 +663,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
     }
     if (
         len(advertised_gap_by_pointer) != len(advertised_gap_entries)
-        or len(advertised_gap_entries) != 87
+        or len(advertised_gap_entries) != 86
     ):
         raise RuntimeLaneError("advertised gap-plan pointer denominator drift")
     if any(
@@ -681,6 +685,21 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
         raise RuntimeLaneError("duplicate oracle capability binding")
     if set(capability_by_id) != set(oracle_by_capability):
         raise RuntimeLaneError("ledger/oracle capability denominator differs")
+    cpu_capability = capability_by_id.get(CPU_MULTIMEDIA_CAPABILITY_ID)
+    cpu_oracle = oracle_by_capability.get(CPU_MULTIMEDIA_CAPABILITY_ID)
+    if (
+        not isinstance(cpu_capability, dict)
+        or cpu_capability.get("feature_id") != "vios-codecs-audio"
+        or cpu_capability.get("title") != "CPU multimedia support"
+        or cpu_capability.get("kind") != "runtime_behavior"
+        or cpu_capability.get("thor_state") != "wired"
+        or cpu_capability.get("runtime_state") != "not_qualified"
+        or not isinstance(cpu_oracle, dict)
+        or cpu_oracle.get("oracle_id") != f"oracle.{CPU_MULTIMEDIA_CAPABILITY_ID}"
+        or cpu_oracle.get("current_state") != "open_unexecuted"
+        or cpu_oracle.get("evidence") != []
+    ):
+        raise RuntimeLaneError("canonical CPU multimedia binding drift")
     if set(feature_by_id) != set(FAMILY_DEFAULT_LANE):
         missing = sorted(set(feature_by_id) - set(FAMILY_DEFAULT_LANE))
         stale = sorted(set(FAMILY_DEFAULT_LANE) - set(feature_by_id))
@@ -867,9 +886,24 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
         for advertised_index, advertised_claim in enumerate(feature["advertised"]):
             json_pointer = f"/features/{feature_index}/advertised/{advertised_index}"
             gap_entry = advertised_gap_by_pointer.get(json_pointer)
-            if bool(family_capability_ids) == bool(gap_entry):
+            entry_specific_capability_ids = [
+                capability_id
+                for capability_id in family_capability_ids
+                if capability_id == CPU_MULTIMEDIA_CAPABILITY_ID
+                and capability_by_id[capability_id]["title"] == advertised_claim
+            ]
+            if gap_entry is not None and entry_specific_capability_ids:
                 raise RuntimeLaneError(
-                    f"{json_pointer}: advertised gap-plan family binding drift"
+                    f"{json_pointer}: canonical entry remains in advertised gap plan"
+                )
+            if (
+                gap_entry is None
+                and not family_capability_ids
+                or json_pointer == CPU_MULTIMEDIA_POINTER
+                and entry_specific_capability_ids != [CPU_MULTIMEDIA_CAPABILITY_ID]
+            ):
+                raise RuntimeLaneError(
+                    f"{json_pointer}: advertised entry coverage binding drift"
                 )
             if gap_entry is not None and (
                 gap_entry.get("advertised") != advertised_claim
@@ -896,12 +930,16 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
                     "entry_classification_source": (
                         "advertised-entry-gap-plan"
                         if gap_entry is not None
+                        else "canonical-entry-capability"
+                        if entry_specific_capability_ids
                         else "not-applicable-family-has-capability-rows"
                     ),
                     "default_lane_id": family_binding["default_lane_id"],
                     "lane_ids": copy.deepcopy(family_binding["lane_ids"]),
                     "lane_binding_scope": (
-                        "feature_family_reviewed_not_entry_specific"
+                        "entry_specific_canonical_capability"
+                        if entry_specific_capability_ids
+                        else "feature_family_reviewed_not_entry_specific"
                     ),
                     "feature_capability_ids": family_capability_ids,
                     "feature_oracle_ids": [
@@ -909,12 +947,19 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
                         for capability_id in family_capability_ids
                     ],
                     "capability_mapping_scope": (
-                        "feature_family_only"
+                        "entry_specific_canonical"
+                        if entry_specific_capability_ids
+                        else "feature_family_only_with_open_entry_gap"
+                        if family_capability_ids and gap_entry is not None
+                        else "feature_family_only"
                         if family_capability_ids
                         else "none_family_has_zero_capability_rows"
                     ),
-                    "entry_specific_capability_ids": [],
-                    "entry_specific_oracle_ids": [],
+                    "entry_specific_capability_ids": entry_specific_capability_ids,
+                    "entry_specific_oracle_ids": [
+                        oracle_by_capability[capability_id]["oracle_id"]
+                        for capability_id in entry_specific_capability_ids
+                    ],
                     "runtime_evidence_records": [],
                     "manifest_entry_sha256": _canonical_sha256(
                         {
@@ -1022,7 +1067,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
             "exactly_one_lane_per_capability": True,
             "all_feature_families_bound": True,
             "all_advertised_entries_bound": True,
-            "advertised_entry_mapping_scope": "feature_family_only",
+            "advertised_entry_mapping_scope": "feature_family_with_canonical_entry_overrides",
             "advertised_entry_bindings_are_runtime_evidence": False,
             "zero_capability_family_entries_block_runtime_completeness": True,
             "literal_runtime_feature_completeness_claim_allowed": False,
@@ -1122,14 +1167,29 @@ def validate_plan(plan: dict[str, Any], repo_root: Path = REPO_ROOT) -> None:
     ):
         raise RuntimeLaneError("advertised family capability/oracle binding drift")
     if any(
-        item["entry_specific_capability_ids"]
-        or item["entry_specific_oracle_ids"]
-        or item["runtime_evidence_records"]
+        item["runtime_evidence_records"]
         for item in plan["advertised_entry_bindings"]
     ):
         raise RuntimeLaneError(
-            "advertised entry binding cannot imply unreviewed semantic or runtime evidence"
+            "advertised entry binding cannot imply runtime evidence"
         )
+    entry_specific = [
+        item
+        for item in plan["advertised_entry_bindings"]
+        if item["entry_specific_capability_ids"]
+        or item["entry_specific_oracle_ids"]
+    ]
+    if (
+        len(entry_specific) != 1
+        or entry_specific[0]["manifest_json_pointer"] != CPU_MULTIMEDIA_POINTER
+        or entry_specific[0]["entry_specific_capability_ids"]
+        != [CPU_MULTIMEDIA_CAPABILITY_ID]
+        or entry_specific[0]["entry_specific_oracle_ids"]
+        != [f"oracle.{CPU_MULTIMEDIA_CAPABILITY_ID}"]
+        or entry_specific[0]["entry_classification_source"]
+        != "canonical-entry-capability"
+    ):
+        raise RuntimeLaneError("canonical entry-specific CPU mapping drift")
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -217,7 +217,64 @@
         },
         "current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
         "evidence": {"type": "array", "maxItems": 0}
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["capability_id"],
+            "properties": {
+              "capability_id": {"const": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"}
+            }
+          },
+          "then": {
+            "properties": {
+              "oracle_id": {"const": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"},
+              "profile": {"const": "behavior-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support"},
+              "mode": {"const": "runtime"},
+              "ledger_binding": {
+                "properties": {
+                  "feature_id": {"const": "vios-codecs-audio"},
+                  "kind": {"const": "runtime_behavior"},
+                  "title": {"const": "CPU multimedia support"},
+                  "acceptance_class": {"const": "required_local"},
+                  "thor_state": {"const": "wired"},
+                  "runtime_state": {"const": "not_qualified"},
+                  "contract": {
+                    "required": ["selectors", "branch_selection", "software_elements", "hardware_default_elements", "offline_bundle", "immutable_derivatives", "source_controls"]
+                  }
+                }
+              },
+              "fixture": {
+                "properties": {
+                  "kind": {"const": "generated_custom_media"},
+                  "warehouse_sample_bundle": {"const": false}
+                }
+              },
+              "execution_bounds": {
+                "properties": {
+                  "executor": {"const": null},
+                  "collectors": {"const": []},
+                  "max_requests": {"const": 2},
+                  "max_actions": {"const": 2}
+                }
+              },
+              "cleanup": {
+                "properties": {
+                  "executor": {"const": null},
+                  "postcondition_collectors": {"const": []}
+                }
+              },
+              "acceptance_readiness": {
+                "properties": {
+                  "classification": {"const": "planning_index_only"}
+                }
+              },
+              "current_state": {"const": "open_unexecuted"},
+              "evidence": {"const": []}
+            }
+          }
+        }
+      ]
     },
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "reviewedFile": {

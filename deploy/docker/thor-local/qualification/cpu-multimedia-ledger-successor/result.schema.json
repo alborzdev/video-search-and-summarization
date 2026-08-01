@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cpu-multimedia-ledger-successor-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "status", "policy", "predecessor",
+    "successor", "frozen_packages", "cpu", "integrity", "effects", "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "read_only_cpu_multimedia_ledger_successor"},
+    "status": {"const": "successor_mapping_verified_non_advancing"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "candidate_only", "can_mark_passed_current", "runtime_evidence",
+        "network_allowed", "docker_allowed", "downloads_allowed",
+        "runtime_allowed", "file_writes_allowed", "local_git_object_reads_allowed"
+      ],
+      "properties": {
+        "candidate_only": {"const": true},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "runtime_allowed": {"const": false},
+        "file_writes_allowed": {"const": false},
+        "local_git_object_reads_allowed": {"const": true}
+      }
+    },
+    "predecessor": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "commit", "commit_object_type", "advertised_gap_count",
+        "official_capability_count", "capability_oracle_count",
+        "plan_payload_sha256", "core_sha256", "wave_checks",
+        "historical_inventory_source_lock_count"
+      ],
+      "properties": {
+        "commit": {"const": "0c9a0a388900e1012b9fba68c6f2b17d6abb3c06"},
+        "commit_object_type": {"const": "commit"},
+        "advertised_gap_count": {"const": 87},
+        "official_capability_count": {"const": 276},
+        "capability_oracle_count": {"const": 276},
+        "plan_payload_sha256": {"const": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d"},
+        "core_sha256": {"$ref": "#/$defs/predecessorCoreSha"},
+        "wave_checks": {
+          "type": "array", "minItems": 8, "maxItems": 8,
+          "items": {"$ref": "#/$defs/waveCheck"}
+        },
+        "historical_inventory_source_lock_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "successor": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "advertised_gap_count", "official_capability_count",
+        "capability_oracle_count", "plan_payload_sha256", "core_sha256",
+        "historical_candidate_count", "still_open_historical_candidate_count",
+        "retired_to_canonical_ids", "external_blocker_ids", "wave8_upgrade_ids",
+        "removed_gap_ids", "added_gap_ids"
+      ],
+      "properties": {
+        "advertised_gap_count": {"const": 86},
+        "official_capability_count": {"const": 277},
+        "capability_oracle_count": {"const": 277},
+        "plan_payload_sha256": {"const": "a50231e6de3b97cd551a46c32a317e83c71cff2ca27eb22a0363d92e756587d4"},
+        "core_sha256": {"$ref": "#/$defs/successorCoreSha"},
+        "historical_candidate_count": {"const": 83},
+        "still_open_historical_candidate_count": {"const": 82},
+        "retired_to_canonical_ids": {
+          "const": ["manifest-gap.vios-codecs-audio.05-cpu-multimedia-support"]
+        },
+        "external_blocker_ids": {
+          "const": [
+            "manifest-gap.alert-notifications-slack.00-slack-notification",
+            "manifest-gap.enterprise-rag.00-rag-report-generation",
+            "manifest-gap.enterprise-rag.01-frag-retrieval-integration",
+            "manifest-gap.spatial-ai-utils.07-aws-gcs-validation"
+          ]
+        },
+        "wave8_upgrade_ids": {
+          "const": [
+            "manifest-gap.agent-and-mcp-apis.06-lvs-mcp",
+            "manifest-gap.video-summarization-live.05-sse-mcp-server"
+          ]
+        },
+        "removed_gap_ids": {
+          "const": ["manifest-gap.vios-codecs-audio.05-cpu-multimedia-support"]
+        },
+        "added_gap_ids": {"const": []}
+      }
+    },
+    "frozen_packages": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "package_count", "category_counts", "embedded_source_lock_count",
+        "checks", "execution_state"
+      ],
+      "properties": {
+        "package_count": {"const": 17},
+        "category_counts": {
+          "const": {
+            "wave3_candidate": 4,
+            "static_integration": 2,
+            "offline_tool_observation": 1,
+            "planning_requirement_wave": 8,
+            "parity_source_lock": 1,
+            "recursive_coverage": 1
+          }
+        },
+        "embedded_source_lock_count": {"const": 245},
+        "checks": {
+          "type": "array", "minItems": 17, "maxItems": 17,
+          "items": {"$ref": "#/$defs/frozenPackageCheck"}
+        },
+        "execution_state": {"const": "identity_verified_not_reexecuted"}
+      }
+    },
+    "cpu": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "gap_id", "capability_id", "oracle_id", "acceptance_class",
+        "thor_state", "runtime_state", "oracle_current_state", "evidence"
+      ],
+      "properties": {
+        "gap_id": {"const": "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support"},
+        "capability_id": {"const": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"},
+        "oracle_id": {"const": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"},
+        "acceptance_class": {"const": "required_local"},
+        "thor_state": {"const": "wired"},
+        "runtime_state": {"const": "not_qualified"},
+        "oracle_current_state": {"const": "open_unexecuted"},
+        "evidence": {"const": []}
+      }
+    },
+    "integrity": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "predecessor_commit_verified", "predecessor_core_objects_verified",
+        "wave_package_trees_verified", "wave_inventories_verified",
+        "predecessor_chain_verified", "historical_inventory_source_locks_verified",
+        "frozen_package_trees_verified", "frozen_key_artifacts_verified",
+        "frozen_embedded_source_locks_bound",
+        "frozen_embedded_source_paths_present_in_predecessor",
+        "current_core_verified", "exact_set_transition_verified",
+        "candidate_partition_verified"
+      ],
+      "properties": {
+        "predecessor_commit_verified": {"const": true},
+        "predecessor_core_objects_verified": {"const": true},
+        "wave_package_trees_verified": {"const": true},
+        "wave_inventories_verified": {"const": true},
+        "predecessor_chain_verified": {"const": true},
+        "historical_inventory_source_locks_verified": {"const": true},
+        "frozen_package_trees_verified": {"const": true},
+        "frozen_key_artifacts_verified": {"const": true},
+        "frozen_embedded_source_locks_bound": {"const": true},
+        "frozen_embedded_source_paths_present_in_predecessor": {"const": true},
+        "current_core_verified": {"const": true},
+        "exact_set_transition_verified": {"const": true},
+        "candidate_partition_verified": {"const": true}
+      }
+    },
+    "effects": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "runtime_evidence", "official_capability_effect", "network_used",
+        "docker_used", "downloads_used", "runtime_used", "file_writes_used",
+        "subprocess_used", "subprocess_scope"
+      ],
+      "properties": {
+        "runtime_evidence": {"const": []},
+        "official_capability_effect": {"const": "none_candidate_only"},
+        "network_used": {"const": false},
+        "docker_used": {"const": false},
+        "downloads_used": {"const": false},
+        "runtime_used": {"const": false},
+        "file_writes_used": {"const": false},
+        "subprocess_used": {"const": true},
+        "subprocess_scope": {"const": "read_only_local_git_objects_only"}
+      }
+    },
+    "limitations": {
+      "const": [
+        "historical_wave_executors_not_reexecuted_from_exported_worktree",
+        "frozen_candidate_integration_and_planning_executors_identity_verified_not_reexecuted",
+        "frozen_offline_mv3dt_observation_identity_verified_not_reexecuted",
+        "frozen_source_lock_and_recursive_coverage_validators_identity_verified_not_reexecuted",
+        "embedded_historical_source_digests_are_bound_by_artifact_identity_not_rebased_to_predecessor_tip",
+        "identity_and_partition_verification_does_not_replace_runtime_qualification"
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "predecessorCoreSha": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+        "deploy/docker/thor-local/parity/manifest.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/capability-oracles.json"
+      ],
+      "properties": {
+        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json": {"const": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
+        "deploy/docker/thor-local/parity/manifest.json": {"const": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"},
+        "deploy/docker/thor-local/parity/official-capabilities.json": {"const": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+        "deploy/docker/thor-local/parity/capability-oracles.json": {"const": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"}
+      }
+    },
+    "successorCoreSha": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+        "deploy/docker/thor-local/parity/manifest.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/capability-oracles.json"
+      ],
+      "properties": {
+        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json": {"const": "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239"},
+        "deploy/docker/thor-local/parity/manifest.json": {"const": "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba"},
+        "deploy/docker/thor-local/parity/official-capabilities.json": {"const": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"},
+        "deploy/docker/thor-local/parity/capability-oracles.json": {"const": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"}
+      }
+    },
+    "waveCheck": {
+      "type": "object", "additionalProperties": false,
+      "required": ["wave", "path", "tree_oid", "inventory_sha256", "case_count"],
+      "properties": {
+        "wave": {"type": "integer", "minimum": 1, "maximum": 8},
+        "path": {"type": "string", "minLength": 1},
+        "tree_oid": {"$ref": "#/$defs/oid"},
+        "inventory_sha256": {"$ref": "#/$defs/sha256"},
+        "case_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "frozenPackageCheck": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "id", "category", "path", "tree_oid", "key_artifact_sha256",
+        "embedded_source_lock_count", "execution_state"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "category": {
+          "enum": [
+            "wave3_candidate", "static_integration", "planning_requirement_wave",
+            "offline_tool_observation", "parity_source_lock", "recursive_coverage"
+          ]
+        },
+        "path": {"type": "string", "minLength": 1},
+        "tree_oid": {"$ref": "#/$defs/oid"},
+        "key_artifact_sha256": {
+          "type": "object", "minProperties": 1, "maxProperties": 3,
+          "propertyNames": {"type": "string", "minLength": 1},
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        },
+        "embedded_source_lock_count": {"type": "integer", "minimum": 0},
+        "execution_state": {"const": "identity_verified_not_reexecuted"}
+      }
+    }
+  }
+}

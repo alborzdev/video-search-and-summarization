@@ -18,7 +18,7 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[4].resolve(strict=True)
 CONTRACT_PATH = HERE / "contract.json"
 EXPECTED_CONTRACT_SHA256 = (
-    "26dbfd77b8e1d8ff151d0f63a7a4759330ae6edcbc77e90d41d5ad477baa0541"
+    "27dacb96bbd3ff7d6fee5d3a25952492feff363b259be06f09b256ed7d8213aa"
 )
 MAX_BYTES = 5_000_000
 EXPECTED_SOURCE_PATHS = {

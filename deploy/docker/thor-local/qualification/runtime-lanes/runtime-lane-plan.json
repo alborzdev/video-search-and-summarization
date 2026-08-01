@@ -9,7 +9,7 @@
   "source_bindings": {
     "advertised_gap_plan": {
       "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
-      "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"
+      "raw_sha256": "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239"
     },
     "advertised_gap_rules": {
       "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/classification-rules.json",
@@ -17,26 +17,26 @@
     },
     "ledger": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"
+      "raw_sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
     },
     "manifest": {
       "path": "deploy/docker/thor-local/parity/manifest.json",
-      "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+      "raw_sha256": "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba"
     },
     "oracle_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
-      "raw_sha256": "a1af2cd99d4df2e6bdec9afdee851b717ce7b0c931718fb1d727bd8090ddcbf5"
+      "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"
     },
     "oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
+      "raw_sha256": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"
     }
   },
   "policy": {
     "exactly_one_lane_per_capability": true,
     "all_feature_families_bound": true,
     "all_advertised_entries_bound": true,
-    "advertised_entry_mapping_scope": "feature_family_only",
+    "advertised_entry_mapping_scope": "feature_family_with_canonical_entry_overrides",
     "advertised_entry_bindings_are_runtime_evidence": false,
     "zero_capability_family_entries_block_runtime_completeness": true,
     "literal_runtime_feature_completeness_claim_allowed": false,
@@ -53,23 +53,23 @@
     "lanes": 8,
     "feature_families": 55,
     "advertised_entries": 500,
-    "capabilities": 276,
-    "oracles": 276,
-    "capabilities_with_exactly_one_lane": 276,
+    "capabilities": 277,
+    "oracles": 277,
+    "capabilities_with_exactly_one_lane": 277,
     "feature_families_with_lane_binding": 55,
-    "feature_families_without_capability_rows": 16,
+    "feature_families_without_capability_rows": 15,
     "advertised_entries_with_lane_binding": 500,
-    "advertised_entries_in_families_with_capability_oracle_rows": 413,
-    "advertised_entries_in_families_without_capability_oracle_rows": 87,
-    "advertised_gap_entries_proposed_required_local": 56,
+    "advertised_entries_in_families_with_capability_oracle_rows": 419,
+    "advertised_entries_in_families_without_capability_oracle_rows": 81,
+    "advertised_gap_entries_proposed_required_local": 55,
     "advertised_gap_entries_proposed_alternate_local_lane": 26,
     "advertised_gap_entries_proposed_external_optional": 5,
-    "advertised_entries_with_entry_specific_capability_mapping": 0,
-    "advertised_entries_with_entry_specific_oracle_mapping": 0,
+    "advertised_entries_with_entry_specific_capability_mapping": 1,
+    "advertised_entries_with_entry_specific_oracle_mapping": 1,
     "advertised_entry_runtime_evidence_records": 0,
-    "capabilities_with_planning_only_service_binding": 272,
+    "capabilities_with_planning_only_service_binding": 273,
     "capabilities_with_unresolved_service_binding": 4,
-    "required_or_alternate_local_capabilities": 247,
+    "required_or_alternate_local_capabilities": 248,
     "runtime_probe_executors": 0,
     "cleanup_executors": 0,
     "runtime_evidence_records": 0,
@@ -80,7 +80,7 @@
     "search": 4,
     "lvs": 10,
     "alerts": 26,
-    "standalone-services": 133,
+    "standalone-services": 134,
     "custom-data-warehouse": 24,
     "official-edge-model-boundary": 5,
     "external-optional": 29
@@ -953,9 +953,9 @@
       "lane_ids": [
         "standalone-services"
       ],
-      "capability_count": 0,
+      "capability_count": 1,
       "advertised_entry_count": 6,
-      "manifest_feature_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c"
+      "manifest_feature_sha256": "931f0c996cd3cf65cbf6cd75a346a10c892654651fc637521d9ba9bc30127ac9"
     },
     {
       "feature_id": "vios-core",
@@ -6244,9 +6244,13 @@
         "standalone-services"
       ],
       "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
+      "feature_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "capability_mapping_scope": "feature_family_only_with_open_entry_gap",
       "entry_specific_capability_ids": [],
       "entry_specific_oracle_ids": [],
       "runtime_evidence_records": [],
@@ -6266,9 +6270,13 @@
         "standalone-services"
       ],
       "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
+      "feature_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "capability_mapping_scope": "feature_family_only_with_open_entry_gap",
       "entry_specific_capability_ids": [],
       "entry_specific_oracle_ids": [],
       "runtime_evidence_records": [],
@@ -6288,9 +6296,13 @@
         "standalone-services"
       ],
       "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
+      "feature_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "capability_mapping_scope": "feature_family_only_with_open_entry_gap",
       "entry_specific_capability_ids": [],
       "entry_specific_oracle_ids": [],
       "runtime_evidence_records": [],
@@ -6310,9 +6322,13 @@
         "standalone-services"
       ],
       "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
+      "feature_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "capability_mapping_scope": "feature_family_only_with_open_entry_gap",
       "entry_specific_capability_ids": [],
       "entry_specific_oracle_ids": [],
       "runtime_evidence_records": [],
@@ -6332,9 +6348,13 @@
         "standalone-services"
       ],
       "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
+      "feature_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "capability_mapping_scope": "feature_family_only_with_open_entry_gap",
       "entry_specific_capability_ids": [],
       "entry_specific_oracle_ids": [],
       "runtime_evidence_records": [],
@@ -6347,18 +6367,26 @@
       "advertised_index": 5,
       "advertised_claim": "CPU multimedia support",
       "family_acceptance_class": "required_local",
-      "entry_planning_acceptance_class": "required_local",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "8422de5c77b2959d19989ce33607cd6d48feb77521f230d125b9cfc78e6ad2d1"
     },
@@ -46925,6 +46953,275 @@
         "current-run fixture digests and pre-state capture are absent",
         "explicit operator approval for service lifecycle is absent",
         "fixture path, generator, and digest are not materialized",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+      "oracle_id": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+      "feature_id": "vios-codecs-audio",
+      "lane_id": "standalone-services",
+      "kind": "runtime_behavior",
+      "acceptance_class": "required_local",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "behavior-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support",
+      "oracle_mode": "runtime",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "a719a66d1a7544476a8fe7303a16dece0e55b18747d420ee0253021c6c1fff36",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "vios"
+        ],
+        "planned_service_compose_paths": [
+          "deploy/docker/services/vios/compose.yml"
+        ],
+        "planned_non_compose_roles": [],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed feature-family service boundary",
+        "service_binding_source_claims": [
+          {
+            "source_id": "doc.vios",
+            "locator": "VMS Stream Processing — CPU Multimedia Support"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "840d23af805997a11c02deb7cd7f0bd0d3215696fe2cef217662701613322412",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+          "kind": "generated_custom_media",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+            "contract": {
+              "selectors": {
+                "use_software_path": {
+                  "json_pointer": "/data/use_software_path",
+                  "checked_in_value": false,
+                  "default": false
+                },
+                "USE_SOFTWARE_PATH": {
+                  "environment_override_for": "/data/use_software_path",
+                  "accepted_values": [
+                    "true",
+                    "false"
+                  ]
+                },
+                "use_software_encoder": {
+                  "json_pointer": "/data/use_software_encoder",
+                  "checked_in_key_present": false,
+                  "default": false
+                }
+              },
+              "branch_selection": {
+                "decoder_gate": "m_useNvV4l2Dec",
+                "encoder_gate": "m_useNvV4l2Enc",
+                "use_software_path_directly_selects_elements": false,
+                "use_software_path_true": {
+                  "m_useNvV4l2Dec": false,
+                  "m_useNvV4l2Enc": false
+                },
+                "use_software_encoder_true": {
+                  "m_useNvV4l2Dec": "hardware_availability",
+                  "m_useNvV4l2Enc": false
+                }
+              },
+              "software_elements": {
+                "video_decoders": {
+                  "h264": "avdec_h264",
+                  "h265": "avdec_h265"
+                },
+                "video_encoders": {
+                  "h264": "x264enc",
+                  "h265": "x265enc"
+                },
+                "audio_encoder": "avenc_aac",
+                "parsers": [
+                  "h264parse",
+                  "h265parse"
+                ]
+              },
+              "hardware_default_elements": {
+                "video_decoder": "nvv4l2decoder",
+                "video_encoders": {
+                  "h264": "nvv4l2h264enc",
+                  "h265": "nvv4l2h265enc"
+                }
+              },
+              "offline_bundle": {
+                "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+                "architecture": "arm64",
+                "package_count": 59,
+                "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+              },
+              "immutable_derivatives": {
+                "runtime_network_install": "disabled",
+                "entrypoint": "/usr/local/bin/vios-offline-entrypoint",
+                "dockerfiles": [
+                  "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+                  "deploy/docker/thor-local/Dockerfile.vios-nvstreamer"
+                ]
+              },
+              "source_controls": [
+                {
+                  "path": "services/vios/src/framework/media/media_utils/gst_utils.cpp",
+                  "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"
+                },
+                {
+                  "path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+                  "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"
+                },
+                {
+                  "path": "services/vios/src/framework/utilities/config.cpp",
+                  "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"
+                },
+                {
+                  "path": "services/vios/src/framework/platform_specific/nvhwdetection.h",
+                  "sha256": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0"
+                },
+                {
+                  "path": "deploy/docker/thor-local/vios/vst_config.json",
+                  "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"
+                },
+                {
+                  "path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+                  "sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"
+                },
+                {
+                  "path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+                  "sha256": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285"
+                },
+                {
+                  "path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+                  "sha256": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0"
+                },
+                {
+                  "path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+                  "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"
+                }
+              ]
+            },
+            "namespace": "vss-oracle-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support",
+            "action": "run bounded hardware-default and use_software_path=true H.264/H.265/AAC workflows, prove m_useNvV4l2Dec and m_useNvV4l2Enc select distinct nvv4l2 and CPU elements, then restore the checked-in false default"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "hardware_cpu_discrimination"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "contract-05",
+          "contract-06",
+          "contract-07",
+          "contract-08",
+          "contract-09",
+          "contract-10",
+          "contract-11",
+          "contract-12",
+          "contract-13",
+          "contract-14",
+          "contract-15",
+          "contract-16",
+          "contract-17",
+          "contract-18",
+          "contract-19",
+          "contract-20",
+          "contract-21",
+          "contract-22",
+          "contract-23",
+          "contract-24",
+          "contract-25",
+          "contract-26",
+          "contract-27",
+          "contract-28",
+          "contract-29",
+          "contract-30",
+          "contract-31",
+          "contract-32",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound",
+          "runtime-capacity"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "namespaced_and_reversible",
+        "targets": [
+          "vss-oracle-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support"
+        ],
+        "pre_state": "service, configuration, resource IDs, and target absence/digests must be captured before mutation",
+        "restore": "remove only recorded oracle-owned resources and restore the captured pre-test service/config state",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "every allowlisted oracle-owned resource is absent",
+          "captured service/config state and non-owned resource digests match pre-state"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
         "request/command executor and collectors are not implemented"
       ]
     },

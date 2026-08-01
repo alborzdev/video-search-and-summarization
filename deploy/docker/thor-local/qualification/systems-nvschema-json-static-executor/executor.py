@@ -57,8 +57,8 @@ ACCEPTANCE_INVENTORY_PATH = (
 )
 EXPECTED_LOCKS = {
     ACCEPTANCE_INVENTORY_PATH: "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
-    "deploy/docker/thor-local/parity/official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
-    "deploy/docker/thor-local/parity/capability-oracles.json": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2",
+    "deploy/docker/thor-local/parity/official-capabilities.json": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e",
+    "deploy/docker/thor-local/parity/capability-oracles.json": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff",
     "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json": "d670829d85239bfb924737d32565eb3b87a0378df2520d225df72a75617122d9",
     "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539",
     "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/schema_util.py": "3c7c8d16b6c58fb01adea07b4dfde27104a62454a545fe0afbd623274f92ecca",

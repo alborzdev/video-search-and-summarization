@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "package_id": "official-vss-3.2.1-doc-drift-observation-2026-08-01",
+  "product_version": "3.2.1",
+  "observed_on": "2026-08-01",
+  "mode": "reviewed_aggregate_metadata_non_advancing",
+  "baseline_artifacts": [
+    {
+      "id": "immutable_2026_07_31_source_lock",
+      "path": "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+      "sha256": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07"
+    },
+    {
+      "id": "recursive_172_url_set",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/recursive-targets.json",
+      "sha256": "30e42ca2d085aa6e4b3ea99e537f9e2897864da1463979bb4768d06b8027a3aa"
+    },
+    {
+      "id": "recursive_26449_edge_graph",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/crawl-graph.json",
+      "sha256": "7f8fff1f1a540afe8663e461b687eeb24ba8b229f2d867d4bcf18ff83a157f99"
+    }
+  ],
+  "immutable_baseline": {
+    "captured_on": "2026-07-31",
+    "url_count": 172,
+    "success_count": 172,
+    "failure_count": 0,
+    "total_byte_count": 13351947,
+    "canonical_record_set_sha256": "b37a617f351dbd32673983eee2299daed0db1f04b387db5d89ec2a89511d79eb",
+    "canonical_url_set_sha256": "74a1d6ae1f520049202e47dce69fa56d10c28c48aa3aa24a3a2c4214dad4b208",
+    "canonical_directed_edge_count": 26449,
+    "self_edge_count": 172,
+    "canonical_url_pair_edge_set_sha256": "58759d1dc9b060c90518aa2928190381d2838558d170746e9af783a0dbc35a55"
+  },
+  "reviewed_drift_observation": {
+    "compared_url_count": 172,
+    "raw_sha256_changed_count": 172,
+    "raw_sha256_unchanged_count": 0,
+    "all_raw_sha256_changed": true,
+    "per_page_byte_count_match_count": 172,
+    "per_page_byte_count_mismatch_count": 0,
+    "all_per_page_byte_counts_identical": true,
+    "observed_total_byte_count": 13351947,
+    "canonical_url_set_identical": true,
+    "observed_canonical_url_set_sha256": "74a1d6ae1f520049202e47dce69fa56d10c28c48aa3aa24a3a2c4214dad4b208",
+    "directed_edge_topology_identical": true,
+    "observed_canonical_directed_edge_count": 26449,
+    "observed_canonical_url_pair_edge_set_sha256": "58759d1dc9b060c90518aa2928190381d2838558d170746e9af783a0dbc35a55"
+  },
+  "evidence_availability": {
+    "fact_basis": "already_reviewed_2026_08_01_aggregate_observation",
+    "local_refetch_performed": false,
+    "august_response_bodies_available": false,
+    "august_per_page_sha256_values_available": false,
+    "august_aggregate_record_sha256_available": false,
+    "august_crawl_graph_artifact_available": false,
+    "exact_august_relock_materialized": false
+  },
+  "interpretation": {
+    "hash_scope": "raw_response_body_bytes_only",
+    "semantic_diff_performed": false,
+    "semantic_equality": "unproven",
+    "raw_hash_drift_proves_semantic_change": false,
+    "topology_and_byte_count_equality_proves_semantic_equality": false,
+    "classification": "raw_byte_drift_with_stable_size_and_topology_requires_semantic_review"
+  },
+  "follow_up_plan": [
+    "preserve_the_2026_07_31_source_lock_unchanged",
+    "materialize_a_separate_august_capture_only_when_exact_per_page_hashes_are_available",
+    "compare_normalized_document_text_dom_and_bound_claim_locators",
+    "review_every_semantic_difference_before_proposing_any_ledger_change"
+  ],
+  "policy": {
+    "network_allowed": false,
+    "downloads_allowed": false,
+    "docker_allowed": false,
+    "service_lifecycle_allowed": false,
+    "runtime_calls_allowed": false,
+    "credentials_allowed": false,
+    "canonical_mutation_allowed": false,
+    "source_lock_relabel_allowed": false,
+    "writes": "none"
+  },
+  "promotion": {
+    "runtime_evidence": [],
+    "feature_evidence": [],
+    "official_capability_effect": "none_metadata_only",
+    "source_lock_mutated": false,
+    "source_lock_relabelled": false,
+    "core_ledgers_mutated": false,
+    "feature_or_runtime_promotion": false
+  },
+  "result": "documentation_raw_drift_observed_semantics_unproven_non_advancing"
+}

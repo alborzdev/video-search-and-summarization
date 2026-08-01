@@ -33,7 +33,7 @@ RESULT_SCHEMA_PATH = HERE / "result.schema.json"
 ENTRY_ID = "manifest-gap.spatial-ai-utils.03-detection-map"
 MAX_INPUT_BYTES = 1_000_000
 EXPECTED_CONTRACT_SHA256 = (
-    "5ca96f6923dee872182ad6af782270d4df14cec17044eebbfd0121601b84bdbc"
+    "34febe2641fe724398e36250e6a36775580f8fd37c3c46311ac0fd333047a5de"
 )
 EXPECTED_POLICY = {
     "candidate_only": True,

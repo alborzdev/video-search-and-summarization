@@ -10,8 +10,8 @@ The inert planner fail-closes on raw drift in nine existing inputs:
 | Thor MV3DT launcher | `e697a2a41a146bc84b701558918af1f24d10ba10cd4ffc05d9fd3d9818080499` |
 | camInfo generator | `910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675` |
 | FOV topology generator | `bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc` |
-| advertised-entry plan | `dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122` |
-| parity manifest | `6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127` |
+| advertised-entry plan | `9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239` |
+| parity manifest | `879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba` |
 | Thor MV3DT compose overlay | `a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b` |
 | MV3DT tracker configuration | `1053cc0a13f58b465cf28c5b59c65aa85f4feeb7d25c6aa7272d876f02a54b96` |
 | four-camera DeepStream configuration | `6f1a5b76c26a0e8aa0ad42e3ab2327b1acf0fa1c8e66dcafefc2e1b6965db80d` |

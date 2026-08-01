@@ -78,7 +78,7 @@
         "deploy/docker/thor-local/qualification/detection-map-static-executor/fixtures/detection-map-v1.json"
       ],
       "properties": {
-        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json": {"const": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
+        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json": {"const": "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239"},
         "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py": {"const": "b6e8ece795f6986b2cdb1afd133474deb94338b5daf35e54b9e171ab97691ba6"},
         "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py": {"const": "d1b5b48668b8b24cd3c232ca8b026f080dc3e4380301c136e72e03119dd92aa1"},
         "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py": {"const": "f5d9e8120ee1196bd6add34ec1960ac8fb7b65252283a2ccf4c1d2a7f27afa3a"},

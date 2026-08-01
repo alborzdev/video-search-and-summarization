@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cpu-multimedia-ledger-successor-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "policy", "predecessor", "frozen_packages",
+    "successor"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "read_only_cpu_multimedia_ledger_successor"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_only", "can_mark_passed_current", "runtime_evidence",
+        "network_allowed", "docker_allowed", "downloads_allowed",
+        "runtime_allowed", "file_writes_allowed", "local_git_object_reads_allowed"
+      ],
+      "properties": {
+        "candidate_only": {"const": true},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "runtime_allowed": {"const": false},
+        "file_writes_allowed": {"const": false},
+        "local_git_object_reads_allowed": {"const": true}
+      }
+    },
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit", "advertised_gap_count", "official_capability_count",
+        "capability_oracle_count", "core_objects", "plan_payload_sha256",
+        "wave_packages"
+      ],
+      "properties": {
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "advertised_gap_count": {"const": 87},
+        "official_capability_count": {"const": 276},
+        "capability_oracle_count": {"const": 276},
+        "core_objects": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "uniqueItems": true, "items": {"$ref": "#/$defs/fileLock"}
+        },
+        "plan_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "wave_packages": {
+          "type": "array", "minItems": 8, "maxItems": 8,
+          "items": {"$ref": "#/$defs/wavePackage"}
+        }
+      }
+    },
+    "frozen_packages": {
+      "type": "array", "minItems": 17, "maxItems": 17,
+      "items": {"$ref": "#/$defs/frozenPackage"}
+    },
+    "successor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "advertised_gap_count", "official_capability_count",
+        "capability_oracle_count", "historical_candidate_count",
+        "still_open_historical_candidate_count", "retired_to_canonical_count",
+        "external_blocker_count", "cpu_gap_id", "cpu_capability_id",
+        "cpu_oracle_id", "current_objects", "plan_payload_sha256", "cpu_state"
+      ],
+      "properties": {
+        "advertised_gap_count": {"const": 86},
+        "official_capability_count": {"const": 277},
+        "capability_oracle_count": {"const": 277},
+        "historical_candidate_count": {"const": 83},
+        "still_open_historical_candidate_count": {"const": 82},
+        "retired_to_canonical_count": {"const": 1},
+        "external_blocker_count": {"const": 4},
+        "cpu_gap_id": {"const": "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support"},
+        "cpu_capability_id": {"const": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"},
+        "cpu_oracle_id": {"const": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"},
+        "current_objects": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "uniqueItems": true, "items": {"$ref": "#/$defs/fileLock"}
+        },
+        "plan_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "cpu_state": {
+          "type": "object", "additionalProperties": false,
+          "required": ["acceptance_class", "thor_state", "runtime_state", "oracle_current_state", "evidence"],
+          "properties": {
+            "acceptance_class": {"const": "required_local"},
+            "thor_state": {"const": "wired"},
+            "runtime_state": {"const": "not_qualified"},
+            "oracle_current_state": {"const": "open_unexecuted"},
+            "evidence": {"const": []}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "repoPath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+    "fileLock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repoPath"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "wavePackage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["wave", "path", "tree_oid", "inventory_sha256"],
+      "properties": {
+        "wave": {"type": "integer", "minimum": 1, "maximum": 8},
+        "path": {"$ref": "#/$defs/repoPath"},
+        "tree_oid": {"$ref": "#/$defs/oid"},
+        "inventory_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "frozenPackage": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "id", "category", "path", "tree_oid", "key_artifacts",
+        "embedded_source_lock_count"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "category": {
+          "enum": [
+            "wave3_candidate", "static_integration", "planning_requirement_wave",
+            "offline_tool_observation", "parity_source_lock", "recursive_coverage"
+          ]
+        },
+        "path": {"$ref": "#/$defs/repoPath"},
+        "tree_oid": {"$ref": "#/$defs/oid"},
+        "key_artifacts": {
+          "type": "array", "minItems": 1, "maxItems": 3,
+          "uniqueItems": true, "items": {"$ref": "#/$defs/fileLock"}
+        },
+        "embedded_source_lock_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

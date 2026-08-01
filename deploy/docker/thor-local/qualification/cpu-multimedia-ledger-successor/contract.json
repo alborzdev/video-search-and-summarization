@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "mode": "read_only_cpu_multimedia_ledger_successor",
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "downloads_allowed": false,
+    "runtime_allowed": false,
+    "file_writes_allowed": false,
+    "local_git_object_reads_allowed": true
+  },
+  "predecessor": {
+    "commit": "0c9a0a388900e1012b9fba68c6f2b17d6abb3c06",
+    "advertised_gap_count": 87,
+    "official_capability_count": 276,
+    "capability_oracle_count": 276,
+    "core_objects": [
+      {
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+        "sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"
+      },
+      {
+        "path": "deploy/docker/thor-local/parity/manifest.json",
+        "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+      },
+      {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"
+      },
+      {
+        "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+        "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
+      }
+    ],
+    "plan_payload_sha256": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d",
+    "wave_packages": [
+      {
+        "wave": 1,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors",
+        "tree_oid": "f5ed28904344a86b526390bf8937041c288a4386",
+        "inventory_sha256": "91406a15ff1340b9b4dba988507470234971fa4905997bc52e64fb983fc12a18"
+      },
+      {
+        "wave": 2,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave2",
+        "tree_oid": "4fb53046c1dbc193c784e9406a1d6f0e91312cfb",
+        "inventory_sha256": "2c14f8ae5ade22ccbc556a844b4fcb63661048826660073fb21c5f882047c5d2"
+      },
+      {
+        "wave": 3,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave3",
+        "tree_oid": "931bd3762063c3ead93310ab37b6ad871d3aa7ee",
+        "inventory_sha256": "0b7056eafce7686fc2b7315fef8ae491ddef03d2e52f41e7c7861247933f90ab"
+      },
+      {
+        "wave": 4,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave4",
+        "tree_oid": "899386cc6e763f8f164954ec778b2481dc8a7015",
+        "inventory_sha256": "1de6e9be3c93c349e45b192506e3081758553582dda6f73b79877bc4ff5155a6"
+      },
+      {
+        "wave": 5,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave5",
+        "tree_oid": "973e83b0e688849a5dcfbc68330df36e2b1e09df",
+        "inventory_sha256": "98876a18d628df644171cd1d0051753dadd904cca67a5fe0fa8696832cb08771"
+      },
+      {
+        "wave": 6,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave6",
+        "tree_oid": "36fa40a3e4716b3becd230a9a239cc17892626a5",
+        "inventory_sha256": "dbc1045b5d9e6b02ab152f2f0cc9007c0087e265692ef4e4aa911dc12f7935e3"
+      },
+      {
+        "wave": 7,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7",
+        "tree_oid": "9ccf1ab3390d358310210574f4286e200b7f1c54",
+        "inventory_sha256": "ebab232152429b866ffc283f2b3c761f11c679e7c26979b2adaa0c8f11b2739d"
+      },
+      {
+        "wave": 8,
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8",
+        "tree_oid": "47ca7c3781141cfb633de03b0724df908a1bbfb8",
+        "inventory_sha256": "af0cc4180d0e9d19ac869fb36deace3adfdaadf3ddf12c2d59936f043b293aa3"
+      }
+    ]
+  },
+  "frozen_packages": [
+    {
+      "id": "wave3-agent-smartcity",
+      "category": "wave3_candidate",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity",
+      "tree_oid": "89ebb5d86cfb19e706694da762eaf62569f3c6d5",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"}
+      ],
+      "embedded_source_lock_count": 4
+    },
+    {
+      "id": "wave3-systems",
+      "category": "wave3_candidate",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems",
+      "tree_oid": "1d6034b3a1f4c38c4e125ae2ca9a22e868b389a3",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"}
+      ],
+      "embedded_source_lock_count": 0
+    },
+    {
+      "id": "wave3-calibration-warehouse",
+      "category": "wave3_candidate",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse",
+      "tree_oid": "f8aedbfe4be64e8eaccafd9cc5251481e9358175",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json", "sha256": "1bc083b7ef0419a0f6975007cf672c477e9de0d164a7c350976f069199576ade"}
+      ],
+      "embedded_source_lock_count": 5
+    },
+    {
+      "id": "wave3-bundle",
+      "category": "wave3_candidate",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/bundle",
+      "tree_oid": "239165e70ea6b0fbfdc79c52d036521d8c5a1924",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-plan.json", "sha256": "bcb98e16ed991eb1e92504c1d2031c8d5a1f690cde73509a8b40848eca990a3d"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json", "sha256": "7bbefa6fdc0cd8223b0aafdace181526ef5ef5f5fcff17dc192d2d2dbb6eeb5c"}
+      ],
+      "embedded_source_lock_count": 11
+    },
+    {
+      "id": "lvs-mcp-static-adapter-integration",
+      "category": "static_integration",
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-static-adapter-integration",
+      "tree_oid": "6bef343b52ae74bb82c48806ef99a7ecf7b405da",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/lvs-mcp-static-adapter-integration/live-integration-receipt.json", "sha256": "e3cc6000d28a8d56f30ccdab20631813b639e7519e11ffc9375da72661ec69fc"}
+      ],
+      "embedded_source_lock_count": 15
+    },
+    {
+      "id": "calibration-schema-static-integration",
+      "category": "static_integration",
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-integration",
+      "tree_oid": "1510945063b1e281e06616c3d5f207ed0361e700",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/calibration-schema-static-integration/execution-receipt.json", "sha256": "7050c8e513e59fa3393cc3ca747f445ca7a883974c0faa1efc9cc2372f5ef6fb"},
+        {"path": "deploy/docker/thor-local/qualification/calibration-schema-static-integration/live-integration-receipt.json", "sha256": "ab8bd15d5634a5f0790f9d249afd5958374b00d651e895bfb72521bf016a8dd2"}
+      ],
+      "embedded_source_lock_count": 10
+    },
+    {
+      "id": "offline-mv3dt-tools",
+      "category": "offline_tool_observation",
+      "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools",
+      "tree_oid": "79f745f149d015b23e1f1943657b6c025c7b22cd",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/contract.json", "sha256": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984"},
+        {"path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/execution-receipt.json", "sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063"}
+      ],
+      "embedded_source_lock_count": 5
+    },
+    {
+      "id": "planning-requirement-executors-wave5",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5",
+      "tree_oid": "d5d806cf778dbc495fdd31664d2778a7c118d8b5",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"}
+      ],
+      "embedded_source_lock_count": 24
+    },
+    {
+      "id": "planning-requirement-executors-wave6",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6",
+      "tree_oid": "300e020c3494af2488ceaa4469051f66c4ed312b",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json", "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"}
+      ],
+      "embedded_source_lock_count": 14
+    },
+    {
+      "id": "planning-requirement-executors-wave7",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7",
+      "tree_oid": "4a9e7f38e26a48c8f4eafc0097df254570bcde15",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "d670829d85239bfb924737d32565eb3b87a0378df2520d225df72a75617122d9"}
+      ],
+      "embedded_source_lock_count": 22
+    },
+    {
+      "id": "planning-requirement-executors-wave8",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave8",
+      "tree_oid": "707fce6f24bde07143c6b6245cd6dcea4384d6e9",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave8/inventory.json", "sha256": "a06b93ef77738f6963b2eafe847ed0281d6752eca9bb73d0ce263c2afd956e8a"}
+      ],
+      "embedded_source_lock_count": 13
+    },
+    {
+      "id": "planning-requirement-executors-wave9",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave9",
+      "tree_oid": "2b54e549a80c11c7636bd201c83c133158e49407",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave9/inventory.json", "sha256": "b2e5b1ae48a60c4a5c162466167975de255abdcf14c4bf83bd310919bb424861"}
+      ],
+      "embedded_source_lock_count": 25
+    },
+    {
+      "id": "planning-requirement-executors-wave10",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave10",
+      "tree_oid": "03df61a3b9f0b7d9ebd74fcfdba0f9452b6bd03f",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave10/inventory.json", "sha256": "e9c81d33ea07018c3dc0e7d0ea9794e09d5fae962b959175cd65c73e2f136a35"}
+      ],
+      "embedded_source_lock_count": 29
+    },
+    {
+      "id": "planning-requirement-executors-wave11",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11",
+      "tree_oid": "dcf289ff76e326001a28a5a55972a0fa94068eeb",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11/inventory.json", "sha256": "734609e5b1aab27a4d65a2570d3e6a3c366ae9ecf896dd7f0d5e62785e219cdd"}
+      ],
+      "embedded_source_lock_count": 23
+    },
+    {
+      "id": "planning-requirement-executors-wave12",
+      "category": "planning_requirement_wave",
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave12",
+      "tree_oid": "b397bee64dcdf0392281104030071b9efe75c4f5",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave12/inventory.json", "sha256": "360e657f7aeab4b5f37ce45047443976e6b7c7136d5b3363c6fe07e2cff2226a"}
+      ],
+      "embedded_source_lock_count": 36
+    },
+    {
+      "id": "parity-source-lock",
+      "category": "parity_source_lock",
+      "path": "deploy/docker/thor-local/parity/source-lock",
+      "tree_oid": "378ca6e43008c80d68429eea88918f76fa1f2e9f",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/parity/source-lock/source-lock.json", "sha256": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07"}
+      ],
+      "embedded_source_lock_count": 3
+    },
+    {
+      "id": "wave3-recursive-coverage",
+      "category": "recursive_coverage",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage",
+      "tree_oid": "fa1bff09911bd958e52eb6897b195e8318ef48df",
+      "key_artifacts": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/recursive-targets.json", "sha256": "30e42ca2d085aa6e4b3ea99e537f9e2897864da1463979bb4768d06b8027a3aa"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/crawl-graph.json", "sha256": "7f8fff1f1a540afe8663e461b687eeb24ba8b229f2d867d4bcf18ff83a157f99"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/recursive-coverage.json", "sha256": "64873383117a54f75650f979a99cbec67221adbfaf41ef7e9fd3719825aba99b"}
+      ],
+      "embedded_source_lock_count": 6
+    }
+  ],
+  "successor": {
+    "advertised_gap_count": 86,
+    "official_capability_count": 277,
+    "capability_oracle_count": 277,
+    "historical_candidate_count": 83,
+    "still_open_historical_candidate_count": 82,
+    "retired_to_canonical_count": 1,
+    "external_blocker_count": 4,
+    "cpu_gap_id": "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support",
+    "cpu_capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+    "cpu_oracle_id": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+    "current_objects": [
+      {
+        "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+        "sha256": "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239"
+      },
+      {
+        "path": "deploy/docker/thor-local/parity/manifest.json",
+        "sha256": "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba"
+      },
+      {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
+      },
+      {
+        "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+        "sha256": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"
+      }
+    ],
+    "plan_payload_sha256": "a50231e6de3b97cd551a46c32a317e83c71cff2ca27eb22a0363d92e756587d4",
+    "cpu_state": {
+      "acceptance_class": "required_local",
+      "thor_state": "wired",
+      "runtime_state": "not_qualified",
+      "oracle_current_state": "open_unexecuted",
+      "evidence": []
+    }
+  }
+}

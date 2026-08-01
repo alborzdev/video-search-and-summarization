@@ -136,7 +136,13 @@ class CapabilityOracleTests(unittest.TestCase):
             root = Path(temporary)
             source_paths = self._copy_offline_mv3dt_inputs(root)
             self.assertEqual(len(source_paths), 4)
-            for relative in source_paths:
+            current_inputs = [
+                relative
+                for relative in source_paths
+                if relative != "deploy/docker/thor-local/parity/manifest.json"
+            ]
+            self.assertEqual(len(current_inputs), 3)
+            for relative in current_inputs:
                 with self.subTest(relative=relative):
                     path = root / relative
                     original = path.read_bytes()
@@ -144,6 +150,25 @@ class CapabilityOracleTests(unittest.TestCase):
                     with self.assertRaisesRegex(verifier.OracleContractError, "source lock differs"):
                         verifier._offline_mv3dt_tool_bindings(root)
                     path.write_bytes(original)
+
+    def test_offline_mv3dt_historical_manifest_lock_is_preserved(self) -> None:
+        bindings = verifier._offline_mv3dt_tool_bindings()
+        expected = (
+            "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+        )
+        self.assertNotEqual(
+            hashlib.sha256(
+                (verifier.REPO_ROOT / "deploy/docker/thor-local/parity/manifest.json").read_bytes()
+            ).hexdigest(),
+            expected,
+        )
+        for rows in bindings.values():
+            manifest_lock = next(
+                item
+                for item in rows[0]["source_locks"]
+                if item["path"] == "deploy/docker/thor-local/parity/manifest.json"
+            )
+            self.assertEqual(manifest_lock["sha256"], expected)
 
     def test_offline_mv3dt_receipt_raw_lock_and_schema_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -288,6 +313,49 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertTrue(required <= set(by_id))
         for capability_id in required:
             self.assertEqual(by_id[capability_id]["fixture"]["kind"], "generated_custom_media")
+
+    def test_cpu_multimedia_oracle_requires_hardware_cpu_discrimination(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == verifier.CPU_MULTIMEDIA_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["oracle_id"],
+            f"oracle.{verifier.CPU_MULTIMEDIA_CAPABILITY_ID}",
+        )
+        self.assertEqual(
+            oracle["profile"],
+            "behavior-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support",
+        )
+        self.assertEqual(oracle["mode"], "runtime")
+        self.assertEqual(oracle["fixture"]["kind"], "generated_custom_media")
+        action = oracle["fixture"]["input"]["action"]
+        for token in (
+            "hardware-default",
+            "use_software_path=true",
+            "m_useNvV4l2Dec",
+            "m_useNvV4l2Enc",
+            "nvv4l2",
+            "CPU elements",
+        ):
+            self.assertIn(token, action)
+        observation = next(
+            item
+            for item in oracle["expected_observations"]
+            if item["id"] == "hardware_cpu_discrimination"
+        )
+        self.assertIn("false-default", observation["description"])
+        self.assertIn("nvv4l2", observation["description"])
+        self.assertIn("libav/x264/x265", observation["description"])
+        self.assertEqual(oracle["execution_bounds"]["max_requests"], 2)
+        self.assertEqual(oracle["execution_bounds"]["max_actions"], 2)
+        self.assertEqual(
+            oracle["acceptance_readiness"]["classification"],
+            "planning_index_only",
+        )
+        self.assertEqual(oracle["current_state"], "open_unexecuted")
+        self.assertEqual(oracle["evidence"], [])
 
     def test_request_bounds_are_arithmetically_exact(self) -> None:
         for item in self.plan["oracles"]:

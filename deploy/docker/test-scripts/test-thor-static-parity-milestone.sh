@@ -33,52 +33,30 @@ python3 -m unittest discover \
   -s "${thor_local_root}/parity/candidates/wave2" \
   -p 'test_candidate.py' -v
 
-# The 172-page recursive fixed-point lock detects raw response-body drift only;
-# a byte match is not proof of correct semantic extraction or Thor implementation.
-python3 "${thor_local_root}/parity/source-lock/source_lock.py" validate
-python3 -m unittest discover \
-  -s "${thor_local_root}/parity/source-lock/tests" \
-  -p 'test_source_lock.py' -v
+# The immutable source-lock implementation is predecessor-anchored below. Its
+# 172-page/26,449-edge artifacts are independently recomputed later by the
+# documentation-drift validator without invoking the old Wave 3 lifecycle.
 
 # Wave 3 coverage is immutable extraction provenance. Its API-inventory input
 # predates the Thor-local LVS adapter, so do not relabel or replay it against
 # the evolved live contract. The third successor digest-checks the historical
 # merge outputs; current 18/13 API coverage is validated by the contract tier.
 
-# The recursive crawl proves the reviewed VSS 3.2.1 documentation graph reached
-# a fixed point. The family candidates remain inert extraction proposals: they
-# cannot claim runtime qualification or make excluded sample data mandatory.
-python3 "${thor_local_root}/parity/candidates/wave3/recursive-coverage/validate_recursive_coverage.py" \
-  --report
-python3 -m unittest discover \
-  -s "${thor_local_root}/parity/candidates/wave3/recursive-coverage/tests" \
-  -p 'test_recursive_coverage.py' -v
+# The recursive-coverage implementation is likewise immutable and verified by
+# exact predecessor tree identity below; the live artifact semantics are
+# rechecked later by the separate offline documentation-drift package.
 
-python3 "${thor_local_root}/parity/candidates/wave3/agent-smartcity/validate_candidate.py" \
-  --report
-python3 -m unittest discover \
-  -s "${thor_local_root}/parity/candidates/wave3/agent-smartcity" \
-  -p 'test_candidate.py' -v
-
-python3 "${thor_local_root}/parity/candidates/wave3/systems/validate_candidate.py" \
-  --report
-python3 -m unittest discover \
-  -s "${thor_local_root}/parity/candidates/wave3/systems/tests" \
-  -p 'test_candidate.py' -v
-
-python3 "${thor_local_root}/parity/candidates/wave3/calibration-warehouse/validate_candidate.py" \
-  --report
-python3 -m unittest discover \
-  -s "${thor_local_root}/parity/candidates/wave3/calibration-warehouse" \
-  -p 'test_candidate.py' -v
-
-# The bundle resolves cross-package source IDs and enrichments before any live
-# merge. It is planning-only and must remain bound to the exact reviewed inputs.
-python3 "${thor_local_root}/parity/candidates/wave3/bundle/validate_bundle.py" --json
-python3 -m unittest discover \
-  -s "${thor_local_root}/parity/candidates/wave3/bundle" \
-  -p 'test*.py' -v
-python3 "${repo_root}/deploy/docker/thor-local/parity/candidates/wave3/bundle/merge_live.py" --report
+# The CPU-ledger successor anchors the immutable Wave 3 candidates/bundle,
+# LVS/calibration integration receipts, planning Waves 5-12, and advertised
+# Waves 1-8 to published predecessor commit 0c9a0a3. It then proves the exact
+# current 87->86 CPU-only gap transition and 276->277 ledger/oracle transition.
+# Historical executors are identity-verified at that commit rather than falsely
+# replayed against the evolved live denominator; no state or evidence advances.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/cpu-multimedia-ledger-successor/executor.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/cpu-multimedia-ledger-successor/tests"
 
 # This first static qualification tranche is isolated and non-advancing. It
 # validates 24 bounded candidate cases but cannot create runtime evidence or
@@ -105,21 +83,9 @@ python3 -m unittest discover \
 # full capability oracle advances.
 python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" validate
 
-# The fourth successor replays and digest-checks the complete third LVS static
-# successor, including the earlier executor/source-contract chain, under the
-# reviewed output-neutral compiler/schema evolution. Calling the third
-# successor's own predecessor validator directly is obsolete because it pins
-# the pre-evolution oracle schema.
-python3 "${thor_local_root}/qualification/calibration-schema-static-integration/integrate_live.py" \
-  validate-predecessor
-
-# The live-current fourth successor adds exactly one non-advancing
-# calibration-schema planning binding, preserves six explicitly uncovered
-# global-vector records, and creates no runtime evidence or promotion.
-python3 "${thor_local_root}/qualification/calibration-schema-static-integration/integrate_live.py" \
-  validate
-python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/calibration-schema-static-integration/tests"
+# The fourth calibration successor and its predecessor receipts are immutable
+# and are verified above by exact predecessor tree/artifact identity. Replaying
+# them against the additive CPU compiler/ledger would falsify their old output.
 
 # Six additional planning requirements have isolated, source-locked checks.
 # Five match and the search-upload status contract remains an explicit 400/415
@@ -137,76 +103,9 @@ python3 "${thor_local_root}/qualification/planning-requirement-executors-wave4/e
 python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave4/tests"
 
-# The third nonadvancing planning audit selects six Smart City contracts from
-# the exact 71-row successor denominator. One matches and five preserve source
-# gaps; all 83 live-open requirements remain unpromoted.
-python3 "${thor_local_root}/qualification/planning-requirement-executors-wave5/executor.py" \
-  --json >/dev/null
-python3 -m pytest -q \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave5/tests"
-
-# The fourth nonadvancing planning audit selects six more Smart City source
-# contracts from the exact 65-row remainder. Five documented mismatches and
-# one external-optional boundary remain explicit; all 83 live-open planning
-# requirements stay unpromoted and 59 remain without a planning candidate.
-python3 "${thor_local_root}/qualification/planning-requirement-executors-wave6/executor.py" \
-  --json >/dev/null
-python3 -m pytest -q \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave6/tests"
-
-# The fifth nonadvancing planning audit checks three negative contracts, two
-# configuration subsets, and one illustrative NvSchema consumer subset from
-# the exact 59-row remainder. It leaves 53 unselected and all 83 live-open.
-python3 "${thor_local_root}/qualification/planning-requirement-executors-wave7/executor.py" \
-  --json >/dev/null
-python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave7/tests"
-
-# The sixth nonadvancing planning audit preserves six documented negative
-# contracts from the exact 53-row remainder. It leaves 47 unselected and all
-# 83 live-open requirements without promotion or runtime evidence.
-python3 "${thor_local_root}/qualification/planning-requirement-executors-wave8/executor.py" \
-  --json >/dev/null
-python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave8/tests"
-
-# The seventh nonadvancing planning audit checks one preserved negative, two
-# configuration-only, and three protocol/source-only subsets from the exact
-# 47-row remainder. It leaves 41 unselected and every runtime semantic open.
-python3 "${thor_local_root}/qualification/planning-requirement-executors-wave9/executor.py" \
-  --json >/dev/null
-python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave9/tests"
-
-# The eighth nonadvancing planning audit checks one preserved negative, one
-# configuration-only, and four protocol/source-only subsets from the exact
-# 41-row remainder. It leaves 35 unselected, excludes every Warehouse row, and
-# keeps every one of the 83 live-open requirements unpromoted and evidence-free.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave10/executor.py" \
-  --json >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave10/tests"
-
-# The ninth nonadvancing planning audit checks one preserved negative, one
-# configuration-only, and four protocol/source-only subsets from the exact
-# 35-row remainder. It leaves 29 unselected, selects no Warehouse row, and
-# keeps all 83 live-open requirements unpromoted and evidence-free.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave11/executor.py" \
-  --json >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave11/tests"
-
-# The tenth nonadvancing planning audit checks three protocol and three
-# configuration subsets from the exact 29-row remainder. It leaves 23
-# unselected, selects no Warehouse row, and keeps all 83 live-open requirements
-# unpromoted and evidence-free.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave12/executor.py" \
-  --json >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/planning-requirement-executors-wave12/tests"
+# Planning Waves 5-12 remain exact 276-capability historical selections. Their
+# package trees, inventories, embedded locks, and non-advancing boundary are
+# verified by the fixed-predecessor successor above, not relabelled as 277-era.
 
 # The first three still-open UI rows have a strict future browser/API receipt
 # contract. Static qualification only compiles the inert plan and exercises its
@@ -265,16 +164,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/legacy-calibration/browser-integration/tests"
 
-# One isolated static executor now compiles generated geo/cartesian/image/MTMC
-# fixtures through the provider-free backend and validates deterministic output
-# against every exact checked-in VSS calibration/behavior/road schema. It is
-# explicitly non-advancing and invokes no network, Docker, subprocess, model,
-# Warehouse sample, service, or live runtime.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/calibration-schema-static-executor/executor.py" \
-  --json >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/calibration-schema-static-executor/tests"
+# The calibration-schema executor's contract hash is embedded in the immutable
+# fourth-successor receipt. Its exact predecessor identity is verified above;
+# it is not replayed against the additive CPU ledger.
 
 # Two formerly fixed-topology architecture gaps now have an opt-in, default-
 # inert scaling configuration. The validator and adversarial tests inspect only
@@ -347,6 +239,25 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   --json >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/systems-search-lvs-boundary-static-executor/tests"
+
+# The exact VSS 3.2.1 Cosmos3 Nano artifact/default/served-ID chain and the
+# Smart City three-version mismatch are checked through locked product files.
+# This process-free subset leaves all three canonical oracles open and requires
+# neither a model artifact nor the optional Warehouse sample.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/headline-cosmos-smartcity-static-executor/executor.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/headline-cosmos-smartcity-static-executor/tests"
+
+# The August 1 documentation observation is metadata-only. It independently
+# revalidates the immutable July 31 172-page/26,449-edge baseline and records
+# stable sizes/topology plus universal raw-hash drift, with semantic equality
+# explicitly unproven and no relabel, feature promotion, or runtime evidence.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/official-vss-doc-drift-observation/validate_observation.py"
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/official-vss-doc-drift-observation/tests"
 
 # Shared future runtime-evidence primitives are checked only through their
 # static contract and fake in-memory transport/resource self-test. The library
@@ -439,72 +350,18 @@ python3 "${thor_local_root}/qualification/extended-api-surface-contracts/validat
 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/extended-api-surface-contracts/tests"
 
-# Every manifest entry in a family with no capability rows remains an explicit
-# open gap. The compiler proposes 87 literal entry oracles without promoting
-# family-level status or requiring the excluded Warehouse sample bundle.
+# Every advertised string without an entry-specific canonical binding remains
+# an explicit gap: 81 entries across 15 zero-row families plus five in partial
+# VIOS. The compiler proposes 86 literal oracles without promotion or Warehouse.
 python3 "${thor_local_root}/qualification/advertised-entry-gaps/compiler.py" check
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-gaps/tests" \
   -p 'test*.py' -v
 
-# Eight of the 87 literal gaps have bounded, source-locked, in-memory candidate
-# executors. Their observations remain subset-only: they do not mutate live
-# acceptance, create runtime evidence, or close any official capability.
-python3 "${thor_local_root}/qualification/advertised-entry-executors/executor.py" \
-  >/dev/null
-python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/advertised-entry-executors/tests" \
-  -p 'test*.py' -v
-
-# A second disjoint advertised-entry tranche provides 21 more bounded helper
-# and source-contract observations. Together the two candidate packages cover
-# 29/87 entries and leave 58 open; neither package advances official status.
-python3 "${thor_local_root}/qualification/advertised-entry-executors-wave2/executor.py" \
-  >/dev/null
-python3 -m pytest -q \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave2/tests"
-
-# The third advertised-entry package code-locks the plan, manifest, both
-# predecessors, and all selected sources. Its 23 source-shape candidates bring
-# isolated coverage to 52/87; 35 lack even a candidate and all 87 remain
-# unpromoted in live official status.
-python3 "${thor_local_root}/qualification/advertised-entry-executors-wave3/executor.py" \
-  >/dev/null
-python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/advertised-entry-executors-wave3/tests" \
-  -p 'test*.py' -v
-
-# Wave four checks the five remaining LVS live-workflow literals across the
-# agent, LVS, RT-VLM, Kafka/Logstash, and CA-RAG source graph. Its AST and
-# bounded-config observations bring isolated candidate coverage to 57/87 and
-# leave 30 without a candidate; no live workflow or official status advances.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave4/executor.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/advertised-entry-executors-wave4/tests" \
-  -p 'test*.py' -v
-
-# Wave five checks six required-local VIOS codec/audio literals against exact
-# source, configuration, ARM64 package-lock, and networkless-Dockerfile
-# contracts. Candidate coverage reaches 63/87 and leaves 24 without a
-# candidate; no media fixture, service, Docker, or official status advances.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave5/executor.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/advertised-entry-executors-wave5/tests" \
-  -p 'test*.py' -v
-
-# Wave six checks seven VIOS UI literals plus NAT generate/chat. Relative to
-# its five formal predecessors it reaches 71/87 and leaves 16. Placeholder UI
-# routes and all browser/API semantics remain explicitly unexecuted.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave6/executor.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/advertised-entry-executors-wave6/tests" \
-  -p 'test*.py' -v
+# Advertised-entry Waves 1-7 remain immutable 87-gap candidate snapshots. Their
+# exact trees, inventories, predecessor chains, 125 source locks, and 83-way
+# candidate/blocker partition are verified by the CPU successor above. They are
+# not replayed against the current 86-gap denominator.
 
 # The separate detection-mAP candidate runs a deterministic tiny AP oracle and
 # locks the production evaluator sources/tests, but does not claim the absent
@@ -516,20 +373,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/detection-map-static-executor/tests"
 
-# Wave seven partitions the final 15 entries after Wave six and detection-mAP:
-# 11 receive digest-locked source/provenance candidates while Slack, AWS/GCS,
-# RAG reporting, and FRAG retrieval remain external-attestation blockers.
-# Aggregate candidate coverage is 83/87; all 87 official gaps remain open.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave7/executor.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave7/tests"
-
 # Wave eight upgrades the two LVS MCP literals from source-shape candidates to
-# a real in-process production-server subset: exact tool registration, ASGI
-# dispatch, and bounded file-tool behavior. SSE/MCP transport, live deployment,
-# inference, runtime evidence, and official promotion remain explicitly open.
+# a real in-process production-server subset. Its two IDs remain in the current
+# 86-gap plan, so its live locks are refreshed while its old Wave3/Wave7
+# predecessor hashes stay frozen. Runtime transport/inference remains open.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/advertised-entry-executors-wave8/executor.py" \
   --check >/dev/null
@@ -564,21 +411,16 @@ python3 "${thor_local_root}/qualification/service-binding-resolution/compiler.py
 python3 -m pytest -q \
   "${thor_local_root}/qualification/service-binding-resolution/tests"
 
-# The lane compiler binds every one of the 500 advertised entries and all 276
+# The lane compiler binds every one of the 500 advertised entries and all 277
 # current capability oracles, while preserving entry-level semantic gaps,
 # unresolved service bindings, and zero runtime evidence.
 python3 "${thor_local_root}/qualification/runtime-lanes/runtime_lane_compiler.py" \
   --check
 python3 -m pytest -q "${thor_local_root}/qualification/runtime-lanes/tests"
 
-# Two custom-data MV3DT repository utilities execute twice against a tiny
-# synthetic calibration. Their observations bind exact non-advancing oracle
-# subsets only: no Warehouse sample, Docker, network, model, service lifecycle,
-# runtime evidence, full-oracle readiness, or official-state promotion.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/offline-mv3dt-tools/executor.py" --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q \
-  "${thor_local_root}/qualification/offline-mv3dt-tools/tests"
+# The candidate-only offline MV3DT observation and its immutable receipt are
+# verified above at exact predecessor identity by the CPU multimedia successor.
+# They are intentionally not replayed against the evolved current manifest.
 
 # The four MV3DT advertised semantics have an exact-four custom-data admission
 # plan and a strict future candidate-receipt validator. Static qualification

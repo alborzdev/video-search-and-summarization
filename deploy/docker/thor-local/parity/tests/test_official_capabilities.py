@@ -181,9 +181,96 @@ class OfficialCapabilityTests(unittest.TestCase):
             copy.deepcopy(self.acceptance),
         )
         self.assertEqual(counts["sources"], 126)
-        self.assertEqual(counts["capabilities"], 276)
-        self.assertEqual(counts["feature_families"], 39)
+        self.assertEqual(counts["capabilities"], 277)
+        self.assertEqual(counts["feature_families"], 40)
         self.assertEqual(counts["discrepancies"], 47)
+
+    def test_cpu_multimedia_entry_is_exactly_wired_but_unqualified(self) -> None:
+        capability = next(
+            item
+            for item in self.ledger["capabilities"]
+            if item["id"] == verifier.CPU_MULTIMEDIA_CAPABILITY_ID
+        )
+        feature = next(
+            item
+            for item in self.manifest["features"]
+            if item["id"] == "vios-codecs-audio"
+        )
+        self.assertEqual(
+            feature["official_capability_ids"],
+            [verifier.CPU_MULTIMEDIA_CAPABILITY_ID],
+        )
+        self.assertEqual(capability["kind"], "runtime_behavior")
+        self.assertEqual(capability["thor_state"], "wired")
+        self.assertEqual(capability["runtime_state"], "not_qualified")
+        self.assertNotIn("runtime_evidence", capability)
+        contract = capability["contract"]
+        self.assertEqual(
+            contract["selectors"],
+            {
+                "use_software_path": {
+                    "json_pointer": "/data/use_software_path",
+                    "checked_in_value": False,
+                    "default": False,
+                },
+                "USE_SOFTWARE_PATH": {
+                    "environment_override_for": "/data/use_software_path",
+                    "accepted_values": ["true", "false"],
+                },
+                "use_software_encoder": {
+                    "json_pointer": "/data/use_software_encoder",
+                    "checked_in_key_present": False,
+                    "default": False,
+                },
+            },
+        )
+        self.assertEqual(contract["branch_selection"]["decoder_gate"], "m_useNvV4l2Dec")
+        self.assertEqual(contract["branch_selection"]["encoder_gate"], "m_useNvV4l2Enc")
+        self.assertIs(
+            contract["branch_selection"]["use_software_path_directly_selects_elements"],
+            False,
+        )
+        self.assertEqual(
+            contract["hardware_default_elements"],
+            {
+                "video_decoder": "nvv4l2decoder",
+                "video_encoders": {
+                    "h264": "nvv4l2h264enc",
+                    "h265": "nvv4l2h265enc",
+                },
+            },
+        )
+        self.assertEqual(
+            {item["path"]: item["sha256"] for item in contract["source_controls"]},
+            verifier.CPU_MULTIMEDIA_SOURCE_CONTROLS,
+        )
+
+    def test_cpu_multimedia_selector_or_source_control_drift_fails_closed(self) -> None:
+        for label, mutate in {
+            "selector": lambda item: item["contract"]["selectors"][
+                "use_software_path"
+            ].update(default=True),
+            "gate": lambda item: item["contract"]["branch_selection"].update(
+                decoder_gate="use_software_path"
+            ),
+            "source": lambda item: item["contract"]["source_controls"][0].update(
+                sha256="0" * 64
+            ),
+        }.items():
+            with self.subTest(label=label):
+                ledger = copy.deepcopy(self.ledger)
+                capability = next(
+                    item
+                    for item in ledger["capabilities"]
+                    if item["id"] == verifier.CPU_MULTIMEDIA_CAPABILITY_ID
+                )
+                mutate(capability)
+                with self.assertRaises(verifier.CapabilityContractError):
+                    verifier.validate(
+                        ledger,
+                        copy.deepcopy(self.manifest),
+                        copy.deepcopy(self.acceptance),
+                    )
 
     def test_executor_mismatch_semantic_resolutions_remain_exact(self) -> None:
         discrepancies = {

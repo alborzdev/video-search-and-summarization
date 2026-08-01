@@ -48,6 +48,116 @@
               "properties": {"runtime_state": {"const": "passed_current"}}
             },
             "then": {"required": ["runtime_evidence"]}
+          },
+          {
+            "if": {
+              "required": ["id"],
+              "properties": {
+                "id": {"const": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"}
+              }
+            },
+            "then": {
+              "not": {"required": ["runtime_evidence"]},
+              "properties": {
+                "feature_id": {"const": "vios-codecs-audio"},
+                "kind": {"const": "runtime_behavior"},
+                "title": {"const": "CPU multimedia support"},
+                "acceptance_class": {"const": "required_local"},
+                "thor_state": {"const": "wired"},
+                "runtime_state": {"const": "not_qualified"},
+                "scenario_ids": {"const": ["analytics-vios-workflows"]},
+                "contract": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["selectors", "branch_selection", "software_elements", "hardware_default_elements", "offline_bundle", "immutable_derivatives", "source_controls"],
+                  "properties": {
+                    "selectors": {
+                      "const": {
+                        "use_software_path": {
+                          "json_pointer": "/data/use_software_path",
+                          "checked_in_value": false,
+                          "default": false
+                        },
+                        "USE_SOFTWARE_PATH": {
+                          "environment_override_for": "/data/use_software_path",
+                          "accepted_values": ["true", "false"]
+                        },
+                        "use_software_encoder": {
+                          "json_pointer": "/data/use_software_encoder",
+                          "checked_in_key_present": false,
+                          "default": false
+                        }
+                      }
+                    },
+                    "branch_selection": {
+                      "const": {
+                        "decoder_gate": "m_useNvV4l2Dec",
+                        "encoder_gate": "m_useNvV4l2Enc",
+                        "use_software_path_directly_selects_elements": false,
+                        "use_software_path_true": {
+                          "m_useNvV4l2Dec": false,
+                          "m_useNvV4l2Enc": false
+                        },
+                        "use_software_encoder_true": {
+                          "m_useNvV4l2Dec": "hardware_availability",
+                          "m_useNvV4l2Enc": false
+                        }
+                      }
+                    },
+                    "software_elements": {
+                      "const": {
+                        "video_decoders": {"h264": "avdec_h264", "h265": "avdec_h265"},
+                        "video_encoders": {"h264": "x264enc", "h265": "x265enc"},
+                        "audio_encoder": "avenc_aac",
+                        "parsers": ["h264parse", "h265parse"]
+                      }
+                    },
+                    "hardware_default_elements": {
+                      "const": {
+                        "video_decoder": "nvv4l2decoder",
+                        "video_encoders": {
+                          "h264": "nvv4l2h264enc",
+                          "h265": "nvv4l2h265enc"
+                        }
+                      }
+                    },
+                    "offline_bundle": {
+                      "const": {
+                        "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+                        "architecture": "arm64",
+                        "package_count": 59,
+                        "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+                      }
+                    },
+                    "immutable_derivatives": {
+                      "const": {
+                        "runtime_network_install": "disabled",
+                        "entrypoint": "/usr/local/bin/vios-offline-entrypoint",
+                        "dockerfiles": [
+                          "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+                          "deploy/docker/thor-local/Dockerfile.vios-nvstreamer"
+                        ]
+                      }
+                    },
+                    "source_controls": {
+                      "type": "array",
+                      "minItems": 9,
+                      "maxItems": 9,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["path", "sha256"],
+                        "properties": {
+                          "path": {"type": "string", "minLength": 1},
+                          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         ],
         "properties": {

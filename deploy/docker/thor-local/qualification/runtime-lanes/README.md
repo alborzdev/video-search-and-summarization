@@ -4,7 +4,7 @@ This directory turns the reviewed VSS 3.2.1 inventory into eight bounded Thor
 deployment/probe planning lanes. It is a static planner, not runtime evidence,
 and does not claim that its service-role sets are mathematically minimal.
 
-The checked plan covers all 500 manifest `advertised` entries, all 276
+The checked plan covers all 500 manifest `advertised` entries, all 277
 capability oracles, and all 55 feature families. Every capability belongs to
 exactly one of eight lanes:
 
@@ -14,7 +14,7 @@ exactly one of eight lanes:
 | `search` | 4 | Archived-video semantic search |
 | `lvs` | 10 | Long-video summarization |
 | `alerts` | 26 | Alert verification, real-time alerts, and Smart City |
-| `standalone-services` | 133 | Independently bounded VSS microservices and infrastructure |
+| `standalone-services` | 134 | Independently bounded VSS microservices and infrastructure |
 | `custom-data-warehouse` | 24 | Warehouse with small custom media/calibration only |
 | `official-edge-model-boundary` | 5 | Exact official Thor Edge model/support contract |
 | `external-optional` | 29 | Optional managed/provider boundaries; never local parity evidence |
@@ -24,20 +24,18 @@ Every advertised entry has a deterministic manifest JSON pointer such as
 family lane set. This preserves duplicate claim text as distinct source entries
 and prevents any of the 500 claims from disappearing silently.
 
-The manifest does not map individual advertised strings to individual
-capabilities. The plan therefore records that limitation instead of inventing
-semantic coverage: all 500 entry bindings are family-level only, none has an
-entry-specific capability/oracle mapping, and none is runtime evidence. Of the
-500 entries, 413 are in families that have capability rows. The remaining 87
-entries belong to 16 families with no capability rows at all. Their source-locked
-entry-level planning classifications come from `advertised-entry-gaps`: 56 are
-required-local, 26 are alternate-local, and five are external-optional. Those are exact
-semantic coverage gaps that must be resolved before literal feature-completeness
-can be claimed; their family-level lane bindings are planning coverage only.
-The machine contract consequently fixes
-`literal_runtime_feature_completeness_claim_allowed` to `false` and keeps the
-87 zero-row entries as an explicit completeness blocker until concrete
-capability/oracle contracts exist.
+The plan does not infer advertised-string coverage from family membership. It
+has exactly one entry-specific canonical mapping: CPU multimedia at
+`/features/20/advertised/5`. That capability/oracle is still runtime-open. Of
+the remaining bindings, 413 are family-level entries in families with
+capability rows, five are open entries in the partial VIOS family, and 81 are
+in 15 families with no capability rows. The 86 source-locked classifications
+from `advertised-entry-gaps` are 55 required-local, 26 alternate-local, and five
+external-optional. These are exact semantic gaps that must be resolved before
+literal feature-completeness can be claimed; family-level lane bindings are
+planning coverage only. The machine contract consequently fixes
+`literal_runtime_feature_completeness_claim_allowed` to `false` and keeps all
+86 open entries as completeness blockers.
 
 The Warehouse sample bundle is unconditionally excluded. Warehouse runtime
 qualification remains in scope only with small user-owned custom media and
@@ -50,7 +48,7 @@ the capability contract SHA-256 and source-claim locators used during the role
 audit, fixture, observation and
 assertion IDs, admission gates, execution bounds, cleanup contract, evidence
 requirements, and unresolved blockers. These service-role sets are not runtime
-evidence. Of 276 capabilities, 272 have a planning-only binding and four
+evidence. Of 277 capabilities, 273 have a planning-only binding and four
 remain explicitly unresolved because their checked contracts do not select one
 executable service boundary: embedding re-index validation and the three
 NvSchema format/JSON/Protobuf contracts. The unresolved bindings machine-block

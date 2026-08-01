@@ -20,14 +20,23 @@ sys.dont_write_bytecode = True
 LANE = Path(__file__).resolve().parent
 REPO_ROOT = LANE.parents[4]
 MANIFEST_PATH = REPO_ROOT / "deploy/docker/thor-local/parity/manifest.json"
+OFFICIAL_CAPABILITIES_PATH = (
+    REPO_ROOT / "deploy/docker/thor-local/parity/official-capabilities.json"
+)
 RULES_PATH = LANE / "classification-rules.json"
 RULES_SCHEMA_PATH = LANE / "classification-rules.schema.json"
 PLAN_SCHEMA_PATH = LANE / "plan.schema.json"
 PLAN_PATH = LANE / "plan.json"
 
-MANIFEST_RAW_SHA256 = "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+MANIFEST_RAW_SHA256 = "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba"
 MANIFEST_CANONICAL_SHA256 = (
-    "172a6ff8c33cd7d3e1378bf6cb643e4c56fd70f5d4c2e117166a640932f7c411"
+    "9b955d9f68fdf5f413e48b92653861b0d56933b1803e84d145e1eafff93f7e6c"
+)
+OFFICIAL_CAPABILITIES_RAW_SHA256 = (
+    "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
+)
+OFFICIAL_CAPABILITIES_CANONICAL_SHA256 = (
+    "792dde11c6d6b8f75e5323250a75c5743fe47e6500c80cb27673a3c1d6b2c5c3"
 )
 RULES_RAW_SHA256 = "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314"
 RULES_CANONICAL_SHA256 = (
@@ -37,13 +46,13 @@ RULES_SCHEMA_RAW_SHA256 = (
     "ad5e7c6c5d2a6760aee0909ea805bbcbceb4adcd8bce600429e0b67ab7126c0b"
 )
 PLAN_SCHEMA_RAW_SHA256 = (
-    "98c8b6dd1fdec77e945ed7f43309bcf17f55438a691f838d4f5095c4a8f36606"
+    "17dff277b38f1a0ca30055c94e0d96f7a8ee3087bfb4aa2de428065ebebd818c"
 )
 EXPECTED_PLAN_PAYLOAD_SHA256 = (
-    "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d"
+    "a50231e6de3b97cd551a46c32a317e83c71cff2ca27eb22a0363d92e756587d4"
 )
 EXPECTED_PLAN_RAW_SHA256 = (
-    "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"
+    "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239"
 )
 EXPECTED_FAMILY_IDS = {
     "video-summarization-live",
@@ -62,6 +71,9 @@ EXPECTED_FAMILY_IDS = {
     "spatial-ai-utils",
     "synthetic-data-tools",
     "enterprise-rag",
+}
+MIGRATED_ENTRY_CAPABILITY_IDS = {
+    "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
 }
 CUSTOM_DATA_FAMILIES = {"rt-cv-3d-sparse4d", "rt-cv-3d-mv3dt"}
 EXCLUDED_SAMPLE_MARKERS = (
@@ -194,6 +206,11 @@ def compile_plan() -> dict[str, Any]:
     manifest = _load_locked_json(
         MANIFEST_PATH, MANIFEST_RAW_SHA256, MANIFEST_CANONICAL_SHA256
     )
+    official = _load_locked_json(
+        OFFICIAL_CAPABILITIES_PATH,
+        OFFICIAL_CAPABILITIES_RAW_SHA256,
+        OFFICIAL_CAPABILITIES_CANONICAL_SHA256,
+    )
     rules = _load_locked_json(RULES_PATH, RULES_RAW_SHA256, RULES_CANONICAL_SHA256)
     rules_schema = _load_locked_json(RULES_SCHEMA_PATH, RULES_SCHEMA_RAW_SHA256)
     rule_errors = _schema_errors(rules, rules_schema)
@@ -204,18 +221,41 @@ def compile_plan() -> dict[str, Any]:
     if len(manifest.get("features", [])) != 55:
         raise CompileError("manifest feature denominator drift")
 
-    uncovered: list[tuple[int, dict[str, Any]]] = []
+    capabilities = official.get("capabilities")
+    if not isinstance(capabilities, list):
+        raise CompileError("official capability ledger is malformed")
+    capability_by_id = {
+        item.get("id"): item for item in capabilities if isinstance(item, dict)
+    }
+    if len(capability_by_id) != len(capabilities):
+        raise CompileError("official capability identity denominator drift")
+
+    uncovered: list[tuple[int, dict[str, Any], list[tuple[int, str]]]] = []
     for family_index, feature in enumerate(manifest["features"]):
         ids = feature.get("official_capability_ids", [])
         if not isinstance(ids, list):
             raise CompileError(
                 f"official_capability_ids is not a list: {feature.get('id')}"
             )
-        if not ids:
-            uncovered.append((family_index, feature))
+        if any(capability_id not in capability_by_id for capability_id in ids):
+            raise CompileError(
+                f"manifest capability binding is absent from ledger: {feature.get('id')}"
+            )
+        if ids and not set(ids) <= MIGRATED_ENTRY_CAPABILITY_IDS:
+            continue
+        canonical_titles = {
+            capability_by_id[capability_id].get("title") for capability_id in ids
+        }
+        missing = [
+            (advertised_index, advertised)
+            for advertised_index, advertised in enumerate(feature.get("advertised", []))
+            if advertised not in canonical_titles
+        ]
+        if missing:
+            uncovered.append((family_index, feature, missing))
     if len(uncovered) != 16:
         raise CompileError("uncovered family denominator drift")
-    uncovered_ids = {feature["id"] for _, feature in uncovered}
+    uncovered_ids = {feature["id"] for _, feature, _ in uncovered}
     if uncovered_ids != EXPECTED_FAMILY_IDS:
         raise CompileError("uncovered family identity drift")
     if set(rules["family_rules"]) != uncovered_ids:
@@ -226,17 +266,15 @@ def compile_plan() -> dict[str, Any]:
     entries: list[dict[str, Any]] = []
     families: list[dict[str, Any]] = []
     used_overrides: set[tuple[str, str]] = set()
-    for family_index, feature in uncovered:
-        if "official_capability_ids" in feature:
-            raise CompileError(
-                f"expected absent official_capability_ids key: {feature['id']}"
-            )
+    for family_index, feature, missing_entries in uncovered:
         family_id = feature["id"]
+        official_capability_ids = feature.get("official_capability_ids", [])
+        official_state = "partial" if official_capability_ids else "absent"
         family_pointer = f"/features/{family_index}"
         family_hash = _sha_json(feature)
         family_rule = rules["family_rules"][family_id]
         entry_ids: list[str] = []
-        for advertised_index, advertised in enumerate(feature["advertised"]):
+        for advertised_index, advertised in missing_entries:
             if not isinstance(advertised, str) or not advertised:
                 raise CompileError(f"invalid advertised entry: {family_pointer}")
             entry_id = (
@@ -267,7 +305,7 @@ def compile_plan() -> dict[str, Any]:
                     "family_category": feature["category"],
                     "family_runtime_state_snapshot": feature["runtime_state"],
                     "family_thor_state_snapshot": feature["thor_state"],
-                    "official_capability_ids_state": "absent",
+                    "official_capability_ids_state": official_state,
                     "family_lane_binding_is_semantic_coverage": False,
                     "coverage_state": "open_missing_entry_capability_and_oracle",
                     "proposed_capability": {
@@ -305,7 +343,12 @@ def compile_plan() -> dict[str, Any]:
                 "family_index": family_index,
                 "family_canonical_sha256": family_hash,
                 "advertised_entry_count": len(feature["advertised"]),
-                "official_capability_ids_state": "absent",
+                "uncovered_advertised_entry_count": len(missing_entries),
+                "covered_advertised_entry_count": (
+                    len(feature["advertised"]) - len(missing_entries)
+                ),
+                "official_capability_ids": official_capability_ids,
+                "official_capability_ids_state": official_state,
                 "family_lane_binding_is_semantic_coverage": False,
                 "family_runtime_state_snapshot": feature["runtime_state"],
                 "family_thor_state_snapshot": feature["thor_state"],
@@ -322,9 +365,9 @@ def compile_plan() -> dict[str, Any]:
         raise CompileError(
             "one or more entry overrides do not bind an exact manifest string"
         )
-    if len(entries) != 87 or len({item["entry_id"] for item in entries}) != 87:
+    if len(entries) != 86 or len({item["entry_id"] for item in entries}) != 86:
         raise CompileError("advertised entry denominator or identity drift")
-    if len({item["manifest_pointer"] for item in entries}) != 87:
+    if len({item["manifest_pointer"] for item in entries}) != 86:
         raise CompileError("manifest entry pointers are not unique")
 
     acceptance_counts = Counter(
@@ -345,6 +388,11 @@ def compile_plan() -> dict[str, Any]:
                 "raw_sha256": RULES_RAW_SHA256,
                 "canonical_sha256": RULES_CANONICAL_SHA256,
             },
+            "official_capabilities": {
+                "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+                "raw_sha256": OFFICIAL_CAPABILITIES_RAW_SHA256,
+                "canonical_sha256": OFFICIAL_CAPABILITIES_CANONICAL_SHA256,
+            },
         },
         "policy": {
             "planning_only": True,
@@ -356,7 +404,13 @@ def compile_plan() -> dict[str, Any]:
         },
         "summary": {
             "manifest_family_count": 55,
-            "families_without_official_capability_ids": len(families),
+            "families_with_uncovered_advertised_entries": len(families),
+            "families_without_official_capability_ids": sum(
+                item["official_capability_ids_state"] == "absent" for item in families
+            ),
+            "families_with_partial_official_capability_ids": sum(
+                item["official_capability_ids_state"] == "partial" for item in families
+            ),
             "advertised_entries_without_official_capability_ids": len(entries),
             "open_unverified_entries": len(entries),
             "runtime_evidence_count": 0,
@@ -430,7 +484,7 @@ def main() -> int:
         else:
             plan = check_checked_plan()
             print(
-                "PASS: exact 16-family / 87-entry advertised gap plan "
+                "PASS: exact 16-family / 86-entry advertised gap plan "
                 f"validated ({plan['plan_payload_sha256']})"
             )
     except (CompileError, OSError) as exc:

@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "executor_id": "headline-cosmos-smartcity-static-executor",
+  "scope": "provider-free static identity and discrepancy checks only",
+  "policy": {
+    "network_allowed": false,
+    "docker_allowed": false,
+    "downloads_allowed": false,
+    "service_lifecycle_allowed": false,
+    "runtime_evidence_created": false,
+    "runtime_state_promoted": false,
+    "warehouse_sample_required": false
+  },
+  "bindings": [
+    {
+      "capability_id": "model.rt-vlm.default-cosmos3-nano-bf16",
+      "oracle_id": "oracle.model.rt-vlm.default-cosmos3-nano-bf16",
+      "expected_acceptance_class": "required_local",
+      "expected_thor_state": "partial",
+      "expected_runtime_state": "not_qualified",
+      "static_outcome": "exact_identity_and_default_wiring_verified",
+      "runtime_outcome": "open"
+    },
+    {
+      "capability_id": "model.edge.cosmos3-nano-served-id",
+      "oracle_id": "oracle.model.edge.cosmos3-nano-served-id",
+      "expected_acceptance_class": "required_local",
+      "expected_thor_state": "partial",
+      "expected_runtime_state": "not_qualified",
+      "static_outcome": "exact_served_identity_wiring_verified",
+      "runtime_outcome": "open"
+    },
+    {
+      "capability_id": "boundary.smart-city.version-skew",
+      "oracle_id": "oracle.boundary.smart-city.version-skew",
+      "planning_requirement_id": "smartcity-version-lock",
+      "expected_acceptance_class": "alternate_local_lane",
+      "expected_thor_state": "source_only",
+      "expected_runtime_state": "not_qualified",
+      "static_outcome": "documented_mismatch_preserved",
+      "runtime_outcome": "open"
+    }
+  ],
+  "cosmos_contract": {
+    "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+    "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "selector": "cosmos-reason3",
+    "roles": [
+      "rt-vlm",
+      "agent-vlm"
+    ],
+    "default": true,
+    "release_provenance": "3.2.1",
+    "older_default_prose_overridden": true
+  },
+  "smartcity_contract": {
+    "docs_container": "3.2.1",
+    "toc_claim": "VSS v3.1",
+    "release_note_claim": "3.2.0 microservices",
+    "deep_dive_claim": "VSS 3.0 architecture",
+    "qualification_rule": "pin actual artifact and image digests; never infer runtime version from docs path",
+    "candidate_discrepancy_id": "discrepancy.smart-city.version-identity",
+    "must_not_claim": "The 3.2.1 documentation path proves one consistent Smart City runtime version."
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/official-edge/contract.json",
+      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/official-edge.env",
+      "sha256": "134e4369f21ce80c4fd2261552d83925da900ca80f23d93622cc7bf2756d8074"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.yml",
+      "sha256": "8a57b27d6798fa1c4655994fecb1c7abd78a3f738e8d20370f0ecdbefb11369c"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
+      "sha256": "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/official_edge.py",
+      "sha256": "779ef64bd134fa00934a7bdfdde3b1066678dd1e8ffa75c11c8b9b5af3f06faa"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
+      "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md",
+      "sha256": "a52cc9d1fb873924c46a4565bbb235086af1822458864ff91c0ae6dc797b92d0"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json",
+      "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json",
+      "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"
+    }
+  ],
+  "future_runtime_evidence": [
+    "exact staged Cosmos artifact tree with content digests",
+    "served /v1/models identity equals nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "bounded semantic video inference through the selected default rt-vlm and agent-vlm roles",
+    "resolved Smart City component image and artifact versions with immutable digests",
+    "bounded Smart City custom-media smoke test; no Warehouse sample bundle required"
+  ]
+}

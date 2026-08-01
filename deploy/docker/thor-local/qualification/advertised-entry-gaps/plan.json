@@ -2373,7 +2373,7 @@
       "coverage_state": "open_missing_entry_capability_and_oracle",
       "entry_id": "manifest-gap.vios-codecs-audio.00-b-frame-handling",
       "family_acceptance_class": "required_local",
-      "family_canonical_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c",
+      "family_canonical_sha256": "931f0c996cd3cf65cbf6cd75a346a10c892654651fc637521d9ba9bc30127ac9",
       "family_category": "media",
       "family_id": "vios-codecs-audio",
       "family_index": 20,
@@ -2382,7 +2382,7 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/20/advertised/0",
-      "official_capability_ids_state": "absent",
+      "official_capability_ids_state": "partial",
       "proposed_capability": {
         "acceptance_class": "required_local",
         "id": "manifest-entry.vios-codecs-audio.00-b-frame-handling",
@@ -2421,7 +2421,7 @@
       "coverage_state": "open_missing_entry_capability_and_oracle",
       "entry_id": "manifest-gap.vios-codecs-audio.01-hevc-multislice-rfc7798",
       "family_acceptance_class": "required_local",
-      "family_canonical_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c",
+      "family_canonical_sha256": "931f0c996cd3cf65cbf6cd75a346a10c892654651fc637521d9ba9bc30127ac9",
       "family_category": "media",
       "family_id": "vios-codecs-audio",
       "family_index": 20,
@@ -2430,7 +2430,7 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/20/advertised/1",
-      "official_capability_ids_state": "absent",
+      "official_capability_ids_state": "partial",
       "proposed_capability": {
         "acceptance_class": "required_local",
         "id": "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
@@ -2469,7 +2469,7 @@
       "coverage_state": "open_missing_entry_capability_and_oracle",
       "entry_id": "manifest-gap.vios-codecs-audio.02-h-264-h-265",
       "family_acceptance_class": "required_local",
-      "family_canonical_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c",
+      "family_canonical_sha256": "931f0c996cd3cf65cbf6cd75a346a10c892654651fc637521d9ba9bc30127ac9",
       "family_category": "media",
       "family_id": "vios-codecs-audio",
       "family_index": 20,
@@ -2478,7 +2478,7 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/20/advertised/2",
-      "official_capability_ids_state": "absent",
+      "official_capability_ids_state": "partial",
       "proposed_capability": {
         "acceptance_class": "required_local",
         "id": "manifest-entry.vios-codecs-audio.02-h-264-h-265",
@@ -2517,7 +2517,7 @@
       "coverage_state": "open_missing_entry_capability_and_oracle",
       "entry_id": "manifest-gap.vios-codecs-audio.03-audio-recording",
       "family_acceptance_class": "required_local",
-      "family_canonical_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c",
+      "family_canonical_sha256": "931f0c996cd3cf65cbf6cd75a346a10c892654651fc637521d9ba9bc30127ac9",
       "family_category": "media",
       "family_id": "vios-codecs-audio",
       "family_index": 20,
@@ -2526,7 +2526,7 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/20/advertised/3",
-      "official_capability_ids_state": "absent",
+      "official_capability_ids_state": "partial",
       "proposed_capability": {
         "acceptance_class": "required_local",
         "id": "manifest-entry.vios-codecs-audio.03-audio-recording",
@@ -2565,7 +2565,7 @@
       "coverage_state": "open_missing_entry_capability_and_oracle",
       "entry_id": "manifest-gap.vios-codecs-audio.04-audio-rtsp-republish",
       "family_acceptance_class": "required_local",
-      "family_canonical_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c",
+      "family_canonical_sha256": "931f0c996cd3cf65cbf6cd75a346a10c892654651fc637521d9ba9bc30127ac9",
       "family_category": "media",
       "family_id": "vios-codecs-audio",
       "family_index": 20,
@@ -2574,7 +2574,7 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/20/advertised/4",
-      "official_capability_ids_state": "absent",
+      "official_capability_ids_state": "partial",
       "proposed_capability": {
         "acceptance_class": "required_local",
         "id": "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish",
@@ -2586,54 +2586,6 @@
         "executor_class": "bounded_vios_codec_audio_probe",
         "id": "oracle.manifest-entry.vios-codecs-audio.04",
         "literal_success_condition": "Directly execute and semantically verify \"audio RTSP republish\" through bounded_vios_codec_audio_probe; source presence or a family-lane pass is not sufficient.",
-        "required_evidence": [
-          "exact_media_probe",
-          "ingest_and_replay_transcript",
-          "codec_or_audio_semantic_assertion"
-        ],
-        "runtime_evidence": [],
-        "setup_requirements": [
-          "local_vios",
-          "tiny_operator_supplied_codec_fixture"
-        ],
-        "status": "open_unexecuted",
-        "type": "runtime_codec_audio_matrix"
-      },
-      "runtime_evidence": [],
-      "warehouse_scope": {
-        "custom_data_capability_in_scope": false,
-        "sample_bundle_required": false
-      }
-    },
-    {
-      "advertised": "CPU multimedia support",
-      "advertised_canonical_sha256": "9efa0d484b1c7d3e18ada0fc68edbfbc2515e29ac0f1e93b0b1135dba41ab943",
-      "advertised_index": 5,
-      "advertised_utf8_sha256": "b34d3960a00090cf81be1662d03ec19dc22331527426f6629bb875e76dda5491",
-      "coverage_state": "open_missing_entry_capability_and_oracle",
-      "entry_id": "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support",
-      "family_acceptance_class": "required_local",
-      "family_canonical_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c",
-      "family_category": "media",
-      "family_id": "vios-codecs-audio",
-      "family_index": 20,
-      "family_lane_binding_is_semantic_coverage": false,
-      "family_pointer": "/features/20",
-      "family_runtime_state_snapshot": "not_qualified",
-      "family_thor_state_snapshot": "wired",
-      "manifest_pointer": "/features/20/advertised/5",
-      "official_capability_ids_state": "absent",
-      "proposed_capability": {
-        "acceptance_class": "required_local",
-        "id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
-        "kind": "runtime_media_compatibility",
-        "literal_scope": "CPU multimedia support"
-      },
-      "required_oracle": {
-        "cleanup_policy": "delete_only_executor_owned_sensors_streams_and_media",
-        "executor_class": "bounded_vios_codec_audio_probe",
-        "id": "oracle.manifest-entry.vios-codecs-audio.05",
-        "literal_success_condition": "Directly execute and semantically verify \"CPU multimedia support\" through bounded_vios_codec_audio_probe; source presence or a family-lane pass is not sufficient.",
         "required_evidence": [
           "exact_media_probe",
           "ingest_and_replay_transcript",
@@ -4212,6 +4164,7 @@
   "families": [
     {
       "advertised_entry_count": 6,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.video-summarization-live.00-live-captions",
         "manifest-gap.video-summarization-live.01-live-stream-summaries",
@@ -4227,10 +4180,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/2",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 6
     },
     {
       "advertised_entry_count": 2,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.search-scale.00-configuration-up-to-100-streams",
         "manifest-gap.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia"
@@ -4242,10 +4198,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/4",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 2
     },
     {
       "advertised_entry_count": 1,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.alert-notifications-slack.00-slack-notification"
       ],
@@ -4256,10 +4215,13 @@
       "family_runtime_state_snapshot": "not_applicable",
       "family_thor_state_snapshot": "external_optional",
       "manifest_pointer": "/features/7",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 1
     },
     {
       "advertised_entry_count": 11,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.rt-vlm-media.00-file-upload",
         "manifest-gap.rt-vlm-media.01-http-s",
@@ -4280,10 +4242,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/8",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 11
     },
     {
       "advertised_entry_count": 8,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.rt-vlm-api.00-openai-compatible-chat-completions",
         "manifest-gap.rt-vlm-api.01-text-only-chat",
@@ -4301,10 +4266,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/9",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 8
     },
     {
       "advertised_entry_count": 5,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.rt-vlm-models.00-cosmos-reason-1-2",
         "manifest-gap.rt-vlm-models.01-cosmos-3-nano-super",
@@ -4319,10 +4287,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/10",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 5
     },
     {
       "advertised_entry_count": 8,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.rt-vlm-performance-observability.00-efficient-video-sampling",
         "manifest-gap.rt-vlm-performance-observability.01-gop-aware-decode",
@@ -4340,10 +4311,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/11",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 8
     },
     {
       "advertised_entry_count": 2,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking",
         "manifest-gap.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics"
@@ -4355,10 +4329,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/14",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 2
     },
     {
       "advertised_entry_count": 6,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.rt-cv-3d-mv3dt.00-per-camera-rt-detr",
         "manifest-gap.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion",
@@ -4374,29 +4351,36 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/15",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 6
     },
     {
       "advertised_entry_count": 6,
+      "covered_advertised_entry_count": 1,
       "entry_ids": [
         "manifest-gap.vios-codecs-audio.00-b-frame-handling",
         "manifest-gap.vios-codecs-audio.01-hevc-multislice-rfc7798",
         "manifest-gap.vios-codecs-audio.02-h-264-h-265",
         "manifest-gap.vios-codecs-audio.03-audio-recording",
-        "manifest-gap.vios-codecs-audio.04-audio-rtsp-republish",
-        "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support"
+        "manifest-gap.vios-codecs-audio.04-audio-rtsp-republish"
       ],
-      "family_canonical_sha256": "ff909be446a6f81395a1838d4849a941777e266da977e7a5e7691cd87eda9d9c",
+      "family_canonical_sha256": "931f0c996cd3cf65cbf6cd75a346a10c892654651fc637521d9ba9bc30127ac9",
       "family_id": "vios-codecs-audio",
       "family_index": 20,
       "family_lane_binding_is_semantic_coverage": false,
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/20",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ],
+      "official_capability_ids_state": "partial",
+      "uncovered_advertised_entry_count": 5
     },
     {
       "advertised_entry_count": 3,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.audio-understanding.00-audio-aware-base-workflow",
         "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
@@ -4409,10 +4393,13 @@
       "family_runtime_state_snapshot": "blocked",
       "family_thor_state_snapshot": "partial",
       "manifest_pointer": "/features/21",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 3
     },
     {
       "advertised_entry_count": 7,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.vios-ui.00-vios-dashboard",
         "manifest-gap.vios-ui.01-sensor-and-stream-management",
@@ -4429,10 +4416,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/22",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 7
     },
     {
       "advertised_entry_count": 8,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.agent-and-mcp-apis.00-nat-generate-chat",
         "manifest-gap.agent-and-mcp-apis.01-health",
@@ -4450,10 +4440,13 @@
       "family_runtime_state_snapshot": "not_qualified",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/27",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 8
     },
     {
       "advertised_entry_count": 8,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.spatial-ai-utils.00-calibration-and-camera-grouping",
         "manifest-gap.spatial-ai-utils.01-3d-2d-geometry",
@@ -4471,10 +4464,13 @@
       "family_runtime_state_snapshot": "passed_current",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/29",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 8
     },
     {
       "advertised_entry_count": 4,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.synthetic-data-tools.00-semantic-label-helpers",
         "manifest-gap.synthetic-data-tools.01-dataset-checks",
@@ -4488,10 +4484,13 @@
       "family_runtime_state_snapshot": "passed_current",
       "family_thor_state_snapshot": "wired",
       "manifest_pointer": "/features/30",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 4
     },
     {
       "advertised_entry_count": 2,
+      "covered_advertised_entry_count": 0,
       "entry_ids": [
         "manifest-gap.enterprise-rag.00-rag-report-generation",
         "manifest-gap.enterprise-rag.01-frag-retrieval-integration"
@@ -4503,11 +4502,13 @@
       "family_runtime_state_snapshot": "not_applicable",
       "family_thor_state_snapshot": "external_optional",
       "manifest_pointer": "/features/34",
-      "official_capability_ids_state": "absent"
+      "official_capability_ids": [],
+      "official_capability_ids_state": "absent",
+      "uncovered_advertised_entry_count": 2
     }
   ],
   "mode": "isolated_advertised_entry_gap_planning",
-  "plan_payload_sha256": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d",
+  "plan_payload_sha256": "a50231e6de3b97cd551a46c32a317e83c71cff2ca27eb22a0363d92e756587d4",
   "policy": {
     "can_mark_passed_current": false,
     "custom_data_warehouse_capability": "in_scope",
@@ -4524,21 +4525,28 @@
       "raw_sha256": "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314"
     },
     "manifest": {
-      "canonical_sha256": "172a6ff8c33cd7d3e1378bf6cb643e4c56fd70f5d4c2e117166a640932f7c411",
+      "canonical_sha256": "9b955d9f68fdf5f413e48b92653861b0d56933b1803e84d145e1eafff93f7e6c",
       "path": "deploy/docker/thor-local/parity/manifest.json",
-      "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+      "raw_sha256": "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba"
+    },
+    "official_capabilities": {
+      "canonical_sha256": "792dde11c6d6b8f75e5323250a75c5743fe47e6500c80cb27673a3c1d6b2c5c3",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
     }
   },
   "summary": {
     "acceptance_class_counts": {
       "alternate_local_lane": 26,
       "external_optional": 5,
-      "required_local": 56
+      "required_local": 55
     },
-    "advertised_entries_without_official_capability_ids": 87,
-    "families_without_official_capability_ids": 16,
+    "advertised_entries_without_official_capability_ids": 86,
+    "families_with_partial_official_capability_ids": 1,
+    "families_with_uncovered_advertised_entries": 16,
+    "families_without_official_capability_ids": 15,
     "manifest_family_count": 55,
-    "open_unverified_entries": 87,
+    "open_unverified_entries": 86,
     "oracle_type_counts": {
       "alternate_local_model_matrix": 4,
       "external_optional_boundary": 5,
@@ -4547,7 +4555,7 @@
       "runtime_api_or_mcp_operation": 8,
       "runtime_audio_semantics": 3,
       "runtime_browser_interaction": 7,
-      "runtime_codec_audio_matrix": 6,
+      "runtime_codec_audio_matrix": 5,
       "runtime_custom_data_multicamera": 8,
       "runtime_media_matrix": 11,
       "runtime_scale_benchmark": 2,

@@ -43,6 +43,9 @@ OFFLINE_MV3DT_FILES = {
     "execution_receipt": {"path": f"{OFFLINE_MV3DT_ROOT}/execution-receipt.json", "raw_sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063"},
 }
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
+CPU_MULTIMEDIA_CAPABILITY_ID = (
+    "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+)
 
 # capability_id: (planning_requirement_id, minimum requests, maximum actions)
 # Derived by qualification/runtime-execution-bounds-audit.  Exact IDs prevent
@@ -197,6 +200,11 @@ def _profile(capability: dict[str, Any]) -> tuple[str, str]:
 def _action(capability: dict[str, Any], profile: str) -> str:
     capability_id = capability["id"]
     exact = {
+        CPU_MULTIMEDIA_CAPABILITY_ID: (
+            "run bounded hardware-default and use_software_path=true H.264/H.265/AAC "
+            "workflows, prove m_useNvV4l2Dec and m_useNvV4l2Enc select distinct "
+            "nvv4l2 and CPU elements, then restore the checked-in false default"
+        ),
         "config.vss-configurator.profile-manager": "render, validate, and diff a minimal 2D and 3D profile",
         "config.vss-configurator.sensor-manager": "create, validate, read back, and remove one namespaced sensor mapping",
         "config.sdrc.docker-distribution": "assign two namespaced streams and inspect Redis-backed ownership",
@@ -392,7 +400,18 @@ def _observations(capability: dict[str, Any], profile: str) -> list[dict[str, An
             "description": _action(capability, profile),
         },
     ]
-    if capability_id == "boundary.thor.custom-all-local-extension":
+    if capability_id == CPU_MULTIMEDIA_CAPABILITY_ID:
+        observations.append(
+            {
+                "id": "hardware_cpu_discrimination",
+                "description": (
+                    "The false-default path records nvv4l2 decoder/encoder selection, "
+                    "while the opted-in path records the declared libav/x264/x265 "
+                    "elements for the same bounded H.264/H.265 media matrix."
+                ),
+            }
+        )
+    elif capability_id == "boundary.thor.custom-all-local-extension":
         observations.extend(
             {
                 "id": f"profile_{profile_id.replace('-', '_')}",
@@ -749,6 +768,20 @@ def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[
     verified_source_locks: dict[str, str] = {}
     for source_lock in source_locks:
         relative = source_lock["path"]
+        if relative == "deploy/docker/thor-local/parity/manifest.json":
+            # This candidate receipt is an immutable observation of the live
+            # manifest that existed when the two tool runs were captured.  A
+            # later canonical-ledger successor must retain that recorded input
+            # identity rather than rewrite history or require today's manifest
+            # to have the historical digest.
+            if source_lock.get("sha256") != (
+                "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+            ):
+                raise OracleContractError(
+                    "offline MV3DT historical manifest lock differs"
+                )
+            verified_source_locks[relative] = source_lock["sha256"]
+            continue
         path = _resolve_repo_regular_file(repo_root, relative, f"offline_mv3dt.source_lock.{relative}")
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
         if actual != source_lock.get("sha256"):
@@ -1122,11 +1155,12 @@ def validate(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--compile", action="store_true", help="print the canonical expanded plan")
+    parser.add_argument("--write", action="store_true", help="write the canonical expanded plan")
     parser.add_argument("--report", action="store_true", help="print validation counts")
     args = parser.parse_args()
     try:
-        if args.compile:
-            print(
+        if args.compile or args.write:
+            rendered = (
                 json.dumps(
                     compile_plan(
                         _load(LEDGER),
@@ -1136,9 +1170,13 @@ def main() -> int:
                     indent=2,
                     ensure_ascii=False,
                 )
-                + "\n",
-                end="",
+                + "\n"
             )
+            if args.write:
+                ORACLES.write_text(rendered, encoding="utf-8")
+                print(f"WROTE: {ORACLES.relative_to(REPO_ROOT)}")
+            else:
+                print(rendered, end="")
             return 0
         counts = validate()
     except (OSError, json.JSONDecodeError, OracleContractError) as exc:

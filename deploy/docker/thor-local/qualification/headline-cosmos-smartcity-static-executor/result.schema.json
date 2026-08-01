@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "executor_id", "status", "scope", "runtime_evidence_created", "runtime_state_promoted", "warehouse_sample_required", "source_lock_count", "results", "future_runtime_evidence"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "executor_id": {"const": "headline-cosmos-smartcity-static-executor"},
+    "status": {"const": "pass"},
+    "scope": {"const": "static_only"},
+    "runtime_evidence_created": {"const": false},
+    "runtime_state_promoted": {"const": false},
+    "warehouse_sample_required": {"const": false},
+    "source_lock_count": {"const": 9},
+    "results": {
+      "const": [
+        {
+          "capability_id": "model.rt-vlm.default-cosmos3-nano-bf16",
+          "oracle_id": "oracle.model.rt-vlm.default-cosmos3-nano-bf16",
+          "static_outcome": "exact_identity_and_default_wiring_verified",
+          "runtime_outcome": "open",
+          "runtime_state": "not_qualified"
+        },
+        {
+          "capability_id": "model.edge.cosmos3-nano-served-id",
+          "oracle_id": "oracle.model.edge.cosmos3-nano-served-id",
+          "static_outcome": "exact_served_identity_wiring_verified",
+          "runtime_outcome": "open",
+          "runtime_state": "not_qualified"
+        },
+        {
+          "capability_id": "boundary.smart-city.version-skew",
+          "oracle_id": "oracle.boundary.smart-city.version-skew",
+          "static_outcome": "documented_mismatch_preserved",
+          "runtime_outcome": "open",
+          "runtime_state": "not_qualified"
+        }
+      ]
+    },
+    "future_runtime_evidence": {"type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "source_hashes", "verified_baseline", "recorded_observation", "evidence_boundary", "confinement", "promotion", "result"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "official-vss-3.2.1-doc-drift-observation-2026-08-01"},
+    "mode": {"const": "offline_metadata_validation_non_advancing"},
+    "source_hashes": {"const": {"deploy/docker/thor-local/parity/source-lock/source-lock.json": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07", "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/recursive-targets.json": "30e42ca2d085aa6e4b3ea99e537f9e2897864da1463979bb4768d06b8027a3aa", "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/crawl-graph.json": "7f8fff1f1a540afe8663e461b687eeb24ba8b229f2d867d4bcf18ff83a157f99"}},
+    "verified_baseline": {"const": {"captured_on": "2026-07-31", "url_count": 172, "total_byte_count": 13351947, "canonical_url_set_sha256": "74a1d6ae1f520049202e47dce69fa56d10c28c48aa3aa24a3a2c4214dad4b208", "canonical_directed_edge_count": 26449, "canonical_url_pair_edge_set_sha256": "58759d1dc9b060c90518aa2928190381d2838558d170746e9af783a0dbc35a55"}},
+    "recorded_observation": {"const": {"observed_on": "2026-08-01", "raw_sha256_changed_count": 172, "per_page_byte_count_match_count": 172, "canonical_url_set_identical": true, "directed_edge_topology_identical": true, "semantic_equality": "unproven"}},
+    "evidence_boundary": {"const": {"august_per_page_sha256_values_available": false, "exact_august_relock_materialized": false, "external_observation_reproduced_by_validator": false, "validator_scope": "checked_in_july_baseline_and_strict_aggregate_metadata_only"}},
+    "confinement": {"const": {"network_calls": 0, "downloads": 0, "docker_calls": 0, "runtime_calls": 0, "filesystem_writes": 0, "canonical_files_modified": 0}},
+    "promotion": {"const": {"runtime_evidence": [], "feature_evidence": [], "official_capability_effect": "none_metadata_only", "feature_or_runtime_promotion": false}},
+    "result": {"const": "documentation_raw_drift_observed_semantics_unproven_non_advancing"}
+  }
+}

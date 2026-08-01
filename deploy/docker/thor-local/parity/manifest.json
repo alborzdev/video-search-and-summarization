@@ -719,7 +719,10 @@
       ],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The exact locked 59-package ARM64 bundle and both immutable networkless VIOS derivatives are staged and pass source/bundle/image preflight. Exercise B-frame republish, multislice HEVC/RFC7798, H.264/H.265, AAC record/republish/extract, and the isolated CPU software path on the current runtime."
+      "gap": "The exact locked 59-package ARM64 bundle and both immutable networkless VIOS derivatives are staged and pass source/bundle/image preflight. Exercise B-frame republish, multislice HEVC/RFC7798, H.264/H.265, AAC record/republish/extract, and the isolated CPU software path on the current runtime.",
+      "official_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+      ]
     },
     {
       "id": "audio-understanding",

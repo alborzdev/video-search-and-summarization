@@ -24,10 +24,11 @@
     "mode": {"const": "isolated_advertised_entry_gap_planning"},
     "source_locks": {
       "type": "object", "additionalProperties": false,
-      "required": ["manifest", "classification_rules"],
+      "required": ["manifest", "classification_rules", "official_capabilities"],
       "properties": {
         "manifest": {"$ref": "#/$defs/source_lock"},
-        "classification_rules": {"$ref": "#/$defs/source_lock"}
+        "classification_rules": {"$ref": "#/$defs/source_lock"},
+        "official_capabilities": {"$ref": "#/$defs/source_lock"}
       }
     },
     "policy": {
@@ -44,12 +45,14 @@
     },
     "summary": {
       "type": "object", "additionalProperties": false,
-      "required": ["manifest_family_count", "families_without_official_capability_ids", "advertised_entries_without_official_capability_ids", "open_unverified_entries", "runtime_evidence_count", "acceptance_class_counts", "oracle_type_counts"],
+      "required": ["manifest_family_count", "families_with_uncovered_advertised_entries", "families_without_official_capability_ids", "families_with_partial_official_capability_ids", "advertised_entries_without_official_capability_ids", "open_unverified_entries", "runtime_evidence_count", "acceptance_class_counts", "oracle_type_counts"],
       "properties": {
         "manifest_family_count": {"const": 55},
-        "families_without_official_capability_ids": {"const": 16},
-        "advertised_entries_without_official_capability_ids": {"const": 87},
-        "open_unverified_entries": {"const": 87},
+        "families_with_uncovered_advertised_entries": {"const": 16},
+        "families_without_official_capability_ids": {"const": 15},
+        "families_with_partial_official_capability_ids": {"const": 1},
+        "advertised_entries_without_official_capability_ids": {"const": 86},
+        "open_unverified_entries": {"const": 86},
         "runtime_evidence_count": {"const": 0},
         "acceptance_class_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
         "oracle_type_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}}
@@ -59,14 +62,17 @@
       "type": "array", "minItems": 16, "maxItems": 16,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["family_id", "manifest_pointer", "family_index", "family_canonical_sha256", "advertised_entry_count", "official_capability_ids_state", "family_lane_binding_is_semantic_coverage", "family_runtime_state_snapshot", "family_thor_state_snapshot", "entry_ids"],
+        "required": ["family_id", "manifest_pointer", "family_index", "family_canonical_sha256", "advertised_entry_count", "uncovered_advertised_entry_count", "covered_advertised_entry_count", "official_capability_ids", "official_capability_ids_state", "family_lane_binding_is_semantic_coverage", "family_runtime_state_snapshot", "family_thor_state_snapshot", "entry_ids"],
         "properties": {
           "family_id": {"$ref": "#/$defs/id"},
           "manifest_pointer": {"$ref": "#/$defs/pointer"},
           "family_index": {"type": "integer", "minimum": 0},
           "family_canonical_sha256": {"$ref": "#/$defs/sha256"},
           "advertised_entry_count": {"type": "integer", "minimum": 1},
-          "official_capability_ids_state": {"const": "absent"},
+          "uncovered_advertised_entry_count": {"type": "integer", "minimum": 1},
+          "covered_advertised_entry_count": {"type": "integer", "minimum": 0},
+          "official_capability_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+          "official_capability_ids_state": {"enum": ["absent", "partial"]},
           "family_lane_binding_is_semantic_coverage": {"const": false},
           "family_runtime_state_snapshot": {"type": "string"},
           "family_thor_state_snapshot": {"type": "string"},
@@ -75,7 +81,7 @@
       }
     },
     "entries": {
-      "type": "array", "minItems": 87, "maxItems": 87,
+      "type": "array", "minItems": 86, "maxItems": 86,
       "items": {
         "type": "object", "additionalProperties": false,
         "required": ["entry_id", "manifest_pointer", "family_pointer", "family_index", "advertised_index", "family_id", "advertised", "advertised_utf8_sha256", "advertised_canonical_sha256", "family_canonical_sha256", "family_acceptance_class", "family_category", "family_runtime_state_snapshot", "family_thor_state_snapshot", "official_capability_ids_state", "family_lane_binding_is_semantic_coverage", "coverage_state", "proposed_capability", "required_oracle", "warehouse_scope", "runtime_evidence"],
@@ -94,7 +100,7 @@
           "family_category": {"type": "string"},
           "family_runtime_state_snapshot": {"type": "string"},
           "family_thor_state_snapshot": {"type": "string"},
-          "official_capability_ids_state": {"const": "absent"},
+          "official_capability_ids_state": {"enum": ["absent", "partial"]},
           "family_lane_binding_is_semantic_coverage": {"const": false},
           "coverage_state": {"const": "open_missing_entry_capability_and_oracle"},
           "proposed_capability": {

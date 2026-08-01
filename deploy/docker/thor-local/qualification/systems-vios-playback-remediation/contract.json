@@ -149,11 +149,11 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
+      "sha256": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"
     },
     {
       "path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json",
-      "sha256": "8a1172c0569b224c2453772e86319cf30b153af4ce0f5ab108af3274afd1fd95"
+      "sha256": "428672fd5f6e79709995e1f8a39eb59ba4c9743cfa2b743feb7d7aefddc8612b"
     },
     {
       "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",

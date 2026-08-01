@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "executor_id",
+    "scope",
+    "policy",
+    "bindings",
+    "cosmos_contract",
+    "smartcity_contract",
+    "source_locks",
+    "future_runtime_evidence"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "executor_id": {"const": "headline-cosmos-smartcity-static-executor"},
+    "scope": {"type": "string", "minLength": 1},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network_allowed", "docker_allowed", "downloads_allowed", "service_lifecycle_allowed", "runtime_evidence_created", "runtime_state_promoted", "warehouse_sample_required"],
+      "properties": {
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "runtime_evidence_created": {"const": false},
+        "runtime_state_promoted": {"const": false},
+        "warehouse_sample_required": {"const": false}
+      }
+    },
+    "bindings": {
+      "const": [
+        {
+          "capability_id": "model.rt-vlm.default-cosmos3-nano-bf16",
+          "oracle_id": "oracle.model.rt-vlm.default-cosmos3-nano-bf16",
+          "expected_acceptance_class": "required_local",
+          "expected_thor_state": "partial",
+          "expected_runtime_state": "not_qualified",
+          "static_outcome": "exact_identity_and_default_wiring_verified",
+          "runtime_outcome": "open"
+        },
+        {
+          "capability_id": "model.edge.cosmos3-nano-served-id",
+          "oracle_id": "oracle.model.edge.cosmos3-nano-served-id",
+          "expected_acceptance_class": "required_local",
+          "expected_thor_state": "partial",
+          "expected_runtime_state": "not_qualified",
+          "static_outcome": "exact_served_identity_wiring_verified",
+          "runtime_outcome": "open"
+        },
+        {
+          "capability_id": "boundary.smart-city.version-skew",
+          "oracle_id": "oracle.boundary.smart-city.version-skew",
+          "planning_requirement_id": "smartcity-version-lock",
+          "expected_acceptance_class": "alternate_local_lane",
+          "expected_thor_state": "source_only",
+          "expected_runtime_state": "not_qualified",
+          "static_outcome": "documented_mismatch_preserved",
+          "runtime_outcome": "open"
+        }
+      ]
+    },
+    "cosmos_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "served_model_id", "selector", "roles", "default", "release_provenance", "older_default_prose_overridden"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "served_model_id": {"type": "string", "minLength": 1},
+        "selector": {"type": "string", "minLength": 1},
+        "roles": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"type": "string"}},
+        "default": {"const": true},
+        "release_provenance": {"const": "3.2.1"},
+        "older_default_prose_overridden": {"const": true}
+      }
+    },
+    "smartcity_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docs_container", "toc_claim", "release_note_claim", "deep_dive_claim", "qualification_rule", "candidate_discrepancy_id", "must_not_claim"],
+      "properties": {
+        "docs_container": {"const": "3.2.1"},
+        "toc_claim": {"const": "VSS v3.1"},
+        "release_note_claim": {"const": "3.2.0 microservices"},
+        "deep_dive_claim": {"const": "VSS 3.0 architecture"},
+        "qualification_rule": {"type": "string", "minLength": 1},
+        "candidate_discrepancy_id": {"const": "discrepancy.smart-city.version-identity"},
+        "must_not_claim": {"type": "string", "minLength": 1}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "future_runtime_evidence": {"type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}
