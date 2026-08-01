@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/ui-runtime-evidence.schema.json",
+  "title": "Future sanitized UI browser/API qualification evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "package_id", "plan_sha256", "run_id", "authorization", "target", "preflight", "endpoints", "fixtures", "cases", "cleanup", "postflight", "boundary"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "future_sanitized_browser_api_evidence"},
+    "package_id": {"const": "thor-ui-runtime-contracts-v1"},
+    "plan_sha256": {"$ref": "#/$defs/sha256"},
+    "run_id": {"$ref": "#/$defs/runId"},
+    "authorization": {"$ref": "#/$defs/authorization"},
+    "target": {"$ref": "#/$defs/target"},
+    "preflight": {"$ref": "#/$defs/resourceSnapshot"},
+    "endpoints": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/endpoint"}},
+    "fixtures": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"$ref": "#/$defs/fixture"}},
+    "cases": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"oneOf": [{"$ref": "#/$defs/alertsCase"}, {"$ref": "#/$defs/searchCase"}, {"$ref": "#/$defs/videoCase"}]}},
+    "cleanup": {"$ref": "#/$defs/cleanup"},
+    "postflight": {"$ref": "#/$defs/resourceSnapshot"},
+    "boundary": {"$ref": "#/$defs/boundary"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "runId": {"type": "string", "pattern": "^uiq-[a-z0-9]{12}$"},
+    "authorization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authorization_id", "run_id", "acknowledgement", "scope", "scope_sha256", "granted_at", "expires_at", "single_use", "inherited"],
+      "properties": {
+        "authorization_id": {"type": "string", "pattern": "^uia-[a-z0-9]{16}$"},
+        "run_id": {"$ref": "#/$defs/runId"},
+        "acknowledgement": {"const": "I_ACCEPT_UI_BROWSER_API_QUALIFICATION_RUN"},
+        "scope": {"type": "object", "additionalProperties": false, "required": ["package_id", "run_id", "repository_commit", "endpoint_ids", "max_total_duration_seconds", "browser_api_only", "lifecycle_allowed"], "properties": {"package_id": {"const": "thor-ui-runtime-contracts-v1"}, "run_id": {"$ref": "#/$defs/runId"}, "repository_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "endpoint_ids": {"const": ["ui-origin", "alerts-mock", "search-mock", "video-mock"]}, "max_total_duration_seconds": {"const": 900}, "browser_api_only": {"const": true}, "lifecycle_allowed": {"const": false}}},
+        "scope_sha256": {"$ref": "#/$defs/sha256"},
+        "granted_at": {"$ref": "#/$defs/timestamp"},
+        "expires_at": {"$ref": "#/$defs/timestamp"},
+        "single_use": {"const": true},
+        "inherited": {"const": false}
+      }
+    },
+    "target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["platform", "repository_commit", "host_identity_sha256", "browser_name", "browser_version_sha256", "ui_build_sha256"],
+      "properties": {
+        "platform": {"const": "nvidia-jetson-thor"},
+        "repository_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "host_identity_sha256": {"$ref": "#/$defs/sha256"},
+        "browser_name": {"enum": ["chromium", "chrome", "firefox"]},
+        "browser_version_sha256": {"$ref": "#/$defs/sha256"},
+        "ui_build_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "resourceSnapshot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["captured_at", "thor_detected", "cgroup_admitted", "memory_total_bytes", "memory_available_bytes", "memory_required_bytes", "memory_reserve_percent", "disk_free_bytes", "disk_required_bytes", "gpu_required", "endpoints_healthy", "gate_passed", "receipt_sha256"],
+      "properties": {
+        "captured_at": {"$ref": "#/$defs/timestamp"},
+        "thor_detected": {"const": true},
+        "cgroup_admitted": {"const": true},
+        "memory_total_bytes": {"type": "integer", "minimum": 1},
+        "memory_available_bytes": {"type": "integer", "minimum": 1},
+        "memory_required_bytes": {"type": "integer", "minimum": 2147483648},
+        "memory_reserve_percent": {"type": "integer", "minimum": 20, "maximum": 100},
+        "disk_free_bytes": {"type": "integer", "minimum": 1073741824},
+        "disk_required_bytes": {"type": "integer", "minimum": 1},
+        "gpu_required": {"const": false},
+        "endpoints_healthy": {"const": true},
+        "gate_passed": {"const": true},
+        "receipt_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "endpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["endpoint_id", "scheme", "host", "port", "base_path_sha256", "preexisting", "healthy", "started_by_run", "tls_verified"],
+      "properties": {
+        "endpoint_id": {"enum": ["ui-origin", "alerts-mock", "search-mock", "video-mock"]},
+        "scheme": {"enum": ["http", "https"]},
+        "host": {"const": "127.0.0.1"},
+        "port": {"type": "integer", "minimum": 1024, "maximum": 65535},
+        "base_path_sha256": {"$ref": "#/$defs/sha256"},
+        "preexisting": {"const": true},
+        "healthy": {"const": true},
+        "started_by_run": {"const": false},
+        "tls_verified": {"type": "boolean"}
+      }
+    },
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixture_id", "run_id", "kind", "media_type", "generated_locally", "operator_custom", "warehouse_sample_bundle", "artifact_name", "sha256", "size_bytes", "generator_receipt_sha256", "contains_secret_material"],
+      "properties": {
+        "fixture_id": {"enum": ["ui-alert-api", "ui-search-api", "ui-tiny-mp4", "ui-tiny-mkv", "ui-tiny-rtsp-inventory"]},
+        "run_id": {"$ref": "#/$defs/runId"},
+        "kind": {"enum": ["generated_mock_json", "generated_tiny_media"]},
+        "media_type": {"enum": ["application/json", "video/mp4", "video/x-matroska"]},
+        "generated_locally": {"const": true},
+        "operator_custom": {"const": false},
+        "warehouse_sample_bundle": {"const": false},
+        "artifact_name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{3,127}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1, "maximum": 10485760},
+        "generator_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "contains_secret_material": {"const": false}
+      }
+    },
+    "apiExchange": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exchange_id", "correlation_id", "request_at", "response_at", "method", "path_sha256", "request_body_sha256", "response_status", "response_body_sha256", "endpoint_id", "run_id", "authorization_id", "sanitized", "raw_headers_recorded", "raw_url_recorded"],
+      "properties": {
+        "exchange_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{3,63}$"},
+        "correlation_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{7,63}$"},
+        "request_at": {"$ref": "#/$defs/timestamp"},
+        "response_at": {"$ref": "#/$defs/timestamp"},
+        "method": {"enum": ["GET", "POST", "PUT", "DELETE"]},
+        "path_sha256": {"$ref": "#/$defs/sha256"},
+        "request_body_sha256": {"$ref": "#/$defs/sha256"},
+        "response_status": {"type": "integer", "minimum": 200, "maximum": 499},
+        "response_body_sha256": {"$ref": "#/$defs/sha256"},
+        "endpoint_id": {"enum": ["alerts-mock", "search-mock", "video-mock"]},
+        "run_id": {"$ref": "#/$defs/runId"},
+        "authorization_id": {"type": "string", "pattern": "^uia-[a-z0-9]{16}$"},
+        "sanitized": {"const": true},
+        "raw_headers_recorded": {"const": false},
+        "raw_url_recorded": {"const": false}
+      }
+    },
+    "browserProof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["driver", "driver_version_sha256", "ui_endpoint_id", "navigation_origin_sha256", "rendered_ui_observed", "dom_actions_observed", "api_only", "action_count", "trace_sha256", "dom_snapshot_sha256", "screenshot_sha256", "console_error_count", "network_error_count", "sanitized"],
+      "properties": {
+        "driver": {"enum": ["playwright", "selenium", "webdriver-bidi"]},
+        "driver_version_sha256": {"$ref": "#/$defs/sha256"},
+        "ui_endpoint_id": {"const": "ui-origin"},
+        "navigation_origin_sha256": {"$ref": "#/$defs/sha256"},
+        "rendered_ui_observed": {"const": true},
+        "dom_actions_observed": {"const": true},
+        "api_only": {"const": false},
+        "action_count": {"type": "integer", "minimum": 1},
+        "trace_sha256": {"$ref": "#/$defs/sha256"},
+        "dom_snapshot_sha256": {"$ref": "#/$defs/sha256"},
+        "screenshot_sha256": {"$ref": "#/$defs/sha256"},
+        "console_error_count": {"const": 0},
+        "network_error_count": {"const": 0},
+        "sanitized": {"const": true}
+      }
+    },
+    "caseBase": {
+      "type": "object",
+      "required": ["case_id", "planning_requirement_id", "capability_id", "oracle_id", "run_id", "authorization_id", "endpoint_id", "started_at", "finished_at", "browser", "api_exchanges", "observations"]
+    },
+    "alertsCase": {
+      "allOf": [
+        {"$ref": "#/$defs/caseBase"},
+        {"type": "object", "additionalProperties": false, "properties": {
+          "case_id": {"const": "ui-runtime.alerts"}, "planning_requirement_id": {"const": "ui-alert-api"}, "capability_id": {"const": "runtime.ui.alerts-tab"}, "oracle_id": {"const": "oracle.runtime.ui.alerts-tab"}, "run_id": {"$ref": "#/$defs/runId"}, "authorization_id": {"type": "string"}, "endpoint_id": {"const": "alerts-mock"}, "started_at": {"$ref": "#/$defs/timestamp"}, "finished_at": {"$ref": "#/$defs/timestamp"}, "browser": {"$ref": "#/$defs/browserProof"}, "api_exchanges": {"type": "array", "minItems": 2, "maxItems": 24, "items": {"$ref": "#/$defs/apiExchange"}},
+          "observations": {"type": "object", "additionalProperties": false, "required": ["views", "defaults", "create_rule_refreshed_live_streams", "friendly_sensor_name_sha256", "friendly_catalog_rtsp_url_sha256", "friendly_submitted_sensor_sha256", "custom_sensor_name_sha256", "custom_submitted_sensor_sha256", "custom_rtsp_url_forwarded", "created_resource_ids", "browser_step_ids_sha256"], "properties": {"views": {"const": ["View Alerts", "Manage Alerts"]}, "defaults": {"type": "object", "additionalProperties": false, "required": ["verified_only", "range_minutes", "fetch_count", "refresh_seconds", "rows", "max_search", "bbox_overlay"], "properties": {"verified_only": {"const": true}, "range_minutes": {"const": 10}, "fetch_count": {"const": 100}, "refresh_seconds": {"const": 1}, "rows": {"const": 20}, "max_search": {"const": "unlimited"}, "bbox_overlay": {"const": false}}}, "create_rule_refreshed_live_streams": {"const": true}, "friendly_sensor_name_sha256": {"$ref": "#/$defs/sha256"}, "friendly_catalog_rtsp_url_sha256": {"$ref": "#/$defs/sha256"}, "friendly_submitted_sensor_sha256": {"$ref": "#/$defs/sha256"}, "custom_sensor_name_sha256": {"$ref": "#/$defs/sha256"}, "custom_submitted_sensor_sha256": {"$ref": "#/$defs/sha256"}, "custom_rtsp_url_forwarded": {"const": false}, "created_resource_ids": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "string"}}, "browser_step_ids_sha256": {"$ref": "#/$defs/sha256"}}}
+        }}
+      ]
+    },
+    "searchCase": {
+      "allOf": [
+        {"$ref": "#/$defs/caseBase"},
+        {"type": "object", "additionalProperties": false, "properties": {
+          "case_id": {"const": "ui-runtime.search"}, "planning_requirement_id": {"const": "ui-search-api"}, "capability_id": {"const": "runtime.ui.search-tab"}, "oracle_id": {"const": "oracle.runtime.ui.search-tab"}, "run_id": {"$ref": "#/$defs/runId"}, "authorization_id": {"type": "string"}, "endpoint_id": {"const": "search-mock"}, "started_at": {"$ref": "#/$defs/timestamp"}, "finished_at": {"$ref": "#/$defs/timestamp"}, "browser": {"$ref": "#/$defs/browserProof"}, "api_exchanges": {"type": "array", "minItems": 3, "maxItems": 24, "items": {"$ref": "#/$defs/apiExchange"}},
+          "observations": {"type": "object", "additionalProperties": false, "required": ["source_default", "source_values", "time_zone", "similarity_range", "top_k_default", "top_k_minimum", "critic_default_enabled", "critic_disable_env_tested", "critic_sort_order", "image_requirements_observed", "bbox_rendered", "frame_response_sha256", "picture_response_sha256", "created_resource_ids", "browser_step_ids_sha256"], "properties": {"source_default": {"const": "Video File"}, "source_values": {"const": ["Video File", "RTSP"]}, "time_zone": {"const": "browser_local_no_conversion"}, "similarity_range": {"const": [-1, 1]}, "top_k_default": {"const": 10}, "top_k_minimum": {"const": 1}, "critic_default_enabled": {"const": true}, "critic_disable_env_tested": {"const": "ENABLE_CRITIC=false"}, "critic_sort_order": {"const": ["confirmed", "unverified", "rejected"]}, "image_requirements_observed": {"const": ["mediaWithObjectsBbox", "mdx_frames_endpoint", "vst_picture_api"]}, "bbox_rendered": {"const": true}, "frame_response_sha256": {"$ref": "#/$defs/sha256"}, "picture_response_sha256": {"$ref": "#/$defs/sha256"}, "created_resource_ids": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"type": "string"}}, "browser_step_ids_sha256": {"$ref": "#/$defs/sha256"}}}
+        }}
+      ]
+    },
+    "videoCase": {
+      "allOf": [
+        {"$ref": "#/$defs/caseBase"},
+        {"type": "object", "additionalProperties": false, "properties": {
+          "case_id": {"const": "ui-runtime.video-management"}, "planning_requirement_id": {"const": "ui-tiny-media"}, "capability_id": {"const": "runtime.ui.video-management-tab"}, "oracle_id": {"const": "oracle.runtime.ui.video-management-tab"}, "run_id": {"$ref": "#/$defs/runId"}, "authorization_id": {"type": "string"}, "endpoint_id": {"const": "video-mock"}, "started_at": {"$ref": "#/$defs/timestamp"}, "finished_at": {"$ref": "#/$defs/timestamp"}, "browser": {"$ref": "#/$defs/browserProof"}, "api_exchanges": {"type": "array", "minItems": 5, "maxItems": 32, "items": {"$ref": "#/$defs/apiExchange"}},
+          "observations": {"type": "object", "additionalProperties": false, "required": ["file_types", "multi_upload_observed", "rtsp_add_list_delete_observed", "bulk_delete_warning", "bulk_delete_confirmed", "upload_progress_percent", "optional_template_environment_observed", "repeated_delete_status", "created_resource_ids", "browser_step_ids_sha256"], "properties": {"file_types": {"const": ["MP4", "MKV"]}, "multi_upload_observed": {"const": true}, "rtsp_add_list_delete_observed": {"const": true}, "bulk_delete_warning": {"const": "irreversible"}, "bulk_delete_confirmed": {"const": true}, "upload_progress_percent": {"type": "array", "minItems": 3, "maxItems": 101, "items": {"type": "integer", "minimum": 0, "maximum": 100}}, "optional_template_environment_observed": {"const": true}, "repeated_delete_status": {"enum": [404, 410]}, "created_resource_ids": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string"}}, "browser_step_ids_sha256": {"$ref": "#/$defs/sha256"}}}
+        }}
+      ]
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["completed_at", "preexisting_resource_ids", "preexisting_state_before_sha256", "preexisting_state_after_sha256", "owned_resource_ids", "deleted_resource_ids", "absent_after_resource_ids", "delete_receipt_sha256", "only_exact_owned_deleted", "repeated_video_delete_observed", "mock_endpoints_stopped", "service_state_mutated"],
+      "properties": {
+        "completed_at": {"$ref": "#/$defs/timestamp"},
+        "preexisting_resource_ids": {"type": "array", "maxItems": 256, "uniqueItems": true, "items": {"type": "string"}},
+        "preexisting_state_before_sha256": {"$ref": "#/$defs/sha256"},
+        "preexisting_state_after_sha256": {"$ref": "#/$defs/sha256"},
+        "owned_resource_ids": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string"}},
+        "deleted_resource_ids": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string"}},
+        "absent_after_resource_ids": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string"}},
+        "delete_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "only_exact_owned_deleted": {"const": true},
+        "repeated_video_delete_observed": {"const": true},
+        "mock_endpoints_stopped": {"const": false},
+        "service_state_mutated": {"const": false}
+      }
+    },
+    "boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["generated_by_package", "api_mocks_counted_as_rendered_ui", "browser_level_observations_present", "external_network_used", "dns_used", "docker_used", "subprocess_used_by_package", "process_lifecycle_used_by_package", "credentials_used", "secret_material_recorded", "raw_urls_recorded", "warehouse_used", "live_state_promoted"],
+      "properties": {
+        "generated_by_package": {"const": false},
+        "api_mocks_counted_as_rendered_ui": {"const": false},
+        "browser_level_observations_present": {"const": true},
+        "external_network_used": {"const": false},
+        "dns_used": {"const": false},
+        "docker_used": {"const": false},
+        "subprocess_used_by_package": {"const": false},
+        "process_lifecycle_used_by_package": {"const": false},
+        "credentials_used": {"const": false},
+        "secret_material_recorded": {"const": false},
+        "raw_urls_recorded": {"const": false},
+        "warehouse_used": {"const": false},
+        "live_state_promoted": {"const": false}
+      }
+    }
+  }
+}

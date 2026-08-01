@@ -194,6 +194,26 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/planning-requirement-executors-wave11/tests"
 
+# The tenth nonadvancing planning audit checks three protocol and three
+# configuration subsets from the exact 30-row remainder. It leaves 24
+# unselected, selects no Warehouse row, and keeps all 84 live-open requirements
+# unpromoted and evidence-free.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave12/executor.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave12/tests"
+
+# The first three still-open UI rows have a strict future browser/API receipt
+# contract. Static qualification only compiles the inert plan and exercises its
+# offline validator; it has no execute mode, calls no UI/API/browser/process,
+# rejects mock-only evidence, and cannot advance a live state.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/ui-runtime-contracts/validator.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/ui-runtime-contracts/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \

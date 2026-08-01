@@ -109,6 +109,18 @@ in this directory:
   and persistence, Behavior Analytics, and LVS queue/format surfaces. It leaves
   30 without a planning candidate, selects no Warehouse row, and keeps all 84
   live-open requirements unpromoted and runtime-evidence-empty;
+- `planning-requirement-executors-wave12/` audits that exact 30-requirement
+  remainder and adds six disjoint bounded subsets for Search documents and
+  bounding boxes, real-time alerts, the three UI surfaces, and alert-worker
+  scaling. It leaves 24 without a planning candidate, selects no Warehouse row,
+  and keeps all 84 live-open requirements unpromoted and evidence-empty;
+- `ui-runtime-contracts/` binds the three still-open Alerts, Search, and video-
+  management UI rows to a strict future browser/API evidence shape. Its inert
+  compiler and offline validator require a separate UI origin plus three mock
+  APIs on distinct numeric-loopback ports, locally generated tiny fixtures,
+  rendered DOM/actions and sanitized browser artifacts, bounded exchanges, and
+  exact-owned cleanup. There is no executor; API mocks alone are non-admissible
+  and no live state can advance;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle

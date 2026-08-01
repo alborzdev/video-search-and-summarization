@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-runtime-contracts-v1",
+  "mode": "inert_future_browser_api_qualification",
+  "policy": {
+    "default_inert": true,
+    "runtime_executor_implemented": false,
+    "browser_allowed": false,
+    "api_calls_allowed": false,
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "process_lifecycle_allowed": false,
+    "writes_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "runtime_evidence": [],
+    "can_promote_live_state": false
+  },
+  "future_execution_gate": {
+    "acknowledgement_token": "I_ACCEPT_UI_BROWSER_API_QUALIFICATION_RUN",
+    "approval_inheritance": false,
+    "approval_present_in_package": false,
+    "scope": "one bounded browser/API run against three pre-existing loopback mock endpoints; no service, browser, Docker, or process lifecycle",
+    "executor": null
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
+      "raw_sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"
+    }
+  ],
+  "requirements": [
+    {
+      "planning_requirement_id": "ui-alert-api",
+      "planning_requirement_sha256": "02a09126568011cad7c32a495d7081fef301c64e017cc4a1222734681923ebf4",
+      "planning_payload_sha256": "1e1d30ff2b7051b69e07a19a0ee14f8c5aa3b64572a3a744ae4f93f6a38789cc",
+      "capability_id": "runtime.ui.alerts-tab",
+      "capability_sha256": "87022e79571eb288cc3a75200fc2f49305475fdf6fca1a00b47c9ecea2d40c13",
+      "contract_sha256": "eb69451ac97a7ea8c0401f05b03d0a34f98a217968db4b9f77f03c318d4f901b",
+      "oracle_id": "oracle.runtime.ui.alerts-tab",
+      "oracle_sha256": "316387c8463285c796790fb1e7070e82f33c0fabe0f1c03279409cfc2f5c752e",
+      "case_id": "ui-runtime.alerts",
+      "ui_endpoint_id": "ui-origin",
+      "endpoint_id": "alerts-mock",
+      "fixture_ids": ["ui-alert-api"],
+      "max_duration_seconds": 180,
+      "max_browser_actions": 32,
+      "max_api_exchanges": 24,
+      "owned_resource_suffixes": ["alert-friendly", "alert-custom"]
+    },
+    {
+      "planning_requirement_id": "ui-search-api",
+      "planning_requirement_sha256": "49716611c35e7cf44093408282d791e7ebea8aa1f0ccad3ef1ed1859ba10c715",
+      "planning_payload_sha256": "039708f40d10ab80dc8bd107fb11aede99bf16953769503cc0950685423e5bb6",
+      "capability_id": "runtime.ui.search-tab",
+      "capability_sha256": "741b40492faea62fefeb22494c3a2b56417ca724838309d9b01e206cd9e62b97",
+      "contract_sha256": "9e025312f0a1cacf730946700e3abef2cabb1caa259a4be46c29d8ec57a258b5",
+      "oracle_id": "oracle.runtime.ui.search-tab",
+      "oracle_sha256": "8eb8b3a9174c50917924587fc2b03ae76665ea36243b9a5c8885fe0b563e37d8",
+      "case_id": "ui-runtime.search",
+      "ui_endpoint_id": "ui-origin",
+      "endpoint_id": "search-mock",
+      "fixture_ids": ["ui-search-api", "ui-tiny-mp4"],
+      "max_duration_seconds": 180,
+      "max_browser_actions": 32,
+      "max_api_exchanges": 24,
+      "owned_resource_suffixes": ["search-session"]
+    },
+    {
+      "planning_requirement_id": "ui-tiny-media",
+      "planning_requirement_sha256": "30cb1c2efc9f6c9fe048da76eafc60f5e9db667de746160d31b623059d8bc9dd",
+      "planning_payload_sha256": "e3d37258b761beac46c5d7dfdcc40c067ae0916d2919168efb2da081ab5064c0",
+      "capability_id": "runtime.ui.video-management-tab",
+      "capability_sha256": "606f5bbee9d290a44466391951b75f53e951136b24f2e886e311bdf20f87d2b4",
+      "contract_sha256": "bf539bc466bde8b973fb392e4a228c5de9dff2b166e41d6d24a060694279e117",
+      "oracle_id": "oracle.runtime.ui.video-management-tab",
+      "oracle_sha256": "abae52bfd27a3bfb4f1cac71a3cfcd8086931bc463a75e7308b11e7fa6ae5e73",
+      "case_id": "ui-runtime.video-management",
+      "ui_endpoint_id": "ui-origin",
+      "endpoint_id": "video-mock",
+      "fixture_ids": ["ui-tiny-mp4", "ui-tiny-mkv", "ui-tiny-rtsp-inventory"],
+      "max_duration_seconds": 240,
+      "max_browser_actions": 40,
+      "max_api_exchanges": 32,
+      "owned_resource_suffixes": ["video-mp4", "video-mkv", "rtsp-sensor"]
+    }
+  ],
+  "fixture_contracts": [
+    {"fixture_id": "ui-alert-api", "kind": "generated_mock_json", "media_type": "application/json", "max_size_bytes": 1048576},
+    {"fixture_id": "ui-search-api", "kind": "generated_mock_json", "media_type": "application/json", "max_size_bytes": 1048576},
+    {"fixture_id": "ui-tiny-mp4", "kind": "generated_tiny_media", "media_type": "video/mp4", "max_size_bytes": 10485760},
+    {"fixture_id": "ui-tiny-mkv", "kind": "generated_tiny_media", "media_type": "video/x-matroska", "max_size_bytes": 10485760},
+    {"fixture_id": "ui-tiny-rtsp-inventory", "kind": "generated_mock_json", "media_type": "application/json", "max_size_bytes": 1048576}
+  ],
+  "future_resource_gates": {
+    "platform": "nvidia-jetson-thor",
+    "minimum_available_memory_bytes": 2147483648,
+    "minimum_memory_reserve_percent": 20,
+    "minimum_free_disk_bytes": 1073741824,
+    "gpu_required": false,
+    "all_target_endpoints_preexisting_and_healthy": true
+  },
+  "future_network_boundary": {
+    "host": "127.0.0.1",
+    "required_endpoint_ids": ["ui-origin", "alerts-mock", "search-mock", "video-mock"],
+    "ui_origin_preexisting": true,
+    "allowed_schemes": ["http", "https"],
+    "dns_allowed": false,
+    "external_network_allowed": false,
+    "distinct_ports_required": true,
+    "raw_url_evidence_allowed": false
+  },
+  "cleanup_contract": {
+    "resource_id_template": "{run_id}.{suffix}",
+    "preexisting_collision_allowed": false,
+    "delete_only_exact_owned_resources": true,
+    "restore_preexisting_state": true,
+    "repeated_delete_required_for_video_resources": true,
+    "postflight_resource_and_capacity_gate_required": true
+  },
+  "current_state": {
+    "classification": "future_evidence_contract_only",
+    "live_state_advanced": false,
+    "runtime_evidence": [],
+    "remaining_blocker": "A separately authorized bounded run still needs pre-existing loopback mock endpoints and browser, locally generated and digested fixtures, passing Thor preflight gates, a non-lifecycle browser/API collector, and exact-owned cleanup evidence."
+  }
+}

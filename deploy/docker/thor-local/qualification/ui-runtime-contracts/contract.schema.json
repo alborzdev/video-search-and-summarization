@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/ui-runtime-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "policy", "future_execution_gate", "source_locks", "requirements", "fixture_contracts", "future_resource_gates", "future_network_boundary", "cleanup_contract", "current_state"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-ui-runtime-contracts-v1"},
+    "mode": {"const": "inert_future_browser_api_qualification"},
+    "policy": {"type": "object"},
+    "future_execution_gate": {"type": "object"},
+    "source_locks": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["path", "raw_sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "raw_sha256": {"$ref": "#/$defs/sha256"}}}},
+    "requirements": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["planning_requirement_id", "planning_requirement_sha256", "planning_payload_sha256", "capability_id", "capability_sha256", "contract_sha256", "oracle_id", "oracle_sha256", "case_id", "ui_endpoint_id", "endpoint_id", "fixture_ids", "max_duration_seconds", "max_browser_actions", "max_api_exchanges", "owned_resource_suffixes"], "properties": {"planning_requirement_id": {"type": "string"}, "planning_requirement_sha256": {"$ref": "#/$defs/sha256"}, "planning_payload_sha256": {"$ref": "#/$defs/sha256"}, "capability_id": {"type": "string"}, "capability_sha256": {"$ref": "#/$defs/sha256"}, "contract_sha256": {"$ref": "#/$defs/sha256"}, "oracle_id": {"type": "string"}, "oracle_sha256": {"$ref": "#/$defs/sha256"}, "case_id": {"type": "string"}, "ui_endpoint_id": {"type": "string"}, "endpoint_id": {"type": "string"}, "fixture_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}, "max_duration_seconds": {"type": "integer", "minimum": 1}, "max_browser_actions": {"type": "integer", "minimum": 1}, "max_api_exchanges": {"type": "integer", "minimum": 1}, "owned_resource_suffixes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}}}},
+    "fixture_contracts": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"type": "object"}},
+    "future_resource_gates": {"type": "object"},
+    "future_network_boundary": {"type": "object"},
+    "cleanup_contract": {"type": "object"},
+    "current_state": {"type": "object"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

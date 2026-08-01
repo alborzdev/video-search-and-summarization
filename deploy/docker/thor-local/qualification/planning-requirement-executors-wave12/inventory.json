@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "docker": false,
+    "subprocess": false,
+    "writes": false,
+    "lifecycle": false,
+    "downloads": false,
+    "credentials": false,
+    "warehouse_used": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json", "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "07fb76a7675d3a8506b65d4eeb1130f7a04571ea32b9c8f8057907d7b0a37bf4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave8/inventory.json", "sha256": "faa85d0f1b77478e2814763bafc439f61fc419dd6813ed06f044002b1ffcb4fa"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave9/inventory.json", "sha256": "ef61deabad56286d7a49c74a5938c0ad2e980c42cb92ff7b0d2df6250c3a6537"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave10/inventory.json", "sha256": "ad84036c336369a8a83665461d59ee2b7ea6962d1b3e01e417323bf7d4a51b8a"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11/inventory.json", "sha256": "3d8f35a66b39bc688cd531e891db86df32c56a7de43dbcdfb14a8812a946a68a"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave12-source-case.search-routing-ranking",
+      "planning_requirement_id": "search-documents-and-bboxes",
+      "capability_id": "runtime.agent.search-profile",
+      "planning_payload_sha256": "7f0b99aa5bd8357b7b0ec2a8677868e44c788c82d92608ca2dc8617933fc167b",
+      "capability_sha256": "b1e0203f690e577238165ffbb636de798f49ecc8d988d67c375ecb8436abbc48",
+      "contract_sha256": "36b2c0a7699ff1bb150b80d054e1a5146aecec59daa2d0fa1d9ef029f9964c82",
+      "oracle_sha256": "77d1c912afeac1998390cf342234d874f8be4a3755e1992cc4218eb59f362a0a",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
+        {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-search-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.agent.search-profile\"", "\"routes\":[\"/api/v1/search\",\"/api/v1/search/attribute\",\"/api/v1/search/fusion\",\"/api/v1/search/image\"]", "\"indices\":[\"mdx-embed-filtered-*\",\"mdx-behavior-*\",\"mdx-raw-*\"]", "Exact merge, fusion, and image-search semantics are not proven by the operation inventory."]},
+        {"assertion_id": "source-attribute-boundaries", "sources": ["services/agent/src/vss_agents/tools/attribute_search.py"], "expected": ["MIN_CLIP_DURATION_SECONDS = 1.0", "\"mdx-behavior-*\"", "\"mdx-embed-filtered-*\"", "\"mdx-raw-*\"", "fuse_multi_attribute: bool = Field("]},
+        {"assertion_id": "source-default-rank-fusion", "sources": ["services/agent/src/vss_agents/tools/search.py"], "expected": ["fusion_method: Literal[\"weighted_linear\", \"rrf\"] = Field(", "default=\"rrf\"", "Reciprocal Rank Fusion"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave12-source-case.realtime-alert-surface",
+      "planning_requirement_id": "tiny-alert-stream",
+      "capability_id": "runtime.workflow.real-time-alerts",
+      "planning_payload_sha256": "3077a32f2abd92fcaa0106d000dfce83251aeee0c44e8b25119b81a9d87f1a2b",
+      "capability_sha256": "253e50e5fb62dd00fe40ca35c1acfc7225a116039ee0934d51d636c2aa750adb",
+      "contract_sha256": "ed3e3086ec699fb518c2e091a5c6a9a434a2731dbc2004e2e3ba122ad595e759",
+      "oracle_sha256": "9df770310ef0fc74a62d6a4ef23b46edc01d7ad08d8092bdefe3f8bf2752bcc7",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/alert/README.md", "sha256": "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"},
+        {"path": "services/alert/realtime/schemas/alert_config.py", "sha256": "64f549c625a6d34386baa5120ff41c760dc38a9c2dfd4ad0b9a1a310d04efa99"},
+        {"path": "services/alert/realtime/services/always_on_service.py", "sha256": "bd797b7fb0f5f750a13166028f4a5549ceffeca7a1db8acd6c8e91a67aa31f4d"},
+        {"path": "services/alert/webhook/openclaw_notifier.py", "sha256": "209936060c18a3a71bd227e02439fd790fa8a6dcfcf5e2139406b94f02acf43b"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/CreateAlertRulesView.tsx", "sha256": "5bc41b76967eb6922abf9e6a8b381e74d49f48150d3927dfcc951025c9b33577"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-realtime-alert-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.workflow.real-time-alerts\"", "\"rule_language\":\"natural_language\"", "\"delete_requires_confirmation\":true", "\"delete_is_idempotent\":true", "Rule lifecycle and optional relay remain unqualified."]},
+        {"assertion_id": "documented-realtime-stream-surface", "sources": ["services/alert/README.md"], "expected": ["**Realtime alerts**", "continuous VLM", "generated", "published over Kafka"]},
+        {"assertion_id": "source-prompt-config-surface", "sources": ["services/alert/realtime/schemas/alert_config.py"], "expected": ["Required fields: live_stream_url, alert_type, prompt.", "class AlertRuleConfig:", "prompt: str"]},
+        {"assertion_id": "source-idempotent-delete-surface", "sources": ["services/alert/realtime/services/always_on_service.py"], "expected": ["returning 404 as an idempotent success", "treating as idempotent success"]},
+        {"assertion_id": "source-optional-openclaw-surface", "sources": ["services/alert/webhook/openclaw_notifier.py"], "expected": ["When disabled (the default) every public method is a no-op.", "webhook.openclaw"]},
+        {"assertion_id": "ui-two-step-delete-surface", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/CreateAlertRulesView.tsx"], "expected": ["Two-step delete confirmation", "data-testid=\"realtime-alert-confirm-delete\""]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave12-source-case.alerts-ui-configuration",
+      "planning_requirement_id": "ui-alert-api",
+      "capability_id": "runtime.ui.alerts-tab",
+      "planning_payload_sha256": "1e1d30ff2b7051b69e07a19a0ee14f8c5aa3b64572a3a744ae4f93f6a38789cc",
+      "capability_sha256": "87022e79571eb288cc3a75200fc2f49305475fdf6fca1a00b47c9ecea2d40c13",
+      "contract_sha256": "eb69451ac97a7ea8c0401f05b03d0a34f98a217968db4b9f77f03c318d4f901b",
+      "oracle_sha256": "316387c8463285c796790fb1e7070e82f33c0fabe0f1c03279409cfc2f5c752e",
+      "evidence_class": "static_configuration_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/server.ts", "sha256": "d04cecd93caa9e20d7445c8244140f998fcec083ab188265acded821a53348e5"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/Controls.tsx", "sha256": "7132db98c8f8483fa9b9ff476435067c2d32d9cdabd92b2f984c79edc2341b82"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/utils/vstSensorList.ts", "sha256": "6698a7248a57496aa3bb8b761adb46791c411e2e680411eecb368a1525e4db2c"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-alerts-ui-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.ui.alerts-tab\"", "\"views\":[\"View Alerts\",\"Manage Alerts\"]", "\"refresh_seconds\":1", "\"fetch_count\":100", "Defaults and sensor-resolution behavior need browser qualification."]},
+        {"assertion_id": "source-alert-defaults", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/server.ts"], "expected": ["defaultTimeWindow: parseInt(ALERTS_TAB_ALERTS_FETCH_DEFAULT_TIME_WINDOW_IN_MINUTES || '10', 10)", "defaultAutoRefreshInterval: parseInt(ALERTS_TAB_DEFAULT_AUTO_REFRESH_IN_MILLISECONDS || '1000', 10)", "maxResults: parseInt(ALERTS_TAB_ALERTS_FETCH_MAX_RESULT_SIZE || '100', 10)", "pageSize: 20", "maxSearchTimeLimit: ALERTS_TAB_MAX_SEARCH_TIME_LIMIT || '0'"]},
+        {"assertion_id": "source-alert-subviews", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/Controls.tsx"], "expected": ["label: 'View Alerts'", "label: 'Manage Alerts'"]},
+        {"assertion_id": "source-live-stream-refresh", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/utils/vstSensorList.ts"], "expected": ["Live-stream catalog from `GET /v1/live/streams`. Not cached", "/v1/live/streams"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave12-source-case.search-ui-configuration",
+      "planning_requirement_id": "ui-search-api",
+      "capability_id": "runtime.ui.search-tab",
+      "planning_payload_sha256": "039708f40d10ab80dc8bd107fb11aede99bf16953769503cc0950685423e5bb6",
+      "capability_sha256": "741b40492faea62fefeb22494c3a2b56417ca724838309d9b01e206cd9e62b97",
+      "contract_sha256": "9e025312f0a1cacf730946700e3abef2cabb1caa259a4be46c29d8ec57a258b5",
+      "oracle_sha256": "8eb8b3a9174c50917924587fc2b03ae76665ea36243b9a5c8885fe0b563e37d8",
+      "evidence_class": "static_configuration_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/server.ts", "sha256": "1649f70bcb09efcc0b6f862a3e3b8d268c24a9f027cf2800d18e7c269c2455ae"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useFilter.ts", "sha256": "076fc93804a93b93bc0c75b20657a732f94615fd74393b0bb8e47b2b607d4b25"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/FilterPopover.tsx", "sha256": "4457be7ee50bef9118ecb05cf9cd1e258a3cd35e5717d8e09056d01326d79d46"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearchByImage.ts", "sha256": "24d3fd995dfbf94d96a905a4b68a4e06cdfa06e46bc1ad97418dfb7ccc855a6c"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/types.ts", "sha256": "c12a62882392c8f7abbad2f11fe97e8f8d6293a4fe8c3da34303f116414ef33f"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-search-ui-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.ui.search-tab\"", "\"similarity_range\":[-1,1]", "\"default\":\"Video File\",\"values\":[\"Video File\",\"RTSP\"]", "\"top_k\":{\"default\":10,\"minimum\":1}", "Filter defaults, critic ordering, and image flow are not currently qualified."]},
+        {"assertion_id": "source-search-image-config", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/server.ts"], "expected": ["mdxWebApiUrl: MDX_WEB_API_URL || null", "mediaWithObjectsBbox: SEARCH_TAB_MEDIA_WITH_OBJECTS_BBOX === 'true'"]},
+        {"assertion_id": "source-search-defaults", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useFilter.ts"], "expected": ["export const DEFAULT_TOP_K = 10;", "export const DEFAULT_MIN_COSINE_SIMILARITY = -1;", "num >= 1"]},
+        {"assertion_id": "source-search-input-bounds", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/FilterPopover.tsx"], "expected": ["min={-1}", "max={1}", "min={1}"]},
+        {"assertion_id": "source-search-image-endpoints", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearchByImage.ts"], "expected": ["const url = `${mdxWebApiUrl}/frames?${params}`;", "fetchFrameImage(vstApiUrl"]},
+        {"assertion_id": "source-search-critic-states", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/types.ts"], "expected": ["result: 'confirmed' | 'rejected' | 'unverified';"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave12-source-case.video-management-ui-configuration",
+      "planning_requirement_id": "ui-tiny-media",
+      "capability_id": "runtime.ui.video-management-tab",
+      "planning_payload_sha256": "e3d37258b761beac46c5d7dfdcc40c067ae0916d2919168efb2da081ab5064c0",
+      "capability_sha256": "606f5bbee9d290a44466391951b75f53e951136b24f2e886e311bdf20f87d2b4",
+      "contract_sha256": "bf539bc466bde8b973fb392e4a228c5de9dff2b166e41d6d24a060694279e117",
+      "oracle_sha256": "abae52bfd27a3bfb4f1cac71a3cfcd8086931bc463a75e7308b11e7fa6ae5e73",
+      "evidence_class": "static_configuration_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/Toolbar.tsx", "sha256": "e367ad03493f08241ef878d894025b08dd30f8c36734711b8cab05be3ed0adc4"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/UploadProgressPanel.tsx", "sha256": "ffcc183f411c08d6b33f3ebebd7ebe9ad8b8562bc8fed463b333efa477242cac"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/DeleteConfirmDialog.tsx", "sha256": "e13e1c71f8a44eb77e6476ed7a4c73c102c6492e3a0545e828ec55b1facc7f88"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-video-management-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.ui.video-management-tab\"", "\"file_types\":[\"MP4\",\"MKV\"]", "\"multi_upload\":true", "\"rtsp_management\":true", "\"upload_progress\":true", "Bulk operations and progress behavior need browser qualification."]},
+        {"assertion_id": "source-video-and-rtsp-controls", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/Toolbar.tsx"], "expected": ["type=\"file\"", "multiple", "accept=\".mp4,.mkv\"", "+ Upload Video", "+ Add RTSP", "Delete Selected"]},
+        {"assertion_id": "source-upload-progress-panel", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/UploadProgressPanel.tsx"], "expected": ["aria-label=\"Upload progress\"", "Uploading ${completedCount + inProgressCount + processingCount}/${uploads.length} files..."]},
+        {"assertion_id": "source-destructive-confirmation", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/DeleteConfirmDialog.tsx"], "expected": ["Are you sure you want to delete the following?", "data-testid=\"delete-confirm-button\"", "{isDeleting ? 'Deleting...' : 'Confirm'}"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave12-source-case.alert-worker-backpressure",
+      "planning_requirement_id": "systems-alert-worker-scaling",
+      "capability_id": "performance.alerts.worker-scaling",
+      "planning_payload_sha256": "6ab4f9e3977d7eb3e25b538293376079603fb92c3e525cb042ea399f8eeb9c58",
+      "capability_sha256": "b1cc65159d965eda18844fb51aa939d3178b871c1a16475dac2c44376f54b039",
+      "contract_sha256": "a6e834a99da5d9bea0db8181b26ceb860b89d2555e3ebbc42fe6dc19b4f508eb",
+      "oracle_sha256": "20cbb31091ce437c2e3593d3a69466a1b1fa5b089b83bcae09c1e1b52e20c495",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/alert/enhance_alert_with_vlm.py", "sha256": "43b9759f03eb7bbc3776ca55966d0f59a6bf55311d74b9fc30d53ba097b3c8bd"},
+        {"path": "services/alert/blueprint_config/config_smartcity_blueprint.yaml", "sha256": "d9e55cc8424dfef4889507fa826150c5e99e59362c02332dc4f6ed4652bcdc1a"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-alert-worker-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"performance.alerts.worker-scaling\"", "\"chunk_size\":1", "\"natural_backpressure\":true", "\"horizontal_group_shared\":true", "\"partitions_must_cover_instances\":true", "Worker saturation and partition scaling are not measured on Thor."]},
+        {"assertion_id": "source-worker-queue-backpressure", "sources": ["services/alert/enhance_alert_with_vlm.py"], "expected": ["self.worker_queue = Queue(maxsize=self.num_workers)", "ThreadPoolExecutor(max_workers=self.num_workers", "self.worker_queue.get(timeout=5)", "All workers busy. Waiting to schedule next sub-batch..."]},
+        {"assertion_id": "source-smartcity-single-chunk", "sources": ["services/alert/blueprint_config/config_smartcity_blueprint.yaml"], "expected": ["num_workers: 1", "chunk_size: 1", "consumer_group: \"vlm_agents_group\""]}
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}
