@@ -107,9 +107,10 @@ python3 -m unittest discover \
 # full capability oracle advances.
 python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" validate
 
-# The LVS MCP adapter is a third static successor. It preserves the immutable
-# 13-vs-9 upstream discrepancy while wiring four Thor-local file-management
-# tools. It creates no runtime evidence or passed-current promotion.
+# The live-current third static successor preserves the immutable LVS 13-vs-9
+# upstream discrepancy while wiring four Thor-local file-management tools. It
+# also binds two deterministic offline MV3DT observations to bounded oracle
+# subsets. Neither integration creates runtime evidence or a promotion.
 python3 "${thor_local_root}/qualification/lvs-mcp-static-adapter-integration/integrate_live.py" \
   validate
 python3 -m unittest discover \
@@ -230,6 +231,26 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-executors-wave5/tests" \
   -p 'test*.py' -v
 
+# Wave six checks seven VIOS UI literals plus NAT generate/chat. Relative to
+# its five formal predecessors it reaches 71/87 and leaves 16. Placeholder UI
+# routes and all browser/API semantics remain explicitly unexecuted.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave6/executor.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/advertised-entry-executors-wave6/tests" \
+  -p 'test*.py' -v
+
+# The separate detection-mAP candidate runs a deterministic tiny AP oracle and
+# locks the production evaluator sources/tests, but does not claim the absent
+# optional dependency stack or production evaluator executed. Combined with
+# Wave six, aggregate candidate coverage is 72/87 with 15 still unselected.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/detection-map-static-executor/executor.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/detection-map-static-executor/tests"
+
 # The four unresolved capability-to-service bindings have an authoritative
 # negative audit. None of the contracts selects a unique runtime participant
 # set, so the audit must keep all four open and forbid runtime-lane updates.
@@ -246,8 +267,9 @@ python3 "${thor_local_root}/qualification/runtime-lanes/runtime_lane_compiler.py
 python3 -m pytest -q "${thor_local_root}/qualification/runtime-lanes/tests"
 
 # Two custom-data MV3DT repository utilities execute twice against a tiny
-# synthetic calibration. This is candidate-only evidence: no Warehouse sample,
-# Docker, network, model, service lifecycle, or official-state promotion.
+# synthetic calibration. Their observations bind exact non-advancing oracle
+# subsets only: no Warehouse sample, Docker, network, model, service lifecycle,
+# runtime evidence, full-oracle readiness, or official-state promotion.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/offline-mv3dt-tools/executor.py" --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q \

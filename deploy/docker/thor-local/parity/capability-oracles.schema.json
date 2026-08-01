@@ -79,6 +79,10 @@
           "type": "array", "minItems": 1, "uniqueItems": true,
           "items": {"$ref": "#/$defs/planningExecutorBinding"}
         },
+        "offline_tool_observation_bindings": {
+          "type": "array", "minItems": 1, "maxItems": 1,
+          "items": {"$ref": "#/$defs/offlineToolObservationBinding"}
+        },
         "ledger_binding": {
           "type": "object", "additionalProperties": false,
           "required": ["feature_id", "kind", "title", "source_claims", "acceptance_class", "thor_state", "runtime_state", "contract", "gap"],
@@ -215,6 +219,132 @@
       }
     },
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reviewedFile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^deploy/docker/thor-local/qualification/offline-mv3dt-tools/"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "offlineToolObservationBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "scope", "qualification_package", "contract", "executor",
+        "result_schema", "fixture", "execution_receipt", "source_locks",
+        "dependency_observation", "selected_output_locks", "selected_semantic",
+        "oracle_coverage", "result",
+        "can_advance_capability", "can_mark_passed_current", "runtime_evidence"
+      ],
+      "properties": {
+        "scope": {"const": "bounded_static_tool_observation_subset_only"},
+        "qualification_package": {"const": "deploy/docker/thor-local/qualification/offline-mv3dt-tools"},
+        "contract": {"$ref": "#/$defs/reviewedFile"},
+        "executor": {
+          "type": "object", "additionalProperties": false,
+          "required": ["path", "raw_sha256", "invocation"],
+          "properties": {
+            "path": {"const": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py"},
+            "raw_sha256": {"$ref": "#/$defs/sha256"},
+            "invocation": {
+              "const": [
+                "python3",
+                "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py",
+                "--check"
+              ]
+            }
+          }
+        },
+        "result_schema": {"$ref": "#/$defs/reviewedFile"},
+        "fixture": {"$ref": "#/$defs/reviewedFile"},
+        "execution_receipt": {"$ref": "#/$defs/reviewedFile"},
+        "source_locks": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"$ref": "#/$defs/sha256"}
+            }
+          }
+        },
+        "selected_output_locks": {
+          "type": "object", "minProperties": 1, "maxProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        },
+        "dependency_observation": {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "requirements_path", "requirements_sha256", "declared_requirements",
+            "observed_distribution_versions", "observed_module_versions",
+            "observed_versions_sha256", "note",
+            "declared_versions_match_observed_distributions",
+            "normative_for_declared_requirements", "mismatches"
+          ],
+          "properties": {
+            "requirements_path": {"const": "tools/rtvi-cv-mv3dt-utils/requirements.txt"},
+            "requirements_sha256": {"$ref": "#/$defs/sha256"},
+            "declared_requirements": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "string", "minLength": 1}},
+            "observed_distribution_versions": {"type": "object", "minProperties": 4, "additionalProperties": {"type": "string", "minLength": 1}},
+            "observed_module_versions": {"type": "object", "minProperties": 4, "additionalProperties": {"type": "string", "minLength": 1}},
+            "observed_versions_sha256": {"$ref": "#/$defs/sha256"},
+            "note": {"const": "candidate execution records local versions; it does not claim they equal the reviewed pins"},
+            "declared_versions_match_observed_distributions": {"const": false},
+            "normative_for_declared_requirements": {"const": false},
+            "mismatches": {
+              "type": "array", "minItems": 4, "maxItems": 4,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["distribution", "declared", "observed"],
+                "properties": {
+                  "distribution": {"enum": ["numpy", "opencv-python", "PyYAML", "tqdm"]},
+                  "declared": {"type": "string", "minLength": 1},
+                  "observed": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "selected_semantic": {
+          "type": "object", "minProperties": 1, "maxProperties": 1
+        },
+        "oracle_coverage": {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "covered_observation_ids", "uncovered_observation_ids",
+            "covered_assertion_ids", "uncovered_assertion_ids"
+          ],
+          "properties": {
+            "covered_observation_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}},
+            "uncovered_observation_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}},
+            "covered_assertion_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}},
+            "uncovered_assertion_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/plainId"}}
+          }
+        },
+        "result": {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "observation", "run_count", "official_capability_effect",
+            "warehouse_sample_bundle_used", "network_used", "docker_used",
+            "subprocess_used", "lifecycle_used"
+          ],
+          "properties": {
+            "observation": {"const": "observed_match_candidate_only"},
+            "run_count": {"const": 2},
+            "official_capability_effect": {"const": "none_candidate_only"},
+            "warehouse_sample_bundle_used": {"const": false},
+            "network_used": {"const": false},
+            "docker_used": {"const": false},
+            "subprocess_used": {"const": false},
+            "lifecycle_used": {"const": false}
+          }
+        },
+        "can_advance_capability": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
     "planningExecutorBinding": {
       "type": "object", "additionalProperties": false,
       "required": [

@@ -46,6 +46,26 @@
       "raw_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
     },
     {
+      "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/contract.json",
+      "raw_sha256": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/execution-receipt.json",
+      "raw_sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py",
+      "raw_sha256": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json",
+      "raw_sha256": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/result.schema.json",
+      "raw_sha256": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887"
+    },
+    {
       "path": "services/video-summarization/src/lvs_mcp.py",
       "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
     },
@@ -80,13 +100,19 @@
       "list_files",
       "get_file_info",
       "delete_file"
-    ]
+    ],
+    "offline_tool_capability_ids": [
+      "tool.mv3dt.cam-info-generator",
+      "tool.mv3dt.pub-sub-generator"
+    ],
+    "offline_tool_qualification_package": "deploy/docker/thor-local/qualification/offline-mv3dt-tools"
   },
   "expected_counts": {
     "capabilities": 276,
     "oracles": 276,
     "planning_index_only_oracles": 276,
-    "static_subset_oracle_bindings": 26,
+    "static_subset_oracle_bindings": 28,
+    "offline_tool_observation_bindings": 2,
     "runtime_evidence_records": 0,
     "passed_current_promotions": 0,
     "lvs_rest_operations": 18,
@@ -103,12 +129,12 @@
     "docker": "forbidden",
     "subprocess": "forbidden"
   },
-  "contract_sha256": "536a9321a99fee382bb775c1bae2da1565938e08522a17dc04d142178b1ae48c",
+  "contract_sha256": "f65c04d92a97fb60c5c506b4de8f7ea4cf6035098d5870343f7aeebf64fb6bc2",
   "outputs": {
     "official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
     "manifest.json": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
     "acceptance_inventory.json": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f",
-    "capability-oracles.json": "dbc646a068cfb365a010640774e1ae0dff97f8fe11257dfa9e285f17955403e8"
+    "capability-oracles.json": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"
   },
   "lifecycle": "third_static_adapter_successor_integrated"
 }

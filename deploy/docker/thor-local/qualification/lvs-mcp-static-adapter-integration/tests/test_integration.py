@@ -57,6 +57,27 @@ class StaticAdapterIntegrationTests(unittest.TestCase):
                 for row in self.oracles["oracles"]
             )
         )
+        offline = {
+            row["capability_id"]: row["offline_tool_observation_bindings"][0]
+            for row in self.oracles["oracles"]
+            if row.get("offline_tool_observation_bindings")
+        }
+        self.assertEqual(
+            set(offline),
+            {
+                "tool.mv3dt.cam-info-generator",
+                "tool.mv3dt.pub-sub-generator",
+            },
+        )
+        self.assertEqual(
+            self.receipt["expected_counts"]["static_subset_oracle_bindings"], 28
+        )
+        self.assertEqual(
+            self.receipt["expected_counts"]["offline_tool_observation_bindings"], 2
+        )
+        self.assertTrue(
+            all(binding["can_advance_capability"] is False for binding in offline.values())
+        )
 
     def test_live_validation_is_exact(self):
         result = MODULE.validate_live()

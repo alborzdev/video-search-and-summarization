@@ -16,7 +16,8 @@ in this directory:
   binding them into live planning acceptance;
 - `lvs-mcp-static-adapter-integration/` is the third static successor. It
   preserves the pinned upstream 13-versus-9 discrepancy while recording the
-  four Thor-local file-management adapters, with zero runtime evidence;
+  four Thor-local file-management adapters and two bounded offline MV3DT tool
+  observations, with zero runtime evidence or full-oracle promotion;
 - `extended-api-surface-contracts/` splits the five excluded official API
   groups into seven addressable REST surfaces. It locks six exact descriptors
   totaling 80 operations and keeps legacy calibration authoritative-unknown
@@ -43,6 +44,15 @@ in this directory:
   candidate coverage reaches 63 of 87 while 24 lack a candidate; no codec
   fixture, RTSP session, recording, CPU pipeline, or official-state promotion
   occurs;
+- `advertised-entry-executors-wave6/` checks seven VIOS UI literals plus NAT
+  generate/chat against exact source, route, static-operation, dependency, and
+  predecessor locks. Its wave-local sequence reaches 71 of 87 and leaves 16;
+  empty UI route placeholders and all browser/API runtime work remain open;
+- `detection-map-static-executor/` adds a separate candidate for the detection
+  mAP literal. It executes a tiny deterministic AP semantic oracle while
+  preserving the missing local production-evaluator dependency stack, so it
+  creates no runtime evidence or official-state promotion. Together with Wave
+  6 this brings aggregate candidate coverage to 72 of 87 and leaves 15;
 - `planning-requirement-executors-wave3/` checks six of the 84 still-open
   planning requirements without promoting them, preserving five source
   matches and the search-upload HTTP 400/415 mismatch;
@@ -61,8 +71,9 @@ in this directory:
   utilities twice against a tiny synthetic two-camera calibration, locking
   schema, matrix, camera-ID, MQTT-topology, determinism, confinement, and
   cleanup observations. It uses neither the Warehouse sample nor Docker,
-  models, cloud inference, network, or service lifecycle, and remains
-  candidate-only;
+  models, cloud inference, network, or service lifecycle. Its two observations
+  are bound only to exact non-advancing oracle subsets; both full oracles remain
+  open;
 - `advertised-entry-gaps/` gives each advertised entry from the 16 families
   that lack capability rows its own still-open semantic oracle plan;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
@@ -108,14 +119,15 @@ complete totals.
 
 The first two deterministic static successors currently materialize 26 of 110
 planning requirements. All 276 full capability oracles remain
-`planning_index_only`; the 26 bindings are static subsets only, with zero
-runtime evidence and zero `passed_current` promotions. The third successor
-updates only the LVS adapter's static API contract and does not materialize an
-additional planning requirement. The separate 8 + 21 + 23 + 5 + 6
+`planning_index_only`; those 26 planning bindings plus two offline MV3DT tool
+bindings are static subsets only, with zero runtime evidence and zero
+`passed_current` promotions. The third successor updates the LVS adapter's
+static API contract and binds those two MV3DT subsets without materializing an
+additional planning requirement. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1
 advertised-entry candidates and 6 + 6 + 6 additional planning checks are
-non-advancing and do not change those live counts. They leave 24
-advertised entries without a candidate source executor and 66 planning
-requirements not yet selected by a planning executor package, respectively.
+non-advancing and do not change those live counts. They leave 15 advertised
+entries without a candidate source executor and 66 planning requirements not
+yet selected by a planning executor package, respectively.
 The prerelease packages are separate from these stable 3.2.1 denominators. The
 fourteen-family watchlist remains pointer-only; the adjacent exact diff package
 proves that every commit and path/status in the locked prerelease range was

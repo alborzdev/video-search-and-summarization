@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "source_plan", "source_manifest", "previous_candidate_inventories", "policy", "denominator", "cases"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_only_vios_ui_and_nat_executor_tranche_wave6"},
+    "source_plan": {"$ref": "#/$defs/source_plan"},
+    "source_manifest": {"$ref": "#/$defs/raw_source_lock"},
+    "previous_candidate_inventories": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/raw_source_lock"}
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_only", "can_mark_passed_current", "live_acceptance_mutation_allowed", "live_oracle_mutation_allowed", "runtime_evidence", "browser_allowed", "network_allowed", "docker_allowed", "subprocess_allowed", "lifecycle_allowed", "downloads_allowed", "credentials_allowed", "file_writes_allowed"],
+      "properties": {
+        "candidate_only": {"const": true},
+        "can_mark_passed_current": {"const": false},
+        "live_acceptance_mutation_allowed": {"const": false},
+        "live_oracle_mutation_allowed": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "browser_allowed": {"const": false},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "file_writes_allowed": {"const": false}
+      }
+    },
+    "denominator": {"$ref": "#/$defs/denominator"},
+    "cases": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "safe_path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/safe_path"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "raw_source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {"path": {"$ref": "#/$defs/safe_path"}, "raw_sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "source_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256", "plan_payload_sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/safe_path"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "plan_payload_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "denominator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advertised_gap_entries", "previously_selected_candidate_entries", "prior_open_entries", "selected_candidate_entries", "entries_left_open"],
+      "properties": {
+        "advertised_gap_entries": {"const": 87},
+        "previously_selected_candidate_entries": {"const": 63},
+        "prior_open_entries": {"const": 24},
+        "selected_candidate_entries": {"const": 8},
+        "entries_left_open": {"const": 16}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_pointer", "entry_id", "proposed_capability_id", "advertised", "advertised_utf8_sha256", "advertised_canonical_sha256", "adapter_id", "evidence_scope", "source_locks"],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/(?:22/advertised/[0-6]|27/advertised/0)$"},
+        "entry_id": {"type": "string", "pattern": "^manifest-gap\\.(?:vios-ui|agent-and-mcp-apis)\\."},
+        "proposed_capability_id": {"type": "string", "pattern": "^manifest-entry\\.(?:vios-ui|agent-and-mcp-apis)\\."},
+        "advertised": {"type": "string", "minLength": 1},
+        "advertised_utf8_sha256": {"$ref": "#/$defs/sha256"},
+        "advertised_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "adapter_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "evidence_scope": {"type": "string", "pattern": "^subset:"},
+        "source_locks": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/source_lock"}
+        }
+      }
+    }
+  }
+}

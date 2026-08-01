@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "fixture_id": "synthetic-detection-map-v1",
+  "distance_threshold": 0.5,
+  "classes": ["Person"],
+  "cases": [
+    {
+      "id": "perfect-single-detection",
+      "ground_truth": [
+        {
+          "sample_token": "frame-1",
+          "class_name": "Person",
+          "translation": [0.0, 0.0, 0.0]
+        }
+      ],
+      "predictions": [
+        {
+          "sample_token": "frame-1",
+          "class_name": "Person",
+          "translation": [0.0, 0.0, 0.0],
+          "confidence": 0.9
+        }
+      ],
+      "expected": {
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "mean_ap": 1.0
+      }
+    },
+    {
+      "id": "distance-threshold-miss",
+      "ground_truth": [
+        {
+          "sample_token": "frame-1",
+          "class_name": "Person",
+          "translation": [0.0, 0.0, 0.0]
+        }
+      ],
+      "predictions": [
+        {
+          "sample_token": "frame-1",
+          "class_name": "Person",
+          "translation": [1.0, 0.0, 0.0],
+          "confidence": 0.9
+        }
+      ],
+      "expected": {
+        "true_positives": 0,
+        "false_positives": 1,
+        "false_negatives": 1,
+        "mean_ap": 0.0
+      }
+    }
+  ],
+  "warehouse_sample_bundle": false
+}

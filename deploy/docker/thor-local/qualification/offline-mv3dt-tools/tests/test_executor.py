@@ -82,6 +82,65 @@ def test_candidate_executor_runs_twice_with_exact_locks_and_cleanup() -> None:
     assert result["warehouse_sample_bundle_used"] is False
 
 
+def test_checked_execution_receipt_is_schema_valid_and_matches_current_observation() -> (
+    None
+):
+    receipt = json.loads((LANE / "execution-receipt.json").read_text(encoding="utf-8"))
+    schema = json.loads((LANE / "result.schema.json").read_text(encoding="utf-8"))
+    assert list(Draft202012Validator(schema).iter_errors(receipt)) == []
+    assert receipt == EXECUTOR.execute()
+    dependency = receipt["dependency_lock"]
+    assert dependency["observed_versions_sha256"] == (
+        "f8b538e36776da71af95af5a667426dbd5cbb3e3fa482c2c5850ba9306888e80"
+    )
+    assert dependency["observed_distribution_versions"] == {
+        "PyYAML": "6.0.3",
+        "numpy": "2.5.1",
+        "opencv-python": "4.11.0.86",
+        "tqdm": "4.68.4",
+    }
+    assert dependency["note"] == (
+        "candidate execution records local versions; it does not claim they equal the reviewed pins"
+    )
+
+
+def test_exact_two_official_oracles_bind_only_the_supported_static_subset() -> None:
+    plan = json.loads(
+        (
+            REPO_ROOT / "deploy/docker/thor-local/parity/capability-oracles.json"
+        ).read_text(encoding="utf-8")
+    )
+    expected = {
+        "tool.mv3dt.cam-info-generator",
+        "tool.mv3dt.pub-sub-generator",
+    }
+    bound = {
+        row["capability_id"]: row
+        for row in plan["oracles"]
+        if row.get("offline_tool_observation_bindings")
+    }
+    assert set(bound) == expected
+    for row in bound.values():
+        assert row["current_state"] == "open_unexecuted"
+        assert row["evidence"] == []
+        assert row["acceptance_readiness"]["classification"] == "planning_index_only"
+        binding = row["offline_tool_observation_bindings"][0]
+        assert binding["can_advance_capability"] is False
+        assert binding["can_mark_passed_current"] is False
+        assert binding["runtime_evidence"] == []
+        assert binding["result"]["official_capability_effect"] == (
+            "none_candidate_only"
+        )
+        coverage = binding["oracle_coverage"]
+        assert coverage["uncovered_observation_ids"] == ["contract_identity"]
+        assert coverage["uncovered_assertion_ids"] == [
+            "contract-05",
+            "contract-06",
+            "contract-07",
+            "contract-08",
+        ]
+
+
 def test_result_schema_rejects_fabricated_lock_keys_values_and_semantics() -> None:
     result = EXECUTOR.execute()
     schema = json.loads((LANE / "result.schema.json").read_text(encoding="utf-8"))

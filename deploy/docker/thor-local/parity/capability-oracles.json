@@ -10008,7 +10008,169 @@
         ]
       },
       "current_state": "open_unexecuted",
-      "evidence": []
+      "evidence": [],
+      "offline_tool_observation_bindings": [
+        {
+          "scope": "bounded_static_tool_observation_subset_only",
+          "qualification_package": "deploy/docker/thor-local/qualification/offline-mv3dt-tools",
+          "contract": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/contract.json",
+            "raw_sha256": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py",
+            "raw_sha256": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py",
+              "--check"
+            ]
+          },
+          "result_schema": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/result.schema.json",
+            "raw_sha256": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887"
+          },
+          "fixture": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json",
+            "raw_sha256": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33"
+          },
+          "execution_receipt": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/execution-receipt.json",
+            "raw_sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063"
+          },
+          "source_locks": [
+            {
+              "path": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+              "sha256": "910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675"
+            },
+            {
+              "path": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py",
+              "sha256": "bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc"
+            },
+            {
+              "path": "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+              "sha256": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
+            },
+            {
+              "path": "deploy/docker/thor-local/parity/manifest.json",
+              "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+            }
+          ],
+          "dependency_observation": {
+            "declared_requirements": [
+              "numpy==2.2.6",
+              "opencv-python~=4.12.0",
+              "PyYAML==6.0.2",
+              "tqdm==4.67.1"
+            ],
+            "note": "candidate execution records local versions; it does not claim they equal the reviewed pins",
+            "observed_distribution_versions": {
+              "PyYAML": "6.0.3",
+              "numpy": "2.5.1",
+              "opencv-python": "4.11.0.86",
+              "tqdm": "4.68.4"
+            },
+            "observed_module_versions": {
+              "cv2": "4.13.0",
+              "numpy": "2.5.1",
+              "tqdm": "4.68.4",
+              "yaml": "6.0.3"
+            },
+            "observed_versions_sha256": "f8b538e36776da71af95af5a667426dbd5cbb3e3fa482c2c5850ba9306888e80",
+            "requirements_path": "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+            "requirements_sha256": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4",
+            "declared_versions_match_observed_distributions": false,
+            "normative_for_declared_requirements": false,
+            "mismatches": [
+              {
+                "distribution": "numpy",
+                "declared": "numpy==2.2.6",
+                "observed": "2.5.1"
+              },
+              {
+                "distribution": "opencv-python",
+                "declared": "opencv-python~=4.12.0",
+                "observed": "4.11.0.86"
+              },
+              {
+                "distribution": "PyYAML",
+                "declared": "PyYAML==6.0.2",
+                "observed": "6.0.3"
+              },
+              {
+                "distribution": "tqdm",
+                "declared": "tqdm==4.67.1",
+                "observed": "4.68.4"
+              }
+            ]
+          },
+          "result": {
+            "observation": "observed_match_candidate_only",
+            "run_count": 2,
+            "official_capability_effect": "none_candidate_only",
+            "warehouse_sample_bundle_used": false,
+            "network_used": false,
+            "docker_used": false,
+            "subprocess_used": false,
+            "lifecycle_used": false
+          },
+          "can_advance_capability": false,
+          "can_mark_passed_current": false,
+          "runtime_evidence": [],
+          "selected_output_locks": {
+            "cam_info_tree_sha256": "921b0fe8ef3d0f2417245623465ba5e5d0b1fb4a427bbd96915c3ebd430dcece"
+          },
+          "selected_semantic": {
+            "cam_info": {
+              "custom_cam_a": {
+                "class_ids": [
+                  0,
+                  1
+                ],
+                "projection_shape": [
+                  3,
+                  4
+                ],
+                "projection_value_count": 12
+              },
+              "custom_cam_b": {
+                "class_ids": [
+                  0,
+                  1
+                ],
+                "projection_shape": [
+                  3,
+                  4
+                ],
+                "projection_value_count": 12
+              }
+            }
+          },
+          "oracle_coverage": {
+            "covered_observation_ids": [
+              "semantic_result",
+              "deterministic_output"
+            ],
+            "uncovered_observation_ids": [
+              "contract_identity"
+            ],
+            "covered_assertion_ids": [
+              "contract-01",
+              "contract-02",
+              "contract-03",
+              "contract-04",
+              "observation-02",
+              "observation-03"
+            ],
+            "uncovered_assertion_ids": [
+              "contract-05",
+              "contract-06",
+              "contract-07",
+              "contract-08"
+            ]
+          }
+        }
+      ]
     },
     {
       "capability_id": "tool.mv3dt.pub-sub-generator",
@@ -10244,7 +10406,161 @@
         ]
       },
       "current_state": "open_unexecuted",
-      "evidence": []
+      "evidence": [],
+      "offline_tool_observation_bindings": [
+        {
+          "scope": "bounded_static_tool_observation_subset_only",
+          "qualification_package": "deploy/docker/thor-local/qualification/offline-mv3dt-tools",
+          "contract": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/contract.json",
+            "raw_sha256": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py",
+            "raw_sha256": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py",
+              "--check"
+            ]
+          },
+          "result_schema": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/result.schema.json",
+            "raw_sha256": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887"
+          },
+          "fixture": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json",
+            "raw_sha256": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33"
+          },
+          "execution_receipt": {
+            "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/execution-receipt.json",
+            "raw_sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063"
+          },
+          "source_locks": [
+            {
+              "path": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+              "sha256": "910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675"
+            },
+            {
+              "path": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py",
+              "sha256": "bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc"
+            },
+            {
+              "path": "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+              "sha256": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
+            },
+            {
+              "path": "deploy/docker/thor-local/parity/manifest.json",
+              "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+            }
+          ],
+          "dependency_observation": {
+            "declared_requirements": [
+              "numpy==2.2.6",
+              "opencv-python~=4.12.0",
+              "PyYAML==6.0.2",
+              "tqdm==4.67.1"
+            ],
+            "note": "candidate execution records local versions; it does not claim they equal the reviewed pins",
+            "observed_distribution_versions": {
+              "PyYAML": "6.0.3",
+              "numpy": "2.5.1",
+              "opencv-python": "4.11.0.86",
+              "tqdm": "4.68.4"
+            },
+            "observed_module_versions": {
+              "cv2": "4.13.0",
+              "numpy": "2.5.1",
+              "tqdm": "4.68.4",
+              "yaml": "6.0.3"
+            },
+            "observed_versions_sha256": "f8b538e36776da71af95af5a667426dbd5cbb3e3fa482c2c5850ba9306888e80",
+            "requirements_path": "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+            "requirements_sha256": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4",
+            "declared_versions_match_observed_distributions": false,
+            "normative_for_declared_requirements": false,
+            "mismatches": [
+              {
+                "distribution": "numpy",
+                "declared": "numpy==2.2.6",
+                "observed": "2.5.1"
+              },
+              {
+                "distribution": "opencv-python",
+                "declared": "opencv-python~=4.12.0",
+                "observed": "4.11.0.86"
+              },
+              {
+                "distribution": "PyYAML",
+                "declared": "PyYAML==6.0.2",
+                "observed": "6.0.3"
+              },
+              {
+                "distribution": "tqdm",
+                "declared": "tqdm==4.67.1",
+                "observed": "4.68.4"
+              }
+            ]
+          },
+          "result": {
+            "observation": "observed_match_candidate_only",
+            "run_count": 2,
+            "official_capability_effect": "none_candidate_only",
+            "warehouse_sample_bundle_used": false,
+            "network_used": false,
+            "docker_used": false,
+            "subprocess_used": false,
+            "lifecycle_used": false
+          },
+          "can_advance_capability": false,
+          "can_mark_passed_current": false,
+          "runtime_evidence": [],
+          "selected_output_locks": {
+            "pub_sub_file_sha256": "f6f823e94e0e736c5c8ecba33c913338e5eeb3641e691d67948b53a6727195e7"
+          },
+          "selected_semantic": {
+            "pub_sub": {
+              "broker": "localhost:1883",
+              "camera_ids": [
+                "custom_cam_a",
+                "custom_cam_b"
+              ],
+              "peer_counts": {
+                "custom_cam_a": 1,
+                "custom_cam_b": 1
+              },
+              "self_subscriptions": 0,
+              "topics": [
+                "localhost:1883;/trck/custom_cam_a",
+                "localhost:1883;/trck/custom_cam_b"
+              ]
+            }
+          },
+          "oracle_coverage": {
+            "covered_observation_ids": [
+              "semantic_result",
+              "deterministic_output"
+            ],
+            "uncovered_observation_ids": [
+              "contract_identity"
+            ],
+            "covered_assertion_ids": [
+              "contract-01",
+              "contract-02",
+              "contract-03",
+              "contract-04",
+              "observation-02",
+              "observation-03"
+            ],
+            "uncovered_assertion_ids": [
+              "contract-05",
+              "contract-06",
+              "contract-07",
+              "contract-08"
+            ]
+          }
+        }
+      ]
     },
     {
       "capability_id": "api.vss-configurator.sensor",

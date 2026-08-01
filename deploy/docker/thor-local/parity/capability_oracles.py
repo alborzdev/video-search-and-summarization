@@ -34,6 +34,14 @@ PROTOCOL_CASES_PATH = "deploy/docker/thor-local/qualification/protocol-cases/pro
 PROTOCOL_CASES = REPO_ROOT / PROTOCOL_CASES_PATH
 PROTOCOL_CASES_FILE_SHA256 = "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
 PROTOCOL_CASES_SET_SHA256 = "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21"
+OFFLINE_MV3DT_ROOT = "deploy/docker/thor-local/qualification/offline-mv3dt-tools"
+OFFLINE_MV3DT_FILES = {
+    "contract": {"path": f"{OFFLINE_MV3DT_ROOT}/contract.json", "raw_sha256": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984"},
+    "executor": {"path": f"{OFFLINE_MV3DT_ROOT}/executor.py", "raw_sha256": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273"},
+    "result_schema": {"path": f"{OFFLINE_MV3DT_ROOT}/result.schema.json", "raw_sha256": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887"},
+    "fixture": {"path": f"{OFFLINE_MV3DT_ROOT}/fixtures/two-camera-calibration.json", "raw_sha256": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33"},
+    "execution_receipt": {"path": f"{OFFLINE_MV3DT_ROOT}/execution-receipt.json", "raw_sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063"},
+}
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 
 
@@ -65,6 +73,30 @@ def _resolve_reviewed_file(repo_root: Path, value: Any, label: str) -> Path:
         raise OracleContractError(f"{label}: path must be a string")
     path = Path(value)
     if path.is_absolute() or ".." in path.parts or not value.startswith("deploy/docker/thor-local/"):
+        raise OracleContractError(f"{label}: unsafe repository path")
+    try:
+        root = repo_root.resolve(strict=True)
+        candidate = root
+        for part in path.parts:
+            candidate /= part
+            if candidate.is_symlink():
+                raise OracleContractError(f"{label}: path contains a symlink")
+        resolved = candidate.resolve(strict=True)
+        resolved.relative_to(root)
+    except OracleContractError:
+        raise
+    except (OSError, ValueError) as exc:
+        raise OracleContractError(f"{label}: reviewed file is missing") from exc
+    if not resolved.is_file():
+        raise OracleContractError(f"{label}: reviewed path must be a file")
+    return resolved
+
+
+def _resolve_repo_regular_file(repo_root: Path, value: Any, label: str) -> Path:
+    if not isinstance(value, str):
+        raise OracleContractError(f"{label}: path must be a string")
+    path = Path(value)
+    if path.is_absolute() or ".." in path.parts:
         raise OracleContractError(f"{label}: unsafe repository path")
     try:
         root = repo_root.resolve(strict=True)
@@ -596,6 +628,156 @@ def _planning_executor_bindings(
     return result
 
 
+def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[dict[str, Any]]]:
+    """Bind the reviewed candidate result to only its supported oracle subset."""
+    loaded: dict[str, dict[str, Any]] = {}
+    for role, lock in OFFLINE_MV3DT_FILES.items():
+        path = _resolve_reviewed_file(repo_root, lock["path"], f"offline_mv3dt.{role}")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != lock["raw_sha256"]:
+            raise OracleContractError(f"offline MV3DT {role} raw digest differs")
+        if role in {"contract", "result_schema", "execution_receipt"}:
+            loaded[role] = _load(path)
+    contract = loaded["contract"]
+    result_schema = loaded["result_schema"]
+    receipt = loaded["execution_receipt"]
+    expected_policy = {
+        "candidate_only": True,
+        "official_capability_effect": "none_candidate_only",
+        "runtime_evidence": [],
+        "network_allowed": False,
+        "docker_allowed": False,
+        "subprocess_allowed": False,
+        "lifecycle_allowed": False,
+        "downloads_allowed": False,
+        "credentials_allowed": False,
+        "warehouse_sample_bundle": "excluded",
+        "writes": "private_temporary_directory_only",
+    }
+    entries = contract.get("advertised_entries")
+    if (
+        contract.get("mode") != "candidate_only_offline_mv3dt_tools"
+        or contract.get("feature_id") != "mv3dt-config-utils"
+        or contract.get("policy") != expected_policy
+        or contract.get("execution", {}).get("runs") != 2
+        or not isinstance(entries, list)
+        or {item.get("capability_id") for item in entries if isinstance(item, dict)}
+        != {"tool.mv3dt.cam-info-generator", "tool.mv3dt.pub-sub-generator"}
+    ):
+        raise OracleContractError("offline MV3DT candidate boundary differs")
+    semantic = result_schema.get("$defs", {}).get("run", {}).get("properties", {}).get("semantic", {}).get("const")
+    if not isinstance(semantic, dict) or set(semantic) != {"cam_info", "pub_sub"}:
+        raise OracleContractError("offline MV3DT semantic result lock differs")
+    source_locks = contract.get("source_locks")
+    if not isinstance(source_locks, list) or len(source_locks) != 4:
+        raise OracleContractError("offline MV3DT source-lock denominator differs")
+    expected_source_paths = {
+        "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+        "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py",
+        "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+        "deploy/docker/thor-local/parity/manifest.json",
+    }
+    if {item.get("path") for item in source_locks if isinstance(item, dict)} != expected_source_paths:
+        raise OracleContractError("offline MV3DT source-lock path set differs")
+    verified_source_locks: dict[str, str] = {}
+    for source_lock in source_locks:
+        relative = source_lock["path"]
+        path = _resolve_repo_regular_file(repo_root, relative, f"offline_mv3dt.source_lock.{relative}")
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != source_lock.get("sha256"):
+            raise OracleContractError(f"offline MV3DT source lock differs: {relative}")
+        verified_source_locks[relative] = actual
+    receipt_errors = sorted(
+        Draft202012Validator(result_schema).iter_errors(receipt),
+        key=lambda error: list(error.absolute_path),
+    )
+    if receipt_errors:
+        first = receipt_errors[0]
+        raise OracleContractError(f"offline MV3DT execution receipt schema failed: {first.message}")
+    fixture_lock = OFFLINE_MV3DT_FILES["fixture"]
+    expected_receipt_sources = {
+        **verified_source_locks,
+        fixture_lock["path"]: fixture_lock["raw_sha256"],
+    }
+    if receipt.get("source_and_fixture_sha256") != expected_receipt_sources:
+        raise OracleContractError("offline MV3DT receipt source/fixture bindings differ")
+    runs = receipt.get("deterministic_runs")
+    if not isinstance(runs, list) or len(runs) != 2 or runs[0] != runs[1]:
+        raise OracleContractError("offline MV3DT receipt does not contain two identical runs")
+    observed_dependency = receipt.get("dependency_lock")
+    if not isinstance(observed_dependency, dict):
+        raise OracleContractError("offline MV3DT receipt dependency observation is absent")
+    declared = observed_dependency.get("declared_requirements")
+    observed_distributions = observed_dependency.get("observed_distribution_versions")
+    expected_declared = contract.get("dependency_lock", {}).get("declared_requirements")
+    if declared != expected_declared or not isinstance(observed_distributions, dict):
+        raise OracleContractError("offline MV3DT receipt dependency declaration differs")
+    declared_by_distribution = {
+        "numpy": "numpy==2.2.6",
+        "opencv-python": "opencv-python~=4.12.0",
+        "PyYAML": "PyYAML==6.0.2",
+        "tqdm": "tqdm==4.67.1",
+    }
+    if set(observed_distributions) != set(declared_by_distribution):
+        raise OracleContractError("offline MV3DT dependency distribution set differs")
+    mismatches = [
+        {
+            "distribution": distribution,
+            "declared": requirement,
+            "observed": observed_distributions[distribution],
+        }
+        for distribution, requirement in declared_by_distribution.items()
+    ]
+    if any(
+        item["observed"] in item["declared"] for item in mismatches
+    ):
+        raise OracleContractError("offline MV3DT dependency mismatch boundary differs")
+    receipt_run = runs[0]
+    common = {
+        "scope": "bounded_static_tool_observation_subset_only",
+        "qualification_package": OFFLINE_MV3DT_ROOT,
+        "contract": copy.deepcopy(OFFLINE_MV3DT_FILES["contract"]),
+        "executor": {**OFFLINE_MV3DT_FILES["executor"], "invocation": ["python3", f"{OFFLINE_MV3DT_ROOT}/executor.py", "--check"]},
+        "result_schema": copy.deepcopy(OFFLINE_MV3DT_FILES["result_schema"]),
+        "fixture": copy.deepcopy(OFFLINE_MV3DT_FILES["fixture"]),
+        "execution_receipt": copy.deepcopy(OFFLINE_MV3DT_FILES["execution_receipt"]),
+        "source_locks": copy.deepcopy(source_locks),
+        "dependency_observation": {
+            **copy.deepcopy(observed_dependency),
+            "declared_versions_match_observed_distributions": False,
+            "normative_for_declared_requirements": False,
+            "mismatches": mismatches,
+        },
+        "result": {
+            key: copy.deepcopy(receipt[key])
+            for key in (
+                "observation",
+                "run_count",
+                "official_capability_effect",
+                "warehouse_sample_bundle_used",
+                "network_used",
+                "docker_used",
+                "subprocess_used",
+                "lifecycle_used",
+            )
+        },
+        "can_advance_capability": False,
+        "can_mark_passed_current": False,
+        "runtime_evidence": [],
+    }
+    coverage = {
+        "covered_observation_ids": ["semantic_result", "deterministic_output"],
+        "uncovered_observation_ids": ["contract_identity"],
+        "covered_assertion_ids": ["contract-01", "contract-02", "contract-03", "contract-04", "observation-02", "observation-03"],
+        "uncovered_assertion_ids": ["contract-05", "contract-06", "contract-07", "contract-08"],
+    }
+    outputs = receipt_run["output_locks"]
+    observed_semantic = receipt_run["semantic"]
+    return {
+        "tool.mv3dt.cam-info-generator": [{**copy.deepcopy(common), "selected_output_locks": {"cam_info_tree_sha256": outputs["cam_info_tree_sha256"]}, "selected_semantic": {"cam_info": copy.deepcopy(observed_semantic["cam_info"])}, "oracle_coverage": copy.deepcopy(coverage)}],
+        "tool.mv3dt.pub-sub-generator": [{**copy.deepcopy(common), "selected_output_locks": {"pub_sub_file_sha256": outputs["pub_sub_file_sha256"]}, "selected_semantic": {"pub_sub": copy.deepcopy(observed_semantic["pub_sub"])}, "oracle_coverage": copy.deepcopy(coverage)}],
+    }
+
+
 def compile_plan(
     ledger: dict[str, Any],
     protocol_document: dict[str, Any] | None = None,
@@ -608,6 +790,7 @@ def compile_plan(
     protocol_document = _load(PROTOCOL_CASES) if protocol_document is None else protocol_document
     protocol_bindings = _protocol_case_bindings(protocol_document)
     planning_bindings = _planning_executor_bindings(acceptance_document)
+    offline_tool_bindings = {} if acceptance_document is None else _offline_mv3dt_tool_bindings()
     oracles = []
     for capability in capabilities:
         if not isinstance(capability, dict) or not isinstance(capability.get("id"), str):
@@ -674,6 +857,8 @@ def compile_plan(
                 "the full capability fixture, runtime executor, and collectors are not materialized",
                 "the full capability cleanup allowlist has no machine executor or postcondition collector",
             ]
+        if capability_id in offline_tool_bindings:
+            oracle["offline_tool_observation_bindings"] = offline_tool_bindings[capability_id]
         oracles.append(oracle)
     return {
         "schema_version": 1,
@@ -755,6 +940,31 @@ def validate(
                 raise OracleContractError(
                     f"{item['capability_id']}: static planning binding implies runtime advancement"
                 )
+        for binding in item.get("offline_tool_observation_bindings", []):
+            if (
+                binding["can_advance_capability"] is not False
+                or binding["can_mark_passed_current"] is not False
+                or binding["runtime_evidence"] != []
+                or binding["scope"] != "bounded_static_tool_observation_subset_only"
+                or binding["result"]["official_capability_effect"] != "none_candidate_only"
+            ):
+                raise OracleContractError(f"{item['capability_id']}: offline tool binding implies capability advancement")
+            coverage = binding["oracle_coverage"]
+            expected_observations = {observation["id"] for observation in item["expected_observations"]}
+            covered_observations = set(coverage["covered_observation_ids"])
+            uncovered_observations = set(coverage["uncovered_observation_ids"])
+            expected_assertions = {assertion["id"] for assertion in item["assertions"]}
+            covered_assertions = set(coverage["covered_assertion_ids"])
+            uncovered_assertions = set(coverage["uncovered_assertion_ids"])
+            if (
+                covered_observations & uncovered_observations
+                or covered_observations | uncovered_observations != expected_observations
+                or covered_assertions & uncovered_assertions
+                or covered_assertions | uncovered_assertions != expected_assertions
+                or not uncovered_observations
+                or not uncovered_assertions
+            ):
+                raise OracleContractError(f"{item['capability_id']}: offline tool oracle coverage is not an exact non-advancing partition")
         workload = item["execution_bounds"]["workload"]
         calculated = (
             workload["units"] * workload["requests_per_unit"]
@@ -805,6 +1015,12 @@ def validate(
         "executor_ready": sum(item["acceptance_readiness"]["classification"] == "executor_ready" for item in plan["oracles"]),
         "planning_executor_bindings": sum(
             len(item.get("planning_executor_bindings", [])) for item in plan["oracles"]
+        ),
+        "offline_tool_observation_bindings": sum(len(item.get("offline_tool_observation_bindings", [])) for item in plan["oracles"]),
+        "static_subset_oracle_bindings": sum(
+            len(item.get("planning_executor_bindings", []))
+            + len(item.get("offline_tool_observation_bindings", []))
+            for item in plan["oracles"]
         ),
     }
 

@@ -48,7 +48,8 @@ PREDECESSOR_OUTPUTS = {
     "capability-oracles.json": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb",
     "capability-oracles.schema.json": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498",
 }
-ORACLE_COMPILER_RAW_SHA256 = "bf029e8f1b3e50401368b77021d0b2b3373cb98ac9dafe7ffcd4f87e2bafd034"
+ORACLE_COMPILER_RAW_SHA256 = "68271eb774ee1ccbbd897cbbfaad2a743f682d9da71e2f8e157d65a6cd3f3b84"
+LIVE_ORACLE_SCHEMA_RAW_SHA256 = "68d30d340069f3ed43d98687c527f3bcb692bd9b6c8554080b577ff89f6142ee"
 
 STATIC_INPUTS = {
     "deploy/docker/thor-local/qualification/api_inventory.json": "5d7f5e9303eedebdaabaec25dd77677540475d968850b8481ab4422c2d6b525b",
@@ -61,6 +62,11 @@ STATIC_INPUTS = {
     "deploy/docker/thor-local/Dockerfile.video-summarization": "50b77993332df61de4fc0a42dcdb1856ba3307b392b922d10de70eb08d591663",
     "deploy/docker/thor-local/compose.yml": "1106c34a4831c6545ed8024c92f8bcba413f1d90a22434844c9cd446d0069778",
     "deploy/docker/services/video-summarization/compose.yml": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f",
+    "deploy/docker/thor-local/qualification/offline-mv3dt-tools/contract.json": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984",
+    "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273",
+    "deploy/docker/thor-local/qualification/offline-mv3dt-tools/execution-receipt.json": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063",
+    "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33",
+    "deploy/docker/thor-local/qualification/offline-mv3dt-tools/result.schema.json": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887",
 }
 
 ADAPTER_TOOLS = ["add_file", "list_files", "get_file_info", "delete_file"]
@@ -152,6 +158,7 @@ def _historical_predecessor() -> tuple[dict[str, Any], dict[str, Any], dict[str,
     executor = _module(
         "lvs_adapter_executor_predecessor", source.PREDECESSOR_INTEGRATOR
     )
+    executor.SUCCESSOR_ORACLE_SCHEMA_RAW_SHA256 = LIVE_ORACLE_SCHEMA_RAW_SHA256
     original_loader = executor._module
 
     def historical_loader(name: str, path: Path) -> Any:
@@ -161,11 +168,29 @@ def _historical_predecessor() -> tuple[dict[str, Any], dict[str, Any], dict[str,
                 item["path"]: item["sha256"]
                 for item in descriptor["reviewed_evidence"]
             }
+        if path == executor.CAPABILITY_ORACLES:
+            module._offline_mv3dt_tool_bindings = lambda: {}
         return module
 
     executor._module = historical_loader
     ten_case = executor.build_expected(execute=False)
     source._predecessor = lambda: ten_case
+    source_loader = source._module
+    source_locked = source._locked
+
+    def source_historical_loader(name: str, path: Path) -> Any:
+        module = source_loader(name, path)
+        if path == source.CAPABILITY_ORACLES:
+            module._offline_mv3dt_tool_bindings = lambda: {}
+        return module
+
+    def source_historical_lock(path: Path, expected: str) -> None:
+        if path in {source.CAPABILITY_ORACLES, source.ORACLE_SCHEMA}:
+            return
+        source_locked(path, expected)
+
+    source._module = source_historical_loader
+    source._locked = source_historical_lock
     values = source.build_expected(execute=False)
     names = (
         "official-capabilities.json",
@@ -310,6 +335,26 @@ def _validate_semantics(
         raise IntegrationError("runtime evidence was added")
     if any(row.get("current_state") == "passed_current" for row in rows):
         raise IntegrationError("passed_current promotion is forbidden")
+    planning_bindings = sum(len(row.get("planning_executor_bindings", [])) for row in rows)
+    offline_bindings = [
+        (row["capability_id"], binding)
+        for row in rows
+        for binding in row.get("offline_tool_observation_bindings", [])
+    ]
+    if planning_bindings != 26 or {capability_id for capability_id, _binding in offline_bindings} != {
+        "tool.mv3dt.cam-info-generator",
+        "tool.mv3dt.pub-sub-generator",
+    }:
+        raise IntegrationError("static subset oracle binding denominator drift")
+    if any(
+        binding.get("can_advance_capability") is not False
+        or binding.get("can_mark_passed_current") is not False
+        or binding.get("runtime_evidence") != []
+        or binding.get("result", {}).get("official_capability_effect") != "none_candidate_only"
+        or not binding.get("oracle_coverage", {}).get("uncovered_assertion_ids")
+        for _capability_id, binding in offline_bindings
+    ):
+        raise IntegrationError("offline MV3DT subset boundary drift")
 
 
 def build_expected(
@@ -353,12 +398,18 @@ def build_expected(
             ],
             "api_surface_ids": ["lvs", "lvs-mcp"],
             "local_adapter_tools": copy.deepcopy(ADAPTER_TOOLS),
+            "offline_tool_capability_ids": [
+                "tool.mv3dt.cam-info-generator",
+                "tool.mv3dt.pub-sub-generator",
+            ],
+            "offline_tool_qualification_package": "deploy/docker/thor-local/qualification/offline-mv3dt-tools",
         },
         "expected_counts": {
             "capabilities": 276,
             "oracles": 276,
             "planning_index_only_oracles": 276,
-            "static_subset_oracle_bindings": 26,
+            "static_subset_oracle_bindings": 28,
+            "offline_tool_observation_bindings": 2,
             "runtime_evidence_records": 0,
             "passed_current_promotions": 0,
             "lvs_rest_operations": 18,

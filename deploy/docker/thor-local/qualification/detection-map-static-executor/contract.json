@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_detection_map_static_executor",
+  "entry": {
+    "entry_id": "manifest-gap.spatial-ai-utils.03-detection-map",
+    "capability_id": "manifest-entry.spatial-ai-utils.03-detection-map",
+    "oracle_id": "oracle.manifest-entry.spatial-ai-utils.03",
+    "manifest_pointer": "/features/29/advertised/3",
+    "advertised": "detection mAP",
+    "advertised_canonical_sha256": "11b02b722571ef8a75cda543c7da5e8b2a79dfb03e5fe5b16029e74df0c1e66e",
+    "advertised_utf8_sha256": "0063b19dfd280891144f59d3cd5fc0f221a2e3d7fbd06c08ec8ecf070a53c2ba"
+  },
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "official_capability_effect": "none_candidate_only",
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "writes": "executor_owned_private_temporary_directory_only"
+  },
+  "plan_binding": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+    "entry_canonical_sha256": "c6fed68bc7b2e0c35385bff1f2b7ee4fe5d50ff5d199ae2262915b47b4b995a4"
+  },
+  "source_locks": [
+    {
+      "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py",
+      "sha256": "b6e8ece795f6986b2cdb1afd133474deb94338b5daf35e54b9e171ab97691ba6"
+    },
+    {
+      "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py",
+      "sha256": "d1b5b48668b8b24cd3c232ca8b026f080dc3e4380301c136e72e03119dd92aa1"
+    },
+    {
+      "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py",
+      "sha256": "f5d9e8120ee1196bd6add34ec1960ac8fb7b65252283a2ccf4c1d2a7f27afa3a"
+    },
+    {
+      "path": "libs/analytics/spatialai-data-utils/tests/eval/detection/test_evaluate.py",
+      "sha256": "adaf622ab4cada2bafd35c74df1a67cb571aa8c2f428b2d1ea7121a9228af5e7"
+    },
+    {
+      "path": "libs/analytics/spatialai-data-utils/release/pyproject.toml",
+      "sha256": "260418e6907fb5bda5daa383b6701bf05420fccd24f28e2c478beddc20532ddc"
+    }
+  ],
+  "fixture": {
+    "path": "deploy/docker/thor-local/qualification/detection-map-static-executor/fixtures/detection-map-v1.json",
+    "sha256": "fd2dd6de0bf3e68084993843840a61b4b53a12082779593fad17686cfbc7105a",
+    "fixture_id": "synthetic-detection-map-v1",
+    "warehouse_sample_bundle": false
+  },
+  "output_locks": {
+    "perfect-single-detection.json": "17c8bf94b69708fa6d32eec9458d5028bb183a9269bcba16cfbbbab30bf27380",
+    "distance-threshold-miss.json": "274e96a52b0ea08a8dec0344db1d3b412d982517fc216f1b12186b3d0bb14c29",
+    "tree_sha256": "e3581ff503dd26b0acfd2b002a11725a2ac6b0458cddc076494d2f782546fc12"
+  },
+  "claim_boundary": {
+    "semantic_oracle_executed": true,
+    "checked_in_integration_test_evidence_verified": true,
+    "production_evaluator_executed": false,
+    "local_optional_eval_dependencies_verified": false,
+    "service_runtime_proven": false
+  }
+}

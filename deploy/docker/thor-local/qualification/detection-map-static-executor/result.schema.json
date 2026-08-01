@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mode",
+    "entry_id",
+    "capability_id",
+    "advertised_binding",
+    "candidate_only",
+    "observation",
+    "official_capability_effect",
+    "runtime_evidence",
+    "policy",
+    "command_contract",
+    "input_sha256",
+    "integration_test_evidence",
+    "claim_boundary",
+    "deterministic_runs",
+    "cleanup"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_only_detection_map_static_executor"},
+    "entry_id": {"const": "manifest-gap.spatial-ai-utils.03-detection-map"},
+    "capability_id": {"const": "manifest-entry.spatial-ai-utils.03-detection-map"},
+    "advertised_binding": {
+      "const": {
+        "entry_id": "manifest-gap.spatial-ai-utils.03-detection-map",
+        "capability_id": "manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.03",
+        "manifest_pointer": "/features/29/advertised/3",
+        "advertised": "detection mAP",
+        "advertised_canonical_sha256": "11b02b722571ef8a75cda543c7da5e8b2a79dfb03e5fe5b16029e74df0c1e66e",
+        "advertised_utf8_sha256": "0063b19dfd280891144f59d3cd5fc0f221a2e3d7fbd06c08ec8ecf070a53c2ba"
+      }
+    },
+    "candidate_only": {"const": true},
+    "observation": {"const": "observed_candidate_contract_match"},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "policy": {
+      "const": {
+        "candidate_only": true,
+        "can_mark_passed_current": false,
+        "official_capability_effect": "none_candidate_only",
+        "runtime_evidence": [],
+        "network_allowed": false,
+        "docker_allowed": false,
+        "subprocess_allowed": false,
+        "lifecycle_allowed": false,
+        "downloads_allowed": false,
+        "credentials_allowed": false,
+        "warehouse_sample_bundle": "excluded",
+        "writes": "executor_owned_private_temporary_directory_only"
+      }
+    },
+    "command_contract": {
+      "const": {
+        "operation": "bounded_reference_detection_map",
+        "runs": 2,
+        "fixture_id": "synthetic-detection-map-v1",
+        "distance_threshold": 0.5,
+        "interpolation": "101_point_precision_envelope"
+      }
+    },
+    "input_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py",
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py",
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py",
+        "libs/analytics/spatialai-data-utils/tests/eval/detection/test_evaluate.py",
+        "libs/analytics/spatialai-data-utils/release/pyproject.toml",
+        "deploy/docker/thor-local/qualification/detection-map-static-executor/fixtures/detection-map-v1.json"
+      ],
+      "properties": {
+        "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json": {"const": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py": {"const": "b6e8ece795f6986b2cdb1afd133474deb94338b5daf35e54b9e171ab97691ba6"},
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py": {"const": "d1b5b48668b8b24cd3c232ca8b026f080dc3e4380301c136e72e03119dd92aa1"},
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py": {"const": "f5d9e8120ee1196bd6add34ec1960ac8fb7b65252283a2ccf4c1d2a7f27afa3a"},
+        "libs/analytics/spatialai-data-utils/tests/eval/detection/test_evaluate.py": {"const": "adaf622ab4cada2bafd35c74df1a67cb571aa8c2f428b2d1ea7121a9228af5e7"},
+        "libs/analytics/spatialai-data-utils/release/pyproject.toml": {"const": "260418e6907fb5bda5daa383b6701bf05420fccd24f28e2c478beddc20532ddc"},
+        "deploy/docker/thor-local/qualification/detection-map-static-executor/fixtures/detection-map-v1.json": {"const": "fd2dd6de0bf3e68084993843840a61b4b53a12082779593fad17686cfbc7105a"}
+      }
+    },
+    "integration_test_evidence": {
+      "const": {
+        "production_evaluator_functions": [
+          "evaluate_detection",
+          "save_detection_results",
+          "load_boxes_from_jsonl"
+        ],
+        "checked_in_end_to_end_tests": [
+          "test_evaluate_detection_per_bev_sensor_writes_outputs",
+          "test_evaluate_detection_for_all_bev_sensors_creates_outputs"
+        ],
+        "locked_test_semantic": "real loader + real evaluator + real save asserts Person AP=1.0",
+        "optional_eval_dependencies_declared": [
+          "nuscenes-devkit==1.2.0",
+          "motmetrics==1.4.0"
+        ],
+        "production_evaluator_executed": false
+      }
+    },
+    "claim_boundary": {
+      "const": {
+        "semantic_oracle_executed": true,
+        "checked_in_integration_test_evidence_verified": true,
+        "production_evaluator_executed": false,
+        "local_optional_eval_dependencies_verified": false,
+        "service_runtime_proven": false
+      }
+    },
+    "deterministic_runs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {"$ref": "#/$defs/run"}
+    },
+    "cleanup": {
+      "const": {
+        "owned_root_removed": true,
+        "executor_owned_sentinel_unchanged": true
+      }
+    }
+  },
+  "$defs": {
+    "run": {
+      "const": {
+        "file_sha256": {
+          "distance-threshold-miss.json": "274e96a52b0ea08a8dec0344db1d3b412d982517fc216f1b12186b3d0bb14c29",
+          "perfect-single-detection.json": "17c8bf94b69708fa6d32eec9458d5028bb183a9269bcba16cfbbbab30bf27380"
+        },
+        "tree_sha256": "e3581ff503dd26b0acfd2b002a11725a2ac6b0458cddc076494d2f782546fc12",
+        "semantic": [
+          {
+            "case_id": "perfect-single-detection",
+            "distance_threshold": 0.5,
+            "per_class": {
+              "Person": {
+                "ground_truth_count": 1,
+                "prediction_count": 1,
+                "true_positives": 1,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "match_distances": [0.0],
+                "average_precision": 1.0
+              }
+            },
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "mean_ap": 1.0
+          },
+          {
+            "case_id": "distance-threshold-miss",
+            "distance_threshold": 0.5,
+            "per_class": {
+              "Person": {
+                "ground_truth_count": 1,
+                "prediction_count": 1,
+                "true_positives": 0,
+                "false_positives": 1,
+                "false_negatives": 1,
+                "match_distances": [],
+                "average_precision": 0.0
+              }
+            },
+            "true_positives": 0,
+            "false_positives": 1,
+            "false_negatives": 1,
+            "mean_ap": 0.0
+          }
+        ]
+      }
+    }
+  }
+}

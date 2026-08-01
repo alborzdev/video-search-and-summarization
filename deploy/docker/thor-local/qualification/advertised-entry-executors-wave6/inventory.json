@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_vios_ui_and_nat_executor_tranche_wave6",
+  "source_plan": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+    "plan_payload_sha256": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d"
+  },
+  "source_manifest": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+  },
+  "previous_candidate_inventories": [
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json", "raw_sha256": "91406a15ff1340b9b4dba988507470234971fa4905997bc52e64fb983fc12a18"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave2/inventory.json", "raw_sha256": "2c14f8ae5ade22ccbc556a844b4fcb63661048826660073fb21c5f882047c5d2"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave3/inventory.json", "raw_sha256": "0b7056eafce7686fc2b7315fef8ae491ddef03d2e52f41e7c7861247933f90ab"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave4/inventory.json", "raw_sha256": "1de6e9be3c93c349e45b192506e3081758553582dda6f73b79877bc4ff5155a6"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave5/inventory.json", "raw_sha256": "98876a18d628df644171cd1d0051753dadd904cca67a5fe0fa8696832cb08771"}
+  ],
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "live_acceptance_mutation_allowed": false,
+    "live_oracle_mutation_allowed": false,
+    "runtime_evidence": [],
+    "browser_allowed": false,
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "file_writes_allowed": false
+  },
+  "denominator": {
+    "advertised_gap_entries": 87,
+    "previously_selected_candidate_entries": 63,
+    "prior_open_entries": 24,
+    "selected_candidate_entries": 8,
+    "entries_left_open": 16
+  },
+  "cases": [
+    {
+      "manifest_pointer": "/features/22/advertised/0",
+      "entry_id": "manifest-gap.vios-ui.00-vios-dashboard",
+      "proposed_capability_id": "manifest-entry.vios-ui.00-vios-dashboard",
+      "advertised": "VIOS dashboard",
+      "advertised_utf8_sha256": "3b9da30a904e0d5b5152f5c228e4acbaddbfca029c7abf4bcbbf5e5fcbb0708e",
+      "advertised_canonical_sha256": "e5705235ff94bc49c0df7088eb41c67fc471ff574b3e9cf59a02e471d78aaa86",
+      "adapter_id": "vios_dashboard_source_contract",
+      "evidence_scope": "subset: digest-locked mounted dashboard route, navigation label, refresh call, and widget composition only; no browser render or backend correlation",
+      "source_locks": [
+        {"path": "services/vios/ui/vios-ui/src/layout/routes/Routes.tsx", "sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc"},
+        {"path": "services/vios/ui/vios-ui/src/layout/nav/ListItems.tsx", "sha256": "8007b5102301a77b94cd32f807ea339e20fe64b46dd78dd9adeeed17228a8611"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/VSTDashboard.tsx", "sha256": "4b8f8afc3158cfe949cb933c182b281f9206da88ea1d36febd7f2fa3048acc9f"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/22/advertised/1",
+      "entry_id": "manifest-gap.vios-ui.01-sensor-and-stream-management",
+      "proposed_capability_id": "manifest-entry.vios-ui.01-sensor-and-stream-management",
+      "advertised": "sensor and stream management",
+      "advertised_utf8_sha256": "7d46f19cf8c2425d3c23dbffd0591137b1004935f3bc31a751dab4e830a1b5ea",
+      "advertised_canonical_sha256": "2cd8c4e0a9b6ae205ce099f294bede8bd0fe644a2125d9bdb9f41a53fec5a8c2",
+      "adapter_id": "sensor_stream_management_source_contract",
+      "evidence_scope": "subset: digest-locked mounted sensor and stream-detail routes, navigation labels, sensor action cards, and RTSP table composition only; no browser or API execution",
+      "source_locks": [
+        {"path": "services/vios/ui/vios-ui/src/layout/routes/Routes.tsx", "sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc"},
+        {"path": "services/vios/ui/vios-ui/src/layout/nav/ListItems.tsx", "sha256": "8007b5102301a77b94cd32f807ea339e20fe64b46dd78dd9adeeed17228a8611"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/SensorManagement.tsx", "sha256": "9215b51d7149f29532d7154d56482f147041a07660ecd861f98262b39919e8d8"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/StreamDetails.tsx", "sha256": "98955d6ec8d5829feb838c1223ef9d41894d091e45d4db8eeffc83221a2f12e1"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/22/advertised/2",
+      "entry_id": "manifest-gap.vios-ui.02-recording-schedules",
+      "proposed_capability_id": "manifest-entry.vios-ui.02-recording-schedules",
+      "advertised": "recording schedules",
+      "advertised_utf8_sha256": "57297ad7e954263b0f31363970b5c515ba9888bd44658add88982e31fb04faa2",
+      "advertised_canonical_sha256": "f0967bc7ec36db48868f0f778c01a9c276ae43c0d9dd58d062df5cad5172d7a7",
+      "adapter_id": "recording_schedules_source_contract",
+      "evidence_scope": "subset: digest-locked mounted record-settings route, navigation label, schedule/status endpoints, and schedule card/table composition only; no browser or recording mutation",
+      "source_locks": [
+        {"path": "services/vios/ui/vios-ui/src/layout/routes/Routes.tsx", "sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc"},
+        {"path": "services/vios/ui/vios-ui/src/layout/nav/ListItems.tsx", "sha256": "8007b5102301a77b94cd32f807ea339e20fe64b46dd78dd9adeeed17228a8611"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/SensorRecording.tsx", "sha256": "2ce5ef8d5348f592b558807603c38829420808adf47c06571e2ef0fc8b1c0085"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/22/advertised/3",
+      "entry_id": "manifest-gap.vios-ui.03-media-management-upload",
+      "proposed_capability_id": "manifest-entry.vios-ui.03-media-management-upload",
+      "advertised": "media management/upload",
+      "advertised_utf8_sha256": "a74eb05485a4535321151d660e3f8da8830467aabf8c3bbf1d84a5ab267ed6d1",
+      "advertised_canonical_sha256": "7603bb716abb3d5a86c72d96985c9491205c4efa1e2145486edd0c105ace8282",
+      "adapter_id": "media_management_upload_source_contract",
+      "evidence_scope": "subset: digest-locked mounted media-management route, navigation label, download/delete/upload composition, and multipart upload source only; no browser, file, or API execution",
+      "source_locks": [
+        {"path": "services/vios/ui/vios-ui/src/layout/routes/Routes.tsx", "sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc"},
+        {"path": "services/vios/ui/vios-ui/src/layout/nav/ListItems.tsx", "sha256": "8007b5102301a77b94cd32f807ea339e20fe64b46dd78dd9adeeed17228a8611"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/MediaManagement.tsx", "sha256": "1b8bf1ab67ae11bc1249953ff6b4ee19fb589a0b1237d9b41cf68ab7b4c13a40"},
+        {"path": "services/vios/ui/vios-ui/src/pages/nvstreamer/MediaUpload.tsx", "sha256": "dccb44dd226cd8a92e32f9e7a97a8cf5509de2c7ca808f5fab05235d532cafba"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/22/advertised/4",
+      "entry_id": "manifest-gap.vios-ui.04-live-replay-video-wall",
+      "proposed_capability_id": "manifest-entry.vios-ui.04-live-replay-video-wall",
+      "advertised": "live/replay/video wall",
+      "advertised_utf8_sha256": "c59e9b6ed0bfb1f3d7f3e158ca5f24c295b5d5886064e7c96275cff074c3ea48",
+      "advertised_canonical_sha256": "25e390ca1370ed59a5624a14bad6564476e56286cc0a58a8cd8ef6434be45a65",
+      "adapter_id": "live_replay_video_wall_source_contract",
+      "evidence_scope": "subset: digest-locked live, replay, and video-wall page implementations plus explicit placeholder route state; no claim that pages are mounted, rendered, or streaming",
+      "source_locks": [
+        {"path": "services/vios/ui/vios-ui/src/layout/routes/Routes.tsx", "sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc"},
+        {"path": "services/vios/ui/vios-ui/src/layout/nav/ListItems.tsx", "sha256": "8007b5102301a77b94cd32f807ea339e20fe64b46dd78dd9adeeed17228a8611"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/LiveStream.tsx", "sha256": "3aac820bb28fc2d136476f5e6fd5995dc0b9ec6782bb55938d1cdade0d1f2a4d"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/ReplayStream.tsx", "sha256": "343411ed0d6937138e84bba7c95bfffc8188315178e50c27117063037bb2327c"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/VideoWall.tsx", "sha256": "2519423e6013f9d48c66977e494ed670b4181d076bcb36870bd8efa4a118b7e8"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/22/advertised/5",
+      "entry_id": "manifest-gap.vios-ui.05-qos-system-stream-stats",
+      "proposed_capability_id": "manifest-entry.vios-ui.05-qos-system-stream-stats",
+      "advertised": "QoS/system/stream stats",
+      "advertised_utf8_sha256": "06530fc6d51054a844eb0b5307f75bb586973d6f7dc193b0dc9f79b0c7375e41",
+      "advertised_canonical_sha256": "6e854320e408b4f7497a435eccbcc10915691e08f0f8983038a17b354b1733ab",
+      "adapter_id": "qos_system_stream_stats_source_contract",
+      "evidence_scope": "subset: digest-locked experimental tab composition and QoS/system/WebRTC statistics source plus explicit placeholder route state; no browser, polling, or backend execution",
+      "source_locks": [
+        {"path": "services/vios/ui/vios-ui/src/layout/routes/Routes.tsx", "sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc"},
+        {"path": "services/vios/ui/vios-ui/src/pages/common/Experimental.tsx", "sha256": "962e89a8da8715b903241f25bf512799ef92e97e0e4aed51325e765b69773dc2"},
+        {"path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/SystemStats.tsx", "sha256": "cb553b709c8300b242f67d5e3812e3d4ae9160aabeb7f14bdb5a8b196dcd6ef8"},
+        {"path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamStats.tsx", "sha256": "989775ff8487f1a1a54da86c1db5d089fcbe9e6083015bb54d5b62b2ca833428"},
+        {"path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/RTSPStreamQOS.tsx", "sha256": "9f773291f5e44dbc61dedc5d93425f652531fa1d86bc70892e8d4940153a6711"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/22/advertised/6",
+      "entry_id": "manifest-gap.vios-ui.06-debug-and-playback-automation",
+      "proposed_capability_id": "manifest-entry.vios-ui.06-debug-and-playback-automation",
+      "advertised": "debug and playback automation",
+      "advertised_utf8_sha256": "8ceca593f52e55d6320c66d1fb2f2041442745f03a158a70b872be45b4e67378",
+      "advertised_canonical_sha256": "c64eea399708d65ade457811c3cd47aca52c9d7abc3dba7b352d1158c28b2182",
+      "adapter_id": "debug_playback_automation_source_contract",
+      "evidence_scope": "subset: digest-locked experimental debug and playback-automation tab/component source plus explicit placeholder route state; no DOM, timer, WebSocket, or playback execution",
+      "source_locks": [
+        {"path": "services/vios/ui/vios-ui/src/layout/routes/Routes.tsx", "sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc"},
+        {"path": "services/vios/ui/vios-ui/src/pages/common/Experimental.tsx", "sha256": "962e89a8da8715b903241f25bf512799ef92e97e0e4aed51325e765b69773dc2"},
+        {"path": "services/vios/ui/vios-ui/src/components/debugOptions/DebugOptions.tsx", "sha256": "7fa5fde4951be4afb8393dd63f731d5fc6f340cf41e9d69c6f98f6f84c60c1e5"},
+        {"path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamAutomation.tsx", "sha256": "d650220c5bb47e17967a96053be4986a6586ecb53174baf139fbd28ec26dc03b"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/0",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.00-nat-generate-chat",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.00-nat-generate-chat",
+      "advertised": "NAT generate/chat",
+      "advertised_utf8_sha256": "dfa940754ede3aa450ac2287a6c00196c59d78e82c0e821ae1dde1149e0574f6",
+      "advertised_canonical_sha256": "140ad2335b82cb6ed12f48fff11dd15ea37f4f3d024a5d06ffe619a6fc337c6a",
+      "adapter_id": "nat_generate_chat_source_contract",
+      "evidence_scope": "subset: digest-locked NAT 1.6.0 dependency, inherited NAT route registration, and checked-in static agent API inventory containing generate/chat operations only; no import, service, request, or response execution",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "086cc29db4abe15ff6021e16234a83e5b64345313a7cc73a154a49262e4c43a3"},
+        {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"},
+        {"path": "services/agent/pyproject.toml", "sha256": "d4e32ddb05460f3928fab19309aa163b0dce69e0b59abd251c4a67ec6ae23b97"},
+        {"path": "services/agent/uv.lock", "sha256": "8647f8a7e8eb22ef2c9e83850ba13c2405c32222a48f78c585e5fb8015566523"}
+      ]
+    }
+  ]
+}

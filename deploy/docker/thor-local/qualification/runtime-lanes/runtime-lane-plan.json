@@ -25,11 +25,11 @@
     },
     "oracle_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
-      "raw_sha256": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498"
+      "raw_sha256": "68d30d340069f3ed43d98687c527f3bcb692bd9b6c8554080b577ff89f6142ee"
     },
     "oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "dbc646a068cfb365a010640774e1ae0dff97f8fe11257dfa9e285f17955403e8"
+      "raw_sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"
     }
   },
   "policy": {
@@ -65356,7 +65356,7 @@
       "oracle_profile": "tool-cam-info-generator",
       "oracle_mode": "static",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "104bb206a191b701d76f4376d94013762a6c9c9afd2b9cd03123d9bf59af2c9d",
+      "oracle_contract_sha256": "3030ea46c4a9ec109868f8dfe3c2d79963d06ed794901a97f7078b7e71fbef46",
       "deployment": {
         "profile_paths": [
           "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
@@ -65521,7 +65521,7 @@
       "oracle_profile": "tool-pub-sub-generator",
       "oracle_mode": "static",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "f7c66a22770b3767cd8d1432f109a936cbbc245e935a7637d08ab52d508fe988",
+      "oracle_contract_sha256": "cf76574da06754767544a534e742e1b0d6d4ed80804a3afdc6327ef86c119a08",
       "deployment": {
         "profile_paths": [
           "deploy/docker/industry-profiles/warehouse-operations/compose.yml",

@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -24,6 +26,19 @@ class CapabilityOracleTests(unittest.TestCase):
         cls.ledger = json.loads(verifier.LEDGER.read_text(encoding="utf-8"))
         cls.protocol_cases = json.loads(verifier.PROTOCOL_CASES.read_text(encoding="utf-8"))
 
+    def _copy_offline_mv3dt_inputs(self, root: Path) -> list[str]:
+        contract = json.loads(
+            (verifier.REPO_ROOT / verifier.OFFLINE_MV3DT_FILES["contract"]["path"]).read_text(encoding="utf-8")
+        )
+        paths = {
+            lock["path"] for lock in verifier.OFFLINE_MV3DT_FILES.values()
+        } | {lock["path"] for lock in contract["source_locks"]}
+        for relative in paths:
+            destination = root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(verifier.REPO_ROOT / relative, destination)
+        return [lock["path"] for lock in contract["source_locks"]]
+
     def test_checked_in_plan_has_one_oracle_per_capability(self) -> None:
         counts = verifier.validate(copy.deepcopy(self.plan), copy.deepcopy(self.ledger))
         capability_count = len(self.ledger["capabilities"])
@@ -38,6 +53,8 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertEqual(counts["planning_index_only"], capability_count)
         self.assertEqual(counts["executor_ready"], 0)
         self.assertEqual(counts["planning_executor_bindings"], 26)
+        self.assertEqual(counts["offline_tool_observation_bindings"], 2)
+        self.assertEqual(counts["static_subset_oracle_bindings"], 28)
         self.assertGreater(counts["profiles"], 0)
 
     def test_static_planning_bindings_do_not_promote_full_oracles(self) -> None:
@@ -60,6 +77,91 @@ class CapabilityOracleTests(unittest.TestCase):
                 self.assertIs(binding["can_advance_capability"], False)
                 self.assertIs(binding["can_mark_passed_current"], False)
                 self.assertEqual(binding["runtime_evidence"], [])
+
+    def test_offline_mv3dt_bindings_cover_only_the_observed_oracle_subset(self) -> None:
+        expected_ids = {"tool.mv3dt.cam-info-generator", "tool.mv3dt.pub-sub-generator"}
+        bound = {
+            item["capability_id"]: item
+            for item in self.plan["oracles"]
+            if item.get("offline_tool_observation_bindings")
+        }
+        self.assertEqual(set(bound), expected_ids)
+        for capability_id, item in bound.items():
+            self.assertEqual(len(item["offline_tool_observation_bindings"]), 1)
+            binding = item["offline_tool_observation_bindings"][0]
+            self.assertEqual(binding["scope"], "bounded_static_tool_observation_subset_only")
+            self.assertIs(binding["can_advance_capability"], False)
+            self.assertIs(binding["can_mark_passed_current"], False)
+            self.assertEqual(binding["runtime_evidence"], [])
+            self.assertEqual(binding["result"]["official_capability_effect"], "none_candidate_only")
+            coverage = binding["oracle_coverage"]
+            self.assertEqual(
+                set(coverage["covered_observation_ids"]) | set(coverage["uncovered_observation_ids"]),
+                {row["id"] for row in item["expected_observations"]},
+            )
+            self.assertEqual(
+                set(coverage["covered_assertion_ids"]) | set(coverage["uncovered_assertion_ids"]),
+                {row["id"] for row in item["assertions"]},
+            )
+            self.assertEqual(
+                coverage["uncovered_assertion_ids"],
+                ["contract-05", "contract-06", "contract-07", "contract-08"],
+                capability_id,
+            )
+
+    def test_offline_mv3dt_binding_is_derived_from_strict_execution_receipt(self) -> None:
+        receipt_path = verifier.REPO_ROOT / verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["path"]
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            hashlib.sha256(receipt_path.read_bytes()).hexdigest(),
+            verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"],
+        )
+        bindings = verifier._offline_mv3dt_tool_bindings()
+        first_run = receipt["deterministic_runs"][0]
+        for capability_id, rows in bindings.items():
+            binding = rows[0]
+            self.assertEqual(binding["result"]["observation"], receipt["observation"])
+            self.assertEqual(binding["result"]["run_count"], receipt["run_count"])
+            self.assertEqual(binding["execution_receipt"]["raw_sha256"], hashlib.sha256(receipt_path.read_bytes()).hexdigest())
+            dependency = binding["dependency_observation"]
+            self.assertEqual(dependency["observed_versions_sha256"], "f8b538e36776da71af95af5a667426dbd5cbb3e3fa482c2c5850ba9306888e80")
+            self.assertIs(dependency["declared_versions_match_observed_distributions"], False)
+            self.assertIs(dependency["normative_for_declared_requirements"], False)
+            self.assertEqual(len(dependency["mismatches"]), 4)
+            selected_key = "cam_info" if capability_id.endswith("cam-info-generator") else "pub_sub"
+            self.assertEqual(binding["selected_semantic"], {selected_key: first_run["semantic"][selected_key]})
+
+    def test_offline_mv3dt_every_contract_source_lock_is_rehashed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source_paths = self._copy_offline_mv3dt_inputs(root)
+            self.assertEqual(len(source_paths), 4)
+            for relative in source_paths:
+                with self.subTest(relative=relative):
+                    path = root / relative
+                    original = path.read_bytes()
+                    path.write_bytes(original + b"\nsource-lock-tamper")
+                    with self.assertRaisesRegex(verifier.OracleContractError, "source lock differs"):
+                        verifier._offline_mv3dt_tool_bindings(root)
+                    path.write_bytes(original)
+
+    def test_offline_mv3dt_receipt_raw_lock_and_schema_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self._copy_offline_mv3dt_inputs(root)
+            receipt_path = root / verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["path"]
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt["run_count"] = 3
+            receipt_path.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(verifier.OracleContractError, "execution_receipt raw digest differs"):
+                verifier._offline_mv3dt_tool_bindings(root)
+            original_lock = verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"]
+            verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"] = hashlib.sha256(receipt_path.read_bytes()).hexdigest()
+            try:
+                with self.assertRaisesRegex(verifier.OracleContractError, "execution receipt schema failed"):
+                    verifier._offline_mv3dt_tool_bindings(root)
+            finally:
+                verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"] = original_lock
 
     def test_every_execution_mode_is_covered(self) -> None:
         self.assertEqual(

@@ -106,11 +106,13 @@ gates, and intended mutation ownership. These prose-derived requirements are
 useful for implementation review but do not provide fixture files/generators,
 commands/requests, collectors, or executable cleanup for the complete contract.
 All 276 entries are therefore explicitly `planning_index_only`; the full-oracle
-executor-ready count is zero. Ten oracles also bind a runnable file-only static
-subset from `../qualification/executor-cases/`. Those subset bindings cannot
-promote the full oracle, create runtime evidence, or change capability state.
-The seven planned modes are static, config, runtime, API, protocol, model, and
-deploy.
+executor-ready count is zero. Twenty-six live planning bindings cover bounded
+file-only subsets, and the two MV3DT generator oracles additionally bind their
+deterministic custom-data tool observations from
+`../qualification/offline-mv3dt-tools/`. All 28 subset bindings are explicitly
+non-advancing: they cannot promote the full oracle, create runtime evidence, or
+change capability state. The seven planned modes are static, config, runtime,
+API, protocol, model, and deploy.
 
 `../qualification/static-cases/` is an isolated first tranche of 24 bounded
 static observations. Its inventory, generated calibration fixtures, and tests
