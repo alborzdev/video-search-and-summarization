@@ -302,6 +302,16 @@ in this directory:
   source-bound exact-title capability and future-oracle candidate. Its in-memory
   500-capability/500-exact-mapping projection satisfies the strict ledger
   schema, but the package is candidate-only and neither merges nor promotes it;
+- `candidate-oracle-adapter/` translates all 211 candidate contracts into
+  machine-usable planning-oracle seeds and separately locks the states and
+  evidence arrays of all 289 live oracles. Every execution/materialization hook
+  remains absent and no candidate is executor-ready;
+- `protocol-cases-v2-candidates/` preserves the seven live protocol cases and
+  adds 23 exact, non-activating planning cases with composite transport and
+  locality boundaries. It does not change the live protocol executor;
+- `remaining-entry-workloads/` replaces generic workload defaults for the 41
+  API and 19 deployment candidates with 134 exact operation units and 58
+  ordered actions. Its three external workloads remain zero-activation;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

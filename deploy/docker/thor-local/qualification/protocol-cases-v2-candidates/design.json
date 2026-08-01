@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "candidate_cases": [
+    {
+      "capability_id": "manifest-entry.base-agent-workflow.04-large-file-chunked-upload",
+      "transport_components": ["http", "multipart-upload", "chunked-upload"],
+      "proposed_runner_family": "http-chunked-upload-composite"
+    },
+    {
+      "capability_id": "manifest-entry.video-summarization-file.03-structured-output",
+      "transport_components": ["http", "json", "json-schema"],
+      "proposed_runner_family": "http-json-schema"
+    },
+    {
+      "capability_id": "manifest-entry.video-summarization-live.05-sse-mcp-server",
+      "transport_components": ["http", "sse", "mcp-jsonrpc"],
+      "proposed_runner_family": "sse-mcp-jsonrpc"
+    },
+    {
+      "capability_id": "manifest-entry.realtime-alerts.05-websocket-delivery",
+      "transport_components": ["redis-streams", "websocket"],
+      "proposed_runner_family": "alert-websocket-composite"
+    },
+    {
+      "capability_id": "manifest-entry.alert-notifications-slack.00-slack-notification",
+      "transport_components": ["kafka", "http-webhook", "slack-external"],
+      "proposed_runner_family": "external-webhook-attestation"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-media.00-file-upload",
+      "transport_components": ["http", "multipart-upload", "asset-lifecycle"],
+      "proposed_runner_family": "http-media-upload"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-media.01-http-s",
+      "transport_components": ["http", "https", "asset-lifecycle"],
+      "proposed_runner_family": "loopback-http-https-fetch"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-media.02-s3",
+      "transport_components": ["s3", "http", "asset-lifecycle"],
+      "proposed_runner_family": "disposable-s3-compatible"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-media.04-inline-data-uri",
+      "transport_components": ["data-uri", "base64", "asset-lifecycle"],
+      "proposed_runner_family": "in-process-data-uri"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-media.05-rtsp",
+      "transport_components": ["rtsp", "http", "asset-lifecycle"],
+      "proposed_runner_family": "rtsp-media-lifecycle"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-api.03-token-sse",
+      "transport_components": ["http", "sse", "token-stream"],
+      "proposed_runner_family": "sse-token-stream"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-models.04-remote-openai-compatible-endpoint",
+      "transport_components": ["https", "openai-compatible", "oauth"],
+      "proposed_runner_family": "external-openai-attestation"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+      "transport_components": ["kafka", "redis-streams", "product-error-trigger"],
+      "proposed_runner_family": "product-error-broker-composite"
+    },
+    {
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+      "transport_components": ["http", "prometheus", "opentelemetry-otlp"],
+      "proposed_runner_family": "observability-composite"
+    },
+    {
+      "capability_id": "manifest-entry.rt-embed.01-live-rtsp",
+      "transport_components": ["rtsp", "http", "asset-lifecycle"],
+      "proposed_runner_family": "rtsp-media-lifecycle"
+    },
+    {
+      "capability_id": "manifest-entry.rt-embed.02-url-and-inline-base64-video",
+      "transport_components": ["http", "https", "data-uri", "base64"],
+      "proposed_runner_family": "composite-media-input"
+    },
+    {
+      "capability_id": "manifest-entry.rt-embed.04-kafka-redis-opentelemetry",
+      "transport_components": ["kafka", "redis-streams", "opentelemetry-otlp"],
+      "proposed_runner_family": "broker-telemetry-composite"
+    },
+    {
+      "capability_id": "manifest-entry.vios-core.06-live-replay-webrtc",
+      "transport_components": ["http", "webrtc", "live-media", "replay-media"],
+      "proposed_runner_family": "vios-live-replay-webrtc"
+    },
+    {
+      "capability_id": "manifest-entry.vios-core.07-rtsp-proxy-and-stream-bridge",
+      "transport_components": ["http", "rtsp", "webrtc", "stream-bridge"],
+      "proposed_runner_family": "vios-rtsp-proxy-stream-bridge"
+    },
+    {
+      "capability_id": "manifest-entry.warehouse-2d.01-kafka-and-redis-paths",
+      "transport_components": ["kafka", "redis-streams", "warehouse-2d-product-path"],
+      "proposed_runner_family": "warehouse-2d-broker-composite-custom-data"
+    },
+    {
+      "capability_id": "manifest-entry.infra-observability.01-kafka",
+      "transport_components": ["kafka", "broker-admin", "produce-consume"],
+      "proposed_runner_family": "kafka-admin-produce-consume"
+    },
+    {
+      "capability_id": "manifest-entry.infra-observability.02-redis",
+      "transport_components": ["redis", "redis-streams"],
+      "proposed_runner_family": "redis-command-stream"
+    },
+    {
+      "capability_id": "manifest-entry.infra-observability.06-nvschema",
+      "transport_components": ["protobuf-nvschema", "kafka", "product-trigger"],
+      "proposed_runner_family": "kafka-protobuf-product-trigger"
+    }
+  ]
+}

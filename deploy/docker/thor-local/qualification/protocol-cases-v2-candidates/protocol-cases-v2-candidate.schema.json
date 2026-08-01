@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/protocol-cases-v2-candidate.schema.json",
+  "title": "Candidate-only VSS protocol case v2 contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_id",
+    "target",
+    "policy",
+    "source_locks",
+    "summary",
+    "cases",
+    "bindings",
+    "candidate_payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "candidate_id": {"const": "vss-thor-protocol-cases-v2-23-candidate-extension"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live_protocol_target_commit", "candidate_main_commit", "candidate_base_commit", "product_version"],
+      "properties": {
+        "live_protocol_target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "candidate_main_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "candidate_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "product_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_only", "live_integration", "runtime_evidence", "can_promote_runtime_state", "external_activation", "warehouse_sample_bundle", "custom_data_warehouse_capability"],
+      "properties": {
+        "candidate_only": {"const": true},
+        "live_integration": {"const": false},
+        "runtime_evidence": {"const": []},
+        "can_promote_runtime_state": {"const": false},
+        "external_activation": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "custom_data_warehouse_capability": {"const": "planning_only"}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {"$ref": "#/$defs/sourceHash"}
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_cases", "preserved_live_v1_cases", "candidate_protocol_cases", "boundary_counts", "readiness_counts", "runtime_evidence_records", "activating_external_cases", "warehouse_sample_bundle_entries"],
+      "properties": {
+        "total_cases": {"const": 30},
+        "preserved_live_v1_cases": {"const": 7},
+        "candidate_protocol_cases": {"const": 23},
+        "boundary_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["local", "alternate_local", "external"],
+          "properties": {
+            "local": {"const": 27},
+            "alternate_local": {"const": 1},
+            "external": {"const": 2}
+          }
+        },
+        "readiness_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["planning_only", "executor_ready", "blocked"],
+          "properties": {
+            "planning_only": {"const": 23},
+            "executor_ready": {"const": 5},
+            "blocked": {"const": 2}
+          }
+        },
+        "runtime_evidence_records": {"const": 0},
+        "activating_external_cases": {"const": 0},
+        "warehouse_sample_bundle_entries": {"const": 0}
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 30,
+      "items": {"oneOf": [{"$ref": "#/$defs/legacyCaseWrapper"}, {"$ref": "#/$defs/candidateCaseWrapper"}]}
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 30,
+      "items": {"$ref": "#/$defs/binding"}
+    },
+    "candidate_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "sourceHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "activation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supported", "executor_binding", "reason"],
+      "properties": {
+        "supported": {"type": "boolean"},
+        "executor_binding": {"type": ["string", "null"]},
+        "reason": {"type": "string", "minLength": 8}
+      }
+    },
+    "caseCommon": {
+      "type": "object",
+      "required": ["origin", "capability_id", "case_id", "transport_components", "boundary", "readiness", "activation", "runtime_evidence", "warehouse_sample_bundle"],
+      "properties": {
+        "origin": {"enum": ["live_v1", "candidate_manifest"]},
+        "capability_id": {"type": "string", "minLength": 3},
+        "case_id": {"type": "string", "pattern": "^protocol(?:-v2)?-case\\."},
+        "transport_components": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"}
+        },
+        "boundary": {"enum": ["local", "alternate_local", "external"]},
+        "readiness": {"enum": ["planning_only", "executor_ready", "blocked"]},
+        "activation": {"$ref": "#/$defs/activation"},
+        "runtime_evidence": {"const": []},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "legacyCaseWrapper": {
+      "allOf": [
+        {"$ref": "#/$defs/caseCommon"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["origin", "capability_id", "case_id", "transport_components", "boundary", "readiness", "activation", "runtime_evidence", "warehouse_sample_bundle", "legacy_case"],
+          "properties": {
+            "origin": {"const": "live_v1"},
+            "capability_id": true,
+            "case_id": true,
+            "transport_components": true,
+            "boundary": {"const": "local"},
+            "readiness": true,
+            "activation": true,
+            "runtime_evidence": true,
+            "warehouse_sample_bundle": true,
+            "legacy_case": {"type": "object"}
+          }
+        }
+      ]
+    },
+    "candidateCaseWrapper": {
+      "allOf": [
+        {"$ref": "#/$defs/caseCommon"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["origin", "capability_id", "case_id", "transport_components", "boundary", "readiness", "activation", "runtime_evidence", "warehouse_sample_bundle", "proposed_runner_family", "candidate_contract"],
+          "properties": {
+            "origin": {"const": "candidate_manifest"},
+            "capability_id": {"pattern": "^manifest-entry\\."},
+            "case_id": true,
+            "transport_components": true,
+            "boundary": true,
+            "readiness": {"const": "planning_only"},
+            "activation": true,
+            "runtime_evidence": true,
+            "warehouse_sample_bundle": true,
+            "proposed_runner_family": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+            "candidate_contract": {"$ref": "#/$defs/candidateContract"}
+          }
+        }
+      ]
+    },
+    "candidateContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_pointer", "advertised_literal", "acceptance_class", "thor_state", "runtime_state", "implementation_surfaces", "required_semantics", "oracle_plan"],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "advertised_literal": {"type": "string", "minLength": 1},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "thor_state": {"enum": ["wired", "partial"]},
+        "runtime_state": {"enum": ["not_qualified", "not_applicable"]},
+        "implementation_surfaces": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "required_semantics": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "oracle_plan": {"$ref": "#/$defs/planningVectorContract"}
+      }
+    },
+    "planningVectorContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_strategy", "required_observations", "adjacent_negative", "execution_boundary", "cleanup_boundary"],
+      "properties": {
+        "fixture_strategy": {"type": "string", "minLength": 12},
+        "required_observations": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+        "adjacent_negative": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+        "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+        "cleanup_boundary": {"type": "string", "minLength": 12},
+        "authoritative_gap_requirement": {"type": "object"}
+      }
+    },
+    "vectorProjection": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "positive_vector_id", "adjacent_negative_vector_ids"],
+          "properties": {
+            "kind": {"const": "executable_vectors"},
+            "positive_vector_id": {"type": "string", "minLength": 1},
+            "adjacent_negative_vector_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "contract"],
+          "properties": {
+            "kind": {"const": "planning_only"},
+            "contract": {"$ref": "#/$defs/planningVectorContract"}
+          }
+        }
+      ]
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "case_id", "case_payload_sha256", "binding_sha256", "transport_components", "boundary", "readiness", "activation_supported", "vector_projection", "source_hashes"],
+      "properties": {
+        "capability_id": {"type": "string", "minLength": 3},
+        "case_id": {"type": "string", "minLength": 3},
+        "case_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "binding_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "transport_components": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"}},
+        "boundary": {"enum": ["local", "alternate_local", "external"]},
+        "readiness": {"enum": ["planning_only", "executor_ready", "blocked"]},
+        "activation_supported": {"type": "boolean"},
+        "vector_projection": {"$ref": "#/$defs/vectorProjection"},
+        "source_hashes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceHash"}}
+      }
+    }
+  }
+}

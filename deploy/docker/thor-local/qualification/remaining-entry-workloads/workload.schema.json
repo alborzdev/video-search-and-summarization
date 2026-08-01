@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/remaining-entry-workloads.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "policy", "locks", "summary", "workloads", "payload_sha256"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "remaining-entry-api-deployment-workloads"},
+    "policy": {
+      "const": {"candidate_only": true, "can_promote_runtime_state": false, "runtime_evidence": [], "required_cloud_inference": false, "warehouse_sample_bundle": "excluded", "external_activation": "forbidden"}
+    },
+    "locks": {"type": "object", "minProperties": 3, "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["path", "raw_sha256"], "properties": {"path": {"type": "string", "minLength": 2}, "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["api_candidates", "deployment_candidates", "workloads", "api_units", "deployment_actions", "candidate_runtime_evidence_records", "external_activations", "warehouse_sample_bundle_entries"],
+      "properties": {"api_candidates": {"const": 41}, "deployment_candidates": {"const": 19}, "workloads": {"const": 60}, "api_units": {"type": "integer", "minimum": 41}, "deployment_actions": {"type": "integer", "minimum": 19}, "candidate_runtime_evidence_records": {"const": 0}, "external_activations": {"const": 0}, "warehouse_sample_bundle_entries": {"const": 0}}
+    },
+    "workloads": {"type": "array", "minItems": 60, "maxItems": 60, "items": {"$ref": "#/$defs/workload"}},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "operationUnit": {
+      "type": "object", "additionalProperties": false,
+      "required": ["unit_id", "covers", "transport", "activation", "mutation", "max_requests", "phase", "request_shape", "required_observations", "adjacent_negative", "cleanup"],
+      "properties": {"unit_id": {"type": "string", "pattern": "^[a-z0-9_-]+$"}, "covers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}, "transport": {"enum": ["http_or_ui_api", "mcp", "external_http"]}, "activation": {"enum": ["candidate_owned_local", "external_non_activating"]}, "mutation": {"type": "boolean"}, "max_requests": {"type": "integer", "minimum": 0, "maximum": 8}, "phase": {"const": "operation_exercise"}, "request_shape": {"type": "string", "minLength": 20}, "required_observations": {"type": "array", "minItems": 2, "items": {"type": "string"}}, "adjacent_negative": {"type": "string", "minLength": 20}, "cleanup": {"type": "string", "minLength": 12}}
+    },
+    "requestPerUnit": {"type": "object", "additionalProperties": false, "required": ["unit_id", "max_requests"], "properties": {"unit_id": {"type": "string"}, "max_requests": {"type": "integer", "minimum": 0, "maximum": 8}}},
+    "deploymentAction": {"type": "object", "additionalProperties": false, "required": ["sequence", "action_id", "action", "mode", "max_attempts", "max_requests"], "properties": {"sequence": {"type": "integer", "minimum": 1}, "action_id": {"type": "string", "pattern": "^[a-z0-9-]+$"}, "action": {"type": "string", "minLength": 8}, "mode": {"enum": ["planning_only", "static_non_activating"]}, "max_attempts": {"type": "integer", "minimum": 0, "maximum": 1}, "max_requests": {"type": "integer", "minimum": 0, "maximum": 4}}},
+    "requestPerAction": {"type": "object", "additionalProperties": false, "required": ["action_id", "max_requests"], "properties": {"action_id": {"type": "string"}, "max_requests": {"type": "integer", "minimum": 0, "maximum": 4}}},
+    "workload": {
+      "type": "object", "additionalProperties": false, "required": ["manifest_pointer", "candidate_id", "advertised", "acceptance_class", "workload_type", "activation", "source_surfaces", "calculated_max_requests", "max_actions"],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"}, "candidate_id": {"type": "string", "pattern": "^manifest-entry\\."}, "advertised": {"type": "string", "minLength": 1},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]}, "workload_type": {"enum": ["api", "deployment"]}, "activation": {"enum": ["candidate_owned_local", "planning_only_local", "external_non_activating"]},
+        "source_surfaces": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}}, "calculated_max_requests": {"type": "integer", "minimum": 0, "maximum": 128}, "max_actions": {"type": "integer", "minimum": 0, "maximum": 64},
+        "unit_count": {"type": "integer", "minimum": 1}, "phases": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string"}}, "literal_facets": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}, "operation_units": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/operationUnit"}}, "requests_per_unit": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/requestPerUnit"}}, "overhead_requests": {"type": "integer", "minimum": 0}, "total_request_budget": {"type": "integer", "minimum": 0},
+        "preconditions": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/deploymentAction"}}, "readiness_observations": {"type": "array", "minItems": 2, "items": {"type": "string"}}, "adjacent_negative": {"type": "string", "minLength": 12}, "cleanup": {"type": "string", "minLength": 12}, "requests_per_action": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/requestPerAction"}}
+      }
+    }
+  }
+}

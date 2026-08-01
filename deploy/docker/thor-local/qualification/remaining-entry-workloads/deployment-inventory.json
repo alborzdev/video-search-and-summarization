@@ -1,0 +1,1238 @@
+{
+  "candidate_raw_sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd",
+  "entries": [
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "resolve local layout",
+          "action_id": "resolve-local-layout",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "resolve shared-volume layout",
+          "action_id": "resolve-shared-volume-layout",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "inspect remote layout without contacting it",
+          "action_id": "inspect-remote-layout-without-contacting-it",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "undeclared remote fallback is rejected",
+      "advertised": "local/shared/remote model layouts",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.base-agent-workflow.05-local-shared-remote-model-layouts",
+      "cleanup": "restore captured agent configuration and delete fixture paths",
+      "manifest_pointer": "/features/0/advertised/5",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "local model tree, shared-volume path, and inert remote-reference fixture"
+      ],
+      "readiness_observations": [
+        "effective provider identity and path for each layout",
+        "local lane has no remote fallback"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "resolve-local-layout",
+          "max_requests": 0
+        },
+        {
+          "action_id": "resolve-shared-volume-layout",
+          "max_requests": 0
+        },
+        {
+          "action_id": "inspect-remote-layout-without-contacting-it",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/services/agent/compose.yml",
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+        "services/agent/src/vss_agents/orchestrator/storage.py"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "stage caption message",
+          "action_id": "stage-caption-message",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "trace Kafka-to-Logstash mapping",
+          "action_id": "trace-kafka-to-logstash-mapping",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "plan Elasticsearch correlation query",
+          "action_id": "plan-elasticsearch-correlation-query",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "duplicate caption identity cannot create two documents",
+      "advertised": "Elasticsearch caption storage",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.video-summarization-live.04-elasticsearch-caption-storage",
+      "cleanup": "delete only candidate caption/index records",
+      "manifest_pointer": "/features/2/advertised/4",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "tiny caption event and candidate-owned stream identity"
+      ],
+      "readiness_observations": [
+        "stream, time, and text fields remain intact",
+        "one message maps to one document"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "stage-caption-message",
+          "max_requests": 0
+        },
+        {
+          "action_id": "trace-kafka-to-logstash-mapping",
+          "max_requests": 0
+        },
+        {
+          "action_id": "plan-elasticsearch-correlation-query",
+          "max_requests": 1
+        }
+      ],
+      "source_surfaces": [
+        "services/video-summarization/src/kafka_producer.py",
+        "services/agent/src/lib/knowledge/adapters/es_caption.py",
+        "deploy/docker/services/video-summarization/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "plan start",
+          "action_id": "plan-start",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "observe active state",
+          "action_id": "observe-active-state",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "plan stop",
+          "action_id": "plan-stop",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        },
+        {
+          "action": "plan restart replay",
+          "action_id": "plan-restart-replay",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 4
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "duplicate replay cannot create a second active instance",
+      "advertised": "always-on lifecycle",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.realtime-alerts.03-always-on-lifecycle",
+      "cleanup": "stop and delete only executor-owned rules",
+      "manifest_pointer": "/features/6/advertised/3",
+      "max_actions": 4,
+      "overhead_requests": 1,
+      "preconditions": [
+        "one enabled and one disabled executor-owned rule"
+      ],
+      "readiness_observations": [
+        "enabled rule activates exactly once",
+        "disabled rule remains inactive"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "plan-start",
+          "max_requests": 0
+        },
+        {
+          "action_id": "observe-active-state",
+          "max_requests": 1
+        },
+        {
+          "action_id": "plan-stop",
+          "max_requests": 0
+        },
+        {
+          "action_id": "plan-restart-replay",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "services/alert/realtime/services/always_on_service.py",
+        "services/alert/realtime/schemas/always_on_config.py"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "actions": [
+        {
+          "action": "render sample-free graph",
+          "action_id": "render-sample-free-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate custom mounts and service count",
+          "action_id": "validate-custom-mounts-and-service-count",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "plan bounded readiness order",
+          "action_id": "plan-bounded-readiness-order",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "missing custom calibration fails before activation",
+      "advertised": "Compose deployment",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.rt-cv-3d-mv3dt.04-compose-deployment",
+      "cleanup": "remove only candidate Compose project and temporary render",
+      "manifest_pointer": "/features/15/advertised/4",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "custom MV3DT paths, immutable images, and no Warehouse sample"
+      ],
+      "readiness_observations": [
+        "all declared services have truthful readiness gates",
+        "no pull or excluded sample reference"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-sample-free-graph",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-custom-mounts-and-service-count",
+          "max_requests": 0
+        },
+        {
+          "action_id": "plan-bounded-readiness-order",
+          "max_requests": 1
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+        "deploy/docker/scripts/thor-warehouse-mv3dt.sh"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "actions": [
+        {
+          "action": "render ten slots",
+          "action_id": "render-ten-slots",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "bind ten custom stream references",
+          "action_id": "bind-ten-custom-stream-references",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "validate unique sensor graph",
+          "action_id": "validate-unique-sensor-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "duplicate sensor ID fails graph validation",
+      "advertised": "ten-sensor sample profile",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.smart-city.07-ten-sensor-sample-profile",
+      "cleanup": "delete only candidate sensor records and render",
+      "manifest_pointer": "/features/24/advertised/7",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "ten distinct Smart City sensor IDs and operator stream overrides"
+      ],
+      "readiness_observations": [
+        "exactly ten unique sensor identities",
+        "every slot accepts operator data"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-ten-slots",
+          "max_requests": 0
+        },
+        {
+          "action_id": "bind-ten-custom-stream-references",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-unique-sensor-graph",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/industry-profiles/smartcities/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "render HAProxy config",
+          "action_id": "render-haproxy-config",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "resolve every public backend",
+          "action_id": "resolve-every-public-backend",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "evaluate disallowed route",
+          "action_id": "evaluate-disallowed-route",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "unknown route has no backend",
+      "advertised": "API gateway",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.infra-observability.00-api-gateway",
+      "cleanup": "remove only temporary rendered gateway config",
+      "manifest_pointer": "/features/28/advertised/0",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "declared route table and one disallowed path"
+      ],
+      "readiness_observations": [
+        "each route has one local backend",
+        "internal listeners remain unexposed"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-haproxy-config",
+          "max_requests": 0
+        },
+        {
+          "action_id": "resolve-every-public-backend",
+          "max_requests": 0
+        },
+        {
+          "action_id": "evaluate-disallowed-route",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/services/infra/haproxy/haproxy.cfg.template"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "validate Elasticsearch config",
+          "action_id": "validate-elasticsearch-config",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate Kibana cluster target",
+          "action_id": "validate-kibana-cluster-target",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "plan one document/dashboard correlation",
+          "action_id": "plan-one-document-dashboard-correlation",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "wrong cluster URL fails correlation",
+      "advertised": "Elasticsearch/Kibana",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.infra-observability.03-elasticsearch-kibana",
+      "cleanup": "delete only candidate index/object plan",
+      "manifest_pointer": "/features/28/advertised/3",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "candidate index name, mapping, and Kibana datasource config"
+      ],
+      "readiness_observations": [
+        "Kibana points to declared cluster",
+        "mapping preserves sensor and timestamp"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "validate-elasticsearch-config",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-kibana-cluster-target",
+          "max_requests": 0
+        },
+        {
+          "action_id": "plan-one-document-dashboard-correlation",
+          "max_requests": 1
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/services/infra/elk/elasticsearch/configs/elasticsearch.yml",
+        "deploy/docker/services/infra/elk/kibana/configs/kibana.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "validate scrape targets",
+          "action_id": "validate-scrape-targets",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate Grafana datasource",
+          "action_id": "validate-grafana-datasource",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "validate dashboard queries",
+          "action_id": "validate-dashboard-queries",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "missing scrape job remains visibly down",
+      "advertised": "Prometheus/Grafana",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.infra-observability.04-prometheus-grafana",
+      "cleanup": "remove only temporary validation outputs",
+      "manifest_pointer": "/features/28/advertised/4",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "Thor scrape config, datasource, and dashboard JSON"
+      ],
+      "readiness_observations": [
+        "datasource targets local Prometheus",
+        "dashboard jobs match declared scrape jobs"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "validate-scrape-targets",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-grafana-datasource",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-dashboard-queries",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/thor-local/observability/prometheus.yml",
+        "deploy/docker/services/monitoring/config/grafana-provisioning/datasources/datasource.yml",
+        "deploy/docker/services/monitoring/config/grafana-dashboard/thor-vss-observability.json"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "render Base graph",
+          "action_id": "render-base-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate variables and mounts",
+          "action_id": "validate-variables-and-mounts",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "topologically inspect health dependencies",
+          "action_id": "topologically-inspect-health-dependencies",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "undefined required variable rejects render",
+      "advertised": "Base Compose",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.docker-compose.00-base-compose",
+      "cleanup": "remove only candidate render/project",
+      "manifest_pointer": "/features/31/advertised/0",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "deterministic Base environment"
+      ],
+      "readiness_observations": [
+        "agent, UI, VIOS, and infra are present",
+        "dependency graph is acyclic"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-base-graph",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-variables-and-mounts",
+          "max_requests": 0
+        },
+        {
+          "action_id": "topologically-inspect-health-dependencies",
+          "max_requests": 1
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/developer-profiles/dev-profile-base/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "render Search graph",
+          "action_id": "render-search-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate embedding/storage/search/UI services",
+          "action_id": "validate-embedding-storage-search-ui-services",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "inspect readiness dependencies",
+          "action_id": "inspect-readiness-dependencies",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "missing embedding endpoint rejects render",
+      "advertised": "Search Compose",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.docker-compose.01-search-compose",
+      "cleanup": "remove only candidate render/project",
+      "manifest_pointer": "/features/31/advertised/1",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "deterministic Search environment"
+      ],
+      "readiness_observations": [
+        "search routes and model endpoints resolve",
+        "LVS-only service is not assumed"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-search-graph",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-embedding-storage-search-ui-services",
+          "max_requests": 0
+        },
+        {
+          "action_id": "inspect-readiness-dependencies",
+          "max_requests": 1
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/developer-profiles/dev-profile-search/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "render LVS graph",
+          "action_id": "render-lvs-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate summarization/agent/VIOS services",
+          "action_id": "validate-summarization-agent-vios-services",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "inspect HITL readiness dependencies",
+          "action_id": "inspect-hitl-readiness-dependencies",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "missing summarization service rejects render",
+      "advertised": "LVS Compose",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.docker-compose.02-lvs-compose",
+      "cleanup": "remove only candidate render/project",
+      "manifest_pointer": "/features/31/advertised/2",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "deterministic LVS environment"
+      ],
+      "readiness_observations": [
+        "LVS readiness is explicit",
+        "HITL dependency is reachable in graph"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-lvs-graph",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-summarization-agent-vios-services",
+          "max_requests": 0
+        },
+        {
+          "action_id": "inspect-hitl-readiness-dependencies",
+          "max_requests": 1
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "render Alerts graph",
+          "action_id": "render-alerts-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate verification/realtime/broker services",
+          "action_id": "validate-verification-realtime-broker-services",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "cross-check topics and bridge routes",
+          "action_id": "cross-check-topics-and-bridge-routes",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "topic mismatch rejects graph",
+      "advertised": "Alerts Compose",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.docker-compose.03-alerts-compose",
+      "cleanup": "remove only candidate render/project",
+      "manifest_pointer": "/features/31/advertised/3",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "deterministic Alerts environment"
+      ],
+      "readiness_observations": [
+        "alert topics and routes agree",
+        "health dependencies are acyclic"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-alerts-graph",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-verification-realtime-broker-services",
+          "max_requests": 0
+        },
+        {
+          "action_id": "cross-check-topics-and-bridge-routes",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/developer-profiles/dev-profile-alerts/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "render Warehouse graph",
+          "action_id": "render-warehouse-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate custom mounts",
+          "action_id": "validate-custom-mounts",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "scan all services for excluded sample references",
+          "action_id": "scan-all-services-for-excluded-sample-references",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "sample-only unresolved mount rejects graph",
+      "advertised": "Warehouse Compose",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.docker-compose.04-warehouse-compose",
+      "cleanup": "remove only candidate render/project",
+      "manifest_pointer": "/features/31/advertised/4",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "custom-data Warehouse overrides without sample paths"
+      ],
+      "readiness_observations": [
+        "custom-data services resolve",
+        "no Warehouse sample is required"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-warehouse-graph",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-custom-mounts",
+          "max_requests": 0
+        },
+        {
+          "action_id": "scan-all-services-for-excluded-sample-references",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/industry-profiles/warehouse-operations/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "render Smart City graph",
+          "action_id": "render-smart-city-graph",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate profile/config mounts",
+          "action_id": "validate-profile-config-mounts",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "inspect startup dependencies",
+          "action_id": "inspect-startup-dependencies",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "missing calibration import rejects readiness plan",
+      "advertised": "Smart City launchable Compose",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.docker-compose.05-smart-city-launchable-compose",
+      "cleanup": "remove only candidate render/project",
+      "manifest_pointer": "/features/31/advertised/5",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "deterministic Smart City environment and custom media paths"
+      ],
+      "readiness_observations": [
+        "required Smart City services resolve",
+        "mounted assets exist"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "render-smart-city-graph",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-profile-config-mounts",
+          "max_requests": 0
+        },
+        {
+          "action_id": "inspect-startup-dependencies",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/industry-profiles/smartcities/compose.yml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "actions": [
+        {
+          "action": "statically inspect each Chart.yaml",
+          "action_id": "statically-inspect-each-chart-yaml",
+          "max_attempts": 0,
+          "max_requests": 0,
+          "mode": "static_non_activating",
+          "sequence": 1
+        },
+        {
+          "action": "resolve chart dependencies and values",
+          "action_id": "resolve-chart-dependencies-and-values",
+          "max_attempts": 0,
+          "max_requests": 0,
+          "mode": "static_non_activating",
+          "sequence": 2
+        },
+        {
+          "action": "build a non-activating render plan",
+          "action_id": "build-a-non-activating-render-plan",
+          "max_attempts": 0,
+          "max_requests": 0,
+          "mode": "static_non_activating",
+          "sequence": 3
+        }
+      ],
+      "activation": "external_non_activating",
+      "adjacent_negative": "missing one workflow chart fails inventory",
+      "advertised": "Helm for four developer workflows",
+      "calculated_max_requests": 0,
+      "candidate_id": "manifest-entry.helm.00-helm-for-four-developer-workflows",
+      "cleanup": "delete only local plan; never mutate a cluster",
+      "manifest_pointer": "/features/32/advertised/0",
+      "max_actions": 0,
+      "overhead_requests": 0,
+      "preconditions": [
+        "checked Base, Search, LVS, and Alerts chart trees"
+      ],
+      "readiness_observations": [
+        "all four workflow plans are complete",
+        "readiness probes remain workflow-specific"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "statically-inspect-each-chart-yaml",
+          "max_requests": 0
+        },
+        {
+          "action_id": "resolve-chart-dependencies-and-values",
+          "max_requests": 0
+        },
+        {
+          "action_id": "build-a-non-activating-render-plan",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/helm/developer-profiles/dev-profile-base/Chart.yaml",
+        "deploy/helm/developer-profiles/dev-profile-search/Chart.yaml",
+        "deploy/helm/developer-profiles/dev-profile-lvs/Chart.yaml",
+        "deploy/helm/developer-profiles/dev-profile-alerts/Chart.yaml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "actions": [
+        {
+          "action": "statically enumerate shipped charts",
+          "action_id": "statically-enumerate-shipped-charts",
+          "max_attempts": 0,
+          "max_requests": 0,
+          "mode": "static_non_activating",
+          "sequence": 1
+        },
+        {
+          "action": "resolve dependencies and values",
+          "action_id": "resolve-dependencies-and-values",
+          "max_attempts": 0,
+          "max_requests": 0,
+          "mode": "static_non_activating",
+          "sequence": 2
+        },
+        {
+          "action": "build non-activating service render plans",
+          "action_id": "build-non-activating-service-render-plans",
+          "max_attempts": 0,
+          "max_requests": 0,
+          "mode": "static_non_activating",
+          "sequence": 3
+        }
+      ],
+      "activation": "external_non_activating",
+      "adjacent_negative": "unknown chart name fails inventory",
+      "advertised": "Helm for most standalone services",
+      "calculated_max_requests": 0,
+      "candidate_id": "manifest-entry.helm.01-helm-for-most-standalone-services",
+      "cleanup": "delete only local plan; never mutate a cluster",
+      "manifest_pointer": "/features/32/advertised/1",
+      "max_actions": 0,
+      "overhead_requests": 0,
+      "preconditions": [
+        "checked standalone service chart trees"
+      ],
+      "readiness_observations": [
+        "agent, RTVI, VIOS, analytics, UI, infra, alerts, summarization are covered",
+        "no unshipped chart is claimed"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "statically-enumerate-shipped-charts",
+          "max_requests": 0
+        },
+        {
+          "action_id": "resolve-dependencies-and-values",
+          "max_requests": 0
+        },
+        {
+          "action_id": "build-non-activating-service-render-plans",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/helm/services/agent/Chart.yaml",
+        "deploy/helm/services/rtvi/Chart.yaml",
+        "deploy/helm/services/vios/Chart.yaml",
+        "deploy/helm/services/analytics/Chart.yaml",
+        "deploy/helm/services/ui/Chart.yaml",
+        "deploy/helm/services/infra/Chart.yaml",
+        "deploy/helm/services/alert/Chart.yaml",
+        "deploy/helm/services/video-summarization/Chart.yaml",
+        "deploy/helm/services/calibration-toolkit/Chart.yaml",
+        "deploy/helm/services/nims/Chart.yaml"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "actions": [
+        {
+          "action": "inspect init action sequence",
+          "action_id": "inspect-init-action-sequence",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "validate same-host endpoint wiring",
+          "action_id": "validate-same-host-endpoint-wiring",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "plan sandbox readiness",
+          "action_id": "plan-sandbox-readiness",
+          "max_attempts": 1,
+          "max_requests": 1,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "non-loopback undeclared provider fails policy",
+      "advertised": "NemoClaw/OpenClaw sandbox",
+      "calculated_max_requests": 2,
+      "candidate_id": "manifest-entry.nemoclaw-openclaw.00-nemoclaw-openclaw-sandbox",
+      "cleanup": "remove only candidate sandbox plan/config",
+      "manifest_pointer": "/features/33/advertised/0",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "loopback VSS endpoints, checked sandbox policy, and plugin config"
+      ],
+      "readiness_observations": [
+        "plugin and skills are declared",
+        "no cloud inference endpoint is required"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "inspect-init-action-sequence",
+          "max_requests": 0
+        },
+        {
+          "action_id": "validate-same-host-endpoint-wiring",
+          "max_requests": 0
+        },
+        {
+          "action_id": "plan-sandbox-readiness",
+          "max_requests": 1
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/scripts/nemoclaw/init_nemoclaw.sh"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "verify offline-stage contract",
+          "action_id": "verify-offline-stage-contract",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "plan pull-free restart actions",
+          "action_id": "plan-pull-free-restart-actions",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "evaluate missing-artifact gate",
+          "action_id": "evaluate-missing-artifact-gate",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "missing artifact blocks before start",
+      "advertised": "offline restart",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.offline-security.00-offline-restart",
+      "cleanup": "remove only candidate plan and temporary negative fixture",
+      "manifest_pointer": "/features/35/advertised/0",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "complete staged-artifact manifest and one intentionally missing-artifact variant"
+      ],
+      "readiness_observations": [
+        "all staged artifacts resolve",
+        "restart plan contains no pull/build/download"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "verify-offline-stage-contract",
+          "max_requests": 0
+        },
+        {
+          "action_id": "plan-pull-free-restart-actions",
+          "max_requests": 0
+        },
+        {
+          "action_id": "evaluate-missing-artifact-gate",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/scripts/thor-local.sh"
+      ],
+      "workload_type": "deployment"
+    },
+    {
+      "acceptance_class": "required_local",
+      "actions": [
+        {
+          "action": "resolve selected images",
+          "action_id": "resolve-selected-images",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 1
+        },
+        {
+          "action": "compare digest and staged ID",
+          "action_id": "compare-digest-and-staged-id",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 2
+        },
+        {
+          "action": "evaluate drift gate",
+          "action_id": "evaluate-drift-gate",
+          "max_attempts": 1,
+          "max_requests": 0,
+          "mode": "planning_only",
+          "sequence": 3
+        }
+      ],
+      "activation": "planning_only_local",
+      "adjacent_negative": "tag-only or drifted image fails before Compose",
+      "advertised": "content-addressed image locks",
+      "calculated_max_requests": 1,
+      "candidate_id": "manifest-entry.offline-security.01-content-addressed-image-locks",
+      "cleanup": "remove only temporary lock fixture",
+      "manifest_pointer": "/features/35/advertised/1",
+      "max_actions": 3,
+      "overhead_requests": 1,
+      "preconditions": [
+        "selected image list with digest and staged ID plus one drifted ID"
+      ],
+      "readiness_observations": [
+        "every image has a content lock",
+        "all staged IDs match"
+      ],
+      "requests_per_action": [
+        {
+          "action_id": "resolve-selected-images",
+          "max_requests": 0
+        },
+        {
+          "action_id": "compare-digest-and-staged-id",
+          "max_requests": 0
+        },
+        {
+          "action_id": "evaluate-drift-gate",
+          "max_requests": 0
+        }
+      ],
+      "source_surfaces": [
+        "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+        "deploy/docker/scripts/thor-local.sh"
+      ],
+      "workload_type": "deployment"
+    }
+  ],
+  "inventory_id": "remaining-entry-deployment-workloads",
+  "schema_version": 1
+}

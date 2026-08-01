@@ -429,6 +429,27 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/remaining-advertised-entry-candidates/tests"
 
+# Three candidate-only successor inputs make the future 289-to-500 oracle
+# transition explicit without changing the live ledgers. They preserve all 289
+# current oracle states/evidence, adapt all 211 exact semantic contracts, expand
+# the protocol design from 7 to 30 cases with all 23 additions non-activating,
+# and bind exact workloads for the 41 API and 19 deployment candidates.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-oracle-adapter/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-oracle-adapter/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/protocol-cases-v2-candidates/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/protocol-cases-v2-candidates/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/remaining-entry-workloads/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/remaining-entry-workloads/tests"
+
 # The candidate-only offline MV3DT observation and its immutable receipt are
 # verified above at exact predecessor identity by the CPU multimedia successor.
 # They are intentionally not replayed against the evolved current manifest.

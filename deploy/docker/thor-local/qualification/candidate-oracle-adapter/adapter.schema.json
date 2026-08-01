@@ -1,0 +1,595 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/candidate-oracle-adapter.schema.json",
+  "title": "VSS Thor-local candidate oracle adapter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "adapter_id",
+    "mode",
+    "target",
+    "source_locks",
+    "policy",
+    "summary",
+    "current_oracle_preservation",
+    "candidate_adapters_by_capability_id",
+    "adapter_payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "adapter_id": {"const": "vss-3.2.1-thor-candidate-oracle-adapter-211"},
+    "mode": {"const": "candidate_only_planning_index"},
+    "target": {
+      "const": {
+        "base_commit": "642b081eae180cffc6d53b30f31c6b15d514825a",
+        "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+        "product_version": "3.2.1"
+      }
+    },
+    "source_locks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate",
+        "candidate_schema",
+        "official_capabilities",
+        "official_capabilities_schema",
+        "capability_oracles",
+        "capability_oracles_schema"
+      ],
+      "properties": {
+        "candidate": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "raw_sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"}},
+        "candidate_schema": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.schema.json", "raw_sha256": "e3f09d7c86c46e236b9786f5eb3aa60868e67363224922ce04cfab3d60cd12a8"}},
+        "official_capabilities": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"}},
+        "official_capabilities_schema": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.schema.json", "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896"}},
+        "capability_oracles": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"}},
+        "capability_oracles_schema": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.schema.json", "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"}}
+      }
+    },
+    "policy": {
+      "const": {
+        "candidate_only": true,
+        "can_modify_live_ledgers_or_oracles": false,
+        "can_mark_passed_current": false,
+        "runtime_evidence": [],
+        "executor_materialization": "absent",
+        "warehouse_sample_bundle": "excluded"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_adapter_count",
+        "preserved_current_oracle_count",
+        "combined_capability_count",
+        "explicit_gap_requirement_count",
+        "candidate_execution_boundary_counts",
+        "candidate_state_counts",
+        "candidate_runtime_state_counts",
+        "current_oracle_state_counts",
+        "current_ledger_runtime_state_counts",
+        "candidate_evidence_record_count",
+        "current_evidence_record_count",
+        "candidate_executor_ready_count",
+        "candidate_promoted_count"
+      ],
+      "properties": {
+        "candidate_adapter_count": {"const": 211},
+        "preserved_current_oracle_count": {"const": 289},
+        "combined_capability_count": {"const": 500},
+        "explicit_gap_requirement_count": {"const": 74},
+        "candidate_execution_boundary_counts": {
+          "const": {"alternate_local": 46, "external": 6, "local": 159}
+        },
+        "candidate_state_counts": {
+          "const": {"external_boundary_unexecuted": 6, "open_unexecuted": 205}
+        },
+        "candidate_runtime_state_counts": {
+          "const": {"not_applicable": 6, "not_qualified": 205}
+        },
+        "current_oracle_state_counts": {
+          "const": {"external_boundary_unexecuted": 30, "open_unexecuted": 259}
+        },
+        "current_ledger_runtime_state_counts": {
+          "const": {
+            "blocked": 9,
+            "not_applicable": 32,
+            "not_qualified": 208,
+            "passed_prior": 1,
+            "static_only": 39
+          }
+        },
+        "candidate_evidence_record_count": {"const": 0},
+        "current_evidence_record_count": {"const": 0},
+        "candidate_executor_ready_count": {"const": 0},
+        "candidate_promoted_count": {"const": 0}
+      }
+    },
+    "current_oracle_preservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_records_canonical_sha256",
+        "oracle_records_canonical_sha256",
+        "state_evidence_projection_sha256",
+        "by_capability_id"
+      ],
+      "properties": {
+        "ledger_records_canonical_sha256": {"const": "afca818d0d73eecd692869f998e949e5e2df7c1b7fabf91d8a55afb1486eb96c"},
+        "oracle_records_canonical_sha256": {"const": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2"},
+        "state_evidence_projection_sha256": {"const": "82a748a7fa0065283df1f7e80ea3d479e073276b3a2881d8d13ffadf9de11abb"},
+        "by_capability_id": {
+          "type": "object",
+          "minProperties": 289,
+          "maxProperties": 289,
+          "propertyNames": {"type": "string", "minLength": 3},
+          "additionalProperties": {"$ref": "#/$defs/currentOracleState"}
+        }
+      }
+    },
+    "candidate_adapters_by_capability_id": {
+      "type": "object",
+      "minProperties": 211,
+      "maxProperties": 211,
+      "propertyNames": {"pattern": "^manifest-entry\\.[a-z0-9.-]+$"},
+      "additionalProperties": {"$ref": "#/$defs/candidateAdapter"}
+    },
+    "adapter_payload_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sourceLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sourceClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "locator"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "gapRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cleanup_policy",
+        "executor_class",
+        "id",
+        "literal_success_condition",
+        "required_evidence",
+        "runtime_evidence",
+        "setup_requirements",
+        "status",
+        "type"
+      ],
+      "properties": {
+        "cleanup_policy": {"type": "string", "minLength": 1},
+        "executor_class": {"type": "string", "minLength": 1},
+        "id": {"type": "string", "minLength": 1},
+        "literal_success_condition": {"type": "string", "minLength": 1},
+        "required_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "runtime_evidence": {"const": []},
+        "setup_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "status": {"const": "open_unexecuted"},
+        "type": {"type": "string", "minLength": 1}
+      }
+    },
+    "candidateOraclePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_strategy",
+        "required_observations",
+        "adjacent_negative",
+        "execution_boundary",
+        "cleanup_boundary"
+      ],
+      "properties": {
+        "fixture_strategy": {"type": "string", "minLength": 12},
+        "required_observations": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 4}
+        },
+        "adjacent_negative": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 4}
+        },
+        "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+        "cleanup_boundary": {"type": "string", "minLength": 12},
+        "authoritative_gap_requirement": {"$ref": "#/$defs/gapRequirement"}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^(required-observation|adjacent-negative)-[0-9]{2}$"},
+        "description": {"type": "string", "minLength": 4}
+      }
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "observation_id", "operator", "expected"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^assertion\\.(required-observation|adjacent-negative)-[0-9]{2}$"},
+        "observation_id": {"type": "string", "pattern": "^(required-observation|adjacent-negative)-[0-9]{2}$"},
+        "operator": {"enum": ["recorded_pass", "recorded_absent"]},
+        "expected": {"const": true}
+      }
+    },
+    "fixtureInputContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "manifest_pointer",
+        "advertised_literal",
+        "dependency_capability_ids",
+        "implementation_surfaces",
+        "required_semantics",
+        "source_claims"
+      ],
+      "properties": {
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "advertised_literal": {"type": "string", "minLength": 1},
+        "dependency_capability_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "implementation_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 2}
+        },
+        "required_semantics": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "source_claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/sourceClaim"}
+        }
+      }
+    },
+    "candidateContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_pointer",
+        "advertised_literal",
+        "implementation_surfaces",
+        "required_semantics",
+        "dependency_capability_ids",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "advertised_literal": {"type": "string", "minLength": 1},
+        "implementation_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 2}
+        },
+        "required_semantics": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "dependency_capability_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "ledgerBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_id",
+        "kind",
+        "title",
+        "source_claims",
+        "acceptance_class",
+        "thor_state",
+        "runtime_state",
+        "contract",
+        "gap"
+      ],
+      "properties": {
+        "feature_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "kind": {"enum": ["api", "calibration", "configuration", "deployment", "evaluation", "model", "model_customization", "performance", "protocol", "runtime_behavior", "security", "tooling"]},
+        "title": {"type": "string", "minLength": 1},
+        "source_claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/sourceClaim"}
+        },
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "thor_state": {"enum": ["wired", "partial"]},
+        "runtime_state": {"enum": ["not_applicable", "not_qualified"]},
+        "contract": {"$ref": "#/$defs/candidateContract"},
+        "gap": {"type": "string", "minLength": 24}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "availability",
+        "strategy",
+        "namespace",
+        "materialization",
+        "input_contract"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^fixture\\.manifest-entry\\."},
+        "kind": {"const": "candidate_generated_bounded"},
+        "availability": {"const": "not_staged"},
+        "strategy": {"type": "string", "minLength": 12},
+        "namespace": {"type": "string", "pattern": "^vss-candidate-[0-9a-f]{20}$"},
+        "materialization": {"type": "null"},
+        "input_contract": {"$ref": "#/$defs/fixtureInputContract"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intent",
+        "ownership_boundary",
+        "pre_state_required",
+        "targets",
+        "allowlist",
+        "executor",
+        "postcondition_collectors"
+      ],
+      "properties": {
+        "intent": {"type": "string", "minLength": 12},
+        "ownership_boundary": {"const": "candidate_owned_resources_only"},
+        "pre_state_required": {"const": true},
+        "targets": {"type": "null"},
+        "allowlist": {"type": "null"},
+        "executor": {"type": "null"},
+        "postcondition_collectors": {"type": "null"}
+      }
+    },
+    "executionBounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acceptance_class",
+        "execution_boundary",
+        "namespace",
+        "network_scope",
+        "max_duration_seconds",
+        "max_requests",
+        "max_actions",
+        "executor",
+        "collectors"
+      ],
+      "properties": {
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+        "namespace": {"type": "string", "pattern": "^vss-candidate-[0-9a-f]{20}$"},
+        "network_scope": {"enum": ["loopback_or_compose_internal", "operator_selected_local_alternate", "operator_approved_external_only"]},
+        "max_duration_seconds": {"type": "null"},
+        "max_requests": {"type": "null"},
+        "max_actions": {"type": "null"},
+        "executor": {"type": "null"},
+        "collectors": {"type": "null"}
+      }
+    },
+    "currentOracleState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "oracle_id",
+        "current_state",
+        "ledger_runtime_state",
+        "evidence",
+        "state_evidence_sha256"
+      ],
+      "properties": {
+        "oracle_id": {"type": "string", "pattern": "^oracle\\."},
+        "current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
+        "ledger_runtime_state": {"enum": ["blocked", "not_applicable", "not_qualified", "passed_prior", "static_only"]},
+        "evidence": {"const": []},
+        "state_evidence_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "candidateAdapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "oracle_id",
+        "profile_seed",
+        "mode_seed",
+        "candidate_entry_sha256",
+        "manifest_pointer",
+        "feature_id",
+        "advertised",
+        "prior_mapping_class",
+        "acceptance_class",
+        "execution_boundary",
+        "source_claims",
+        "implementation_surfaces",
+        "ledger_binding",
+        "reviewed_scenario_ids",
+        "candidate_oracle_plan",
+        "fixture",
+        "expected_observations",
+        "adjacent_negative_observations",
+        "assertions",
+        "admission_gates",
+        "cleanup",
+        "execution_bounds",
+        "readiness",
+        "current_state",
+        "runtime_state",
+        "evidence",
+        "can_promote_runtime_state"
+      ],
+      "properties": {
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\.[a-z0-9.-]+$"},
+        "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.[a-z0-9.-]+$"},
+        "profile_seed": {"enum": ["candidate-api", "candidate-calibration", "candidate-configuration", "candidate-deployment", "candidate-evaluation", "candidate-model", "candidate-model-customization", "candidate-performance", "candidate-protocol", "candidate-runtime-behavior", "candidate-security", "candidate-tooling"]},
+        "mode_seed": {"enum": ["static", "config", "runtime", "api", "protocol", "model", "deploy"]},
+        "candidate_entry_sha256": {"$ref": "#/$defs/sha256"},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "feature_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "advertised": {"type": "string", "minLength": 1},
+        "prior_mapping_class": {"enum": ["explicit_missing_entry_gap", "family_only_unreviewed"]},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+        "source_claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/sourceClaim"}
+        },
+        "implementation_surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 2}
+        },
+        "ledger_binding": {"$ref": "#/$defs/ledgerBinding"},
+        "reviewed_scenario_ids": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 2}
+        },
+        "candidate_oracle_plan": {"$ref": "#/$defs/candidateOraclePlan"},
+        "fixture": {"$ref": "#/$defs/fixture"},
+        "expected_observations": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/observation"}
+        },
+        "adjacent_negative_observations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/observation"}
+        },
+        "assertions": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/assertion"}
+        },
+        "admission_gates": {
+          "const": [
+            {
+              "id": "candidate-entry-bound",
+              "requirement": "candidate entry, source claims, and implementation surfaces are digest-bound",
+              "status": "satisfied_static"
+            },
+            {
+              "id": "fixture-materialized",
+              "requirement": "fixture path, generator, and digest are materialized",
+              "status": "unmet"
+            },
+            {
+              "id": "executor-implemented",
+              "requirement": "capability-specific executor is implemented and reviewed",
+              "status": "unmet"
+            },
+            {
+              "id": "collectors-implemented",
+              "requirement": "observation and cleanup collectors are implemented and reviewed",
+              "status": "unmet"
+            },
+            {
+              "id": "operator-approval",
+              "requirement": "explicit approval exists before any runtime or external activity",
+              "status": "unmet"
+            }
+          ]
+        },
+        "cleanup": {"$ref": "#/$defs/cleanup"},
+        "execution_bounds": {"$ref": "#/$defs/executionBounds"},
+        "readiness": {
+          "const": {
+            "classification": "planning_index_only",
+            "fixture_materialized": false,
+            "executor_ready": false,
+            "blockers": [
+              "fixture_not_materialized",
+              "executor_not_implemented",
+              "collectors_not_implemented",
+              "operator_approval_absent"
+            ]
+          }
+        },
+        "current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
+        "runtime_state": {"enum": ["not_applicable", "not_qualified"]},
+        "evidence": {"const": []},
+        "can_promote_runtime_state": {"const": false}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"prior_mapping_class": {"const": "explicit_missing_entry_gap"}},
+            "required": ["prior_mapping_class"]
+          },
+          "then": {
+            "properties": {
+              "candidate_oracle_plan": {"required": ["authoritative_gap_requirement"]}
+            }
+          },
+          "else": {
+            "properties": {
+              "candidate_oracle_plan": {
+                "not": {"required": ["authoritative_gap_requirement"]}
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

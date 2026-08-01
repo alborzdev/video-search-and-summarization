@@ -106,6 +106,14 @@ a schema-valid 500-capability ledger with one exact same-family title mapping
 per advertised string. This is a merge candidate, not the live ledger and not
 runtime evidence; official counts remain 289 until a separate successor merge.
 
+Three candidate-only inputs now make that successor mechanically representable:
+`candidate-oracle-adapter/` translates all 211 exact semantic plans while
+locking the current 289 oracle states and evidence; `protocol-cases-v2-candidates/`
+preserves the seven live protocol cases and adds 23 non-activating planning
+cases; and `remaining-entry-workloads/` defines exact bounded workloads for the
+41 API and 19 deployment candidates. None changes the live denominator or
+claims Thor runtime qualification.
+
 A first current-ledger successor added the exact CPU multimedia advertised entry
 as capability 277. The tooling-entry successor then adds the eight exact Spatial
 AI utility entries and four exact synthetic-data tool entries as capabilities
