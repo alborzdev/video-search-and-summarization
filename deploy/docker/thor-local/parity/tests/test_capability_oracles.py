@@ -94,7 +94,18 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertTrue(all(not item["fixture"]["warehouse_sample_bundle"] for item in self.plan["oracles"]))
         calibration = [item for item in self.plan["oracles"] if item["capability_id"].startswith("calibration.")]
         self.assertTrue(calibration)
-        self.assertTrue(all(item["fixture"]["kind"] == "generated_custom_media" for item in calibration))
+        expected = {
+            item["capability_id"]: (
+                "operator_external_contract"
+                if item["capability_id"] == "calibration.sdg.workflow"
+                else "generated_custom_media"
+            )
+            for item in calibration
+        }
+        self.assertEqual(
+            {item["capability_id"]: item["fixture"]["kind"] for item in calibration},
+            expected,
+        )
 
     def test_cleanup_intent_is_namespaced_and_planning_only(self) -> None:
         local = [item for item in self.plan["oracles"] if item["current_state"] == "open_unexecuted"]

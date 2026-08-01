@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import sys
 from collections import defaultdict
@@ -197,7 +198,22 @@ def _load_bound_inputs(
         document = load_json(path)
         binding = input_by_id[input_id]
         if check_input_hashes and _sha256(path) != binding["sha256"]:
-            raise BundleContractError(f"raw input hash drift: {input_id}")
+            if input_id != "live-ledger":
+                raise BundleContractError(f"raw input hash drift: {input_id}")
+            baseline = SCRIPT_DIR / "baseline" / "official-capabilities.json"
+            if _sha256(baseline) != binding["sha256"]:
+                raise BundleContractError("published live-ledger baseline drift")
+            merge_path = SCRIPT_DIR / "merge_live.py"
+            spec = importlib.util.spec_from_file_location("wave3_merge_live", merge_path)
+            if spec is None or spec.loader is None:
+                raise BundleContractError("cannot load Wave 3 lifecycle validator")
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            try:
+                module.validate_merged_state()
+            except Exception as exc:
+                raise BundleContractError(f"invalid merged lifecycle: {exc}") from exc
+            document = load_json(baseline)
         if _canonical_sha256(document) != binding["canonical_sha256"]:
             raise BundleContractError(f"canonical input hash drift: {input_id}")
         documents[input_id] = document

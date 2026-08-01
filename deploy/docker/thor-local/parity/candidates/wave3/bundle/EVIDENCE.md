@@ -2,7 +2,7 @@
 
 ## Scope and result
 
-The bundle was evaluated as a deterministic merge plan only. No containers were
+The bundle was evaluated and applied as a deterministic static merge. No containers were
 started or stopped, Docker was not changed, no assets were downloaded, and the
 live ledger was not edited.
 
@@ -14,7 +14,11 @@ Validated proposal:
 | Live source records | 55 |
 | Candidate source records | 96 |
 | Unique proposed sources | 140 |
-| Live capabilities | 161 |
+| Published baseline capabilities | 161 |
+| Merged live capabilities | 276 |
+| Candidate source URIs | 140 |
+| Live claim-bearing sources | 126 |
+| Receipt-recorded non-claim exclusions | 14 |
 | Collision-free new capabilities | 115 |
 | Proposed capabilities | 276 |
 | Enrichment records / unique targets | 46 / 44 |
@@ -98,7 +102,7 @@ python3 -m ruff check \
 Observed results:
 
 - validator: PASS, with all exact counts above;
-- mutation suite: 34 tests PASS;
+- bundle and merge mutation suite: 37 tests PASS;
 - Ruff: PASS.
 
 The mutation suite covers duplicate/non-finite JSON, plan and input hash drift,
@@ -113,8 +117,17 @@ correction, Smart City external-boundary normalization, and count mutation.
 ## Limits
 
 This evidence does not assert that 276 records have runtime pass evidence. It
-does not merge the records into the live ledger or create executor-ready
+merges the records into the live static ledger but does not create executor-ready
 oracles. Warehouse runtime qualification also remains bounded by the documented
 IGX-THOR 38.5 contract versus this AGX Thor 38.4 host, the current Docker cgroup
 driver mismatch, missing runtime assets, and the unsupported single-GPU local
 Warehouse agent-VLM topology.
+
+## Final receipt-bound outputs
+
+- ledger: `0dcd9aabc508b79d863da60c6b7ab592dd3f57032037dac750b160f72ff2f9b0`
+- manifest: `bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a`
+- acceptance inventory: `ba7d1b6d81b511e525eaadb79aac54416711d2ed543984847ddb9e9a8df7cce6`
+- capability oracles: `afaa785d6f7fb830b92042f61284e363915548573615cdc051e1ca8211a2b54b`
+- capability schema: `6bbd5354db37f871a2a912a79a1bb45c477617ef65e54e1fb1a13f0269efad39`
+- merge receipt: `7bbefa6fdc0cd8223b0aafdace181526ef5ef5f5fcff17dc192d2d2dbb6eeb5c`

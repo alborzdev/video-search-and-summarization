@@ -38,26 +38,28 @@ documentation/repository discrepancies. Validate it directly:
 python3 deploy/docker/thor-local/parity/verify_official_capabilities.py --report
 ```
 
-The live 161-capability ledger is an intermediate denominator, not an exhaustive
-claim that all official documentation has been transcribed. A post-merge audit
-of the 152 distinct HTML targets linked by the versioned documentation index
-found 59 substantive semantic/workflow/configuration/benchmark pages that still
-needed claim extraction, alongside 34 navigation/duplicate/reference pages and
-8 external/license/sample-dependency pages. The machine-readable Wave 3 coverage
-package under `candidates/wave3/coverage/` binds those counts to the exact index
-target set. The reviewed Agent/Smart City, Systems, and Calibration/Warehouse
-candidates now stage the omitted claims, but feature and runtime parity remain
-open until those candidates are merged and qualified.
+The live 276-capability ledger is the complete reviewed VSS 3.2.1 static
+denominator. Every page in the exact 172-page documentation graph is classified,
+and every reviewed claim-bearing source is merged. This is inventory closure,
+not evidence that every capability runs on this Thor. A historical audit of the
+152 distinct HTML targets linked directly by the versioned documentation index
+found 59 substantive semantic/workflow/configuration/benchmark pages that needed
+claim extraction, alongside 34 navigation/duplicate/reference pages and 8
+external/license/sample-dependency pages. The machine-readable Wave 3 coverage
+package under `candidates/wave3/coverage/` preserves that pre-merge denominator;
+the reviewed Agent/Smart City, Systems, and Calibration/Warehouse claims are now
+merged into the live ledger.
 
 That direct-index denominator is also not the final documentation graph. A
 recursive same-version follow-up reached a 172-page fixed point (including
-`index.html`) and found 19 additional Warehouse descendant pages that are not
-in the 152 direct-link set or the live ledger. Their reviewed claim extraction
-is staged in the Wave 3 Calibration/Warehouse candidate but remains open until
-that candidate is merged into the live ledger. The exact URL set, 26,449-edge
-crawl graph, depth/frontier proof, and 8 semantic / 9 external-workflow / 2
-navigation classification are pinned under `candidates/wave3/recursive-coverage/`.
-The 152-page direct-index package must not be described as whole-site coverage.
+`index.html`) and found 19 additional Warehouse descendant pages outside the 152
+direct-link set. All 19 are now classified: eight claim-bearing semantic pages
+are represented in the merged ledger, nine external workflows remain explicit
+boundaries, and two navigation/reference pages remain non-claim receipt entries.
+The exact URL set, 26,449-edge crawl graph, depth/frontier proof, and 8 semantic /
+9 external-workflow / 2 navigation classification are pinned under
+`candidates/wave3/recursive-coverage/`. The 152-page direct-index package must
+not be described as whole-site coverage.
 
 `official-capabilities.schema.json` documents the on-disk format. The validator
 requires every reviewed claim to be cross-linked from exactly one manifest
@@ -79,11 +81,17 @@ network-refresh commands.
 `candidates/wave3/bundle/` is the planning-only merge contract for those three
 reviewed candidate families. It binds their exact bytes, resolves duplicate and
 conflicting source IDs, preserves both approved multi-package enrichments, and
-rejects unplanned capability or fixture collisions. Its current proposal would
-expand the live ledger from 161 to 276 capabilities and from 55 to 140 unique
-claim sources; these are proposed merge counts, not live or runtime-qualified
-counts. The optional Warehouse sample bundle remains excluded, while operator
-custom media, calibration, model, and configuration inputs remain in scope.
+rejects unplanned capability or fixture collisions. Its deterministic merge
+expanded the published 161-capability baseline to 276 live capabilities and 45
+explicit discrepancies. The candidate registry has
+140 unique source URIs; 126 claim-bearing sources are live and exactly 14
+navigation/summary/legal/no-independent-claim pages remain receipt-recorded
+exclusions. The receipt accepts only the pinned baseline or the exact wholly
+merged outputs; partial or co-tampered states fail. The manifest now contains 55
+families and 500 advertised entries. These are static review counts, not
+runtime-qualified counts. The optional Warehouse sample bundle remains excluded,
+while operator custom media, calibration, model, and configuration inputs remain
+in scope.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and
@@ -96,10 +104,16 @@ record with the exact ledger semantics, scenario and prospective fixture
 identity, required observations/assertions, arithmetic work bounds, admission
 gates, and intended mutation ownership. These prose-derived requirements are
 useful for implementation review but do not provide fixture files/generators,
-commands/requests, collectors, or executable cleanup. All 161 entries are
+commands/requests, collectors, or executable cleanup. All 276 entries are
 therefore explicitly `planning_index_only`; the executor-ready count is zero.
 The seven planned modes are static, config, runtime, API, protocol, model, and
 deploy.
+
+`../qualification/static-cases/` is an isolated first tranche of 24 bounded
+static observations. Its inventory, generated calibration fixtures, and tests
+are part of the unified static wrapper, but every case remains `candidate_only`,
+`executor_ready: false`, and unable to advance a capability. Current outcomes
+are diagnostic observations rather than runtime evidence.
 
 Validate or review the oracle counts without executing any oracle:
 
@@ -130,7 +144,7 @@ repeat those bindings and a passing cleanup result.
 
 `candidates/wave2/` preserves the reviewed extraction provenance for the 30
 capabilities, 9 enrichments, and 14 discrepancy/boundary records now merged
-into the live 161-capability denominator. Its validator accepts only a wholly
+into the published 161-capability Wave 3 baseline. Its validator accepts only a wholly
 unmerged or wholly merged lifecycle and rejects partial application. The live
 ledger deduplicates four same-URI sources and requires at least two structured
 source/locator/claim observations for every discrepancy, including two claims

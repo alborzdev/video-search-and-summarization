@@ -1,0 +1,500 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "integration_state": "candidate_only",
+    "executor_ready": false,
+    "can_advance_capability": false,
+    "network": "forbidden",
+    "docker": "forbidden",
+    "subprocess_lifecycle": "forbidden",
+    "warehouse_sample_bundle": "excluded",
+    "max_bytes": 8388608,
+    "max_files": 64,
+    "deadline_seconds": 10,
+    "allowed_outcomes": ["observed_match", "observed_mismatch", "blocked", "not_applicable"]
+  },
+  "evidence_schema_binding": {
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/runtime-evidence.schema.json",
+    "sha256": "7267eb3ea5e762924392f26df765b0d2853a17cdd6fcf6a6dc146e588e480a0f",
+    "usage": "shape_reference_only_no_runtime_evidence"
+  },
+  "cases": [
+    {
+      "case_id": "static-case.calibration-schema-vss-json",
+      "capability_id": "calibration.schema.vss-json",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "calibration_schema",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "calibration.schema.vss-json",
+        "contract_sha256": "a7996e01204db670829ddb948ba15cf3bdd8414db0af109d8a11abd389428a5c"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json",
+          "contains": ["\"calibrationType\"", "\"globalCoordinates\"", "\"intrinsicMatrix\""]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.warehouse-thor-platform",
+      "capability_id": "prereq.warehouse.thor-platform",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "host_platform",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "prereq.warehouse.thor-platform",
+        "contract_sha256": "a7e67c6f4799c0ec0554864754f5b4471fd7c508d8e6d5cd61f050ecb9fed000"
+      },
+      "disposition": "safety_boundary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.warehouse-profile-hardware-matrix",
+      "capability_id": "configuration.warehouse.profile-hardware-matrix",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "configuration.warehouse.profile-hardware-matrix",
+        "contract_sha256": "90479c206d924a9da7a9c0b2e76cf08f93fca2ffaf10b0e15be19ea8c1ba3a91"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/.env",
+          "contains": ["BP_PROFILE=bp_wh", "bp_wh_kafka", "bp_wh_redis", "bp_wh_auto_calib", "HARDWARE_PROFILE="]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.warehouse-broker-minimal-retention",
+      "capability_id": "configuration.warehouse.broker-minimal-retention",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "configuration.warehouse.broker-minimal-retention",
+        "contract_sha256": "805996381d25c0618d58cb585217f7b41bc5b152dfe9b7ecdd2cd83d6cf9c183"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/.env",
+          "contains": ["MINIMAL_PROFILE=\"true\"", "ELASTICSEARCH_ILM_MIN_AGE=4h", "bp_wh_kafka", "bp_wh_redis"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.warehouse-rtdetr-deepstream",
+      "capability_id": "configuration.warehouse.rtdetr-deepstream",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "configuration.warehouse.rtdetr-deepstream",
+        "contract_sha256": "7728db37534a3f35dc21de451f3adeff7a27e201af1116e13d6cbc915b5ff7e8"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-pgie-config.yml",
+          "contains": ["infer-dims: 3;640;640", "rtdetr_warehouse_v1.0.2.fp16.onnx", "num-detected-classes: 7", "NvDsInferParseCustomRTDETRTAO"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.warehouse-sparse4d-deepstream",
+      "capability_id": "configuration.warehouse.sparse4d-deepstream",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "configuration.warehouse.sparse4d-deepstream",
+        "contract_sha256": "e47d3a2a6dae550f402b4f283ad02a77e1fb7ef3f4f253337ffe99e9c1335d9a"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app/deepstream/configs/config.yaml",
+          "contains": ["sparse4d_warehouse_v2.2.onnx", "bev_group_name: bev-sensor-1", "num_anchor: 900", "embed_dims: 256", "num_temp_instances: 600"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.warehouse-mv3dt-deepstream",
+      "capability_id": "configuration.warehouse.mv3dt-deepstream",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "configuration.warehouse.mv3dt-deepstream",
+        "contract_sha256": "27db1baa50446c3622cbb46c42af2c6d7c7f15467805433872b1189cfef087cc"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-pgie-config.yml",
+          "contains": ["rtdetr_warehouse_v1.0.2.fp16.onnx", "filter-out-class-ids: 4;6"]
+        },
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/pub_sub_info_config.yml",
+          "contains": ["localhost:1883", "Camera_01"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.warehouse-destructive-boundary",
+      "capability_id": "behavior.warehouse.destructive-troubleshooting-boundaries",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "binding",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "behavior.warehouse.destructive-troubleshooting-boundaries",
+        "contract_sha256": "c976d5364a24ec3f2094c33daf04bfd29856aa7c7bc91d36e338803a6ac7184a"
+      },
+      "disposition": "safety_boundary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.warehouse-reference-latency",
+      "capability_id": "performance.warehouse.profile-latency",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "binding",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "performance.warehouse.profile-latency",
+        "contract_sha256": "6cf7c175db1119cadcc03c70c54f9020792d6ad20e37e4bbfc4f96c426e3139c"
+      },
+      "disposition": "reference_boundary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.warehouse-sdg-toolchain-boundary",
+      "capability_id": "boundary.warehouse.sdg-toolchain",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "binding",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "boundary.warehouse.sdg-toolchain",
+        "contract_sha256": "41a68fd2a18ce77b06ef433c7ebd6c93a60e376aa999b15d536a3e947c786795"
+      },
+      "disposition": "external_boundary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.warehouse-sdg-scene-calibration-boundary",
+      "capability_id": "boundary.warehouse.sdg-scene-calibration",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "binding",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "boundary.warehouse.sdg-scene-calibration",
+        "contract_sha256": "5622066d92a7b7ea4bb83c2c9e183362f48b3b74110134062777f7b1ab9b0a54"
+      },
+      "disposition": "external_boundary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.warehouse-sdg-postprocess-boundary",
+      "capability_id": "boundary.warehouse.sdg-postprocess",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "binding",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "boundary.warehouse.sdg-postprocess",
+        "contract_sha256": "3e36af114ff0a99206e060d59621aeb4c3be8419bf73bf8a55081a384cbe933f"
+      },
+      "disposition": "external_boundary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.warehouse-sim2real-boundary",
+      "capability_id": "boundary.warehouse.sim2real",
+      "family": "calibration_warehouse",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "binding",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "collection": "new_capabilities",
+        "record_id": "boundary.warehouse.sim2real",
+        "contract_sha256": "a95c31e8167526b8ff25af66a5f3b2afcd8698291fe15cdb1a64b9f4161f9f0f"
+      },
+      "disposition": "external_boundary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.platform-validated-gpus",
+      "capability_id": "prereq.platform.validated-gpus",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "host_platform",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "prereq.platform.validated-gpus",
+        "contract_sha256": "e87bcb69b45f9b90e0cf9b831f616e25d5ef1e965b40467fd37802dba6ebcc5e"
+      },
+      "disposition": "ordinary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.platform-agx-thor-software",
+      "capability_id": "prereq.platform.agx-thor-software",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "host_platform",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "prereq.platform.agx-thor-software",
+        "contract_sha256": "dea85b404c1e254784207bd1c13b8b4479a1189e17651165aeb0fe40714801f1"
+      },
+      "disposition": "ordinary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.platform-kernel-thor-runtime",
+      "capability_id": "prereq.platform.kernel-and-thor-runtime",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "host_kernel",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "prereq.platform.kernel-and-thor-runtime",
+        "contract_sha256": "b615fb493200bf5666cfbcdff4bd051e36d0f44b2ad48d9074d94bfe587f7708"
+      },
+      "disposition": "ordinary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.thor-fully-local-future-boundary",
+      "capability_id": "boundary.thor.fully-local-future",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "boundary.thor.fully-local-future",
+        "contract_sha256": "acc9a992a3d3626fda9e3e1d6749c572b971b59a7b688f46971175f14ea2eb9a"
+      },
+      "disposition": "safety_boundary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/thor-local/parity/manifest.json",
+          "contains": ["Official fully local all-workflow Thor deployment is future-planned", "boundary.thor.fully-local-future"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.agent-skills-catalog-16",
+      "capability_id": "tooling.agent-skills.catalog-16",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "skills_catalog",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "tooling.agent-skills.catalog-16",
+        "contract_sha256": "7d0d37ab3f18673ddb390383dfe4d75ce95cb942fd80872ab5ee83974379d8f5"
+      },
+      "disposition": "ordinary",
+      "source_assertions": []
+    },
+    {
+      "case_id": "static-case.agent-file-llm-schema",
+      "capability_id": "configuration.agent.file-llm-schema",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "configuration.agent.file-llm-schema",
+        "contract_sha256": "9aba734606dfaf8340da497ed3c1af1b216631764bf4f67cb1a59a4b07ea2e6a"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+          "contains": ["general:", "object_stores:", "function_groups:", "functions:", "llms:", "workflow:"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.agent-mcp-client",
+      "capability_id": "configuration.agent.mcp-client",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "configuration.agent.mcp-client",
+        "contract_sha256": "82fbac75b85fcaaaed0e4881d70334938b06e971b6fbdc6c74e66e7d6435aea9"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+          "contains": ["_type: mcp_client", "transport: streamable-http", "include:"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.agent-knowledge-retrieval-backends",
+      "capability_id": "configuration.agent.knowledge-retrieval-backends",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "configuration.agent.knowledge-retrieval-backends",
+        "contract_sha256": "cc7a5cfcf6fdccca024d25b8740c191854bbb6a24557c1e6f952ae940e07dea6"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "services/agent/src/vss_agents/register_knowledge_layers.py",
+          "contains": ["es_caption", "frag_api", "frag_lib", "langchain", "llama_index"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.agent-hierarchy",
+      "capability_id": "configuration.agent.hierarchy",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "configuration.agent.hierarchy",
+        "contract_sha256": "18cdc2fcdf3853468e97a292dac9a9a2c5e9bd954d1a742d753aabde7f0f3305"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+          "contains": ["_type: report_agent", "_type: top_agent", "subagent_names:", "tool_names:"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.rt-embed-model-source",
+      "capability_id": "configuration.rt-embed.model-source",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "configuration.rt-embed.model-source",
+        "contract_sha256": "f238928bf3c4e1faa6cf9ad587cde7763872fbadd76e6ee5c98dd59d6c6fd399"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "services/rtvi/rt-embed/docker/compose.yaml",
+          "contains": ["MODEL_PATH:", "git:https://huggingface.co/nvidia/Cosmos-Embed1-448p", "MODEL_IMPLEMENTATION_PATH:", "MODEL_REPOSITORY_SCRIPT_PATH:"]
+        }
+      ]
+    },
+    {
+      "case_id": "static-case.warehouse-behavior-analytics-config",
+      "capability_id": "configuration.warehouse.behavior-analytics",
+      "family": "live_static",
+      "integration_state": "candidate_only",
+      "executor_ready": false,
+      "can_advance_capability": false,
+      "adapter": "source_contract",
+      "binding": {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "collection": "capabilities",
+        "record_id": "configuration.warehouse.behavior-analytics",
+        "contract_sha256": "978e5d2c5914b2af3c8123a8fef2df3e6b42897ee358576443f13c7642f63a51"
+      },
+      "disposition": "ordinary",
+      "source_assertions": [
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/vss-behavior-analytics/configs/vss-behavior-analytics-config.json",
+          "contains": ["\"redisStream\"", "\"mdx-raw\"", "\"mdx-frames\"", "\"mdx-behavior\"", "\"mdx-events\"", "\"mdx-incidents\""]
+        }
+      ]
+    }
+  ]
+}

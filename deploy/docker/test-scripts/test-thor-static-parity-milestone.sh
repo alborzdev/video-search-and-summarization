@@ -81,7 +81,16 @@ python3 -m unittest discover \
 python3 "${thor_local_root}/parity/candidates/wave3/bundle/validate_bundle.py" --json
 python3 -m unittest discover \
   -s "${thor_local_root}/parity/candidates/wave3/bundle" \
-  -p 'test_bundle.py' -v
+  -p 'test*.py' -v
+python3 "${repo_root}/deploy/docker/thor-local/parity/candidates/wave3/bundle/merge_live.py" --report
+
+# This first static qualification tranche is isolated and non-advancing. It
+# validates 24 bounded candidate cases but cannot create runtime evidence or
+# mark an oracle executor-ready.
+python3 "${thor_local_root}/qualification/static-cases/static_case_executor.py" validate
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/static-cases/tests" \
+  -p 'test_static_case_executor.py' -v
 
 python3 "${thor_local_root}/rt-vlm/model_matrix.py" \
   --matrix "${thor_local_root}/rt-vlm/model-matrix.json" \

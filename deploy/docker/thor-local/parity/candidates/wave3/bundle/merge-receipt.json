@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "merge_id": "wave3-vss-3.2.1-thor-static",
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "bundle": {
+    "path": "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-plan.json",
+    "raw_sha256": "bcb98e16ed991eb1e92504c1d2031c8d5a1f690cde73509a8b40848eca990a3d",
+    "canonical_sha256": "7c61cb7569f095c66a8590ef56b323364643899271a460b7c375abbc6adb0fea"
+  },
+  "published_baseline": {
+    "commit": "45dd109d767f11f0bdef0ea25a31ef4693eccae6",
+    "files": {
+      "official-capabilities.json": "e33eff2cc03f7770e0513a061732ec860ccb241721e40b9d60d6dbb2b0dafee8",
+      "manifest.json": "4c2712271a0157522d2ad5b8335a0853309796d33f72ef1396605a3f3baecdc4",
+      "capability-oracles.json": "5462c555436b96ec3c2fab9f3af3223fce26b064d85ee4cfd1c38128bceff56b",
+      "acceptance_inventory.json": "24f2ee284abc795cdc14537319f99c2b0655718ab541f1381132085cf20cff26"
+    }
+  },
+  "candidates": [
+    {
+      "id": "agent-smartcity",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
+      "raw_sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395",
+      "canonical_sha256": "a0c366965541898d6c9f978f938a1fe8fc77fac84c1b992af09f96fc8d5ea9b7"
+    },
+    {
+      "id": "systems",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json",
+      "raw_sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539",
+      "canonical_sha256": "b4417c11a667bf4a6b2fa8c780f90e5504107c25821e117f6a5adc83af19af93"
+    },
+    {
+      "id": "calibration-warehouse",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+      "raw_sha256": "1bc083b7ef0419a0f6975007cf672c477e9de0d164a7c350976f069199576ade",
+      "canonical_sha256": "e8aa7045c93cf0ef73e70034dd7d8efedb4f2c5e54153f10008c83eb70911783"
+    }
+  ],
+  "systems_feature_map": {
+    "path": "deploy/docker/thor-local/parity/candidates/wave3/bundle/systems-feature-map.json",
+    "raw_sha256": "ad4a1f56c528e404c3b9bb2eb2c86539801c1fc2ff7c21c546c48c78ff3d9091",
+    "canonical_sha256": "98a3fae17478bde0fe044ec6e30e57748427dce5a07766dc359c237ded13073f",
+    "entry_count": 55
+  },
+  "source_resolutions": {
+    "policy": "canonical_uri_reuse_live_first",
+    "duplicate_uri_resolutions": [
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
+        "canonical_source_id": "release-notes-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "release-notes-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "release-notes-3.2.1"
+          },
+          {
+            "input_id": "systems",
+            "source_id": "doc.release-notes"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Configuration.html",
+        "canonical_source_id": "agent-config-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-config-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-config-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Customization.html",
+        "canonical_source_id": "agent-customization-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-customization-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-customization-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Evaluation.html",
+        "canonical_source_id": "agent-eval-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-eval-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-eval-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Known-Issues.html",
+        "canonical_source_id": "agent-known-issues-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-known-issues-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-known-issues-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-llm.html",
+        "canonical_source_id": "agent-llm-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-llm-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-llm-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-vlm.html",
+        "canonical_source_id": "agent-vlm-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-vlm-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-vlm-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-Observability.html",
+        "canonical_source_id": "agent-observability-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-observability-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-observability-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-report-generation.html",
+        "canonical_source_id": "agent-report-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "agent-report-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "agent-report-doc-3.2.1"
+          }
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-orchestrator-mcp.html",
+        "canonical_source_id": "orchestrator-mcp-doc-3.2.1",
+        "contributors": [
+          {
+            "input_id": "live-ledger",
+            "source_id": "orchestrator-mcp-doc-3.2.1"
+          },
+          {
+            "input_id": "agent-smartcity",
+            "source_id": "orchestrator-mcp-doc-3.2.1"
+          }
+        ]
+      }
+    ],
+    "source_id_remaps": [
+      {
+        "input_id": "systems",
+        "from_source_id": "doc.release-notes",
+        "to_source_id": "release-notes-3.2.1",
+        "uri": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
+        "claim_reference_count": 13
+      }
+    ],
+    "source_id_renames": [
+      {
+        "input_id": "agent-smartcity",
+        "from_source_id": "video-analytics-mcp-doc-3.2.1",
+        "to_source_id": "agent-video-analytics-mcp-doc-3.2.1",
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/Video-Analytics-MCP-Server.html",
+        "claim_reference_count": 1,
+        "reason": "same_source_id_distinct_uri"
+      }
+    ]
+  },
+  "excluded_from_live_claim_registry": [
+    {
+      "package": "agent-smartcity",
+      "source_id": "agent-api-wrapper-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-api.html",
+      "classification": "empty_api_wrapper",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "agent-smartcity",
+      "source_id": "agent-workflows-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/agent-workflows.html",
+      "classification": "navigation_or_placeholder",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "agent-smartcity",
+      "source_id": "smartcity-development-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Smartcity-Development-Workflow.html",
+      "classification": "navigation_or_placeholder",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "agent-smartcity",
+      "source_id": "smartcity-faq-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/FAQ.html",
+      "classification": "navigation_or_placeholder",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "agent-smartcity",
+      "source_id": "smartcity-introduction-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Introduction.html",
+      "classification": "summary_duplicate",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "agent-smartcity",
+      "source_id": "smartcity-license-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/License-Information.html",
+      "classification": "legal_external",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "agent-smartcity",
+      "source_id": "smartcity-operations-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Operations.html",
+      "classification": "navigation_or_placeholder",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "agent-smartcity",
+      "source_id": "smartcity-troubleshooting-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Troubleshooting-Guide.html",
+      "classification": "navigation_or_placeholder",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "calibration-warehouse",
+      "source_id": "warehouse-accuracy-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Accuracy-Performance-Benchmarks.html",
+      "classification": "navigation_duplicate_reference",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "calibration-warehouse",
+      "source_id": "warehouse-blueprint-profiles-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/blueprint-profiles.html",
+      "classification": "navigation_duplicate_reference",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "calibration-warehouse",
+      "source_id": "warehouse-sdg-index-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Synthetic-Data-Generation.html",
+      "classification": "navigation_duplicate_reference",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "calibration-warehouse",
+      "source_id": "warehouse-sdg-scene-customization-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "classification": "navigation_duplicate_reference",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "calibration-warehouse",
+      "source_id": "warehouse-system-sizing-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/System-Sizing-Guide.html",
+      "classification": "navigation_duplicate_reference",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    },
+    {
+      "package": "calibration-warehouse",
+      "source_id": "warehouse-toc-doc-3.2.1",
+      "uri": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/warehouse-toc.html",
+      "classification": "navigation_duplicate_reference",
+      "reason": "navigation_summary_legal_or_no_independent_capability_claim"
+    }
+  ],
+  "expected_post_counts": {
+    "candidate_registry_sources": 140,
+    "excluded_non_claim_sources": 14,
+    "live_claim_sources": 126,
+    "capabilities": 276,
+    "discrepancies": 45,
+    "guardrails": 10,
+    "planning_requirements": 110,
+    "oracles": 276,
+    "executor_ready": 0
+  },
+  "expected_discrepancy_distributions": {
+    "record_semantics": {
+      "legacy_cross_source": 18,
+      "single_source_record": 19,
+      "cross_source_discrepancy": 8
+    },
+    "category": {
+      "legacy_unspecified": 18,
+      "boundary": 15,
+      "discrepancy": 10,
+      "scoped_default": 2
+    }
+  },
+  "boundaries": {
+    "warehouse_sample_bundle": "excluded_optional",
+    "warehouse_official_platform": "IGX-THOR Jetson Linux 38.5",
+    "current_host": "AGX Thor Jetson Linux 38.4",
+    "warehouse_single_gpu_agent_vlm_official": false,
+    "auto_calibration_official_architecture": "x86_64",
+    "docker_cgroup_driver_required": "cgroupfs",
+    "runtime_pass_evidence_added": false
+  },
+  "contract_sha256": "733ff41b1aa473f7a6e1a117d7162c981dca99034d080677ece7b4b4c220c46b",
+  "outputs": {
+    "official-capabilities.json": "0dcd9aabc508b79d863da60c6b7ab592dd3f57032037dac750b160f72ff2f9b0",
+    "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+    "acceptance_inventory.json": "ba7d1b6d81b511e525eaadb79aac54416711d2ed543984847ddb9e9a8df7cce6",
+    "capability-oracles.json": "afaa785d6f7fb830b92042f61284e363915548573615cdc051e1ca8211a2b54b",
+    "official-capabilities.schema.json": "6bbd5354db37f871a2a912a79a1bb45c477617ef65e54e1fb1a13f0269efad39"
+  },
+  "lifecycle": "wholly_merged"
+}

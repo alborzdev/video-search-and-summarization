@@ -1,6 +1,6 @@
 # Wave 3 bundle and merge plan
 
-This package joins the isolated Agent/Smart City, Systems, and
+This package joins the reviewed Agent/Smart City, Systems, and
 Calibration/Warehouse candidates into one fail-closed **planning artifact**. It
 does not edit the live capability ledger, create runtime evidence, or qualify a
 service on Thor.
@@ -12,10 +12,14 @@ recomputes the proposed merged counts and rejects input drift, undocumented
 source remaps, capability, discrepancy, guardrail, or fixture collisions, and
 mutations to the two approved multi-enrichment merges.
 
-## Proposed merge
+## Deterministic live merge
 
-- 161 live plus 115 collision-free candidate capabilities yields 276 proposed
-  capabilities.
+- The pinned 161-capability baseline plus 115 collision-free candidate
+  capabilities produces exactly 276 live planning records.
+- The 140-URI candidate registry produces 126 claim-bearing live sources; the
+  receipt records exactly 14 non-claim exclusions.
+- `merge_live.py` accepts only the exact published unmerged state or the exact
+  receipt-verified merged state and rejects partial or co-tampered outputs.
 - 151 source records collapse to 140 unique URIs. Ten same-URI groups are
   explicitly resolved, including `doc.release-notes` to the live
   `release-notes-3.2.1` ID.

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/static-cases/static-result.schema.json",
+  "title": "Candidate-only bounded static observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "case_id", "capability_id", "integration_state",
+    "executor_ready", "can_advance_capability", "evidence_class", "outcome",
+    "started_at", "finished_at", "bounds", "binding", "observations",
+    "source_hashes_before", "source_hashes_after", "ownership", "cleanup"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "case_id": {"type": "string", "pattern": "^static-case\\."},
+    "capability_id": {"type": "string"},
+    "integration_state": {"const": "candidate_only"},
+    "executor_ready": {"const": false},
+    "can_advance_capability": {"const": false},
+    "evidence_class": {"const": "static_observation_not_runtime_evidence"},
+    "outcome": {"enum": ["observed_match", "observed_mismatch", "blocked", "not_applicable"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_bytes", "max_files", "deadline_seconds", "bytes_read", "files_read"],
+      "properties": {
+        "max_bytes": {"const": 8388608},
+        "max_files": {"const": 64},
+        "deadline_seconds": {"const": 10},
+        "bytes_read": {"type": "integer", "minimum": 0, "maximum": 8388608},
+        "files_read": {"type": "integer", "minimum": 0, "maximum": 64}
+      }
+    },
+    "binding": {"type": "object"},
+    "observations": {"type": "array", "minItems": 1},
+    "source_hashes_before": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "source_hashes_after": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["temporary_root_private", "owned_paths_only"],
+      "properties": {
+        "temporary_root_private": {"const": true},
+        "owned_paths_only": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["temporary_root_removed", "source_hashes_unchanged"],
+      "properties": {
+        "temporary_root_removed": {"const": true},
+        "source_hashes_unchanged": {"const": true}
+      }
+    }
+  }
+}

@@ -186,6 +186,16 @@ def repo_file(binding: dict[str, Any]) -> Path:
     if relative.is_absolute() or ".." in relative.parts:
         raise CoverageError(f"unsafe repository path: {relative}")
     candidate = REPO_ROOT / relative
+    if candidate.name in {
+        "official-capabilities.json",
+        "manifest.json",
+        "acceptance_inventory.json",
+        "capability-oracles.json",
+    }:
+        sys.path.insert(0, str(SCRIPT_DIR.parent))
+        import lifecycle as wave3_lifecycle
+
+        candidate = wave3_lifecycle.validation_path(candidate)
     if candidate.is_symlink() or not candidate.is_file():
         raise CoverageError(f"bound input is not a regular non-symlink file: {relative}")
     if candidate.resolve().is_relative_to(REPO_ROOT.resolve()) is False:

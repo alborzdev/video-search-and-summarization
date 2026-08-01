@@ -376,6 +376,144 @@ class AcceptancePlanTests(unittest.TestCase):
             },
         )
 
+    def test_wave3_planning_contract_is_exact_and_plan_only(self) -> None:
+        validation = self.validate()
+        wave3 = self.inventory["wave3_contracts"]
+        requirements = wave3["planning_requirements"]
+
+        self.assertEqual(validation["counts"]["wave3_planning_requirements"], 110)
+        self.assertEqual(len(requirements), 110)
+        self.assertEqual(len({item["id"] for item in requirements}), 110)
+        self.assertTrue(all(item["materialized"] is False for item in requirements))
+        self.assertTrue(all(item["executor_ready"] is False for item in requirements))
+        self.assertTrue(all(item["runtime_evidence"] == [] for item in requirements))
+        self.assertEqual(
+            [item["id"] for item in requirements if item.get("blocker_ids")],
+            ["smartcity-sdg-config", "simulation-external-boundary"],
+        )
+        self.assertEqual(
+            {tuple(item.get("blocker_ids", [])) for item in requirements},
+            {(), ("external-simulation-toolchain-required",)},
+        )
+
+    def test_wave3_requirement_payload_pointer_hash_and_provenance_drift_fail(
+        self,
+    ) -> None:
+        mutations = []
+        payload = copy.deepcopy(self.inventory)
+        payload["wave3_contracts"]["planning_requirements"][0]["payload"][
+            "description"
+        ] += " drift"
+        mutations.append(payload)
+
+        pointer = copy.deepcopy(self.inventory)
+        pointer["wave3_contracts"]["planning_requirements"][0]["json_pointer"] = (
+            "/new_capabilities/0/qualification/fixtures/1"
+        )
+        mutations.append(pointer)
+
+        digest = copy.deepcopy(self.inventory)
+        digest["wave3_contracts"]["planning_requirements"][0][
+            "payload_canonical_sha256"
+        ] = "0" * 64
+        mutations.append(digest)
+
+        provenance = copy.deepcopy(self.inventory)
+        provenance["wave3_contracts"]["planning_requirements"][0]["provenance"][
+            "source_ids"
+        ] = ["release-notes-3.2.1"]
+        mutations.append(provenance)
+
+        evidence = copy.deepcopy(self.inventory)
+        evidence["wave3_contracts"]["planning_requirements"][0][
+            "runtime_evidence"
+        ] = ["unreviewed-runtime-pass"]
+        mutations.append(evidence)
+
+        blocker = copy.deepcopy(self.inventory)
+        blocker["wave3_contracts"]["planning_requirements"][0]["blocker_ids"] = [
+            "external-simulation-toolchain-required"
+        ]
+        mutations.append(blocker)
+
+        for inventory in mutations:
+            with self.subTest(mutation=mutations.index(inventory)):
+                with self.assertRaises(acceptance.AcceptanceConfigError):
+                    self.validate(inventory=inventory)
+
+    def test_wave3_guardrails_are_exact_and_close_over_live_capabilities(self) -> None:
+        validation = self.validate()
+        guardrails = self.inventory["wave3_contracts"]["guardrails"]
+        self.assertEqual(validation["counts"]["wave3_guardrails"], 10)
+        self.assertEqual(len(guardrails), 10)
+        self.assertEqual(len({item["id"] for item in guardrails}), 10)
+
+        mutations = []
+        payload = copy.deepcopy(self.inventory)
+        payload["wave3_contracts"]["guardrails"][0]["payload"]["rule"] += " drift"
+        mutations.append(payload)
+        digest = copy.deepcopy(self.inventory)
+        digest["wave3_contracts"]["guardrails"][0][
+            "payload_canonical_sha256"
+        ] = "f" * 64
+        mutations.append(digest)
+        applicability = copy.deepcopy(self.inventory)
+        applicability["wave3_contracts"]["guardrails"][0][
+            "applicable_record_ids"
+        ].pop()
+        mutations.append(applicability)
+
+        for inventory in mutations:
+            with self.assertRaises(acceptance.AcceptanceConfigError):
+                self.validate(inventory=inventory)
+
+        ledger = acceptance.load_json(acceptance.DEFAULT_OFFICIAL_LEDGER)
+        target = next(
+            item
+            for item in ledger["capabilities"]
+            if item["id"] == "configuration.smart-city.custom-location"
+        )
+        target["contract"]["wave3_acceptance"]["guardrail_ids"].pop()
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            acceptance._validate_wave3_contracts(
+                copy.deepcopy(self.inventory["wave3_contracts"]),
+                copy.deepcopy(self.inventory),
+                ledger,
+            )
+
+    def test_wave3_receipt_bundle_and_candidate_bindings_are_immutable(self) -> None:
+        receipt = copy.deepcopy(self.inventory)
+        receipt["wave3_contracts"]["merge_receipt"]["contract_sha256"] = "0" * 64
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            self.validate(inventory=receipt)
+
+        bundle = copy.deepcopy(self.inventory)
+        bundle["wave3_contracts"]["bundle"]["raw_sha256"] = "0" * 64
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            self.validate(inventory=bundle)
+
+        candidate = copy.deepcopy(self.inventory)
+        candidate["wave3_contracts"]["candidates"][0]["canonical_sha256"] = (
+            "0" * 64
+        )
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            self.validate(inventory=candidate)
+
+    def test_wave3_planning_cross_reference_drift_fails_closed(self) -> None:
+        ledger = acceptance.load_json(acceptance.DEFAULT_OFFICIAL_LEDGER)
+        target = next(
+            item
+            for item in ledger["capabilities"]
+            if item["id"] == "performance.alert-verification"
+        )
+        target["contract"]["wave3_acceptance"]["planning_requirement_ids"] = []
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            acceptance._validate_wave3_contracts(
+                copy.deepcopy(self.inventory["wave3_contracts"]),
+                copy.deepcopy(self.inventory),
+                ledger,
+            )
+
     def test_default_cli_failure_is_redacted_and_plan_only(self) -> None:
         output = io.StringIO()
         with contextlib.redirect_stdout(output):

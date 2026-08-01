@@ -43,6 +43,114 @@ DEFAULT_API_INVENTORY = SCRIPT_DIR / "api_inventory.json"
 DEFAULT_EXPECTED_DIR = SCRIPT_DIR / "expected"
 DEFAULT_RUNTIME_INVENTORY = SCRIPT_DIR / "runtime_inventory.json"
 DEFAULT_PHASE1_INVENTORY = SCRIPT_DIR / "acceptance_phase1_inventory.json"
+DEFAULT_OFFICIAL_LEDGER = REPO_ROOT / "deploy/docker/thor-local/parity/official-capabilities.json"
+DEFAULT_WAVE3_RECEIPT = REPO_ROOT / (
+    "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+)
+
+WAVE3_RECEIPT_PATH = (
+    "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+)
+WAVE3_BUNDLE_PATH = (
+    "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-plan.json"
+)
+WAVE3_FEATURE_MAP_PATH = (
+    "deploy/docker/thor-local/parity/candidates/wave3/bundle/systems-feature-map.json"
+)
+WAVE3_CANDIDATE_BINDINGS = {
+    "agent-smartcity": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
+        "raw_sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395",
+        "canonical_sha256": "a0c366965541898d6c9f978f938a1fe8fc77fac84c1b992af09f96fc8d5ea9b7",
+    },
+    "systems": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json",
+        "raw_sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539",
+        "canonical_sha256": "b4417c11a667bf4a6b2fa8c780f90e5504107c25821e117f6a5adc83af19af93",
+    },
+    "calibration-warehouse": {
+        "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+        "raw_sha256": "1bc083b7ef0419a0f6975007cf672c477e9de0d164a7c350976f069199576ade",
+        "canonical_sha256": "e8aa7045c93cf0ef73e70034dd7d8efedb4f2c5e54153f10008c83eb70911783",
+    },
+}
+WAVE3_BUNDLE_RAW_SHA256 = "bcb98e16ed991eb1e92504c1d2031c8d5a1f690cde73509a8b40848eca990a3d"
+WAVE3_BUNDLE_CANONICAL_SHA256 = (
+    "7c61cb7569f095c66a8590ef56b323364643899271a460b7c375abbc6adb0fea"
+)
+WAVE3_FEATURE_MAP_RAW_SHA256 = (
+    "ad4a1f56c528e404c3b9bb2eb2c86539801c1fc2ff7c21c546c48c78ff3d9091"
+)
+WAVE3_FEATURE_MAP_CANONICAL_SHA256 = (
+    "98a3fae17478bde0fe044ec6e30e57748427dce5a07766dc359c237ded13073f"
+)
+WAVE3_RECEIPT_CONTRACT_SHA256 = (
+    "733ff41b1aa473f7a6e1a117d7162c981dca99034d080677ece7b4b4c220c46b"
+)
+WAVE3_EXTERNAL_CAPABILITIES = {
+    "tooling.smart-city.synthetic-data-pipeline",
+    "boundary.warehouse.sdg-toolchain",
+    "boundary.warehouse.sdg-scene-calibration",
+    "boundary.warehouse.sdg-postprocess",
+    "boundary.warehouse.sim2real",
+}
+WAVE3_EXTERNAL_BLOCKER = "external-simulation-toolchain-required"
+WAVE3_GUARDRAIL_RECORD_MAP = {
+    "guardrail.sample-bundles-optional": [
+        "configuration.smart-city.custom-location",
+        "deployment.smart-city.bp-smc-surface",
+        "runtime.smart-city.traffic-analytics",
+    ],
+    "guardrail.operator-custom-data": [
+        "configuration.smart-city.custom-location",
+        "calibration.legacy.core",
+        "calibration.legacy.gis",
+        "runtime.smart-city.traffic-analytics",
+    ],
+    "guardrail.google-maps-external": [
+        "boundary.smart-city.google-maps-dependency",
+        "runtime.smart-city.map-ui",
+    ],
+    "guardrail.vlm-fine-tuning-forthcoming": [
+        "customization.smart-city.trafficcamnet-rtdetr"
+    ],
+    "guardrail.warehouse-sample-excluded": [
+        "configuration.warehouse.custom-inputs",
+        "runtime.warehouse.profile-2d-pipeline",
+        "runtime.warehouse.profile-2d-agent-pipeline",
+        "runtime.warehouse.profile-3d-sparse4d-pipeline",
+        "runtime.warehouse.profile-mv3dt-pipeline",
+        "performance.warehouse.profile-latency",
+    ],
+    "guardrail.warehouse-operator-data-in-scope": [
+        "configuration.warehouse.custom-inputs",
+        "calibration.auto.input-contract",
+        "runtime.warehouse.profile-2d-pipeline",
+        "runtime.warehouse.profile-2d-agent-pipeline",
+        "runtime.warehouse.profile-3d-sparse4d-pipeline",
+        "runtime.warehouse.profile-mv3dt-pipeline",
+    ],
+    "guardrail.warehouse-platform-scope": [
+        "prereq.warehouse.thor-platform",
+        "configuration.warehouse.profile-hardware-matrix",
+    ],
+    "guardrail.warehouse-agent-vlm-topology": [
+        "runtime.warehouse.profile-2d-agent-pipeline",
+        "runtime.warehouse.agent-hierarchy",
+        "model.agent-vlm.cosmos3-nano",
+    ],
+    "guardrail.warehouse-external-development": [
+        "boundary.warehouse.sdg-toolchain",
+        "boundary.warehouse.sdg-scene-calibration",
+        "boundary.warehouse.sdg-postprocess",
+        "boundary.warehouse.sim2real",
+        "calibration.sdg.workflow",
+    ],
+    "guardrail.warehouse-destructive-and-benchmark": [
+        "behavior.warehouse.destructive-troubleshooting-boundaries",
+        "performance.warehouse.profile-latency",
+    ],
+}
 
 PLAIN_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,62}$")
 RUN_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{5,31}$")
@@ -1016,6 +1124,460 @@ def _validate_coverage(
     }
 
 
+def _wave3_canonical_sha256(value: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
+def _wave3_load_bound_json(
+    relative_path: str, raw_sha256: str, canonical_sha256: str
+) -> dict[str, Any]:
+    path = REPO_ROOT / relative_path
+    try:
+        raw = path.read_bytes()
+    except OSError as exc:
+        raise AcceptanceConfigError("configuration_error") from exc
+    value = load_json(path)
+    if (
+        hashlib.sha256(raw).hexdigest() != raw_sha256
+        or _wave3_canonical_sha256(value) != canonical_sha256
+    ):
+        raise AcceptanceConfigError("configuration_error")
+    return value
+
+
+def _wave3_source_mapping(
+    package: str, candidate: dict[str, Any], live_sources_by_uri: dict[str, str]
+) -> dict[str, str]:
+    mapping: dict[str, str] = {}
+    for source in candidate.get("sources", []):
+        if not isinstance(source, dict):
+            raise AcceptanceConfigError("configuration_error")
+        source_id = source.get("id")
+        uri = source.get("uri", source.get("url"))
+        if not isinstance(source_id, str) or not isinstance(uri, str):
+            raise AcceptanceConfigError("configuration_error")
+        live_id = live_sources_by_uri.get(uri)
+        # The 14 reviewed navigation/summary/legal inputs have no independent
+        # live claim and therefore are intentionally absent from this mapping.
+        if live_id is not None:
+            mapping[source_id] = live_id
+    if not mapping:
+        raise AcceptanceConfigError("configuration_error")
+    return mapping
+
+
+def _wave3_claim_source_ids(
+    package: str, record: dict[str, Any], source_map: dict[str, str]
+) -> list[str]:
+    if package == "systems":
+        claims = [record["source"]] if "source" in record else record.get("sources", [])
+    else:
+        claims = record.get("source_claims", record.get("source_claims_add", []))
+    if not isinstance(claims, list):
+        raise AcceptanceConfigError("configuration_error")
+    result: list[str] = []
+    for claim in claims:
+        if not isinstance(claim, dict) or claim.get("source_id") not in source_map:
+            raise AcceptanceConfigError("configuration_error")
+        mapped = source_map[claim["source_id"]]
+        if mapped not in result:
+            result.append(mapped)
+    return result
+
+
+def _validate_wave3_contracts(
+    wave3: Any, inventory: dict[str, Any], ledger: dict[str, Any]
+) -> dict[str, int]:
+    if not isinstance(wave3, dict) or set(wave3) != {
+        "schema_version",
+        "merge_receipt",
+        "bundle",
+        "candidates",
+        "policies",
+        "planning_requirements",
+        "guardrails",
+    }:
+        raise AcceptanceConfigError("configuration_error")
+    if wave3.get("schema_version") != 1 or wave3.get("policies") != {
+        "planning_only": True,
+        "materialized_fixtures_added": False,
+        "executor_ready_added": False,
+        "runtime_pass_evidence_added": False,
+        "warehouse_sample_bundle": "excluded_optional",
+    }:
+        raise AcceptanceConfigError("configuration_error")
+
+    receipt = load_json(DEFAULT_WAVE3_RECEIPT)
+    if (
+        receipt.get("lifecycle") != "wholly_merged"
+        or receipt.get("contract_sha256") != WAVE3_RECEIPT_CONTRACT_SHA256
+        or wave3.get("merge_receipt")
+        != {
+            "path": WAVE3_RECEIPT_PATH,
+            "contract_sha256": WAVE3_RECEIPT_CONTRACT_SHA256,
+        }
+    ):
+        raise AcceptanceConfigError("configuration_error")
+    receipt_contract = {
+        key: value
+        for key, value in receipt.items()
+        if key not in {"contract_sha256", "outputs", "lifecycle"}
+    }
+    if _wave3_canonical_sha256(receipt_contract) != WAVE3_RECEIPT_CONTRACT_SHA256:
+        raise AcceptanceConfigError("configuration_error")
+
+    bundle = _wave3_load_bound_json(
+        WAVE3_BUNDLE_PATH,
+        WAVE3_BUNDLE_RAW_SHA256,
+        WAVE3_BUNDLE_CANONICAL_SHA256,
+    )
+    del bundle
+    expected_bundle_binding = {
+        "path": WAVE3_BUNDLE_PATH,
+        "raw_sha256": WAVE3_BUNDLE_RAW_SHA256,
+        "canonical_sha256": WAVE3_BUNDLE_CANONICAL_SHA256,
+    }
+    if wave3.get("bundle") != expected_bundle_binding or receipt.get(
+        "bundle"
+    ) != expected_bundle_binding:
+        raise AcceptanceConfigError("configuration_error")
+
+    candidate_values: dict[str, dict[str, Any]] = {}
+    expected_candidate_receipts: list[dict[str, str]] = []
+    for package, binding in WAVE3_CANDIDATE_BINDINGS.items():
+        candidate_values[package] = _wave3_load_bound_json(
+            binding["path"], binding["raw_sha256"], binding["canonical_sha256"]
+        )
+        expected_candidate_receipts.append({"id": package, **binding})
+    if (
+        wave3.get("candidates") != expected_candidate_receipts
+        or receipt.get("candidates") != expected_candidate_receipts
+    ):
+        raise AcceptanceConfigError("configuration_error")
+
+    _wave3_load_bound_json(
+        WAVE3_FEATURE_MAP_PATH,
+        WAVE3_FEATURE_MAP_RAW_SHA256,
+        WAVE3_FEATURE_MAP_CANONICAL_SHA256,
+    )
+    if receipt.get("systems_feature_map") != {
+        "path": WAVE3_FEATURE_MAP_PATH,
+        "raw_sha256": WAVE3_FEATURE_MAP_RAW_SHA256,
+        "canonical_sha256": WAVE3_FEATURE_MAP_CANONICAL_SHA256,
+        "entry_count": 55,
+    }:
+        raise AcceptanceConfigError("configuration_error")
+
+    output_paths = {
+        "official-capabilities.json": DEFAULT_OFFICIAL_LEDGER,
+        "manifest.json": DEFAULT_PARITY_MANIFEST,
+        "acceptance_inventory.json": DEFAULT_INVENTORY,
+        "capability-oracles.json": REPO_ROOT
+        / "deploy/docker/thor-local/parity/capability-oracles.json",
+        "official-capabilities.schema.json": REPO_ROOT
+        / "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+    }
+    outputs = receipt.get("outputs")
+    if not isinstance(outputs, dict) or set(outputs) != set(output_paths):
+        raise AcceptanceConfigError("configuration_error")
+    for name, path in output_paths.items():
+        try:
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        except OSError as exc:
+            raise AcceptanceConfigError("configuration_error") from exc
+        if outputs.get(name) != digest:
+            raise AcceptanceConfigError("configuration_error")
+
+    sources = ledger.get("sources")
+    capabilities = ledger.get("capabilities")
+    if not isinstance(sources, list) or not isinstance(capabilities, list):
+        raise AcceptanceConfigError("configuration_error")
+    live_sources_by_uri: dict[str, str] = {}
+    for source in sources:
+        if (
+            not isinstance(source, dict)
+            or not isinstance(source.get("id"), str)
+            or not isinstance(source.get("uri"), str)
+            or source["uri"] in live_sources_by_uri
+        ):
+            raise AcceptanceConfigError("configuration_error")
+        live_sources_by_uri[source["uri"]] = source["id"]
+    capability_by_id: dict[str, dict[str, Any]] = {}
+    for capability in capabilities:
+        if (
+            not isinstance(capability, dict)
+            or not isinstance(capability.get("id"), str)
+            or capability["id"] in capability_by_id
+        ):
+            raise AcceptanceConfigError("configuration_error")
+        capability_by_id[capability["id"]] = capability
+    source_maps = {
+        package: _wave3_source_mapping(package, candidate, live_sources_by_uri)
+        for package, candidate in candidate_values.items()
+    }
+
+    owner_sources: dict[tuple[str, str], list[str]] = {}
+    for package, candidate in candidate_values.items():
+        new_key = "proposed_capabilities" if package == "systems" else "new_capabilities"
+        for record in candidate[new_key]:
+            owner_sources[(package, record["id"])] = _wave3_claim_source_ids(
+                package, record, source_maps[package]
+            )
+        for record in candidate["enrichments"]:
+            owner_sources[(package, record["target_id"])] = _wave3_claim_source_ids(
+                package, record, source_maps[package]
+            )
+
+    expected_requirements: list[dict[str, Any]] = []
+
+    def provenance(package: str, owner_id: str) -> dict[str, Any]:
+        return {
+            "candidate_path": WAVE3_CANDIDATE_BINDINGS[package]["path"],
+            "candidate_canonical_sha256": WAVE3_CANDIDATE_BINDINGS[package][
+                "canonical_sha256"
+            ],
+            "source_ids": owner_sources[(package, owner_id)],
+        }
+
+    agent = candidate_values["agent-smartcity"]
+    for group in ("new_capabilities", "enrichments"):
+        for record_index, record in enumerate(agent[group]):
+            owner_id = record.get("id", record.get("target_id"))
+            for fixture_index, fixture in enumerate(record["qualification"]["fixtures"]):
+                expected_requirements.append(
+                    {
+                        "id": fixture["id"],
+                        "owner_type": "capability_or_enrichment_target",
+                        "owner_id": owner_id,
+                        "package": "agent-smartcity",
+                        "json_pointer": f"/{group}/{record_index}/qualification/fixtures/{fixture_index}",
+                        "payload": fixture,
+                        "payload_canonical_sha256": _wave3_canonical_sha256(fixture),
+                        "provenance": provenance("agent-smartcity", owner_id),
+                        "materialized": False,
+                        "executor_ready": False,
+                        "runtime_evidence": [],
+                    }
+                )
+
+    systems = candidate_values["systems"]
+    for record_index, record in enumerate(systems["proposed_capabilities"]):
+        payload = record["acceptance"]
+        expected_requirements.append(
+            {
+                "id": payload["fixture_id"],
+                "owner_type": "capability",
+                "owner_id": record["id"],
+                "package": "systems",
+                "json_pointer": f"/proposed_capabilities/{record_index}/acceptance",
+                "payload": payload,
+                "payload_canonical_sha256": _wave3_canonical_sha256(payload),
+                "provenance": provenance("systems", record["id"]),
+                "materialized": False,
+                "executor_ready": False,
+                "runtime_evidence": [],
+            }
+        )
+    performance_owners = {
+        record["contract_merge"].get("fixture_id"): record["target_id"]
+        for record in systems["enrichments"]
+        if record["contract_merge"].get("fixture_id") is not None
+    }
+    for requirement_index, payload in enumerate(
+        systems["performance_fixture_requirements"]
+    ):
+        owner_id = performance_owners.get(payload["id"])
+        if not isinstance(owner_id, str):
+            raise AcceptanceConfigError("configuration_error")
+        expected_requirements.append(
+            {
+                "id": payload["id"],
+                "owner_type": "performance_enrichment_target",
+                "owner_id": owner_id,
+                "package": "systems",
+                "json_pointer": f"/performance_fixture_requirements/{requirement_index}",
+                "payload": payload,
+                "payload_canonical_sha256": _wave3_canonical_sha256(payload),
+                "provenance": {
+                    **provenance("systems", owner_id),
+                    "reference_only": True,
+                    "thor_remeasurement_required": True,
+                },
+                "materialized": False,
+                "executor_ready": False,
+                "runtime_evidence": [],
+            }
+        )
+
+    calibration = candidate_values["calibration-warehouse"]
+    calibration_records = [
+        *calibration["new_capabilities"],
+        *calibration["enrichments"],
+    ]
+    for vector_index, payload in enumerate(calibration["acceptance_vectors"]):
+        owners = [
+            record.get("id", record.get("target_id"))
+            for record in calibration_records
+            if payload["id"] in record["qualification"]["acceptance_vector_ids"]
+        ]
+        source_ids = sorted(
+            {
+                source_id
+                for owner_id in owners
+                for source_id in owner_sources[("calibration-warehouse", owner_id)]
+            }
+        )
+        expected_requirements.append(
+            {
+                "id": payload["id"],
+                "owner_type": "global_acceptance_vector",
+                "owner_id": payload["id"],
+                "package": "calibration-warehouse",
+                "json_pointer": f"/acceptance_vectors/{vector_index}",
+                "payload": payload,
+                "payload_canonical_sha256": _wave3_canonical_sha256(payload),
+                "applicable_record_ids": owners,
+                "provenance": {
+                    "candidate_path": WAVE3_CANDIDATE_BINDINGS[
+                        "calibration-warehouse"
+                    ]["path"],
+                    "candidate_canonical_sha256": WAVE3_CANDIDATE_BINDINGS[
+                        "calibration-warehouse"
+                    ]["canonical_sha256"],
+                    "source_ids": source_ids,
+                },
+                "materialized": False,
+                "executor_ready": False,
+                "runtime_evidence": [],
+            }
+        )
+
+    for requirement in expected_requirements:
+        owners = {
+            requirement["owner_id"],
+            *requirement.get("applicable_record_ids", []),
+        }
+        if owners & WAVE3_EXTERNAL_CAPABILITIES:
+            requirement["blocker_ids"] = [WAVE3_EXTERNAL_BLOCKER]
+    requirements = wave3.get("planning_requirements")
+    if (
+        not isinstance(requirements, list)
+        or len(requirements) != 110
+        or len({item.get("id") for item in requirements if isinstance(item, dict)})
+        != 110
+        or requirements != expected_requirements
+    ):
+        raise AcceptanceConfigError("configuration_error")
+
+    expected_guardrails: list[dict[str, Any]] = []
+    for package in ("agent-smartcity", "calibration-warehouse"):
+        for payload in candidate_values[package]["guardrails"]:
+            claims = [
+                {
+                    "source_id": source_maps[package][claim["source_id"]],
+                    "locator": claim["locator"],
+                }
+                for claim in payload["source_claims"]
+            ]
+            expected_guardrails.append(
+                {
+                    "id": payload["id"],
+                    "package": package,
+                    "source_claims": claims,
+                    "rule": payload["rule"],
+                    "applicable_record_ids": WAVE3_GUARDRAIL_RECORD_MAP[payload["id"]],
+                    "payload": payload,
+                    "payload_canonical_sha256": _wave3_canonical_sha256(payload),
+                }
+            )
+    guardrails = wave3.get("guardrails")
+    if (
+        not isinstance(guardrails, list)
+        or len(guardrails) != 10
+        or len({item.get("id") for item in guardrails if isinstance(item, dict)}) != 10
+        or guardrails != expected_guardrails
+    ):
+        raise AcceptanceConfigError("configuration_error")
+
+    expected_requirement_refs: dict[str, set[str]] = {}
+    for requirement in expected_requirements:
+        owners = requirement.get("applicable_record_ids", [requirement["owner_id"]])
+        owner_claim_union: set[str] = set()
+        for owner_id in owners:
+            if owner_id not in capability_by_id:
+                raise AcceptanceConfigError("configuration_error")
+            expected_requirement_refs.setdefault(owner_id, set()).add(requirement["id"])
+            claim_ids = {
+                claim.get("source_id")
+                for claim in capability_by_id[owner_id].get("source_claims", [])
+                if isinstance(claim, dict)
+            }
+            owner_claim_union.update(claim_ids)
+            expected_owner_sources = owner_sources.get(
+                (requirement["package"], owner_id), []
+            )
+            if not set(expected_owner_sources) <= claim_ids:
+                raise AcceptanceConfigError("configuration_error")
+        if not set(requirement["provenance"]["source_ids"]) <= owner_claim_union:
+            raise AcceptanceConfigError("configuration_error")
+    expected_guardrail_refs: dict[str, set[str]] = {}
+    for guardrail in expected_guardrails:
+        for owner_id in guardrail["applicable_record_ids"]:
+            if owner_id not in capability_by_id:
+                raise AcceptanceConfigError("configuration_error")
+            expected_guardrail_refs.setdefault(owner_id, set()).add(guardrail["id"])
+
+    for owner_id, capability in capability_by_id.items():
+        contract = capability.get("contract")
+        metadata = contract.get("wave3_acceptance", {}) if isinstance(contract, dict) else {}
+        if not isinstance(metadata, dict):
+            raise AcceptanceConfigError("configuration_error")
+        observed_requirements = metadata.get("planning_requirement_ids", [])
+        if not isinstance(observed_requirements, list):
+            raise AcceptanceConfigError("configuration_error")
+        contributions = metadata.get("contributions", [])
+        if not isinstance(contributions, list) or any(
+            not isinstance(item, dict)
+            or not isinstance(item.get("planning_requirement_ids"), list)
+            for item in contributions
+        ):
+            raise AcceptanceConfigError("configuration_error")
+        if any(
+            not set(contribution["planning_requirement_ids"])
+            <= set(observed_requirements)
+            for contribution in contributions
+        ):
+            raise AcceptanceConfigError("configuration_error")
+        observed_guardrails = metadata.get("guardrail_ids", [])
+        if (
+            set(observed_requirements) != expected_requirement_refs.get(owner_id, set())
+            or len(observed_requirements) != len(set(observed_requirements))
+            or set(observed_guardrails) != expected_guardrail_refs.get(owner_id, set())
+            or len(observed_guardrails) != len(set(observed_guardrails))
+        ):
+            raise AcceptanceConfigError("configuration_error")
+        if (observed_requirements or observed_guardrails) and (
+            metadata.get("materialized") is not False
+            or metadata.get("executor_ready") is not False
+        ):
+            raise AcceptanceConfigError("configuration_error")
+
+    expected_external_blocker = {
+        "id": WAVE3_EXTERNAL_BLOCKER,
+        "reason": "CARLA, RoadRunner, Isaac Sim, Cosmos Transfer, and associated training/simulation environments are operator-managed external dependencies.",
+        "scope": "external",
+    }
+    if [
+        item
+        for item in inventory.get("blockers", [])
+        if isinstance(item, dict) and item.get("id") == WAVE3_EXTERNAL_BLOCKER
+    ] != [expected_external_blocker]:
+        raise AcceptanceConfigError("configuration_error")
+    return {"guardrails": 10, "planning_requirements": 110}
+
+
 def validate_inventory(
     inventory: dict[str, Any],
     fixture_catalog: dict[str, Any],
@@ -1116,6 +1678,13 @@ def validate_inventory(
         scenarios=scenarios,
         blockers=blockers,
     )
+    wave3_counts = _validate_wave3_contracts(
+        inventory.get("wave3_contracts"),
+        inventory,
+        load_json(DEFAULT_OFFICIAL_LEDGER),
+    )
+    counts["wave3_guardrails"] = wave3_counts["guardrails"]
+    counts["wave3_planning_requirements"] = wave3_counts["planning_requirements"]
     return {
         "blocker_count": len(blockers),
         "counts": counts,

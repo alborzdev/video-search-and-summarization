@@ -28,6 +28,8 @@ SCHEMA = SCRIPT_DIR / "candidate.schema.json"
 LIVE_LEDGER = PARITY_DIR / "official-capabilities.json"
 LIVE_MANIFEST = PARITY_DIR / "manifest.json"
 LIVE_ACCEPTANCE = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+sys.path.insert(0, str(SCRIPT_DIR.parent))
+import lifecycle as wave3_lifecycle  # noqa: E402
 RECURSIVE_TARGETS = SCRIPT_DIR.parent / "recursive-coverage" / "recursive-targets.json"
 AGENT_CANDIDATE = SCRIPT_DIR.parent / "agent-smartcity" / "candidate.json"
 SYSTEMS_CANDIDATE = SCRIPT_DIR.parent / "systems" / "candidate.json"
@@ -128,7 +130,10 @@ def _validate_live_hashes(package: dict[str, Any], repo_root: Path) -> None:
         raise CandidateContractError("live input set drift")
     root = repo_root.resolve(strict=True)
     for item in package["live_inputs"]:
-        path = (repo_root / item["path"]).resolve(strict=True)
+        path = repo_root / item["path"]
+        if repo_root.resolve() == REPO_ROOT.resolve():
+            path = wave3_lifecycle.validation_path(path)
+        path = path.resolve(strict=True)
         try:
             path.relative_to(root)
         except ValueError as exc:
@@ -150,9 +155,15 @@ def validate(
     repo_root: Path = REPO_ROOT,
 ) -> dict[str, int]:
     package = load_json(CANDIDATE) if package is None else package
-    live_ledger = load_json(LIVE_LEDGER) if live_ledger is None else live_ledger
-    live_manifest = load_json(LIVE_MANIFEST) if live_manifest is None else live_manifest
-    live_acceptance = load_json(LIVE_ACCEPTANCE) if live_acceptance is None else live_acceptance
+    live_ledger = load_json(wave3_lifecycle.validation_path(LIVE_LEDGER)) if live_ledger is None else live_ledger
+    live_manifest = load_json(wave3_lifecycle.validation_path(LIVE_MANIFEST)) if live_manifest is None else live_manifest
+    live_acceptance = load_json(wave3_lifecycle.validation_path(LIVE_ACCEPTANCE)) if live_acceptance is None else live_acceptance
+    if live_ledger == load_json(LIVE_LEDGER) and wave3_lifecycle.state() == "wholly_merged":
+        live_ledger = load_json(wave3_lifecycle.validation_path(LIVE_LEDGER))
+        if live_manifest == load_json(LIVE_MANIFEST):
+            live_manifest = load_json(wave3_lifecycle.validation_path(LIVE_MANIFEST))
+        if live_acceptance == load_json(LIVE_ACCEPTANCE):
+            live_acceptance = load_json(wave3_lifecycle.validation_path(LIVE_ACCEPTANCE))
     recursive_targets = load_json(RECURSIVE_TARGETS) if recursive_targets is None else recursive_targets
     agent_candidate = load_json(AGENT_CANDIDATE) if agent_candidate is None else agent_candidate
     systems_candidate = load_json(SYSTEMS_CANDIDATE) if systems_candidate is None else systems_candidate

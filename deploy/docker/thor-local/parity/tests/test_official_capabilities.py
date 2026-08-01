@@ -180,10 +180,10 @@ class OfficialCapabilityTests(unittest.TestCase):
             copy.deepcopy(self.manifest),
             copy.deepcopy(self.acceptance),
         )
-        self.assertEqual(counts["sources"], 55)
-        self.assertEqual(counts["capabilities"], 161)
-        self.assertEqual(counts["feature_families"], 25)
-        self.assertEqual(counts["discrepancies"], 18)
+        self.assertEqual(counts["sources"], 126)
+        self.assertEqual(counts["capabilities"], 276)
+        self.assertEqual(counts["feature_families"], 39)
+        self.assertEqual(counts["discrepancies"], 45)
 
     def test_single_source_discrepancy_retains_two_exact_sides(self) -> None:
         discrepancy = next(

@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "osmURL": "",
+  "calibrationType": "cartesian",
+  "sensors": [
+    {
+      "type": "camera",
+      "id": "Operator_Camera_01",
+      "origin": {"lat": 0.0, "lng": 0.0},
+      "geoLocation": {"lat": 0.0, "lng": 0.0},
+      "coordinates": {"x": 0.0, "y": 0.0},
+      "scaleFactor": 1.0,
+      "attributes": [{"name": "frameWidth", "value": "1920"}],
+      "place": [{"name": "building", "value": "Operator"}],
+      "imageCoordinates": [{"x": 0.0, "y": 0.0}],
+      "globalCoordinates": [{"x": 0.0, "y": 0.0, "z": 0.0}],
+      "intrinsicMatrix": [[1.0, 0.0], [0.0, 1.0]]
+    }
+  ]
+}

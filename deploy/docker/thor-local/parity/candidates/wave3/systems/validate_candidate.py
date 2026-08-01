@@ -23,6 +23,8 @@ CANDIDATE = SCRIPT_DIR / "candidate.json"
 SCHEMA = SCRIPT_DIR / "candidate.schema.json"
 LIVE_LEDGER = PARITY_DIR / "official-capabilities.json"
 LIVE_ACCEPTANCE = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+sys.path.insert(0, str(SCRIPT_DIR.parent))
+import lifecycle as wave3_lifecycle  # noqa: E402
 
 EXPECTED_COUNTS = {
     "sources": 23,
@@ -331,7 +333,7 @@ def validate(package: dict[str, Any] | None = None) -> dict[str, Any]:
     if discrepancy_ids != EXPECTED_DISCREPANCY_IDS:
         raise CandidateError("exact discrepancy and boundary set drifted")
 
-    live_ledger = load_json(LIVE_LEDGER)
+    live_ledger = load_json(wave3_lifecycle.validation_path(LIVE_LEDGER))
     if package["target"] != live_ledger.get("target"):
         raise CandidateError("candidate target identity differs from the live ledger")
     live_ids = {item["id"] for item in live_ledger["capabilities"]}
@@ -346,7 +348,7 @@ def validate(package: dict[str, Any] | None = None) -> dict[str, Any]:
             f"enrichment target missing from live ledger: {sorted(missing_targets)[0]}"
         )
 
-    acceptance = load_json(LIVE_ACCEPTANCE)
+    acceptance = load_json(wave3_lifecycle.validation_path(LIVE_ACCEPTANCE))
     scenario_ids = {item["id"] for item in acceptance["scenarios"]}
     for capability in package["proposed_capabilities"]:
         state = capability["acceptance"]

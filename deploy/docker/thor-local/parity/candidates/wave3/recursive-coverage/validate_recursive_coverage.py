@@ -130,6 +130,11 @@ def repo_file(binding: dict[str, Any]) -> Path:
     if relative.is_absolute() or ".." in relative.parts:
         raise RecursiveCoverageError(f"unsafe repository path: {relative}")
     path = REPO_ROOT / relative
+    if relative.as_posix() == "deploy/docker/thor-local/parity/official-capabilities.json":
+        sys.path.insert(0, str(SCRIPT_DIR.parent))
+        import lifecycle as wave3_lifecycle
+
+        path = wave3_lifecycle.validation_path(path)
     if path.is_symlink() or not path.is_file():
         raise RecursiveCoverageError(
             f"bound input is not a regular non-symlink file: {relative}"

@@ -28,6 +28,8 @@ SCHEMA = SCRIPT_DIR / "candidate.schema.json"
 LIVE_LEDGER = PARITY_DIR / "official-capabilities.json"
 LIVE_MANIFEST = PARITY_DIR / "manifest.json"
 LIVE_ACCEPTANCE = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+sys.path.insert(0, str(SCRIPT_DIR.parent))
+import lifecycle as wave3_lifecycle  # noqa: E402
 FIXED_POINT_GRAPH = SCRIPT_DIR.parent / "recursive-coverage" / "recursive-targets.json"
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 EXPECTED_COUNTS = {
@@ -128,6 +130,8 @@ def _validate_live_hashes(package: dict[str, Any], repo_root: Path) -> None:
     resolved_root = repo_root.resolve(strict=True)
     for item in package["live_inputs"]:
         path = repo_root / item["path"]
+        if repo_root.resolve() == REPO_ROOT.resolve():
+            path = wave3_lifecycle.validation_path(path)
         try:
             resolved = path.resolve(strict=True)
             resolved.relative_to(resolved_root)
@@ -149,9 +153,15 @@ def validate(
     repo_root: Path = REPO_ROOT,
 ) -> dict[str, int]:
     package = load_json(CANDIDATE) if package is None else package
-    live_ledger = load_json(LIVE_LEDGER) if live_ledger is None else live_ledger
-    live_manifest = load_json(LIVE_MANIFEST) if live_manifest is None else live_manifest
-    live_acceptance = load_json(LIVE_ACCEPTANCE) if live_acceptance is None else live_acceptance
+    live_ledger = load_json(wave3_lifecycle.validation_path(LIVE_LEDGER)) if live_ledger is None else live_ledger
+    live_manifest = load_json(wave3_lifecycle.validation_path(LIVE_MANIFEST)) if live_manifest is None else live_manifest
+    live_acceptance = load_json(wave3_lifecycle.validation_path(LIVE_ACCEPTANCE)) if live_acceptance is None else live_acceptance
+    if live_ledger == load_json(LIVE_LEDGER) and wave3_lifecycle.state() == "wholly_merged":
+        live_ledger = load_json(wave3_lifecycle.validation_path(LIVE_LEDGER))
+        if live_manifest == load_json(LIVE_MANIFEST):
+            live_manifest = load_json(wave3_lifecycle.validation_path(LIVE_MANIFEST))
+        if live_acceptance == load_json(LIVE_ACCEPTANCE):
+            live_acceptance = load_json(wave3_lifecycle.validation_path(LIVE_ACCEPTANCE))
     schema = load_json(SCHEMA)
     try:
         Draft202012Validator.check_schema(schema)

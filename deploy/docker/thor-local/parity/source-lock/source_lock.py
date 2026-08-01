@@ -235,6 +235,14 @@ def source_urls(
     inputs: dict[str, Path] = INPUTS,
 ) -> dict[str, list[str]]:
     """Return the exact recursive allowlist with semantic-source provenance."""
+    if inputs is INPUTS:
+        sys.path.insert(0, str(PARITY_DIR / "candidates/wave3"))
+        import lifecycle as wave3_lifecycle
+
+        inputs = {
+            **INPUTS,
+            "live_ledger": wave3_lifecycle.validation_path(INPUTS["live_ledger"]),
+        }
     if set(inputs) != {"live_ledger", "wave2_candidate", "recursive_targets"}:
         raise SourceLockError("source inputs must be the reviewed three-input set")
     target_document = load_json(inputs["recursive_targets"])
@@ -483,6 +491,16 @@ def validate(
     *,
     inputs: dict[str, Path] = INPUTS,
 ) -> dict[str, Any]:
+    display_inputs = inputs
+    if inputs is INPUTS:
+        sys.path.insert(0, str(PARITY_DIR / "candidates/wave3"))
+        import lifecycle as wave3_lifecycle
+
+        inputs = {
+            **INPUTS,
+            "live_ledger": wave3_lifecycle.validation_path(INPUTS["live_ledger"]),
+        }
+        display_inputs = INPUTS
     document = load_json(LOCK) if document is None else document
     _schema_validate(document)
     if document["product_version"] != PRODUCT_VERSION:
@@ -498,7 +516,7 @@ def validate(
     expected_inputs = [
         {
             "id": label,
-            "path": str(path.relative_to(REPO_ROOT)),
+            "path": str(display_inputs[label].relative_to(REPO_ROOT)),
             "sha256": sha256_file(path),
         }
         for label, path in inputs.items()

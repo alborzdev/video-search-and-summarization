@@ -588,6 +588,8 @@ def validate(
     for discrepancy in discrepancies:
         discrepancy_source_ids = discrepancy.get("source_ids", [])
         observations = discrepancy.get("observations", [])
+        semantics = discrepancy.get("record_semantics")
+        category = discrepancy.get("category")
         observation_sides = {
             (
                 item.get("source_id"),
@@ -597,12 +599,44 @@ def validate(
             for item in observations
             if isinstance(item, dict)
         }
+        invalid_semantics = (
+            (semantics is None and len(observations) < 2)
+            or (
+                semantics == "single_source_record"
+                and (
+                    len(observations) != 1
+                    or len(discrepancy_source_ids) != 1
+                )
+            )
+            or (semantics == "cross_source_discrepancy" and len(observations) < 2)
+            or semantics not in {None, "single_source_record", "cross_source_discrepancy"}
+            or (semantics is not None and category not in {"boundary", "discrepancy", "scoped_default", "known_limitation"})
+        )
+        generic_values = {
+            "official source boundary",
+            "official documentation boundary",
+            "source-backed observation",
+            "reviewed official source claim",
+        }
+        fabricated_generic = any(
+            value.strip().lower().rstrip(".") in generic_values
+            for item in observation_sides
+            for value in item[1:]
+        )
+        candidate_observations = discrepancy.get("candidate_observations")
+        invalid_candidate_observations = candidate_observations is not None and (
+            not isinstance(candidate_observations, list)
+            or not candidate_observations
+            or any(not isinstance(value, str) or not value for value in candidate_observations)
+        )
         if (
             not discrepancy_source_ids
             or len(discrepancy_source_ids) != len(set(discrepancy_source_ids))
             or not set(discrepancy_source_ids) <= set(source_ids)
             or not isinstance(observations, list)
-            or len(observations) < 2
+            or invalid_semantics
+            or fabricated_generic
+            or invalid_candidate_observations
             or len(observation_sides) != len(observations)
             or {item[0] for item in observation_sides} != set(discrepancy_source_ids)
             or any(

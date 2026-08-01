@@ -107,7 +107,7 @@
           },
           "observations": {
             "type": "array",
-            "minItems": 2,
+            "minItems": 1,
             "items": {
               "type": "object",
               "required": ["source_id", "locator", "claim"],
@@ -119,9 +119,50 @@
               }
             }
           },
+          "category": {
+            "enum": [
+              "boundary",
+              "discrepancy",
+              "scoped_default",
+              "known_limitation"
+            ]
+          },
+          "record_semantics": {
+            "enum": ["single_source_record", "cross_source_discrepancy"]
+          },
+          "candidate_observations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
           "resolution": {"type": "string", "minLength": 1},
           "must_not_claim": {"type": "string", "minLength": 1}
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "record_semantics": {"const": "single_source_record"}
+              },
+              "required": ["record_semantics"]
+            },
+            "then": {
+              "required": ["category"],
+              "properties": {
+                "source_ids": {"maxItems": 1},
+                "observations": {"minItems": 1, "maxItems": 1}
+              }
+            },
+            "else": {
+              "properties": {
+                "observations": {"minItems": 2}
+              }
+            }
+          }
+        ]
       }
     }
   },

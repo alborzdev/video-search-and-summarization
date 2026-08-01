@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/static-cases/inventory.schema.json",
+  "title": "Candidate-only Thor static qualification inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy", "evidence_schema_binding", "cases"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "repo_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "collection", "record_id", "contract_sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repo_path"},
+        "collection": {"enum": ["capabilities", "new_capabilities"]},
+        "record_id": {"$ref": "#/$defs/id"},
+        "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "source_assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "contains"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repo_path"},
+        "contains": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 512}
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": 1},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "integration_state", "executor_ready", "can_advance_capability",
+        "network", "docker", "subprocess_lifecycle", "warehouse_sample_bundle",
+        "max_bytes", "max_files", "deadline_seconds", "allowed_outcomes"
+      ],
+      "properties": {
+        "integration_state": {"const": "candidate_only"},
+        "executor_ready": {"const": false},
+        "can_advance_capability": {"const": false},
+        "network": {"const": "forbidden"},
+        "docker": {"const": "forbidden"},
+        "subprocess_lifecycle": {"const": "forbidden"},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "max_bytes": {"const": 8388608},
+        "max_files": {"const": 64},
+        "deadline_seconds": {"const": 10},
+        "allowed_outcomes": {
+          "const": ["observed_match", "observed_mismatch", "blocked", "not_applicable"]
+        }
+      }
+    },
+    "evidence_schema_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "usage"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/qualification/protocol-cases/runtime-evidence.schema.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "usage": {"const": "shape_reference_only_no_runtime_evidence"}
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 24,
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id", "capability_id", "family", "integration_state",
+          "executor_ready", "can_advance_capability", "adapter", "binding",
+          "disposition", "source_assertions"
+        ],
+        "properties": {
+          "case_id": {"type": "string", "pattern": "^static-case\\."},
+          "capability_id": {"$ref": "#/$defs/id"},
+          "family": {"enum": ["calibration_warehouse", "live_static"]},
+          "integration_state": {"const": "candidate_only"},
+          "executor_ready": {"const": false},
+          "can_advance_capability": {"const": false},
+          "adapter": {
+            "enum": [
+              "binding", "calibration_schema", "host_platform",
+              "host_kernel", "skills_catalog", "source_contract"
+            ]
+          },
+          "binding": {"$ref": "#/$defs/binding"},
+          "disposition": {
+            "enum": ["ordinary", "external_boundary", "reference_boundary", "safety_boundary"]
+          },
+          "source_assertions": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {"$ref": "#/$defs/source_assertion"}
+          }
+        }
+      }
+    }
+  }
+}
