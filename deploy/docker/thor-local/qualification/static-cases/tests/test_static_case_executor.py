@@ -64,7 +64,9 @@ class StaticCasePackageTest(unittest.TestCase):
             ["observed_match", "observed_mismatch", "blocked", "not_applicable"],
         )
 
-    def test_runtime_evidence_schema_is_shape_reference_only_and_hash_bound(self) -> None:
+    def test_runtime_evidence_schema_is_shape_reference_only_and_hash_bound(
+        self,
+    ) -> None:
         binding = self.inventory["evidence_schema_binding"]
         path = REPO_ROOT / binding["path"]
         self.assertEqual(binding["usage"], "shape_reference_only_no_runtime_evidence")
@@ -86,7 +88,9 @@ class StaticCasePackageTest(unittest.TestCase):
             with self.subTest(case=case["case_id"]):
                 result = EXECUTOR.inspect_case(self.inventory, case["case_id"])
                 self.assertEqual(list(validator.iter_errors(result)), [])
-                self.assertIn(result["outcome"], self.inventory["policy"]["allowed_outcomes"])
+                self.assertIn(
+                    result["outcome"], self.inventory["policy"]["allowed_outcomes"]
+                )
                 self.assertEqual(result["integration_state"], "candidate_only")
                 self.assertIs(result["executor_ready"], False)
                 self.assertIs(result["can_advance_capability"], False)
@@ -100,7 +104,9 @@ class StaticCasePackageTest(unittest.TestCase):
                 self.assertLessEqual(result["bounds"]["files_read"], 64)
                 self.assertLessEqual(result["bounds"]["bytes_read"], 8 * 1024 * 1024)
 
-    def test_calibration_fixtures_cover_positive_and_adjacent_negative_cases(self) -> None:
+    def test_calibration_fixtures_cover_positive_and_adjacent_negative_cases(
+        self,
+    ) -> None:
         schema = json.loads(
             (
                 REPO_ROOT
@@ -125,20 +131,107 @@ class StaticCasePackageTest(unittest.TestCase):
         self.assertGreater(len(list(validator.iter_errors(missing))), 0)
         self.assertGreater(len(list(validator.iter_errors(matrix))), 0)
 
-    def test_calibration_case_does_not_fabricate_official_schema_identity(self) -> None:
+    def test_calibration_case_classifies_exact_identity_and_validation_projection(
+        self,
+    ) -> None:
         result = EXECUTOR.inspect_case(
             self.inventory, "static-case.calibration-schema-vss-json"
         )
         observations = {item["id"]: item for item in result["observations"]}
         self.assertEqual(result["outcome"], "observed_mismatch")
         self.assertEqual(observations["generated_fixture_matrix"]["status"], "match")
+        self.assertEqual(
+            observations["official_schema_reference_binding"]["status"], "match"
+        )
+        self.assertEqual(observations["official_schema_source_lock"]["status"], "match")
         self.assertEqual(observations["official_schema_identity"]["status"], "mismatch")
         self.assertNotEqual(
             observations["official_schema_identity"]["expected"],
             observations["official_schema_identity"]["observed"],
         )
+        projection = observations["official_schema_validation_projection"]
+        self.assertEqual(projection["status"], "match")
+        self.assertEqual(projection["expected"], projection["observed"])
+        self.assertEqual(projection["official_error_message_count"], 2)
+        self.assertEqual(projection["local_error_message_count"], 77)
 
-    def test_warehouse_sample_markers_are_absent_from_inventory_and_fixtures(self) -> None:
+    def test_calibration_projection_removes_only_object_members_with_exact_key(
+        self,
+    ) -> None:
+        value = {
+            "errorMessage": {"ignored": True},
+            "nested": [{"errorMessage": "ignored", "keep": "errorMessage"}],
+            "errorMessages": "keep",
+        }
+        self.assertEqual(
+            EXECUTOR._remove_object_key(value, "errorMessage"),
+            {"nested": [{"keep": "errorMessage"}], "errorMessages": "keep"},
+        )
+        self.assertEqual(EXECUTOR._count_object_key(value, "errorMessage"), 2)
+
+    def test_calibration_projection_detects_validation_constraint_drift(self) -> None:
+        schema_path = (
+            REPO_ROOT
+            / "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json"
+        )
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        case = next(
+            item
+            for item in self.inventory["cases"]
+            if item["case_id"] == "static-case.calibration-schema-vss-json"
+        )
+        records = json.loads((REPO_ROOT / case["binding"]["path"]).read_text())[
+            case["binding"]["collection"]
+        ]
+        record = next(
+            item for item in records if item["id"] == case["binding"]["record_id"]
+        )
+        mutated = copy.deepcopy(schema)
+        mutated["properties"]["version"]["minLength"] = 2
+        observations = {
+            item["id"]: item
+            for item in EXECUTOR._calibration_identity_observations(
+                mutated, record["contract"], case["schema_reference"]
+            )
+        }
+        self.assertEqual(
+            observations["official_schema_validation_projection"]["status"],
+            "mismatch",
+        )
+
+    def test_inventory_schema_rejects_calibration_reference_tampering(self) -> None:
+        validator = Draft202012Validator(self.inventory_schema)
+        tampered = copy.deepcopy(self.inventory)
+        tampered["cases"][0]["schema_reference"]["validation_projection_sha256"] = (
+            "0" * 64
+        )
+        self.assertGreater(len(list(validator.iter_errors(tampered))), 0)
+        missing = copy.deepcopy(self.inventory)
+        del missing["cases"][0]["schema_reference"]
+        self.assertGreater(len(list(validator.iter_errors(missing))), 0)
+
+    def test_calibration_source_lock_reference_is_byte_and_record_bound(self) -> None:
+        case = next(
+            item
+            for item in self.inventory["cases"]
+            if item["case_id"] == "static-case.calibration-schema-vss-json"
+        )
+        budget = EXECUTOR.Budget()
+        observation = EXECUTOR._calibration_source_lock_observation(
+            case["schema_reference"], budget
+        )
+        self.assertEqual(observation["status"], "match")
+        self.assertEqual(observation["matching_record_count"], 1)
+        tampered = copy.deepcopy(case["schema_reference"])
+        tampered["official_source_body_sha256"] = "0" * 64
+        mismatch = EXECUTOR._calibration_source_lock_observation(
+            tampered, EXECUTOR.Budget()
+        )
+        self.assertEqual(mismatch["status"], "mismatch")
+
+    def test_warehouse_sample_markers_are_absent_from_inventory_and_fixtures(
+        self,
+    ) -> None:
         paths = [LANE / "inventory.json", *sorted((LANE / "fixtures").glob("*.json"))]
         for path in paths:
             text = path.read_text(encoding="utf-8")
@@ -156,7 +249,15 @@ class StaticCasePackageTest(unittest.TestCase):
                 imported.add(node.module.split(".")[0])
         self.assertTrue(
             imported.isdisjoint(
-                {"asyncio", "docker", "http", "requests", "socket", "subprocess", "urllib"}
+                {
+                    "asyncio",
+                    "docker",
+                    "http",
+                    "requests",
+                    "socket",
+                    "subprocess",
+                    "urllib",
+                }
             )
         )
         self.assertNotIn("os.system", source)
@@ -235,7 +336,9 @@ class StaticCasePackageTest(unittest.TestCase):
         original_root = EXECUTOR.REPO_ROOT
         with tempfile.TemporaryDirectory() as temporary_name:
             root = Path(temporary_name)
-            document = {"capabilities": [{"id": "capability.test", "contract": {"x": 2}}]}
+            document = {
+                "capabilities": [{"id": "capability.test", "contract": {"x": 2}}]
+            }
             (root / "binding.json").write_text(json.dumps(document), encoding="utf-8")
             case = {
                 "binding": {

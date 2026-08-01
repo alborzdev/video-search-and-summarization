@@ -36,6 +36,40 @@
           "items": {"type": "string", "minLength": 1, "maxLength": 512}
         }
       }
+    },
+    "calibration_schema_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "official_source_url", "source_lock_path", "source_lock_file_sha256",
+        "official_source_body_sha256",
+        "official_canonical_sha256", "validation_projection_rule",
+        "validation_projection_sha256", "official_error_message_count"
+      ],
+      "properties": {
+        "official_source_url": {
+          "const": "https://docs.nvidia.com/vss/3.2.1/calibration-schema.html"
+        },
+        "source_lock_path": {
+          "const": "deploy/docker/thor-local/parity/source-lock/source-lock.json"
+        },
+        "source_lock_file_sha256": {
+          "const": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07"
+        },
+        "official_source_body_sha256": {
+          "const": "8a497322da0ade04e16d6e161b6bd9245d25902b6ea6992bd59c2b62c7c42200"
+        },
+        "official_canonical_sha256": {
+          "const": "0ad42822136283bb458b51f5d7f1b44d0332193df509b5319d42f82d1b8da5dd"
+        },
+        "validation_projection_rule": {
+          "const": "recursively_remove_object_members_named_errorMessage"
+        },
+        "validation_projection_sha256": {
+          "const": "a00f2230fde4639ace8efe4754be176c67c8beca0d13d6b146d88b23b6e88229"
+        },
+        "official_error_message_count": {"const": 2}
+      }
     }
   },
   "properties": {
@@ -81,6 +115,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {"properties": {"adapter": {"const": "calibration_schema"}}},
+            "then": {"required": ["schema_reference"]},
+            "else": {"not": {"required": ["schema_reference"]}}
+          }
+        ],
         "required": [
           "case_id", "capability_id", "family", "integration_state",
           "executor_ready", "can_advance_capability", "adapter", "binding",
@@ -100,6 +141,7 @@
             ]
           },
           "binding": {"$ref": "#/$defs/binding"},
+          "schema_reference": {"$ref": "#/$defs/calibration_schema_reference"},
           "disposition": {
             "enum": ["ordinary", "external_boundary", "reference_boundary", "safety_boundary"]
           },

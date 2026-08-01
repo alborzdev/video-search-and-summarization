@@ -47,10 +47,20 @@ python3 -m unittest discover \
 ## Calibration identity boundary
 
 The checked-in implementation schema validates the tiny generated positive and
-adjacent-negative fixtures. Its canonical digest is not the exact digest quoted
-by the published VSS schema contract. The executor therefore reports the schema
-identity observation as a mismatch. It does not invent an official schema body
-or promote successful fixture discrimination into capability evidence.
+adjacent-negative fixtures, but its canonical JSON document digest is not the
+exact digest of the [published VSS schema](https://docs.nvidia.com/vss/3.2.1/calibration-schema.html).
+This is a real exact-document identity gap, not a whitespace, serialization, or
+key-order artifact: the local document has 77 `errorMessage` members while the
+official document has two.
+
+The difference is confined to that keyword. Recursively removing only object
+members named `errorMessage` produces the same canonical projection digest for
+both documents (`a00f2230...e88229`). The executor's `Draft7Validator` does not
+use this extension keyword to decide whether an instance is accepted, so the
+validation-rule projection and generated-fixture matrix match even though exact
+schema identity does not. The case honestly remains `observed_mismatch`; it does
+not invent an official schema body or promote static discrimination into
+capability evidence.
 
 ## Integration boundary
 

@@ -92,6 +92,16 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/static-cases/tests" \
   -p 'test_static_case_executor.py' -v
 
+# An isolated candidate tranche supplies ten deterministic, genuinely runnable
+# file-only executors. Live planning flags remain unchanged; even a match cannot
+# create runtime evidence or advance a capability to passed_current.
+python3 "${thor_local_root}/qualification/executor-cases/executor.py" validate
+python3 "${thor_local_root}/qualification/executor-cases/executor.py" \
+  run-all >/dev/null
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/executor-cases/tests" \
+  -p 'test_executor.py' -v
+
 python3 "${thor_local_root}/rt-vlm/model_matrix.py" \
   --matrix "${thor_local_root}/rt-vlm/model-matrix.json" \
   --artifact-lock "${thor_local_root}/rt-vlm/artifacts.lock.json" \

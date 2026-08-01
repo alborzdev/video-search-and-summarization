@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "integration_state": "isolated_executor_candidate",
+    "evidence_class": "deterministic_file_static_evidence_not_runtime",
+    "executor_ready": true,
+    "can_advance_capability": false,
+    "can_mark_passed_current": false,
+    "network": "forbidden",
+    "docker": "forbidden",
+    "subprocess": "forbidden",
+    "environment_mutation": "forbidden",
+    "warehouse_sample_bundle": "excluded",
+    "max_bytes": 4194304,
+    "max_files": 16,
+    "deadline_seconds": 5,
+    "allowed_outcomes": ["observed_match", "observed_mismatch"]
+  },
+  "planning_source": {
+    "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+    "denominator": 110,
+    "required_source_state": {
+      "materialized": false,
+      "executor_ready": false,
+      "runtime_evidence": []
+    }
+  },
+  "cases": [
+    {
+      "case_id": "executor-case.alert-metrics-contract",
+      "planning_requirement_id": "systems-alert-metrics",
+      "capability_id": "observability.alerts.prometheus",
+      "planning_payload_sha256": "6fd52ad7c17ff196a1329d099343dad08b64d25f3b3065e47cdbb057cef98929",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "metrics-defaults-and-route",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/metrics/__init__.py", "services/alert/alert-agent-web/app/main.py"],
+          "expected": ["PROMETHEUS_METRICS_ENABLED", "PROMETHEUS_PORT", "9081", "@app.get(\"/metrics\")"]
+        },
+        {
+          "assertion_id": "metrics-seven-families-and-cardinality",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/metrics/prometheus_metrics.py", "services/alert/metrics/recorder.py"],
+          "expected": ["alert_bridge_upstream_duration_seconds", "alert_bridge_kafka_lag_duration_seconds", "alert_bridge_worker_queue_wait_duration_seconds", "alert_bridge_vst_duration_seconds", "alert_bridge_video_length_seconds", "alert_bridge_vlm_duration_seconds", "alert_bridge_e2e_duration_seconds", "_MAX_SENSOR_IDS = 128", "unknown_overflow"]
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.rtvi-input-codec-surface",
+      "planning_requirement_id": "systems-rtvi-input-codecs",
+      "capability_id": "runtime.rtvi.input-codec-boundary",
+      "planning_payload_sha256": "004c9eef2df009df8c26225ae2925df008bb695a3bf8aaf8d72bef6cb38b9c46",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "rtvi-live-codec-enumeration",
+          "adapter": "text_contains_all",
+          "sources": ["services/rtvi/rt-vlm/src/api_models/live_stream.py"],
+          "expected": ["H264", "H265", "MJPEG"]
+        },
+        {
+          "assertion_id": "rtvi-container-media-types",
+          "adapter": "text_contains_all",
+          "sources": ["services/rtvi/rt-vlm/src/cli/rtvi_client_cli.py", "services/rtvi/rt-vlm/src/utils/asset_manager.py"],
+          "expected": [".mp4", "video/mp4", ".mkv", "video/x-matroska"]
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.broker-profile-choice",
+      "planning_requirement_id": "systems-broker-choice",
+      "capability_id": "configuration.message-broker.profile-choice",
+      "planning_payload_sha256": "fc5348257a7b087aaca993d4d7fa665b1ce12a12a5727de3eb8469ee0788e995",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "thor-defaults-to-kafka",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/thor-local/compose.yml"],
+          "expected": ["STREAM_TYPE: kafka"]
+        },
+        {
+          "assertion_id": "infra-declares-kafka-and-redis-profiles",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/infra/compose.yml"],
+          "expected": ["  kafka:", "  redis:", "bp_wh_kafka_2d", "bp_wh_redis_2d", "bp_developer_thor_full_2d"]
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.nvschema-format-selection",
+      "planning_requirement_id": "systems-nvschema-format",
+      "capability_id": "protocol.nvschema.format-selection",
+      "planning_payload_sha256": "05c22e278b8f6f972f7f36060c08d0557feb4d4bb77b9bcf8e229b2c110a18b0",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "json-metadata-container-declared",
+          "adapter": "json_pointer_equals",
+          "sources": ["deploy/docker/thor-local/vios/vst_config.json"],
+          "pointer": "/data/nv_streamer_metadata_container_supported",
+          "expected": ["json"]
+        },
+        {
+          "assertion_id": "protobuf-selected-for-overlay",
+          "adapter": "json_pointer_equals",
+          "sources": ["deploy/docker/thor-local/vios/vst_config.json"],
+          "pointer": "/overlay/use_video_metadata_protobuf",
+          "expected": true
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.nvschema-protobuf-fields",
+      "planning_requirement_id": "systems-nvschema-protobuf",
+      "capability_id": "protocol.nvschema.protobuf-messages",
+      "planning_payload_sha256": "2292a0e023ac1b1c3480f8de4eba4dd6405d5406db8fb09e2997c453a88e63a7",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "frame-field-tags",
+          "adapter": "proto_message_fields",
+          "sources": ["libs/nvschema/protobuf/schema.proto"],
+          "message": "Frame",
+          "expected": {"version": 1, "id": 2, "timestamp": 3, "sensorId": 4, "objects": 5, "fov": 6, "rois": 7, "socialDistancing": 8, "segmentation": 9, "interactions": 10, "congestions": 11, "info": 12}
+        },
+        {
+          "assertion_id": "vision-llm-field-tags",
+          "adapter": "proto_message_fields",
+          "sources": ["libs/nvschema/protobuf/schema.proto"],
+          "message": "VisionLLM",
+          "expected": {"version": 1, "timestamp": 2, "end": 3, "startFrameId": 4, "endFrameId": 5, "sensor": 6, "llm": 7, "info": 8}
+        },
+        {
+          "assertion_id": "incident-field-tags",
+          "adapter": "proto_message_fields",
+          "sources": ["libs/nvschema/protobuf/ext.proto"],
+          "message": "Incident",
+          "expected": {"sensorId": 1, "timestamp": 2, "end": 3, "objectIds": 4, "frameIds": 5, "place": 6, "analytics": 7, "category": 8, "embeddings": 9, "isAnomaly": 10, "info": 11, "llm": 12}
+        },
+        {
+          "assertion_id": "space-utilization-field-tags",
+          "adapter": "proto_message_fields",
+          "sources": ["libs/nvschema/protobuf/ext.proto"],
+          "message": "SpaceUtilization",
+          "expected": {"id": 1, "timestamp": 2, "metrics": 3, "sensors": 4, "layouts": 5}
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.elk-stack-config",
+      "planning_requirement_id": "systems-elk-config",
+      "capability_id": "configuration.elk.stack",
+      "planning_payload_sha256": "c5dad27972b415220e71159b5a605201d6f827d95b36e19c61f0773150079bd3",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "elasticsearch-network-and-security",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/infra/elk/elasticsearch/configs/elasticsearch.yml"],
+          "expected": ["network.host: 0.0.0.0", "http.port: 9200", "xpack.security.enabled: false"]
+        },
+        {
+          "assertion_id": "logstash-ordering-and-monitoring",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/infra/elk/logstash/configs/logstash.yml"],
+          "expected": ["pipeline.workers: 1", "pipeline.ordered: true", "xpack.monitoring.elasticsearch.hosts: [\"http://localhost:9200\"]"]
+        },
+        {
+          "assertion_id": "elk-image-version",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/infra/compose.yml"],
+          "expected": ["docker.elastic.co/kibana/kibana:9.3.3", "docker.elastic.co/logstash/logstash:9.3.3"]
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.logstash-dual-ingestion",
+      "planning_requirement_id": "systems-logstash-ingestion",
+      "capability_id": "protocol.elk.logstash-ingestion",
+      "planning_payload_sha256": "19c80d6b48fe4ef1139ac187bb79f8aae71cd0876bd15da22cb0a98c346e9eae",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "kafka-ingestion-contract",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/infra/elk/logstash/pipelines/kafka/mdx-logstash.conf"],
+          "expected": ["consumer_threads => 4", "auto_offset_reset => \"latest\"", "group_id => \"logstash\"", "StringDeserializer", "ByteArrayDeserializer", "bootstrap_servers => \"localhost:9092\""]
+        },
+        {
+          "assertion_id": "redis-ingestion-contract",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/infra/elk/logstash/pipelines/redis/mdx-logstash.conf"],
+          "expected": ["redis_stream {", "host => \"localhost\"", "port => 6379", "group => \"logstash\"", "data_field => \"value\""]
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.vios-effective-upload-limit",
+      "planning_requirement_id": "systems-vios-upload-limit",
+      "capability_id": "configuration.vios.upload-effective-limit",
+      "planning_payload_sha256": "555de95e525be7f1c4185cd0ef7e3abc3d196d3e7c442916a53c7f99c1f7ceb5",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "effective-upload-limit-minimum",
+          "adapter": "effective_upload_limit_mb",
+          "sources": ["deploy/docker/services/vios/configs/nginx-vst.conf", "deploy/docker/thor-local/vios/vst_config.json"],
+          "expected": 25600
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.lvs-custom-model-prompt-surface",
+      "planning_requirement_id": "systems-lvs-custom-model-prompt",
+      "capability_id": "configuration.lvs.custom-model-prompt",
+      "planning_payload_sha256": "bb17584af988d56ca93fdcd10a70050575eb3b0f865148eabfec1c95df03e8aa",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "lvs-custom-model-environment",
+          "adapter": "text_contains_all",
+          "sources": ["services/video-summarization/config/config.yaml", "deploy/docker/thor-local/compose.yml"],
+          "expected": ["LVS_LLM_MODEL_NAME", "LVS_LLM_BASE_URL", "LVS_LLM_MODEL_TYPE"]
+        },
+        {
+          "assertion_id": "lvs-prompt-override-api",
+          "adapter": "text_contains_all",
+          "sources": ["services/video-summarization/src/lvs_mcp.py", "services/video-summarization/src/via_stream_handler.py"],
+          "expected": ["override_vlm_prompt", "request.prompt", "caption_prompt"]
+        }
+      ]
+    },
+    {
+      "case_id": "executor-case.alert-warmup-default",
+      "planning_requirement_id": "systems-alert-prompt-warmup",
+      "capability_id": "configuration.alerts.prompt-vlm-warmup",
+      "planning_payload_sha256": "3efcf3e0fc683734bb4fa08a1a759dd781ab6ca559d7bd42c0977936fb57bf35",
+      "materialized": true,
+      "materialization_scope": "isolated_candidate_only",
+      "executor_ready": true,
+      "advancement_scope": "static_assertion_only",
+      "runtime_evidence": [],
+      "assertions": [
+        {
+          "assertion_id": "thor-warmup-matches-official-default",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/thor-local/compose.yml"],
+          "expected": ["VLM_WARMUP_ENABLED: \"true\""]
+        }
+      ]
+    }
+  ]
+}

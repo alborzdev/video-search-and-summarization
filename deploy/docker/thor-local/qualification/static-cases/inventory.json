@@ -33,6 +33,16 @@
         "record_id": "calibration.schema.vss-json",
         "contract_sha256": "a7996e01204db670829ddb948ba15cf3bdd8414db0af109d8a11abd389428a5c"
       },
+      "schema_reference": {
+        "official_source_url": "https://docs.nvidia.com/vss/3.2.1/calibration-schema.html",
+        "source_lock_path": "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+        "source_lock_file_sha256": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07",
+        "official_source_body_sha256": "8a497322da0ade04e16d6e161b6bd9245d25902b6ea6992bd59c2b62c7c42200",
+        "official_canonical_sha256": "0ad42822136283bb458b51f5d7f1b44d0332193df509b5319d42f82d1b8da5dd",
+        "validation_projection_rule": "recursively_remove_object_members_named_errorMessage",
+        "validation_projection_sha256": "a00f2230fde4639ace8efe4754be176c67c8beca0d13d6b146d88b23b6e88229",
+        "official_error_message_count": 2
+      },
       "disposition": "ordinary",
       "source_assertions": [
         {

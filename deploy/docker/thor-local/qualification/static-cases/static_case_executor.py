@@ -98,6 +98,29 @@ def _sha_json(value: Any) -> str:
     return _sha_bytes(_canonical_bytes(value))
 
 
+def _remove_object_key(value: Any, key: str) -> Any:
+    """Return a JSON value with every object member named *key* removed."""
+    if isinstance(value, dict):
+        return {
+            name: _remove_object_key(item, key)
+            for name, item in value.items()
+            if name != key
+        }
+    if isinstance(value, list):
+        return [_remove_object_key(item, key) for item in value]
+    return value
+
+
+def _count_object_key(value: Any, key: str) -> int:
+    if isinstance(value, dict):
+        return int(key in value) + sum(
+            _count_object_key(item, key) for item in value.values()
+        )
+    if isinstance(value, list):
+        return sum(_count_object_key(item, key) for item in value)
+    return 0
+
+
 def _utc_now() -> str:
     return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
@@ -242,9 +265,13 @@ def load_and_validate_inventory() -> dict[str, Any]:
         raise StaticCaseError(f"24-ID tranche drift: missing={missing}, extra={extra}")
 
     inventory_text = INVENTORY_PATH.read_text(encoding="utf-8")
-    forbidden = [marker for marker in EXCLUDED_SAMPLE_MARKERS if marker in inventory_text]
+    forbidden = [
+        marker for marker in EXCLUDED_SAMPLE_MARKERS if marker in inventory_text
+    ]
     if forbidden:
-        raise StaticCaseError(f"excluded Warehouse sample marker in inventory: {forbidden}")
+        raise StaticCaseError(
+            f"excluded Warehouse sample marker in inventory: {forbidden}"
+        )
 
     evidence = inventory["evidence_schema_binding"]
     evidence_path = _repo_file(evidence["path"])
@@ -254,7 +281,9 @@ def load_and_validate_inventory() -> dict[str, Any]:
     return inventory
 
 
-def _binding(case: dict[str, Any], budget: Budget) -> tuple[dict[str, Any] | None, dict[str, Any]]:
+def _binding(
+    case: dict[str, Any], budget: Budget
+) -> tuple[dict[str, Any] | None, dict[str, Any]]:
     binding = case["binding"]
     try:
         document = _strict_json_bytes(
@@ -298,7 +327,11 @@ def _source_assertions(case: dict[str, Any], budget: Budget) -> list[dict[str, A
             text = payload.decode("utf-8")
         except (StaticCaseError, UnicodeDecodeError) as exc:
             observations.append(
-                {"id": f"source:{assertion['path']}", "status": "blocked", "detail": str(exc)}
+                {
+                    "id": f"source:{assertion['path']}",
+                    "status": "blocked",
+                    "detail": str(exc),
+                }
             )
             continue
         missing = [token for token in assertion["contains"] if token not in text]
@@ -312,8 +345,95 @@ def _source_assertions(case: dict[str, Any], budget: Budget) -> list[dict[str, A
     return observations
 
 
+def _calibration_identity_observations(
+    schema: dict[str, Any],
+    contract: dict[str, Any],
+    reference: dict[str, Any],
+) -> list[dict[str, Any]]:
+    official_hash = contract["canonical_schema_sha256"]
+    reference_hash = reference["official_canonical_sha256"]
+    local_canonical_hash = _sha_json(schema)
+    annotation_key = "errorMessage"
+    local_projection_hash = _sha_json(_remove_object_key(schema, annotation_key))
+    return [
+        {
+            "id": "official_schema_reference_binding",
+            "status": "match" if official_hash == reference_hash else "mismatch",
+            "expected": official_hash,
+            "observed": reference_hash,
+            "source_url": reference["official_source_url"],
+            "source_body_sha256": reference["official_source_body_sha256"],
+        },
+        {
+            "id": "official_schema_identity",
+            "status": "match" if local_canonical_hash == official_hash else "mismatch",
+            "expected": official_hash,
+            "observed": local_canonical_hash,
+            "detail": (
+                "canonical JSON document identity differs; this is not a raw "
+                "serialization or key-order comparison"
+            ),
+        },
+        {
+            "id": "official_schema_validation_projection",
+            "status": (
+                "match"
+                if local_projection_hash == reference["validation_projection_sha256"]
+                else "mismatch"
+            ),
+            "expected": reference["validation_projection_sha256"],
+            "observed": local_projection_hash,
+            "projection_rule": reference["validation_projection_rule"],
+            "official_error_message_count": reference["official_error_message_count"],
+            "local_error_message_count": _count_object_key(schema, annotation_key),
+            "detail": (
+                "digest-equivalent after removing only errorMessage object members; "
+                "Draft7Validator does not use that extension keyword for acceptance"
+            ),
+        },
+    ]
+
+
+def _calibration_source_lock_observation(
+    reference: dict[str, Any], budget: Budget
+) -> dict[str, Any]:
+    path = reference["source_lock_path"]
+    payload = budget.read_repo(path)
+    file_hash = _sha_bytes(payload)
+    source_lock = _strict_json_bytes(payload, path)
+    records = source_lock.get("records") if isinstance(source_lock, dict) else None
+    matches = (
+        [
+            record
+            for record in records
+            if isinstance(record, dict)
+            and record.get("url") == reference["official_source_url"]
+        ]
+        if isinstance(records, list)
+        else []
+    )
+    observed_body_hash = matches[0].get("sha256") if len(matches) == 1 else None
+    expected_file_hash = reference["source_lock_file_sha256"]
+    expected_body_hash = reference["official_source_body_sha256"]
+    return {
+        "id": "official_schema_source_lock",
+        "status": (
+            "match"
+            if file_hash == expected_file_hash
+            and observed_body_hash == expected_body_hash
+            else "mismatch"
+        ),
+        "source_lock_path": path,
+        "expected_source_lock_file_sha256": expected_file_hash,
+        "observed_source_lock_file_sha256": file_hash,
+        "expected_source_body_sha256": expected_body_hash,
+        "observed_source_body_sha256": observed_body_hash,
+        "matching_record_count": len(matches),
+    }
+
+
 def _calibration_observations(
-    record: dict[str, Any], budget: Budget, temporary_root: Path
+    case: dict[str, Any], record: dict[str, Any], budget: Budget, temporary_root: Path
 ) -> list[dict[str, Any]]:
     schema_path = "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json"
     schema = _strict_json_bytes(budget.read_repo(schema_path), schema_path)
@@ -325,15 +445,21 @@ def _calibration_observations(
     )
     fixture_results: list[dict[str, Any]] = []
     for name in fixture_names:
-        relative = f"deploy/docker/thor-local/qualification/static-cases/fixtures/{name}"
+        relative = (
+            f"deploy/docker/thor-local/qualification/static-cases/fixtures/{name}"
+        )
         payload = budget.read_repo(relative)
         if any(marker.encode() in payload for marker in EXCLUDED_SAMPLE_MARKERS):
-            raise StaticCaseError(f"excluded Warehouse sample marker in fixture: {name}")
+            raise StaticCaseError(
+                f"excluded Warehouse sample marker in fixture: {name}"
+            )
         owned = temporary_root / name
         owned.write_bytes(payload)
         os.chmod(owned, 0o600)
         document = _strict_json_bytes(owned.read_bytes(), str(owned))
-        errors = sorted(validator.iter_errors(document), key=lambda error: list(error.path))
+        errors = sorted(
+            validator.iter_errors(document), key=lambda error: list(error.path)
+        )
         expected_valid = name == "calibration-valid.json"
         fixture_results.append(
             {
@@ -344,17 +470,11 @@ def _calibration_observations(
             }
         )
 
-    contract = record["contract"]
-    official_hash = contract["canonical_schema_sha256"]
-    local_canonical_hash = _sha_json(schema)
     return [
-        {
-            "id": "official_schema_identity",
-            "status": "match" if local_canonical_hash == official_hash else "mismatch",
-            "expected": official_hash,
-            "observed": local_canonical_hash,
-            "detail": "local implementation schema is compared; no official body is fabricated",
-        },
+        _calibration_source_lock_observation(case["schema_reference"], budget),
+        *_calibration_identity_observations(
+            schema, record["contract"], case["schema_reference"]
+        ),
         {
             "id": "generated_fixture_matrix",
             "status": "match"
@@ -367,7 +487,11 @@ def _calibration_observations(
 
 def _host_text(budget: Budget, key: str) -> str | None:
     payload = budget.read_host(key)
-    return None if payload is None else payload.decode("utf-8", errors="replace").strip("\x00\n ")
+    return (
+        None
+        if payload is None
+        else payload.decode("utf-8", errors="replace").strip("\x00\n ")
+    )
 
 
 def _platform_observations(
@@ -389,15 +513,25 @@ def _platform_observations(
                 "id": "host_platform",
                 "status": "blocked"
                 if normalized is None
-                else ("match" if normalized in record["contract"]["validated"] else "mismatch"),
+                else (
+                    "match"
+                    if normalized in record["contract"]["validated"]
+                    else "mismatch"
+                ),
                 "observed": normalized or "unavailable",
             }
         )
         return observations
 
-    expected_platform = record["contract"].get("host_platform") or record["contract"].get("platform")
-    expected_bsp = record["contract"].get("host_bsp") or record["contract"].get("bsp_release")
-    expected_driver = record["contract"].get("official_driver") or record["contract"].get("driver")
+    expected_platform = record["contract"].get("host_platform") or record[
+        "contract"
+    ].get("platform")
+    expected_bsp = record["contract"].get("host_bsp") or record["contract"].get(
+        "bsp_release"
+    )
+    expected_driver = record["contract"].get("official_driver") or record[
+        "contract"
+    ].get("driver")
     normalized_platform = None
     if model:
         if "AGX Thor" in model and "AGX" in expected_platform:
@@ -406,13 +540,9 @@ def _platform_observations(
             normalized_platform = expected_platform
         else:
             normalized_platform = model
-    release_match = re.search(
-        r"R(\d+).*?REVISION:\s*(\d+)(?:\.\d+)?", bsp or ""
-    )
+    release_match = re.search(r"R(\d+).*?REVISION:\s*(\d+)(?:\.\d+)?", bsp or "")
     normalized_bsp = (
-        f"{release_match.group(1)}.{release_match.group(2)}"
-        if release_match
-        else None
+        f"{release_match.group(1)}.{release_match.group(2)}" if release_match else None
     )
     driver_match = re.search(r"(\d{3}\.\d{2})", driver or "")
     normalized_driver = driver_match.group(1) if driver_match else None
@@ -424,7 +554,9 @@ def _platform_observations(
         observations.append(
             {
                 "id": f"host_{name}",
-                "status": "blocked" if observed is None else ("match" if observed == expected else "mismatch"),
+                "status": "blocked"
+                if observed is None
+                else ("match" if observed == expected else "mismatch"),
                 "expected": expected,
                 "observed": observed or "unavailable",
             }
@@ -444,7 +576,9 @@ def _platform_observations(
     return observations
 
 
-def _kernel_observations(record: dict[str, Any], budget: Budget) -> list[dict[str, Any]]:
+def _kernel_observations(
+    record: dict[str, Any], budget: Budget
+) -> list[dict[str, Any]]:
     contract = record["contract"]
     mapping = {
         "disable_ipv6": str(int(contract["sysctl"]["disable_ipv6"])),
@@ -460,7 +594,9 @@ def _kernel_observations(record: dict[str, Any], budget: Budget) -> list[dict[st
         observations.append(
             {
                 "id": f"sysctl_{key}",
-                "status": "blocked" if normalized is None else ("match" if normalized == expected else "mismatch"),
+                "status": "blocked"
+                if normalized is None
+                else ("match" if normalized == expected else "mismatch"),
                 "expected": expected,
                 "observed": normalized or "unavailable",
             }
@@ -475,7 +611,9 @@ def _kernel_observations(record: dict[str, Any], budget: Budget) -> list[dict[st
     return observations
 
 
-def _skills_observations(record: dict[str, Any], budget: Budget) -> list[dict[str, Any]]:
+def _skills_observations(
+    record: dict[str, Any], budget: Budget
+) -> list[dict[str, Any]]:
     expected = record["contract"]["skills"]
     observed: list[str] = []
     frontmatter_missing: list[str] = []
@@ -489,7 +627,9 @@ def _skills_observations(record: dict[str, Any], budget: Budget) -> list[dict[st
     return [
         {
             "id": "skill_catalog",
-            "status": "match" if observed == expected and not frontmatter_missing else "mismatch",
+            "status": "match"
+            if observed == expected and not frontmatter_missing
+            else "mismatch",
             "expected_count": 16,
             "observed_count": len(observed),
             "frontmatter_missing": frontmatter_missing,
@@ -536,9 +676,13 @@ def inspect_case(inventory: dict[str, Any], case_id: str) -> dict[str, Any]:
         if record is not None:
             adapter = case["adapter"]
             if adapter == "calibration_schema":
-                observations.extend(_calibration_observations(record, budget, temporary_path))
+                observations.extend(
+                    _calibration_observations(case, record, budget, temporary_path)
+                )
             elif adapter == "host_platform":
-                observations.extend(_platform_observations(case["capability_id"], record, budget))
+                observations.extend(
+                    _platform_observations(case["capability_id"], record, budget)
+                )
             elif adapter == "host_kernel":
                 observations.extend(_kernel_observations(record, budget))
             elif adapter == "skills_catalog":
@@ -558,7 +702,9 @@ def inspect_case(inventory: dict[str, Any], case_id: str) -> dict[str, Any]:
         before = dict(budget.hashes)
         after = budget.rehash()
         if before != after:
-            raise StaticCaseError("one or more observed sources changed during inspection")
+            raise StaticCaseError(
+                "one or more observed sources changed during inspection"
+            )
         if stat.S_IMODE(temporary_path.stat().st_mode) != 0o700:
             raise StaticCaseError("private temporary root mode changed")
 
@@ -642,7 +788,9 @@ def main() -> int:
             "network, Docker, lifecycle, or Warehouse sample"
         )
     elif args.command == "inspect":
-        print(json.dumps(inspect_case(inventory, args.case_id), indent=2, sort_keys=True))
+        print(
+            json.dumps(inspect_case(inventory, args.case_id), indent=2, sort_keys=True)
+        )
     else:
         raise StaticCaseError(f"unsupported command: {args.command}")
     return 0
