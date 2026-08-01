@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scope", "advances_live_acceptance", "runtime_evidence_added", "inventory_sha256", "set_digests", "baseline_checks", "counts", "remaining_requirement_audit", "results"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"const": "isolated_candidate_only"},
+    "advances_live_acceptance": {"const": false},
+    "runtime_evidence_added": {"const": false},
+    "inventory_sha256": {"$ref": "#/$defs/sha256"},
+    "set_digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_44", "wave5_remaining_66", "wave6_selected_6", "wave6_remaining_60"],
+      "properties": {
+        "prior_44": {"const": "3a6e3e23bb918167eb2359988416ec84baed1b8402f0b28103c96c28cf93560f"},
+        "wave5_remaining_66": {"const": "b51107200a0fd2e9c862c5576135c864ab1d9f041bf668dff2ff3934a5fe6f28"},
+        "wave6_selected_6": {"const": "ebed5e3724ad9935e7068974e51b3c7fcdd0506e78e10077a95afc5752d6fcc8"},
+        "wave6_remaining_60": {"const": "12bada9c389b5550910bfed7073281a59d63b5616266118e983f75522126c342"}
+      }
+    },
+    "baseline_checks": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/file_check"}
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_planning_requirements", "integrated_materialized", "live_open", "prior_package_selections", "prior_materialized_static_bindings", "prior_live_open_candidate_selections", "remaining_requirements_audited", "cases", "observed_match", "observed_mismatch", "documented_mismatches_preserved", "external_optional_boundaries_preserved", "remaining_requirements_unselected"],
+      "properties": {
+        "total_planning_requirements": {"const": 110},
+        "integrated_materialized": {"const": 26},
+        "live_open": {"const": 84},
+        "prior_package_selections": {"const": 44},
+        "prior_materialized_static_bindings": {"const": 26},
+        "prior_live_open_candidate_selections": {"const": 18},
+        "remaining_requirements_audited": {"const": 66},
+        "cases": {"const": 6},
+        "observed_match": {"const": 6},
+        "observed_mismatch": {"const": 0},
+        "documented_mismatches_preserved": {"const": 5},
+        "external_optional_boundaries_preserved": {"const": 1},
+        "remaining_requirements_unselected": {"const": 60}
+      }
+    },
+    "remaining_requirement_audit": {
+      "type": "array",
+      "minItems": 66,
+      "maxItems": 66,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["planning_requirement_id", "owner_id", "package", "planning_payload_sha256", "capability_sha256", "contract_sha256", "classification"],
+        "properties": {
+          "planning_requirement_id": {"type": "string", "minLength": 1},
+          "owner_id": {"type": "string", "minLength": 1},
+          "package": {"enum": ["agent-smartcity", "systems", "calibration-warehouse"]},
+          "planning_payload_sha256": {"$ref": "#/$defs/sha256"},
+          "capability_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+          "contract_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+          "classification": {"enum": ["selected_source_contract", "existing_static_or_external_boundary_lane_not_new", "requires_custom_media_and_runtime_qualification", "requires_fixture_or_independent_source_semantics", "requires_runtime_or_complete_independent_source_semantics"]}
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "planning_requirement_id", "capability_id", "outcome", "boundary_status", "binding_checks", "source_checks", "assertions", "runtime_evidence"],
+        "properties": {
+          "case_id": {"type": "string", "pattern": "^wave6-source-case\\."},
+          "planning_requirement_id": {"type": "string", "minLength": 1},
+          "capability_id": {"type": "string", "minLength": 1},
+          "outcome": {"const": "observed_match"},
+          "boundary_status": {"enum": ["documented_mismatch_preserved", "external_optional_boundary_preserved"]},
+          "binding_checks": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["requirement_payload_sha256", "capability_sha256", "contract_sha256", "owner_binding", "requirement_still_open"],
+            "properties": {
+              "requirement_payload_sha256": {"const": true},
+              "capability_sha256": {"const": true},
+              "contract_sha256": {"const": true},
+              "owner_binding": {"const": true},
+              "requirement_still_open": {"const": true}
+            }
+          },
+          "source_checks": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "uniqueItems": true,
+            "items": {"$ref": "#/$defs/file_check"}
+          },
+          "assertions": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["assertion_id", "passed", "detail"],
+              "properties": {
+                "assertion_id": {"type": "string", "minLength": 1},
+                "passed": {"const": true},
+                "detail": {"const": "missing=[]"}
+              }
+            }
+          },
+          "runtime_evidence": {"const": []}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "file_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256_match"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256_match": {"const": true}
+      }
+    }
+  }
+}

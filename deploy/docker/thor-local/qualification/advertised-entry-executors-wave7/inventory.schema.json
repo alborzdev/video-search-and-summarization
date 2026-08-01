@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "source_plan", "source_manifest",
+    "live_official_capabilities", "live_capability_oracles",
+    "previous_candidate_inventories", "separate_detection_map_candidate",
+    "policy", "denominator", "cases", "blocked_entries"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_only_remaining_source_executor_tranche_wave7"},
+    "source_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256", "plan_payload_sha256"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "plan_payload_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "source_manifest": {"$ref": "#/$defs/lockedFile"},
+    "live_official_capabilities": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/parity/official-capabilities.json"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "live_capability_oracles": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/parity/capability-oracles.json"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "previous_candidate_inventories": {
+      "type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/lockedFile"}
+    },
+    "separate_detection_map_candidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256", "entry_id"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/qualification/detection-map-static-executor/contract.json"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "entry_id": {"const": "manifest-gap.spatial-ai-utils.03-detection-map"}
+      }
+    },
+    "policy": {
+      "const": {
+        "candidate_only": true,
+        "can_mark_passed_current": false,
+        "live_acceptance_mutation_allowed": false,
+        "live_oracle_mutation_allowed": false,
+        "runtime_evidence": [],
+        "network_allowed": false,
+        "docker_allowed": false,
+        "subprocess_allowed": false,
+        "lifecycle_allowed": false,
+        "downloads_allowed": false,
+        "credentials_allowed": false,
+        "warehouse_sample_bundle": "excluded",
+        "file_writes_allowed": false
+      }
+    },
+    "denominator": {
+      "const": {
+        "advertised_gap_entries": 87,
+        "previous_wave_candidates": 71,
+        "separate_detection_map_candidates": 1,
+        "pre_wave7_candidates": 72,
+        "wave7_remaining_entries": 15,
+        "selected_source_candidates": 11,
+        "external_attestation_blockers": 4,
+        "post_wave7_candidates": 83,
+        "entries_without_candidate": 4,
+        "official_open_entries": 87
+      }
+    },
+    "cases": {
+      "type": "array", "minItems": 11, "maxItems": 11,
+      "items": {"$ref": "#/$defs/case"}
+    },
+    "blocked_entries": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"$ref": "#/$defs/blocked"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "entryId": {"type": "string", "pattern": "^manifest-gap\\.[a-z0-9-]+\\.[0-9]{2}-[a-z0-9-]+$"},
+    "lockedFile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sourceLock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sourceAssertion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "fragments"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "fragments": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "case": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "manifest_pointer", "entry_id", "proposed_capability_id", "advertised",
+        "advertised_utf8_sha256", "advertised_canonical_sha256",
+        "required_oracle_canonical_sha256", "adapter_id", "evidence_scope",
+        "source_locks", "source_assertions"
+      ],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "entry_id": {"$ref": "#/$defs/entryId"},
+        "proposed_capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "advertised": {"type": "string", "minLength": 1},
+        "advertised_utf8_sha256": {"$ref": "#/$defs/sha256"},
+        "advertised_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "required_oracle_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "adapter_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "evidence_scope": {"type": "string", "pattern": "^subset:"},
+        "source_locks": {
+          "type": "array", "minItems": 2, "maxItems": 4, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/sourceLock"}
+        },
+        "source_assertions": {
+          "type": "array", "minItems": 1, "maxItems": 4,
+          "items": {"$ref": "#/$defs/sourceAssertion"}
+        }
+      }
+    },
+    "blocked": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "manifest_pointer", "entry_id", "advertised", "advertised_utf8_sha256",
+        "advertised_canonical_sha256", "required_oracle_canonical_sha256",
+        "blocker_type", "reason"
+      ],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "entry_id": {"$ref": "#/$defs/entryId"},
+        "advertised": {"type": "string", "minLength": 1},
+        "advertised_utf8_sha256": {"$ref": "#/$defs/sha256"},
+        "advertised_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "required_oracle_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "blocker_type": {"const": "external_optional_boundary"},
+        "reason": {"type": "string", "minLength": 40}
+      }
+    }
+  }
+}

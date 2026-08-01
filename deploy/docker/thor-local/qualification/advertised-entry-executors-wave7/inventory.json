@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_remaining_source_executor_tranche_wave7",
+  "source_plan": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+    "plan_payload_sha256": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d"
+  },
+  "source_manifest": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+  },
+  "live_official_capabilities": {
+    "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+    "raw_sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"
+  },
+  "live_capability_oracles": {
+    "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+    "raw_sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"
+  },
+  "previous_candidate_inventories": [
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json", "raw_sha256": "91406a15ff1340b9b4dba988507470234971fa4905997bc52e64fb983fc12a18"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave2/inventory.json", "raw_sha256": "2c14f8ae5ade22ccbc556a844b4fcb63661048826660073fb21c5f882047c5d2"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave3/inventory.json", "raw_sha256": "0b7056eafce7686fc2b7315fef8ae491ddef03d2e52f41e7c7861247933f90ab"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave4/inventory.json", "raw_sha256": "1de6e9be3c93c349e45b192506e3081758553582dda6f73b79877bc4ff5155a6"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave5/inventory.json", "raw_sha256": "98876a18d628df644171cd1d0051753dadd904cca67a5fe0fa8696832cb08771"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave6/inventory.json", "raw_sha256": "dbc1045b5d9e6b02ab152f2f0cc9007c0087e265692ef4e4aa911dc12f7935e3"}
+  ],
+  "separate_detection_map_candidate": {
+    "path": "deploy/docker/thor-local/qualification/detection-map-static-executor/contract.json",
+    "raw_sha256": "5ca96f6923dee872182ad6af782270d4df14cec17044eebbfd0121601b84bdbc",
+    "entry_id": "manifest-gap.spatial-ai-utils.03-detection-map"
+  },
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "live_acceptance_mutation_allowed": false,
+    "live_oracle_mutation_allowed": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "file_writes_allowed": false
+  },
+  "denominator": {
+    "advertised_gap_entries": 87,
+    "previous_wave_candidates": 71,
+    "separate_detection_map_candidates": 1,
+    "pre_wave7_candidates": 72,
+    "wave7_remaining_entries": 15,
+    "selected_source_candidates": 11,
+    "external_attestation_blockers": 4,
+    "post_wave7_candidates": 83,
+    "entries_without_candidate": 4,
+    "official_open_entries": 87
+  },
+  "cases": [
+    {
+      "manifest_pointer": "/features/4/advertised/0",
+      "entry_id": "manifest-gap.search-scale.00-configuration-up-to-100-streams",
+      "proposed_capability_id": "manifest-entry.search-scale.00-configuration-up-to-100-streams",
+      "advertised": "configuration up to 100 streams",
+      "advertised_utf8_sha256": "ce66ba2c9b6e20cef557a1b0416e66e95360fa5b62d25f94ffdb5ea283f4621e",
+      "advertised_canonical_sha256": "6b8ee1e28010c867a52732076f26345be4616d14eabfb1923c228278b566bf87",
+      "required_oracle_canonical_sha256": "e353e754f5c1108908e4d8bf4729ad8a9f77bbd0cad6f37cc731006040976b01",
+      "adapter_id": "search_scale_configuration_source_provenance",
+      "evidence_scope": "subset: digest-locked max-live-stream configurability plus reviewed reference-only performance provenance; no 100-stream workload, correctness, latency, or resource proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"},
+        {"path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py", "sha256": "6cc1d682072e0944f224eccf169f083ded81adbf860140442cd972854d96dd80"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"}
+      ],
+      "source_assertions": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "fragments": ["args.max_live_streams", "Server is already processing maximum number of live streams"]},
+        {"path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py", "fragments": ["--max-live-streams", "self._max_live_streams"]},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "fragments": ["\"reference_only\":true", "\"thor_remeasurement_required\":true"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/4/advertised/1",
+      "entry_id": "manifest-gap.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia",
+      "proposed_capability_id": "manifest-entry.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia",
+      "advertised": "16 concurrent 1080p streams tested by NVIDIA",
+      "advertised_utf8_sha256": "947626302d450cd77025382e15dc07a59e078c99db117948eaef446248d1dfed",
+      "advertised_canonical_sha256": "ac4967d65f315bfc4378aa3417f9bba5b736e5f0b8fc76ab5280b9a9be8130fb",
+      "required_oracle_canonical_sha256": "9818e83ea0ae45b498cc88c41e53263141d06d8af2f5ed2214f4c368831ee7ae",
+      "adapter_id": "search_scale_reference_provenance",
+      "evidence_scope": "subset: digest-locked NVIDIA performance-reference provenance marked reference-only and Thor-remeasurement-required; no 16x1080p Thor execution or performance proof",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "fragments": ["\"id\":\"performance.rt-vlm\"", "\"reference_only\":true", "\"thor_remeasurement_required\":true", "\"maximum-alert-and-caption-streams\""]},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "fragments": ["\"reference_only\": true", "\"id\": \"performance.rt-vlm\""]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/14/advertised/0",
+      "entry_id": "manifest-gap.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking",
+      "advertised": "Sparse4D multi-camera 3D detection and tracking",
+      "advertised_utf8_sha256": "5a54dea2e59479301b03ce24c1b8c4309191a69c62e197d063139b3991185d33",
+      "advertised_canonical_sha256": "ea600fe567d289543d5ca88978cf47f6273737c7fe464262d728529a41913214",
+      "required_oracle_canonical_sha256": "d4ed2d5abc7ecea15a101d2ed0fed97cf093dde973c348c8a2d0e12cc56dee74",
+      "adapter_id": "sparse4d_custom_data_source_contract",
+      "evidence_scope": "subset: digest-locked Thor Sparse4D model, anchor, four-camera input, and compose wiring contracts only; no model loading, inference, tracking output, health, or metrics proof",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "sha256": "e385a4a3c78fe3cc35f51f7a5f35fae43746b5172f61c65a53b7ec8a1c05d914"},
+        {"path": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py", "sha256": "ecbe1a4e43487a491547b8fd5b62fe542c19a2e90a6eb0c1d1108339b3cd02c3"},
+        {"path": "deploy/docker/scripts/thor-warehouse-sparse4d.sh", "sha256": "c1174164a494263e62139e9507e15836b539b133cebae813ec99b5bbc5765f4c"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "fragments": ["perception-3d:", "TRANSFORMERS_OFFLINE: \"1\"", "HF_HUB_OFFLINE: \"1\""]},
+        {"path": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py", "fragments": ["MODEL = \"sparse4d_warehouse_v2.2.onnx\"", "ANCHOR = \"_ov_kmeans900_v2.2.npy\"", "anchor.shape != (900, 11)", "\"sparse4d_contract\": \"four synchronized cameras\""]},
+        {"path": "deploy/docker/scripts/thor-warehouse-sparse4d.sh", "fragments": ["DS_MODEL_FAMILY == \"sparse4d-warehouse\"", "Active sources", "FPS|frames per second"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/14/advertised/1",
+      "entry_id": "manifest-gap.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics",
+      "advertised": "shared RT-CV lifecycle/health/metrics",
+      "advertised_utf8_sha256": "c4bb02cb39143626f69715de6e266e2ce14400dc35b2e059b585aa5106064e95",
+      "advertised_canonical_sha256": "c035411eb0a2bf67d99a2036d2f77e647f09728c22de1e56b0ac707d3902c4f9",
+      "required_oracle_canonical_sha256": "6f3f8d07014bf042dba7c52ae3a858b462fa92af01a48fcfdb17cac54a35d9b2",
+      "adapter_id": "sparse4d_lifecycle_metrics_source_contract",
+      "evidence_scope": "subset: digest-locked healthcheck, Prometheus scrape, and launcher readiness assertions only; no lifecycle action, endpoint request, container health, or metric sample",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "sha256": "e385a4a3c78fe3cc35f51f7a5f35fae43746b5172f61c65a53b7ec8a1c05d914"},
+        {"path": "deploy/docker/thor-local/warehouse-sparse4d-prometheus.yml", "sha256": "d7e195313cf8aef56ea76aa9ead3a437b964be134d7f175436b5eab53cbefc94"},
+        {"path": "deploy/docker/scripts/thor-warehouse-sparse4d.sh", "sha256": "c1174164a494263e62139e9507e15836b539b133cebae813ec99b5bbc5765f4c"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "fragments": ["healthcheck:", "broker-health-check:"]},
+        {"path": "deploy/docker/thor-local/warehouse-sparse4d-prometheus.yml", "fragments": ["scrape_configs:", "job_name: prometheus"]},
+        {"path": "deploy/docker/scripts/thor-warehouse-sparse4d.sh", "fragments": ["container unhealthy", "Grafana health failed", "FPS evidence"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/0",
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.00-per-camera-rt-detr",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-mv3dt.00-per-camera-rt-detr",
+      "advertised": "per-camera RT-DETR",
+      "advertised_utf8_sha256": "60c7ff0e8482daf0075b88292fd6b0e400c6ec828613d12d23d0d64e4f59ac22",
+      "advertised_canonical_sha256": "53bfea8d8beb5ab7ebaeedcac3d9610c9a461784ef2f3bf41c2f501dd5201268",
+      "required_oracle_canonical_sha256": "1798e84b80e393992b1758cd77fbf742400d3c7fff8e55b19df77495e0eb1cc4",
+      "adapter_id": "mv3dt_rtdetr_source_contract",
+      "evidence_scope": "subset: digest-locked RT-DETR DeepStream source and model-input validation only; no engine build, per-camera inference, detections, or runtime proof",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "sha256": "09c3497f8cd7302d871cf528c09467273ac6a3717535f772e05d0eb2e63d6aff"},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-main-config-mv3dt.txt", "sha256": "6f1a5b76c26a0e8aa0ad42e3ab2327b1acf0fa1c8e66dcafefc2e1b6965db80d"},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-pgie-config.yml", "sha256": "df4a32517aaac9669da38dce731ce418ce9e6d5bd58613af0d87a992d0783994"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "fragments": ["DETECTOR_MODEL = \"rtdetr_warehouse_v1.0.2.fp16.onnx\"", "regular_file(detector, \"RT-DETR ONNX\")"]},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-main-config-mv3dt.txt", "fragments": ["RT-DETR + MV3DT pipeline", "batch-size=4"]},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-pgie-config.yml", "fragments": ["rtdetr_warehouse_v1.0.2.fp16.onnx", "infer-dims: 3;640;640"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/1",
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion",
+      "advertised": "MV3DT BEV fusion",
+      "advertised_utf8_sha256": "456b67bb1b166f75911113a3e868c44e3fba4b273ffa05e8284df8d8cfb2ac23",
+      "advertised_canonical_sha256": "9a7594bfff46cd3c1723040f7fb61e4a19f06adfacd9e4fc2ffa471d1cf74c0c",
+      "required_oracle_canonical_sha256": "854d88ed7605fa63fedd37d549d042142487c285570e1b5e787a4d8ca181c59e",
+      "adapter_id": "mv3dt_bev_fusion_source_contract",
+      "evidence_scope": "subset: digest-locked BEV-fusion service and tracker fusion parameters only; no service lifecycle, synchronized messages, fused tracks, or semantic output proof",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "sha256": "a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b"},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-mv3dt-tracker-config.yml", "sha256": "1053cc0a13f58b465cf28c5b59c65aa85f4feeb7d25c6aa7272d876f02a54b96"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "fragments": ["vss-rtvi-cv-mv3dt:", "vss-rtvi-cv-bev-fusion:"]},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-mv3dt-tracker-config.yml", "fragments": ["maxPeerToPredDistance4Fusion: 3.0", "minPeerVisibility4Fusion: 0.15"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/2",
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.02-bodypose3dnet",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-mv3dt.02-bodypose3dnet",
+      "advertised": "BodyPose3DNet",
+      "advertised_utf8_sha256": "e0706b2e4138d649eee019e420b26aa7f91f72cc260067fa7541e5428d9273af",
+      "advertised_canonical_sha256": "c7f9a9e0d9d15c2099ad0e37283e0580f9199551a92a36f57df6eb6817bc6e75",
+      "required_oracle_canonical_sha256": "9c92f0849f6bdcbb6356d7956801d0431f85fc6ce0f1b2f1f0ee03fcf385813d",
+      "adapter_id": "mv3dt_bodypose_source_contract",
+      "evidence_scope": "subset: digest-locked BodyPose3DNet input validation and tracker model configuration only; no model load, inference, pose output, or runtime proof",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "sha256": "09c3497f8cd7302d871cf528c09467273ac6a3717535f772e05d0eb2e63d6aff"},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-mv3dt-tracker-config.yml", "sha256": "1053cc0a13f58b465cf28c5b59c65aa85f4feeb7d25c6aa7272d876f02a54b96"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "fragments": ["BODYPOSE_MODEL = \"bodypose3dnet_accuracy.onnx\"", "regular_file(bodypose, \"BodyPose3DNet ONNX\")"]},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-mv3dt-tracker-config.yml", "fragments": ["/opt/storage/BodyPose3DNet/bodypose3dnet_accuracy.onnx", "bodypose3dnet_accuracy.onnx_b1_gpu0_fp16.engine"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/3",
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking",
+      "advertised": "four-camera calibrated multiview tracking",
+      "advertised_utf8_sha256": "4a41a538ba72c0304f1d5bf266d2e793afc8d83fef01ef5f75c022fa2ff2ba66",
+      "advertised_canonical_sha256": "2ee6b7597a796b0fe42ffbf1f5a4f4b95959327f55854297323da17b7bf42db8",
+      "required_oracle_canonical_sha256": "e138ec6f480d0d53382caaa443675bc7ff74b53a99c6e285fd67d31640a694ee",
+      "adapter_id": "mv3dt_four_camera_contract",
+      "evidence_scope": "subset: digest-locked four-camera batch and exact calibration/video/camInfo validation contracts only; no synchronized decode, tracking, BEV output, or cleanup execution",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "sha256": "09c3497f8cd7302d871cf528c09467273ac6a3717535f772e05d0eb2e63d6aff"},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-main-config-mv3dt.txt", "sha256": "6f1a5b76c26a0e8aa0ad42e3ab2327b1acf0fa1c8e66dcafefc2e1b6965db80d"},
+        {"path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "sha256": "a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "fragments": ["sensors[] must contain 2-7 cameras", "MP4 names must match calibration sensors exactly", "camInfo names must match calibration sensors exactly", "projectionMatrix_3x4_w2p"]},
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-main-config-mv3dt.txt", "fragments": ["columns=4", "max-batch-size=4", "batch-size=4"]},
+        {"path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "fragments": ["vss-rtvi-cv-mv3dt:", "vss-rtvi-cv-bev-fusion:"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/21/advertised/0",
+      "entry_id": "manifest-gap.audio-understanding.00-audio-aware-base-workflow",
+      "proposed_capability_id": "manifest-entry.audio-understanding.00-audio-aware-base-workflow",
+      "advertised": "audio-aware Base workflow",
+      "advertised_utf8_sha256": "d9c0f5d0bcb636a3ae4ac9a327c2ea2b7dbd7cd40e96bb89edf34660039bf45f",
+      "advertised_canonical_sha256": "d818d7805d1ac7ddcc36990b7625269bc4456db5ce67d583463582624d46a2e9",
+      "required_oracle_canonical_sha256": "9fc78ad68e479a3aaa9eddcb4f2e1c8481205b1e630c86d30314749af1fabc6c",
+      "adapter_id": "audio_base_source_contract",
+      "evidence_scope": "subset: digest-locked Base-profile audio flags and report-tool audio path only; no audio-capable model, media decode, semantic output, or workflow response",
+      "source_locks": [
+        {"path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "sha256": "5d07f34fc24921326ca803c7d2958a7c6ac6428c834d628db259b417a56df5a9"},
+        {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"}
+      ],
+      "source_assertions": [
+        {"path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "fragments": ["enable_audio: ${ENABLE_AUDIO:-false}", "remote VLM receives full MP4"]},
+        {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "fragments": ["enable_audio: bool", "disable_audio=not enable_audio", "AUDIO_REPORT_PROMPT_SUFFIX"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/21/advertised/1",
+      "entry_id": "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
+      "proposed_capability_id": "manifest-entry.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
+      "advertised": "audio transcript per RT-VLM chunk",
+      "advertised_utf8_sha256": "bb9a40945394173471c49d1d59631b54a76896db8ba58c491a27ab4a5a7bd431",
+      "advertised_canonical_sha256": "95666fb137f36efaf9c24cb13a71577fa41001493184977405272ebf001431f1",
+      "required_oracle_canonical_sha256": "4e54f3a8bf32fbc34c572f72a012ded20b3a0b88e7e6c9b9b5748edede31ddfa",
+      "adapter_id": "audio_chunk_transcript_source_contract",
+      "evidence_scope": "subset: digest-locked RT-VLM chunk-result transcript propagation and audio gating only; no decoded speech, transcript content, timing, or model execution",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "sha256": "5d07f34fc24921326ca803c7d2958a7c6ac6428c834d628db259b417a56df5a9"}
+      ],
+      "source_assertions": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "fragments": ["if chunk_result.audio_transcript:", "vision_llm.info[\"audioTranscript\"] = chunk_result.audio_transcript", "query.enable_audio"]},
+        {"path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "fragments": ["enable_audio: ${ENABLE_AUDIO:-false}"]}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/21/advertised/2",
+      "entry_id": "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts",
+      "proposed_capability_id": "manifest-entry.audio-understanding.02-audio-aware-summarization-and-alerts",
+      "advertised": "audio-aware summarization and alerts",
+      "advertised_utf8_sha256": "1e0a4b1cbef49cea40bb703dca38e6e549c656d173c87e083bcc4eda9dc30767",
+      "advertised_canonical_sha256": "b14388a9186581e2727f79c36491f72e6e9123d9829851443400a0120d2ed186",
+      "required_oracle_canonical_sha256": "b9df559c2c45ce08133185aa1757ac1805562051cf8d1d544ff538b2a65171e2",
+      "adapter_id": "audio_summary_alert_source_contract",
+      "evidence_scope": "subset: digest-locked audio transcript attachment, live summary path, incident category, and report audio prompt source only; no audio model or end-to-end summary/alert semantics",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"},
+        {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"}
+      ],
+      "source_assertions": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "fragments": ["vision_llm.info[\"audioTranscript\"]", "Generated new response for live-stream", "incident.category = alert_category or \"vlm-alert\""]},
+        {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "fragments": ["AUDIO_REPORT_PROMPT_SUFFIX", "if config.enable_audio and _is_omni_audio_model"]}
+      ]
+    }
+  ],
+  "blocked_entries": [
+    {
+      "manifest_pointer": "/features/7/advertised/0",
+      "entry_id": "manifest-gap.alert-notifications-slack.00-slack-notification",
+      "advertised": "Slack notification",
+      "advertised_utf8_sha256": "0bade3d0afb9d77be52651cfe4872541744b34af4f0b8d3cd6fe75f5bf8ab9f5",
+      "advertised_canonical_sha256": "abf0510fa4ed4569a6e10f40e4ec01055be952c0c70d9bb2b57d4558a435e612",
+      "required_oracle_canonical_sha256": "a5c895b40507f96b4e375c29eb5cb36ab97edf72e86aca02cc9779c1327cec7f",
+      "blocker_type": "external_optional_boundary",
+      "reason": "requires a user-managed Slack destination, authorized credentials, a real delivery receipt, and alert-to-message correlation; source presence or a local mock is not a candidate"
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/7",
+      "entry_id": "manifest-gap.spatial-ai-utils.07-aws-gcs-validation",
+      "advertised": "AWS/GCS validation",
+      "advertised_utf8_sha256": "ba65b25c6e8002105d4ecc6a9424e023b9c00f8abe4393d14fe26ac89292c18a",
+      "advertised_canonical_sha256": "8161863fd598f63c7ae7c6efdd9531f4d05e92a4727250c67d43c2930fce081e",
+      "required_oracle_canonical_sha256": "d3288d388b173192d989f5ce85448ba2cff4d85c21baa10783667f181d5eaa31",
+      "blocker_type": "external_optional_boundary",
+      "reason": "requires a user-managed AWS or GCS object store, authorized credentials, endpoint transcript, and validation result; mocks or source presence are not a candidate"
+    },
+    {
+      "manifest_pointer": "/features/34/advertised/0",
+      "entry_id": "manifest-gap.enterprise-rag.00-rag-report-generation",
+      "advertised": "RAG report generation",
+      "advertised_utf8_sha256": "b4b2d038c79830a83bed2846ca14500d7c49aab887013abe2c6a0d1f7548d1a6",
+      "advertised_canonical_sha256": "528f71e562b41a867b2997b8f7b9b952678f892fa7483e060e83c2e8fb25fca0",
+      "required_oracle_canonical_sha256": "81d5e93820e080da0ee93fc75f163751b136c0042795c12b71719b21a21da5c4",
+      "blocker_type": "external_optional_boundary",
+      "reason": "requires a user-managed Enterprise RAG server, authorized credentials, test document, retrieval transcript, citation correlation, and report response; source wiring is not a candidate"
+    },
+    {
+      "manifest_pointer": "/features/34/advertised/1",
+      "entry_id": "manifest-gap.enterprise-rag.01-frag-retrieval-integration",
+      "advertised": "frag retrieval integration",
+      "advertised_utf8_sha256": "bbb03dae4599e71759e999ff3ae6a098b458c559cb9605e6817a12b9ad3d80d5",
+      "advertised_canonical_sha256": "76f2900d07f2095a5413b37d18cf3ff75e043a7e969f29bc47e9db7d6072e48b",
+      "required_oracle_canonical_sha256": "acadf099f19bde6b52e1a17a7ebb8bb9513478f827098d22c227cf1886141b99",
+      "blocker_type": "external_optional_boundary",
+      "reason": "requires a user-managed Enterprise RAG endpoint, authorized credentials, test document, and retrieval/citation transcript; the FRAG client source alone is not a candidate"
+    }
+  ]
+}

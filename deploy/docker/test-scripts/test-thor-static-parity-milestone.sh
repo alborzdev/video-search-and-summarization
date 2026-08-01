@@ -141,6 +141,15 @@ python3 "${thor_local_root}/qualification/planning-requirement-executors-wave5/e
 python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave5/tests"
 
+# The fourth nonadvancing planning audit selects six more Smart City source
+# contracts from the exact 66-row remainder. Five documented mismatches and
+# one external-optional boundary remain explicit; all 84 live-open planning
+# requirements stay unpromoted and 60 remain without a planning candidate.
+python3 "${thor_local_root}/qualification/planning-requirement-executors-wave6/executor.py" \
+  --json >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave6/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
@@ -250,6 +259,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/detection-map-static-executor/tests"
+
+# Wave seven partitions the final 15 entries after Wave six and detection-mAP:
+# 11 receive digest-locked source/provenance candidates while Slack, AWS/GCS,
+# RAG reporting, and FRAG retrieval remain external-attestation blockers.
+# Aggregate candidate coverage is 83/87; all 87 official gaps remain open.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave7/executor.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave7/tests"
 
 # The four unresolved capability-to-service bindings have an authoritative
 # negative audit. None of the contracts selects a unique runtime participant

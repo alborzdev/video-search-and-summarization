@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "candidate_only", "can_mark_passed_current",
+    "official_capability_effect", "runtime_evidence", "network_used", "docker_used",
+    "subprocess_used", "lifecycle_used", "downloads_used", "credentials_used",
+    "warehouse_sample_bundle_used", "file_writes_used", "denominator", "observations",
+    "blocked_entries", "source_tree_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_only_remaining_source_executor_tranche_wave7"},
+    "candidate_only": {"const": true},
+    "can_mark_passed_current": {"const": false},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "network_used": {"const": false},
+    "docker_used": {"const": false},
+    "subprocess_used": {"const": false},
+    "lifecycle_used": {"const": false},
+    "downloads_used": {"const": false},
+    "credentials_used": {"const": false},
+    "warehouse_sample_bundle_used": {"const": false},
+    "file_writes_used": {"const": false},
+    "denominator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["advertised_gap_entries", "prior_candidates", "wave7_candidates", "external_blockers", "candidate_total", "official_open_entries"],
+      "properties": {
+        "advertised_gap_entries": {"const": 87},
+        "prior_candidates": {"const": 72},
+        "wave7_candidates": {"const": 11},
+        "external_blockers": {"const": 4},
+        "candidate_total": {"const": 83},
+        "official_open_entries": {"const": 87}
+      }
+    },
+    "observations": {
+      "type": "array", "minItems": 11, "maxItems": 11,
+      "items": {"$ref": "#/$defs/observation"}
+    },
+    "blocked_entries": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"$ref": "#/$defs/blocker"}
+    },
+    "source_tree_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "entry_id", "adapter_id", "observation", "evidence_scope", "source_sha256",
+        "assertion_sha256", "required_oracle", "full_oracle_status",
+        "can_mark_passed_current", "runtime_evidence"
+      ],
+      "properties": {
+        "entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+        "adapter_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "observation": {"const": "source_subset_match_candidate_only"},
+        "evidence_scope": {"type": "string", "pattern": "^subset:"},
+        "source_sha256": {"type": "object", "minProperties": 2, "additionalProperties": {"$ref": "#/$defs/sha256"}},
+        "assertion_sha256": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+        "required_oracle": {"$ref": "#/$defs/caseOracle"},
+        "full_oracle_status": {"const": "open_unexecuted"},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "blocker": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_id", "blocker_type", "reason", "required_oracle", "candidate_materialized", "runtime_evidence"],
+      "properties": {
+        "entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+        "blocker_type": {"const": "external_optional_boundary"},
+        "reason": {"type": "string", "minLength": 40},
+        "required_oracle": {"$ref": "#/$defs/blockerOracle"},
+        "candidate_materialized": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "caseOracle": {
+      "type": "object",
+      "required": ["type", "status", "runtime_evidence"],
+      "properties": {
+        "type": {"enum": ["runtime_scale_benchmark", "runtime_custom_data_multicamera", "runtime_audio_semantics"]},
+        "status": {"const": "open_unexecuted"},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "blockerOracle": {
+      "type": "object",
+      "required": ["type", "status", "runtime_evidence"],
+      "properties": {
+        "type": {"const": "external_optional_boundary"},
+        "status": {"const": "open_unexecuted"},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    }
+  }
+}

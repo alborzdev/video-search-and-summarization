@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "docker": false,
+    "subprocess": false,
+    "writes": false,
+    "lifecycle": false,
+    "downloads": false,
+    "credentials": false,
+    "warehouse_sample_bundle_used": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave6-source-case.smartcity-version-lock",
+      "planning_requirement_id": "smartcity-version-lock",
+      "capability_id": "boundary.smart-city.version-skew",
+      "planning_payload_sha256": "35e47e123a3b4c09f40d5d4382842a8e0ac114ce9da76ed82d4fa91d3477e56e",
+      "capability_sha256": "c206338f2b3e67b5a6db27c8309a13d2c28547f7fa67dde37302b4425f591120",
+      "contract_sha256": "140077191d26836067931dbf34a07dc79d895b41ba67e0331c202543aefb36b6",
+      "boundary_status": "documented_mismatch_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md", "sha256": "a52cc9d1fb873924c46a4565bbb235086af1822458864ff91c0ae6dc797b92d0"},
+        {"path": "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md", "sha256": "7f80ffb2679f2b477210690d82340fe3cfc1a4c48270491f1ced576d82bd7848"},
+        {"path": "deploy/docker/thor-local/models/artifacts.lock.json", "sha256": "5b0030ba13fb1ccee5950e3c4b78d334d8dd0c30a2a45ce90e6166a57fe31d09"}
+      ],
+      "assertions": [
+        {"assertion_id": "three-version-statements", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"toc_claim\":\"VSS v3.1\"", "\"release_note_claim\":\"3.2.0 microservices\"", "\"deep_dive_claim\":\"VSS 3.0 architecture\""]},
+        {"assertion_id": "version-lock-rule", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md", "deploy/docker/thor-local/models/artifacts.lock.json"], "expected": ["pin actual artifact and image digests; never infer runtime version from docs path", "all three official statements", "schema_version"]},
+        {"assertion_id": "artifact-integrity-is-not-runtime-evidence", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md"], "expected": ["artifact integrity and semantic evidence, not live inference evidence", "batch 64 is **not** a runtime claim"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave6-source-case.smartcity-prereq-source",
+      "planning_requirement_id": "smartcity-prereq-source",
+      "capability_id": "prereq.smart-city.reference-platform",
+      "planning_payload_sha256": "77e5b3e4d4b14d7fce5242309f003c6e03d4da69143f86dc855cfba0f1f443a7",
+      "capability_sha256": "7c9f93eecd1b5695b291706dac24ae010eba7262f7c092c2ad7fd7913e666875",
+      "contract_sha256": "25a1d25196205a974d757942d90674e2f914dafdbd69cd36ae4ab2edaa022ced",
+      "boundary_status": "documented_mismatch_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md", "sha256": "a52cc9d1fb873924c46a4565bbb235086af1822458864ff91c0ae6dc797b92d0"},
+        {"path": "README.md", "sha256": "9db37cdfebbf1b203ff419b8f2c3914a84a675fdc92bb9f0761ebfa5780ea67b"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-x86-reference-platform", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "README.md"], "expected": ["\"architecture\":\"x86_64\"", "\"validated_gpus\":[\"H100\",\"L40S\",\"RTX PRO 6000\"]", "580.105.08", "x86 hosts: Ubuntu 22.04 or Ubuntu 24.04"]},
+        {"assertion_id": "official-thor-exclusion", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"official_thor_support\":false", "Official Smart City prerequisites exclude AGX Thor"]},
+        {"assertion_id": "thor-lane-is-custom", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md"], "expected": ["Official x86 Smart City support versus the custom alternate Thor lane"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave6-source-case.smartcity-reference-envelope",
+      "planning_requirement_id": "smartcity-reference-envelope",
+      "capability_id": "performance.smart-city.reference-stream-envelope",
+      "planning_payload_sha256": "883b4af8907251cbd096ac59463fbfbc2a5cc0af71ec9c88542e9d7daf66b564",
+      "capability_sha256": "58f498eaf5ed117517d0747faf5b332a36a905cd592aa0cbb6530a12c381633a",
+      "contract_sha256": "34af0d85c928c652740756202257a0571ca2187fb3f931a21f2c2ef95d121cd3",
+      "boundary_status": "documented_mismatch_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-reference-table", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"input\":\"1080p@10fps\"", "\"H100\":{\"streams\":30,\"analytics_streams\":12", "\"L40S\":{\"streams\":30,\"analytics_streams\":6", "\"RTX_PRO_6000\":{\"streams\":30,\"analytics_streams\":12"]},
+        {"assertion_id": "reference-is-not-thor-pass-criterion", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["Reference table only; never used for Thor pass/fail", "\"applies_to_thor\":false"]},
+        {"assertion_id": "no-thor-envelope", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["No official Smart City performance envelope is supplied for Thor"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave6-source-case.smartcity-sdg-config",
+      "planning_requirement_id": "smartcity-sdg-config",
+      "capability_id": "tooling.smart-city.synthetic-data-pipeline",
+      "planning_payload_sha256": "76a4763e0840c2555abacbaa03b7c5cc532f843278766eaa52890205343aed32",
+      "capability_sha256": "02e70eb826739529676b270cef27b8db95775a6aa40aa69dab5d677dd01bc60d",
+      "contract_sha256": "c873de5be00b71fc4ae520a1b228e7725df503dadbc4c1a9cba0113a486e0202",
+      "boundary_status": "external_optional_boundary_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md", "sha256": "a52cc9d1fb873924c46a4565bbb235086af1822458864ff91c0ae6dc797b92d0"},
+        {"path": "deploy/docker/thor-local/parity/evidence/2026-07-31-sdg-thor-offline.md", "sha256": "19fae3261a6f39d353132abc29ed928ded4aa2d38f3f30620e2cc967d2d03e88"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-static-sdg-contract", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"simulator\":\"CARLA 0.9.16\"", "\"custom_map_sources\":[\"CARLA\",\"RoadRunner\"]", "\"augmentation\":\"Cosmos Transfer 2.5\"", "\"augmentation_variants\":18", "\"variant_groups\":{\"lighting\":9,\"weather\":5,\"surface\":4}", "\"ground_truth_retained\":true"]},
+        {"assertion_id": "external-not-runtime-dependency", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md"], "expected": ["\"runtime_dependency\":false", "external_optional/external_optional/not_applicable", "neither is a Smart City runtime dependency"]},
+        {"assertion_id": "local-tooling-evidence-does-not-imply-smartcity-runtime", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/evidence/2026-07-31-sdg-thor-offline.md"], "expected": ["No NVIDIA warehouse sample", "tooling lane current-runtime qualified"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave6-source-case.trafficcamnet-recipe",
+      "planning_requirement_id": "trafficcamnet-recipe",
+      "capability_id": "customization.smart-city.trafficcamnet-rtdetr",
+      "planning_payload_sha256": "e74b78c6b58bcc313ba1985176d019b7d119c5ef53e94df35053de62003295b3",
+      "capability_sha256": "e1a966e79464eb87cf9ed22dd2d6da945eb17c757cc5e0ad74df789de9b29d71",
+      "contract_sha256": "bfd505e42b9e63567223546498e611826a0cf660ecb83f2710e58873905db002",
+      "boundary_status": "documented_mismatch_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md", "sha256": "a52cc9d1fb873924c46a4565bbb235086af1822458864ff91c0ae6dc797b92d0"},
+        {"path": "services/rtvi/rt-cv/README.md", "sha256": "8525ea798262f4fb903255e4163644d63a26ebcb5a71fae33aa0b682cfa27173"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-four-class-training-recipe", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["nvidia/trafficcamnet_transformer_lite:trainable_resnet50_v2.0", "\"classes\":4", "\"input\":[544,960]", "\"queries\":300", "\"decoder_layers\":6", "\"optimizer\":\"AdamW\"", "\"epochs\":50", "\"export\":{\"format\":\"ONNX\",\"width\":960,\"height\":544}"]},
+        {"assertion_id": "local-five-class-runtime-surface-is-distinct", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "services/rtvi/rt-cv/README.md"], "expected": ["\"classes\":4", "# 5 classes"]},
+        {"assertion_id": "vlm-fine-tuning-remains-forthcoming", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/EVIDENCE.md"], "expected": ["\"vlm_fine_tuning\":\"forthcoming\"", "VLM fine-tuning is not delivered"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave6-source-case.smartcity-limitations-oracle",
+      "planning_requirement_id": "smartcity-limitations-oracle",
+      "capability_id": "behavior.smart-city.known-limitations",
+      "planning_payload_sha256": "9cc932a45d4a3cf63b7b2d1c0625852523ac1a49b5f4a5a6d9c1bb67d0396637",
+      "capability_sha256": "015db8d922aa96daa1d0bb474b8584b374a0873aeb6bd5ad620e3ba3238212f5",
+      "contract_sha256": "720594a773580e074215efc32d2c3499e3b3274377357ea48f7d8753658dc745",
+      "boundary_status": "documented_mismatch_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-active-limitations", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"default_nims_only_tested_on_shared_gpu\":true", "\"private_webrtc_requires_turn\":true", "\"multi_sensor_ui_latency\":\"tens_of_seconds\"", "\"long_run_crash_risks\":[\"cosmos3_nim\",\"vios\"]"]},
+        {"assertion_id": "exact-recovery-boundary", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"after\":[\"rtvi_restart\",\"vios_restart\"]", "restart perception-sdr-smc or delete and re-add streams"]},
+        {"assertion_id": "must-not-claim-remediated", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"must_not_claim_remediated\":true", "Documented limitations remain active boundaries, not passed functionality"]}
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}

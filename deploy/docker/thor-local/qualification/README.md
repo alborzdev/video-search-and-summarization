@@ -53,6 +53,12 @@ in this directory:
   preserving the missing local production-evaluator dependency stack, so it
   creates no runtime evidence or official-state promotion. Together with Wave
   6 this brings aggregate candidate coverage to 72 of 87 and leaves 15;
+- `advertised-entry-executors-wave7/` partitions those final 15 entries into
+  11 digest-locked source/provenance candidates for search scale, Sparse4D,
+  MV3DT, and audio, plus four explicit external-attestation blockers for
+  Slack, AWS/GCS, RAG report generation, and FRAG retrieval. Aggregate
+  candidate coverage is 83 of 87; all runtime, model, scale, custom-data, and
+  external delivery/retrieval oracles remain open;
 - `planning-requirement-executors-wave3/` checks six of the 84 still-open
   planning requirements without promoting them, preserving five source
   matches and the search-upload HTTP 400/415 mismatch;
@@ -63,6 +69,10 @@ in this directory:
   the exact 72-requirement successor denominator. It preserves one source match
   and five explicit source gaps, leaves 66 requirements without a candidate,
   and keeps all 84 live-open planning requirements unpromoted;
+- `planning-requirement-executors-wave6/` checks six more Smart City source
+  contracts from that exact 66-requirement remainder. It preserves five
+  documented mismatches and one external-optional boundary, leaves 60
+  requirements without a planning candidate, and keeps all 84 live-open;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -123,11 +133,11 @@ planning requirements. All 276 full capability oracles remain
 bindings are static subsets only, with zero runtime evidence and zero
 `passed_current` promotions. The third successor updates the LVS adapter's
 static API contract and binds those two MV3DT subsets without materializing an
-additional planning requirement. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1
-advertised-entry candidates and 6 + 6 + 6 additional planning checks are
-non-advancing and do not change those live counts. They leave 15 advertised
-entries without a candidate source executor and 66 planning requirements not
-yet selected by a planning executor package, respectively.
+additional planning requirement. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1 +
+11 advertised-entry candidates and 6 + 6 + 6 + 6 additional planning checks
+are non-advancing and do not change those live counts. They leave four
+advertised entries as explicit external-attestation blockers and 60 planning
+requirements not yet selected by a planning executor package, respectively.
 The prerelease packages are separate from these stable 3.2.1 denominators. The
 fourteen-family watchlist remains pointer-only; the adjacent exact diff package
 proves that every commit and path/status in the locked prerelease range was
