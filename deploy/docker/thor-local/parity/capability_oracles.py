@@ -648,9 +648,38 @@ def _planning_executor_bindings(
             raise OracleContractError("partial live planning-executor integration")
         if requirement.get("runtime_evidence") != []:
             raise OracleContractError("planning executor must not contain runtime evidence")
-        capability_id = requirement.get("owner_id")
-        if not isinstance(capability_id, str):
-            raise OracleContractError("planning executor lacks a capability owner")
+        owner_type = requirement.get("owner_type")
+        owner_id = requirement.get("owner_id")
+        case = binding.get("case")
+        if not isinstance(case, dict):
+            raise OracleContractError("planning executor case is malformed")
+        if (
+            case.get("planning_requirement_id") != requirement.get("id")
+            or case.get("planning_payload_sha256") != requirement.get("payload_canonical_sha256")
+        ):
+            raise OracleContractError("planning executor case ownership differs")
+        case_capability_id = case.get("capability_id")
+        if owner_type in {"capability", "performance_enrichment_target"}:
+            capability_id = owner_id
+            if not isinstance(capability_id, str) or case_capability_id != capability_id:
+                raise OracleContractError("planning executor lacks its exact capability owner")
+        elif owner_type == "global_acceptance_vector":
+            applicable = requirement.get("applicable_record_ids")
+            capability_id = case_capability_id
+            if (
+                owner_id != requirement.get("id")
+                or case.get("planning_owner_type") != owner_type
+                or case.get("planning_owner_id") != owner_id
+                or not isinstance(capability_id, str)
+                or not isinstance(applicable, list)
+                or len(applicable) != len(set(applicable))
+                or capability_id not in applicable
+                or case.get("uncovered_applicable_record_ids")
+                != [record_id for record_id in applicable if record_id != capability_id]
+            ):
+                raise OracleContractError("global planning executor target or uncovered partition differs")
+        else:
+            raise OracleContractError("planning executor owner type is unsupported")
         result.setdefault(capability_id, []).append(
             {
                 "planning_requirement_id": requirement.get("id"),

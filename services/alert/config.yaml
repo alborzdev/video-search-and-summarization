@@ -244,6 +244,13 @@ alert_agent:
     allow_private_urls: true                     # Allow private/local URLs (development only, SSRF risk)
     use_verdict: false                           # VLM response mode: true=verdict-based (parse structured response), false=freestyle (store raw response)
 
+  # Process-local status/cancellation registry for HTTP on-demand verification.
+  # Active jobs are never evicted; new submissions fail closed at capacity.
+  # Terminal records expire after ttl_seconds and are lost on process restart.
+  ondemand_jobs:
+    capacity: 1000
+    ttl_seconds: 3600
+
 
   # Enrichment Processing Configuration
   enrichment:

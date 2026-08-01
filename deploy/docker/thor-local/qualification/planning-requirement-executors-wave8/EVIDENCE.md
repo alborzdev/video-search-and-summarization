@@ -5,10 +5,14 @@
 The executor digest-locks the exact sets it recomputes from the live ledgers:
 
 - 110 total planning requirements;
-- 26 materialized and 84 live-open;
+- 27 materialized and 83 live-open;
 - 56 predecessor selections (26 materialized, 30 still open);
-- 54 live-open requirements audited before this wave;
-- 6 selected here and 48 left unselected.
+- 53 live-open requirements audited before this wave;
+- 6 selected here and 47 left unselected.
+
+`calibration-schema-static` is now materialized by its canonical static
+integration. It is outside this live-open audit and does not alter the six
+historical Wave 8 candidate selections.
 
 ## Selected static negative contracts
 

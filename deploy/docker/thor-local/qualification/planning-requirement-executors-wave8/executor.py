@@ -18,13 +18,13 @@ INVENTORY_PATH = HERE / "inventory.json"
 INVENTORY_SCHEMA_PATH = HERE / "inventory.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
 EXPECTED_INVENTORY_SHA256 = (
-    "34515be94aa764c9bba716b3e51ad4e578487722b50923946f5a0e40bd922b6d"
+    "a06b93ef77738f6963b2eafe847ed0281d6752eca9bb73d0ce263c2afd956e8a"
 )
 EXPECTED_INVENTORY_SCHEMA_SHA256 = (
     "78c771909eed461068546af79472475dd30701a0d0028b53d44405049610f2a2"
 )
 EXPECTED_RESULT_SCHEMA_SHA256 = (
-    "a6fe1ced58a6951c29e7ee1fb04366fcde8763d5b32cd279ff553bfe65b2829a"
+    "3493406c16cfa3664abdb105e0c44fc0ee603e84867c12d3b681112497e16b05"
 )
 ACCEPTANCE_PATH = (
     REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
@@ -87,13 +87,13 @@ EXPECTED_PRIOR_SHA256 = (
     "0974fe61e1f67d4b4b766e7c56c65c5a65e02e8ae98da585bb00e999bc126315"
 )
 EXPECTED_REMAINING_SHA256 = (
-    "cae70bf8d08a7cf01ddd583e3b20821d1e18678a95418ce4503d7edcb07bf050"
+    "154acf12f0b82772df8c54cefe7fa8721ab387163bd7304df33c628bd162c4ac"
 )
 EXPECTED_SELECTED_SHA256 = (
     "0ab0a6a768ab6b9d89c24404f9d1695d689fa600bef3a2570ff630ecb4018d16"
 )
 EXPECTED_AFTER_SHA256 = (
-    "e110cc91283d37dd8f789ffef55045dc97bbbadf4ff5eadc9d69532357be97d5"
+    "7fb2fdbc019926c6febfab1c9e9d4b3a6885d8103d3d020b37304cc21d462bf9"
 )
 
 
@@ -293,15 +293,15 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("prior 56 selection composition drifted")
 
     live_open = [item for item in all_requirements if item["materialized"] is False]
-    if len(all_requirements) != 110 or len(live_open) != 84:
+    if len(all_requirements) != 110 or len(live_open) != 83:
         raise QualificationError("live planning denominator drifted")
     remaining = [item for item in live_open if item["id"] not in prior_selected]
     remaining_ids = {item["id"] for item in remaining}
     if (
-        len(remaining_ids) != 54
+        len(remaining_ids) != 53
         or canonical_sha256(sorted(remaining_ids)) != EXPECTED_REMAINING_SHA256
     ):
-        raise QualificationError("exact 54-row Wave 7 remainder drifted")
+        raise QualificationError("exact 53-row Wave 7 remainder drifted")
     selected = {
         case["planning_requirement_id"]: case["evidence_class"]
         for case in inventory["cases"]
@@ -313,10 +313,10 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("Wave 8 selected set drifted")
     after_ids = remaining_ids - set(selected)
     if (
-        len(after_ids) != 48
+        len(after_ids) != 47
         or canonical_sha256(sorted(after_ids)) != EXPECTED_AFTER_SHA256
     ):
-        raise QualificationError("exact 48-row Wave 8 remainder drifted")
+        raise QualificationError("exact 47-row Wave 8 remainder drifted")
 
     audit = []
     for requirement in remaining:
@@ -409,19 +409,19 @@ def build_result() -> dict[str, Any]:
         "inventory_sha256": file_sha256(INVENTORY_PATH),
         "set_digests": {
             "prior_56": canonical_sha256(sorted(prior_selected)),
-            "wave7_remaining_54": canonical_sha256(sorted(remaining_ids)),
+            "wave7_remaining_53": canonical_sha256(sorted(remaining_ids)),
             "wave8_selected_6": canonical_sha256(sorted(selected)),
-            "wave8_remaining_48": canonical_sha256(sorted(after_ids)),
+            "wave8_remaining_47": canonical_sha256(sorted(after_ids)),
         },
         "baseline_checks": baseline_checks,
         "counts": {
             "total_planning_requirements": 110,
-            "integrated_materialized": 26,
-            "live_open": 84,
+            "integrated_materialized": 27,
+            "live_open": 83,
             "prior_package_selections": 56,
             "prior_materialized_static_bindings": 26,
             "prior_live_open_candidate_selections": 30,
-            "remaining_requirements_audited": 54,
+            "remaining_requirements_audited": 53,
             "cases": 6,
             "observed_match": len(results),
             "observed_mismatch": 6 - len(results),
@@ -437,7 +437,7 @@ def build_result() -> dict[str, Any]:
                 item["evidence_class"] == "static_protocol_subset_only"
                 for item in results
             ),
-            "remaining_requirements_unselected": 48,
+            "remaining_requirements_unselected": 47,
         },
         "remaining_requirement_audit": audit,
         "results": results,

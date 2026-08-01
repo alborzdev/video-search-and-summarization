@@ -134,6 +134,10 @@ def test_plan_retains_all_active_blockers() -> None:
     assert plan["kafka_is_separate_lane"] is True
     assert len(plan["active_blockers"]) == 8
     assert "late-publication-not-reversible" in plan["active_blockers"]
+    assert "terminal-status-api-not-integrated" in plan["active_blockers"]
+    assert "sink-receipt-not-integrated" in plan["active_blockers"]
+    assert "terminal-status-api-missing" not in plan["active_blockers"]
+    assert "sink-receipt-missing" not in plan["active_blockers"]
 
 
 def test_exact_request_action_and_cleanup_accounting() -> None:

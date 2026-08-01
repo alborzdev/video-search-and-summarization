@@ -20,6 +20,9 @@ INVENTORY_SCHEMA_PATH = HERE / "inventory.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
 ACCEPTANCE_PATH = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
 CANDIDATE_PATH = REPO_ROOT / "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"
+EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256 = (
+    "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+)
 
 EXPECTED_BINDINGS = {
     "wave3-source-case.behavior-embedding-downsampling": (
@@ -157,6 +160,8 @@ def _evaluate(assertion: dict[str, Any], texts: dict[str, str]) -> tuple[bool, s
 
 def build_result() -> dict[str, Any]:
     inventory = _load_inventory()
+    if file_sha256(ACCEPTANCE_PATH) != EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256:
+        raise QualificationError("canonical fourth-successor acceptance identity drifted")
     acceptance = _load(ACCEPTANCE_PATH)
     candidate = _load(CANDIDATE_PATH)
     requirements = {item["id"]: item for item in acceptance["wave3_contracts"]["planning_requirements"]}
@@ -215,7 +220,6 @@ def build_result() -> dict[str, Any]:
         if item["materialized"] is False
     ]
     existing_static_ids = {
-        "calibration-schema-static",
         "warehouse-static-dry-run",
         "simulation-external-boundary",
     }
@@ -247,6 +251,14 @@ def build_result() -> dict[str, Any]:
         "runtime_evidence_added": False,
         "inventory_sha256": file_sha256(INVENTORY_PATH),
         "counts": {
+            "total_planning_requirements": len(
+                acceptance["wave3_contracts"]["planning_requirements"]
+            ),
+            "integrated_materialized": sum(
+                item["materialized"] is True
+                for item in acceptance["wave3_contracts"]["planning_requirements"]
+            ),
+            "live_open": len(audit),
             "cases": len(results),
             "observed_match": sum(item["outcome"] == "observed_match" for item in results),
             "observed_mismatch": sum(item["outcome"] == "observed_mismatch" for item in results),

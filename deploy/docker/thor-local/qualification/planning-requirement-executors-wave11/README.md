@@ -1,6 +1,6 @@
 # Planning Requirement Executors — Wave 11
 
-This isolated package audits Wave 10's exact 36-row remaining denominator and
+This isolated package audits Wave 10's exact 35-row live-open remainder and
 records six additional, disjoint static subsets. It performs only raw-file,
 canonical-ledger-binding, set-accounting, and source-token checks.
 
@@ -17,7 +17,7 @@ No result is a runtime pass. Static dashboard configuration does not prove
 Kibana availability or embedding, documentation does not prove alert or
 analytics semantics, queue-state names do not prove one-active-request
 serialization, and declarations/uploader filters do not prove format-by-format
-LVS ingestion. All 84 live-open requirements remain unpromoted,
+LVS ingestion. All 83 live-open requirements remain unpromoted,
 executor-not-ready, and runtime-evidence-empty. Every selected oracle remains
 `open_unexecuted` and evidence-empty.
 

@@ -15,11 +15,14 @@ The shared global vector has seven applicable records. Only the exact schema
 capability above is evaluated here; the other six record IDs are machine-listed
 as not evaluated so vector ownership cannot imply broader calibration evidence.
 
-The executor raw-locks the acceptance inventory, official capability ledger,
-canonical oracle plan, provider-free backend, two identical strict calibration
-schema copies, the Behavior Analytics schema, and the strict road-network
-schema. It also binds the canonical planning record, its payload, the exact
-capability, and the exact oracle by canonical SHA-256.
+The executor raw-locks the official capability ledger, provider-free backend,
+two identical strict calibration schema copies, the Behavior Analytics schema,
+and the strict road-network schema. It binds the mutable acceptance row and
+generated oracle through exact normalized predecessor digests: only the
+reviewed integration fields are stripped, while owner, payload, applicable
+partition, capability, open state, and evidence remain normative. In the final
+state the complete checked-in static binding is also read back against the
+current package files and execution receipt.
 
 ## Reproducible result
 

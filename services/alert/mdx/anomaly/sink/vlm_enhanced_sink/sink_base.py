@@ -144,7 +144,7 @@ class VLMEnhancedSink(ABC):
         system_prompt: Optional[str],
         vlm_response: VLMResponsePayload,
         latency: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    ) -> Dict[str, Any]:
         latency = latency or {}
         event_kind = 'alert' if is_alert(message) else 'incident'
         # Preserve downstream hint
@@ -156,7 +156,9 @@ class VLMEnhancedSink(ABC):
             vlm_response,
         )
        
-        self._store_success(event_kind, enriched, vlm_response, user_prompt)
+        return self._store_success(
+            event_kind, enriched, vlm_response, user_prompt
+        )
 
     def publish_error(
         self,
@@ -165,7 +167,7 @@ class VLMEnhancedSink(ABC):
         system_prompt: Optional[str],
         error_payload: Dict[str, Any],
         latency: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    ) -> Dict[str, Any]:
         latency = latency or {}
         event_kind = 'alert' if is_alert(message) else 'incident'
         # Preserve downstream hint
@@ -177,7 +179,7 @@ class VLMEnhancedSink(ABC):
             error_payload,
         )
        
-        self._store_error(event_kind, enriched, error_payload)
+        return self._store_error(event_kind, enriched, error_payload)
 
     @abstractmethod
     def _store_success(
@@ -186,7 +188,7 @@ class VLMEnhancedSink(ABC):
         document: Dict[str, Any],
         raw_vlm_response: VLMResponsePayload,
         user_prompt: str,
-    ) -> None:
+    ) -> Dict[str, Any]:
         ...
 
     @abstractmethod
@@ -195,6 +197,5 @@ class VLMEnhancedSink(ABC):
         event_kind: str,
         document: Dict[str, Any],
         error_payload: Dict[str, Any],
-    ) -> None:
+    ) -> Dict[str, Any]:
         ...
-

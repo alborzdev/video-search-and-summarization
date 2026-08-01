@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "overlay_id": "thor-local-vios-calibration-browser-v1",
+  "source_root": "services/vios/ui/vios-ui",
+  "policy": {
+    "same_origin_endpoint": "/vst/calibration-api",
+    "private_backend": "127.0.0.1:8013",
+    "public_backend_port": false,
+    "warehouse_required": false,
+    "runtime_evidence": []
+  },
+  "files": [
+    {
+      "path": "src/config.tsx",
+      "source_sha256": "8ac1ac8648ccc92f58bedc6db701ca52469000e8124cc434126aded3b02864c0",
+      "replacements": [
+        {
+          "old": "const analyticsUIServerDefaultPort = '8003';\n",
+          "new": ""
+        },
+        {
+          "old": "    analyticsUIServerEndpoint: `${window.location.protocol}//${window.location.hostname}:${analyticsUIServerDefaultPort}`,",
+          "new": "    analyticsUIServerEndpoint: '/vst/calibration-api',"
+        }
+      ],
+      "output_sha256": "103b0bddee58d8595aad3e542a97f8fb2afd9963dc99b4571fa6ee3d42c1eb74"
+    },
+    {
+      "path": "src/layout/routes/Routes.tsx",
+      "source_sha256": "f4b9d45fa8779c9186bbfa080a247f0d07476806640f14aebd9282630ec488fc",
+      "replacements": [
+        {
+          "old": "import VSTMediaManagement from '../../pages/vst/MediaManagement';\n",
+          "new": "import VSTMediaManagement from '../../pages/vst/MediaManagement';\nimport CalibrationWorkflow from '../../pages/vst/CalibrationWorkflow';\n"
+        },
+        {
+          "old": "            { path: 'media-management', element: <VSTMediaManagement /> },\n",
+          "new": "            { path: 'media-management', element: <VSTMediaManagement /> },\n            { path: 'calibration', element: <CalibrationWorkflow /> },\n"
+        }
+      ],
+      "output_sha256": "231443962ccd6ff89cc69f48c4cdf7b63572933f154cacc8624e132871bf194a"
+    },
+    {
+      "path": "src/layout/nav/ListItems.tsx",
+      "source_sha256": "8007b5102301a77b94cd32f807ea339e20fe64b46dd78dd9adeeed17228a8611",
+      "replacements": [
+        {
+          "old": "import AssessmentIcon from '@mui/icons-material/Assessment';\n",
+          "new": "import AssessmentIcon from '@mui/icons-material/Assessment';\nimport StraightenIcon from '@mui/icons-material/Straighten';\n"
+        },
+        {
+          "old": "            <NavLink to='/settings' style={navLinkStyles}>\n                <ListItemButton selected={location.pathname === '/settings'}>\n",
+          "new": "            <NavLink to='/calibration' style={navLinkStyles}>\n                <ListItemButton selected={location.pathname === '/calibration'}>\n                    <ListItemIcon>\n                        <StraightenIcon />\n                    </ListItemIcon>\n                    <ListItemText primary='Calibration' />\n                </ListItemButton>\n            </NavLink>\n            <NavLink to='/settings' style={navLinkStyles}>\n                <ListItemButton selected={location.pathname === '/settings'}>\n",
+          "occurrence": 2
+        }
+      ],
+      "output_sha256": "4beb6d706fa6f605176d554bb39f871a2431b5ec06c7f24c29d565f115c8a95c"
+    },
+    {
+      "path": "src/pages/vst/calibration-steps/CalibrationJsonManager.tsx",
+      "source_sha256": "d516a11f428e2343ccb794caef39cd5b66a746432a784bfa8a833a15ea5c347e",
+      "replacements": [
+        {
+          "old": "import { Project, Sensor } from './types';\n",
+          "new": "import { Project, Sensor } from './types';\nimport config from '../../../config';\n"
+        },
+        {
+          "old": "fetch(`/api/projects/${project.id}/`, {",
+          "new": "fetch(`${config.analyticsUIServerEndpoint}/api/projects/${project.id}/`, {"
+        }
+      ],
+      "output_sha256": "9a05403e970f23e49bfb15acada5abcd62640d2a14dffc3c8cdac61f36a06a6d"
+    },
+    {
+      "path": "src/pages/vst/calibration-steps/MmsURLConfiguration.tsx",
+      "source_sha256": "94f10fe5314500c1beb422df5ad663d099fe3c61b8eb00a5a9e935f0951597e0",
+      "replacements": [
+        {
+          "old": "            const importResponse = await fetch(`${config.analyticsUIServerEndpoint}/api/importSensors/${projectId}/`);",
+          "new": "            const importResponse = await fetch(`${config.analyticsUIServerEndpoint}/api/importSensors/${projectId}/`, {\n                method: 'POST',\n                headers: { 'Content-Type': 'application/json' },\n                body: JSON.stringify({ action: 'import-staged' }),\n            });"
+        }
+      ],
+      "output_sha256": "42570add0a3cd7f02f4a18a420b8092c88776b31d075526473791129203cdf57"
+    }
+  ]
+}

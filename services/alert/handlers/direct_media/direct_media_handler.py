@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import time
+from collections.abc import Callable, Mapping
 from typing import Any, Dict, List, Optional
 
 from openai import APITimeoutError, APIConnectionError, InternalServerError, UnprocessableEntityError, BadRequestError
@@ -182,6 +183,7 @@ class DirectMediaHandler:
         vlm_enhanced_event_sink,
         config: Dict[str, Any],
         pluggable_parser=None,
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
     ):
         self.vlm_client = vlm_client
         self.vlm_enhanced_event_sink = vlm_enhanced_event_sink
@@ -192,6 +194,9 @@ class DirectMediaHandler:
         # as Mode-2 / Mode-VST so all three ingestion paths produce identical
         # info shape.
         self._pluggable_parser = pluggable_parser
+        # Optional atomic admission hook used by the on-demand HTTP service.
+        # Existing Kafka/VST callers omit it and retain prior behavior.
+        self._before_publish = before_publish
         
         media_config = config.get('alert_agent', {}).get('media_download', {})
         self.enabled = media_config.get('enabled', True)
@@ -232,7 +237,8 @@ class DirectMediaHandler:
         user_prompt: str,
         system_prompt: str,
         config_overrides: Optional[Dict[str, Any]] = None,
-    ) -> None:
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    ) -> Dict[str, Any]:
         """
         Evaluate media from direct URL(s).
         
@@ -243,26 +249,27 @@ class DirectMediaHandler:
         media_urls = self._get_media_urls(info_block)
         
         if not media_urls:
-            self._publish_error(
+            return self._publish_error(
                 message, user_prompt, system_prompt,
                 code=400,
                 status="media_urls is required and must be a non-empty list",
                 error_source=ERROR_SOURCE_MEDIA_DOWNLOAD,
+                before_publish=before_publish,
             )
-            return
         
         if media_type == 'video':
             if len(media_urls) > 1:
                 logger.warning("Multiple videos not supported, using first URL only")
-            self._evaluate_video(
+            return self._evaluate_video(
                 worker_id, message, media_urls[0], user_prompt, system_prompt,
                 config_overrides=config_overrides,
+                before_publish=before_publish,
             )
-            return
-        
-        self._evaluate_images(
+
+        return self._evaluate_images(
             worker_id, message, media_urls, user_prompt, system_prompt,
             config_overrides=config_overrides,
+            before_publish=before_publish,
         )
 
     def _get_media_urls(self, info_block: Dict[str, Any]) -> List[str]:
@@ -297,7 +304,8 @@ class DirectMediaHandler:
         user_prompt: str,
         system_prompt: str,
         config_overrides: Optional[Dict[str, Any]] = None,
-    ) -> None:
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    ) -> Dict[str, Any]:
         """Evaluate a single video URL via shared media analyzer."""
         try:
             start_time = time.time()
@@ -319,19 +327,24 @@ class DirectMediaHandler:
             if os.getenv('LOG_VERBOSE_VLM_RESPONSE', 'false').lower() in ('1', 'true', 'yes'):
                 logger.debug("Raw VLM response: %s", response_content)
 
-            self._publish_success(
+            return self._publish_success(
                 message, user_prompt, system_prompt, response_content,
                 media_type='video',
                 config_overrides=config_overrides,
+                before_publish=before_publish,
             )
 
         except ValueError as e:
-            self._publish_error(
+            return self._publish_error(
                 message, user_prompt, system_prompt,
                 code=502, status=str(e),
+                before_publish=before_publish,
             )
         except Exception as e:
-            self._handle_vlm_error(e, message, user_prompt, system_prompt)
+            return self._handle_vlm_error(
+                e, message, user_prompt, system_prompt,
+                before_publish=before_publish,
+            )
 
     def _evaluate_images(
         self,
@@ -341,7 +354,8 @@ class DirectMediaHandler:
         user_prompt: str,
         system_prompt: str,
         config_overrides: Optional[Dict[str, Any]] = None,
-    ) -> None:
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    ) -> Dict[str, Any]:
         """Evaluate image(s) from URL(s) via shared media analyzer."""
         try:
             logger.info("Processing %d image(s) [sensor=%s category=%s]",
@@ -369,7 +383,7 @@ class DirectMediaHandler:
             if os.getenv('LOG_VERBOSE_VLM_RESPONSE', 'false').lower() in ('1', 'true', 'yes'):
                 logger.debug("Raw VLM response: %s", response_content)
 
-            self._publish_success(
+            return self._publish_success(
                 message, user_prompt, system_prompt, response_content,
                 media_type='image' if len(media_urls) == 1 else 'images',
                 media_metadata={
@@ -378,15 +392,20 @@ class DirectMediaHandler:
                     'images_total': len(media_urls),
                 },
                 config_overrides=config_overrides,
+                before_publish=before_publish,
             )
 
         except ValueError as e:
-            self._publish_error(
+            return self._publish_error(
                 message, user_prompt, system_prompt,
                 code=502, status=str(e),
+                before_publish=before_publish,
             )
         except Exception as e:
-            self._handle_vlm_error(e, message, user_prompt, system_prompt)
+            return self._handle_vlm_error(
+                e, message, user_prompt, system_prompt,
+                before_publish=before_publish,
+            )
 
     # ── Publish helpers ────────────────────────────────────────────────
 
@@ -399,7 +418,8 @@ class DirectMediaHandler:
         media_type: str,
         media_metadata: Optional[Dict[str, Any]] = None,
         config_overrides: Optional[Dict[str, Any]] = None,
-    ) -> None:
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    ) -> Dict[str, Any]:
         """Parse VLM response, merge into message, set metadata, and publish.
 
         Precedence (Mode-3 parity with VST / local):
@@ -444,7 +464,8 @@ class DirectMediaHandler:
                     message['info'] = {}
                 message['info']['media_type'] = media_type
                 _merge_media_metadata_into_info(message['info'], media_metadata)
-                self.vlm_enhanced_event_sink.publish_error(
+                return self._publish_to_sink(
+                    "error",
                     message,
                     user_prompt,
                     system_prompt,
@@ -453,8 +474,8 @@ class DirectMediaHandler:
                         "error_type": type(e).__name__,
                         "errorSource": ERROR_SOURCE_PLUGGABLE_PARSER,
                     },
+                    before_publish=before_publish,
                 )
-                return
             if 'info' not in message:
                 message['info'] = {}
             message['info']['media_type'] = media_type
@@ -475,8 +496,13 @@ class DirectMediaHandler:
                 media_metadata=media_metadata,
             )
 
-        self.vlm_enhanced_event_sink.publish_success(
-            message, user_prompt, system_prompt, response_content,
+        return self._publish_to_sink(
+            "success",
+            message,
+            user_prompt,
+            system_prompt,
+            response_content,
+            before_publish=before_publish,
         )
 
     def _publish_error(
@@ -487,7 +513,8 @@ class DirectMediaHandler:
         code: int,
         status: str,
         error_source: Optional[str] = None,
-    ) -> None:
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    ) -> Dict[str, Any]:
         """Publish error response.
 
         ``error_source`` is the structured bucket from
@@ -505,7 +532,142 @@ class DirectMediaHandler:
                 error_source=error_source,
             ),
         )
-        self.vlm_enhanced_event_sink.publish_error(message, user_prompt, system_prompt, {})
+        return self._publish_to_sink(
+            "error",
+            message,
+            user_prompt,
+            system_prompt,
+            {},
+            before_publish=before_publish,
+        )
+
+    def _publish_to_sink(
+        self,
+        publish_kind: str,
+        message: Dict[str, Any],
+        user_prompt: str,
+        system_prompt: str,
+        payload: Any,
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    ) -> Dict[str, Any]:
+        """Apply the cancellation gate and return a sanitized sink result.
+
+        The hook and cancellation endpoint use the same lock in the on-demand
+        job store.  Once the hook returns true, publication owns the job and a
+        later cancellation request is rejected rather than falsely accepted.
+        """
+
+        publish_gate = before_publish or self._before_publish
+        if publish_gate is not None:
+            try:
+                allowed = publish_gate(message) is True
+            except Exception:
+                logger.exception(
+                    "Pre-publish admission hook failed; suppressing sink call",
+                    extra={"id": message.get("id")},
+                )
+                allowed = False
+            if not allowed:
+                logger.info(
+                    "Sink publish suppressed by pre-publish admission hook",
+                    extra={"id": message.get("id")},
+                )
+                return self._processing_result(
+                    message,
+                    {
+                        "transport": self._configured_sink_type(),
+                        "outcome": "unconfirmed",
+                    },
+                    processing_outcome="unknown",
+                )
+
+        try:
+            if publish_kind == "success":
+                raw_receipt = self.vlm_enhanced_event_sink.publish_success(
+                    message, user_prompt, system_prompt, payload
+                )
+            else:
+                raw_receipt = self.vlm_enhanced_event_sink.publish_error(
+                    message, user_prompt, system_prompt, payload
+                )
+        except Exception:
+            # Admission already moved the job to ``publishing``.  Do not let
+            # the outer VLM try/except reinterpret a sink failure as a VLM
+            # failure and attempt a second publish.
+            logger.exception(
+                "Direct-media sink publish failed",
+                extra={"id": message.get("id"), "publish_kind": publish_kind},
+            )
+            return self._processing_result(
+                message,
+                {
+                    "transport": self._configured_sink_type(),
+                    "outcome": "failed",
+                },
+            )
+        return self._processing_result(
+            message,
+            self._normalize_sink_receipt(raw_receipt),
+        )
+
+    def _configured_sink_type(self) -> str:
+        sink_type = str(
+            (self.config.get("vlm_enhanced_sink", {}) or {}).get(
+                "type", "elastic"
+            )
+        ).strip().lower()
+        return sink_type if sink_type in {"elastic", "kafka"} else "unknown"
+
+    def _normalize_sink_receipt(self, value: Any) -> Dict[str, Any]:
+        """Normalize new receipt-aware sinks and older ``None`` sinks."""
+
+        if not isinstance(value, Mapping):
+            return {
+                "transport": self._configured_sink_type(),
+                "outcome": "unconfirmed",
+            }
+        receipt = dict(value)
+        receipt.setdefault("transport", self._configured_sink_type())
+        receipt.setdefault("outcome", "unconfirmed")
+        return receipt
+
+    @staticmethod
+    def _processing_result(
+        message: Dict[str, Any],
+        sink_delivery: Dict[str, Any],
+        *,
+        processing_outcome: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        info = message.get("info") if isinstance(message.get("info"), dict) else {}
+        verdict = info.get("verdict")
+        response_code = info.get("verificationResponseCode")
+        numeric_response_code: Optional[int] = None
+        if isinstance(response_code, int) and not isinstance(response_code, bool):
+            numeric_response_code = response_code
+        elif isinstance(response_code, str) and response_code.isdigit():
+            numeric_response_code = int(response_code)
+        if processing_outcome is None:
+            processing_outcome = (
+                "verification_failed"
+                if verdict == "verification-failed"
+                or (
+                    numeric_response_code is not None
+                    and numeric_response_code >= 400
+                )
+                else "verified"
+            )
+        result: Dict[str, Any] = {
+            "processingOutcome": processing_outcome,
+            "sinkDelivery": sink_delivery,
+        }
+        if verdict is not None:
+            result["verdict"] = verdict
+        if numeric_response_code is not None:
+            result["verificationResponseCode"] = numeric_response_code
+        error_source = info.get("errorSource")
+        if error_source is not None:
+            result["errorSource"] = error_source
+        return result
 
     def _handle_vlm_error(
         self,
@@ -513,22 +675,24 @@ class DirectMediaHandler:
         message: Dict[str, Any],
         user_prompt: str,
         system_prompt: str,
-    ) -> None:
+        before_publish: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    ) -> Dict[str, Any]:
         """Map VLM/OpenAI exceptions to HTTP error codes and publish."""
         for exc_type, (code, default_status) in _VLM_ERROR_MAP.items():
             if isinstance(error, exc_type):
                 logger.error("VLM error during direct media evaluation: %s", error, exc_info=True)
                 status = f"{default_status}: {error}" if code in (400, 422) else default_status
-                self._publish_error(
+                return self._publish_error(
                     message, user_prompt, system_prompt,
                     code=code, status=status,
                     error_source=ERROR_SOURCE_VLM_API,
+                    before_publish=before_publish,
                 )
-                return
 
         logger.error("Unexpected error during direct media evaluation: %s", error, exc_info=True)
-        self._publish_error(
+        return self._publish_error(
             message, user_prompt, system_prompt,
             code=500, status=f"Evaluation error: {error}",
             error_source=ERROR_SOURCE_VLM_API,
+            before_publish=before_publish,
         )

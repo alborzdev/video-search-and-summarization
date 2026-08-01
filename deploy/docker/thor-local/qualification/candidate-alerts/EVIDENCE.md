@@ -7,6 +7,13 @@ No HTTP request, socket bind, Alert Bridge mutation, background VLM task, sink
 delivery, Elasticsearch/Kafka access, Docker operation, service lifecycle
 action, model access, or runtime receipt was performed for this package.
 
+Thor product source now includes bounded process-local on-demand terminal
+status/cancellation and bounded sink-outcome propagation. This scaffold has
+not integrated or exercised those surfaces. Its active blockers therefore use
+`terminal-status-api-not-integrated` and `sink-receipt-not-integrated`, while
+`late-publication-not-reversible` remains active from the disconnected
+collector's perspective.
+
 Static evidence commands:
 
 ```text

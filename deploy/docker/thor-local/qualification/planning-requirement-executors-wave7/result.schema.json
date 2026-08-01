@@ -11,12 +11,12 @@
     "inventory_sha256": {"$ref": "#/$defs/sha256"},
     "set_digests": {
       "type": "object", "additionalProperties": false,
-      "required": ["prior_50", "wave6_remaining_60", "wave7_selected_6", "wave7_remaining_54"],
+      "required": ["prior_50", "wave6_remaining_59", "wave7_selected_6", "wave7_remaining_53"],
       "properties": {
         "prior_50": {"const": "d1eca2fd7439a268708ca39cb27e224fbcbbd644b145088030d72ec9c81a08a9"},
-        "wave6_remaining_60": {"const": "12bada9c389b5550910bfed7073281a59d63b5616266118e983f75522126c342"},
+        "wave6_remaining_59": {"const": "88ec60aa61ee86e93e9ee239c008e336c2e7cafbea3940e18e778580542485c6"},
         "wave7_selected_6": {"const": "9a3b857dfaff5ac163634dc123dec40967a0a04e63b70c7fb39b546e009a8c03"},
-        "wave7_remaining_54": {"const": "cae70bf8d08a7cf01ddd583e3b20821d1e18678a95418ce4503d7edcb07bf050"}
+        "wave7_remaining_53": {"const": "154acf12f0b82772df8c54cefe7fa8721ab387163bd7304df33c628bd162c4ac"}
       }
     },
     "baseline_checks": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"$ref": "#/$defs/file_check"}},
@@ -25,23 +25,23 @@
       "required": ["total_planning_requirements", "integrated_materialized", "live_open", "prior_package_selections", "prior_materialized_static_bindings", "prior_live_open_candidate_selections", "remaining_requirements_audited", "cases", "observed_match", "observed_mismatch", "negative_contracts_preserved", "configuration_subsets", "protocol_subsets", "remaining_requirements_unselected"],
       "properties": {
         "total_planning_requirements": {"const": 110},
-        "integrated_materialized": {"const": 26},
-        "live_open": {"const": 84},
+        "integrated_materialized": {"const": 27},
+        "live_open": {"const": 83},
         "prior_package_selections": {"const": 50},
         "prior_materialized_static_bindings": {"const": 26},
         "prior_live_open_candidate_selections": {"const": 24},
-        "remaining_requirements_audited": {"const": 60},
+        "remaining_requirements_audited": {"const": 59},
         "cases": {"const": 6},
         "observed_match": {"const": 6},
         "observed_mismatch": {"const": 0},
         "negative_contracts_preserved": {"const": 3},
         "configuration_subsets": {"const": 2},
         "protocol_subsets": {"const": 1},
-        "remaining_requirements_unselected": {"const": 54}
+        "remaining_requirements_unselected": {"const": 53}
       }
     },
     "remaining_requirement_audit": {
-      "type": "array", "minItems": 60, "maxItems": 60,
+      "type": "array", "minItems": 59, "maxItems": 59,
       "items": {
         "type": "object", "additionalProperties": false,
         "required": ["planning_requirement_id", "owner_id", "package", "planning_payload_sha256", "capability_sha256", "contract_sha256", "classification"],

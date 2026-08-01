@@ -1,7 +1,7 @@
 # Wave 4 planning-requirement source executors
 
-This isolated package starts from the exact 78 still-open planning requirements
-not previously selected by a source-executor package: 26 requirements have
+This isolated package starts from the exact 77 still-open planning requirements
+not previously selected by a source-executor package: 27 requirements have
 integrated static-subset bindings and six more were selected by the prior
 nonadvancing Wave 3 package. It selects six new, non-overlapping requirements
 whose bounded declared contracts can be compared with immutable checked-in
@@ -15,7 +15,10 @@ The package is deliberately nonadvancing:
   lifecycle action;
 - it locks the complete five-file baseline plus every selected planning payload,
   capability, contract, and source file;
-- it emits a 78-row audit with canonical planning/capability/contract identities.
+- it preserves the immutable predecessor locks while accepting only the exact
+  reviewed fourth-successor acceptance bytes and the exact additive Alert
+  terminal-API README/config successor bytes;
+- it emits a 77-row audit with canonical planning/capability/contract identities.
 
 Run it with:
 
@@ -31,6 +34,8 @@ locked checked-in Alerts source names Cosmos Reason but contains no Qwen example
 This is source-contract evidence only, never backend availability or runtime
 qualification.
 
-The remaining 72 requirements retain explicit classifications. Warehouse sample
+The remaining 71 requirements retain explicit classifications. The canonical
+denominator is 110 total, 27 materialized, and 83 live-open;
+`calibration-schema-static` is no longer in the open set. Warehouse sample
 data is neither required nor touched; custom-media Warehouse runtime planning
 remains open.

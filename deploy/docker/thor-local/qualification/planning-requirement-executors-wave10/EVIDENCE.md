@@ -5,18 +5,22 @@
 The executor recomputes and digest-locks every set from the live acceptance
 inventory and predecessor inventories through Wave 9:
 
-- 110 total planning requirements, 26 materialized and 84 live-open;
+- 110 total planning requirements, 27 materialized and 83 live-open;
 - 68 disjoint predecessor selections: 26 materialized and 42 still open;
-- exact Wave 9 remainder: 42;
+- exact Wave 9 live-open remainder: 41;
 - exact Wave 10 static selection: 6;
-- exact remainder after Wave 10: 36.
+- exact remainder after Wave 10: 35.
 
 The set digests are:
 
 - `prior_68`: `843fde32fe7ee9f871451df0387326deff8e90a652b78d704c3d3581001f7d60`;
-- `wave9_remaining_42`: `5c6885d089e5d5af6e49d6cccb8a03dc829642174bc8f2ec660674d24df10672`;
+- `wave9_remaining_41`: `dc9c51cada03c13b4830d3062e89eb0dc5e2107d50d4958c84f5ed66f41e3b36`;
 - `wave10_selected_6`: `a1041929edb70ab3d07ab5dd4e08cd64029e5b9365b91a26a3f252678e72cc98`;
-- `wave10_remaining_36`: `db6822446d2591213affcfa05d7d1b4f9b94ebc73ecf44c8bdb8265fac7ef33b`.
+- `wave10_remaining_35`: `e08aada14a3335ab53b1e15214b85cb72f0df42891fc6c8d62472e4a323fe42d`.
+
+`calibration-schema-static` is the 27th materialized requirement. Its
+deterministic static binding is therefore outside this live-open remainder;
+the Wave 10 candidate selection remains unchanged and non-promoting.
 
 The package raw-locks the live acceptance inventory, official capability
 ledger, capability-oracle ledger, `executor-cases`, `source-contract-cases`,
@@ -46,13 +50,13 @@ These observations do not satisfy the runtime oracles. The result is always
 
 ## Exclusions and fail-closed behavior
 
-All seven `calibration-warehouse` rows in the audited remainder are classified
-as `excluded_warehouse_requirement`; none enters the selected set. No Warehouse
-sample, custom media, container, or runtime path is read or used.
+All six still-open `calibration-warehouse` rows in the audited remainder are
+classified as `excluded_warehouse_requirement`; none enters the selected set.
+No Warehouse sample, custom media, container, or runtime path is read or used.
 
 The executor fails closed on package identity drift, schema drift, baseline or
 source byte drift, predecessor overlap, exact set-digest drift, canonical
-binding drift, any promotion/evidence on the 84 live-open requirements,
+binding drift, any promotion/evidence on the 83 live-open requirements,
 selected-oracle state/evidence drift, missing source tokens, duplicate JSON
 keys, unknown schema fields, unsafe paths, symlinks, or a Warehouse selection.
 

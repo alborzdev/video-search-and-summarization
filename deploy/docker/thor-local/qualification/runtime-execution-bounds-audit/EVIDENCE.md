@@ -5,7 +5,7 @@ Scope: exact 20 local-runtime planning rows remaining after Warehouse exclusion.
 Canonical input:
 
 - path: `deploy/docker/thor-local/parity/capability-oracles.json`
-- current raw SHA-256: `c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3`
+- current raw SHA-256: `573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2`
 - historical generic-baseline raw SHA-256: `a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f`
 - selected oracle count: 20
 - selected starting state: 20 `open_unexecuted`, 20 empty evidence arrays

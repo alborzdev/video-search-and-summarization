@@ -1,7 +1,8 @@
 # Wave 3 planning-requirement source executors
 
-This isolated package audits all 84 planning requirements that remained open after
-the first 26 static bindings. It selects six new, non-overlapping requirements whose
+This isolated package audits all 83 planning requirements that remain open after
+the 27 canonical fourth-successor static bindings. It selects six new,
+non-overlapping requirements whose
 complete declared contract can be compared directly with immutable checked-in source.
 
 The package is deliberately nonadvancing:
@@ -25,7 +26,7 @@ contract says both missing and unsupported search-upload Content-Type failures u
 HTTP 400, while the locked implementation uses HTTP 400 for missing and HTTP 415 for
 unsupported media types.
 
-The result also emits a machine-checkable 84-row audit. The other 78 requirements stay
+The result also emits a machine-checkable 83-row audit. The other 77 requirements stay
 open because they require unmaterialized fixtures, custom media, runtime/external
 state, an existing static lane rather than a new case, or complete independent source
 semantics that are not available in a bounded checked-in artifact.

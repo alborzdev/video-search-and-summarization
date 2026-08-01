@@ -19,7 +19,7 @@ Implemented client contracts:
 | PATCH multipart | `/api/sensors/{plain_id}/` | Exact seven-part client upload; one PNG/JPEG plus calibration state, at most 16 MiB total. Filename input is ignored in favor of SHA-256 identity. |
 | GET | `/api/approxHomography/{plain_id}/` | Solve from `sensorPolygon`/`edgeLengths`, persist `sensor.homography` as the JSON string the client subsequently reads. |
 | GET | `/api/homography/{plain_id}/` | Same bounded clean-room solve with exact-route identity. |
-| GET | `/api/importSensors/{numeric_id}/` | Consume only the locally staged bounded sensor manifest; no `mmsURL` request. |
+| POST | `/api/importSensors/{numeric_id}/` | Consume only the locally staged bounded sensor manifest with exact JSON body `{"action":"import-staged"}`; no `mmsURL` request. |
 | GET | `/media/projects/{numeric_id}/sensors/{plain_id}/{sha256}.(png|jpg)` | Serve only digest-verified media currently referenced by that sensor. |
 
 The compatibility store permits incomplete UI state. This is essential: the
@@ -39,10 +39,13 @@ The last must not become an arbitrary server-side request primitive; a future
 implementation may target only a configured local VSS analytics API and must
 disable DNS ambiguity, environment proxies, and redirects.
 
-The intended browser topology is a same-origin VIOS Nginx route such as
-`/vst/calibration-api/` proxying to private port 8013. That route and the
-`CalibrationWorkflow` navigation entry are not yet checked in, so browser
-equivalence and runtime evidence are not claimed. For isolated development,
+The Thor browser derivative in `browser-integration/` now deterministically
+adds the `/calibration` route/navigation entry, changes the client base URL to
+same-origin `/vst/calibration-api`, and supplies a VIOS Nginx route proxying to
+private numeric loopback port 8013. It preserves the released source bytes and
+their historical qualification locks. A local ingress image must still be
+built from the materialized successor and exercised under authorization, so
+browser equivalence and runtime evidence are not claimed. For isolated development,
 `serve` may receive repeated `--allowed-origin http://127.0.0.1:PORT` flags;
 only explicit numeric-loopback origins get CORS preflight/response headers.
 There is no wildcard or credentialed CORS mode.

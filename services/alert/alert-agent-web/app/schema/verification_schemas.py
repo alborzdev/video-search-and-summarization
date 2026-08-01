@@ -19,7 +19,7 @@ Schemas for on-demand verification API.
 Accepts full Incident payload -- same structure DirectMedia receives from Kafka.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Literal, Optional
 
 from pydantic import BaseModel, Field, validator
 
@@ -74,4 +74,55 @@ class OnDemandVerificationRequest(BaseModel):
             }
         }
 
+
+class OnDemandAcceptedResponse(BaseModel):
+    status: Literal["accepted"]
+    correlationId: str
+    statusUrl: str
+    message: str
+    timestamp: str
+
+
+class VerificationSinkDelivery(BaseModel):
+    transport: Literal["elastic", "kafka", "unknown"]
+    outcome: Literal[
+        "acknowledged", "submitted_unconfirmed", "failed", "unconfirmed"
+    ]
+    documentId: Optional[str] = None
+    index: Optional[str] = None
+    topic: Optional[str] = None
+    partition: Optional[str] = None
+    offset: Optional[str] = None
+
+
+class VerificationJobResult(BaseModel):
+    processingOutcome: Literal["verified", "verification_failed", "unknown"]
+    sinkDelivery: VerificationSinkDelivery
+    verdict: Optional[str] = None
+    verificationResponseCode: Optional[int] = None
+    errorSource: Optional[str] = None
+
+
+class VerificationJobError(BaseModel):
+    code: str
+
+
+class VerificationJobStatus(BaseModel):
+    correlationId: str
+    state: Literal[
+        "queued", "running", "publishing", "completed", "failed", "cancelled"
+    ]
+    terminal: bool
+    createdAt: str
+    updatedAt: str
+    result: Optional[VerificationJobResult] = None
+    error: Optional[VerificationJobError] = None
+    cancellationAccepted: Optional[bool] = None
+
+
+class VerificationErrorResponse(BaseModel):
+    status: Literal["error"]
+    error: str
+    message: str
+    timestamp: str
 

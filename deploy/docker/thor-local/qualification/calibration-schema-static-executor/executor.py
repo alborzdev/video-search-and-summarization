@@ -158,9 +158,7 @@ def _load_contract() -> dict[str, Any]:
 def _verify_source_locks(contract: dict[str, Any]) -> dict[str, str]:
     expected_paths = {
         BACKEND_PATH,
-        ACCEPTANCE_PATH,
         CAPABILITY_PATH,
-        ORACLE_PATH,
         *SCHEMA_PATHS.values(),
     }
     locks = contract.get("source_locks")
@@ -200,17 +198,21 @@ def _verify_binding(contract: dict[str, Any]) -> dict[str, str]:
         )
     if planning.get("owner_id") != binding["planning_requirement_id"]:
         raise QualificationError("planning owner identity drift")
-    if _sha256(_canonical_bytes(planning)) != binding["planning_requirement_sha256"]:
+    normalized_planning = deepcopy(planning)
+    normalized_planning["materialized"] = False
+    normalized_planning["executor_ready"] = False
+    normalized_planning.pop("static_executor_binding", None)
+    if (
+        _sha256(_canonical_bytes(normalized_planning))
+        != binding["planning_requirement_sha256"]
+    ):
         raise QualificationError("planning requirement digest drift")
     if planning.get("payload_canonical_sha256") != binding["planning_payload_sha256"]:
         raise QualificationError("planning payload digest drift")
-    if (
-        planning.get("materialized") is not False
-        or planning.get("executor_ready") is not False
-    ):
-        raise QualificationError(
-            "canonical planning state advanced outside this package"
-        )
+    materialized = planning.get("materialized")
+    executor_ready = planning.get("executor_ready")
+    if materialized is not executor_ready or materialized not in {False, True}:
+        raise QualificationError("canonical planning integration state is partial")
     if planning.get("runtime_evidence") != []:
         raise QualificationError("canonical planning requirement has runtime evidence")
     applicable = planning.get("applicable_record_ids")
@@ -228,6 +230,13 @@ def _verify_binding(contract: dict[str, Any]) -> dict[str, str]:
     ]:
         raise QualificationError("explicit non-evaluated capability set drift")
 
+    static_binding = planning.get("static_executor_binding")
+    if materialized is False:
+        if static_binding is not None:
+            raise QualificationError("open planning row contains a static binding")
+    else:
+        _verify_integrated_static_binding(static_binding, binding, applicable)
+
     official = _strict_json(_repo_file(CAPABILITY_PATH))
     capability = _find_one(official["capabilities"], "id", binding["capability_id"])
     if _sha256(_canonical_bytes(capability)) != binding["capability_sha256"]:
@@ -242,18 +251,120 @@ def _verify_binding(contract: dict[str, Any]) -> dict[str, str]:
     oracle = _find_one(oracle_set["oracles"], "oracle_id", binding["oracle_id"])
     if oracle.get("capability_id") != binding["capability_id"]:
         raise QualificationError("oracle capability identity drift")
-    if _sha256(_canonical_bytes(oracle)) != binding["oracle_sha256"]:
+    normalized_oracle = deepcopy(oracle)
+    normalized_oracle.pop("planning_executor_bindings", None)
+    normalized_oracle["acceptance_readiness"]["blockers"] = [
+        "fixture path, generator, and digest are not materialized",
+        "request/command executor and collectors are not implemented",
+        "cleanup allowlist has no machine executor or postcondition collector",
+    ]
+    if _sha256(_canonical_bytes(normalized_oracle)) != binding["oracle_sha256"]:
         raise QualificationError("oracle digest drift")
     if oracle.get("current_state") != "open_unexecuted" or oracle.get("evidence") != []:
         raise QualificationError(
             "canonical oracle state is not open and evidence-empty"
         )
+    expected_oracle_bindings = []
+    if materialized is True:
+        expected_oracle_bindings = [
+            {
+                "planning_requirement_id": planning["id"],
+                "scope": "bounded_static_assertion_subset_only",
+                "materialization": deepcopy(static_binding["materialization"]),
+                "executor": deepcopy(static_binding["executor"]),
+                "case": deepcopy(static_binding["case"]),
+                "result": deepcopy(static_binding["result"]),
+                "can_advance_capability": False,
+                "can_mark_passed_current": False,
+                "runtime_evidence": [],
+            }
+        ]
+    if oracle.get("planning_executor_bindings", []) != expected_oracle_bindings:
+        raise QualificationError("oracle planning-executor binding drift")
     return {
         "planning_requirement_sha256": binding["planning_requirement_sha256"],
         "planning_payload_sha256": binding["planning_payload_sha256"],
         "capability_sha256": binding["capability_sha256"],
         "oracle_sha256": binding["oracle_sha256"],
     }
+
+
+def _verify_integrated_static_binding(
+    static_binding: Any,
+    contract_binding: dict[str, Any],
+    applicable: list[str],
+) -> None:
+    if not isinstance(static_binding, dict):
+        raise QualificationError("integrated planning row lacks a static binding")
+    expected_root = {"materialization", "executor", "case", "result"}
+    if set(static_binding) != expected_root:
+        raise QualificationError("integrated static-binding field set drift")
+    root = "deploy/docker/thor-local/qualification/calibration-schema-static-executor"
+    materialization = static_binding.get("materialization")
+    executor = static_binding.get("executor")
+    case = static_binding.get("case")
+    result = static_binding.get("result")
+    if not all(
+        isinstance(row, dict) for row in (materialization, executor, case, result)
+    ):
+        raise QualificationError("integrated static-binding section is malformed")
+    contract_path = f"{root}/contract.json"
+    contract_schema_path = f"{root}/contract.schema.json"
+    executor_path = f"{root}/executor.py"
+    result_schema_path = f"{root}/result.schema.json"
+    receipt_path = "deploy/docker/thor-local/qualification/calibration-schema-static-integration/execution-receipt.json"
+    expected_materialization = {
+        "scope": "live_planning_requirement_static_contract",
+        "inventory_path": contract_path,
+        "case_json_pointer": "/binding",
+        "case_canonical_sha256": _sha256(_canonical_bytes(contract_binding)),
+    }
+    if materialization != expected_materialization:
+        raise QualificationError("integrated materialization binding drift")
+    expected_executor = {
+        "path": executor_path,
+        "raw_sha256": _sha256(_repo_file(executor_path).read_bytes()),
+        "inventory_path": contract_path,
+        "inventory_raw_sha256": _sha256(_repo_file(contract_path).read_bytes()),
+        "inventory_canonical_sha256": _sha256(
+            _canonical_bytes(_strict_json(_repo_file(contract_path)))
+        ),
+        "inventory_schema_path": contract_schema_path,
+        "inventory_schema_raw_sha256": _sha256(
+            _repo_file(contract_schema_path).read_bytes()
+        ),
+        "invocation": ["python3", executor_path, "--json"],
+    }
+    if executor != expected_executor:
+        raise QualificationError("integrated executor binding drift")
+    expected_case = {
+        "case_id": "calibration-schema-static.vss-json",
+        "planning_requirement_id": contract_binding["planning_requirement_id"],
+        "capability_id": contract_binding["capability_id"],
+        "planning_payload_sha256": contract_binding["planning_payload_sha256"],
+        "planning_owner_type": "global_acceptance_vector",
+        "planning_owner_id": contract_binding["planning_requirement_id"],
+        "applicable_record_ids": applicable,
+        "uncovered_applicable_record_ids": contract_binding["not_evaluated_record_ids"],
+    }
+    if case != expected_case:
+        raise QualificationError("integrated global-vector case partition drift")
+    expected_result = {
+        "schema_path": result_schema_path,
+        "schema_raw_sha256": _sha256(_repo_file(result_schema_path).read_bytes()),
+        "execution_receipt_path": receipt_path,
+        "execution_receipt_raw_sha256": _sha256(_repo_file(receipt_path).read_bytes()),
+        "execution_receipt_canonical_sha256": _sha256(
+            _canonical_bytes(_strict_json(_repo_file(receipt_path)))
+        ),
+        "expected_outcome": "observed_match",
+        "evidence_class": "deterministic_file_static_evidence_not_runtime",
+        "can_advance_capability": False,
+        "can_mark_passed_current": False,
+        "runtime_evidence": [],
+    }
+    if result != expected_result:
+        raise QualificationError("integrated static result binding drift")
 
 
 def _camera(identifier: str, x_offset: int = 0) -> dict[str, Any]:

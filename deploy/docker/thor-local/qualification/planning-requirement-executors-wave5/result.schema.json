@@ -16,20 +16,20 @@
       "required": ["total_planning_requirements", "integrated_materialized", "live_open", "prior_candidate_selections", "remaining_requirements_audited", "cases", "observed_match", "observed_mismatch", "remaining_requirements_unselected"],
       "properties": {
         "total_planning_requirements": {"const": 110},
-        "integrated_materialized": {"const": 26},
-        "live_open": {"const": 84},
+        "integrated_materialized": {"const": 27},
+        "live_open": {"const": 83},
         "prior_candidate_selections": {"const": 12},
-        "remaining_requirements_audited": {"const": 72},
+        "remaining_requirements_audited": {"const": 71},
         "cases": {"const": 6},
         "observed_match": {"const": 1},
         "observed_mismatch": {"const": 5},
-        "remaining_requirements_unselected": {"const": 66}
+        "remaining_requirements_unselected": {"const": 65}
       }
     },
     "remaining_requirement_audit": {
       "type": "array",
-      "minItems": 72,
-      "maxItems": 72,
+      "minItems": 71,
+      "maxItems": 71,
       "items": {
         "type": "object",
         "additionalProperties": false,

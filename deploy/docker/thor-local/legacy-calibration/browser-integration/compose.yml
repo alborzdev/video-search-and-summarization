@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+# Opt-in Thor-full overlay. This file defines lifecycle; it does not start it.
+
+services:
+  thor-calibration-ui-api:
+    image: ${VSS_AGENT_IMAGE:-nvcr.io/nvidia/vss-core/vss-agent:${VSS_AGENT_VERSION:-3.2.1}}
+    container_name: thor-calibration-ui-api
+    network_mode: host
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    working_dir: /opt/thor-calibration
+    entrypoint:
+      - /usr/local/bin/python3
+      - /opt/thor-calibration/ui_server.py
+    command:
+      - serve
+      - --data-root
+      - /var/lib/thor-calibration
+      - --acknowledgement
+      - I_ACCEPT_LOCAL_VIOS_CALIBRATION_UI_SERVER_8013
+    volumes:
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/legacy-calibration:/opt/thor-calibration:ro
+      - ${VSS_DATA_DIR}/calibration-ui:/var/lib/thor-calibration:rw
+    healthcheck:
+      test:
+        - CMD
+        - /usr/local/bin/python3
+        - -c
+        - >-
+          import http.client,sys;
+          c=http.client.HTTPConnection('127.0.0.1',8013,timeout=2);
+          c.request('GET','/api/projects/');
+          sys.exit(0 if c.getresponse().status == 200 else 1)
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 3s
+    restart: unless-stopped
+
+  vst-ingress:
+    # Must name a locally built ingress containing the materialized overlay.
+    # There is intentionally no fallback to the released image, whose SPA
+    # tree-shakes the unreachable CalibrationWorkflow from its bundle.
+    image: ${THOR_CALIBRATION_VIOS_INGRESS_IMAGE:?build the Thor calibration VIOS ingress first}
+    volumes:
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/legacy-calibration/browser-integration/nginx-vst-direct.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      thor-calibration-ui-api:
+        condition: service_healthy

@@ -23,19 +23,22 @@
     "counts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["cases", "observed_match", "observed_mismatch", "remaining_requirements_audited", "remaining_requirements_unselected"],
+      "required": ["total_planning_requirements", "integrated_materialized", "live_open", "cases", "observed_match", "observed_mismatch", "remaining_requirements_audited", "remaining_requirements_unselected"],
       "properties": {
+        "total_planning_requirements": {"const": 110},
+        "integrated_materialized": {"const": 27},
+        "live_open": {"const": 83},
         "cases": {"const": 6},
         "observed_match": {"const": 5},
         "observed_mismatch": {"const": 1},
-        "remaining_requirements_audited": {"const": 78},
-        "remaining_requirements_unselected": {"const": 72}
+        "remaining_requirements_audited": {"const": 77},
+        "remaining_requirements_unselected": {"const": 71}
       }
     },
     "remaining_requirement_audit": {
       "type": "array",
-      "minItems": 78,
-      "maxItems": 78,
+      "minItems": 77,
+      "maxItems": 77,
       "items": {
         "type": "object",
         "additionalProperties": false,

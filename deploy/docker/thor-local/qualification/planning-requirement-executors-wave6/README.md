@@ -1,6 +1,6 @@
 # Wave 6 planning-requirement Smart City source contracts
 
-This isolated candidate package starts from the exact 66 live-open planning
+This isolated candidate package starts from the exact 65 live-open planning
 requirements left unselected after Wave 5. It selects six high-value Smart
 City requirements whose useful evidence is genuinely static:
 
@@ -29,9 +29,12 @@ SDG lane remains external-optional. In particular, the package does not infer
 official Thor support, a Thor performance envelope, a unified Smart City
 version, delivered VLM fine-tuning, or remediation of known limitations.
 
-The planning denominator remains 110 total, 26 materialized, and 84 live-open.
+The canonical fourth-successor planning denominator is 110 total, 27
+materialized, and 83 live-open.
 The five predecessor inventory packages contain 44 distinct package selections:
 26 are now materialized static bindings and 18 remain live-open candidate-only
-selections. Wave 6 audits the exact remaining 66 live-open requirements, selects
-six, and leaves 60 without a candidate executor. All 84 requirements remain
+selections. Wave 6 audits the exact remaining 65 live-open requirements, selects
+six, and leaves 59 without a candidate executor. All 83 requirements remain
 live-open; the package does not materialize its six selections.
+`calibration-schema-static` is already materialized and is excluded from this
+open denominator.

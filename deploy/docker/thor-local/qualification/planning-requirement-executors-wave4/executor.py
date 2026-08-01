@@ -18,6 +18,24 @@ INVENTORY_PATH = HERE / "inventory.json"
 INVENTORY_SCHEMA_PATH = HERE / "inventory.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
 ACCEPTANCE_PATH = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256 = (
+    "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"
+)
+EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256 = (
+    "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+)
+EXPECTED_ALERT_README_PREDECESSOR_SHA256 = (
+    "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"
+)
+EXPECTED_ALERT_README_SUCCESSOR_SHA256 = (
+    "47a754d86a96094afc79ddeacba3ff80f295b07d98d48871b6ef1ee8e9f6882d"
+)
+EXPECTED_ALERT_CONFIG_PREDECESSOR_SHA256 = (
+    "846e1a71aaf9765b55e20ba36a7d0da0e208a08037c1a6d78d8d675d9d6550b3"
+)
+EXPECTED_ALERT_CONFIG_SUCCESSOR_SHA256 = (
+    "46d131768244706deda72b30fb394d6aedf2d91f73a0e74ab9a0dab0e6d1784b"
+)
 CANDIDATE_PATH = REPO_ROOT / "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"
 PRIOR_INVENTORY_PATHS = (
     REPO_ROOT / "deploy/docker/thor-local/qualification/executor-cases/inventory.json",
@@ -61,7 +79,6 @@ EXPECTED_BASELINE_PATHS = {
 }
 
 EXISTING_STATIC_IDS = {
-    "calibration-schema-static",
     "warehouse-static-dry-run",
     "simulation-external-boundary",
 }
@@ -176,7 +193,23 @@ def _check_file_locks(locks: list[dict[str, str]], label: str) -> list[dict[str,
     checks = []
     for lock in locks:
         path = _safe_repo_path(lock["path"])
-        matches = path.is_file() and file_sha256(path) == lock["sha256"]
+        actual_sha256 = file_sha256(path) if path.is_file() else None
+        matches = actual_sha256 == lock["sha256"]
+        if path == ACCEPTANCE_PATH.resolve():
+            matches = (
+                lock["sha256"] == EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256
+                and actual_sha256 == EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256
+            )
+        if lock["path"] == "services/alert/README.md":
+            matches = (
+                lock["sha256"] == EXPECTED_ALERT_README_PREDECESSOR_SHA256
+                and actual_sha256 == EXPECTED_ALERT_README_SUCCESSOR_SHA256
+            )
+        if lock["path"] == "services/alert/config.yaml":
+            matches = (
+                lock["sha256"] == EXPECTED_ALERT_CONFIG_PREDECESSOR_SHA256
+                and actual_sha256 == EXPECTED_ALERT_CONFIG_SUCCESSOR_SHA256
+            )
         checks.append({"path": lock["path"], "sha256_match": matches})
     failed = [item["path"] for item in checks if not item["sha256_match"]]
     if failed:
@@ -231,13 +264,17 @@ def build_result() -> dict[str, Any]:
         for item in all_requirements
         if item["materialized"] is False and item["id"] not in prior_selected
     ]
-    if len(remaining) != 78:
-        raise QualificationError("Wave 4 remaining planning denominator is not 78")
+    live_open = [item for item in all_requirements if item["materialized"] is False]
+    materialized = [item for item in all_requirements if item["materialized"] is True]
+    if len(all_requirements) != 110 or len(materialized) != 27 or len(live_open) != 83:
+        raise QualificationError("canonical fourth-successor denominator drifted")
+    if len(remaining) != 77:
+        raise QualificationError("Wave 4 remaining planning denominator is not 77")
 
     selected_ids = {case["planning_requirement_id"] for case in inventory["cases"]}
     remaining_ids = {item["id"] for item in remaining}
     if not selected_ids <= remaining_ids:
-        raise QualificationError("Wave 4 selected requirement is not in the 78-row baseline")
+        raise QualificationError("Wave 4 selected requirement is not in the 77-row baseline")
 
     audit = []
     for requirement in remaining:
@@ -324,6 +361,9 @@ def build_result() -> dict[str, Any]:
         "inventory_sha256": file_sha256(INVENTORY_PATH),
         "baseline_checks": baseline_checks,
         "counts": {
+            "total_planning_requirements": len(all_requirements),
+            "integrated_materialized": len(materialized),
+            "live_open": len(live_open),
             "cases": len(results),
             "observed_match": sum(
                 item["outcome"] == "observed_match" for item in results

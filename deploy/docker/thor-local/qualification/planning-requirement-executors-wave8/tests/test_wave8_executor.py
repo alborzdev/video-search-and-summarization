@@ -58,25 +58,25 @@ def test_exact_denominator_sets_and_accounting():
     result = _module().build_result()
     assert result["set_digests"] == {
         "prior_56": "0974fe61e1f67d4b4b766e7c56c65c5a65e02e8ae98da585bb00e999bc126315",
-        "wave7_remaining_54": "cae70bf8d08a7cf01ddd583e3b20821d1e18678a95418ce4503d7edcb07bf050",
+        "wave7_remaining_53": "154acf12f0b82772df8c54cefe7fa8721ab387163bd7304df33c628bd162c4ac",
         "wave8_selected_6": "0ab0a6a768ab6b9d89c24404f9d1695d689fa600bef3a2570ff630ecb4018d16",
-        "wave8_remaining_48": "e110cc91283d37dd8f789ffef55045dc97bbbadf4ff5eadc9d69532357be97d5",
+        "wave8_remaining_47": "7fb2fdbc019926c6febfab1c9e9d4b3a6885d8103d3d020b37304cc21d462bf9",
     }
     assert result["counts"] == {
         "total_planning_requirements": 110,
-        "integrated_materialized": 26,
-        "live_open": 84,
+        "integrated_materialized": 27,
+        "live_open": 83,
         "prior_package_selections": 56,
         "prior_materialized_static_bindings": 26,
         "prior_live_open_candidate_selections": 30,
-        "remaining_requirements_audited": 54,
+        "remaining_requirements_audited": 53,
         "cases": 6,
         "observed_match": 6,
         "observed_mismatch": 0,
         "negative_contracts_preserved": 6,
         "configuration_subsets": 0,
         "protocol_subsets": 0,
-        "remaining_requirements_unselected": 48,
+        "remaining_requirements_unselected": 47,
     }
 
 
@@ -126,19 +126,30 @@ def test_all_sources_and_bindings_match_but_every_requirement_and_oracle_stays_o
         for row in acceptance["wave3_contracts"]["planning_requirements"]
         if row["materialized"] is False
     ]
-    assert len(open_rows) == 84
+    assert len(open_rows) == 83
     assert all(
         row["executor_ready"] is False and row["runtime_evidence"] == []
         for row in open_rows
     )
+    calibration = next(
+        row
+        for row in acceptance["wave3_contracts"]["planning_requirements"]
+        if row["id"] == "calibration-schema-static"
+    )
+    assert calibration["materialized"] is True
+    assert calibration["executor_ready"] is True
+    assert calibration["runtime_evidence"] == []
 
 
-def test_fifty_four_row_audit_has_six_negative_cases_and_48_unselected():
+def test_fifty_three_row_audit_has_six_negative_cases_and_47_unselected():
     rows = _module().build_result()["remaining_requirement_audit"]
     selected = [row for row in rows if row["classification"].startswith("selected_")]
-    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 54
+    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 53
     assert len(selected) == 6
-    assert len(rows) - len(selected) == 48
+    assert len(rows) - len(selected) == 47
+    assert "calibration-schema-static" not in {
+        row["planning_requirement_id"] for row in rows
+    }
     assert (
         sum(
             row["classification"] == "selected_static_negative_contract" for row in rows

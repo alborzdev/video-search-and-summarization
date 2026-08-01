@@ -6345,9 +6345,68 @@
             "calibration-schema-doc-3.2.1"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.json",
+            "case_json_pointer": "/binding",
+            "case_canonical_sha256": "136dce0e50ee49c8608801737ceac0fd26b44c497b04910dd769feb6683c30ed"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/executor.py",
+            "raw_sha256": "420b936e7476ad137cadf1f27dc672dd3bb79ba7c679aded3be6dbbf5bb531fe",
+            "inventory_path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.json",
+            "inventory_raw_sha256": "4e18a42bed2d307214b08ad81ef5edf5028fbc983e3e3c1c7446429b0737d584",
+            "inventory_canonical_sha256": "ac6701d49fd2e4aeabdfc5dfeaeab859a811810604c3dffc69adcd73373c783d",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.schema.json",
+            "inventory_schema_raw_sha256": "7e506f5b155bd10f53c81e55d664ce396d91e0795ddf16f52bddd36b784a822b",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/calibration-schema-static-executor/executor.py",
+              "--json"
+            ]
+          },
+          "case": {
+            "case_id": "calibration-schema-static.vss-json",
+            "planning_requirement_id": "calibration-schema-static",
+            "capability_id": "calibration.schema.vss-json",
+            "planning_payload_sha256": "3e54d36b3e1895ad69fda05e458d3c80809507e31e975c210fdab56f446ce791",
+            "planning_owner_type": "global_acceptance_vector",
+            "planning_owner_id": "calibration-schema-static",
+            "applicable_record_ids": [
+              "calibration.camera-positioning.installation-contract",
+              "calibration.schema.vss-json",
+              "behavior.auto-calibration.failure-recovery",
+              "behavior.auto-calibration.result-verification",
+              "calibration.auto.alignment-schema",
+              "calibration.auto.workflow-six-step",
+              "behavior.auto-calibration.known-limitations"
+            ],
+            "uncovered_applicable_record_ids": [
+              "calibration.camera-positioning.installation-contract",
+              "behavior.auto-calibration.failure-recovery",
+              "behavior.auto-calibration.result-verification",
+              "calibration.auto.alignment-schema",
+              "calibration.auto.workflow-six-step",
+              "behavior.auto-calibration.known-limitations"
+            ]
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/result.schema.json",
+            "schema_raw_sha256": "849e4517acb4d1b3288164c34ad0689de011ca899da7e2f575c0ada067deffea",
+            "execution_receipt_path": "deploy/docker/thor-local/qualification/calibration-schema-static-integration/execution-receipt.json",
+            "execution_receipt_raw_sha256": "7050c8e513e59fa3393cc3ca747f445ca7a883974c0faa1efc9cc2372f5ef6fb",
+            "execution_receipt_canonical_sha256": "290dbdb08439e4d0b726d7047dcda49aacf010002636b027af497339cf340eb9",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "warehouse-static-dry-run",

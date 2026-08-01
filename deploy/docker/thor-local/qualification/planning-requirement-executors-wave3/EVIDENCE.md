@@ -1,11 +1,13 @@
 # Evidence
 
-- Open planning requirements audited: **84**
+- Total planning requirements: **110**
+- Integrated/materialized requirements: **27**
+- Open planning requirements audited: **83**
 - New isolated source cases: **6**
 - Existing 10 + 16 source cases overlapped: **0**
 - Observed matches: **5**
 - Observed mismatches: **1**
-- Requirements deliberately left open: **78**
+- Requirements deliberately left open without a Wave 3 candidate: **77**
 - Runtime evidence added: **0**
 - Live acceptance/oracle changes: **0**
 

@@ -12,12 +12,12 @@
     "set_digests": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["prior_44", "wave5_remaining_66", "wave6_selected_6", "wave6_remaining_60"],
+      "required": ["prior_44", "wave5_remaining_65", "wave6_selected_6", "wave6_remaining_59"],
       "properties": {
         "prior_44": {"const": "3a6e3e23bb918167eb2359988416ec84baed1b8402f0b28103c96c28cf93560f"},
-        "wave5_remaining_66": {"const": "b51107200a0fd2e9c862c5576135c864ab1d9f041bf668dff2ff3934a5fe6f28"},
+        "wave5_remaining_65": {"const": "69aba6737b9d1815112d7d8d44451d6fdf07d9eefe9b54a89d46850ddc1728b7"},
         "wave6_selected_6": {"const": "ebed5e3724ad9935e7068974e51b3c7fcdd0506e78e10077a95afc5752d6fcc8"},
-        "wave6_remaining_60": {"const": "12bada9c389b5550910bfed7073281a59d63b5616266118e983f75522126c342"}
+        "wave6_remaining_59": {"const": "88ec60aa61ee86e93e9ee239c008e336c2e7cafbea3940e18e778580542485c6"}
       }
     },
     "baseline_checks": {
@@ -33,24 +33,24 @@
       "required": ["total_planning_requirements", "integrated_materialized", "live_open", "prior_package_selections", "prior_materialized_static_bindings", "prior_live_open_candidate_selections", "remaining_requirements_audited", "cases", "observed_match", "observed_mismatch", "documented_mismatches_preserved", "external_optional_boundaries_preserved", "remaining_requirements_unselected"],
       "properties": {
         "total_planning_requirements": {"const": 110},
-        "integrated_materialized": {"const": 26},
-        "live_open": {"const": 84},
+        "integrated_materialized": {"const": 27},
+        "live_open": {"const": 83},
         "prior_package_selections": {"const": 44},
         "prior_materialized_static_bindings": {"const": 26},
         "prior_live_open_candidate_selections": {"const": 18},
-        "remaining_requirements_audited": {"const": 66},
+        "remaining_requirements_audited": {"const": 65},
         "cases": {"const": 6},
         "observed_match": {"const": 6},
         "observed_mismatch": {"const": 0},
         "documented_mismatches_preserved": {"const": 5},
         "external_optional_boundaries_preserved": {"const": 1},
-        "remaining_requirements_unselected": {"const": 60}
+        "remaining_requirements_unselected": {"const": 59}
       }
     },
     "remaining_requirement_audit": {
       "type": "array",
-      "minItems": 66,
-      "maxItems": 66,
+      "minItems": 65,
+      "maxItems": 65,
       "items": {
         "type": "object",
         "additionalProperties": false,

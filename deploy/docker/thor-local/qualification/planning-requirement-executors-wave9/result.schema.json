@@ -10,12 +10,12 @@
     "inventory_sha256": {"$ref": "#/$defs/sha256"},
     "set_digests": {
       "type": "object", "additionalProperties": false,
-      "required": ["prior_62", "wave8_remaining_48", "wave9_selected_6", "wave9_remaining_42"],
+      "required": ["prior_62", "wave8_remaining_47", "wave9_selected_6", "wave9_remaining_41"],
       "properties": {
         "prior_62": {"const": "faefaedeb3f198d98c1dc7e28b77606585e21131c3845b3270897fd95119d464"},
-        "wave8_remaining_48": {"const": "e110cc91283d37dd8f789ffef55045dc97bbbadf4ff5eadc9d69532357be97d5"},
+        "wave8_remaining_47": {"const": "7fb2fdbc019926c6febfab1c9e9d4b3a6885d8103d3d020b37304cc21d462bf9"},
         "wave9_selected_6": {"const": "513730392f6a3b372d63711a6cdffcef1b3c56b02a619fdc800b620d8cb11891"},
-        "wave9_remaining_42": {"const": "5c6885d089e5d5af6e49d6cccb8a03dc829642174bc8f2ec660674d24df10672"}
+        "wave9_remaining_41": {"const": "dc9c51cada03c13b4830d3062e89eb0dc5e2107d50d4958c84f5ed66f41e3b36"}
       }
     },
     "baseline_checks": {"type": "array", "minItems": 11, "maxItems": 11, "items": {"$ref": "#/$defs/sourceCheck"}},
@@ -23,14 +23,14 @@
       "type": "object", "additionalProperties": false,
       "required": ["total_planning_requirements", "integrated_materialized", "live_open", "prior_package_selections", "prior_materialized_static_bindings", "prior_live_open_candidate_selections", "remaining_requirements_audited", "cases", "observed_match", "observed_mismatch", "negative_contracts_preserved", "configuration_subsets", "protocol_subsets", "warehouse_cases_selected", "remaining_requirements_unselected"],
       "properties": {
-        "total_planning_requirements": {"const": 110}, "integrated_materialized": {"const": 26}, "live_open": {"const": 84},
+        "total_planning_requirements": {"const": 110}, "integrated_materialized": {"const": 27}, "live_open": {"const": 83},
         "prior_package_selections": {"const": 62}, "prior_materialized_static_bindings": {"const": 26}, "prior_live_open_candidate_selections": {"const": 36},
-        "remaining_requirements_audited": {"const": 48}, "cases": {"const": 6}, "observed_match": {"const": 6}, "observed_mismatch": {"const": 0},
+        "remaining_requirements_audited": {"const": 47}, "cases": {"const": 6}, "observed_match": {"const": 6}, "observed_mismatch": {"const": 0},
         "negative_contracts_preserved": {"const": 1}, "configuration_subsets": {"const": 2}, "protocol_subsets": {"const": 3},
-        "warehouse_cases_selected": {"const": 0}, "remaining_requirements_unselected": {"const": 42}
+        "warehouse_cases_selected": {"const": 0}, "remaining_requirements_unselected": {"const": 41}
       }
     },
-    "remaining_requirement_audit": {"type": "array", "minItems": 48, "maxItems": 48, "items": {"$ref": "#/$defs/audit"}},
+    "remaining_requirement_audit": {"type": "array", "minItems": 47, "maxItems": 47, "items": {"$ref": "#/$defs/audit"}},
     "results": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/result"}}
   },
   "$defs": {

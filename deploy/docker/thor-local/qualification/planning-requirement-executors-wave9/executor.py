@@ -19,13 +19,13 @@ INVENTORY_PATH = HERE / "inventory.json"
 INVENTORY_SCHEMA_PATH = HERE / "inventory.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
 EXPECTED_INVENTORY_SHA256 = (
-    "37c4ca40e560536c6e8e21566009d19b0df0dd28892b523b6df18cc99ecfa91c"
+    "b2e5b1ae48a60c4a5c162466167975de255abdcf14c4bf83bd310919bb424861"
 )
 EXPECTED_INVENTORY_SCHEMA_SHA256 = (
     "3c6b1f4d516b2ffa7d917c5489571b7b74082c25034c76743daedcd410c6c8c2"
 )
 EXPECTED_RESULT_SCHEMA_SHA256 = (
-    "00aa4529a46abedf5209f29a54f668291c5d3c325cb3ee7dfa8a9fab3cf357f7"
+    "a04e80fd7cdfe508291007514d86d718ed4c69c38a0f8ccd846efcb45c8a8c34"
 )
 MAX_BYTES = 5_000_000
 ACCEPTANCE_PATH = (
@@ -90,13 +90,13 @@ EXPECTED_PRIOR_SHA256 = (
     "faefaedeb3f198d98c1dc7e28b77606585e21131c3845b3270897fd95119d464"
 )
 EXPECTED_REMAINDER_SHA256 = (
-    "e110cc91283d37dd8f789ffef55045dc97bbbadf4ff5eadc9d69532357be97d5"
+    "7fb2fdbc019926c6febfab1c9e9d4b3a6885d8103d3d020b37304cc21d462bf9"
 )
 EXPECTED_SELECTED_SHA256 = (
     "513730392f6a3b372d63711a6cdffcef1b3c56b02a619fdc800b620d8cb11891"
 )
 EXPECTED_AFTER_SHA256 = (
-    "5c6885d089e5d5af6e49d6cccb8a03dc829642174bc8f2ec660674d24df10672"
+    "dc9c51cada03c13b4830d3062e89eb0dc5e2107d50d4958c84f5ed66f41e3b36"
 )
 
 
@@ -305,15 +305,15 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("prior 62 selection composition drifted")
 
     live_open = [row for row in all_requirements if row["materialized"] is False]
-    if len(all_requirements) != 110 or len(live_open) != 84:
+    if len(all_requirements) != 110 or len(live_open) != 83:
         raise QualificationError("live planning denominator drifted")
     remainder = [row for row in live_open if row["id"] not in prior_selected]
     remainder_ids = {row["id"] for row in remainder}
     if (
-        len(remainder_ids) != 48
+        len(remainder_ids) != 47
         or canonical_sha256(sorted(remainder_ids)) != EXPECTED_REMAINDER_SHA256
     ):
-        raise QualificationError("exact Wave 8 remainder48 drifted")
+        raise QualificationError("exact Wave 8 remainder47 drifted")
     selected = {
         case["planning_requirement_id"]: case["evidence_class"]
         for case in inventory["cases"]
@@ -329,7 +329,7 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("Warehouse selection is forbidden")
     after_ids = remainder_ids - set(selected)
     if (
-        len(after_ids) != 42
+        len(after_ids) != 41
         or canonical_sha256(sorted(after_ids)) != EXPECTED_AFTER_SHA256
     ):
         raise QualificationError("exact Wave 9 remainder-after set drifted")
@@ -428,19 +428,19 @@ def build_result() -> dict[str, Any]:
         "inventory_sha256": file_sha256(INVENTORY_PATH),
         "set_digests": {
             "prior_62": canonical_sha256(sorted(prior_selected)),
-            "wave8_remaining_48": canonical_sha256(sorted(remainder_ids)),
+            "wave8_remaining_47": canonical_sha256(sorted(remainder_ids)),
             "wave9_selected_6": canonical_sha256(sorted(selected)),
-            "wave9_remaining_42": canonical_sha256(sorted(after_ids)),
+            "wave9_remaining_41": canonical_sha256(sorted(after_ids)),
         },
         "baseline_checks": baseline_checks,
         "counts": {
             "total_planning_requirements": 110,
-            "integrated_materialized": 26,
-            "live_open": 84,
+            "integrated_materialized": 27,
+            "live_open": 83,
             "prior_package_selections": 62,
             "prior_materialized_static_bindings": 26,
             "prior_live_open_candidate_selections": 36,
-            "remaining_requirements_audited": 48,
+            "remaining_requirements_audited": 47,
             "cases": 6,
             "observed_match": len(results),
             "observed_mismatch": 6 - len(results),
@@ -457,7 +457,7 @@ def build_result() -> dict[str, Any]:
                 for row in results
             ),
             "warehouse_cases_selected": 0,
-            "remaining_requirements_unselected": 42,
+            "remaining_requirements_unselected": 41,
         },
         "remaining_requirement_audit": audit,
         "results": results,

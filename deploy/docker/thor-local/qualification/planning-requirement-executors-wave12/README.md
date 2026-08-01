@@ -1,6 +1,6 @@
 # Planning Requirement Executors — Wave 12
 
-This isolated package audits Wave 11's exact 30-row remaining denominator and
+This isolated package audits Wave 11's exact 29-row live-open remainder and
 records six additional, disjoint static subsets. All six selected requirements
 are `required_local`; none is Warehouse or external-optional. The executor
 performs only raw-file, canonical-ledger-binding, set-accounting, and
@@ -19,7 +19,7 @@ No result is a runtime pass. Source routes and index strings do not prove
 search results; alert types and handlers do not prove live chunk processing or
 relay delivery; component configuration does not prove browser/API behavior;
 and worker queue code does not prove Thor saturation, horizontal groups, or
-Kafka partition coverage. All 84 live-open requirements remain unpromoted,
+Kafka partition coverage. All 83 live-open requirements remain unpromoted,
 executor-not-ready, and runtime-evidence-empty. Every selected oracle remains
 `open_unexecuted` and evidence-empty.
 

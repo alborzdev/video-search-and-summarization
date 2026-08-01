@@ -1,17 +1,17 @@
 # Evidence
 
 - Total planning requirements: **110**
-- Integrated/materialized requirements: **26**
-- Live-open requirements before and after this package: **84**
+- Integrated/materialized requirements: **27**
+- Live-open requirements before and after this package: **83**
 - Prior package selections through Wave 5: **44**
   - Currently materialized static bindings: **26**
   - Live-open candidate-only selections: **18**
-- Exact previously unselected set audited: **66**
+- Exact previously unselected set audited: **65**
 - New isolated static source-contract cases: **6**
 - Source observations matching locked assertions: **6**
 - Documented mismatch boundaries preserved: **5**
 - External-optional boundaries preserved: **1**
-- Requirements without a candidate executor afterward: **60**
+- Requirements without a candidate executor afterward: **59**
 - Runtime evidence added: **0**
 - Live acceptance/oracle/manifest/lane/API changes: **0**
 - Network, Docker, subprocess, lifecycle, credentials, or downloads: **0**
@@ -21,9 +21,9 @@
 
 ```text
 prior 44 package rows  3a6e3e23bb918167eb2359988416ec84baed1b8402f0b28103c96c28cf93560f
-Wave 5 remainder 66    b51107200a0fd2e9c862c5576135c864ab1d9f041bf668dff2ff3934a5fe6f28
+Wave 5 remainder 65    69aba6737b9d1815112d7d8d44451d6fdf07d9eefe9b54a89d46850ddc1728b7
 Wave 6 selected 6      ebed5e3724ad9935e7068974e51b3c7fcdd0506e78e10077a95afc5752d6fcc8
-Wave 6 remainder 60    12bada9c389b5550910bfed7073281a59d63b5616266118e983f75522126c342
+Wave 6 remainder 59    88ec60aa61ee86e93e9ee239c008e336c2e7cafbea3940e18e778580542485c6
 inventory raw SHA-256  bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7
 ```
 

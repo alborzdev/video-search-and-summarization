@@ -88,7 +88,10 @@ and one delivery receipt:
 Failed/cancelled terminal results must carry `verification-failed` and an
 explicit `backend=none`, `delivered=false` receipt with a bounded failure code.
 The schema is a required product contract, not evidence that the current API
-already emits it.
+already emits it. Thor product source now carries a bounded process-local
+on-demand status/cancel API and propagates sanitized Elasticsearch/Kafka sink
+outcomes. This scaffold does not yet call that API, map its `completed` state
+to this schema's `succeeded` state, or prove a receipt with exact sink readback.
 
 ## Query boundary
 
@@ -104,22 +107,27 @@ separately reviewed bounded-query transport change.
 ## Remaining blockers
 
 Static Thor source candidates now propagate per-category VLM parameters,
-effective response-format/JSON parsing, enable direct-media verdicts, and copy
-the audited modules into the derivative image. Those changes are not runtime
-proof.
+effective response-format/JSON parsing, enable direct-media verdicts, expose a
+bounded process-local on-demand terminal status/cancel API, and propagate
+sanitized sink outcomes. The derivative copies the audited module closure.
+Those changes are not runtime proof and this scaffold remains disconnected
+from the new terminal endpoints.
 
 Promotion remains blocked because:
 
 - the two semantic media artifacts and byte digests are not materialized;
-- Alert Bridge has no terminal background-job status/cancel API;
-- a task can publish after collector cleanup;
-- sinks do not return durable success/failure delivery receipts;
+- the collector has not integrated terminal status readback/cancellation;
+- from the disconnected collector's perspective, a task can still publish
+  after cleanup;
+- the collector has not exercised a concrete sink receipt or exact sink
+  readback;
 - confirmed/rejected output and running-image identity are not live-proven;
 - the strict query builder is not connected to a bounded transport; and
 - Kafka still needs its own bounded Protobuf consumer and immutable-record
   policy, preferably against a dedicated oracle topic.
 
-Without terminal/cancellation plus exact sink cleanup, a timeout cannot prove
-that a late document or Kafka record will not appear. `reversibility_assessment`
-therefore emits blocker `late-publication-not-reversible`; it never converts
-this scaffold into promotion evidence.
+Until this collector integrates terminal/cancellation plus exact sink cleanup,
+a timeout cannot prove that a late document or Kafka record will not appear.
+`reversibility_assessment` therefore retains blocker
+`late-publication-not-reversible`; it never converts this scaffold into
+promotion evidence.

@@ -16,7 +16,7 @@
   },
   "live_capability_oracles": {
     "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-    "raw_sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
+    "raw_sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
   },
   "previous_candidate_inventories": [
     {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json", "raw_sha256": "91406a15ff1340b9b4dba988507470234971fa4905997bc52e64fb983fc12a18"},

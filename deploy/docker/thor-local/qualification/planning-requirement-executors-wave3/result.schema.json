@@ -12,17 +12,20 @@
     "counts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["cases", "observed_match", "observed_mismatch", "open_requirements_audited", "open_requirements_unselected"],
+      "required": ["total_planning_requirements", "integrated_materialized", "live_open", "cases", "observed_match", "observed_mismatch", "open_requirements_audited", "open_requirements_unselected"],
       "properties": {
+        "total_planning_requirements": {"const": 110},
+        "integrated_materialized": {"const": 27},
+        "live_open": {"const": 83},
         "cases": {"const": 6},
         "observed_match": {"const": 5},
         "observed_mismatch": {"const": 1},
-        "open_requirements_audited": {"const": 84},
-        "open_requirements_unselected": {"const": 78}
+        "open_requirements_audited": {"const": 83},
+        "open_requirements_unselected": {"const": 77}
       }
     },
     "open_requirement_audit": {
-      "type": "array", "minItems": 84, "maxItems": 84,
+      "type": "array", "minItems": 83, "maxItems": 83,
       "items": {
         "type": "object", "additionalProperties": false,
         "required": ["planning_requirement_id", "package", "classification"],

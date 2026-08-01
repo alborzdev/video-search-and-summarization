@@ -1,9 +1,10 @@
 # Planning Requirement Executors — Wave 8
 
-This isolated package audits the exact 54 live-open planning requirements left
-after Wave 7. It records six additional, disjoint static negative-contract
-subsets covering documented known limitations in LVS, base-profile recovery,
-search, and RT-CV.
+This isolated package audits the exact 53 live-open planning requirements left
+after Wave 7. The separately integrated `calibration-schema-static` requirement
+is materialized and is not part of this live-open remainder. This package
+records six additional, disjoint static negative-contract subsets covering
+documented known limitations in LVS, base-profile recovery, search, and RT-CV.
 
 It is deliberately not runtime qualification. A successful result does not
 prove that a limitation occurs, that recovery works, or that a runtime feature

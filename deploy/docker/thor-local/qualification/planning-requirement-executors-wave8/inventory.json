@@ -14,16 +14,16 @@
     "warehouse_sample_bundle_used": false
   },
   "baseline_locks": [
-    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
     {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"},
     {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
     {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json", "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"},
-    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "da6c6f401e1f827145deda62e747ad68582043218336f407141a2fd8d312571f"}
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "d670829d85239bfb924737d32565eb3b87a0378df2520d225df72a75617122d9"}
   ],
   "cases": [
     {

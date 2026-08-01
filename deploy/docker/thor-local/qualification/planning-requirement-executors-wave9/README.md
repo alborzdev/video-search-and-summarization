@@ -1,7 +1,9 @@
 # Planning Requirement Executors — Wave 9
 
-This isolated package audits the exact 48 live-open planning requirements left
-after Wave 8 and records six additional, disjoint static subsets. It performs
+This isolated package audits the exact 47 live-open planning requirements left
+after Wave 8 and records six additional, disjoint static subsets. The canonical
+`calibration-schema-static` integration is materialized and therefore absent
+from this live-open remainder. This package performs
 only raw-file, canonical-ledger-binding, set-accounting, and source-token checks.
 
 The selected subsets are deliberately narrower than their live requirements:

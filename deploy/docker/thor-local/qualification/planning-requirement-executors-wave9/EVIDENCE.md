@@ -5,11 +5,15 @@
 The executor recomputes and digest-locks all sets from the live acceptance
 inventory and every predecessor inventory through Wave 8:
 
-- 110 total planning requirements, 26 materialized and 84 live-open;
+- 110 total planning requirements, 27 materialized and 83 live-open;
 - 62 disjoint predecessor selections: 26 materialized and 36 still open;
-- exact Wave 8 remainder: 48;
+- exact Wave 8 remainder: 47;
 - exact Wave 9 static selection: 6;
-- exact remainder after Wave 9: 42.
+- exact remainder after Wave 9: 41.
+
+The canonical `calibration-schema-static` integration accounts for the new
+materialized row. It is outside this live-open audit and does not alter the six
+historical Wave 9 candidate selections.
 
 It raw-locks the live acceptance inventory, official capability ledger,
 capability-oracle ledger, `executor-cases`, `source-contract-cases`, and every
@@ -44,7 +48,7 @@ are never transformed into runtime evidence. The result is always
 
 ## Exclusions and fail-closed behavior
 
-All seven `calibration-warehouse` rows in the audited remainder are classified
+All six live-open `calibration-warehouse` rows in the audited remainder are classified
 as `excluded_warehouse_requirement` and none may enter the selected set. The
 Warehouse sample bundle, custom Warehouse media, containers, and runtime paths
 are not read or used.

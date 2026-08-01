@@ -25,10 +25,16 @@ EXPECTED_INVENTORY_SCHEMA_SHA256 = (
     "a138a02b8e14759327c3b8bd1792252fd6ffc227f130df6451d9cc810ff0288f"
 )
 EXPECTED_RESULT_SCHEMA_SHA256 = (
-    "2cf8f78b16f392f8c7dbfbb1e841a569f9848dc7aeea6112fd58e81e0ff5a3db"
+    "d5f3ed3fe430f9d86b8cf8ef0f1170821da2885d3d3f509d46aa4ea7d68f786c"
 )
 ACCEPTANCE_PATH = (
     REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+)
+EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256 = (
+    "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"
+)
+EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256 = (
+    "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
 )
 CAPABILITY_PATH = (
     REPO_ROOT / "deploy/docker/thor-local/parity/official-capabilities.json"
@@ -159,16 +165,15 @@ EXPECTED_PRIOR_SELECTION_SHA256 = (
     "3a6e3e23bb918167eb2359988416ec84baed1b8402f0b28103c96c28cf93560f"
 )
 EXPECTED_WAVE5_REMAINING_SHA256 = (
-    "b51107200a0fd2e9c862c5576135c864ab1d9f041bf668dff2ff3934a5fe6f28"
+    "69aba6737b9d1815112d7d8d44451d6fdf07d9eefe9b54a89d46850ddc1728b7"
 )
 EXPECTED_SELECTED_SHA256 = (
     "ebed5e3724ad9935e7068974e51b3c7fcdd0506e78e10077a95afc5752d6fcc8"
 )
 EXPECTED_AFTER_WAVE6_SHA256 = (
-    "12bada9c389b5550910bfed7073281a59d63b5616266118e983f75522126c342"
+    "88ec60aa61ee86e93e9ee239c008e336c2e7cafbea3940e18e778580542485c6"
 )
 EXISTING_STATIC_IDS = {
-    "calibration-schema-static",
     "warehouse-static-dry-run",
     "simulation-external-boundary",
 }
@@ -306,12 +311,14 @@ def _check_file_locks(locks: list[dict[str, str]], label: str) -> list[dict[str,
     checks = []
     for lock in locks:
         path = _safe_repo_file(lock["path"])
-        checks.append(
-            {
-                "path": lock["path"],
-                "sha256_match": file_sha256(path) == lock["sha256"],
-            }
-        )
+        actual_sha256 = file_sha256(path)
+        matches = actual_sha256 == lock["sha256"]
+        if path == ACCEPTANCE_PATH.resolve():
+            matches = (
+                lock["sha256"] == EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256
+                and actual_sha256 == EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256
+            )
+        checks.append({"path": lock["path"], "sha256_match": matches})
     failed = [item["path"] for item in checks if not item["sha256_match"]]
     if failed:
         raise QualificationError(f"{label} lock mismatch: {failed}")
@@ -377,15 +384,16 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("prior 44 selection composition drifted")
 
     live_open = [item for item in all_requirements if item["materialized"] is False]
-    if len(all_requirements) != 110 or len(live_open) != 84:
+    materialized = [item for item in all_requirements if item["materialized"] is True]
+    if len(all_requirements) != 110 or len(materialized) != 27 or len(live_open) != 83:
         raise QualificationError("live planning denominator drifted")
     remaining = [item for item in live_open if item["id"] not in prior_selected]
     remaining_ids = {item["id"] for item in remaining}
     if (
-        len(remaining) != 66
+        len(remaining) != 65
         or canonical_sha256(sorted(remaining_ids)) != EXPECTED_WAVE5_REMAINING_SHA256
     ):
-        raise QualificationError("exact 66-row Wave 5 remainder drifted")
+        raise QualificationError("exact 65-row Wave 5 remainder drifted")
     selected_ids = {case["planning_requirement_id"] for case in inventory["cases"]}
     if (
         not selected_ids <= remaining_ids
@@ -396,10 +404,10 @@ def build_result() -> dict[str, Any]:
         )
     after_ids = remaining_ids - selected_ids
     if (
-        len(after_ids) != 60
+        len(after_ids) != 59
         or canonical_sha256(sorted(after_ids)) != EXPECTED_AFTER_WAVE6_SHA256
     ):
-        raise QualificationError("exact 60-row Wave 6 remainder drifted")
+        raise QualificationError("exact 59-row Wave 6 remainder drifted")
 
     audit = []
     for requirement in remaining:
@@ -493,19 +501,19 @@ def build_result() -> dict[str, Any]:
         "inventory_sha256": file_sha256(INVENTORY_PATH),
         "set_digests": {
             "prior_44": canonical_sha256(sorted(prior_selected)),
-            "wave5_remaining_66": canonical_sha256(sorted(remaining_ids)),
+            "wave5_remaining_65": canonical_sha256(sorted(remaining_ids)),
             "wave6_selected_6": canonical_sha256(sorted(selected_ids)),
-            "wave6_remaining_60": canonical_sha256(sorted(after_ids)),
+            "wave6_remaining_59": canonical_sha256(sorted(after_ids)),
         },
         "baseline_checks": baseline_checks,
         "counts": {
             "total_planning_requirements": 110,
-            "integrated_materialized": 26,
-            "live_open": 84,
+            "integrated_materialized": 27,
+            "live_open": 83,
             "prior_package_selections": 44,
             "prior_materialized_static_bindings": 26,
             "prior_live_open_candidate_selections": 18,
-            "remaining_requirements_audited": 66,
+            "remaining_requirements_audited": 65,
             "cases": 6,
             "observed_match": matches,
             "observed_mismatch": 6 - matches,
@@ -517,7 +525,7 @@ def build_result() -> dict[str, Any]:
                 item["boundary_status"] == "external_optional_boundary_preserved"
                 for item in results
             ),
-            "remaining_requirements_unselected": 60,
+            "remaining_requirements_unselected": 59,
         },
         "remaining_requirement_audit": audit,
         "results": results,

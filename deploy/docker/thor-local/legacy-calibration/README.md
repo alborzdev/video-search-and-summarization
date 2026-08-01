@@ -20,9 +20,12 @@ or runtime qualification. Two deliberately separate adapters now exist:
   persisted homography, bounded multipart PNG/JPEG upload and confined static
   media, and an operator-staged provider-free sensor import.
 
-The UI route and same-origin VIOS proxy, image inversion, image/warped ZIP
-downloads, outbound Web API upload, official Google Maps identity, and an
-authorized Thor runtime run remain open. See `REST_API.md`.
+The digest-locked browser derivative now routes the checked-in workflow and
+defines its same-origin VIOS proxy without changing historical upstream source
+locks. A reviewed, locally built ingress image and authorized browser run are
+still required. Image inversion, image/warped ZIP downloads, outbound Web API
+upload, official Google Maps identity, and runtime qualification remain open.
+See `browser-integration/README.md` and `REST_API.md`.
 
 The input project must explicitly supply semantics that cannot safely be
 invented: one of the three legal VSS output calibration types, the OSM URL,
@@ -66,7 +69,8 @@ python3 deploy/docker/thor-local/legacy-calibration/ui_server.py stage-sensors \
 
 The manifest is exactly `{"sensors":[...]}`. Each row requires a plain
 `sensorId`, may provide a distinct plain `id`, and may contain only documented
-UI Sensor fields. `GET /api/importSensors/1/` then consumes that staged file;
+UI Sensor fields. `POST /api/importSensors/1/` with exact JSON body
+`{"action":"import-staged"}` then consumes that staged file;
 there is no DNS, proxy, redirect, VST, map-provider, or Web API request.
 
 The exporter never overwrites a project directory. Inputs are strict bounded

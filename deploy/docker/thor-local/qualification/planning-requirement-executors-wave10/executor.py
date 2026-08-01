@@ -19,13 +19,13 @@ INVENTORY_PATH = HERE / "inventory.json"
 INVENTORY_SCHEMA_PATH = HERE / "inventory.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
 EXPECTED_INVENTORY_SHA256 = (
-    "6c5ad14ccc36600a9c2654bd57bd594fe478b689fad78336d45c8ae0a3eab2e0"
+    "e9c81d33ea07018c3dc0e7d0ea9794e09d5fae962b959175cd65c73e2f136a35"
 )
 EXPECTED_INVENTORY_SCHEMA_SHA256 = (
     "1fb22786d33425de0a5cad72be3d83856566af0e60513be697cc019969a64702"
 )
 EXPECTED_RESULT_SCHEMA_SHA256 = (
-    "754d2e217d6580acc3b41414c185e9946f2f7302e730e0089e2916732e363a8c"
+    "c28b8d44ad3145b4071594a33628897e306bc8dc6c21f3f81d5daf7a34c9f5e9"
 )
 MAX_BYTES = 5_000_000
 ACCEPTANCE_PATH = (
@@ -91,13 +91,13 @@ EXPECTED_PRIOR_SHA256 = (
     "843fde32fe7ee9f871451df0387326deff8e90a652b78d704c3d3581001f7d60"
 )
 EXPECTED_REMAINDER_SHA256 = (
-    "5c6885d089e5d5af6e49d6cccb8a03dc829642174bc8f2ec660674d24df10672"
+    "dc9c51cada03c13b4830d3062e89eb0dc5e2107d50d4958c84f5ed66f41e3b36"
 )
 EXPECTED_SELECTED_SHA256 = (
     "a1041929edb70ab3d07ab5dd4e08cd64029e5b9365b91a26a3f252678e72cc98"
 )
 EXPECTED_AFTER_SHA256 = (
-    "db6822446d2591213affcfa05d7d1b4f9b94ebc73ecf44c8bdb8265fac7ef33b"
+    "e08aada14a3335ab53b1e15214b85cb72f0df42891fc6c8d62472e4a323fe42d"
 )
 
 
@@ -306,20 +306,35 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("prior 68 selection composition drifted")
 
     live_open = [row for row in all_requirements if row["materialized"] is False]
-    if len(all_requirements) != 110 or len(live_open) != 84:
+    if len(all_requirements) != 110 or len(live_open) != 83:
         raise QualificationError("live planning denominator drifted")
+    calibration_static = requirements.get("calibration-schema-static", {})
+    calibration_result = calibration_static.get("static_executor_binding", {}).get(
+        "result", {}
+    )
+    if (
+        calibration_static.get("materialized") is not True
+        or calibration_static.get("executor_ready") is not True
+        or calibration_static.get("runtime_evidence") != []
+        or calibration_result.get("can_advance_capability") is not False
+        or calibration_result.get("can_mark_passed_current") is not False
+        or calibration_result.get("runtime_evidence") != []
+    ):
+        raise QualificationError(
+            "calibration-schema-static materialized non-runtime boundary drifted"
+        )
     if any(
         row["executor_ready"] is not False or row["runtime_evidence"] != []
         for row in live_open
     ):
-        raise QualificationError("all 84 live-open requirements must remain unpromoted")
+        raise QualificationError("all 83 live-open requirements must remain unpromoted")
     remainder = [row for row in live_open if row["id"] not in prior_selected]
     remainder_ids = {row["id"] for row in remainder}
     if (
-        len(remainder_ids) != 42
+        len(remainder_ids) != 41
         or canonical_sha256(sorted(remainder_ids)) != EXPECTED_REMAINDER_SHA256
     ):
-        raise QualificationError("exact Wave 9 remainder42 drifted")
+        raise QualificationError("exact Wave 9 remainder41 drifted")
     selected = {
         case["planning_requirement_id"]: case["evidence_class"]
         for case in inventory["cases"]
@@ -335,7 +350,7 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("Warehouse selection is forbidden")
     after_ids = remainder_ids - set(selected)
     if (
-        len(after_ids) != 36
+        len(after_ids) != 35
         or canonical_sha256(sorted(after_ids)) != EXPECTED_AFTER_SHA256
     ):
         raise QualificationError("exact Wave 10 remainder-after set drifted")
@@ -434,19 +449,19 @@ def build_result() -> dict[str, Any]:
         "inventory_sha256": file_sha256(INVENTORY_PATH),
         "set_digests": {
             "prior_68": canonical_sha256(sorted(prior_selected)),
-            "wave9_remaining_42": canonical_sha256(sorted(remainder_ids)),
+            "wave9_remaining_41": canonical_sha256(sorted(remainder_ids)),
             "wave10_selected_6": canonical_sha256(sorted(selected)),
-            "wave10_remaining_36": canonical_sha256(sorted(after_ids)),
+            "wave10_remaining_35": canonical_sha256(sorted(after_ids)),
         },
         "baseline_checks": baseline_checks,
         "counts": {
             "total_planning_requirements": 110,
-            "integrated_materialized": 26,
-            "live_open": 84,
+            "integrated_materialized": 27,
+            "live_open": 83,
             "prior_package_selections": 68,
             "prior_materialized_static_bindings": 26,
             "prior_live_open_candidate_selections": 42,
-            "remaining_requirements_audited": 42,
+            "remaining_requirements_audited": 41,
             "cases": 6,
             "observed_match": len(results),
             "observed_mismatch": 6 - len(results),
@@ -463,7 +478,7 @@ def build_result() -> dict[str, Any]:
                 for row in results
             ),
             "warehouse_cases_selected": 0,
-            "remaining_requirements_unselected": 36,
+            "remaining_requirements_unselected": 35,
         },
         "remaining_requirement_audit": audit,
         "results": results,

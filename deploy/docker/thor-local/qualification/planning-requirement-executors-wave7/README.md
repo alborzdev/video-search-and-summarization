@@ -1,6 +1,6 @@
 # Planning Requirement Executors — Wave 7
 
-This isolated package audits the exact 60 live-open planning requirements left after Wave 6 and records six additional, disjoint static source subsets:
+This isolated package audits the exact 59 live-open planning requirements left after Wave 6 and records six additional, disjoint static source subsets. The separate canonical integration of `calibration-schema-static` is materialized and therefore no longer appears in this live-open remainder:
 
 - three preserved negative/known-issue contracts;
 - two configuration implementation subsets;

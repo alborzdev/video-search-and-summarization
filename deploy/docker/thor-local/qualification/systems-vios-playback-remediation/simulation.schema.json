@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/systems-vios-playback-remediation-fake-simulation.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collector_id", "mode", "status", "promotion_eligible", "runtime_actions", "runtime_requests", "simulated_actions", "simulated_requests", "planning_requirement_id", "capability_id", "oracle_id", "fixture_sha256", "observations", "blockers"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "collector_id": {"const": "systems-vios-playback-remediation"},
+    "mode": {"const": "offline-fake-simulation"},
+    "status": {"const": "pass"},
+    "promotion_eligible": {"const": false},
+    "runtime_actions": {"const": 0},
+    "runtime_requests": {"const": 0},
+    "simulated_actions": {"const": 9},
+    "simulated_requests": {"const": 8},
+    "planning_requirement_id": {"const": "systems-vios-playback-remediation"},
+    "capability_id": {"const": "behavior.vios.upload-playback-remediation"},
+    "oracle_id": {"const": "oracle.behavior.vios.upload-playback-remediation"},
+    "fixture_sha256": {"const": "7899df8025ffc61968888d5b6a7490805794ab2cab9a3e8d24724e83eb7dfaf2"},
+    "observations": {
+      "type": "array",
+      "prefixItems": [
+        {"$ref": "#/$defs/prestate"},
+        {"$ref": "#/$defs/transport"},
+        {"$ref": "#/$defs/incompatible"},
+        {"$ref": "#/$defs/repair"},
+        {"$ref": "#/$defs/ownership"},
+        {"$ref": "#/$defs/replay"},
+        {"$ref": "#/$defs/negative"},
+        {"$ref": "#/$defs/cleanup"},
+        {"$ref": "#/$defs/postcondition"}
+      ],
+      "items": false,
+      "minItems": 9,
+      "maxItems": 9
+    },
+    "blockers": {
+      "const": [
+        "no VIOS service response was observed",
+        "no media bytes were generated, transcoded, uploaded, or replayed",
+        "no asynchronous playback-ready transition or synchronized playback window was observed",
+        "no cleanup race or delayed resource reappearance window was observed"
+      ]
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "prestate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "service_state_digest", "config_digest", "non_owned_resource_digest", "owned_resources", "target_absent"],
+      "properties": {
+        "sequence": {"const": 1}, "step_id": {"const": "capture-pre-state"}, "observation_kind": {"const": "fake_prestate"},
+        "service_state_digest": {"$ref": "#/$defs/digest"}, "config_digest": {"$ref": "#/$defs/digest"}, "non_owned_resource_digest": {"$ref": "#/$defs/digest"},
+        "owned_resources": {"const": []}, "target_absent": {"const": true}
+      }
+    },
+    "transport": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "classification", "vpn_used", "network_used", "upload_measured"],
+      "properties": {
+        "sequence": {"const": 2}, "step_id": {"const": "measure-vpn-upload-transport"}, "observation_kind": {"const": "fake_transport_classification"},
+        "classification": {"const": "transport"}, "vpn_used": {"const": false}, "network_used": {"const": false}, "upload_measured": {"const": false}
+      }
+    },
+    "incompatible": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "recipe_id", "bframes", "playback", "reason_code", "retryable_without_transcode"],
+      "properties": {
+        "sequence": {"const": 3}, "step_id": {"const": "observe-incompatible-playback"}, "observation_kind": {"const": "fake_incompatible_playback"},
+        "recipe_id": {"const": "tiny-bframe-failing-mp4-v1"}, "bframes": {"const": 2}, "playback": {"const": "failed"},
+        "reason_code": {"const": "b_frames_not_supported"}, "retryable_without_transcode": {"const": false}
+      }
+    },
+    "repair": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "operation", "input_recipe_id", "output_recipe_id", "target_bframes", "target_keyint", "preserve_source", "process_invoked"],
+      "properties": {
+        "sequence": {"const": 4}, "step_id": {"const": "reencode-local-fixture"}, "observation_kind": {"const": "fake_repair_intent"},
+        "operation": {"const": "local_transcode"}, "input_recipe_id": {"const": "tiny-bframe-failing-mp4-v1"}, "output_recipe_id": {"const": "tiny-bframe-reference-mp4-v1"},
+        "target_bframes": {"const": 0}, "target_keyint": {"const": 30}, "preserve_source": {"const": true}, "process_invoked": {"const": false}
+      }
+    },
+    "ownership": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "namespace", "resource_id", "ownership_admitted", "fake_source_identity", "fake_derived_identity", "derived_identity_distinct"],
+      "properties": {
+        "sequence": {"const": 5}, "step_id": {"const": "upload-remediated-fixture"}, "observation_kind": {"const": "fake_ownership_registration"},
+        "namespace": {"const": "vss-oracle-behavior-vios-upload-playback-remediation"},
+        "resource_id": {"const": "vss-oracle-behavior-vios-upload-playback-remediation/derived-01"}, "ownership_admitted": {"const": true},
+        "fake_source_identity": {"const": "1111111111111111111111111111111111111111111111111111111111111111"},
+        "fake_derived_identity": {"const": "2222222222222222222222222222222222222222222222222222222222222222"},
+        "derived_identity_distinct": {"const": true}
+      }
+    },
+    "replay": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "recipe_id", "playback", "readback", "synchronized", "late_effect_window_observed"],
+      "properties": {
+        "sequence": {"const": 6}, "step_id": {"const": "verify-synchronized-playback"}, "observation_kind": {"const": "fake_replay_readback"},
+        "recipe_id": {"const": "tiny-bframe-reference-mp4-v1"}, "playback": {"const": "ready"}, "readback": {"const": "modeled"},
+        "synchronized": {"const": true}, "late_effect_window_observed": {"const": false}
+      }
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "bframes", "keyint", "accepted", "reason_code"],
+      "properties": {
+        "sequence": {"const": 7}, "step_id": {"const": "reject-wrong-encode-settings"}, "observation_kind": {"const": "fake_adjacent_negative"},
+        "bframes": {"const": 1}, "keyint": {"const": 29}, "accepted": {"const": false}, "reason_code": {"const": "settings_not_remediated"}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "removed_resource_id", "only_owned_resource_removed", "config_restored", "foreign_resource_mutated"],
+      "properties": {
+        "sequence": {"const": 8}, "step_id": {"const": "restore-owned-state"}, "observation_kind": {"const": "fake_cleanup"},
+        "removed_resource_id": {"const": "vss-oracle-behavior-vios-upload-playback-remediation/derived-01"},
+        "only_owned_resource_removed": {"const": true}, "config_restored": {"const": true}, "foreign_resource_mutated": {"const": false}
+      }
+    },
+    "postcondition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "owned_resources_absent", "source_identity_unchanged", "service_state_digest_restored", "config_digest_restored", "non_owned_resource_digest_restored", "late_effect_window_observed"],
+      "properties": {
+        "sequence": {"const": 9}, "step_id": {"const": "verify-postconditions"}, "observation_kind": {"const": "fake_postcondition"},
+        "owned_resources_absent": {"const": true}, "source_identity_unchanged": {"const": true}, "service_state_digest_restored": {"const": true},
+        "config_digest_restored": {"const": true}, "non_owned_resource_digest_restored": {"const": true}, "late_effect_window_observed": {"const": false}
+      }
+    }
+  }
+}

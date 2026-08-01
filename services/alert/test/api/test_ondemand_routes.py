@@ -22,12 +22,11 @@ they are handled by DirectMediaHandler in the background.
 
 import os
 import sys
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
-from openai import BadRequestError
-
 _web_root = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "..", "alert-agent-web")
 )
@@ -51,6 +50,7 @@ SAMPLE_MESSAGE = {
 def mock_service():
     svc = MagicMock()
     svc.prepare.return_value = (SAMPLE_MESSAGE, "user prompt", "system prompt")
+    svc.register.return_value = SimpleNamespace(correlation_id="job-server-123")
     svc.process_and_publish.return_value = None
     return svc
 
@@ -71,6 +71,10 @@ def client(mock_service):
         from app.main import app
         from app.api.verification_routes import get_ondemand_service
         from app.service.ondemand_verification_service import AlertTypeNotFoundError as _Err
+        from app.service.terminal_job_store import (
+            JobAlreadyExistsError as _DuplicateErr,
+            JobCapacityError as _CapacityErr,
+        )
     except (ImportError, Exception) as exc:
         pytest.skip(f"FastAPI app not importable: {exc}")
     finally:
@@ -78,6 +82,8 @@ def client(mock_service):
         sys.modules.update(saved_modules)
 
     mock_service._AlertTypeNotFoundError = _Err
+    mock_service._JobAlreadyExistsError = _DuplicateErr
+    mock_service._JobCapacityError = _CapacityErr
     app.dependency_overrides[get_ondemand_service] = lambda: mock_service
     yield TestClient(app, raise_server_exceptions=False)
     app.dependency_overrides.clear()
@@ -108,8 +114,12 @@ class TestOndemandHappyPath:
     def test_response_has_correlationId(self, client):
         resp = _post(client)
         body = resp.json()
-        assert body["correlationId"] == SAMPLE_MESSAGE["id"]
+        assert body["correlationId"] == "job-server-123"
+        assert body["correlationId"] != SAMPLE_MESSAGE["id"]
         assert body["status"] == "accepted"
+        assert body["statusUrl"] == (
+            "/api/v1/verification/ondemand/job-server-123"
+        )
         assert "timestamp" in body
 
     def test_full_incident_payload_accepted(self, client):
@@ -135,9 +145,31 @@ class TestOndemandHappyPath:
 
     def test_background_task_dispatched(self, client, mock_service):
         _post(client)
+        mock_service.register.assert_called_once_with()
         mock_service.process_and_publish.assert_called_once_with(
-            SAMPLE_MESSAGE, "user prompt", "system prompt"
+            mock_service.register.return_value,
+            SAMPLE_MESSAGE,
+            "user prompt",
+            "system prompt",
         )
+
+    def test_server_job_id_allocation_conflict_returns_409(self, client, mock_service):
+        mock_service.register.side_effect = mock_service._JobAlreadyExistsError(
+            "duplicate"
+        )
+        resp = _post(client)
+        assert resp.status_code == 409
+        assert resp.json()["error"] == "job_id_allocation_conflict"
+        mock_service.process_and_publish.assert_not_called()
+
+    def test_capacity_exhaustion_returns_503(self, client, mock_service):
+        mock_service.register.side_effect = mock_service._JobCapacityError(
+            "full"
+        )
+        resp = _post(client)
+        assert resp.status_code == 503
+        assert resp.json()["error"] == "job_capacity_exhausted"
+        mock_service.process_and_publish.assert_not_called()
 
 
 # ---------------------------------------------------------------------------
@@ -235,3 +267,54 @@ class TestErrorResponseStructure:
         assert set(body.keys()) >= {"status", "error", "message", "timestamp"}
         assert body["status"] == "error"
         assert body["timestamp"].endswith("Z")
+
+
+class TestTerminalStatusRoutes:
+
+    def test_get_returns_retained_snapshot(self, client, mock_service):
+        mock_service.get_status.return_value = {
+            "correlationId": "job-1",
+            "state": "completed",
+            "terminal": True,
+            "createdAt": "2026-01-01T00:00:00Z",
+            "updatedAt": "2026-01-01T00:00:01Z",
+            "result": {
+                "processingOutcome": "verified",
+                "sinkDelivery": {
+                    "transport": "elastic",
+                    "outcome": "acknowledged",
+                },
+            },
+        }
+        resp = client.get("/api/v1/verification/ondemand/job-1")
+        assert resp.status_code == 200
+        assert resp.json()["state"] == "completed"
+
+    def test_get_missing_returns_404(self, client, mock_service):
+        mock_service.get_status.return_value = None
+        resp = client.get("/api/v1/verification/ondemand/missing")
+        assert resp.status_code == 404
+
+    def test_accepted_cancel_returns_202(self, client, mock_service):
+        mock_service.cancel.return_value = {
+            "correlationId": "job-1",
+            "state": "cancelled",
+            "terminal": True,
+            "createdAt": "2026-01-01T00:00:00Z",
+            "updatedAt": "2026-01-01T00:00:01Z",
+            "cancellationAccepted": True,
+        }
+        resp = client.delete("/api/v1/verification/ondemand/job-1")
+        assert resp.status_code == 202
+
+    def test_publish_owned_cancel_returns_409(self, client, mock_service):
+        mock_service.cancel.return_value = {
+            "correlationId": "job-1",
+            "state": "publishing",
+            "terminal": False,
+            "createdAt": "2026-01-01T00:00:00Z",
+            "updatedAt": "2026-01-01T00:00:01Z",
+            "cancellationAccepted": False,
+        }
+        resp = client.delete("/api/v1/verification/ondemand/job-1")
+        assert resp.status_code == 409

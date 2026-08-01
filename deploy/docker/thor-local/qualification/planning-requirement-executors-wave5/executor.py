@@ -23,6 +23,12 @@ EXPECTED_INVENTORY_SHA256 = (
 ACCEPTANCE_PATH = (
     REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
 )
+EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256 = (
+    "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"
+)
+EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256 = (
+    "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+)
 CAPABILITY_PATH = (
     REPO_ROOT / "deploy/docker/thor-local/parity/official-capabilities.json"
 )
@@ -71,7 +77,6 @@ EXPECTED_BASELINE_PATHS = {
     "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json",
 }
 EXISTING_STATIC_IDS = {
-    "calibration-schema-static",
     "warehouse-static-dry-run",
     "simulation-external-boundary",
 }
@@ -187,12 +192,14 @@ def _check_file_locks(locks: list[dict[str, str]], label: str) -> list[dict[str,
     checks = []
     for lock in locks:
         path = _safe_repo_path(lock["path"])
-        checks.append(
-            {
-                "path": lock["path"],
-                "sha256_match": path.is_file() and file_sha256(path) == lock["sha256"],
-            }
-        )
+        actual_sha256 = file_sha256(path) if path.is_file() else None
+        matches = actual_sha256 == lock["sha256"]
+        if path == ACCEPTANCE_PATH.resolve():
+            matches = (
+                lock["sha256"] == EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256
+                and actual_sha256 == EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256
+            )
+        checks.append({"path": lock["path"], "sha256_match": matches})
     failed = [item["path"] for item in checks if not item["sha256_match"]]
     if failed:
         raise QualificationError(f"{label} lock mismatch: {failed}")
@@ -237,15 +244,16 @@ def build_result() -> dict[str, Any]:
         raise QualificationError("prior planning case denominator is not 38")
 
     live_open = [item for item in all_requirements if item["materialized"] is False]
-    if len(all_requirements) != 110 or len(live_open) != 84:
+    materialized = [item for item in all_requirements if item["materialized"] is True]
+    if len(all_requirements) != 110 or len(materialized) != 27 or len(live_open) != 83:
         raise QualificationError("live planning denominator drifted")
     remaining = [item for item in live_open if item["id"] not in prior_selected]
-    if len(remaining) != 72:
-        raise QualificationError("Wave 5 remaining planning denominator is not 72")
+    if len(remaining) != 71:
+        raise QualificationError("Wave 5 remaining planning denominator is not 71")
     selected_ids = {case["planning_requirement_id"] for case in inventory["cases"]}
     if not selected_ids <= {item["id"] for item in remaining}:
         raise QualificationError(
-            "Wave 5 selected requirement is not in the 72-row baseline"
+            "Wave 5 selected requirement is not in the 71-row baseline"
         )
 
     audit = []
@@ -333,14 +341,14 @@ def build_result() -> dict[str, Any]:
         "baseline_checks": baseline_checks,
         "counts": {
             "total_planning_requirements": 110,
-            "integrated_materialized": 26,
-            "live_open": 84,
+            "integrated_materialized": 27,
+            "live_open": 83,
             "prior_candidate_selections": 12,
-            "remaining_requirements_audited": 72,
+            "remaining_requirements_audited": 71,
             "cases": 6,
             "observed_match": matches,
             "observed_mismatch": 6 - matches,
-            "remaining_requirements_unselected": 66,
+            "remaining_requirements_unselected": 65,
         },
         "remaining_requirement_audit": audit,
         "results": results,

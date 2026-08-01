@@ -21,7 +21,7 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
-      "raw_sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
       "role": "four_open_runtime_rows",
       "required_fragments": [
         "\"id\": \"smartcity-manual-calibration\"",

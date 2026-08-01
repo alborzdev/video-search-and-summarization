@@ -37,11 +37,14 @@ def test_exact_six_nonoverlapping_open_requirements_and_expected_outcomes():
     module = _module()
     result = module.build_result()
     assert result["counts"] == {
+        "total_planning_requirements": 110,
+        "integrated_materialized": 27,
+        "live_open": 83,
         "cases": 6,
         "observed_match": 5,
         "observed_mismatch": 1,
-        "open_requirements_audited": 84,
-        "open_requirements_unselected": 78,
+        "open_requirements_audited": 83,
+        "open_requirements_unselected": 77,
     }
     assert len({item["planning_requirement_id"] for item in result["results"]}) == 6
     mismatch = [item for item in result["results"] if item["outcome"] == "observed_mismatch"]
@@ -195,7 +198,7 @@ def test_result_schema_rejects_runtime_evidence_and_live_promotion():
         jsonschema.Draft202012Validator(schema).validate(result)
 
 
-def test_exact_84_open_before_candidate_and_78_remain_unselected():
+def test_exact_83_open_before_candidate_and_77_remain_unselected():
     acceptance = json.loads((HERE.parent / "acceptance_inventory.json").read_text())
     open_ids = {
         item["id"]
@@ -206,15 +209,16 @@ def test_exact_84_open_before_candidate_and_78_remain_unselected():
         item["planning_requirement_id"]
         for item in json.loads((HERE / "inventory.json").read_text())["cases"]
     }
-    assert len(open_ids) == 84
+    assert len(open_ids) == 83
+    assert "calibration-schema-static" not in open_ids
     assert selected <= open_ids
-    assert len(open_ids - selected) == 78
+    assert len(open_ids - selected) == 77
 
 
 def test_machine_audit_classifies_every_open_requirement_exactly_once():
     result = _module().build_result()
     rows = result["open_requirement_audit"]
-    assert len(rows) == 84
-    assert len({row["planning_requirement_id"] for row in rows}) == 84
+    assert len(rows) == 83
+    assert len({row["planning_requirement_id"] for row in rows}) == 83
     assert sum(row["classification"] == "selected_source_executor" for row in rows) == 6
-    assert sum(row["classification"] != "selected_source_executor" for row in rows) == 78
+    assert sum(row["classification"] != "selected_source_executor" for row in rows) == 77

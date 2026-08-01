@@ -53,6 +53,15 @@ eight-point floor, external-provider identity, path traversal, illegal MTMC
 output identity, duplicate camera IDs, a missing required calibration field,
 and an unknown road-network field.
 
+The mutable canonical acceptance inventory and generated oracle document are
+not raw source locks. Instead, the executor normalizes only the exact allowed
+static-integration fields before comparing the immutable planning-row and
+oracle-base digests. In the integrated state it additionally validates every
+field of the one calibration binding against the current executor, contract,
+schemas, and checked-in execution receipt. This keeps the advertised invocation
+runnable after integration without allowing owner, payload, applicable-record,
+open-state, evidence, or promotion drift.
+
 ## Boundary
 
 This is deterministic static candidate evidence, not runtime evidence. It does

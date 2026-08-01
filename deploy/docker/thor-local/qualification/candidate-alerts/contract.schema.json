@@ -183,9 +183,9 @@
           "blocker_id": {
             "enum": [
               "media-not-materialized",
-              "terminal-status-api-missing",
+              "terminal-status-api-not-integrated",
               "late-publication-not-reversible",
-              "sink-receipt-missing",
+              "sink-receipt-not-integrated",
               "verdict-propagation-unqualified",
               "query-transport-integration-missing",
               "runtime-image-identity-unproven",

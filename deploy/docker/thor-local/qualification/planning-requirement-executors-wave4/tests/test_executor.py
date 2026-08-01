@@ -48,11 +48,14 @@ def test_inventory_and_result_validate_against_strict_schemas():
 def test_exact_six_cases_five_matches_and_preserved_qwen_mismatch():
     result = _module().build_result()
     assert result["counts"] == {
+        "total_planning_requirements": 110,
+        "integrated_materialized": 27,
+        "live_open": 83,
         "cases": 6,
         "observed_match": 5,
         "observed_mismatch": 1,
-        "remaining_requirements_audited": 78,
-        "remaining_requirements_unselected": 72,
+        "remaining_requirements_audited": 77,
+        "remaining_requirements_unselected": 71,
     }
     mismatch = [item for item in result["results"] if item["outcome"] == "observed_mismatch"]
     assert [item["case_id"] for item in mismatch] == [
@@ -67,13 +70,16 @@ def test_exact_six_cases_five_matches_and_preserved_qwen_mismatch():
     ]
 
 
-def test_exact_78_row_accounting_with_locked_canonical_identities():
+def test_exact_77_row_accounting_with_locked_canonical_identities():
     result = _module().build_result()
     rows = result["remaining_requirement_audit"]
-    assert len(rows) == 78
-    assert len({row["planning_requirement_id"] for row in rows}) == 78
+    assert len(rows) == 77
+    assert len({row["planning_requirement_id"] for row in rows}) == 77
+    assert "calibration-schema-static" not in {
+        row["planning_requirement_id"] for row in rows
+    }
     assert sum(row["classification"] == "selected_source_executor" for row in rows) == 6
-    assert sum(row["classification"] != "selected_source_executor" for row in rows) == 72
+    assert sum(row["classification"] != "selected_source_executor" for row in rows) == 71
     assert all(len(row["planning_payload_sha256"]) == 64 for row in rows)
     assert all(
         row["capability_sha256"] is None or len(row["capability_sha256"]) == 64

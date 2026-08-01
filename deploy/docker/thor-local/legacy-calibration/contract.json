@@ -7,7 +7,7 @@
   "source_contracts": [
     {
       "path": "deploy/docker/thor-local/qualification/architecture-gap-contracts/contract.json",
-      "raw_sha256": "f2164050ab6f437c28561fbe05ba48d9cecb599d431af315e2c11ed56b44c765"
+      "raw_sha256": "6246aa315279ceaf2d18046cc607307d9ed18a0c44f5c3d957f144eca1a48379"
     },
     {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",

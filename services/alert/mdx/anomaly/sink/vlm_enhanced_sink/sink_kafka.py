@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-import json
 from typing import Any, Dict, Optional
 
 from mdx.anomaly.kafka_message_broker import KafkaMessageBroker
@@ -84,18 +83,18 @@ class VLMEnhancedKafkaSink(VLMEnhancedSink):
         document: Dict[str, Any],
         raw_vlm_response: Any,
         user_prompt: str,
-    ) -> None:
-        self._produce(event_kind, document)
+    ) -> Dict[str, Any]:
+        return self._produce(event_kind, document)
 
     def _store_error(
         self,
         event_kind: str,
         document: Dict[str, Any],
         error_payload: Dict[str, Any],
-    ) -> None:
-        self._produce(event_kind, document)
+    ) -> Dict[str, Any]:
+        return self._produce(event_kind, document)
 
-    def _produce(self, event_kind: str, document: Dict[str, Any]) -> None:
+    def _produce(self, event_kind: str, document: Dict[str, Any]) -> Dict[str, Any]:
         route = self._alert_route if event_kind == 'alert' else self._incident_route
         topic = route.get("topic")
         if not topic:
@@ -126,6 +125,25 @@ class VLMEnhancedKafkaSink(VLMEnhancedSink):
                 )
         # ─────────────────────────────────────────────────────────
 
+        delivery_errors: list[str] = []
+        delivery_metadata: Dict[str, Any] = {}
+        delivery_acknowledged = False
+
+        def _on_delivery(error, delivered_message) -> None:
+            nonlocal delivery_acknowledged
+            if error is not None:
+                delivery_errors.append(type(error).__name__)
+                return
+            delivery_acknowledged = True
+            try:
+                delivery_metadata["topic"] = delivered_message.topic()
+                delivery_metadata["partition"] = delivered_message.partition()
+                delivery_metadata["offset"] = delivered_message.offset()
+            except Exception:
+                # A broker acknowledgement without metadata is still an
+                # acknowledgement; receipt fields are optional.
+                pass
+
         try:
             self._logger.info(
                 "Publishing VLM-enhanced event to Kafka event_type=%s topic=%s",
@@ -141,14 +159,61 @@ class VLMEnhancedKafkaSink(VLMEnhancedSink):
             else:
                 raise ValueError(f"Unsupported message_type for Kafka route: {message_type}")
             payload = proto_msg.SerializeToString()
-            self._producer.produce(topic=topic, value=payload, key=key)
-            self._producer.flush()
+            self._producer.produce(
+                topic=topic,
+                value=payload,
+                key=key,
+                on_delivery=_on_delivery,
+            )
+            remaining = self._producer.flush()
+            if delivery_errors:
+                self._logger.error(
+                    "Kafka delivery did not complete",
+                    extra={"incident_id": document.get("id"), "topic": topic},
+                )
+                return {
+                    "transport": "kafka",
+                    "outcome": "failed",
+                    "topic": topic,
+                }
             # Mirror Elastic sink post-publish logging
             log_enriched_event(self._logger, "Kafka", document.get("id"), document)
+            if delivery_acknowledged:
+                return {
+                    "transport": "kafka",
+                    "outcome": "acknowledged",
+                    **delivery_metadata,
+                }
+            if (
+                isinstance(remaining, int)
+                and not isinstance(remaining, bool)
+                and remaining > 0
+            ):
+                self._logger.error(
+                    "Kafka delivery did not complete",
+                    extra={"incident_id": document.get("id"), "topic": topic},
+                )
+                return {
+                    "transport": "kafka",
+                    "outcome": "failed",
+                    "topic": topic,
+                }
+            # Some producer adapters do not invoke callbacks even after
+            # ``flush``.  Report that boundary explicitly instead of treating
+            # queue drain as a broker acknowledgement.
+            return {
+                "transport": "kafka",
+                "outcome": "submitted_unconfirmed",
+                "topic": topic,
+            }
         except Exception:
             self._logger.error(
                 "Failed to publish VLM-enhanced event to Kafka",
                 extra={"incident_id": document.get("id"), "topic": topic},
                 exc_info=True,
             )
-            return
+            return {
+                "transport": "kafka",
+                "outcome": "failed",
+                "topic": topic,
+            }

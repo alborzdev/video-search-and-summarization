@@ -1071,7 +1071,11 @@ class Application:
                     200, self.store.homography(match.group(1), approximate=False)
                 )
             match = IMPORT_PATH.fullmatch(path)
-            if match and method == "GET":
+            if match and method == "POST":
+                if content_type.split(";", 1)[0].strip().lower() != "application/json":
+                    raise UIError(415, "staged sensor import requires JSON")
+                if _strict_json_object(body) != {"action": "import-staged"}:
+                    raise UIError(400, "staged sensor import action is invalid")
                 count = self.store.import_staged(int(match.group(1)))
                 return _text_response(200, f"Imported {count} locally staged sensor(s)")
             match = MEDIA_PATH.fullmatch(path)

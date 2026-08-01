@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "collector_id": "systems-vios-playback-remediation",
+  "mode": "offline-plan-only",
+  "default_execution_enabled": false,
+  "planning_requirement_id": "systems-vios-playback-remediation",
+  "capability_id": "behavior.vios.upload-playback-remediation",
+  "oracle_id": "oracle.behavior.vios.upload-playback-remediation",
+  "canonical_binding": {
+    "capability_oracles_path": "deploy/docker/thor-local/parity/capability-oracles.json",
+    "verified_integrations_path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json",
+    "acceptance_inventory_path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+    "canonical_oracle_index": 233,
+    "canonical_oracle_sha256": "c74086cf56aa26713b1b5714bfbfabf1bfb66fa5df5eff3286bcdb010b345a44",
+    "planning_payload_canonical_sha256": "defbbb835182f2a331687cfd73b15db0cb581d1ef2effc478620ecf80ec826a3"
+  },
+  "fixture_binding": {
+    "fixture_id": "local20-vios-remediation-v1",
+    "manifest_path": "deploy/docker/thor-local/qualification/local20-fixture-pack/manifest.json",
+    "fixture_path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/vios-remediation.json",
+    "fixture_schema_path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixture.schema.json",
+    "media_recipe_ids": [
+      "tiny-bframe-failing-mp4-v1",
+      "tiny-bframe-reference-mp4-v1"
+    ],
+    "media_materialized": false
+  },
+  "execution_bounds": {
+    "max_requests": 8,
+    "max_actions": 9,
+    "max_duration_seconds": 900,
+    "network_scope": "none-plan-only",
+    "warehouse_sample_bundle": "excluded",
+    "subprocess_allowed": false,
+    "docker_allowed": false,
+    "service_lifecycle_allowed": false,
+    "download_allowed": false,
+    "phases": [
+      "pre_state",
+      "positive",
+      "adjacent_negative",
+      "restore",
+      "postcondition"
+    ]
+  },
+  "workflow": [
+    {
+      "sequence": 1,
+      "id": "capture-pre-state",
+      "phase": "pre_state",
+      "request_cost": 1,
+      "intent": "Capture service/config state, exact target absence, and non-owned resource digest before mutation."
+    },
+    {
+      "sequence": 2,
+      "id": "measure-vpn-upload-transport",
+      "phase": "positive",
+      "request_cost": 1,
+      "intent": "Record that the upload limitation is a transport constraint without using a VPN or external network."
+    },
+    {
+      "sequence": 3,
+      "id": "observe-incompatible-playback",
+      "phase": "positive",
+      "request_cost": 1,
+      "intent": "Model the B-frame fixture playback failure and its exact reason code."
+    },
+    {
+      "sequence": 4,
+      "id": "reencode-local-fixture",
+      "phase": "positive",
+      "request_cost": 0,
+      "intent": "Record a future local-transcode repair intent with bframes=0, keyint=30, and source preservation; do not invoke a process."
+    },
+    {
+      "sequence": 5,
+      "id": "upload-remediated-fixture",
+      "phase": "positive",
+      "request_cost": 1,
+      "intent": "Model creation of one namespace-owned derived resource with distinct identity."
+    },
+    {
+      "sequence": 6,
+      "id": "verify-synchronized-playback",
+      "phase": "positive",
+      "request_cost": 1,
+      "intent": "Model replay and readback of the remediated local reference fixture."
+    },
+    {
+      "sequence": 7,
+      "id": "reject-wrong-encode-settings",
+      "phase": "adjacent_negative",
+      "request_cost": 1,
+      "intent": "Reject adjacent wrong encode settings bframes=1 and keyint=29."
+    },
+    {
+      "sequence": 8,
+      "id": "restore-owned-state",
+      "phase": "restore",
+      "request_cost": 1,
+      "intent": "Delete only the exact recorded oracle-owned derived resource and restore captured configuration."
+    },
+    {
+      "sequence": 9,
+      "id": "verify-postconditions",
+      "phase": "postcondition",
+      "request_cost": 1,
+      "intent": "Verify target absence, source identity, and non-owned digest restoration; record that late effects remain unobserved."
+    }
+  ],
+  "ownership": {
+    "namespace": "vss-oracle-behavior-vios-upload-playback-remediation",
+    "owned_resource_type": "vios-derived-media",
+    "registration_gate": "exact create success plus exact resource readback with namespace and source digest",
+    "ambiguous_create_policy": "fail closed without ownership registration or deletion",
+    "foreign_resource_policy": "never mutate"
+  },
+  "cleanup": {
+    "order": "lifo",
+    "allowlist": [
+      "vss-oracle-behavior-vios-upload-playback-remediation"
+    ],
+    "restore": "remove only the exact read-back owned derived resource and restore captured configuration",
+    "postconditions": [
+      "every allowlisted oracle-owned resource is absent",
+      "source identity is unchanged",
+      "captured service/config state and non-owned resource digest match pre-state"
+    ]
+  },
+  "evidence_scope": {
+    "observes_in_fake_only": [
+      "exact prestate",
+      "transport-classification intent",
+      "incompatible B-frame boundary",
+      "local-transcode repair intent",
+      "derived-resource ownership",
+      "replay/readback shape",
+      "adjacent wrong-settings rejection",
+      "cleanup and digest-restore shape"
+    ],
+    "late_effect_blockers": [
+      "no VIOS service response was observed",
+      "no media bytes were generated, transcoded, uploaded, or replayed",
+      "no asynchronous playback-ready transition or synchronized playback window was observed",
+      "no cleanup race or delayed resource reappearance window was observed"
+    ],
+    "promotion_eligible": false
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json",
+      "sha256": "8a1172c0569b224c2453772e86319cf30b153af4ce0f5ab108af3274afd1fd95"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/local20-fixture-pack/manifest.json",
+      "sha256": "f6f994992620fe34da36695be82b9092fc04b64a3f065a2472f614a71f77935b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/vios-remediation.json",
+      "sha256": "7899df8025ffc61968888d5b6a7490805794ab2cab9a3e8d24724e83eb7dfaf2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixture.schema.json",
+      "sha256": "5b98998e21ce43838ff19ca8f59761e43fdbe0ae541319829e236eb9d27ec887"
+    }
+  ]
+}

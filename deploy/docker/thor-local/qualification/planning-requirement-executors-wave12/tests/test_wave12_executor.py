@@ -55,22 +55,22 @@ def test_strict_schemas_and_raw_package_identities() -> None:
     assert _digest(HERE / "inventory.json") == module.EXPECTED_INVENTORY_SHA256
 
 
-def test_exact_prior80_remainder30_selected6_and_remainder24_accounting() -> None:
+def test_exact_prior80_remainder29_selected6_and_remainder23_accounting() -> None:
     result = _module().build_result()
     assert result["set_digests"] == {
         "prior_80": "127fd31fa4d7cfc7b84115e08500db2d93137eda3f8160468ae371d1128648e5",
-        "wave11_remaining_30": "c75592f2a54340507e4348a80fa17eb21a77f6a0e85170ffdfb05a997ed68813",
+        "wave11_remaining_29": "e86a4e00bd319b4fd822d0bbf4502e1ea4bfc45122efd73ddb9a488e8375ff0f",
         "wave12_selected_6": "0b77dc52e1347fffd454f55519702c72a4637905ee00f868cbdce5fc760d33fe",
-        "wave12_remaining_24": "ff8a6b3bfb1c308a3533ca25f05b7b84baa29d08acd699fca3920755681e151e",
+        "wave12_remaining_23": "244182f25fed82f0f9e481563901fb48d87a1e61b24042a76ba7897920d562c9",
     }
     assert result["counts"] == {
         "total_planning_requirements": 110,
-        "integrated_materialized": 26,
-        "live_open": 84,
+        "integrated_materialized": 27,
+        "live_open": 83,
         "prior_package_selections": 80,
         "prior_materialized_static_bindings": 26,
         "prior_live_open_candidate_selections": 54,
-        "remaining_requirements_audited": 30,
+        "remaining_requirements_audited": 29,
         "cases": 6,
         "observed_match": 6,
         "observed_mismatch": 0,
@@ -78,7 +78,7 @@ def test_exact_prior80_remainder30_selected6_and_remainder24_accounting() -> Non
         "configuration_subsets": 3,
         "protocol_subsets": 3,
         "warehouse_cases_selected": 0,
-        "remaining_requirements_unselected": 24,
+        "remaining_requirements_unselected": 23,
     }
 
 
@@ -129,14 +129,24 @@ def test_every_selected_requirement_and_oracle_remains_open() -> None:
     assert result["runtime_evidence_added"] is False
 
 
-def test_all_84_live_open_requirements_remain_unpromoted_and_evidence_empty() -> None:
+def test_all_83_live_open_requirements_remain_unpromoted_and_evidence_empty() -> None:
     module = _module()
     acceptance = json.loads(module.ACCEPTANCE_PATH.read_text())
     requirements = acceptance["wave3_contracts"]["planning_requirements"]
     live_open = [row for row in requirements if row["materialized"] is False]
-    assert len(live_open) == 84
+    assert len(live_open) == 83
     assert all(row["executor_ready"] is False for row in live_open)
     assert all(row["runtime_evidence"] == [] for row in live_open)
+    calibration_static = next(
+        row for row in requirements if row["id"] == "calibration-schema-static"
+    )
+    assert calibration_static["materialized"] is True
+    assert calibration_static["executor_ready"] is True
+    assert calibration_static["runtime_evidence"] == []
+    static_result = calibration_static["static_executor_binding"]["result"]
+    assert static_result["can_advance_capability"] is False
+    assert static_result["can_mark_passed_current"] is False
+    assert static_result["runtime_evidence"] == []
 
 
 def test_remainder_audit_selects_six_local_subsets_and_preserves_boundaries() -> None:
@@ -153,10 +163,10 @@ def test_remainder_audit_selects_six_local_subsets_and_preserves_boundaries() ->
             "systems-remote-nim-fetch",
         }
     ]
-    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 30
+    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 29
     assert len(selected) == 6
-    assert len(rows) - len(selected) == 24
-    assert len(warehouse) == 7
+    assert len(rows) - len(selected) == 23
+    assert len(warehouse) == 6
     assert {row["classification"] for row in warehouse} == {
         "excluded_warehouse_requirement"
     }

@@ -196,7 +196,8 @@ class TestProcessAndPublish:
 
     def test_calls_handler_evaluate(self, ctx):
         msg, user, system = ctx.svc.prepare(_make_payload())
-        ctx.svc.process_and_publish(msg, user, system)
+        handle = ctx.svc.register()
+        ctx.svc.process_and_publish(handle, msg, user, system)
 
         ctx.mock_handler.evaluate.assert_called_once()
         call_kwargs = ctx.mock_handler.evaluate.call_args.kwargs
@@ -219,8 +220,9 @@ class TestProcessAndPublish:
             }
         }
         msg, user, system = ctx.svc.prepare(_make_payload())
+        handle = ctx.svc.register()
 
-        ctx.svc.process_and_publish(msg, user, system)
+        ctx.svc.process_and_publish(handle, msg, user, system)
 
         overrides = ctx.mock_handler.evaluate.call_args.kwargs["config_overrides"]
         assert overrides["model"] == "local-qwen"
@@ -230,11 +232,41 @@ class TestProcessAndPublish:
     def test_handler_receives_full_message(self, ctx):
         payload = _make_payload(id="test-123", sensorId="cam-77")
         msg, user, system = ctx.svc.prepare(payload)
-        ctx.svc.process_and_publish(msg, user, system)
+        handle = ctx.svc.register()
+        ctx.svc.process_and_publish(handle, msg, user, system)
 
         call_kwargs = ctx.mock_handler.evaluate.call_args.kwargs
         assert call_kwargs["message"]["id"] == "test-123"
         assert call_kwargs["message"]["sensorId"] == "cam-77"
+
+    def test_cancel_before_background_start_skips_handler(self, ctx):
+        msg, user, system = ctx.svc.prepare(_make_payload(id="cancelled"))
+        handle = ctx.svc.register()
+        cancellation = ctx.svc.cancel(handle.correlation_id)
+        assert cancellation["cancellationAccepted"] is True
+
+        ctx.svc.process_and_publish(handle, msg, user, system)
+
+        ctx.mock_handler.evaluate.assert_not_called()
+        assert ctx.svc.get_status(handle.correlation_id)["state"] == "cancelled"
+
+    def test_failed_sink_receipt_sets_terminal_failed(self, ctx):
+        ctx.mock_handler.evaluate.return_value = {
+            "processingOutcome": "verified",
+            "sinkDelivery": {"transport": "elastic", "outcome": "failed"},
+        }
+        msg, user, system = ctx.svc.prepare(_make_payload(id="sink-failed"))
+        handle = ctx.svc.register()
+
+        # The real handler invokes this at the exact sink boundary.
+        assert ctx.svc.job_store.mark_running(handle) is True
+        assert ctx.svc.job_store.begin_publish(handle) is True
+        # Simulate the remainder of process_and_publish after the running
+        # transition, since the direct handler is mocked in this unit test.
+        result = ctx.mock_handler.evaluate.return_value
+        assert ctx.svc.job_store.complete(handle, result) is True
+
+        assert ctx.svc.get_status(handle.correlation_id)["state"] == "failed"
 
 
 # ---------------------------------------------------------------------------

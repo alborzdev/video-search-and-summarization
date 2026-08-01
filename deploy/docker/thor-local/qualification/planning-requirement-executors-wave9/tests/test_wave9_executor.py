@@ -55,22 +55,22 @@ def test_strict_schemas_and_raw_package_identities() -> None:
     assert _digest(HERE / "inventory.json") == module.EXPECTED_INVENTORY_SHA256
 
 
-def test_exact_remainder48_selected6_and_remainder42_accounting() -> None:
+def test_exact_remainder47_selected6_and_remainder41_accounting() -> None:
     result = _module().build_result()
     assert result["set_digests"] == {
         "prior_62": "faefaedeb3f198d98c1dc7e28b77606585e21131c3845b3270897fd95119d464",
-        "wave8_remaining_48": "e110cc91283d37dd8f789ffef55045dc97bbbadf4ff5eadc9d69532357be97d5",
+        "wave8_remaining_47": "7fb2fdbc019926c6febfab1c9e9d4b3a6885d8103d3d020b37304cc21d462bf9",
         "wave9_selected_6": "513730392f6a3b372d63711a6cdffcef1b3c56b02a619fdc800b620d8cb11891",
-        "wave9_remaining_42": "5c6885d089e5d5af6e49d6cccb8a03dc829642174bc8f2ec660674d24df10672",
+        "wave9_remaining_41": "dc9c51cada03c13b4830d3062e89eb0dc5e2107d50d4958c84f5ed66f41e3b36",
     }
     assert result["counts"] == {
         "total_planning_requirements": 110,
-        "integrated_materialized": 26,
-        "live_open": 84,
+        "integrated_materialized": 27,
+        "live_open": 83,
         "prior_package_selections": 62,
         "prior_materialized_static_bindings": 26,
         "prior_live_open_candidate_selections": 36,
-        "remaining_requirements_audited": 48,
+        "remaining_requirements_audited": 47,
         "cases": 6,
         "observed_match": 6,
         "observed_mismatch": 0,
@@ -78,7 +78,7 @@ def test_exact_remainder48_selected6_and_remainder42_accounting() -> None:
         "configuration_subsets": 2,
         "protocol_subsets": 3,
         "warehouse_cases_selected": 0,
-        "remaining_requirements_unselected": 42,
+        "remaining_requirements_unselected": 41,
     }
 
 
@@ -130,13 +130,25 @@ def test_remainder_audit_selects_only_six_honest_static_subsets() -> None:
     rows = _module().build_result()["remaining_requirement_audit"]
     selected = [row for row in rows if row["classification"].startswith("selected_")]
     warehouse = [row for row in rows if row["package"] == "calibration-warehouse"]
-    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 48
+    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 47
     assert len(selected) == 6
-    assert len(rows) - len(selected) == 42
-    assert len(warehouse) == 7
+    assert len(rows) - len(selected) == 41
+    assert len(warehouse) == 6
+    assert "calibration-schema-static" not in {
+        row["planning_requirement_id"] for row in rows
+    }
     assert {row["classification"] for row in warehouse} == {
         "excluded_warehouse_requirement"
     }
+    acceptance = json.loads((HERE.parent / "acceptance_inventory.json").read_text())
+    calibration = next(
+        row
+        for row in acceptance["wave3_contracts"]["planning_requirements"]
+        if row["id"] == "calibration-schema-static"
+    )
+    assert calibration["materialized"] is True
+    assert calibration["executor_ready"] is True
+    assert calibration["runtime_evidence"] == []
     assert (
         sum(
             row["classification"] == "selected_static_negative_contract" for row in rows

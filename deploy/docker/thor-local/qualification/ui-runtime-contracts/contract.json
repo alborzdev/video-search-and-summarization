@@ -28,7 +28,7 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
-      "raw_sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
     },
     {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
@@ -36,7 +36,7 @@
     },
     {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
+      "raw_sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
     },
     {
       "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",

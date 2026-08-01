@@ -30,9 +30,7 @@
       "additionalProperties": false,
       "required": [
         "deploy/docker/thor-local/legacy-calibration/backend.py",
-        "deploy/docker/thor-local/qualification/acceptance_inventory.json",
         "deploy/docker/thor-local/parity/official-capabilities.json",
-        "deploy/docker/thor-local/parity/capability-oracles.json",
         "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json",
         "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/calibration.json",
         "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/schemas/calibration.schema.json",
@@ -40,9 +38,7 @@
       ],
       "properties": {
         "deploy/docker/thor-local/legacy-calibration/backend.py": {"$ref": "#/$defs/sha256"},
-        "deploy/docker/thor-local/qualification/acceptance_inventory.json": {"$ref": "#/$defs/sha256"},
         "deploy/docker/thor-local/parity/official-capabilities.json": {"$ref": "#/$defs/sha256"},
-        "deploy/docker/thor-local/parity/capability-oracles.json": {"$ref": "#/$defs/sha256"},
         "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json": {"$ref": "#/$defs/sha256"},
         "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/calibration.json": {"$ref": "#/$defs/sha256"},
         "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/schemas/calibration.schema.json": {"$ref": "#/$defs/sha256"},

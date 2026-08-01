@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/systems-vios-playback-remediation-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collector_id", "mode", "default_execution_enabled", "planning_requirement_id", "capability_id", "oracle_id", "canonical_binding", "fixture_binding", "execution_bounds", "workflow", "ownership", "cleanup", "evidence_scope", "source_locks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "collector_id": {"const": "systems-vios-playback-remediation"},
+    "mode": {"const": "offline-plan-only"},
+    "default_execution_enabled": {"const": false},
+    "planning_requirement_id": {"const": "systems-vios-playback-remediation"},
+    "capability_id": {"const": "behavior.vios.upload-playback-remediation"},
+    "oracle_id": {"const": "oracle.behavior.vios.upload-playback-remediation"},
+    "canonical_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_oracles_path", "verified_integrations_path", "acceptance_inventory_path", "canonical_oracle_index", "canonical_oracle_sha256", "planning_payload_canonical_sha256"],
+      "properties": {
+        "capability_oracles_path": {"const": "deploy/docker/thor-local/parity/capability-oracles.json"},
+        "verified_integrations_path": {"const": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json"},
+        "acceptance_inventory_path": {"const": "deploy/docker/thor-local/qualification/acceptance_inventory.json"},
+        "canonical_oracle_index": {"const": 233},
+        "canonical_oracle_sha256": {"const": "c74086cf56aa26713b1b5714bfbfabf1bfb66fa5df5eff3286bcdb010b345a44"},
+        "planning_payload_canonical_sha256": {"const": "defbbb835182f2a331687cfd73b15db0cb581d1ef2effc478620ecf80ec826a3"}
+      }
+    },
+    "fixture_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_id", "manifest_path", "fixture_path", "fixture_schema_path", "media_recipe_ids", "media_materialized"],
+      "properties": {
+        "fixture_id": {"const": "local20-vios-remediation-v1"},
+        "manifest_path": {"const": "deploy/docker/thor-local/qualification/local20-fixture-pack/manifest.json"},
+        "fixture_path": {"const": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/vios-remediation.json"},
+        "fixture_schema_path": {"const": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixture.schema.json"},
+        "media_recipe_ids": {"const": ["tiny-bframe-failing-mp4-v1", "tiny-bframe-reference-mp4-v1"]},
+        "media_materialized": {"const": false}
+      }
+    },
+    "execution_bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_requests", "max_actions", "max_duration_seconds", "network_scope", "warehouse_sample_bundle", "subprocess_allowed", "docker_allowed", "service_lifecycle_allowed", "download_allowed", "phases"],
+      "properties": {
+        "max_requests": {"const": 8},
+        "max_actions": {"const": 9},
+        "max_duration_seconds": {"const": 900},
+        "network_scope": {"const": "none-plan-only"},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "subprocess_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "download_allowed": {"const": false},
+        "phases": {"const": ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"]}
+      }
+    },
+    "workflow": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {"$ref": "#/$defs/workflow_step"}
+    },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespace", "owned_resource_type", "registration_gate", "ambiguous_create_policy", "foreign_resource_policy"],
+      "properties": {
+        "namespace": {"const": "vss-oracle-behavior-vios-upload-playback-remediation"},
+        "owned_resource_type": {"const": "vios-derived-media"},
+        "registration_gate": {"type": "string", "minLength": 20, "maxLength": 256},
+        "ambiguous_create_policy": {"type": "string", "minLength": 20, "maxLength": 256},
+        "foreign_resource_policy": {"const": "never mutate"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "allowlist", "restore", "postconditions"],
+      "properties": {
+        "order": {"const": "lifo"},
+        "allowlist": {"const": ["vss-oracle-behavior-vios-upload-playback-remediation"]},
+        "restore": {"type": "string", "minLength": 20, "maxLength": 256},
+        "postconditions": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 10, "maxLength": 256}}
+      }
+    },
+    "evidence_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observes_in_fake_only", "late_effect_blockers", "promotion_eligible"],
+      "properties": {
+        "observes_in_fake_only": {"type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true, "items": {"type": "string", "minLength": 5, "maxLength": 128}},
+        "late_effect_blockers": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 10, "maxLength": 256}},
+        "promotion_eligible": {"const": false}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {"$ref": "#/$defs/source_lock"}
+    }
+  },
+  "$defs": {
+    "workflow_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "id", "phase", "request_cost", "intent"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 9},
+        "id": {"enum": ["capture-pre-state", "measure-vpn-upload-transport", "observe-incompatible-playback", "reencode-local-fixture", "upload-remediated-fixture", "verify-synchronized-playback", "reject-wrong-encode-settings", "restore-owned-state", "verify-postconditions"]},
+        "phase": {"enum": ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"]},
+        "request_cost": {"type": "integer", "minimum": 0, "maximum": 1},
+        "intent": {"type": "string", "minLength": 20, "maxLength": 300}
+      }
+    },
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^deploy/docker/thor-local/(parity|qualification)/[A-Za-z0-9_./-]+\\.json$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

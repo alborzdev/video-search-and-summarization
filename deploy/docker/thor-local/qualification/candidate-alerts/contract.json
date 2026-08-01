@@ -104,19 +104,19 @@
       "reason": "The two semantic media artifacts and their byte digests are not staged."
     },
     {
-      "blocker_id": "terminal-status-api-missing",
+      "blocker_id": "terminal-status-api-not-integrated",
       "active": true,
-      "reason": "Alert Bridge exposes admission but no terminal background-job result API."
+      "reason": "Thor product source exposes process-local on-demand GET status and DELETE cancellation, but this offline scaffold does not call them or bind their readback to its terminal-result schema."
     },
     {
       "blocker_id": "late-publication-not-reversible",
       "active": true,
-      "reason": "A background VLM task can publish after configuration and fixture-server cleanup."
+      "reason": "The current disconnected collector does not observe terminal status or accept cancellation before cleanup, so it cannot rule out a background publish after configuration and fixture-server cleanup."
     },
     {
-      "blocker_id": "sink-receipt-missing",
+      "blocker_id": "sink-receipt-not-integrated",
       "active": true,
-      "reason": "Current sinks swallow delivery failures and return no durable delivery receipt."
+      "reason": "Thor product source propagates bounded Elasticsearch/Kafka sink outcomes, but this scaffold has not exercised a concrete receipt or performed exact sink readback."
     },
     {
       "blocker_id": "verdict-propagation-unqualified",

@@ -757,34 +757,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string"
-                                        },
-                                        "correlationId": {
-                                            "type": "string"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        },
-                                        "timestamp": {
-                                            "type": "string",
-                                            "format": "date-time"
-                                        }
-                                    },
-                                    "type": "object",
-                                    "required": [
-                                        "status",
-                                        "correlationId",
-                                        "message",
-                                        "timestamp"
-                                    ]
-                                },
-                                "example": {
-                                    "status": "accepted",
-                                    "correlationId": "incident-123",
-                                    "message": "Verification request accepted for processing",
-                                    "timestamp": "2025-06-01T12:00:00Z"
+                                    "$ref": "#/components/schemas/OnDemandAcceptedResponse"
                                 }
                             }
                         }
@@ -794,34 +767,171 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string"
-                                        },
-                                        "error": {
-                                            "type": "string"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        },
-                                        "timestamp": {
-                                            "type": "string",
-                                            "format": "date-time"
-                                        }
-                                    },
-                                    "type": "object",
-                                    "required": [
-                                        "status",
-                                        "error",
-                                        "message",
-                                        "timestamp"
-                                    ]
-                                },
-                                "example": {
-                                    "status": "error",
-                                    "error": "unknown_category",
-                                    "message": "No alert config found for category 'unknown_type'",
-                                    "timestamp": "2025-06-01T12:00:00Z"
+                                    "$ref": "#/components/schemas/VerificationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Server-generated job ID allocation conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Bounded job registry capacity exhausted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/verification/ondemand/{correlation_id}": {
+            "get": {
+                "tags": [
+                    "verification"
+                ],
+                "summary": "Get on-demand verification status",
+                "description": "Return bounded process-local job status. Terminal records expire and are not durable across Alert Bridge restarts.",
+                "operationId": "get_ondemand_status_api_v1_verification_ondemand__correlation_id__get",
+                "parameters": [
+                    {
+                        "name": "correlation_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Correlation Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retained job status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationJobStatus"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid correlation ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Job not found or terminal receipt expired",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "verification"
+                ],
+                "summary": "Cancel on-demand verification before sink publication",
+                "description": "Cancellation is accepted only while queued or running. Once sink publication begins, cancellation is rejected to avoid a false guarantee that no event was delivered.",
+                "operationId": "cancel_ondemand_api_v1_verification_ondemand__correlation_id__delete",
+                "parameters": [
+                    {
+                        "name": "correlation_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Correlation Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Job was already cancelled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationJobStatus"
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Cancellation accepted before publication",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationJobStatus"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid correlation ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Job not found or terminal receipt expired",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Publication already started or job is terminal",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VerificationJobStatus"
                                 }
                             }
                         }
@@ -2069,6 +2179,18 @@
                     "total": 42
                 }
             },
+            "OnDemandAcceptedResponse": {
+                "properties": {
+                    "status": {"type": "string", "const": "accepted", "title": "Status"},
+                    "correlationId": {"type": "string", "title": "Correlationid"},
+                    "statusUrl": {"type": "string", "title": "Statusurl"},
+                    "message": {"type": "string", "title": "Message"},
+                    "timestamp": {"type": "string", "title": "Timestamp"}
+                },
+                "type": "object",
+                "required": ["status", "correlationId", "statusUrl", "message", "timestamp"],
+                "title": "OnDemandAcceptedResponse"
+            },
             "OnDemandVerificationRequest": {
                 "properties": {
                     "category": {
@@ -2105,6 +2227,74 @@
                     "sensorId": "sensor-01",
                     "timestamp": "2026-04-22T10:00:00Z"
                 }
+            },
+            "VerificationErrorResponse": {
+                "properties": {
+                    "status": {"type": "string", "const": "error", "title": "Status"},
+                    "error": {"type": "string", "title": "Error"},
+                    "message": {"type": "string", "title": "Message"},
+                    "timestamp": {"type": "string", "title": "Timestamp"}
+                },
+                "type": "object",
+                "required": ["status", "error", "message", "timestamp"],
+                "title": "VerificationErrorResponse"
+            },
+            "VerificationJobError": {
+                "properties": {
+                    "code": {"type": "string", "title": "Code"}
+                },
+                "type": "object",
+                "required": ["code"],
+                "title": "VerificationJobError"
+            },
+            "VerificationJobResult": {
+                "properties": {
+                    "processingOutcome": {
+                        "type": "string",
+                        "enum": ["verified", "verification_failed", "unknown"],
+                        "title": "Processingoutcome"
+                    },
+                    "sinkDelivery": {"$ref": "#/components/schemas/VerificationSinkDelivery"},
+                    "verdict": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Verdict"},
+                    "verificationResponseCode": {"anyOf": [{"type": "integer"}, {"type": "null"}], "title": "Verificationresponsecode"},
+                    "errorSource": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Errorsource"}
+                },
+                "type": "object",
+                "required": ["processingOutcome", "sinkDelivery"],
+                "title": "VerificationJobResult"
+            },
+            "VerificationJobStatus": {
+                "properties": {
+                    "correlationId": {"type": "string", "title": "Correlationid"},
+                    "state": {
+                        "type": "string",
+                        "enum": ["queued", "running", "publishing", "completed", "failed", "cancelled"],
+                        "title": "State"
+                    },
+                    "terminal": {"type": "boolean", "title": "Terminal"},
+                    "createdAt": {"type": "string", "title": "Createdat"},
+                    "updatedAt": {"type": "string", "title": "Updatedat"},
+                    "result": {"anyOf": [{"$ref": "#/components/schemas/VerificationJobResult"}, {"type": "null"}]},
+                    "error": {"anyOf": [{"$ref": "#/components/schemas/VerificationJobError"}, {"type": "null"}]},
+                    "cancellationAccepted": {"anyOf": [{"type": "boolean"}, {"type": "null"}], "title": "Cancellationaccepted"}
+                },
+                "type": "object",
+                "required": ["correlationId", "state", "terminal", "createdAt", "updatedAt"],
+                "title": "VerificationJobStatus"
+            },
+            "VerificationSinkDelivery": {
+                "properties": {
+                    "transport": {"type": "string", "enum": ["elastic", "kafka", "unknown"], "title": "Transport"},
+                    "outcome": {"type": "string", "enum": ["acknowledged", "submitted_unconfirmed", "failed", "unconfirmed"], "title": "Outcome"},
+                    "documentId": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Documentid"},
+                    "index": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Index"},
+                    "topic": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Topic"},
+                    "partition": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Partition"},
+                    "offset": {"anyOf": [{"type": "string"}, {"type": "null"}], "title": "Offset"}
+                },
+                "type": "object",
+                "required": ["transport", "outcome"],
+                "title": "VerificationSinkDelivery"
             },
             "RealtimeAlertDeleteResponse": {
                 "properties": {

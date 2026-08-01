@@ -116,6 +116,34 @@ curl -X POST http://localhost:9080/api/v1/alerts \
 
 Enriched results are persisted and broadcast over the WebSocket endpoint.
 
+On-demand verification returns a correlation ID and exposes process-local
+terminal status and pre-publication cancellation:
+
+```text
+POST   /api/v1/verification/ondemand
+GET    /api/v1/verification/ondemand/{correlationId}
+DELETE /api/v1/verification/ondemand/{correlationId}
+```
+
+The registry is bounded (default 1,000 jobs) and terminal records expire after
+one hour. Configure those limits with
+`alert_agent.ondemand_jobs.capacity` and
+`alert_agent.ondemand_jobs.ttl_seconds`. Cancellation is guaranteed only when
+DELETE returns HTTP 202 (or an idempotent HTTP 200 for an already-cancelled
+job); HTTP 409 means publication already owns the job. Status is intentionally
+not durable across an Alert Bridge restart. Sink receipts distinguish an
+acknowledgement from `submitted_unconfirmed`, `unconfirmed`, and `failed` and
+never expose prompts, media URLs, raw model output, or exception details.
+Every submission receives a server-generated opaque job ID; a caller-supplied
+Incident `id` remains the event/sink identity and is never used as the status
+or cancellation key.
+
+The Alert Bridge API currently has no built-in authentication or authorization
+middleware. Opaque job IDs reduce guessing and cross-request collisions, but
+they are not an authorization mechanism. Deploy the API only on a trusted
+network or behind an authenticated reverse proxy/API gateway, and apply the
+same boundary to POST, GET status, and DELETE cancellation endpoints.
+
 ## Testing
 
 Unit tests run with `pytest`:

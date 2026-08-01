@@ -347,6 +347,12 @@
       }
     },
     "planningExecutorBinding": {
+      "oneOf": [
+        {"$ref": "#/$defs/genericPlanningExecutorBinding"},
+        {"$ref": "#/$defs/calibrationSchemaPlanningExecutorBinding"}
+      ]
+    },
+    "genericPlanningExecutorBinding": {
       "type": "object", "additionalProperties": false,
       "required": [
         "planning_requirement_id", "scope", "materialization", "executor",
@@ -360,6 +366,117 @@
         "executor": {"$ref": "#/$defs/staticExecutor"},
         "case": {"$ref": "#/$defs/staticCase"},
         "result": {"$ref": "#/$defs/staticResult"},
+        "can_advance_capability": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "calibrationSchemaPlanningExecutorBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "planning_requirement_id", "scope", "materialization", "executor",
+        "case", "result", "can_advance_capability", "can_mark_passed_current",
+        "runtime_evidence"
+      ],
+      "properties": {
+        "planning_requirement_id": {"const": "calibration-schema-static"},
+        "scope": {"const": "bounded_static_assertion_subset_only"},
+        "materialization": {"$ref": "#/$defs/calibrationSchemaStaticMaterialization"},
+        "executor": {"$ref": "#/$defs/calibrationSchemaStaticExecutor"},
+        "case": {"$ref": "#/$defs/calibrationSchemaStaticCase"},
+        "result": {"$ref": "#/$defs/calibrationSchemaStaticResult"},
+        "can_advance_capability": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "calibrationSchemaStaticMaterialization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scope", "inventory_path", "case_json_pointer", "case_canonical_sha256"],
+      "properties": {
+        "scope": {"const": "live_planning_requirement_static_contract"},
+        "inventory_path": {"const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.json"},
+        "case_json_pointer": {"const": "/binding"},
+        "case_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "calibrationSchemaStaticExecutor": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "path", "raw_sha256", "inventory_path", "inventory_raw_sha256",
+        "inventory_canonical_sha256", "inventory_schema_path",
+        "inventory_schema_raw_sha256", "invocation"
+      ],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/executor.py"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "inventory_path": {"const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.json"},
+        "inventory_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "inventory_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "inventory_schema_path": {"const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.schema.json"},
+        "inventory_schema_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "invocation": {
+          "const": [
+            "python3",
+            "deploy/docker/thor-local/qualification/calibration-schema-static-executor/executor.py",
+            "--json"
+          ]
+        }
+      }
+    },
+    "calibrationSchemaStaticCase": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "case_id", "planning_requirement_id", "capability_id",
+        "planning_payload_sha256", "planning_owner_type", "planning_owner_id",
+        "applicable_record_ids", "uncovered_applicable_record_ids"
+      ],
+      "properties": {
+        "case_id": {"const": "calibration-schema-static.vss-json"},
+        "planning_requirement_id": {"const": "calibration-schema-static"},
+        "capability_id": {"const": "calibration.schema.vss-json"},
+        "planning_payload_sha256": {"const": "3e54d36b3e1895ad69fda05e458d3c80809507e31e975c210fdab56f446ce791"},
+        "planning_owner_type": {"const": "global_acceptance_vector"},
+        "planning_owner_id": {"const": "calibration-schema-static"},
+        "applicable_record_ids": {
+          "const": [
+            "calibration.camera-positioning.installation-contract",
+            "calibration.schema.vss-json",
+            "behavior.auto-calibration.failure-recovery",
+            "behavior.auto-calibration.result-verification",
+            "calibration.auto.alignment-schema",
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.known-limitations"
+          ]
+        },
+        "uncovered_applicable_record_ids": {
+          "const": [
+            "calibration.camera-positioning.installation-contract",
+            "behavior.auto-calibration.failure-recovery",
+            "behavior.auto-calibration.result-verification",
+            "calibration.auto.alignment-schema",
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.known-limitations"
+          ]
+        }
+      }
+    },
+    "calibrationSchemaStaticResult": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "schema_path", "schema_raw_sha256", "execution_receipt_path",
+        "execution_receipt_raw_sha256", "execution_receipt_canonical_sha256",
+        "expected_outcome", "evidence_class", "can_advance_capability",
+        "can_mark_passed_current", "runtime_evidence"
+      ],
+      "properties": {
+        "schema_path": {"const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/result.schema.json"},
+        "schema_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "execution_receipt_path": {"const": "deploy/docker/thor-local/qualification/calibration-schema-static-integration/execution-receipt.json"},
+        "execution_receipt_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "execution_receipt_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "expected_outcome": {"const": "observed_match"},
+        "evidence_class": {"const": "deterministic_file_static_evidence_not_runtime"},
         "can_advance_capability": {"const": false},
         "can_mark_passed_current": {"const": false},
         "runtime_evidence": {"type": "array", "maxItems": 0}

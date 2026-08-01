@@ -1,6 +1,6 @@
 # Planning Requirement Executors — Wave 10
 
-This isolated package audits Wave 9's exact 42-row remaining denominator and
+This isolated package audits Wave 9's exact 41-row live-open remainder and
 records six additional, disjoint static subsets. It performs only raw-file,
 canonical-ledger-binding, set-accounting, and source-token checks.
 
@@ -16,7 +16,7 @@ canonical-ledger-binding, set-accounting, and source-token checks.
 No result is a runtime pass. The source branches do not prove routing or UI
 semantics, detector names are not artifact digest locks, one VIOS setting does
 not prove the 100-stream boundary, documentation does not prove file lifecycle,
-and exports do not prove query semantics. All 84 live-open requirements must
+and exports do not prove query semantics. All 83 live-open requirements must
 remain unpromoted, executor-not-ready, and runtime-evidence-empty. Every
 selected oracle must remain `open_unexecuted` and evidence-empty.
 

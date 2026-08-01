@@ -31,7 +31,7 @@ HTTP 202 immediately.
 import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from handlers.direct_media.direct_media_handler import DirectMediaHandler
 from handlers.prompt_handler.prompt_manager import PromptManager
@@ -39,6 +39,7 @@ from mdx.anomaly.sink.vlm_enhanced_sink import build_vlm_enhanced_sink
 from vlm.vlm_client import VLMClient
 
 from ..core.dependencies import load_config, load_config_path
+from .terminal_job_store import JobHandle, TerminalJobStore
 
 
 class AlertTypeNotFoundError(Exception):
@@ -53,10 +54,18 @@ class OnDemandVerificationService:
     (blocking, intended to run in a background task).
     """
 
-    def __init__(self):
+    def __init__(self, job_store: Optional[TerminalJobStore] = None):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.config_file = load_config_path()
         self.config = load_config()
+
+        job_config = (
+            self.config.get("alert_agent", {}).get("ondemand_jobs", {}) or {}
+        )
+        self.job_store = job_store or TerminalJobStore(
+            capacity=job_config.get("capacity", 1000),
+            ttl_seconds=job_config.get("ttl_seconds", 3600),
+        )
 
         self.vlm_client = VLMClient(self.config.get("vlm", {}))
         self.prompt_manager = PromptManager(self.config_file)
@@ -102,7 +111,11 @@ class OnDemandVerificationService:
         message = dict(request_data)
 
         now = datetime.now(timezone.utc).isoformat()
-        message.setdefault("id", f"ondemand-{uuid.uuid4()}")
+        requested_id = message.get("id")
+        if requested_id is None:
+            message["id"] = f"ondemand-{uuid.uuid4()}"
+        elif not isinstance(requested_id, str):
+            raise ValueError("id must be a string when provided")
         message.setdefault("sensorId", "ondemand")
         message.setdefault("timestamp", now)
         message.setdefault("end", now)
@@ -134,8 +147,26 @@ class OnDemandVerificationService:
 
         return message, user_prompt, system_prompt
 
+    def register(self) -> JobHandle:
+        """Create a server-keyed job before background dispatch."""
+
+        return self.job_store.register()
+
+    def get_status(self, correlation_id: str) -> Optional[Dict[str, Any]]:
+        """Return a sanitized process-local status snapshot, if retained."""
+
+        TerminalJobStore.validate_correlation_id(correlation_id)
+        return self.job_store.get(correlation_id)
+
+    def cancel(self, correlation_id: str) -> Optional[Dict[str, Any]]:
+        """Request cancellation while the job is still pre-publish."""
+
+        TerminalJobStore.validate_correlation_id(correlation_id)
+        return self.job_store.cancel(correlation_id)
+
     def process_and_publish(
         self,
+        job_handle: JobHandle,
         message: Dict[str, Any],
         user_prompt: str,
         system_prompt: str,
@@ -146,16 +177,47 @@ class OnDemandVerificationService:
         pipeline is identical to the Kafka-driven path.  This method is
         blocking (synchronous) and is intended to run inside a background task.
         """
-        info_block = message.get("info", {})
-        config_overrides = self._get_merged_vlm_config(message.get("category", ""))
-        self.direct_media_handler.evaluate(
-            worker_id=0,
-            message=message,
-            info_block=info_block,
-            user_prompt=user_prompt,
-            system_prompt=system_prompt,
-            config_overrides=config_overrides,
-        )
+        correlation_id = job_handle.correlation_id
+        if not self.job_store.mark_running(job_handle):
+            # Cancellation can win between HTTP 202 creation and background
+            # task startup.  In that case no VLM or sink work is started.
+            return
+
+        try:
+            info_block = message.get("info", {})
+            config_overrides = self._get_merged_vlm_config(
+                message.get("category", "")
+            )
+            result = self.direct_media_handler.evaluate(
+                worker_id=0,
+                message=message,
+                info_block=info_block,
+                user_prompt=user_prompt,
+                system_prompt=system_prompt,
+                config_overrides=config_overrides,
+                before_publish=lambda _message: self.job_store.begin_publish(
+                    job_handle
+                ),
+            )
+            # ``complete`` intentionally succeeds only after the handler's
+            # atomic pre-publish hook moved the state to ``publishing``.  A
+            # handler cancelled at that gate leaves the existing cancelled
+            # terminal record untouched.
+            completed = self.job_store.complete(job_handle, result)
+            if not completed:
+                snapshot = self.job_store.get(correlation_id)
+                if snapshot is not None and snapshot.get("state") != "cancelled":
+                    self.job_store.fail(
+                        job_handle, "publish_transition_missing"
+                    )
+        except Exception:
+            self.logger.exception(
+                "On-demand verification background processing failed",
+                extra={"correlation_id": correlation_id},
+            )
+            # Keep the public error bounded and non-secret; details stay in
+            # server logs.
+            self.job_store.fail(job_handle, "processing_failed")
 
     def _get_merged_vlm_config(self, category: str) -> Dict[str, Any]:
         """Resolve the same per-category VLM overrides as Kafka ingestion.

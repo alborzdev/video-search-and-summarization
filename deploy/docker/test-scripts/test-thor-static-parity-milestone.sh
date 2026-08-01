@@ -94,8 +94,6 @@ python3 -m unittest discover \
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" validate
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" \
   run-all >/dev/null
-python3 "${thor_local_root}/qualification/lvs-mcp-static-adapter-integration/integrate_live.py" \
-  validate-predecessor
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/executor-cases/tests" \
   -p 'test_executor.py' -v
@@ -107,25 +105,31 @@ python3 -m unittest discover \
 # full capability oracle advances.
 python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" validate
 
-# The live-current third static successor preserves the immutable LVS 13-vs-9
-# upstream discrepancy while wiring four Thor-local file-management tools. It
-# also binds two deterministic offline MV3DT observations to bounded oracle
-# subsets. Neither integration creates runtime evidence or a promotion.
-python3 "${thor_local_root}/qualification/lvs-mcp-static-adapter-integration/integrate_live.py" \
+# The fourth successor replays and digest-checks the complete third LVS static
+# successor, including the earlier executor/source-contract chain, under the
+# reviewed output-neutral compiler/schema evolution. Calling the third
+# successor's own predecessor validator directly is obsolete because it pins
+# the pre-evolution oracle schema.
+python3 "${thor_local_root}/qualification/calibration-schema-static-integration/integrate_live.py" \
+  validate-predecessor
+
+# The live-current fourth successor adds exactly one non-advancing
+# calibration-schema planning binding, preserves six explicitly uncovered
+# global-vector records, and creates no runtime evidence or promotion.
+python3 "${thor_local_root}/qualification/calibration-schema-static-integration/integrate_live.py" \
   validate
-python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/lvs-mcp-static-adapter-integration/tests" \
-  -p 'test*.py' -v
+python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/calibration-schema-static-integration/tests"
 
 # Six additional planning requirements have isolated, source-locked checks.
 # Five match and the search-upload status contract remains an explicit 400/415
-# mismatch. This package cannot alter the 26 integrated live bindings.
+# mismatch. This package cannot alter the 27 integrated live bindings.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave3/executor.py" \
   --json >/dev/null
 python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave3/tests"
 
-# A second nonadvancing planning audit selects six of the 78 requirements not
+# A second nonadvancing planning audit selects six of the 77 requirements not
 # previously covered by a planning executor package. Five source contracts
 # match and the Alerts Qwen example remains an explicit source mismatch.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave4/executor.py" \
@@ -134,17 +138,17 @@ python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave4/tests"
 
 # The third nonadvancing planning audit selects six Smart City contracts from
-# the exact 72-row successor denominator. One matches and five preserve source
-# gaps; all 84 live-open requirements remain unpromoted.
+# the exact 71-row successor denominator. One matches and five preserve source
+# gaps; all 83 live-open requirements remain unpromoted.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave5/executor.py" \
   --json >/dev/null
 python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave5/tests"
 
 # The fourth nonadvancing planning audit selects six more Smart City source
-# contracts from the exact 66-row remainder. Five documented mismatches and
-# one external-optional boundary remain explicit; all 84 live-open planning
-# requirements stay unpromoted and 60 remain without a planning candidate.
+# contracts from the exact 65-row remainder. Five documented mismatches and
+# one external-optional boundary remain explicit; all 83 live-open planning
+# requirements stay unpromoted and 59 remain without a planning candidate.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave6/executor.py" \
   --json >/dev/null
 python3 -m pytest -q \
@@ -152,15 +156,15 @@ python3 -m pytest -q \
 
 # The fifth nonadvancing planning audit checks three negative contracts, two
 # configuration subsets, and one illustrative NvSchema consumer subset from
-# the exact 60-row remainder. It leaves 54 unselected and all 84 live-open.
+# the exact 59-row remainder. It leaves 53 unselected and all 83 live-open.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave7/executor.py" \
   --json >/dev/null
 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/planning-requirement-executors-wave7/tests"
 
 # The sixth nonadvancing planning audit preserves six documented negative
-# contracts from the exact 54-row remainder. It leaves 48 unselected and all
-# 84 live-open requirements without promotion or runtime evidence.
+# contracts from the exact 53-row remainder. It leaves 47 unselected and all
+# 83 live-open requirements without promotion or runtime evidence.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave8/executor.py" \
   --json >/dev/null
 python3 -m pytest -q -p no:cacheprovider \
@@ -168,7 +172,7 @@ python3 -m pytest -q -p no:cacheprovider \
 
 # The seventh nonadvancing planning audit checks one preserved negative, two
 # configuration-only, and three protocol/source-only subsets from the exact
-# 48-row remainder. It leaves 42 unselected and every runtime semantic open.
+# 47-row remainder. It leaves 41 unselected and every runtime semantic open.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave9/executor.py" \
   --json >/dev/null
 python3 -m pytest -q -p no:cacheprovider \
@@ -176,8 +180,8 @@ python3 -m pytest -q -p no:cacheprovider \
 
 # The eighth nonadvancing planning audit checks one preserved negative, one
 # configuration-only, and four protocol/source-only subsets from the exact
-# 42-row remainder. It leaves 36 unselected, excludes every Warehouse row, and
-# keeps every one of the 84 live-open requirements unpromoted and evidence-free.
+# 41-row remainder. It leaves 35 unselected, excludes every Warehouse row, and
+# keeps every one of the 83 live-open requirements unpromoted and evidence-free.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/planning-requirement-executors-wave10/executor.py" \
   --json >/dev/null
@@ -186,8 +190,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 
 # The ninth nonadvancing planning audit checks one preserved negative, one
 # configuration-only, and four protocol/source-only subsets from the exact
-# 36-row remainder. It leaves 30 unselected, selects no Warehouse row, and
-# keeps all 84 live-open requirements unpromoted and evidence-free.
+# 35-row remainder. It leaves 29 unselected, selects no Warehouse row, and
+# keeps all 83 live-open requirements unpromoted and evidence-free.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/planning-requirement-executors-wave11/executor.py" \
   --json >/dev/null
@@ -195,8 +199,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/planning-requirement-executors-wave11/tests"
 
 # The tenth nonadvancing planning audit checks three protocol and three
-# configuration subsets from the exact 30-row remainder. It leaves 24
-# unselected, selects no Warehouse row, and keeps all 84 live-open requirements
+# configuration subsets from the exact 29-row remainder. It leaves 23
+# unselected, selects no Warehouse row, and keeps all 83 live-open requirements
 # unpromoted and evidence-free.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/planning-requirement-executors-wave12/executor.py" \
@@ -252,6 +256,15 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/legacy-calibration/tests"
 
+# The opt-in browser derivative is source-only. Inspection verifies its exact
+# upstream/overlay/proxy/Compose locks and focused tests exercise deterministic
+# materialization without building an image or starting a service.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/legacy-calibration/browser-integration/materialize.py" \
+  inspect >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/legacy-calibration/browser-integration/tests"
+
 # One isolated static executor now compiles generated geo/cartesian/image/MTMC
 # fixtures through the provider-free backend and validates deterministic output
 # against every exact checked-in VSS calibration/behavior/road schema. It is
@@ -281,13 +294,18 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/alert" \
   python3 -m pytest -q -p no:cacheprovider \
   "${repo_root}/services/alert/test/test_schema_util_nvschema_alias.py"
 
-# Direct-media source tests prove the Thor-only verdict gate and exact
-# per-category model/response-format/JSON-parser propagation without importing
-# the full Alert runtime. The test supplies a minimal local OpenAI type stub
-# when that image-only dependency is absent; it performs no I/O.
+# Dependency-free Alert source tests prove the Thor-only verdict gate, image
+# error coercion, terminal job-store ownership, publish gating, offline sink
+# receipts, and isolated route semantics without importing the full app or
+# performing network, broker, service-lifecycle, or model I/O.
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/alert" \
   python3 -m pytest -q -p no:cacheprovider \
-  "${repo_root}/services/alert/test/test_direct_media_pluggable_parser_ft.py"
+  "${repo_root}/services/alert/test/test_direct_media_pluggable_parser_ft.py" \
+  "${repo_root}/services/alert/test/test_image_error_info_coercion_ft.py" \
+  "${repo_root}/services/alert/test/api/test_terminal_job_store.py" \
+  "${repo_root}/services/alert/test/api/test_terminal_publish_gate.py" \
+  "${repo_root}/services/alert/test/api/test_sink_delivery_receipts_offline.py" \
+  "${repo_root}/services/alert/test/api/test_verification_routes_isolated.py"
 
 # Shared future runtime-evidence primitives are checked only through their
 # static contract and fake in-memory transport/resource self-test. The library
@@ -321,6 +339,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-alerts/test_collector.py"
+
+# The VIOS playback-remediation candidate binds the final canonical oracle and
+# local20 metadata to an inert 8-request/9-action future plan. Its plain-data
+# transcript simulation has no callback or live adapter and remains
+# non-promoting; no media, network, process, service, or Warehouse data is used.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/systems-vios-playback-remediation/collector.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/systems-vios-playback-remediation/test_collector.py"
 
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.

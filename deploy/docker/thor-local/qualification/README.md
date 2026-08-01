@@ -18,6 +18,10 @@ in this directory:
   preserves the pinned upstream 13-versus-9 discrepancy while recording the
   four Thor-local file-management adapters and two bounded offline MV3DT tool
   observations, with zero runtime evidence or full-oracle promotion;
+- `calibration-schema-static-integration/` is the fourth static successor. It
+  replays the LVS predecessor and integrates one exact non-advancing binding
+  for `calibration.schema.vss-json`, preserving the global-vector owner and six
+  explicitly uncovered applicable records with zero runtime evidence;
 - `extended-api-surface-contracts/` splits the five excluded official API
   groups into seven addressable REST surfaces. It locks six exact descriptors
   totaling 80 operations and keeps legacy calibration authoritative-unknown
@@ -71,49 +75,49 @@ in this directory:
   operator H.264 source, exact per-stream identities and evidence, a strict
   1920x1080 gate for the 16-stream claim, resource aborts, and exact-owned
   cleanup, but executes no publisher, API, container, or runtime workload;
-- `planning-requirement-executors-wave3/` checks six of the 84 still-open
+- `planning-requirement-executors-wave3/` checks six of the 83 still-open
   planning requirements without promoting them, preserving five source
   matches and the search-upload HTTP 400/415 mismatch;
-- `planning-requirement-executors-wave4/` checks six of the 78 previously
+- `planning-requirement-executors-wave4/` checks six of the 77 previously
   unselected open requirements, preserving five matches and the missing Alerts
   Qwen example as a source-contract mismatch;
 - `planning-requirement-executors-wave5/` checks six Smart City contracts from
-  the exact 72-requirement successor denominator. It preserves one source match
-  and five explicit source gaps, leaves 66 requirements without a candidate,
-  and keeps all 84 live-open planning requirements unpromoted;
+  the exact 71-requirement successor denominator. It preserves one source match
+  and five explicit source gaps, leaves 65 requirements without a candidate,
+  and keeps all 83 live-open planning requirements unpromoted;
 - `planning-requirement-executors-wave6/` checks six more Smart City source
-  contracts from that exact 66-requirement remainder. It preserves five
-  documented mismatches and one external-optional boundary, leaves 60
-  requirements without a planning candidate, and keeps all 84 live-open;
-- `planning-requirement-executors-wave7/` audits that exact 60-requirement
+  contracts from that exact 65-requirement remainder. It preserves five
+  documented mismatches and one external-optional boundary, leaves 59
+  requirements without a planning candidate, and keeps all 83 live-open;
+- `planning-requirement-executors-wave7/` audits that exact 59-requirement
   remainder and adds six disjoint source subsets: three preserved negative
   contracts, two configuration implementations, and one illustrative NvSchema
-  consumer/protocol subset. It leaves 54 without a planning candidate and all
-  84 live-open requirements unpromoted;
-- `planning-requirement-executors-wave8/` audits that exact 54-requirement
+  consumer/protocol subset. It leaves 53 without a planning candidate and all
+  83 live-open requirements unpromoted;
+- `planning-requirement-executors-wave8/` audits that exact 53-requirement
   remainder and adds six disjoint preserved negative contracts for LVS, CR2
-  recovery, Search, and ended-stream deletion. It leaves 48 without a planning
-  candidate and all 84 live-open requirements unpromoted;
-- `planning-requirement-executors-wave9/` audits that exact 48-requirement
+  recovery, Search, and ended-stream deletion. It leaves 47 without a planning
+  candidate and all 83 live-open requirements unpromoted;
+- `planning-requirement-executors-wave9/` audits that exact 47-requirement
   remainder and adds six disjoint bounded subsets: one preserved negative
   contract, two configuration-only observations, and three protocol/source
-  surfaces. It leaves 42 without a planning candidate and all runtime semantics
-  and all 84 live-open requirements unpromoted;
-- `planning-requirement-executors-wave10/` audits that exact 42-requirement
+  surfaces. It leaves 41 without a planning candidate and all runtime semantics
+  and all 83 live-open requirements unpromoted;
+- `planning-requirement-executors-wave10/` audits that exact 41-requirement
   remainder and adds six disjoint bounded subsets for agent routing, UI chat
   state, Smart City model/configuration boundaries, NvStreamer file protocol,
-  and the VA query library. It leaves 36 without a planning candidate, excludes
-  every Warehouse row, and keeps all 84 live-open requirements unpromoted;
-- `planning-requirement-executors-wave11/` audits that exact 36-requirement
+  and the VA query library. It leaves 35 without a planning candidate, excludes
+  every Warehouse row, and keeps all 83 live-open requirements unpromoted;
+- `planning-requirement-executors-wave11/` audits that exact 35-requirement
   remainder and adds six disjoint bounded subsets for Kibana, alert workflow
   and persistence, Behavior Analytics, and LVS queue/format surfaces. It leaves
-  30 without a planning candidate, selects no Warehouse row, and keeps all 84
+  29 without a planning candidate, selects no Warehouse row, and keeps all 83
   live-open requirements unpromoted and runtime-evidence-empty;
-- `planning-requirement-executors-wave12/` audits that exact 30-requirement
+- `planning-requirement-executors-wave12/` audits that exact 29-requirement
   remainder and adds six disjoint bounded subsets for Search documents and
   bounding boxes, real-time alerts, the three UI surfaces, and alert-worker
-  scaling. It leaves 24 without a planning candidate, selects no Warehouse row,
-  and keeps all 84 live-open requirements unpromoted and evidence-empty;
+  scaling. It leaves 23 without a planning candidate, selects no Warehouse row,
+  and keeps all 83 live-open requirements unpromoted and evidence-empty;
 - `ui-runtime-contracts/` binds the three still-open Alerts, Search, and video-
   management UI rows to a strict future browser/API evidence shape. Its inert
   compiler and offline validator require a separate UI origin plus three mock
@@ -150,7 +154,8 @@ in this directory:
   the UI-state-to-strict-export bridge, official Google Maps identity, and
   Thor runtime proof remain open;
 - `calibration-schema-static-executor/` materializes the exact
-  `calibration-schema-static` planning candidate without advancing it: four
+  `calibration-schema-static` planning subset without advancing its capability:
+  four
   generated geo/cartesian/image/MTMC projects are exported twice, checked
   against all exact VSS calibration/Behavior/Road schemas, subjected to seven
   adjacent invalid cases, read back, confined, and cleaned deterministically;
@@ -270,13 +275,15 @@ exact server count. Complete REST totals therefore remain `407 + L` declared
 and `406 + L` normalized; the defensible lower bounds are 421 and 420, not
 complete totals.
 
-The first two deterministic static successors currently materialize 26 of 110
+The deterministic static successors currently materialize 27 of 110
 planning requirements. All 276 full capability oracles remain
-`planning_index_only`; those 26 planning bindings plus two offline MV3DT tool
+`planning_index_only`; those 27 planning bindings plus two offline MV3DT tool
 bindings are static subsets only, with zero runtime evidence and zero
 `passed_current` promotions. The third successor updates the LVS adapter's
 static API contract and binds those two MV3DT subsets without materializing an
-additional planning requirement. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1 +
+additional planning requirement. The fourth successor integrates the exact
+calibration-schema subset while preserving six uncovered global-vector
+records. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1 +
 11 advertised-entry candidates and 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 additional planning
 checks are non-advancing and do not change those live counts. They leave four
 advertised entries as explicit external-attestation blockers and 30 planning

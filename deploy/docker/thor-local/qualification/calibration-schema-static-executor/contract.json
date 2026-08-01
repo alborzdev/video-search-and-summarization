@@ -41,16 +41,8 @@
       "sha256": "d464ea0bfbd1f2df53813cdf5f4a8d6cffdc576924e8a00642cc2b84669beb7e"
     },
     {
-      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
-      "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"
-    },
-    {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
       "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"
-    },
-    {
-      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
     },
     {
       "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json",

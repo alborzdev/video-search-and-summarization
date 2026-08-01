@@ -101,7 +101,21 @@ def stage_and_import(
             ]
         },
     ) == {"project_id": project_id, "staged": 1}
-    response = application.dispatch("GET", f"/api/importSensors/{project_id}/")
+    assert application.dispatch(
+        "GET", f"/api/importSensors/{project_id}/"
+    ).status == 404
+    assert application.dispatch(
+        "POST",
+        f"/api/importSensors/{project_id}/",
+        b'{"action":"import-staged"}',
+        content_type="text/plain",
+    ).status == 415
+    response = application.dispatch(
+        "POST",
+        f"/api/importSensors/{project_id}/",
+        b'{"action":"import-staged"}',
+        content_type="application/json",
+    )
     assert response.status == 200
     assert response.body == b"Imported 1 locally staged sensor(s)\n"
     project = payload(application.dispatch("GET", f"/api/projects/{project_id}/"))

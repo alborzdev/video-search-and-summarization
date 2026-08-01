@@ -89,8 +89,8 @@
     },
     "source_locks": {
       "type": "array",
-      "minItems": 8,
-      "maxItems": 8,
+      "minItems": 6,
+      "maxItems": 6,
       "uniqueItems": true,
       "items": {
         "type": "object",

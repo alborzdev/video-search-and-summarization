@@ -25,11 +25,11 @@
     },
     "oracle_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
-      "raw_sha256": "f8267486856f45cd469655346ca322fa72ea1f7d84b026e28751b7f9cc3da202"
+      "raw_sha256": "a1af2cd99d4df2e6bdec9afdee851b717ce7b0c931718fb1d727bd8090ddcbf5"
     },
     "oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
+      "raw_sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
     }
   },
   "policy": {
@@ -37200,7 +37200,7 @@
       "oracle_profile": "calibration-schema-vss-json",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "6e4ededd81f30c6313ea376b899dd943b5fc739dee302e73886dfb850aee1c53",
+      "oracle_contract_sha256": "f7e5d9fe755a0dff17db493af2ffd0d1120dde8b4f1f7e98c2586bf82d76ba98",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -37374,12 +37374,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {

@@ -59,14 +59,14 @@ def test_exact_denominators_one_match_and_five_honest_mismatches():
     result = _module().build_result()
     assert result["counts"] == {
         "total_planning_requirements": 110,
-        "integrated_materialized": 26,
-        "live_open": 84,
+        "integrated_materialized": 27,
+        "live_open": 83,
         "prior_candidate_selections": 12,
-        "remaining_requirements_audited": 72,
+        "remaining_requirements_audited": 71,
         "cases": 6,
         "observed_match": 1,
         "observed_mismatch": 5,
-        "remaining_requirements_unselected": 66,
+        "remaining_requirements_unselected": 65,
     }
     assert [
         item["case_id"]
@@ -104,12 +104,15 @@ def test_exact_missing_contract_tokens_are_preserved():
         assert failed == assertions
 
 
-def test_exact_72_row_accounting_and_six_selected_rows():
+def test_exact_71_row_accounting_and_six_selected_rows():
     rows = _module().build_result()["remaining_requirement_audit"]
-    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 72
+    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 71
+    assert "calibration-schema-static" not in {
+        row["planning_requirement_id"] for row in rows
+    }
     assert sum(row["classification"] == "selected_source_executor" for row in rows) == 6
     assert (
-        sum(row["classification"] != "selected_source_executor" for row in rows) == 66
+        sum(row["classification"] != "selected_source_executor" for row in rows) == 65
     )
 
 

@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 import json
-import logging
+from collections.abc import Mapping
 from typing import Any, Dict, Optional
 
 from elastic.elastic import ElasticClient, ElasticConfig
@@ -125,13 +125,13 @@ class VLMEnhancedElasticSink(VLMEnhancedSink):
         document: Dict[str, Any],
         raw_vlm_response: VLMResponsePayload,
         user_prompt: str,
-    ) -> None:
+    ) -> Dict[str, Any]:
         index = self._alert_index if event_kind == 'alert' else self._incident_index
         self._logger.info("Publishing to Elastic [sensor=%s category=%s start=%s] index=%s",
                           document.get('sensorId', 'N/A'), document.get('category', 'N/A'),
                           document.get('timestamp', 'N/A'), index)
         try:
-            self._elastic.write_event_response(
+            write_result = self._elastic.write_event_response(
                 document,
                 raw_vlm_response,
                 user_prompt,
@@ -148,26 +148,38 @@ class VLMEnhancedElasticSink(VLMEnhancedSink):
             self._logger.error("Failed to publish to Elastic [sensor=%s category=%s start=%s]",
                                document.get('sensorId', 'N/A'), document.get('category', 'N/A'),
                                document.get('timestamp', 'N/A'), exc_info=True)
-            return
+            return {"transport": "elastic", "outcome": "failed"}
 
         # ─── Mark confirmed after successful write ───
         fingerprint = document.get("Id")
         verdict = (document.get("info", {}).get("verdict") or "").lower()
         if self._redis_handler and fingerprint and verdict == "confirmed":
-            self._redis_handler.mark_verdict_confirmed(fingerprint)
+            try:
+                self._redis_handler.mark_verdict_confirmed(fingerprint)
+            except Exception:
+                # The Elasticsearch write has already been acknowledged.
+                # A secondary Redis marker failure must not turn that fact
+                # into a false sink-failed receipt or trigger republish.
+                self._logger.error(
+                    "Elasticsearch write succeeded but confirmed-verdict "
+                    "Redis marker failed",
+                    extra={"incident_id": document.get("id")},
+                    exc_info=True,
+                )
         # ─────────────────────────────────────────────
 
         log_enriched_event(self._logger, "Elastic", document.get("id"), document)
+        return self._delivery_receipt(write_result)
 
     def _store_error(
         self,
         event_kind: str,
         document: Dict[str, Any],
         error_payload: Dict[str, Any],
-    ) -> None:
+    ) -> Dict[str, Any]:
         index = self._alert_index if event_kind == 'alert' else self._incident_index
         try:
-            self._elastic.write_event_response(
+            write_result = self._elastic.write_event_response(
                 document,
                 error_payload,
                 document.get("info", {}).get("user_prompt"),
@@ -181,8 +193,32 @@ class VLMEnhancedElasticSink(VLMEnhancedSink):
                 extra={"incident_id": document.get("id")},
                 exc_info=True,
             )
-            return
+            return {"transport": "elastic", "outcome": "failed"}
         log_enriched_event(self._logger, "Elastic", document.get("id"), document)
+        return self._delivery_receipt(write_result)
+
+    @staticmethod
+    def _delivery_receipt(write_result: Any) -> Dict[str, Any]:
+        """Summarize Elasticsearch's synchronous index acknowledgement."""
+
+        receipt: Dict[str, Any] = {
+            "transport": "elastic",
+            "outcome": "unconfirmed",
+        }
+        if not isinstance(write_result, Mapping):
+            return receipt
+        document_id = write_result.get("_id")
+        index = write_result.get("_index")
+        result = write_result.get("result")
+        if (
+            result in {"created", "updated", "noop"}
+            and document_id is not None
+            and index is not None
+        ):
+            receipt["outcome"] = "acknowledged"
+            receipt["documentId"] = str(document_id)
+            receipt["index"] = str(index)
+        return receipt
 
     def update_enrichment(
         self,

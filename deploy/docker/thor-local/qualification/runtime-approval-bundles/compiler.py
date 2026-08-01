@@ -21,7 +21,7 @@ CONTRACT_SCHEMA_PATH = HERE / "contract.schema.json"
 PLAN_SCHEMA_PATH = HERE / "plan.schema.json"
 MAX_JSON_BYTES = 2_000_000
 EXPECTED_PACKAGE_HASHES = {
-    "contract.json": "8d410e8001d5175dd73a0d48e6f77b8727acf4de84f757c2549bb67ea1ab0808",
+    "contract.json": "fe6141afc526e496b43cd2b66fb1e9439161125c56f4fac0b0b6f395009b0b7d",
     "contract.schema.json": "400b3b8720cd9332c069cc2d5d14aa54722680a4493ccfabef8701db5e98d36e",
     "plan.schema.json": "ccf37af1c00cac7f677a6af1dca4c5d7f69391bbf4147561e894455fe6ecf218",
 }

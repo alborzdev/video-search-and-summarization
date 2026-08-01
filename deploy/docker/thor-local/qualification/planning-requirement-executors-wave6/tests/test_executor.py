@@ -69,7 +69,7 @@ def test_both_schemas_have_exact_raw_identities_owned_by_executor():
         "a138a02b8e14759327c3b8bd1792252fd6ffc227f130df6451d9cc810ff0288f"
     )
     assert module.EXPECTED_RESULT_SCHEMA_SHA256 == (
-        "2cf8f78b16f392f8c7dbfbb1e841a569f9848dc7aeea6112fd58e81e0ff5a3db"
+        "d5f3ed3fe430f9d86b8cf8ef0f1170821da2885d3d3f509d46aa4ea7d68f786c"
     )
 
 
@@ -77,24 +77,24 @@ def test_exact_accounting_and_set_digests():
     result = _module().build_result()
     assert result["counts"] == {
         "total_planning_requirements": 110,
-        "integrated_materialized": 26,
-        "live_open": 84,
+        "integrated_materialized": 27,
+        "live_open": 83,
         "prior_package_selections": 44,
         "prior_materialized_static_bindings": 26,
         "prior_live_open_candidate_selections": 18,
-        "remaining_requirements_audited": 66,
+        "remaining_requirements_audited": 65,
         "cases": 6,
         "observed_match": 6,
         "observed_mismatch": 0,
         "documented_mismatches_preserved": 5,
         "external_optional_boundaries_preserved": 1,
-        "remaining_requirements_unselected": 60,
+        "remaining_requirements_unselected": 59,
     }
     assert result["set_digests"] == {
         "prior_44": "3a6e3e23bb918167eb2359988416ec84baed1b8402f0b28103c96c28cf93560f",
-        "wave5_remaining_66": "b51107200a0fd2e9c862c5576135c864ab1d9f041bf668dff2ff3934a5fe6f28",
+        "wave5_remaining_65": "69aba6737b9d1815112d7d8d44451d6fdf07d9eefe9b54a89d46850ddc1728b7",
         "wave6_selected_6": "ebed5e3724ad9935e7068974e51b3c7fcdd0506e78e10077a95afc5752d6fcc8",
-        "wave6_remaining_60": "12bada9c389b5550910bfed7073281a59d63b5616266118e983f75522126c342",
+        "wave6_remaining_59": "88ec60aa61ee86e93e9ee239c008e336c2e7cafbea3940e18e778580542485c6",
     }
 
 
@@ -141,12 +141,15 @@ def test_all_source_assertions_match_while_boundaries_remain_explicit():
     )
 
 
-def test_exact_66_row_audit_has_six_selected_and_sixty_unselected():
+def test_exact_65_row_audit_has_six_selected_and_fifty_nine_unselected():
     rows = _module().build_result()["remaining_requirement_audit"]
-    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 66
+    assert len(rows) == len({row["planning_requirement_id"] for row in rows}) == 65
+    assert "calibration-schema-static" not in {
+        row["planning_requirement_id"] for row in rows
+    }
     assert sum(row["classification"] == "selected_source_contract" for row in rows) == 6
     assert (
-        sum(row["classification"] != "selected_source_contract" for row in rows) == 60
+        sum(row["classification"] != "selected_source_contract" for row in rows) == 59
     )
 
 
@@ -170,7 +173,7 @@ def test_wave5_and_all_prior_inventories_are_locked_without_overlap():
     assert current.isdisjoint(prior)
 
 
-def test_candidate_only_policy_and_all_84_requirements_stay_live_open():
+def test_candidate_only_policy_and_all_83_requirements_stay_live_open():
     inventory = json.loads((HERE / "inventory.json").read_text())
     assert inventory["policies"] == {
         "advances_live_acceptance": False,
@@ -191,7 +194,8 @@ def test_candidate_only_policy_and_all_84_requirements_stay_live_open():
         for row in acceptance["wave3_contracts"]["planning_requirements"]
         if row["materialized"] is False
     ]
-    assert len(open_rows) == 84
+    assert len(open_rows) == 83
+    assert "calibration-schema-static" not in {row["id"] for row in open_rows}
     assert all(
         row["executor_ready"] is False and row["runtime_evidence"] == []
         for row in open_rows

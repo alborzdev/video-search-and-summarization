@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "integration_id": "calibration-schema-static-fourth-successor-2026-08-01",
+  "predecessor": {
+    "integrator_path": "deploy/docker/thor-local/qualification/lvs-mcp-static-adapter-integration/integrate_live.py",
+    "integrator_raw_sha256": "17460d7798264a2c7c3de787e2a870a43771705a5c8ac71a90ed484798c84f03",
+    "receipt_path": "deploy/docker/thor-local/qualification/lvs-mcp-static-adapter-integration/live-integration-receipt.json",
+    "receipt_raw_sha256": "e3cc6000d28a8d56f30ccdab20631813b639e7519e11ffc9375da72661ec69fc",
+    "receipt_canonical_sha256": "326103b4682c095ba5b199e6f8d9ce859dda65cc0f0f3bd39b17df55df7d67a4",
+    "contract_sha256": "8015432ecaa593d58bc21c7ac3d6d91dddc8773c19fb8bbeb533fd0671cebc12",
+    "outputs": {
+      "official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
+      "manifest.json": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
+      "acceptance_inventory.json": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f",
+      "capability-oracles.json": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
+    },
+    "compiler_change_output_neutral_at_predecessor": true
+  },
+  "reviewed_inputs": [
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/EVIDENCE.md",
+      "raw_sha256": "da8c84447fd59cd578925fcd35ae5eca45352cfeb2748f0eda28b327a8f798ef"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/README.md",
+      "raw_sha256": "bfdf756782a2d8469ce00b2c446dac86a84585c3a4708c2dd35c03627982f964"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.json",
+      "raw_sha256": "4e18a42bed2d307214b08ad81ef5edf5028fbc983e3e3c1c7446429b0737d584"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.schema.json",
+      "raw_sha256": "7e506f5b155bd10f53c81e55d664ce396d91e0795ddf16f52bddd36b784a822b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/executor.py",
+      "raw_sha256": "420b936e7476ad137cadf1f27dc672dd3bb79ba7c679aded3be6dbbf5bb531fe"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/result.schema.json",
+      "raw_sha256": "849e4517acb4d1b3288164c34ad0689de011ca899da7e2f575c0ada067deffea"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/tests/test_executor.py",
+      "raw_sha256": "267d14e72abef5f268f9168fd09f5ceee58ce3e4e945ece83d2f9580d6cf3821"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/calibration-schema-static-integration/execution-receipt.json",
+      "raw_sha256": "7050c8e513e59fa3393cc3ca747f445ca7a883974c0faa1efc9cc2372f5ef6fb",
+      "canonical_sha256": "290dbdb08439e4d0b726d7047dcda49aacf010002636b027af497339cf340eb9"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/capability_oracles.py",
+      "raw_sha256": "7a1c96055dbdb1d26463f9f4c6952a0f29af2a05ab3ac003dfad82911c14e60f"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+      "raw_sha256": "a1af2cd99d4df2e6bdec9afdee851b717ce7b0c931718fb1d727bd8090ddcbf5"
+    }
+  ],
+  "delta": {
+    "planning_requirement_id": "calibration-schema-static",
+    "planning_owner_type": "global_acceptance_vector",
+    "planning_owner_id": "calibration-schema-static",
+    "capability_id": "calibration.schema.vss-json",
+    "oracle_id": "oracle.calibration.schema.vss-json",
+    "applicable_record_ids": [
+      "calibration.camera-positioning.installation-contract",
+      "calibration.schema.vss-json",
+      "behavior.auto-calibration.failure-recovery",
+      "behavior.auto-calibration.result-verification",
+      "calibration.auto.alignment-schema",
+      "calibration.auto.workflow-six-step",
+      "behavior.auto-calibration.known-limitations"
+    ],
+    "uncovered_applicable_record_ids": [
+      "calibration.camera-positioning.installation-contract",
+      "behavior.auto-calibration.failure-recovery",
+      "behavior.auto-calibration.result-verification",
+      "calibration.auto.alignment-schema",
+      "calibration.auto.workflow-six-step",
+      "behavior.auto-calibration.known-limitations"
+    ],
+    "new_planning_executor_bindings": 1
+  },
+  "expected_counts": {
+    "capabilities": 276,
+    "oracles": 276,
+    "planning_requirements": 110,
+    "materialized_planning_requirements": 27,
+    "open_planning_requirements": 83,
+    "planning_executor_bindings": 27,
+    "offline_tool_observation_bindings": 2,
+    "static_subset_oracle_bindings": 29,
+    "runtime_evidence_records": 0,
+    "passed_current_promotions": 0,
+    "new_calibration_schema_bindings": 1,
+    "explicitly_uncovered_applicable_records": 6
+  },
+  "boundaries": {
+    "evidence_class": "deterministic_file_static_evidence_not_runtime",
+    "capability_runtime_state_changed": false,
+    "capability_oracle_promoted": false,
+    "runtime_evidence_added": false,
+    "warehouse_sample_bundle": "excluded",
+    "network": "forbidden",
+    "docker": "forbidden",
+    "subprocess": "forbidden"
+  },
+  "contract_sha256": "a5c9c6e73b415a16f409777a350ae1643754689a45ed15d97cc53569b1ee2e5f",
+  "outputs": {
+    "official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
+    "manifest.json": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
+    "acceptance_inventory.json": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
+    "capability-oracles.json": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"
+  },
+  "lifecycle": "fourth_calibration_schema_static_successor_integrated"
+}
