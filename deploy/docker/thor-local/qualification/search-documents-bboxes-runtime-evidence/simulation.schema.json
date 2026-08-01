@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/search-documents-bboxes-runtime-evidence-simulation.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "collector_id",
+    "mode",
+    "status",
+    "promotion_eligible",
+    "runtime_requests",
+    "runtime_actions",
+    "simulated_requests",
+    "simulated_actions",
+    "planning_requirement_id",
+    "capability_id",
+    "oracle_id",
+    "canonical_current_state",
+    "canonical_evidence",
+    "fixture_id",
+    "fixture_sha256",
+    "observations",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "collector_id": {"const": "search-documents-bboxes-runtime-evidence"},
+    "mode": {"const": "offline-fake-simulation"},
+    "status": {"const": "candidate_simulation_valid_non_advancing"},
+    "promotion_eligible": {"const": false},
+    "runtime_requests": {"const": 0},
+    "runtime_actions": {"const": 0},
+    "simulated_requests": {"const": 14},
+    "simulated_actions": {"const": 14},
+    "planning_requirement_id": {"const": "search-documents-and-bboxes"},
+    "capability_id": {"const": "runtime.agent.search-profile"},
+    "oracle_id": {"const": "oracle.runtime.agent.search-profile"},
+    "canonical_current_state": {"const": "open_unexecuted"},
+    "canonical_evidence": {"const": []},
+    "fixture_id": {"const": "local20-search-documents-bboxes-v1"},
+    "fixture_sha256": {"const": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517"},
+    "observations": {
+      "type": "array",
+      "prefixItems": [
+        {"$ref": "#/$defs/prestate"},
+        {"$ref": "#/$defs/search_route"},
+        {"$ref": "#/$defs/attribute_route"},
+        {"$ref": "#/$defs/fusion_route"},
+        {"$ref": "#/$defs/image_route"},
+        {"$ref": "#/$defs/same_object"},
+        {"$ref": "#/$defs/append_attributes"},
+        {"$ref": "#/$defs/rerank"},
+        {"$ref": "#/$defs/fuse_attributes"},
+        {"$ref": "#/$defs/top_k"},
+        {"$ref": "#/$defs/bbox_knn"},
+        {"$ref": "#/$defs/negative"},
+        {"$ref": "#/$defs/cleanup"},
+        {"$ref": "#/$defs/postconditions"}
+      ],
+      "items": false,
+      "minItems": 14,
+      "maxItems": 14
+    },
+    "blockers": {"$ref": "#/$defs/blockers"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "document_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "document_id"],
+      "properties": {
+        "index": {"type": "string", "pattern": "^mdx-(embed-filtered|behavior|raw)-vss-oracle-runtime-agent-search-profile$"},
+        "document_id": {"type": "string", "pattern": "^vss-oracle-runtime-agent-search-profile-doc-camera-0[12]-0001$"}
+      }
+    },
+    "prestate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "namespace", "service_state_digest", "configuration_digest", "non_owned_indices_digest", "owned_documents", "target_absent", "actual_runtime_observed"],
+      "properties": {
+        "sequence": {"const": 1},
+        "step_id": {"const": "capture-pre-state"},
+        "observation_kind": {"const": "fake_prestate"},
+        "namespace": {"const": "vss-oracle-runtime-agent-search-profile"},
+        "service_state_digest": {"$ref": "#/$defs/digest"},
+        "configuration_digest": {"$ref": "#/$defs/digest"},
+        "non_owned_indices_digest": {"$ref": "#/$defs/digest"},
+        "owned_documents": {"const": []},
+        "target_absent": {"const": true},
+        "actual_runtime_observed": {"const": false}
+      }
+    },
+    "route_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "exact_path", "expected_status", "forbidden_alias_used", "actual_http_response_observed", "currently_registered"],
+      "properties": {
+        "sequence": {"type": "integer"},
+        "step_id": {"type": "string"},
+        "observation_kind": {"const": "fake_route_expectation"},
+        "exact_path": {"type": "string"},
+        "expected_status": {"const": 200},
+        "forbidden_alias_used": {"const": false},
+        "actual_http_response_observed": {"const": false},
+        "currently_registered": {"type": "boolean"}
+      }
+    },
+    "search_route": {"allOf": [{"$ref": "#/$defs/route_base"}, {"properties": {"sequence": {"const": 2}, "step_id": {"const": "search-route"}, "exact_path": {"const": "/api/v1/search"}, "currently_registered": {"const": true}}}]},
+    "attribute_route": {"allOf": [{"$ref": "#/$defs/route_base"}, {"properties": {"sequence": {"const": 3}, "step_id": {"const": "attribute-route"}, "exact_path": {"const": "/api/v1/search/attribute"}, "currently_registered": {"const": false}}}]},
+    "fusion_route": {"allOf": [{"$ref": "#/$defs/route_base"}, {"properties": {"sequence": {"const": 4}, "step_id": {"const": "fusion-route"}, "exact_path": {"const": "/api/v1/search/fusion"}, "currently_registered": {"const": false}}}]},
+    "image_route": {"allOf": [{"$ref": "#/$defs/route_base"}, {"properties": {"sequence": {"const": 5}, "step_id": {"const": "image-route"}, "exact_path": {"const": "/api/v1/search/image"}, "currently_registered": {"const": false}}}]},
+    "same_object": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "same_object_merge_expected", "minimum_clip_seconds", "actual_semantic_observed"],
+      "properties": {"sequence": {"const": 6}, "step_id": {"const": "same-object-merge"}, "observation_kind": {"const": "fake_semantic_expectation"}, "same_object_merge_expected": {"const": true}, "minimum_clip_seconds": {"const": 1}, "actual_semantic_observed": {"const": false}}
+    },
+    "append_attributes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "multiple_attribute_mode", "actual_semantic_observed"],
+      "properties": {"sequence": {"const": 7}, "step_id": {"const": "append-multiple-attributes"}, "observation_kind": {"const": "fake_semantic_expectation"}, "multiple_attribute_mode": {"const": "append"}, "actual_semantic_observed": {"const": false}}
+    },
+    "rerank": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "order", "default_rank_fusion", "fallback_allowed", "actual_semantic_observed"],
+      "properties": {"sequence": {"const": 8}, "step_id": {"const": "rerank-or-fallback"}, "observation_kind": {"const": "fake_semantic_expectation"}, "order": {"const": ["embedding", "rerank_or_fallback"]}, "default_rank_fusion": {"const": "rrf"}, "fallback_allowed": {"const": true}, "actual_semantic_observed": {"const": false}}
+    },
+    "fuse_attributes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "multiple_attribute_mode", "actual_semantic_observed"],
+      "properties": {"sequence": {"const": 9}, "step_id": {"const": "fuse-multiple-attributes"}, "observation_kind": {"const": "fake_semantic_expectation"}, "multiple_attribute_mode": {"const": "fuse"}, "actual_semantic_observed": {"const": false}}
+    },
+    "top_k": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "same_video_top_k", "actual_semantic_observed"],
+      "properties": {"sequence": {"const": 10}, "step_id": {"const": "same-video-top-k"}, "observation_kind": {"const": "fake_semantic_expectation"}, "same_video_top_k": {"const": 1}, "actual_semantic_observed": {"const": false}}
+    },
+    "bbox_knn": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "selected_bbox", "retrieval", "query_fixture", "image_bytes_present", "image_digest_present", "actual_semantic_observed"],
+      "properties": {"sequence": {"const": 11}, "step_id": {"const": "selected-bbox-knn"}, "observation_kind": {"const": "fake_semantic_expectation"}, "selected_bbox": {"const": true}, "retrieval": {"const": "object_level_knn"}, "query_fixture": {"const": "frame-camera-01-0001"}, "image_bytes_present": {"const": false}, "image_digest_present": {"const": false}, "actual_semantic_observed": {"const": false}}
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "index_family", "expected_status", "backend_query_count", "backend_write_count", "actual_http_response_observed"],
+      "properties": {"sequence": {"const": 12}, "step_id": {"const": "reject-invalid-index-family"}, "observation_kind": {"const": "fake_adjacent_negative_expectation"}, "index_family": {"const": "vss-invalid-search-*"}, "expected_status": {"enum": [400, 422]}, "backend_query_count": {"const": 0}, "backend_write_count": {"const": 0}, "actual_http_response_observed": {"const": false}}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "registered_documents", "simulated_deleted_documents", "lifo", "index_delete_attempted", "ambiguous_resource_delete_attempted", "foreign_resource_delete_attempted", "actual_delete_count"],
+      "properties": {
+        "sequence": {"const": 13}, "step_id": {"const": "restore-owned-state"}, "observation_kind": {"const": "fake_cleanup_expectation"},
+        "registered_documents": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/document_ref"}},
+        "simulated_deleted_documents": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/document_ref"}},
+        "lifo": {"const": true}, "index_delete_attempted": {"const": false}, "ambiguous_resource_delete_attempted": {"const": false}, "foreign_resource_delete_attempted": {"const": false}, "actual_delete_count": {"const": 0}
+      }
+    },
+    "postconditions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "step_id", "observation_kind", "target_absent", "service_state_digest", "configuration_digest", "non_owned_indices_digest", "index_deleted", "late_reappearance_window_observed", "actual_runtime_observed"],
+      "properties": {"sequence": {"const": 14}, "step_id": {"const": "verify-postconditions"}, "observation_kind": {"const": "fake_postcondition_expectation"}, "target_absent": {"const": true}, "service_state_digest": {"$ref": "#/$defs/digest"}, "configuration_digest": {"$ref": "#/$defs/digest"}, "non_owned_indices_digest": {"$ref": "#/$defs/digest"}, "index_deleted": {"const": false}, "late_reappearance_window_observed": {"const": false}, "actual_runtime_observed": {"const": false}}
+    },
+    "blockers": {
+      "const": [
+        "required routes /api/v1/search/attribute, /api/v1/search/fusion, and /api/v1/search/image are absent from the current Search profile",
+        "registered /api/v1/attribute_search and /api/v1/embed_search aliases are not accepted as parity",
+        "selected-bbox fixture names frame IDs but provides no image bytes or image digest",
+        "no Search service, Elasticsearch query, index write, HTTP response, cleanup race, or delayed reappearance was observed"
+      ]
+    }
+  }
+}

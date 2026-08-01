@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "collector_id": "search-documents-bboxes-runtime-evidence",
+  "mode": "offline-fake-simulation",
+  "status": "candidate_simulation_valid_non_advancing",
+  "promotion_eligible": false,
+  "runtime_requests": 0,
+  "runtime_actions": 0,
+  "simulated_requests": 14,
+  "simulated_actions": 14,
+  "planning_requirement_id": "search-documents-and-bboxes",
+  "capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.agent.search-profile",
+  "canonical_current_state": "open_unexecuted",
+  "canonical_evidence": [],
+  "fixture_id": "local20-search-documents-bboxes-v1",
+  "fixture_sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517",
+  "observations": [
+    {
+      "sequence": 1,
+      "step_id": "capture-pre-state",
+      "observation_kind": "fake_prestate",
+      "namespace": "vss-oracle-runtime-agent-search-profile",
+      "service_state_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "configuration_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "non_owned_indices_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "owned_documents": [],
+      "target_absent": true,
+      "actual_runtime_observed": false
+    },
+    {
+      "sequence": 2,
+      "step_id": "search-route",
+      "observation_kind": "fake_route_expectation",
+      "exact_path": "/api/v1/search",
+      "expected_status": 200,
+      "forbidden_alias_used": false,
+      "actual_http_response_observed": false,
+      "currently_registered": true
+    },
+    {
+      "sequence": 3,
+      "step_id": "attribute-route",
+      "observation_kind": "fake_route_expectation",
+      "exact_path": "/api/v1/search/attribute",
+      "expected_status": 200,
+      "forbidden_alias_used": false,
+      "actual_http_response_observed": false,
+      "currently_registered": false
+    },
+    {
+      "sequence": 4,
+      "step_id": "fusion-route",
+      "observation_kind": "fake_route_expectation",
+      "exact_path": "/api/v1/search/fusion",
+      "expected_status": 200,
+      "forbidden_alias_used": false,
+      "actual_http_response_observed": false,
+      "currently_registered": false
+    },
+    {
+      "sequence": 5,
+      "step_id": "image-route",
+      "observation_kind": "fake_route_expectation",
+      "exact_path": "/api/v1/search/image",
+      "expected_status": 200,
+      "forbidden_alias_used": false,
+      "actual_http_response_observed": false,
+      "currently_registered": false
+    },
+    {
+      "sequence": 6,
+      "step_id": "same-object-merge",
+      "observation_kind": "fake_semantic_expectation",
+      "same_object_merge_expected": true,
+      "minimum_clip_seconds": 1,
+      "actual_semantic_observed": false
+    },
+    {
+      "sequence": 7,
+      "step_id": "append-multiple-attributes",
+      "observation_kind": "fake_semantic_expectation",
+      "multiple_attribute_mode": "append",
+      "actual_semantic_observed": false
+    },
+    {
+      "sequence": 8,
+      "step_id": "rerank-or-fallback",
+      "observation_kind": "fake_semantic_expectation",
+      "order": ["embedding", "rerank_or_fallback"],
+      "default_rank_fusion": "rrf",
+      "fallback_allowed": true,
+      "actual_semantic_observed": false
+    },
+    {
+      "sequence": 9,
+      "step_id": "fuse-multiple-attributes",
+      "observation_kind": "fake_semantic_expectation",
+      "multiple_attribute_mode": "fuse",
+      "actual_semantic_observed": false
+    },
+    {
+      "sequence": 10,
+      "step_id": "same-video-top-k",
+      "observation_kind": "fake_semantic_expectation",
+      "same_video_top_k": 1,
+      "actual_semantic_observed": false
+    },
+    {
+      "sequence": 11,
+      "step_id": "selected-bbox-knn",
+      "observation_kind": "fake_semantic_expectation",
+      "selected_bbox": true,
+      "retrieval": "object_level_knn",
+      "query_fixture": "frame-camera-01-0001",
+      "image_bytes_present": false,
+      "image_digest_present": false,
+      "actual_semantic_observed": false
+    },
+    {
+      "sequence": 12,
+      "step_id": "reject-invalid-index-family",
+      "observation_kind": "fake_adjacent_negative_expectation",
+      "index_family": "vss-invalid-search-*",
+      "expected_status": 422,
+      "backend_query_count": 0,
+      "backend_write_count": 0,
+      "actual_http_response_observed": false
+    },
+    {
+      "sequence": 13,
+      "step_id": "restore-owned-state",
+      "observation_kind": "fake_cleanup_expectation",
+      "registered_documents": [
+        {"index": "mdx-embed-filtered-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+        {"index": "mdx-embed-filtered-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"},
+        {"index": "mdx-behavior-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+        {"index": "mdx-behavior-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"},
+        {"index": "mdx-raw-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+        {"index": "mdx-raw-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"}
+      ],
+      "simulated_deleted_documents": [
+        {"index": "mdx-raw-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"},
+        {"index": "mdx-raw-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+        {"index": "mdx-behavior-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"},
+        {"index": "mdx-behavior-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+        {"index": "mdx-embed-filtered-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"},
+        {"index": "mdx-embed-filtered-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"}
+      ],
+      "lifo": true,
+      "index_delete_attempted": false,
+      "ambiguous_resource_delete_attempted": false,
+      "foreign_resource_delete_attempted": false,
+      "actual_delete_count": 0
+    },
+    {
+      "sequence": 14,
+      "step_id": "verify-postconditions",
+      "observation_kind": "fake_postcondition_expectation",
+      "target_absent": true,
+      "service_state_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "configuration_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "non_owned_indices_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "index_deleted": false,
+      "late_reappearance_window_observed": false,
+      "actual_runtime_observed": false
+    }
+  ],
+  "blockers": [
+    "required routes /api/v1/search/attribute, /api/v1/search/fusion, and /api/v1/search/image are absent from the current Search profile",
+    "registered /api/v1/attribute_search and /api/v1/embed_search aliases are not accepted as parity",
+    "selected-bbox fixture names frame IDs but provides no image bytes or image digest",
+    "no Search service, Elasticsearch query, index write, HTTP response, cleanup race, or delayed reappearance was observed"
+  ]
+}

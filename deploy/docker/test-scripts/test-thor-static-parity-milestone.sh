@@ -307,6 +307,16 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/alert" \
   "${repo_root}/services/alert/test/api/test_sink_delivery_receipts_offline.py" \
   "${repo_root}/services/alert/test/api/test_verification_routes_isolated.py"
 
+# Three remaining Alert systems requirements now have one digest-locked static
+# executor over the production DirectMedia, NvSchema, sink-receipt, and terminal
+# job-store code. External clients are deterministic fakes; the result remains
+# non-advancing with empty runtime evidence and excludes Warehouse data.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/systems-alert-completion-static-executor/executor.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/systems-alert-completion-static-executor/tests"
+
 # Shared future runtime-evidence primitives are checked only through their
 # static contract and fake in-memory transport/resource self-test. The library
 # constructs no network opener and performs no host, Docker, subprocess,
@@ -339,6 +349,21 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-alerts/test_collector.py"
+
+# The Search documents/bboxes requirement has an exact 14-step future-runtime
+# plan plus a strict plain-JSON transcript validator. Static qualification runs
+# only the inert plan and fake simulation: zero runtime requests/actions, no
+# callback or live adapter, no promotion, and no Warehouse sample.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/collector.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/collector.py" \
+  validate-simulation \
+  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/fake-simulation.json" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/test_collector.py"
 
 # The VIOS playback-remediation candidate binds the final canonical oracle and
 # local20 metadata to an inert 8-request/9-action future plan. Its plain-data
@@ -469,6 +494,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-wave7/tests"
+
+# Wave eight upgrades the two LVS MCP literals from source-shape candidates to
+# a real in-process production-server subset: exact tool registration, ASGI
+# dispatch, and bounded file-tool behavior. SSE/MCP transport, live deployment,
+# inference, runtime evidence, and official promotion remain explicitly open.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave8/executor.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave8/tests"
 
 # The exact four external blockers have a credential-free future attestation
 # contract. Static qualification compiles only the inert plan and adversarial

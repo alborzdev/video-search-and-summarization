@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "collector_id": "search-documents-bboxes-runtime-evidence",
+  "mode": "offline-plan-and-fake-validation-only",
+  "default_execution_enabled": false,
+  "planning_requirement_id": "search-documents-and-bboxes",
+  "capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.agent.search-profile",
+  "canonical_binding": {
+    "canonical_oracle_index": 165,
+    "canonical_oracle_sha256": "79c459485a71e0f70c910d0a245e0146918225f0593f144cd0eadde412908529",
+    "normalized_oracle_sha256": "e81c27d35a3e874f2e57b8a0831cde6674d04ba3fad7468e5384c1926921d2a5",
+    "planning_payload_canonical_sha256": "7f0b99aa5bd8357b7b0ec2a8677868e44c788c82d92608ca2dc8617933fc167b",
+    "integrated_workflow_sha256": "c68ee322cb3e449eafa990654a02f23e1f326cf7c92c70b8af98442dc9a00311",
+    "canonical_current_state": "open_unexecuted",
+    "canonical_evidence_count": 0
+  },
+  "fixture_binding": {
+    "fixture_id": "local20-search-documents-bboxes-v1",
+    "fixture_path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/search-documents-bboxes.json",
+    "fixture_sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517",
+    "document_count": 2,
+    "route_case_count": 4,
+    "selected_bbox_image_bytes_present": false,
+    "selected_bbox_image_digest_present": false
+  },
+  "route_contract": {
+    "required_exact_paths": [
+      "/api/v1/search",
+      "/api/v1/search/attribute",
+      "/api/v1/search/fusion",
+      "/api/v1/search/image"
+    ],
+    "currently_absent_required_paths": [
+      "/api/v1/search/attribute",
+      "/api/v1/search/fusion",
+      "/api/v1/search/image"
+    ],
+    "forbidden_alias_equivalences": [
+      "/api/v1/attribute_search",
+      "/api/v1/embed_search"
+    ],
+    "allowed_index_patterns": [
+      "mdx-embed-filtered-*",
+      "mdx-behavior-*",
+      "mdx-raw-*"
+    ],
+    "adjacent_invalid_index_family": "vss-invalid-search-*"
+  },
+  "execution_bounds": {
+    "max_requests": 14,
+    "max_actions": 14,
+    "max_duration_seconds": 900,
+    "network_scope": "none-plan-and-fake-only",
+    "warehouse_sample_bundle": "excluded",
+    "subprocess_allowed": false,
+    "docker_allowed": false,
+    "service_lifecycle_allowed": false,
+    "download_allowed": false,
+    "write_allowed": false,
+    "phases": [
+      "pre_state",
+      "positive",
+      "adjacent_negative",
+      "restore",
+      "postcondition"
+    ]
+  },
+  "workflow": [
+    {"sequence": 1, "id": "capture-pre-state", "phase": "pre_state", "request_cost": 1, "action_cost": 1},
+    {"sequence": 2, "id": "search-route", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 3, "id": "attribute-route", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 4, "id": "fusion-route", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 5, "id": "image-route", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 6, "id": "same-object-merge", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 7, "id": "append-multiple-attributes", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 8, "id": "rerank-or-fallback", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 9, "id": "fuse-multiple-attributes", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 10, "id": "same-video-top-k", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 11, "id": "selected-bbox-knn", "phase": "positive", "request_cost": 1, "action_cost": 1},
+    {"sequence": 12, "id": "reject-invalid-index-family", "phase": "adjacent_negative", "request_cost": 1, "action_cost": 1},
+    {"sequence": 13, "id": "restore-owned-state", "phase": "restore", "request_cost": 1, "action_cost": 1},
+    {"sequence": 14, "id": "verify-postconditions", "phase": "postcondition", "request_cost": 1, "action_cost": 1}
+  ],
+  "ownership": {
+    "namespace": "vss-oracle-runtime-agent-search-profile",
+    "owned_resource_type": "elasticsearch-document",
+    "registration_gate": "exact successful create plus exact document readback matching namespace, index, document ID, and source digest",
+    "ambiguous_create_policy": "fail closed without ownership registration or deletion",
+    "foreign_resource_policy": "never mutate",
+    "index_delete_allowed": false,
+    "registered_documents": [
+      {"index": "mdx-embed-filtered-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+      {"index": "mdx-embed-filtered-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"},
+      {"index": "mdx-behavior-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+      {"index": "mdx-behavior-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"},
+      {"index": "mdx-raw-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-01-0001"},
+      {"index": "mdx-raw-vss-oracle-runtime-agent-search-profile", "document_id": "vss-oracle-runtime-agent-search-profile-doc-camera-02-0001"}
+    ]
+  },
+  "adjacent_negative": {
+    "step_id": "reject-invalid-index-family",
+    "index_family": "vss-invalid-search-*",
+    "allowed_statuses": [400, 422],
+    "required_backend_query_count": 0,
+    "required_backend_write_count": 0
+  },
+  "cleanup": {
+    "order": "lifo",
+    "delete_scope": "exact read-back-confirmed namespace-owned document IDs only",
+    "index_delete_allowed": false,
+    "ambiguous_resource_delete_allowed": false,
+    "foreign_resource_delete_allowed": false,
+    "postconditions": [
+      "every registered namespace-owned document is absent",
+      "no index was deleted",
+      "service and configuration digests match pre-state",
+      "non-owned index and document digests match pre-state"
+    ]
+  },
+  "evidence_scope": {
+    "promotion_eligible": false,
+    "runtime_requests": 0,
+    "runtime_actions": 0,
+    "blockers": [
+      "required routes /api/v1/search/attribute, /api/v1/search/fusion, and /api/v1/search/image are absent from the current Search profile",
+      "registered /api/v1/attribute_search and /api/v1/embed_search aliases are not accepted as parity",
+      "selected-bbox fixture names frame IDs but provides no image bytes or image digest",
+      "no Search service, Elasticsearch query, index write, HTTP response, cleanup race, or delayed reappearance was observed"
+    ]
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/contract.json", "sha256": "c96abad933b006367ca36d1fdbf5c7e5173b366f480e4dbb83e6c1de320acbfb"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json", "sha256": "8a1172c0569b224c2453772e86319cf30b153af4ce0f5ab108af3274afd1fd95"},
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
+    {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/manifest.json", "sha256": "f6f994992620fe34da36695be82b9092fc04b64a3f065a2472f614a71f77935b"},
+    {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/search-documents-bboxes.json", "sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517"},
+    {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixture.schema.json", "sha256": "5b98998e21ce43838ff19ca8f59761e43fdbe0ae541319829e236eb9d27ec887"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave12/inventory.json", "sha256": "360e657f7aeab4b5f37ce45047443976e6b7c7136d5b3363c6fe07e2cff2226a"},
+    {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "fdacf0a0c9db2c4ba2a11408c2a1314bd72e403b5a3612016c335a9a59cbb4ca"},
+    {"path": "services/agent/src/vss_agents/agents/search_agent.py", "sha256": "a5de8de3ab86839671de88dd5bc356339044806ad71c1e0d1310033ce5373040"},
+    {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
+    {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
+    {"path": "services/agent/src/vss_agents/tools/embed_search.py", "sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"},
+    {"path": "services/agent/src/vss_agents/tools/fusion.py", "sha256": "cc79953fdf75550dcbde841680120fe9e71fb4b3fba3cf680e6c9b04547c8a28"}
+  ]
+}

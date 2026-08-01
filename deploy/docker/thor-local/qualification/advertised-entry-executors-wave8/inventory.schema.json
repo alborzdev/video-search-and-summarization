@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "source_plan", "source_manifest",
+    "live_official_capabilities", "live_capability_oracles", "predecessors",
+    "policy", "denominator", "fixture", "source_locks", "cases"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_executable_subset_non_advancing"},
+    "source_plan": {"$ref": "#/$defs/planLock"},
+    "source_manifest": {"$ref": "#/$defs/fileLock"},
+    "live_official_capabilities": {"$ref": "#/$defs/fileLock"},
+    "live_capability_oracles": {"$ref": "#/$defs/fileLock"},
+    "predecessors": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/predecessor"}, {"properties": {"role": {"const": "exact_original_source_candidates"}}}]},
+        {"allOf": [{"$ref": "#/$defs/predecessor"}, {"properties": {"role": {"const": "complete_pre_wave8_candidate_denominator"}}}]}
+      ],
+      "items": false
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "candidate_only", "result_class", "can_mark_passed_current",
+        "official_capability_effect", "live_acceptance_mutation_allowed",
+        "live_oracle_mutation_allowed", "runtime_evidence", "network_allowed",
+        "socket_allowed", "subprocess_allowed", "docker_allowed",
+        "lifecycle_allowed", "downloads_allowed", "credentials_allowed",
+        "caller_supplied_callbacks_allowed", "warehouse_sample_bundle",
+        "file_writes", "mcp_dependency_strategy"
+      ],
+      "properties": {
+        "candidate_only": {"const": true},
+        "result_class": {"const": "candidate_executable_subset_non_advancing"},
+        "can_mark_passed_current": {"const": false},
+        "official_capability_effect": {"const": "none_candidate_only"},
+        "live_acceptance_mutation_allowed": {"const": false},
+        "live_oracle_mutation_allowed": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "network_allowed": {"const": false},
+        "socket_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "caller_supplied_callbacks_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "file_writes": {"const": "executor_owned_private_temporary_directory_only"},
+        "mcp_dependency_strategy": {"const": "import_only_registration_type_stubs"}
+      }
+    },
+    "denominator": {
+      "const": {
+        "advertised_gap_entries": 87,
+        "pre_wave8_candidates": 83,
+        "selected_upgrades": 2,
+        "entries_without_candidate": 4,
+        "official_open_entries": 87
+      }
+    },
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["filename", "content_utf8", "sha256", "max_bytes"],
+      "properties": {
+        "filename": {"const": "wave8-fixture.mp4"},
+        "content_utf8": {"const": "wave8-lvs-media-fixture\n"},
+        "sha256": {"const": "8828ea64e48f0b522ee57e9878f1a1dcd41acd430687f223fd1f393603ad6602"},
+        "max_bytes": {"const": 64}
+      }
+    },
+    "source_locks": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"$ref": "#/$defs/sourceLock"}
+    },
+    "cases": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/case"}, {"properties": {"entry_id": {"const": "manifest-gap.video-summarization-live.05-sse-mcp-server"}, "advertised": {"const": "SSE MCP server"}, "adapter_id": {"const": "lvs_shared_server_dispatch_subset"}}}]},
+        {"allOf": [{"$ref": "#/$defs/case"}, {"properties": {"entry_id": {"const": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"}, "advertised": {"const": "LVS MCP"}, "adapter_id": {"const": "lvs_tool_dispatch_and_file_lifecycle"}}}]}
+      ],
+      "items": false
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "safePath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+    "fileLock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/safePath"},
+        "raw_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "sourceLock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/safePath"},
+        "sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "planLock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256", "plan_payload_sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/safePath"},
+        "raw_sha256": {"$ref": "#/$defs/sha"},
+        "plan_payload_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "predecessor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256", "role"],
+      "properties": {
+        "path": {"$ref": "#/$defs/safePath"},
+        "raw_sha256": {"$ref": "#/$defs/sha"},
+        "role": {"enum": ["exact_original_source_candidates", "complete_pre_wave8_candidate_denominator"]}
+      }
+    },
+    "case": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "manifest_pointer", "entry_id", "proposed_capability_id", "oracle_id",
+        "advertised", "advertised_utf8_sha256", "advertised_canonical_sha256",
+        "predecessor_case_canonical_sha256", "adapter_id", "evidence_scope",
+        "retained_blockers"
+      ],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "entry_id": {"enum": ["manifest-gap.video-summarization-live.05-sse-mcp-server", "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"]},
+        "proposed_capability_id": {"type": "string", "minLength": 1},
+        "oracle_id": {"type": "string", "minLength": 1},
+        "advertised": {"enum": ["SSE MCP server", "LVS MCP"]},
+        "advertised_utf8_sha256": {"$ref": "#/$defs/sha"},
+        "advertised_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "predecessor_case_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "adapter_id": {"enum": ["lvs_shared_server_dispatch_subset", "lvs_tool_dispatch_and_file_lifecycle"]},
+        "evidence_scope": {"enum": [
+          "subset: production LVS MCP server construction, exact tool registration, and in-process shared tool dispatch; no SSE connection, MCP transport/session/handshake, server lifecycle, deployed LVS, VLM inference, or Thor readiness",
+          "subset: production 13-tool registration plus in-process health and bounded file add/list/info/delete semantics with rejection, rollback, and sanitized-error checks; no MCP transport/session/handshake, live service, model, summarization, or Thor readiness"
+        ]},
+        "retained_blockers": {
+          "type": "array", "minItems": 4, "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"entry_id": {"const": "manifest-gap.video-summarization-live.05-sse-mcp-server"}}, "required": ["entry_id"]},
+          "then": {"properties": {"evidence_scope": {"const": "subset: production LVS MCP server construction, exact tool registration, and in-process shared tool dispatch; no SSE connection, MCP transport/session/handshake, server lifecycle, deployed LVS, VLM inference, or Thor readiness"}}}
+        },
+        {
+          "if": {"properties": {"entry_id": {"const": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"}}, "required": ["entry_id"]},
+          "then": {"properties": {"evidence_scope": {"const": "subset: production 13-tool registration plus in-process health and bounded file add/list/info/delete semantics with rejection, rollback, and sanitized-error checks; no MCP transport/session/handshake, live service, model, summarization, or Thor readiness"}}}
+        }
+      ]
+    }
+  }
+}

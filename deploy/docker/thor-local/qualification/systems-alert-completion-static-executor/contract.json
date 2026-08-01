@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-systems-alert-completion-static-executor-v1",
+  "mode": "candidate_only_systems_alert_completion_static",
+  "policy": {
+    "candidate_only": true,
+    "advances_live_acceptance": false,
+    "can_mark_passed_current": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "service_lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "writes": "executor_owned_private_temporary_directory_only"
+  },
+  "bindings": [
+    {
+      "planning_requirement_id": "systems-alert-workflow-modes",
+      "planning_requirement_sha256": "cd0b220b4847056fc2346206edae2a85c0a5d4e61a83513badd2eccfbf5708db",
+      "planning_payload_sha256": "22b26e286a6cb22f949753ee1a2dfbbb17b0cf92c68063674aea0d08e3bb4425",
+      "capability_id": "runtime.alerts.workflow-modes",
+      "capability_sha256": "baac3d6639dbec00c35513401ed93cd12835bb5351aba263c557098540126fb0",
+      "oracle_id": "oracle.runtime.alerts.workflow-modes",
+      "oracle_sha256": "105f4b523e6ea5db12586b3bacfa57a9af8f1d7c6eed44d292b6de64cfe27605"
+    },
+    {
+      "planning_requirement_id": "systems-alert-nvschema",
+      "planning_requirement_sha256": "7fbedafaf1b9c29f5b3918ffe52df90b9da1ae55831449da8763bc5a47a7975c",
+      "planning_payload_sha256": "5c7586e0798de78ac4b59dd26c6af2c4043fe654c22967503338ff5c5a6220e8",
+      "capability_id": "protocol.alerts.nvschema-ingestion",
+      "capability_sha256": "2b32cc4797942196981ab4c87942f2648f8251e4b14c2cc3111c947d32b1a666",
+      "oracle_id": "oracle.protocol.alerts.nvschema-ingestion",
+      "oracle_sha256": "ec5aa4ae87993b4c725f56711503f609d4ae1df72be0507285c551475527b1c8"
+    },
+    {
+      "planning_requirement_id": "systems-alert-persistence",
+      "planning_requirement_sha256": "36bfefd80aef8548b3877b099154fb495462083db555725cb6d2fa79f88998f8",
+      "planning_payload_sha256": "c4303d9d4185c478373588a3efd844225164e0a589aaef8e6570839ccfcda24e",
+      "capability_id": "runtime.alerts.persistence-output",
+      "capability_sha256": "c3d472f46f6e79ff10ff8cd088ad4bbab0415f1f10fbe10d9293e45ece31b454",
+      "oracle_id": "oracle.runtime.alerts.persistence-output",
+      "oracle_sha256": "913f710acf7a505bdb426f11c3a206be332686e52c8d4c490af4dd7ef736d030"
+    }
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"},
+    {"path": "services/alert/handlers/direct_media/direct_media_handler.py", "sha256": "b02d2f011b77f735d63ceffcad12d341d1888505bbe83ab47fed8154900d6a0d"},
+    {"path": "services/alert/handlers/direct_media/media_downloader.py", "sha256": "9575d3f2c0e42af45e0706ed84b2626b911da96567b97aa611422a8229db8d1f"},
+    {"path": "services/alert/models/responses.py", "sha256": "0c658632db38f83a1a956f389c964f87dc44ba23032689983844cd2284b1c21f"},
+    {"path": "services/alert/models/pluggable_parser_runtime.py", "sha256": "6570afd986167b918acc7262de8e805176e39824897aa9cb8c48b7896a0b9535"},
+    {"path": "services/alert/utils/schema_util.py", "sha256": "43e56364b8501627b03690ccfc9d8352b14ce702217d8a12cdaf15e7d51d9a4b"},
+    {"path": "services/alert/mdx/anomaly/protobuf/ext_pb2.py", "sha256": "a51bbe015b433d61e8bcad654f1e1e081fd75be30283b85eec7a57bfd6b14536"},
+    {"path": "services/alert/mdx/anomaly/protobuf/schema_pb2.py", "sha256": "ed41100ece8a86cb606727f701fcf2bce2f4f2b274cd4cfa29a09c8261000e37"},
+    {"path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py", "sha256": "ff3daca60d0528ff47fbda929ed802bb707d814f191d7f983508b50cda42ccb4"},
+    {"path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py", "sha256": "dad6c8c7c5a361e416df8e54c4f7c71af58cf9ad089347e029ece6f75688746e"},
+    {"path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_kafka.py", "sha256": "f70901d5523c131552a0e2dece63559b83f1c30131306d4c84add3adcacb2bee"},
+    {"path": "services/alert/alert-agent-web/app/service/terminal_job_store.py", "sha256": "e2bd209a442aa9acce8b14525ca8525927cd85b9fa3aba119889e4a3c0e862c7"},
+    {"path": "services/alert/test/test_direct_media_pluggable_parser_ft.py", "sha256": "5682edb3213e8096e8cae48df3433d8d24b55acd8b25638456bcfb32f5f6feee"},
+    {"path": "services/alert/test/test_schema_util_nvschema_alias.py", "sha256": "11103b619272cc04e2b4191f3838394c8103f977fa3a2ce8b46c55428d857c7f"},
+    {"path": "services/alert/test/api/test_sink_delivery_receipts_offline.py", "sha256": "a3e8bd98116747882ab85a1576eaaaefcffe8176157e11d131452a67fdac9fcb"},
+    {"path": "services/alert/test/api/test_terminal_publish_gate.py", "sha256": "b0a24c96573b120a749a9dcfed734745ecd64a18097cb45df5104ffe822ba10f"},
+    {"path": "services/alert/test/api/test_terminal_job_store.py", "sha256": "55e58e2394d3e65cb2905116461d79ef9a09b3b0d4fc26fc3faf8d750b592eb7"}
+  ],
+  "adjacent_negative_ids": [
+    "unsupported-workflow-mode",
+    "classification-parser-non-object",
+    "incident-alias-conflict",
+    "invalid-protobuf-bytes",
+    "elastic-malformed-ack",
+    "kafka-callback-error",
+    "kafka-missing-callback-no-overclaim",
+    "cancelled-before-publish"
+  ]
+}

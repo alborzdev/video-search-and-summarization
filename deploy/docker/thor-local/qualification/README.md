@@ -63,6 +63,11 @@ in this directory:
   Slack, AWS/GCS, RAG report generation, and FRAG retrieval. Aggregate
   candidate coverage is 83 of 87; all runtime, model, scale, custom-data, and
   external delivery/retrieval oracles remain open;
+- `advertised-entry-executors-wave8/` upgrades the SSE-MCP-server and LVS-MCP
+  entries with a non-advancing in-process execution of the production LVS MCP
+  server: all 13 tools register and bounded health/file operations run through
+  deterministic fakes. Live SSE/MCP transport, a deployed service, VLM
+  inference, Thor runtime evidence, and official promotion remain open;
 - `external-entry-attestations/` turns those exact four blockers into an inert,
   credential-free collection plan and strict validator for a future sanitized
   operator receipt. Source or mocks never count as delivery; Slack and
@@ -168,6 +173,11 @@ in this directory:
   Incident field-7 name `analytics` by conflict-safely mapping it to the
   released wire binding `analyticsModule`; the Thor Alert derivative installs
   that converter and focused tests prove deterministic protobuf roundtrip;
+- `systems-alert-completion-static-executor/` binds three remaining Alert
+  systems planning rows to actual DirectMedia, NvSchema/protobuf, sink receipt,
+  and terminal job-store behavior with deterministic external-client fakes and
+  adjacent negatives. It creates no runtime evidence and advances no canonical
+  planning, capability, or oracle state;
 - `runtime-evidence-common/` provides reusable fail-closed primitives for
   future authorized collectors: numeric-loopback/exact-path transport through
   an injected proxy/redirect-disabled opener, independent request/action
@@ -186,6 +196,11 @@ in this directory:
   and an explicit late-publication blocker. It has no execute path and remains
   non-promoting until media, terminal/cancel APIs, durable sink receipts,
   bounded transport integration, and live runtime identity exist;
+- `search-documents-bboxes-runtime-evidence/` binds the Search agent requirement
+  to an exact 14-step/14-request/14-action future workflow and validates a
+  strict plain-JSON fake transcript. The CLI exposes no execute mode or live
+  adapter; exact official `/api/v1/search/{attribute,fusion,image}` route gaps
+  and the missing selected-bbox image payload remain explicit blockers;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle

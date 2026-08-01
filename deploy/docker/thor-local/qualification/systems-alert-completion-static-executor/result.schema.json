@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "policy", "bindings", "source_hashes", "observations", "determinism", "confinement", "runtime_evidence", "official_capability_effect", "result"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-systems-alert-completion-static-executor-v1"},
+    "mode": {"const": "candidate_only_systems_alert_completion_static"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "bindings": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/binding_observation"}},
+    "source_hashes": {
+      "type": "object", "minProperties": 19, "maxProperties": 19,
+      "propertyNames": {"enum": [
+        "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/capability-oracles.json",
+        "services/alert/handlers/direct_media/direct_media_handler.py",
+        "services/alert/handlers/direct_media/media_downloader.py",
+        "services/alert/models/responses.py",
+        "services/alert/models/pluggable_parser_runtime.py",
+        "services/alert/utils/schema_util.py",
+        "services/alert/mdx/anomaly/protobuf/ext_pb2.py",
+        "services/alert/mdx/anomaly/protobuf/schema_pb2.py",
+        "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py",
+        "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py",
+        "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_kafka.py",
+        "services/alert/alert-agent-web/app/service/terminal_job_store.py",
+        "services/alert/test/test_direct_media_pluggable_parser_ft.py",
+        "services/alert/test/test_schema_util_nvschema_alias.py",
+        "services/alert/test/api/test_sink_delivery_receipts_offline.py",
+        "services/alert/test/api/test_terminal_publish_gate.py",
+        "services/alert/test/api/test_terminal_job_store.py"
+      ]},
+      "additionalProperties": {"$ref": "#/$defs/sha256"}
+    },
+    "observations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workflow_modes", "nvschema_round_trips", "persistence", "adjacent_negatives"],
+      "properties": {
+        "workflow_modes": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/workflow"}},
+        "nvschema_round_trips": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/round_trip"}},
+        "persistence": {"$ref": "#/$defs/persistence"},
+        "adjacent_negatives": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/negative"}}
+      }
+    },
+    "determinism": {
+      "type": "object", "additionalProperties": false, "required": ["independent_runs", "byte_identical", "observation_sha256"],
+      "properties": {"independent_runs": {"const": 2}, "byte_identical": {"const": true}, "observation_sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "confinement": {
+      "type": "object", "additionalProperties": false, "required": ["private_temporary_roots", "cleanup_verified", "external_calls", "warehouse_sample_bundle"],
+      "properties": {"private_temporary_roots": {"const": true}, "cleanup_verified": {"const": true}, "external_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}}
+    },
+    "runtime_evidence": {"const": []},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "result": {"const": "candidate_static_pass_non_advancing"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_only", "advances_live_acceptance", "can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "service_lifecycle_allowed", "downloads_allowed", "credentials_allowed", "warehouse_sample_bundle", "writes"],
+      "properties": {
+        "candidate_only": {"const": true}, "advances_live_acceptance": {"const": false}, "can_mark_passed_current": {"const": false}, "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false}, "docker_allowed": {"const": false}, "subprocess_allowed": {"const": false}, "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false}, "credentials_allowed": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"},
+        "writes": {"const": "executor_owned_private_temporary_directory_only"}
+      }
+    },
+    "binding_observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["planning_requirement_id", "capability_id", "oracle_id", "owner_type", "package", "acceptance_class", "thor_state", "runtime_state", "oracle_state", "oracle_classification", "canonical_state_advanced"],
+      "properties": {
+        "planning_requirement_id": {"enum": ["systems-alert-workflow-modes", "systems-alert-nvschema", "systems-alert-persistence"]},
+        "capability_id": {"enum": ["runtime.alerts.workflow-modes", "protocol.alerts.nvschema-ingestion", "runtime.alerts.persistence-output"]},
+        "oracle_id": {"enum": ["oracle.runtime.alerts.workflow-modes", "oracle.protocol.alerts.nvschema-ingestion", "oracle.runtime.alerts.persistence-output"]},
+        "owner_type": {"const": "capability"}, "package": {"const": "systems"}, "acceptance_class": {"const": "required_local"},
+        "thor_state": {"const": "partial"}, "runtime_state": {"const": "not_qualified"}, "oracle_state": {"const": "open_unexecuted"},
+        "oracle_classification": {"const": "planning_index_only"}, "canonical_state_advanced": {"const": false}
+      }
+    },
+    "receipt": {
+      "type": "object", "additionalProperties": false, "required": ["transport", "outcome"],
+      "properties": {
+        "transport": {"enum": ["elastic", "kafka"]}, "outcome": {"enum": ["acknowledged", "failed", "unconfirmed", "submitted_unconfirmed"]},
+        "documentId": {"type": "string"}, "index": {"type": "string"}, "topic": {"type": "string"}, "partition": {"type": "integer"}, "offset": {"type": "integer"}
+      }
+    },
+    "workflow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "verificationResponseCode", "verificationResponseStatus", "sinkDelivery"],
+      "properties": {
+        "mode": {"enum": ["verification", "context", "classification"]}, "verificationResponseCode": {"const": "200"}, "verificationResponseStatus": {"const": "OK"},
+        "sinkDelivery": {"$ref": "#/$defs/receipt"}, "verdict": {"type": "string"}, "reasoning": {"type": "string"}, "vlm_response_present": {"type": "boolean"},
+        "vlm_response": {"type": "object", "additionalProperties": false, "required": ["label", "confidence"], "properties": {"label": {"const": "entry"}, "confidence": {"const": 0.98}}}
+      }
+    },
+    "round_trip": {
+      "type": "object", "additionalProperties": false,
+      "required": ["message", "formats", "input_topic", "output_topic", "protobuf_sha256", "json_sha256", "verification_fields", "round_trip", "analytics_alias_field_number", "released_wire_name_supported"],
+      "properties": {
+        "message": {"enum": ["nv.Incident", "nv.Behavior"]}, "formats": {"const": ["JSON", "Protobuf"]},
+        "input_topic": {"enum": ["mdx-incidents", "mdx-alerts"]}, "output_topic": {"enum": ["mdx-vlm-incidents", "mdx-vlm-alerts"]},
+        "protobuf_sha256": {"$ref": "#/$defs/sha256"}, "json_sha256": {"$ref": "#/$defs/sha256"},
+        "verification_fields": {"const": ["verificationResponseCode", "verificationResponseStatus"]}, "round_trip": {"const": true},
+        "analytics_alias_field_number": {"type": ["integer", "null"]}, "released_wire_name_supported": {"type": ["boolean", "null"]}
+      }
+    },
+    "receipt_set": {
+      "type": "object", "minProperties": 3, "maxProperties": 4,
+      "propertyNames": {"enum": ["acknowledged", "failed", "unconfirmed", "submitted_unconfirmed", "undelivered_failed"]},
+      "additionalProperties": {"$ref": "#/$defs/receipt"}
+    },
+    "persistence": {
+      "type": "object", "additionalProperties": false, "required": ["elastic", "kafka", "terminal_states", "cancel_publish_gate"],
+      "properties": {
+        "elastic": {"$ref": "#/$defs/receipt_set"}, "kafka": {"$ref": "#/$defs/receipt_set"},
+        "terminal_states": {
+          "type": "object", "additionalProperties": false,
+          "required": ["acknowledged", "failed", "unconfirmed", "submitted_unconfirmed"],
+          "properties": {
+            "acknowledged": {"$ref": "#/$defs/terminal_state"}, "failed": {"$ref": "#/$defs/terminal_state"},
+            "unconfirmed": {"$ref": "#/$defs/terminal_state"}, "submitted_unconfirmed": {"$ref": "#/$defs/terminal_state"}
+          }
+        },
+        "cancel_publish_gate": {
+          "type": "object", "additionalProperties": false, "required": ["accepted", "state", "sink_calls", "sinkDelivery"],
+          "properties": {"accepted": {"const": true}, "state": {"const": "cancelled"}, "sink_calls": {"const": 0}, "sinkDelivery": {"$ref": "#/$defs/receipt"}}
+        }
+      }
+    },
+    "terminal_state": {
+      "type": "object", "additionalProperties": false, "required": ["state", "receipt_outcome"],
+      "properties": {
+        "state": {"enum": ["completed", "failed"]},
+        "receipt_outcome": {"enum": ["acknowledged", "failed", "unconfirmed", "submitted_unconfirmed"]}
+      }
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false, "required": ["case_id", "rejected"],
+      "properties": {"case_id": {"enum": ["unsupported-workflow-mode", "classification-parser-non-object", "incident-alias-conflict", "invalid-protobuf-bytes", "elastic-malformed-ack", "kafka-callback-error", "kafka-missing-callback-no-overclaim", "cancelled-before-publish"]}, "rejected": {"const": true}}
+    }
+  }
+}

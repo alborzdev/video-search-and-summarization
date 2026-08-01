@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/search-documents-bboxes-runtime-evidence-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "collector_id",
+    "mode",
+    "default_execution_enabled",
+    "planning_requirement_id",
+    "capability_id",
+    "oracle_id",
+    "canonical_binding",
+    "fixture_binding",
+    "route_contract",
+    "execution_bounds",
+    "workflow",
+    "ownership",
+    "adjacent_negative",
+    "cleanup",
+    "evidence_scope",
+    "source_locks"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "collector_id": {"const": "search-documents-bboxes-runtime-evidence"},
+    "mode": {"const": "offline-plan-and-fake-validation-only"},
+    "default_execution_enabled": {"const": false},
+    "planning_requirement_id": {"const": "search-documents-and-bboxes"},
+    "capability_id": {"const": "runtime.agent.search-profile"},
+    "oracle_id": {"const": "oracle.runtime.agent.search-profile"},
+    "canonical_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_oracle_index",
+        "canonical_oracle_sha256",
+        "normalized_oracle_sha256",
+        "planning_payload_canonical_sha256",
+        "integrated_workflow_sha256",
+        "canonical_current_state",
+        "canonical_evidence_count"
+      ],
+      "properties": {
+        "canonical_oracle_index": {"const": 165},
+        "canonical_oracle_sha256": {"const": "79c459485a71e0f70c910d0a245e0146918225f0593f144cd0eadde412908529"},
+        "normalized_oracle_sha256": {"const": "e81c27d35a3e874f2e57b8a0831cde6674d04ba3fad7468e5384c1926921d2a5"},
+        "planning_payload_canonical_sha256": {"const": "7f0b99aa5bd8357b7b0ec2a8677868e44c788c82d92608ca2dc8617933fc167b"},
+        "integrated_workflow_sha256": {"const": "c68ee322cb3e449eafa990654a02f23e1f326cf7c92c70b8af98442dc9a00311"},
+        "canonical_current_state": {"const": "open_unexecuted"},
+        "canonical_evidence_count": {"const": 0}
+      }
+    },
+    "fixture_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_id",
+        "fixture_path",
+        "fixture_sha256",
+        "document_count",
+        "route_case_count",
+        "selected_bbox_image_bytes_present",
+        "selected_bbox_image_digest_present"
+      ],
+      "properties": {
+        "fixture_id": {"const": "local20-search-documents-bboxes-v1"},
+        "fixture_path": {"const": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/search-documents-bboxes.json"},
+        "fixture_sha256": {"const": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517"},
+        "document_count": {"const": 2},
+        "route_case_count": {"const": 4},
+        "selected_bbox_image_bytes_present": {"const": false},
+        "selected_bbox_image_digest_present": {"const": false}
+      }
+    },
+    "route_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_exact_paths",
+        "currently_absent_required_paths",
+        "forbidden_alias_equivalences",
+        "allowed_index_patterns",
+        "adjacent_invalid_index_family"
+      ],
+      "properties": {
+        "required_exact_paths": {"const": ["/api/v1/search", "/api/v1/search/attribute", "/api/v1/search/fusion", "/api/v1/search/image"]},
+        "currently_absent_required_paths": {"const": ["/api/v1/search/attribute", "/api/v1/search/fusion", "/api/v1/search/image"]},
+        "forbidden_alias_equivalences": {"const": ["/api/v1/attribute_search", "/api/v1/embed_search"]},
+        "allowed_index_patterns": {"const": ["mdx-embed-filtered-*", "mdx-behavior-*", "mdx-raw-*"]},
+        "adjacent_invalid_index_family": {"const": "vss-invalid-search-*"}
+      }
+    },
+    "execution_bounds": {"$ref": "#/$defs/execution_bounds"},
+    "workflow": {
+      "type": "array",
+      "prefixItems": [
+        {"$ref": "#/$defs/step1"}, {"$ref": "#/$defs/step2"}, {"$ref": "#/$defs/step3"},
+        {"$ref": "#/$defs/step4"}, {"$ref": "#/$defs/step5"}, {"$ref": "#/$defs/step6"},
+        {"$ref": "#/$defs/step7"}, {"$ref": "#/$defs/step8"}, {"$ref": "#/$defs/step9"},
+        {"$ref": "#/$defs/step10"}, {"$ref": "#/$defs/step11"}, {"$ref": "#/$defs/step12"},
+        {"$ref": "#/$defs/step13"}, {"$ref": "#/$defs/step14"}
+      ],
+      "items": false,
+      "minItems": 14,
+      "maxItems": 14
+    },
+    "ownership": {"$ref": "#/$defs/ownership"},
+    "adjacent_negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "index_family", "allowed_statuses", "required_backend_query_count", "required_backend_write_count"],
+      "properties": {
+        "step_id": {"const": "reject-invalid-index-family"},
+        "index_family": {"const": "vss-invalid-search-*"},
+        "allowed_statuses": {"const": [400, 422]},
+        "required_backend_query_count": {"const": 0},
+        "required_backend_write_count": {"const": 0}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "delete_scope", "index_delete_allowed", "ambiguous_resource_delete_allowed", "foreign_resource_delete_allowed", "postconditions"],
+      "properties": {
+        "order": {"const": "lifo"},
+        "delete_scope": {"const": "exact read-back-confirmed namespace-owned document IDs only"},
+        "index_delete_allowed": {"const": false},
+        "ambiguous_resource_delete_allowed": {"const": false},
+        "foreign_resource_delete_allowed": {"const": false},
+        "postconditions": {
+          "const": [
+            "every registered namespace-owned document is absent",
+            "no index was deleted",
+            "service and configuration digests match pre-state",
+            "non-owned index and document digests match pre-state"
+          ]
+        }
+      }
+    },
+    "evidence_scope": {"$ref": "#/$defs/evidence_scope"},
+    "source_locks": {
+      "const": [
+        {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"},
+        {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+        {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/contract.json", "sha256": "c96abad933b006367ca36d1fdbf5c7e5173b366f480e4dbb83e6c1de320acbfb"},
+        {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json", "sha256": "8a1172c0569b224c2453772e86319cf30b153af4ce0f5ab108af3274afd1fd95"},
+        {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
+        {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/manifest.json", "sha256": "f6f994992620fe34da36695be82b9092fc04b64a3f065a2472f614a71f77935b"},
+        {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/search-documents-bboxes.json", "sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517"},
+        {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixture.schema.json", "sha256": "5b98998e21ce43838ff19ca8f59761e43fdbe0ae541319829e236eb9d27ec887"},
+        {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave12/inventory.json", "sha256": "360e657f7aeab4b5f37ce45047443976e6b7c7136d5b3363c6fe07e2cff2226a"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "fdacf0a0c9db2c4ba2a11408c2a1314bd72e403b5a3612016c335a9a59cbb4ca"},
+        {"path": "services/agent/src/vss_agents/agents/search_agent.py", "sha256": "a5de8de3ab86839671de88dd5bc356339044806ad71c1e0d1310033ce5373040"},
+        {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
+        {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
+        {"path": "services/agent/src/vss_agents/tools/embed_search.py", "sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"},
+        {"path": "services/agent/src/vss_agents/tools/fusion.py", "sha256": "cc79953fdf75550dcbde841680120fe9e71fb4b3fba3cf680e6c9b04547c8a28"}
+      ]
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "execution_bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_requests", "max_actions", "max_duration_seconds", "network_scope", "warehouse_sample_bundle", "subprocess_allowed", "docker_allowed", "service_lifecycle_allowed", "download_allowed", "write_allowed", "phases"],
+      "properties": {
+        "max_requests": {"const": 14},
+        "max_actions": {"const": 14},
+        "max_duration_seconds": {"const": 900},
+        "network_scope": {"const": "none-plan-and-fake-only"},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "subprocess_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "download_allowed": {"const": false},
+        "write_allowed": {"const": false},
+        "phases": {"const": ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"]}
+      }
+    },
+    "step_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "id", "phase", "request_cost", "action_cost"],
+      "properties": {
+        "sequence": {"type": "integer"},
+        "id": {"type": "string"},
+        "phase": {"enum": ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"]},
+        "request_cost": {"const": 1},
+        "action_cost": {"const": 1}
+      }
+    },
+    "step1": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 1}, "id": {"const": "capture-pre-state"}, "phase": {"const": "pre_state"}}}]},
+    "step2": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 2}, "id": {"const": "search-route"}, "phase": {"const": "positive"}}}]},
+    "step3": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 3}, "id": {"const": "attribute-route"}, "phase": {"const": "positive"}}}]},
+    "step4": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 4}, "id": {"const": "fusion-route"}, "phase": {"const": "positive"}}}]},
+    "step5": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 5}, "id": {"const": "image-route"}, "phase": {"const": "positive"}}}]},
+    "step6": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 6}, "id": {"const": "same-object-merge"}, "phase": {"const": "positive"}}}]},
+    "step7": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 7}, "id": {"const": "append-multiple-attributes"}, "phase": {"const": "positive"}}}]},
+    "step8": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 8}, "id": {"const": "rerank-or-fallback"}, "phase": {"const": "positive"}}}]},
+    "step9": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 9}, "id": {"const": "fuse-multiple-attributes"}, "phase": {"const": "positive"}}}]},
+    "step10": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 10}, "id": {"const": "same-video-top-k"}, "phase": {"const": "positive"}}}]},
+    "step11": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 11}, "id": {"const": "selected-bbox-knn"}, "phase": {"const": "positive"}}}]},
+    "step12": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 12}, "id": {"const": "reject-invalid-index-family"}, "phase": {"const": "adjacent_negative"}}}]},
+    "step13": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 13}, "id": {"const": "restore-owned-state"}, "phase": {"const": "restore"}}}]},
+    "step14": {"allOf": [{"$ref": "#/$defs/step_base"}, {"properties": {"sequence": {"const": 14}, "id": {"const": "verify-postconditions"}, "phase": {"const": "postcondition"}}}]},
+    "document_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "document_id"],
+      "properties": {
+        "index": {"type": "string", "pattern": "^mdx-(embed-filtered|behavior|raw)-vss-oracle-runtime-agent-search-profile$"},
+        "document_id": {"type": "string", "pattern": "^vss-oracle-runtime-agent-search-profile-doc-camera-0[12]-0001$"}
+      }
+    },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespace", "owned_resource_type", "registration_gate", "ambiguous_create_policy", "foreign_resource_policy", "index_delete_allowed", "registered_documents"],
+      "properties": {
+        "namespace": {"const": "vss-oracle-runtime-agent-search-profile"},
+        "owned_resource_type": {"const": "elasticsearch-document"},
+        "registration_gate": {"const": "exact successful create plus exact document readback matching namespace, index, document ID, and source digest"},
+        "ambiguous_create_policy": {"const": "fail closed without ownership registration or deletion"},
+        "foreign_resource_policy": {"const": "never mutate"},
+        "index_delete_allowed": {"const": false},
+        "registered_documents": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/document_ref"}}
+      }
+    },
+    "evidence_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["promotion_eligible", "runtime_requests", "runtime_actions", "blockers"],
+      "properties": {
+        "promotion_eligible": {"const": false},
+        "runtime_requests": {"const": 0},
+        "runtime_actions": {"const": 0},
+        "blockers": {
+          "const": [
+            "required routes /api/v1/search/attribute, /api/v1/search/fusion, and /api/v1/search/image are absent from the current Search profile",
+            "registered /api/v1/attribute_search and /api/v1/embed_search aliases are not accepted as parity",
+            "selected-bbox fixture names frame IDs but provides no image bytes or image digest",
+            "no Search service, Elasticsearch query, index write, HTTP response, cleanup race, or delayed reappearance was observed"
+          ]
+        }
+      }
+    },
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^[A-Za-z0-9_.@/+:-]+$"},
+        "sha256": {"$ref": "#/$defs/digest"}
+      }
+    }
+  }
+}

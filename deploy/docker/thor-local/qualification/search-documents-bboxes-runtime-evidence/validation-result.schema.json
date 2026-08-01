@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/search-documents-bboxes-runtime-evidence-validation-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "collector_id",
+    "mode",
+    "status",
+    "valid",
+    "promotion_eligible",
+    "runtime_requests",
+    "runtime_actions",
+    "simulated_requests",
+    "simulated_actions",
+    "canonical_current_state",
+    "canonical_evidence",
+    "input_canonical_sha256",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "collector_id": {"const": "search-documents-bboxes-runtime-evidence"},
+    "mode": {"const": "offline-fake-validation-result"},
+    "status": {"const": "candidate_simulation_valid_non_advancing"},
+    "valid": {"const": true},
+    "promotion_eligible": {"const": false},
+    "runtime_requests": {"const": 0},
+    "runtime_actions": {"const": 0},
+    "simulated_requests": {"const": 14},
+    "simulated_actions": {"const": 14},
+    "canonical_current_state": {"const": "open_unexecuted"},
+    "canonical_evidence": {"const": []},
+    "input_canonical_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "blockers": {
+      "const": [
+        "required routes /api/v1/search/attribute, /api/v1/search/fusion, and /api/v1/search/image are absent from the current Search profile",
+        "registered /api/v1/attribute_search and /api/v1/embed_search aliases are not accepted as parity",
+        "selected-bbox fixture names frame IDs but provides no image bytes or image digest",
+        "no Search service, Elasticsearch query, index write, HTTP response, cleanup race, or delayed reappearance was observed"
+      ]
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "outcome", "official_capability_effect",
+    "runtime_evidence", "entries", "execution", "safety", "source_digests"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_executable_subset_non_advancing"},
+    "outcome": {"const": "observed_match_candidate_only"},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "entries": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "prefixItems": [
+        {
+          "allOf": [
+            {"$ref": "#/$defs/entry"},
+            {"properties": {
+              "entry_id": {"const": "manifest-gap.video-summarization-live.05-sse-mcp-server"},
+              "retained_blockers": {"const": ["live_sse_connection_not_executed", "mcp_transport_and_handshake_not_executed", "deployed_lvs_not_observed", "thor_runtime_readiness_not_observed"]},
+              "matched_assertions": {"const": ["production_lvs_mcp_module_imported", "exact_13_tool_registration_executed", "in_process_asgi_health_dispatch_executed", "external_execution_guards_active", "shared_server_dispatch_subset_executed"]}
+            }}
+          ]
+        },
+        {
+          "allOf": [
+            {"$ref": "#/$defs/entry"},
+            {"properties": {
+              "entry_id": {"const": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"},
+              "retained_blockers": {"const": ["mcp_transport_and_handshake_not_executed", "live_lvs_service_not_executed", "vlm_inference_not_executed", "thor_runtime_readiness_not_observed"]},
+              "matched_assertions": {"const": ["production_lvs_mcp_module_imported", "exact_13_tool_registration_executed", "in_process_asgi_health_dispatch_executed", "external_execution_guards_active", "bounded_file_add_list_info_delete_executed", "path_size_symlink_uuid_rejections_executed", "invalid_metadata_rollback_executed", "file_error_sanitization_executed"]}
+            }}
+          ]
+        }
+      ],
+      "items": false
+    },
+    "execution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["production_module_imported", "registered_tool_count", "registered_tools", "fixture_sha256", "operations"],
+      "properties": {
+        "production_module_imported": {"const": true},
+        "registered_tool_count": {"const": 13},
+        "registered_tools": {
+          "const": ["add_file", "delete_file", "generate_captions", "generate_vlm_captions", "get_file_info", "get_metrics", "get_recommended_config", "health_live", "health_ready", "list_files", "list_models", "stream_summarize", "summarize_video"]
+        },
+        "fixture_sha256": {"const": "8828ea64e48f0b522ee57e9878f1a1dcd41acd430687f223fd1f393603ad6602"},
+        "operations": {
+          "const": ["file_add", "file_delete", "file_info", "file_list", "file_rejection_matrix", "health_error_propagation", "health_live", "health_ready", "rollback_after_invalid_metadata", "sanitized_file_error", "tool_registration"]
+        }
+      }
+    },
+    "safety": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "network_used", "socket_used", "subprocess_used", "docker_used",
+        "service_lifecycle_used", "downloads_used", "credentials_used",
+        "caller_supplied_callback_used", "warehouse_sample_used", "temporary_files_cleaned",
+        "live_sse_connection", "mcp_transport_handshake", "deployed_lvs",
+        "vlm_inference", "thor_runtime_readiness"
+      ],
+      "properties": {
+        "network_used": {"const": false},
+        "socket_used": {"const": false},
+        "subprocess_used": {"const": false},
+        "docker_used": {"const": false},
+        "service_lifecycle_used": {"const": false},
+        "downloads_used": {"const": false},
+        "credentials_used": {"const": false},
+        "caller_supplied_callback_used": {"const": false},
+        "warehouse_sample_used": {"const": false},
+        "temporary_files_cleaned": {"const": true},
+        "live_sse_connection": {"const": false},
+        "mcp_transport_handshake": {"const": false},
+        "deployed_lvs": {"const": false},
+        "vlm_inference": {"const": false},
+        "thor_runtime_readiness": {"const": false}
+      }
+    },
+    "source_digests": {
+      "type": "object", "minProperties": 11, "maxProperties": 11,
+      "propertyNames": {
+        "enum": [
+          "deploy/docker/services/video-summarization/compose.yml",
+          "deploy/docker/thor-local/parity/capability-oracles.json",
+          "deploy/docker/thor-local/parity/manifest.json",
+          "deploy/docker/thor-local/parity/official-capabilities.json",
+          "deploy/docker/thor-local/qualification/advertised-entry-executors-wave3/inventory.json",
+          "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json",
+          "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+          "services/video-summarization/src/lvs_mcp.py",
+          "services/video-summarization/src/rtvi_vlm_client.py",
+          "services/video-summarization/src/via_server.py",
+          "services/video-summarization/tests/test_lvs_mcp.py"
+        ]
+      },
+      "additionalProperties": {"$ref": "#/$defs/sha"}
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "entry": {
+        "type": "object", "additionalProperties": false,
+        "required": ["entry_id", "candidate_state", "evidence_scope", "retained_blockers", "matched_assertions"],
+        "properties": {
+          "entry_id": {"enum": ["manifest-gap.video-summarization-live.05-sse-mcp-server", "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"]},
+          "candidate_state": {"const": "candidate_executable_subset_non_advancing"},
+          "evidence_scope": {"enum": [
+            "subset: production LVS MCP server construction, exact tool registration, and in-process shared tool dispatch; no SSE connection, MCP transport/session/handshake, server lifecycle, deployed LVS, VLM inference, or Thor readiness",
+            "subset: production 13-tool registration plus in-process health and bounded file add/list/info/delete semantics with rejection, rollback, and sanitized-error checks; no MCP transport/session/handshake, live service, model, summarization, or Thor readiness"
+          ]},
+          "retained_blockers": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "matched_assertions": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"entry_id": {"const": "manifest-gap.video-summarization-live.05-sse-mcp-server"}}, "required": ["entry_id"]},
+            "then": {"properties": {"evidence_scope": {"const": "subset: production LVS MCP server construction, exact tool registration, and in-process shared tool dispatch; no SSE connection, MCP transport/session/handshake, server lifecycle, deployed LVS, VLM inference, or Thor readiness"}}}
+          },
+          {
+            "if": {"properties": {"entry_id": {"const": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"}}, "required": ["entry_id"]},
+            "then": {"properties": {"evidence_scope": {"const": "subset: production 13-tool registration plus in-process health and bounded file add/list/info/delete semantics with rejection, rollback, and sanitized-error checks; no MCP transport/session/handshake, live service, model, summarization, or Thor readiness"}}}
+          }
+        ]
+      }
+    }
+  }
