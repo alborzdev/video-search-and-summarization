@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "package_id": "runtime-evidence-common",
+  "mode": "inert-library",
+  "default_execution_enabled": false,
+  "transport": {
+    "numeric_loopback_only": true,
+    "explicit_port_required": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "injected_opener_required": true,
+    "max_request_bytes": 2097152,
+    "max_response_bytes": 1048576,
+    "timeout_seconds": 10
+  },
+  "budgets": {
+    "max_actions": 64,
+    "max_requests": 64
+  },
+  "identity": {
+    "exact_run_id": true,
+    "exact_authorization_id": true,
+    "authorization_token_sha256": true,
+    "record_raw_authorization_token": false
+  },
+  "resources": {
+    "ownership": "exact-run-bound",
+    "cleanup_order": "lifo",
+    "cleanup_transitions_per_resource": 2,
+    "postcondition_required": true,
+    "record_raw_resource_id": false
+  },
+  "evidence": {
+    "raw_payloads": false,
+    "raw_headers": false,
+    "raw_urls": false,
+    "payload_digest": "sha256",
+    "pre_post_digest_comparison": true
+  }
+}

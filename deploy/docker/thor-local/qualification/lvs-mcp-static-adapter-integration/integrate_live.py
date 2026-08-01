@@ -48,8 +48,8 @@ PREDECESSOR_OUTPUTS = {
     "capability-oracles.json": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb",
     "capability-oracles.schema.json": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498",
 }
-ORACLE_COMPILER_RAW_SHA256 = "68271eb774ee1ccbbd897cbbfaad2a743f682d9da71e2f8e157d65a6cd3f3b84"
-LIVE_ORACLE_SCHEMA_RAW_SHA256 = "68d30d340069f3ed43d98687c527f3bcb692bd9b6c8554080b577ff89f6142ee"
+ORACLE_COMPILER_RAW_SHA256 = "7e0d14bee9e656bf24b74b2c0f65d9b37312e5e3478bc4dbf5b238f8f731bd20"
+LIVE_ORACLE_SCHEMA_RAW_SHA256 = "f8267486856f45cd469655346ca322fa72ea1f7d84b026e28751b7f9cc3da202"
 
 STATIC_INPUTS = {
     "deploy/docker/thor-local/qualification/api_inventory.json": "5d7f5e9303eedebdaabaec25dd77677540475d968850b8481ab4422c2d6b525b",
@@ -170,6 +170,10 @@ def _historical_predecessor() -> tuple[dict[str, Any], dict[str, Any], dict[str,
             }
         if path == executor.CAPABILITY_ORACLES:
             module._offline_mv3dt_tool_bindings = lambda: {}
+            historical_compile = module.compile_plan
+            module.compile_plan = lambda *args, **kwargs: historical_compile(
+                *args, **kwargs, include_local_runtime_bounds=False
+            )
         return module
 
     executor._module = historical_loader
@@ -182,6 +186,10 @@ def _historical_predecessor() -> tuple[dict[str, Any], dict[str, Any], dict[str,
         module = source_loader(name, path)
         if path == source.CAPABILITY_ORACLES:
             module._offline_mv3dt_tool_bindings = lambda: {}
+            historical_compile = module.compile_plan
+            module.compile_plan = lambda *args, **kwargs: historical_compile(
+                *args, **kwargs, include_local_runtime_bounds=False
+            )
         return module
 
     def source_historical_lock(path: Path, expected: str) -> None:
@@ -370,7 +378,11 @@ def build_expected(
     ledger, manifest, acceptance = copy.deepcopy(predecessor[:3])
     _apply_delta(ledger, manifest, acceptance)
     compiler = _module("lvs_adapter_oracle_compiler", ORACLE_COMPILER)
-    oracles = compiler.compile_plan(ledger, acceptance_document=acceptance)
+    oracles = compiler.compile_plan(
+        ledger,
+        acceptance_document=acceptance,
+        include_local_runtime_bounds=True,
+    )
     _validate_semantics(predecessor, ledger, acceptance, oracles)
     receipt_core = {
         "schema_version": 1,

@@ -22,7 +22,7 @@ REPO_ROOT = LANE.parents[4].resolve(strict=True)
 CONTRACT_PATH = LANE / "contract.json"
 CONTRACT_SCHEMA_PATH = LANE / "contract.schema.json"
 EVIDENCE_SCHEMA_PATH = LANE / "evidence.schema.json"
-CONTRACT_SHA256 = "c8fd312b5642fd42b1d08eba12571f44aeb3e920dee8825fd5c2775158aaafd3"
+CONTRACT_SHA256 = "84de1ed7dd188d3d3bf2110210ceed550832cb64fa3f04529d41a1ffe60b87dc"
 CONTRACT_SCHEMA_SHA256 = (
     "082fc0841baa77e51bdcc530485e325315d64095ac491fbe2d923660452cdf35"
 )

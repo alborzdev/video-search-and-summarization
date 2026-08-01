@@ -9,7 +9,7 @@
         "oracle_id": "oracle.prereq.platform.validated-gpus",
         "oracle_profile": "host-prerequisite-validated-gpus",
         "oracle_mode": "static",
-        "oracle_canonical_sha256": "3074a94a1c3500cd5b41ea6d1695f4734fc1409f3743b6ca2d988ffa36297c32",
+        "oracle_canonical_sha256": "5330db16a73775c384f47319c3de756841cda97d729cd67e290262805ec99587",
         "contract_canonical_sha256": "e87bcb69b45f9b90e0cf9b831f616e25d5ef1e965b40467fd37802dba6ebcc5e"
       },
       {
@@ -17,7 +17,7 @@
         "oracle_id": "oracle.prereq.platform.agx-thor-software",
         "oracle_profile": "host-prerequisite-agx-thor-software",
         "oracle_mode": "static",
-        "oracle_canonical_sha256": "ab389b60ec7abac779cb2a821950155d1611d42fabfcfdc23a8cf5a040ea6f72",
+        "oracle_canonical_sha256": "e71b1c1c2132f578540d6b1defb7eb73a030582a2604284f01050fb57b573976",
         "contract_canonical_sha256": "dea85b404c1e254784207bd1c13b8b4479a1189e17651165aeb0fe40714801f1"
       },
       {
@@ -25,7 +25,7 @@
         "oracle_id": "oracle.prereq.platform.toolchain-versions",
         "oracle_profile": "host-prerequisite-toolchain-versions",
         "oracle_mode": "static",
-        "oracle_canonical_sha256": "17f0db55dc40bd72fe5e97d4b4839edc247514a6ff24bf127eda64a6c0f0ae64",
+        "oracle_canonical_sha256": "7380b69634c2e5d875c451cca428b5aded4eede18008affce8d1598f41f02e0d",
         "contract_canonical_sha256": "0994e8fdb5e219120627bcb0bb86c05f8d22d6d4343465837df99748e108459f"
       },
       {
@@ -33,7 +33,7 @@
         "oracle_id": "oracle.prereq.platform.capacity-and-access",
         "oracle_profile": "host-prerequisite-capacity-and-access",
         "oracle_mode": "static",
-        "oracle_canonical_sha256": "50c785d609344b80a8b423eff5169e8e2092d86c4bd76e76741c610e60e1fa3a",
+        "oracle_canonical_sha256": "33ebbe1611d40b42e666c0d081a0c6a9d7e3995bcf354543bbd7bec26c3c232b",
         "contract_canonical_sha256": "4624f3a67de5a783aa48021a6764bdf9cd0e1dcd1338dce89c5b5dce75523437"
       }
     ]

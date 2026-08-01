@@ -1,27 +1,38 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://nvidia.example/vss/thor/runtime-execution-bounds-audit/result.schema.json",
-  "title": "Deterministic proposed local-runtime execution-bound overrides",
+  "title": "Deterministic verified local-runtime execution-bound integrations",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_kind", "mode", "source", "official_states_preserved", "cases", "summary"],
+  "required": ["schema_version", "artifact_kind", "mode", "source", "baseline_provenance", "official_states_preserved", "cases", "summary"],
   "properties": {
     "schema_version": {"const": "1.0.0"},
-    "artifact_kind": {"const": "proposed_execution_bound_overrides"},
+    "artifact_kind": {"const": "verified_execution_bound_integrations"},
     "mode": {"const": "static_inert_planning_only"},
     "source": {
       "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
       "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha256"}}
     },
+    "baseline_provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["canonical_source_sha256", "max_requests", "max_actions_present", "historical_digest_only"],
+      "properties": {
+        "canonical_source_sha256": {"const": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+        "max_requests": {"const": 2},
+        "max_actions_present": {"const": false},
+        "historical_digest_only": {"const": true}
+      }
+    },
     "official_states_preserved": {"const": true},
     "cases": {"type": "array", "minItems": 20, "maxItems": 20, "items": {"$ref": "#/$defs/case"}},
     "summary": {
       "type": "object", "additionalProperties": false,
-      "required": ["case_count", "current_two_request_cases", "two_request_inadequate_cases", "minimum_request_budget_total", "minimum_action_budget_total"],
+      "required": ["case_count", "prior_two_request_cases", "prior_two_request_inadequate_cases", "integrated_exact_cases", "minimum_request_budget_total", "minimum_action_budget_total"],
       "properties": {
         "case_count": {"const": 20},
-        "current_two_request_cases": {"const": 20},
-        "two_request_inadequate_cases": {"type": "integer", "minimum": 0, "maximum": 20},
+        "prior_two_request_cases": {"const": 20},
+        "prior_two_request_inadequate_cases": {"const": 20},
+        "integrated_exact_cases": {"const": 20},
         "minimum_request_budget_total": {"type": "integer", "minimum": 60},
         "minimum_action_budget_total": {"type": "integer", "minimum": 60}
       }
@@ -42,22 +53,26 @@
     },
     "case": {
       "type": "object", "additionalProperties": false,
-      "required": ["planning_requirement_id", "capability_id", "oracle_id", "canonical_oracle_index", "canonical_oracle_sha256", "current_max_requests", "minimum_request_budget", "minimum_action_budget", "max_requests_2_inadequate", "expanded_workflow_sha256", "override_target", "proposed_override"],
+      "required": ["planning_requirement_id", "capability_id", "oracle_id", "canonical_oracle_index", "canonical_oracle_sha256", "prior_baseline_oracle_sha256", "prior_max_requests", "integrated_max_requests", "integrated_max_actions", "minimum_request_budget", "minimum_action_budget", "prior_max_requests_2_inadequate", "integration_verified", "expanded_workflow_sha256", "integration_target", "integrated_bounds"],
       "properties": {
         "planning_requirement_id": {"type": "string"},
         "capability_id": {"type": "string"},
         "oracle_id": {"type": "string"},
         "canonical_oracle_index": {"type": "integer", "minimum": 0},
         "canonical_oracle_sha256": {"$ref": "#/$defs/sha256"},
-        "current_max_requests": {"const": 2},
+        "prior_baseline_oracle_sha256": {"$ref": "#/$defs/sha256"},
+        "prior_max_requests": {"const": 2},
+        "integrated_max_requests": {"type": "integer", "minimum": 3},
+        "integrated_max_actions": {"type": "integer", "minimum": 3},
         "minimum_request_budget": {"type": "integer", "minimum": 3},
         "minimum_action_budget": {"type": "integer", "minimum": 3},
-        "max_requests_2_inadequate": {"type": "boolean"},
+        "prior_max_requests_2_inadequate": {"const": true},
+        "integration_verified": {"const": true},
         "expanded_workflow_sha256": {"$ref": "#/$defs/sha256"},
-        "override_target": {"type": "string", "pattern": "^/oracles/[0-9]+/execution_bounds$"},
-        "proposed_override": {
-          "type": "object", "additionalProperties": false, "required": ["max_requests", "workload"],
-          "properties": {"max_requests": {"type": "integer", "minimum": 3}, "workload": {"$ref": "#/$defs/workload"}}
+        "integration_target": {"type": "string", "pattern": "^/oracles/[0-9]+/execution_bounds$"},
+        "integrated_bounds": {
+          "type": "object", "additionalProperties": false, "required": ["max_requests", "max_actions", "workload"],
+          "properties": {"max_requests": {"type": "integer", "minimum": 3}, "max_actions": {"type": "integer", "minimum": 3}, "workload": {"$ref": "#/$defs/workload"}}
         }
       }
     }

@@ -296,6 +296,8 @@ class CapabilityOracleTests(unittest.TestCase):
             expected = workload["units"] * workload["requests_per_unit"] + workload["overhead_requests"]
             self.assertEqual(workload["calculated_max_requests"], expected)
             self.assertEqual(bounds["max_requests"], expected)
+            override = verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(item["capability_id"])
+            self.assertEqual(bounds["max_actions"], override[2] if override is not None else expected)
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
         self.assertEqual(by_id["behavior.rt-embed.kafka-queue-bound"]["execution_bounds"]["max_requests"], 1025)
         self.assertEqual(by_id["api.core.video-analytics-56"]["execution_bounds"]["max_requests"], 225)
@@ -303,6 +305,21 @@ class CapabilityOracleTests(unittest.TestCase):
             by_id["api.core.video-analytics-56"]["execution_bounds"]["workload"]["phases"],
             ["positive", "adjacent_negative", "readback", "cleanup"],
         )
+
+    def test_exact_20_local_runtime_workload_overrides_are_capability_bound(self) -> None:
+        self.assertEqual(len(verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES), 20)
+        self.assertEqual(sum(row[1] for row in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()), 202)
+        self.assertEqual(sum(row[2] for row in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()), 207)
+        by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
+        for capability_id, (planning_id, requests, actions) in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.items():
+            oracle = by_id[capability_id]
+            self.assertEqual(oracle["execution_bounds"]["max_requests"], requests)
+            self.assertEqual(oracle["execution_bounds"]["max_actions"], actions)
+            self.assertEqual(oracle["execution_bounds"]["workload"]["phases"], verifier.LOCAL_RUNTIME_WORKLOAD_PHASES)
+            self.assertEqual(oracle["fixture"]["input"]["contract"]["wave3_acceptance"]["planning_requirement_ids"], [planning_id])
+            self.assertEqual(oracle["current_state"], "open_unexecuted")
+            self.assertEqual(oracle["evidence"], [])
+            self.assertIs(oracle["fixture"]["warehouse_sample_bundle"], False)
 
     def test_models_stage_before_runtime_not_inside_it(self) -> None:
         models = [item for item in self.plan["oracles"] if item["ledger_binding"]["kind"] == "model"]

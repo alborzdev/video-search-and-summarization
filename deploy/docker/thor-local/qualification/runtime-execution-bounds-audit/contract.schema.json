@@ -4,7 +4,7 @@
   "title": "Thor local-runtime execution-bound audit contract",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "package_id", "mode", "canonical_source", "policy", "mandatory_envelope", "cases"],
+  "required": ["schema_version", "package_id", "mode", "canonical_source", "baseline_provenance", "policy", "mandatory_envelope", "cases"],
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "package_id": {"const": "runtime-execution-bounds-audit"},
@@ -16,6 +16,17 @@
       "properties": {
         "path": {"const": "deploy/docker/thor-local/parity/capability-oracles.json"},
         "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "baseline_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_source_sha256", "max_requests", "max_actions_present", "historical_digest_only"],
+      "properties": {
+        "canonical_source_sha256": {"const": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+        "max_requests": {"const": 2},
+        "max_actions_present": {"const": false},
+        "historical_digest_only": {"const": true}
       }
     },
     "policy": {
@@ -80,13 +91,13 @@
     "case": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["planning_requirement_id", "capability_id", "oracle_id", "canonical_oracle_index", "canonical_oracle_sha256", "positive_steps", "adjacent_negative"],
+      "required": ["planning_requirement_id", "capability_id", "oracle_id", "canonical_oracle_index", "prior_baseline_oracle_sha256", "positive_steps", "adjacent_negative"],
       "properties": {
         "planning_requirement_id": {"type": "string", "minLength": 3},
         "capability_id": {"type": "string", "minLength": 3},
         "oracle_id": {"type": "string", "pattern": "^oracle\\."},
         "canonical_oracle_index": {"type": "integer", "minimum": 0},
-        "canonical_oracle_sha256": {"$ref": "#/$defs/sha256"},
+        "prior_baseline_oracle_sha256": {"$ref": "#/$defs/sha256"},
         "positive_steps": {"type": "array", "minItems": 3, "maxItems": 20, "items": {"$ref": "#/$defs/step"}},
         "adjacent_negative": {"$ref": "#/$defs/step"}
       }

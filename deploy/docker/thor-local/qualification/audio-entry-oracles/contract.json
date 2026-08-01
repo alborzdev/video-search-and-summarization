@@ -75,13 +75,13 @@
     }
   ],
   "source_locks": [
-    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json", "sha256": "13219546fbc70a92c8593512d2af405cd977136525721d7f8b063e02025230fa"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json", "sha256": "e79ec66c26094478f178058b03e0b7371e5eacc15911dc354b3903d1b45afe95"},
     {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.schema.json", "sha256": "2c6d1c09f00a595870c5f375c077276cac290eaa5f434380fcd9313767e2c3a6"},
     {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json", "sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
     {"path": "deploy/docker/thor-local/parity/manifest.json", "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"},
     {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
     {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"},
     {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/fixture.py", "sha256": "b3868473e7113d13ed1be6e45bf1db7ea3445162aa75ecc512bf12051f9551bb"},
     {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/receipt.schema.json", "sha256": "11b379f215d54ae6c7fdc42e5680059a69d2b5a41b162d257b313e9ad3f11793"},
     {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/README.md", "sha256": "3b2aae86139fc8b2702afb90ee5ed91fa8156c8981da86b87b7a6a434100e823"},

@@ -215,8 +215,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/ui-runtime-contracts/tests"
 
 # The exact 20 non-Warehouse local-runtime rows have constructively derived
-# request/action envelopes. This static compiler checks the deterministic,
-# non-applied proposal only; canonical oracles remain open and unchanged.
+# request/action envelopes. This static compiler verifies the deterministic
+# canonical integration; every oracle remains open and evidence-empty.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/runtime-execution-bounds-audit/compiler.py" \
   --check
@@ -242,6 +242,19 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/architecture-gap-contracts/tests"
+
+# Shared future runtime-evidence primitives are checked only through their
+# static contract and fake in-memory transport/resource self-test. The library
+# constructs no network opener and performs no host, Docker, subprocess,
+# service-lifecycle, or live runtime action in this milestone.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/runtime-evidence-common/common.py" \
+  check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/runtime-evidence-common/common.py" \
+  self-test >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/runtime-evidence-common/test_common.py"
 
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.

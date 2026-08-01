@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/vss/thor/runtime-evidence-common/evidence.schema.json",
+  "title": "Sanitized Thor runtime evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "identity", "budget", "actions", "cleanup", "comparisons"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "package_id": { "const": "runtime-evidence-common" },
+    "status": { "enum": ["pass", "fail"] },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "authorization_id", "authorization_token_sha256"],
+      "properties": {
+        "run_id": { "$ref": "#/$defs/plainId" },
+        "authorization_id": { "$ref": "#/$defs/plainId" },
+        "authorization_token_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actions", "max_actions", "requests", "max_requests"],
+      "properties": {
+        "actions": { "type": "integer", "minimum": 0 },
+        "max_actions": { "type": "integer", "minimum": 1, "maximum": 64 },
+        "requests": { "type": "integer", "minimum": 0 },
+        "max_requests": { "type": "integer", "minimum": 1, "maximum": 64 }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/action" }
+    },
+    "cleanup": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/cleanup" }
+    },
+    "comparisons": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/comparison" }
+    }
+  },
+  "$defs": {
+    "plainId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "action_id", "kind", "status", "payload_bytes", "payload_sha256", "result_code"],
+      "properties": {
+        "order": { "type": "integer", "minimum": 1, "maximum": 64 },
+        "action_id": { "$ref": "#/$defs/plainId" },
+        "kind": { "$ref": "#/$defs/plainId" },
+        "status": { "enum": ["pass", "fail"] },
+        "payload_bytes": { "type": "integer", "minimum": 0, "maximum": 1048576 },
+        "payload_sha256": { "$ref": "#/$defs/sha256" },
+        "result_code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$" }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "resource_type", "target_sha256", "action_status", "postcondition_status"],
+      "properties": {
+        "order": { "type": "integer", "minimum": 1, "maximum": 64 },
+        "resource_type": { "$ref": "#/$defs/plainId" },
+        "target_sha256": { "$ref": "#/$defs/sha256" },
+        "action_status": { "enum": ["pass", "fail"] },
+        "postcondition_status": { "enum": ["pass", "fail", "not_run"] }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["comparison_id", "pre_sha256", "post_sha256", "expectation", "status"],
+      "properties": {
+        "comparison_id": { "$ref": "#/$defs/plainId" },
+        "pre_sha256": { "$ref": "#/$defs/sha256" },
+        "post_sha256": { "$ref": "#/$defs/sha256" },
+        "expectation": { "enum": ["equal", "different"] },
+        "status": { "enum": ["pass", "fail"] }
+      }
+    }
+  }
+}

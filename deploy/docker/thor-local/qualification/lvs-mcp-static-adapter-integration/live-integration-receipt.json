@@ -134,7 +134,7 @@
     "official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
     "manifest.json": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
     "acceptance_inventory.json": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f",
-    "capability-oracles.json": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"
+    "capability-oracles.json": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
   },
   "lifecycle": "third_static_adapter_successor_integrated"
 }

@@ -4,7 +4,13 @@
   "mode": "static_inert_planning_only",
   "canonical_source": {
     "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-    "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"
+    "sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
+  },
+  "baseline_provenance": {
+    "canonical_source_sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f",
+    "max_requests": 2,
+    "max_actions_present": false,
+    "historical_digest_only": true
   },
   "policy": {
     "official_states_remain_open": true,
@@ -23,7 +29,7 @@
       "capability_id": "runtime.workflow.base-chat-report",
       "oracle_id": "oracle.runtime.workflow.base-chat-report",
       "canonical_oracle_index": 162,
-      "canonical_oracle_sha256": "afafdffe9048d699209f93271fef74c87dc2f1b13e6535e14fc0da491e5764e0",
+      "prior_baseline_oracle_sha256": "afafdffe9048d699209f93271fef74c87dc2f1b13e6535e14fc0da491e5764e0",
       "positive_steps": [
         {"id": "qa-mp4", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/inputs/0", "/fixture/input/contract/actions/0"]},
         {"id": "qa-mkv", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/inputs/1", "/fixture/input/contract/actions/0"]},
@@ -37,7 +43,7 @@
       "capability_id": "runtime.agent.base-hitl",
       "oracle_id": "oracle.runtime.agent.base-hitl",
       "canonical_oracle_index": 163,
-      "canonical_oracle_sha256": "3e02127b4fac348c54dbaefda7023895f11269969378b31f62dd3b0bc10f041b",
+      "prior_baseline_oracle_sha256": "3e02127b4fac348c54dbaefda7023895f11269969378b31f62dd3b0bc10f041b",
       "positive_steps": [
         {"id": "new-prompt", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/commands/1"]},
         {"id": "generate", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/commands/2"]},
@@ -54,7 +60,7 @@
       "capability_id": "runtime.agent.lvs-profile",
       "oracle_id": "oracle.runtime.agent.lvs-profile",
       "canonical_oracle_index": 164,
-      "canonical_oracle_sha256": "abf3f8ea893873db9f4d9478c7d7c0859424b1e6bf3bd908807907e2f1f42faf",
+      "prior_baseline_oracle_sha256": "abf3f8ea893873db9f4d9478c7d7c0859424b1e6bf3bd908807907e2f1f42faf",
       "positive_steps": [
         {"id": "call-video-understanding", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/tools/0"]},
         {"id": "call-config-media", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/tools/1"]},
@@ -74,7 +80,7 @@
       "capability_id": "runtime.agent.search-profile",
       "oracle_id": "oracle.runtime.agent.search-profile",
       "canonical_oracle_index": 165,
-      "canonical_oracle_sha256": "592bb697391c9fd6c1a54b90350d9591ce6f02c65946007b07d82de8352aa08c",
+      "prior_baseline_oracle_sha256": "592bb697391c9fd6c1a54b90350d9591ce6f02c65946007b07d82de8352aa08c",
       "positive_steps": [
         {"id": "search-route", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/routes/0"]},
         {"id": "attribute-route", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/routes/1"]},
@@ -94,7 +100,7 @@
       "capability_id": "runtime.workflow.alert-verification",
       "oracle_id": "oracle.runtime.workflow.alert-verification",
       "canonical_oracle_index": 166,
-      "canonical_oracle_sha256": "ec47d9b43c1001c93e68f1043e9a0036313145f56660d5567c6a246c01050e68",
+      "prior_baseline_oracle_sha256": "ec47d9b43c1001c93e68f1043e9a0036313145f56660d5567c6a246c01050e68",
       "positive_steps": [
         {"id": "verify-ppe-candidate", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/use_cases/0", "/fixture/input/contract/pipeline"]},
         {"id": "verify-restricted-area-candidate", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/use_cases/1", "/fixture/input/contract/pipeline"]},
@@ -108,7 +114,7 @@
       "capability_id": "runtime.workflow.real-time-alerts",
       "oracle_id": "oracle.runtime.workflow.real-time-alerts",
       "canonical_oracle_index": 167,
-      "canonical_oracle_sha256": "9a2868bf7a2ea0738cbd72c47596fd3868d8e0b3ef4303396cd2ba8e361ffe96",
+      "prior_baseline_oracle_sha256": "9a2868bf7a2ea0738cbd72c47596fd3868d8e0b3ef4303396cd2ba8e361ffe96",
       "positive_steps": [
         {"id": "configure-prompt", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/configurable/0"]},
         {"id": "configure-invocation", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/configurable/1"]},
@@ -126,7 +132,7 @@
       "capability_id": "runtime.ui.alerts-tab",
       "oracle_id": "oracle.runtime.ui.alerts-tab",
       "canonical_oracle_index": 169,
-      "canonical_oracle_sha256": "f45edcb8d8af75ef9985943f40727c911e3501419ab06259f63650d4124c9d46",
+      "prior_baseline_oracle_sha256": "f45edcb8d8af75ef9985943f40727c911e3501419ab06259f63650d4124c9d46",
       "positive_steps": [
         {"id": "view-alerts", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/views/0"]},
         {"id": "manage-alerts", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/views/1"]},
@@ -141,7 +147,7 @@
       "capability_id": "runtime.ui.search-tab",
       "oracle_id": "oracle.runtime.ui.search-tab",
       "canonical_oracle_index": 171,
-      "canonical_oracle_sha256": "c91ff89ebe2050a8c65563ad5f12437b51bf624f083dcfdb1959339d9d5bf46f",
+      "prior_baseline_oracle_sha256": "c91ff89ebe2050a8c65563ad5f12437b51bf624f083dcfdb1959339d9d5bf46f",
       "positive_steps": [
         {"id": "video-file-source", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/sources/values/0"]},
         {"id": "rtsp-source", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/sources/values/1"]},
@@ -160,7 +166,7 @@
       "capability_id": "runtime.ui.video-management-tab",
       "oracle_id": "oracle.runtime.ui.video-management-tab",
       "canonical_oracle_index": 172,
-      "canonical_oracle_sha256": "4644fcbb4949e916dc8d0ebb2e207386bfed15c3bb0f7af7db77aa16b40864c6",
+      "prior_baseline_oracle_sha256": "4644fcbb4949e916dc8d0ebb2e207386bfed15c3bb0f7af7db77aa16b40864c6",
       "positive_steps": [
         {"id": "upload-mp4", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/file_types/0"]},
         {"id": "upload-mkv", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/file_types/1"]},
@@ -177,7 +183,7 @@
       "capability_id": "deployment.nemoclaw.same-host-operating-path",
       "oracle_id": "oracle.deployment.nemoclaw.same-host-operating-path",
       "canonical_oracle_index": 174,
-      "canonical_oracle_sha256": "f89816f0545153324bc0f8cbdce75fe99ea262813c295870c9000876a0d46e7b",
+      "prior_baseline_oracle_sha256": "f89816f0545153324bc0f8cbdce75fe99ea262813c295870c9000876a0d46e7b",
       "positive_steps": [
         {"id": "render-owned-namespace", "request_cost": 0, "canonical_basis": ["/fixture/input/action"]},
         {"id": "lint-rendered-plan", "request_cost": 0, "canonical_basis": ["/fixture/input/action"]},
@@ -192,7 +198,7 @@
       "capability_id": "security.nemoclaw.policy-provider-network-boundary",
       "oracle_id": "oracle.security.nemoclaw.policy-provider-network-boundary",
       "canonical_oracle_index": 176,
-      "canonical_oracle_sha256": "afc5b6ad48f44d16b5d4ee3a55f8647a8bc573cfbc023287891c2ff224500472",
+      "prior_baseline_oracle_sha256": "afc5b6ad48f44d16b5d4ee3a55f8647a8bc573cfbc023287891c2ff224500472",
       "positive_steps": [
         {"id": "permitted-provider-request", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/policy_enforced_provider_access"]},
         {"id": "denied-provider-request", "request_cost": 1, "canonical_basis": ["/fixture/input/action"]},
@@ -207,7 +213,7 @@
       "capability_id": "runtime.smart-city.chat-alert-dashboard",
       "oracle_id": "oracle.runtime.smart-city.chat-alert-dashboard",
       "canonical_oracle_index": 183,
-      "canonical_oracle_sha256": "7c21d56ee5054bfaabce85724ef1f1d8f23ae6237d2abd3d3395d03fc8fae05e",
+      "prior_baseline_oracle_sha256": "7c21d56ee5054bfaabce85724ef1f1d8f23ae6237d2abd3d3395d03fc8fae05e",
       "positive_steps": [
         {"id": "natural-language-chat", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/surfaces/0"]},
         {"id": "verified-alerts", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/surfaces/1"]},
@@ -221,7 +227,7 @@
       "capability_id": "runtime.smart-city.traffic-analytics",
       "oracle_id": "oracle.runtime.smart-city.traffic-analytics",
       "canonical_oracle_index": 185,
-      "canonical_oracle_sha256": "719699cec225f3266bd482a1cb10cd97ab4aa73b89fda1421cf4c6600ddec6c8",
+      "prior_baseline_oracle_sha256": "719699cec225f3266bd482a1cb10cd97ab4aa73b89fda1421cf4c6600ddec6c8",
       "positive_steps": [
         {"id": "submit-synthetic-track", "request_cost": 1, "canonical_basis": ["/fixture/input/action"]},
         {"id": "camera-directional-speed", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/metrics/0", "/fixture/input/contract/entities/0"]},
@@ -241,7 +247,7 @@
       "capability_id": "runtime.smart-city.agent-workflow",
       "oracle_id": "oracle.runtime.smart-city.agent-workflow",
       "canonical_oracle_index": 189,
-      "canonical_oracle_sha256": "c4a1b351cfc793a2d48d809d5691139291c391e508023d069eff77d185b4cb93",
+      "prior_baseline_oracle_sha256": "c4a1b351cfc793a2d48d809d5691139291c391e508023d069eff77d185b4cb93",
       "positive_steps": [
         {"id": "city-scope-query", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/location_levels/0"]},
         {"id": "intersection-scope-query", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/location_levels/1"]},
@@ -259,7 +265,7 @@
       "capability_id": "calibration.legacy.core",
       "oracle_id": "oracle.calibration.legacy.core",
       "canonical_oracle_index": 30,
-      "canonical_oracle_sha256": "299a5ba095b7c5cefc4afe6a6dda498d24048b1fa9eb410bdb881aedc3fad597",
+      "prior_baseline_oracle_sha256": "299a5ba095b7c5cefc4afe6a6dda498d24048b1fa9eb410bdb881aedc3fad597",
       "positive_steps": [
         {"id": "create-project", "request_cost": 1, "canonical_basis": ["/fixture/input/action"]},
         {"id": "solve-homography", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/transform"]},
@@ -273,7 +279,7 @@
       "capability_id": "calibration.legacy.gis",
       "oracle_id": "oracle.calibration.legacy.gis",
       "canonical_oracle_index": 31,
-      "canonical_oracle_sha256": "fc81486bcbd9f810b37042d52e2c8e5db1361c9c82c5fbf66fa710dc3cbcf78b",
+      "prior_baseline_oracle_sha256": "fc81486bcbd9f810b37042d52e2c8e5db1361c9c82c5fbf66fa710dc3cbcf78b",
       "positive_steps": [
         {"id": "create-gis-project", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/project_type"]},
         {"id": "solve-3x3-homography", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/transform"]},
@@ -287,7 +293,7 @@
       "capability_id": "performance.alerts.worker-scaling",
       "oracle_id": "oracle.performance.alerts.worker-scaling",
       "canonical_oracle_index": 201,
-      "canonical_oracle_sha256": "e0c73f2372cb5a2a649ed7b459bfd6542f0dbff6c6ad5dcfd67f125ca935656a",
+      "prior_baseline_oracle_sha256": "e0c73f2372cb5a2a649ed7b459bfd6542f0dbff6c6ad5dcfd67f125ca935656a",
       "positive_steps": [
         {"id": "single-worker-baseline", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/chunk_size"]},
         {"id": "saturate-and-observe-backpressure", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/natural_backpressure"]},
@@ -301,7 +307,7 @@
       "capability_id": "deployment.vios.horizontal-scaling",
       "oracle_id": "oracle.deployment.vios.horizontal-scaling",
       "canonical_oracle_index": 218,
-      "canonical_oracle_sha256": "821af3fe1d82b7fd109a7281c49e3192a92b9d3186335cb53c8eb30400d7df49",
+      "prior_baseline_oracle_sha256": "821af3fe1d82b7fd109a7281c49e3192a92b9d3186335cb53c8eb30400d7df49",
       "positive_steps": [
         {"id": "render-replica-plan", "request_cost": 0, "canonical_basis": ["/fixture/input/action"]},
         {"id": "lint-replica-plan", "request_cost": 0, "canonical_basis": ["/fixture/input/action"]},
@@ -316,7 +322,7 @@
       "capability_id": "behavior.elk.disk-watermark-recovery",
       "oracle_id": "oracle.behavior.elk.disk-watermark-recovery",
       "canonical_oracle_index": 230,
-      "canonical_oracle_sha256": "c87fcecc2d6be6f2910767843f5b84cea1d68bd6d96056fff6d8ca6b99813f1e",
+      "prior_baseline_oracle_sha256": "c87fcecc2d6be6f2910767843f5b84cea1d68bd6d96056fff6d8ca6b99813f1e",
       "positive_steps": [
         {"id": "capture-healthy-baseline", "request_cost": 1, "canonical_basis": ["/fixture/input/action"]},
         {"id": "exercise-low-watermark", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/watermarks/low"]},
@@ -335,7 +341,7 @@
       "capability_id": "behavior.vios.upload-playback-remediation",
       "oracle_id": "oracle.behavior.vios.upload-playback-remediation",
       "canonical_oracle_index": 233,
-      "canonical_oracle_sha256": "4adf00cfb917d42cbf9c84d032c328b2d3615c6a8c0ba0708aba15d113561137",
+      "prior_baseline_oracle_sha256": "4adf00cfb917d42cbf9c84d032c328b2d3615c6a8c0ba0708aba15d113561137",
       "positive_steps": [
         {"id": "measure-vpn-upload-transport", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/vpn_upload_constraint"]},
         {"id": "observe-incompatible-playback", "request_cost": 1, "canonical_basis": ["/fixture/input/contract/reencode_required_for_incompatible_files"]},

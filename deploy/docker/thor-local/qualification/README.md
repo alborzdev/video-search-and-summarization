@@ -124,8 +124,8 @@ in this directory:
 - `runtime-execution-bounds-audit/` derives exact minimum envelopes for the 20
   non-Warehouse rows still needing local runtime evidence. It proves every
   generic two-request budget is inadequate, locks 202 minimum requests and 207
-  atomic actions, and emits a deterministic proposal without applying it or
-  changing any official state;
+  atomic actions, and verifies those bounds are now integrated into the
+  canonical oracle plan without changing any official state or evidence;
 - `local20-fixture-pack/` supplies strict candidate-input contracts for nine of
   those rows: four tiny MP4/MKV/B-frame media recipes plus four embedded JSON
   fixtures for HITL, Search/bboxes, Alerts/Smart City tracks, and VIOS
@@ -138,6 +138,12 @@ in this directory:
   VIOS stream processing with a singleton Sensor. It source-locks the current
   blockers, rejects false equivalences such as AMC=legacy or `num_workers`=
   horizontal scaling, and defines future decision/acceptance receipt shapes;
+- `runtime-evidence-common/` provides reusable fail-closed primitives for
+  future authorized collectors: numeric-loopback/exact-path transport through
+  an injected proxy/redirect-disabled opener, independent request/action
+  budgets, exact run/authorization binding, exact-owned LIFO cleanup, pre/post
+  digests, and sanitized evidence. Its CLI is limited to a static check and an
+  in-memory fake self-test; it constructs no opener and performs no live I/O;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle

@@ -44,6 +44,34 @@ OFFLINE_MV3DT_FILES = {
 }
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 
+# capability_id: (planning_requirement_id, minimum requests, maximum actions)
+# Derived by qualification/runtime-execution-bounds-audit.  Exact IDs prevent
+# an unrelated workload from inheriting a wider budget; actions are separate
+# because three lifecycle/remediation flows contain non-request actions.
+LOCAL_RUNTIME_WORKLOAD_OVERRIDES = {
+    "runtime.workflow.base-chat-report": ("tiny-agent-media", 8, 8),
+    "runtime.agent.base-hitl": ("hitl-state-transcript", 11, 11),
+    "runtime.agent.lvs-profile": ("lvs-multi-file", 14, 14),
+    "runtime.agent.search-profile": ("search-documents-and-bboxes", 14, 14),
+    "runtime.workflow.alert-verification": ("candidate-alerts", 8, 8),
+    "runtime.workflow.real-time-alerts": ("tiny-alert-stream", 12, 12),
+    "runtime.ui.alerts-tab": ("ui-alert-api", 9, 9),
+    "runtime.ui.search-tab": ("ui-search-api", 13, 13),
+    "runtime.ui.video-management-tab": ("ui-tiny-media", 11, 11),
+    "deployment.nemoclaw.same-host-operating-path": ("nemoclaw-lifecycle-mocks", 7, 9),
+    "security.nemoclaw.policy-provider-network-boundary": ("nemoclaw-policy-network", 9, 9),
+    "runtime.smart-city.chat-alert-dashboard": ("smartcity-ui-incidents", 8, 8),
+    "runtime.smart-city.traffic-analytics": ("smartcity-synthetic-tracks", 14, 14),
+    "runtime.smart-city.agent-workflow": ("smartcity-agent-pages", 12, 12),
+    "calibration.legacy.core": ("smartcity-manual-calibration", 8, 8),
+    "calibration.legacy.gis": ("smartcity-gis-calibration", 8, 8),
+    "performance.alerts.worker-scaling": ("systems-alert-worker-scaling", 8, 8),
+    "deployment.vios.horizontal-scaling": ("systems-vios-scaling", 7, 9),
+    "behavior.elk.disk-watermark-recovery": ("systems-elk-recovery", 13, 13),
+    "behavior.vios.upload-playback-remediation": ("systems-vios-playback-remediation", 8, 9),
+}
+LOCAL_RUNTIME_WORKLOAD_PHASES = ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"]
+
 
 class OracleContractError(ValueError):
     """The capability-oracle plan is incomplete or has drifted."""
@@ -485,10 +513,16 @@ def _cleanup(capability: dict[str, Any], mode: str) -> dict[str, Any]:
     }
 
 
-def _workload(capability: dict[str, Any]) -> dict[str, Any]:
+def _workload(capability: dict[str, Any], live_integration: bool = True) -> dict[str, Any]:
     capability_id = capability["id"]
     contract = capability["contract"]
-    if capability_id == "api.orchestrator-mcp.tools-9":
+    if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
+        _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
+        units = 1
+        phases = LOCAL_RUNTIME_WORKLOAD_PHASES
+        per_unit = request_budget
+        overhead = 0
+    elif capability_id == "api.orchestrator-mcp.tools-9":
         units = len(contract["tools"])
         phases = ["schema_discovery", "approved_lifecycle", "state_readback", "cleanup"]
         per_unit = len(phases)
@@ -526,6 +560,11 @@ def _workload(capability: dict[str, Any]) -> dict[str, Any]:
         "calculated_max_requests": max_requests,
         "phases": phases,
     }
+
+
+def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
+    override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
+    return override[2] if override is not None else workload["calculated_max_requests"]
 
 
 def canonical_oracle_sha256(oracle: dict[str, Any]) -> str:
@@ -782,11 +821,22 @@ def compile_plan(
     ledger: dict[str, Any],
     protocol_document: dict[str, Any] | None = None,
     acceptance_document: dict[str, Any] | None = None,
+    include_local_runtime_bounds: bool = True,
 ) -> dict[str, Any]:
     target = ledger.get("target")
     capabilities = ledger.get("capabilities")
     if not isinstance(target, dict) or not isinstance(capabilities, list):
         raise OracleContractError("official capability ledger is malformed")
+    live_integration = include_local_runtime_bounds
+    if live_integration:
+        capability_ids = {item.get("id") for item in capabilities if isinstance(item, dict)}
+        planning_ids = [row[0] for row in LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()]
+        if (
+            len(LOCAL_RUNTIME_WORKLOAD_OVERRIDES) != 20
+            or not set(LOCAL_RUNTIME_WORKLOAD_OVERRIDES).issubset(capability_ids)
+            or len(planning_ids) != len(set(planning_ids))
+        ):
+            raise OracleContractError("exact local-runtime workload override denominator drift")
     protocol_document = _load(PROTOCOL_CASES) if protocol_document is None else protocol_document
     protocol_bindings = _protocol_case_bindings(protocol_document)
     planning_bindings = _planning_executor_bindings(acceptance_document)
@@ -798,7 +848,19 @@ def compile_plan(
         capability_id = capability["id"]
         profile, mode = _profile(capability)
         external_boundary = capability["acceptance_class"] == "external_optional"
-        workload = _workload(capability)
+        workload = _workload(capability, live_integration=live_integration)
+        execution_bounds = {
+            "executor": None,
+            "collectors": [],
+            "network_scope": "operator-approved external endpoint" if external_boundary else "loopback-or-compose-internal",
+            "max_duration_seconds": 900,
+            "max_requests": workload["calculated_max_requests"],
+            "workload": workload,
+            "model_staging": "prerequisite_only",
+            "warehouse_sample_bundle": "excluded",
+        }
+        if live_integration:
+            execution_bounds["max_actions"] = _max_actions(capability, workload)
         oracle = {
                 "capability_id": capability_id,
                 "oracle_id": f"oracle.{capability_id}",
@@ -823,16 +885,7 @@ def compile_plan(
                 "expected_observations": _observations(capability, profile),
                 "assertions": _contract_assertions(capability),
                 "admission_prerequisites": _admission(capability, mode),
-                "execution_bounds": {
-                    "executor": None,
-                    "collectors": [],
-                    "network_scope": "operator-approved external endpoint" if external_boundary else "loopback-or-compose-internal",
-                    "max_duration_seconds": 900,
-                    "max_requests": workload["calculated_max_requests"],
-                    "workload": workload,
-                    "model_staging": "prerequisite_only",
-                    "warehouse_sample_bundle": "excluded",
-                },
+                "execution_bounds": execution_bounds,
                 "cleanup": _cleanup(capability, mode),
                 "acceptance_readiness": {
                     "classification": "planning_index_only",
@@ -897,7 +950,11 @@ def validate(
         error = errors[0]
         path = ".".join(str(item) for item in error.absolute_path) or "<root>"
         raise OracleContractError(f"oracle schema violation at {path}: {error.message}")
-    expected = compile_plan(ledger, acceptance_document=_load(ACCEPTANCE))
+    expected = compile_plan(
+        ledger,
+        acceptance_document=_load(ACCEPTANCE),
+        include_local_runtime_bounds=True,
+    )
     if plan != expected:
         expected_by_id = {item["capability_id"]: item for item in expected["oracles"]}
         actual_by_id = {item.get("capability_id"): item for item in plan.get("oracles", []) if isinstance(item, dict)}
@@ -972,6 +1029,14 @@ def validate(
         )
         if workload["calculated_max_requests"] != calculated or item["execution_bounds"]["max_requests"] != calculated:
             raise OracleContractError(f"{item['capability_id']}: execution-bound arithmetic differs")
+        override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(item["capability_id"])
+        expected_actions = override[2] if override is not None else calculated
+        if item["execution_bounds"]["max_actions"] != expected_actions:
+            raise OracleContractError(f"{item['capability_id']}: execution action bound differs")
+        if override is not None:
+            planning_ids = item["fixture"]["input"]["contract"].get("wave3_acceptance", {}).get("planning_requirement_ids")
+            if planning_ids != [override[0]] or calculated != override[1] or workload["phases"] != LOCAL_RUNTIME_WORKLOAD_PHASES:
+                raise OracleContractError(f"{item['capability_id']}: exact local-runtime workload override differs")
         if item["acceptance_readiness"]["classification"] == "planning_index_only":
             materialization = item["fixture"]["materialization"]
             if (
@@ -1034,8 +1099,13 @@ def main() -> int:
         if args.compile:
             print(
                 json.dumps(
-                    compile_plan(_load(LEDGER), acceptance_document=_load(ACCEPTANCE)),
+                    compile_plan(
+                        _load(LEDGER),
+                        acceptance_document=_load(ACCEPTANCE),
+                        include_local_runtime_bounds=True,
+                    ),
                     indent=2,
+                    ensure_ascii=False,
                 )
                 + "\n",
                 end="",

@@ -36,7 +36,7 @@
     },
     {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"
+      "raw_sha256": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
     },
     {
       "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
@@ -52,7 +52,7 @@
       "capability_sha256": "87022e79571eb288cc3a75200fc2f49305475fdf6fca1a00b47c9ecea2d40c13",
       "contract_sha256": "eb69451ac97a7ea8c0401f05b03d0a34f98a217968db4b9f77f03c318d4f901b",
       "oracle_id": "oracle.runtime.ui.alerts-tab",
-      "oracle_sha256": "316387c8463285c796790fb1e7070e82f33c0fabe0f1c03279409cfc2f5c752e",
+      "oracle_sha256": "39a99181923af8c4e3840a3c5afbf9d4387433b2419c300ec6636f82a7c1459e",
       "case_id": "ui-runtime.alerts",
       "ui_endpoint_id": "ui-origin",
       "endpoint_id": "alerts-mock",
@@ -70,7 +70,7 @@
       "capability_sha256": "741b40492faea62fefeb22494c3a2b56417ca724838309d9b01e206cd9e62b97",
       "contract_sha256": "9e025312f0a1cacf730946700e3abef2cabb1caa259a4be46c29d8ec57a258b5",
       "oracle_id": "oracle.runtime.ui.search-tab",
-      "oracle_sha256": "8eb8b3a9174c50917924587fc2b03ae76665ea36243b9a5c8885fe0b563e37d8",
+      "oracle_sha256": "19821e950f6f4bd212afdd45965d3b7654ed54c1dc00987abed8984cd5125bba",
       "case_id": "ui-runtime.search",
       "ui_endpoint_id": "ui-origin",
       "endpoint_id": "search-mock",
@@ -88,7 +88,7 @@
       "capability_sha256": "606f5bbee9d290a44466391951b75f53e951136b24f2e886e311bdf20f87d2b4",
       "contract_sha256": "bf539bc466bde8b973fb392e4a228c5de9dff2b166e41d6d24a060694279e117",
       "oracle_id": "oracle.runtime.ui.video-management-tab",
-      "oracle_sha256": "abae52bfd27a3bfb4f1cac71a3cfcd8086931bc463a75e7308b11e7fa6ae5e73",
+      "oracle_sha256": "07decbf5ecae1a6e192752aef87451fba1f67155872a4ffd74adb5c4c9b5dff9",
       "case_id": "ui-runtime.video-management",
       "ui_endpoint_id": "ui-origin",
       "endpoint_id": "video-mock",

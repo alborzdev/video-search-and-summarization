@@ -1,12 +1,12 @@
 # Local runtime execution-bound audit
 
-This package statically audits the exact 20 non-Warehouse planning requirements that still need authorized local runtime evidence. It does not execute them. It proves that the canonical generic `max_requests: 2` envelope cannot contain each oracle's own atomic workflow, then emits a deterministic **proposal** in `proposed-overrides.json`.
+This package statically audits the exact 20 non-Warehouse planning requirements that still need authorized local runtime evidence. It does not execute them. It preserves the raw digest of the prior generic `max_requests: 2` baseline, derives each oracle's exact atomic envelope, and verifies the canonical integration in `verified-integrations.json`.
 
-The proposal changes no canonical file, state, evidence, executor, collector, service, or host resource. All official oracles remain `open_unexecuted`. The compiler performs only bounded reads of files inside this repository; it has no Docker, network, download, subprocess, lifecycle, or live-runtime capability.
+The verified bounds change no state, evidence, executor, collector, service, or host resource. All official oracles remain `open_unexecuted`. The compiler performs only bounded reads of files inside this repository; it has no Docker, network, download, subprocess, lifecycle, or live-runtime capability.
 
 ## Derivation rule
 
-Each case locks the whole canonical oracle by index, ID, capability ID, SHA-256, planning-requirement binding, open state, empty evidence, and unimplemented two-request baseline. Every atomic workflow step cites one or more resolvable JSON pointers in that oracle.
+Each case locks the current canonical source by raw SHA-256, index, ID, capability ID, current oracle SHA-256, planning-requirement binding, open state, empty evidence, and unimplemented executor/collector state. Historical per-oracle and whole-file digests preserve the prior two-request baseline without treating it as current. Every atomic workflow step cites one or more resolvable JSON pointers in the current oracle.
 
 The execution envelope is:
 
@@ -16,7 +16,7 @@ The execution envelope is:
 4. restore only oracle-owned state; and
 5. verify cleanup postconditions.
 
-Minimum request budget is the sum of the declared per-step request costs. Minimum action budget is the expanded workflow step count. Local render, lint, and media re-encode steps cost an action but no service request. The proposed workload uses one unit, zero hidden overhead, and the derived request count; it is deliberately not applied.
+Minimum request budget is the sum of the declared per-step request costs. Maximum action budget is the expanded workflow step count. Local render, lint, and media re-encode steps cost an action but no service request. The integrated workload uses one unit, zero hidden request overhead, and the derived request count; `max_actions` is represented separately.
 
 ## Exact result
 
@@ -56,4 +56,4 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/tests
 ```
 
-Running the compiler without `--check` prints the same inert proposal to stdout. It never writes or applies it.
+Running the compiler without `--check` prints the same inert verification record to stdout. It never writes or applies anything.

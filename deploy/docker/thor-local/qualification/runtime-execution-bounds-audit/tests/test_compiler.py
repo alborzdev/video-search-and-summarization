@@ -49,37 +49,38 @@ def test_exact_denominator_and_budgets(inputs):
     assert list(actual) == compiler.EXPECTED_IDS
     assert result["summary"] == {
         "case_count": 20,
-        "current_two_request_cases": 20,
-        "two_request_inadequate_cases": 20,
+        "prior_two_request_cases": 20,
+        "prior_two_request_inadequate_cases": 20,
+        "integrated_exact_cases": 20,
         "minimum_request_budget_total": 202,
         "minimum_action_budget_total": 207,
     }
 
 
-def test_all_twos_are_constructively_proved_inadequate(inputs):
+def test_all_prior_twos_are_inadequate_and_exact_bounds_are_integrated(inputs):
     result = compiler.compile_audit(*inputs)
     for case in result["cases"]:
-        assert case["current_max_requests"] == 2
-        assert case["minimum_request_budget"] > case["current_max_requests"]
-        assert case["max_requests_2_inadequate"] is True
-        assert (
-            case["proposed_override"]["max_requests"] == case["minimum_request_budget"]
-        )
+        assert case["prior_max_requests"] == 2
+        assert case["minimum_request_budget"] > case["prior_max_requests"]
+        assert case["prior_max_requests_2_inadequate"] is True
+        assert case["integration_verified"] is True
+        assert case["integrated_max_requests"] == case["minimum_request_budget"]
+        assert case["integrated_max_actions"] == case["minimum_action_budget"]
 
 
-def test_override_targets_only_execution_bounds(inputs):
+def test_integration_targets_only_execution_bounds(inputs):
     result = compiler.compile_audit(*inputs)
     for case in result["cases"]:
-        assert case["override_target"].endswith("/execution_bounds")
-        assert "state" not in case["override_target"]
-        assert "evidence" not in case["override_target"]
-        assert set(case["proposed_override"]) == {"max_requests", "workload"}
+        assert case["integration_target"].endswith("/execution_bounds")
+        assert "state" not in case["integration_target"]
+        assert "evidence" not in case["integration_target"]
+        assert set(case["integrated_bounds"]) == {"max_requests", "max_actions", "workload"}
 
 
 def test_workload_arithmetic_is_exact(inputs):
     result = compiler.compile_audit(*inputs)
     for case in result["cases"]:
-        workload = case["proposed_override"]["workload"]
+        workload = case["integrated_bounds"]["workload"]
         assert (
             workload["units"] * workload["requests_per_unit"]
             + workload["overhead_requests"]
@@ -116,47 +117,38 @@ def test_official_oracles_remain_open_and_unmaterialized(inputs):
         assert oracle["execution_bounds"]["collectors"] == []
 
 
-def test_canonical_oracle_digest_drift_is_rejected(inputs):
+def test_canonical_execution_bound_drift_is_rejected(inputs):
     contract, canonical = copy.deepcopy(inputs)
-    canonical["oracles"][162]["execution_bounds"]["max_duration_seconds"] += 1
-    with pytest.raises(compiler.AuditError, match="canonical oracle digest drift"):
+    canonical["oracles"][162]["execution_bounds"]["max_requests"] += 1
+    with pytest.raises(compiler.AuditError, match="canonical exact execution bounds differ"):
         compiler.compile_audit(contract, canonical)
 
 
-def test_closed_state_is_rejected_even_when_digest_is_rebased(inputs):
+def test_closed_state_is_rejected(inputs):
     contract, canonical = copy.deepcopy(inputs)
     case = contract["cases"][0]
     oracle = canonical["oracles"][case["canonical_oracle_index"]]
     oracle["current_state"] = "verified"
-    case["canonical_oracle_sha256"] = compiler._sha256(
-        compiler._canonical_bytes(oracle)
-    )
     with pytest.raises(compiler.AuditError, match="must remain open"):
         compiler.compile_audit(contract, canonical)
 
 
-def test_materialized_executor_baseline_is_rejected_even_when_rebased(inputs):
+def test_materialized_executor_is_rejected(inputs):
     contract, canonical = copy.deepcopy(inputs)
     case = contract["cases"][0]
     oracle = canonical["oracles"][case["canonical_oracle_index"]]
     oracle["execution_bounds"]["executor"] = "unsafe.py"
-    case["canonical_oracle_sha256"] = compiler._sha256(
-        compiler._canonical_bytes(oracle)
-    )
-    with pytest.raises(compiler.AuditError, match="generic unimplemented"):
+    with pytest.raises(compiler.AuditError, match="unimplemented runtime bounds"):
         compiler.compile_audit(contract, canonical)
 
 
-def test_two_request_baseline_change_is_rejected_even_when_rebased(inputs):
+def test_integrated_request_bound_change_is_rejected(inputs):
     contract, canonical = copy.deepcopy(inputs)
     case = contract["cases"][0]
     oracle = canonical["oracles"][case["canonical_oracle_index"]]
-    oracle["execution_bounds"]["max_requests"] = 8
-    oracle["execution_bounds"]["workload"]["calculated_max_requests"] = 8
-    case["canonical_oracle_sha256"] = compiler._sha256(
-        compiler._canonical_bytes(oracle)
-    )
-    with pytest.raises(compiler.AuditError, match="two-request baseline"):
+    oracle["execution_bounds"]["max_requests"] += 1
+    oracle["execution_bounds"]["workload"]["calculated_max_requests"] += 1
+    with pytest.raises(compiler.AuditError, match="exact execution bounds differ"):
         compiler.compile_audit(contract, canonical)
 
 
@@ -200,14 +192,11 @@ def test_case_reordering_is_rejected(inputs):
         compiler.compile_audit(contract, canonical)
 
 
-def test_warehouse_fixture_is_rejected_even_when_digest_is_rebased(inputs):
+def test_warehouse_fixture_is_rejected(inputs):
     contract, canonical = copy.deepcopy(inputs)
     case = contract["cases"][0]
     oracle = canonical["oracles"][case["canonical_oracle_index"]]
     oracle["fixture"]["warehouse_sample_bundle"] = True
-    case["canonical_oracle_sha256"] = compiler._sha256(
-        compiler._canonical_bytes(oracle)
-    )
     with pytest.raises(compiler.AuditError, match="Warehouse fixture"):
         compiler.compile_audit(contract, canonical)
 
@@ -235,7 +224,7 @@ def test_contract_and_result_schemas_are_strict(inputs):
 
 def test_committed_artifact_matches_compilation(inputs):
     expected = compiler._canonical_bytes(compiler.compile_audit(*inputs)) + b"\n"
-    assert (PACKAGE / "proposed-overrides.json").read_bytes() == expected
+    assert (PACKAGE / "verified-integrations.json").read_bytes() == expected
 
 
 def test_compiler_imports_are_static_only():

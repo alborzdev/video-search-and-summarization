@@ -19,7 +19,7 @@ REPO_ROOT = HERE.parents[4].resolve(strict=True)
 CONTRACT_PATH = HERE / "contract.json"
 CONTRACT_SCHEMA_PATH = HERE / "contract.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
-PROPOSED_PATH = HERE / "proposed-overrides.json"
+VERIFIED_PATH = HERE / "verified-integrations.json"
 MAX_JSON_BYTES = 8_000_000
 
 EXPECTED_IDS = [
@@ -214,8 +214,6 @@ def compile_audit(
             raise AuditError(f"canonical oracle ID/index drift: {requirement_id}")
         if oracle.get("capability_id") != case["capability_id"]:
             raise AuditError(f"canonical capability binding drift: {requirement_id}")
-        if _sha256(_canonical_bytes(oracle)) != case["canonical_oracle_sha256"]:
-            raise AuditError(f"canonical oracle digest drift: {requirement_id}")
         if (
             oracle.get("current_state") != "open_unexecuted"
             or oracle.get("evidence") != []
@@ -226,15 +224,8 @@ def compile_audit(
 
         bounds = oracle.get("execution_bounds", {})
         workload = bounds.get("workload", {})
-        if (
-            bounds.get("max_requests") != 2
-            or workload.get("calculated_max_requests") != 2
-            or bounds.get("executor") is not None
-            or bounds.get("collectors") != []
-        ):
-            raise AuditError(
-                f"expected generic unimplemented two-request baseline: {requirement_id}"
-            )
+        if bounds.get("executor") is not None or bounds.get("collectors") != []:
+            raise AuditError(f"expected unimplemented runtime bounds: {requirement_id}")
         planning_ids = (
             oracle.get("fixture", {})
             .get("input", {})
@@ -263,51 +254,60 @@ def compile_audit(
         action_budget = len(expanded)
         if (request_budget, action_budget) != EXPECTED_BUDGETS[requirement_id]:
             raise AuditError(f"derived budget drift: {requirement_id}")
-        if request_budget <= bounds["max_requests"]:
-            raise AuditError(f"two-request inadequacy was not proved: {requirement_id}")
 
-        proposed_workload = {
+        integrated_workload = {
             "units": 1,
             "requests_per_unit": request_budget,
             "overhead_requests": 0,
             "calculated_max_requests": request_budget,
             "phases": PHASES,
         }
+        if (
+            bounds.get("max_requests") != request_budget
+            or bounds.get("max_actions") != action_budget
+            or workload != integrated_workload
+        ):
+            raise AuditError(f"canonical exact execution bounds differ: {requirement_id}")
         results.append(
             {
                 "planning_requirement_id": requirement_id,
                 "capability_id": case["capability_id"],
                 "oracle_id": case["oracle_id"],
                 "canonical_oracle_index": index,
-                "canonical_oracle_sha256": case["canonical_oracle_sha256"],
-                "current_max_requests": bounds["max_requests"],
+                "canonical_oracle_sha256": _sha256(_canonical_bytes(oracle)),
+                "prior_baseline_oracle_sha256": case["prior_baseline_oracle_sha256"],
+                "prior_max_requests": contract["baseline_provenance"]["max_requests"],
+                "integrated_max_requests": bounds["max_requests"],
+                "integrated_max_actions": bounds["max_actions"],
                 "minimum_request_budget": request_budget,
                 "minimum_action_budget": action_budget,
-                "max_requests_2_inadequate": True,
+                "prior_max_requests_2_inadequate": request_budget > 2,
+                "integration_verified": True,
                 "expanded_workflow_sha256": _sha256(_canonical_bytes(expanded)),
-                "override_target": f"/oracles/{index}/execution_bounds",
-                "proposed_override": {
+                "integration_target": f"/oracles/{index}/execution_bounds",
+                "integrated_bounds": {
                     "max_requests": request_budget,
-                    "workload": proposed_workload,
+                    "max_actions": action_budget,
+                    "workload": integrated_workload,
                 },
             }
         )
 
     return {
         "schema_version": "1.0.0",
-        "artifact_kind": "proposed_execution_bound_overrides",
+        "artifact_kind": "verified_execution_bound_integrations",
         "mode": "static_inert_planning_only",
         "source": contract["canonical_source"],
+        "baseline_provenance": contract["baseline_provenance"],
         "official_states_preserved": True,
         "cases": results,
         "summary": {
             "case_count": len(results),
-            "current_two_request_cases": sum(
-                case["current_max_requests"] == 2 for case in results
+            "prior_two_request_cases": len(results),
+            "prior_two_request_inadequate_cases": sum(
+                case["prior_max_requests_2_inadequate"] for case in results
             ),
-            "two_request_inadequate_cases": sum(
-                case["max_requests_2_inadequate"] for case in results
-            ),
+            "integrated_exact_cases": sum(case["integration_verified"] for case in results),
             "minimum_request_budget_total": sum(
                 case["minimum_request_budget"] for case in results
             ),
@@ -348,12 +348,12 @@ def main(argv: list[str] | None = None) -> int:
         rendered = _canonical_bytes(result).decode("utf-8") + "\n"
         if args.check:
             committed = _regular_file(
-                PROPOSED_PATH, "proposed-overrides.json"
+                VERIFIED_PATH, "verified-integrations.json"
             ).read_bytes()
             if committed != rendered.encode("utf-8"):
-                raise AuditError("committed proposed override artifact drift")
+                raise AuditError("committed verified integration artifact drift")
             print(
-                "PASS: exact 20 local-runtime execution bounds are locked and reproducible"
+                "PASS: exact 20 local-runtime execution bounds are integrated and reproducible"
             )
         else:
             sys.stdout.write(rendered)

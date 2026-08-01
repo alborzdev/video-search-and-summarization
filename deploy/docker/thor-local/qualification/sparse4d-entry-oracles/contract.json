@@ -63,7 +63,7 @@
     {"path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "sha256": "e385a4a3c78fe3cc35f51f7a5f35fae43746b5172f61c65a53b7ec8a1c05d914"},
     {"path": "deploy/docker/thor-local/warehouse-sparse4d-prometheus.yml", "sha256": "d7e195313cf8aef56ea76aa9ead3a437b964be134d7f175436b5eab53cbefc94"},
     {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json", "sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
-    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json", "sha256": "13219546fbc70a92c8593512d2af405cd977136525721d7f8b063e02025230fa"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json", "sha256": "e79ec66c26094478f178058b03e0b7371e5eacc15911dc354b3903d1b45afe95"},
     {"path": "deploy/docker/thor-local/parity/manifest.json", "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"}
   ]
 }

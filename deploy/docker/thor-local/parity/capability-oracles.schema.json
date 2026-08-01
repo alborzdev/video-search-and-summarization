@@ -170,13 +170,14 @@
         },
         "execution_bounds": {
           "type": "object", "additionalProperties": false,
-          "required": ["executor", "collectors", "network_scope", "max_duration_seconds", "max_requests", "workload", "model_staging", "warehouse_sample_bundle"],
+          "required": ["executor", "collectors", "network_scope", "max_duration_seconds", "max_requests", "max_actions", "workload", "model_staging", "warehouse_sample_bundle"],
           "properties": {
             "executor": {"type": ["string", "null"]},
             "collectors": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
             "network_scope": {"enum": ["loopback-or-compose-internal", "operator-approved external endpoint"]},
             "max_duration_seconds": {"type": "integer", "minimum": 1, "maximum": 1800},
             "max_requests": {"type": "integer", "minimum": 0, "maximum": 10000},
+            "max_actions": {"type": "integer", "minimum": 1, "maximum": 10000},
             "workload": {
               "type": "object", "additionalProperties": false,
               "required": ["units", "requests_per_unit", "overhead_requests", "calculated_max_requests", "phases"],

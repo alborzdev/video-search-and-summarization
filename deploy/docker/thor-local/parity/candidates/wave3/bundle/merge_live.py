@@ -837,7 +837,9 @@ def build_unmerged(
         }
         record["scenario_ids"] = sorted(set(record["scenario_ids"]) | scenarios)
 
-    oracle_plan = capability_oracles.compile_plan(ledger)
+    oracle_plan = capability_oracles.compile_plan(
+        ledger, include_local_runtime_bounds=False
+    )
     if len(oracle_plan["oracles"]) != 276 or any(
         item["acceptance_readiness"]["classification"] != "planning_index_only"
         or item["evidence"]
