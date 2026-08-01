@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/synthetic-data-entry-static-contract/result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "scope", "observations", "determinism", "confinement", "runtime_evidence_created", "runtime_state_promoted", "official_capability_effect", "result"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-synthetic-data-entry-static-contract-v1"},
+    "mode": {"const": "candidate_only_canonical_source_wiring"},
+    "status": {"const": "pass"},
+    "scope": {"const": "static_wiring_only"},
+    "observations": {"$ref": "#/$defs/observations"},
+    "determinism": {
+      "type": "object", "additionalProperties": false,
+      "required": ["independent_runs", "byte_identical"],
+      "properties": {"independent_runs": {"const": 2}, "byte_identical": {"const": true}}
+    },
+    "confinement": {"$ref": "#/$defs/confinement"},
+    "runtime_evidence_created": {"const": false},
+    "runtime_state_promoted": {"const": false},
+    "official_capability_effect": {"const": "none_static_contract_only"},
+    "result": {"const": "static_source_wiring_verified_runtime_open"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "binding_base": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_id", "capability_id", "oracle_id", "kind", "acceptance_class", "thor_state", "runtime_state", "oracle_state", "source_count", "runtime_evidence"],
+      "properties": {
+        "entry_id": {"type": "string"},
+        "capability_id": {"type": "string"},
+        "oracle_id": {"type": "string"},
+        "kind": {"const": "tooling"},
+        "acceptance_class": {"const": "alternate_local_lane"},
+        "thor_state": {"const": "wired"},
+        "runtime_state": {"const": "not_qualified"},
+        "oracle_state": {"const": "open_unexecuted"},
+        "source_count": {"type": "integer"},
+        "runtime_evidence": {"const": []}
+      }
+    },
+    "binding0": {"allOf": [{"$ref": "#/$defs/binding_base"}, {"properties": {"entry_id": {"const": "manifest-gap.synthetic-data-tools.00-semantic-label-helpers"}, "capability_id": {"const": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers"}, "oracle_id": {"const": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers"}, "source_count": {"const": 3}}}]},
+    "binding1": {"allOf": [{"$ref": "#/$defs/binding_base"}, {"properties": {"entry_id": {"const": "manifest-gap.synthetic-data-tools.01-dataset-checks"}, "capability_id": {"const": "manifest-entry.synthetic-data-tools.01-dataset-checks"}, "oracle_id": {"const": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks"}, "source_count": {"const": 10}}}]},
+    "binding2": {"allOf": [{"$ref": "#/$defs/binding_base"}, {"properties": {"entry_id": {"const": "manifest-gap.synthetic-data-tools.02-rgb-depth-video-conversion"}, "capability_id": {"const": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion"}, "oracle_id": {"const": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion"}, "source_count": {"const": 3}}}]},
+    "binding3": {"allOf": [{"$ref": "#/$defs/binding_base"}, {"properties": {"entry_id": {"const": "manifest-gap.synthetic-data-tools.03-ground-truth-conversion"}, "capability_id": {"const": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"}, "oracle_id": {"const": "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion"}, "source_count": {"const": 2}}}]},
+    "arm64_environment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["platform", "python", "openusd", "conda_artifacts", "pip_requirements", "locked_wheels", "miniforge_filename", "miniforge_sha256"],
+      "properties": {
+        "platform": {"const": "linux-aarch64"},
+        "python": {"const": "3.10.20"},
+        "openusd": {"const": "26.05"},
+        "conda_artifacts": {"const": 178},
+        "pip_requirements": {"const": 21},
+        "locked_wheels": {"const": 21},
+        "miniforge_filename": {"const": "Miniforge3-25.3.1-0-Linux-aarch64.sh"},
+        "miniforge_sha256": {"const": "a57c9e3d6c0c449c0283fd07e0bfa30d95eb8d547a14e8dc06c606405d01a7f0"}
+      }
+    },
+    "ground_truth_cli": {
+      "type": "object", "additionalProperties": false,
+      "required": ["flag", "requires_output", "requires_calibration", "default_visualization_requires_calibration", "deterministic_outputs"],
+      "properties": {
+        "flag": {"const": "--skip-visualization"},
+        "requires_output": {"const": true},
+        "requires_calibration": {"const": false},
+        "default_visualization_requires_calibration": {"const": true},
+        "deterministic_outputs": {"const": ["ground_truth.json", "bounding_boxes.json", "rotation_keys_with_rot.json", "corners_comparison_dict.json"]}
+      }
+    },
+    "observations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contract_sha256", "source_hashes", "unique_entry_source_count", "arm64_environment", "entry_bindings", "ground_truth_cli", "warehouse_sample_bundle", "runtime_evidence", "full_semantic_execution_performed", "canonical_state_advanced"],
+      "properties": {
+        "contract_sha256": {"$ref": "#/$defs/sha256"},
+        "source_hashes": {
+          "type": "object", "minProperties": 26, "maxProperties": 26,
+          "propertyNames": {"type": "string", "pattern": "^(tools/sdg-postprocessing/)"},
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        },
+        "unique_entry_source_count": {"const": 18},
+        "arm64_environment": {"$ref": "#/$defs/arm64_environment"},
+        "entry_bindings": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "prefixItems": [{"$ref": "#/$defs/binding0"}, {"$ref": "#/$defs/binding1"}, {"$ref": "#/$defs/binding2"}, {"$ref": "#/$defs/binding3"}],
+          "items": false
+        },
+        "ground_truth_cli": {"$ref": "#/$defs/ground_truth_cli"},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "runtime_evidence": {"const": []},
+        "full_semantic_execution_performed": {"const": false},
+        "canonical_state_advanced": {"const": false}
+      }
+    },
+    "confinement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network_calls", "docker_calls", "subprocess_calls", "downloads", "service_lifecycle_calls", "product_imports", "filesystem_writes", "warehouse_sample_bundle"],
+      "properties": {
+        "network_calls": {"const": 0},
+        "docker_calls": {"const": 0},
+        "subprocess_calls": {"const": 0},
+        "downloads": {"const": 0},
+        "service_lifecycle_calls": {"const": 0},
+        "product_imports": {"const": 0},
+        "filesystem_writes": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  }
+}

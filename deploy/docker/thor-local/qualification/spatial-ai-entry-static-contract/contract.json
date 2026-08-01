@@ -1,0 +1,425 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-spatial-ai-entry-static-contract-v1",
+  "mode": "candidate_only_canonical_source_wiring",
+  "manifest_binding": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "feature_id": "spatial-ai-utils",
+    "feature_index": 29,
+    "feature_pointer": "/features/29",
+    "advertised_entry_count": 8
+  },
+  "policy": {
+    "candidate_only": true,
+    "can_mutate_live_ledgers": false,
+    "can_mark_passed_current": false,
+    "official_capability_effect": "none_static_contract_only",
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "service_lifecycle_allowed": false,
+    "file_writes_allowed": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "entries": [
+    {
+      "manifest_pointer": "/features/29/advertised/0",
+      "advertised": "calibration and camera grouping",
+      "entry_id": "manifest-gap.spatial-ai-utils.00-calibration-and-camera-grouping",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "kind": "tooling",
+        "gap_classifier_kind": "offline_tooling",
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/group_utils.py",
+          "sha256": "05336334cde57578e878462bcace3a598d65fcf1aebdd1ba722c39c96e6b09d8",
+          "ast_symbols": ["add_group_info_to_sensors", "parse_moves", "apply_group_reassignments", "reassign_camera_groups_from_calibration"],
+          "text_fragments": ["sensor[\"group\"] = template", "Invalid --move format", "calculate_and_update_group_origins"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/grouping.py",
+          "sha256": "c358caaac6b703d57a7aca7309eb3ccf48f557a4034fd50e7fed6eafb3399b4d",
+          "ast_symbols": ["CameraGroupManager", "group_cameras_from_calibration"],
+          "text_fragments": ["manager.get_group_list()", "group_list"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/clustering.py",
+          "sha256": "75e3677226e1761faa7831df1dbcf1d4d51c560fcf873fb30197e8ab77548c93",
+          "ast_symbols": ["CameraClusterManager", "cluster_cameras_from_calibration", "find_suggested_cluster_params"],
+          "text_fragments": ["n_clusters", "calibration_data"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/origin.py",
+          "sha256": "a32fd3e47d9f720d7b50833cbbdea434855cd493707cf0d6bb4ede8479b5dd39",
+          "ast_symbols": ["calculate_group_origin", "calculate_group_origin_from_frustum", "calculate_group_origin_hybrid", "calculate_and_update_group_origins"],
+          "text_fragments": ["dilation_distance", "dimensions"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/reassign_camera_groups.py",
+          "sha256": "0a0f7ef446189d67bb3a5b1edfb27cb5e3d0f755665587e23f841e6228f1de24",
+          "ast_symbols": ["main"],
+          "text_fragments": ["--move", "reassign_camera_groups_from_calibration"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "type": "offline_tool_execution",
+        "current_state": "open_unexecuted",
+        "success_condition": "Run the real checked-in grouping and reassignment path on a digest-bound two-camera calibration, validate group metadata and recomputed origin semantics, and reject malformed or missing assignments.",
+        "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/1",
+      "advertised": "3D/2D geometry",
+      "entry_id": "manifest-gap.spatial-ai-utils.01-3d-2d-geometry",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "kind": "tooling",
+        "gap_classifier_kind": "offline_tooling",
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_3d.py",
+          "sha256": "8c7f61ff04ce7f68cb9f8ef29d0a5189dab299bb10b8b36ae9f343e1b8b7cabc",
+          "ast_symbols": ["box3d_to_corners"],
+          "text_fragments": ["canonical 9-DoF", "Legacy 7-DoF"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/projection.py",
+          "sha256": "8107092b08df576182e7a83ea1fa9babe27ea09f53ff7bd991e9f0d4f316958f",
+          "ast_symbols": ["project_points_3d_to_image", "project_boxes_3d_to_2d", "project_bev_objects_bbox_in_image"],
+          "text_fragments": ["front_mask", "visible_mask", "bbox3d.info"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/projection/project_bbox3d_to_2d.py",
+          "sha256": "927c822821a26e667177a8b257a4dfaa657dde8737f5492a02f54b6fdb7d8572",
+          "ast_symbols": ["parse_args", "main"],
+          "text_fragments": ["--sensor_id", "--nvschema_path", "project_bev_objects_bbox_in_image"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "type": "offline_tool_execution",
+        "current_state": "open_unexecuted",
+        "success_condition": "Run the real projection CLI on digest-bound 9-DoF boxes and calibration, validate exact projected corners and visibility filtering, and prove the legacy 7-DoF negative is rejected.",
+        "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/2",
+      "advertised": "multiview visualization",
+      "entry_id": "manifest-gap.spatial-ai-utils.02-multiview-visualization",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "kind": "tooling",
+        "gap_classifier_kind": "offline_tooling",
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_3d.py",
+          "sha256": "19d645818a480485d2d51d4471e89f70d4c7714f2c43b4181b9ae95154bd21f5",
+          "ast_symbols": ["draw_bbox3d_on_img", "draw_bbox3d_on_bev", "draw_bbox3d_multicam"],
+          "text_fragments": ["world2imgs", "bev = draw_bbox3d_on_bev", "np.concatenate"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox.py",
+          "sha256": "cc2fe3f0633e8f96c9afe549b467a4616e118e86f1cb232d7caa151fdc1cce2d",
+          "ast_symbols": ["parse_args", "main"],
+          "text_fragments": ["--input_data_path", "--calib_path", "project_bev_objects_bbox_in_image", "draw_bev_objects_bbox_in_image"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox_batch.py",
+          "sha256": "8485c512a8c3bca4048a6769b399eb23f5c07b281397433b1efa460131910971",
+          "ast_symbols": ["parse_args", "main"],
+          "text_fragments": ["visualize_3dbbox", "--nvschema_path"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "type": "offline_tool_execution",
+        "current_state": "open_unexecuted",
+        "success_condition": "Render digest-bound boxes into two camera panels plus BEV with the real visualization path, validate panel dimensions and non-empty pixels, and prove source images remain unchanged.",
+        "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/3",
+      "advertised": "detection mAP",
+      "entry_id": "manifest-gap.spatial-ai-utils.03-detection-map",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.03-detection-map",
+        "kind": "evaluation",
+        "gap_classifier_kind": "offline_tooling",
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py",
+          "sha256": "b6e8ece795f6986b2cdb1afd133474deb94338b5daf35e54b9e171ab97691ba6",
+          "ast_symbols": ["evaluate_detection", "save_detection_results", "evaluate_detection_per_BEV_sensor", "evaluate_detection_all_BEV_sensors"],
+          "text_fragments": ["accumulate", "calc_ap", "add_label_ap", "metrics_summary.json"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py",
+          "sha256": "d1b5b48668b8b24cd3c232ca8b026f080dc3e4380301c136e72e03119dd92aa1",
+          "ast_symbols": ["load_boxes_from_jsonl"],
+          "text_fragments": ["DetectionBox", "sample_token"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py",
+          "sha256": "f5d9e8120ee1196bd6add34ec1960ac8fb7b65252283a2ccf4c1d2a7f27afa3a",
+          "ast_symbols": ["DetectionBox"],
+          "text_fragments": ["confidence", "class_name"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/validation_and_evaluation/run_validation_and_evaluation.py",
+          "sha256": "303a8023ec4b617749d32f9a516403bc68de33bb331cf051db8a5911ef28557d",
+          "ast_symbols": ["run_evaluation", "main", "parse_args"],
+          "text_fragments": ["evaluate_detection_per_BEV_sensor", "confidence_threshold"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/release/pyproject.toml",
+          "sha256": "260418e6907fb5bda5daa383b6701bf05420fccd24f28e2c478beddc20532ddc",
+          "ast_symbols": [],
+          "text_fragments": ["nuscenes-devkit==1.2.0", "motmetrics==1.4.0"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "type": "offline_tool_execution",
+        "current_state": "open_unexecuted",
+        "success_condition": "Run the real production loader, evaluator, and save path with the declared local eval dependencies on digest-bound perfect and threshold-miss fixtures and validate AP, mAP, and output digests.",
+        "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/4",
+      "advertised": "tracking HOTA/CLEAR/identity/count",
+      "entry_id": "manifest-gap.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "kind": "evaluation",
+        "gap_classifier_kind": "offline_tooling",
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/_base_metric.py",
+          "sha256": "b48f033e11b0bfc81ece63242593896910d816df27d97d9008b40811babeadd3",
+          "ast_symbols": ["_BaseMetric"],
+          "text_fragments": ["eval_sequence", "combine_sequences"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/hota.py",
+          "sha256": "b225a9b4f0a0f1c823257c8d3d892285ffdbf2325aedba881175ae967f2f8d33",
+          "ast_symbols": ["HOTA"],
+          "text_fragments": ["def eval_sequence", "res['HOTA']", "res['DetA']", "res['AssA']"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/clear.py",
+          "sha256": "5e5baadcb3b00c938bd929acf8bd1f8e1eface219cffabb6e4609fdb6f7cca4f",
+          "ast_symbols": ["CLEAR"],
+          "text_fragments": ["def eval_sequence", "res['MOTA']", "res['MOTP']"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/identity.py",
+          "sha256": "f01a9d644bbeeaf6864c64d340164d3ac99c4e3a24abf77c28d0f2cc91f2e973",
+          "ast_symbols": ["Identity"],
+          "text_fragments": ["def eval_sequence", "res['IDF1']", "res['IDR']", "res['IDP']"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py",
+          "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b",
+          "ast_symbols": ["Count"],
+          "text_fragments": ["def eval_sequence", "'Dets'", "'GT_Dets'", "'IDs'", "'GT_IDs'"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/utils.py",
+          "sha256": "58622fa0c85d145f6216372433afd183d26f33126cf751f1b9e74689c88f0249",
+          "ast_symbols": ["init_config"],
+          "text_fragments": ["PRINT_CONFIG"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/evaluation/evaluate_aicity_mtmc.py",
+          "sha256": "582bbbb3fa24ad67b1d59bd79ea516291217a455e62b5abaec918062fad3feaa",
+          "ast_symbols": ["parse_args", "main"],
+          "text_fragments": ["--edition", "HOTA"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "type": "offline_tool_execution",
+        "current_state": "open_unexecuted",
+        "success_condition": "Run the real HOTA, CLEAR, Identity, and Count implementations on a digest-bound two-frame track, validate exact scores and counts, and include an identity-mismatch negative.",
+        "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/5",
+      "advertised": "NVSchema conversion",
+      "entry_id": "manifest-gap.spatial-ai-utils.05-nvschema-conversion",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "kind": "tooling",
+        "gap_classifier_kind": "offline_tooling",
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py",
+          "sha256": "ccf56090b1fd9774d9c9615a03773ce85d4712e3239655d5348778eeeaaad3cb",
+          "ast_symbols": ["FloatEncoder", "convert_sparse4d_to_nvschema"],
+          "text_fragments": ["\"version\": \"4.0\"", "tracking_name", "tracking_score", "reid_embedding", "bbox3d"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py",
+          "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32",
+          "ast_symbols": ["euler_from_quaternion"],
+          "text_fragments": ["pitch", "roll", "yaw"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py",
+          "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e",
+          "ast_symbols": ["load_nvschema"],
+          "text_fragments": ["Each line of the input file is one frame", "sensorId", "objects"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "type": "offline_tool_execution",
+        "current_state": "open_unexecuted",
+        "success_condition": "Run the real converter on a digest-bound Sparse4D result, validate NVSchema 4.0 class, confidence, rotation, dimensions, and embedding semantics, then strictly load the emitted JSONL.",
+        "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/6",
+      "advertised": "video/frame tools",
+      "entry_id": "manifest-gap.spatial-ai-utils.06-video-frame-tools",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "kind": "tooling",
+        "gap_classifier_kind": "offline_tooling",
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "wired",
+        "runtime_state": "not_qualified"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video.py",
+          "sha256": "7bbd3fa74d1ca1238716c0b95ac375127be629212cac8e7a457b563eb571916f",
+          "ast_symbols": ["list_frame_paths", "frames_to_video", "frames_to_video_batch"],
+          "text_fragments": ["VideoWriter", "STATUS_COMPLETED", "STATUS_WRITE_ERROR"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/video2frame.py",
+          "sha256": "3a0da452fc4c69c9d71242c3134adc81f5bfb3ed587355abcd615b713d7385bd",
+          "ast_symbols": ["video_to_frames", "video_to_frames_batch"],
+          "text_fragments": ["VideoCapture", "imwrite", "STATUS_COMPLETED", "STATUS_INCOMPLETE_EXTRACTION"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/video_utils/frame2video.py",
+          "sha256": "9c8839496d921d420d2a6e76466e889147097bdd8c1d67fac019683911d4f084",
+          "ast_symbols": ["parse_args", "main"],
+          "text_fragments": ["frames_to_video", "--down_sample", "--codec"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/tools/video_utils/video2frame.py",
+          "sha256": "ae585b525ddeaf7536a122dacf6f6ea738368d3b2ab6d1f3737a030c628d92a7",
+          "ast_symbols": ["parse_args", "main"],
+          "text_fragments": ["video_to_frames", "--frame_skip", "--overwrite"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "type": "offline_tool_execution",
+        "current_state": "open_unexecuted",
+        "success_condition": "Encode digest-bound generated frames and decode the resulting tiny video through the real local codec path, validating numeric ordering, downsample, frame skip, pixels, container digest, and cleanup.",
+        "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/7",
+      "advertised": "AWS/GCS validation",
+      "entry_id": "manifest-gap.spatial-ai-utils.07-aws-gcs-validation",
+      "capability": {
+        "id": "manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+        "kind": "tooling",
+        "gap_classifier_kind": "external_integration",
+        "acceptance_class": "external_optional",
+        "thor_state": "external_optional",
+        "runtime_state": "not_applicable"
+      },
+      "source_reviews": [
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/common.py",
+          "sha256": "45a82ec714865bdf462262eb4334c8fadd6ca831441a050b82bfe3e8ecd06242",
+          "ast_symbols": ["get_storage_bucket", "get_storage_client"],
+          "text_fragments": ["SUPPORTED_STORAGE_PROVIDERS", "GCS_ENDPOINT_URL", "STORAGE_PROVIDER"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/upload_utils.py",
+          "sha256": "d484d3c6337c8f2a56f078300f15833d94df0c95c7b58142ea6c6b8e0c74413d",
+          "ast_symbols": ["upload_csv_to_storage"],
+          "text_fragments": ["put_object", "get_storage_client", "get_storage_bucket"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/download_utils.py",
+          "sha256": "b4669fc52deb0e64bd086b7b184af4602601e6eb2decdf3a32da35ef9b51aa32",
+          "ast_symbols": ["download_single_file_from_storage_streaming", "download_and_merge_data_from_storage", "get_calibration_from_storage"],
+          "text_fragments": ["storage_client.download_file", "get_storage_client", "get_storage_bucket"]
+        },
+        {
+          "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/validation_utils.py",
+          "sha256": "c8202a1ee2525f27fcc8f364b65305c658dead6ba0cd0b242ab1894b0b2066a8",
+          "ast_symbols": ["count_the_bev_records_in_storage", "check_if_all_ground_truth_files_are_present_in_storage"],
+          "text_fragments": ["actual_count", "storage_prefix_path"]
+        }
+      ],
+      "oracle": {
+        "id": "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+        "type": "external_optional_boundary",
+        "current_state": "external_boundary_unexecuted",
+        "success_condition": "With explicit authorization, correlate upload, readback, validation, and cleanup of one operator-owned object against an actual AWS or GCS HTTPS endpoint; source, mocks, emulators, and generic S3-compatible services are insufficient.",
+        "required_evidence": ["user_authorized_endpoint_transcript", "validation_result"],
+        "runtime_evidence": [],
+        "static_contract_is_full_semantic_proof": false
+      }
+    }
+  ]
+}

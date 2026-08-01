@@ -74,8 +74,8 @@
   ],
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
-    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"},
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"},
     {"path": "services/analytics/behavior-analytics/src/mdx/__init__.py", "sha256": "91aeed5fc7e608ef0dd055febf0eb8fd8e73dd7f7e83ffbb18fa62e556c100b0"},
     {"path": "services/analytics/behavior-analytics/src/mdx/analytics/__init__.py", "sha256": "91aeed5fc7e608ef0dd055febf0eb8fd8e73dd7f7e83ffbb18fa62e556c100b0"},
     {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/__init__.py", "sha256": "91aeed5fc7e608ef0dd055febf0eb8fd8e73dd7f7e83ffbb18fa62e556c100b0"},

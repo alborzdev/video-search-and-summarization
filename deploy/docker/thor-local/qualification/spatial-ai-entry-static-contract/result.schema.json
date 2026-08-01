@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/vss/thor/spatial-ai-entry-static-contract-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "candidate_only", "official_capability_effect", "contract_sha256", "manifest_observation", "summary", "entries", "runtime_evidence", "can_mark_passed_current", "limitations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-spatial-ai-entry-static-contract-v1"},
+    "mode": {"const": "candidate_only_canonical_source_wiring"},
+    "candidate_only": {"const": true},
+    "official_capability_effect": {"const": "none_static_contract_only"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "manifest_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256", "feature_canonical_sha256", "feature_id", "feature_index", "advertised_entry_count"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/parity/manifest.json"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "feature_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "feature_id": {"const": "spatial-ai-utils"},
+        "feature_index": {"const": 29},
+        "advertised_entry_count": {"const": 8}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_count", "local_wired_not_qualified_count", "external_optional_not_applicable_count", "open_offline_oracle_count", "open_external_oracle_count", "unique_source_lock_count", "unique_source_set_sha256", "runtime_evidence_count"],
+      "properties": {
+        "entry_count": {"const": 8},
+        "local_wired_not_qualified_count": {"const": 7},
+        "external_optional_not_applicable_count": {"const": 1},
+        "open_offline_oracle_count": {"const": 7},
+        "open_external_oracle_count": {"const": 1},
+        "unique_source_lock_count": {"const": 34},
+        "unique_source_set_sha256": {"$ref": "#/$defs/sha256"},
+        "runtime_evidence_count": {"const": 0}
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/localToolRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/0"}, "advertised": {"const": "calibration and camera grouping"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.00-calibration-and-camera-grouping"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping"}, "capability_kind": {"const": "tooling"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping"}, "source_lock_count": {"const": 5}}}]},
+        {"allOf": [{"$ref": "#/$defs/localToolRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/1"}, "advertised": {"const": "3D/2D geometry"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.01-3d-2d-geometry"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry"}, "capability_kind": {"const": "tooling"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry"}, "source_lock_count": {"const": 3}}}]},
+        {"allOf": [{"$ref": "#/$defs/localToolRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/2"}, "advertised": {"const": "multiview visualization"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.02-multiview-visualization"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.02-multiview-visualization"}, "capability_kind": {"const": "tooling"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization"}, "source_lock_count": {"const": 3}}}]},
+        {"allOf": [{"$ref": "#/$defs/localToolRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/3"}, "advertised": {"const": "detection mAP"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.03-detection-map"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.03-detection-map"}, "capability_kind": {"const": "evaluation"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.03-detection-map"}, "source_lock_count": {"const": 5}}}]},
+        {"allOf": [{"$ref": "#/$defs/localToolRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/4"}, "advertised": {"const": "tracking HOTA/CLEAR/identity/count"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.04-tracking-hota-clear-identity-count"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count"}, "capability_kind": {"const": "evaluation"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count"}, "source_lock_count": {"const": 7}}}]},
+        {"allOf": [{"$ref": "#/$defs/localToolRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/5"}, "advertised": {"const": "NVSchema conversion"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.05-nvschema-conversion"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.05-nvschema-conversion"}, "capability_kind": {"const": "tooling"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion"}, "source_lock_count": {"const": 3}}}]},
+        {"allOf": [{"$ref": "#/$defs/localToolRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/6"}, "advertised": {"const": "video/frame tools"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.06-video-frame-tools"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.06-video-frame-tools"}, "capability_kind": {"const": "tooling"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools"}, "source_lock_count": {"const": 4}}}]},
+        {"allOf": [{"$ref": "#/$defs/baseRow"}, {"properties": {"manifest_pointer": {"const": "/features/29/advertised/7"}, "advertised": {"const": "AWS/GCS validation"}, "entry_id": {"const": "manifest-gap.spatial-ai-utils.07-aws-gcs-validation"}, "capability_id": {"const": "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"}, "capability_kind": {"const": "tooling"}, "acceptance_class": {"const": "external_optional"}, "thor_state": {"const": "external_optional"}, "runtime_state": {"const": "not_applicable"}, "oracle_id": {"const": "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"}, "oracle_type": {"const": "external_optional_boundary"}, "oracle_current_state": {"const": "external_boundary_unexecuted"}, "source_lock_count": {"const": 4}}}]}
+      ],
+      "items": false
+    },
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "can_mark_passed_current": {"const": false},
+    "limitations": {
+      "const": [
+        "source wiring and exact canonical entry contracts only",
+        "reviewed product functions and CLIs are not executed",
+        "offline tool semantics, codecs, and external providers are not qualified",
+        "no live parity ledger, oracle registry, gap plan, runtime plan, or wrapper is mutated"
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "plainId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "baseRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_pointer", "advertised", "entry_id", "capability_id", "capability_kind", "acceptance_class", "thor_state", "runtime_state", "oracle_id", "oracle_type", "oracle_current_state", "source_lock_count", "source_assertion_count", "source_set_sha256", "observation", "runtime_evidence", "can_mark_passed_current"],
+      "properties": {
+        "manifest_pointer": {"type": "string"},
+        "advertised": {"type": "string"},
+        "entry_id": {"$ref": "#/$defs/plainId"},
+        "capability_id": {"$ref": "#/$defs/plainId"},
+        "capability_kind": {"enum": ["tooling", "evaluation"]},
+        "acceptance_class": {"enum": ["alternate_local_lane", "external_optional"]},
+        "thor_state": {"enum": ["wired", "external_optional"]},
+        "runtime_state": {"enum": ["not_qualified", "not_applicable"]},
+        "oracle_id": {"$ref": "#/$defs/plainId"},
+        "oracle_type": {"enum": ["offline_tool_execution", "external_optional_boundary"]},
+        "oracle_current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
+        "source_lock_count": {"type": "integer", "minimum": 3},
+        "source_assertion_count": {"type": "integer", "minimum": 6},
+        "source_set_sha256": {"$ref": "#/$defs/sha256"},
+        "observation": {"const": "observed_canonical_source_wiring"},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "can_mark_passed_current": {"const": false}
+      }
+    },
+    "localToolRow": {
+      "allOf": [
+        {"$ref": "#/$defs/baseRow"},
+        {"properties": {
+          "acceptance_class": {"const": "alternate_local_lane"},
+          "thor_state": {"const": "wired"},
+          "runtime_state": {"const": "not_qualified"},
+          "oracle_type": {"const": "offline_tool_execution"},
+          "oracle_current_state": {"const": "open_unexecuted"}
+        }}
+      ]
+    }
+  }
+}

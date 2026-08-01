@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tooling-entry-ledger-successor-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "predecessor", "successor", "transition", "frozen_direct_dependents", "effects", "limitations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "read_only_tooling_entry_ledger_successor"},
+    "predecessor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["commit", "root_tree_oid", "advertised_gap_count", "official_capability_count", "capability_oracle_count"],
+      "properties": {
+        "commit": {"const": "f638eb3421ec5620fe22609590c5e9d5872d33d0"},
+        "root_tree_oid": {"const": "396686f4bbd0e0f10d344ac06dd629fdad425181"},
+        "advertised_gap_count": {"const": 86},
+        "official_capability_count": {"const": 277},
+        "capability_oracle_count": {"const": 277}
+      }
+    },
+    "successor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["advertised_gap_count", "official_capability_count", "capability_oracle_count", "retired_gap_ids", "added_capability_ids", "added_oracle_ids"],
+      "properties": {
+        "advertised_gap_count": {"const": 74},
+        "official_capability_count": {"const": 289},
+        "capability_oracle_count": {"const": 289},
+        "retired_gap_ids": {"type": "array", "minItems": 12, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "pattern": "^manifest-gap\\.(spatial-ai-utils|synthetic-data-tools)\\."}},
+        "added_capability_ids": {"type": "array", "minItems": 12, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "pattern": "^manifest-entry\\.(spatial-ai-utils|synthetic-data-tools)\\."}},
+        "added_oracle_ids": {"type": "array", "minItems": 12, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.(spatial-ai-utils|synthetic-data-tools)\\."}}
+      }
+    },
+    "transition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_count", "local_open_count", "external_boundary_count", "common_capability_records_unchanged", "common_oracle_records_unchanged", "surviving_gap_records_unchanged", "family_level_passed_evidence_promoted", "warehouse_sample_bundle", "advertised_entries_without_entry_specific_capability_mapping", "family_only_entries_outside_this_plan"],
+      "properties": {
+        "entry_count": {"const": 12},
+        "local_open_count": {"const": 11},
+        "external_boundary_count": {"const": 1},
+        "common_capability_records_unchanged": {"const": 277},
+        "common_oracle_records_unchanged": {"const": 277},
+        "surviving_gap_records_unchanged": {"const": 74},
+        "family_level_passed_evidence_promoted": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "advertised_entries_without_entry_specific_capability_mapping": {"const": 487},
+        "family_only_entries_outside_this_plan": {"const": 413}
+      }
+    },
+    "frozen_direct_dependents": {
+      "type": "object", "additionalProperties": false,
+      "required": ["package_count", "direct_core_artifact_count", "checks", "execution_state"],
+      "properties": {
+        "package_count": {"const": 20},
+        "direct_core_artifact_count": {"const": 30},
+        "checks": {"type": "array", "minItems": 20, "maxItems": 20, "items": {"$ref": "#/$defs/frozenCheck"}},
+        "execution_state": {"const": "identity_verified_not_reexecuted"}
+      }
+    },
+    "effects": {
+      "type": "object", "additionalProperties": false,
+      "required": ["can_mark_passed_current", "runtime_evidence", "network_used", "docker_used", "runtime_used", "file_writes_used", "subprocess_used", "subprocess_scope", "git_commands"],
+      "properties": {
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_used": {"const": false},
+        "docker_used": {"const": false},
+        "runtime_used": {"const": false},
+        "file_writes_used": {"const": false},
+        "subprocess_used": {"const": true},
+        "subprocess_scope": {"const": "read_only_local_git_objects_only"},
+        "git_commands": {"const": ["rev-parse", "cat-file", "show"]}
+      }
+    },
+    "limitations": {
+      "const": [
+        "historical_packages_identity_verified_not_reexecuted",
+        "family_evidence_retained_as_historical_corroboration_not_entry_qualification",
+        "source_wiring_does_not_replace_capability_bound_runtime_evidence",
+        "aws_gcs_requires_explicit_external_provider_attestation"
+      ]
+    }
+  },
+  "$defs": {
+    "frozenCheck": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "tree_oid", "direct_core_artifact_count", "execution_state"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "tree_oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "direct_core_artifact_count": {"type": "integer", "minimum": 1, "maximum": 3},
+        "execution_state": {"const": "identity_verified_not_reexecuted"}
+      }
+    }
+  }
+}

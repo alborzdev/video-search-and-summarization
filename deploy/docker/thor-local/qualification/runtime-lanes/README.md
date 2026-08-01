@@ -4,7 +4,7 @@ This directory turns the reviewed VSS 3.2.1 inventory into eight bounded Thor
 deployment/probe planning lanes. It is a static planner, not runtime evidence,
 and does not claim that its service-role sets are mathematically minimal.
 
-The checked plan covers all 500 manifest `advertised` entries, all 277
+The checked plan covers all 500 manifest `advertised` entries, all 289
 capability oracles, and all 55 feature families. Every capability belongs to
 exactly one of eight lanes:
 
@@ -14,10 +14,10 @@ exactly one of eight lanes:
 | `search` | 4 | Archived-video semantic search |
 | `lvs` | 10 | Long-video summarization |
 | `alerts` | 26 | Alert verification, real-time alerts, and Smart City |
-| `standalone-services` | 134 | Independently bounded VSS microservices and infrastructure |
-| `custom-data-warehouse` | 24 | Warehouse with small custom media/calibration only |
+| `standalone-services` | 141 | Independently bounded VSS microservices and infrastructure |
+| `custom-data-warehouse` | 28 | Warehouse with small custom media/calibration only |
 | `official-edge-model-boundary` | 5 | Exact official Thor Edge model/support contract |
-| `external-optional` | 29 | Optional managed/provider boundaries; never local parity evidence |
+| `external-optional` | 30 | Optional managed/provider boundaries; never local parity evidence |
 
 Every advertised entry has a deterministic manifest JSON pointer such as
 `/features/0/advertised/0`, a pointer-and-value SHA-256, and its reviewed
@@ -25,17 +25,20 @@ family lane set. This preserves duplicate claim text as distinct source entries
 and prevents any of the 500 claims from disappearing silently.
 
 The plan does not infer advertised-string coverage from family membership. It
-has exactly one entry-specific canonical mapping: CPU multimedia at
-`/features/20/advertised/5`. That capability/oracle is still runtime-open. Of
-the remaining bindings, 413 are family-level entries in families with
-capability rows, five are open entries in the partial VIOS family, and 81 are
-in 15 families with no capability rows. The 86 source-locked classifications
-from `advertised-entry-gaps` are 55 required-local, 26 alternate-local, and five
+has exactly 13 entry-specific canonical mappings: CPU multimedia plus the eight
+Spatial AI and four synthetic-data tooling entries. Every mapped
+capability/oracle is still runtime-open. In total, 431 entries are in families
+with capability rows and 69 are in 13 families without capability rows. Of the
+487 entries without an exact mapping, 74 are enumerated in the empty/partial
+family gap plan and 413 retain family-only planning bindings. Both classes block
+literal completeness. The 74 source-locked classifications from
+`advertised-entry-gaps` are 55
+required-local, 15 alternate-local, and four
 external-optional. These are exact semantic gaps that must be resolved before
 literal feature-completeness can be claimed; family-level lane bindings are
 planning coverage only. The machine contract consequently fixes
 `literal_runtime_feature_completeness_claim_allowed` to `false` and keeps all
-86 open entries as completeness blockers.
+487 non-canonical entries as completeness blockers.
 
 The Warehouse sample bundle is unconditionally excluded. Warehouse runtime
 qualification remains in scope only with small user-owned custom media and
@@ -48,7 +51,7 @@ the capability contract SHA-256 and source-claim locators used during the role
 audit, fixture, observation and
 assertion IDs, admission gates, execution bounds, cleanup contract, evidence
 requirements, and unresolved blockers. These service-role sets are not runtime
-evidence. Of 277 capabilities, 273 have a planning-only binding and four
+evidence. Of 289 capabilities, 285 have a planning-only binding and four
 remain explicitly unresolved because their checked contracts do not select one
 executable service boundary: embedding re-index validation and the three
 NvSchema format/JSON/Protobuf contracts. The unresolved bindings machine-block

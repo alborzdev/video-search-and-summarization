@@ -89,8 +89,8 @@ EXPECTED_NEGATIVES = [
 ]
 EXPECTED_LOCKS = {
     "deploy/docker/thor-local/qualification/acceptance_inventory.json": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
-    "deploy/docker/thor-local/parity/official-capabilities.json": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e",
-    "deploy/docker/thor-local/parity/capability-oracles.json": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff",
+    "deploy/docker/thor-local/parity/official-capabilities.json": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+    "deploy/docker/thor-local/parity/capability-oracles.json": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
     "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539",
     "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232",
     "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11/inventory.json": "734609e5b1aab27a4d65a2570d3e6a3c366ae9ecf896dd7f0d5e62785e219cdd",

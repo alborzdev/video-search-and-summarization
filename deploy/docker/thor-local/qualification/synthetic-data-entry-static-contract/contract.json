@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-synthetic-data-entry-static-contract-v1",
+  "mode": "candidate_only_canonical_source_wiring",
+  "manifest_binding": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "feature_id": "synthetic-data-tools",
+    "feature_index": 30,
+    "feature_pointer": "/features/30",
+    "advertised_entry_count": 4
+  },
+  "policy": {
+    "candidate_only": true,
+    "proves": "checked_in_static_wiring_only",
+    "can_mutate_live_ledgers": false,
+    "can_mark_passed_current": false,
+    "official_capability_effect": "none_static_contract_only",
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "service_lifecycle_allowed": false,
+    "product_imports_allowed": false,
+    "file_writes_allowed": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "arm64_environment": {
+    "platform": "linux-aarch64",
+    "python": "3.10.20",
+    "openusd": "26.05",
+    "upstream_usd_requirement": "usd-core==26.5",
+    "miniforge": {
+      "filename": "Miniforge3-25.3.1-0-Linux-aarch64.sh",
+      "sha256": "a57c9e3d6c0c449c0283fd07e0bfa30d95eb8d547a14e8dc06c606405d01a7f0"
+    },
+    "conda_lock": {
+      "path": "tools/sdg-postprocessing/thor/conda-linux-aarch64.lock",
+      "sha256": "9905f3f0f1ac6b82d8920429a2a6f7101d51a9df0e54dba8671d44f9f8158b6f",
+      "artifact_count": 178,
+      "python_artifact_fragment": "python-3.10.20-",
+      "openusd_artifact_fragment": "openusd-26.05-py310",
+      "ffmpeg_artifact_fragment": "ffmpeg-8.1.2-"
+    },
+    "pip_requirements": {
+      "path": "tools/sdg-postprocessing/thor/requirements-pip.txt",
+      "sha256": "95cdadc9544667440effbe18c2b4b612ec367c6f249a5d348488b00e4a27520e",
+      "requirement_count": 21,
+      "derivation": "upstream_exact_minus_usd_core"
+    },
+    "wheel_lock": {
+      "path": "tools/sdg-postprocessing/thor/wheels-linux-aarch64.sha256",
+      "sha256": "7a6140f5c16e7c75a09677e0c7d16be212c0ad0c707163f1e20a1f29e78532fa",
+      "wheel_count": 21,
+      "filename_and_bytes_locked": true
+    },
+    "source_controls": [
+      {"path": "tools/sdg-postprocessing/requirements.txt", "sha256": "2ec301194c3384fd743061282c9b5cc591412f1ed87ca40e5c2528a6cccff1c9", "ast_symbols": [], "text_fragments": ["usd-core==26.5", "opencv-python-headless==4.13.0.92"]},
+      {"path": "tools/sdg-postprocessing/thor/materialize_local_lock.py", "sha256": "5ea572f89e9fe75a309bc79c2a3243c075af13fb1f0f7bbe0d7ed381da05e0aa", "ast_symbols": ["materialize", "main"], "text_fragments": ["file://", "Conda lock entry is not SHA-256 pinned"]},
+      {"path": "tools/sdg-postprocessing/thor/verify_offline_cache.py", "sha256": "5212d3b33194545c8dca23c8d69c2834e99c6eb058a4f12a09a7298a3161fe7f", "ast_symbols": ["read_checksums", "parse_requirements", "read_wheel_lock", "verify_wheels", "verify", "main"], "text_fragments": ["Miniforge3-25.3.1-0-Linux-aarch64.sh", "openusd-26.05-py310"]},
+      {"path": "tools/sdg-postprocessing/thor/stage-offline-cache.sh", "sha256": "6b4ea7fbccb70fc0febc518044ebaf894bc8013ab2f649a56041a7dacfe179c4", "ast_symbols": [], "text_fragments": ["Linux-aarch64", "wheels-linux-aarch64.sha256", "--offline"]},
+      {"path": "tools/sdg-postprocessing/thor/create-offline-env.sh", "sha256": "c2844c6f04ee15c52458b199f7552c921feecd724840723255cdf9bca68a7e5c", "ast_symbols": [], "text_fragments": ["Linux-aarch64", "wheels-linux-aarch64.sha256", "--offline", "--no-index"]},
+      {"path": "tools/sdg-postprocessing/thor/test-thor-sdg-offline.sh", "sha256": "c4efebdfef1da2fa6ba5c484aa739c63dae37d8dd3e03eea532158ad4a9b0a66", "ast_symbols": [], "text_fragments": ["len(urls) == 178", "len(wheel_lines) == 21", "python-3.10.20-", "openusd-26.05-py310"]},
+      {"path": "tools/sdg-postprocessing/thor/qualify-thor-env.sh", "sha256": "e67252d7be7f0863f7ef1df944471e1064bd31f0f7019bb2068ecefe04b60fa2", "ast_symbols": [], "text_fragments": ["platform.machine() == \"aarch64\"", "OpenUSD", "convert_npy_to_png_depthmap.py", "convert_single_camera_rgb_depth_to_h5.py"]},
+      {"path": "tools/sdg-postprocessing/thor/README.md", "sha256": "d1a1f9f1881f43cd1be3ef26c8484087bb01dee9ff21b36dd54984cd6ec31394", "ast_symbols": [], "text_fragments": ["178 SHA-locked conda packages", "21 exact ARM64 Python wheels", "downloads no warehouse or synthetic dataset"]}
+    ]
+  },
+  "entries": [
+    {
+      "manifest_pointer": "/features/30/advertised/0",
+      "advertised": "semantic label helpers",
+      "entry_id": "manifest-gap.synthetic-data-tools.00-semantic-label-helpers",
+      "capability": {"id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers", "kind": "tooling", "acceptance_class": "alternate_local_lane", "thor_state": "wired", "runtime_state": "not_qualified"},
+      "cli_contracts": [
+        {"path": "tools/sdg-postprocessing/semantic_labeling/box_check.py", "arguments": ["--stage", "--output", "--apply", "--semantic-class", "--include-hidden"], "semantics": "file-backed stage inspection; optional in-place LabelsAPI authoring"},
+        {"path": "tools/sdg-postprocessing/semantic_labeling/remove_label.py", "arguments": ["--stage"], "semantics": "remove current and available legacy semantic labels in place"},
+        {"path": "tools/sdg-postprocessing/utils/export_xform_semantics.py", "arguments": ["--stage", "--output"], "semantics": "export parent Xform rotation metadata as JSON"}
+      ],
+      "source_reviews": [
+        {"path": "tools/sdg-postprocessing/semantic_labeling/box_check.py", "sha256": "0f92e5a7bbce77d0f44622c9abe68f1dec59d1aab0268c8776094a9f0fb1d634", "ast_symbols": ["enable_semantics", "get_stage", "categorize_boxes", "write_report", "run", "main"], "text_fragments": ["UsdSemantics.LabelsAPI", "--stage", "--apply"]},
+        {"path": "tools/sdg-postprocessing/semantic_labeling/remove_label.py", "sha256": "f8a484079f9a341059c8560ed1aa945f64fd7a04da6b09ef196f22d4997730eb", "ast_symbols": ["get_stage", "remove_all_semantics", "run", "main"], "text_fragments": ["UsdSemantics.LabelsAPI", "SemanticsAPI", "--stage"]},
+        {"path": "tools/sdg-postprocessing/utils/export_xform_semantics.py", "sha256": "38a0f79876626754563ed306fdd9a41a4fe505d36b16e883c49a24d2ab8663c3", "ast_symbols": ["get_stage", "collect_semantics", "resolve_output_path", "run", "main"], "text_fragments": ["UsdSemantics.LabelsAPI", "SemanticsAPI", "--stage", "--output"]}
+      ],
+      "oracle": {"id": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers", "type": "offline_tool_execution", "current_state": "open_unexecuted", "runtime_evidence": [], "static_contract_is_full_semantic_proof": false}
+    },
+    {
+      "manifest_pointer": "/features/30/advertised/1",
+      "advertised": "dataset checks",
+      "entry_id": "manifest-gap.synthetic-data-tools.01-dataset-checks",
+      "capability": {"id": "manifest-entry.synthetic-data-tools.01-dataset-checks", "kind": "tooling", "acceptance_class": "alternate_local_lane", "thor_state": "wired", "runtime_state": "not_qualified"},
+      "cli_contracts": [
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_rgb.py", "arguments": ["--base_dir", "--total_frames", "--output_log"], "semantics": "check RGB presence and readability"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_npy.py", "arguments": ["--base_dir", "--total_frames", "--output_log", "--camera_folder"], "semantics": "check depth NPY presence and readability"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_json.py", "arguments": ["--base_dir", "--total_frames", "--output_log", "--camera_folder"], "semantics": "check annotation JSON presence, readability, emptiness, and overflow"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_velocity.py", "arguments": ["--gt_dir", "--step"], "semantics": "calculate object velocity over a positive frame interval"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_bbox_direction.py", "arguments": ["--root_dir", "--calibration", "--save_path", "--frame_idx_list", "--prim_key", "--xform_json_path"], "semantics": "check 3D bounding-box direction and corners"}
+      ],
+      "source_reviews": [
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_bbox_direction.py", "sha256": "26ae55353ef1a11a914b3f6055c160dd9f5070e72f84ecfee497b0c7eeaf478a", "ast_symbols": ["get_projection_matrix", "corners_projection", "best_corners_mapping", "corners_comparison", "main"], "text_fragments": ["--root_dir", "--frame_idx_list", "--xform_json_path"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_calibration.py", "sha256": "609cfa1317245064fc29429590ef11bfa5d27614dc514d6a687407288270a44f", "ast_symbols": ["load_calibration_data", "CalibrationValidator"], "text_fragments": ["--base_dir", "--calibration", "--output_dir"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_json.py", "sha256": "9c7471af6fda24ba118fe2128a50ee218954ff2f9cb8ddc4dfa0e548655e93d7", "ast_symbols": ["sanity_check"], "text_fragments": ["--base_dir", "--total_frames", "--output_log"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_png.py", "sha256": "f7020591340e45b306eeabf329a17f1b3b3312a2820ddd875e1f94ef91c772da", "ast_symbols": ["sanity_check"], "text_fragments": ["--base_dir", "--total_frames", "--output_log"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_json.py", "sha256": "08fc48050364fcf1332f04fa09cbc41054c1ab4dc4250530ee906664e0988799", "ast_symbols": ["sanity_check", "check_for_overflow"], "text_fragments": ["--base_dir", "--total_frames", "--camera_folder"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_npy.py", "sha256": "59307b80214542c9ed02d01f27f3e9042cc501bf3edafee26be09310b35646ab", "ast_symbols": ["sanity_check"], "text_fragments": ["--base_dir", "--total_frames", "--camera_folder"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_png.py", "sha256": "426e34a8b7584d12e5af16e93f08d9f154322ec30c475ac58d05a84be1bfbce3", "ast_symbols": ["sanity_check"], "text_fragments": ["--base_dir", "--total_frames", "--output_log"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_rgb.py", "sha256": "1da31b208b1e772de48779aee8c08621abe0a75f7b7129ee0607e980126cf656", "ast_symbols": ["sanity_check"], "text_fragments": ["--base_dir", "--total_frames", "--output_log"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_velocity.py", "sha256": "e3d1acbe6cb3fc135b4be648ca048308e1db1e2ecdd525fbde7ca9573ecd5fb0", "ast_symbols": ["calculate_speed", "find_frames_with_large_velocity", "process_frames"], "text_fragments": ["--gt_dir", "--step", "greater than zero"]},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_videos.sh", "sha256": "2b18d0b9b5e827d69210699d14c9ce039fda0191da96dfb41de4dbfdc0eecc39", "ast_symbols": [], "text_fragments": ["bframes_check_results.txt", "ffprobe"]}
+      ],
+      "oracle": {"id": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks", "type": "offline_tool_execution", "current_state": "open_unexecuted", "runtime_evidence": [], "static_contract_is_full_semantic_proof": false}
+    },
+    {
+      "manifest_pointer": "/features/30/advertised/2",
+      "advertised": "RGB/depth/video conversion",
+      "entry_id": "manifest-gap.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "capability": {"id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion", "kind": "tooling", "acceptance_class": "alternate_local_lane", "thor_state": "wired", "runtime_state": "not_qualified"},
+      "cli_contracts": [
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py", "arguments": ["base_dir"], "semantics": "scale depth by 1000 and write uint16 PNG"},
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py", "arguments": ["--input"], "semantics": "write gzip-compressed RGB and depth datasets to per-camera HDF5"},
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_images_to_videos_no_bframes.sh", "arguments": ["base_dir"], "semantics": "write 30 FPS H.264 MP4 with bframes=0"}
+      ],
+      "source_reviews": [
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py", "sha256": "c149099e5055143aa536df717c61f339d76c1b02cbd6645458d3f854f7f0a811", "ast_symbols": ["npy_to_png", "process_subdir", "process_directory"], "text_fragments": ["* 1000", "np.uint16", "base_dir"]},
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py", "sha256": "708d37524b672dc91842b6304025fcfe07101d6e1851130caca585ddec3ff363", "ast_symbols": ["read_image", "convert_camera_to_h5"], "text_fragments": ["compression=\"gzip\"", "--input"]},
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_images_to_videos_no_bframes.sh", "sha256": "6eed454a82c4fe2f95648a0664e9af023136768d49a8d6704938ca7ba3a74f7b", "ast_symbols": [], "text_fragments": ["-r 30", "libx264", "bframes=0:keyint=30"]}
+      ],
+      "oracle": {"id": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion", "type": "offline_tool_execution", "current_state": "open_unexecuted", "runtime_evidence": [], "static_contract_is_full_semantic_proof": false}
+    },
+    {
+      "manifest_pointer": "/features/30/advertised/3",
+      "advertised": "ground-truth conversion",
+      "entry_id": "manifest-gap.synthetic-data-tools.03-ground-truth-conversion",
+      "capability": {"id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion", "kind": "tooling", "acceptance_class": "alternate_local_lane", "thor_state": "wired", "runtime_state": "not_qualified"},
+      "cli_contracts": [
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_ground_truth.py", "arguments": ["input", "--output", "--calibration", "--max_frames", "--xform_info", "--skip-visualization"], "semantics": "--output is required; --calibration is required unless --skip-visualization is set; conversion-only mode uses a temporary alias workspace, does not mutate the input tree, and returns before demo image/video rendering"}
+      ],
+      "deterministic_outputs": ["ground_truth.json", "bounding_boxes.json", "rotation_keys_with_rot.json", "corners_comparison_dict.json"],
+      "source_reviews": [
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_ground_truth.py", "sha256": "4d81551c3a143f52f3fa4bfdc52f1af6aa01fac864d250a9a3f2547dfdaeef9f", "ast_symbols": ["utils_for_data_parse", "utils_for_vis", "build_arg_parser", "main"], "text_fragments": ["--skip-visualization", "--calibration is required unless --skip-visualization is set", "TemporaryDirectory", "temporary symlink aliases", "ground_truth.json", "bounding_boxes.json", "rotation_keys_with_rot.json", "corners_comparison_dict.json", "enumerate(sorted(object_label_map)", "for key in sorted(rotation_dict)"]},
+        {"path": "tools/sdg-postprocessing/tests/test_sdg_regressions.py", "sha256": "0f887f72dd6ebcfd53ab6830afb010853b0168c72facda7d81490b3eff5db7cf", "ast_symbols": ["write_tiny_ground_truth_fixture", "run_tiny_ground_truth_conversion", "test_ground_truth_conversion_only_cli_is_tiny_deterministic_and_sample_free", "test_ground_truth_visualization_mode_requires_calibration", "test_ground_truth_default_cli_preserves_image_and_video_generation"], "text_fragments": ["--skip-visualization", "without_xform_a == without_xform_b", "with_xform_a == with_xform_b", "assert not (fixture_root / \"Camera\").exists()"]}
+      ],
+      "oracle": {"id": "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion", "type": "offline_tool_execution", "current_state": "open_unexecuted", "runtime_evidence": [], "static_contract_is_full_semantic_proof": false}
+    }
+  ],
+  "warehouse_scope": {
+    "sample_bundle_required": false,
+    "sample_assets_or_paths": [],
+    "custom_data_runtime_oracle_remains_required": true
+  },
+  "remaining_runtime_requirements": [
+    "execute each real tool path on digest-bound tiny custom inputs in the pinned ARM64 environment",
+    "record command contracts plus exact input and output digests",
+    "validate semantic outputs and negative cases rather than importability alone",
+    "remove only executor-owned temporary outputs",
+    "do not use or download the optional NVIDIA Warehouse sample bundle"
+  ]
+}

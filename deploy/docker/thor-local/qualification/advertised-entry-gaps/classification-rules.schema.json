@@ -51,14 +51,14 @@
         "runtime_evidence": {"const": []},
         "warehouse_sample_bundle": {"const": "excluded"},
         "custom_data_warehouse_capability": {"const": "in_scope"},
-        "required_family_count": {"const": 16},
-        "required_entry_count": {"const": 87}
+        "required_family_count": {"const": 14},
+        "required_entry_count": {"const": 74}
       }
     },
     "family_rules": {
       "type": "object",
-      "minProperties": 16,
-      "maxProperties": 16,
+      "minProperties": 14,
+      "maxProperties": 14,
       "additionalProperties": {"$ref": "#/$defs/rule"}
     }
   }

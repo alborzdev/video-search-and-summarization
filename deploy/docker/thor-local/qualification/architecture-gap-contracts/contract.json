@@ -35,7 +35,7 @@
     },
     {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e",
+      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
       "role": "advertised_calibration_and_scaling_contracts",
       "required_fragments": [
         "\"id\": \"calibration.legacy.core\"",

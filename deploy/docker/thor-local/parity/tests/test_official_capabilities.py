@@ -181,9 +181,63 @@ class OfficialCapabilityTests(unittest.TestCase):
             copy.deepcopy(self.acceptance),
         )
         self.assertEqual(counts["sources"], 126)
-        self.assertEqual(counts["capabilities"], 277)
-        self.assertEqual(counts["feature_families"], 40)
+        self.assertEqual(counts["capabilities"], 289)
+        self.assertEqual(counts["feature_families"], 42)
         self.assertEqual(counts["discrepancies"], 47)
+
+    def test_twelve_tooling_entries_are_canonical_but_not_runtime_promoted(self) -> None:
+        expected = {
+            **{
+                f"manifest-entry.spatial-ai-utils.{index:02d}-{suffix}": title
+                for index, (suffix, title) in enumerate(
+                    [
+                        ("calibration-and-camera-grouping", "calibration and camera grouping"),
+                        ("3d-2d-geometry", "3D/2D geometry"),
+                        ("multiview-visualization", "multiview visualization"),
+                        ("detection-map", "detection mAP"),
+                        ("tracking-hota-clear-identity-count", "tracking HOTA/CLEAR/identity/count"),
+                        ("nvschema-conversion", "NVSchema conversion"),
+                        ("video-frame-tools", "video/frame tools"),
+                        ("aws-gcs-validation", "AWS/GCS validation"),
+                    ]
+                )
+            },
+            **{
+                f"manifest-entry.synthetic-data-tools.{index:02d}-{suffix}": title
+                for index, (suffix, title) in enumerate(
+                    [
+                        ("semantic-label-helpers", "semantic label helpers"),
+                        ("dataset-checks", "dataset checks"),
+                        ("rgb-depth-video-conversion", "RGB/depth/video conversion"),
+                        ("ground-truth-conversion", "ground-truth conversion"),
+                    ]
+                )
+            },
+        }
+        capabilities = {
+            item["id"]: item
+            for item in self.ledger["capabilities"]
+            if item["id"] in expected
+        }
+        self.assertEqual(set(capabilities), set(expected))
+        for capability_id, title in expected.items():
+            with self.subTest(capability_id=capability_id):
+                capability = capabilities[capability_id]
+                self.assertEqual(capability["title"], title)
+                self.assertNotIn("runtime_evidence", capability)
+                self.assertEqual(
+                    capability["contract"]["warehouse_sample_bundle"], "excluded"
+                )
+                if capability_id.endswith("aws-gcs-validation"):
+                    self.assertEqual(capability["acceptance_class"], "external_optional")
+                    self.assertEqual(capability["thor_state"], "external_optional")
+                    self.assertEqual(capability["runtime_state"], "not_applicable")
+                else:
+                    self.assertEqual(
+                        capability["acceptance_class"], "alternate_local_lane"
+                    )
+                    self.assertEqual(capability["thor_state"], "wired")
+                    self.assertEqual(capability["runtime_state"], "not_qualified")
 
     def test_cpu_multimedia_entry_is_exactly_wired_but_unqualified(self) -> None:
         capability = next(

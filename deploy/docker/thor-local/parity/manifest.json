@@ -1112,9 +1112,19 @@
         "deploy/docker/thor-local/qualification/qualify-spatialai.sh",
         "deploy/docker/thor-local/parity/evidence/2026-07-31-tooling-qualification.md"
       ],
-      "thor_state": "wired",
-      "runtime_state": "passed_current",
-      "gap": "No open Thor gap in this tooling family: all 1902 tests pass with the complete eval, visualization, CPU PyTorch, and pinned PyTorch3D dependency set."
+      "official_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "thor_state": "partial",
+      "runtime_state": "not_qualified",
+      "gap": "All seven provider-free tools are source-wired and the historical 1902-test family run is retained, but entry-level target-bound receipts remain open. AWS/GCS is an external optional boundary."
     },
     {
       "id": "synthetic-data-tools",
@@ -1146,9 +1156,15 @@
         "tools/sdg-postprocessing/tests/test_sdg_regressions.py",
         "deploy/docker/thor-local/parity/evidence/2026-07-31-sdg-thor-offline.md"
       ],
+      "official_capability_ids": [
+        "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
       "thor_state": "wired",
-      "runtime_state": "passed_current",
-      "gap": "No open Thor gap in this alternate tooling lane: the 178-package/21-wheel cache created the exact Python 3.10/OpenUSD 26.05 ARM64 environment offline, and native depth, HDF5, H.264/B-frame, semantic-label, Xform-export, removal, and regression fixtures pass."
+      "runtime_state": "not_qualified",
+      "gap": "All four tooling entries are source-wired, including a bounded deterministic ground-truth conversion CLI. The historical native family run remains corroborating evidence, but target-bound entry-level receipts remain open."
     },
     {
       "id": "docker-compose",

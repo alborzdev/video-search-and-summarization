@@ -7,11 +7,11 @@
   "source_contracts": [
     {
       "path": "deploy/docker/thor-local/qualification/architecture-gap-contracts/contract.json",
-      "raw_sha256": "35fe6982a3575251b24063a8170c8408931cb29e91ba29923a2611eef7859eff"
+      "raw_sha256": "96aba7c9d56986c9d90f8e3d1f5902ad4fba1d5aa5b1f27a1171c4bad9a52000"
     },
     {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
+      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
     },
     {
       "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json",

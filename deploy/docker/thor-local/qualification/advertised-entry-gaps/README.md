@@ -1,12 +1,22 @@
 # Advertised entry gap plan
 
-This isolated package compiles every manifest-advertised string that lacks an
-entry-specific canonical capability/oracle binding. The locked VSS manifest
-currently has 16 families with open entries: 15 have no
+This isolated package compiles manifest-advertised strings in families that
+have no capability rows, plus uncovered strings in explicitly partial families.
+The locked VSS manifest currently has 14 such families: 13 have no
 `official_capability_ids`, while `vios-codecs-audio` is partial. Its CPU
 multimedia entry is canonical but still runtime-unqualified; its other five
-media entries remain in this plan. The plan therefore contains exactly 86 open
+media entries remain in this plan. The plan therefore contains exactly 74 open
 advertised entries.
+
+The twelve Spatial AI and synthetic-data tooling entries now have exact
+canonical capability/oracle rows. Their source contracts remain static-only and
+runtime-unqualified, so this retirement from the missing-entry plan is not a
+runtime promotion. AWS/GCS validation remains an external-optional capability.
+
+This is not the global entry-specific denominator. Across all 500 advertised
+strings, only 13 currently have exact canonical mappings. The 74 entries here
+are explicit empty/partial-family gaps; another 413 retain family-only planning
+bindings. All 487 entries without exact mappings block literal completeness.
 
 Every output entry preserves:
 
@@ -18,7 +28,7 @@ Every output entry preserves:
 - the setup, evidence, literal success condition, and owned cleanup needed to
   verify the advertised behavior.
 
-All 86 plan entries remain `open_missing_entry_capability_and_oracle`, with their
+All 74 plan entries remain `open_missing_entry_capability_and_oracle`, with their
 oracles `open_unexecuted` and `runtime_evidence: []`. A family lane, static
 source presence, or even a family-level `passed_current` state is explicitly
 not semantic coverage of its individual advertised strings.

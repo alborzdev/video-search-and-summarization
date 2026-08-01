@@ -33,38 +33,55 @@ SOURCE_PATHS = {
     "oracle_schema": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
 }
 SOURCE_SHA256 = {
-    "advertised_gap_plan": "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239",
-    "advertised_gap_rules": "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314",
-    "manifest": "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba",
-    "ledger": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e",
-    "oracles": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff",
+    "advertised_gap_plan": "a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada",
+    "advertised_gap_rules": "9938db401c3012d8ab39887291b0f013ae0b3c54ee94dabe25ec6f8bfed923ac",
+    "manifest": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce",
+    "ledger": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+    "oracles": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
     "oracle_schema": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1",
 }
 CPU_MULTIMEDIA_CAPABILITY_ID = (
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
 )
 CPU_MULTIMEDIA_POINTER = "/features/20/advertised/5"
+MIGRATED_ENTRY_CAPABILITY_IDS = {
+    CPU_MULTIMEDIA_CAPABILITY_ID,
+    "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+    "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+    "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+    "manifest-entry.spatial-ai-utils.03-detection-map",
+    "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+    "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+    "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+    "manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+    "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+    "manifest-entry.synthetic-data-tools.01-dataset-checks",
+    "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+    "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+}
 EXPECTED_DENOMINATORS = {
     "lanes": 8,
     "feature_families": 55,
     "advertised_entries": 500,
-    "capabilities": 277,
-    "oracles": 277,
-    "capabilities_with_exactly_one_lane": 277,
+    "capabilities": 289,
+    "oracles": 289,
+    "capabilities_with_exactly_one_lane": 289,
     "feature_families_with_lane_binding": 55,
-    "feature_families_without_capability_rows": 15,
+    "feature_families_without_capability_rows": 13,
     "advertised_entries_with_lane_binding": 500,
-    "advertised_entries_in_families_with_capability_oracle_rows": 419,
-    "advertised_entries_in_families_without_capability_oracle_rows": 81,
+    "advertised_entries_in_families_with_capability_oracle_rows": 431,
+    "advertised_entries_in_families_without_capability_oracle_rows": 69,
     "advertised_gap_entries_proposed_required_local": 55,
-    "advertised_gap_entries_proposed_alternate_local_lane": 26,
-    "advertised_gap_entries_proposed_external_optional": 5,
-    "advertised_entries_with_entry_specific_capability_mapping": 1,
-    "advertised_entries_with_entry_specific_oracle_mapping": 1,
+    "advertised_gap_entries_proposed_alternate_local_lane": 15,
+    "advertised_gap_entries_proposed_external_optional": 4,
+    "advertised_entries_with_entry_specific_capability_mapping": 13,
+    "advertised_entries_with_entry_specific_oracle_mapping": 13,
+    "advertised_entries_without_entry_specific_capability_mapping": 487,
+    "family_only_entries_outside_advertised_gap_plan": 413,
     "advertised_entry_runtime_evidence_records": 0,
-    "capabilities_with_planning_only_service_binding": 273,
+    "capabilities_with_planning_only_service_binding": 285,
     "capabilities_with_unresolved_service_binding": 4,
-    "required_or_alternate_local_capabilities": 248,
+    "required_or_alternate_local_capabilities": 259,
     "runtime_probe_executors": 0,
     "cleanup_executors": 0,
     "runtime_evidence_records": 0,
@@ -75,10 +92,10 @@ EXPECTED_LANE_COUNTS = {
     "search": 4,
     "lvs": 10,
     "alerts": 26,
-    "standalone-services": 134,
-    "custom-data-warehouse": 24,
+    "standalone-services": 141,
+    "custom-data-warehouse": 28,
     "official-edge-model-boundary": 5,
-    "external-optional": 29,
+    "external-optional": 30,
 }
 
 
@@ -498,6 +515,16 @@ def _planned_service_binding(
             "unresolved",
         )
 
+    if (
+        capability_id in MIGRATED_ENTRY_CAPABILITY_IDS
+        and feature_id in {"spatial-ai-utils", "synthetic-data-tools"}
+        and capability["acceptance_class"] != "external_optional"
+    ):
+        return binding(
+            ["repository-tooling"],
+            "reviewed entry-specific offline tooling contract",
+        )
+
     explicit_roles = {
         "api.vss-configurator.sensor": ["vss-configurator"],
         "behavior.docker.ngc-pull-29-5": ["host"],
@@ -663,7 +690,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
     }
     if (
         len(advertised_gap_by_pointer) != len(advertised_gap_entries)
-        or len(advertised_gap_entries) != 86
+        or len(advertised_gap_entries) != 74
     ):
         raise RuntimeLaneError("advertised gap-plan pointer denominator drift")
     if any(
@@ -879,6 +906,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
         )
 
     family_binding_by_id = {item["feature_id"]: item for item in family_bindings}
+    binding_by_capability_id = {item["capability_id"]: item for item in bindings}
     advertised_bindings: list[dict[str, Any]] = []
     for feature_index, feature in enumerate(features):
         family_binding = family_binding_by_id[feature["id"]]
@@ -889,7 +917,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
             entry_specific_capability_ids = [
                 capability_id
                 for capability_id in family_capability_ids
-                if capability_id == CPU_MULTIMEDIA_CAPABILITY_ID
+                if capability_id in MIGRATED_ENTRY_CAPABILITY_IDS
                 and capability_by_id[capability_id]["title"] == advertised_claim
             ]
             if gap_entry is not None and entry_specific_capability_ids:
@@ -914,6 +942,20 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
                 raise RuntimeLaneError(
                     f"{json_pointer}: advertised gap-plan entry identity drift"
                 )
+            if entry_specific_capability_ids:
+                if len(entry_specific_capability_ids) != 1:
+                    raise RuntimeLaneError(
+                        f"{json_pointer}: entry-specific mapping must be unique"
+                    )
+                entry_lane_ids = [
+                    binding_by_capability_id[entry_specific_capability_ids[0]][
+                        "lane_id"
+                    ]
+                ]
+                entry_default_lane_id = entry_lane_ids[0]
+            else:
+                entry_lane_ids = copy.deepcopy(family_binding["lane_ids"])
+                entry_default_lane_id = family_binding["default_lane_id"]
             advertised_bindings.append(
                 {
                     "manifest_json_pointer": json_pointer,
@@ -934,8 +976,8 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
                         if entry_specific_capability_ids
                         else "not-applicable-family-has-capability-rows"
                     ),
-                    "default_lane_id": family_binding["default_lane_id"],
-                    "lane_ids": copy.deepcopy(family_binding["lane_ids"]),
+                    "default_lane_id": entry_default_lane_id,
+                    "lane_ids": entry_lane_ids,
                     "lane_binding_scope": (
                         "entry_specific_canonical_capability"
                         if entry_specific_capability_ids
@@ -1017,6 +1059,13 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
         "advertised_entries_with_entry_specific_oracle_mapping": sum(
             bool(item["entry_specific_oracle_ids"]) for item in advertised_bindings
         ),
+        "advertised_entries_without_entry_specific_capability_mapping": sum(
+            not item["entry_specific_capability_ids"] for item in advertised_bindings
+        ),
+        "family_only_entries_outside_advertised_gap_plan": sum(
+            item["capability_mapping_scope"] == "feature_family_only"
+            for item in advertised_bindings
+        ),
         "advertised_entry_runtime_evidence_records": sum(
             len(item["runtime_evidence_records"]) for item in advertised_bindings
         ),
@@ -1070,6 +1119,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
             "advertised_entry_mapping_scope": "feature_family_with_canonical_entry_overrides",
             "advertised_entry_bindings_are_runtime_evidence": False,
             "zero_capability_family_entries_block_runtime_completeness": True,
+            "family_only_entry_bindings_block_runtime_completeness": True,
             "literal_runtime_feature_completeness_claim_allowed": False,
             "unresolved_service_bindings_block_runtime_completeness": True,
             "planned_service_bindings_are_runtime_evidence": False,
@@ -1179,17 +1229,23 @@ def validate_plan(plan: dict[str, Any], repo_root: Path = REPO_ROOT) -> None:
         if item["entry_specific_capability_ids"]
         or item["entry_specific_oracle_ids"]
     ]
+    mapped_capabilities = {
+        capability_id
+        for item in entry_specific
+        for capability_id in item["entry_specific_capability_ids"]
+    }
     if (
-        len(entry_specific) != 1
-        or entry_specific[0]["manifest_json_pointer"] != CPU_MULTIMEDIA_POINTER
-        or entry_specific[0]["entry_specific_capability_ids"]
-        != [CPU_MULTIMEDIA_CAPABILITY_ID]
-        or entry_specific[0]["entry_specific_oracle_ids"]
-        != [f"oracle.{CPU_MULTIMEDIA_CAPABILITY_ID}"]
-        or entry_specific[0]["entry_classification_source"]
-        != "canonical-entry-capability"
+        len(entry_specific) != len(MIGRATED_ENTRY_CAPABILITY_IDS)
+        or mapped_capabilities != MIGRATED_ENTRY_CAPABILITY_IDS
+        or any(
+            item["entry_specific_oracle_ids"]
+            != [f"oracle.{item['entry_specific_capability_ids'][0]}"]
+            or item["entry_classification_source"]
+            != "canonical-entry-capability"
+            for item in entry_specific
+        )
     ):
-        raise RuntimeLaneError("canonical entry-specific CPU mapping drift")
+        raise RuntimeLaneError("canonical migrated entry-specific mapping drift")
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -32,11 +32,11 @@
     },
     {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
+      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
     },
     {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"
+      "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
     },
     {
       "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",

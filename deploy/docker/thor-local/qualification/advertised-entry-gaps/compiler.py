@@ -28,31 +28,31 @@ RULES_SCHEMA_PATH = LANE / "classification-rules.schema.json"
 PLAN_SCHEMA_PATH = LANE / "plan.schema.json"
 PLAN_PATH = LANE / "plan.json"
 
-MANIFEST_RAW_SHA256 = "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba"
+MANIFEST_RAW_SHA256 = "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"
 MANIFEST_CANONICAL_SHA256 = (
-    "9b955d9f68fdf5f413e48b92653861b0d56933b1803e84d145e1eafff93f7e6c"
+    "cbf65ddc55b3518763bf8ee57f58f24619956473035aeca98a274a7b1bc959f2"
 )
 OFFICIAL_CAPABILITIES_RAW_SHA256 = (
-    "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
+    "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
 )
 OFFICIAL_CAPABILITIES_CANONICAL_SHA256 = (
-    "792dde11c6d6b8f75e5323250a75c5743fe47e6500c80cb27673a3c1d6b2c5c3"
+    "30142a6716d48597f2daee6a5e776629393526bc7185ca7f70b89fefe2b13eec"
 )
-RULES_RAW_SHA256 = "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314"
+RULES_RAW_SHA256 = "9938db401c3012d8ab39887291b0f013ae0b3c54ee94dabe25ec6f8bfed923ac"
 RULES_CANONICAL_SHA256 = (
-    "631cccf7d20b68f82bdb384f36b2c409e26abe26fe4c1425b740bad1f2ba77d6"
+    "a3a1f938b777beb8d12a927f447bad0540f32e4b8e8401f1f3fee3a450671496"
 )
 RULES_SCHEMA_RAW_SHA256 = (
-    "ad5e7c6c5d2a6760aee0909ea805bbcbceb4adcd8bce600429e0b67ab7126c0b"
+    "9d2d085b7b313bd1c8681d208050e42c1c5884fcd5c843003d8345da5953d2b6"
 )
 PLAN_SCHEMA_RAW_SHA256 = (
-    "17dff277b38f1a0ca30055c94e0d96f7a8ee3087bfb4aa2de428065ebebd818c"
+    "ba76a7a32213ad586503d1f6efc1cd205289ab7933e1f894a8717c949ef9b52e"
 )
 EXPECTED_PLAN_PAYLOAD_SHA256 = (
-    "a50231e6de3b97cd551a46c32a317e83c71cff2ca27eb22a0363d92e756587d4"
+    "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26"
 )
 EXPECTED_PLAN_RAW_SHA256 = (
-    "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239"
+    "a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada"
 )
 EXPECTED_FAMILY_IDS = {
     "video-summarization-live",
@@ -68,12 +68,22 @@ EXPECTED_FAMILY_IDS = {
     "audio-understanding",
     "vios-ui",
     "agent-and-mcp-apis",
-    "spatial-ai-utils",
-    "synthetic-data-tools",
     "enterprise-rag",
 }
 MIGRATED_ENTRY_CAPABILITY_IDS = {
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+    "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+    "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+    "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+    "manifest-entry.spatial-ai-utils.03-detection-map",
+    "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+    "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+    "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+    "manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+    "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+    "manifest-entry.synthetic-data-tools.01-dataset-checks",
+    "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+    "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
 }
 CUSTOM_DATA_FAMILIES = {"rt-cv-3d-sparse4d", "rt-cv-3d-mv3dt"}
 EXCLUDED_SAMPLE_MARKERS = (
@@ -253,7 +263,7 @@ def compile_plan() -> dict[str, Any]:
         ]
         if missing:
             uncovered.append((family_index, feature, missing))
-    if len(uncovered) != 16:
+    if len(uncovered) != 14:
         raise CompileError("uncovered family denominator drift")
     uncovered_ids = {feature["id"] for _, feature, _ in uncovered}
     if uncovered_ids != EXPECTED_FAMILY_IDS:
@@ -365,10 +375,40 @@ def compile_plan() -> dict[str, Any]:
         raise CompileError(
             "one or more entry overrides do not bind an exact manifest string"
         )
-    if len(entries) != 86 or len({item["entry_id"] for item in entries}) != 86:
+    if len(entries) != 74 or len({item["entry_id"] for item in entries}) != 74:
         raise CompileError("advertised entry denominator or identity drift")
-    if len({item["manifest_pointer"] for item in entries}) != 86:
+    if len({item["manifest_pointer"] for item in entries}) != 74:
         raise CompileError("manifest entry pointers are not unique")
+    if rules["policy"]["required_family_count"] != len(families):
+        raise CompileError("classification policy family denominator drift")
+    if rules["policy"]["required_entry_count"] != len(entries):
+        raise CompileError("classification policy entry denominator drift")
+
+    manifest_entry_count = sum(
+        len(feature.get("advertised", [])) for feature in manifest["features"]
+    )
+    entry_specific_mapping_count = 0
+    for feature in manifest["features"]:
+        canonical_titles = {
+            capability_by_id[capability_id].get("title")
+            for capability_id in feature.get("official_capability_ids", [])
+            if capability_id in MIGRATED_ENTRY_CAPABILITY_IDS
+        }
+        entry_specific_mapping_count += sum(
+            advertised in canonical_titles
+            for advertised in feature.get("advertised", [])
+        )
+    missing_entry_specific_mapping_count = (
+        manifest_entry_count - entry_specific_mapping_count
+    )
+    family_only_outside_plan_count = missing_entry_specific_mapping_count - len(entries)
+    if (
+        manifest_entry_count != 500
+        or entry_specific_mapping_count != 13
+        or missing_entry_specific_mapping_count != 487
+        or family_only_outside_plan_count != 413
+    ):
+        raise CompileError("global advertised entry-specific denominator drift")
 
     acceptance_counts = Counter(
         item["proposed_capability"]["acceptance_class"] for item in entries
@@ -411,7 +451,9 @@ def compile_plan() -> dict[str, Any]:
             "families_with_partial_official_capability_ids": sum(
                 item["official_capability_ids_state"] == "partial" for item in families
             ),
-            "advertised_entries_without_official_capability_ids": len(entries),
+            "advertised_entries_in_scoped_empty_or_partial_families": len(entries),
+            "advertised_entries_without_entry_specific_capability_mapping": missing_entry_specific_mapping_count,
+            "family_only_entries_outside_this_plan": family_only_outside_plan_count,
             "open_unverified_entries": len(entries),
             "runtime_evidence_count": 0,
             "acceptance_class_counts": dict(sorted(acceptance_counts.items())),
@@ -484,7 +526,7 @@ def main() -> int:
         else:
             plan = check_checked_plan()
             print(
-                "PASS: exact 16-family / 86-entry advertised gap plan "
+                "PASS: exact 14-family / 74-entry advertised gap plan "
                 f"validated ({plan['plan_payload_sha256']})"
             )
     except (CompileError, OSError) as exc:

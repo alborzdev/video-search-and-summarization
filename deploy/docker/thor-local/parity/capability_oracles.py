@@ -150,6 +150,8 @@ def _resolve_repo_regular_file(repo_root: Path, value: Any, label: str) -> Path:
 def _profile(capability: dict[str, Any]) -> tuple[str, str]:
     capability_id = capability["id"]
     kind = capability["kind"]
+    if capability_id == "manifest-entry.spatial-ai-utils.07-aws-gcs-validation":
+        return "external-spatial-object-store-boundary", "deploy"
     if capability_id.startswith("model.remote-"):
         return "external-model-boundary", "model"
     if capability_id == "model.agent-vlm.custom-weights":
@@ -200,6 +202,12 @@ def _profile(capability: dict[str, Any]) -> tuple[str, str]:
 def _action(capability: dict[str, Any], profile: str) -> str:
     capability_id = capability["id"]
     exact = {
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation": (
+            "with explicit operator authorization, upload one namespaced tiny object "
+            "to the selected AWS S3 or Google Cloud Storage provider, read and "
+            "validate it through the exact SpatialAI utilities, then delete only "
+            "that object and record provider, TLS, content, and cleanup evidence"
+        ),
         CPU_MULTIMEDIA_CAPABILITY_ID: (
             "run bounded hardware-default and use_software_path=true H.264/H.265/AAC "
             "workflows, prove m_useNvV4l2Dec and m_useNvV4l2Enc select distinct "

@@ -6,8 +6,8 @@
     "runtime_evidence": [],
     "warehouse_sample_bundle": "excluded",
     "custom_data_warehouse_capability": "in_scope",
-    "required_family_count": 16,
-    "required_entry_count": 87
+    "required_family_count": 14,
+    "required_entry_count": 74
   },
   "family_rules": {
     "video-summarization-live": {
@@ -125,32 +125,6 @@
       "required_evidence": ["operation_identity", "request_response_transcript", "schema_and_semantic_assertion"],
       "setup_requirements": ["local_agent", "applicable_local_mcp_services"],
       "cleanup_policy": "delete_only_executor_owned_resources"
-    },
-    "spatial-ai-utils": {
-      "capability_kind": "offline_tooling",
-      "oracle_type": "offline_tool_execution",
-      "executor_class": "bounded_spatial_ai_tool_fixture",
-      "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
-      "setup_requirements": ["tiny_deterministic_custom_input", "local_tool_dependencies"],
-      "cleanup_policy": "remove_only_executor_owned_temporary_outputs",
-      "entry_overrides": {
-        "AWS/GCS validation": {
-          "capability_kind": "external_integration",
-          "oracle_type": "external_optional_boundary",
-          "executor_class": "user_managed_object_store_validation_attestation",
-          "required_evidence": ["user_authorized_endpoint_transcript", "validation_result"],
-          "setup_requirements": ["user_managed_object_store", "user_authorized_credentials"],
-          "cleanup_policy": "no_external_mutation"
-        }
-      }
-    },
-    "synthetic-data-tools": {
-      "capability_kind": "offline_tooling",
-      "oracle_type": "offline_tool_execution",
-      "executor_class": "bounded_synthetic_data_tool_fixture",
-      "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
-      "setup_requirements": ["tiny_deterministic_custom_input", "local_tool_dependencies"],
-      "cleanup_policy": "remove_only_executor_owned_temporary_outputs"
     },
     "enterprise-rag": {
       "capability_kind": "external_integration",

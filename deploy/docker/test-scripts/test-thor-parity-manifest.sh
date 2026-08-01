@@ -19,9 +19,9 @@ python3 "${official_tests}"
 
 report="$(python3 "${verifier}" --report)"
 grep -q "Ledger: 55 families, 500 advertised capabilities, 16 skills" <<<"${report}"
-grep -q "Thor state: external_optional=8, partial=37, source_only=3, wired=7" <<<"${report}"
-grep -q "Runtime: blocked=1, not_applicable=8, not_qualified=43, passed_current=2, static_only=1" <<<"${report}"
-grep -q "Completion: 2/47 local families passed current" <<<"${report}"
+grep -q "Thor state: external_optional=8, partial=38, source_only=3, wired=6" <<<"${report}"
+grep -q "Runtime: blocked=1, not_applicable=8, not_qualified=45, static_only=1" <<<"${report}"
+grep -q "Completion: 0/47 local families passed current" <<<"${report}"
 grep -q "smart-city: partial/not_qualified" <<<"${report}"
 grep -q "warehouse-2d: partial/not_qualified" <<<"${report}"
 grep -q "rt-cv-3d-sparse4d: partial/not_qualified" <<<"${report}"
@@ -33,7 +33,9 @@ grep -q "vios-codecs-audio: wired/not_qualified" <<<"${report}"
 grep -q "vios-ui: wired/not_qualified" <<<"${report}"
 grep -q "infra-observability: partial/not_qualified" <<<"${report}"
 grep -q "nemoclaw-openclaw: partial/not_qualified" <<<"${report}"
-jq -e '.features[] | select(.id == "synthetic-data-tools") | .thor_state == "wired" and .runtime_state == "passed_current"' \
+jq -e '.features[] | select(.id == "spatial-ai-utils") | .thor_state == "partial" and .runtime_state == "not_qualified"' \
+  "${repo_root}/deploy/docker/thor-local/parity/manifest.json" >/dev/null
+jq -e '.features[] | select(.id == "synthetic-data-tools") | .thor_state == "wired" and .runtime_state == "not_qualified"' \
   "${repo_root}/deploy/docker/thor-local/parity/manifest.json" >/dev/null
 grep -q "Acceptance: alternate_local_lane=14, external_optional=8, required_local=33" <<<"${report}"
 grep -q "alert-notifications-slack: external_optional/not_applicable" <<<"${report}"
@@ -51,15 +53,15 @@ open_report="$(sed -n '/^Open parity work:/,/^External optional boundaries:/p' <
 ! grep -q "alert-notifications-slack" <<<"${open_report}"
 ! grep -q "enterprise-rag" <<<"${open_report}"
 ! grep -q "helm" <<<"${open_report}"
-! grep -q "spatial-ai-utils" <<<"${open_report}"
-! grep -q "synthetic-data-tools" <<<"${open_report}"
+grep -q "spatial-ai-utils" <<<"${open_report}"
+grep -q "synthetic-data-tools" <<<"${open_report}"
 
 set +e
 complete_output="$(python3 "${verifier}" --require-complete 2>&1)"
 complete_status=$?
 set -e
 [[ ${complete_status} -eq 2 ]]
-grep -q "INCOMPLETE: 45 local feature families remain open" <<<"${complete_output}"
+grep -q "INCOMPLETE: 47 local feature families remain open" <<<"${complete_output}"
 
 bash -n "${spatialai_qualifier}"
 "${spatialai_qualifier}" --help | grep -q 'does not download a dataset'

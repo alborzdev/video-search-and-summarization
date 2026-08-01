@@ -46,17 +46,33 @@ python3 -m unittest discover \
 # exact predecessor tree identity below; the live artifact semantics are
 # rechecked later by the separate offline documentation-drift package.
 
-# The CPU-ledger successor anchors the immutable Wave 3 candidates/bundle,
-# LVS/calibration integration receipts, planning Waves 5-12, and advertised
-# Waves 1-8 to published predecessor commit 0c9a0a3. It then proves the exact
-# current 87->86 CPU-only gap transition and 276->277 ledger/oracle transition.
-# Historical executors are identity-verified at that commit rather than falsely
-# replayed against the evolved live denominator; no state or evidence advances.
+# The tooling-ledger successor anchors the published f638 predecessor and its
+# earlier CPU successor, immutable candidates/receipts, and directly dependent
+# historical packages. It proves the exact 277/86 -> 289/74 transition for only
+# the twelve Spatial AI and synthetic-data entries. Historical executors are
+# identity-verified rather than replayed against the evolved live denominator;
+# no state or evidence advances.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/cpu-multimedia-ledger-successor/executor.py" \
+  "${thor_local_root}/qualification/tooling-entry-ledger-successor/executor.py" \
+  --check \
   >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/tooling-entry-ledger-successor/tests" \
+  -p 'test*.py' -v
+
+# These two entry-level contracts bind the exact checked-in implementation and
+# CLI surfaces for the twelve newly canonical tooling entries. They are
+# deterministic source-wiring checks only and create no runtime evidence.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/spatial-ai-entry-static-contract/executor.py" \
+  --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/cpu-multimedia-ledger-successor/tests"
+  "${thor_local_root}/qualification/spatial-ai-entry-static-contract/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/synthetic-data-entry-static-contract/executor.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/synthetic-data-entry-static-contract/tests"
 
 # This first static qualification tranche is isolated and non-advancing. It
 # validates 24 bounded candidate cases but cannot create runtime evidence or
@@ -117,14 +133,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/ui-runtime-contracts/tests"
 
-# The exact 20 non-Warehouse local-runtime rows have constructively derived
-# request/action envelopes. This static compiler verifies the deterministic
-# canonical integration; every oracle remains open and evidence-empty.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/runtime-execution-bounds-audit/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/runtime-execution-bounds-audit/tests"
+# The 20-row runtime-execution-bounds audit is a predecessor-bound historical
+# package. Its exact tree and direct core artifacts are verified by the tooling
+# successor above rather than replayed against the 289-oracle denominator.
 
 # Nine local runtime rows now have strict, deterministic candidate-input
 # contracts. The static tier runs read-only validation and mocked tests only;
@@ -292,20 +303,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-alerts/test_collector.py"
 
-# The Search documents/bboxes requirement has an exact 14-step future-runtime
-# plan plus a strict plain-JSON transcript validator. Static qualification runs
-# only the inert plan and fake simulation: zero runtime requests/actions, no
-# callback or live adapter, no promotion, and no Warehouse sample.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/collector.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/collector.py" \
-  validate-simulation \
-  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/fake-simulation.json" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/search-documents-bboxes-runtime-evidence/test_collector.py"
+# The Search documents/bboxes runtime-evidence package is likewise a frozen
+# predecessor snapshot. The tooling successor verifies its exact tree and core
+# artifact identities without relabelling or replaying the old denominator.
 
 # The VIOS playback-remediation candidate binds the final canonical oracle and
 # local20 metadata to an inert 8-request/9-action future plan. Its plain-data
@@ -350,9 +350,11 @@ python3 "${thor_local_root}/qualification/extended-api-surface-contracts/validat
 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/extended-api-surface-contracts/tests"
 
-# Every advertised string without an entry-specific canonical binding remains
-# an explicit gap: 81 entries across 15 zero-row families plus five in partial
-# VIOS. The compiler proposes 86 literal oracles without promotion or Warehouse.
+# Every still-unmapped advertised string in an empty or partial capability
+# family remains an explicit gap: 69 entries across 13 zero-row families plus
+# five in partial VIOS. The compiler proposes 74 literal oracles without
+# promotion or Warehouse. Another 413 advertised strings retain family-only
+# planning bindings and separately block literal completeness.
 python3 "${thor_local_root}/qualification/advertised-entry-gaps/compiler.py" check
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-gaps/tests" \
@@ -361,21 +363,15 @@ python3 -m unittest discover \
 # Advertised-entry Waves 1-7 remain immutable 87-gap candidate snapshots. Their
 # exact trees, inventories, predecessor chains, 125 source locks, and 83-way
 # candidate/blocker partition are verified by the CPU successor above. They are
-# not replayed against the current 86-gap denominator.
+# not replayed against the current 74-gap denominator.
 
-# The separate detection-mAP candidate runs a deterministic tiny AP oracle and
-# locks the production evaluator sources/tests, but does not claim the absent
-# optional dependency stack or production evaluator executed. Combined with
-# Wave six, aggregate candidate coverage is 72/87 with 15 still unselected.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/detection-map-static-executor/executor.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/detection-map-static-executor/tests"
+# The separate detection-mAP candidate is an immutable old-gap snapshot. Its
+# exact predecessor tree is verified by the tooling successor above; the new
+# canonical entry remains runtime-unqualified and is not replayed here.
 
 # Wave eight upgrades the two LVS MCP literals from source-shape candidates to
 # a real in-process production-server subset. Its two IDs remain in the current
-# 86-gap plan, so its live locks are refreshed while its old Wave3/Wave7
+# 74-gap plan, so its live locks are refreshed while its old Wave3/Wave7
 # predecessor hashes stay frozen. Runtime transport/inference remains open.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/advertised-entry-executors-wave8/executor.py" \
@@ -383,15 +379,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-wave8/tests"
 
-# The exact four external blockers have a credential-free future attestation
-# contract. Static qualification compiles only the inert plan and adversarial
-# validator tests; it contacts no Slack, cloud object store, RAG endpoint, or
-# credential source and cannot promote a blocked entry.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/external-entry-attestations/plan.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/external-entry-attestations/tests"
+# The old four-entry external-attestation package includes the now-canonical
+# AWS/GCS boundary and is therefore a historical snapshot. Its exact predecessor
+# tree is verified by the tooling successor instead of being relabelled here.
 
 # The two Search scale literals have an exact, Warehouse-free future workload
 # plan: progressive 2/4/8/16 plus a separate operator-approved 100-stream run.
@@ -411,9 +401,9 @@ python3 "${thor_local_root}/qualification/service-binding-resolution/compiler.py
 python3 -m pytest -q \
   "${thor_local_root}/qualification/service-binding-resolution/tests"
 
-# The lane compiler binds every one of the 500 advertised entries and all 277
-# current capability oracles, while preserving entry-level semantic gaps,
-# unresolved service bindings, and zero runtime evidence.
+# The lane compiler binds every one of the 500 advertised entries and all 289
+# current capability oracles, while preserving all 487 missing entry-specific
+# mappings, unresolved service bindings, and zero runtime evidence.
 python3 "${thor_local_root}/qualification/runtime-lanes/runtime_lane_compiler.py" \
   --check
 python3 -m pytest -q "${thor_local_root}/qualification/runtime-lanes/tests"

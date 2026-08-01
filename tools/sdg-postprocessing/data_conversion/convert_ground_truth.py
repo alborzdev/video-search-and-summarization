@@ -36,6 +36,7 @@ from pxr import Gf
 import random
 import glob
 import hashlib
+import tempfile
 
 object_id_map = None
 class_name_map = {
@@ -994,7 +995,10 @@ class utils_for_data_parse:
             None
         """
         global object_id_map
-        object_id_map = {object_id: idx for idx, object_id in enumerate(object_label_map, start=0)}
+        object_id_map = {
+            object_id: idx
+            for idx, object_id in enumerate(sorted(object_label_map), start=0)
+        }
 
     def generate_ground_truth_for_scene(
         self,
@@ -1019,7 +1023,11 @@ class utils_for_data_parse:
         """
         utils_vis = utils_for_vis()
 
-        subfolders = [f.path for f in os.scandir(scene_dir) if f.is_dir() and f.name.startswith("Camera")]
+        subfolders = sorted(
+            f.path
+            for f in os.scandir(scene_dir)
+            if f.is_dir() and f.name.startswith("Camera")
+        )
 
         # Check if all subfolders have the same frame count
         frame_counts = [
@@ -1173,8 +1181,11 @@ class utils_for_data_parse:
             raise
         
         rotation_keys_with_rot = []
-        for key, rot_list in rotation_dict.items():
-            unique_rots = [list(x) for x in set(tuple(x) for x in rot_list)]
+        for key in sorted(rotation_dict):
+            unique_rots = [
+                list(rotation)
+                for rotation in sorted({tuple(value) for value in rotation_dict[key]})
+            ]
             rotation_keys_with_rot.append({"object_name": key, "rotations": unique_rots})
         
         with open(f"{output_directory}/rotation_keys_with_rot.json", "w") as f:
@@ -1553,16 +1564,31 @@ class utils_for_vis:
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Process and rename camera folders in dataset scenes.")
     parser.add_argument("input", type=str, help="Path to the root directory containing scene folders.")
-    parser.add_argument("--calibration", type=str, help="Path to the calibration file.") 
-    parser.add_argument("--output", type=str, help="Path to the output directory where processed data will be saved.")
+    parser.add_argument("--calibration", type=str, help="Path to the calibration file.")
+    parser.add_argument(
+        "--output",
+        type=str,
+        required=True,
+        help="Path to the output directory where processed data will be saved.",
+    )
     parser.add_argument("--max_frames", type=int, default=None, help="Max frames to render per camera video (omit for all frames)")
     parser.add_argument("--xform_info", type=str, default=None, help="Optional path to xform_info file (omit if not needed).")
+    parser.add_argument(
+        "--skip-visualization",
+        action="store_true",
+        help=(
+            "Generate the four ground-truth JSON outputs without rendering demo "
+            "images or videos. This bounded mode does not require --calibration."
+        ),
+    )
     return parser
 
-def main() -> None:
+def main(argv: Optional[List[str]] = None) -> None:
     # Parse command-line arguments
     parser = build_arg_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    if not args.skip_visualization and not args.calibration:
+        parser.error("--calibration is required unless --skip-visualization is set")
 
     root_directory = args.input
     output_directory = args.output
@@ -1620,33 +1646,62 @@ def main() -> None:
         utils_parser = utils_for_data_parse()
         utils_vis = utils_for_vis()
 
-        # Rename camera folders
-        print("Start to rename camera folder")
-        utils_parser.rename_camera_folders(root_directory)
-        print("Done")
+        processing_root = root_directory
+        temporary_workspace = None
+        if args.skip_visualization:
+            # The converter historically normalizes camera directory names in
+            # place. Conversion-only mode must leave operator-owned input
+            # untouched, so rename temporary symlink aliases instead.
+            temporary_workspace = tempfile.TemporaryDirectory(
+                prefix="vss-ground-truth-conversion-"
+            )
+            processing_root = os.path.join(
+                temporary_workspace.name, os.path.basename(root_directory)
+            )
+            os.makedirs(processing_root)
+            for name in sorted(os.listdir(root_directory)):
+                source = os.path.abspath(os.path.join(root_directory, name))
+                os.symlink(
+                    source,
+                    os.path.join(processing_root, name),
+                    target_is_directory=os.path.isdir(source),
+                )
 
-        # Convert annotation format
-        print("Start to convert format")
-        ground_truth_path, bounding_box_path = utils_parser.generate_ground_truth_for_scene(
-            root_directory,
-            output_directory,
-            exclude_class,
-            exclude_prim,
-            xform_info_path,
-            prim_rotate_dict,
-            prim_extreme_dict,
-            object_detection_name,
-            rename_format_enable,
-        )  
-        print("Done")
-        
-        print("Start to generate demo images")
-        utils_vis.process_image(root_directory, calibration_path, output_directory, frame_id_list=[0, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000])
-        print("Done")
-        
-        print("Start to generate demo videos")
-        utils_vis.process_video_across_cameras(root_directory, calibration_path, output_directory, max_frames=max_frames)
-        print("Image and video processing completed.")
+        try:
+            # Rename camera folders (or their temporary aliases in bounded mode).
+            print("Start to rename camera folder")
+            utils_parser.rename_camera_folders(processing_root)
+            print("Done")
+
+            # Convert annotation format
+            print("Start to convert format")
+            ground_truth_path, bounding_box_path = utils_parser.generate_ground_truth_for_scene(
+                processing_root,
+                output_directory,
+                exclude_class,
+                exclude_prim,
+                xform_info_path,
+                prim_rotate_dict,
+                prim_extreme_dict,
+                object_detection_name,
+                rename_format_enable,
+            )
+            print("Done")
+
+            if args.skip_visualization:
+                print("Skipping demo image and video generation (--skip-visualization).")
+                return
+
+            print("Start to generate demo images")
+            utils_vis.process_image(root_directory, calibration_path, output_directory, frame_id_list=[0, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000])
+            print("Done")
+
+            print("Start to generate demo videos")
+            utils_vis.process_video_across_cameras(root_directory, calibration_path, output_directory, max_frames=max_frames)
+            print("Image and video processing completed.")
+        finally:
+            if temporary_workspace is not None:
+                temporary_workspace.cleanup()
 
 if __name__ == "__main__":
     main()

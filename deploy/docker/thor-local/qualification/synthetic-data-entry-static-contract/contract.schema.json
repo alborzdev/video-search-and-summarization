@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/synthetic-data-entry-static-contract/contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "manifest_binding", "policy", "arm64_environment", "entries", "warehouse_scope", "remaining_runtime_requirements"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-synthetic-data-entry-static-contract-v1"},
+    "mode": {"const": "candidate_only_canonical_source_wiring"},
+    "manifest_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "feature_id", "feature_index", "feature_pointer", "advertised_entry_count"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/parity/manifest.json"},
+        "feature_id": {"const": "synthetic-data-tools"},
+        "feature_index": {"const": 30},
+        "feature_pointer": {"const": "/features/30"},
+        "advertised_entry_count": {"const": 4}
+      }
+    },
+    "policy": {"$ref": "#/$defs/policy"},
+    "arm64_environment": {"$ref": "#/$defs/arm64_environment"},
+    "entries": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "prefixItems": [
+        {"$ref": "#/$defs/entry0"},
+        {"$ref": "#/$defs/entry1"},
+        {"$ref": "#/$defs/entry2"},
+        {"$ref": "#/$defs/entry3"}
+      ],
+      "items": false
+    },
+    "warehouse_scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sample_bundle_required", "sample_assets_or_paths", "custom_data_runtime_oracle_remains_required"],
+      "properties": {
+        "sample_bundle_required": {"const": false},
+        "sample_assets_or_paths": {"const": []},
+        "custom_data_runtime_oracle_remains_required": {"const": true}
+      }
+    },
+    "remaining_runtime_requirements": {
+      "type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_only", "proves", "can_mutate_live_ledgers", "can_mark_passed_current", "official_capability_effect", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "downloads_allowed", "credentials_allowed", "service_lifecycle_allowed", "product_imports_allowed", "file_writes_allowed", "warehouse_sample_bundle"],
+      "properties": {
+        "candidate_only": {"const": true},
+        "proves": {"const": "checked_in_static_wiring_only"},
+        "can_mutate_live_ledgers": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "official_capability_effect": {"const": "none_static_contract_only"},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "product_imports_allowed": {"const": false},
+        "file_writes_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "miniforge": {
+      "type": "object", "additionalProperties": false,
+      "required": ["filename", "sha256"],
+      "properties": {
+        "filename": {"const": "Miniforge3-25.3.1-0-Linux-aarch64.sh"},
+        "sha256": {"const": "a57c9e3d6c0c449c0283fd07e0bfa30d95eb8d547a14e8dc06c606405d01a7f0"}
+      }
+    },
+    "conda_lock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "artifact_count", "python_artifact_fragment", "openusd_artifact_fragment", "ffmpeg_artifact_fragment"],
+      "properties": {
+        "path": {"const": "tools/sdg-postprocessing/thor/conda-linux-aarch64.lock"},
+        "sha256": {"const": "9905f3f0f1ac6b82d8920429a2a6f7101d51a9df0e54dba8671d44f9f8158b6f"},
+        "artifact_count": {"const": 178},
+        "python_artifact_fragment": {"const": "python-3.10.20-"},
+        "openusd_artifact_fragment": {"const": "openusd-26.05-py310"},
+        "ffmpeg_artifact_fragment": {"const": "ffmpeg-8.1.2-"}
+      }
+    },
+    "pip_lock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "requirement_count", "derivation"],
+      "properties": {
+        "path": {"const": "tools/sdg-postprocessing/thor/requirements-pip.txt"},
+        "sha256": {"const": "95cdadc9544667440effbe18c2b4b612ec367c6f249a5d348488b00e4a27520e"},
+        "requirement_count": {"const": 21},
+        "derivation": {"const": "upstream_exact_minus_usd_core"}
+      }
+    },
+    "wheel_lock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "wheel_count", "filename_and_bytes_locked"],
+      "properties": {
+        "path": {"const": "tools/sdg-postprocessing/thor/wheels-linux-aarch64.sha256"},
+        "sha256": {"const": "7a6140f5c16e7c75a09677e0c7d16be212c0ad0c707163f1e20a1f29e78532fa"},
+        "wheel_count": {"const": 21},
+        "filename_and_bytes_locked": {"const": true}
+      }
+    },
+    "arm64_environment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["platform", "python", "openusd", "upstream_usd_requirement", "miniforge", "conda_lock", "pip_requirements", "wheel_lock", "source_controls"],
+      "properties": {
+        "platform": {"const": "linux-aarch64"},
+        "python": {"const": "3.10.20"},
+        "openusd": {"const": "26.05"},
+        "upstream_usd_requirement": {"const": "usd-core==26.5"},
+        "miniforge": {"$ref": "#/$defs/miniforge"},
+        "conda_lock": {"$ref": "#/$defs/conda_lock"},
+        "pip_requirements": {"$ref": "#/$defs/pip_lock"},
+        "wheel_lock": {"$ref": "#/$defs/wheel_lock"},
+        "source_controls": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/source_review"}}
+      }
+    },
+    "source_review": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "ast_symbols", "text_fragments"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "ast_symbols": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "text_fragments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "cli_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "arguments", "semantics"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "arguments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "semantics": {"type": "string", "minLength": 1}
+      }
+    },
+    "capability": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "acceptance_class", "thor_state", "runtime_state"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^manifest-entry\\.synthetic-data-tools\\.0[0-3]-"},
+        "kind": {"const": "tooling"},
+        "acceptance_class": {"const": "alternate_local_lane"},
+        "thor_state": {"const": "wired"},
+        "runtime_state": {"const": "not_qualified"}
+      }
+    },
+    "oracle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "type", "current_state", "runtime_evidence", "static_contract_is_full_semantic_proof"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.synthetic-data-tools\\.0[0-3]-"},
+        "type": {"const": "offline_tool_execution"},
+        "current_state": {"const": "open_unexecuted"},
+        "runtime_evidence": {"const": []},
+        "static_contract_is_full_semantic_proof": {"const": false}
+      }
+    },
+    "entry_base": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifest_pointer", "advertised", "entry_id", "capability", "cli_contracts", "source_reviews", "oracle"],
+      "properties": {
+        "manifest_pointer": {"type": "string"},
+        "advertised": {"type": "string"},
+        "entry_id": {"type": "string"},
+        "capability": {"$ref": "#/$defs/capability"},
+        "cli_contracts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/cli_contract"}},
+        "source_reviews": {"type": "array", "items": {"$ref": "#/$defs/source_review"}},
+        "oracle": {"$ref": "#/$defs/oracle"}
+      }
+    },
+    "entry0": {
+      "allOf": [
+        {"$ref": "#/$defs/entry_base"},
+        {"properties": {"manifest_pointer": {"const": "/features/30/advertised/0"}, "advertised": {"const": "semantic label helpers"}, "entry_id": {"const": "manifest-gap.synthetic-data-tools.00-semantic-label-helpers"}, "capability": {"properties": {"id": {"const": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers"}}}, "oracle": {"properties": {"id": {"const": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers"}}}, "cli_contracts": {"minItems": 3, "maxItems": 3}, "source_reviews": {"minItems": 3, "maxItems": 3}}}
+      ]
+    },
+    "entry1": {
+      "allOf": [
+        {"$ref": "#/$defs/entry_base"},
+        {"properties": {"manifest_pointer": {"const": "/features/30/advertised/1"}, "advertised": {"const": "dataset checks"}, "entry_id": {"const": "manifest-gap.synthetic-data-tools.01-dataset-checks"}, "capability": {"properties": {"id": {"const": "manifest-entry.synthetic-data-tools.01-dataset-checks"}}}, "oracle": {"properties": {"id": {"const": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks"}}}, "cli_contracts": {"minItems": 5, "maxItems": 5}, "source_reviews": {"minItems": 10, "maxItems": 10}}}
+      ]
+    },
+    "entry2": {
+      "allOf": [
+        {"$ref": "#/$defs/entry_base"},
+        {"properties": {"manifest_pointer": {"const": "/features/30/advertised/2"}, "advertised": {"const": "RGB/depth/video conversion"}, "entry_id": {"const": "manifest-gap.synthetic-data-tools.02-rgb-depth-video-conversion"}, "capability": {"properties": {"id": {"const": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion"}}}, "oracle": {"properties": {"id": {"const": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion"}}}, "cli_contracts": {"minItems": 3, "maxItems": 3}, "source_reviews": {"minItems": 3, "maxItems": 3}}}
+      ]
+    },
+    "entry3_base": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifest_pointer", "advertised", "entry_id", "capability", "cli_contracts", "deterministic_outputs", "source_reviews", "oracle"],
+      "properties": {
+        "manifest_pointer": {"const": "/features/30/advertised/3"},
+        "advertised": {"const": "ground-truth conversion"},
+        "entry_id": {"const": "manifest-gap.synthetic-data-tools.03-ground-truth-conversion"},
+        "capability": {"allOf": [{"$ref": "#/$defs/capability"}, {"properties": {"id": {"const": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"}}}]},
+        "cli_contracts": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"$ref": "#/$defs/cli_contract"}},
+        "deterministic_outputs": {"const": ["ground_truth.json", "bounding_boxes.json", "rotation_keys_with_rot.json", "corners_comparison_dict.json"]},
+        "source_reviews": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/source_review"}},
+        "oracle": {"allOf": [{"$ref": "#/$defs/oracle"}, {"properties": {"id": {"const": "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion"}}}]}
+      }
+    },
+    "entry3": {"$ref": "#/$defs/entry3_base"}
+  }
+}

@@ -47,8 +47,8 @@
   ],
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
-    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"},
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"},
     {"path": "services/alert/handlers/direct_media/direct_media_handler.py", "sha256": "b02d2f011b77f735d63ceffcad12d341d1888505bbe83ab47fed8154900d6a0d"},
     {"path": "services/alert/handlers/direct_media/media_downloader.py", "sha256": "9575d3f2c0e42af45e0706ed84b2626b911da96567b97aa611422a8229db8d1f"},
     {"path": "services/alert/models/responses.py", "sha256": "0c658632db38f83a1a956f389c964f87dc44ba23032689983844cd2284b1c21f"},

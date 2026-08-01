@@ -46,11 +46,11 @@ def test_checked_plan_is_exact_deterministic_output(plan: dict) -> None:
 def test_exact_denominators_and_lane_counts(plan: dict) -> None:
     assert plan["denominators"] == compiler.EXPECTED_DENOMINATORS
     assert plan["lane_capability_counts"] == compiler.EXPECTED_LANE_COUNTS
-    assert sum(plan["lane_capability_counts"].values()) == 277
+    assert sum(plan["lane_capability_counts"].values()) == 289
     assert len(plan["lanes"]) == 8
     assert len(plan["feature_family_bindings"]) == 55
     assert len(plan["advertised_entry_bindings"]) == 500
-    assert len(plan["capability_bindings"]) == 277
+    assert len(plan["capability_bindings"]) == 289
 
 
 def test_every_capability_and_every_family_is_bound_once(plan: dict) -> None:
@@ -58,11 +58,11 @@ def test_every_capability_and_every_family_is_bound_once(plan: dict) -> None:
         binding["capability_id"] for binding in plan["capability_bindings"]
     ]
     family_ids = [binding["feature_id"] for binding in plan["feature_family_bindings"]]
-    assert len(capability_ids) == len(set(capability_ids)) == 277
+    assert len(capability_ids) == len(set(capability_ids)) == 289
     assert len(family_ids) == len(set(family_ids)) == 55
     assert (
         sum(item["capability_count"] == 0 for item in plan["feature_family_bindings"])
-        == 15
+        == 13
     )
     assert all(item["lane_ids"] for item in plan["feature_family_bindings"])
 
@@ -163,15 +163,26 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
                 if gap_entry is not None
                 else None
             )
+            is_entry_specific = bool(binding["entry_specific_capability_ids"])
             assert binding["entry_classification_source"] == (
                 "advertised-entry-gap-plan"
                 if gap_entry is not None
                 else "canonical-entry-capability"
-                if pointer == compiler.CPU_MULTIMEDIA_POINTER
+                if is_entry_specific
                 else "not-applicable-family-has-capability-rows"
             )
-            assert binding["default_lane_id"] == family["default_lane_id"]
-            assert binding["lane_ids"] == family["lane_ids"]
+            if is_entry_specific:
+                capability_binding = next(
+                    item
+                    for item in plan["capability_bindings"]
+                    if item["capability_id"]
+                    == binding["entry_specific_capability_ids"][0]
+                )
+                assert binding["default_lane_id"] == capability_binding["lane_id"]
+                assert binding["lane_ids"] == [capability_binding["lane_id"]]
+            else:
+                assert binding["default_lane_id"] == family["default_lane_id"]
+                assert binding["lane_ids"] == family["lane_ids"]
             assert binding["feature_capability_ids"] == sorted(
                 feature.get("official_capability_ids", [])
             )
@@ -179,12 +190,10 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
                 f"oracle.{capability_id}"
                 for capability_id in binding["feature_capability_ids"]
             ]
-            if pointer == compiler.CPU_MULTIMEDIA_POINTER:
-                assert binding["entry_specific_capability_ids"] == [
-                    compiler.CPU_MULTIMEDIA_CAPABILITY_ID
-                ]
+            if is_entry_specific:
+                assert len(binding["entry_specific_capability_ids"]) == 1
                 assert binding["entry_specific_oracle_ids"] == [
-                    f"oracle.{compiler.CPU_MULTIMEDIA_CAPABILITY_ID}"
+                    f"oracle.{binding['entry_specific_capability_ids'][0]}"
                 ]
                 assert binding["lane_binding_scope"] == (
                     "entry_specific_canonical_capability"
@@ -207,8 +216,8 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
 
 def test_advertised_entry_semantic_and_runtime_gaps_are_explicit(plan: dict) -> None:
     bindings = plan["advertised_entry_bindings"]
-    assert sum(bool(item["feature_capability_ids"]) for item in bindings) == 419
-    assert sum(not item["feature_capability_ids"] for item in bindings) == 81
+    assert sum(bool(item["feature_capability_ids"]) for item in bindings) == 431
+    assert sum(not item["feature_capability_ids"] for item in bindings) == 69
     assert (
         sum(
             item["entry_planning_acceptance_class"] == "required_local"
@@ -221,14 +230,14 @@ def test_advertised_entry_semantic_and_runtime_gaps_are_explicit(plan: dict) -> 
             item["entry_planning_acceptance_class"] == "alternate_local_lane"
             for item in bindings
         )
-        == 26
+        == 15
     )
     assert (
         sum(
             item["entry_planning_acceptance_class"] == "external_optional"
             for item in bindings
         )
-        == 5
+        == 4
     )
     assert {
         item["capability_mapping_scope"]
@@ -247,21 +256,49 @@ def test_advertised_entry_semantic_and_runtime_gaps_are_explicit(plan: dict) -> 
     entry_specific = [
         item for item in bindings if item["entry_specific_capability_ids"]
     ]
-    assert len(entry_specific) == 1
-    assert entry_specific[0]["manifest_json_pointer"] == compiler.CPU_MULTIMEDIA_POINTER
-    assert entry_specific[0]["entry_specific_capability_ids"] == [
-        compiler.CPU_MULTIMEDIA_CAPABILITY_ID
-    ]
-    assert entry_specific[0]["entry_specific_oracle_ids"] == [
-        f"oracle.{compiler.CPU_MULTIMEDIA_CAPABILITY_ID}"
-    ]
+    assert len(entry_specific) == 13
+    assert {
+        capability_id
+        for item in entry_specific
+        for capability_id in item["entry_specific_capability_ids"]
+    } == compiler.MIGRATED_ENTRY_CAPABILITY_IDS
+    assert sum(
+        not item["entry_specific_capability_ids"] for item in bindings
+    ) == 487
+    assert sum(
+        item["capability_mapping_scope"] == "feature_family_only"
+        for item in bindings
+    ) == 413
     assert all(not item["runtime_evidence_records"] for item in bindings)
     assert plan["policy"]["advertised_entry_mapping_scope"] == (
         "feature_family_with_canonical_entry_overrides"
     )
     assert not plan["policy"]["advertised_entry_bindings_are_runtime_evidence"]
     assert plan["policy"]["zero_capability_family_entries_block_runtime_completeness"]
+    assert plan["policy"]["family_only_entry_bindings_block_runtime_completeness"]
     assert not plan["policy"]["literal_runtime_feature_completeness_claim_allowed"]
+
+
+def test_entry_specific_tooling_bindings_use_exact_capability_lane(plan: dict) -> None:
+    bindings = {
+        item["entry_specific_capability_ids"][0]: item
+        for item in plan["advertised_entry_bindings"]
+        if item["entry_specific_capability_ids"]
+    }
+    aws = bindings["manifest-entry.spatial-ai-utils.07-aws-gcs-validation"]
+    assert aws["default_lane_id"] == "external-optional"
+    assert aws["lane_ids"] == ["external-optional"]
+    local_tooling_ids = {
+        capability_id
+        for capability_id in compiler.MIGRATED_ENTRY_CAPABILITY_IDS
+        if capability_id.startswith("manifest-entry.spatial-ai-utils.")
+        or capability_id.startswith("manifest-entry.synthetic-data-tools.")
+    } - {"manifest-entry.spatial-ai-utils.07-aws-gcs-validation"}
+    assert all(
+        bindings[capability_id]["lane_ids"] != ["external-optional"]
+        and "external-optional" not in bindings[capability_id]["lane_ids"]
+        for capability_id in local_tooling_ids
+    )
 
 
 def test_cpu_multimedia_capability_is_planning_only_and_not_promoted(plan: dict) -> None:
@@ -358,7 +395,7 @@ def test_warehouse_sample_is_excluded_but_custom_lane_is_present(plan: dict) -> 
         lane for lane in plan["lanes"] if lane["id"] == "custom-data-warehouse"
     )
     assert "sample bundle forbidden" in warehouse["fixture_strategy"]
-    assert plan["lane_capability_counts"]["custom-data-warehouse"] == 24
+    assert plan["lane_capability_counts"]["custom-data-warehouse"] == 28
     assert all(
         binding["probe"]["fixture"]["warehouse_sample_bundle"] is False
         for binding in plan["capability_bindings"]
@@ -371,7 +408,7 @@ def test_external_optional_is_fail_closed_and_cannot_count_local(plan: dict) -> 
         for item in plan["capability_bindings"]
         if item["acceptance_class"] == "external_optional"
     ]
-    assert len(external) == 29
+    assert len(external) == 30
     assert {item["lane_id"] for item in external} == {"external-optional"}
     assert plan["policy"]["external_optional_cannot_satisfy_local"] is True
     assert plan["policy"]["required_cloud_inference"] is False

@@ -38,7 +38,7 @@ documentation/repository discrepancies. Validate it directly:
 python3 deploy/docker/thor-local/parity/verify_official_capabilities.py --report
 ```
 
-The live 277-capability ledger is the complete reviewed VSS 3.2.1 static
+The live 289-capability ledger is the complete reviewed VSS 3.2.1 static
 denominator. Every page in the exact 172-page documentation graph is classified,
 and every reviewed claim-bearing source is merged. This is inventory closure,
 not evidence that every capability runs on this Thor. A historical audit of the
@@ -93,9 +93,19 @@ runtime-qualified counts. The optional Warehouse sample bundle remains excluded,
 while operator custom media, calibration, model, and configuration inputs remain
 in scope.
 
-A current-ledger successor adds the exact CPU multimedia advertised entry as
-capability 277 while retaining the 47 existing discrepancies. This does not
-rewrite the immutable Wave 3 merge receipt or qualify the CPU runtime path.
+The claim-level ledger is not yet a literal one-row-per-advertised-string
+denominator. Thirteen of the 500 advertised strings have exact entry-specific
+capability/oracle mappings. Another 74 are enumerated in the empty/partial-family
+gap plan, while 413 still have family-only planning bindings. Those 487 entries
+without exact mappings block literal feature-completeness.
+
+A first current-ledger successor added the exact CPU multimedia advertised entry
+as capability 277. The tooling-entry successor then adds the eight exact Spatial
+AI utility entries and four exact synthetic-data tool entries as capabilities
+278 through 289 while retaining the 47 existing discrepancies. These additions
+do not rewrite the immutable Wave 3 merge receipt or qualify any runtime path.
+The AWS/GCS validation entry is an explicit external-optional boundary; the
+other eleven tooling entries are local lanes with static source contracts only.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and
@@ -109,7 +119,7 @@ identity, required observations/assertions, arithmetic work bounds, admission
 gates, and intended mutation ownership. These prose-derived requirements are
 useful for implementation review but do not provide fixture files/generators,
 commands/requests, collectors, or executable cleanup for the complete contract.
-All 277 entries are therefore explicitly `planning_index_only`; the full-oracle
+All 289 entries are therefore explicitly `planning_index_only`; the full-oracle
 executor-ready count is zero. Twenty-seven live planning bindings cover bounded
 file-only subsets, and the two MV3DT generator oracles additionally bind their
 deterministic custom-data tool observations from

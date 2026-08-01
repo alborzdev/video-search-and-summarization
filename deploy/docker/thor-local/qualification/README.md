@@ -75,6 +75,13 @@ in this directory:
   offline-MV3DT candidate observation, and Planning Waves 5-12, then prove that
   only the CPU multimedia gap left the current plan, becoming
   capability/oracle 277 while staying runtime-unqualified and evidence-empty;
+- `spatial-ai-entry-static-contract/` and
+  `synthetic-data-entry-static-contract/` bind the exact checked-in source and
+  CLI surfaces for the twelve newly canonical tooling entries. They are
+  deterministic static contracts only and create no Thor runtime evidence;
+- `tooling-entry-ledger-successor/` freezes the CPU-multimedia predecessor and
+  proves that only those twelve tooling entries leave the advertised-entry gap
+  plan, becoming capabilities/oracles 278 through 289 without promotion;
 - `external-entry-attestations/` turns those exact four blockers into an inert,
   credential-free collection plan and strict validator for a future sanitized
   operator receipt. Source or mocks never count as delivery; Slack and
@@ -278,8 +285,10 @@ in this directory:
   external attestations remain independently gated. The compiler is inert,
   grants no approval, and performs no host, Docker, network, credential,
   download, or lifecycle action;
-- `advertised-entry-gaps/` gives each advertised entry from the 16 families
-  that lack capability rows its own still-open semantic oracle plan;
+- `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
+  13 families with no capability rows plus the partial VIOS family its own
+  still-open semantic oracle plan. Its 74-entry scope is not the global missing
+  entry-specific denominator: 413 more strings retain family-only bindings;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite
@@ -324,7 +333,7 @@ and `406 + L` normalized; the defensible lower bounds are 421 and 420, not
 complete totals.
 
 The deterministic static successors currently materialize 27 of 110
-planning requirements. All 277 full capability oracles remain
+planning requirements. All 289 full capability oracles remain
 `planning_index_only`; those 27 planning bindings plus two offline MV3DT tool
 bindings are static subsets only, with zero runtime evidence and zero
 `passed_current` promotions. The third successor updates the LVS adapter's

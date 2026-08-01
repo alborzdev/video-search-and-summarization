@@ -39,32 +39,37 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
             (LANE / "classification-rules.json").read_text(encoding="utf-8")
         )
 
-    def test_exact_sixteen_family_and_eighty_six_entry_denominator(self) -> None:
-        self.assertEqual(len(self.plan["families"]), 16)
-        self.assertEqual(len(self.plan["entries"]), 86)
+    def test_exact_fourteen_family_and_seventy_four_entry_denominator(self) -> None:
+        self.assertEqual(len(self.plan["families"]), 14)
+        self.assertEqual(len(self.plan["entries"]), 74)
         self.assertEqual(
             {item["family_id"] for item in self.plan["families"]},
             COMPILER.EXPECTED_FAMILY_IDS,
         )
-        self.assertEqual(len({item["entry_id"] for item in self.plan["entries"]}), 86)
+        self.assertEqual(len({item["entry_id"] for item in self.plan["entries"]}), 74)
         self.assertEqual(
-            len({item["manifest_pointer"] for item in self.plan["entries"]}), 86
+            len({item["manifest_pointer"] for item in self.plan["entries"]}), 74
         )
 
     def test_summary_is_exact_and_all_entries_remain_open(self) -> None:
         summary = self.plan["summary"]
         self.assertEqual(summary["manifest_family_count"], 55)
-        self.assertEqual(summary["families_with_uncovered_advertised_entries"], 16)
-        self.assertEqual(summary["families_without_official_capability_ids"], 15)
+        self.assertEqual(summary["families_with_uncovered_advertised_entries"], 14)
+        self.assertEqual(summary["families_without_official_capability_ids"], 13)
         self.assertEqual(summary["families_with_partial_official_capability_ids"], 1)
         self.assertEqual(
-            summary["advertised_entries_without_official_capability_ids"], 86
+            summary["advertised_entries_in_scoped_empty_or_partial_families"], 74
         )
-        self.assertEqual(summary["open_unverified_entries"], 86)
+        self.assertEqual(
+            summary["advertised_entries_without_entry_specific_capability_mapping"],
+            487,
+        )
+        self.assertEqual(summary["family_only_entries_outside_this_plan"], 413)
+        self.assertEqual(summary["open_unverified_entries"], 74)
         self.assertEqual(summary["runtime_evidence_count"], 0)
         self.assertEqual(
             summary["acceptance_class_counts"],
-            {"alternate_local_lane": 26, "external_optional": 5, "required_local": 55},
+            {"alternate_local_lane": 15, "external_optional": 4, "required_local": 55},
         )
         self.assertTrue(
             all(
@@ -101,7 +106,7 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
                     item["family_canonical_sha256"], COMPILER._sha_json(family)
                 )
 
-    def test_fifteen_source_families_are_absent_and_vios_is_partial(self) -> None:
+    def test_thirteen_source_families_are_absent_and_vios_is_partial(self) -> None:
         for item in self.plan["families"]:
             family = self.manifest["features"][item["family_index"]]
             self.assertEqual(item["advertised_entry_count"], len(family["advertised"]))
@@ -149,6 +154,20 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
             {item["entry_id"] for item in self.plan["entries"]},
         )
 
+    def test_all_twelve_tooling_entries_are_removed_from_gap_plan_only(self) -> None:
+        gap_family_ids = {item["family_id"] for item in self.plan["entries"]}
+        self.assertNotIn("spatial-ai-utils", gap_family_ids)
+        self.assertNotIn("synthetic-data-tools", gap_family_ids)
+        migrated = COMPILER.MIGRATED_ENTRY_CAPABILITY_IDS
+        self.assertEqual(
+            len({item for item in migrated if item.startswith("manifest-entry.spatial-ai-utils.")}),
+            8,
+        )
+        self.assertEqual(
+            len({item for item in migrated if item.startswith("manifest-entry.synthetic-data-tools.")}),
+            4,
+        )
+
     def test_family_lane_status_is_never_semantic_entry_coverage(self) -> None:
         self.assertIs(
             self.plan["policy"]["family_lane_binding_is_semantic_coverage"], False
@@ -165,22 +184,10 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
                 for item in self.plan["entries"]
             )
         )
-        passed_families = {
-            item["family_id"]
-            for item in self.plan["families"]
-            if item["family_runtime_state_snapshot"] == "passed_current"
-        }
-        self.assertEqual(passed_families, {"spatial-ai-utils", "synthetic-data-tools"})
-        passed_family_entries = [
-            item
-            for item in self.plan["entries"]
-            if item["family_id"] in passed_families
-        ]
-        self.assertEqual(len(passed_family_entries), 12)
-        self.assertTrue(
-            all(
-                item["required_oracle"]["status"] == "open_unexecuted"
-                for item in passed_family_entries
+        self.assertFalse(
+            any(
+                item["family_runtime_state_snapshot"] == "passed_current"
+                for item in self.plan["families"]
             )
         )
 
@@ -200,7 +207,7 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
                 self.assertEqual(item["runtime_evidence"], [])
                 self.assertNotEqual(oracle["status"], "passed_current")
 
-    def test_external_optional_classification_is_exactly_five_entries(self) -> None:
+    def test_external_optional_classification_is_exactly_four_entries(self) -> None:
         external = {
             (item["family_id"], item["advertised"])
             for item in self.plan["entries"]
@@ -211,7 +218,6 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
             {
                 ("alert-notifications-slack", "Slack notification"),
                 ("rt-vlm-models", "remote OpenAI-compatible endpoint"),
-                ("spatial-ai-utils", "AWS/GCS validation"),
                 ("enterprise-rag", "RAG report generation"),
                 ("enterprise-rag", "frag retrieval integration"),
             },

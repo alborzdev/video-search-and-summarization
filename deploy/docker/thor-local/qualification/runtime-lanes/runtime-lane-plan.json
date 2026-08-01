@@ -9,19 +9,19 @@
   "source_bindings": {
     "advertised_gap_plan": {
       "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
-      "raw_sha256": "9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239"
+      "raw_sha256": "a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada"
     },
     "advertised_gap_rules": {
       "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/classification-rules.json",
-      "raw_sha256": "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314"
+      "raw_sha256": "9938db401c3012d8ab39887291b0f013ae0b3c54ee94dabe25ec6f8bfed923ac"
     },
     "ledger": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e"
+      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
     },
     "manifest": {
       "path": "deploy/docker/thor-local/parity/manifest.json",
-      "raw_sha256": "879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba"
+      "raw_sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"
     },
     "oracle_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
@@ -29,7 +29,7 @@
     },
     "oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "daccf4e9d198ad3fab762a2f0bcab2e06d093ba92dfb50513f7966b4b5c40dff"
+      "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
     }
   },
   "policy": {
@@ -39,6 +39,7 @@
     "advertised_entry_mapping_scope": "feature_family_with_canonical_entry_overrides",
     "advertised_entry_bindings_are_runtime_evidence": false,
     "zero_capability_family_entries_block_runtime_completeness": true,
+    "family_only_entry_bindings_block_runtime_completeness": true,
     "literal_runtime_feature_completeness_claim_allowed": false,
     "unresolved_service_bindings_block_runtime_completeness": true,
     "planned_service_bindings_are_runtime_evidence": false,
@@ -53,23 +54,25 @@
     "lanes": 8,
     "feature_families": 55,
     "advertised_entries": 500,
-    "capabilities": 277,
-    "oracles": 277,
-    "capabilities_with_exactly_one_lane": 277,
+    "capabilities": 289,
+    "oracles": 289,
+    "capabilities_with_exactly_one_lane": 289,
     "feature_families_with_lane_binding": 55,
-    "feature_families_without_capability_rows": 15,
+    "feature_families_without_capability_rows": 13,
     "advertised_entries_with_lane_binding": 500,
-    "advertised_entries_in_families_with_capability_oracle_rows": 419,
-    "advertised_entries_in_families_without_capability_oracle_rows": 81,
+    "advertised_entries_in_families_with_capability_oracle_rows": 431,
+    "advertised_entries_in_families_without_capability_oracle_rows": 69,
     "advertised_gap_entries_proposed_required_local": 55,
-    "advertised_gap_entries_proposed_alternate_local_lane": 26,
-    "advertised_gap_entries_proposed_external_optional": 5,
-    "advertised_entries_with_entry_specific_capability_mapping": 1,
-    "advertised_entries_with_entry_specific_oracle_mapping": 1,
+    "advertised_gap_entries_proposed_alternate_local_lane": 15,
+    "advertised_gap_entries_proposed_external_optional": 4,
+    "advertised_entries_with_entry_specific_capability_mapping": 13,
+    "advertised_entries_with_entry_specific_oracle_mapping": 13,
+    "advertised_entries_without_entry_specific_capability_mapping": 487,
+    "family_only_entries_outside_advertised_gap_plan": 413,
     "advertised_entry_runtime_evidence_records": 0,
-    "capabilities_with_planning_only_service_binding": 273,
+    "capabilities_with_planning_only_service_binding": 285,
     "capabilities_with_unresolved_service_binding": 4,
-    "required_or_alternate_local_capabilities": 248,
+    "required_or_alternate_local_capabilities": 259,
     "runtime_probe_executors": 0,
     "cleanup_executors": 0,
     "runtime_evidence_records": 0,
@@ -80,10 +83,10 @@
     "search": 4,
     "lvs": 10,
     "alerts": 26,
-    "standalone-services": 134,
-    "custom-data-warehouse": 24,
+    "standalone-services": 141,
+    "custom-data-warehouse": 28,
     "official-edge-model-boundary": 5,
-    "external-optional": 29
+    "external-optional": 30
   },
   "lanes": [
     {
@@ -879,11 +882,12 @@
       "acceptance_class": "alternate_local_lane",
       "default_lane_id": "standalone-services",
       "lane_ids": [
+        "external-optional",
         "standalone-services"
       ],
-      "capability_count": 0,
+      "capability_count": 8,
       "advertised_entry_count": 8,
-      "manifest_feature_sha256": "3db1c846fc6d3f465f17df9481e94e1524015f3c3adba555034b30961676bb69"
+      "manifest_feature_sha256": "34cd7e4bae124ae2b5eb8799cc1b10bb4b824569abcde119319ce4ba8bd03294"
     },
     {
       "feature_id": "synthetic-data-tools",
@@ -893,9 +897,9 @@
       "lane_ids": [
         "custom-data-warehouse"
       ],
-      "capability_count": 0,
+      "capability_count": 4,
       "advertised_entry_count": 4,
-      "manifest_feature_sha256": "30859f794e5784008ef4e8556b4f78dfcccdbd0b3acbc177d988a135ac457c0d"
+      "manifest_feature_sha256": "ee9904f1665527e8ef07b3753601ca8e6b997dc893cec242245501f9deb2fcb7"
     },
     {
       "feature_id": "synthetic-data-workflows-external",
@@ -10712,18 +10716,40 @@
       "advertised_index": 0,
       "advertised_claim": "calibration and camera grouping",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "661c320c5c16f9d1642a6a943b9dfe9669edd93154255247a95e68a040bc2278"
     },
@@ -10734,18 +10760,40 @@
       "advertised_index": 1,
       "advertised_claim": "3D/2D geometry",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "7b4ad20692e38b98aa7bca2313c9765d70fa119ad9dad82430a9094ac5b3a0a8"
     },
@@ -10756,18 +10804,40 @@
       "advertised_index": 2,
       "advertised_claim": "multiview visualization",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "544f0fec501c5069b33faf9779a9c3a1f548178b5c4ffd426690588d421448e9"
     },
@@ -10778,18 +10848,40 @@
       "advertised_index": 3,
       "advertised_claim": "detection mAP",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.03-detection-map"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "56e06e42ece9bc3ae2df7b688221827b082750ab0be441b6b0e1989828ef9bed"
     },
@@ -10800,18 +10892,40 @@
       "advertised_index": 4,
       "advertised_claim": "tracking HOTA/CLEAR/identity/count",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "a9a2d7a9c9420ba8061b05bd2bf2c3ea2f67f704ed0f808806b45af775aab535"
     },
@@ -10822,18 +10936,40 @@
       "advertised_index": 5,
       "advertised_claim": "NVSchema conversion",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "9c7549b6bda21fa28aca649dcd047fc4fcf3c6a09f76bb09dc490589d1d94f43"
     },
@@ -10844,18 +10980,40 @@
       "advertised_index": 6,
       "advertised_claim": "video/frame tools",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "standalone-services",
       "lane_ids": [
         "standalone-services"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "ea52f7bf1a9f65a6b4c6080c00a2352c8e281f4770d4106c34104d102ecba015"
     },
@@ -10866,18 +11024,40 @@
       "advertised_index": 7,
       "advertised_claim": "AWS/GCS validation",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "external_optional",
-      "entry_classification_source": "advertised-entry-gap-plan",
-      "default_lane_id": "standalone-services",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
+      "default_lane_id": "external-optional",
       "lane_ids": [
-        "standalone-services"
+        "external-optional"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "e21491bf7b61c02e1c864e39530ff47dff8dbe2ccced90c0b61aa302fa8d75bc"
     },
@@ -10888,18 +11068,32 @@
       "advertised_index": 0,
       "advertised_claim": "semantic label helpers",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "custom-data-warehouse",
       "lane_ids": [
         "custom-data-warehouse"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.synthetic-data-tools.00-semantic-label-helpers"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "8235ddf576a4fefaf9fa6df8eef8894b26d5fc653b588fac8cf642daf9c27bd4"
     },
@@ -10910,18 +11104,32 @@
       "advertised_index": 1,
       "advertised_claim": "dataset checks",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "custom-data-warehouse",
       "lane_ids": [
         "custom-data-warehouse"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.synthetic-data-tools.01-dataset-checks"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "98353fe39f094f9acb96bc8a81dac637f5dbe3c7ba1f4b16c6ac4debd596591e"
     },
@@ -10932,18 +11140,32 @@
       "advertised_index": 2,
       "advertised_claim": "RGB/depth/video conversion",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "custom-data-warehouse",
       "lane_ids": [
         "custom-data-warehouse"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "e82e902c64de835c9d9a6a9e57aeda6e251229634ca03423eee7bda0a2c2041b"
     },
@@ -10954,18 +11176,32 @@
       "advertised_index": 3,
       "advertised_claim": "ground-truth conversion",
       "family_acceptance_class": "alternate_local_lane",
-      "entry_planning_acceptance_class": "alternate_local_lane",
-      "entry_classification_source": "advertised-entry-gap-plan",
+      "entry_planning_acceptance_class": null,
+      "entry_classification_source": "canonical-entry-capability",
       "default_lane_id": "custom-data-warehouse",
       "lane_ids": [
         "custom-data-warehouse"
       ],
-      "lane_binding_scope": "feature_family_reviewed_not_entry_specific",
-      "feature_capability_ids": [],
-      "feature_oracle_ids": [],
-      "capability_mapping_scope": "none_family_has_zero_capability_rows",
-      "entry_specific_capability_ids": [],
-      "entry_specific_oracle_ids": [],
+      "lane_binding_scope": "entry_specific_canonical_capability",
+      "feature_capability_ids": [
+        "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "feature_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "capability_mapping_scope": "entry_specific_canonical",
+      "entry_specific_capability_ids": [
+        "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "entry_specific_oracle_ids": [
+        "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
       "runtime_evidence_records": [],
       "manifest_entry_sha256": "799c530f1dea3f34bd4282225c7b67fcc0695c6ab404a1ffe861ab9ea41ea05f"
     },
@@ -46953,6 +47189,1972 @@
         "current-run fixture digests and pre-state capture are absent",
         "explicit operator approval for service lifecycle is absent",
         "fixture path, generator, and digest are not materialized",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "standalone-services",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-00-calibration-and-camera-grouping",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "3d1dc7c0df2ec9b5ba8f410cf9ce68c3d99029ef364ffbb1303b3afb9aa864e9",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils/tools/camera_grouping"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "05b9766c93d70b2e015c5b21fd2850239f9f4df0d77054aaae4914ab53cd84e8",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+          "kind": "generated_custom_media",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/group_utils.py",
+                  "sha256": "05336334cde57578e878462bcace3a598d65fcf1aebdd1ba722c39c96e6b09d8"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/reassign_camera_groups.py",
+                  "sha256": "0a0f7ef446189d67bb3a5b1edfb27cb5e3d0f755665587e23f841e6228f1de24"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/create_camera_groups.py",
+                  "sha256": "60f45bf21ea91d744d6390eeffa6b787c90056cb88a769f29a73242c8b85880e"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/create_camera_clusters.py",
+                  "sha256": "6ece1b187173588217035ce2045fcf597ebbc41ffc1f780b252d91752f65f256"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/calculate_origin.py",
+                  "sha256": "6b062045ce02bf09733a356325a25da705be99e5fd8a3690799c15b9e7f9d87f"
+                }
+              ],
+              "required_semantics": [
+                "parse_moves",
+                "apply_group_reassignments",
+                "create_camera_groups",
+                "create_camera_clusters",
+                "calculate_origin"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-00-calibration-and-camera-grouping",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: calibration and camera grouping"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-00-calibration-and-camera-grouping"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-00-calibration-and-camera-grouping"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "standalone-services",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-01-3d-2d-geometry",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "8e5db30cb2604c52d1b1ef1ad0e3aaa796649d9335ce2d570efe3e36e68c8669",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils spatial geometry and projection"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "01a27dc139c6a8695782cdf8967b061c98715dbc0fe613a6c5aac7893bbd9892",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_3d.py",
+                  "sha256": "8c7f61ff04ce7f68cb9f8ef29d0a5189dab299bb10b8b36ae9f343e1b8b7cabc"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/projection.py",
+                  "sha256": "8107092b08df576182e7a83ea1fa9babe27ea09f53ff7bd991e9f0d4f316958f"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/projection/project_bbox3d_to_2d.py",
+                  "sha256": "927c822821a26e667177a8b257a4dfaa657dde8737f5492a02f54b6fdb7d8572"
+                }
+              ],
+              "required_semantics": [
+                "box3d_to_corners",
+                "project_points_3d_to_image",
+                "project_boxes_3d_to_2d",
+                "project_bev_objects_bbox_in_image"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-01-3d-2d-geometry",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: 3D/2D geometry"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-01-3d-2d-geometry"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-01-3d-2d-geometry"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "standalone-services",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-02-multiview-visualization",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "bad0444611dcaaa498d19fe610aa60054b75e3f3a950a1462518414b4a51553a",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils visualization tools"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "db029502e153b6bfb6844148dc168eee5d1d493613082c4d7782196d6d5c95f1",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_3d.py",
+                  "sha256": "19d645818a480485d2d51d4471e89f70d4c7714f2c43b4181b9ae95154bd21f5"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox.py",
+                  "sha256": "cc2fe3f0633e8f96c9afe549b467a4616e118e86f1cb232d7caa151fdc1cce2d"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox_batch.py",
+                  "sha256": "8485c512a8c3bca4048a6769b399eb23f5c07b281397433b1efa460131910971"
+                }
+              ],
+              "required_semantics": [
+                "draw_bbox3d_on_img",
+                "draw_bbox3d_on_bev",
+                "draw_bbox3d_multicam"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-02-multiview-visualization",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: multiview visualization"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-02-multiview-visualization"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-02-multiview-visualization"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.03-detection-map",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "standalone-services",
+      "kind": "evaluation",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "agent-evaluation-03-detection-map",
+      "oracle_mode": "runtime",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "f818d54624f6ef58816e30def5d004a210a5394aec04191dd46fc1c4bc34146e",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils detection evaluation"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "aac0412d460bc1aabfc4cfbc0f5ecf1d8e593b36055657198c5192adacc0a529",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.03-detection-map",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.03-detection-map",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "candidate_executor": "deploy/docker/thor-local/qualification/detection-map-static-executor",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py",
+                  "sha256": "b6e8ece795f6986b2cdb1afd133474deb94338b5daf35e54b9e171ab97691ba6"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py",
+                  "sha256": "d1b5b48668b8b24cd3c232ca8b026f080dc3e4380301c136e72e03119dd92aa1"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py",
+                  "sha256": "f5d9e8120ee1196bd6add34ec1960ac8fb7b65252283a2ccf4c1d2a7f27afa3a"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/validation_and_evaluation/run_validation_and_evaluation.py",
+                  "sha256": "303a8023ec4b617749d32f9a516403bc68de33bb331cf051db8a5911ef28557d"
+                }
+              ],
+              "required_semantics": [
+                "evaluate_detection",
+                "accumulate",
+                "calc_ap",
+                "save_detection_results",
+                "evaluate_detection_per_BEV_sensor"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-03-detection-map",
+            "action": "run positive and adjacent-negative evaluator fixtures and record per-row plus aggregate results for the exact evaluation contract: detection mAP"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "score_record"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "contract-05",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound",
+          "runtime-capacity"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "namespaced_and_reversible",
+        "targets": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-03-detection-map"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-03-detection-map"
+        ],
+        "pre_state": "service, configuration, resource IDs, and target absence/digests must be captured before mutation",
+        "restore": "remove only recorded oracle-owned resources and restore the captured pre-test service/config state",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "every allowlisted oracle-owned resource is absent",
+          "captured service/config state and non-owned resource digests match pre-state"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "standalone-services",
+      "kind": "evaluation",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "agent-evaluation-04-tracking-hota-clear-identity-count",
+      "oracle_mode": "runtime",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "73770bdd0758be1bcfeb74548740dcfd84ba06b6818ca0ba8c9661efb071d333",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils tracking evaluation metrics"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "dea127f57aec5e5885ab0b07e58589d44b93a7c716e292e74db418cf4370585c",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/hota.py",
+                  "sha256": "b225a9b4f0a0f1c823257c8d3d892285ffdbf2325aedba881175ae967f2f8d33"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/clear.py",
+                  "sha256": "5e5baadcb3b00c938bd929acf8bd1f8e1eface219cffabb6e4609fdb6f7cca4f"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/identity.py",
+                  "sha256": "f01a9d644bbeeaf6864c64d340164d3ac99c4e3a24abf77c28d0f2cc91f2e973"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py",
+                  "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/evaluation/evaluate_aicity_mtmc.py",
+                  "sha256": "582bbbb3fa24ad67b1d59bd79ea516291217a455e62b5abaec918062fad3feaa"
+                }
+              ],
+              "required_metrics": [
+                "HOTA",
+                "DetA",
+                "AssA",
+                "MOTA",
+                "MOTP",
+                "IDF1",
+                "IDR",
+                "IDP",
+                "Dets",
+                "GT_Dets",
+                "IDs",
+                "GT_IDs"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-04-tracking-hota-clear-identity-count",
+            "action": "run positive and adjacent-negative evaluator fixtures and record per-row plus aggregate results for the exact evaluation contract: tracking HOTA/CLEAR/identity/count"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "score_record"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound",
+          "runtime-capacity"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "namespaced_and_reversible",
+        "targets": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-04-tracking-hota-clear-identity-count"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-04-tracking-hota-clear-identity-count"
+        ],
+        "pre_state": "service, configuration, resource IDs, and target absence/digests must be captured before mutation",
+        "restore": "remove only recorded oracle-owned resources and restore the captured pre-test service/config state",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "every allowlisted oracle-owned resource is absent",
+          "captured service/config state and non-owned resource digests match pre-state"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "standalone-services",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-05-nvschema-conversion",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "eb82438b6bde164e4c12b18287e1e472362d8d694f0e088d537fb552b2899e0e",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils Sparse4D to NVSchema converter"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "9a0bb2735da42d97960b020fa210cf4d0a1fb64fd2ce063ffe6bc2c9725375c1",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py",
+                  "sha256": "ccf56090b1fd9774d9c9615a03773ce85d4712e3239655d5348778eeeaaad3cb"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py",
+                  "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32"
+                }
+              ],
+              "output_schema_version": "4.0",
+              "required_semantics": [
+                "convert_sparse4d_to_nvschema",
+                "class",
+                "confidence",
+                "embedding",
+                "bbox3d",
+                "quaternion_rotation"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-05-nvschema-conversion",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: NVSchema conversion"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "contract-05",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-05-nvschema-conversion"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-05-nvschema-conversion"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "standalone-services",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-06-video-frame-tools",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "f9fad7b2d0412e2dbe8ec225a8d8cc18975a639f3f38e264de1444405cb79466",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/thor-local/compose.yml",
+          "deploy/docker/services/compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils video/frame tools"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "880c7b58602e8e40febb75cf8657d03d094cb95e938c66d1b9da6de5d22f1041",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-required-or-alternate"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+          "kind": "generated_custom_media",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video.py",
+                  "sha256": "7bbd3fa74d1ca1238716c0b95ac375127be629212cac8e7a457b563eb571916f"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/video2frame.py",
+                  "sha256": "3a0da452fc4c69c9d71242c3134adc81f5bfb3ed587355abcd615b713d7385bd"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/video_utils/frame2video.py",
+                  "sha256": "9c8839496d921d420d2a6e76466e889147097bdd8c1d67fac019683911d4f084"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/tools/video_utils/video2frame.py",
+                  "sha256": "ae585b525ddeaf7536a122dacf6f6ea738368d3b2ab6d1f3737a030c628d92a7"
+                }
+              ],
+              "required_semantics": [
+                "list_frame_paths",
+                "frames_to_video",
+                "video_to_frames",
+                "frame_order",
+                "downsample",
+                "frame_skip"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-06-video-frame-tools",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: video/frame tools"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-06-video-frame-tools"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-spatial-ai-utils-06-video-frame-tools"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "one-service-at-a-time Thor scheduling plan has not been executed",
+        "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+      "feature_id": "spatial-ai-utils",
+      "lane_id": "external-optional",
+      "kind": "tooling",
+      "acceptance_class": "external_optional",
+      "runtime_state": "not_applicable",
+      "oracle_profile": "external-spatial-object-store-boundary",
+      "oracle_mode": "deploy",
+      "oracle_current_state": "external_boundary_unexecuted",
+      "oracle_contract_sha256": "8aa110783776a7edbc4369efbf3b8c286b109a9b5edcabb4f6710f2c1fe9926c",
+      "deployment": {
+        "profile_paths": [],
+        "planned_service_roles": [
+          "external-provider"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "external-provider"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "external acceptance boundary",
+        "service_binding_source_claims": [
+          {
+            "source_id": "tagged-repository-3.2.1",
+            "locator": "libs/analytics/spatialai-data-utils cloud validation utilities"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "a28950002e955daff9e0e16305031402f62d8dda787facb9210052f1f748d606",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "external-not-required-for-thor-local-parity"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+          "kind": "operator_external_contract",
+          "availability": "operator_required",
+          "source": "operator-provided opt-in boundary",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.spatial-ai-utils.07-aws-gcs-validation",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/common.py",
+                  "sha256": "45a82ec714865bdf462262eb4334c8fadd6ca831441a050b82bfe3e8ecd06242"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/upload_utils.py",
+                  "sha256": "d484d3c6337c8f2a56f078300f15833d94df0c95c7b58142ea6c6b8e0c74413d"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/download_utils.py",
+                  "sha256": "b4669fc52deb0e64bd086b7b184af4602601e6eb2decdf3a32da35ef9b51aa32"
+                },
+                {
+                  "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/validation_utils.py",
+                  "sha256": "c8202a1ee2525f27fcc8f364b65305c658dead6ba0cd0b242ab1894b0b2066a8"
+                }
+              ],
+              "providers": [
+                "AWS S3",
+                "Google Cloud Storage"
+              ],
+              "local_emulator_is_equivalent": false,
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-07-aws-gcs-validation",
+            "action": "with explicit operator authorization, upload one namespaced tiny object to the selected AWS S3 or Google Cloud Storage provider, read and validate it through the exact SpatialAI utilities, then delete only that object and record provider, TLS, content, and cleanup evidence"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "contract-05",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound",
+          "external-opt-in"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "operator-approved external endpoint",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "none_by_default",
+        "targets": [],
+        "allowlist": [],
+        "pre_state": "not_materialized",
+        "restore": "revoke only test-scoped credentials/resources if the operator opts in",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "operator records removal or revocation of every test-scoped external resource"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "external access and credentials are not authorized",
+        "external inference is optional and cannot satisfy a required Thor-local capability",
+        "fixture path, generator, and digest are not materialized",
+        "provider-side executor, cost bound, and cleanup collector are not admitted",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "feature_id": "synthetic-data-tools",
+      "lane_id": "custom-data-warehouse",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-00-semantic-label-helpers",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "e5c6de59a8254f0482750a275a4568676e1f1334005535687ab245e98f4a7881",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+          "deploy/docker/thor-local/warehouse-2d.compose.yml",
+          "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+          "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "warehouse-sdg-semantics-doc-3.2.1",
+            "locator": "Semantic label workflow and file-backed OpenUSD helpers"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "7bfd8d89b32689d65e5a7c318fe3a47f0a3e2ced45af6580d8609ff56947aaa5",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-alternate-custom-data"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "tools/sdg-postprocessing/semantic_labeling/box_check.py",
+                  "sha256": "0f92e5a7bbce77d0f44622c9abe68f1dec59d1aab0268c8776094a9f0fb1d634"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/utils/export_xform_semantics.py",
+                  "sha256": "38a0f79876626754563ed306fdd9a41a4fe505d36b16e883c49a24d2ab8663c3"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/semantic_labeling/remove_label.py",
+                  "sha256": "f8a484079f9a341059c8560ed1aa945f64fd7a04da6b09ef196f22d4997730eb"
+                }
+              ],
+              "commands": [
+                "box_check.py --stage --output --apply",
+                "export_xform_semantics.py --stage --output",
+                "remove_label.py --stage"
+              ],
+              "required_semantics": [
+                "UsdSemantics.LabelsAPI",
+                "report_categorization",
+                "parent_xform_export",
+                "label_removal"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-00-semantic-label-helpers",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: semantic label helpers"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "contract-05",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-00-semantic-label-helpers"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-00-semantic-label-helpers"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "AGX Thor is a custom unsupported Warehouse execution boundary in VSS 3.2.1",
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "custom media, calibration, and exact model artifacts are not admitted",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "official Warehouse sample bundle is excluded by user scope",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "feature_id": "synthetic-data-tools",
+      "lane_id": "custom-data-warehouse",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-01-dataset-checks",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "bf986ed0795471831ea9ea9b02ba7288dfad48a4835bc756de731a47f87714db",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+          "deploy/docker/thor-local/warehouse-2d.compose.yml",
+          "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+          "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "warehouse-sdg-postprocess-doc-3.2.1",
+            "locator": "Data Sanity Check"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "dee7e6a93c1c3f8e406d139cbdc9fa0c19c67ecfdd21b558b5f5b266b6dc97c5",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-alternate-custom-data"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.synthetic-data-tools.01-dataset-checks",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+              "checkers": [
+                "RGB",
+                "NPY depth",
+                "PNG depth",
+                "object-detection JSON and overflow",
+                "instance-ID JSON",
+                "instance-ID PNG",
+                "calibration",
+                "bbox direction",
+                "velocity",
+                "video B-frames"
+              ],
+              "source_controls": [
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_rgb.py",
+                  "sha256": "1da31b208b1e772de48779aee8c08621abe0a75f7b7129ee0607e980126cf656"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_npy.py",
+                  "sha256": "59307b80214542c9ed02d01f27f3e9042cc501bf3edafee26be09310b35646ab"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_png.py",
+                  "sha256": "426e34a8b7584d12e5af16e93f08d9f154322ec30c475ac58d05a84be1bfbce3"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_json.py",
+                  "sha256": "08fc48050364fcf1332f04fa09cbc41054c1ab4dc4250530ee906664e0988799"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_json.py",
+                  "sha256": "9c7471af6fda24ba118fe2128a50ee218954ff2f9cb8ddc4dfa0e548655e93d7"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_png.py",
+                  "sha256": "f7020591340e45b306eeabf329a17f1b3b3312a2820ddd875e1f94ef91c772da"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_calibration.py",
+                  "sha256": "609cfa1317245064fc29429590ef11bfa5d27614dc514d6a687407288270a44f"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_bbox_direction.py",
+                  "sha256": "26ae55353ef1a11a914b3f6055c160dd9f5070e72f84ecfee497b0c7eeaf478a"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_velocity.py",
+                  "sha256": "e3d1acbe6cb3fc135b4be648ca048308e1db1e2ecdd525fbde7ca9573ecd5fb0"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_videos.sh",
+                  "sha256": "2b18d0b9b5e827d69210699d14c9ce039fda0191da96dfb41de4dbfdc0eecc39"
+                }
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-01-dataset-checks",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: dataset checks"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-01-dataset-checks"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-01-dataset-checks"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "AGX Thor is a custom unsupported Warehouse execution boundary in VSS 3.2.1",
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "custom media, calibration, and exact model artifacts are not admitted",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "official Warehouse sample bundle is excluded by user scope",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "feature_id": "synthetic-data-tools",
+      "lane_id": "custom-data-warehouse",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-02-rgb-depth-video-conversion",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "fb330ce02d73c4bfd304fcbd51e0a2a16f7647de1c595a7c5d5f94aa37b3f4de",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+          "deploy/docker/thor-local/warehouse-2d.compose.yml",
+          "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+          "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "warehouse-sdg-postprocess-doc-3.2.1",
+            "locator": "Data Conversion"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "38c6b09784ef6cc13db907c0260f629b7a4f8e74c26dfdcf4ad9d2ffd58a8578",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-alternate-custom-data"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+          "kind": "generated_custom_media",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py",
+                  "sha256": "c149099e5055143aa536df717c61f339d76c1b02cbd6645458d3f854f7f0a811"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py",
+                  "sha256": "708d37524b672dc91842b6304025fcfe07101d6e1851130caca585ddec3ff363"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/data_conversion/convert_images_to_videos_no_bframes.sh",
+                  "sha256": "6eed454a82c4fe2f95648a0664e9af023136768d49a8d6704938ca7ba3a74f7b"
+                }
+              ],
+              "required_outputs": [
+                "uint16 PNG depth",
+                "gzip HDF5 RGB/depth",
+                "H.264 MP4",
+                "ffprobe zero-B-frame validation"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-02-rgb-depth-video-conversion",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: RGB/depth/video conversion"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-02-rgb-depth-video-conversion"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-02-rgb-depth-video-conversion"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "AGX Thor is a custom unsupported Warehouse execution boundary in VSS 3.2.1",
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "custom media, calibration, and exact model artifacts are not admitted",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "official Warehouse sample bundle is excluded by user scope",
+        "request/command executor and collectors are not implemented"
+      ]
+    },
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+      "feature_id": "synthetic-data-tools",
+      "lane_id": "custom-data-warehouse",
+      "kind": "tooling",
+      "acceptance_class": "alternate_local_lane",
+      "runtime_state": "not_qualified",
+      "oracle_profile": "tool-03-ground-truth-conversion",
+      "oracle_mode": "static",
+      "oracle_current_state": "open_unexecuted",
+      "oracle_contract_sha256": "ecb4eb12e4408cbf199e60f2f30f15b63b851103dc4be1515dfa6778bdbc9003",
+      "deployment": {
+        "profile_paths": [
+          "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+          "deploy/docker/thor-local/warehouse-2d.compose.yml",
+          "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+          "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
+        ],
+        "planned_service_roles": [
+          "repository-tooling"
+        ],
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
+        ],
+        "service_binding_state": "planning_only",
+        "service_binding_basis": "reviewed entry-specific offline tooling contract",
+        "service_binding_source_claims": [
+          {
+            "source_id": "warehouse-sdg-postprocess-doc-3.2.1",
+            "locator": "Ground-truth schema conversion and xform_info"
+          }
+        ],
+        "service_binding_capability_contract_sha256": "62ad6ddc31231d0070c5e226f7162894b184427f8cd80c604491a00ff33cba15",
+        "service_binding_is_runtime_evidence": false,
+        "boundary": "thor-local-alternate-custom-data"
+      },
+      "probe": {
+        "fixture": {
+          "id": "fixture.manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+          "kind": "generated_minimal_contract",
+          "availability": "not_staged",
+          "source": "bounded locally generated fixture",
+          "warehouse_sample_bundle": false,
+          "materialization": {
+            "path": null,
+            "generator": null,
+            "sha256": null
+          },
+          "input": {
+            "capability_id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+            "contract": {
+              "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+              "source_controls": [
+                {
+                  "path": "tools/sdg-postprocessing/data_conversion/convert_ground_truth.py",
+                  "sha256": "4d81551c3a143f52f3fa4bfdc52f1af6aa01fac864d250a9a3f2547dfdaeef9f"
+                },
+                {
+                  "path": "tools/sdg-postprocessing/tests/test_sdg_regressions.py",
+                  "sha256": "0f887f72dd6ebcfd53ab6830afb010853b0168c72facda7d81490b3eff5db7cf"
+                }
+              ],
+              "bounded_cli": {
+                "flag": "--skip-visualization",
+                "requires_output": true,
+                "requires_calibration": false,
+                "default_visualization_requires_calibration": true,
+                "input_tree_mutated": false,
+                "temporary_alias_workspace": true
+              },
+              "deterministic_outputs": [
+                "ground_truth.json",
+                "bounding_boxes.json",
+                "rotation_keys_with_rot.json",
+                "corners_comparison_dict.json"
+              ],
+              "xform_info_modes": [
+                "absent",
+                "non_null"
+              ],
+              "warehouse_sample_bundle": "excluded"
+            },
+            "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-03-ground-truth-conversion",
+            "action": "run the exact tool contract twice in a temporary namespace and compare schema-valid output digests: ground-truth conversion"
+          }
+        },
+        "expected_observation_ids": [
+          "contract_identity",
+          "semantic_result",
+          "deterministic_output"
+        ],
+        "assertion_ids": [
+          "contract-01",
+          "contract-02",
+          "contract-03",
+          "contract-04",
+          "contract-05",
+          "contract-06",
+          "contract-07",
+          "contract-08",
+          "contract-09",
+          "contract-10",
+          "contract-11",
+          "observation-02",
+          "observation-03"
+        ],
+        "admission_prerequisite_ids": [
+          "operator-approval",
+          "target-bound",
+          "fixture-bound"
+        ],
+        "execution_bounds": {
+          "executor": null,
+          "collectors": [],
+          "network_scope": "loopback-or-compose-internal",
+          "max_duration_seconds": 900,
+          "max_requests": 2,
+          "workload": {
+            "units": 1,
+            "requests_per_unit": 2,
+            "overhead_requests": 0,
+            "calculated_max_requests": 2,
+            "phases": [
+              "positive",
+              "adjacent_negative"
+            ]
+          },
+          "model_staging": "prerequisite_only",
+          "warehouse_sample_bundle": "excluded",
+          "max_actions": 2
+        }
+      },
+      "cleanup": {
+        "mutation": "temporary_files_only",
+        "targets": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-03-ground-truth-conversion"
+        ],
+        "allowlist": [
+          "vss-oracle-manifest-entry-synthetic-data-tools-03-ground-truth-conversion"
+        ],
+        "pre_state": "exact target absence or digest must be captured",
+        "restore": "delete the exact temporary directory after digest capture",
+        "executor": null,
+        "postcondition_collectors": [],
+        "postconditions": [
+          "the exact temporary target is absent and no sibling path changed"
+        ]
+      },
+      "evidence": {
+        "current_records": [],
+        "required_fields": [
+          "target commit and Thor host identity",
+          "profile and service configuration digests",
+          "exact image and model artifact identities",
+          "fixture provenance and SHA-256",
+          "bounded request and observation transcript",
+          "every oracle assertion result",
+          "cleanup transcript and postcondition results"
+        ],
+        "may_promote_runtime_state_without_current_record": false
+      },
+      "blockers": [
+        "AGX Thor is a custom unsupported Warehouse execution boundary in VSS 3.2.1",
+        "cleanup allowlist has no machine executor or postcondition collector",
+        "custom media, calibration, and exact model artifacts are not admitted",
+        "explicit operator approval for service lifecycle is absent",
+        "fixture path, generator, and digest are not materialized",
+        "official Warehouse sample bundle is excluded by user scope",
         "request/command executor and collectors are not implemented"
       ]
     },

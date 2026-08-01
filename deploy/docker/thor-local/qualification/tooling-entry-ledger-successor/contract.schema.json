@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tooling-entry-ledger-successor-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "policy", "predecessor", "successor", "frozen_direct_dependents"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "read_only_tooling_entry_ledger_successor"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "runtime_allowed", "file_writes_allowed", "local_git_object_reads_allowed", "allowed_git_commands", "warehouse_sample_bundle"],
+      "properties": {
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "runtime_allowed": {"const": false},
+        "file_writes_allowed": {"const": false},
+        "local_git_object_reads_allowed": {"const": true},
+        "allowed_git_commands": {"const": ["rev-parse", "cat-file", "show"]},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "predecessor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["commit", "parent_commit", "root_tree_oid", "advertised_gap_count", "official_capability_count", "capability_oracle_count", "plan_payload_sha256", "core_objects"],
+      "properties": {
+        "commit": {"const": "f638eb3421ec5620fe22609590c5e9d5872d33d0"},
+        "parent_commit": {"const": "0c9a0a388900e1012b9fba68c6f2b17d6abb3c06"},
+        "root_tree_oid": {"const": "396686f4bbd0e0f10d344ac06dd629fdad425181"},
+        "advertised_gap_count": {"const": 86},
+        "official_capability_count": {"const": 277},
+        "capability_oracle_count": {"const": 277},
+        "plan_payload_sha256": {"const": "a50231e6de3b97cd551a46c32a317e83c71cff2ca27eb22a0363d92e756587d4"},
+        "core_objects": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/pathSha"}}
+      }
+    },
+    "successor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["advertised_gap_count", "official_capability_count", "capability_oracle_count", "plan_payload_sha256", "global_denominator", "current_objects", "transition_entries"],
+      "properties": {
+        "advertised_gap_count": {"const": 74},
+        "official_capability_count": {"const": 289},
+        "capability_oracle_count": {"const": 289},
+        "plan_payload_sha256": {"const": "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26"},
+        "global_denominator": {
+          "type": "object", "additionalProperties": false,
+          "required": ["advertised_entries_without_entry_specific_capability_mapping", "family_only_entries_outside_this_plan"],
+          "properties": {
+            "advertised_entries_without_entry_specific_capability_mapping": {"const": 487},
+            "family_only_entries_outside_this_plan": {"const": 413}
+          }
+        },
+        "current_objects": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/pathSha"}},
+        "transition_entries": {"type": "array", "minItems": 12, "maxItems": 12, "items": {"$ref": "#/$defs/transitionEntry"}}
+      }
+    },
+    "frozen_direct_dependents": {"type": "array", "minItems": 20, "maxItems": 20, "items": {"$ref": "#/$defs/frozenPackage"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "repoPath": {"type": "string", "pattern": "^deploy/docker/thor-local/[^/].+$"},
+    "pathSha": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/repoPath"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "transitionEntry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifest_pointer", "advertised", "gap_id", "capability_id", "oracle_id", "kind", "acceptance_class", "thor_state", "runtime_state", "oracle_current_state"],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/(29|30)/advertised/[0-7]$"},
+        "advertised": {"type": "string", "minLength": 1},
+        "gap_id": {"type": "string", "pattern": "^manifest-gap\\.(spatial-ai-utils|synthetic-data-tools)\\."},
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\.(spatial-ai-utils|synthetic-data-tools)\\."},
+        "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.(spatial-ai-utils|synthetic-data-tools)\\."},
+        "kind": {"enum": ["tooling", "evaluation"]},
+        "acceptance_class": {"enum": ["alternate_local_lane", "external_optional"]},
+        "thor_state": {"enum": ["wired", "external_optional"]},
+        "runtime_state": {"enum": ["not_qualified", "not_applicable"]},
+        "oracle_current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]}
+      }
+    },
+    "frozenPackage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "path", "tree_oid", "direct_core_artifacts"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "pattern": "^deploy/docker/thor-local/qualification/[^/]+$"},
+        "tree_oid": {"$ref": "#/$defs/oid"},
+        "direct_core_artifacts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/pathSha"}}
+      }
+    }
+  }
+}

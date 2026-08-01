@@ -2,6 +2,11 @@
 
 This artifact is planning evidence, not runtime evidence.
 
+The table covers the 74 entries selected from empty or partial capability
+families. It does not include the 413 additional advertised strings that still
+have family-only planning bindings; all 487 non-canonical entries remain global
+literal-completeness blockers.
+
 | Family | Entries | Required lane |
 |---|---:|---|
 | video-summarization-live | 6 | local runtime workflow |
@@ -17,45 +22,45 @@ This artifact is planning evidence, not runtime evidence.
 | audio-understanding | 3 | alternate local audio workflow |
 | vios-ui | 7 | browser/backend correlation |
 | agent-and-mcp-apis | 8 | local API/MCP operations |
-| spatial-ai-utils | 8 | seven local offline tools plus one external boundary |
-| synthetic-data-tools | 4 | local offline tools |
 | enterprise-rag | 2 | user-managed external boundary |
-| **Total** | **86** | **all plan entries open** |
+| **Total** | **74** | **all plan entries open** |
 
 Classification totals:
 
 - required local: 55
-- alternate local: 26
-- external optional: 5
+- alternate local: 15
+- external optional: 4
 - runtime evidence: 0
-- canonical entry-level capabilities: 1 (`CPU multimedia support`)
+- canonical entry-level capabilities: 13 (CPU multimedia plus 12 tooling entries)
 - runtime-qualified entry-level capabilities: 0
 
-The two source families already marked `passed_current` are
-`spatial-ai-utils` and `synthetic-data-tools`. Their 12 advertised entries are
-still open because no entry-level official capability IDs or literal semantic
-oracles exist. `vios-codecs-audio` is the separate partial family: CPU
+The eight `spatial-ai-utils` and four `synthetic-data-tools` advertised entries
+now have exact entry-level capabilities and literal semantic oracles, so they
+are no longer missing-entry gaps. All twelve remain runtime-unqualified and
+evidence-empty; the AWS/GCS entry is an external-optional boundary. Their prior
+family-level static evidence did not qualify the individual entries.
+`vios-codecs-audio` is the separate partial family: CPU
 multimedia now has an exact canonical capability/oracle, remains
 `not_qualified`, and its other five advertised semantics remain open here.
 
 Digest locks:
 
 - manifest raw SHA-256:
-  `879d683f9ad22ace194f5c818361418bc9027d7011cb4fa9d6f9a4af738cacba`
+  `1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce`
 - manifest canonical SHA-256:
-  `9b955d9f68fdf5f413e48b92653861b0d56933b1803e84d145e1eafff93f7e6c`
+  `cbf65ddc55b3518763bf8ee57f58f24619956473035aeca98a274a7b1bc959f2`
 - official capability ledger raw SHA-256:
-  `65241b3ad56f5d9bb817ba040c06abdbfe034701be645c845d94e4f065514f0e`
+  `cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0`
 - classification rules raw SHA-256:
-  `8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314`
+  `9938db401c3012d8ab39887291b0f013ae0b3c54ee94dabe25ec6f8bfed923ac`
 - classification rules canonical SHA-256:
-  `631cccf7d20b68f82bdb384f36b2c409e26abe26fe4c1425b740bad1f2ba77d6`
+  `a3a1f938b777beb8d12a927f447bad0540f32e4b8e8401f1f3fee3a450671496`
 - compiled plan payload SHA-256:
-  `a50231e6de3b97cd551a46c32a317e83c71cff2ca27eb22a0363d92e756587d4`
+  `7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26`
 - compiled plan raw SHA-256:
-  `9ea23d0e84c22f913024035b92633c173e46bce61e7b80ddc6af376d0e389239`
+  `a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada`
 
-The five external boundaries are Slack notification, a remote
-OpenAI-compatible model endpoint, AWS/GCS validation, Enterprise RAG report
+The four remaining external gaps are Slack notification, a remote
+OpenAI-compatible model endpoint, Enterprise RAG report
 generation, and FRAG retrieval integration. They cannot be promoted using
 local mocks or without user authorization.
