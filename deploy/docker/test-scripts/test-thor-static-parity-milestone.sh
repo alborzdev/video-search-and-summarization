@@ -194,6 +194,26 @@ python3 "${thor_local_root}/qualification/runtime-lanes/runtime_lane_compiler.py
   --check
 python3 -m pytest -q "${thor_local_root}/qualification/runtime-lanes/tests"
 
+# The divergent VSS 3.3.0 development line remains an isolated curated
+# prerelease watchlist. Its 14 selected candidate-static families and 40 exact
+# remote pointers define no authoritative full-diff denominator and make no
+# exhaustive-coverage claim. Validation uses no network or local develop
+# checkout; all runtime states stay unexecuted, the Warehouse sample remains
+# excluded, and stale Thor Edge 4B remains an explicit conflict.
+python3 "${thor_local_root}/qualification/prerelease-watchlist/validator.py" \
+  --json >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/prerelease-watchlist/tests"
+
+# The adjacent prerelease denominator exhaustively locks all 498 develop-side
+# commits and 109,052 develop path/status records plus two main-only divergence
+# exceptions. This is commit/path accounting only: classification does not
+# claim semantic feature completeness, local implementation, or runtime parity.
+python3 "${thor_local_root}/qualification/prerelease-denominator/validator.py" \
+  --json >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/prerelease-denominator/tests"
+
 # The local Qwen alternate model contract is checked only in its inert plan
 # mode. Runtime HTTP probes require a separate exact acknowledgement.
 python3 "${thor_local_root}/qualification/local-alternate-models/qualify.py" \

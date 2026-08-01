@@ -39,7 +39,18 @@ in this directory:
 - `official-edge-readiness/` fixes the exact Nemotron/Cosmos identities,
   source-locks all staging gates, and offers a separately acknowledged,
   allowlisted read-only inspection that cannot claim runtime qualification;
-  and
+- `prerelease-watchlist/` isolates a curated watchlist from the divergent VSS
+  3.3.0 development line as fourteen selected candidate-static families backed
+  by forty exact remote source pointers. It has no authoritative full-diff
+  denominator and makes no exhaustive-coverage claim. It requires no network
+  or local development checkout, preserves the stale Thor Edge 4B recipe as a
+  conflict, keeps the Warehouse sample excluded, and cannot promote stable/live
+  qualification state;
+- `prerelease-denominator/` complements that curated watchlist with exhaustive
+  Git-metadata accounting for the exact locked divergence: all 498 develop-side
+  commits, 109,052 develop path/status records, and two main-only exceptions.
+  This is commit/path exhaustiveness, not feature-semantic completeness, local
+  implementation, or runtime parity; and
 - `local-alternate-models/` defines an exact-acknowledgement, four-request
   qualifier for the non-official local Qwen endpoint pair.
 
@@ -55,6 +66,12 @@ runtime evidence and zero `passed_current` promotions. The separate 8 + 21 +
 non-advancing and do not change those live counts. They leave 35
 advertised entries without a candidate source executor and 72 planning
 requirements not yet selected by a planning executor package, respectively.
+The prerelease packages are separate from these stable 3.2.1 denominators. The
+fourteen-family watchlist remains pointer-only; the adjacent exact diff package
+proves that every commit and path/status in the locked prerelease range was
+considered, but does not prove that a classifier captured every feature meaning.
+Neither adds official capabilities, runtime evidence, or `passed_current`
+results.
 
 Run the contract tier from the repository root:
 

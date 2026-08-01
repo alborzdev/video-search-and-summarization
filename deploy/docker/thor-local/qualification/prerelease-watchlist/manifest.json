@@ -1,0 +1,551 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_prerelease_watchlist",
+  "evidence_strategy": {
+    "mode": "locked_remote_pointer_only",
+    "selection_basis": "curated_prerelease_candidate_watchlist",
+    "offline_validation": true,
+    "content_validation": "not_performed_without_materialized_upstream_tree",
+    "qualification_ceiling": "locked_remote_pointers_only",
+    "authoritative_full_diff_denominator": null,
+    "exhaustive_develop_coverage_claimed": false,
+    "coverage_fraction": "not_computable"
+  },
+  "upstream_locks": {
+    "repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "stable_main_sha": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "stable_release_tag": "v3.2.1",
+    "stable_release_peeled_sha": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "prerelease_branch": "develop",
+    "prerelease_sha": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+    "nightly_tag": "nightly-20260801",
+    "nightly_sha": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+    "declared_prerelease_version": "3.3.0",
+    "merge_base_sha": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "compare_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/compare/7732edf8fb38ef896b20f2a0a6a701a4db10dc57...708dac2ff071c76971d5cc8cab24f3879e6aac63"
+  },
+  "policies": {
+    "official_baseline": false,
+    "live_ledger_mutation_allowed": false,
+    "runtime_evidence_allowed": false,
+    "promotion_allowed": false,
+    "passed_current_allowed": false,
+    "network_required": false,
+    "local_develop_checkout_required": false,
+    "warehouse_sample_required": false
+  },
+  "families": [
+    {
+      "family_id": "build-vision-agent",
+      "title": "Build Vision Agent composition skill",
+      "summary": "Natural-language stock and delta profile composition with validation, sizing, deployment, and teardown contracts.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "build-vision-agent-skill",
+          "path": "skills/vss-build-vision-agent/SKILL.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-build-vision-agent/SKILL.md",
+          "introducing_commit": "e740d35f2f90af386dcf706c68fc06c132d87934",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/e740d35f2f90af386dcf706c68fc06c132d87934",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "build-vision-agent-composition",
+          "path": "skills/vss-build-vision-agent/references/composition.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-build-vision-agent/references/composition.md",
+          "introducing_commit": "e740d35f2f90af386dcf706c68fc06c132d87934",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/e740d35f2f90af386dcf706c68fc06c132d87934",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "build-vision-agent-edge",
+          "path": "skills/vss-build-vision-agent/references/edge.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-build-vision-agent/references/edge.md",
+          "introducing_commit": "e740d35f2f90af386dcf706c68fc06c132d87934",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/e740d35f2f90af386dcf706c68fc06c132d87934",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": [
+        {
+          "exception_id": "deprecated-thor-edge-4b",
+          "disposition": "conflict",
+          "reason": "The prerelease edge reference names an obsolete Thor Edge 4B fallback; the locked official Thor Nemotron-3-Nano-4B-FP8 and Cosmos3 contract takes precedence."
+        }
+      ]
+    },
+    {
+      "family_id": "search-architecture",
+      "title": "Search core, CLI, RT-VLM, and clip offsets",
+      "summary": "NAT-free search core, unified CLI, RT-VLM-enabled two-GPU profile, and clip-offset-aware results.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "search-archive-skill",
+          "path": "skills/vss-search-archive/SKILL.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-search-archive/SKILL.md",
+          "introducing_commit": "381926e7f87340fa201b6bff5f77caa136bd13ed",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/381926e7f87340fa201b6bff5f77caa136bd13ed",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "search-profile-overrides",
+          "path": "deploy/docker/developer-profiles/dev-profile-search/overrides.env",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/developer-profiles/dev-profile-search/overrides.env",
+          "introducing_commit": "fef33284139da3a99443683fb4079221a0700dfa",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/fef33284139da3a99443683fb4079221a0700dfa",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "search-agent-config",
+          "path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml",
+          "introducing_commit": "53ce65d0b79606ece2237713291922db8600e5dc",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/53ce65d0b79606ece2237713291922db8600e5dc",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "graph-rag",
+      "title": "ArangoDB graph RAG adapter",
+      "summary": "Relationship-aware retrieval against an operator-provided read-only ArangoDB graph.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "graph-rag-adapter",
+          "path": "services/agent/packages/vss_core/src/vss_core/knowledge/adapters/arango_graph.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/agent/packages/vss_core/src/vss_core/knowledge/adapters/arango_graph.py",
+          "introducing_commit": "27d9d2736142226805a184f9b325ca64793c1882",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/27d9d2736142226805a184f9b325ca64793c1882",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "graph-rag-config",
+          "path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_rag.yml",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_rag.yml",
+          "introducing_commit": "27d9d2736142226805a184f9b325ca64793c1882",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/27d9d2736142226805a184f9b325ca64793c1882",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "alerts-workflows",
+      "title": "Alerts consolidation, async pipeline, metrics, and workflows",
+      "summary": "Realtime incident consolidation, event-loop I/O, on-demand metrics, and direct Alert Bridge operate flows.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "alerts-consolidation",
+          "path": "services/alert/src/realtime/services/incident_service.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/alert/src/realtime/services/incident_service.py",
+          "introducing_commit": "2748aaa312394388fdeabe2bbbd2c00bec4aa94a",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/2748aaa312394388fdeabe2bbbd2c00bec4aa94a",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "alerts-event-loop",
+          "path": "services/alert/src/handlers/event_loop_pipeline_mixin.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/alert/src/handlers/event_loop_pipeline_mixin.py",
+          "introducing_commit": "2561a206734dd83de63902956782127b347eed61",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/2561a206734dd83de63902956782127b347eed61",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "alerts-prometheus-metrics",
+          "path": "services/alert/src/metrics/prometheus_metrics.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/alert/src/metrics/prometheus_metrics.py",
+          "introducing_commit": "1634f43741542e2ef7a4818801fe28dc39840e52",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/1634f43741542e2ef7a4818801fe28dc39840e52",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "alerts-operate-skill",
+          "path": "skills/vss-manage-alerts/SKILL.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-manage-alerts/SKILL.md",
+          "introducing_commit": "ad68ee6ebd706a5678194bd4e75905bbbc6f01bf",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/ad68ee6ebd706a5678194bd4e75905bbbc6f01bf",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "behavior-analytics",
+      "title": "Unified behavior analytics application",
+      "summary": "Config-driven multi-profile app with search-and-alerts, ROI, tripwire, and emit-once semantics.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "behavior-analytics-uber-app",
+          "path": "services/analytics/behavior-analytics/apps/uber/main_uber_app.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/analytics/behavior-analytics/apps/uber/main_uber_app.py",
+          "introducing_commit": "ba9309b459068972cc15f2c701c0303485767987",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/ba9309b459068972cc15f2c701c0303485767987",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "behavior-analytics-uber-config",
+          "path": "services/analytics/behavior-analytics/configs/uber_config.json",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/analytics/behavior-analytics/configs/uber_config.json",
+          "introducing_commit": "ba9309b459068972cc15f2c701c0303485767987",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/ba9309b459068972cc15f2c701c0303485767987",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "behavior-analytics-skill",
+          "path": "skills/vss-setup-behavior-analytics/SKILL.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-setup-behavior-analytics/SKILL.md",
+          "introducing_commit": "9d9f4ca59e36f3452c6aac12960a53de22edf895",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/9d9f4ca59e36f3452c6aac12960a53de22edf895",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "vios-webrtc-ui",
+      "title": "VIOS webhooks, WebRTC audio, player UI, and TURN",
+      "summary": "Webhook fan-out, AAC live audio, fullscreen controls, and local TURN relay support.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "vios-webhook-config",
+          "path": "services/vios/configs/notification_config.json",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/vios/configs/notification_config.json",
+          "introducing_commit": "2aadf9548c696f069a89e7596946a5785b28a95b",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/2aadf9548c696f069a89e7596946a5785b28a95b",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "vios-aac-decoder",
+          "path": "services/vios/src/framework/media/media_pipelines/gstnvaudiodecoder.cpp",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/vios/src/framework/media/media_pipelines/gstnvaudiodecoder.cpp",
+          "introducing_commit": "e91788f6198793c15098fa3db808c00a0332ea74",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/e91788f6198793c15098fa3db808c00a0332ea74",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "vios-video-player",
+          "path": "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+          "introducing_commit": "743a0ee14fabe393f0bada12b9d16b6f887edb81",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/743a0ee14fabe393f0bada12b9d16b6f887edb81",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "vios-turn-config",
+          "path": "deploy/docker/services/vios/scripts/apply_turn_config.sh",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/services/vios/scripts/apply_turn_config.sh",
+          "introducing_commit": "3e2ac404591d0657f1bfb3a826215d90fc4db88d",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/3e2ac404591d0657f1bfb3a826215d90fc4db88d",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "reports-sop",
+      "title": "Report modes and SOP compliance",
+      "summary": "Refactored report templates plus SOP compliance ingestion and report Mode C.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "report-generation-skill",
+          "path": "skills/vss-generate-video-report/SKILL.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-generate-video-report/SKILL.md",
+          "introducing_commit": "6c114839ddfec31e4cded8854b2e1952308381ed",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/6c114839ddfec31e4cded8854b2e1952308381ed",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "sop-composition-reference",
+          "path": "skills/vss-build-vision-agent/references/services/sop.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-build-vision-agent/references/services/sop.md",
+          "introducing_commit": "b982b2680ed3f316f544a5694f8bcaef60f73274",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/b982b2680ed3f316f544a5694f8bcaef60f73274",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "sop-report-template",
+          "path": "skills/vss-generate-video-report/references/report-templates/sop-compliance-report.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-generate-video-report/references/report-templates/sop-compliance-report.md",
+          "introducing_commit": "b982b2680ed3f316f544a5694f8bcaef60f73274",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/b982b2680ed3f316f544a5694f8bcaef60f73274",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "lvs-index-api",
+      "title": "LVS orphan index deletion API",
+      "summary": "DELETE asset-index endpoint for draining orphan Elasticsearch indices.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "lvs-index-api-server",
+          "path": "services/video-summarization/src/via_server.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/video-summarization/src/via_server.py",
+          "introducing_commit": "13e1dda785140bcc6231d950dc6bfa66e7a4572b",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/13e1dda785140bcc6231d950dc6bfa66e7a4572b",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "lvs-index-api-models",
+          "path": "services/video-summarization/src/vss_api_models.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/video-summarization/src/vss_api_models.py",
+          "introducing_commit": "13e1dda785140bcc6231d950dc6bfa66e7a4572b",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/13e1dda785140bcc6231d950dc6bfa66e7a4572b",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "agent-ui-vlm-verification",
+      "title": "VLM-verified incident selection UI",
+      "summary": "Runtime selection and display of VLM-verified realtime incidents in the VSS UI.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "alerts-ui-component",
+          "path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/AlertsComponent.tsx",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/AlertsComponent.tsx",
+          "introducing_commit": "30283056fd838748f81a54ec8eeed2bebe774438",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/30283056fd838748f81a54ec8eeed2bebe774438",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "alerts-ui-table",
+          "path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/AlertsTable.tsx",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/AlertsTable.tsx",
+          "introducing_commit": "30283056fd838748f81a54ec8eeed2bebe774438",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/30283056fd838748f81a54ec8eeed2bebe774438",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "profile-compose-inversion",
+      "title": "Profile inversion and deterministic service composition",
+      "summary": "Layered profile overrides, shared service Compose fragments, container inventory, and RT-CV model acquisition.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "managed-container-environment",
+          "path": "deploy/docker/containers.env",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/containers.env",
+          "introducing_commit": "2dad5db7bb14311450cd381c4278ac56e9d85ca8",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/2dad5db7bb14311450cd381c4278ac56e9d85ca8",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "base-profile-overrides",
+          "path": "deploy/docker/developer-profiles/dev-profile-base/overrides.env",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/developer-profiles/dev-profile-base/overrides.env",
+          "introducing_commit": "2dad5db7bb14311450cd381c4278ac56e9d85ca8",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/2dad5db7bb14311450cd381c4278ac56e9d85ca8",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "rt-cv-model-acquisition",
+          "path": "deploy/docker/services/rtvi/rtvi-cv/download-models.sh",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/services/rtvi/rtvi-cv/download-models.sh",
+          "introducing_commit": "cb366e72fde3984def9f958642bdf87f1c1f4923",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/cb366e72fde3984def9f958642bdf87f1c1f4923",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "thor-aarch64-multiarch",
+      "title": "Unified Thor and AArch64 multiarch build",
+      "summary": "CUDA 13.2 runtime detection and unified Orin, Thor, Spark, and multiarch VIOS builds.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "vios-aarch64-application-image",
+          "path": "services/vios/cicd_files/aarch64/Dockerfile.app",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/vios/cicd_files/aarch64/Dockerfile.app",
+          "introducing_commit": "91cc11e3b8d6dc7cbd31bd65a0ee55b5da632099",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/91cc11e3b8d6dc7cbd31bd65a0ee55b5da632099",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "vios-multiarch-build",
+          "path": "services/vios/build.sh",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/vios/build.sh",
+          "introducing_commit": "781d88f9806b6314b3940186955f05fc274f10ee",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/781d88f9806b6314b3940186955f05fc274f10ee",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "sdrc-configurator",
+      "title": "SDRC and runtime configurator services",
+      "summary": "Local SDRC, VSS Configurator, and VSS RT Config Adaptor sources for dynamic profile operation.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "sdrc-service",
+          "path": "services/sdrc/README.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/sdrc/README.md",
+          "introducing_commit": "01384d0ae20c153cb0742c3f464c1b0b25c9f753",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/01384d0ae20c153cb0742c3f464c1b0b25c9f753",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "vss-configurator-service",
+          "path": "services/analytics/vss-configurator/README.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/analytics/vss-configurator/README.md",
+          "introducing_commit": "01384d0ae20c153cb0742c3f464c1b0b25c9f753",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/01384d0ae20c153cb0742c3f464c1b0b25c9f753",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "vss-rt-config-adaptor",
+          "path": "services/analytics/vss-rt-config-adaptor/README.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/analytics/vss-rt-config-adaptor/README.md",
+          "introducing_commit": "01384d0ae20c153cb0742c3f464c1b0b25c9f753",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/01384d0ae20c153cb0742c3f464c1b0b25c9f753",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": [
+        {
+          "exception_id": "warehouse-sample-bundle",
+          "disposition": "excluded",
+          "reason": "The optional approximately 100 GB Warehouse sample bundle is user-excluded; small operator-owned custom media and calibration remain in scope."
+        }
+      ]
+    },
+    {
+      "family_id": "kubernetes-helm",
+      "title": "Kubernetes operate contracts and Warehouse Helm charts",
+      "summary": "Public Ingress routing for operate skills plus developer and custom-data Warehouse Helm compositions.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "kubernetes-endpoint-resolution",
+          "path": "skills/vss-build-vision-agent/references/deployment_resolution.md",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/skills/vss-build-vision-agent/references/deployment_resolution.md",
+          "introducing_commit": "42d92840ac9ced25d561d8053d446c9a77cbdce3",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/42d92840ac9ced25d561d8053d446c9a77cbdce3",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "warehouse-2d-helm-values",
+          "path": "deploy/helm/industry-profiles/warehouse-operations/warehouse-2d-app/values.yaml",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/helm/industry-profiles/warehouse-operations/warehouse-2d-app/values.yaml",
+          "introducing_commit": "ee50193cbb47ec3ccbe20a86865b8ff942943093",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/ee50193cbb47ec3ccbe20a86865b8ff942943093",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "search-helm-values",
+          "path": "deploy/helm/developer-profiles/dev-profile-search/values.yaml",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/helm/developer-profiles/dev-profile-search/values.yaml",
+          "introducing_commit": "e58288a0ad06e0a2baec64410312fe6b4ff94fa0",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/e58288a0ad06e0a2baec64410312fe6b4ff94fa0",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    },
+    {
+      "family_id": "nemoclaw-mcp-orchestration",
+      "title": "NemoClaw and HTTPS MCP orchestration",
+      "summary": "Separated local deployment notebooks and an optional HTTPS-capable VSS orchestrator MCP worker.",
+      "static_disposition": "candidate_static",
+      "runtime_disposition": "runtime_watchlist",
+      "source_pointers": [
+        {
+          "evidence_id": "nemoclaw-deployment-notebook",
+          "path": "deploy/docker/scripts/deploy_nemoclaw.ipynb",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/scripts/deploy_nemoclaw.ipynb",
+          "introducing_commit": "11f73ac2acca6e988b9bd2a2759a38a143787700",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/11f73ac2acca6e988b9bd2a2759a38a143787700",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "vss-orchestrator-deployment-notebook",
+          "path": "deploy/docker/scripts/deploy_vss_orchestrator.ipynb",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/deploy/docker/scripts/deploy_vss_orchestrator.ipynb",
+          "introducing_commit": "11f73ac2acca6e988b9bd2a2759a38a143787700",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/11f73ac2acca6e988b9bd2a2759a38a143787700",
+          "evidence_state": "locked_remote_pointer_only"
+        },
+        {
+          "evidence_id": "orchestrator-mcp-ssl-worker",
+          "path": "services/agent/packages/vss_agents/src/vss_agents/orchestrator/mcp_ssl_worker.py",
+          "source_ref": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+          "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/services/agent/packages/vss_agents/src/vss_agents/orchestrator/mcp_ssl_worker.py",
+          "introducing_commit": "74f88bb2cbe77d5abf4e44bd78908f0718c3ffb5",
+          "introducing_commit_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/74f88bb2cbe77d5abf4e44bd78908f0718c3ffb5",
+          "evidence_state": "locked_remote_pointer_only"
+        }
+      ],
+      "exceptions": []
+    }
+  ]
+}

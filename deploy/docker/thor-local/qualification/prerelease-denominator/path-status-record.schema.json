@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/schemas/vss/thor-prerelease-path-status-record.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["commit", "path", "range", "status"],
+  "properties": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "path": {"type": "string", "minLength": 1},
+    "range": {"enum": ["develop_side", "main_only_exception"]},
+    "status": {"enum": ["A", "D", "M", "T"]}
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scope",
+    "upstream_prerelease_sha",
+    "qualification_ceiling",
+    "official_baseline_status",
+    "coverage_limit",
+    "counts",
+    "family_results",
+    "runtime_evidence"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"const": "isolated_prerelease_watchlist"},
+    "upstream_prerelease_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+    "qualification_ceiling": {"const": "locked_remote_pointers_only"},
+    "official_baseline_status": {"const": "unchanged"},
+    "coverage_limit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selection_basis",
+        "authoritative_full_diff_denominator",
+        "exhaustive_develop_coverage_claimed",
+        "coverage_fraction"
+      ],
+      "properties": {
+        "selection_basis": {"const": "curated_prerelease_candidate_watchlist"},
+        "authoritative_full_diff_denominator": {"const": null},
+        "exhaustive_develop_coverage_claimed": {"const": false},
+        "coverage_fraction": {"const": "not_computable"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "families",
+        "candidate_static",
+        "runtime_watchlist",
+        "source_pointers",
+        "excluded_exceptions",
+        "conflict_exceptions",
+        "passed_current_promotions"
+      ],
+      "properties": {
+        "families": {"const": 14},
+        "candidate_static": {"const": 14},
+        "runtime_watchlist": {"const": 14},
+        "source_pointers": {"type": "integer", "minimum": 14},
+        "excluded_exceptions": {"const": 1},
+        "conflict_exceptions": {"const": 1},
+        "passed_current_promotions": {"const": 0}
+      }
+    },
+    "family_results": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "family_id",
+          "static_status",
+          "runtime_status",
+          "source_pointer_count",
+          "runtime_evidence"
+        ],
+        "properties": {
+          "family_id": {"type": "string", "minLength": 1},
+          "static_status": {"const": "pointer_locked_candidate"},
+          "runtime_status": {"const": "watchlist_not_executed"},
+          "source_pointer_count": {"type": "integer", "minimum": 1},
+          "runtime_evidence": {"const": []}
+        }
+      }
+    },
+    "runtime_evidence": {"const": []}
+  }
+}

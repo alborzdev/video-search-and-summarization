@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/schemas/vss/thor-prerelease-denominator.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scope",
+    "evidence_ceiling",
+    "runtime_parity_claimed",
+    "official_capability_promotions",
+    "upstream_locks",
+    "generation_contract",
+    "classification_contract",
+    "counts",
+    "digests",
+    "path_status_sidecar",
+    "develop_side_commits",
+    "main_only_exceptions"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"const": "static_prerelease_diff_denominator_only"},
+    "evidence_ceiling": {"const": "commit_tree_and_path_status_metadata_only"},
+    "runtime_parity_claimed": {"const": false},
+    "official_capability_promotions": {"const": 0},
+    "upstream_locks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "merge_base_sha",
+        "stable_main_sha",
+        "prerelease_branch",
+        "prerelease_sha",
+        "nightly_tag",
+        "nightly_sha"
+      ],
+      "properties": {
+        "repository": {"const": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization"},
+        "merge_base_sha": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "stable_main_sha": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "prerelease_branch": {"const": "develop"},
+        "prerelease_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+        "nightly_tag": {"const": "nightly-20260801"},
+        "nightly_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"}
+      }
+    },
+    "generation_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit_traversal",
+        "path_status_mode",
+        "rename_representation",
+        "blob_materialization_required",
+        "network_required_by_offline_validator"
+      ],
+      "properties": {
+        "commit_traversal": {"type": "string", "minLength": 1},
+        "path_status_mode": {"type": "string", "minLength": 1},
+        "rename_representation": {"const": "deterministic_delete_and_add_pairs"},
+        "blob_materialization_required": {"const": false},
+        "network_required_by_offline_validator": {"const": false}
+      }
+    },
+    "classification_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_family_ids",
+        "watchlist_category_ids",
+        "rules_canonical_sha256",
+        "every_commit_classified",
+        "classification_is_runtime_evidence"
+      ],
+      "properties": {
+        "candidate_family_ids": {"$ref": "#/$defs/familyIds"},
+        "watchlist_category_ids": {"$ref": "#/$defs/categoryIds"},
+        "rules_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "every_commit_classified": {"const": true},
+        "classification_is_runtime_evidence": {"const": false}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "develop_side_commits",
+        "main_only_exceptions",
+        "develop_side_path_status_records",
+        "main_only_path_status_records",
+        "all_path_status_records",
+        "unique_paths",
+        "status_counts",
+        "classification_counts"
+      ],
+      "properties": {
+        "develop_side_commits": {"const": 498},
+        "main_only_exceptions": {"const": 2},
+        "develop_side_path_status_records": {"const": 109052},
+        "main_only_path_status_records": {"const": 2},
+        "all_path_status_records": {"const": 109054},
+        "unique_paths": {"const": 59914},
+        "status_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["A", "D", "M"],
+          "properties": {
+            "A": {"const": 39339},
+            "D": {"const": 57058},
+            "M": {"const": 12657}
+          }
+        },
+        "classification_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "build-vision-agent",
+            "search-architecture",
+            "graph-rag",
+            "alerts-workflows",
+            "behavior-analytics",
+            "vios-webrtc-ui",
+            "reports-sop",
+            "lvs-index-api",
+            "agent-ui-vlm-verification",
+            "profile-compose-inversion",
+            "thor-aarch64-multiarch",
+            "sdrc-configurator",
+            "kubernetes-helm",
+            "nemoclaw-mcp-orchestration",
+            "bugfix",
+            "tests-docs",
+            "vendor-generated-deletion",
+            "ci-release",
+            "supply-chain",
+            "non-thor-hardware",
+            "excluded-warehouse-sample"
+          ],
+          "properties": {
+            "build-vision-agent": {"const": 9},
+            "search-architecture": {"const": 58},
+            "graph-rag": {"const": 3},
+            "alerts-workflows": {"const": 146},
+            "behavior-analytics": {"const": 38},
+            "vios-webrtc-ui": {"const": 138},
+            "reports-sop": {"const": 5},
+            "lvs-index-api": {"const": 52},
+            "agent-ui-vlm-verification": {"const": 53},
+            "profile-compose-inversion": {"const": 149},
+            "thor-aarch64-multiarch": {"const": 21},
+            "sdrc-configurator": {"const": 93},
+            "kubernetes-helm": {"const": 79},
+            "nemoclaw-mcp-orchestration": {"const": 9},
+            "bugfix": {"const": 128},
+            "tests-docs": {"const": 233},
+            "vendor-generated-deletion": {"const": 4},
+            "ci-release": {"const": 126},
+            "supply-chain": {"const": 38},
+            "non-thor-hardware": {"const": 30},
+            "excluded-warehouse-sample": {"const": 0}
+          }
+        }
+      }
+    },
+    "digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "develop_commit_sequence_sha256",
+        "main_exception_sequence_sha256",
+        "path_status_jsonl_sha256",
+        "path_status_gzip_sha256"
+      ],
+      "properties": {
+        "develop_commit_sequence_sha256": {"const": "71392342507ca18fc086b5c629c39f1f33c8c215e888a2af51516df6779c0344"},
+        "main_exception_sequence_sha256": {"const": "601be158b38bcb039f3fa4e09487b4541fba9c576f3d257963724448636bd889"},
+        "path_status_jsonl_sha256": {"const": "afd9f9717184526031c7ae4dc820eb78d260b6525f56c0f2a7dc6e344051d262"},
+        "path_status_gzip_sha256": {"const": "f8fbc47104c0192727226d32b19180c27f839c83fda8ecc01028425605487ef7"}
+      }
+    },
+    "path_status_sidecar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "format",
+        "gzip_mtime",
+        "compressed_bytes",
+        "uncompressed_bytes"
+      ],
+      "properties": {
+        "path": {"const": "path-status.jsonl.gz"},
+        "format": {"const": "gzip_json_lines"},
+        "gzip_mtime": {"const": 0},
+        "compressed_bytes": {"const": 789321},
+        "uncompressed_bytes": {"const": 25039231}
+      }
+    },
+    "develop_side_commits": {
+      "type": "array",
+      "minItems": 498,
+      "maxItems": 498,
+      "items": {"$ref": "#/$defs/commit"}
+    },
+    "main_only_exceptions": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {"$ref": "#/$defs/commit"}
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "familyIds": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": {"enum": [
+        "build-vision-agent",
+        "search-architecture",
+        "graph-rag",
+        "alerts-workflows",
+        "behavior-analytics",
+        "vios-webrtc-ui",
+        "reports-sop",
+        "lvs-index-api",
+        "agent-ui-vlm-verification",
+        "profile-compose-inversion",
+        "thor-aarch64-multiarch",
+        "sdrc-configurator",
+        "kubernetes-helm",
+        "nemoclaw-mcp-orchestration"
+      ]}
+    },
+    "categoryIds": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {"enum": [
+        "bugfix",
+        "tests-docs",
+        "vendor-generated-deletion",
+        "ci-release",
+        "supply-chain",
+        "non-thor-hardware",
+        "excluded-warehouse-sample"
+      ]}
+    },
+    "classification": {
+      "enum": [
+        "build-vision-agent",
+        "search-architecture",
+        "graph-rag",
+        "alerts-workflows",
+        "behavior-analytics",
+        "vios-webrtc-ui",
+        "reports-sop",
+        "lvs-index-api",
+        "agent-ui-vlm-verification",
+        "profile-compose-inversion",
+        "thor-aarch64-multiarch",
+        "sdrc-configurator",
+        "kubernetes-helm",
+        "nemoclaw-mcp-orchestration",
+        "bugfix",
+        "tests-docs",
+        "vendor-generated-deletion",
+        "ci-release",
+        "supply-chain",
+        "non-thor-hardware",
+        "excluded-warehouse-sample"
+      ]
+    },
+    "commit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordinal",
+        "sha",
+        "tree",
+        "parents",
+        "committed_at",
+        "subject",
+        "classifications",
+        "classification_rule_ids",
+        "change_count",
+        "path_status_sha256"
+      ],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1},
+        "sha": {"$ref": "#/$defs/sha"},
+        "tree": {"$ref": "#/$defs/sha"},
+        "parents": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/sha"}
+        },
+        "committed_at": {"type": "string", "format": "date-time"},
+        "subject": {"type": "string", "minLength": 1},
+        "classifications": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/classification"}
+        },
+        "classification_rule_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^(family|category)-[a-z0-9-]+$"}
+        },
+        "change_count": {"type": "integer", "minimum": 1},
+        "path_status_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

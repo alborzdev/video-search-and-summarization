@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/schemas/vss/thor-prerelease-denominator-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "scope",
+    "evidence_ceiling",
+    "counts",
+    "digests",
+    "all_develop_commits_classified",
+    "main_divergence_exceptions_preserved",
+    "runtime_parity_claimed",
+    "runtime_evidence",
+    "official_capability_promotions"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "status": {"const": "static_denominator_valid"},
+    "scope": {"const": "static_prerelease_diff_denominator_only"},
+    "evidence_ceiling": {"const": "commit_tree_and_path_status_metadata_only"},
+    "counts": {
+      "const": {
+        "develop_side_commits": 498,
+        "main_only_exceptions": 2,
+        "develop_side_path_status_records": 109052,
+        "main_only_path_status_records": 2,
+        "all_path_status_records": 109054,
+        "unique_paths": 59914,
+        "status_counts": {"A": 39339, "D": 57058, "M": 12657},
+        "classification_counts": {
+          "build-vision-agent": 9,
+          "search-architecture": 58,
+          "graph-rag": 3,
+          "alerts-workflows": 146,
+          "behavior-analytics": 38,
+          "vios-webrtc-ui": 138,
+          "reports-sop": 5,
+          "lvs-index-api": 52,
+          "agent-ui-vlm-verification": 53,
+          "profile-compose-inversion": 149,
+          "thor-aarch64-multiarch": 21,
+          "sdrc-configurator": 93,
+          "kubernetes-helm": 79,
+          "nemoclaw-mcp-orchestration": 9,
+          "bugfix": 128,
+          "tests-docs": 233,
+          "vendor-generated-deletion": 4,
+          "ci-release": 126,
+          "supply-chain": 38,
+          "non-thor-hardware": 30,
+          "excluded-warehouse-sample": 0
+        }
+      }
+    },
+    "digests": {
+      "const": {
+        "develop_commit_sequence_sha256": "71392342507ca18fc086b5c629c39f1f33c8c215e888a2af51516df6779c0344",
+        "main_exception_sequence_sha256": "601be158b38bcb039f3fa4e09487b4541fba9c576f3d257963724448636bd889",
+        "path_status_jsonl_sha256": "afd9f9717184526031c7ae4dc820eb78d260b6525f56c0f2a7dc6e344051d262",
+        "path_status_gzip_sha256": "f8fbc47104c0192727226d32b19180c27f839c83fda8ecc01028425605487ef7"
+      }
+    },
+    "all_develop_commits_classified": {"const": true},
+    "main_divergence_exceptions_preserved": {"const": true},
+    "runtime_parity_claimed": {"const": false},
+    "runtime_evidence": {"const": []},
+    "official_capability_promotions": {"const": 0}
+  }
+}

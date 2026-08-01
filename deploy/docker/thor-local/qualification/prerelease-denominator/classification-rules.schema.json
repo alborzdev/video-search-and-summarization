@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/schemas/vss/thor-prerelease-classification-rules.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_family_ids",
+    "watchlist_category_ids",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "candidate_family_ids": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "watchlist_category_ids": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/identifier"}
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 21,
+      "maxItems": 21,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "classification_id",
+          "path_regexes",
+          "subject_regexes",
+          "deleted_path_regexes"
+        ],
+        "properties": {
+          "rule_id": {"$ref": "#/$defs/identifier"},
+          "classification_id": {"$ref": "#/$defs/identifier"},
+          "path_regexes": {"$ref": "#/$defs/patterns"},
+          "subject_regexes": {"$ref": "#/$defs/patterns"},
+          "deleted_path_regexes": {"$ref": "#/$defs/patterns"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "patterns": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

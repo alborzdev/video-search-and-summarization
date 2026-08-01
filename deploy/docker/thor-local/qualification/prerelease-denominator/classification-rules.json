@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "candidate_family_ids": [
+    "build-vision-agent",
+    "search-architecture",
+    "graph-rag",
+    "alerts-workflows",
+    "behavior-analytics",
+    "vios-webrtc-ui",
+    "reports-sop",
+    "lvs-index-api",
+    "agent-ui-vlm-verification",
+    "profile-compose-inversion",
+    "thor-aarch64-multiarch",
+    "sdrc-configurator",
+    "kubernetes-helm",
+    "nemoclaw-mcp-orchestration"
+  ],
+  "watchlist_category_ids": [
+    "bugfix",
+    "tests-docs",
+    "vendor-generated-deletion",
+    "ci-release",
+    "supply-chain",
+    "non-thor-hardware",
+    "excluded-warehouse-sample"
+  ],
+  "rules": [
+    {
+      "rule_id": "family-build-vision-agent",
+      "classification_id": "build-vision-agent",
+      "path_regexes": [
+        "^skills/vss-build-vision-agent/"
+      ],
+      "subject_regexes": [
+        "build[ -]vision[ -]agent"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-search-architecture",
+      "classification_id": "search-architecture",
+      "path_regexes": [
+        "^skills/vss-search-archive/",
+        "^deploy/docker/developer-profiles/dev-profile-search/",
+        "^deploy/helm/developer-profiles/dev-profile-search/",
+        "^services/agent/.*/search",
+        "^services/agent/.*/vss_cli",
+        "^services/agent/.*/vss_core"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])search([^a-z]|$)",
+        "clip offsets?",
+        "conversation history"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-graph-rag",
+      "classification_id": "graph-rag",
+      "path_regexes": [
+        "arango_graph\\.py$",
+        "config_rag\\.ya?ml$"
+      ],
+      "subject_regexes": [
+        "graph[ -]rag"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-alerts-workflows",
+      "classification_id": "alerts-workflows",
+      "path_regexes": [
+        "^services/alert/",
+        "^skills/vss-manage-alerts/",
+        "dev-profile-alert",
+        "alert-bridge",
+        "alert_bridge"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])alerts?([^a-z]|$)",
+        "incidents?",
+        "prometheus"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-behavior-analytics",
+      "classification_id": "behavior-analytics",
+      "path_regexes": [
+        "^services/analytics/behavior-analytics/",
+        "^skills/vss-setup-behavior-analytics/",
+        "behavior-analytics"
+      ],
+      "subject_regexes": [
+        "behavior[ -]analytics",
+        "emit-once",
+        "tripwire"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-vios-webrtc-ui",
+      "classification_id": "vios-webrtc-ui",
+      "path_regexes": [
+        "^services/vios/",
+        "^skills/vss-manage-video-io-storage/",
+        "^deploy/docker/services/vios/",
+        "^deploy/helm/services/vios/"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])vios([^a-z]|$)",
+        "(^|[^a-z])vst([^a-z]|$)",
+        "webrtc",
+        "nvstreamer",
+        "webhooks?"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-reports-sop",
+      "classification_id": "reports-sop",
+      "path_regexes": [
+        "^skills/vss-generate-video-report/",
+        "sop-compliance-report",
+        "/sop\\.md$"
+      ],
+      "subject_regexes": [
+        "report gen",
+        "report generation",
+        "sop ingestion",
+        "sop compliance"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-lvs-index-api",
+      "classification_id": "lvs-index-api",
+      "path_regexes": [
+        "^services/video-summarization/",
+        "^skills/vss-summarize-video/",
+        "dev-profile-lvs",
+        "services/lvs"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])lvs([^a-z]|$)",
+        "video[ -]summarization",
+        "summarize skill"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-agent-ui-vlm-verification",
+      "classification_id": "agent-ui-vlm-verification",
+      "path_regexes": [
+        "^services/ui/",
+        "^services/agent/"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])agent([^a-z]|$)",
+        "vlm verified",
+        "verification profile"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-profile-compose-inversion",
+      "classification_id": "profile-compose-inversion",
+      "path_regexes": [
+        "^deploy/docker/",
+        "^skills/vss-deploy-profile/"
+      ],
+      "subject_regexes": [
+        "profile inversion",
+        "docker compose",
+        "developer profiles?",
+        "blueprint-deploy"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-thor-aarch64-multiarch",
+      "classification_id": "thor-aarch64-multiarch",
+      "path_regexes": [
+        "aarch64",
+        "sbsa",
+        "multiarch"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])thor([^a-z]|$)",
+        "aarch64",
+        "sbsa",
+        "multiarch",
+        "jetson"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-sdrc-configurator",
+      "classification_id": "sdrc-configurator",
+      "path_regexes": [
+        "^services/sdrc/",
+        "^services/analytics/vss-configurator/",
+        "^services/analytics/vss-rt-config-adaptor/",
+        "^services/analytics/video-analytics-api/",
+        "^services/analytics/spatialai",
+        "(^|/)sdrc([/.])",
+        "(^|/)mv3dt([/.])",
+        "warehouse-operations"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])sdrc([^a-z]|$)",
+        "configurator",
+        "config adaptor",
+        "mv3dt",
+        "warehouse"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-kubernetes-helm",
+      "classification_id": "kubernetes-helm",
+      "path_regexes": [
+        "^deploy/helm/"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])helm([^a-z]|$)",
+        "kubernetes"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "family-nemoclaw-mcp-orchestration",
+      "classification_id": "nemoclaw-mcp-orchestration",
+      "path_regexes": [
+        "nemoclaw",
+        "vss_orchestrator",
+        "mcp_ssl_worker",
+        "^\\.openclaw/"
+      ],
+      "subject_regexes": [
+        "nemoclaw",
+        "vss orchestrator",
+        "mcp orchestration"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "category-bugfix",
+      "classification_id": "bugfix",
+      "path_regexes": [],
+      "subject_regexes": [
+        "^fix([(:/]| )",
+        "^revert",
+        "^address(ed)? review",
+        "^repair",
+        "^harden",
+        "^restore",
+        "^readd",
+        "wrong path",
+        "bug"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "category-tests-docs",
+      "classification_id": "tests-docs",
+      "path_regexes": [
+        "(^|/)(tests?|docs?|evals?)(/|$)",
+        "(^|/)(README|CONTRIBUTING|AGENTS|CLAUDE)(\\.|$)",
+        "(^|/)SKILL\\.md$",
+        "\\.ipynb$"
+      ],
+      "subject_regexes": [
+        "^(test|tests|docs?|skill-eval|skills-eval)([(:/]| )",
+        "test cases?",
+        "unit tests?",
+        "review draft",
+        "documentation",
+        "readme"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "category-vendor-generated-deletion",
+      "classification_id": "vendor-generated-deletion",
+      "path_regexes": [],
+      "subject_regexes": [],
+      "deleted_path_regexes": [
+        "(^|/)(3rdparty|third_party|vendor|vendored|prebuilts?|generated)(/|$)",
+        "services/vios/.*webrtc.*include/"
+      ]
+    },
+    {
+      "rule_id": "category-ci-release",
+      "classification_id": "ci-release",
+      "path_regexes": [
+        "^\\.github/",
+        "^\\.cursor/",
+        "(^|/)cicd_files/",
+        "release_metadata\\.yaml$",
+        "(^|/)Jenkinsfile$"
+      ],
+      "subject_regexes": [
+        "^(ci|deploy|release|chore\\(ci\\))([(:/]| )",
+        "dco commit sign-offs",
+        "image tag",
+        "repin",
+        "promotion trigger"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "category-supply-chain",
+      "classification_id": "supply-chain",
+      "path_regexes": [
+        "^tools/logstash-plugins/",
+        "(^|/)(uv|package|poetry|cargo|yarn)\\.lock$",
+        "(^|/)package(-lock)?\\.json$",
+        "(^|/)requirements[^/]*\\.txt$",
+        "(^|/)pyproject\\.toml$",
+        "(^|/)(3rdParty_Licenses|LICENSE\\.3rdparty)(\\.|$)",
+        "logstash-.*\\.gem$"
+      ],
+      "subject_regexes": [
+        "cves?",
+        "security",
+        "third[- ]party dependencies",
+        "3rd party oss",
+        "dependencies",
+        "redisstream input plugin",
+        "libssl",
+        "base image"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "category-non-thor-hardware",
+      "classification_id": "non-thor-hardware",
+      "path_regexes": [
+        "(^|/)(x86_64|x86|orin|spark|h100|rtx[^/]*|openshift|rhel)(/|$)"
+      ],
+      "subject_regexes": [
+        "(^|[^a-z])(x86|x86_64|orin|spark|h100|rtx[0-9a-z]*|bx00|openshift|rhel)([^a-z]|$)"
+      ],
+      "deleted_path_regexes": []
+    },
+    {
+      "rule_id": "category-excluded-warehouse-sample",
+      "classification_id": "excluded-warehouse-sample",
+      "path_regexes": [
+        "(^|/)warehouse[^/]*/(sample[-_]?data|dataset)(/|$)",
+        "(^|/)sample[-_]?warehouse(/|$)"
+      ],
+      "subject_regexes": [
+        "warehouse sample bundle",
+        "100 ?gb warehouse"
+      ],
+      "deleted_path_regexes": []
+    }
+  ]
+}

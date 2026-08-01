@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scope",
+    "evidence_strategy",
+    "upstream_locks",
+    "policies",
+    "families"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"const": "isolated_prerelease_watchlist"},
+    "evidence_strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "selection_basis",
+        "offline_validation",
+        "content_validation",
+        "qualification_ceiling",
+        "authoritative_full_diff_denominator",
+        "exhaustive_develop_coverage_claimed",
+        "coverage_fraction"
+      ],
+      "properties": {
+        "mode": {"const": "locked_remote_pointer_only"},
+        "selection_basis": {"const": "curated_prerelease_candidate_watchlist"},
+        "offline_validation": {"const": true},
+        "content_validation": {"const": "not_performed_without_materialized_upstream_tree"},
+        "qualification_ceiling": {"const": "locked_remote_pointers_only"},
+        "authoritative_full_diff_denominator": {"const": null},
+        "exhaustive_develop_coverage_claimed": {"const": false},
+        "coverage_fraction": {"const": "not_computable"}
+      }
+    },
+    "upstream_locks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "stable_main_sha",
+        "stable_release_tag",
+        "stable_release_peeled_sha",
+        "prerelease_branch",
+        "prerelease_sha",
+        "nightly_tag",
+        "nightly_sha",
+        "declared_prerelease_version",
+        "merge_base_sha",
+        "compare_url"
+      ],
+      "properties": {
+        "repository": {"const": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization"},
+        "stable_main_sha": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "stable_release_tag": {"const": "v3.2.1"},
+        "stable_release_peeled_sha": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "prerelease_branch": {"const": "develop"},
+        "prerelease_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+        "nightly_tag": {"const": "nightly-20260801"},
+        "nightly_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+        "declared_prerelease_version": {"const": "3.3.0"},
+        "merge_base_sha": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "compare_url": {"const": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/compare/7732edf8fb38ef896b20f2a0a6a701a4db10dc57...708dac2ff071c76971d5cc8cab24f3879e6aac63"}
+      }
+    },
+    "policies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "official_baseline",
+        "live_ledger_mutation_allowed",
+        "runtime_evidence_allowed",
+        "promotion_allowed",
+        "passed_current_allowed",
+        "network_required",
+        "local_develop_checkout_required",
+        "warehouse_sample_required"
+      ],
+      "properties": {
+        "official_baseline": {"const": false},
+        "live_ledger_mutation_allowed": {"const": false},
+        "runtime_evidence_allowed": {"const": false},
+        "promotion_allowed": {"const": false},
+        "passed_current_allowed": {"const": false},
+        "network_required": {"const": false},
+        "local_develop_checkout_required": {"const": false},
+        "warehouse_sample_required": {"const": false}
+      }
+    },
+    "families": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": {"$ref": "#/$defs/family"}
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "family": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family_id",
+        "title",
+        "summary",
+        "static_disposition",
+        "runtime_disposition",
+        "source_pointers",
+        "exceptions"
+      ],
+      "properties": {
+        "family_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "title": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "static_disposition": {"const": "candidate_static"},
+        "runtime_disposition": {"const": "runtime_watchlist"},
+        "source_pointers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/source_pointer"}
+        },
+        "exceptions": {
+          "type": "array",
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/exception"}
+        }
+      }
+    },
+    "source_pointer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "path",
+        "source_ref",
+        "source_url",
+        "introducing_commit",
+        "introducing_commit_url",
+        "evidence_state"
+      ],
+      "properties": {
+        "evidence_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "path": {"type": "string", "minLength": 1},
+        "source_ref": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+        "source_url": {"type": "string", "pattern": "^https://github\\.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/708dac2ff071c76971d5cc8cab24f3879e6aac63/[^?#]+$"},
+        "introducing_commit": {"$ref": "#/$defs/sha"},
+        "introducing_commit_url": {"type": "string", "pattern": "^https://github\\.com/NVIDIA-AI-Blueprints/video-search-and-summarization/commit/[0-9a-f]{40}$"},
+        "evidence_state": {"const": "locked_remote_pointer_only"}
+      }
+    },
+    "exception": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exception_id", "disposition", "reason"],
+      "properties": {
+        "exception_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "disposition": {"enum": ["excluded", "conflict"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
