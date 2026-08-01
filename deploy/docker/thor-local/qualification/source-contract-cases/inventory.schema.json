@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/source-contract-cases/inventory.schema.json",
+  "title": "Thor source-contract static executor inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy", "planning_source", "cases"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repo_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+    },
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repo_path"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assertion_id", "adapter", "sources", "expected"],
+      "properties": {
+        "assertion_id": {"$ref": "#/$defs/id"},
+        "adapter": {"enum": ["text_contains_all", "json_pointer_equals"]},
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/repo_path"}
+        },
+        "pointer": {"type": "string", "pattern": "^/"},
+        "expected": {}
+      },
+      "allOf": [{
+        "if": {"properties": {"adapter": {"const": "json_pointer_equals"}}},
+        "then": {"required": ["pointer"]}
+      }]
+    }
+  },
+  "properties": {
+    "schema_version": {"const": 1},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "integration_state", "evidence_class", "executor_ready",
+        "can_advance_capability", "can_mark_passed_current", "network",
+        "docker", "subprocess", "environment_mutation", "warehouse_sample_bundle",
+        "max_bytes", "max_files", "deadline_seconds", "allowed_outcomes"
+      ],
+      "properties": {
+        "integration_state": {"const": "isolated_source_contract_executor_candidate"},
+        "evidence_class": {"const": "deterministic_file_static_evidence_not_runtime"},
+        "executor_ready": {"const": true},
+        "can_advance_capability": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "network": {"const": "forbidden"},
+        "docker": {"const": "forbidden"},
+        "subprocess": {"const": "forbidden"},
+        "environment_mutation": {"const": "forbidden"},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "max_bytes": {"const": 4194304},
+        "max_files": {"const": 16},
+        "deadline_seconds": {"const": 5},
+        "allowed_outcomes": {"const": ["observed_match", "observed_mismatch"]}
+      }
+    },
+    "planning_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "denominator", "required_source_state"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/qualification/acceptance_inventory.json"},
+        "denominator": {"const": 110},
+        "required_source_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["materialized", "executor_ready", "runtime_evidence"],
+          "properties": {
+            "materialized": {"const": false},
+            "executor_ready": {"const": false},
+            "runtime_evidence": {"const": []}
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id", "planning_requirement_id", "capability_id",
+          "planning_payload_sha256", "materialized", "materialization_scope",
+          "executor_ready", "advancement_scope", "runtime_evidence",
+          "source_locks", "assertions"
+        ],
+        "properties": {
+          "case_id": {"type": "string", "pattern": "^source-contract-case\\."},
+          "planning_requirement_id": {"$ref": "#/$defs/id"},
+          "capability_id": {"$ref": "#/$defs/id"},
+          "planning_payload_sha256": {"$ref": "#/$defs/sha256"},
+          "materialized": {"const": true},
+          "materialization_scope": {"const": "isolated_candidate_only"},
+          "executor_ready": {"const": true},
+          "advancement_scope": {"const": "static_assertion_only"},
+          "runtime_evidence": {"const": []},
+          "source_locks": {
+            "type": "array", "minItems": 1, "maxItems": 8,
+            "items": {"$ref": "#/$defs/source_lock"}
+          },
+          "assertions": {
+            "type": "array", "minItems": 1, "maxItems": 8,
+            "items": {"$ref": "#/$defs/assertion"}
+          }
+        }
+      }
+    }
+  }
+}

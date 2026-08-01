@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "integration_state": "isolated_source_contract_executor_candidate",
+    "evidence_class": "deterministic_file_static_evidence_not_runtime",
+    "executor_ready": true,
+    "can_advance_capability": false,
+    "can_mark_passed_current": false,
+    "network": "forbidden",
+    "docker": "forbidden",
+    "subprocess": "forbidden",
+    "environment_mutation": "forbidden",
+    "warehouse_sample_bundle": "excluded",
+    "max_bytes": 4194304,
+    "max_files": 16,
+    "deadline_seconds": 5,
+    "allowed_outcomes": ["observed_match", "observed_mismatch"]
+  },
+  "planning_source": {
+    "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+    "denominator": 110,
+    "required_source_state": {"materialized": false, "executor_ready": false, "runtime_evidence": []}
+  },
+  "cases": [
+    {
+      "case_id": "source-contract-case.performance-alert-verification",
+      "planning_requirement_id": "performance.alert-verification",
+      "capability_id": "performance.alert-verification",
+      "planning_payload_sha256": "38d382efce2f5bd2ecf803080a39432688a45d83f9dddf44e4a03caebbcb14f4",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}],
+      "assertions": [
+        {"assertion_id": "reference-only", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/reference_only", "expected": true},
+        {"assertion_id": "not-thor-results", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/thor_results", "expected": false},
+        {"assertion_id": "thor-reference-row", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/fixtures/0/selected_cross_checks/thor", "expected": {"streams": 1, "e2e_avg": 0.91, "e2e_p90": 1.85, "e2e_p99": 2.44}}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.performance-lvs",
+      "planning_requirement_id": "performance.lvs", "capability_id": "performance.video-summarization",
+      "planning_payload_sha256": "b54dcbaaa3db474b7562a5ce26d2e22d07b1500373ef97a429846a40ae920873",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}],
+      "assertions": [
+        {"assertion_id": "reference-only", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/reference_only", "expected": true},
+        {"assertion_id": "not-thor-results", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/thor_results", "expected": false},
+        {"assertion_id": "duration-matrix", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/fixtures/1/duration_minutes", "expected": [1, 10, 30, 60, 120, 720]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.performance-search",
+      "planning_requirement_id": "performance.search", "capability_id": "performance.search",
+      "planning_payload_sha256": "b0c106ae02537d085fb6d6693da899932a8773581fc0b992fe44519f6d9459b2",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}],
+      "assertions": [
+        {"assertion_id": "reference-only", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/reference_only", "expected": true},
+        {"assertion_id": "not-thor-results", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/thor_results", "expected": false},
+        {"assertion_id": "concurrency-matrix", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/fixtures/2/selected_cross_checks/concurrency", "expected": [1, 10, 20, 50]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.performance-rt-cv",
+      "planning_requirement_id": "performance.rt-cv", "capability_id": "performance.rt-cv",
+      "planning_payload_sha256": "70872b9d8f1a65771362d9f5a4a8d7a1752469d169eece9d3b878151209203cb",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}],
+      "assertions": [
+        {"assertion_id": "reference-only", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/reference_only", "expected": true},
+        {"assertion_id": "not-thor-results", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/thor_results", "expected": false},
+        {"assertion_id": "thor-rtdetr-row", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/fixtures/3/rows/thor/rtdetr-r50", "expected": [4, 56.39, 68.25, 72.33, 59.8, 22.3]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.performance-rt-vlm",
+      "planning_requirement_id": "performance.rt-vlm", "capability_id": "performance.rt-vlm",
+      "planning_payload_sha256": "303bf62c347e6f39d9a72363e9cca1dd14fac05b925ca409da2d0e840f572f6b",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}],
+      "assertions": [
+        {"assertion_id": "reference-only", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/reference_only", "expected": true},
+        {"assertion_id": "not-thor-results", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/thor_results", "expected": false},
+        {"assertion_id": "thor-alert-reference", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/fixtures/4/selected_cross_checks/thor_max_alert", "expected": {"streams": 3, "average": 6.52, "p90": 8.12, "p95": 8.14, "gpu_percent": 81.1}}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.performance-rt-embed",
+      "planning_requirement_id": "performance.rt-embed", "capability_id": "performance.rt-embed",
+      "planning_payload_sha256": "5c17d4aeff412836598cbac7d3f64bab6e62c55ce8bb182078212905e7e8f66a",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}],
+      "assertions": [
+        {"assertion_id": "reference-only", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/reference_only", "expected": true},
+        {"assertion_id": "not-thor-results", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/thor_results", "expected": false},
+        {"assertion_id": "h100-max-reference", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/fixtures/5/selected_cross_checks/h100_max/streams", "expected": 170}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.performance-vios",
+      "planning_requirement_id": "performance.vios", "capability_id": "performance.vios",
+      "planning_payload_sha256": "ad9937d621fbc68db243592f8d3c70d09e81d1f597a91919167dc52e385ea8f7",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json", "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec"}],
+      "assertions": [
+        {"assertion_id": "reference-only", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/reference_only", "expected": true},
+        {"assertion_id": "not-thor-results", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/thor_results", "expected": false},
+        {"assertion_id": "profiling-scope", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json"], "pointer": "/fixtures/6/profiling_scope", "expected": "x86 Ubuntu 22.04 reference only"}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.alert-parser",
+      "planning_requirement_id": "systems-alert-parser", "capability_id": "customization.alerts.pluggable-parser",
+      "planning_payload_sha256": "4795ebc0130ae947cb24e40edf6ea59b222388f16bd47d289297cadba715c2ab",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [
+        {"path": "services/alert/models/base_response_parser.py", "sha256": "a62893a9092a502d136b428b9bc5ad61f4d6a5544a2edeff6b887831636a56ce"},
+        {"path": "services/alert/models/pluggable_parser_runtime.py", "sha256": "6570afd986167b918acc7262de8e805176e39824897aa9cb8c48b7896a0b9535"}
+      ],
+      "assertions": [
+        {"assertion_id": "duck-typed-interface", "adapter": "text_contains_all", "sources": ["services/alert/models/base_response_parser.py"], "expected": ["def parse(self, raw_response: str) -> dict", "load_response_parser", "callable parse() method"]},
+        {"assertion_id": "stable-failure-prefix", "adapter": "text_contains_all", "sources": ["services/alert/models/pluggable_parser_runtime.py"], "expected": ["PLUGGABLE_PARSER_ERROR_STATUS = \"Pluggable parser failed\"", "pluggable_parser"]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.behavior-dynamic-config",
+      "planning_requirement_id": "systems-behavior-dynamic-config", "capability_id": "configuration.behavior.dynamic-update",
+      "planning_payload_sha256": "90a81e73ca006fd94b3d62fb792b9f426b36a81da124d75ec8fca6618e105e9c",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/config/config_listener.py", "sha256": "eebee6b748c54d20492031272abe08e2e0af7f69d905027db9b0adc8252b689c"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/models.py", "sha256": "b9c5f34a803c689c5772521ae4dde2ce19b637c37fc40e184c98dda6bb7fc5ee"}
+      ],
+      "assertions": [
+        {"assertion_id": "topic-key-bootstrap", "adapter": "text_contains_all", "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/transform/config/config_listener.py"], "expected": ["mdx-notification", "behavior-analytics-config", "DEFAULT_BOOTSTRAP_TIMEOUT_SEC: float = 15.0", "disk baseline"]},
+        {"assertion_id": "event-and-status-vocabulary", "adapter": "text_contains_all", "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/schema/models.py"], "expected": ["upsert-all", "request-config", "partial-success", "failure"]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.rt-cv-compose",
+      "planning_requirement_id": "systems-rt-cv-compose", "capability_id": "deployment.rt-cv.compose-extension-contract",
+      "planning_payload_sha256": "1563af093647856ee28ef1e340c2fc00383d9b1d4b6bbef762dd2a064d173c35",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/services/rtvi/rtvi-cv/compose.yaml", "sha256": "42c9281021adf6db5780f98918a03a79543fb5aca567d2a5255784544035099e"}],
+      "assertions": [{"assertion_id": "base-extension-contract", "adapter": "text_contains_all", "sources": ["deploy/docker/services/rtvi/rtvi-cv/compose.yaml"], "expected": ["perception:", "container_name: vss-rtvi-cv", "network_mode: \"host\"", "source: ./ds-start.sh", "DS_MODEL_FAMILY:", "ds-start.sh"]}]
+    },
+    {
+      "case_id": "source-contract-case.va-bootstrap",
+      "planning_requirement_id": "systems-va-bootstrap", "capability_id": "configuration.video-analytics.bootstrap",
+      "planning_payload_sha256": "18876decd231fe35a3da9395c9d3f3b43c7d63df1c34539d3f6b1516364213be",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/services/analytics/video-analytics-api/configs/vss-video-analytics-api-config.json", "sha256": "1158f20353305fd1bd7f65ccfef86d70aa5b016979ccbb14f7cffda65ecf517d"}],
+      "assertions": [
+        {"assertion_id": "post-body-limit", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/analytics/video-analytics-api/configs/vss-video-analytics-api-config.json"], "pointer": "/server/configs/0", "expected": {"name": "postBodySizeLimit", "value": "50mb"}},
+        {"assertion_id": "amr-retention", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/analytics/video-analytics-api/configs/vss-video-analytics-api-config.json"], "pointer": "/server/configs/1", "expected": {"name": "amrRetentionInSec", "value": "3"}},
+        {"assertion_id": "config-timeout", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/analytics/video-analytics-api/configs/vss-video-analytics-api-config.json"], "pointer": "/server/configs/3", "expected": {"name": "configStatusTimeoutMs", "value": "30000"}},
+        {"assertion_id": "cleanup-frequency", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/analytics/video-analytics-api/configs/vss-video-analytics-api-config.json"], "pointer": "/server/configs/4", "expected": {"name": "configStatusTimeoutCheckFrequencyMs", "value": "900000"}},
+        {"assertion_id": "elasticsearch-retries", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/analytics/video-analytics-api/configs/vss-video-analytics-api-config.json"], "pointer": "/elasticsearch/retries", "expected": 15}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.elk-indices",
+      "planning_requirement_id": "systems-elk-indices", "capability_id": "storage.elk.indices-ilm",
+      "planning_payload_sha256": "19585ae25b1ff2038f18b77aab290158cc124f63bb428805f662c5d0a8e2c315",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [
+        {"path": "deploy/docker/services/infra/elk/elasticsearch/init-scripts/elasticsearch-ilm-policy-creation.sh", "sha256": "076580fd5f5cd1b006736eec476f0ef33181d9121563c9d2ed73be4b65b2e6d7"},
+        {"path": "deploy/docker/services/infra/elk/elasticsearch/init-scripts/elasticsearch-ingest-pipeline-creation.sh", "sha256": "07951d971c933c7712abad6a6ab7d5f97ba6525b98a2b14c81ad78fdc8a062ee"}
+      ],
+      "assertions": [
+        {"assertion_id": "fifteen-ilm-policies", "adapter": "text_contains_all", "sources": ["deploy/docker/services/infra/elk/elasticsearch/init-scripts/elasticsearch-ilm-policy-creation.sh"], "expected": ["ELASTICSEARCH_ILM_MIN_AGE:-4h", "indices.lifecycle.poll_interval\": \"30s", "mdx-behavior-ilm-policy", "mdx-raw-ilm-policy", "mdx-frames-ilm-policy", "mdx-alerts-ilm-policy", "mdx-events-ilm-policy", "mdx-mtmc-ilm-policy", "mdx-rtls-ilm-policy", "mdx-amr-locations-ilm-policy", "mdx-amr-events-ilm-policy", "mdx-bev-ilm-policy", "mdx-space-utilization-ilm-policy", "mdx-vlm-alerts-ilm-policy", "mdx-incidents-ilm-policy", "mdx-vlm-incidents-ilm-policy", "mdx-embed-filtered-ilm-policy"]},
+        {"assertion_id": "insertion-pipeline", "adapter": "text_contains_all", "sources": ["deploy/docker/services/infra/elk/elasticsearch/init-scripts/elasticsearch-ingest-pipeline-creation.sh"], "expected": ["insertion-timestamp-pipeline", "_ingest_timestamp", "targetFieldName"]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.observability-stack",
+      "planning_requirement_id": "systems-observability-stack", "capability_id": "observability.system.prometheus-stack",
+      "planning_payload_sha256": "381f470e47bfa4a44842570fab17345f48c08f87ffe345a68bbaf9ae874c8a42",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [
+        {"path": "deploy/docker/services/monitoring/compose.yml", "sha256": "d989c5f44b1ea0f1aa2ff3784d989601e69d1976c27733b3be0ba9f2889e0545"},
+        {"path": "deploy/docker/services/monitoring/config/grafana-provisioning/dashboards/dashboard.yml", "sha256": "93223481113809122f7f15f4afbf95e18980fd893a6cb81c251a2f5a4741b6e5"},
+        {"path": "deploy/docker/services/monitoring/config/grafana-dashboard/dcgm-exporter.json", "sha256": "446d0d97d8e777d383e4e8d0314bbd25835b8a3263ae4774331f9988d13b2bbd"},
+        {"path": "deploy/docker/services/monitoring/config/grafana-dashboard/full-node-exporter.json", "sha256": "63f190671e30abfa4ff73fc5d2d0809357bea9e009a780b2428de89ba0f94a73"},
+        {"path": "deploy/docker/services/monitoring/config/grafana-dashboard/cadvisor.json", "sha256": "d139e3efd39ee1cfe04f0b157aa4f92b071c6c5e84d4a67fcd56c8f32721559f"}
+      ],
+      "assertions": [
+        {"assertion_id": "service-port-surface", "adapter": "text_contains_all", "sources": ["deploy/docker/services/monitoring/compose.yml"], "expected": ["dcgm-exporter:", "9400:9400", "prometheus:", "${PROMETHEUS_PORT:-9090}:9090", "grafana:", "${GRAFANA_PORT:-35000}:3000", "node-exporter:", ":9100", "cadvisor:", "${CADVISOR_PORT:-18080}:8080"]},
+        {"assertion_id": "dashboard-provisioning", "adapter": "text_contains_all", "sources": ["deploy/docker/services/monitoring/config/grafana-provisioning/dashboards/dashboard.yml"], "expected": ["type: file", "path: /etc/grafana/dashboards"]},
+        {"assertion_id": "gpu-node-docker-dashboards", "adapter": "text_contains_all", "sources": ["deploy/docker/services/monitoring/config/grafana-dashboard/dcgm-exporter.json", "deploy/docker/services/monitoring/config/grafana-dashboard/full-node-exporter.json", "deploy/docker/services/monitoring/config/grafana-dashboard/cadvisor.json"], "expected": ["NVIDIA DCGM Exporter Dashboard", "Node Exporter Full", "Docker monitoring"]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.release-tags",
+      "planning_requirement_id": "systems-release-tags", "capability_id": "deployment.release.mixed-container-tags",
+      "planning_payload_sha256": "6636b133fcff88eea83b0b7d75a7f76f8104f61ccbf45854cb72b0084a244006",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/generated.env", "sha256": "3eb2c3a49c651083437e17b7bc75d1e44e5e21bd13d372ee62a8498206b97a3a"},
+        {"path": "deploy/docker/services/ui/compose.yml", "sha256": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3"},
+        {"path": "deploy/docker/services/analytics/video-analytics-api/compose.yml", "sha256": "cce192bcbdfe82441702467c2c6680270cc2db328a34044e2f7d3fb4c981feb7"}
+      ],
+      "assertions": [
+        {"assertion_id": "thor-locks-mixed-tags", "adapter": "text_contains_all", "sources": ["deploy/docker/thor-local/generated.env"], "expected": ["vss-agent:3.2.1", "vss-rt-cv:3.2.1", "vss-video-analytics-api:3.2.0"]},
+        {"assertion_id": "official-3-2-pins", "adapter": "text_contains_all", "sources": ["deploy/docker/services/ui/compose.yml", "deploy/docker/services/analytics/video-analytics-api/compose.yml"], "expected": ["vss-agent-ui:3.2.0", "vss-video-analytics-api:3.2.0"]}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.nvstreamer-full-config",
+      "planning_requirement_id": "systems-nvstreamer-full-config", "capability_id": "configuration.nvstreamer.full-contract",
+      "planning_payload_sha256": "74cda80c1b0f7e5a57284fde309080d804a7c378c7fde48d00bc54515e8403a2",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [{"path": "deploy/docker/services/vios/configs/vst_config.json", "sha256": "ef28cfab87be3199356a16554f7e92c0cd3e1f6a18b09cedfaed3a784bafca78"}],
+      "assertions": [
+        {"assertion_id": "official-rtsp-port", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/vios/configs/vst_config.json"], "pointer": "/network/rtsp_server_port", "expected": 8554},
+        {"assertion_id": "official-rtsp-instances", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/vios/configs/vst_config.json"], "pointer": "/network/rtsp_server_instances_count", "expected": 8},
+        {"assertion_id": "official-max-upload", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/vios/configs/vst_config.json"], "pointer": "/data/nv_streamer_max_upload_file_size_MB", "expected": 10000},
+        {"assertion_id": "official-https-default", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/vios/configs/vst_config.json"], "pointer": "/security/use_https", "expected": true},
+        {"assertion_id": "session-age", "adapter": "json_pointer_equals", "sources": ["deploy/docker/services/vios/configs/vst_config.json"], "pointer": "/security/session_max_age_sec", "expected": 2592000}
+      ]
+    },
+    {
+      "case_id": "source-contract-case.vios-modules",
+      "planning_requirement_id": "systems-vios-modules", "capability_id": "runtime.vios.modular-capabilities",
+      "planning_payload_sha256": "3d2b0f680c9bdd6ca5cc078a72d9987c11b05636c1749bb7f0d154de5f0df0f5",
+      "materialized": true, "materialization_scope": "isolated_candidate_only", "executor_ready": true,
+      "advancement_scope": "static_assertion_only", "runtime_evidence": [],
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/qualification/expected/vios-sensor.json", "sha256": "8e3f779b8567761509b1da4f0327412fd74d98c57d47f79be2c1253e35ec0820"},
+        {"path": "deploy/docker/thor-local/qualification/expected/vios-proxy.json", "sha256": "6fb5bf826c6c32210767d2dba14a78311f9290f764c08f41859c6ee6cf2f5987"},
+        {"path": "deploy/docker/thor-local/qualification/expected/vios-live.json", "sha256": "62ee3362cbe7ab2d0745ed1b191a6ffa68b2ac4a7d0c484489729367b071724e"},
+        {"path": "deploy/docker/thor-local/qualification/expected/vios-recorder.json", "sha256": "d3035b87a0d406308698ff8aba13c4b99e1019b265e22f519d8bb1e187d351e0"},
+        {"path": "deploy/docker/thor-local/qualification/expected/vios-replay.json", "sha256": "f6c0be691224056e55f62a3f54d1022422608225d9c834b633695a2fb2c9cdf8"},
+        {"path": "deploy/docker/thor-local/qualification/expected/vios-storage.json", "sha256": "0f6867eb98243fae9bc99d97dda03109db52fe8889210adbf9408a86731113ac"}
+      ],
+      "assertions": [
+        {"assertion_id": "sensor-operations", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/qualification/expected/vios-sensor.json"], "pointer": "/declared_operation_count", "expected": 28},
+        {"assertion_id": "proxy-operations", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/qualification/expected/vios-proxy.json"], "pointer": "/declared_operation_count", "expected": 7},
+        {"assertion_id": "live-operations", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/qualification/expected/vios-live.json"], "pointer": "/declared_operation_count", "expected": 20},
+        {"assertion_id": "recorder-operations", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/qualification/expected/vios-recorder.json"], "pointer": "/declared_operation_count", "expected": 16},
+        {"assertion_id": "replay-operations", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/qualification/expected/vios-replay.json"], "pointer": "/declared_operation_count", "expected": 21},
+        {"assertion_id": "storage-operations", "adapter": "json_pointer_equals", "sources": ["deploy/docker/thor-local/qualification/expected/vios-storage.json"], "pointer": "/declared_operation_count", "expected": 26}
+      ]
+    }
+  ]
+}

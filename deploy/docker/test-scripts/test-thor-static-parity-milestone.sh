@@ -103,6 +103,46 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/executor-cases/tests" \
   -p 'test*.py' -v
 
+# The next source-contract tranche remains isolated from live acceptance. Its
+# 16 file-only candidates report static matches/mismatches without creating
+# runtime evidence or advancing a capability oracle.
+python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" validate
+python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" \
+  run-all >/dev/null
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/source-contract-cases/tests" \
+  -p 'test*.py' -v
+
+# Default host-preflight mode is an inert, inspectable plan. Live inspection is
+# intentionally excluded from this static wrapper.
+python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
+  plan >/dev/null
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/host-preflight/tests" \
+  -p 'test*.py' -v
+
+# Every manifest entry in a family with no capability rows remains an explicit
+# open gap. The compiler proposes 87 literal entry oracles without promoting
+# family-level status or requiring the excluded Warehouse sample bundle.
+python3 "${thor_local_root}/qualification/advertised-entry-gaps/compiler.py" check
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/advertised-entry-gaps/tests" \
+  -p 'test*.py' -v
+
+# The lane compiler binds every one of the 500 advertised entries and all 276
+# current capability oracles, while preserving entry-level semantic gaps,
+# unresolved service bindings, and zero runtime evidence.
+python3 "${thor_local_root}/qualification/runtime-lanes/runtime_lane_compiler.py" \
+  --check
+python3 -m pytest -q "${thor_local_root}/qualification/runtime-lanes/tests"
+
+# The local Qwen alternate model contract is checked only in its inert plan
+# mode. Runtime HTTP probes require a separate exact acknowledgement.
+python3 "${thor_local_root}/qualification/local-alternate-models/qualify.py" \
+  >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/local-alternate-models/tests"
+
 python3 "${thor_local_root}/rt-vlm/model_matrix.py" \
   --matrix "${thor_local_root}/rt-vlm/model-matrix.json" \
   --artifact-lock "${thor_local_root}/rt-vlm/artifacts.lock.json" \

@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "contract_id": "vss-3.2.1-thor-local-qwen-alternate-runtime",
+  "classification": {
+    "lane": "non-official-local-alternate",
+    "official_vss_model_equivalence": false,
+    "official_capability_promotion_allowed": false,
+    "acceptance_oracle_mutation_allowed": false,
+    "statement": "A pass qualifies only the locked Thor-local Qwen alternate endpoints; it is not evidence that an official NVIDIA VSS model or capability passed."
+  },
+  "source_binding": {
+    "product_version": "3.2.1",
+    "release_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "reviewed_main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "reviewed_local_base_commit": "ee82896c01e66e03502d24bdafe6b46e20679785",
+    "current_commit_source": ".git/HEAD (resolved read-only without subprocess)"
+  },
+  "artifact_lock": {
+    "path": "deploy/docker/thor-local/models/artifacts.lock.json",
+    "sha256": "5b0030ba13fb1ccee5950e3c4b78d334d8dd0c30a2a45ce90e6166a57fe31d09",
+    "artifacts": {
+      "qwen_llm": {
+        "repository": "Qwen/Qwen3.6-35B-A3B-FP8",
+        "revision": "95a723d08a9490559dae23d0cff1d9466213d989",
+        "canonical_sha256": "3daac37579503b0ad6f3346c484194b82842889cdcccbb8b6b459190322fa483"
+      },
+      "qwen_vlm": {
+        "repository": "Qwen/Qwen3-VL-8B-Instruct-FP8",
+        "revision": "9cdc6310a8cb770ce18efaf4e9935334512aee45",
+        "canonical_sha256": "f39e7f8a690e9d4fec01c0ceab74effdb495682f67b08ba659e6f436c1020a6b"
+      }
+    }
+  },
+  "runtime": {
+    "vllm_image": "ghcr.io/nvidia-ai-iot/vllm@sha256:6402d5ac90223b9ba4434228f98aec798c5a8b942e770ee47528b4148e923105",
+    "endpoints": {
+      "llm": {
+        "base_url": "http://172.17.0.1:8000",
+        "served_model_id": "datasheet-chat"
+      },
+      "vlm": {
+        "base_url": "http://172.17.0.1:8003",
+        "served_model_id": "datasheet-vision"
+      }
+    }
+  },
+  "execution_policy": {
+    "default_mode": "plan",
+    "exact_acknowledgement": "I_ACKNOWLEDGE_THIS_IS_A_NON_OFFICIAL_ALTERNATE_MODEL_TEST_WITH_NO_OFFICIAL_VSS_CAPABILITY_PROMOTION",
+    "maximum_http_requests": 4,
+    "request_timeout_seconds": 10,
+    "maximum_request_body_bytes": 262144,
+    "maximum_response_body_bytes": 1048576,
+    "proxies_allowed": false,
+    "redirects_allowed": false,
+    "credentials_allowed": false,
+    "docker_or_subprocess_allowed": false,
+    "lifecycle_or_download_allowed": false,
+    "file_writes_allowed": false,
+    "evidence_destination": "stdout"
+  },
+  "probes": [
+    {
+      "id": "llm-model-identity",
+      "request_number": 1,
+      "endpoint": "llm",
+      "method": "GET",
+      "path": "/v1/models",
+      "expected": "the only returned model id is datasheet-chat"
+    },
+    {
+      "id": "vlm-model-identity",
+      "request_number": 2,
+      "endpoint": "vlm",
+      "method": "GET",
+      "path": "/v1/models",
+      "expected": "the only returned model id is datasheet-vision"
+    },
+    {
+      "id": "llm-ping-tool-call",
+      "request_number": 3,
+      "endpoint": "llm",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "expected": "exactly one ping tool call with the locked message and enable_thinking=false"
+    },
+    {
+      "id": "vlm-four-image-color-order",
+      "request_number": 4,
+      "endpoint": "vlm",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "expected": "red, green, blue, yellow",
+      "images": [
+        {
+          "color": "red",
+          "rgb": [255, 0, 0],
+          "sha256": "c7688e580506236f18d65e36ae194d5ee94ff232a4f43fe4996f47e12df2ef37"
+        },
+        {
+          "color": "green",
+          "rgb": [0, 255, 0],
+          "sha256": "75a9d4734f1002189a3c477eb52c21fd695afc10dd3ee6f865a985e390439692"
+        },
+        {
+          "color": "blue",
+          "rgb": [0, 0, 255],
+          "sha256": "9fcd98102a7190ec20857cf9925c53b888cba30c5aab65d6e39cbd84ee044e8c"
+        },
+        {
+          "color": "yellow",
+          "rgb": [255, 255, 0],
+          "sha256": "5c78c2c759ce3cacc482f8696e65846a7e5c4aadaea245b45d51de42470da600"
+        }
+      ]
+    }
+  ]
+}

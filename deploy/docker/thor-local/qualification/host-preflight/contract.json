@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "contract_id": "vss-3.2.1-thor-host-preflight",
+  "inspection_policy": {
+    "default_mode": "plan",
+    "network_allowed": false,
+    "credentials_allowed": false,
+    "container_lifecycle_allowed": false,
+    "host_mutation_allowed": false
+  },
+  "requirements": {
+    "architectures": [
+      "aarch64"
+    ],
+    "agx_thor_bsp_release": "38.4",
+    "igx_thor_bsp_release": "38.5",
+    "thor_driver_version": "580.00",
+    "docker_minimum": "28.3.3",
+    "docker_exclusive_maximum": "29.5.0",
+    "compose_minimum": "2.39.1",
+    "docker_cgroup_driver": "cgroupfs",
+    "official_edge_minimum_available_memory_fraction": "0.80",
+    "disk_warning_available_bytes": 161061273600,
+    "kernel": {
+      "vm.max_map_count": 262144,
+      "net.core.rmem_max": 5242880,
+      "net.core.wmem_max": 5242880
+    }
+  },
+  "ports": [
+    {"port": 3001, "role": "thor-ui"},
+    {"port": 7777, "role": "public-ingress"},
+    {"port": 8000, "role": "alternate-local-llm"},
+    {"port": 8001, "role": "vios-mcp"},
+    {"port": 8018, "role": "official-edge-rt-vlm"},
+    {"port": 9901, "role": "video-analytics-mcp"},
+    {"port": 30888, "role": "vios-vst"},
+    {"port": 30081, "role": "official-edge-nemotron"},
+    {"port": 31000, "role": "nvstreamer"}
+  ],
+  "container_conflicts": {
+    "compose_projects": ["mdx", "vss", "vss-thor"],
+    "name_prefixes": ["mdx-", "vss-"],
+    "exact_names": [
+      "cti-vss-qwen3-vl",
+      "datasheet-embedding",
+      "vss-nemotron-edge-4b"
+    ]
+  },
+  "official_edge": {
+    "contract_path": "deploy/docker/thor-local/official-edge/contract.json",
+    "artifact_lock_path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
+    "contract_id": "vss-3.2.1-thor-official-edge"
+  },
+  "sources": [
+    "skills/vss-deploy-profile/references/prerequisites.md",
+    "skills/vss-deploy-profile/references/thor-official-edge.md",
+    "deploy/docker/thor-local/official-edge/contract.json",
+    "deploy/docker/thor-local/README.md"
+  ]
+}

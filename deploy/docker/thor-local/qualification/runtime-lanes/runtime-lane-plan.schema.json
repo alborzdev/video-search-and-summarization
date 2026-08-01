@@ -1,0 +1,510 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/runtime-lane-plan.schema.json",
+  "title": "Thor VSS complete runtime lane plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "target",
+    "source_bindings",
+    "policy",
+    "denominators",
+    "lane_capability_counts",
+    "lanes",
+    "feature_family_bindings",
+    "advertised_entry_bindings",
+    "capability_bindings"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "plan_id": { "const": "thor-vss-3.2.1-complete-runtime-lanes" },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "release", "evidence_state"],
+      "properties": {
+        "platform": { "const": "NVIDIA Jetson AGX Thor" },
+        "release": { "const": "VSS 3.2.1" },
+        "evidence_state": { "const": "planning_only_no_runtime_qualification" }
+      }
+    },
+    "source_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advertised_gap_plan", "advertised_gap_rules", "ledger", "manifest", "oracle_schema", "oracles"],
+      "properties": {
+        "advertised_gap_plan": { "$ref": "#/$defs/source" },
+        "advertised_gap_rules": { "$ref": "#/$defs/source" },
+        "ledger": { "$ref": "#/$defs/source" },
+        "manifest": { "$ref": "#/$defs/source" },
+        "oracle_schema": { "$ref": "#/$defs/source" },
+        "oracles": { "$ref": "#/$defs/source" }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exactly_one_lane_per_capability",
+        "all_feature_families_bound",
+        "all_advertised_entries_bound",
+        "advertised_entry_mapping_scope",
+        "advertised_entry_bindings_are_runtime_evidence",
+        "zero_capability_family_entries_block_runtime_completeness",
+        "literal_runtime_feature_completeness_claim_allowed",
+        "unresolved_service_bindings_block_runtime_completeness",
+        "planned_service_bindings_are_runtime_evidence",
+        "required_cloud_inference",
+        "external_optional_cannot_satisfy_local",
+        "warehouse_sample_bundle",
+        "warehouse_custom_data",
+        "runtime_evidence_created",
+        "live_parity_artifacts_mutated"
+      ],
+      "properties": {
+        "exactly_one_lane_per_capability": { "const": true },
+        "all_feature_families_bound": { "const": true },
+        "all_advertised_entries_bound": { "const": true },
+        "advertised_entry_mapping_scope": { "const": "feature_family_only" },
+        "advertised_entry_bindings_are_runtime_evidence": { "const": false },
+        "zero_capability_family_entries_block_runtime_completeness": { "const": true },
+        "literal_runtime_feature_completeness_claim_allowed": { "const": false },
+        "unresolved_service_bindings_block_runtime_completeness": { "const": true },
+        "planned_service_bindings_are_runtime_evidence": { "const": false },
+        "required_cloud_inference": { "const": false },
+        "external_optional_cannot_satisfy_local": { "const": true },
+        "warehouse_sample_bundle": { "const": "excluded" },
+        "warehouse_custom_data": { "const": "in_scope" },
+        "runtime_evidence_created": { "const": false },
+        "live_parity_artifacts_mutated": { "const": false }
+      }
+    },
+    "denominators": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lanes",
+        "feature_families",
+        "advertised_entries",
+        "capabilities",
+        "oracles",
+        "capabilities_with_exactly_one_lane",
+        "feature_families_with_lane_binding",
+        "feature_families_without_capability_rows",
+        "advertised_entries_with_lane_binding",
+        "advertised_entries_in_families_with_capability_oracle_rows",
+        "advertised_entries_in_families_without_capability_oracle_rows",
+        "advertised_gap_entries_proposed_required_local",
+        "advertised_gap_entries_proposed_alternate_local_lane",
+        "advertised_gap_entries_proposed_external_optional",
+        "advertised_entries_with_entry_specific_capability_mapping",
+        "advertised_entries_with_entry_specific_oracle_mapping",
+        "advertised_entry_runtime_evidence_records",
+        "capabilities_with_planning_only_service_binding",
+        "capabilities_with_unresolved_service_binding",
+        "required_or_alternate_local_capabilities",
+        "runtime_probe_executors",
+        "cleanup_executors",
+        "runtime_evidence_records",
+        "warehouse_sample_bundle_capabilities"
+      ],
+      "properties": {
+        "lanes": { "const": 8 },
+        "feature_families": { "const": 55 },
+        "advertised_entries": { "const": 500 },
+        "capabilities": { "const": 276 },
+        "oracles": { "const": 276 },
+        "capabilities_with_exactly_one_lane": { "const": 276 },
+        "feature_families_with_lane_binding": { "const": 55 },
+        "feature_families_without_capability_rows": { "const": 16 },
+        "advertised_entries_with_lane_binding": { "const": 500 },
+        "advertised_entries_in_families_with_capability_oracle_rows": { "const": 413 },
+        "advertised_entries_in_families_without_capability_oracle_rows": { "const": 87 },
+        "advertised_gap_entries_proposed_required_local": { "const": 56 },
+        "advertised_gap_entries_proposed_alternate_local_lane": { "const": 26 },
+        "advertised_gap_entries_proposed_external_optional": { "const": 5 },
+        "advertised_entries_with_entry_specific_capability_mapping": { "const": 0 },
+        "advertised_entries_with_entry_specific_oracle_mapping": { "const": 0 },
+        "advertised_entry_runtime_evidence_records": { "const": 0 },
+        "capabilities_with_planning_only_service_binding": { "const": 272 },
+        "capabilities_with_unresolved_service_binding": { "const": 4 },
+        "required_or_alternate_local_capabilities": { "const": 247 },
+        "runtime_probe_executors": { "const": 0 },
+        "cleanup_executors": { "const": 0 },
+        "runtime_evidence_records": { "const": 0 },
+        "warehouse_sample_bundle_capabilities": { "const": 0 }
+      }
+    },
+    "lane_capability_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "base",
+        "search",
+        "lvs",
+        "alerts",
+        "standalone-services",
+        "custom-data-warehouse",
+        "official-edge-model-boundary",
+        "external-optional"
+      ],
+      "properties": {
+        "base": { "const": 45 },
+        "search": { "const": 4 },
+        "lvs": { "const": 10 },
+        "alerts": { "const": 26 },
+        "standalone-services": { "const": 133 },
+        "custom-data-warehouse": { "const": 24 },
+        "official-edge-model-boundary": { "const": 5 },
+        "external-optional": { "const": 29 }
+      }
+    },
+    "lanes": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/lane" }
+    },
+    "feature_family_bindings": {
+      "type": "array",
+      "minItems": 55,
+      "maxItems": 55,
+      "items": { "$ref": "#/$defs/familyBinding" }
+    },
+    "advertised_entry_bindings": {
+      "type": "array",
+      "minItems": 500,
+      "maxItems": 500,
+      "items": { "$ref": "#/$defs/advertisedEntryBinding" }
+    },
+    "capability_bindings": {
+      "type": "array",
+      "minItems": 276,
+      "maxItems": 276,
+      "items": { "$ref": "#/$defs/capabilityBinding" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]+$"
+    },
+    "laneId": {
+      "enum": [
+        "base",
+        "search",
+        "lvs",
+        "alerts",
+        "standalone-services",
+        "custom-data-warehouse",
+        "official-edge-model-boundary",
+        "external-optional"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^deploy/docker/thor-local/(parity/|qualification/advertised-entry-gaps/)" },
+        "raw_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "pathList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^deploy/docker/" }
+    },
+    "stringList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "boundary",
+        "profile_paths",
+        "service_compose_paths",
+        "fixture_strategy",
+        "cleanup_requirement",
+        "evidence_requirements",
+        "blockers"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/laneId" },
+        "title": { "type": "string", "minLength": 8 },
+        "boundary": { "type": "string", "minLength": 8 },
+        "profile_paths": { "$ref": "#/$defs/pathList" },
+        "service_compose_paths": { "$ref": "#/$defs/pathList" },
+        "fixture_strategy": { "type": "string", "minLength": 20 },
+        "cleanup_requirement": { "type": "string", "minLength": 20 },
+        "evidence_requirements": {
+          "allOf": [
+            { "$ref": "#/$defs/stringList" },
+            { "minItems": 7, "maxItems": 7 }
+          ]
+        },
+        "blockers": {
+          "allOf": [
+            { "$ref": "#/$defs/stringList" },
+            { "minItems": 3 }
+          ]
+        }
+      }
+    },
+    "familyBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_id",
+        "category",
+        "acceptance_class",
+        "default_lane_id",
+        "lane_ids",
+        "capability_count",
+        "advertised_entry_count",
+        "manifest_feature_sha256"
+      ],
+      "properties": {
+        "feature_id": { "$ref": "#/$defs/id" },
+        "category": { "$ref": "#/$defs/id" },
+        "acceptance_class": {
+          "enum": ["required_local", "alternate_local_lane", "external_optional"]
+        },
+        "default_lane_id": { "$ref": "#/$defs/laneId" },
+        "lane_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/laneId" }
+        },
+        "capability_count": { "type": "integer", "minimum": 0 },
+        "advertised_entry_count": { "type": "integer", "minimum": 1 },
+        "manifest_feature_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "advertisedEntryBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_json_pointer",
+        "feature_id",
+        "feature_manifest_index",
+        "advertised_index",
+        "advertised_claim",
+        "family_acceptance_class",
+        "entry_planning_acceptance_class",
+        "entry_classification_source",
+        "default_lane_id",
+        "lane_ids",
+        "lane_binding_scope",
+        "feature_capability_ids",
+        "feature_oracle_ids",
+        "capability_mapping_scope",
+        "entry_specific_capability_ids",
+        "entry_specific_oracle_ids",
+        "runtime_evidence_records",
+        "manifest_entry_sha256"
+      ],
+      "properties": {
+        "manifest_json_pointer": {
+          "type": "string",
+          "pattern": "^/features/[0-9]+/advertised/[0-9]+$"
+        },
+        "feature_id": { "$ref": "#/$defs/id" },
+        "feature_manifest_index": { "type": "integer", "minimum": 0, "maximum": 54 },
+        "advertised_index": { "type": "integer", "minimum": 0 },
+        "advertised_claim": { "type": "string", "minLength": 1 },
+        "family_acceptance_class": {
+          "enum": ["required_local", "alternate_local_lane", "external_optional"]
+        },
+        "entry_planning_acceptance_class": {
+          "type": ["string", "null"],
+          "enum": ["required_local", "alternate_local_lane", "external_optional", null]
+        },
+        "entry_classification_source": {
+          "enum": [
+            "advertised-entry-gap-plan",
+            "not-applicable-family-has-capability-rows"
+          ]
+        },
+        "default_lane_id": { "$ref": "#/$defs/laneId" },
+        "lane_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/laneId" }
+        },
+        "lane_binding_scope": {
+          "const": "feature_family_reviewed_not_entry_specific"
+        },
+        "feature_capability_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "feature_oracle_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "capability_mapping_scope": {
+          "enum": [
+            "feature_family_only",
+            "none_family_has_zero_capability_rows"
+          ]
+        },
+        "entry_specific_capability_ids": { "type": "array", "maxItems": 0 },
+        "entry_specific_oracle_ids": { "type": "array", "maxItems": 0 },
+        "runtime_evidence_records": { "type": "array", "maxItems": 0 },
+        "manifest_entry_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "availability",
+        "source",
+        "warehouse_sample_bundle",
+        "materialization",
+        "input"
+      ],
+      "properties": {
+        "warehouse_sample_bundle": { "const": false }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_paths",
+        "planned_service_roles",
+        "planned_service_compose_paths",
+        "planned_non_compose_roles",
+        "service_binding_state",
+        "service_binding_basis",
+        "service_binding_source_claims",
+        "service_binding_capability_contract_sha256",
+        "service_binding_is_runtime_evidence",
+        "boundary"
+      ],
+      "properties": {
+        "profile_paths": { "$ref": "#/$defs/pathList" },
+        "planned_service_roles": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 1 }]
+        },
+        "planned_service_compose_paths": { "$ref": "#/$defs/pathList" },
+        "planned_non_compose_roles": { "$ref": "#/$defs/stringList" },
+        "service_binding_state": { "enum": ["planning_only", "unresolved"] },
+        "service_binding_basis": { "type": "string", "minLength": 20 },
+        "service_binding_source_claims": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "object" }
+        },
+        "service_binding_capability_contract_sha256": { "$ref": "#/$defs/sha256" },
+        "service_binding_is_runtime_evidence": { "const": false },
+        "boundary": { "type": "string", "minLength": 8 }
+      }
+    },
+    "probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture",
+        "expected_observation_ids",
+        "assertion_ids",
+        "admission_prerequisite_ids",
+        "execution_bounds"
+      ],
+      "properties": {
+        "fixture": { "$ref": "#/$defs/fixture" },
+        "expected_observation_ids": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 2 }]
+        },
+        "assertion_ids": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 2 }]
+        },
+        "admission_prerequisite_ids": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 3 }]
+        },
+        "execution_bounds": { "type": "object" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_records",
+        "required_fields",
+        "may_promote_runtime_state_without_current_record"
+      ],
+      "properties": {
+        "current_records": { "type": "array", "maxItems": 0 },
+        "required_fields": {
+          "allOf": [
+            { "$ref": "#/$defs/stringList" },
+            { "minItems": 7, "maxItems": 7 }
+          ]
+        },
+        "may_promote_runtime_state_without_current_record": { "const": false }
+      }
+    },
+    "capabilityBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "oracle_id",
+        "feature_id",
+        "lane_id",
+        "kind",
+        "acceptance_class",
+        "runtime_state",
+        "oracle_profile",
+        "oracle_mode",
+        "oracle_current_state",
+        "oracle_contract_sha256",
+        "deployment",
+        "probe",
+        "cleanup",
+        "evidence",
+        "blockers"
+      ],
+      "properties": {
+        "capability_id": { "$ref": "#/$defs/id" },
+        "oracle_id": { "$ref": "#/$defs/id" },
+        "feature_id": { "$ref": "#/$defs/id" },
+        "lane_id": { "$ref": "#/$defs/laneId" },
+        "kind": { "$ref": "#/$defs/id" },
+        "acceptance_class": {
+          "enum": ["required_local", "alternate_local_lane", "external_optional"]
+        },
+        "runtime_state": { "type": "string", "minLength": 1 },
+        "oracle_profile": { "type": "string", "minLength": 1 },
+        "oracle_mode": { "enum": ["static", "config", "deploy", "model", "api", "protocol", "runtime"] },
+        "oracle_current_state": { "enum": ["open_unexecuted", "external_boundary_unexecuted"] },
+        "oracle_contract_sha256": { "$ref": "#/$defs/sha256" },
+        "deployment": { "$ref": "#/$defs/deployment" },
+        "probe": { "$ref": "#/$defs/probe" },
+        "cleanup": { "type": "object" },
+        "evidence": { "$ref": "#/$defs/evidence" },
+        "blockers": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 3 }]
+        }
+      }
+    }
+  }
+}

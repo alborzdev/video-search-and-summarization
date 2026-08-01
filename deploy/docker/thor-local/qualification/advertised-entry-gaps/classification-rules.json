@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "planning_only": true,
+    "family_lane_binding_is_semantic_coverage": false,
+    "runtime_evidence": [],
+    "warehouse_sample_bundle": "excluded",
+    "custom_data_warehouse_capability": "in_scope",
+    "required_family_count": 16,
+    "required_entry_count": 87
+  },
+  "family_rules": {
+    "video-summarization-live": {
+      "capability_kind": "runtime_workflow",
+      "oracle_type": "runtime_service_workflow",
+      "executor_class": "bounded_lvs_live_workflow",
+      "required_evidence": ["request_response_transcript", "service_state_observation", "owned_resource_cleanup"],
+      "setup_requirements": ["local_lvs", "tiny_operator_supplied_stream"],
+      "cleanup_policy": "delete_only_executor_owned_streams_and_files"
+    },
+    "search-scale": {
+      "capability_kind": "performance_envelope",
+      "oracle_type": "runtime_scale_benchmark",
+      "executor_class": "bounded_thor_search_scale_benchmark",
+      "required_evidence": ["exact_workload_manifest", "per_stream_success", "latency_and_resource_metrics"],
+      "setup_requirements": ["local_search_profile", "operator_approved_concurrency_window", "tiny_custom_stream_set"],
+      "cleanup_policy": "delete_only_benchmark_owned_streams_and_indices"
+    },
+    "alert-notifications-slack": {
+      "capability_kind": "external_integration",
+      "oracle_type": "external_optional_boundary",
+      "executor_class": "user_managed_slack_delivery_attestation",
+      "required_evidence": ["user_authorized_delivery_receipt", "alert_to_message_correlation"],
+      "setup_requirements": ["user_managed_slack_destination", "user_authorized_credentials"],
+      "cleanup_policy": "no_external_deletion_without_user_authorization"
+    },
+    "rt-vlm-media": {
+      "capability_kind": "runtime_media_protocol",
+      "oracle_type": "runtime_media_matrix",
+      "executor_class": "bounded_rt_vlm_media_matrix",
+      "required_evidence": ["request_response_transcript", "media_specific_semantic_assertion", "owned_resource_cleanup"],
+      "setup_requirements": ["local_rt_vlm", "tiny_operator_supplied_media"],
+      "cleanup_policy": "delete_only_executor_owned_media_and_streams"
+    },
+    "rt-vlm-api": {
+      "capability_kind": "api_contract",
+      "oracle_type": "runtime_api_operation",
+      "executor_class": "bounded_rt_vlm_api_probe",
+      "required_evidence": ["request_response_transcript", "schema_and_semantic_assertion"],
+      "setup_requirements": ["local_rt_vlm"],
+      "cleanup_policy": "delete_only_executor_owned_files_and_streams"
+    },
+    "rt-vlm-models": {
+      "capability_kind": "model_compatibility",
+      "oracle_type": "alternate_local_model_matrix",
+      "executor_class": "bounded_local_model_contract",
+      "required_evidence": ["exact_model_artifact_lock", "served_model_identity", "semantic_inference_transcript"],
+      "setup_requirements": ["local_model_artifact", "local_inference_endpoint", "memory_capacity_gate"],
+      "cleanup_policy": "stop_only_executor_started_model_service",
+      "entry_overrides": {
+        "remote OpenAI-compatible endpoint": {
+          "capability_kind": "external_integration",
+          "oracle_type": "external_optional_boundary",
+          "executor_class": "user_managed_remote_model_attestation",
+          "required_evidence": ["user_authorized_endpoint_transcript", "served_model_identity", "semantic_inference_transcript"],
+          "setup_requirements": ["user_managed_endpoint", "user_authorized_credentials"],
+          "cleanup_policy": "no_external_mutation"
+        }
+      }
+    },
+    "rt-vlm-performance-observability": {
+      "capability_kind": "runtime_observability",
+      "oracle_type": "runtime_telemetry_and_behavior",
+      "executor_class": "bounded_rt_vlm_observability_probe",
+      "required_evidence": ["workload_transcript", "metric_or_trace_capture", "literal_behavior_assertion"],
+      "setup_requirements": ["local_rt_vlm", "local_metrics_endpoint", "tiny_operator_supplied_media"],
+      "cleanup_policy": "delete_only_executor_owned_media_and_streams"
+    },
+    "rt-cv-3d-sparse4d": {
+      "capability_kind": "alternate_local_3d_analytics",
+      "oracle_type": "runtime_custom_data_multicamera",
+      "executor_class": "bounded_sparse4d_custom_data_workflow",
+      "required_evidence": ["custom_data_manifest", "calibration_lock", "tracked_3d_output", "health_and_metrics_capture"],
+      "setup_requirements": ["operator_supplied_tiny_custom_multicamera_data", "matching_calibration", "local_sparse4d_assets"],
+      "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+      "custom_data_required": true
+    },
+    "rt-cv-3d-mv3dt": {
+      "capability_kind": "alternate_local_3d_analytics",
+      "oracle_type": "runtime_custom_data_multicamera",
+      "executor_class": "bounded_mv3dt_custom_data_workflow",
+      "required_evidence": ["custom_data_manifest", "calibration_lock", "per_camera_and_bev_outputs", "owned_resource_cleanup"],
+      "setup_requirements": ["operator_supplied_tiny_custom_four_camera_data", "matching_calibration", "local_mv3dt_assets"],
+      "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+      "custom_data_required": true
+    },
+    "vios-codecs-audio": {
+      "capability_kind": "runtime_media_compatibility",
+      "oracle_type": "runtime_codec_audio_matrix",
+      "executor_class": "bounded_vios_codec_audio_probe",
+      "required_evidence": ["exact_media_probe", "ingest_and_replay_transcript", "codec_or_audio_semantic_assertion"],
+      "setup_requirements": ["local_vios", "tiny_operator_supplied_codec_fixture"],
+      "cleanup_policy": "delete_only_executor_owned_sensors_streams_and_media"
+    },
+    "audio-understanding": {
+      "capability_kind": "alternate_local_audio_workflow",
+      "oracle_type": "runtime_audio_semantics",
+      "executor_class": "bounded_local_audio_understanding_workflow",
+      "required_evidence": ["exact_audio_media_lock", "transcript_or_semantic_output", "workflow_response_transcript"],
+      "setup_requirements": ["local_audio_capable_model", "tiny_operator_supplied_audio_video"],
+      "cleanup_policy": "delete_only_executor_owned_media_and_streams"
+    },
+    "vios-ui": {
+      "capability_kind": "ui_workflow",
+      "oracle_type": "runtime_browser_interaction",
+      "executor_class": "bounded_vios_ui_browser_workflow",
+      "required_evidence": ["browser_interaction_trace", "rendered_state_assertion", "api_state_correlation"],
+      "setup_requirements": ["local_vios_ui", "local_vios", "tiny_executor_owned_sensor"],
+      "cleanup_policy": "delete_only_executor_owned_ui_resources"
+    },
+    "agent-and-mcp-apis": {
+      "capability_kind": "api_and_mcp_contract",
+      "oracle_type": "runtime_api_or_mcp_operation",
+      "executor_class": "bounded_agent_mcp_operation_probe",
+      "required_evidence": ["operation_identity", "request_response_transcript", "schema_and_semantic_assertion"],
+      "setup_requirements": ["local_agent", "applicable_local_mcp_services"],
+      "cleanup_policy": "delete_only_executor_owned_resources"
+    },
+    "spatial-ai-utils": {
+      "capability_kind": "offline_tooling",
+      "oracle_type": "offline_tool_execution",
+      "executor_class": "bounded_spatial_ai_tool_fixture",
+      "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+      "setup_requirements": ["tiny_deterministic_custom_input", "local_tool_dependencies"],
+      "cleanup_policy": "remove_only_executor_owned_temporary_outputs",
+      "entry_overrides": {
+        "AWS/GCS validation": {
+          "capability_kind": "external_integration",
+          "oracle_type": "external_optional_boundary",
+          "executor_class": "user_managed_object_store_validation_attestation",
+          "required_evidence": ["user_authorized_endpoint_transcript", "validation_result"],
+          "setup_requirements": ["user_managed_object_store", "user_authorized_credentials"],
+          "cleanup_policy": "no_external_mutation"
+        }
+      }
+    },
+    "synthetic-data-tools": {
+      "capability_kind": "offline_tooling",
+      "oracle_type": "offline_tool_execution",
+      "executor_class": "bounded_synthetic_data_tool_fixture",
+      "required_evidence": ["input_digest", "command_contract", "output_digest", "semantic_output_assertion"],
+      "setup_requirements": ["tiny_deterministic_custom_input", "local_tool_dependencies"],
+      "cleanup_policy": "remove_only_executor_owned_temporary_outputs"
+    },
+    "enterprise-rag": {
+      "capability_kind": "external_integration",
+      "oracle_type": "external_optional_boundary",
+      "executor_class": "user_managed_enterprise_rag_attestation",
+      "required_evidence": ["user_authorized_retrieval_transcript", "grounding_citation_correlation", "report_response_transcript"],
+      "setup_requirements": ["user_managed_enterprise_rag", "user_authorized_credentials", "user_supplied_test_document"],
+      "cleanup_policy": "no_external_deletion_without_user_authorization"
+    }
+  }
+}

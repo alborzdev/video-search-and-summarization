@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/source-contract-cases/result.schema.json",
+  "title": "Thor source-contract static executor result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "case_id", "planning_requirement_id", "capability_id",
+    "materialized", "materialization_scope", "executor_ready", "advancement_scope",
+    "can_advance_capability", "can_mark_passed_current", "evidence_class", "outcome",
+    "observations", "bounds", "source_hashes_before", "source_hashes_after", "runtime_evidence"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "case_id": {"type": "string", "pattern": "^source-contract-case\\."},
+    "planning_requirement_id": {"type": "string"},
+    "capability_id": {"type": "string"},
+    "materialized": {"const": true},
+    "materialization_scope": {"const": "isolated_candidate_only"},
+    "executor_ready": {"const": true},
+    "advancement_scope": {"const": "static_assertion_only"},
+    "can_advance_capability": {"const": false},
+    "can_mark_passed_current": {"const": false},
+    "evidence_class": {"const": "deterministic_file_static_evidence_not_runtime"},
+    "outcome": {"enum": ["observed_match", "observed_mismatch"]},
+    "observations": {"type": "array", "minItems": 4},
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_bytes", "max_files", "deadline_seconds", "bytes_read", "files_read"],
+      "properties": {
+        "max_bytes": {"const": 4194304},
+        "max_files": {"const": 16},
+        "deadline_seconds": {"const": 5},
+        "bytes_read": {"type": "integer", "minimum": 0, "maximum": 4194304},
+        "files_read": {"type": "integer", "minimum": 0, "maximum": 16}
+      }
+    },
+    "source_hashes_before": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "source_hashes_after": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "runtime_evidence": {"const": []}
+  }
+}

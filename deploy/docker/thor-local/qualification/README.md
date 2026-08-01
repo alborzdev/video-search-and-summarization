@@ -6,6 +6,22 @@ safe to run on an offline operator host: it reads only checked-in files, does
 not inspect secrets, does not open sockets, and never starts, stops, or mutates
 containers or VSS resources.
 
+The broader parity program also keeps four planning and admission boundaries
+in this directory:
+
+- `runtime-lanes/` binds every manifest-advertised entry and capability oracle
+  to a bounded execution lane without manufacturing runtime evidence;
+- `advertised-entry-gaps/` gives each advertised entry from the 16 families
+  that lack capability rows its own still-open semantic oracle plan;
+- `host-preflight/` defaults to an inert plan and offers a separately explicit,
+  read-only Thor host inspection; and
+- `local-alternate-models/` defines an exact-acknowledgement, four-request
+  qualifier for the non-official local Qwen endpoint pair.
+
+The optional NVIDIA Warehouse sample bundle is excluded throughout. Small
+operator-owned custom media and calibration remain valid inputs for the
+Warehouse capability lanes.
+
 Run the contract tier from the repository root:
 
 ```bash

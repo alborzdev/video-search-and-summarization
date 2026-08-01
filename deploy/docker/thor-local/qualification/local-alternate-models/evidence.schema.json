@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vss.local/schemas/thor-local-qwen-alternate-evidence-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_id", "classification", "status", "binding", "policy", "requests_attempted", "checks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "contract_id": {"const": "vss-3.2.1-thor-local-qwen-alternate-runtime"},
+    "classification": {"const": "non-official-local-alternate"},
+    "status": {"enum": ["planned", "passed", "failed"]},
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_commit", "reviewed_main_commit", "reviewed_local_base_commit", "current_commit", "artifact_lock_sha256", "contract_sha256", "vllm_image"],
+      "properties": {
+        "release_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "reviewed_main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "reviewed_local_base_commit": {"const": "ee82896c01e66e03502d24bdafe6b46e20679785"},
+        "current_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "artifact_lock_sha256": {"const": "5b0030ba13fb1ccee5950e3c4b78d334d8dd0c30a2a45ce90e6166a57fe31d09"},
+        "contract_sha256": {"const": "7eb3f4f32bde6de9adced6ff51e9b0ed7163f26c44e5f89e97a94157cb11e72e"},
+        "vllm_image": {"const": "ghcr.io/nvidia-ai-iot/vllm@sha256:6402d5ac90223b9ba4434228f98aec798c5a8b942e770ee47528b4148e923105"}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["official_capability_promotion_allowed", "writes_or_lifecycle_actions", "network_scope", "raw_model_output_recorded"],
+      "properties": {
+        "official_capability_promotion_allowed": {"const": false},
+        "writes_or_lifecycle_actions": {"const": false},
+        "network_scope": {"const": "exact-no-proxy-local-http-endpoints-only"},
+        "raw_model_output_recorded": {"const": false}
+      }
+    },
+    "requests_attempted": {"type": "integer", "minimum": 0, "maximum": 4},
+    "checks": {
+      "type": "array", "minItems": 1, "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "status"],
+        "properties": {
+          "id": {"enum": ["preflight", "llm-model-identity", "vlm-model-identity", "llm-ping-tool-call", "vlm-four-image-color-order"]},
+          "status": {"enum": ["planned", "passed", "failed", "not-run"]},
+          "diagnostic": {"type": "string", "maxLength": 160}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "planned"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "requests_attempted": {"const": 0},
+          "checks": {
+            "const": [
+              {"id": "llm-model-identity", "status": "planned"},
+              {"id": "vlm-model-identity", "status": "planned"},
+              {"id": "llm-ping-tool-call", "status": "planned"},
+              {"id": "vlm-four-image-color-order", "status": "planned"}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "passed"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "requests_attempted": {"const": 4},
+          "checks": {
+            "const": [
+              {"id": "llm-model-identity", "status": "passed"},
+              {"id": "vlm-model-identity", "status": "passed"},
+              {"id": "llm-ping-tool-call", "status": "passed"},
+              {"id": "vlm-four-image-color-order", "status": "passed"}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

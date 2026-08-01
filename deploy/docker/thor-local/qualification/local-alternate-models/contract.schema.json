@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vss.local/schemas/thor-local-qwen-alternate-contract-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_id", "classification", "source_binding", "artifact_lock", "runtime", "execution_policy", "probes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "contract_id": {"const": "vss-3.2.1-thor-local-qwen-alternate-runtime"},
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lane", "official_vss_model_equivalence", "official_capability_promotion_allowed", "acceptance_oracle_mutation_allowed", "statement"],
+      "properties": {
+        "lane": {"const": "non-official-local-alternate"},
+        "official_vss_model_equivalence": {"const": false},
+        "official_capability_promotion_allowed": {"const": false},
+        "acceptance_oracle_mutation_allowed": {"const": false},
+        "statement": {"const": "A pass qualifies only the locked Thor-local Qwen alternate endpoints; it is not evidence that an official NVIDIA VSS model or capability passed."}
+      }
+    },
+    "source_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "release_commit", "reviewed_main_commit", "reviewed_local_base_commit", "current_commit_source"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "release_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "reviewed_main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "reviewed_local_base_commit": {"const": "ee82896c01e66e03502d24bdafe6b46e20679785"},
+        "current_commit_source": {"const": ".git/HEAD (resolved read-only without subprocess)"}
+      }
+    },
+    "artifact_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "artifacts"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/models/artifacts.lock.json"},
+        "sha256": {"const": "5b0030ba13fb1ccee5950e3c4b78d334d8dd0c30a2a45ce90e6166a57fe31d09"},
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["qwen_llm", "qwen_vlm"],
+          "properties": {
+            "qwen_llm": {"$ref": "#/$defs/llmArtifact"},
+            "qwen_vlm": {"$ref": "#/$defs/vlmArtifact"}
+          }
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vllm_image", "endpoints"],
+      "properties": {
+        "vllm_image": {"const": "ghcr.io/nvidia-ai-iot/vllm@sha256:6402d5ac90223b9ba4434228f98aec798c5a8b942e770ee47528b4148e923105"},
+        "endpoints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["llm", "vlm"],
+          "properties": {
+            "llm": {"$ref": "#/$defs/llmEndpoint"},
+            "vlm": {"$ref": "#/$defs/vlmEndpoint"}
+          }
+        }
+      }
+    },
+    "execution_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_mode", "exact_acknowledgement", "maximum_http_requests", "request_timeout_seconds", "maximum_request_body_bytes", "maximum_response_body_bytes", "proxies_allowed", "redirects_allowed", "credentials_allowed", "docker_or_subprocess_allowed", "lifecycle_or_download_allowed", "file_writes_allowed", "evidence_destination"],
+      "properties": {
+        "default_mode": {"const": "plan"},
+        "exact_acknowledgement": {"const": "I_ACKNOWLEDGE_THIS_IS_A_NON_OFFICIAL_ALTERNATE_MODEL_TEST_WITH_NO_OFFICIAL_VSS_CAPABILITY_PROMOTION"},
+        "maximum_http_requests": {"const": 4},
+        "request_timeout_seconds": {"const": 10},
+        "maximum_request_body_bytes": {"const": 262144},
+        "maximum_response_body_bytes": {"const": 1048576},
+        "proxies_allowed": {"const": false},
+        "redirects_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "docker_or_subprocess_allowed": {"const": false},
+        "lifecycle_or_download_allowed": {"const": false},
+        "file_writes_allowed": {"const": false},
+        "evidence_destination": {"const": "stdout"}
+      }
+    },
+    "probes": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        {"$ref": "#/$defs/llmModelsProbe"},
+        {"$ref": "#/$defs/vlmModelsProbe"},
+        {"$ref": "#/$defs/llmProbe"},
+        {"$ref": "#/$defs/vlmProbe"}
+      ],
+      "items": false
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "llmArtifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repository", "revision", "canonical_sha256"],
+      "properties": {
+        "repository": {"const": "Qwen/Qwen3.6-35B-A3B-FP8"},
+        "revision": {"const": "95a723d08a9490559dae23d0cff1d9466213d989"},
+        "canonical_sha256": {"const": "3daac37579503b0ad6f3346c484194b82842889cdcccbb8b6b459190322fa483"}
+      }
+    },
+    "vlmArtifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repository", "revision", "canonical_sha256"],
+      "properties": {
+        "repository": {"const": "Qwen/Qwen3-VL-8B-Instruct-FP8"},
+        "revision": {"const": "9cdc6310a8cb770ce18efaf4e9935334512aee45"},
+        "canonical_sha256": {"const": "f39e7f8a690e9d4fec01c0ceab74effdb495682f67b08ba659e6f436c1020a6b"}
+      }
+    },
+    "llmEndpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_url", "served_model_id"],
+      "properties": {"base_url": {"const": "http://172.17.0.1:8000"}, "served_model_id": {"const": "datasheet-chat"}}
+    },
+    "vlmEndpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_url", "served_model_id"],
+      "properties": {"base_url": {"const": "http://172.17.0.1:8003"}, "served_model_id": {"const": "datasheet-vision"}}
+    },
+    "probeBase": {
+      "type": "object",
+      "required": ["id", "request_number", "endpoint", "method", "path", "expected"],
+      "properties": {
+        "id": {"type": "string"}, "request_number": {"type": "integer"}, "endpoint": {"enum": ["llm", "vlm"]},
+        "method": {"enum": ["GET", "POST"]}, "path": {"enum": ["/v1/models", "/v1/chat/completions"]}, "expected": {"type": "string"}
+      }
+    },
+    "llmModelsProbe": {"unevaluatedProperties": false, "allOf": [{"$ref": "#/$defs/probeBase"}, {"properties": {"id": {"const": "llm-model-identity"}, "request_number": {"const": 1}, "endpoint": {"const": "llm"}, "method": {"const": "GET"}, "path": {"const": "/v1/models"}, "expected": {"const": "the only returned model id is datasheet-chat"}}}]},
+    "vlmModelsProbe": {"unevaluatedProperties": false, "allOf": [{"$ref": "#/$defs/probeBase"}, {"properties": {"id": {"const": "vlm-model-identity"}, "request_number": {"const": 2}, "endpoint": {"const": "vlm"}, "method": {"const": "GET"}, "path": {"const": "/v1/models"}, "expected": {"const": "the only returned model id is datasheet-vision"}}}]},
+    "llmProbe": {"unevaluatedProperties": false, "allOf": [{"$ref": "#/$defs/probeBase"}, {"properties": {"id": {"const": "llm-ping-tool-call"}, "request_number": {"const": 3}, "endpoint": {"const": "llm"}, "method": {"const": "POST"}, "path": {"const": "/v1/chat/completions"}, "expected": {"const": "exactly one ping tool call with the locked message and enable_thinking=false"}}}]},
+    "vlmProbe": {
+      "unevaluatedProperties": false,
+      "allOf": [
+        {"$ref": "#/$defs/probeBase"},
+        {
+          "required": ["images"],
+          "properties": {
+            "id": {"const": "vlm-four-image-color-order"}, "request_number": {"const": 4}, "endpoint": {"const": "vlm"}, "method": {"const": "POST"}, "path": {"const": "/v1/chat/completions"}, "expected": {"const": "red, green, blue, yellow"},
+            "images": {
+              "type": "array", "minItems": 4, "maxItems": 4, "items": false,
+              "prefixItems": [
+                {"type": "object", "additionalProperties": false, "required": ["color", "rgb", "sha256"], "properties": {"color": {"const": "red"}, "rgb": {"const": [255, 0, 0]}, "sha256": {"const": "c7688e580506236f18d65e36ae194d5ee94ff232a4f43fe4996f47e12df2ef37"}}},
+                {"type": "object", "additionalProperties": false, "required": ["color", "rgb", "sha256"], "properties": {"color": {"const": "green"}, "rgb": {"const": [0, 255, 0]}, "sha256": {"const": "75a9d4734f1002189a3c477eb52c21fd695afc10dd3ee6f865a985e390439692"}}},
+                {"type": "object", "additionalProperties": false, "required": ["color", "rgb", "sha256"], "properties": {"color": {"const": "blue"}, "rgb": {"const": [0, 0, 255]}, "sha256": {"const": "9fcd98102a7190ec20857cf9925c53b888cba30c5aab65d6e39cbd84ee044e8c"}}},
+                {"type": "object", "additionalProperties": false, "required": ["color", "rgb", "sha256"], "properties": {"color": {"const": "yellow"}, "rgb": {"const": [255, 255, 0]}, "sha256": {"const": "5c78c2c759ce3cacc482f8696e65846a7e5c4aadaea245b45d51de42470da600"}}}
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
