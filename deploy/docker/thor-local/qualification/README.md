@@ -178,6 +178,22 @@ in this directory:
   and terminal job-store behavior with deterministic external-client fakes and
   adjacent negatives. It creates no runtime evidence and advances no canonical
   planning, capability, or oracle state;
+- `systems-behavior-analytics-static-executor/` binds all six Behavior
+  Analytics systems rows to real config, calibration, event/state, embedding,
+  and broker-sink product subsets. External constructors and transports are
+  replaced by fail-closed or in-memory fakes; full media, listener/watcher,
+  broker, deployment, and Thor runtime evidence remain explicit blockers;
+- `systems-nvschema-json-static-executor/` executes the real Behavior legacy
+  2D JSON-to-Protobuf converter, Spatial AI modern 3D JSONL loader, and agent
+  incident aliases for the open NvSchema systems row. It preserves two
+  observed consumer limitations, creates no runtime evidence, and advances no
+  canonical state;
+- `systems-search-lvs-boundary-static-executor/` executes three remaining
+  Search/LVS systems subsets and deliberately reports a candidate mismatch:
+  unsupported Search media returns 415 rather than the canonical 400, the
+  isolated LVS handler does not demonstrate one-active/one-queued behavior,
+  and AVI/MOV/WebM remain outside the default UI admission path and unproven at
+  runtime. No mismatch is normalized into a pass;
 - `runtime-evidence-common/` provides reusable fail-closed primitives for
   future authorized collectors: numeric-loopback/exact-path transport through
   an injected proxy/redirect-disabled opener, independent request/action

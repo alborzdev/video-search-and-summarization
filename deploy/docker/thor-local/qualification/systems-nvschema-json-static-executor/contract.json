@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-systems-nvschema-json-static-executor-v1",
+  "mode": "candidate_only_nvschema_json_product_subset",
+  "policy": {
+    "candidate_only": true,
+    "advances_live_acceptance": false,
+    "can_mark_passed_current": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "service_lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "writes": "executor_owned_private_temporary_directory_only"
+  },
+  "binding": {
+    "planning_requirement_id": "systems-nvschema-json",
+    "planning_requirement_sha256": "d6e7e54c9f868a32e18aa7ff7ca62ae41bea7c3816149b3bece5a926d4359dc5",
+    "planning_payload_sha256": "432af33c22551017f27c20e006bac9ab9aa629b21a491c36fa91bf52f2e3d6f2",
+    "capability_id": "protocol.nvschema.json-frame",
+    "capability_sha256": "35f14a33961931693ceafbe8bc82eb9a3931600447cd7b92e3f7cd5dd045d79a",
+    "oracle_id": "oracle.protocol.nvschema.json-frame",
+    "oracle_sha256": "3284503c74f383118aa78eaf8904e1e61345efd75673b4ce577bfe18dae03f75"
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "d670829d85239bfb924737d32565eb3b87a0378df2520d225df72a75617122d9"},
+    {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/schema_util.py", "sha256": "3c7c8d16b6c58fb01adea07b4dfde27104a62454a545fe0afbd623274f92ecca"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/schema_pb2.py", "sha256": "bfa3727bc8c72cd1975eb3169caae768a0e6a4e7fb0f72aa610747cf5ddde87c"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/ext_pb2.py", "sha256": "ca1719b0f731f023592cc6b51f0b0640b677bfccc6ae6c60448746404da0ad4a"},
+    {"path": "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/utils/test_schema_util.py", "sha256": "1cde76d582690f6c0de979eb5c641b849ad510365bdfdeefcca3761d2202f218"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py", "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e"},
+    {"path": "libs/analytics/spatialai-data-utils/tests/loaders/test_nvschema_loader.py", "sha256": "b9563cb1404cb5bc30796b6c1c70a3440f9ed510a0808784888d8fa0cdec710e"},
+    {"path": "services/agent/src/vss_agents/video_analytics/nvschema.py", "sha256": "8c71e67e1fe1329d87486b46b57e35c271352cf0fe37c1c7bd0687939e15efe6"},
+    {"path": "services/agent/tests/unit_test/video_analytics/test_nvschema.py", "sha256": "caf91635661f4e85aca872a910aa0e9d6eb57f7e57e9a7a836d27bfa5775f834"}
+  ],
+  "adjacent_negative_ids": [
+    "legacy-frame-missing-sensor-id",
+    "legacy-object-short-primary-segment",
+    "legacy-frame-invalid-timestamp",
+    "spatial-loader-unsupported-output-format",
+    "spatial-row-official-timestamp-not-projected",
+    "unsupported-event-value-not-validated"
+  ]
+}

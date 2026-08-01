@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "result", "policy", "binding", "source_hashes", "observations", "determinism", "confinement", "limitations", "runtime_evidence", "official_capability_effect"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-systems-nvschema-json-static-executor-v1"},
+    "mode": {"const": "candidate_only_nvschema_json_product_subset"},
+    "result": {"const": "candidate_static_pass_non_advancing"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_only", "advances_live_acceptance", "can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "service_lifecycle_allowed", "downloads_allowed", "credentials_allowed", "warehouse_sample_bundle", "writes"],
+      "properties": {
+        "candidate_only": {"const": true}, "advances_live_acceptance": {"const": false}, "can_mark_passed_current": {"const": false}, "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false}, "docker_allowed": {"const": false}, "subprocess_allowed": {"const": false}, "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false}, "credentials_allowed": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"},
+        "writes": {"const": "executor_owned_private_temporary_directory_only"}
+      }
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["planning_requirement_id", "capability_id", "oracle_id", "planning_materialized", "planning_executor_ready", "capability_thor_state", "capability_runtime_state", "oracle_state", "canonical_runtime_evidence"],
+      "properties": {
+        "planning_requirement_id": {"const": "systems-nvschema-json"}, "capability_id": {"const": "protocol.nvschema.json-frame"}, "oracle_id": {"const": "oracle.protocol.nvschema.json-frame"},
+        "planning_materialized": {"const": false}, "planning_executor_ready": {"const": false}, "capability_thor_state": {"const": "partial"}, "capability_runtime_state": {"const": "not_qualified"},
+        "oracle_state": {"const": "open_unexecuted"}, "canonical_runtime_evidence": {"const": []}
+      }
+    },
+    "source_hashes": {
+      "type": "object", "minProperties": 13, "maxProperties": 13,
+      "propertyNames": {"enum": [
+        "deploy/docker/thor-local/qualification/acceptance_inventory.json", "deploy/docker/thor-local/parity/official-capabilities.json", "deploy/docker/thor-local/parity/capability-oracles.json",
+        "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/schema_util.py", "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/schema_pb2.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/ext_pb2.py", "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/utils/test_schema_util.py",
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py", "libs/analytics/spatialai-data-utils/tests/loaders/test_nvschema_loader.py",
+        "services/agent/src/vss_agents/video_analytics/nvschema.py", "services/agent/tests/unit_test/video_analytics/test_nvschema.py"
+      ]},
+      "additionalProperties": {"$ref": "#/$defs/sha"}
+    },
+    "observations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["legacy_behavior_frame", "spatial_3d_frame", "agent_incident_aliases", "adjacent_negatives"],
+      "properties": {
+        "legacy_behavior_frame": {
+          "type": "object", "additionalProperties": false,
+          "required": ["version", "id", "sensor_id", "timestamp", "object_count", "object_id", "object_type", "bbox", "confidence", "pose_keypoints", "embedding", "wire_sha256", "wire_roundtrip_byte_identical"],
+          "properties": {
+            "version": {"const": "4.0"}, "id": {"const": "17"}, "sensor_id": {"const": "camera-legacy"}, "timestamp": {"const": "2026-08-01T12:00:00Z"}, "object_count": {"const": 1},
+            "object_id": {"const": "object-7"}, "object_type": {"const": "Person"}, "bbox": {"const": [10.0, 20.0, 30.0, 40.0]}, "confidence": {"const": 0.75},
+            "pose_keypoints": {"const": 1}, "embedding": {"const": [1.0, 2.0, 3.0]}, "wire_sha256": {"$ref": "#/$defs/sha"}, "wire_roundtrip_byte_identical": {"const": true}
+          }
+        },
+        "spatial_3d_frame": {
+          "type": "object", "additionalProperties": false,
+          "required": ["raw_id", "raw_custom_field", "flat_object_id", "flat_location", "flat_scale", "flat_rotation", "row_timestamp", "row_info"],
+          "properties": {
+            "raw_id": {"const": "object-19"}, "raw_custom_field": {"const": "preserved"}, "flat_object_id": {"const": "object-19"},
+            "flat_location": {"const": [1, 2, 3]}, "flat_scale": {"const": [4, 5, 6]}, "flat_rotation": {"const": [0.1, 0.2, 0.3]},
+            "row_timestamp": {"const": "2026-08-01T12:00:01Z"}, "row_info": {"const": {"camera-3d": "2026-08-01T12:00:01Z"}}
+          }
+        },
+        "agent_incident_aliases": {
+          "const": {"Id": "incident-1", "sensorId": "camera-legacy", "timestamp": "2026-08-01T12:00:00Z", "end": "2026-08-01T12:00:02Z", "objectIds": ["object-7"], "analyticsModule": "behavior-analytics", "type": "entry"}
+        },
+        "adjacent_negatives": {
+          "type": "array", "minItems": 6, "maxItems": 6,
+          "prefixItems": [
+            {"const": {"id": "legacy-frame-missing-sensor-id", "outcome": "rejected", "exception": "KeyError"}},
+            {"const": {"id": "legacy-object-short-primary-segment", "outcome": "rejected", "exception": "IndexError"}},
+            {"const": {"id": "legacy-frame-invalid-timestamp", "outcome": "rejected", "exception": "ValueError"}},
+            {"const": {"id": "spatial-loader-unsupported-output-format", "outcome": "rejected", "exception": "ValueError"}},
+            {"const": {"id": "spatial-row-official-timestamp-not-projected", "outcome": "accepted_limited", "exception": "none"}},
+            {"const": {"id": "unsupported-event-value-not-validated", "outcome": "accepted_limited", "exception": "none"}}
+          ],
+          "items": false
+        }
+      }
+    },
+    "determinism": {
+      "type": "object", "additionalProperties": false,
+      "required": ["independent_runs", "byte_identical", "observation_sha256"],
+      "properties": {"independent_runs": {"const": 2}, "byte_identical": {"const": true}, "observation_sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "confinement": {"const": {"private_temporary_roots": true, "cleanup_verified": true, "external_calls": 0, "warehouse_sample_bundle": "excluded", "counter_basis": "locked_source_and_import_boundary_audit", "import_state_restored": true}},
+    "limitations": {"const": ["illustrative_contract_has_no_complete_json_schema_validator", "documented_event_enum_is_not_enforced_by_the_executed_frame_converter", "spatial_iterator_does_not_project_the_official_legacy_at_timestamp_field", "legacy_2d_string_objects_and_modern_3d_dictionary_objects_use_distinct_consumers", "full_behavior_test_import_is_blocked_by_host_numpy2_matplotlib_numpy1_abi_mismatch", "no_deployed_service_or_broker_protocol_roundtrip_executed"]},
+    "runtime_evidence": {"const": []},
+    "official_capability_effect": {"const": "none_candidate_only"}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

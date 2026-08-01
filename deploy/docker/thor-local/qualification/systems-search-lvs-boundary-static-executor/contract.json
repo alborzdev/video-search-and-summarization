@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-systems-search-lvs-boundary-static-executor-v1",
+  "mode": "candidate_only_search_lvs_boundary_static",
+  "policy": {
+    "candidate_only": true,
+    "advances_live_acceptance": false,
+    "can_mark_passed_current": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "service_lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "writes": "none"
+  },
+  "bindings": [
+    {
+      "planning_requirement_id": "systems-search-content-type",
+      "planning_requirement_sha256": "aed214a8d3c17d2be32da551e098156d9eb5d4fb565f6625798956f8b8023030",
+      "planning_payload_sha256": "ce5f7b27385fec6d42b740db430eb9ce841984a97f0f5da4b15587a8a7794b6d",
+      "capability_id": "behavior.search-upload.content-type",
+      "capability_sha256": "ced060c74827ef8f9f531e813178ead6e4c7c17f20969360e47542c9f86e0187",
+      "oracle_id": "oracle.behavior.search-upload.content-type",
+      "oracle_sha256": "b94a7c266507fdaf8068bf0c0a9c57377efaada814005f79124c07f783f9936b"
+    },
+    {
+      "planning_requirement_id": "systems-lvs-queue",
+      "planning_requirement_sha256": "e7f1d99d857d2dabdc811d0c0b183f3b5c4d646b44b633febc1d43f52bcb3f27",
+      "planning_payload_sha256": "904d611af35a15c0a7fe35908eec71ccc84c3e3e74fd56930100fca574d66781",
+      "capability_id": "runtime.lvs.single-request-queue",
+      "capability_sha256": "2c131d1e6ac114446bb3be9b4eb46d06c171df89695ec1c04de6239f9d846e8a",
+      "oracle_id": "oracle.runtime.lvs.single-request-queue",
+      "oracle_sha256": "0b05a8810cee52f352755b1a3563f987de6f7e712e5033fd73cde48a06a2cbc5"
+    },
+    {
+      "planning_requirement_id": "systems-lvs-formats",
+      "planning_requirement_sha256": "c3ddfdf95b9dd90025890df442d7b1095150fc78d3f06a6421bbd6ca0cb13fa9",
+      "planning_payload_sha256": "442480fe6e8c8894a511debb046a20925133a286dfa920c3d2178c0a922b9007",
+      "capability_id": "runtime.lvs.supported-formats",
+      "capability_sha256": "9bebd816048820906a1dda9c97d41069997a096953eab08d209d2332c1cbb1e4",
+      "oracle_id": "oracle.runtime.lvs.supported-formats",
+      "oracle_sha256": "adf30ec25b4b7c047aa0be8881aa4a84ac070ce9b87bf55638c7eb4b527c9a08"
+    }
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "573d5a6804f0a2ac502a6f2eede0a90331a5c330b395c0e2c1f7eb19282f1ae2"},
+    {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11/inventory.json", "sha256": "734609e5b1aab27a4d65a2570d3e6a3c366ae9ecf896dd7f0d5e62785e219cdd"},
+    {"path": "services/agent/src/vss_agents/api/video_search_ingest.py", "sha256": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77"},
+    {"path": "services/agent/tests/unit_test/api/test_video_search_ingest.py", "sha256": "1ade3f881b57fd8357047c951f500c660cbfc1d67b65fe268c150437f320030e"},
+    {"path": "services/video-summarization/src/via_stream_handler.py", "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"},
+    {"path": "services/agent/README.md", "sha256": "f8bb48cbee282b8f6048ab9220258adcb648e3de761d81b98c34baa747d1740e"},
+    {"path": "services/ui/packages/common/lib-src/components/UploadFilesDialog.tsx", "sha256": "90487a061cdd8750f24ce17446010b09995c7d0152f1394cbb05201c6e82d2dd"},
+    {"path": "services/ui/packages/common/__tests__/components/UploadFilesDialog.test.tsx", "sha256": "71da8185445f1ffa3b3d0c5d590f7c5f306038b43eec2529ecdcb0283c506456"}
+  ],
+  "adjacent_negative_ids": [
+    "search-missing-content-type",
+    "search-unsupported-content-type",
+    "search-parameterized-content-type",
+    "search-missing-content-length",
+    "search-invalid-content-length",
+    "search-empty-body",
+    "ui-advertised-format-gap",
+    "lvs-handler-concurrent-entry"
+  ]
+}

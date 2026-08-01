@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "policy", "bindings", "source_locks", "adjacent_case_ids"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-systems-behavior-analytics-static-executor-v1"},
+    "mode": {"const": "candidate_only_systems_behavior_analytics_static"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "bindings": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/binding"}},
+    "source_locks": {"type": "array", "minItems": 75, "maxItems": 75, "items": {"$ref": "#/$defs/lock"}},
+    "adjacent_case_ids": {"type": "array", "minItems": 10, "maxItems": 10, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_only", "advances_live_acceptance", "can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "service_lifecycle_allowed", "downloads_allowed", "credentials_allowed", "warehouse_sample_bundle", "writes"],
+      "properties": {
+        "candidate_only": {"const": true},
+        "advances_live_acceptance": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "writes": {"const": "none"}
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planning_requirement_id", "planning_requirement_sha256", "planning_payload_sha256", "capability_id", "capability_sha256", "oracle_id", "oracle_sha256"],
+      "properties": {
+        "planning_requirement_id": {"type": "string", "minLength": 1},
+        "planning_requirement_sha256": {"$ref": "#/$defs/sha256"},
+        "planning_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "capability_id": {"type": "string", "minLength": 1},
+        "capability_sha256": {"$ref": "#/$defs/sha256"},
+        "oracle_id": {"type": "string", "minLength": 1},
+        "oracle_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

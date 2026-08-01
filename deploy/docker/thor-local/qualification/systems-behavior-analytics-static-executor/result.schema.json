@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "policy", "bindings", "source_hashes", "observations", "determinism", "confinement", "runtime_evidence", "official_capability_effect", "residual_blockers", "result"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-systems-behavior-analytics-static-executor-v1"},
+    "mode": {"const": "candidate_only_systems_behavior_analytics_static"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "bindings": {
+      "type": "array", "minItems": 6, "maxItems": 6,
+      "prefixItems": [
+        {"const": {"planning_requirement_id": "systems-behavior-pipeline", "capability_id": "runtime.behavior.pipeline", "oracle_id": "oracle.runtime.behavior.pipeline", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "planning_materialized": false, "planning_executor_ready": false, "canonical_state_advanced": false}},
+        {"const": {"planning_requirement_id": "systems-behavior-dynamic-config", "capability_id": "configuration.behavior.dynamic-update", "oracle_id": "oracle.configuration.behavior.dynamic-update", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "planning_materialized": true, "planning_executor_ready": true, "canonical_state_advanced": false}},
+        {"const": {"planning_requirement_id": "systems-behavior-calibration", "capability_id": "calibration.behavior.dynamic", "oracle_id": "oracle.calibration.behavior.dynamic", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "planning_materialized": false, "planning_executor_ready": false, "canonical_state_advanced": false}},
+        {"const": {"planning_requirement_id": "systems-behavior-events", "capability_id": "runtime.behavior.events-incidents", "oracle_id": "oracle.runtime.behavior.events-incidents", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "planning_materialized": false, "planning_executor_ready": false, "canonical_state_advanced": false}},
+        {"const": {"planning_requirement_id": "systems-behavior-embedding-downsampling", "capability_id": "runtime.behavior.embedding-downsampling", "oracle_id": "oracle.runtime.behavior.embedding-downsampling", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "planning_materialized": false, "planning_executor_ready": false, "canonical_state_advanced": false}},
+        {"const": {"planning_requirement_id": "systems-behavior-sinks", "capability_id": "protocol.behavior.broker-sinks", "oracle_id": "oracle.protocol.behavior.broker-sinks", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "planning_materialized": false, "planning_executor_ready": false, "canonical_state_advanced": false}}
+      ],
+      "items": false
+    },
+    "source_hashes": {
+      "type": "object",
+      "minProperties": 75,
+      "maxProperties": 75,
+      "propertyNames": {"enum": [
+        "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/capability-oracles.json",
+        "services/analytics/behavior-analytics/src/mdx/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/constants.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/ext_pb2.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/trajectory/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/trajectory/trajectory_base.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/behavior/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/frame/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/downsampling/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_e.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_i.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/config/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/detection/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/detection/proximity_detection.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/__init__.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/crp.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/distance_util.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/io_utils.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/schema_util.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/util.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/config.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/models.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/schema_pb2.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/config/config_validator.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/config/config_value_validators.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/config/config_applier.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/transform/config/test_config_validator.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/transform/config/test_config_applier.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_validator.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/schemas/calibration.schema.json",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_base.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_dynamic.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/transform/calibration/test_calibration_validator.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/transform/calibration/test_calibration_dynamic.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/base_event.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/roi_event.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/tripwire_event.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/transform/event/test_roi_event.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/transform/event/test_tripwire_event.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/behavior/state_management_base.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/state/behavior/test_state_management_base.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/frame/frame_state_management.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/state/frame/test_frame_state_management.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/video_embedding_state_mgmt.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/downsampling/downsampler_base.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/downsampling/downsampler_sdt.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/downsampling/downsampler_window.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/state/video_embedding/test_video_embedding_state_mgmt.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/state/video_embedding/test_downsampler_sdt.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/state/video_embedding/test_downsampler_window.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_base.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_kafka.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_redis_stream.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_mqtt.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/sink/test_sink_factory.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/sink/test_sink_kafka.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/sink/test_sink_redis_stream.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/stream/sink/test_sink_mqtt.py",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/app/test_app_base.py"
+      ]},
+      "additionalProperties": {"$ref": "#/$defs/sha256"}
+    },
+    "observations": {"$ref": "#/$defs/observations"},
+    "determinism": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["independent_runs", "byte_identical", "observation_sha256"],
+      "properties": {
+        "independent_runs": {"const": 2},
+        "byte_identical": {"const": true},
+        "observation_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "confinement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["filesystem_writes", "network_calls", "broker_connections", "subprocess_calls", "service_lifecycle_calls", "warehouse_sample_bundle", "counter_basis", "product_and_stub_import_state_restored", "loaded_repo_product_files"],
+      "properties": {
+        "filesystem_writes": {"const": 0},
+        "network_calls": {"const": 0},
+        "broker_connections": {"const": 0},
+        "subprocess_calls": {"const": 0},
+        "service_lifecycle_calls": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "counter_basis": {"const": "locked_source_and_forbidden_constructor_audit"},
+        "product_and_stub_import_state_restored": {"const": true},
+        "loaded_repo_product_files": {"const": 54}
+      }
+    },
+    "runtime_evidence": {"const": []},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "residual_blockers": {"const": ["full bbox/tracking/media pipeline is not executed", "coordinate-transform provider path is not executed", "dynamic-config broker listener, atomic persistence, acknowledgement, and timeout fallback are not executed", "calibration filesystem watcher and live multi-worker reload are not executed", "full tripwire trajectory and incident completion media fixtures are not executed", "real Kafka, Redis Streams, and MQTT transports are not connected", "Thor service deployment, load, persistence, and restart behavior remain unqualified"]},
+    "result": {"const": "candidate_static_pass_non_advancing"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_only", "advances_live_acceptance", "can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "service_lifecycle_allowed", "downloads_allowed", "credentials_allowed", "warehouse_sample_bundle", "writes"],
+      "properties": {
+        "candidate_only": {"const": true}, "advances_live_acceptance": {"const": false}, "can_mark_passed_current": {"const": false}, "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false}, "docker_allowed": {"const": false}, "subprocess_allowed": {"const": false}, "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false}, "credentials_allowed": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"}, "writes": {"const": "none"}
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planning_requirement_id", "capability_id", "oracle_id", "owner_type", "package", "acceptance_class", "thor_state", "runtime_state", "oracle_state", "oracle_classification", "planning_materialized", "planning_executor_ready", "canonical_state_advanced"],
+      "properties": {
+        "planning_requirement_id": {"enum": ["systems-behavior-pipeline", "systems-behavior-dynamic-config", "systems-behavior-calibration", "systems-behavior-events", "systems-behavior-embedding-downsampling", "systems-behavior-sinks"]},
+        "capability_id": {"enum": ["runtime.behavior.pipeline", "configuration.behavior.dynamic-update", "calibration.behavior.dynamic", "runtime.behavior.events-incidents", "runtime.behavior.embedding-downsampling", "protocol.behavior.broker-sinks"]},
+        "oracle_id": {"enum": ["oracle.runtime.behavior.pipeline", "oracle.configuration.behavior.dynamic-update", "oracle.calibration.behavior.dynamic", "oracle.runtime.behavior.events-incidents", "oracle.runtime.behavior.embedding-downsampling", "oracle.protocol.behavior.broker-sinks"]},
+        "owner_type": {"const": "capability"}, "package": {"const": "systems"}, "acceptance_class": {"const": "required_local"},
+        "thor_state": {"const": "partial"}, "runtime_state": {"const": "not_qualified"}, "oracle_state": {"const": "open_unexecuted"},
+        "oracle_classification": {"const": "planning_index_only"}, "canonical_state_advanced": {"const": false}
+        ,"planning_materialized": {"type": "boolean"}, "planning_executor_ready": {"type": "boolean"}
+      }
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pipeline_subset", "dynamic_config", "calibration", "events_incidents", "embedding_downsampling", "broker_sinks", "adjacent_cases"],
+      "properties": {
+        "pipeline_subset": {
+          "type": "object", "additionalProperties": false,
+          "required": ["actual_product_modules", "inputs_exercised", "stages_exercised", "full_pipeline_claimed"],
+          "properties": {
+            "actual_product_modules": {"const": true}, "inputs_exercised": {"const": ["tracking", "embedding"]},
+            "stages_exercised": {"const": ["dynamic-config", "calibration", "roi", "behavior-state", "metrics"]}, "full_pipeline_claimed": {"const": false}
+          }
+        },
+        "dynamic_config": {"$ref": "#/$defs/dynamic_config"},
+        "calibration": {"$ref": "#/$defs/calibration"},
+        "events_incidents": {"$ref": "#/$defs/events"},
+        "embedding_downsampling": {"$ref": "#/$defs/embedding"},
+        "broker_sinks": {"$ref": "#/$defs/sinks"},
+        "adjacent_cases": {
+          "type": "array", "minItems": 10, "maxItems": 10,
+          "prefixItems": [
+            {"const": {"case_id": "config-non-object", "outcome": "rejected"}},
+            {"const": {"case_id": "config-read-only-section", "outcome": "rejected"}},
+            {"const": {"case_id": "config-invalid-value", "outcome": "rejected"}},
+            {"const": {"case_id": "calibration-invalid-type", "outcome": "rejected"}},
+            {"const": {"case_id": "calibration-unknown-action", "outcome": "rejected"}},
+            {"const": {"case_id": "calibration-existing-file-reload", "outcome": "delegated_without_type_switch"}},
+            {"const": {"case_id": "event-empty-identifier", "outcome": "ignored_without_mutation"}},
+            {"const": {"case_id": "embedding-invalid-record", "outcome": "filtered"}},
+            {"const": {"case_id": "sink-unsupported-type", "outcome": "rejected"}},
+            {"const": {"case_id": "sink-missing-route", "outcome": "rejected"}}
+          ],
+          "items": false
+        }
+      }
+    },
+    "dynamic_config": {
+      "type": "object", "additionalProperties": false, "required": ["success", "partial", "negative_statuses"],
+      "properties": {
+        "success": {"type": "object", "additionalProperties": false, "required": ["status", "applied_app", "applied_sensor_items", "snapshot_sha256"], "properties": {"status": {"const": "success"}, "applied_app": {"const": 2}, "applied_sensor_items": {"const": 1}, "snapshot_sha256": {"$ref": "#/$defs/sha256"}}},
+        "partial": {"type": "object", "additionalProperties": false, "required": ["status", "applied_app", "rejection_present"], "properties": {"status": {"const": "partial-success"}, "applied_app": {"const": 1}, "rejection_present": {"const": true}}},
+        "negative_statuses": {"type": "object", "additionalProperties": false, "required": ["config-non-object", "config-read-only-section", "config-invalid-value"], "properties": {"config-non-object": {"const": "failure"}, "config-read-only-section": {"const": "failure"}, "config-invalid-value": {"const": "failure"}}}
+      }
+    },
+    "calibration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["accepted_types", "accepted_actions", "merge_ids", "after_delete_ids", "invalid_payload_preserved_state", "existing_file_reload_delegated", "existing_file_type_switch_attempted", "negative_rejections"],
+      "properties": {
+        "accepted_types": {"const": ["image", "cartesian", "geo"]}, "accepted_actions": {"const": ["upsert", "upsert-all", "delete"]},
+        "merge_ids": {"const": ["cam-a", "cam-b"]}, "after_delete_ids": {"const": ["cam-b"]},
+        "invalid_payload_preserved_state": {"const": true}, "existing_file_reload_delegated": {"const": true}, "existing_file_type_switch_attempted": {"const": false},
+        "negative_rejections": {"type": "object", "additionalProperties": false, "required": ["calibration-invalid-type", "calibration-unknown-action"], "properties": {"calibration-invalid-type": {"const": true}, "calibration-unknown-action": {"const": true}}}
+      }
+    },
+    "events": {
+      "type": "object", "additionalProperties": false, "required": ["event_checks", "event_objects", "behavior_state", "violation_state_counts", "event-empty-identifier"],
+      "properties": {
+        "event_checks": {"type": "object", "additionalProperties": false, "required": ["roi", "tripwire"], "properties": {"roi": {"const": true}, "tripwire": {"const": true}}},
+        "event_objects": {"type": "object", "additionalProperties": false, "required": ["roi", "tripwire"], "properties": {"roi": {"const": 1}, "tripwire": {"const": 1}}},
+        "behavior_state": {"type": "object", "additionalProperties": false, "required": ["state_created", "trip_state_created", "tracked_points", "last_message_id"], "properties": {"state_created": {"const": true}, "trip_state_created": {"const": true}, "tracked_points": {"const": 2}, "last_message_id": {"const": "tracking-2"}}},
+        "violation_state_counts": {"type": "object", "additionalProperties": false, "required": ["proximity", "restricted-area", "confined-area", "fov-count"], "properties": {"proximity": {"const": 1}, "restricted-area": {"const": 1}, "confined-area": {"const": 1}, "fov-count": {"const": 1}}},
+        "event-empty-identifier": {"const": true}
+      }
+    },
+    "embedding": {
+      "type": "object", "additionalProperties": false, "required": ["optional_passthrough_identity", "input_valid_records", "invalid_records_filtered", "modes", "embedding-invalid-record"],
+      "properties": {
+        "optional_passthrough_identity": {"const": true}, "input_valid_records": {"const": 5}, "invalid_records_filtered": {"const": 1}, "embedding-invalid-record": {"const": true},
+        "modes": {"type": "object", "additionalProperties": false, "required": ["sdt", "sliding-window"], "properties": {
+          "sdt": {"type": "object", "additionalProperties": false, "required": ["output_records", "pending_flushed"], "properties": {"output_records": {"const": 1}, "pending_flushed": {"const": 1}}},
+          "sliding-window": {"type": "object", "additionalProperties": false, "required": ["output_records"], "properties": {"output_records": {"const": 2}}}
+        }}
+      }
+    },
+    "sinks": {
+      "type": "object", "additionalProperties": false, "required": ["output_route_map", "sink_types", "sink-unsupported-type", "sink-missing-route"],
+      "properties": {
+        "output_route_map": {"type": "object", "additionalProperties": false, "required": ["frames", "behaviors", "events", "incidents", "anomalies", "cluster", "space-utilization"], "properties": {"frames": {"const": "frames"}, "behaviors": {"const": "behavior"}, "events": {"const": "events"}, "incidents": {"const": "incidents"}, "anomalies": {"const": "anomaly"}, "cluster": {"const": "behaviorPlus"}, "space-utilization": {"const": "spaceUtilization"}}},
+        "sink_types": {"type": "object", "additionalProperties": false, "required": ["kafka", "redisStream", "mqtt"], "properties": {
+          "kafka": {"const": {"class": "SinkKafka", "writes": 7, "routes": ["frames", "behavior", "events", "incidents", "anomaly", "behaviorPlus", "spaceUtilization"], "connections_opened": 0}},
+          "redisStream": {"const": {"class": "SinkRedisStream", "writes": 7, "routes": ["frames", "behavior", "events", "incidents", "anomaly", "behaviorPlus", "spaceUtilization"], "connections_opened": 0}},
+          "mqtt": {"const": {"class": "SinkMQTT", "writes": 7, "routes": ["frames", "behavior", "events", "incidents", "anomaly", "behaviorPlus", "spaceUtilization"], "connections_opened": 0}}
+        }},
+        "sink-unsupported-type": {"const": true}, "sink-missing-route": {"const": true}
+      }
+    }
+  }
+}

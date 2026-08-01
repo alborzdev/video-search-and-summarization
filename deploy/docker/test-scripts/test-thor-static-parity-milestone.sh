@@ -317,6 +317,37 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/systems-alert-completion-static-executor/tests"
 
+# All six Behavior Analytics systems rows now execute bounded real-product
+# subsets for config, calibration, state/events, embeddings, and seven output
+# routes through in-memory broker fakes. Import state is restored and full
+# media, broker, lifecycle, runtime evidence, and Warehouse data remain out.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/systems-behavior-analytics-static-executor/executor.py" \
+  --self-test >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  -W ignore::pydantic.warnings.PydanticDeprecatedSince20 \
+  "${thor_local_root}/qualification/systems-behavior-analytics-static-executor/test_executor.py"
+
+# The open NvSchema systems row now has a bounded real-product subset across
+# the Behavior legacy converter, Spatial AI 3D loader, and Agent incident
+# aliases. Two consumer limitations remain explicit; no broker, service,
+# runtime evidence, official promotion, or Warehouse sample is involved.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/systems-nvschema-json-static-executor/executor.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/systems-nvschema-json-static-executor/tests"
+
+# Search upload, LVS queue, and LVS format boundaries execute against real
+# checked-in product code with deterministic fakes. The expected 400/observed
+# 415 mismatch, absent handler-level serialization, and UI format gap remain
+# non-advancing and require future live Thor evidence.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/systems-search-lvs-boundary-static-executor/executor.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/systems-search-lvs-boundary-static-executor/tests"
+
 # Shared future runtime-evidence primitives are checked only through their
 # static contract and fake in-memory transport/resource self-test. The library
 # constructs no network opener and performs no host, Docker, subprocess,

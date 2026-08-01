@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "policy", "bindings", "source_hashes", "observations", "determinism", "confinement", "remaining_live_blockers", "runtime_evidence", "official_capability_effect", "result"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-systems-search-lvs-boundary-static-executor-v1"},
+    "mode": {"const": "candidate_only_search_lvs_boundary_static"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "bindings": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {"const": {"planning_requirement_id": "systems-search-content-type", "capability_id": "behavior.search-upload.content-type", "oracle_id": "oracle.behavior.search-upload.content-type", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "canonical_state_advanced": false}},
+        {"const": {"planning_requirement_id": "systems-lvs-queue", "capability_id": "runtime.lvs.single-request-queue", "oracle_id": "oracle.runtime.lvs.single-request-queue", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "canonical_state_advanced": false}},
+        {"const": {"planning_requirement_id": "systems-lvs-formats", "capability_id": "runtime.lvs.supported-formats", "oracle_id": "oracle.runtime.lvs.supported-formats", "owner_type": "capability", "package": "systems", "acceptance_class": "required_local", "thor_state": "partial", "runtime_state": "not_qualified", "oracle_state": "open_unexecuted", "oracle_classification": "planning_index_only", "canonical_state_advanced": false}}
+      ],
+      "items": false
+    },
+    "source_hashes": {
+      "type": "object",
+      "minProperties": 12,
+      "maxProperties": 12,
+      "propertyNames": {"enum": [
+        "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/capability-oracles.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json",
+        "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json",
+        "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11/inventory.json",
+        "services/agent/src/vss_agents/api/video_search_ingest.py",
+        "services/agent/tests/unit_test/api/test_video_search_ingest.py",
+        "services/video-summarization/src/via_stream_handler.py",
+        "services/agent/README.md",
+        "services/ui/packages/common/lib-src/components/UploadFilesDialog.tsx",
+        "services/ui/packages/common/__tests__/components/UploadFilesDialog.test.tsx"
+      ]},
+      "additionalProperties": {"$ref": "#/$defs/sha256"}
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["search_upload", "lvs_queue", "lvs_formats", "adjacent_negatives"],
+      "properties": {
+        "search_upload": {"$ref": "#/$defs/search_upload"},
+        "lvs_queue": {"$ref": "#/$defs/lvs_queue"},
+        "lvs_formats": {"$ref": "#/$defs/lvs_formats"},
+        "adjacent_negatives": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "prefixItems": [
+            {"const": {"case_id": "search-missing-content-type", "observed": true}},
+            {"const": {"case_id": "search-unsupported-content-type", "observed": true}},
+            {"const": {"case_id": "search-parameterized-content-type", "observed": true}},
+            {"const": {"case_id": "search-missing-content-length", "observed": true}},
+            {"const": {"case_id": "search-invalid-content-length", "observed": true}},
+            {"const": {"case_id": "search-empty-body", "observed": true}},
+            {"const": {"case_id": "ui-advertised-format-gap", "observed": true}},
+            {"const": {"case_id": "lvs-handler-concurrent-entry", "observed": true}}
+          ],
+          "items": false
+        }
+      }
+    },
+    "determinism": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["independent_runs", "byte_identical", "observation_sha256"],
+      "properties": {
+        "independent_runs": {"const": 2},
+        "byte_identical": {"const": true},
+        "observation_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "confinement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["external_calls", "network_calls", "subprocess_calls", "filesystem_writes", "docker_calls", "service_lifecycle_calls", "model_calls", "warehouse_sample_bundle", "counter_basis"],
+      "properties": {
+        "external_calls": {"const": 0},
+        "network_calls": {"const": 0},
+        "subprocess_calls": {"const": 0},
+        "filesystem_writes": {"const": 0},
+        "docker_calls": {"const": 0},
+        "service_lifecycle_calls": {"const": 0},
+        "model_calls": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "counter_basis": {"const": "locked_source_and_replaced_transport_boundary_audit"}
+      }
+    },
+    "remaining_live_blockers": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {"enum": [
+        "search endpoint must return canonical HTTP 400 for an unsupported Content-Type or the canonical contract must be reconciled",
+        "all five advertised containers/codecs require format-by-format Thor decode and summarization evidence",
+        "AVI, MOV, and WebM need an admitted local upload path or a documented API-only path with runtime proof",
+        "two live concurrent LVS requests must prove one active and one queued across the LVS and RTVI boundary",
+        "successful local VLM inference and output semantics remain unobserved by this provider-free executor"
+      ]}
+    },
+    "runtime_evidence": {"const": []},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "result": {"const": "candidate_executable_mismatch_non_advancing"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_only", "advances_live_acceptance", "can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "service_lifecycle_allowed", "downloads_allowed", "credentials_allowed", "warehouse_sample_bundle", "writes"],
+      "properties": {
+        "candidate_only": {"const": true},
+        "advances_live_acceptance": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "writes": {"const": "none"}
+      }
+    },
+    "binding_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planning_requirement_id", "capability_id", "oracle_id", "owner_type", "package", "acceptance_class", "thor_state", "runtime_state", "oracle_state", "oracle_classification", "canonical_state_advanced"],
+      "properties": {
+        "planning_requirement_id": {"enum": ["systems-search-content-type", "systems-lvs-queue", "systems-lvs-formats"]},
+        "capability_id": {"enum": ["behavior.search-upload.content-type", "runtime.lvs.single-request-queue", "runtime.lvs.supported-formats"]},
+        "oracle_id": {"enum": ["oracle.behavior.search-upload.content-type", "oracle.runtime.lvs.single-request-queue", "oracle.runtime.lvs.supported-formats"]},
+        "owner_type": {"const": "capability"},
+        "package": {"const": "systems"},
+        "acceptance_class": {"const": "required_local"},
+        "thor_state": {"const": "partial"},
+        "runtime_state": {"const": "not_qualified"},
+        "oracle_state": {"const": "open_unexecuted"},
+        "oracle_classification": {"const": "planning_index_only"},
+        "canonical_state_advanced": {"const": false}
+      }
+    },
+    "search_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_type", "accepted", "status", "fake_upload_calls"],
+      "properties": {
+        "content_type": {"type": ["string", "null"]},
+        "accepted": {"type": "boolean"},
+        "status": {"type": "integer"},
+        "fake_upload_calls": {"type": "integer", "minimum": 0, "maximum": 1}
+      }
+    },
+    "search_upload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route", "deprecated", "advertised_accepted", "advertised_missing_or_unsupported_status", "cases", "observed_accepted", "observed_missing_status", "observed_unsupported_status", "exact_media_type_match", "external_network_calls", "canonical_match", "mismatch"],
+      "properties": {
+        "route": {"const": "/api/v1/videos-for-search/{filename}"},
+        "deprecated": {"const": true},
+        "advertised_accepted": {"const": ["video/mp4", "video/x-matroska"]},
+        "advertised_missing_or_unsupported_status": {"const": 400},
+        "cases": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/search_case"}},
+        "observed_accepted": {"const": ["video/mp4", "video/x-matroska"]},
+        "observed_missing_status": {"const": 400},
+        "observed_unsupported_status": {"const": 415},
+        "exact_media_type_match": {"const": true},
+        "external_network_calls": {"const": 0},
+        "canonical_match": {"const": false},
+        "mismatch": {"const": "unsupported Content-Type is 415 in product code but 400 in the canonical contract"}
+      }
+    },
+    "lvs_queue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advertised_active_requests", "advertised_additional_requests", "executed_product_method", "executed_ast_sha256", "submitted_requests", "initial_statuses", "statuses_at_pipeline_entry", "peak_concurrent_fake_pipeline_calls", "second_request_observed_queued", "lvs_handler_serialization_match", "end_to_end_contract_status", "external_calls"],
+      "properties": {
+        "advertised_active_requests": {"const": 1},
+        "advertised_additional_requests": {"const": "queued"},
+        "executed_product_method": {"const": "ViaStreamHandler._trigger_query"},
+        "executed_ast_sha256": {"$ref": "#/$defs/sha256"},
+        "submitted_requests": {"const": 2},
+        "initial_statuses": {"const": ["queued", "queued"]},
+        "statuses_at_pipeline_entry": {"const": ["processing", "processing"]},
+        "peak_concurrent_fake_pipeline_calls": {"const": 2},
+        "second_request_observed_queued": {"const": false},
+        "lvs_handler_serialization_match": {"const": false},
+        "end_to_end_contract_status": {"const": "unqualified_downstream_rtvi_may_queue"},
+        "external_calls": {"const": 0}
+      }
+    },
+    "format_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "extension", "mime_type", "ui_default_admitted"],
+      "properties": {
+        "format": {"enum": ["MP4", "AVI", "MOV", "MKV", "WebM"]},
+        "extension": {"type": "string"},
+        "mime_type": {"type": "string"},
+        "ui_default_admitted": {"type": "boolean"}
+      }
+    },
+    "lvs_formats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advertised_formats", "proprietary_where_supported", "ui_default_accept", "ui_default_extensions", "ui_default_mime_types", "cases", "ui_default_admitted_formats", "ui_default_missing_advertised_formats", "proprietary_codec_opt_in_documented", "capability_status", "live_decode_matrix_executed"],
+      "properties": {
+        "advertised_formats": {"const": ["MP4", "AVI", "MOV", "MKV", "WebM"]},
+        "proprietary_where_supported": {"const": true},
+        "ui_default_accept": {"const": ".mp4,.mkv,video/mp4,video/x-matroska"},
+        "ui_default_extensions": {"const": ["mp4", "mkv"]},
+        "ui_default_mime_types": {"const": ["video/mp4", "video/x-matroska"]},
+        "cases": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"$ref": "#/$defs/format_case"}},
+        "ui_default_admitted_formats": {"const": ["MP4", "MKV"]},
+        "ui_default_missing_advertised_formats": {"const": ["AVI", "MOV", "WebM"]},
+        "proprietary_codec_opt_in_documented": {"const": true},
+        "capability_status": {"const": "not_proven_ui_surface_narrower_than_advertised_contract"},
+        "live_decode_matrix_executed": {"const": false}
+      }
+    },
+    "negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "observed"],
+      "properties": {
+        "case_id": {"enum": ["search-missing-content-type", "search-unsupported-content-type", "search-parameterized-content-type", "search-missing-content-length", "search-invalid-content-length", "search-empty-body", "ui-advertised-format-gap", "lvs-handler-concurrent-entry"]},
+        "observed": {"const": true}
+      }
+    }
+  }
+}

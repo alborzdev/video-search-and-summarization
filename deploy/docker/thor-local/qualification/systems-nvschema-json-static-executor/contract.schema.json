@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "policy", "binding", "source_locks", "adjacent_negative_ids"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-systems-nvschema-json-static-executor-v1"},
+    "mode": {"const": "candidate_only_nvschema_json_product_subset"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_only", "advances_live_acceptance", "can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "service_lifecycle_allowed", "downloads_allowed", "credentials_allowed", "warehouse_sample_bundle", "writes"],
+      "properties": {
+        "candidate_only": {"const": true},
+        "advances_live_acceptance": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "writes": {"const": "executor_owned_private_temporary_directory_only"}
+      }
+    },
+    "binding": {
+      "const": {
+        "planning_requirement_id": "systems-nvschema-json",
+        "planning_requirement_sha256": "d6e7e54c9f868a32e18aa7ff7ca62ae41bea7c3816149b3bece5a926d4359dc5",
+        "planning_payload_sha256": "432af33c22551017f27c20e006bac9ab9aa629b21a491c36fa91bf52f2e3d6f2",
+        "capability_id": "protocol.nvschema.json-frame",
+        "capability_sha256": "35f14a33961931693ceafbe8bc82eb9a3931600447cd7b92e3f7cd5dd045d79a",
+        "oracle_id": "oracle.protocol.nvschema.json-frame",
+        "oracle_sha256": "3284503c74f383118aa78eaf8904e1e61345efd75673b4ce577bfe18dae03f75"
+      }
+    },
+    "source_locks": {"type": "array", "minItems": 13, "maxItems": 13, "items": {"$ref": "#/$defs/lock"}},
+    "adjacent_negative_ids": {
+      "const": [
+        "legacy-frame-missing-sensor-id",
+        "legacy-object-short-primary-segment",
+        "legacy-frame-invalid-timestamp",
+        "spatial-loader-unsupported-output-format",
+        "spatial-row-official-timestamp-not-projected",
+        "unsupported-event-value-not-validated"
+      ]
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}}
+    }
+  }
+}
