@@ -140,6 +140,15 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/host-preflight/tests" \
   -p 'test*.py' -v
 
+# Four platform prerequisite oracles have a source-locked, sanitized host
+# evidence collector. The unified static milestone executes only its inert
+# plan and injected/mocked tests; live inspection requires a separate exact
+# acknowledgement and is not performed here.
+python3 "${thor_local_root}/qualification/host-prerequisite-evidence/collector.py" \
+  plan >/dev/null
+python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/host-prerequisite-evidence/tests"
+
 # The cgroupfs remediation defaults to an inert plan. Its mocked transaction
 # suite exercises execute/rollback/recover safety without inspecting or
 # changing this host, Docker, systemd, or any container lifecycle state.
@@ -147,6 +156,14 @@ python3 "${thor_local_root}/qualification/host-cgroupfs-remediation/remediate.py
   plan >/dev/null
 python3 -m pytest -q \
   "${thor_local_root}/qualification/host-cgroupfs-remediation/tests"
+
+# Five documented API exclusions resolve to seven independently addressable
+# REST surfaces. Six have exact static descriptors totaling 80 operations;
+# legacy calibration remains an authoritative-unknown server denominator with
+# only L>=14 client evidence. This check cannot claim complete-product totals.
+python3 "${thor_local_root}/qualification/extended-api-surface-contracts/validate.py"
+python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/extended-api-surface-contracts/tests"
 
 # Every manifest entry in a family with no capability rows remains an explicit
 # open gap. The compiler proposes 87 literal entry oracles without promoting
@@ -181,6 +198,17 @@ python3 "${thor_local_root}/qualification/advertised-entry-executors-wave3/execu
   >/dev/null
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-executors-wave3/tests" \
+  -p 'test*.py' -v
+
+# Wave four checks the five remaining LVS live-workflow literals across the
+# agent, LVS, RT-VLM, Kafka/Logstash, and CA-RAG source graph. Its AST and
+# bounded-config observations bring isolated candidate coverage to 57/87 and
+# leave 30 without a candidate; no live workflow or official status advances.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave4/executor.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/advertised-entry-executors-wave4/tests" \
   -p 'test*.py' -v
 
 # The four unresolved capability-to-service bindings have an authoritative

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "candidate_only", "inventory_sha256", "denominator", "runtime_evidence", "official_capability_effect", "results"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_only_cross_layer_executor_tranche_wave4"},
+    "candidate_only": {"const": true},
+    "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "denominator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advertised_gap_entries", "previously_selected_candidate_entries", "prior_open_entries", "selected_candidate_entries", "entries_left_open"],
+      "properties": {
+        "advertised_gap_entries": {"const": 87},
+        "previously_selected_candidate_entries": {"const": 52},
+        "prior_open_entries": {"const": 35},
+        "selected_candidate_entries": {"const": 5},
+        "entries_left_open": {"const": 30}
+      }
+    },
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "results": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["manifest_pointer", "entry_id", "proposed_capability_id", "advertised", "evidence_scope", "observation", "input_sha256", "semantic_output_sha256", "semantic_output", "runtime_evidence", "official_capability_effect"],
+        "properties": {
+          "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+          "entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+          "proposed_capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+          "advertised": {"type": "string", "minLength": 1},
+          "evidence_scope": {"type": "string", "pattern": "^subset:"},
+          "observation": {"const": "observed_match"},
+          "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "semantic_output_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "semantic_output": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["contract_scope", "call_graph_edges", "matched_assertions", "matched_source_files", "python_ast_parsed", "bounded_config_parsed", "runtime_executed", "workflow_proven", "service_readiness_proven", "model_availability_proven", "real_file_writes"],
+            "properties": {
+              "contract_scope": {"const": "exact-digest-locked-cross-layer-source-contract-only"},
+              "call_graph_edges": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+              "matched_assertions": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+              "matched_source_files": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+              "python_ast_parsed": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "\\.py$"}},
+              "bounded_config_parsed": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+              "runtime_executed": {"const": false},
+              "workflow_proven": {"const": false},
+              "service_readiness_proven": {"const": false},
+              "model_availability_proven": {"const": false},
+              "real_file_writes": {"const": 0}
+            }
+          },
+          "runtime_evidence": {"type": "array", "maxItems": 0},
+          "official_capability_effect": {"const": "none_candidate_only"}
+        }
+      }
+    }
+  }
+}

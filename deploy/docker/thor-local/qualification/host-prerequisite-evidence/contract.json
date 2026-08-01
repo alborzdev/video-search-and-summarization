@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "contract_id": "vss-3.2.1-thor-host-prerequisite-evidence",
+  "source": {
+    "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+    "pairs": [
+      {
+        "capability_id": "prereq.platform.validated-gpus",
+        "oracle_id": "oracle.prereq.platform.validated-gpus",
+        "oracle_profile": "host-prerequisite-validated-gpus",
+        "oracle_mode": "static",
+        "oracle_canonical_sha256": "3074a94a1c3500cd5b41ea6d1695f4734fc1409f3743b6ca2d988ffa36297c32",
+        "contract_canonical_sha256": "e87bcb69b45f9b90e0cf9b831f616e25d5ef1e965b40467fd37802dba6ebcc5e"
+      },
+      {
+        "capability_id": "prereq.platform.agx-thor-software",
+        "oracle_id": "oracle.prereq.platform.agx-thor-software",
+        "oracle_profile": "host-prerequisite-agx-thor-software",
+        "oracle_mode": "static",
+        "oracle_canonical_sha256": "ab389b60ec7abac779cb2a821950155d1611d42fabfcfdc23a8cf5a040ea6f72",
+        "contract_canonical_sha256": "dea85b404c1e254784207bd1c13b8b4479a1189e17651165aeb0fe40714801f1"
+      },
+      {
+        "capability_id": "prereq.platform.toolchain-versions",
+        "oracle_id": "oracle.prereq.platform.toolchain-versions",
+        "oracle_profile": "host-prerequisite-toolchain-versions",
+        "oracle_mode": "static",
+        "oracle_canonical_sha256": "17f0db55dc40bd72fe5e97d4b4839edc247514a6ff24bf127eda64a6c0f0ae64",
+        "contract_canonical_sha256": "0994e8fdb5e219120627bcb0bb86c05f8d22d6d4343465837df99748e108459f"
+      },
+      {
+        "capability_id": "prereq.platform.capacity-and-access",
+        "oracle_id": "oracle.prereq.platform.capacity-and-access",
+        "oracle_profile": "host-prerequisite-capacity-and-access",
+        "oracle_mode": "static",
+        "oracle_canonical_sha256": "50c785d609344b80a8b423eff5169e8e2092d86c4bd76e76741c610e60e1fa3a",
+        "contract_canonical_sha256": "4624f3a67de5a783aa48021a6764bdf9cd0e1dcd1338dce89c5b5dce75523437"
+      }
+    ]
+  },
+  "inspection_policy": {
+    "default_mode": "plan",
+    "acknowledgement": "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE",
+    "network_requests_allowed": false,
+    "credentials_allowed": false,
+    "container_lifecycle_allowed": false,
+    "docker_data_mutation_allowed": false,
+    "host_mutation_allowed": false,
+    "raw_probe_output_allowed": false
+  },
+  "interpretation": {
+    "capacity_units": "decimal-si",
+    "memory_total_bytes_per_gb": 1000000000,
+    "storage_total_bytes_per_tb": 1000000000000,
+    "network_contract": {
+      "minimum_mbps": 1000,
+      "physical_link_satisfaction": "at-least-one-nonvirtual-ethernet-interface-with-carrier-and-reported-speed-at-or-above-minimum",
+      "active_route_semantics": "diagnostic-only-and-never-a-substitute-for-or-negation-of-physical-link-capacity",
+      "identifiers_emitted": false
+    },
+    "storage_contract": "root-filesystem-total-capacity-on-a-nonrotational-block-device",
+    "operational_admission": {
+      "contract_satisfaction_independent": true,
+      "model_start_available_memory_bytes": 53687091200,
+      "stack_start_available_memory_bytes": 21474836480,
+      "official_edge_available_memory_fraction": "0.80",
+      "free_disk_warning_bytes": 161061273600
+    }
+  }
+}

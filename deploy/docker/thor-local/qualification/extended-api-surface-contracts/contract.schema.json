@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/extended-api-surface-contracts.schema.json",
+  "title": "Thor VSS extended API surface static contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "target_commit",
+    "contract_set_sha256",
+    "scope",
+    "surfaces",
+    "extraction_provenance"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "contract_set_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "scope": {"$ref": "#/$defs/scope"},
+    "surfaces": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {"$ref": "#/$defs/surface"}
+    },
+    "extraction_provenance": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "oneOf": [
+          {"$ref": "#/$defs/imageProvenance"},
+          {"$ref": "#/$defs/checkoutProvenance"}
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "advertised_claim_family_count",
+        "addressable_surface_count",
+        "recoverable_surface_count",
+        "authoritative_unknown_surface_count",
+        "recoverable_operation_count",
+        "legacy_minimum_operation_count",
+        "core_surface_count_observed",
+        "core_declared_rest_operations_observed",
+        "core_normalized_rest_operations_observed",
+        "complete_declared_rest_formula",
+        "complete_normalized_rest_formula",
+        "legacy_operation_count_symbol",
+        "minimum_declared_rest_operations",
+        "minimum_normalized_rest_operations",
+        "complete_product_api",
+        "warehouse_sample_required",
+        "shared_ledgers_modified"
+      ],
+      "properties": {
+        "advertised_claim_family_count": {"const": 5},
+        "addressable_surface_count": {"const": 7},
+        "recoverable_surface_count": {"const": 6},
+        "authoritative_unknown_surface_count": {"const": 1},
+        "recoverable_operation_count": {"const": 80},
+        "legacy_minimum_operation_count": {"const": 14},
+        "core_surface_count_observed": {"const": 17},
+        "core_declared_rest_operations_observed": {"const": 327},
+        "core_normalized_rest_operations_observed": {"const": 326},
+        "complete_declared_rest_formula": {"const": "407 + L"},
+        "complete_normalized_rest_formula": {"const": "406 + L"},
+        "legacy_operation_count_symbol": {"const": "L"},
+        "minimum_declared_rest_operations": {"const": 421},
+        "minimum_normalized_rest_operations": {"const": 420},
+        "complete_product_api": {"const": false},
+        "warehouse_sample_required": {"const": false},
+        "shared_ledgers_modified": {"const": false}
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "path", "evidence", "mutation"],
+      "properties": {
+        "method": {"enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]},
+        "path": {"type": "string", "pattern": "^/[^?#]*$"},
+        "evidence": {
+          "enum": [
+            "implementation",
+            "implementation_only",
+            "published_schema",
+            "published_schema_and_implementation",
+            "checked_in_catalog",
+            "client_lower_bound"
+          ]
+        },
+        "mutation": {"enum": ["read_only", "mutating", "unknown"]}
+      }
+    },
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "claim_id",
+        "title",
+        "component",
+        "contract_state",
+        "runtime_state",
+        "runtime_evidence",
+        "operation_count",
+        "minimum_operation_count",
+        "provenance_id",
+        "operations",
+        "limitations"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "claim_id": {"type": "string", "pattern": "^api\\."},
+        "title": {"type": "string", "minLength": 1},
+        "component": {"type": "string", "minLength": 1},
+        "contract_state": {"enum": ["exact_descriptor", "authoritative_unknown"]},
+        "runtime_state": {"const": "not_qualified"},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "operation_count": {"type": ["integer", "null"], "minimum": 1},
+        "minimum_operation_count": {"type": "integer", "minimum": 1},
+        "provenance_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "operations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/operation"}},
+        "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"contract_state": {"const": "exact_descriptor"}}},
+          "then": {"properties": {"operation_count": {"type": "integer", "minimum": 1}}}
+        },
+        {
+          "if": {"properties": {"contract_state": {"const": "authoritative_unknown"}}},
+          "then": {"properties": {"operation_count": {"const": null}}}
+        }
+      ]
+    },
+    "imageFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "content_sha256", "size_bytes", "role"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "role": {"type": "string", "minLength": 1}
+      }
+    },
+    "checkoutFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "content_sha256", "git_blob_oid", "role"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "git_blob_oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "role": {"type": "string", "minLength": 1}
+      }
+    },
+    "imageProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "mutable_tag",
+        "image_reference",
+        "image_digest",
+        "image_id",
+        "architecture",
+        "os",
+        "local_size_bytes",
+        "observed_at",
+        "required_at_validation",
+        "extraction_method",
+        "files"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "type": {"const": "pinned_local_image_snapshot"},
+        "mutable_tag": {"type": "string", "pattern": "^nvcr\\.io/.+:[^@]+$"},
+        "image_reference": {"type": "string", "pattern": "^nvcr\\.io/.+@sha256:[0-9a-f]{64}$"},
+        "image_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "architecture": {"const": "arm64"},
+        "os": {"const": "linux"},
+        "local_size_bytes": {"type": "integer", "minimum": 1},
+        "observed_at": {"type": "string", "format": "date"},
+        "required_at_validation": {"const": false},
+        "extraction_method": {"type": "string", "minLength": 1},
+        "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/imageFile"}}
+      }
+    },
+    "checkoutProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "extraction_method", "files"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "type": {"const": "checked_in_source_snapshot"},
+        "extraction_method": {"type": "string", "minLength": 1},
+        "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/checkoutFile"}}
+      }
+    }
+  }
+}

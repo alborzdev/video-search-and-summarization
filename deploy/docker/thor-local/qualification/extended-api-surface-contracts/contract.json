@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "target_commit": "98828261bdc7a6996b0b4c262d31d3356b535c99",
+  "contract_set_sha256": "02143fad02cc83ae4f619ed899cf23ed547744ac695aade66feab306b42662be",
+  "scope": {
+    "advertised_claim_family_count": 5,
+    "addressable_surface_count": 7,
+    "recoverable_surface_count": 6,
+    "authoritative_unknown_surface_count": 1,
+    "recoverable_operation_count": 80,
+    "legacy_minimum_operation_count": 14,
+    "core_surface_count_observed": 17,
+    "core_declared_rest_operations_observed": 327,
+    "core_normalized_rest_operations_observed": 326,
+    "complete_declared_rest_formula": "407 + L",
+    "complete_normalized_rest_formula": "406 + L",
+    "legacy_operation_count_symbol": "L",
+    "minimum_declared_rest_operations": 421,
+    "minimum_normalized_rest_operations": 420,
+    "complete_product_api": false,
+    "warehouse_sample_required": false,
+    "shared_ledgers_modified": false
+  },
+  "surfaces": [
+    {
+      "id": "vss-configurator-sensor",
+      "claim_id": "api.vss-configurator.sensor",
+      "title": "VSS Configurator sensor-management API",
+      "component": "vss-configurator",
+      "contract_state": "exact_descriptor",
+      "runtime_state": "not_qualified",
+      "runtime_evidence": [],
+      "operation_count": 7,
+      "minimum_operation_count": 7,
+      "provenance_id": "vss-configurator-image",
+      "operations": [
+        {"method": "POST", "path": "/calibration", "evidence": "implementation", "mutation": "mutating"},
+        {"method": "GET", "path": "/download", "evidence": "implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/cameras", "evidence": "implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/groups", "evidence": "implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/healthz", "evidence": "implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/readyz", "evidence": "implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/video-upload-status", "evidence": "implementation", "mutation": "read_only"}
+      ],
+      "limitations": [
+        "The pinned image contains Flask implementation source but no OpenAPI document.",
+        "Static recovery is not runtime qualification."
+      ]
+    },
+    {
+      "id": "sdrc-controller",
+      "claim_id": "api.sdrc.control-plane",
+      "title": "SDRC controller API",
+      "component": "sdr-mw-l-controller",
+      "contract_state": "exact_descriptor",
+      "runtime_state": "not_qualified",
+      "runtime_evidence": [],
+      "operation_count": 7,
+      "minimum_operation_count": 7,
+      "provenance_id": "sdrc-image",
+      "operations": [
+        {"method": "GET", "path": "/healthz", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/metrics", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "POST", "path": "/report", "evidence": "published_schema_and_implementation", "mutation": "mutating"},
+        {"method": "GET", "path": "/get_agent_data", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/yy", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/stream2", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/stream", "evidence": "published_schema_and_implementation", "mutation": "read_only"}
+      ],
+      "limitations": [
+        "The controller contract is present in the image but has no Thor runtime evidence.",
+        "Docker-mode applicability must be resolved before runtime qualification."
+      ]
+    },
+    {
+      "id": "sdrc-router",
+      "claim_id": "api.sdrc.control-plane",
+      "title": "SDRC multi-workload router API",
+      "component": "sdr-mw-l-router",
+      "contract_state": "exact_descriptor",
+      "runtime_state": "not_qualified",
+      "runtime_evidence": [],
+      "operation_count": 16,
+      "minimum_operation_count": 16,
+      "provenance_id": "sdrc-image",
+      "operations": [
+        {"method": "GET", "path": "/openapi.json", "evidence": "published_schema", "mutation": "read_only"},
+        {"method": "GET", "path": "/", "evidence": "published_schema", "mutation": "read_only"},
+        {"method": "POST", "path": "/v3/discovery:clusters", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "POST", "path": "/v3/discovery:routes", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "GET", "path": "/dashboard", "evidence": "published_schema", "mutation": "read_only"},
+        {"method": "GET", "path": "/dashboard/health", "evidence": "published_schema", "mutation": "read_only"},
+        {"method": "GET", "path": "/dashboard/clusterxds", "evidence": "published_schema", "mutation": "read_only"},
+        {"method": "GET", "path": "/dashboard/config_yml", "evidence": "published_schema", "mutation": "read_only"},
+        {"method": "POST", "path": "/dashboard/global_add", "evidence": "published_schema", "mutation": "mutating"},
+        {"method": "GET", "path": "/sdrc/{wl_obj_name}", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "POST", "path": "/sdrc/{wl_obj_name}", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "PUT", "path": "/sdrc/{wl_obj_name}", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "PATCH", "path": "/sdrc/{wl_obj_name}", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "DELETE", "path": "/sdrc/{wl_obj_name}", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "HEAD", "path": "/sdrc/{wl_obj_name}", "evidence": "published_schema", "mutation": "unknown"},
+        {"method": "OPTIONS", "path": "/sdrc/{wl_obj_name}", "evidence": "published_schema", "mutation": "unknown"}
+      ],
+      "limitations": [
+        "The exact router document is generated by image-local Python and has no Thor runtime evidence."
+      ]
+    },
+    {
+      "id": "sdrc-workload-coordinator",
+      "claim_id": "api.sdrc.control-plane",
+      "title": "SDRC workload-coordinator API",
+      "component": "sdr-mw-l-workload-worker",
+      "contract_state": "exact_descriptor",
+      "runtime_state": "not_qualified",
+      "runtime_evidence": [],
+      "operation_count": 23,
+      "minimum_operation_count": 23,
+      "provenance_id": "sdrc-image",
+      "operations": [
+        {"method": "GET", "path": "/openapi.json", "evidence": "implementation_only", "mutation": "read_only"},
+        {"method": "GET", "path": "/", "evidence": "implementation_only", "mutation": "read_only"},
+        {"method": "GET", "path": "/healthz", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/reset", "evidence": "published_schema_and_implementation", "mutation": "mutating"},
+        {"method": "GET", "path": "/get_config", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/replicas", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/getwl", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/getpoddns", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "POST", "path": "/v3/discovery:routes", "evidence": "published_schema_and_implementation", "mutation": "unknown"},
+        {"method": "POST", "path": "/v3/discovery:clusters", "evidence": "published_schema_and_implementation", "mutation": "unknown"},
+        {"method": "GET", "path": "/stream", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/current_distributed_streams_cache", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/current_distributed_streams_name_id_url", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/current_streamid_address_mapping", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/redis_cache_data", "evidence": "implementation_only", "mutation": "read_only"},
+        {"method": "POST", "path": "/cache_metadata_update", "evidence": "published_schema_and_implementation", "mutation": "mutating"},
+        {"method": "GET", "path": "/metrics", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "POST", "path": "/apply_metadata_payload", "evidence": "published_schema_and_implementation", "mutation": "mutating"},
+        {"method": "POST", "path": "/remove_stream", "evidence": "implementation_only", "mutation": "mutating"},
+        {"method": "GET", "path": "/get_wl_replica_data", "evidence": "published_schema_and_implementation", "mutation": "read_only"},
+        {"method": "GET", "path": "/pod_list", "evidence": "implementation_only", "mutation": "read_only"},
+        {"method": "GET", "path": "/down_pods", "evidence": "implementation_only", "mutation": "read_only"},
+        {"method": "GET", "path": "/getpodInfo", "evidence": "published_schema_and_implementation", "mutation": "read_only"}
+      ],
+      "limitations": [
+        "The published 17-operation Swagger omits six implemented operations.",
+        "GET /reset mutates state and must never be treated as a safe GET probe.",
+        "No Thor runtime evidence exists."
+      ]
+    },
+    {
+      "id": "deepstream-configurator",
+      "claim_id": "api.deepstream-configurator.post-config",
+      "title": "DeepStream Configurator API",
+      "component": "vss-rt-config-adaptor",
+      "contract_state": "exact_descriptor",
+      "runtime_state": "not_qualified",
+      "runtime_evidence": [],
+      "operation_count": 1,
+      "minimum_operation_count": 1,
+      "provenance_id": "deepstream-configurator-image",
+      "operations": [
+        {"method": "POST", "path": "/config", "evidence": "implementation", "mutation": "mutating"}
+      ],
+      "limitations": [
+        "The one-shot service writes CSV/YAML state and intentionally exits after a successful response.",
+        "The pinned image contains implementation source but no OpenAPI document."
+      ]
+    },
+    {
+      "id": "auto-calibration",
+      "claim_id": "api.auto-calibration.operations",
+      "title": "AutoMagicCalib REST API",
+      "component": "vss-auto-calibration",
+      "contract_state": "exact_descriptor",
+      "runtime_state": "not_qualified",
+      "runtime_evidence": [],
+      "operation_count": 26,
+      "minimum_operation_count": 26,
+      "provenance_id": "auto-calibration-checkout",
+      "operations": [
+        {"method": "GET", "path": "/v1/ready", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "POST", "path": "/v1/create_project", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/upload_video_files/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/config/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/upload_alignment/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/upload_layout/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/upload_gt_file/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/upload_focal_length/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/verify_project/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/calibrate/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/stop_calibration/{id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "GET", "path": "/v1/get_project_info/{project_id}", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "GET", "path": "/v1/result/{project_id}/evaluation_statistics", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "GET", "path": "/v1/result/{project_id}/overlay_image", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "GET", "path": "/v1/amc/calibrate/{project_id}/log", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "GET", "path": "/v1/calibrate/{project_id}/log/{type}/stream", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "POST", "path": "/v1/vggt/calibrate/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "GET", "path": "/v1/vggt_results/{project_id}/evaluation_statistics", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "GET", "path": "/v1/result/{project_id}/mv3dt_result", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "POST", "path": "/v1/rtsp/capture/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "GET", "path": "/v1/rtsp/capture/{project_id}/{session_id}", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "POST", "path": "/v1/rtsp/capture/{project_id}/{session_id}/ingest", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "POST", "path": "/v1/rtsp/capture/{project_id}/{session_id}/stop", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "GET", "path": "/v1/rtsp/sessions/{project_id}", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "DELETE", "path": "/v1/rtsp/session/{project_id}/{session_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
+        {"method": "DELETE", "path": "/v1/delete_project/{id}", "evidence": "checked_in_catalog", "mutation": "mutating"}
+      ],
+      "limitations": [
+        "The backend image and live OpenAPI were absent at audit time.",
+        "The exact checked-in catalog is static contract evidence, not runtime calibration evidence.",
+        "VGGT is optional for base AMC but required for VGGT refinement qualification."
+      ]
+    },
+    {
+      "id": "legacy-calibration",
+      "claim_id": "api.legacy-calibration.ui-server",
+      "title": "Legacy calibration UI/server API",
+      "component": "calibration-toolkit",
+      "contract_state": "authoritative_unknown",
+      "runtime_state": "not_qualified",
+      "runtime_evidence": [],
+      "operation_count": null,
+      "minimum_operation_count": 14,
+      "provenance_id": "legacy-calibration-checkout",
+      "operations": [
+        {"method": "GET", "path": "/api/projects/", "evidence": "client_lower_bound", "mutation": "read_only"},
+        {"method": "POST", "path": "/api/projects/", "evidence": "client_lower_bound", "mutation": "mutating"},
+        {"method": "GET", "path": "/api/projects/{project_id}/", "evidence": "client_lower_bound", "mutation": "read_only"},
+        {"method": "PATCH", "path": "/api/projects/{project_id}/", "evidence": "client_lower_bound", "mutation": "mutating"},
+        {"method": "DELETE", "path": "/api/projects/{project_id}/", "evidence": "client_lower_bound", "mutation": "mutating"},
+        {"method": "GET", "path": "/api/sensors/{sensor_id}/", "evidence": "client_lower_bound", "mutation": "read_only"},
+        {"method": "PATCH", "path": "/api/sensors/{sensor_id}/", "evidence": "client_lower_bound", "mutation": "mutating"},
+        {"method": "GET", "path": "/api/approxHomography/{sensor_id}/", "evidence": "client_lower_bound", "mutation": "unknown"},
+        {"method": "GET", "path": "/api/homography/{sensor_id}/", "evidence": "client_lower_bound", "mutation": "unknown"},
+        {"method": "GET", "path": "/api/invertImage/{sensor_id}/", "evidence": "client_lower_bound", "mutation": "unknown"},
+        {"method": "GET", "path": "/api/importSensors/{project_id}/", "evidence": "client_lower_bound", "mutation": "mutating"},
+        {"method": "GET", "path": "/api/getWarpedFiles/{project_id}/", "evidence": "client_lower_bound", "mutation": "read_only"},
+        {"method": "GET", "path": "/api/getImageFiles/{project_id}/", "evidence": "client_lower_bound", "mutation": "read_only"},
+        {"method": "GET", "path": "/api/uploadWebApi/{project_id}/", "evidence": "client_lower_bound", "mutation": "mutating"}
+      ],
+      "limitations": [
+        "The official calibration:3.2.1 server image was absent at audit time.",
+        "No authoritative server OpenAPI, URL table, or implementation source exists in the checkout.",
+        "The 14 client-observed operations are a lower bound only; L must not be set to 14 without server evidence."
+      ]
+    }
+  ],
+  "extraction_provenance": [
+    {
+      "id": "vss-configurator-image",
+      "type": "pinned_local_image_snapshot",
+      "mutable_tag": "nvcr.io/nvidia/vss-core/vss-configurator:3.2.1",
+      "image_reference": "nvcr.io/nvidia/vss-core/vss-configurator@sha256:35e3e31e7d9e62b298d6dbcb91244d54b0686845227f26e46f886493e9fe4504",
+      "image_digest": "sha256:35e3e31e7d9e62b298d6dbcb91244d54b0686845227f26e46f886493e9fe4504",
+      "image_id": "sha256:35e3e31e7d9e62b298d6dbcb91244d54b0686845227f26e46f886493e9fe4504",
+      "architecture": "arm64",
+      "os": "linux",
+      "local_size_bytes": 149205524,
+      "observed_at": "2026-08-01",
+      "required_at_validation": false,
+      "extraction_method": "docker image save streamed as an OCI archive; layer tar members were inspected in memory; Flask decorators were extracted with Python AST; no implementation source was copied",
+      "files": [
+        {"path": "usr/src/app/mtmc_configurator.py", "content_sha256": "9ad445b445c0eb3631f4b52ad020410e1071889010c6c1a5de6f3c870f2b9d6b", "size_bytes": 71728, "role": "Flask route implementation"}
+      ]
+    },
+    {
+      "id": "sdrc-image",
+      "type": "pinned_local_image_snapshot",
+      "mutable_tag": "nvcr.io/nvidia/vss-core/sdr-mw-l:3.2.0",
+      "image_reference": "nvcr.io/nvidia/vss-core/sdr-mw-l@sha256:7f98d296295a60ccd59c23b4c23ff0c72bfa01a669279c43896ed8d196f14069",
+      "image_digest": "sha256:7f98d296295a60ccd59c23b4c23ff0c72bfa01a669279c43896ed8d196f14069",
+      "image_id": "sha256:7f98d296295a60ccd59c23b4c23ff0c72bfa01a669279c43896ed8d196f14069",
+      "architecture": "arm64",
+      "os": "linux",
+      "local_size_bytes": 1214578191,
+      "observed_at": "2026-08-01",
+      "required_at_validation": false,
+      "extraction_method": "docker image save streamed as an OCI archive; layer tar members were inspected in memory; JSON/OpenAPI paths and Flask decorators were normalized; no implementation source was copied",
+      "files": [
+        {"path": "wdm/lib/controller/__init__.py", "content_sha256": "15e854e135304526a502aeccf0764b0ebad82dc0bcc1ef74e39b41ba973a6ab0", "size_bytes": 18223, "role": "controller Flask implementation"},
+        {"path": "wdm/static/controller-swagger.json", "content_sha256": "44ee8a5e67cacbb242c780bc3d7c1f8fc762bb0675b28cdc3571a020eabeb778", "size_bytes": 3499, "role": "controller OpenAPI 3.0.3"},
+        {"path": "wdm/lib/wdm_router_openapi.py", "content_sha256": "6d38387c8c3ae239bfe911c24aa403d1308fc862777d600b18920bee4eedd5cf", "size_bytes": 16477, "role": "router OpenAPI 3.0.3 generator"},
+        {"path": "wdm/app.py", "content_sha256": "c02f9e485dd2876e404263cac10f404d690a4b8648c612d88bad25b6fbcd8dd7", "size_bytes": 132863, "role": "workload-coordinator Flask implementation"},
+        {"path": "wdm/static/agent-swagger.json", "content_sha256": "5ff1b701a08fb7599ba8b6a82a784568e6cb2812f8a3ada8d6c91d5baff5a526", "size_bytes": 4500, "role": "workload-coordinator Swagger 2.0"},
+        {"path": "wdm/static/swagger.json", "content_sha256": "32bc5fc1c0a8971b3e179e4306ba2f5e5b967c0221da8525a33f12aa18cc4db8", "size_bytes": 4484, "role": "alternate workload-coordinator Swagger 2.0"}
+      ]
+    },
+    {
+      "id": "deepstream-configurator-image",
+      "type": "pinned_local_image_snapshot",
+      "mutable_tag": "nvcr.io/nvidia/vss-core/vss-rt-config-adaptor:3.2.0",
+      "image_reference": "nvcr.io/nvidia/vss-core/vss-rt-config-adaptor@sha256:f7967b26377313fe0131c251ae203f70b9743b3edf61fa5b68d21f822dbbb340",
+      "image_digest": "sha256:f7967b26377313fe0131c251ae203f70b9743b3edf61fa5b68d21f822dbbb340",
+      "image_id": "sha256:f7967b26377313fe0131c251ae203f70b9743b3edf61fa5b68d21f822dbbb340",
+      "architecture": "arm64",
+      "os": "linux",
+      "local_size_bytes": 33689003,
+      "observed_at": "2026-08-01",
+      "required_at_validation": false,
+      "extraction_method": "docker image save streamed as an OCI archive; layer tar members were inspected in memory; Flask decorators were extracted with Python AST; no implementation source was copied",
+      "files": [
+        {"path": "usr/src/app/app.py", "content_sha256": "85d15b4c7135fe338ca8f23249045c126cd2b77fcad60b86a9fb2578a4faabfe", "size_bytes": 5944, "role": "Flask route implementation"}
+      ]
+    },
+    {
+      "id": "auto-calibration-checkout",
+      "type": "checked_in_source_snapshot",
+      "extraction_method": "The REQUIRED_OPENAPI dictionary was parsed statically from the checked-in Thor qualifier; no backend process or image was required",
+      "files": [
+        {"path": "deploy/docker/thor-local/auto-calibration/tool.py", "content_sha256": "94664fc3a18b37f45f436ad6e0f74bed49d78d31b26dd809a489fef2f912b6c8", "git_blob_oid": "b7ed18a1cf091b52e943eba40a4b026bbb7e7bf6", "role": "exact 26-operation REQUIRED_OPENAPI catalog"}
+      ]
+    },
+    {
+      "id": "legacy-calibration-checkout",
+      "type": "checked_in_source_snapshot",
+      "extraction_method": "Only literal HTTP calls in the checked-in calibration UI were normalized; they prove a lower bound and are not treated as a server route table",
+      "files": [
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/ProjectCreateForm.tsx", "content_sha256": "6b790886a839c7e85df31a396b0658008075af05498e8758a2de55906a04b925", "git_blob_oid": "2726c44ab69ec69df6500b1300673b2fe022e777", "role": "project create client call"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/ProjectSelection.tsx", "content_sha256": "1b4557334d27a90ca5cf40ac53024ecd012bcad42c167fa96effcb6d39a662cd", "git_blob_oid": "a62bdfde9718215b33f0111f9227a5e8290c3924", "role": "project list/delete client calls"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/ProjectDetails.tsx", "content_sha256": "c39f03836dc110591a3730afc6c08c9615ee47d6892fa7912a7e0d2707fca269", "git_blob_oid": "52ae453fda658420b0ad5d6ab217a13ad8d41be4", "role": "project detail/update client calls"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/SensorEditDialog.tsx", "content_sha256": "d41af9abc1efaf25643e8251ea4bea27f2707a53108b5d3f5e82604d7f69e2b7", "git_blob_oid": "07bb55cb1a087338da53a191a0c95013427d1814", "role": "sensor detail/update client calls"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/utils/calibrationMath.ts", "content_sha256": "6a391f034ff8370b8918773a7f6b61c22a08ec8c7c44a26e9ed2e4a11490e741", "git_blob_oid": "4fff2e8e9c79d13417704655cf25f616dcdde789", "role": "homography client calls"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/Calibration.tsx", "content_sha256": "05b52e22f878d801917a5de37e1cd4b41d77f705f51900364355181ee570a02a", "git_blob_oid": "e38c7fc5be45e10dfdfaca874dd3bbba48fac2d9", "role": "image inversion client call"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/MmsURLConfiguration.tsx", "content_sha256": "94f10fe5314500c1beb422df5ad663d099fe3c61b8eb00a5a9e935f0951597e0", "git_blob_oid": "84aafdd17e940cbf882234daf2222eee9c39fd4e", "role": "sensor import client call"},
+        {"path": "services/vios/ui/vios-ui/src/pages/vst/calibration-steps/hooks/useExportFunctions.ts", "content_sha256": "472325f95a949d87bd6b4ec35ad0c3dcc6220fb57ca9449a2dc8eee3e3fe14f9", "git_blob_oid": "33a87190ec88a7b98993ddca974ca8c11ae7be24", "role": "image/export/upload client calls"}
+      ]
+    }
+  ]
+}

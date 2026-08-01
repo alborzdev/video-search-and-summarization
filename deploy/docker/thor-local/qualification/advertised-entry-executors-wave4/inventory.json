@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_cross_layer_executor_tranche_wave4",
+  "source_plan": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+    "plan_payload_sha256": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d"
+  },
+  "source_manifest": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+  },
+  "previous_candidate_inventories": [
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json",
+      "raw_sha256": "91406a15ff1340b9b4dba988507470234971fa4905997bc52e64fb983fc12a18"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave2/inventory.json",
+      "raw_sha256": "2c14f8ae5ade22ccbc556a844b4fcb63661048826660073fb21c5f882047c5d2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave3/inventory.json",
+      "raw_sha256": "0b7056eafce7686fc2b7315fef8ae491ddef03d2e52f41e7c7861247933f90ab"
+    }
+  ],
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "live_acceptance_mutation_allowed": false,
+    "live_oracle_mutation_allowed": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "file_writes_allowed": false
+  },
+  "denominator": {
+    "advertised_gap_entries": 87,
+    "previously_selected_candidate_entries": 52,
+    "prior_open_entries": 35,
+    "selected_candidate_entries": 5,
+    "entries_left_open": 30
+  },
+  "cases": [
+    {
+      "manifest_pointer": "/features/2/advertised/0",
+      "entry_id": "manifest-gap.video-summarization-live.00-live-captions",
+      "proposed_capability_id": "manifest-entry.video-summarization-live.00-live-captions",
+      "advertised": "live captions",
+      "advertised_utf8_sha256": "fce3a886cc639c20ded2982720832e7e6344dc7df25254eeb5537e20b139e495",
+      "advertised_canonical_sha256": "dab5acb84df0716dbea72db218e135cb31240dcecc1687b370edd7681b64a0cc",
+      "adapter_id": "live_captions_cross_layer",
+      "evidence_scope": "subset: explicit agent configuration through LVS and sticky-routed RTVI caption kickoff",
+      "source_locks": [
+        {
+          "path": "services/agent/src/vss_agents/tools/lvs_config_media.py",
+          "sha256": "a3854f056dd88f43a62fb3d6d19d2613776a74a875558b112e67ee0c4ced97ea"
+        },
+        {
+          "path": "services/video-summarization/src/via_server.py",
+          "sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+        },
+        {
+          "path": "services/video-summarization/src/via_stream_handler.py",
+          "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+        },
+        {
+          "path": "services/video-summarization/src/rtvi_vlm_client.py",
+          "sha256": "46cdf3abc75146497dd94b5fe0a41895ff900fc08f9ff278dc56de9858944383"
+        },
+        {
+          "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+          "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/2/advertised/1",
+      "entry_id": "manifest-gap.video-summarization-live.01-live-stream-summaries",
+      "proposed_capability_id": "manifest-entry.video-summarization-live.01-live-stream-summaries",
+      "advertised": "live stream summaries",
+      "advertised_utf8_sha256": "25cdee9d7b0eeda233b8ce66861d8602fd4c45505c907235801a393f280210c1",
+      "advertised_canonical_sha256": "320ae755a79aec09cd5184a7b86e035597f8b20a83958cc763f96099d2b58100",
+      "adapter_id": "live_stream_summary_cross_layer",
+      "evidence_scope": "subset: timeline-bounded agent request through database-backed LVS aggregation and response shaping",
+      "source_locks": [
+        {
+          "path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py",
+          "sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"
+        },
+        {
+          "path": "services/video-summarization/src/via_server.py",
+          "sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+        },
+        {
+          "path": "services/video-summarization/src/via_stream_handler.py",
+          "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+        },
+        {
+          "path": "deploy/docker/services/video-summarization/configs/config.yaml",
+          "sha256": "c0f2ac7749f6d905ee23997d74b2ae79c0e67de79e5165b18dc6babfaa710cc7"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/2/advertised/2",
+      "entry_id": "manifest-gap.video-summarization-live.02-stream-reports",
+      "proposed_capability_id": "manifest-entry.video-summarization-live.02-stream-reports",
+      "advertised": "stream reports",
+      "advertised_utf8_sha256": "35118aa31294451669ef8b2b4c7f419e606715d57de65c4a8471c5883fbb53a8",
+      "advertised_canonical_sha256": "8b43190f0c510dcd151adfb8b29e25e883b4a416a090ce67ba0f2b122813cf58",
+      "adapter_id": "stream_report_cross_layer",
+      "evidence_scope": "subset: RTSP report request through LVS stream understanding and markdown/PDF artifact orchestration",
+      "source_locks": [
+        {
+          "path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py",
+          "sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"
+        },
+        {
+          "path": "services/agent/src/vss_agents/tools/video_report_gen.py",
+          "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"
+        },
+        {
+          "path": "services/video-summarization/src/via_server.py",
+          "sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+        },
+        {
+          "path": "services/video-summarization/src/via_stream_handler.py",
+          "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+        },
+        {
+          "path": "deploy/docker/services/video-summarization/configs/config.yaml",
+          "sha256": "c0f2ac7749f6d905ee23997d74b2ae79c0e67de79e5165b18dc6babfaa710cc7"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/2/advertised/3",
+      "entry_id": "manifest-gap.video-summarization-live.03-caption-backed-q-a",
+      "proposed_capability_id": "manifest-entry.video-summarization-live.03-caption-backed-q-a",
+      "advertised": "caption-backed Q&A",
+      "advertised_utf8_sha256": "8c6228731b7af55abfa62fe26a345b03460a472ae79fb483880adb50b5e488b0",
+      "advertised_canonical_sha256": "19dd5b1744d4afeebbd2ccd37ec49ca34394e89d7bc38fe9ff41ba6fd391fe8f",
+      "adapter_id": "caption_qa_cross_layer",
+      "evidence_scope": "subset: CA-RAG-gated chat route through UUID-bound retriever configuration and answer shaping",
+      "source_locks": [
+        {
+          "path": "services/video-summarization/src/via_server.py",
+          "sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+        },
+        {
+          "path": "services/video-summarization/src/via_stream_handler.py",
+          "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+        },
+        {
+          "path": "services/video-summarization/src/vss_api_models.py",
+          "sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"
+        },
+        {
+          "path": "services/video-summarization/src/rag_adapter.py",
+          "sha256": "d67b708c0e115a918c34d363e52b252d22911d920226578b9b65e4b04a6f0f93"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/2/advertised/4",
+      "entry_id": "manifest-gap.video-summarization-live.04-elasticsearch-caption-storage",
+      "proposed_capability_id": "manifest-entry.video-summarization-live.04-elasticsearch-caption-storage",
+      "advertised": "Elasticsearch caption storage",
+      "advertised_utf8_sha256": "f41070d34a8feaecc00116794691a77695ca087c0b0acb8516b8dd87028033f2",
+      "advertised_canonical_sha256": "f8cda573dfd3cfcda196f3a46051d5347962929f1a8fe7d63bea73ebaec1af69",
+      "adapter_id": "elasticsearch_caption_storage_cross_layer",
+      "evidence_scope": "subset: stream-correlated RTVI caption protobuf through deterministic Logstash index mapping and LVS database read",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+          "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+        },
+        {
+          "path": "services/video-summarization/docker/logstash/pipeline/visionllm.conf",
+          "sha256": "b5d0cbcc34bc0beb73ddd0c2f2b30400cc1db7d69caaaa3279e809f26c5d5385"
+        },
+        {
+          "path": "deploy/docker/services/video-summarization/configs/config.yaml",
+          "sha256": "c0f2ac7749f6d905ee23997d74b2ae79c0e67de79e5165b18dc6babfaa710cc7"
+        },
+        {
+          "path": "services/video-summarization/src/via_stream_handler.py",
+          "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+        }
+      ]
+    }
+  ]
+}

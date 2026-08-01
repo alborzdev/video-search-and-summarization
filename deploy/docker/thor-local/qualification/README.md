@@ -1,10 +1,12 @@
 # Thor-local API qualification
 
-This directory owns the machine-readable, static API acceptance contract for
-the complete Thor-local VSS profile. The default qualification is deliberately
-safe to run on an offline operator host: it reads only checked-in files, does
-not inspect secrets, does not open sockets, and never starts, stops, or mutates
-containers or VSS resources.
+This directory owns the machine-readable, static acceptance contracts for the
+Thor-local VSS profile. The core API inventory is intentionally incomplete
+until every official auxiliary surface has an authoritative server contract;
+supplemental packages below preserve those boundaries explicitly. The default
+qualification is deliberately safe to run on an offline operator host: it
+reads only checked-in files, does not inspect secrets, does not open sockets,
+and never starts, stops, or mutates containers or VSS resources.
 
 The broader parity program also keeps planning and admission boundaries
 in this directory:
@@ -15,6 +17,11 @@ in this directory:
 - `lvs-mcp-static-adapter-integration/` is the third static successor. It
   preserves the pinned upstream 13-versus-9 discrepancy while recording the
   four Thor-local file-management adapters, with zero runtime evidence;
+- `extended-api-surface-contracts/` splits the five excluded official API
+  groups into seven addressable REST surfaces. It locks six exact descriptors
+  totaling 80 operations and keeps legacy calibration authoritative-unknown
+  with only a 14-operation client lower bound, so complete-product API totals
+  remain deliberately unresolved;
 - `advertised-entry-executors/` gives 8 of the 87 literal advertised-entry
   gaps bounded, source-locked candidate observations while leaving live state
   and the other 79 entries untouched;
@@ -25,6 +32,11 @@ in this directory:
   candidates, bringing isolated advertised-entry coverage to 52 of 87 while
   leaving 35 without a candidate executor; all 87 remain unpromoted in live
   official status;
+- `advertised-entry-executors-wave4/` adds five cross-layer AST/configuration
+  candidates for the remaining LVS live-caption, stream-summary, report, Q&A,
+  and Elasticsearch-storage literals, bringing isolated candidate coverage to
+  57 of 87 while leaving 30 without a candidate executor. It performs no live
+  request, storage operation, or official-state promotion;
 - `planning-requirement-executors-wave3/` checks six of the 84 still-open
   planning requirements without promoting them, preserving five source
   matches and the search-upload HTTP 400/415 mismatch;
@@ -45,6 +57,10 @@ in this directory:
   that lack capability rows its own still-open semantic oracle plan;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
+- `host-prerequisite-evidence/` binds exactly four platform prerequisite
+  oracles to an inert-by-default, acknowledgement-gated, sanitized read-only
+  collector. Its static wrapper runs only the plan and mocked tests; it neither
+  emits a live evidence record nor qualifies an application feature;
 - `host-cgroupfs-remediation/` provides an inert-by-default, exact-acknowledgement
   transaction for preserving Docker daemon settings, switching only the native
   cgroup driver, and restoring exactly the previously running container set.
@@ -72,14 +88,22 @@ The optional NVIDIA Warehouse sample bundle is excluded throughout. Small
 operator-owned custom media and calibration remain valid inputs for the
 Warehouse capability lanes.
 
+The core API inventory remains at 17 surfaces, 327 declared REST operations,
+326 normalized REST operations, 42 MCP tools, and five MCP prompts. The
+separate extended contract proves 80 more operations across six surfaces and
+keeps the seventh, legacy calibration, at `L >= 14` rather than inventing an
+exact server count. Complete REST totals therefore remain `407 + L` declared
+and `406 + L` normalized; the defensible lower bounds are 421 and 420, not
+complete totals.
+
 The first two deterministic static successors currently materialize 26 of 110
 planning requirements. All 276 full capability oracles remain
 `planning_index_only`; the 26 bindings are static subsets only, with zero
 runtime evidence and zero `passed_current` promotions. The third successor
 updates only the LVS adapter's static API contract and does not materialize an
-additional planning requirement. The separate 8 + 21 +
-23 advertised-entry candidates and 6 + 6 additional planning checks are
-non-advancing and do not change those live counts. They leave 35
+additional planning requirement. The separate 8 + 21 + 23 + 5
+advertised-entry candidates and 6 + 6 additional planning checks are
+non-advancing and do not change those live counts. They leave 30
 advertised entries without a candidate source executor and 72 planning
 requirements not yet selected by a planning executor package, respectively.
 The prerelease packages are separate from these stable 3.2.1 denominators. The
@@ -104,10 +128,12 @@ python3 deploy/docker/thor-local/qualification/qualify.py \
   --tier contract --json
 ```
 
-`api_inventory.json` records every REST and MCP surface, direct and public
-route exposure, source provenance, release conditions, expected counts, and
-reviewed contract differences. `expected/*.json` is the reviewed acceptance
-baseline. The qualifier independently re-derives manifests from:
+`api_inventory.json` records the 17 enumerated core REST/MCP surfaces, direct
+and public route exposure, source provenance, release conditions, expected
+counts, and reviewed contract differences. The seven auxiliary surfaces are
+accounted for separately in `extended-api-surface-contracts/` until the legacy
+server denominator is authoritative. `expected/*.json` is the reviewed core
+acceptance baseline. The qualifier independently re-derives manifests from:
 
 - OpenAPI JSON for Alerts and Video Analytics;
 - all seven VIOS Swagger documents;

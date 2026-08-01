@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/host-prerequisite-evidence/result.schema.json",
+  "title": "Thor host-prerequisite evidence result",
+  "oneOf": [
+    {"$ref": "#/$defs/plan"},
+    {"$ref": "#/$defs/evidence"}
+  ],
+  "$defs": {
+    "plainId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nullableString": {"type": ["string", "null"]},
+    "nullableInteger": {"type": ["integer", "null"], "minimum": 0},
+    "nullableBoolean": {"type": ["boolean", "null"]},
+    "pair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "oracle_id"],
+      "properties": {
+        "capability_id": {"$ref": "#/$defs/plainId"},
+        "oracle_id": {"$ref": "#/$defs/plainId"}
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_only", "network_requests", "credential_access",
+        "container_lifecycle", "docker_data_mutation", "host_mutation",
+        "raw_probe_output_emitted", "sensitive_identifiers_emitted",
+        "external_commands_executed", "host_files_read"
+      ],
+      "properties": {
+        "read_only": {"const": true},
+        "network_requests": {"const": false},
+        "credential_access": {"const": false},
+        "container_lifecycle": {"const": false},
+        "docker_data_mutation": {"const": false},
+        "host_mutation": {"const": false},
+        "raw_probe_output_emitted": {"const": false},
+        "sensitive_identifiers_emitted": {"const": false},
+        "external_commands_executed": {"type": "integer", "minimum": 0, "maximum": 11},
+        "host_files_read": {"type": "integer", "minimum": 0, "maximum": 3}
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "package", "mode", "result", "capability_pairs",
+        "safety", "planned_probe_ids", "planned_host_source_ids", "evidence_emitted"
+      ],
+      "properties": {
+        "schema_version": {"const": 1},
+        "package": {"const": "host-prerequisite-evidence"},
+        "mode": {"const": "plan"},
+        "result": {"const": "inert_plan"},
+        "capability_pairs": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "uniqueItems": true, "items": {"$ref": "#/$defs/pair"}
+        },
+        "safety": {"$ref": "#/$defs/safety"},
+        "planned_probe_ids": {
+          "type": "array", "minItems": 11, "maxItems": 11, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/plainId"}
+        },
+        "planned_host_source_ids": {
+          "type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/plainId"}
+        },
+        "evidence_emitted": {"const": false}
+      }
+    },
+    "networkSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_mbps", "physical_link_satisfaction", "active_route_semantics", "identifiers_emitted"],
+      "properties": {
+        "minimum_mbps": {"const": 1000},
+        "physical_link_satisfaction": {"const": "at-least-one-nonvirtual-ethernet-interface-with-carrier-and-reported-speed-at-or-above-minimum"},
+        "active_route_semantics": {"const": "diagnostic-only-and-never-a-substitute-for-or-negation-of-physical-link-capacity"},
+        "identifiers_emitted": {"const": false}
+      }
+    },
+    "operationalSemantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_satisfaction_independent", "model_start_available_memory_bytes",
+        "stack_start_available_memory_bytes", "official_edge_available_memory_fraction",
+        "free_disk_warning_bytes"
+      ],
+      "properties": {
+        "contract_satisfaction_independent": {"const": true},
+        "model_start_available_memory_bytes": {"const": 53687091200},
+        "stack_start_available_memory_bytes": {"const": 21474836480},
+        "official_edge_available_memory_fraction": {"const": "0.80"},
+        "free_disk_warning_bytes": {"const": 161061273600}
+      }
+    },
+    "semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capacity_units", "memory_total_bytes_per_gb", "storage_total_bytes_per_tb",
+        "network_contract", "storage_contract", "operational_admission"
+      ],
+      "properties": {
+        "capacity_units": {"const": "decimal-si"},
+        "memory_total_bytes_per_gb": {"const": 1000000000},
+        "storage_total_bytes_per_tb": {"const": 1000000000000},
+        "network_contract": {"$ref": "#/$defs/networkSemantics"},
+        "storage_contract": {"const": "root-filesystem-total-capacity-on-a-nonrotational-block-device"},
+        "operational_admission": {"$ref": "#/$defs/operationalSemantics"}
+      }
+    },
+    "networkObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "physical_interface_count", "carrier_up_physical_interface_count",
+        "qualifying_physical_link_count", "maximum_qualifying_speed_mbps",
+        "active_route_interface_class", "active_route_reported_speed_mbps",
+        "active_route_meets_minimum", "interface_identifiers_emitted"
+      ],
+      "properties": {
+        "physical_interface_count": {"type": "integer", "minimum": 0},
+        "carrier_up_physical_interface_count": {"type": "integer", "minimum": 0},
+        "qualifying_physical_link_count": {"type": "integer", "minimum": 0},
+        "maximum_qualifying_speed_mbps": {"$ref": "#/$defs/nullableInteger"},
+        "active_route_interface_class": {"enum": ["physical", "virtual_or_unresolved"]},
+        "active_route_reported_speed_mbps": {"$ref": "#/$defs/nullableInteger"},
+        "active_route_meets_minimum": {"$ref": "#/$defs/nullableBoolean"},
+        "interface_identifiers_emitted": {"const": false}
+      }
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "toolchain", "capacity", "operational_admission"],
+      "properties": {
+        "platform": {
+          "type": "object", "additionalProperties": false,
+          "required": ["architecture", "platform_class", "bsp_release", "gpu_count", "gpu_product_names", "gpu_driver_versions"],
+          "properties": {
+            "architecture": {"$ref": "#/$defs/nullableString"},
+            "platform_class": {"type": ["string", "null"], "enum": ["AGX Thor", "IGX Thor", "other", null]},
+            "bsp_release": {"$ref": "#/$defs/nullableString"},
+            "gpu_count": {"$ref": "#/$defs/nullableInteger"},
+            "gpu_product_names": {"type": "array", "items": {"type": "string", "maxLength": 80}},
+            "gpu_driver_versions": {"type": "array", "items": {"type": "string", "maxLength": 32}, "uniqueItems": true}
+          }
+        },
+        "toolchain": {
+          "type": "object", "additionalProperties": false,
+          "required": ["docker_client", "docker_server", "docker_compose", "nvidia_container_toolkit", "ngc_cli"],
+          "properties": {
+            "docker_client": {"$ref": "#/$defs/nullableString"},
+            "docker_server": {"$ref": "#/$defs/nullableString"},
+            "docker_compose": {"$ref": "#/$defs/nullableString"},
+            "nvidia_container_toolkit": {"$ref": "#/$defs/nullableString"},
+            "ngc_cli": {"$ref": "#/$defs/nullableString"}
+          }
+        },
+        "capacity": {
+          "type": "object", "additionalProperties": false,
+          "required": ["online_cpu_count", "total_memory_bytes", "root_filesystem_total_bytes", "root_backing_device_nonrotational", "browser_tcp_port", "browser_tcp_port_available", "network"],
+          "properties": {
+            "online_cpu_count": {"$ref": "#/$defs/nullableInteger"},
+            "total_memory_bytes": {"$ref": "#/$defs/nullableInteger"},
+            "root_filesystem_total_bytes": {"$ref": "#/$defs/nullableInteger"},
+            "root_backing_device_nonrotational": {"$ref": "#/$defs/nullableBoolean"},
+            "browser_tcp_port": {"const": 7777},
+            "browser_tcp_port_available": {"$ref": "#/$defs/nullableBoolean"},
+            "network": {"$ref": "#/$defs/networkObservation"}
+          }
+        },
+        "operational_admission": {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "available_memory_bytes", "total_memory_bytes", "available_memory_fraction",
+            "model_start_minimum_available_memory_bytes", "model_start_memory_satisfied",
+            "stack_start_minimum_available_memory_bytes", "stack_start_memory_satisfied",
+            "official_edge_minimum_available_memory_fraction", "official_edge_memory_satisfied",
+            "root_filesystem_available_bytes", "free_disk_warning_bytes",
+            "free_disk_warning_satisfied", "contract_satisfaction_independent"
+          ],
+          "properties": {
+            "available_memory_bytes": {"$ref": "#/$defs/nullableInteger"},
+            "total_memory_bytes": {"$ref": "#/$defs/nullableInteger"},
+            "available_memory_fraction": {"type": ["string", "null"], "pattern": "^(0|1)\\.[0-9]{6}$"},
+            "model_start_minimum_available_memory_bytes": {"const": 53687091200},
+            "model_start_memory_satisfied": {"$ref": "#/$defs/nullableBoolean"},
+            "stack_start_minimum_available_memory_bytes": {"const": 21474836480},
+            "stack_start_memory_satisfied": {"$ref": "#/$defs/nullableBoolean"},
+            "official_edge_minimum_available_memory_fraction": {"const": "0.80"},
+            "official_edge_memory_satisfied": {"$ref": "#/$defs/nullableBoolean"},
+            "root_filesystem_available_bytes": {"$ref": "#/$defs/nullableInteger"},
+            "free_disk_warning_bytes": {"const": 161061273600},
+            "free_disk_warning_satisfied": {"$ref": "#/$defs/nullableBoolean"},
+            "contract_satisfaction_independent": {"const": true}
+          }
+        }
+      }
+    },
+    "assertion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "expected", "observed", "status"],
+      "properties": {
+        "id": {"$ref": "#/$defs/plainId"},
+        "expected": true,
+        "observed": true,
+        "status": {"enum": ["pass", "fail", "unknown"]}
+      }
+    },
+    "capability": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "capability_id", "oracle_id", "oracle_profile", "oracle_mode",
+        "oracle_canonical_sha256", "contract_canonical_sha256", "assertions",
+        "contract_status", "contract_satisfied"
+      ],
+      "properties": {
+        "capability_id": {"$ref": "#/$defs/plainId"},
+        "oracle_id": {"$ref": "#/$defs/plainId"},
+        "oracle_profile": {"$ref": "#/$defs/plainId"},
+        "oracle_mode": {"const": "static"},
+        "oracle_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "contract_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "assertions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/assertion"}},
+        "contract_status": {"enum": ["pass", "fail", "unknown"]},
+        "contract_satisfied": {"$ref": "#/$defs/nullableBoolean"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "package", "mode", "result", "target", "source_binding",
+        "safety", "semantics", "observations", "capabilities", "summary", "evidence_sha256"
+      ],
+      "properties": {
+        "schema_version": {"const": 1},
+        "package": {"const": "host-prerequisite-evidence"},
+        "mode": {"const": "inspect"},
+        "result": {"enum": ["pass", "fail", "unknown"]},
+        "target": {"const": "VSS 3.2.1 Thor-local prerequisite oracles"},
+        "source_binding": {
+          "type": "object", "additionalProperties": false,
+          "required": ["path", "pair_count", "selected_oracle_set_sha256"],
+          "properties": {
+            "path": {"const": "deploy/docker/thor-local/parity/capability-oracles.json"},
+            "pair_count": {"const": 4},
+            "selected_oracle_set_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "safety": {"$ref": "#/$defs/safety"},
+        "semantics": {"$ref": "#/$defs/semantics"},
+        "observations": {"$ref": "#/$defs/observations"},
+        "capabilities": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {"$ref": "#/$defs/capability"}
+        },
+        "summary": {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "contract_result", "contracts_passed", "contracts_failed", "contracts_unknown",
+            "operational_admission", "host_prerequisite_evidence_emitted",
+            "runtime_feature_qualification_performed", "operational_admission_changes_contract_result"
+          ],
+          "properties": {
+            "contract_result": {"enum": ["pass", "fail", "unknown"]},
+            "contracts_passed": {"type": "integer", "minimum": 0, "maximum": 4},
+            "contracts_failed": {"type": "integer", "minimum": 0, "maximum": 4},
+            "contracts_unknown": {"type": "integer", "minimum": 0, "maximum": 4},
+            "operational_admission": {"enum": ["ready", "blocked_or_warning", "unknown"]},
+            "host_prerequisite_evidence_emitted": {"const": true},
+            "runtime_feature_qualification_performed": {"const": false},
+            "operational_admission_changes_contract_result": {"const": false}
+          }
+        },
+        "evidence_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}
