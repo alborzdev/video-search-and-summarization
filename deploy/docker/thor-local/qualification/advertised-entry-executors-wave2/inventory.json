@@ -1,0 +1,424 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_file_executor_tranche_wave2",
+  "source_plan": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "e57f5fca4cc14b4b37a059823b23a191036ecfda1374791d6f9afde27047b4ec",
+    "plan_payload_sha256": "21dfd759455866923a12c9595422d2dc7a52af4ff6421a85ecde41f792bba5f5"
+  },
+  "source_manifest": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "raw_sha256": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+  },
+  "previous_candidate_inventory": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json",
+    "raw_sha256": "81c33e6723d35a8287380383935dc011865160536fa20ab1d64f3c794fc2ab4c"
+  },
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "live_acceptance_mutation_allowed": false,
+    "live_oracle_mutation_allowed": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "file_writes_allowed": false
+  },
+  "denominator": {
+    "advertised_gap_entries": 87,
+    "previously_selected_candidate_entries": 8,
+    "prior_open_entries": 79,
+    "selected_candidate_entries": 21,
+    "entries_left_open": 58
+  },
+  "cases": [
+    {
+      "manifest_pointer": "/features/8/advertised/0",
+      "entry_id": "manifest-gap.rt-vlm-media.00-file-upload",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.00-file-upload",
+      "advertised": "file upload",
+      "advertised_utf8_sha256": "7f65207474244607770948c9d9a6cc8b1bd221bad5cb59959a4cb80a8bc01aad",
+      "advertised_canonical_sha256": "02a7df565067a335abd54f62fe3a25682ba18ca232a75b844a9c8dd657b28ae0",
+      "adapter_id": "file_upload_helper",
+      "evidence_scope": "subset: in-memory execution of the digest-locked upload helper; no HTTP route, persistence, or runtime service proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+          "sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/1",
+      "entry_id": "manifest-gap.rt-vlm-media.01-http-s",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.01-http-s",
+      "advertised": "HTTP/S",
+      "advertised_utf8_sha256": "8929e581fcfb338478843c7859761e24126a78f17edce31c7d2ebd7ded032b5a",
+      "advertised_canonical_sha256": "675c058483cacf2b020123dd5e0394cbc83fb4830c07cd52e7a1e1f884e43cc8",
+      "adapter_id": "uri_validator",
+      "evidence_scope": "subset: digest-locked request-pattern acceptance and rejection only; no fetch, decode, or workflow proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/api_models/common.py",
+          "sha256": "81d3dc303983e8c0f999f48585cd0c9ffe28c86d0b6105bdc219deae407d42ae"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/2",
+      "entry_id": "manifest-gap.rt-vlm-media.02-s3",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.02-s3",
+      "advertised": "S3",
+      "advertised_utf8_sha256": "44d6a8a73eddb284d49799fdbfa2919a004ece6d2df3546eaa4e246048bcdf81",
+      "advertised_canonical_sha256": "a03242d0944695ad9840df695e850ab9fb9c1f74f76162f529b37bd265804327",
+      "adapter_id": "uri_validator",
+      "evidence_scope": "subset: digest-locked request-pattern acceptance and rejection only; no object access, credentials, or workflow proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/api_models/common.py",
+          "sha256": "81d3dc303983e8c0f999f48585cd0c9ffe28c86d0b6105bdc219deae407d42ae"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/3",
+      "entry_id": "manifest-gap.rt-vlm-media.03-allowlisted-file-uri",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.03-allowlisted-file-uri",
+      "advertised": "allowlisted file URI",
+      "advertised_utf8_sha256": "3faff9b182d781a3b71fdff6dde7e1cfe22af2a50f3f3d7107ac33daa5a66893",
+      "advertised_canonical_sha256": "95eb7be2e4d1a5f037969128da65abface27bbc9e4655819ba7833b50d3451e2",
+      "adapter_id": "file_uri_allowlist",
+      "evidence_scope": "subset: in-memory path-resolution and allowlist behavior only; no real media read or service proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+          "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/4",
+      "entry_id": "manifest-gap.rt-vlm-media.04-inline-data-uri",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.04-inline-data-uri",
+      "advertised": "inline data URI",
+      "advertised_utf8_sha256": "294888fa898b75a9f1c9e3e4a9fca1f52c91d10e21d20eab1c1e23e329ed39a4",
+      "advertised_canonical_sha256": "c78e3d20465f9ab8cf6d502028fa53920a75c7727d2648f053e599eeb488c52e",
+      "adapter_id": "inline_data_uri",
+      "evidence_scope": "subset: digest-locked URI validation plus in-memory base64 helper only; no API route, persistence, or workflow proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/api_models/common.py",
+          "sha256": "81d3dc303983e8c0f999f48585cd0c9ffe28c86d0b6105bdc219deae407d42ae"
+        },
+        {
+          "path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+          "sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/5",
+      "entry_id": "manifest-gap.rt-vlm-media.05-rtsp",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.05-rtsp",
+      "advertised": "RTSP",
+      "advertised_utf8_sha256": "3a567f6b46778f9e2b741c56378d791dfb93726593e554dcdb7afe2f1e0faa77",
+      "advertised_canonical_sha256": "19f94896080b20c81474f59e2865cee8dc9180a60c8a01206ab5b71a4dc90f4c",
+      "adapter_id": "rtsp_validator",
+      "evidence_scope": "subset: digest-locked request-pattern behavior only; no stream connection, decode, or workflow proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/api_models/live_stream.py",
+          "sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/6",
+      "entry_id": "manifest-gap.rt-vlm-media.06-dense-captions",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.06-dense-captions",
+      "advertised": "dense captions",
+      "advertised_utf8_sha256": "4460ba2d6023d4dc703d937e7e4761e32f35eb85775a8bd7da86087adefc1ace",
+      "advertised_canonical_sha256": "89eb5b7f6e990acbfab28bc9f9b3c0e457526021723451c67f0329a1431361ce",
+      "adapter_id": "dense_caption_roundtrip",
+      "evidence_scope": "subset: in-memory JSONL serialization round trip only; no VLM caption generation or service proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/utils/dense_caption_serializer.py",
+          "sha256": "5e56b5ce021a5401d21b0b119917f490d23fe464a8b43d0b94a0a305ffe2eecd"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/7",
+      "entry_id": "manifest-gap.rt-vlm-media.07-incidents",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.07-incidents",
+      "advertised": "incidents",
+      "advertised_utf8_sha256": "a6d1765ab64d82a7ac0698ae7cc91063acfd0b50e9e54f2bfc34f6ff75e57253",
+      "advertised_canonical_sha256": "4ce7a246c34d64af3557ac355a183af1871ce51a52b8803ebbd1394b45da0f1c",
+      "adapter_id": "incident_trigger_helper",
+      "evidence_scope": "subset: digest-locked trigger-token extraction only; no incident workflow, storage, alert, or service proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+          "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/9",
+      "entry_id": "manifest-gap.rt-vlm-media.09-reasoning",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.09-reasoning",
+      "advertised": "reasoning",
+      "advertised_utf8_sha256": "0c4d01e81bb3d1fd0dc4a0b4224518953794068715317ff39e0bbfc29e4ab06a",
+      "advertised_canonical_sha256": "92e8a27265b37e1ad7637939c05683315e6a41b7d36a5bc6dbf08187dbcda3c0",
+      "adapter_id": "reasoning_helpers",
+      "evidence_scope": "subset: digest-locked formatting and metadata helpers only; no model reasoning or endpoint proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+          "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+        },
+        {
+          "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+          "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/0",
+      "entry_id": "manifest-gap.rt-vlm-models.00-cosmos-reason-1-2",
+      "proposed_capability_id": "manifest-entry.rt-vlm-models.00-cosmos-reason-1-2",
+      "advertised": "Cosmos Reason 1/2",
+      "advertised_utf8_sha256": "1a64e3057748e9c332fe48c9ac37c1e9d424eecd53b32d3f547f707d9c2a6d00",
+      "advertised_canonical_sha256": "375c77207019e89bfae4f76d78e42b645f55215675b306f557e499123892595d",
+      "adapter_id": "model_source_contract",
+      "evidence_scope": "subset: exact cross-source model rows and checkout references only; availability and readiness explicitly unproven",
+      "source_locks": [
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+          "sha256": "f9fda515975588794389661b0adfb3c41d4c803db360e8ab6b7842b3aaa70bd1"
+        },
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/official-vss-3.2.1-models.json",
+          "sha256": "872c986a19ef30dfdf9f71e6ab8c9e9cb80a847a096e4442e1579b65703affb7"
+        },
+        {
+          "path": "services/rtvi/rt-vlm/README.md",
+          "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/1",
+      "entry_id": "manifest-gap.rt-vlm-models.01-cosmos-3-nano-super",
+      "proposed_capability_id": "manifest-entry.rt-vlm-models.01-cosmos-3-nano-super",
+      "advertised": "Cosmos 3 Nano/Super",
+      "advertised_utf8_sha256": "d1202146f59763d236123765cffff77104d49802df6d1656799399e3adc625b4",
+      "advertised_canonical_sha256": "508f07530b1c9f1076d1e46a73fed726da46769070d8d0226fc7d5512a6c23ee",
+      "adapter_id": "model_source_contract",
+      "evidence_scope": "subset: exact cross-source model rows and checkout references only; availability and readiness explicitly unproven",
+      "source_locks": [
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+          "sha256": "f9fda515975588794389661b0adfb3c41d4c803db360e8ab6b7842b3aaa70bd1"
+        },
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/official-vss-3.2.1-models.json",
+          "sha256": "872c986a19ef30dfdf9f71e6ab8c9e9cb80a847a096e4442e1579b65703affb7"
+        },
+        {
+          "path": "services/rtvi/rt-vlm/README.md",
+          "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/2",
+      "entry_id": "manifest-gap.rt-vlm-models.02-nemotron-omni",
+      "proposed_capability_id": "manifest-entry.rt-vlm-models.02-nemotron-omni",
+      "advertised": "Nemotron Omni",
+      "advertised_utf8_sha256": "84f771b3827e9f5e2882de804324e22a361ff363eb8a20cd935902b10b8866e1",
+      "advertised_canonical_sha256": "e6b04d1422e4c734e48e06e95a5b1a6f3a62d633299e0a2fd594a5bd451dd050",
+      "adapter_id": "model_source_contract",
+      "evidence_scope": "subset: exact cross-source model rows and checkout references only; availability and readiness explicitly unproven",
+      "source_locks": [
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+          "sha256": "f9fda515975588794389661b0adfb3c41d4c803db360e8ab6b7842b3aaa70bd1"
+        },
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/official-vss-3.2.1-models.json",
+          "sha256": "872c986a19ef30dfdf9f71e6ab8c9e9cb80a847a096e4442e1579b65703affb7"
+        },
+        {
+          "path": "services/rtvi/rt-vlm/README.md",
+          "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/3",
+      "entry_id": "manifest-gap.rt-vlm-models.03-qwen-3-5-and-moe",
+      "proposed_capability_id": "manifest-entry.rt-vlm-models.03-qwen-3-5-and-moe",
+      "advertised": "Qwen 3.5 and MoE",
+      "advertised_utf8_sha256": "d13475b41b4c2c19373885514670fbc5160546d6fda2fadc43e5a79e28224dfd",
+      "advertised_canonical_sha256": "e150f3c036823558b9edd33cef7454a9ebc13807b64e2bf92ffa61c5faeb3f5d",
+      "adapter_id": "model_source_contract",
+      "evidence_scope": "subset: exact cross-source model rows and checkout references only; availability and readiness explicitly unproven",
+      "source_locks": [
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+          "sha256": "f9fda515975588794389661b0adfb3c41d4c803db360e8ab6b7842b3aaa70bd1"
+        },
+        {
+          "path": "deploy/docker/thor-local/rt-vlm/official-vss-3.2.1-models.json",
+          "sha256": "872c986a19ef30dfdf9f71e6ab8c9e9cb80a847a096e4442e1579b65703affb7"
+        },
+        {
+          "path": "services/rtvi/rt-vlm/README.md",
+          "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/0",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.00-efficient-video-sampling",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.00-efficient-video-sampling",
+      "advertised": "efficient video sampling",
+      "advertised_utf8_sha256": "e06c593a37489b23d7498cf922d5ea2077a95d02ce1ae8d83bf668f099d37b44",
+      "advertised_canonical_sha256": "36636c07029d1ba7679b796d750c2c1b0ba7019e9642be2cc6af0231b91431e9",
+      "adapter_id": "frame_sampling_helper",
+      "evidence_scope": "subset: digest-locked media-IO sampling parameter selection only; no decode throughput or runtime efficiency proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/utils/media_io_kwargs.py",
+          "sha256": "75a92d66ca3880620e2a4884af7ac03a074350decb337a1a37b0504471d30946"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/1",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.01-gop-aware-decode",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.01-gop-aware-decode",
+      "advertised": "GOP-aware decode",
+      "advertised_utf8_sha256": "d37e040ff77483e5d4042682c77d66dd26ffb804dbac7fdff317f6865a3afaff",
+      "advertised_canonical_sha256": "b35caa2dc63e3841b1d3283f68d8c646eb70a7ae8858b64bf82aefbabeaa1524",
+      "adapter_id": "gop_selection_helper",
+      "evidence_scope": "subset: in-memory parser-buffer selection behavior only; no GStreamer pipeline or decode proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+          "sha256": "a4e8421e7b18ca1e64534a142168a777e10ebc11e9724c7e69cdcd37eb961be9"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/2",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.02-decoder-reuse",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.02-decoder-reuse",
+      "advertised": "decoder reuse",
+      "advertised_utf8_sha256": "fe4e3ea7f661e0d7c60e802b361b3d12d092a0d37eba3dfda3a27bd127b832f5",
+      "advertised_canonical_sha256": "ab314f3e7e3866b01653dbfa77b2f30a447b6faeebd297649d4e821452f5bd04",
+      "adapter_id": "decoder_cache_helper",
+      "evidence_scope": "subset: in-memory cache-key and lifecycle helper behavior only; no decoder or performance proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+          "sha256": "a4e8421e7b18ca1e64534a142168a777e10ebc11e9724c7e69cdcd37eb961be9"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/4",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.04-asset-limits-and-expiry",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry",
+      "advertised": "asset limits and expiry",
+      "advertised_utf8_sha256": "102e2f4c2c4706d1b81ee202422e0382f6da2330d727680f425dd4a8150ec68e",
+      "advertised_canonical_sha256": "0119e3650156986eed950a38676a204dde2439b0578b169844de6bf2bcd28ec1",
+      "adapter_id": "asset_limit_expiry_helpers",
+      "evidence_scope": "subset: digest-locked size parsing and in-memory TTL selection only; no real asset deletion or service proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+          "sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/7",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
+      "advertised": "absolute timestamp metadata",
+      "advertised_utf8_sha256": "2f7453787c8c25f88e943ecf695c6e02984ebb3a4acf24ba24dde4e20e2cf541",
+      "advertised_canonical_sha256": "5f1a8427be9d2f9d168cd59e71652cfb8bcf76504e826efcdc2751bd72a267b1",
+      "adapter_id": "absolute_timestamp_helper",
+      "evidence_scope": "subset: digest-locked timestamp conversion and metadata construction only; no media pipeline proof",
+      "source_locks": [
+        {
+          "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+          "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/30/advertised/0",
+      "entry_id": "manifest-gap.synthetic-data-tools.00-semantic-label-helpers",
+      "proposed_capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "advertised": "semantic label helpers",
+      "advertised_utf8_sha256": "3e0cf01277bbf3b2061ab42f28e6b29c3385c86acc9bd890651de3c3dacd842c",
+      "advertised_canonical_sha256": "12e3bd1eca24552b46566027eb4cbc55ee04e7ec4161481d93ae549242e0a6f4",
+      "adapter_id": "semantic_label_helpers",
+      "evidence_scope": "subset: in-memory path categorization, label authoring, and label removal only; no USD file mutation",
+      "source_locks": [
+        {
+          "path": "tools/sdg-postprocessing/semantic_labeling/box_check.py",
+          "sha256": "0f92e5a7bbce77d0f44622c9abe68f1dec59d1aab0268c8776094a9f0fb1d634"
+        },
+        {
+          "path": "tools/sdg-postprocessing/semantic_labeling/remove_label.py",
+          "sha256": "f8a484079f9a341059c8560ed1aa945f64fd7a04da6b09ef196f22d4997730eb"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/30/advertised/2",
+      "entry_id": "manifest-gap.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "proposed_capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "advertised": "RGB/depth/video conversion",
+      "advertised_utf8_sha256": "21813009429cbb563a91b4421c6661ef3f9750bfed462c6ddbf7d132a37bfd6b",
+      "advertised_canonical_sha256": "16d6c6ff3154eb0b80535e6611be1ebaac0d609a307a1fb3a7e02d0abb04b092",
+      "adapter_id": "rgb_depth_conversion_helpers",
+      "evidence_scope": "subset: in-memory depth-PNG and RGB/depth-H5 helper bodies only; video overlay explicitly not executed",
+      "source_locks": [
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py",
+          "sha256": "c149099e5055143aa536df717c61f339d76c1b02cbd6645458d3f854f7f0a811"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py",
+          "sha256": "708d37524b672dc91842b6304025fcfe07101d6e1851130caca585ddec3ff363"
+        }
+      ]
+    },
+    {
+      "manifest_pointer": "/features/30/advertised/3",
+      "entry_id": "manifest-gap.synthetic-data-tools.03-ground-truth-conversion",
+      "proposed_capability_id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+      "advertised": "ground-truth conversion",
+      "advertised_utf8_sha256": "d93c7959912347781bf63f8a4cc0fa2b59cc9b3332e5a35509a4c508649838c2",
+      "advertised_canonical_sha256": "6a2a57e4030c74a21786b5f6510d59c9f2e01aeace200c2a7911f8c91df8a9bf",
+      "adapter_id": "ground_truth_helpers",
+      "evidence_scope": "subset: in-memory camera naming, bounding-box, corner, and overflow helpers only; full dataset conversion explicitly not executed",
+      "source_locks": [
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_ground_truth.py",
+          "sha256": "ab7b3401638ab6a15565715fa68cccc8930f64137aac31a4902742f251dc92da"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scope", "advances_live_acceptance", "runtime_evidence_added", "inventory_sha256", "counts", "open_requirement_audit", "results"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"const": "isolated_candidate_only"},
+    "advances_live_acceptance": {"const": false},
+    "runtime_evidence_added": {"const": false},
+    "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cases", "observed_match", "observed_mismatch", "open_requirements_audited", "open_requirements_unselected"],
+      "properties": {
+        "cases": {"const": 6},
+        "observed_match": {"const": 5},
+        "observed_mismatch": {"const": 1},
+        "open_requirements_audited": {"const": 84},
+        "open_requirements_unselected": {"const": 78}
+      }
+    },
+    "open_requirement_audit": {
+      "type": "array", "minItems": 84, "maxItems": 84,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["planning_requirement_id", "package", "classification"],
+        "properties": {
+          "planning_requirement_id": {"type": "string"},
+          "package": {"enum": ["agent-smartcity", "systems", "calibration-warehouse"]},
+          "classification": {"enum": ["selected_source_executor", "existing_static_or_external_boundary_lane_not_new", "requires_custom_media_and_runtime_qualification", "requires_unmaterialized_fixture_or_independent_source_evidence", "requires_runtime_or_complete_independent_source_semantics"]}
+        }
+      }
+    },
+    "results": {
+      "type": "array", "minItems": 6, "maxItems": 6,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["case_id", "planning_requirement_id", "capability_id", "outcome", "binding_checks", "source_checks", "assertions", "runtime_evidence"],
+        "properties": {
+          "case_id": {"type": "string", "pattern": "^wave3-source-case\\."},
+          "planning_requirement_id": {"type": "string"},
+          "capability_id": {"type": "string"},
+          "outcome": {"enum": ["observed_match", "observed_mismatch"]},
+          "binding_checks": {
+            "type": "object", "additionalProperties": false,
+            "required": ["requirement_payload_sha256", "capability_sha256", "contract_sha256", "owner_binding", "requirement_still_open"],
+            "properties": {
+              "requirement_payload_sha256": {"type": "boolean"},
+              "capability_sha256": {"type": "boolean"},
+              "contract_sha256": {"type": "boolean"},
+              "owner_binding": {"type": "boolean"},
+              "requirement_still_open": {"type": "boolean"}
+            }
+          },
+          "source_checks": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256_match"], "properties": {"path": {"type": "string"}, "sha256_match": {"type": "boolean"}}}},
+          "assertions": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["assertion_id", "passed", "detail"], "properties": {"assertion_id": {"type": "string"}, "passed": {"type": "boolean"}, "detail": {"type": "string"}}}},
+          "runtime_evidence": {"const": []}
+        }
+      }
+    }
+  }
+}

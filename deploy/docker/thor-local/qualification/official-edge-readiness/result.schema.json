@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.vss/thor/official-edge-readiness-result.schema.json",
+  "title": "Thor official-edge read-only readiness inspection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "inspection_mode",
+    "qualification_state",
+    "runtime_qualification_performed",
+    "source_locks",
+    "artifact_lock",
+    "artifacts",
+    "images",
+    "memory",
+    "disk",
+    "containers",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "plan_id": {"const": "vss-3.2.1-thor-official-edge-readiness"},
+    "inspection_mode": {"enum": ["plan", "read_only_host"]},
+    "qualification_state": {"enum": ["plan_only", "blocked_not_runtime_qualified", "prelaunch_ready_not_runtime_qualified"]},
+    "runtime_qualification_performed": {"const": false},
+    "source_locks": {"type": "object"},
+    "artifact_lock": {"type": "object"},
+    "artifacts": {"type": "object"},
+    "images": {"type": "object"},
+    "memory": {"type": "object"},
+    "disk": {"type": "object"},
+    "containers": {"type": "object"},
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "state", "detail"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "state": {"enum": ["blocked", "unverified"]},
+          "detail": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"qualification_state": {"const": "blocked_not_runtime_qualified"}},
+        "required": ["qualification_state"]
+      },
+      "then": {
+        "properties": {
+          "blockers": {
+            "contains": {
+              "type": "object",
+              "properties": {"state": {"const": "blocked"}},
+              "required": ["state"]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"qualification_state": {"const": "prelaunch_ready_not_runtime_qualified"}},
+        "required": ["qualification_state"]
+      },
+      "then": {
+        "properties": {
+          "artifacts": {
+            "type": "object",
+            "required": ["exact_tree_verification"],
+            "properties": {
+              "exact_tree_verification": {
+                "type": "object",
+                "required": ["state"],
+                "properties": {"state": {"const": "exact_match"}}
+              }
+            }
+          },
+          "blockers": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "properties": {"state": {"const": "blocked"}},
+                "required": ["state"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

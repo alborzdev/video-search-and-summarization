@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "subprocess": false,
+    "writes": false
+  },
+  "cases": [
+    {
+      "case_id": "wave3-source-case.behavior-embedding-downsampling",
+      "planning_requirement_id": "systems-behavior-embedding-downsampling",
+      "capability_id": "runtime.behavior.embedding-downsampling",
+      "planning_payload_sha256": "73b697a303f5d3b37b2d39ba8fefe02007dc9e781512ec1fa72b36f0b069b837",
+      "capability_sha256": "a549f8f393b0ada7ee5c13bd4aa9aac0a00e43b66a17a853beb6d49f7d7d1995",
+      "contract_sha256": "ae2ddd1a13fd05f839ac464ec8ff65bcc6ba0b64cf4a8952467eeef56d6d54cb",
+      "source_locks": [
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/config.py", "sha256": "fe2221d736dc63aefc999ffa853380342f36cea992cbc69fe89e072279c70fac"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/video_embedding_state_mgmt.py", "sha256": "b78d87eb3eefa9b6641e007a0902bc1c194fe5f695ebd02f42faa5921cd68c35"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "optional-disabled-pass-through",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/schema/config.py", "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/video_embedding_state_mgmt.py"],
+          "expected": ["enable_downsampling: bool = False", "if not self._enable_downsampling:", "return video_embeddings"]
+        },
+        {
+          "assertion_id": "sdt-and-window-modes",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/video_embedding_state_mgmt.py"],
+          "expected": ["SDTEmbeddingDownsampler", "SlidingWindowEmbeddingDownsampler", "self._downsampler_type == 'window'"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave3-source-case.behavior-broker-sinks",
+      "planning_requirement_id": "systems-behavior-sinks",
+      "capability_id": "protocol.behavior.broker-sinks",
+      "planning_payload_sha256": "f6de17941b62a2702a0fc92189140e6c270d3dc3c384b7733a2d854198b678c9",
+      "capability_sha256": "74d05fe17301fcd88cf7b785c918f143b21db920183030f10e6359827f1437b8",
+      "contract_sha256": "a06fa1c5617cdd620880d7173fafb7e54fa36c0271b415b3120380878b79389c",
+      "source_locks": [
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py", "sha256": "8a5c59dd9d8a604716a9113c8dfc144f5e61c951161b2cfd7e913aa0f97936c2"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py", "sha256": "1360a2f79ff360755d6c9b1ffb38c2079ef1ba5e2b7ee3a7396e167d6e513c52"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "three-sink-factory",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py"],
+          "expected": ["sink_type == \"kafka\"", "sink_type == \"redisStream\"", "sink_type == \"mqtt\"", "return SinkKafka(config)", "return SinkRedisStream(config)", "return SinkMQTT(config)"]
+        },
+        {
+          "assertion_id": "all-declared-output-classes",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py"],
+          "expected": ["self.write_proto(\"frames\"", "self.write_proto(\"behavior\"", "\"events\",", "self.write_proto(\"incidents\"", "self.write_proto(\"anomaly\"", "self.write_proto(\"spaceUtilization\"", "write_behaviors_with_clustering", "self.write_proto(\"behaviorPlus\""]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave3-source-case.behavior-space-utilization",
+      "planning_requirement_id": "systems-space-utilization",
+      "capability_id": "runtime.behavior.space-utilization",
+      "planning_payload_sha256": "e5fc89f22645053f9f211fd8cae127388e52f41fc9dea28e4bb286bc489870d2",
+      "capability_sha256": "f4ed9240eaa4d6ba2c18cc7126c4e7e528c15b6cbb11ff93a22cc37b6e21a49c",
+      "contract_sha256": "f2ab8e1cf0b2eb37ed37164e799ac064271fe19bda9bcc86313fb0becc40d0eb",
+      "source_locks": [
+        {"path": "libs/nvschema/protobuf/ext.proto", "sha256": "1fc70039c5ad7c2d984f8f4085fef1bcee7ec704efe6e74450a38e1133f25764"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "space-utilization-metric-fields",
+          "adapter": "text_contains_all",
+          "sources": ["libs/nvschema/protobuf/ext.proto"],
+          "expected": ["message SpaceUtilizationMetrics", "double spaceOccupied = 1;", "double freeSpace = 2;", "double totalSpace = 3;", "double spaceUtilization = 4;", "int32 numExtraPallets = 5;", "double utilizableFreeSpace = 6;"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave3-source-case.custom-behavior-sink",
+      "planning_requirement_id": "systems-custom-behavior-sink",
+      "capability_id": "customization.behavior.sink-extension",
+      "planning_payload_sha256": "c24713b51a76f534e879efd9f242c11d31b84188d881c523a15d3b86a96052b9",
+      "capability_sha256": "fa0752ae2338a42716a9875cdc43f87c9d013f6032da653db1d4322631942590",
+      "contract_sha256": "e561218d3bd8e9f9bb486f4439e674fa8aa13e1af0347330226db7df6f1bf1cc",
+      "source_locks": [
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_base.py", "sha256": "4c33fe5aec0133456939a5cb0d420f2f0cf22873ffb6e60e7944b1aef4fce72a"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py", "sha256": "8a5c59dd9d8a604716a9113c8dfc144f5e61c951161b2cfd7e913aa0f97936c2"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "abstract-sink-extension-interface",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_base.py"],
+          "expected": ["class Sink(ABC):", "@abstractmethod", "def write("]
+        },
+        {
+          "assertion_id": "factory-uses-interface-implementations",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py"],
+          "expected": ["SinkKafka", "SinkRedisStream", "SinkMQTT", "concrete sink implementation that implements the Sink abstract base class interface"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave3-source-case.behavior-events-incidents",
+      "planning_requirement_id": "systems-behavior-events",
+      "capability_id": "runtime.behavior.events-incidents",
+      "planning_payload_sha256": "d5d4e6d7d31c26b301d79fb561d91eb922717ce692b3804fc430e96f37958d4a",
+      "capability_sha256": "2fab94f72118646df1803d05dcb6b0d3c5f71f5076323b6e2771543720b7440d",
+      "contract_sha256": "c2af10aa6e486c51e0ba0b39ebaedcbb05c8f3c070a2a67ac103498195e0b5d4",
+      "source_locks": [
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/roi_event.py", "sha256": "2e9ef509c9867ab0458c3dca0b95c0baed45ea5ff056802caf69a72ef0aa190f"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/tripwire_event.py", "sha256": "ee351da91c59702261e156483c742af13003a58b8578bd2723af4dea43cb9d15"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_base.py", "sha256": "f90191f9a9be5eff0e88d0babb64a074c21ef2d16c32d88e7d169743d0ec411e"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/frame/frame_state_management.py", "sha256": "6e4f153b422378418d316366d3753616caddccb2ee24a49cc0231de19f3ac2e2"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "tripwire-and-roi-events",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/roi_event.py", "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/tripwire_event.py"],
+          "expected": ["\"roi\", \"ROIEvent\"", "\"tripwire\", \"TripEvent\""]
+        },
+        {
+          "assertion_id": "four-violation-families",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_base.py", "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/frame/frame_state_management.py"],
+          "expected": ["proximityViolation", "restrictedAreaViolation", "confinedAreaViolation", "fov_count_violation_state"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave3-source-case.search-upload-content-type",
+      "planning_requirement_id": "systems-search-content-type",
+      "capability_id": "behavior.search-upload.content-type",
+      "planning_payload_sha256": "ce5f7b27385fec6d42b740db430eb9ce841984a97f0f5da4b15587a8a7794b6d",
+      "capability_sha256": "603d9983e1be1e5b0b2d2b19db0ea8957caac50930e3dd9c3c54867aea2a4a7c",
+      "contract_sha256": "13d6cf375c1a0cb8384655caabe9d5b6a08f0787cb4e257b1c381589e9b9edeb",
+      "source_locks": [
+        {"path": "services/agent/src/vss_agents/api/video_search_ingest.py", "sha256": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "accepted-content-types",
+          "adapter": "text_contains_all",
+          "sources": ["services/agent/src/vss_agents/api/video_search_ingest.py"],
+          "expected": ["\"video/mp4\"", "\"video/x-matroska\""]
+        },
+        {
+          "assertion_id": "missing-content-type-is-400",
+          "adapter": "regex_group_equals",
+          "sources": ["services/agent/src/vss_agents/api/video_search_ingest.py"],
+          "pattern": "if not content_type:.*?status_code=([0-9]+)",
+          "group": 1,
+          "expected": "400"
+        },
+        {
+          "assertion_id": "unsupported-content-type-contract-is-400",
+          "adapter": "regex_group_equals",
+          "sources": ["services/agent/src/vss_agents/api/video_search_ingest.py"],
+          "pattern": "if content_type not in _ALLOWED_VIDEO_TYPES:.*?status_code=([0-9]+)",
+          "group": 1,
+          "expected": "400"
+        }
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}

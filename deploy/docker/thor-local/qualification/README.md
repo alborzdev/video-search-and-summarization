@@ -6,7 +6,7 @@ safe to run on an offline operator host: it reads only checked-in files, does
 not inspect secrets, does not open sockets, and never starts, stops, or mutates
 containers or VSS resources.
 
-The broader parity program also keeps seven planning and admission boundaries
+The broader parity program also keeps planning and admission boundaries
 in this directory:
 
 - `source-contract-integration/` replays the immutable ten-case receipt and
@@ -15,6 +15,12 @@ in this directory:
 - `advertised-entry-executors/` gives 8 of the 87 literal advertised-entry
   gaps bounded, source-locked candidate observations while leaving live state
   and the other 79 entries untouched;
+- `advertised-entry-executors-wave2/` adds 21 disjoint helper/source-contract
+  candidates, bringing isolated advertised-entry coverage to 29 of 87 while
+  leaving 58 entries explicitly open;
+- `planning-requirement-executors-wave3/` checks six of the 84 still-open
+  planning requirements without promoting them, preserving five source
+  matches and the search-upload HTTP 400/415 mismatch;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -22,7 +28,11 @@ in this directory:
 - `advertised-entry-gaps/` gives each advertised entry from the 16 families
   that lack capability rows its own still-open semantic oracle plan;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
-  read-only Thor host inspection; and
+  read-only Thor host inspection;
+- `official-edge-readiness/` fixes the exact Nemotron/Cosmos identities,
+  source-locks all staging gates, and offers a separately acknowledged,
+  allowlisted read-only inspection that cannot claim runtime qualification;
+  and
 - `local-alternate-models/` defines an exact-acknowledgement, four-request
   qualifier for the non-official local Qwen endpoint pair.
 
@@ -33,9 +43,10 @@ Warehouse capability lanes.
 The two deterministic static successors currently materialize 26 of 110
 planning requirements. All 276 full capability oracles remain
 `planning_index_only`; the 26 bindings are static subsets only, with zero
-runtime evidence and zero `passed_current` promotions. The separate eight-case
-advertised-entry tranche is candidate-only and does not change those live
-counts.
+runtime evidence and zero `passed_current` promotions. The separate 8 + 21
+advertised-entry candidates and six additional planning checks are
+non-advancing and do not change those live counts. They leave 58
+advertised-entry gaps and 78 planning requirements open, respectively.
 
 Run the contract tier from the repository root:
 

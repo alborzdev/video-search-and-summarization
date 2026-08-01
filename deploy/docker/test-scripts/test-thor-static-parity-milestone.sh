@@ -120,6 +120,14 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/source-contract-integration/tests" \
   -p 'test*.py' -v
 
+# Six additional planning requirements have isolated, source-locked checks.
+# Five match and the search-upload status contract remains an explicit 400/415
+# mismatch. This package cannot alter the 26 integrated live bindings.
+python3 "${thor_local_root}/qualification/planning-requirement-executors-wave3/executor.py" \
+  --json >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave3/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
@@ -144,6 +152,14 @@ python3 "${thor_local_root}/qualification/advertised-entry-executors/executor.py
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-executors/tests" \
   -p 'test*.py' -v
+
+# A second disjoint advertised-entry tranche provides 21 more bounded helper
+# and source-contract observations. Together the two candidate packages cover
+# 29/87 entries and leave 58 open; neither package advances official status.
+python3 "${thor_local_root}/qualification/advertised-entry-executors-wave2/executor.py" \
+  >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave2/tests"
 
 # The four unresolved capability-to-service bindings have an authoritative
 # negative audit. None of the contracts selects a unique runtime participant
@@ -184,5 +200,13 @@ python3 -m unittest discover \
 python3 "${thor_local_root}/official-edge/official_edge.py" static
 python3 -m unittest discover \
   -s "${thor_local_root}/official-edge/tests" -v
+
+# Official-edge readiness defaults to an inert plan. Its tests enforce exact
+# artifact-tree verification and allowlisted read-only Docker inspection, but
+# this static wrapper performs no host inspection or lifecycle operation.
+python3 "${thor_local_root}/qualification/official-edge-readiness/readiness.py" \
+  plan >/dev/null
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/official-edge-readiness/tests" -v
 
 printf 'PASS: unified static-only Thor parity milestone\n'
