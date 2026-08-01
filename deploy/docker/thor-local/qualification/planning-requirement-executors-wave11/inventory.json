@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "docker": false,
+    "subprocess": false,
+    "writes": false,
+    "lifecycle": false,
+    "downloads": false,
+    "credentials": false,
+    "warehouse_used": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json", "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "07fb76a7675d3a8506b65d4eeb1130f7a04571ea32b9c8f8057907d7b0a37bf4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave8/inventory.json", "sha256": "faa85d0f1b77478e2814763bafc439f61fc419dd6813ed06f044002b1ffcb4fa"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave9/inventory.json", "sha256": "ef61deabad56286d7a49c74a5938c0ad2e980c42cb92ff7b0d2df6250c3a6537"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave10/inventory.json", "sha256": "ad84036c336369a8a83665461d59ee2b7ea6962d1b3e01e417323bf7d4a51b8a"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave11-source-case.kibana-static-configuration",
+      "planning_requirement_id": "kibana-availability",
+      "capability_id": "runtime.ui.dashboard-tab",
+      "planning_payload_sha256": "d8e40fa78c2b7e7829bd0fd4bbc959f377ce93354866b7711ae2a719a2b1dccd",
+      "capability_sha256": "1d1e8bb85c122ff81e8e1c383ec454a73b7ff5ad4eb1ba4a031b3d33cd082596",
+      "contract_sha256": "14e44da80a61d16342766ad4644581e3c020be695dafe4392c379e7e8f1df7f8",
+      "oracle_sha256": "86fc44a5100d764cb469266ec35518546a1b6d9f2320607bd752e03480e08ab2",
+      "evidence_class": "static_configuration_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/server.ts", "sha256": "c0b4d63e07150ff6c31eb4f03ec9db0f855cf98f953d6bda3bc10bfb69b27064"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/DashboardComponent.tsx", "sha256": "a35ba4966bbe175cebaaf5edf4ce95e390a1762e7d51e97481629fcf38687e43"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml", "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-dashboard-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.ui.dashboard-tab\"", "\"contract\":{\"backend\":\"kibana\",\"embedded\":true,\"blueprint_preconfigured\":true}", "Embedded dashboard availability is not claim-level qualified."]},
+        {"assertion_id": "ui-kibana-discovery-surface", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/server.ts"], "expected": ["const KIBANA_BASE_URL", "const ENABLE_DASHBOARD_TAB", "/api/saved_objects/_find?type=dashboard", "defaultDashboardId: DEFAULT_DASHBOARD_ID"]},
+        {"assertion_id": "ui-kibana-embed-surface", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/DashboardComponent.tsx"], "expected": ["?embed=true", "title=\"Kibana Dashboard\""]},
+        {"assertion_id": "thor-dashboard-import-surface", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml"], "expected": ["kibana-init-container-thor-full:", "kibana-import-dashboards.sh", "condition: service_healthy"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave11-source-case.alert-workflow-modes",
+      "planning_requirement_id": "systems-alert-workflow-modes",
+      "capability_id": "runtime.alerts.workflow-modes",
+      "planning_payload_sha256": "22b26e286a6cb22f949753ee1a2dfbbb17b0cf92c68063674aea0d08e3bb4425",
+      "capability_sha256": "833d2a2c1e6f4d1c50c4ba7516833cb72a3d531f6406ea10b42a62e24fa67a88",
+      "contract_sha256": "530cc3e8aed99a780414700ad86f3ea4227fec9f886a1ebebe2ba6c2288ec2fe",
+      "oracle_sha256": "73ca56d3e4fff740469f113dd567032866516eb9e176063a8c09004860bb7e50",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/alert/README.md", "sha256": "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-alert-mode-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"runtime.alerts.workflow-modes\"", "\"contract\":{\"modes\":[\"verification\",\"context\",\"classification\"],\"execution\":[\"real-time\",\"on-demand\"]}", "No deterministic Thor exercise of every mode."]},
+        {"assertion_id": "documented-alert-mode-surface", "sources": ["services/alert/README.md"], "expected": ["supports three modes:", "**Alert verification**", "**Realtime alerts**", "**On-demand verification**"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave11-source-case.alert-persistence-output",
+      "planning_requirement_id": "systems-alert-persistence",
+      "capability_id": "runtime.alerts.persistence-output",
+      "planning_payload_sha256": "c4303d9d4185c478373588a3efd844225164e0a589aaef8e6570839ccfcda24e",
+      "capability_sha256": "f6d37d5efcda5d5a2560bb58084a476098c8de94c29036b5f7b68ef25510b726",
+      "contract_sha256": "9411761c2bb63d2b0281bbb240c0751b3bc11f546f2eeff77a9ba0bfc71c7b24",
+      "oracle_sha256": "6fe673af9f32515faefdae1cb92639ab4f420a4057c5af056270eee7cde8827d",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/alert/README.md", "sha256": "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-alert-persistence-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"runtime.alerts.persistence-output\"", "\"structured_fields\":[\"verdict\",\"reason\",\"status\"]", "\"persistence\":\"elasticsearch\",\"optional_output\":\"kafka\"", "Persistence and optional output are not end-to-end qualified."]},
+        {"assertion_id": "documented-alert-persistence-surface", "sources": ["services/alert/README.md"], "expected": ["structured verdict (confirmed /", "persisted to **Elasticsearch** and can optionally be re-published to Kafka", "`persistence/` | Elasticsearch + Redis stores"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave11-source-case.behavior-pipeline-surface",
+      "planning_requirement_id": "systems-behavior-pipeline",
+      "capability_id": "runtime.behavior.pipeline",
+      "planning_payload_sha256": "faf7bd74fdb6232a47ab73e5c9ff49bdbc9e747745209ae9d6c4b36ce2a104d0",
+      "capability_sha256": "a0594ef57e0397403c71fe2f27998d7b43f55702681bdea16427ffafdbc60301",
+      "contract_sha256": "c9ac27f02c8d0af9ee8958ef2bef8825370938b80d33a69a393780462816ea83",
+      "oracle_sha256": "18deb30ecfa970008edbc60b6ed0c9cbdcc4b22f6b1574b751fe66b6d310360e",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/analytics/behavior-analytics/README.md", "sha256": "379b3559c91bf0c5f56b6988ace076fa725190913457b45cb45fdf21d36bcf2a"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-behavior-pipeline-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"runtime.behavior.pipeline\"", "\"inputs\":[\"bbox\",\"tracking\",\"embedding\"]", "\"stages\":[\"dynamic-config\",\"calibration\",\"coordinate-transform\",\"roi\",\"behavior-state\",\"metrics\"]", "Complete pipeline semantics lack a Thor fixture."]},
+        {"assertion_id": "documented-behavior-transform-surface", "sources": ["services/analytics/behavior-analytics/README.md"], "expected": ["consumes frame metadata from a message broker", "configurable transforms (calibration, trajectory tracking, anomaly detection, ROI/tripwire events, incident detection)", "emits behaviors, events, and incidents back to the broker"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave11-source-case.lvs-queue-surface",
+      "planning_requirement_id": "systems-lvs-queue",
+      "capability_id": "runtime.lvs.single-request-queue",
+      "planning_payload_sha256": "904d611af35a15c0a7fe35908eec71ccc84c3e3e74fd56930100fca574d66781",
+      "capability_sha256": "ec705cf178d9550a5136ed3fa66d782fd26c98790894730125a5d456bbd70128",
+      "contract_sha256": "c8e2cde7b267d404520e00d375aff80b4efa1cf6193d4657da849e11b0b6fd3c",
+      "oracle_sha256": "8312b43fa0c5764dff104979b9dd8d74bbf2c8d375243851a722bf03dd5f7f14",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/video-summarization/src/via_stream_handler.py", "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-lvs-queue-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"runtime.lvs.single-request-queue\"", "\"contract\":{\"active_requests\":1,\"additional_requests\":\"queued\"}", "Concurrent-request queue semantics are unqualified."]},
+        {"assertion_id": "source-lvs-queue-state-surface", "sources": ["services/video-summarization/src/via_stream_handler.py"], "expected": ["QUEUED = \"queued\"", "PROCESSING = \"processing\"", "# Add the request to the pending queue", "self._metrics.queries_pending.inc()"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave11-source-case.lvs-format-gap",
+      "planning_requirement_id": "systems-lvs-formats",
+      "capability_id": "runtime.lvs.supported-formats",
+      "planning_payload_sha256": "442480fe6e8c8894a511debb046a20925133a286dfa920c3d2178c0a922b9007",
+      "capability_sha256": "7bce24ae6c39f87a8ccfc507bd0c35f3b87059c27d2bafbd5260756618deee8a",
+      "contract_sha256": "e8dc03a8ea571f052c326480cb61d9f99cea1248924e2d7ac0814207f2bca984",
+      "oracle_sha256": "262ea038c36e8b428ffaab60b09a228c2958f27787292ee9ac0347b1b8dd1183",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/agent/README.md", "sha256": "f8bb48cbee282b8f6048ab9220258adcb648e3de761d81b98c34baa747d1740e"},
+        {"path": "services/ui/packages/common/lib-src/components/UploadFilesDialog.tsx", "sha256": "90487a061cdd8750f24ce17446010b09995c7d0152f1394cbb05201c6e82d2dd"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-lvs-format-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"runtime.lvs.supported-formats\"", "\"formats\":[\"MP4\",\"AVI\",\"MOV\",\"MKV\",\"WebM\"]", "\"proprietary_where_supported\":true", "Format-by-format ingestion is unqualified."]},
+        {"assertion_id": "documented-codec-opt-in-boundary", "sources": ["services/agent/README.md"], "expected": ["pre-built VSS Agent container image **does not bundle `opencv-python-headless`**", "require opting in to the proprietary codecs", "`INSTALL_PROPRIETARY_CODECS=true`"]},
+        {"assertion_id": "current-uploader-narrow-format-surface", "sources": ["services/ui/packages/common/lib-src/components/UploadFilesDialog.tsx"], "expected": ["const DEFAULT_ACCEPT = '.mp4,.mkv,video/mp4,video/x-matroska';", "const allowedExtensions = /\\.(mp4|mkv)$/i;"]}
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}

@@ -304,10 +304,11 @@ correctness, latency, resource, abort, and exact-owned cleanup evidence.
 
 The inert
 [`qualification/runtime-approval-bundles/`](qualification/runtime-approval-bundles/README.md)
-compiler lists the 13 remaining material-action scopes and their precedence.
-It grants no approval: host inspection, remediation, downloads, profile
-lifecycle, progressive and 100-stream Search runs, custom-data runs, the two
-audio lanes, Edge staging, and external attestations remain separately gated.
+compiler lists the 14 remaining material-action scopes and their precedence.
+It grants no approval: the narrow prerequisite collector, broader host/runtime
+inspection, remediation, downloads, profile lifecycle, progressive and
+100-stream Search runs, custom-data runs, the two audio lanes, Edge staging,
+and external attestations remain separately gated.
 
 This is an application-envelope measurement, not a universal camera-count
 claim. Both inputs were copies of one local H.264 sample, so the result does

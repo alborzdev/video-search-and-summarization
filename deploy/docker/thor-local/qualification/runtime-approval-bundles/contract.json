@@ -53,12 +53,25 @@
   },
   "bundles": [
     {
+      "id": "host-prerequisite-evidence-collection",
+      "title": "Acknowledgement-gated host-prerequisite evidence collection",
+      "approval_placeholder": "<APPROVE_ONLY_READ_ONLY_HOST_PREREQUISITE_EVIDENCE_COLLECTION>",
+      "acknowledgement_token": "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE",
+      "authorized_command": "PYTHONDONTWRITEBYTECODE=1 python3 deploy/docker/thor-local/qualification/host-prerequisite-evidence/collector.py inspect --acknowledgement I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE",
+      "depends_on": [],
+      "flags": {"host_inspection": true, "subprocess": true, "network": false, "docker": true, "writes": false, "downloads": false, "credentials": false, "lifecycle": false, "destructive": false},
+      "required_inputs": ["exact collector acknowledgement token", "maintenance-safe read-only observation window", "raw-locked collector and contract with self-locked result schema"],
+      "current_blockers": ["no host-prerequisite evidence acknowledgement is represented by this compiler", "current prerequisite, capacity, and operational-admission state is deliberately not observed"],
+      "cleanup": "none; evidence is emitted to standard output and collection must not create resources",
+      "rollback": "none; stop on source drift, invalid acknowledgement, or any attempted mutation"
+    },
+    {
       "id": "read-only-docker-runtime-inspection",
       "title": "Read-only Docker and runtime inspection",
       "approval_placeholder": "<APPROVE_ONLY_READ_ONLY_DOCKER_AND_LOOPBACK_RUNTIME_INSPECTION>",
-      "depends_on": [],
+      "depends_on": ["host-prerequisite-evidence-collection"],
       "flags": {"host_inspection": true, "subprocess": true, "network": true, "docker": true, "writes": false, "downloads": false, "credentials": false, "lifecycle": false, "destructive": false},
-      "required_inputs": ["operator-selected inspection scope", "maintenance-safe observation window", "read-only host-preflight and runtime-lane contracts"],
+      "required_inputs": ["separate host-prerequisite evidence receipt", "operator-selected broader inspection scope", "maintenance-safe observation window", "read-only host-preflight and runtime-lane contracts"],
       "current_blockers": ["no inspection approval is represented by this compiler", "current host, Docker, port, endpoint, memory, disk, and image state is deliberately not observed"],
       "cleanup": "none; inspection must not create resources",
       "rollback": "none; abort on any attempted mutation or non-loopback runtime target"
@@ -200,6 +213,8 @@
     {"path": "deploy/docker/thor-local/qualification/runtime.py", "sha256": "034e579a3832c327065b535fe9f1bfdfcf2092270d19dcb1162a4eb30d26d996"},
     {"path": "deploy/docker/thor-local/qualification/runtime_inventory.json", "sha256": "43f393077f494175fd537eca9f67277a345c388bc85a44bfbb949064ec7d5eb4"},
     {"path": "deploy/docker/thor-local/qualification/runtime-lanes/runtime-lane-plan.json", "sha256": "a0b20704c3683f9e8820b9ed2eea44a7222950c414ab8fe83b08dd18736ed613"},
+    {"path": "deploy/docker/thor-local/qualification/host-prerequisite-evidence/contract.json", "sha256": "7029d7e76d1de83087f7757b10c7d278ba93783dc4548bbec16ee4b63bb65e4c"},
+    {"path": "deploy/docker/thor-local/qualification/host-prerequisite-evidence/collector.py", "sha256": "6908fc04fc5f3c004719bce2a09755cc08d14574ca4860e05b2e29b0fc4d58b7"},
     {"path": "deploy/docker/thor-local/qualification/host-preflight/contract.json", "sha256": "81a025515e15e5a07213e2bd19d7b7a3e405c1167ddbc6ae5e480074b8142eed"},
     {"path": "deploy/docker/thor-local/qualification/host-preflight/preflight.py", "sha256": "0e73853b7d8da7b3299584a6bada4d8a76b3aaac45abe1098185adcfb6b917c5"},
     {"path": "deploy/docker/thor-local/qualification/host-cgroupfs-remediation/remediate.py", "sha256": "ad478c3990251817d3e562eea058f9bc436678a057559c0116ab85959195d6c1"},

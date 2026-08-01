@@ -184,6 +184,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/planning-requirement-executors-wave10/tests"
 
+# The ninth nonadvancing planning audit checks one preserved negative, one
+# configuration-only, and four protocol/source-only subsets from the exact
+# 36-row remainder. It leaves 30 unselected, selects no Warehouse row, and
+# keeps all 84 live-open requirements unpromoted and evidence-free.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave11/executor.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave11/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
@@ -385,7 +395,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/audio-entry-oracles/tests"
 
-# The remaining material actions are divided into 13 explicit, non-inheriting
+# The remaining material actions are divided into 14 explicit, non-inheriting
 # operator approval scopes. This compiler has no execute mode and the static
 # suite proves it cannot inspect the host, contact a provider, download an
 # artifact, invoke Docker, grant approval, or perform a lifecycle action.

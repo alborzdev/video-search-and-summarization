@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import stat
 import subprocess
@@ -19,7 +18,6 @@ from typing import Any, Mapping, Protocol
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
 
-
 sys.dont_write_bytecode = True
 
 
@@ -27,8 +25,13 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[4]
 DEFAULT_CONTRACT = HERE / "contract.json"
 DEFAULT_SCHEMA = HERE / "result.schema.json"
+EXPECTED_RESULT_SCHEMA_SHA256 = (
+    "a187f6023a65f38216c92fb79f5788bbebc346e84a921125c677504a2b91c0aa"
+)
 MAX_CAPTURE_BYTES = 1024 * 1024
 EXPECTED_ACKNOWLEDGEMENT = "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE"
+SYSTEM_NGC_CANDIDATES = (Path("/usr/bin/ngc"), Path("/usr/local/bin/ngc"))
+UNAVAILABLE_NGC_EXECUTABLE = "/nonexistent/vss-host-prerequisite-ngc"
 INTERFACE_RE = re.compile(r"^[A-Za-z0-9_.:-]{1,64}$")
 VERSION_RE = re.compile(r"(?<!\d)(\d+)\.(\d+)\.(\d+)(?!\d)")
 PRODUCT_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._()+/-]{0,79}$")
@@ -63,32 +66,33 @@ def _probe(probe_id: str, executable: str, *argv: str) -> Probe:
     return Probe(probe_id, executable, tuple(argv))
 
 
-def _ngc_executable() -> str:
-    candidates = (
-        Path("/usr/bin/ngc"),
-        Path("/usr/local/bin/ngc"),
-        Path("/home/nvidia/.local/bin/ngc"),
-    )
-    allowed_roots = (
-        Path("/usr/bin"),
-        Path("/usr/local/bin"),
-        Path("/home/nvidia/.local/lib/ngc-cli"),
-    )
+def _ngc_executable(candidates: tuple[Path, ...] = SYSTEM_NGC_CANDIDATES) -> str:
+    """Select a fixed, root-owned system NGC executable after authorization."""
+
     for candidate in candidates:
+        if candidate not in SYSTEM_NGC_CANDIDATES:
+            continue
         try:
-            resolved = candidate.resolve(strict=True)
-            mode = resolved.stat().st_mode
+            metadata = candidate.lstat()
         except OSError:
             continue
-        if not stat.S_ISREG(mode) or not os.access(resolved, os.X_OK):
+        mode = metadata.st_mode
+        if (
+            not stat.S_ISREG(mode)
+            or metadata.st_uid != 0
+            or not mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+            or mode & (stat.S_IWGRP | stat.S_IWOTH)
+        ):
             continue
-        if any(resolved.parent == root for root in allowed_roots):
-            return str(resolved)
-    # A fixed nonexistent path yields a sanitized unavailable observation.
-    return "/usr/bin/ngc"
+        return str(candidate)
+    # A fixed nonexistent path yields a sanitized unavailable observation and
+    # cannot accidentally execute a rejected candidate at a conventional path.
+    return UNAVAILABLE_NGC_EXECUTABLE
 
 
-def build_probes() -> Mapping[str, Probe]:
+def build_probes(
+    ngc_executable: str = UNAVAILABLE_NGC_EXECUTABLE,
+) -> Mapping[str, Probe]:
     probes = (
         _probe("architecture", "/usr/bin/uname", "-m"),
         _probe(
@@ -112,7 +116,7 @@ def build_probes() -> Mapping[str, Probe]:
             "--short",
         ),
         _probe("toolkit_version", "/usr/bin/nvidia-ctk", "--version"),
-        _probe("ngc_version", _ngc_executable(), "--version"),
+        _probe("ngc_version", ngc_executable, "--version"),
         _probe("cpu_count", "/usr/bin/getconf", "_NPROCESSORS_ONLN"),
         _probe(
             "disk_root",
@@ -179,8 +183,11 @@ class AllowlistedRunner:
         }
     )
 
+    def __init__(self, probes: Mapping[str, Probe] = PROBES) -> None:
+        self._probes = probes
+
     def run(self, probe: Probe) -> ProbeResult:
-        if PROBES.get(probe.id) != probe:
+        if self._probes.get(probe.id) != probe:
             raise EvidenceError(f"probe is not the exact allowlisted tuple: {probe.id}")
         try:
             completed = subprocess.run(
@@ -434,11 +441,9 @@ def _capability(
         "contract_canonical_sha256": binding["contract_canonical_sha256"],
         "assertions": assertions,
         "contract_status": status,
-        "contract_satisfied": True
-        if status == "pass"
-        else False
-        if status == "fail"
-        else None,
+        "contract_satisfied": (
+            True if status == "pass" else False if status == "fail" else None
+        ),
     }
 
 
@@ -555,9 +560,12 @@ def _gpu(value: str | None) -> tuple[list[str], list[str]]:
 
 
 def _observations(
-    runner: Runner, reader: Reader, network: NetworkInspector
+    runner: Runner,
+    reader: Reader,
+    network: NetworkInspector,
+    probes: Mapping[str, Probe],
 ) -> dict[str, Any]:
-    command = {probe_id: runner.run(probe) for probe_id, probe in PROBES.items()}
+    command = {probe_id: runner.run(probe) for probe_id, probe in probes.items()}
     files = {key: reader.read(key) for key in HOST_FILES}
     gpu_names, gpu_drivers = _gpu(_result(command["gpu"]))
     docker = (_result(command["docker_version"]) or "").split("|")
@@ -657,9 +665,11 @@ def _capabilities(
                 "validated-platform",
                 "AGX Thor",
                 platform["platform_class"],
-                platform["platform_class"] == "AGX Thor"
-                if platform["platform_class"]
-                else None,
+                (
+                    platform["platform_class"] == "AGX Thor"
+                    if platform["platform_class"]
+                    else None
+                ),
             )
         ],
     )
@@ -670,9 +680,11 @@ def _capabilities(
                 "platform",
                 "AGX Thor",
                 platform["platform_class"],
-                platform["platform_class"] == "AGX Thor"
-                if platform["platform_class"]
-                else None,
+                (
+                    platform["platform_class"] == "AGX Thor"
+                    if platform["platform_class"]
+                    else None
+                ),
             ),
             _assertion(
                 "bsp-release",
@@ -684,9 +696,11 @@ def _capabilities(
                 "driver",
                 "580.00",
                 platform["gpu_driver_versions"],
-                all(item == "580.00" for item in platform["gpu_driver_versions"])
-                if platform["gpu_driver_versions"]
-                else None,
+                (
+                    all(item == "580.00" for item in platform["gpu_driver_versions"])
+                    if platform["gpu_driver_versions"]
+                    else None
+                ),
             ),
         ],
     )
@@ -698,57 +712,71 @@ def _capabilities(
                 "docker",
                 ">=28.3.3,<29.5.0",
                 toolchain["docker_server"],
-                (28, 3, 3) <= parsed_versions["docker_server"] < (29, 5, 0)
-                if parsed_versions["docker_server"]
-                else None,
+                (
+                    (28, 3, 3) <= parsed_versions["docker_server"] < (29, 5, 0)
+                    if parsed_versions["docker_server"]
+                    else None
+                ),
             ),
             _assertion(
                 "docker-compose",
                 ">=2.39.1",
                 toolchain["docker_compose"],
-                parsed_versions["docker_compose"] >= (2, 39, 1)
-                if parsed_versions["docker_compose"]
-                else None,
+                (
+                    parsed_versions["docker_compose"] >= (2, 39, 1)
+                    if parsed_versions["docker_compose"]
+                    else None
+                ),
             ),
             _assertion(
                 "nvidia-container-toolkit",
                 ">=1.17.8",
                 toolchain["nvidia_container_toolkit"],
-                parsed_versions["nvidia_container_toolkit"] >= (1, 17, 8)
-                if parsed_versions["nvidia_container_toolkit"]
-                else None,
+                (
+                    parsed_versions["nvidia_container_toolkit"] >= (1, 17, 8)
+                    if parsed_versions["nvidia_container_toolkit"]
+                    else None
+                ),
             ),
             _assertion(
                 "ngc-cli",
                 ">=4.10.0",
                 toolchain["ngc_cli"],
-                parsed_versions["ngc_cli"] >= (4, 10, 0)
-                if parsed_versions["ngc_cli"]
-                else None,
+                (
+                    parsed_versions["ngc_cli"] >= (4, 10, 0)
+                    if parsed_versions["ngc_cli"]
+                    else None
+                ),
             ),
             _assertion(
                 "warehouse-docker",
                 ">=28.3.3,<29.5.0",
                 toolchain["docker_server"],
-                (28, 3, 3) <= parsed_versions["docker_server"] < (29, 5, 0)
-                if parsed_versions["docker_server"]
-                else None,
+                (
+                    (28, 3, 3) <= parsed_versions["docker_server"] < (29, 5, 0)
+                    if parsed_versions["docker_server"]
+                    else None
+                ),
             ),
             _assertion(
                 "warehouse-compose",
                 ">=2.39.1",
                 toolchain["docker_compose"],
-                parsed_versions["docker_compose"] >= (2, 39, 1)
-                if parsed_versions["docker_compose"]
-                else None,
+                (
+                    parsed_versions["docker_compose"] >= (2, 39, 1)
+                    if parsed_versions["docker_compose"]
+                    else None
+                ),
             ),
             _assertion(
                 "warehouse-ngc-cli",
                 ">=4.10.0",
                 toolchain["ngc_cli"],
-                parsed_versions["ngc_cli"] >= (4, 10, 0)
-                if parsed_versions["ngc_cli"]
-                else None,
+                (
+                    parsed_versions["ngc_cli"] >= (4, 10, 0)
+                    if parsed_versions["ngc_cli"]
+                    else None
+                ),
             ),
         ],
     )
@@ -756,9 +784,11 @@ def _capabilities(
     cpu_condition = (
         True
         if architecture == "aarch64"
-        else capacity["online_cpu_count"] >= 18
-        if isinstance(capacity["online_cpu_count"], int)
-        else None
+        else (
+            capacity["online_cpu_count"] >= 18
+            if isinstance(capacity["online_cpu_count"], int)
+            else None
+        )
     )
     memory_condition = (
         capacity["total_memory_bytes"] >= 128_000_000_000
@@ -862,12 +892,27 @@ def _operational_status(observed: dict[str, Any]) -> str:
     return "ready"
 
 
-def _validate(result: dict[str, Any], schema_path: Path = DEFAULT_SCHEMA) -> None:
+def _load_locked_result_schema(
+    schema_path: Path = DEFAULT_SCHEMA,
+) -> dict[str, Any]:
+    if schema_path != DEFAULT_SCHEMA:
+        raise EvidenceError("result schema path is not the locked package schema")
+    try:
+        schema_bytes = schema_path.read_bytes()
+    except OSError as exc:
+        raise EvidenceError("result schema is unavailable") from exc
+    if hashlib.sha256(schema_bytes).hexdigest() != EXPECTED_RESULT_SCHEMA_SHA256:
+        raise EvidenceError("result schema raw-byte identity drifted")
     schema = _json_object(schema_path)
     try:
         Draft202012Validator.check_schema(schema)
     except SchemaError as exc:
         raise EvidenceError("result schema is invalid") from exc
+    return schema
+
+
+def _validate(result: dict[str, Any], schema_path: Path = DEFAULT_SCHEMA) -> None:
+    schema = _load_locked_result_schema(schema_path)
     errors = sorted(
         Draft202012Validator(schema).iter_errors(result),
         key=lambda error: list(error.absolute_path),
@@ -914,9 +959,10 @@ def collect_evidence(
     runner: Runner,
     reader: Reader,
     network: NetworkInspector,
+    probes: Mapping[str, Probe] = PROBES,
 ) -> dict[str, Any]:
     load_bound_oracles(contract)
-    observed = _observations(runner, reader, network)
+    observed = _observations(runner, reader, network, probes)
     capabilities = _capabilities(contract, observed)
     statuses = [item["contract_status"] for item in capabilities]
     contract_result = (
@@ -947,7 +993,7 @@ def collect_evidence(
             "host_mutation": False,
             "raw_probe_output_emitted": False,
             "sensitive_identifiers_emitted": False,
-            "external_commands_executed": len(PROBES),
+            "external_commands_executed": len(probes),
             "host_files_read": len(HOST_FILES),
         },
         "semantics": contract["interpretation"],
@@ -987,11 +1033,18 @@ def main(argv: list[str] | None = None) -> int:
                 raise EvidenceError(
                     "inspect requires the exact read-only acknowledgement"
                 )
+            # Validate every checked-in source binding before touching any NGC
+            # candidate path. Import and rejected acknowledgements remain free
+            # of host executable discovery and metadata inspection.
+            load_bound_oracles(contract)
+            _load_locked_result_schema()
+            probes = build_probes(_ngc_executable())
             result = collect_evidence(
                 contract,
-                AllowlistedRunner(),
+                AllowlistedRunner(probes),
                 AllowlistedReader(),
                 SysfsNetworkInspector(),
+                probes,
             )
         print(json.dumps(result, indent=2, sort_keys=True))
         if args.mode == "plan" or result["result"] == "pass":

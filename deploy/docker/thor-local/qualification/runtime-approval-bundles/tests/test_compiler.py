@@ -35,7 +35,7 @@ def test_default_compiles_only_inert_unapproved_plan(capsys):
     assert MODULE.main([]) == 0
     result = json.loads(capsys.readouterr().out)
     assert result["mode"] == "inert_nonexecuting_approval_plan"
-    assert result["bundle_count"] == 13
+    assert result["bundle_count"] == 14
     assert result["approval_count"] == 0
     assert result["default_policy"] == {
         "host_inspection": False,
@@ -57,13 +57,38 @@ def test_exact_bundle_denominator_unique_noninheriting_placeholders():
     bundles = result["ordered_bundles"]
     assert [item["id"] for item in bundles] == MODULE.EXPECTED_BUNDLE_IDS
     placeholders = [item["approval_placeholder"] for item in bundles]
-    assert len(placeholders) == len(set(placeholders)) == 13
+    assert len(placeholders) == len(set(placeholders)) == 14
     assert all(value.startswith("<APPROVE_ONLY_") for value in placeholders)
     policy = result["approval_policy"]
     assert policy["approval_inheritance"] is False
     assert policy["dependency_completion_is_not_approval"] is True
     assert policy["placeholder_is_not_approval"] is True
     assert policy["compiler_can_grant_approval"] is False
+
+
+def test_first_bundle_has_exact_noninheriting_executable_gate():
+    result = MODULE.compile_plan()
+    first = result["ordered_bundles"][0]
+    assert first["id"] == "host-prerequisite-evidence-collection"
+    assert first["depends_on"] == []
+    assert first["approval_placeholder"] == (
+        "<APPROVE_ONLY_READ_ONLY_HOST_PREREQUISITE_EVIDENCE_COLLECTION>"
+    )
+    assert (
+        first["acknowledgement_token"]
+        == "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE"
+    )
+    assert first["authorized_command"] == (
+        "PYTHONDONTWRITEBYTECODE=1 python3 "
+        "deploy/docker/thor-local/qualification/host-prerequisite-evidence/"
+        "collector.py inspect --acknowledgement "
+        "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE"
+    )
+    assert all(
+        "acknowledgement_token" not in bundle and "authorized_command" not in bundle
+        for bundle in result["ordered_bundles"][1:]
+    )
+    assert result["ordered_bundles"][1]["depends_on"] == [first["id"]]
 
 
 def test_precedence_is_exact_acyclic_and_dependencies_precede_dependents():
@@ -158,8 +183,14 @@ def test_all_source_locks_are_exact_and_current():
     loaded = MODULE._load_contract()
     checks = MODULE._check_sources(loaded)
     assert {item["path"] for item in checks} == MODULE.EXPECTED_SOURCE_PATHS
-    assert len(checks) == 25
+    assert len(checks) == 27
     assert all(item["sha256_match"] for item in checks)
+    assert {
+        item["path"] for item in checks if "host-prerequisite-evidence" in item["path"]
+    } == {
+        "deploy/docker/thor-local/qualification/host-prerequisite-evidence/contract.json",
+        "deploy/docker/thor-local/qualification/host-prerequisite-evidence/collector.py",
+    }
 
 
 @pytest.mark.parametrize(
@@ -177,12 +208,22 @@ def test_all_source_locks_are_exact_and_current():
             "dependency precedence drift",
         ),
         (
-            lambda c: c["bundles"][3]["flags"].update(network=False),
+            lambda c: c["bundles"][4]["flags"].update(network=False),
             "download flags must disclose",
         ),
         (
-            lambda c: c["bundles"][4]["flags"].update(lifecycle=False),
+            lambda c: c["bundles"][5]["flags"].update(lifecycle=False),
             "destructive flags must disclose",
+        ),
+        (
+            lambda c: c["bundles"][0].update(acknowledgement_token="WRONG_TOKEN"),
+            "first host-prerequisite approval gate drift",
+        ),
+        (
+            lambda c: c["bundles"][1].update(
+                acknowledgement_token="I_ACCEPT_UNSCOPED_INSPECTION"
+            ),
+            "executable acknowledgement gate must remain isolated",
         ),
         (
             lambda c: c["download_review"].update(known_exact_remote_bytes=1),

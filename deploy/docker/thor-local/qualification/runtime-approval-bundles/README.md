@@ -1,6 +1,6 @@
 # Thor runtime approval bundles
 
-This isolated package compiles the remaining operator-authorized work into 13 explicit, non-executing approval bundles. It grants no approval and performs no host inspection, subprocess, network request, Docker call, write, download, credential access, lifecycle change, or cleanup.
+This isolated package compiles the remaining operator-authorized work into 14 explicit, non-executing approval bundles. It grants no approval and performs no host inspection, subprocess, network request, Docker call, write, download, credential access, lifecycle change, or cleanup.
 
 Run the default inert compiler from the repository root:
 
@@ -17,7 +17,8 @@ Every bundle has a unique `<APPROVE_ONLY_...>` placeholder. A placeholder is not
 
 | Bundle | Must follow | Material action flags |
 |---|---|---|
-| Read-only Docker/runtime inspection | — | host inspection, subprocess, loopback network, Docker |
+| Host-prerequisite evidence collection | — | acknowledgement-gated host inspection, subprocess, read-only Docker version access |
+| Read-only Docker/runtime inspection | prerequisite evidence | broader host inspection, subprocess, loopback network, Docker |
 | cgroupfs remediation | inspection | writes, Docker lifecycle, destructive interruption/restoration |
 | tiny audio fixture generation | — | local subprocess, two outside-repository writes |
 | model/artifact downloads | inspection | network, Docker, writes, downloads, credentials |
@@ -32,6 +33,19 @@ Every bundle has a unique `<APPROVE_ONLY_...>` placeholder. A placeholder is not
 | external attestations | — | provider network, credentials, sanitized evidence write |
 
 The contract records required inputs, current planning blockers, cleanup, rollback, and nine boolean action disclosures for every bundle. A dependency can be satisfied by that bundle's separate receipt or by a reviewed determination that no action is required—for example, cgroupfs already being correct or an artifact already being present. Neither result grants the dependent approval. Blocker language is deliberately non-observational: the compiler does not infer current memory, disk, cgroup, container, port, endpoint, image, model, or credential state.
+
+The exact first executable gate is intentionally narrower than broader Docker
+and loopback inspection:
+
+```text
+placeholder: <APPROVE_ONLY_READ_ONLY_HOST_PREREQUISITE_EVIDENCE_COLLECTION>
+token: I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE
+command: PYTHONDONTWRITEBYTECODE=1 python3 deploy/docker/thor-local/qualification/host-prerequisite-evidence/collector.py inspect --acknowledgement I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE
+```
+
+The placeholder is still not approval. Only the separately supplied exact
+token authorizes that one command. It does not authorize `host-preflight.py
+inspect`, loopback runtime GETs, remediation, downloads, or lifecycle work.
 
 ## Download and disk review
 

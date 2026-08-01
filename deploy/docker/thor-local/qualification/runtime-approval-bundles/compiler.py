@@ -21,11 +21,12 @@ CONTRACT_SCHEMA_PATH = HERE / "contract.schema.json"
 PLAN_SCHEMA_PATH = HERE / "plan.schema.json"
 MAX_JSON_BYTES = 2_000_000
 EXPECTED_PACKAGE_HASHES = {
-    "contract.json": "a2fa6fbfdb552802b5e625b87eaabdef2c9868f89957f4cfffa6550898663e84",
-    "contract.schema.json": "26a598e3002d61ef4f947d4633af865298aa7bbf890138ba669b18fbe70f4214",
-    "plan.schema.json": "91e5737e24d979c130f948142966887469928d4de2d2ec99fc380f28a5d00a2e",
+    "contract.json": "8ff3f3a87ede014264b63b4373e9cfb35f5b70fcc710a28c0bbaf44a84be8311",
+    "contract.schema.json": "400b3b8720cd9332c069cc2d5d14aa54722680a4493ccfabef8701db5e98d36e",
+    "plan.schema.json": "ccf37af1c00cac7f677a6af1dca4c5d7f69391bbf4147561e894455fe6ecf218",
 }
 EXPECTED_BUNDLE_IDS = [
+    "host-prerequisite-evidence-collection",
     "read-only-docker-runtime-inspection",
     "cgroupfs-remediation",
     "tiny-audio-fixture-generation",
@@ -41,7 +42,8 @@ EXPECTED_BUNDLE_IDS = [
     "external-attestations",
 ]
 EXPECTED_DEPENDENCIES = {
-    "read-only-docker-runtime-inspection": [],
+    "host-prerequisite-evidence-collection": [],
+    "read-only-docker-runtime-inspection": ["host-prerequisite-evidence-collection"],
     "cgroupfs-remediation": ["read-only-docker-runtime-inspection"],
     "tiny-audio-fixture-generation": [],
     "model-artifact-downloads": ["read-only-docker-runtime-inspection"],
@@ -80,6 +82,8 @@ EXPECTED_SOURCE_PATHS = {
     "deploy/docker/thor-local/qualification/runtime.py",
     "deploy/docker/thor-local/qualification/runtime_inventory.json",
     "deploy/docker/thor-local/qualification/runtime-lanes/runtime-lane-plan.json",
+    "deploy/docker/thor-local/qualification/host-prerequisite-evidence/contract.json",
+    "deploy/docker/thor-local/qualification/host-prerequisite-evidence/collector.py",
     "deploy/docker/thor-local/qualification/host-preflight/contract.json",
     "deploy/docker/thor-local/qualification/host-preflight/preflight.py",
     "deploy/docker/thor-local/qualification/host-cgroupfs-remediation/remediate.py",
@@ -102,6 +106,19 @@ EXPECTED_SOURCE_PATHS = {
     "deploy/docker/thor-local/qualification/audio-entry-oracles/oracle.py",
     "deploy/docker/scripts/thor-local.sh",
     "deploy/docker/scripts/dev-profile.sh",
+}
+EXPECTED_FIRST_APPROVAL = {
+    "id": "host-prerequisite-evidence-collection",
+    "approval_placeholder": (
+        "<APPROVE_ONLY_READ_ONLY_HOST_PREREQUISITE_EVIDENCE_COLLECTION>"
+    ),
+    "acknowledgement_token": "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE",
+    "authorized_command": (
+        "PYTHONDONTWRITEBYTECODE=1 python3 "
+        "deploy/docker/thor-local/qualification/host-prerequisite-evidence/"
+        "collector.py inspect --acknowledgement "
+        "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE"
+    ),
 }
 
 
@@ -198,6 +215,14 @@ def _validate_semantics(contract: dict[str, Any]) -> None:
     placeholders = [item["approval_placeholder"] for item in bundles]
     if len(set(placeholders)) != len(placeholders):
         raise BundleError("approval placeholders must be unique per bundle")
+    first = bundles[0]
+    if any(first.get(key) != value for key, value in EXPECTED_FIRST_APPROVAL.items()):
+        raise BundleError("first host-prerequisite approval gate drift")
+    if any(
+        "acknowledgement_token" in bundle or "authorized_command" in bundle
+        for bundle in bundles[1:]
+    ):
+        raise BundleError("executable acknowledgement gate must remain isolated")
     positions = {bundle_id: index for index, bundle_id in enumerate(bundle_ids)}
     for bundle in bundles:
         bundle_id = bundle["id"]

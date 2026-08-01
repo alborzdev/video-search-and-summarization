@@ -8,8 +8,12 @@ Implemented boundaries:
 - exactly four prerequisite capability/oracle pairs are canonical-hash bound;
 - default execution is an inert, schema-validated plan;
 - inspect mode requires the exact read-only acknowledgement;
+- the result schema is raw-byte self-locked by the collector;
 - external commands, host files, and sysfs network reads are closed and
   informational;
+- NGC discovery occurs only after acknowledgement and source validation, uses
+  only fixed root-owned non-writable system candidates, and rejects symlinks
+  and user-home executables;
 - Docker lifecycle, Compose application operations, network requests,
   credentials, raw probe output, host mutation, and VSS-state mutation are
   prohibited;
@@ -25,8 +29,8 @@ Focused verification:
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/qualification/host-prerequisite-evidence/tests
 
-................                                                         [100%]
-16 passed
+.........................                                                [100%]
+25 passed
 ```
 
 No live inspect command was run while creating this package. No container was

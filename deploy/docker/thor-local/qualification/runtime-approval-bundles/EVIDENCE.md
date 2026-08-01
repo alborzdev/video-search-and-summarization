@@ -2,9 +2,11 @@
 
 ## Raw-locked inputs
 
-`contract.json` locks 25 current inputs covering:
+`contract.json` locks 27 current inputs covering:
 
 - read-only loopback runtime inventory and runtime-lane planning;
+- the acknowledgement-gated host-prerequisite collector and its contract; the
+  collector raw-locks its result schema;
 - host preflight and cgroupfs remediation;
 - tiny known-speech fixture generation and the reviewed two-lane audio oracle;
 - official Edge readiness/staging;
@@ -23,7 +25,18 @@ and execution.
 
 The plan establishes only a deterministic work denominator, separation of approval scopes, dependency precedence, known-versus-unknown transfer sizing, required inputs, blockers, and intended cleanup/rollback boundaries. It records zero approvals. It does not determine whether any bundle is currently necessary, ready, safe to run, or complete.
 
-Read-only inspection precedes host-dependent mutation and staging. Cgroup remediation and downloads have their own acknowledgements. Profile lifecycle precedes runtime workload qualification. The 2/4/8/16 Search scale approval explicitly excludes the separate dependent 100-stream approval. Native-Omni audio semantics and local-ASR transcript qualification likewise require separate authorization IDs and acknowledgements. MV3DT and Sparse4D require operator-owned exact-four custom data; the Warehouse sample is excluded. Sparse4D additionally requires exact RT-DETR, Sparse4D v2.2 ONNX, and finite `(900,11)` anchor admission. External provider work remains independent of local lifecycle work.
+The exact-token host-prerequisite collection is first. Broader Docker and
+loopback inspection depends on its separate receipt and receives no inherited
+approval. Read-only inspection precedes host-dependent mutation and staging.
+Cgroup remediation and downloads have their own acknowledgements. Profile
+lifecycle precedes runtime workload qualification. The 2/4/8/16 Search scale
+approval explicitly excludes the separate dependent 100-stream approval.
+Native-Omni audio semantics and local-ASR transcript qualification likewise
+require separate authorization IDs and acknowledgements. MV3DT and Sparse4D
+require operator-owned exact-four custom data; the Warehouse sample is
+excluded. Sparse4D additionally requires exact RT-DETR, Sparse4D v2.2 ONNX,
+and finite `(900,11)` anchor admission. External provider work remains
+independent of local lifecycle work.
 
 ## Prohibited inference
 

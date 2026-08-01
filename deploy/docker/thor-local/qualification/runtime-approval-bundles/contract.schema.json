@@ -26,8 +26,8 @@
       "properties": {"state": {"const": "stable_reviewed_audio_contract"}, "stable_fixture_path": {"const": "deploy/docker/thor-local/qualification/tiny-audio-fixture/fixture.py"}, "wave7_identity_path": {"const": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json"}, "runtime_contract_path": {"const": "deploy/docker/thor-local/qualification/audio-entry-oracles/contract.json"}, "runtime_oracle_path": {"const": "deploy/docker/thor-local/qualification/audio-entry-oracles/oracle.py"}, "active_audio_package_relied_on": {"const": true}, "binding_rule": {"const": "native_audio_and_separate_asr_require_distinct_noninheriting_authorizations"}}
     },
     "download_review": {"$ref": "#/$defs/download_review"},
-    "bundles": {"type": "array", "minItems": 13, "maxItems": 13, "items": {"$ref": "#/$defs/bundle"}},
-    "source_locks": {"type": "array", "minItems": 25, "maxItems": 25, "items": {"$ref": "#/$defs/source_lock"}}
+    "bundles": {"type": "array", "minItems": 14, "maxItems": 14, "items": {"$ref": "#/$defs/bundle"}},
+    "source_locks": {"type": "array", "minItems": 27, "maxItems": 27, "items": {"$ref": "#/$defs/source_lock"}}
   },
   "$defs": {
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -42,6 +42,8 @@
       "required": ["id", "title", "approval_placeholder", "depends_on", "flags", "required_inputs", "current_blockers", "cleanup", "rollback"],
       "properties": {
         "id": {"$ref": "#/$defs/id"}, "title": {"type": "string", "minLength": 3}, "approval_placeholder": {"type": "string", "pattern": "^<APPROVE_ONLY_[A-Z0-9_]+>$"},
+        "acknowledgement_token": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{15,127}$"},
+        "authorized_command": {"type": "string", "minLength": 20, "maxLength": 512},
         "depends_on": {"type": "array", "maxItems": 10, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "flags": {"$ref": "#/$defs/flags"},
         "required_inputs": {"type": "array", "minItems": 2, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "minLength": 5}},
         "current_blockers": {"type": "array", "minItems": 2, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "minLength": 10}},

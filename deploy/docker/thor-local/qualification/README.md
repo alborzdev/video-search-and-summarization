@@ -104,6 +104,11 @@ in this directory:
   state, Smart City model/configuration boundaries, NvStreamer file protocol,
   and the VA query library. It leaves 36 without a planning candidate, excludes
   every Warehouse row, and keeps all 84 live-open requirements unpromoted;
+- `planning-requirement-executors-wave11/` audits that exact 36-requirement
+  remainder and adds six disjoint bounded subsets for Kibana, alert workflow
+  and persistence, Behavior Analytics, and LVS queue/format surfaces. It leaves
+  30 without a planning candidate, selects no Warehouse row, and keeps all 84
+  live-open requirements unpromoted and runtime-evidence-empty;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -141,12 +146,13 @@ in this directory:
   artifact, and cleanup gates, and explicitly rejects native-audio ASR-skip as
   transcript proof. Its validator still returns only `not_admitted`;
 - `runtime-approval-bundles/` compiles the remaining operator-authorized work
-  into 13 explicit, non-inheriting approval scopes. Progressive Search and its
-  separate 100-stream run, native Omni audio and local-ASR transcript, model
-  downloads, profile lifecycle, custom-data lanes, Edge staging, and external
-  attestations remain independently gated. The compiler is inert, grants no
-  approval, and performs no host, Docker, network, credential, download, or
-  lifecycle action;
+  into 14 explicit, non-inheriting approval scopes. The narrow host-prerequisite
+  collector now precedes broader Docker/runtime inspection; progressive Search
+  and its separate 100-stream run, native Omni audio and local-ASR transcript,
+  model downloads, profile lifecycle, custom-data lanes, Edge staging, and
+  external attestations remain independently gated. The compiler is inert,
+  grants no approval, and performs no host, Docker, network, credential,
+  download, or lifecycle action;
 - `advertised-entry-gaps/` gives each advertised entry from the 16 families
   that lack capability rows its own still-open semantic oracle plan;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
@@ -197,9 +203,9 @@ bindings are static subsets only, with zero runtime evidence and zero
 `passed_current` promotions. The third successor updates the LVS adapter's
 static API contract and binds those two MV3DT subsets without materializing an
 additional planning requirement. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1 +
-11 advertised-entry candidates and 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 additional planning
+11 advertised-entry candidates and 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 additional planning
 checks are non-advancing and do not change those live counts. They leave four
-advertised entries as explicit external-attestation blockers and 36 planning
+advertised entries as explicit external-attestation blockers and 30 planning
 requirements not yet selected by a planning executor package, respectively.
 The prerelease packages are separate from these stable 3.2.1 denominators. The
 fourteen-family watchlist remains pointer-only; the adjacent exact diff package

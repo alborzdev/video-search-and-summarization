@@ -3,16 +3,17 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import stat
 import subprocess
 import sys
 from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 import jsonschema
 import pytest
-
 
 sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
@@ -143,8 +144,13 @@ def collect(
 
 
 def test_default_plan_is_inert_and_schema_validated() -> None:
-    with mock.patch.object(
-        collector.subprocess, "run", side_effect=AssertionError("executed")
+    with (
+        mock.patch.object(
+            collector.subprocess, "run", side_effect=AssertionError("executed")
+        ),
+        mock.patch.object(
+            collector.Path, "lstat", side_effect=AssertionError("host stat")
+        ),
     ):
         result = collector.build_plan(collector.load_contract())
     assert result["result"] == "inert_plan"
@@ -153,6 +159,12 @@ def test_default_plan_is_inert_and_schema_validated() -> None:
     jsonschema.Draft202012Validator(
         json.loads((PACKAGE / "result.schema.json").read_text())
     ).validate(result)
+
+
+def test_locked_result_schema_fails_closed_on_raw_byte_drift(monkeypatch) -> None:
+    monkeypatch.setattr(collector, "EXPECTED_RESULT_SCHEMA_SHA256", "0" * 64)
+    with pytest.raises(collector.EvidenceError, match="raw-byte identity drifted"):
+        collector.build_plan(collector.load_contract())
 
 
 def test_source_binding_covers_exactly_four_pairs_and_current_rows() -> None:
@@ -216,6 +228,64 @@ def test_runner_rejects_any_argument_change_and_uses_sterile_environment() -> No
     assert "HF_TOKEN" not in kwargs["env"]
     assert "NGC_CLI_API_KEY" not in kwargs["env"]
     assert "shell" not in kwargs
+
+
+def test_ngc_discovery_rejects_unsafe_and_non_system_candidates(monkeypatch) -> None:
+    metadata = {
+        Path("/usr/bin/ngc"): SimpleNamespace(st_mode=stat.S_IFREG | 0o775, st_uid=0),
+        Path("/usr/local/bin/ngc"): SimpleNamespace(
+            st_mode=stat.S_IFREG | 0o755, st_uid=1000
+        ),
+    }
+
+    def fake_lstat(path: Path):
+        return metadata[path]
+
+    monkeypatch.setattr(collector.Path, "lstat", fake_lstat)
+    assert (
+        collector._ngc_executable(
+            (
+                Path("/home/nvidia/.local/bin/ngc"),
+                Path("/usr/bin/ngc"),
+                Path("/usr/local/bin/ngc"),
+            )
+        )
+        == collector.UNAVAILABLE_NGC_EXECUTABLE
+    )
+
+
+@pytest.mark.parametrize(
+    ("mode", "uid"),
+    [
+        (stat.S_IFLNK | 0o777, 0),
+        (stat.S_IFREG | 0o775, 0),
+        (stat.S_IFREG | 0o755, 1000),
+        (stat.S_IFREG | 0o644, 0),
+    ],
+)
+def test_ngc_discovery_rejects_each_unsafe_system_file_class(
+    monkeypatch, mode: int, uid: int
+) -> None:
+    monkeypatch.setattr(
+        collector.Path,
+        "lstat",
+        lambda path: SimpleNamespace(st_mode=mode, st_uid=uid),
+    )
+    assert (
+        collector._ngc_executable((Path("/usr/local/bin/ngc"),))
+        == collector.UNAVAILABLE_NGC_EXECUTABLE
+    )
+
+
+def test_ngc_discovery_accepts_only_safe_root_owned_system_binary(monkeypatch) -> None:
+    def fake_lstat(path: Path):
+        assert path == Path("/usr/local/bin/ngc")
+        return SimpleNamespace(st_mode=stat.S_IFREG | 0o755, st_uid=0)
+
+    monkeypatch.setattr(collector.Path, "lstat", fake_lstat)
+    assert (
+        collector._ngc_executable((Path("/usr/local/bin/ngc"),)) == "/usr/local/bin/ngc"
+    )
 
 
 def test_reader_rejects_arbitrary_paths() -> None:
@@ -339,8 +409,51 @@ def test_schema_rejects_extra_fields_and_false_runtime_claim() -> None:
 
 
 def test_cli_inspect_requires_exact_acknowledgement_without_execution() -> None:
-    with mock.patch.object(
-        collector, "collect_evidence", side_effect=AssertionError("collected")
+    with (
+        mock.patch.object(
+            collector, "collect_evidence", side_effect=AssertionError("collected")
+        ),
+        mock.patch.object(
+            collector.Path, "lstat", side_effect=AssertionError("host stat")
+        ),
     ):
         assert collector.main(["inspect"]) == 2
         assert collector.main(["inspect", "--acknowledgement", "wrong"]) == 2
+
+
+def test_cli_validates_sources_before_ngc_candidate_stat(monkeypatch) -> None:
+    monkeypatch.setattr(
+        collector,
+        "load_bound_oracles",
+        mock.Mock(side_effect=collector.EvidenceError("source drift")),
+    )
+    with mock.patch.object(
+        collector.Path, "lstat", side_effect=AssertionError("host stat")
+    ):
+        assert (
+            collector.main(
+                [
+                    "inspect",
+                    "--acknowledgement",
+                    collector.EXPECTED_ACKNOWLEDGEMENT,
+                ]
+            )
+            == 2
+        )
+
+
+def test_cli_validates_locked_schema_before_ngc_candidate_stat(monkeypatch) -> None:
+    monkeypatch.setattr(collector, "EXPECTED_RESULT_SCHEMA_SHA256", "0" * 64)
+    with mock.patch.object(
+        collector.Path, "lstat", side_effect=AssertionError("host stat")
+    ):
+        assert (
+            collector.main(
+                [
+                    "inspect",
+                    "--acknowledgement",
+                    collector.EXPECTED_ACKNOWLEDGEMENT,
+                ]
+            )
+            == 2
+        )

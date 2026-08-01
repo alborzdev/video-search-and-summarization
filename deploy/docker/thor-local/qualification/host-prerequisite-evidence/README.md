@@ -41,16 +41,24 @@ network clients, registry requests, shell execution, arbitrary arguments, and
 caller-selected paths are absent. The command environment removes ambient
 credentials and points Docker/NGC configuration homes at `/nonexistent`.
 
+NGC executable discovery is deferred until after the exact acknowledgement
+and source-bound oracle validation. It checks only `/usr/bin/ngc` and
+`/usr/local/bin/ngc`; the candidate must be a regular non-symlink, root-owned,
+executable file that is not group/world-writable. User-home candidates are not
+admitted. If neither system candidate is safe, the NGC observation is a
+sanitized unknown. Import, plan mode, rejected acknowledgements, and source
+drift do not stat an NGC candidate.
+
 Three fixed files are read: the device-tree model, Tegra release, and
 `/proc/meminfo`. Network capacity is summarized from `/sys/class/net` after
 rejecting virtual interfaces, CAN, loopback, unsafe names, and paths outside
 `/sys/devices`. The result never emits interface names, addresses, MACs, SSIDs,
 raw command/file output, error text, hostnames, usernames, or timestamps.
 
-Every emitted evidence object is validated against the bundled strict Draft
-2020-12 schema. `evidence_sha256` covers the canonical unsigned object. The
-same parsed observations and source contract therefore produce byte-semantic
-equivalent evidence.
+Every emitted evidence object is validated against the raw-byte self-locked
+strict Draft 2020-12 result schema. `evidence_sha256` covers the canonical
+unsigned object. The same parsed observations and source contract therefore
+produce byte-semantic equivalent evidence.
 
 Exit status is 0 for the inert plan or four satisfied contracts, 1 for a known
 contract failure, and 2 for unknown/invalid evidence. Operational headroom does
@@ -89,4 +97,5 @@ Coverage includes exact source locks, inert defaults, acknowledgement gating,
 command and path allowlists, sterile environments, raw-output sanitization,
 schema enforcement, deterministic evidence digests, version boundaries,
 nonrotational storage, physical-link versus active-route behavior, aarch64 CPU
-scope, missing observations, and operational-admission separation.
+scope, missing observations, operational-admission separation, pre-gate NGC
+stat exclusion, and rejection of unsafe NGC candidates.
