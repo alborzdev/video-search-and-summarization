@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "mode": "inert_sparse4d_advertised_entry_admission",
+  "policy": {
+    "default_action": "read_only_plan",
+    "candidate_evidence_only": true,
+    "advances_live_ledgers": false,
+    "runtime_receipts_bundled": false,
+    "docker": false,
+    "network": false,
+    "subprocess": false,
+    "lifecycle": false,
+    "model_load": false,
+    "downloads": false,
+    "writes": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "admission": {
+    "camera_count": 4,
+    "camera_ids": ["Camera", "Camera_01", "Camera_02", "Camera_03"],
+    "dataset": "operator_supplied_custom_slug_only",
+    "validator": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py",
+    "lane": "deploy/docker/scripts/thor-warehouse-sparse4d.sh",
+    "lane_stages": ["plan", "prepare", "preflight", "qualify"],
+    "sparse4d_model": "sparse4d_warehouse_v2.2.onnx",
+    "anchor": "_ov_kmeans900_v2.2.npy",
+    "anchor_shape": [900, 11],
+    "rtdetr_model": "rtdetr_warehouse_v1.0.2.fp16.onnx",
+    "memory_floor_kib": 52428800,
+    "disk_floor_kib": 31457280,
+    "gpu_conflicts_allowed": 0,
+    "next_action": "resolve_blockers_then_operator_review_and_separate_authorized_runtime"
+  },
+  "advertised_oracles": [
+    {
+      "entry_id": "manifest-gap.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking",
+      "advertised": "Sparse4D multi-camera 3D detection and tracking",
+      "oracle_id": "oracle.manifest-entry.rt-cv-3d-sparse4d.00",
+      "required_oracle_canonical_sha256": "d4ed2d5abc7ecea15a101d2ed0fed97cf093dde973c348c8a2d0e12cc56dee74",
+      "semantic_plan": "require exact model-use identity, four-camera detections, fused 3D/BEV tracks, and cross-camera correlation"
+    },
+    {
+      "entry_id": "manifest-gap.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics",
+      "advertised": "shared RT-CV lifecycle/health/metrics",
+      "oracle_id": "oracle.manifest-entry.rt-cv-3d-sparse4d.01",
+      "required_oracle_canonical_sha256": "6f3f8d07014bf042dba7c52ae3a858b462fa92af01a48fcfdb17cac54a35d9b2",
+      "semantic_plan": "require preflight gates, health, throughput, latency, resources, stream growth, and exact-owned cleanup"
+    }
+  ],
+  "current_blockers": [
+    "Sparse4D v2.2 ONNX is not staged locally",
+    "Sparse4D (900,11) kmeans anchor is not staged locally",
+    "matching operator-owned four-camera media and calibration are not admitted",
+    "the existing Sparse4D validator does not independently admit the requested RT-DETR asset identity",
+    "memory, disk, local ARM64 images, ports, and GPU-idle preflight have not passed for a prepared lane",
+    "no authorized runtime model-use, semantic output, metrics, latency, or cleanup receipt exists"
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py", "sha256": "ecbe1a4e43487a491547b8fd5b62fe542c19a2e90a6eb0c1d1108339b3cd02c3"},
+    {"path": "deploy/docker/scripts/thor-warehouse-sparse4d.sh", "sha256": "c1174164a494263e62139e9507e15836b539b133cebae813ec99b5bbc5765f4c"},
+    {"path": "deploy/docker/thor-local/render-warehouse-sparse4d-env.py", "sha256": "49d485c8dce028fca256f858dbe93ccaf3d57f6719707d62f6c9cc372943d8f7"},
+    {"path": "deploy/docker/thor-local/patch-warehouse-sparse4d-offline.py", "sha256": "bea063caed13dd0aadf8ecb0dcab9e246244e34f11f0a705000001af2e374c09"},
+    {"path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml", "sha256": "e385a4a3c78fe3cc35f51f7a5f35fae43746b5172f61c65a53b7ec8a1c05d914"},
+    {"path": "deploy/docker/thor-local/warehouse-sparse4d-prometheus.yml", "sha256": "d7e195313cf8aef56ea76aa9ead3a437b964be134d7f175436b5eab53cbefc94"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json", "sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json", "sha256": "13219546fbc70a92c8593512d2af405cd977136525721d7f8b063e02025230fa"},
+    {"path": "deploy/docker/thor-local/parity/manifest.json", "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"}
+  ]
+}

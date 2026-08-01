@@ -294,6 +294,21 @@ stops its local publishers. It also deletes only its exact temporary sensor
 names from the Cosmos index. Success includes a final DeepStream stream count
 of zero, absent VIOS test streams, and zero matching embedding documents.
 
+The existing check remains a bounded 1-to-2 measurement. The inert
+[`qualification/search-scale-qualification-plan/`](qualification/search-scale-qualification-plan/README.md)
+package specifies the separate evidence still required for the advertised
+2/4/8/16 progression and 100-stream configuration claim. It does not execute
+those workloads. In particular, the 16-stream result is ineligible unless the
+future operator fixture is H.264 at exactly 1920x1080 and every stream has
+correctness, latency, resource, abort, and exact-owned cleanup evidence.
+
+The inert
+[`qualification/runtime-approval-bundles/`](qualification/runtime-approval-bundles/README.md)
+compiler lists the 13 remaining material-action scopes and their precedence.
+It grants no approval: host inspection, remediation, downloads, profile
+lifecycle, progressive and 100-stream Search runs, custom-data runs, the two
+audio lanes, Edge staging, and external attestations remain separately gated.
+
 This is an application-envelope measurement, not a universal camera-count
 claim. Both inputs were copies of one local H.264 sample, so the result does
 not cover adverse RTSP networks, higher resolutions, different codecs,

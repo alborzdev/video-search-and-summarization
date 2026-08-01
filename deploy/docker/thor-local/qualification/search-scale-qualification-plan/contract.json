@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-search-scale-qualification-plan-v1",
+  "mode": "inert_plan_only",
+  "source_locks": [
+    {
+      "path": "deploy/docker/scripts/thor-capacity-check.sh",
+      "raw_sha256": "74e725a5341ee18348669b4bccd33168b13c30baff93c5ba6a58992d39108720",
+      "role": "bounded_live_path_and_cleanup_predecessor",
+      "required_fragments": [
+        "THOR_CAPACITY_MIN_AVAILABLE_KIB:-3145728",
+        "trap cleanup EXIT INT TERM",
+        "/api/v1/rtsp-streams/add",
+        "/api/v1/rtsp-streams/delete/",
+        "_delete_by_query?conflicts=proceed&refresh=true",
+        "DeepStream active-source proof: 0 -> 1 -> 2"
+      ]
+    },
+    {
+      "path": "deploy/docker/test-scripts/test-thor-capacity-check.sh",
+      "raw_sha256": "9a32d23e83494e1d002ba5a1e5b2fed71fe19ef5a819bab3182e95cfc71c7e49",
+      "role": "predecessor_static_safety_contract",
+      "required_fragments": [
+        "capacity script enforces health, memory, and cleanup contracts",
+        "capacity script never rebuilds or restarts the shared stack",
+        "capacity script measures DeepStream and Cosmos Embed throughput"
+      ]
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/.env",
+      "raw_sha256": "4051fed04091f2c1232ae3a640a51cf258bc66e1b6711e4018605447d996b377",
+      "role": "search_profile_environment_contract",
+      "required_fragments": [
+        "BP_PROFILE=bp_developer_search",
+        "RT_CV_DEVICE_ID='0'",
+        "RT_EMBED_DEVICE_ID='1'",
+        "STREAM_TYPE=kafka",
+        "NUM_STREAMS=16",
+        "ELASTIC_SEARCH_INDEX=mdx-embed-filtered-2025-01-01"
+      ]
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/compose.yml",
+      "raw_sha256": "1a009bde3cc8c63dc173100f2a8ba1185d30c1d8363dfaeef993195fde39dd38",
+      "role": "search_profile_compose_contract",
+      "required_fragments": [
+        "./video-analytics-2d-app/compose.yml",
+        "bp_developer_search_2d",
+        "vss-kibana-init"
+      ]
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml",
+      "raw_sha256": "93fb055473c48585ef22505c5e1f1486f5f3e54885d54f0943bb526234b3814d",
+      "role": "search_perception_and_analytics_contract",
+      "required_fragments": [
+        "container_name: vss-behavior-analytics",
+        "container_name: vss-video-analytics-api",
+        "container_name: vss-rtvi-cv",
+        "DS_MODEL_FAMILY: rtdetr-warehouse",
+        "http://localhost:9000/api/v1/health/get-dsready-state"
+      ]
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/sdrc/2d/configs/config.yml.tmpl",
+      "raw_sha256": "c593d7fb6a90dd4f64ae19c9d2f457ff17a07f73263566e373f038c4df256c12",
+      "role": "stream_resource_controller_contract",
+      "required_fragments": [
+        "WDM_WL_ADD_URL: /api/v1/proxy/stream/add",
+        "WDM_WL_DELETE_URL: /api/v1/proxy/stream/",
+        "WDM_WL_THRESHOLD: 100",
+        "WDM_CLEAR_DATA_WL: true"
+      ]
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/sdrc/2d/configs/docker_cluster_config-streamprocessing.json.tmpl",
+      "raw_sha256": "37a13d3ff1094f3c98f70a270b09f0c88112b0ed140f07566fbc17e54fab4a17",
+      "role": "streamprocessing_resource_identity_contract",
+      "required_fragments": [
+        "vss-vios-streamprocessing",
+        "${HOST_IP}:30001",
+        "\"process_type\": \"docker\""
+      ]
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+      "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+      "role": "two_open_search_scale_oracles",
+      "required_fragments": [
+        "manifest-gap.search-scale.00-configuration-up-to-100-streams",
+        "manifest-gap.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia",
+        "per-stream correctness plus latency and resource measurements",
+        "delete_only_benchmark_owned_streams_and_indices"
+      ]
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json",
+      "raw_sha256": "13219546fbc70a92c8593512d2af405cd977136525721d7f8b063e02025230fa",
+      "role": "nonadvancing_search_scale_provenance_predecessor",
+      "required_fragments": [
+        "no 100-stream workload, correctness, latency, or resource proof",
+        "no 16x1080p Thor execution or performance proof",
+        "thor_remeasurement_required"
+      ]
+    }
+  ],
+  "target_gaps": [
+    "manifest-gap.search-scale.00-configuration-up-to-100-streams",
+    "manifest-gap.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia"
+  ],
+  "progressive_stream_counts": [2, 4, 8, 16],
+  "separate_configuration_stream_count": 100,
+  "fixture_contract": {
+    "source_count": 1,
+    "source_id": "future-operator-h264-loop-v1",
+    "state": "future_unmaterialized",
+    "ownership": "operator_supplied",
+    "checked_into_repository": false,
+    "warehouse_sample_allowed": false,
+    "absolute_regular_nonsymlink_path_required": true,
+    "sha256_required_before_execution": true,
+    "ffprobe_codec_name": "h264",
+    "loop_mode": "ffmpeg-stream-loop-minus-one-video-copy-no-audio",
+    "reuse_policy": "one_digest_locked_source_may_feed_every_uniquely_named_publisher"
+  },
+  "abort_contract": {
+    "minimum_mem_available_kib": 3145728,
+    "required_healthy_services": 9,
+    "maximum_degraded_services": 0,
+    "minimum_active_publishers_fraction": 1.0,
+    "minimum_active_deepstream_sources_fraction": 1.0,
+    "maximum_failed_streams": 0,
+    "sample_interval_seconds": 1,
+    "abort_is_immediate": true,
+    "advance_after_abort": false
+  },
+  "phase_contract": {
+    "baseline_seconds": 8,
+    "ingest_timeout_seconds_per_stream": 120,
+    "source_convergence_timeout_seconds": 40,
+    "hold_seconds": 65,
+    "cleanup_timeout_seconds_per_stream": 90,
+    "progression": "strict_2_then_4_then_8_then_16",
+    "advance_requires_prior_phase_pass_and_cleanup": true
+  },
+  "performance_contract": {
+    "minimum_average_fps": 1.0,
+    "maximum_latency_ms": {
+      "agent_add": 120000,
+      "deepstream_active": 40000,
+      "first_embedding": 120000,
+      "search_query": 5000
+    }
+  },
+  "claim_gates": {
+    "sixteen_stream_claim": {
+      "phase_stream_count": 16,
+      "codec_name": "h264",
+      "width": 1920,
+      "height": 1080,
+      "all_stream_results_required": true,
+      "all_cleanup_results_required": true,
+      "reference_only_is_insufficient": true
+    },
+    "one_hundred_stream_claim": {
+      "separate_from_progressive_sequence": true,
+      "configured_stream_count": 100,
+      "explicit_future_operator_approval_required": true,
+      "all_stream_results_required": true,
+      "all_cleanup_results_required": true,
+      "configuration_value_alone_is_insufficient": true
+    }
+  },
+  "policy": {
+    "default_inert": true,
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "file_writes_allowed": false,
+    "service_lifecycle_allowed": false,
+    "runtime_evidence": [],
+    "can_claim_runtime_scale": false,
+    "can_mark_passed_current": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

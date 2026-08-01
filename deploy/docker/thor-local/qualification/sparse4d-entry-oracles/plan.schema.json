@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/sparse4d-entry-plan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "writes", "subprocesses", "docker", "network", "lifecycle", "model_load", "downloads", "warehouse_sample_bundle", "contract_sha256", "source_checks", "admission", "oracle_plans", "current_blockers", "evidence_boundary", "next_action"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "inert_read_only_admission_plan"},
+    "writes": {"const": false},
+    "subprocesses": {"const": false},
+    "docker": {"const": false},
+    "network": {"const": false},
+    "lifecycle": {"const": false},
+    "model_load": {"const": false},
+    "downloads": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "source_checks": {"type": "array", "minItems": 9, "maxItems": 9, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256_match"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256_match": {"const": true}}}},
+    "admission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["camera_count", "camera_ids", "dataset", "validator", "lane", "lane_stages", "sparse4d_model", "anchor", "anchor_shape", "rtdetr_model", "memory_floor_kib", "disk_floor_kib", "gpu_conflicts_allowed"],
+      "properties": {
+        "camera_count": {"const": 4},
+        "camera_ids": {"const": ["Camera", "Camera_01", "Camera_02", "Camera_03"]},
+        "dataset": {"const": "operator_supplied_custom_slug_only"},
+        "validator": {"const": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py"},
+        "lane": {"const": "deploy/docker/scripts/thor-warehouse-sparse4d.sh"},
+        "lane_stages": {"const": ["plan", "prepare", "preflight", "qualify"]},
+        "sparse4d_model": {"const": "sparse4d_warehouse_v2.2.onnx"},
+        "anchor": {"const": "_ov_kmeans900_v2.2.npy"},
+        "anchor_shape": {"const": [900, 11]},
+        "rtdetr_model": {"const": "rtdetr_warehouse_v1.0.2.fp16.onnx"},
+        "memory_floor_kib": {"const": 52428800},
+        "disk_floor_kib": {"const": 31457280},
+        "gpu_conflicts_allowed": {"const": 0}
+      }
+    },
+    "oracle_plans": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["entry_id", "oracle_id", "status", "semantic_plan", "runtime_evidence"], "properties": {"entry_id": {"type": "string", "minLength": 1}, "oracle_id": {"type": "string", "minLength": 1}, "status": {"const": "open_unexecuted"}, "semantic_plan": {"type": "string", "minLength": 1}, "runtime_evidence": {"const": []}}}},
+    "current_blockers": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "evidence_boundary": {"const": "schema_and_semantic_validator_only_no_runtime_receipt"},
+    "next_action": {"const": "resolve_blockers_then_operator_review_and_separate_authorized_runtime"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

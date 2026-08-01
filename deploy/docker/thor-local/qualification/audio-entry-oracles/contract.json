@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "mode": "inert_audio_advertised_entry_admission",
+  "policy": {
+    "default_action": "read_only_plan",
+    "candidate_evidence_only": true,
+    "advances_live_ledgers": false,
+    "runtime_receipts_bundled": false,
+    "network": false,
+    "docker": false,
+    "subprocess": false,
+    "lifecycle": false,
+    "model_load": false,
+    "downloads": false,
+    "credentials": false,
+    "writes": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "fixture": {
+    "fixture_id": "vss-tiny-known-speech-h264-aac-v1",
+    "phrase": "Attention operator. The blue crate is ready.",
+    "phrase_utf8_sha256": "c20db4dfe2b82f3a2ebeb1cfc053e7b63baa3cf079140466827342930d641ec8",
+    "receipt_schema_path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/receipt.schema.json",
+    "generator_path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/fixture.py",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "admission": {
+    "native_audio_lane": {
+      "purpose": "base_summary_alert_semantics_only",
+      "repository": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
+      "backend": "vllm-compatible",
+      "vlm_model_supports_audio": true,
+      "request_enable_audio": true,
+      "asr_state": "skipped_native_audio",
+      "minimum_available_memory_gib": 80,
+      "fixed_unified_memory_reserve_ratio": 0.2
+    },
+    "transcript_lane": {
+      "purpose": "nonempty_per_chunk_audio_transcript_only",
+      "vlm_model_supports_audio": false,
+      "request_enable_audio": true,
+      "asr_state": "created_and_healthy",
+      "asr_provider": "local_riva",
+      "native_omni_asr_skip_is_admissible": false
+    },
+    "required_endpoint_scope": "loopback_only",
+    "required_phrase_matching": "normalized_ordered_full_phrase",
+    "required_cleanup_policy": "delete_only_executor_owned_media_streams_and_services",
+    "next_action": "operator_review_then_separate_explicit_runtime_execution"
+  },
+  "advertised_oracles": [
+    {
+      "entry_id": "manifest-gap.audio-understanding.00-audio-aware-base-workflow",
+      "advertised": "audio-aware Base workflow",
+      "oracle_id": "oracle.manifest-entry.audio-understanding.00",
+      "required_oracle_canonical_sha256": "9fc78ad68e479a3aaa9eddcb4f2e1c8481205b1e630c86d30314749af1fabc6c",
+      "lane": "native_audio",
+      "semantic_plan": "require enabled Base response to contain the full normalized known phrase and an audio-disabled control not to contain it"
+    },
+    {
+      "entry_id": "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
+      "advertised": "audio transcript per RT-VLM chunk",
+      "oracle_id": "oracle.manifest-entry.audio-understanding.01",
+      "required_oracle_canonical_sha256": "4e54f3a8bf32fbc34c572f72a012ded20b3a0b88e7e6c9b9b5748edede31ddfa",
+      "lane": "separate_asr",
+      "semantic_plan": "require an actual local ASR process and a timed chunk with a nonempty transcript containing the full normalized known phrase; native Omni ASR-skip evidence is rejected"
+    },
+    {
+      "entry_id": "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts",
+      "advertised": "audio-aware summarization and alerts",
+      "oracle_id": "oracle.manifest-entry.audio-understanding.02",
+      "required_oracle_canonical_sha256": "b9df559c2c45ce08133185aa1757ac1805562051cf8d1d544ff538b2a65171e2",
+      "lane": "native_audio",
+      "semantic_plan": "require both LVS summary and alert output to contain the full normalized known phrase and audio-disabled controls not to contain it"
+    }
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json", "sha256": "13219546fbc70a92c8593512d2af405cd977136525721d7f8b063e02025230fa"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.schema.json", "sha256": "2c6d1c09f00a595870c5f375c077276cac290eaa5f434380fcd9313767e2c3a6"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json", "sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
+    {"path": "deploy/docker/thor-local/parity/manifest.json", "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"},
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+    {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/fixture.py", "sha256": "b3868473e7113d13ed1be6e45bf1db7ea3445162aa75ecc512bf12051f9551bb"},
+    {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/receipt.schema.json", "sha256": "11b379f215d54ae6c7fdc42e5680059a69d2b5a41b162d257b313e9ad3f11793"},
+    {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/README.md", "sha256": "3b2aae86139fc8b2702afb90ee5ed91fa8156c8981da86b87b7a6a434100e823"},
+    {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/EVIDENCE.md", "sha256": "70f97047d5ee3e07ec765742588be627e420946168fee47f040addf07c76f4f8"},
+    {"path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py", "sha256": "6cc1d682072e0944f224eccf169f083ded81adbf860140442cd972854d96dd80"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/tools/video_understanding.py", "sha256": "59511bb172a030e0945a9c9a0ccb432e5b299ae1697e9ba023f4246d61c7c095"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "sha256": "5d07f34fc24921326ca803c7d2958a7c6ac6428c834d628db259b417a56df5a9"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env", "sha256": "a80aa33ed97ea2947caff05402e6a049d2aeec81b4152857063d178163cff718"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "d465b9b45416b38639894ee477ce12c238ec48518ea365a7ba32c7ace4ac483c"},
+    {"path": "deploy/docker/thor-local/audio/README.md", "sha256": "4ed60140627fd3b86d2d405e9593aec9d0f68c0593813a6eb4535931c266d828"},
+    {"path": "deploy/docker/thor-local/audio/omni.compose.yml", "sha256": "29413b95f33d4213ddf5848040d4c74968f6bb3574f9cad31eaad51001d7514c"},
+    {"path": "deploy/docker/thor-local/audio/thor-omni-audio.sh", "sha256": "3732ab965778eca5da2ca497dace4288854f772f87bc347eb0ce9bf5eb9338fd"},
+    {"path": "deploy/docker/thor-local/audio/omni_snapshot.py", "sha256": "995a24176545f27c37ddb33243456010337ea587720aefdaa448ca33ed5e6a4d"},
+    {"path": "deploy/docker/thor-local/rt-vlm/memory_budget.py", "sha256": "ca2c480483be4b6c31637ecfd6b20a2d510c8e591b8a615d528a33cfc11e9c24"}
+  ],
+  "source_assertions": [
+    {"path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/receipt.schema.json", "fragments": ["Attention operator. The blue crate is ready.", "vss-tiny-known-speech-h264-aac-v1"]},
+    {"path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py", "fragments": ["Creating ASR process for audio transcription", "Skipping ASR process - VLM handles audio natively", "if self._args.enable_audio and not vlm_supports_audio", "chunk_result.audio_transcript"]},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "fragments": ["if chunk_result.audio_transcript:", "vision_llm.info[\"audioTranscript\"] = chunk_result.audio_transcript"]},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "fragments": ["AUDIO_REPORT_PROMPT_SUFFIX", "if config.enable_audio and _is_omni_audio_model"]},
+    {"path": "services/agent/src/vss_agents/tools/video_understanding.py", "fragments": ["Quote spoken words and narration when audible.", "enable_audio=True requires the full MP4"]},
+    {"path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "fragments": ["enable_audio: ${ENABLE_AUDIO:-false}", "remote VLM receives full MP4"]},
+    {"path": "deploy/docker/thor-local/audio/README.md", "fragments": ["must not be claimed as a separate transcript unless that field is", "per-chunk transcription still requires a", "real transcript-producing ASR path", "80 GiB `MemAvailable` gate"]},
+    {"path": "deploy/docker/thor-local/audio/omni.compose.yml", "fragments": ["VLM_MODEL_SUPPORTS_AUDIO: \"true\"", "VLM_BASE_URL: http://127.0.0.1:", "REALTIME_ALERT_ENABLE_AUDIO: \"true\""]},
+    {"path": "deploy/docker/thor-local/audio/thor-omni-audio.sh", "fragments": ["minimum_memory_gib=\"${THOR_LOCAL_OMNI_MIN_AVAILABLE_MEMORY_GIB:-80}\"", "--no-build --pull never"]},
+    {"path": "deploy/docker/thor-local/audio/omni_snapshot.py", "fragments": ["full lowercase 40-character Git commit", "SUPPORTED_REPOSITORIES"]},
+    {"path": "deploy/docker/thor-local/rt-vlm/memory_budget.py", "fragments": ["RESERVE = decimal.Decimal(\"0.20\")", "minimum_gib"]}
+  ]
+}

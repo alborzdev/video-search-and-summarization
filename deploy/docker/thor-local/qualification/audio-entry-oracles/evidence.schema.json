@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/audio-entry-candidate-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "purpose", "candidate_status", "live_ledger_mutation", "warehouse_sample_bundle", "fixture", "native_audio_run", "transcript_run", "oracle_evidence", "cleanup"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "purpose": {"const": "candidate_runtime_evidence_for_review_only"},
+    "candidate_status": {"const": "observed_not_admitted"},
+    "live_ledger_mutation": {"const": false},
+    "warehouse_sample_bundle": {"const": false},
+    "fixture": {"$ref": "#/$defs/fixture"},
+    "native_audio_run": {"$ref": "#/$defs/native_run"},
+    "transcript_run": {"$ref": "#/$defs/transcript_run"},
+    "oracle_evidence": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {"$ref": "#/$defs/base_oracle"},
+        {"$ref": "#/$defs/transcript_oracle"},
+        {"$ref": "#/$defs/summary_alert_oracle"}
+      ],
+      "items": false
+    },
+    "cleanup": {"$ref": "#/$defs/cleanup"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "safe_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"},
+    "model_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_./:-]{0,255}$"},
+    "bounded_text": {"type": "string", "minLength": 1, "maxLength": 16384},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "path", "sha256", "size_bytes", "captured_at", "source_service"],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/safe_id"},
+        "path": {"type": "string", "pattern": "^/", "minLength": 2, "maxLength": 4096},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+        "captured_at": {"$ref": "#/$defs/timestamp"},
+        "source_service": {"enum": ["fixture-generator", "rtvi-vlm", "vss-agent", "lvs-server", "alert-bridge", "riva-asr", "operator-cleanup", "thor-host"]}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_id", "phrase", "phrase_utf8_sha256", "receipt", "media"],
+      "properties": {
+        "fixture_id": {"const": "vss-tiny-known-speech-h264-aac-v1"},
+        "phrase": {"const": "Attention operator. The blue crate is ready."},
+        "phrase_utf8_sha256": {"const": "c20db4dfe2b82f3a2ebeb1cfc053e7b63baa3cf079140466827342930d641ec8"},
+        "receipt": {"$ref": "#/$defs/artifact"},
+        "media": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_url", "models_url", "transport", "scope", "provider"],
+      "properties": {
+        "base_url": {"type": "string", "pattern": "^http://127\\.0\\.0\\.1:[1-9][0-9]{0,4}$"},
+        "models_url": {"type": "string", "pattern": "^http://127\\.0\\.0\\.1:[1-9][0-9]{0,4}/v1/models$"},
+        "transport": {"const": "loopback_http"},
+        "scope": {"const": "loopback_only"},
+        "provider": {"const": "local_rt_vlm"}
+      }
+    },
+    "native_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "revision", "configured_model_id", "observed_model_id", "backend", "audio_support", "vlm_model_supports_audio", "enable_audio", "asr_process_state", "snapshot_manifest", "models_response", "launch_capture"],
+      "properties": {
+        "repository": {"const": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8"},
+        "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "configured_model_id": {"$ref": "#/$defs/model_id"},
+        "observed_model_id": {"$ref": "#/$defs/model_id"},
+        "backend": {"const": "vllm-compatible"},
+        "audio_support": {"const": true},
+        "vlm_model_supports_audio": {"const": true},
+        "enable_audio": {"const": true},
+        "asr_process_state": {"const": "skipped_native_audio"},
+        "snapshot_manifest": {"$ref": "#/$defs/artifact"},
+        "models_response": {"$ref": "#/$defs/artifact"},
+        "launch_capture": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "native_memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_bytes", "available_before_bytes", "available_during_bytes", "available_after_bytes", "minimum_available_bytes", "gpu_memory_utilization", "fixed_reserve_ratio", "vlm_batch_size", "num_vlm_processes", "max_model_sequences", "oom_events", "gate_passed", "capture"],
+      "properties": {
+        "total_bytes": {"type": "integer", "minimum": 85899345920},
+        "available_before_bytes": {"type": "integer", "minimum": 85899345920},
+        "available_during_bytes": {"type": "integer", "minimum": 1},
+        "available_after_bytes": {"type": "integer", "minimum": 1},
+        "minimum_available_bytes": {"const": 85899345920},
+        "gpu_memory_utilization": {"const": 0.45},
+        "fixed_reserve_ratio": {"const": 0.2},
+        "vlm_batch_size": {"const": 1},
+        "num_vlm_processes": {"const": 1},
+        "max_model_sequences": {"const": 1},
+        "oom_events": {"const": 0},
+        "gate_passed": {"const": true},
+        "capture": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "native_run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "authorization_id", "host_architecture", "host_model", "started_at", "ended_at", "endpoint", "model", "memory"],
+      "properties": {
+        "run_id": {"$ref": "#/$defs/safe_id"},
+        "authorization_id": {"$ref": "#/$defs/safe_id"},
+        "host_architecture": {"const": "aarch64"},
+        "host_model": {"const": "NVIDIA Jetson AGX Thor"},
+        "started_at": {"$ref": "#/$defs/timestamp"},
+        "ended_at": {"$ref": "#/$defs/timestamp"},
+        "endpoint": {"$ref": "#/$defs/endpoint"},
+        "model": {"$ref": "#/$defs/native_model"},
+        "memory": {"$ref": "#/$defs/native_memory"}
+      }
+    },
+    "transcript_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["configured_model_id", "observed_model_id", "backend", "audio_support", "vlm_model_supports_audio", "enable_audio", "models_response"],
+      "properties": {
+        "configured_model_id": {"$ref": "#/$defs/model_id"},
+        "observed_model_id": {"$ref": "#/$defs/model_id"},
+        "backend": {"enum": ["openai-compat", "vllm-compatible"]},
+        "audio_support": {"const": false},
+        "vlm_model_supports_audio": {"const": false},
+        "enable_audio": {"const": true},
+        "models_response": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "asr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "process_state", "endpoint", "model_id", "model_revision", "health_passed", "creation_capture"],
+      "properties": {
+        "provider": {"const": "local_riva"},
+        "process_state": {"const": "created_and_healthy"},
+        "endpoint": {"type": "string", "pattern": "^grpc://127\\.0\\.0\\.1:[1-9][0-9]{0,4}$"},
+        "model_id": {"$ref": "#/$defs/model_id"},
+        "model_revision": {"$ref": "#/$defs/sha256"},
+        "health_passed": {"const": true},
+        "creation_capture": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "bounded_resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memory_limit_bytes", "peak_memory_bytes", "cpu_limit_cores", "peak_cpu_cores", "oom_events", "within_declared_budget", "capture"],
+      "properties": {
+        "memory_limit_bytes": {"type": "integer", "minimum": 1073741824},
+        "peak_memory_bytes": {"type": "integer", "minimum": 1},
+        "cpu_limit_cores": {"type": "number", "exclusiveMinimum": 0, "maximum": 128},
+        "peak_cpu_cores": {"type": "number", "minimum": 0, "maximum": 128},
+        "oom_events": {"const": 0},
+        "within_declared_budget": {"const": true},
+        "capture": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "transcript_run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "authorization_id", "host_architecture", "host_model", "started_at", "ended_at", "endpoint", "model", "asr", "resources"],
+      "properties": {
+        "run_id": {"$ref": "#/$defs/safe_id"},
+        "authorization_id": {"$ref": "#/$defs/safe_id"},
+        "host_architecture": {"const": "aarch64"},
+        "host_model": {"const": "NVIDIA Jetson AGX Thor"},
+        "started_at": {"$ref": "#/$defs/timestamp"},
+        "ended_at": {"$ref": "#/$defs/timestamp"},
+        "endpoint": {"$ref": "#/$defs/endpoint"},
+        "model": {"$ref": "#/$defs/transcript_model"},
+        "asr": {"$ref": "#/$defs/asr"},
+        "resources": {"$ref": "#/$defs/bounded_resources"}
+      }
+    },
+    "base_oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_id", "oracle_id", "candidate_observation", "run_id", "request_enable_audio", "known_phrase", "response_text", "audio_disabled_control_text", "response_capture", "control_capture", "cleanup_evidence_id"],
+      "properties": {
+        "entry_id": {"const": "manifest-gap.audio-understanding.00-audio-aware-base-workflow"},
+        "oracle_id": {"const": "oracle.manifest-entry.audio-understanding.00"},
+        "candidate_observation": {"const": "observed_not_admitted"},
+        "run_id": {"$ref": "#/$defs/safe_id"},
+        "request_enable_audio": {"const": true},
+        "known_phrase": {"const": "Attention operator. The blue crate is ready."},
+        "response_text": {"$ref": "#/$defs/bounded_text"},
+        "audio_disabled_control_text": {"$ref": "#/$defs/bounded_text"},
+        "response_capture": {"$ref": "#/$defs/artifact"},
+        "control_capture": {"$ref": "#/$defs/artifact"},
+        "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}
+      }
+    },
+    "chunk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chunk_index", "start_ms", "end_ms", "audio_transcript", "asr_started_ms", "asr_ended_ms", "response_capture"],
+      "properties": {
+        "chunk_index": {"type": "integer", "minimum": 0, "maximum": 99},
+        "start_ms": {"type": "integer", "minimum": 0, "maximum": 6100},
+        "end_ms": {"type": "integer", "minimum": 1, "maximum": 6100},
+        "audio_transcript": {"$ref": "#/$defs/bounded_text"},
+        "asr_started_ms": {"type": "integer", "minimum": 0, "maximum": 600000},
+        "asr_ended_ms": {"type": "integer", "minimum": 1, "maximum": 600000},
+        "response_capture": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "transcript_oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_id", "oracle_id", "candidate_observation", "run_id", "request_enable_audio", "asr_required", "native_omni_asr_skip_accepted", "chunks", "cleanup_evidence_id"],
+      "properties": {
+        "entry_id": {"const": "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk"},
+        "oracle_id": {"const": "oracle.manifest-entry.audio-understanding.01"},
+        "candidate_observation": {"const": "observed_not_admitted"},
+        "run_id": {"$ref": "#/$defs/safe_id"},
+        "request_enable_audio": {"const": true},
+        "asr_required": {"const": true},
+        "native_omni_asr_skip_accepted": {"const": false},
+        "chunks": {"type": "array", "minItems": 1, "maxItems": 10, "items": {"$ref": "#/$defs/chunk"}},
+        "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}
+      }
+    },
+    "summary_alert_oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_id", "oracle_id", "candidate_observation", "run_id", "request_enable_audio", "summary_text", "summary_audio_disabled_control_text", "alert_text", "alert_audio_disabled_control_text", "alert_category", "summary_capture", "summary_control_capture", "alert_capture", "alert_control_capture", "cleanup_evidence_id"],
+      "properties": {
+        "entry_id": {"const": "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts"},
+        "oracle_id": {"const": "oracle.manifest-entry.audio-understanding.02"},
+        "candidate_observation": {"const": "observed_not_admitted"},
+        "run_id": {"$ref": "#/$defs/safe_id"},
+        "request_enable_audio": {"const": true},
+        "summary_text": {"$ref": "#/$defs/bounded_text"},
+        "summary_audio_disabled_control_text": {"$ref": "#/$defs/bounded_text"},
+        "alert_text": {"$ref": "#/$defs/bounded_text"},
+        "alert_audio_disabled_control_text": {"$ref": "#/$defs/bounded_text"},
+        "alert_category": {"type": "string", "minLength": 1, "maxLength": 128},
+        "summary_capture": {"$ref": "#/$defs/artifact"},
+        "summary_control_capture": {"$ref": "#/$defs/artifact"},
+        "alert_capture": {"$ref": "#/$defs/artifact"},
+        "alert_control_capture": {"$ref": "#/$defs/artifact"},
+        "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cleanup_evidence_id", "completed_at", "ownership_prefix", "created_resource_ids", "removed_resource_ids", "preexisting_resources_unchanged", "broad_delete_used", "native_services_stopped", "transcript_services_stopped", "remaining_stream_ids", "fixture_media_preserved", "capture"],
+      "properties": {
+        "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"},
+        "completed_at": {"$ref": "#/$defs/timestamp"},
+        "ownership_prefix": {"$ref": "#/$defs/safe_id"},
+        "created_resource_ids": {"type": "array", "minItems": 2, "maxItems": 100, "uniqueItems": true, "items": {"$ref": "#/$defs/safe_id"}},
+        "removed_resource_ids": {"type": "array", "minItems": 2, "maxItems": 100, "uniqueItems": true, "items": {"$ref": "#/$defs/safe_id"}},
+        "preexisting_resources_unchanged": {"const": true},
+        "broad_delete_used": {"const": false},
+        "native_services_stopped": {"const": true},
+        "transcript_services_stopped": {"const": true},
+        "remaining_stream_ids": {"const": []},
+        "fixture_media_preserved": {"const": true},
+        "capture": {"$ref": "#/$defs/artifact"}
+      }
+    }
+  }
+}

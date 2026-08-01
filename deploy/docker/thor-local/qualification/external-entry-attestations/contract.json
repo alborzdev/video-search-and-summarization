@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-external-entry-attestations-v1",
+  "mode": "inert_read_only_plan",
+  "blocked_entries_source": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json",
+    "raw_sha256": "13219546fbc70a92c8593512d2af405cd977136525721d7f8b063e02025230fa"
+  },
+  "gap_plan_source": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"
+  },
+  "entries": [
+    {
+      "entry_id": "manifest-gap.alert-notifications-slack.00-slack-notification",
+      "manifest_pointer": "/features/7/advertised/0",
+      "advertised": "Slack notification",
+      "acceptance_class": "external_optional",
+      "provider_scope": "user_managed_slack",
+      "evidence_type": "slack_delivery",
+      "source_locks": [
+        {"path": "skills/vss-manage-alerts/scripts/alert-notify/slack_notifier.py", "raw_sha256": "ffe7c304e9f3c3fca9604bc2690352c2af25823092c7331b7faf37bb82ce2a09", "fragments": ["chat_postMessage", "slack_ts", "channel", "Slack notification sent"]},
+        {"path": "skills/vss-manage-alerts/scripts/alert-notify/server.py", "raw_sha256": "b3b1ad9a6c68e877ccc7324d287a11fb2e522fa280293226ee8035746cc802d3", "fragments": ["/webhook/alert-notify-slack", "send_test", "NotifierResult"]}
+      ],
+      "acceptance_boundary": "Source and mocks are insufficient; require verified HTTPS to slack.com or api.slack.com and a real authorized Slack delivery correlated to the exact test incident, response, provider request, destination receipt, and retained-message or cleanup receipt."
+    },
+    {
+      "entry_id": "manifest-gap.spatial-ai-utils.07-aws-gcs-validation",
+      "manifest_pointer": "/features/29/advertised/7",
+      "advertised": "AWS/GCS validation",
+      "acceptance_class": "alternate_local_lane",
+      "provider_scope": "operator_supplied_actual_aws_or_gcs_endpoint",
+      "evidence_type": "aws_gcs_object_validation",
+      "source_locks": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/common.py", "raw_sha256": "45a82ec714865bdf462262eb4334c8fadd6ca831441a050b82bfe3e8ecd06242", "fragments": ["GCS_ENDPOINT_URL", "AWS_ACCESS_KEY_ID", "get_storage_client", "get_storage_bucket"]},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/upload_utils.py", "raw_sha256": "d484d3c6337c8f2a56f078300f15833d94df0c95c7b58142ea6c6b8e0c74413d", "fragments": ["upload_csv_to_storage", "put_object", "get_storage_client", "get_storage_bucket"]},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/download_utils.py", "raw_sha256": "b4669fc52deb0e64bd086b7b184af4602601e6eb2decdf3a32da35ef9b51aa32", "fragments": ["download_file", "get_storage_client", "get_storage_bucket"]},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/validation_utils.py", "raw_sha256": "c8202a1ee2525f27fcc8f364b65305c658dead6ba0cd0b242ab1894b0b2066a8", "fragments": ["count_the_bev_records_in_storage", "check_if_all_ground_truth_files_are_present_in_storage", "actual_count"]}
+      ],
+      "acceptance_boundary": "An operator endpoint is admissible only over verified HTTPS when sanitized TLS and authenticated-probe evidence identifies the actual AWS or GCS service used; loopback, private, local, emulated, or generic unverified S3-compatible endpoints are not AWS/GCS equivalence."
+    },
+    {
+      "entry_id": "manifest-gap.enterprise-rag.00-rag-report-generation",
+      "manifest_pointer": "/features/34/advertised/0",
+      "advertised": "RAG report generation",
+      "acceptance_class": "external_optional",
+      "provider_scope": "user_managed_enterprise_rag",
+      "evidence_type": "enterprise_rag_report",
+      "source_locks": [
+        {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config_rag.yml", "raw_sha256": "74807cbc32a1cb375b2ecaf5fe72f6ed062ec32c4488ad5a0ce17237ab68b7a9", "fragments": ["frag_retrieval:", "report_agent:", "RAG_SERVER_URL", "KNOWLEDGE_COLLECTION"]},
+        {"path": "deploy/docker/services/agent/compose.yml", "raw_sha256": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7", "fragments": ["RAG_SERVER_URL", "RAG_API_KEY", "KNOWLEDGE_COLLECTION"]},
+        {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "raw_sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4", "fragments": ["video_report_gen", "Markdown report saved to object store", "report_type"]}
+      ],
+      "acceptance_boundary": "Configuration and independent report generation are insufficient; require verified HTTPS and sanitized service-identity evidence plus real Enterprise RAG document ingestion, query/request, retrieval/response, excerpt/citation/report, and artifact-specific cleanup correlations."
+    },
+    {
+      "entry_id": "manifest-gap.enterprise-rag.01-frag-retrieval-integration",
+      "manifest_pointer": "/features/34/advertised/1",
+      "advertised": "frag retrieval integration",
+      "acceptance_class": "external_optional",
+      "provider_scope": "user_managed_enterprise_rag",
+      "evidence_type": "frag_retrieval",
+      "source_locks": [
+        {"path": "services/agent/src/lib/knowledge/adapters/frag_api.py", "raw_sha256": "3082fbf16e3cffcff83fa60c1c9e9bf3620b1fb8c144b4f8292d214d94d2870b", "fragments": ["RAG_SERVER_URL", "RAG_API_KEY", "session.post", "display_citation"]},
+        {"path": "services/agent/src/vss_agents/register_knowledge_layers.py", "raw_sha256": "f0bd23c4bf49b322a9c61ee507ab8edd9a91e9f48df1ae725653123fd3efd6b1", "fragments": ["knowledge_retrieval", "Returns excerpts with citation tags", "Citation:"]},
+        {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config_rag.yml", "raw_sha256": "74807cbc32a1cb375b2ecaf5fe72f6ed062ec32c4488ad5a0ce17237ab68b7a9", "fragments": ["frag_retrieval:", "backend: frag_api", "rag_url:", "knowledge_retrieval routing"]}
+      ],
+      "acceptance_boundary": "The FRAG client source is insufficient; require verified HTTPS and sanitized Enterprise RAG service-identity evidence plus a real authorized response correlated to the exact test document, ingestion, query, retrieval response, excerpt, citation, and artifact-specific cleanup receipt."
+    }
+  ],
+  "policy": {
+    "default_inert": true,
+    "read_only": true,
+    "credential_inspection_allowed": false,
+    "credential_material_allowed_in_evidence": false,
+    "network_allowed": false,
+    "subprocess_allowed": false,
+    "docker_allowed": false,
+    "file_writes_allowed": false,
+    "lifecycle_allowed": false,
+    "source_or_mock_is_delivery_proof": false,
+    "runtime_evidence": [],
+    "can_mark_passed_current": false
+  }
+}

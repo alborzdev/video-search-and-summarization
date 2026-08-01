@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/search-scale-future-evidence.schema.json",
+  "title": "Future Thor search-scale runtime evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "package_id", "plan_sha256", "run_id", "input_source", "progressive_phases", "configuration_100", "claim_decisions", "boundary"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "future_runtime_evidence_not_generated_by_plan_package"},
+    "package_id": {"const": "thor-search-scale-qualification-plan-v1"},
+    "plan_sha256": {"$ref": "#/$defs/sha256"},
+    "run_id": {"type": "string", "pattern": "^[0-9a-f]{12}$"},
+    "input_source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "operator_owned", "warehouse_sample_used", "absolute_path_recorded_separately", "sha256", "size_bytes", "codec_name", "width", "height", "r_frame_rate", "loop_mode"],
+      "properties": {
+        "source_id": {"const": "future-operator-h264-loop-v1"},
+        "operator_owned": {"const": true},
+        "warehouse_sample_used": {"const": false},
+        "absolute_path_recorded_separately": {"const": true},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "codec_name": {"const": "h264"},
+        "width": {"type": "integer", "minimum": 16, "maximum": 8192},
+        "height": {"type": "integer", "minimum": 16, "maximum": 8192},
+        "r_frame_rate": {"type": "string", "pattern": "^[1-9][0-9]*/[1-9][0-9]*$"},
+        "loop_mode": {"const": "ffmpeg-stream-loop-minus-one-video-copy-no-audio"}
+      }
+    },
+    "progressive_phases": {
+      "type": "array", "minItems": 1, "maxItems": 4,
+      "prefixItems": [
+        {"$ref": "#/$defs/phase2"}, {"$ref": "#/$defs/phase4"},
+        {"$ref": "#/$defs/phase8"}, {"$ref": "#/$defs/phase16"}
+      ],
+      "items": false
+    },
+    "configuration_100": {"oneOf": [{"$ref": "#/$defs/phase100"}, {"type": "null"}]},
+    "claim_decisions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sixteen_stream_1080p", "configuration_up_to_100_streams"],
+      "properties": {
+        "sixteen_stream_1080p": {
+          "type": "object", "additionalProperties": false,
+          "required": ["qualified", "all_16_results_passed", "all_inputs_h264_1920x1080", "abort_never_triggered", "cleanup_complete", "runtime_evidence_ids"],
+          "properties": {
+            "qualified": {"type": "boolean"}, "all_16_results_passed": {"type": "boolean"}, "all_inputs_h264_1920x1080": {"type": "boolean"}, "abort_never_triggered": {"type": "boolean"}, "cleanup_complete": {"type": "boolean"},
+            "runtime_evidence_ids": {"type": "array", "minItems": 0, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceId"}}
+          }
+        },
+        "configuration_up_to_100_streams": {
+          "type": "object", "additionalProperties": false,
+          "required": ["qualified", "operator_approved", "all_100_results_passed", "abort_never_triggered", "cleanup_complete", "configuration_only_is_not_counted", "runtime_evidence_ids"],
+          "properties": {
+            "qualified": {"type": "boolean"}, "operator_approved": {"type": "boolean"}, "all_100_results_passed": {"type": "boolean"}, "abort_never_triggered": {"type": "boolean"}, "cleanup_complete": {"type": "boolean"}, "configuration_only_is_not_counted": {"const": true},
+            "runtime_evidence_ids": {"type": "array", "minItems": 0, "maxItems": 5, "uniqueItems": true, "items": {"$ref": "#/$defs/evidenceId"}}
+          }
+        }
+      }
+    },
+    "boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["generated_by_plan_package", "warehouse_sample_used", "reference_only_treated_as_runtime_proof"],
+      "properties": {
+        "generated_by_plan_package": {"const": false},
+        "warehouse_sample_used": {"const": false},
+        "reference_only_treated_as_runtime_proof": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidenceId": {"type": "string", "pattern": "^phase-[0-9a-f]{12}-p(002|004|008|016|100)$"},
+    "resourceName": {"type": "string", "pattern": "^(thor-search-scale|sensor-thor-search-scale|publisher-thor-search-scale|documents-thor-search-scale)-[0-9a-f]{12}-p(002|004|008|016|100)-s[0-9]{3}$"},
+    "streamResult": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "stream_name", "sensor_name", "publisher_name", "document_scope", "input_sha256", "correctness", "latency_ms", "resources", "cleanup"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 100},
+        "stream_name": {"$ref": "#/$defs/resourceName"},
+        "sensor_name": {"$ref": "#/$defs/resourceName"},
+        "publisher_name": {"$ref": "#/$defs/resourceName"},
+        "document_scope": {"$ref": "#/$defs/resourceName"},
+        "input_sha256": {"$ref": "#/$defs/sha256"},
+        "correctness": {
+          "type": "object", "additionalProperties": false,
+          "required": ["agent_add_success", "vios_sensor_present", "deepstream_source_active", "embedding_documents", "search_hit_correlated"],
+          "properties": {
+            "agent_add_success": {"type": "boolean"}, "vios_sensor_present": {"type": "boolean"}, "deepstream_source_active": {"type": "boolean"},
+            "embedding_documents": {"type": "integer", "minimum": 0}, "search_hit_correlated": {"type": "boolean"}
+          }
+        },
+        "latency_ms": {
+          "type": "object", "additionalProperties": false,
+          "required": ["agent_add", "deepstream_active", "first_embedding", "search_query"],
+          "properties": {
+            "agent_add": {"type": "integer", "minimum": 1, "maximum": 120000}, "deepstream_active": {"type": "integer", "minimum": 1, "maximum": 40000},
+            "first_embedding": {"type": "integer", "minimum": 1, "maximum": 120000}, "search_query": {"type": "integer", "minimum": 1, "maximum": 5000}
+          }
+        },
+        "resources": {
+          "type": "object", "additionalProperties": false,
+          "required": ["average_fps", "minimum_mem_available_kib_during_lifetime", "maximum_gpu_temp_c", "average_gpu_power_mw", "publisher_alive_samples", "publisher_total_samples"],
+          "properties": {
+            "average_fps": {"type": "number", "minimum": 1.0}, "minimum_mem_available_kib_during_lifetime": {"type": "integer", "minimum": 0},
+            "maximum_gpu_temp_c": {"type": "number", "minimum": 0}, "average_gpu_power_mw": {"type": "number", "minimum": 0},
+            "publisher_alive_samples": {"type": "integer", "minimum": 0}, "publisher_total_samples": {"type": "integer", "minimum": 1}
+          }
+        },
+        "cleanup": {
+          "type": "object", "additionalProperties": false,
+          "required": ["agent_delete_success", "vios_stream_absent", "deepstream_source_absent", "embedding_documents_after", "publisher_stopped", "only_owned_identity_targeted"],
+          "properties": {
+            "agent_delete_success": {"type": "boolean"}, "vios_stream_absent": {"type": "boolean"}, "deepstream_source_absent": {"type": "boolean"},
+            "embedding_documents_after": {"type": "integer", "minimum": 0}, "publisher_stopped": {"type": "boolean"}, "only_owned_identity_targeted": {"const": true}
+          }
+        }
+      }
+    },
+    "phaseBase": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase_id", "evidence_id", "stream_count", "operator_approved", "started_at", "finished_at", "abort", "aggregate_resources", "stream_results", "cleanup_exact_owned_set", "phase_passed"],
+      "properties": {
+        "phase_id": {"type": "string"}, "evidence_id": {"$ref": "#/$defs/evidenceId"}, "stream_count": {"type": "integer"}, "operator_approved": {"type": "boolean"},
+        "run_id": {"type": "string", "pattern": "^[0-9a-f]{12}$"}, "authorization_id": {"type": "string", "pattern": "^approval-[A-Za-z0-9._:-]{1,119}$"},
+        "started_at": {"type": "string", "format": "date-time"}, "finished_at": {"type": "string", "format": "date-time"},
+        "abort": {
+          "type": "object", "additionalProperties": false,
+          "required": ["triggered", "reason", "minimum_mem_available_kib_floor", "observed_minimum_mem_available_kib", "required_healthy_services", "minimum_observed_healthy_services", "minimum_active_publishers", "minimum_observed_active_publishers", "advanced_after_abort"],
+          "properties": {
+            "triggered": {"type": "boolean"}, "reason": {"type": ["string", "null"]},
+            "minimum_mem_available_kib_floor": {"const": 3145728}, "observed_minimum_mem_available_kib": {"type": "integer", "minimum": 0},
+            "required_healthy_services": {"const": 9}, "minimum_observed_healthy_services": {"type": "integer", "minimum": 0, "maximum": 9},
+            "minimum_active_publishers": {"type": "integer", "minimum": 2, "maximum": 100}, "minimum_observed_active_publishers": {"type": "integer", "minimum": 0, "maximum": 100},
+            "advanced_after_abort": {"const": false}
+          }
+        },
+        "aggregate_resources": {
+          "type": "object", "additionalProperties": false,
+          "required": ["sample_interval_seconds", "sample_count", "minimum_mem_available_kib", "maximum_gpu_temp_c", "average_gpu_power_mw", "degraded_service_samples"],
+          "properties": {
+            "sample_interval_seconds": {"const": 1}, "sample_count": {"type": "integer", "minimum": 1}, "minimum_mem_available_kib": {"type": "integer", "minimum": 0},
+            "maximum_gpu_temp_c": {"type": "number", "minimum": 0}, "average_gpu_power_mw": {"type": "number", "minimum": 0}, "degraded_service_samples": {"type": "integer", "minimum": 0}
+          }
+        },
+        "stream_results": {"type": "array", "items": {"$ref": "#/$defs/streamResult"}},
+        "cleanup_exact_owned_set": {"type": "boolean"}, "phase_passed": {"type": "boolean"}
+      }
+    },
+    "phase2": {"allOf": [{"$ref": "#/$defs/phaseBase"}, {"not": {"anyOf": [{"required": ["run_id"]}, {"required": ["authorization_id"]}]}, "properties": {"phase_id": {"const": "progressive-002"}, "stream_count": {"const": 2}, "stream_results": {"minItems": 2, "maxItems": 2}}}]},
+    "phase4": {"allOf": [{"$ref": "#/$defs/phaseBase"}, {"not": {"anyOf": [{"required": ["run_id"]}, {"required": ["authorization_id"]}]}, "properties": {"phase_id": {"const": "progressive-004"}, "stream_count": {"const": 4}, "stream_results": {"minItems": 4, "maxItems": 4}}}]},
+    "phase8": {"allOf": [{"$ref": "#/$defs/phaseBase"}, {"not": {"anyOf": [{"required": ["run_id"]}, {"required": ["authorization_id"]}]}, "properties": {"phase_id": {"const": "progressive-008"}, "stream_count": {"const": 8}, "stream_results": {"minItems": 8, "maxItems": 8}}}]},
+    "phase16": {"allOf": [{"$ref": "#/$defs/phaseBase"}, {"not": {"anyOf": [{"required": ["run_id"]}, {"required": ["authorization_id"]}]}, "properties": {"phase_id": {"const": "progressive-016"}, "stream_count": {"const": 16}, "stream_results": {"minItems": 16, "maxItems": 16}}}]},
+    "phase100": {"allOf": [{"$ref": "#/$defs/phaseBase"}, {"required": ["run_id", "authorization_id"], "properties": {"phase_id": {"const": "separate-configuration-100"}, "stream_count": {"const": 100}, "operator_approved": {"const": true}, "stream_results": {"minItems": 100, "maxItems": 100}}}]}
+  }
+}

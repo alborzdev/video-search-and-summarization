@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/mv3dt-entry-candidate-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "purpose", "candidate_status", "live_ledger_mutation", "admission", "run", "oracle_evidence", "cleanup"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "purpose": {"const": "candidate_runtime_evidence_for_review_only"},
+    "candidate_status": {"const": "observed_not_admitted"},
+    "live_ledger_mutation": {"const": false},
+    "admission": {"$ref": "#/$defs/admission"},
+    "run": {"$ref": "#/$defs/run"},
+    "oracle_evidence": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "prefixItems": [
+        {"$ref": "#/$defs/rtdetr_evidence"},
+        {"$ref": "#/$defs/bev_evidence"},
+        {"$ref": "#/$defs/bodypose_evidence"},
+        {"$ref": "#/$defs/continuity_evidence"}
+      ],
+      "items": false
+    },
+    "cleanup": {"$ref": "#/$defs/cleanup"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "safe_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"},
+    "camera_id": {"enum": ["Camera", "Camera_01", "Camera_02", "Camera_03"]},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "sha256", "captured_at", "source_service"],
+      "properties": {"artifact_id": {"$ref": "#/$defs/safe_id"}, "sha256": {"$ref": "#/$defs/sha256"}, "captured_at": {"$ref": "#/$defs/timestamp"}, "source_service": {"$ref": "#/$defs/safe_id"}}
+    },
+    "camera_admission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["camera_id", "video_sha256", "cam_info_sha256"],
+      "properties": {"camera_id": {"$ref": "#/$defs/camera_id"}, "video_sha256": {"$ref": "#/$defs/sha256"}, "cam_info_sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "admission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dataset_slug", "input_root", "warehouse_sample_bundle", "camera_count", "camera_ids", "cameras", "custom_data_manifest_sha256", "calibration_sha256", "topology_sha256", "detector_asset_sha256", "bodypose_asset_sha256", "validator", "topology"],
+      "properties": {
+        "dataset_slug": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$", "not": {"const": "warehouse-4cams-20mx20m-synthetic"}},
+        "input_root": {"type": "string", "pattern": "^/", "minLength": 2},
+        "warehouse_sample_bundle": {"const": false},
+        "camera_count": {"const": 4},
+        "camera_ids": {"const": ["Camera", "Camera_01", "Camera_02", "Camera_03"]},
+        "cameras": {"type": "array", "minItems": 4, "maxItems": 4, "prefixItems": [{"allOf": [{"$ref": "#/$defs/camera_admission"}, {"properties": {"camera_id": {"const": "Camera"}}}]}, {"allOf": [{"$ref": "#/$defs/camera_admission"}, {"properties": {"camera_id": {"const": "Camera_01"}}}]}, {"allOf": [{"$ref": "#/$defs/camera_admission"}, {"properties": {"camera_id": {"const": "Camera_02"}}}]}, {"allOf": [{"$ref": "#/$defs/camera_admission"}, {"properties": {"camera_id": {"const": "Camera_03"}}}]}], "items": false},
+        "custom_data_manifest_sha256": {"$ref": "#/$defs/sha256"}, "calibration_sha256": {"$ref": "#/$defs/sha256"}, "topology_sha256": {"$ref": "#/$defs/sha256"}, "detector_asset_sha256": {"$ref": "#/$defs/sha256"}, "bodypose_asset_sha256": {"$ref": "#/$defs/sha256"},
+        "validator": {
+          "type": "object", "additionalProperties": false,
+          "required": ["source_path", "source_sha256", "exit_code", "streams", "sensor_ids", "sync_validated"],
+          "properties": {"source_path": {"const": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py"}, "source_sha256": {"const": "09c3497f8cd7302d871cf528c09467273ac6a3717535f772e05d0eb2e63d6aff"}, "exit_code": {"const": 0}, "streams": {"const": 4}, "sensor_ids": {"const": ["Camera", "Camera_01", "Camera_02", "Camera_03"]}, "sync_validated": {"const": true}}
+        },
+        "topology": {
+          "type": "object", "additionalProperties": false,
+          "required": ["camera_ids", "self_subscriptions", "neighbor_edges", "neighbor_pairs", "generator_source_sha256"],
+          "properties": {"camera_ids": {"const": ["Camera", "Camera_01", "Camera_02", "Camera_03"]}, "self_subscriptions": {"const": 0}, "neighbor_edges": {"type": "integer", "minimum": 4, "maximum": 12}, "neighbor_pairs": {"type": "array", "minItems": 4, "maxItems": 12, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["from_camera", "to_camera"], "properties": {"from_camera": {"$ref": "#/$defs/camera_id"}, "to_camera": {"$ref": "#/$defs/camera_id"}}}}, "generator_source_sha256": {"const": "bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc"}}
+        }
+      }
+    },
+    "run": {
+      "type": "object", "additionalProperties": false,
+      "required": ["namespace", "profile", "started_at", "ended_at", "launcher_source_path", "launcher_source_sha256", "explicit_lifecycle_authorization_id"],
+      "properties": {"namespace": {"$ref": "#/$defs/safe_id"}, "profile": {"enum": ["minimal", "extended"]}, "started_at": {"$ref": "#/$defs/timestamp"}, "ended_at": {"$ref": "#/$defs/timestamp"}, "launcher_source_path": {"const": "deploy/docker/scripts/thor-warehouse-mv3dt.sh"}, "launcher_source_sha256": {"const": "e697a2a41a146bc84b701558918af1f24d10ba10cd4ffc05d9fd3d9818080499"}, "explicit_lifecycle_authorization_id": {"$ref": "#/$defs/safe_id"}}
+    },
+    "bbox": {
+      "type": "object", "additionalProperties": false, "required": ["x", "y", "width", "height"],
+      "properties": {"x": {"type": "number", "minimum": 0}, "y": {"type": "number", "minimum": 0}, "width": {"type": "number", "exclusiveMinimum": 0}, "height": {"type": "number", "exclusiveMinimum": 0}}
+    },
+    "detection": {
+      "type": "object", "additionalProperties": false, "required": ["track_id", "class_id", "confidence", "bbox"],
+      "properties": {"track_id": {"$ref": "#/$defs/safe_id"}, "class_id": {"type": "integer", "minimum": 0}, "confidence": {"type": "number", "minimum": 0, "maximum": 1}, "bbox": {"$ref": "#/$defs/bbox"}}
+    },
+    "camera_observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["camera_id", "topic", "frame_timestamp_ms", "detections", "capture"],
+      "properties": {"camera_id": {"$ref": "#/$defs/camera_id"}, "topic": {"const": "mdx-raw"}, "frame_timestamp_ms": {"type": "integer", "minimum": 0}, "detections": {"type": "array", "minItems": 1, "maxItems": 1000, "items": {"$ref": "#/$defs/detection"}}, "capture": {"$ref": "#/$defs/artifact"}}
+    },
+    "rtdetr_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_id", "oracle_id", "candidate_observation", "camera_observations", "cleanup_evidence_id"],
+      "properties": {
+        "entry_id": {"const": "manifest-gap.rt-cv-3d-mv3dt.00-per-camera-rt-detr"}, "oracle_id": {"const": "oracle.manifest-entry.rt-cv-3d-mv3dt.00"}, "candidate_observation": {"const": "observed_not_admitted"},
+        "camera_observations": {"type": "array", "minItems": 4, "maxItems": 4, "prefixItems": [{"allOf": [{"$ref": "#/$defs/camera_observation"}, {"properties": {"camera_id": {"const": "Camera"}}}]}, {"allOf": [{"$ref": "#/$defs/camera_observation"}, {"properties": {"camera_id": {"const": "Camera_01"}}}]}, {"allOf": [{"$ref": "#/$defs/camera_observation"}, {"properties": {"camera_id": {"const": "Camera_02"}}}]}, {"allOf": [{"$ref": "#/$defs/camera_observation"}, {"properties": {"camera_id": {"const": "Camera_03"}}}]}], "items": false},
+        "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}
+      }
+    },
+    "world_position": {"type": "object", "additionalProperties": false, "required": ["x", "y", "z"], "properties": {"x": {"type": "number"}, "y": {"type": "number"}, "z": {"type": "number"}}},
+    "fused_track": {
+      "type": "object", "additionalProperties": false,
+      "required": ["global_track_id", "contributing_camera_ids", "source_tracks", "world_position", "capture"],
+      "properties": {"global_track_id": {"$ref": "#/$defs/safe_id"}, "contributing_camera_ids": {"type": "array", "minItems": 2, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/camera_id"}}, "source_tracks": {"type": "array", "minItems": 2, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["camera_id", "track_id"], "properties": {"camera_id": {"$ref": "#/$defs/camera_id"}, "track_id": {"$ref": "#/$defs/safe_id"}}}}, "world_position": {"$ref": "#/$defs/world_position"}, "capture": {"$ref": "#/$defs/artifact"}}
+    },
+    "bev_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_id", "oracle_id", "candidate_observation", "topic", "fused_tracks", "cleanup_evidence_id"],
+      "properties": {"entry_id": {"const": "manifest-gap.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion"}, "oracle_id": {"const": "oracle.manifest-entry.rt-cv-3d-mv3dt.01"}, "candidate_observation": {"const": "observed_not_admitted"}, "topic": {"const": "mdx-bev"}, "fused_tracks": {"type": "array", "minItems": 1, "maxItems": 1000, "items": {"$ref": "#/$defs/fused_track"}}, "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}}
+    },
+    "model_event": {
+      "type": "object", "additionalProperties": false,
+      "required": ["event", "model_filename", "service", "capture"],
+      "properties": {"event": {"enum": ["model_loaded", "inference_used"]}, "model_filename": {"const": "bodypose3dnet_accuracy.onnx"}, "service": {"const": "vss-rtvi-cv-mv3dt"}, "capture": {"$ref": "#/$defs/artifact"}, "pose_count": {"type": "integer", "minimum": 1}}
+    },
+    "bodypose_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_id", "oracle_id", "candidate_observation", "model_asset_sha256", "loaded", "used", "cleanup_evidence_id"],
+      "properties": {"entry_id": {"const": "manifest-gap.rt-cv-3d-mv3dt.02-bodypose3dnet"}, "oracle_id": {"const": "oracle.manifest-entry.rt-cv-3d-mv3dt.02"}, "candidate_observation": {"const": "observed_not_admitted"}, "model_asset_sha256": {"$ref": "#/$defs/sha256"}, "loaded": {"allOf": [{"$ref": "#/$defs/model_event"}, {"properties": {"event": {"const": "model_loaded"}}, "not": {"required": ["pose_count"]}}]}, "used": {"allOf": [{"$ref": "#/$defs/model_event"}, {"properties": {"event": {"const": "inference_used"}}, "required": ["pose_count"]}]}, "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}}
+    },
+    "transition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["global_track_id", "from_camera", "to_camera", "last_seen_from_ms", "first_seen_to_ms", "capture"],
+      "properties": {"global_track_id": {"$ref": "#/$defs/safe_id"}, "from_camera": {"$ref": "#/$defs/camera_id"}, "to_camera": {"$ref": "#/$defs/camera_id"}, "last_seen_from_ms": {"type": "integer", "minimum": 0}, "first_seen_to_ms": {"type": "integer", "minimum": 0}, "capture": {"$ref": "#/$defs/artifact"}}
+    },
+    "continuity_evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_id", "oracle_id", "candidate_observation", "transitions", "cleanup_evidence_id"],
+      "properties": {"entry_id": {"const": "manifest-gap.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking"}, "oracle_id": {"const": "oracle.manifest-entry.rt-cv-3d-mv3dt.03"}, "candidate_observation": {"const": "observed_not_admitted"}, "transitions": {"type": "array", "minItems": 2, "maxItems": 1000, "items": {"$ref": "#/$defs/transition"}}, "cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["cleanup_evidence_id", "ownership_prefix", "created_resource_ids", "removed_resource_ids", "preexisting_resource_ids", "preexisting_resources_unchanged", "broad_delete_used", "completed", "capture"],
+      "properties": {"cleanup_evidence_id": {"$ref": "#/$defs/safe_id"}, "ownership_prefix": {"$ref": "#/$defs/safe_id"}, "created_resource_ids": {"type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": {"$ref": "#/$defs/safe_id"}}, "removed_resource_ids": {"type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": {"$ref": "#/$defs/safe_id"}}, "preexisting_resource_ids": {"type": "array", "maxItems": 1000, "uniqueItems": true, "items": {"$ref": "#/$defs/safe_id"}}, "preexisting_resources_unchanged": {"const": true}, "broad_delete_used": {"const": false}, "completed": {"const": true}, "capture": {"$ref": "#/$defs/artifact"}}
+    }
+  }
+}

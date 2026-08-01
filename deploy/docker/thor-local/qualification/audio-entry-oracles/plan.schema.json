@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "writes", "subprocesses", "docker", "network", "lifecycle", "model_load", "downloads", "credentials", "warehouse_sample_bundle", "contract_sha256", "source_checks", "oracle_count", "runtime_evidence", "lanes", "next_action"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "inert_read_only_audio_admission_plan"},
+    "writes": {"const": false}, "subprocesses": {"const": false}, "docker": {"const": false}, "network": {"const": false}, "lifecycle": {"const": false}, "model_load": {"const": false}, "downloads": {"const": false}, "credentials": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "source_checks": {"type": "array", "minItems": 23, "maxItems": 23, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256_match", "assertions_match"], "properties": {"path": {"type": "string"}, "sha256_match": {"const": true}, "assertions_match": {"const": true}}}},
+    "oracle_count": {"const": 3},
+    "runtime_evidence": {"const": []},
+    "lanes": {"const": {"native_audio": "semantic Base/LVS/alert proof only; ASR transcript claim forbidden", "separate_asr": "timed nonempty audio_transcript proof only; VLM_MODEL_SUPPORTS_AUDIO must be false"}},
+    "next_action": {"const": "operator_review_then_separate_explicit_runtime_execution"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

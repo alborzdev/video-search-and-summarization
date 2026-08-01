@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/external-entry-attestation.schema.json",
+  "title": "Sanitized future external-entry attestations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "package_id", "plan_sha256", "attestation_set_id", "attestations", "boundary"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "future_sanitized_operator_evidence"},
+    "package_id": {"const": "thor-external-entry-attestations-v1"},
+    "plan_sha256": {"$ref": "#/$defs/sha256"},
+    "attestation_set_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{7,63}$"},
+    "attestations": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/attestation"}},
+    "boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["credential_values_inspected", "credential_material_included", "source_or_mock_counted_as_delivery", "local_emulator_counted_as_aws_gcs", "generated_by_plan_package"],
+      "properties": {
+        "credential_values_inspected": {"const": false}, "credential_material_included": {"const": false},
+        "source_or_mock_counted_as_delivery": {"const": false}, "local_emulator_counted_as_aws_gcs": {"const": false}, "generated_by_plan_package": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "serviceIdentity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider_kind", "authority_hostname", "verification_method", "tls_peer_certificate_sha256", "provider_identity_receipt_sha256"],
+      "properties": {
+        "provider_kind": {"enum": ["slack_api", "aws_s3", "gcs_hmac", "enterprise_rag"]},
+        "authority_hostname": {"type": "string", "pattern": "^[A-Za-z0-9.-]{1,253}$"},
+        "verification_method": {"const": "tls_certificate_and_authenticated_provider_probe"},
+        "tls_peer_certificate_sha256": {"$ref": "#/$defs/sha256"},
+        "provider_identity_receipt_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "endpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scheme", "hostname", "port", "path_sha256", "tls_verified", "user_managed", "account_scope_sha256", "credential_material_included", "service_identity"],
+      "properties": {
+        "scheme": {"const": "https"}, "hostname": {"type": "string", "pattern": "^[A-Za-z0-9.-]{1,253}$"},
+        "port": {"type": "integer", "minimum": 1, "maximum": 65535}, "path_sha256": {"$ref": "#/$defs/sha256"},
+        "tls_verified": {"const": true}, "user_managed": {"const": true}, "account_scope_sha256": {"$ref": "#/$defs/sha256"},
+        "credential_material_included": {"const": false}, "service_identity": {"$ref": "#/$defs/serviceIdentity"}
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "kind", "sha256", "size_bytes"],
+      "properties": {
+        "artifact_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$"},
+        "kind": {"enum": ["incident", "object", "document", "query", "report"]},
+        "sha256": {"$ref": "#/$defs/sha256"}, "size_bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["correlation_id", "timestamp", "operation", "payload_sha256", "test_artifact", "authentication_result", "sanitized_headers_sha256"],
+      "properties": {
+        "correlation_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{8,128}$"}, "timestamp": {"$ref": "#/$defs/timestamp"},
+        "operation": {"type": "string", "pattern": "^[a-z][a-z0-9._-]{2,63}$"}, "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "test_artifact": {"$ref": "#/$defs/artifact"}, "authentication_result": {"const": "authorized_without_recording_credential"},
+        "sanitized_headers_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "response": {
+      "type": "object", "additionalProperties": false,
+      "required": ["correlation_id", "timestamp", "http_status", "body_sha256", "provider_request_id_sha256", "success"],
+      "properties": {
+        "correlation_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{8,128}$"}, "timestamp": {"$ref": "#/$defs/timestamp"},
+        "http_status": {"type": "integer", "minimum": 200, "maximum": 299}, "body_sha256": {"$ref": "#/$defs/sha256"},
+        "provider_request_id_sha256": {"$ref": "#/$defs/sha256"}, "success": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy", "completed_at", "owned_artifact_only", "artifact_id", "artifact_sha256", "provider_receipt_sha256", "deletion_confirmed", "retention_expires_at"],
+      "properties": {
+        "policy": {"enum": ["delete", "retain_with_expiry", "provider_message_retained"]}, "completed_at": {"$ref": "#/$defs/timestamp"},
+        "owned_artifact_only": {"const": true}, "artifact_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$"},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"}, "provider_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "deletion_confirmed": {"type": "boolean"}, "retention_expires_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "slackProof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proof_type", "provider_identity_receipt_sha256", "incident_sha256", "payload_incident_sha256", "channel_identity_sha256", "message_timestamp_sha256", "delivery_response_sha256", "delivery_provider_request_id_sha256", "cleanup_receipt_sha256", "delivery_receipt_correlated", "destination_observed_real"],
+      "properties": {
+        "proof_type": {"const": "slack_delivery"}, "provider_identity_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "incident_sha256": {"$ref": "#/$defs/sha256"}, "payload_incident_sha256": {"$ref": "#/$defs/sha256"},
+        "channel_identity_sha256": {"$ref": "#/$defs/sha256"}, "message_timestamp_sha256": {"$ref": "#/$defs/sha256"},
+        "delivery_response_sha256": {"$ref": "#/$defs/sha256"}, "delivery_provider_request_id_sha256": {"$ref": "#/$defs/sha256"},
+        "cleanup_receipt_sha256": {"$ref": "#/$defs/sha256"}, "delivery_receipt_correlated": {"const": true}, "destination_observed_real": {"const": true}
+      }
+    },
+    "cloudProof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proof_type", "provider", "actual_provider", "provider_identity_receipt_sha256", "provider_service_verified", "operator_endpoint_used", "local_emulator_used", "claimed_local_equivalence", "object_key_sha256", "uploaded_object_sha256", "upload_confirmed", "readback_sha256", "validation_response_sha256", "validation_passed", "cleanup_receipt_sha256", "delete_or_retention_receipt_sha256"],
+      "properties": {
+        "proof_type": {"const": "aws_gcs_object_validation"}, "provider": {"enum": ["aws_s3", "gcs_hmac", "operator_supplied_actual_aws_or_gcs_endpoint"]},
+        "actual_provider": {"enum": ["aws_s3", "gcs_hmac"]}, "provider_identity_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "provider_service_verified": {"const": true}, "operator_endpoint_used": {"type": "boolean"}, "local_emulator_used": {"const": false}, "claimed_local_equivalence": {"const": false},
+        "object_key_sha256": {"$ref": "#/$defs/sha256"}, "uploaded_object_sha256": {"$ref": "#/$defs/sha256"},
+        "upload_confirmed": {"const": true}, "readback_sha256": {"$ref": "#/$defs/sha256"},
+        "validation_response_sha256": {"$ref": "#/$defs/sha256"}, "validation_passed": {"const": true},
+        "cleanup_receipt_sha256": {"$ref": "#/$defs/sha256"}, "delete_or_retention_receipt_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "ragReportProof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proof_type", "provider_identity_receipt_sha256", "document_sha256", "ingestion_document_sha256", "ingestion_receipt_sha256", "query_sha256", "retrieval_response_sha256", "retrieved_excerpt_sha256", "citation_source_excerpt_sha256", "citation_sha256", "report_source_excerpt_sha256", "report_citation_sha256", "report_sha256", "cleanup_receipt_sha256", "report_contains_correlated_citation", "report_content_grounded_in_retrieved_excerpt"],
+      "properties": {
+        "proof_type": {"const": "enterprise_rag_report"}, "provider_identity_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "document_sha256": {"$ref": "#/$defs/sha256"}, "ingestion_document_sha256": {"$ref": "#/$defs/sha256"}, "ingestion_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "query_sha256": {"$ref": "#/$defs/sha256"}, "retrieval_response_sha256": {"$ref": "#/$defs/sha256"}, "retrieved_excerpt_sha256": {"$ref": "#/$defs/sha256"},
+        "citation_source_excerpt_sha256": {"$ref": "#/$defs/sha256"}, "citation_sha256": {"$ref": "#/$defs/sha256"},
+        "report_source_excerpt_sha256": {"$ref": "#/$defs/sha256"}, "report_citation_sha256": {"$ref": "#/$defs/sha256"},
+        "report_sha256": {"$ref": "#/$defs/sha256"}, "cleanup_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "report_contains_correlated_citation": {"const": true}, "report_content_grounded_in_retrieved_excerpt": {"const": true}
+      }
+    },
+    "fragProof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proof_type", "provider_identity_receipt_sha256", "document_sha256", "ingestion_document_sha256", "ingestion_receipt_sha256", "collection_identity_sha256", "query_sha256", "retrieval_response_sha256", "result_count", "retrieved_excerpt_sha256", "citation_source_excerpt_sha256", "citation_sha256", "cleanup_receipt_sha256", "document_query_excerpt_citation_correlated"],
+      "properties": {
+        "proof_type": {"const": "frag_retrieval"}, "provider_identity_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "document_sha256": {"$ref": "#/$defs/sha256"}, "ingestion_document_sha256": {"$ref": "#/$defs/sha256"}, "ingestion_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "collection_identity_sha256": {"$ref": "#/$defs/sha256"}, "query_sha256": {"$ref": "#/$defs/sha256"}, "retrieval_response_sha256": {"$ref": "#/$defs/sha256"},
+        "result_count": {"type": "integer", "minimum": 1}, "retrieved_excerpt_sha256": {"$ref": "#/$defs/sha256"},
+        "citation_source_excerpt_sha256": {"$ref": "#/$defs/sha256"}, "citation_sha256": {"$ref": "#/$defs/sha256"},
+        "cleanup_receipt_sha256": {"$ref": "#/$defs/sha256"},
+        "document_query_excerpt_citation_correlated": {"const": true}
+      }
+    },
+    "attestation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entry_id", "attestation_set_id", "acceptance_class", "provider_scope", "endpoint", "request", "response", "proof", "cleanup"],
+      "properties": {
+        "entry_id": {"enum": ["manifest-gap.alert-notifications-slack.00-slack-notification", "manifest-gap.spatial-ai-utils.07-aws-gcs-validation", "manifest-gap.enterprise-rag.00-rag-report-generation", "manifest-gap.enterprise-rag.01-frag-retrieval-integration"]},
+        "attestation_set_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{7,63}$"},
+        "acceptance_class": {"enum": ["external_optional", "alternate_local_lane"]}, "provider_scope": {"enum": ["user_managed_slack", "operator_supplied_actual_aws_or_gcs_endpoint", "user_managed_enterprise_rag"]},
+        "endpoint": {"$ref": "#/$defs/endpoint"}, "request": {"$ref": "#/$defs/request"}, "response": {"$ref": "#/$defs/response"},
+        "proof": {"oneOf": [{"$ref": "#/$defs/slackProof"}, {"$ref": "#/$defs/cloudProof"}, {"$ref": "#/$defs/ragReportProof"}, {"$ref": "#/$defs/fragProof"}]},
+        "cleanup": {"$ref": "#/$defs/cleanup"}
+      }
+    }
+  }
+}

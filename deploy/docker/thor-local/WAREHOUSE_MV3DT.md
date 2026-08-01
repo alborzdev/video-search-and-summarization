@@ -151,3 +151,13 @@ dataset/calibration identity, and broker offsets before authorizing a reset.
 Runtime qualification of this lane still requires matching real operator
 videos and calibration plus temporary release of unrelated GPU workloads. A
 static pass is necessary but is not runtime acceptance.
+
+The adjacent
+[`qualification/mv3dt-entry-oracles/`](qualification/mv3dt-entry-oracles/README.md)
+package now fixes the exact-four admission and future evidence contract for the
+four advertised MV3DT semantics. Its default command remains inert: it checks
+the current launcher, validator, configuration tools, and live-open oracle
+bindings, but it does not run this lane or admit a receipt. Future qualification
+must separately demonstrate per-camera `mdx-raw` detections, linked `mdx-bev`
+fusion, actual BodyPose model load and use, calibrated cross-camera continuity,
+and exact-owned cleanup against operator data.

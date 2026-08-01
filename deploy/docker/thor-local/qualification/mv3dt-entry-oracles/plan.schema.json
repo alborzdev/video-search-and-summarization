@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "writes", "subprocesses", "docker", "network", "lifecycle", "model_load", "downloads", "warehouse_sample_bundle", "contract_sha256", "source_checks", "admission", "oracle_plans", "evidence_boundary", "next_action"],
+  "properties": {
+    "schema_version": {"const": 1}, "mode": {"const": "inert_read_only_admission_plan"},
+    "writes": {"const": false}, "subprocesses": {"const": false}, "docker": {"const": false}, "network": {"const": false}, "lifecycle": {"const": false}, "model_load": {"const": false}, "downloads": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "source_checks": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256_match"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256_match": {"const": true}}}},
+    "admission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["camera_count", "camera_ids", "dataset", "validator", "launcher", "cam_info_tool", "topology_tool", "required_topics", "cleanup_policy"],
+      "properties": {"camera_count": {"const": 4}, "camera_ids": {"const": ["Camera", "Camera_01", "Camera_02", "Camera_03"]}, "dataset": {"const": "operator_supplied_custom_slug_only"}, "validator": {"const": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py"}, "launcher": {"const": "deploy/docker/scripts/thor-warehouse-mv3dt.sh"}, "cam_info_tool": {"const": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py"}, "topology_tool": {"const": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py"}, "required_topics": {"const": ["mdx-raw", "mdx-bev"]}, "cleanup_policy": {"const": "delete_only_executor_owned_streams_and_outputs"}}
+    },
+    "oracle_plans": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["entry_id", "oracle_id", "status", "semantic_plan", "runtime_evidence"], "properties": {"entry_id": {"type": "string", "minLength": 1}, "oracle_id": {"type": "string", "minLength": 1}, "status": {"const": "open_unexecuted"}, "semantic_plan": {"type": "string", "minLength": 1}, "runtime_evidence": {"const": []}}}},
+    "evidence_boundary": {"const": "schema_and_semantic_validator_only_no_runtime_receipt"},
+    "next_action": {"const": "operator_review_then_separate_explicit_runtime_execution"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

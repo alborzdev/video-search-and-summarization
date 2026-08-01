@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "policy", "admission", "advertised_oracles", "source_locks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "inert_mv3dt_advertised_entry_admission"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["default_action", "candidate_evidence_only", "advances_live_ledgers", "runtime_receipts_bundled", "docker", "network", "subprocess", "lifecycle", "model_load", "downloads", "credentials", "writes", "warehouse_sample_bundle"],
+      "properties": {
+        "default_action": {"const": "read_only_plan"}, "candidate_evidence_only": {"const": true}, "advances_live_ledgers": {"const": false}, "runtime_receipts_bundled": {"const": false}, "docker": {"const": false}, "network": {"const": false}, "subprocess": {"const": false}, "lifecycle": {"const": false}, "model_load": {"const": false}, "downloads": {"const": false}, "credentials": {"const": false}, "writes": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "admission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["camera_count", "camera_ids", "dataset", "required_existing_validator", "required_existing_launcher", "required_offline_cam_info_tool", "required_offline_topology_tool", "required_topics", "required_cleanup_policy", "next_action"],
+      "properties": {
+        "camera_count": {"const": 4},
+        "camera_ids": {"const": ["Camera", "Camera_01", "Camera_02", "Camera_03"]},
+        "dataset": {"const": "operator_supplied_custom_slug_only"},
+        "required_existing_validator": {"const": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py"},
+        "required_existing_launcher": {"const": "deploy/docker/scripts/thor-warehouse-mv3dt.sh"},
+        "required_offline_cam_info_tool": {"const": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py"},
+        "required_offline_topology_tool": {"const": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py"},
+        "required_topics": {"const": ["mdx-raw", "mdx-bev"]},
+        "required_cleanup_policy": {"const": "delete_only_executor_owned_streams_and_outputs"},
+        "next_action": {"const": "operator_review_then_separate_explicit_runtime_execution"}
+      }
+    },
+    "advertised_oracles": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/oracle"}},
+    "source_locks": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"$ref": "#/$defs/file_lock"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "file_lock": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}},
+    "oracle": {"type": "object", "additionalProperties": false, "required": ["entry_id", "advertised", "oracle_id", "required_oracle_canonical_sha256", "semantic_plan"], "properties": {"entry_id": {"type": "string", "pattern": "^manifest-gap\\.rt-cv-3d-mv3dt\\.0[0-3]-"}, "advertised": {"type": "string", "minLength": 1}, "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.rt-cv-3d-mv3dt\\.0[0-3]$"}, "required_oracle_canonical_sha256": {"$ref": "#/$defs/sha256"}, "semantic_plan": {"type": "string", "minLength": 1}}}
+  }
+}

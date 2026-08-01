@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "policy", "fixture", "admission", "advertised_oracles", "source_locks", "source_assertions"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "inert_audio_advertised_entry_admission"},
+    "policy": {"const": {"default_action": "read_only_plan", "candidate_evidence_only": true, "advances_live_ledgers": false, "runtime_receipts_bundled": false, "network": false, "docker": false, "subprocess": false, "lifecycle": false, "model_load": false, "downloads": false, "credentials": false, "writes": false, "warehouse_sample_bundle": "excluded"}},
+    "fixture": {"type": "object", "additionalProperties": false, "required": ["fixture_id", "phrase", "phrase_utf8_sha256", "receipt_schema_path", "generator_path", "warehouse_sample_bundle"], "properties": {"fixture_id": {"const": "vss-tiny-known-speech-h264-aac-v1"}, "phrase": {"const": "Attention operator. The blue crate is ready."}, "phrase_utf8_sha256": {"const": "c20db4dfe2b82f3a2ebeb1cfc053e7b63baa3cf079140466827342930d641ec8"}, "receipt_schema_path": {"const": "deploy/docker/thor-local/qualification/tiny-audio-fixture/receipt.schema.json"}, "generator_path": {"const": "deploy/docker/thor-local/qualification/tiny-audio-fixture/fixture.py"}, "warehouse_sample_bundle": {"const": "excluded"}}},
+    "admission": {"type": "object", "additionalProperties": false, "required": ["native_audio_lane", "transcript_lane", "required_endpoint_scope", "required_phrase_matching", "required_cleanup_policy", "next_action"], "properties": {
+      "native_audio_lane": {"const": {"purpose": "base_summary_alert_semantics_only", "repository": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8", "backend": "vllm-compatible", "vlm_model_supports_audio": true, "request_enable_audio": true, "asr_state": "skipped_native_audio", "minimum_available_memory_gib": 80, "fixed_unified_memory_reserve_ratio": 0.2}},
+      "transcript_lane": {"const": {"purpose": "nonempty_per_chunk_audio_transcript_only", "vlm_model_supports_audio": false, "request_enable_audio": true, "asr_state": "created_and_healthy", "asr_provider": "local_riva", "native_omni_asr_skip_is_admissible": false}},
+      "required_endpoint_scope": {"const": "loopback_only"},
+      "required_phrase_matching": {"const": "normalized_ordered_full_phrase"},
+      "required_cleanup_policy": {"const": "delete_only_executor_owned_media_streams_and_services"},
+      "next_action": {"const": "operator_review_then_separate_explicit_runtime_execution"}
+    }},
+    "advertised_oracles": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["entry_id", "advertised", "oracle_id", "required_oracle_canonical_sha256", "lane", "semantic_plan"], "properties": {"entry_id": {"type": "string", "pattern": "^manifest-gap\\.audio-understanding\\.0[0-2]-"}, "advertised": {"type": "string", "minLength": 1}, "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.audio-understanding\\.0[0-2]$"}, "required_oracle_canonical_sha256": {"$ref": "#/$defs/sha256"}, "lane": {"enum": ["native_audio", "separate_asr"]}, "semantic_plan": {"type": "string", "minLength": 40}}}},
+    "source_locks": {"type": "array", "minItems": 23, "maxItems": 23, "uniqueItems": true, "items": {"$ref": "#/$defs/lock"}},
+    "source_assertions": {"type": "array", "minItems": 11, "maxItems": 11, "items": {"type": "object", "additionalProperties": false, "required": ["path", "fragments"], "properties": {"path": {"type": "string", "minLength": 1}, "fragments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "lock": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}}
+  }
+}

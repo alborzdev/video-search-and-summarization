@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "docker": false,
+    "subprocess": false,
+    "writes": false,
+    "lifecycle": false,
+    "downloads": false,
+    "credentials": false,
+    "warehouse_sample_bundle_used": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json", "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "07fb76a7675d3a8506b65d4eeb1130f7a04571ea32b9c8f8057907d7b0a37bf4"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave8-source-case.lvs-empty-caption-limitation",
+      "planning_requirement_id": "systems-lvs-empty-caption",
+      "capability_id": "behavior.lvs.live-caption-empty-window",
+      "planning_payload_sha256": "ba2276f69be440b6da2319bf8cc843b2550648e6436a78d7289e79a7a05c6cbf",
+      "capability_sha256": "d85518241f7838e07fe27bce83db2b90b91abc6670c1dd93191c897064bb6605",
+      "contract_sha256": "1ac137907f009d29a62ae589e101b86ff4ef39a3859a0ed8767b74a0ba254a08",
+      "oracle_sha256": "a587127779c967f496bd316f628e1a6460b5cf9623a671536f5031473d45468b",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md", "sha256": "142ef0130b322828a888c32e5459d3d89c3a2c0620e061027f2a891049c0a982"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-empty-window-negative-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"behavior.lvs.live-caption-empty-window\"", "\"contract\":{\"empty_window\":\"no-captions\",\"known_issue\":true}", "\"gap\":\"Known issue has no regression fixture.\""]},
+        {"assertion_id": "conservative-release-note-mapping", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md"], "expected": ["Known failure/recovery semantics retained here include LVS", "empty caption windows", "It is intentionally conservative"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave8-source-case.lvs-shared-prompt-limitation",
+      "planning_requirement_id": "systems-lvs-shared-prompt",
+      "capability_id": "behavior.lvs.shared-caption-prompt",
+      "planning_payload_sha256": "a2b1537024f64644a6b2d32df1b6671aad115f92a9cf48b2d857ca6596a49661",
+      "capability_sha256": "d09989ee585f74595c2a7a6bb2fea37796a65d66e2444b1d01e6bd1597fdee51",
+      "contract_sha256": "1c500c7705c6a4f5ab82b6001e1906b48931e5a306e198038bd37f38ad90444a",
+      "oracle_sha256": "3614ef8637315e54c4485d00c04379452ae962dd790808f23b0b935c682837b9",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md", "sha256": "142ef0130b322828a888c32e5459d3d89c3a2c0620e061027f2a891049c0a982"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-shared-prompt-negative-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"behavior.lvs.shared-caption-prompt\"", "\"contract\":{\"shared_backend\":\"last-writer-wins\",\"cross_agent_visibility\":false,\"known_issue\":true}", "\"gap\":\"Shared prompt collision is not tested.\""]},
+        {"assertion_id": "conservative-release-note-mapping", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md"], "expected": ["shared-prompt last-writer behavior", "Known failure/recovery semantics retained here", "It is intentionally conservative"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave8-source-case.lvs-spurious-index-limitation",
+      "planning_requirement_id": "systems-lvs-spurious-index",
+      "capability_id": "behavior.lvs.caption-spurious-index",
+      "planning_payload_sha256": "0ffa2f9f990b37f9a350f7f19c26f0383f4e3a6b460b0cba478910e53128686e",
+      "capability_sha256": "eb5a25d858fa3af76362ccc8950b93af7c3c02d561910ed63c6b0fcf7d765b36",
+      "contract_sha256": "d89d2c15a53e45d1f703f7e9e6cda87f8f09ada2982d589d1abbfab49cfe8b24",
+      "oracle_sha256": "7547d3e44e7091933354da8a1c3223127cd93d66dfad0c99805a1a4614f31247",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md", "sha256": "142ef0130b322828a888c32e5459d3d89c3a2c0620e061027f2a891049c0a982"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-spurious-index-negative-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"behavior.lvs.caption-spurious-index\"", "\"trigger_values\":[\"yes\",\"true\"]", "\"artifact\":\"mdx-vlm-incidents-1970-01-01\"", "\"known_issue\":true", "\"gap\":\"Known artifact has no regression fixture.\""]},
+        {"assertion_id": "conservative-release-note-mapping", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md"], "expected": ["epoch-dated", "spurious incident index", "Known failure/recovery semantics retained here"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave8-source-case.cr2-redeployment-limitation",
+      "planning_requirement_id": "systems-cr2-recovery",
+      "capability_id": "behavior.base.cr2-nim-recovery",
+      "planning_payload_sha256": "8fc26e615f47f65000f3ffccaae58633318ae9b035db3ea3744540e7debe365c",
+      "capability_sha256": "3388f861e909e090c57881102f0b2c7b82f7388fe546ffa8f93aa4d2980a99ac",
+      "contract_sha256": "613e81b28cf3ffd771884ce84a676970f52b0a2b956085136c5d780bbcc4c45a",
+      "oracle_sha256": "fb720aa8dc964dda5ef4b90382a2c9b28f4eeaf265640986df656db733929998",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md", "sha256": "142ef0130b322828a888c32e5459d3d89c3a2c0620e061027f2a891049c0a982"},
+        {"path": "skills/vss-deploy-profile/references/troubleshooting.md", "sha256": "075e8179ecde590039c3214c054239215d27d19906887938c4bcd7d7c86041e2"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-cr2-negative-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"behavior.base.cr2-nim-recovery\"", "\"contract\":{\"failure\":\"CR2-NIM-crash\",\"recovery\":\"redeploy\",\"known_issue\":true}", "\"gap\":\"Safe recovery has not been fault-injected.\""]},
+        {"assertion_id": "local-guidance-preserves-redeploy-boundary", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md", "skills/vss-deploy-profile/references/troubleshooting.md"], "expected": ["CR2 NIM redeployment recovery", "Known CR2/NIM restart limitation", "Redeploy the full affected VSS stack"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave8-source-case.search-known-limitations",
+      "planning_requirement_id": "systems-search-known-issues",
+      "capability_id": "behavior.search.retention-indexing-quality",
+      "planning_payload_sha256": "199ba2bd7a639fc02a90f1830c9ed19c67393c308335be4eb7a461535d930b15",
+      "capability_sha256": "c43de28c8c3862df8e6a70c4d45a3620370416dfe3e63467fc3979e43ca9bc7b",
+      "contract_sha256": "8aaea08275b46eabc2da1628cdf32f2dbc887cccce1f1478b8c3f07c17e7277e",
+      "oracle_sha256": "0a45ddd00a6c8c5d9a1a8dc38b7f9715d9f40671ab7c1d0858a86d740392d999",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md", "sha256": "142ef0130b322828a888c32e5459d3d89c3a2c0620e061027f2a891049c0a982"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-search-negative-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"behavior.search.retention-indexing-quality\"", "\"retention_limitations\":true", "\"indexing_asynchronous\":true", "\"quality_limitations\":true", "\"known_issue\":true", "Each grouped limitation needs a separate assertion"]},
+        {"assertion_id": "conservative-release-note-mapping", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md"], "expected": ["search retention/indexing/quality limits", "Known failure/recovery semantics retained here", "It is intentionally conservative"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave8-source-case.rt-cv-ended-stream-limitation",
+      "planning_requirement_id": "systems-rt-cv-ended-stream",
+      "capability_id": "behavior.rt-cv.delete-ended-stream",
+      "planning_payload_sha256": "2c6fdfc0551fb0f0b300b9c8261adcd1ab72eed2d4788d1e7650f1f1b1c117e9",
+      "capability_sha256": "ab105ae93f39b35e07a0d2639133dd356381a5e36731256fd9165358596a60e0",
+      "contract_sha256": "e37dcd6abac25a64e22d3afe0a1940ff1b3035edd30899059d88872cc631a7f5",
+      "oracle_sha256": "ddc99cf5711195a24a3f64a8e53bb32db63c218436cbd832ec4cd7bcbe02a795",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md", "sha256": "142ef0130b322828a888c32e5459d3d89c3a2c0620e061027f2a891049c0a982"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-ended-stream-negative-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"behavior.rt-cv.delete-ended-stream\"", "\"contract\":{\"ended_stream_cleanup\":\"delete\",\"known_issue\":true}", "\"gap\":\"Ended-stream lifecycle is unqualified.\""]},
+        {"assertion_id": "conservative-release-note-mapping", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/2026-07-31-systems-extraction.md"], "expected": ["ended-stream", "deletion", "Known failure/recovery semantics retained here"]}
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}

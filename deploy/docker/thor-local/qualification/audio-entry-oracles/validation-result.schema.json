@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "evidence_sha256", "candidate_status", "can_mark_passed_current", "live_ledger_mutation", "warehouse_sample_bundle", "checks", "oracle_observations", "runtime_evidence_admitted", "limitations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "read_only_future_evidence_validation"},
+    "evidence_sha256": {"$ref": "#/$defs/sha256"},
+    "candidate_status": {"const": "validated_for_review_not_admitted"},
+    "can_mark_passed_current": {"const": false},
+    "live_ledger_mutation": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "checks": {"const": {"fixture_receipt_and_media": true, "native_audio_semantics": true, "separate_asr_transcript": true, "chunk_timing": true, "model_identity_and_provenance": true, "loopback_endpoints": true, "memory_and_resources": true, "cleanup": true}},
+    "oracle_observations": {"const": [
+      {"entry_id": "manifest-gap.audio-understanding.00-audio-aware-base-workflow", "observation": "candidate_semantics_matched_not_admitted", "lane": "native_audio"},
+      {"entry_id": "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk", "observation": "candidate_transcript_matched_not_admitted", "lane": "separate_asr"},
+      {"entry_id": "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts", "observation": "candidate_semantics_matched_not_admitted", "lane": "native_audio"}
+    ]},
+    "runtime_evidence_admitted": {"const": []},
+    "limitations": {"const": ["validator authenticates bounded receipt structure, raw artifacts, and cross-correlations but does not execute or independently observe the runtime", "candidate evidence still requires human review and explicit live-ledger integration", "native Omni audio semantics do not prove a nonempty audio_transcript because RT-VLM skips the ASR process for native-audio models"]}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

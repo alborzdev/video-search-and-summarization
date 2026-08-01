@@ -59,6 +59,18 @@ in this directory:
   Slack, AWS/GCS, RAG report generation, and FRAG retrieval. Aggregate
   candidate coverage is 83 of 87; all runtime, model, scale, custom-data, and
   external delivery/retrieval oracles remain open;
+- `external-entry-attestations/` turns those exact four blockers into an inert,
+  credential-free collection plan and strict validator for a future sanitized
+  operator receipt. Source or mocks never count as delivery; Slack and
+  Enterprise RAG remain external-optional, while AWS/GCS requires actual
+  provider identity rather than local-emulator equivalence. Validation alone
+  cannot promote any official state;
+- `search-scale-qualification-plan/` compiles the two still-open Search scale
+  literals into an inert progressive 2/4/8/16 plan and a separate,
+  operator-approved 100-stream plan. It requires one future digest-locked
+  operator H.264 source, exact per-stream identities and evidence, a strict
+  1920x1080 gate for the 16-stream claim, resource aborts, and exact-owned
+  cleanup, but executes no publisher, API, container, or runtime workload;
 - `planning-requirement-executors-wave3/` checks six of the 84 still-open
   planning requirements without promoting them, preserving five source
   matches and the search-upload HTTP 400/415 mismatch;
@@ -78,6 +90,20 @@ in this directory:
   contracts, two configuration implementations, and one illustrative NvSchema
   consumer/protocol subset. It leaves 54 without a planning candidate and all
   84 live-open requirements unpromoted;
+- `planning-requirement-executors-wave8/` audits that exact 54-requirement
+  remainder and adds six disjoint preserved negative contracts for LVS, CR2
+  recovery, Search, and ended-stream deletion. It leaves 48 without a planning
+  candidate and all 84 live-open requirements unpromoted;
+- `planning-requirement-executors-wave9/` audits that exact 48-requirement
+  remainder and adds six disjoint bounded subsets: one preserved negative
+  contract, two configuration-only observations, and three protocol/source
+  surfaces. It leaves 42 without a planning candidate and all runtime semantics
+  and all 84 live-open requirements unpromoted;
+- `planning-requirement-executors-wave10/` audits that exact 42-requirement
+  remainder and adds six disjoint bounded subsets for agent routing, UI chat
+  state, Smart City model/configuration boundaries, NvStreamer file protocol,
+  and the VA query library. It leaves 36 without a planning candidate, excludes
+  every Warehouse row, and keeps all 84 live-open requirements unpromoted;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -89,12 +115,38 @@ in this directory:
   models, cloud inference, network, or service lifecycle. Its two observations
   are bound only to exact non-advancing oracle subsets; both full oracles remain
   open;
+- `mv3dt-entry-oracles/` converts the four remaining MV3DT advertised-entry
+  semantics into an exact-four, operator-data-only admission plan and a strict
+  read-only candidate-receipt validator. It requires per-camera `mdx-raw`
+  detections, linked `mdx-bev` fusion, distinct BodyPose load/use observations,
+  calibrated cross-camera continuity, and exact-owned cleanup while retaining
+  all four official oracles as `open_unexecuted`;
+- `sparse4d-entry-oracles/` binds the two remaining Sparse4D literals to the
+  existing custom-data validator and prepare/preflight/qualify lane without
+  invoking it. Its future candidate-receipt contract requires exact four-camera
+  input, RT-DETR and Sparse4D/anchor identities, model load/use observations,
+  fused 3D/BEV semantics, health/latency/resources, and exact-owned cleanup;
+  missing assets, custom data, admission gates, and runtime evidence remain
+  explicit blockers;
 - `tiny-audio-fixture/` provides an inert-by-default, acknowledgement-gated
   generator and read-only verifier for a six-second known-speech H.264/AAC
   candidate. It uses only local FFmpeg/FFprobe and publishes only the explicit
   new media path and its adjacent receipt outside the repository. A private
   transient work directory is removed non-recursively; the package claims no
   VSS, model, ASR, summary, or alert runtime evidence;
+- `audio-entry-oracles/` binds that fixture to strict future candidate evidence
+  for the three audio literals. It keeps native Omni Base/summary/alert
+  semantics separate from a real local-ASR run for per-chunk transcript,
+  enforces model, loopback, phrase/control, timing, memory-reserve, resource,
+  artifact, and cleanup gates, and explicitly rejects native-audio ASR-skip as
+  transcript proof. Its validator still returns only `not_admitted`;
+- `runtime-approval-bundles/` compiles the remaining operator-authorized work
+  into 13 explicit, non-inheriting approval scopes. Progressive Search and its
+  separate 100-stream run, native Omni audio and local-ASR transcript, model
+  downloads, profile lifecycle, custom-data lanes, Edge staging, and external
+  attestations remain independently gated. The compiler is inert, grants no
+  approval, and performs no host, Docker, network, credential, download, or
+  lifecycle action;
 - `advertised-entry-gaps/` gives each advertised entry from the 16 families
   that lack capability rows its own still-open semantic oracle plan;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
@@ -145,9 +197,9 @@ bindings are static subsets only, with zero runtime evidence and zero
 `passed_current` promotions. The third successor updates the LVS adapter's
 static API contract and binds those two MV3DT subsets without materializing an
 additional planning requirement. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1 +
-11 advertised-entry candidates and 6 + 6 + 6 + 6 + 6 additional planning
+11 advertised-entry candidates and 6 + 6 + 6 + 6 + 6 + 6 + 6 + 6 additional planning
 checks are non-advancing and do not change those live counts. They leave four
-advertised entries as explicit external-attestation blockers and 54 planning
+advertised entries as explicit external-attestation blockers and 36 planning
 requirements not yet selected by a planning executor package, respectively.
 The prerelease packages are separate from these stable 3.2.1 denominators. The
 fourteen-family watchlist remains pointer-only; the adjacent exact diff package

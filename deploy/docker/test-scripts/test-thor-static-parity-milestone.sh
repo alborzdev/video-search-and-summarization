@@ -158,6 +158,32 @@ python3 "${thor_local_root}/qualification/planning-requirement-executors-wave7/e
 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/planning-requirement-executors-wave7/tests"
 
+# The sixth nonadvancing planning audit preserves six documented negative
+# contracts from the exact 54-row remainder. It leaves 48 unselected and all
+# 84 live-open requirements without promotion or runtime evidence.
+python3 "${thor_local_root}/qualification/planning-requirement-executors-wave8/executor.py" \
+  --json >/dev/null
+python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave8/tests"
+
+# The seventh nonadvancing planning audit checks one preserved negative, two
+# configuration-only, and three protocol/source-only subsets from the exact
+# 48-row remainder. It leaves 42 unselected and every runtime semantic open.
+python3 "${thor_local_root}/qualification/planning-requirement-executors-wave9/executor.py" \
+  --json >/dev/null
+python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave9/tests"
+
+# The eighth nonadvancing planning audit checks one preserved negative, one
+# configuration-only, and four protocol/source-only subsets from the exact
+# 42-row remainder. It leaves 36 unselected, excludes every Warehouse row, and
+# keeps every one of the 84 live-open requirements unpromoted and evidence-free.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave10/executor.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave10/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
@@ -278,6 +304,26 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-wave7/tests"
 
+# The exact four external blockers have a credential-free future attestation
+# contract. Static qualification compiles only the inert plan and adversarial
+# validator tests; it contacts no Slack, cloud object store, RAG endpoint, or
+# credential source and cannot promote a blocked entry.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/external-entry-attestations/plan.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/external-entry-attestations/tests"
+
+# The two Search scale literals have an exact, Warehouse-free future workload
+# plan: progressive 2/4/8/16 plus a separate operator-approved 100-stream run.
+# This static command compiles only identities, gates, evidence shape, aborts,
+# and cleanup; it starts no publisher, API request, service, or container.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/search-scale-qualification-plan/plan.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/search-scale-qualification-plan/tests"
+
 # The four unresolved capability-to-service bindings have an authoritative
 # negative audit. None of the contracts selects a unique runtime participant
 # set, so the audit must keep all four open and forbid runtime-lane updates.
@@ -302,6 +348,25 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q \
   "${thor_local_root}/qualification/offline-mv3dt-tools/tests"
 
+# The four MV3DT advertised semantics have an exact-four custom-data admission
+# plan and a strict future candidate-receipt validator. Static qualification
+# executes only the inert plan and adversarial tests; no model, Docker, broker,
+# service lifecycle, external receipt, or official state is touched.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/mv3dt-entry-oracles/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/mv3dt-entry-oracles/tests"
+
+# The two Sparse4D advertised semantics similarly reuse the existing custom
+# four-camera lane through an inert plan and strict candidate-receipt contract.
+# The static tier runs no preflight, model, process, service, or lifecycle path.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/sparse4d-entry-oracles/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/sparse4d-entry-oracles/tests"
+
 # The known-speech H.264/AAC fixture tool defaults to a write-free plan. Its
 # static suite mocks the only two allowed local subprocesses and keeps the real
 # FFmpeg integration opt-in, so this milestone creates no media or receipt.
@@ -309,6 +374,26 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/tiny-audio-fixture/fixture.py" plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/tiny-audio-fixture/tests"
+
+# The three audio advertised semantics have separate native-audio and local-ASR
+# future evidence lanes. Static qualification runs only the inert plan and
+# artifact-validator tests; it generates no fixture, loads no model, starts no
+# ASR/VSS process, and cannot treat native Omni's ASR skip as transcript proof.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/audio-entry-oracles/oracle.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/audio-entry-oracles/tests"
+
+# The remaining material actions are divided into 13 explicit, non-inheriting
+# operator approval scopes. This compiler has no execute mode and the static
+# suite proves it cannot inspect the host, contact a provider, download an
+# artifact, invoke Docker, grant approval, or perform a lifecycle action.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/runtime-approval-bundles/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/runtime-approval-bundles/tests"
 
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact

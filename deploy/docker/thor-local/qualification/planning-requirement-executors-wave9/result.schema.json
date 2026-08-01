@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/planning-wave9-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scope", "advances_live_acceptance", "runtime_evidence_added", "inventory_sha256", "set_digests", "baseline_checks", "counts", "remaining_requirement_audit", "results"],
+  "properties": {
+    "schema_version": {"const": 1}, "scope": {"const": "isolated_candidate_only"},
+    "advances_live_acceptance": {"const": false}, "runtime_evidence_added": {"const": false},
+    "inventory_sha256": {"$ref": "#/$defs/sha256"},
+    "set_digests": {
+      "type": "object", "additionalProperties": false,
+      "required": ["prior_62", "wave8_remaining_48", "wave9_selected_6", "wave9_remaining_42"],
+      "properties": {
+        "prior_62": {"const": "faefaedeb3f198d98c1dc7e28b77606585e21131c3845b3270897fd95119d464"},
+        "wave8_remaining_48": {"const": "e110cc91283d37dd8f789ffef55045dc97bbbadf4ff5eadc9d69532357be97d5"},
+        "wave9_selected_6": {"const": "513730392f6a3b372d63711a6cdffcef1b3c56b02a619fdc800b620d8cb11891"},
+        "wave9_remaining_42": {"const": "5c6885d089e5d5af6e49d6cccb8a03dc829642174bc8f2ec660674d24df10672"}
+      }
+    },
+    "baseline_checks": {"type": "array", "minItems": 11, "maxItems": 11, "items": {"$ref": "#/$defs/sourceCheck"}},
+    "counts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["total_planning_requirements", "integrated_materialized", "live_open", "prior_package_selections", "prior_materialized_static_bindings", "prior_live_open_candidate_selections", "remaining_requirements_audited", "cases", "observed_match", "observed_mismatch", "negative_contracts_preserved", "configuration_subsets", "protocol_subsets", "warehouse_cases_selected", "remaining_requirements_unselected"],
+      "properties": {
+        "total_planning_requirements": {"const": 110}, "integrated_materialized": {"const": 26}, "live_open": {"const": 84},
+        "prior_package_selections": {"const": 62}, "prior_materialized_static_bindings": {"const": 26}, "prior_live_open_candidate_selections": {"const": 36},
+        "remaining_requirements_audited": {"const": 48}, "cases": {"const": 6}, "observed_match": {"const": 6}, "observed_mismatch": {"const": 0},
+        "negative_contracts_preserved": {"const": 1}, "configuration_subsets": {"const": 2}, "protocol_subsets": {"const": 3},
+        "warehouse_cases_selected": {"const": 0}, "remaining_requirements_unselected": {"const": 42}
+      }
+    },
+    "remaining_requirement_audit": {"type": "array", "minItems": 48, "maxItems": 48, "items": {"$ref": "#/$defs/audit"}},
+    "results": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/result"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nullableSha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "sourceCheck": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256_match"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256_match": {"const": true}}
+    },
+    "audit": {
+      "type": "object", "additionalProperties": false,
+      "required": ["planning_requirement_id", "owner_id", "package", "planning_payload_sha256", "capability_sha256", "contract_sha256", "classification"],
+      "properties": {
+        "planning_requirement_id": {"type": "string", "minLength": 1}, "owner_id": {"type": "string", "minLength": 1},
+        "package": {"type": "string", "minLength": 1}, "planning_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "capability_sha256": {"$ref": "#/$defs/nullableSha256"}, "contract_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "classification": {"enum": ["selected_static_negative_contract", "selected_static_configuration_subset", "selected_static_protocol_subset", "excluded_warehouse_requirement", "requires_runtime_or_external_evidence"]}
+      }
+    },
+    "bindingChecks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requirement_payload_sha256", "capability_sha256", "contract_sha256", "oracle_sha256", "owner_binding", "requirement_still_open", "oracle_still_open"],
+      "properties": {
+        "requirement_payload_sha256": {"const": true}, "capability_sha256": {"const": true}, "contract_sha256": {"const": true},
+        "oracle_sha256": {"const": true}, "owner_binding": {"const": true}, "requirement_still_open": {"const": true}, "oracle_still_open": {"const": true}
+      }
+    },
+    "assertion": {
+      "type": "object", "additionalProperties": false, "required": ["assertion_id", "passed", "detail"],
+      "properties": {"assertion_id": {"type": "string", "minLength": 1}, "passed": {"const": true}, "detail": {"const": "missing=[]"}}
+    },
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["case_id", "planning_requirement_id", "capability_id", "outcome", "evidence_class", "binding_checks", "source_checks", "assertions", "runtime_evidence", "qualification_boundary"],
+      "properties": {
+        "case_id": {"type": "string", "pattern": "^wave9-source-case\\."}, "planning_requirement_id": {"type": "string", "minLength": 1},
+        "capability_id": {"type": "string", "minLength": 1}, "outcome": {"const": "static_subset_match_candidate_only"},
+        "evidence_class": {"enum": ["static_negative_contract_preserved", "static_configuration_subset_only", "static_protocol_subset_only"]},
+        "binding_checks": {"$ref": "#/$defs/bindingChecks"}, "source_checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/sourceCheck"}},
+        "assertions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/assertion"}},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "qualification_boundary": {"const": "source/configuration subset only; requirement and oracle remain open"}
+      }
+    }
+  }
+}

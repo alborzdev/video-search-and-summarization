@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "mode": "inert_mv3dt_advertised_entry_admission",
+  "policy": {
+    "default_action": "read_only_plan",
+    "candidate_evidence_only": true,
+    "advances_live_ledgers": false,
+    "runtime_receipts_bundled": false,
+    "docker": false,
+    "network": false,
+    "subprocess": false,
+    "lifecycle": false,
+    "model_load": false,
+    "downloads": false,
+    "credentials": false,
+    "writes": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "admission": {
+    "camera_count": 4,
+    "camera_ids": ["Camera", "Camera_01", "Camera_02", "Camera_03"],
+    "dataset": "operator_supplied_custom_slug_only",
+    "required_existing_validator": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py",
+    "required_existing_launcher": "deploy/docker/scripts/thor-warehouse-mv3dt.sh",
+    "required_offline_cam_info_tool": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+    "required_offline_topology_tool": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py",
+    "required_topics": ["mdx-raw", "mdx-bev"],
+    "required_cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+    "next_action": "operator_review_then_separate_explicit_runtime_execution"
+  },
+  "advertised_oracles": [
+    {
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.00-per-camera-rt-detr",
+      "advertised": "per-camera RT-DETR",
+      "oracle_id": "oracle.manifest-entry.rt-cv-3d-mv3dt.00",
+      "required_oracle_canonical_sha256": "1798e84b80e393992b1758cd77fbf742400d3c7fff8e55b19df77495e0eb1cc4",
+      "semantic_plan": "require nonempty mdx-raw detections from every admitted camera"
+    },
+    {
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion",
+      "advertised": "MV3DT BEV fusion",
+      "oracle_id": "oracle.manifest-entry.rt-cv-3d-mv3dt.01",
+      "required_oracle_canonical_sha256": "854d88ed7605fa63fedd37d549d042142487c285570e1b5e787a4d8ca181c59e",
+      "semantic_plan": "require mdx-bev fused tracks with at least two contributing cameras and four-camera aggregate coverage"
+    },
+    {
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.02-bodypose3dnet",
+      "advertised": "BodyPose3DNet",
+      "oracle_id": "oracle.manifest-entry.rt-cv-3d-mv3dt.02",
+      "required_oracle_canonical_sha256": "9c92f0849f6bdcbb6356d7956801d0431f85fc6ce0f1b2f1f0ee03fcf385813d",
+      "semantic_plan": "require distinct model-loaded and inference-used observations bound to the admitted BodyPose3DNet asset"
+    },
+    {
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking",
+      "advertised": "four-camera calibrated multiview tracking",
+      "oracle_id": "oracle.manifest-entry.rt-cv-3d-mv3dt.03",
+      "required_oracle_canonical_sha256": "e138ec6f480d0d53382caaa443675bc7ff74b53a99c6e285fd67d31640a694ee",
+      "semantic_plan": "require ordered cross-camera continuity transitions whose aggregate camera coverage is exactly four"
+    }
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py", "sha256": "09c3497f8cd7302d871cf528c09467273ac6a3717535f772e05d0eb2e63d6aff"},
+    {"path": "deploy/docker/scripts/thor-warehouse-mv3dt.sh", "sha256": "e697a2a41a146bc84b701558918af1f24d10ba10cd4ffc05d9fd3d9818080499"},
+    {"path": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py", "sha256": "910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675"},
+    {"path": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py", "sha256": "bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json", "sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"},
+    {"path": "deploy/docker/thor-local/parity/manifest.json", "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"},
+    {"path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "sha256": "a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b"},
+    {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-mv3dt-tracker-config.yml", "sha256": "1053cc0a13f58b465cf28c5b59c65aa85f4feeb7d25c6aa7272d876f02a54b96"},
+    {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/ds-main-config-mv3dt.txt", "sha256": "6f1a5b76c26a0e8aa0ad42e3ab2327b1acf0fa1c8e66dcafefc2e1b6965db80d"}
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "docker": false,
+    "subprocess": false,
+    "writes": false,
+    "lifecycle": false,
+    "downloads": false,
+    "credentials": false,
+    "warehouse_used": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json", "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave7/inventory.json", "sha256": "07fb76a7675d3a8506b65d4eeb1130f7a04571ea32b9c8f8057907d7b0a37bf4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave8/inventory.json", "sha256": "faa85d0f1b77478e2814763bafc439f61fc419dd6813ed06f044002b1ffcb4fa"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave9/inventory.json", "sha256": "ef61deabad56286d7a49c74a5938c0ad2e980c42cb92ff7b0d2df6250c3a6537"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave10-source-case.agent-mode-routing",
+      "planning_requirement_id": "agent-mode-mocks",
+      "capability_id": "runtime.agent.operational-modes",
+      "planning_payload_sha256": "4e11c465840847e20fa8e1344a0767810689da811a3762f7a4a6016317ad570c",
+      "capability_sha256": "28531e8e377afc5776ff0b9cbf7b5dcb9fb12001ced181835aa232450bdde546",
+      "contract_sha256": "f11ebf6f7782a64c1fe1b2d749e8454f9bbfb4ac45ccade8756de29a8fabbaa6",
+      "oracle_sha256": "11481a773d9d89e54cab5f7ccb852edc86194395745567419c966585618342df",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-two-mode-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.agent.operational-modes\"", "\"production\":{\"path\":\"va_mcp\"", "\"developer\":{\"path\":\"direct_media\"", "Both routes require claim-level runtime qualification on Thor."]},
+        {"assertion_id": "source-mode-selection-surface", "sources": ["services/agent/src/vss_agents/agents/report_agent.py"], "expected": ["va_mcp_enabled = config.get_incidents_tool is not None and config.get_incident_tool is not None", "Video Analytics MCP mode", "Video(uploaded) Report mode", "if va_mcp_enabled:"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave10-source-case.ui-chat-static-surface",
+      "planning_requirement_id": "ui-chat-state",
+      "capability_id": "runtime.ui.global-chat-sidebar",
+      "planning_payload_sha256": "8d34d5b7a07a8140277901536920bb6849f6eb40dc1e9ef18259f80b5e167c86",
+      "capability_sha256": "e2ce2a0b7ed8a941cd68c5f55462c48153db23030c1bf62a74f058e55ba5eba2",
+      "contract_sha256": "8344dd2bb930ee55d46d09525decf38d1bc15c2320859e071b8106cebeb597f5",
+      "oracle_sha256": "bef59dd7a148891a79571b6c448ca3933d9708715a7ef9cf874be75290f0e06f",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx", "sha256": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/AgentUploadDialog.tsx", "sha256": "f6c0dbfd3c1763d9fef0e2e187fd1ef29a48a469943f7235f7064b3e38714559"},
+        {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/MetadataSection.tsx", "sha256": "b784f587b6232beff181a95562da36cf910d4ea002c3f0e5ff346b8d30cc8eac"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-chat-state-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"runtime.ui.global-chat-sidebar\"", "\"themes\":[\"dark\",\"light\"]", "\"uploads\":[\"MP4\",\"MKV\"]", "Current UI evidence does not cover the complete state model."]},
+        {"assertion_id": "source-theme-sidebar-surface", "sources": ["services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx"], "expected": ["newTheme === 'light' || newTheme === 'dark'", "highlightSidebarWhenCollapsed", "No tabs are enabled in the current deployment configuration."]},
+        {"assertion_id": "source-upload-surface", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/AgentUploadDialog.tsx"], "expected": ["const ACCEPTED_EXTENSIONS = ['.mp4', '.mkv'];", "Movie Files (mp4, mkv)"]},
+        {"assertion_id": "source-report-action", "sources": ["services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/MetadataSection.tsx"], "expected": ["Generate Report", "sends the resolved template to the app chat"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave10-source-case.smartcity-model-lock-gap",
+      "planning_requirement_id": "smartcity-model-locks",
+      "capability_id": "model.smart-city.perception-options",
+      "planning_payload_sha256": "852bea137b58157f8f3ddec1950775493f07e56679ee0b7f8c819718e1343dc7",
+      "capability_sha256": "57f4516878ef470573cd8d06955db2afdcc54715933220be152dfbbb604ea40b",
+      "contract_sha256": "a39dd4ccc9b8988b5768e8dfb8b98f75279d2ad3d5290bd81037e134f30347bf",
+      "oracle_sha256": "2c23b96f6f7615666995a2780cb0aac67ef6587737946247182c5e6acffad5c3",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "sha256": "ac1e8d4b7cfada2870f2cd3f919a6dfe77e6b45ee4cce290e3b3144327b2a82d"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env", "sha256": "a80aa33ed97ea2947caff05402e6a049d2aeec81b4152857063d178163cff718"},
+        {"path": "services/rtvi/rt-cv/README.md", "sha256": "8525ea798262f4fb903255e4163644d63a26ebcb5a71fae33aa0b682cfa27173"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-artifact-lock-gap", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"model.smart-city.perception-options\"", "\"source_policy\":\"operator_credentials\"", "Exact model artifacts are not locked or runtime-qualified on Thor."]},
+        {"assertion_id": "shipped-detector-selections", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-full/.env"], "expected": ["MODEL_NAME_2D: RTDETR", "MODEL_NAME_2D=GDINO"]},
+        {"assertion_id": "documented-tracker-choice", "sources": ["services/rtvi/rt-cv/README.md"], "expected": ["Smart city / ITS detection with two models", "RT-DETR", "GDINO", "NvDCF tracker"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave10-source-case.smartcity-vios-config",
+      "planning_requirement_id": "smartcity-vios-boundary",
+      "capability_id": "configuration.smart-city.vios-defaults",
+      "planning_payload_sha256": "b8ec9d320aa5296ce821ab2ed470dcea942377c1f3583f9b5c19f0424ba8b5cb",
+      "capability_sha256": "a70c2889d81b96c4da389cf519dd113dac8bda04ddaa62098981080f1157bfab",
+      "contract_sha256": "0a23addc4e594dd50ea494f31a8ff08073f29c86184d2b1c08ac0320383c4d72",
+      "oracle_sha256": "4e27a4ef5fae1ec19ce5a92845400a09d5ad7e41038348ac5d2db9dc22d14bc6",
+      "evidence_class": "static_configuration_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/vios/deployment/stream-processing/docker-compose/configs/vst_config.json", "sha256": "9cd31884cb500ccfc139ed7629620cba63cc1a557c5d447830237ae72cb4ea9f"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-vios-boundary", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"id\":\"configuration.smart-city.vios-defaults\"", "\"always_recording\":true", "\"auto_add_nvstreamer_stream_limit\":100", "The exact 100-stream boundary is not runtime-qualified."]},
+        {"assertion_id": "source-always-recording-subset", "sources": ["services/vios/deployment/stream-processing/docker-compose/configs/vst_config.json"], "expected": ["\"always_recording\": true"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave10-source-case.nvstreamer-file-protocol",
+      "planning_requirement_id": "systems-nvstreamer-file",
+      "capability_id": "runtime.nvstreamer.file-streaming",
+      "planning_payload_sha256": "33eaea4b997f61f16d965370ae24269a0704a2bf691bb1a1ce9019b48abad50c",
+      "capability_sha256": "4f694523e90fd2653615288ff282517d6e6d17ea82cff4d6a50cbe19febc7ad2",
+      "contract_sha256": "6ce33c0baf6564332f11a5d53a8388f89557eee7aa9d10a8d0dcf836f642781d",
+      "oracle_sha256": "e5dbe209555b3680de27e2f9a7f65e07bc92d5c515a3008ebfd3a989568f29e3",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "skills/vss-manage-video-io-storage/references/nvstreamer-api-reference.md", "sha256": "520d6982d854d336309f76ed0558c3695020e84cbd54607d87822cbbb9c6d216"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-file-stream-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"runtime.nvstreamer.file-streaming\"", "\"automatic_output\":\"RTSP\"", "\"playback\":\"WebRTC\"", "File lifecycle is not end-to-end qualified."]},
+        {"assertion_id": "documented-upload-handoff-removal", "sources": ["skills/vss-manage-video-io-storage/references/nvstreamer-api-reference.md"], "expected": ["file-to-RTSP republisher", "PUT-uploaded files", "upload to NvStreamer, get RTSP URL, register with VIOS", "DELETE /storage/file/<streamId>", "step 4 is **conditional** on VIOS being present"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave10-source-case.va-library-surface",
+      "planning_requirement_id": "systems-va-query-library",
+      "capability_id": "runtime.video-analytics.query-and-library-contract",
+      "planning_payload_sha256": "8aa7fc7504f2944a9594943065ec4444625c54e225e4b35c7cba076fddcc395b",
+      "capability_sha256": "364ad3f19825b96d5bd5d0de49a4cfd1144665fd9c534d2755dadc1222a842e8",
+      "contract_sha256": "1840e0b98f80e06bf401e7b81926c654cdb747b7d5a4bf3e6a9763b7d9627a79",
+      "oracle_sha256": "9dbb65c3bedb1c8aa242a388a0cd87cabfa26c75e22833a31d95e64f6a0a2240",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/analytics/video-analytics-api/README.md", "sha256": "f107beb1c0116fde4ffcca0f27d1652bb25879087bc3336930becf13bf164988"},
+        {"path": "services/analytics/video-analytics-api/src/web-api-core/index.js", "sha256": "bf78c396b0d8ff02d31c18b2a557b8a0eb6d082a861f8239d067cf21d68999d6"},
+        {"path": "services/analytics/video-analytics-api/src/web-api-core/Errors/index.js", "sha256": "193d5817f59fc37a89d6b78c8621e6aa7e7d8fb4ca2a54a1834c97cb61b6c25e"},
+        {"path": "services/analytics/video-analytics-api/src/web-api-core/Metrics/index.js", "sha256": "0f997411dd9db7dd0c7fef5357bb4469975bfcb5b4213f487d25b55f5c7b8963"},
+        {"path": "services/analytics/video-analytics-api/src/web-api-core/Services/index.js", "sha256": "7bad82e0f643601138692e20f2810c6baaeb5d8d0c3515f557d787ed871ca515"},
+        {"path": "services/analytics/video-analytics-api/src/web-api-core/Utils/index.js", "sha256": "321fc21bd165aef02405d8816af6660c9c72decd9256d250e2a6301b4844cbcc"}
+      ],
+      "assertions": [
+        {"assertion_id": "declared-library-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"id\":\"runtime.video-analytics.query-and-library-contract\"", "\"runtime\":\"Node/Express\"", "\"namespaces\":{\"Metrics\":5,\"Errors\":6,\"Services\":14,\"Utils\":9}", "Namespace surface and query semantics lack runtime qualification."]},
+        {"assertion_id": "documented-query-store-surface", "sources": ["services/analytics/video-analytics-api/README.md"], "expected": ["Node.js REST API service", "reads analytics results from Elasticsearch and optionally uses Kafka", "The REST routes are registered from"]},
+        {"assertion_id": "root-namespace-exports", "sources": ["services/analytics/video-analytics-api/src/web-api-core/index.js"], "expected": ["Errors:require('./Errors/index.js')", "Metrics:require('./Metrics/index.js')", "Services: require('./Services/index.js')", "Utils: require('./Utils/index.js')"]},
+        {"assertion_id": "six-error-exports", "sources": ["services/analytics/video-analytics-api/src/web-api-core/Errors/index.js"], "expected": ["BadRequestError", "IndexNotFoundError", "InternalServerError", "InvalidInputError", "ResourceNotFoundError", "ServiceUnavailableError"]},
+        {"assertion_id": "five-metric-exports", "sources": ["services/analytics/video-analytics-api/src/web-api-core/Metrics/index.js"], "expected": ["Behavior", "LastProcessedTimestamp", "Occupancy", "SpaceUtilization", "TripwireEvent"]},
+        {"assertion_id": "fourteen-service-exports", "sources": ["services/analytics/video-analytics-api/src/web-api-core/Services/index.js"], "expected": ["Incidents", "Alerts", "Behavior", "Calibration", "Clustering", "ConfigManager", "Events", "Frames", "MTMC", "NotificationManager", "Place", "RoadNetwork", "Sensor", "UsdAssets"]},
+        {"assertion_id": "nine-utility-exports", "sources": ["services/analytics/video-analytics-api/src/web-api-core/Utils/index.js"], "expected": ["Config", "Database", "Elasticsearch", "FileUploadHandler", "Histogram", "Kafka", "MessageBroker", "Validator"]}
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "source_locks", "target_gaps", "progressive_stream_counts", "separate_configuration_stream_count", "fixture_contract", "abort_contract", "phase_contract", "performance_contract", "claim_gates", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-search-scale-qualification-plan-v1"},
+    "mode": {"const": "inert_plan_only"},
+    "source_locks": {
+      "type": "array", "minItems": 9, "maxItems": 9,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "raw_sha256", "role", "required_fragments"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^[A-Za-z0-9._/-]+$"},
+          "raw_sha256": {"$ref": "#/$defs/sha256"},
+          "role": {"type": "string", "minLength": 1},
+          "required_fragments": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "target_gaps": {"const": ["manifest-gap.search-scale.00-configuration-up-to-100-streams", "manifest-gap.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia"]},
+    "progressive_stream_counts": {"const": [2, 4, 8, 16]},
+    "separate_configuration_stream_count": {"const": 100},
+    "fixture_contract": {"type": "object"},
+    "abort_contract": {"type": "object"},
+    "phase_contract": {"type": "object"},
+    "performance_contract": {"const": {"minimum_average_fps": 1.0, "maximum_latency_ms": {"agent_add": 120000, "deepstream_active": 40000, "first_embedding": 120000, "search_query": 5000}}},
+    "claim_gates": {"type": "object"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["default_inert", "network_allowed", "docker_allowed", "subprocess_allowed", "file_writes_allowed", "service_lifecycle_allowed", "runtime_evidence", "can_claim_runtime_scale", "can_mark_passed_current", "warehouse_sample_bundle"],
+      "properties": {
+        "default_inert": {"const": true}, "network_allowed": {"const": false}, "docker_allowed": {"const": false}, "subprocess_allowed": {"const": false}, "file_writes_allowed": {"const": false}, "service_lifecycle_allowed": {"const": false},
+        "runtime_evidence": {"const": []}, "can_claim_runtime_scale": {"const": false}, "can_mark_passed_current": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

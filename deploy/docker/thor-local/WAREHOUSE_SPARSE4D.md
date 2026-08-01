@@ -119,3 +119,12 @@ Sparse4D v2.2 ONNX and kmeans anchor are not staged. No custom aligned
 four-camera dataset/calibration has been supplied, and several deterministic
 extended images remain unstaged. Consequently this lane is statically wired
 and tested, not runtime-qualified.
+
+The adjacent
+[`qualification/sparse4d-entry-oracles/`](qualification/sparse4d-entry-oracles/README.md)
+package now fixes the future admission and evidence contract for both
+advertised Sparse4D semantics. Its default command only checks source/oracle
+locks and prints the plan. It does not run this lane or admit evidence. A
+future receipt must additionally prove both model identities were loaded and
+used, exact four-camera detections and fused 3D/BEV correlations, resource and
+latency gates, stream growth, and exact namespace-owned cleanup.

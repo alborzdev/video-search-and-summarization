@@ -152,9 +152,18 @@ the memory gate passes, `/v1/models` returns the configured id with
 `audio_support=true`, and a runtime qualification run using a tiny known-speech
 H.264/AAC fixture proves visible content, audible content, audio-disabled
 control behavior, LVS, and alerts.
+
 The acknowledgement-gated
 `qualification/tiny-audio-fixture/fixture.py` tool now generates and verifies
 that candidate media locally without checking in a binary or using the
 network. Its receipt is input integrity evidence only; it does not satisfy any
 of the runtime conditions above, and per-chunk transcription still requires a
 real transcript-producing ASR path.
+
+The inert
+[`qualification/audio-entry-oracles/`](../qualification/audio-entry-oracles/README.md)
+package specifies the complete future evidence split. Native Omni may support
+the Base, LVS, and alert semantics, but its ASR-skipped path is ineligible for
+the per-chunk transcript claim. That claim requires a distinct local Riva ASR
+run, and both lanes remain candidate-only until separately authorized,
+executed, reviewed, and integrated.

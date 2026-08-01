@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/external-entry-attestation-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "blocked_entries_source", "gap_plan_source", "entries", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-external-entry-attestations-v1"},
+    "mode": {"const": "inert_read_only_plan"},
+    "blocked_entries_source": {"$ref": "#/$defs/source"},
+    "gap_plan_source": {"$ref": "#/$defs/source"},
+    "entries": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/entry"}
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_inert", "read_only", "credential_inspection_allowed", "credential_material_allowed_in_evidence", "network_allowed", "subprocess_allowed", "docker_allowed", "file_writes_allowed", "lifecycle_allowed", "source_or_mock_is_delivery_proof", "runtime_evidence", "can_mark_passed_current"],
+      "properties": {
+        "default_inert": {"const": true},
+        "read_only": {"const": true},
+        "credential_inspection_allowed": {"const": false},
+        "credential_material_allowed_in_evidence": {"const": false},
+        "network_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "file_writes_allowed": {"const": false},
+        "lifecycle_allowed": {"const": false},
+        "source_or_mock_is_delivery_proof": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "can_mark_passed_current": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "fragments": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_id", "manifest_pointer", "advertised", "acceptance_class", "provider_scope", "evidence_type", "source_locks", "acceptance_boundary"],
+      "properties": {
+        "entry_id": {"type": "string", "minLength": 1},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "advertised": {"type": "string", "minLength": 1},
+        "acceptance_class": {"enum": ["external_optional", "alternate_local_lane"]},
+        "provider_scope": {"enum": ["user_managed_slack", "operator_supplied_actual_aws_or_gcs_endpoint", "user_managed_enterprise_rag"]},
+        "evidence_type": {"enum": ["slack_delivery", "aws_gcs_object_validation", "enterprise_rag_report", "frag_retrieval"]},
+        "source_locks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+        "acceptance_boundary": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
