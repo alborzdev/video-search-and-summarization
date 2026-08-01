@@ -1,0 +1,298 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-architecture-gap-contracts-v1",
+  "mode": "inert_repository_analysis_only",
+  "baseline": {
+    "target": "VSS 3.2.1 Thor-local",
+    "runtime_evidence": [],
+    "can_claim_runtime_qualified": false
+  },
+  "policy": {
+    "network_allowed": false,
+    "docker_allowed": false,
+    "downloads_allowed": false,
+    "subprocess_allowed": false,
+    "host_reads_allowed": false,
+    "service_lifecycle_allowed": false,
+    "repository_reads_only": true,
+    "warehouse_sample_allowed": false,
+    "validation_changes_current_status": false
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f",
+      "role": "four_open_runtime_rows",
+      "required_fragments": [
+        "\"id\": \"smartcity-manual-calibration\"",
+        "\"id\": \"smartcity-gis-calibration\"",
+        "\"id\": \"systems-alert-worker-scaling\"",
+        "\"id\": \"systems-vios-scaling\"",
+        "\"materialized\": false",
+        "\"executor_ready\": false",
+        "\"runtime_evidence\": []"
+      ]
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
+      "role": "advertised_calibration_and_scaling_contracts",
+      "required_fragments": [
+        "\"id\": \"calibration.legacy.core\"",
+        "\"id\": \"calibration.legacy.gis\"",
+        "\"id\": \"performance.alerts.worker-scaling\"",
+        "\"id\": \"deployment.vios.horizontal-scaling\"",
+        "\"alternate_is_not_official_google_map_parity\": true",
+        "\"partitions_must_cover_instances\": true",
+        "\"sensor_service\": \"singleton\""
+      ]
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/extended-api-surface-contracts/contract.json",
+      "raw_sha256": "3725eacc9e44b83857f4c3a2a285f2361ef18e571898d88030d01a9c0be9f6ad",
+      "role": "legacy_calibration_registry_platform_provenance",
+      "required_fragments": [
+        "The only published runnable 3.2.1 child is linux/amd64; no linux/arm64 child is published for native Thor execution.",
+        "\"child_architecture\": \"amd64\"",
+        "\"arm64_variant_present\": false",
+        "\"runtime_state\": \"blocked_architecture\"",
+        "\"runtime_qualification_allowed_from_registry_metadata\": false"
+      ]
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/compose.yml",
+      "raw_sha256": "c15631a68c8c6b51b317e640ad18f4156783082cff7ad98647ee9f50bbce96f4",
+      "role": "official_smart_city_legacy_calibration_and_google_ui_wiring",
+      "required_fragments": [
+        "image: nvcr.io/nvidia/vss-core/calibration:${CALIBRATION_TOOLKIT_IMAGE_TAG}",
+        "container_name: mdx-calibration-toolkit",
+        "REACT_APP_GOOGLE_MAPS_API_KEY: $GOOGLE_MAPS_API_KEY",
+        "network_mode: \"host\""
+      ]
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/README.md",
+      "raw_sha256": "6ca22b2e0c0094505aa7256ff9471b066841dd8d8df21926dd9a590c35f5fbc8",
+      "role": "provider_free_local_alternate_boundary",
+      "required_fragments": [
+        "does not start the upstream Google Maps UI",
+        "the official road geometry as local SVG",
+        "makes no browser requests to a map or font provider",
+        "a bounded calibration importer, and a local static map"
+      ]
+    },
+    {
+      "path": "deploy/docker/services/alert/compose.yml",
+      "raw_sha256": "1f36c1f666491549af3a808a6b932338f9de68e0b76a1c5dd87e810c1a9ddb31",
+      "role": "current_alert_single_container_topology",
+      "required_fragments": [
+        "container_name: vss-alert-bridge",
+        "network_mode: host",
+        "ALERT_VERIFICATION_NUM_WORKERS: ${ALERT_VERIFICATION_NUM_WORKERS:-10}"
+      ]
+    },
+    {
+      "path": "services/alert/blueprint_config/config_smartcity_blueprint.yaml",
+      "raw_sha256": "d9e55cc8424dfef4889507fa826150c5e99e59362c02332dc4f6ed4652bcdc1a",
+      "role": "smart_city_single_worker_configuration",
+      "required_fragments": [
+        "group_id: 'alert-bridge-vlm-group'",
+        "num_workers: 1",
+        "chunk_size: 1"
+      ]
+    },
+    {
+      "path": "services/alert/enhance_alert_with_vlm.py",
+      "raw_sha256": "43b9759f03eb7bbc3776ca55966d0f59a6bf55311d74b9fc30d53ba097b3c8bd",
+      "role": "in_process_worker_pool_and_backpressure_implementation",
+      "required_fragments": [
+        "self.worker_queue = Queue(maxsize=self.num_workers)",
+        "ThreadPoolExecutor(max_workers=self.num_workers",
+        "All workers busy. Waiting to schedule next sub-batch",
+        "chunk_size = self.config.get(\"alert_agent\", {}).get(\"chunk_size\", 1)"
+      ]
+    },
+    {
+      "path": "deploy/docker/services/vios/streamprocessing/docker-compose.yaml",
+      "raw_sha256": "a89b1f43790451c005aa2fe5d53d7cedc57c3ba4a9a32cd72e40502886af5d78",
+      "role": "current_vios_stream_processor_singleton_topology",
+      "required_fragments": [
+        "container_name: vss-vios-streamprocessing",
+        "network_mode: host",
+        "HTTP_PORT=${STREAM_PROCESSOR_HTTP_PORT:-30001}",
+        "CONTAINER_NAME=vss-vios-streamprocessing"
+      ]
+    },
+    {
+      "path": "deploy/docker/services/vios/initiator/docker-compose.yaml",
+      "raw_sha256": "4a56f3775a51c1b5fc90c52141612c013fb002dcf41c2686c46dc620e42ad195",
+      "role": "current_vios_sensor_singleton_topology",
+      "required_fragments": [
+        "container_name: vss-vios-sensor",
+        "network_mode: host",
+        "HTTP_PORT=${SENSOR_HTTP_PORT:-30000}",
+        "STREAM_PROCESSOR_MODULE_ENDPOINT=${STREAM_PROCESSOR_MODULE_ENDPOINT}"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "id": "smartcity-manual-calibration",
+      "capability_ids": ["calibration.legacy.core"],
+      "current_state": "blocked_architecture",
+      "blockers": [
+        "The released legacy calibration server has an amd64 runnable child and no arm64 child.",
+        "The Thor importer consumes prebuilt calibration and road-network files; it does not implement the legacy project UI/server workflow.",
+        "AMC is a distinct six-step auto-calibration service and is not a substitute for the legacy manual calibration toolkit."
+      ],
+      "required_design": {
+        "design_id": "native-arm64-legacy-calibration-v1",
+        "implementation_kind": "native_thor_legacy_ui_and_server",
+        "required_changes": [
+          "publish_or_build_a_content_locked_linux_arm64_legacy_calibration_server",
+          "wire_the_legacy_calibration_UI_to_the_native_server_on_Thor",
+          "support_cartesian_image_gis_and_multi_camera_project_types",
+          "support_camera_onboarding_roi_tripwire_validation_and_export",
+          "use_generated_or_operator_custom_eight_point_input_without_Warehouse_data"
+        ],
+        "forbidden_shortcuts": [
+          "claim_AMC_is_the_legacy_manual_calibration_toolkit",
+          "claim_imported_static_JSON_proves_manual_project_execution",
+          "run_the_amd64_child_under_emulation_and_label_it_native_Thor"
+        ]
+      },
+      "acceptance": {
+        "minimum_runtime_replicas": 1,
+        "required_evidence_ids": [
+          "manual.native-arm64-artifact",
+          "manual.four-project-types",
+          "manual.eight-point-project",
+          "manual.roi-tripwire-validation",
+          "manual.export-roundtrip",
+          "manual.cleanup"
+        ],
+        "runtime_required": true,
+        "static_configuration_is_sufficient": false
+      }
+    },
+    {
+      "id": "smartcity-gis-calibration",
+      "capability_ids": ["calibration.legacy.gis", "boundary.smart-city.google-maps-dependency"],
+      "current_state": "blocked_architecture",
+      "blockers": [
+        "The official Smart City UI and ROI Refiner consume a Google Maps API key.",
+        "The Thor local SVG map is deliberately provider-free and is not the official Google Maps UI.",
+        "Checked-in homography, road geometry, and map rendering do not prove an interactive GIS calibration workflow."
+      ],
+      "required_design": {
+        "design_id": "native-provider-free-gis-calibration-v1",
+        "implementation_kind": "native_thor_provider_free_functional_alternate",
+        "required_changes": [
+          "implement_interactive_point_polygon_roi_and_road_link_editing_locally",
+          "compute_and_persist_a_3x3_homography",
+          "validate_at_least_eight_points_per_polygon",
+          "export_and_read_back_calibration_json_and_road_network_json",
+          "preserve_explicit_alternate_identity_without_Google_provider_claims"
+        ],
+        "forbidden_shortcuts": [
+          "claim_provider_free_SVG_is_the_official_Google_Maps_UI",
+          "claim_rendered_road_geometry_proves_GIS_editing",
+          "require_a_Google_key_for_the_all_local_acceptance_lane"
+        ]
+      },
+      "acceptance": {
+        "minimum_runtime_replicas": 1,
+        "required_evidence_ids": [
+          "gis.local-editor-runtime",
+          "gis.eight-point-validation",
+          "gis.homography-roundtrip",
+          "gis.roi-road-link-roundtrip",
+          "gis.provider-free-boundary",
+          "gis.cleanup"
+        ],
+        "runtime_required": true,
+        "static_configuration_is_sufficient": false
+      }
+    },
+    {
+      "id": "systems-alert-worker-scaling",
+      "capability_ids": ["performance.alerts.worker-scaling"],
+      "current_state": "runtime_unqualified",
+      "blockers": [
+        "num_workers and chunk_size configure one Alert Bridge process but do not prove horizontal scaling.",
+        "The Compose service fixes container_name and uses host networking, so Compose cannot safely create indistinguishable replicas from the current definition.",
+        "No Thor measurement proves partition coverage, saturation, backpressure, throughput, or loss and duplication accounting across instances."
+      ],
+      "required_design": {
+        "design_id": "scalable-alert-compose-v1",
+        "implementation_kind": "compose_managed_alert_replicas",
+        "required_changes": [
+          "remove_fixed_container_name_from_the_scaled_service",
+          "move_scaled_workers_off_shared_host_networking",
+          "use_Compose_generated_unique_replica_identities",
+          "share_one_Kafka_consumer_group_with_partitions_at_least_replica_count",
+          "preserve_chunk_size_one_and_natural_blocking_backpressure",
+          "expose_per_replica_queue_wait_processing_and_throughput_metrics"
+        ],
+        "forbidden_shortcuts": [
+          "claim_num_workers_alone_proves_horizontal_scaling",
+          "claim_replicas_from_static_Compose_rendering",
+          "reuse_one_fixed_container_name_or_one_shared_host_listener"
+        ]
+      },
+      "acceptance": {
+        "minimum_runtime_replicas": 2,
+        "required_evidence_ids": [
+          "alerts.resolved-replica-topology",
+          "alerts.partition-assignment",
+          "alerts.generated-load",
+          "alerts.queue-backpressure-metrics",
+          "alerts.loss-duplication-accounting",
+          "alerts.cleanup"
+        ],
+        "runtime_required": true,
+        "static_configuration_is_sufficient": false
+      }
+    },
+    {
+      "id": "systems-vios-scaling",
+      "capability_ids": ["deployment.vios.horizontal-scaling"],
+      "current_state": "runtime_unqualified",
+      "blockers": [
+        "Every current stream-processing profile fixes the same container name and host HTTP port 30001.",
+        "Host networking and shared writable storage paths do not provide replica identity, routing, or ownership isolation.",
+        "The advertised topology requires horizontal stream-processing replicas while Sensor remains a singleton; neither behavior is runtime-qualified on Thor."
+      ],
+      "required_design": {
+        "design_id": "scalable-vios-compose-v1",
+        "implementation_kind": "compose_managed_streamprocessor_replicas_sensor_singleton",
+        "required_changes": [
+          "remove_fixed_container_name_from_streamprocessing",
+          "move_streamprocessing_replicas_off_the_shared_host_port",
+          "give_each_streamprocessor_a_unique_identity_and_storage_ownership_boundary",
+          "route_sensor_and_ingress_requests_across_healthy_streamprocessor_replicas",
+          "keep_exactly_one_sensor_service_instance",
+          "prove_stream_assignment_playback_and_failure_recovery_per_replica"
+        ],
+        "forbidden_shortcuts": [
+          "claim_deploy_replicas_from_static_Compose_rendering",
+          "scale_the_sensor_service_above_one",
+          "reuse_container_name_vss_vios_streamprocessing_or_host_port_30001_across_replicas"
+        ]
+      },
+      "acceptance": {
+        "minimum_runtime_replicas": 2,
+        "required_evidence_ids": [
+          "vios.resolved-replica-topology",
+          "vios.sensor-singleton",
+          "vios.unique-identity-storage",
+          "vios.stream-routing-playback",
+          "vios.replica-failure-recovery",
+          "vios.cleanup"
+        ],
+        "runtime_required": true,
+        "static_configuration_is_sufficient": false
+      }
+    }
+  ]
+}

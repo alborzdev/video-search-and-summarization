@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/local20-fixture.schema.json",
+  "title": "Strict local20 JSON fixture",
+  "oneOf": [
+    {"$ref": "#/$defs/search"},
+    {"$ref": "#/$defs/analytics"},
+    {"$ref": "#/$defs/hitl"},
+    {"$ref": "#/$defs/vios"}
+  ],
+  "$defs": {
+    "bbox": {"type": "array", "minItems": 4, "maxItems": 4, "prefixItems": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}], "items": false},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "search": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "fixture_id", "documents", "route_cases"],
+      "properties": {
+        "schema_version": {"const": 1}, "fixture_id": {"const": "local20-search-documents-bboxes-v1"},
+        "documents": {"type": "array", "minItems": 2, "maxItems": 8, "items": {"type": "object", "additionalProperties": false, "required": ["document_id", "sensor_id", "timestamp", "description", "object_type", "bbox_xyxy_normalized", "frame_id"], "properties": {"document_id": {"$ref": "#/$defs/id"}, "sensor_id": {"$ref": "#/$defs/id"}, "timestamp": {"$ref": "#/$defs/timestamp"}, "description": {"type": "string", "minLength": 1, "maxLength": 256}, "object_type": {"enum": ["person", "vehicle", "bicycle"]}, "bbox_xyxy_normalized": {"$ref": "#/$defs/bbox"}, "frame_id": {"$ref": "#/$defs/id"}}}},
+        "route_cases": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"oneOf": [
+          {"type": "object", "additionalProperties": false, "required": ["route", "query", "expected_document_id"], "properties": {"route": {"enum": ["text", "object"]}, "query": {"type": "string", "minLength": 1, "maxLength": 128}, "expected_document_id": {"$ref": "#/$defs/id"}}},
+          {"type": "object", "additionalProperties": false, "required": ["route", "query_fixture", "expected_document_id"], "properties": {"route": {"const": "image"}, "query_fixture": {"$ref": "#/$defs/id"}, "expected_document_id": {"$ref": "#/$defs/id"}}},
+          {"type": "object", "additionalProperties": false, "required": ["route", "query_fixture", "bbox_xyxy_normalized", "expected_document_id"], "properties": {"route": {"const": "selected_bbox"}, "query_fixture": {"$ref": "#/$defs/id"}, "bbox_xyxy_normalized": {"$ref": "#/$defs/bbox"}, "expected_document_id": {"$ref": "#/$defs/id"}}}
+        ]}}
+      }
+    },
+    "analytics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "fixture_id", "alerts", "incidents", "tracks", "dashboard"],
+      "properties": {
+        "schema_version": {"const": 1}, "fixture_id": {"const": "local20-alerts-incidents-tracks-v1"},
+        "alerts": {"type": "array", "minItems": 2, "maxItems": 8, "items": {"type": "object", "additionalProperties": false, "required": ["alert_id", "sensor_id", "rule", "candidate", "vlm_verdict", "expected_publish"], "properties": {"alert_id": {"$ref": "#/$defs/id"}, "sensor_id": {"$ref": "#/$defs/id"}, "rule": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"}, "candidate": {"const": true}, "vlm_verdict": {"enum": ["verified", "rejected"]}, "expected_publish": {"type": "boolean"}}}},
+        "incidents": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "object", "additionalProperties": false, "required": ["incident_id", "sensor_id", "timestamp", "severity", "status", "report_id"], "properties": {"incident_id": {"$ref": "#/$defs/id"}, "sensor_id": {"$ref": "#/$defs/id"}, "timestamp": {"$ref": "#/$defs/timestamp"}, "severity": {"enum": ["info", "warning", "critical"]}, "status": {"enum": ["open", "closed"]}, "report_id": {"$ref": "#/$defs/id"}}}},
+        "tracks": {"type": "array", "minItems": 5, "maxItems": 12, "items": {"type": "object", "additionalProperties": false, "required": ["track_id", "sensor_id", "event", "samples"], "properties": {"track_id": {"$ref": "#/$defs/id"}, "sensor_id": {"$ref": "#/$defs/id"}, "event": {"enum": ["speed", "flow", "collision", "stall", "wrong_way"]}, "samples": {"type": "array", "minItems": 2, "maxItems": 16, "items": {"type": "array", "minItems": 3, "maxItems": 3, "prefixItems": [{"type": "integer", "minimum": 0, "maximum": 60000}, {"type": "number", "minimum": 0, "maximum": 1}, {"type": "number", "minimum": 0, "maximum": 1}], "items": false}}}}},
+        "dashboard": {"type": "object", "additionalProperties": false, "required": ["sensor_ids", "report_ids", "incident_ids"], "properties": {"sensor_ids": {"type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "report_ids": {"type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "incident_ids": {"type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}}
+      }
+    },
+    "hitl": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "fixture_id", "conversation_id", "steps", "persistence"],
+      "properties": {
+        "schema_version": {"const": 1}, "fixture_id": {"const": "local20-hitl-state-transcript-v1"}, "conversation_id": {"$ref": "#/$defs/id"},
+        "steps": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"type": "object", "additionalProperties": false, "required": ["sequence", "action", "state_before", "state_after", "request_id"], "properties": {"sequence": {"type": "integer", "minimum": 1, "maximum": 5}, "action": {"enum": ["generate", "refine", "cancel", "restart", "persist"]}, "state_before": {"enum": ["idle", "awaiting_review", "cancelled", "completed"]}, "state_after": {"enum": ["awaiting_review", "cancelled", "completed"]}, "request_id": {"$ref": "#/$defs/id"}}}},
+        "persistence": {"type": "object", "additionalProperties": false, "required": ["reload_expected_state", "retained_request_ids"], "properties": {"reload_expected_state": {"const": "completed"}, "retained_request_ids": {"type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}}
+      }
+    },
+    "vios": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "fixture_id", "failing_media_recipe_id", "reference_media_recipe_id", "expected_failure", "remediation", "expected_result"],
+      "properties": {
+        "schema_version": {"const": 1}, "fixture_id": {"const": "local20-vios-remediation-v1"}, "failing_media_recipe_id": {"const": "tiny-bframe-failing-mp4-v1"}, "reference_media_recipe_id": {"const": "tiny-bframe-reference-mp4-v1"},
+        "expected_failure": {"type": "object", "additionalProperties": false, "required": ["stage", "reason_code", "retryable_without_transcode"], "properties": {"stage": {"const": "vios_playback"}, "reason_code": {"const": "b_frames_not_supported"}, "retryable_without_transcode": {"const": false}}},
+        "remediation": {"type": "object", "additionalProperties": false, "required": ["operation", "input_recipe_id", "output_recipe_id", "preserve_source"], "properties": {"operation": {"const": "local_transcode"}, "input_recipe_id": {"const": "tiny-bframe-failing-mp4-v1"}, "output_recipe_id": {"const": "tiny-bframe-reference-mp4-v1"}, "preserve_source": {"const": true}}},
+        "expected_result": {"type": "object", "additionalProperties": false, "required": ["playback", "source_identity_unchanged", "derived_identity_distinct"], "properties": {"playback": {"const": "ready"}, "source_identity_unchanged": {"const": true}, "derived_identity_distinct": {"const": true}}}
+      }
+    }
+  }
+}

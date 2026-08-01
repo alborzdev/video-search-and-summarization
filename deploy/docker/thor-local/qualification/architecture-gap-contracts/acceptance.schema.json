@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vss.local/schemas/thor-architecture-gap-acceptance-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "record_type", "receipt_id", "authorization_id", "implementation_commit", "started_at", "finished_at", "warehouse_sample_used", "rows"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-architecture-gap-contracts-v1"},
+    "record_type": {"const": "authorized_runtime_acceptance"},
+    "receipt_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{2,127}$"},
+    "authorization_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,255}$"},
+    "implementation_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "warehouse_sample_used": {"const": false},
+    "rows": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "design_id", "runtime_replica_count", "sensor_replica_count", "static_only", "evidence", "cleanup_passed", "passed"],
+        "properties": {
+          "id": {"enum": ["smartcity-manual-calibration", "smartcity-gis-calibration", "systems-alert-worker-scaling", "systems-vios-scaling"]},
+          "design_id": {"type": "string", "minLength": 1},
+          "runtime_replica_count": {"type": "integer", "minimum": 1},
+          "sensor_replica_count": {"type": ["integer", "null"], "minimum": 1},
+          "static_only": {"const": false},
+          "evidence": {
+            "type": "array",
+            "minItems": 6,
+            "maxItems": 6,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["evidence_id", "kind", "artifact_path", "raw_sha256", "observed_at"],
+              "properties": {
+                "evidence_id": {"type": "string", "pattern": "^[a-z]+[.][a-z0-9-]+$"},
+                "kind": {"const": "runtime_observation"},
+                "artifact_path": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]+$"},
+                "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                "observed_at": {"type": "string", "format": "date-time"}
+              }
+            }
+          },
+          "cleanup_passed": {"const": true},
+          "passed": {"const": true}
+        }
+      }
+    }
+  }
+}

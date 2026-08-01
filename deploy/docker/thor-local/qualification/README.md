@@ -121,6 +121,23 @@ in this directory:
   rendered DOM/actions and sanitized browser artifacts, bounded exchanges, and
   exact-owned cleanup. There is no executor; API mocks alone are non-admissible
   and no live state can advance;
+- `runtime-execution-bounds-audit/` derives exact minimum envelopes for the 20
+  non-Warehouse rows still needing local runtime evidence. It proves every
+  generic two-request budget is inadequate, locks 202 minimum requests and 207
+  atomic actions, and emits a deterministic proposal without applying it or
+  changing any official state;
+- `local20-fixture-pack/` supplies strict candidate-input contracts for nine of
+  those rows: four tiny MP4/MKV/B-frame media recipes plus four embedded JSON
+  fixtures for HITL, Search/bboxes, Alerts/Smart City tracks, and VIOS
+  remediation. Static validation is read-only; optional media generation is
+  separately acknowledged, outside-repository, local-FFmpeg-only, bounded to
+  8 MB total, and still non-promoting;
+- `architecture-gap-contracts/` freezes the four implementation boundaries
+  that cannot be qualified from current configuration: native legacy manual
+  and provider-free GIS calibration, replica-safe Alert workers, and scalable
+  VIOS stream processing with a singleton Sensor. It source-locks the current
+  blockers, rejects false equivalences such as AMC=legacy or `num_workers`=
+  horizontal scaling, and defines future decision/acceptance receipt shapes;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle

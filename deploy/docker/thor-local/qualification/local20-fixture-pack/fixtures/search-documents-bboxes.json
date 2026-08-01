@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "fixture_id": "local20-search-documents-bboxes-v1",
+  "documents": [
+    {
+      "document_id": "doc-camera-01-0001",
+      "sensor_id": "camera-01",
+      "timestamp": "2026-01-01T00:00:01Z",
+      "description": "A blue delivery van enters the east gate.",
+      "object_type": "vehicle",
+      "bbox_xyxy_normalized": [0.125, 0.25, 0.625, 0.75],
+      "frame_id": "frame-camera-01-0001"
+    },
+    {
+      "document_id": "doc-camera-02-0001",
+      "sensor_id": "camera-02",
+      "timestamp": "2026-01-01T00:00:02Z",
+      "description": "A person in a red jacket waits beside a bicycle.",
+      "object_type": "person",
+      "bbox_xyxy_normalized": [0.2, 0.1, 0.45, 0.9],
+      "frame_id": "frame-camera-02-0001"
+    }
+  ],
+  "route_cases": [
+    {"route": "text", "query": "blue delivery van", "expected_document_id": "doc-camera-01-0001"},
+    {"route": "image", "query_fixture": "frame-camera-02-0001", "expected_document_id": "doc-camera-02-0001"},
+    {"route": "object", "query": "vehicle", "expected_document_id": "doc-camera-01-0001"},
+    {"route": "selected_bbox", "query_fixture": "frame-camera-01-0001", "bbox_xyxy_normalized": [0.125, 0.25, 0.625, 0.75], "expected_document_id": "doc-camera-01-0001"}
+  ]
+}

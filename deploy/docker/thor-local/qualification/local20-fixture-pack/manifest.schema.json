@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/local20-fixture-pack-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "pack_id", "purpose", "requirement_ids", "media_recipes", "json_fixtures", "safety"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "pack_id": {"const": "thor-local20-fixture-pack-v1"},
+    "purpose": {"const": "candidate_inputs_only_non_promoting"},
+    "requirement_ids": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"enum": ["tiny-agent-media", "hitl-state-transcript", "lvs-multi-file", "search-documents-and-bboxes", "candidate-alerts", "tiny-alert-stream", "smartcity-ui-incidents", "smartcity-synthetic-tracks", "systems-vios-playback-remediation"]}},
+    "media_recipes": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["recipe_id", "filename", "container", "codec", "duration_ms", "width", "height", "frame_rate", "b_frames", "max_bytes", "covers"], "properties": {"recipe_id": {"type": "string", "pattern": "^tiny-[a-z0-9-]+-v1$"}, "filename": {"type": "string", "pattern": "^[a-z0-9-]+\\.(mp4|mkv)$"}, "container": {"enum": ["mp4", "matroska"]}, "codec": {"const": "h264"}, "duration_ms": {"const": 2000}, "width": {"const": 160}, "height": {"const": 120}, "frame_rate": {"const": "5/1"}, "b_frames": {"enum": [0, 2]}, "max_bytes": {"const": 2000000}, "covers": {"type": "array", "minItems": 1, "maxItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 64}}}}},
+    "json_fixtures": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["fixture_id", "path", "raw_sha256", "max_bytes", "covers"], "properties": {"fixture_id": {"type": "string", "pattern": "^local20-[a-z0-9-]+-v1$"}, "path": {"type": "string", "pattern": "^fixtures/[a-z0-9-]+\\.json$"}, "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "max_bytes": {"type": "integer", "minimum": 1, "maximum": 65536}, "covers": {"type": "array", "minItems": 1, "maxItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 64}}}}},
+    "safety": {"type": "object", "additionalProperties": false, "required": ["warehouse_data_used", "network_allowed", "docker_allowed", "downloads_allowed", "service_lifecycle_allowed", "default_mode", "generation_acknowledgement", "allowed_tools", "max_generated_files", "max_total_media_bytes"], "properties": {"warehouse_data_used": {"const": false}, "network_allowed": {"const": false}, "docker_allowed": {"const": false}, "downloads_allowed": {"const": false}, "service_lifecycle_allowed": {"const": false}, "default_mode": {"const": "inert_plan"}, "generation_acknowledgement": {"const": "I_ACKNOWLEDGE_GENERATING_BOUNDED_LOCAL20_MEDIA_OUTSIDE_THE_REPOSITORY"}, "allowed_tools": {"const": ["ffmpeg"]}, "max_generated_files": {"const": 5}, "max_total_media_bytes": {"const": 8000000}}}
+  }
+}

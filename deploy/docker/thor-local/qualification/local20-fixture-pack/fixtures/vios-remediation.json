@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "fixture_id": "local20-vios-remediation-v1",
+  "failing_media_recipe_id": "tiny-bframe-failing-mp4-v1",
+  "reference_media_recipe_id": "tiny-bframe-reference-mp4-v1",
+  "expected_failure": {"stage": "vios_playback", "reason_code": "b_frames_not_supported", "retryable_without_transcode": false},
+  "remediation": {"operation": "local_transcode", "input_recipe_id": "tiny-bframe-failing-mp4-v1", "output_recipe_id": "tiny-bframe-reference-mp4-v1", "preserve_source": true},
+  "expected_result": {"playback": "ready", "source_identity_unchanged": true, "derived_identity_distinct": true}
+}

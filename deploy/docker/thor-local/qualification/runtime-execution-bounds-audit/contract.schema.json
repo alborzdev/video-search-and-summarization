@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/runtime-execution-bounds-audit/contract.schema.json",
+  "title": "Thor local-runtime execution-bound audit contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "canonical_source", "policy", "mandatory_envelope", "cases"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "package_id": {"const": "runtime-execution-bounds-audit"},
+    "mode": {"const": "static_inert_planning_only"},
+    "canonical_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/parity/capability-oracles.json"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["official_states_remain_open", "artifact_is_non_executable", "warehouse_sample_bundle", "budget_rule"],
+      "properties": {
+        "official_states_remain_open": {"const": true},
+        "artifact_is_non_executable": {"const": true},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "budget_rule": {"const": "sum atomic request_cost; action budget equals expanded workflow step count"}
+      }
+    },
+    "mandatory_envelope": {
+      "type": "array",
+      "prefixItems": [
+        {"$ref": "#/$defs/preStep"},
+        {"$ref": "#/$defs/restoreStep"},
+        {"$ref": "#/$defs/postStep"}
+      ],
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "pointer": {"type": "string", "pattern": "^/(fixture/input/(action|contract)(/.*)?|expected_observations/[0-9]+|cleanup/(pre_state|restore|postconditions)(/.*)?)$"},
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "request_cost", "canonical_basis"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+        "request_cost": {"type": "integer", "minimum": 0, "maximum": 1},
+        "canonical_basis": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/pointer"}}
+      }
+    },
+    "preStep": {
+      "allOf": [
+        {"$ref": "#/$defs/step"},
+        {"properties": {"id": {"const": "capture-pre-state"}, "request_cost": {"const": 1}, "canonical_basis": {"const": ["/cleanup/pre_state"]}}}
+      ]
+    },
+    "restoreStep": {
+      "allOf": [
+        {"$ref": "#/$defs/step"},
+        {"properties": {"id": {"const": "restore-owned-state"}, "request_cost": {"const": 1}, "canonical_basis": {"const": ["/cleanup/restore"]}}}
+      ]
+    },
+    "postStep": {
+      "allOf": [
+        {"$ref": "#/$defs/step"},
+        {"properties": {"id": {"const": "verify-postconditions"}, "request_cost": {"const": 1}, "canonical_basis": {"const": ["/cleanup/postconditions"]}}}
+      ]
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planning_requirement_id", "capability_id", "oracle_id", "canonical_oracle_index", "canonical_oracle_sha256", "positive_steps", "adjacent_negative"],
+      "properties": {
+        "planning_requirement_id": {"type": "string", "minLength": 3},
+        "capability_id": {"type": "string", "minLength": 3},
+        "oracle_id": {"type": "string", "pattern": "^oracle\\."},
+        "canonical_oracle_index": {"type": "integer", "minimum": 0},
+        "canonical_oracle_sha256": {"$ref": "#/$defs/sha256"},
+        "positive_steps": {"type": "array", "minItems": 3, "maxItems": 20, "items": {"$ref": "#/$defs/step"}},
+        "adjacent_negative": {"$ref": "#/$defs/step"}
+      }
+    }
+  }
+}

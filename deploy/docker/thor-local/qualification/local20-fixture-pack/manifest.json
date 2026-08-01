@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "pack_id": "thor-local20-fixture-pack-v1",
+  "purpose": "candidate_inputs_only_non_promoting",
+  "requirement_ids": [
+    "tiny-agent-media",
+    "hitl-state-transcript",
+    "lvs-multi-file",
+    "search-documents-and-bboxes",
+    "candidate-alerts",
+    "tiny-alert-stream",
+    "smartcity-ui-incidents",
+    "smartcity-synthetic-tracks",
+    "systems-vios-playback-remediation"
+  ],
+  "media_recipes": [
+    {"recipe_id": "tiny-identity-mp4-v1", "filename": "tiny-identity.mp4", "container": "mp4", "codec": "h264", "duration_ms": 2000, "width": 160, "height": 120, "frame_rate": "5/1", "b_frames": 0, "max_bytes": 2000000, "covers": ["tiny-agent-media", "lvs-multi-file", "tiny-alert-stream"]},
+    {"recipe_id": "tiny-identity-mkv-v1", "filename": "tiny-identity.mkv", "container": "matroska", "codec": "h264", "duration_ms": 2000, "width": 160, "height": 120, "frame_rate": "5/1", "b_frames": 0, "max_bytes": 2000000, "covers": ["tiny-agent-media", "lvs-multi-file"]},
+    {"recipe_id": "tiny-bframe-failing-mp4-v1", "filename": "tiny-bframe-failing.mp4", "container": "mp4", "codec": "h264", "duration_ms": 2000, "width": 160, "height": 120, "frame_rate": "5/1", "b_frames": 2, "max_bytes": 2000000, "covers": ["systems-vios-playback-remediation"]},
+    {"recipe_id": "tiny-bframe-reference-mp4-v1", "filename": "tiny-bframe-reference.mp4", "container": "mp4", "codec": "h264", "duration_ms": 2000, "width": 160, "height": 120, "frame_rate": "5/1", "b_frames": 0, "max_bytes": 2000000, "covers": ["systems-vios-playback-remediation"]}
+  ],
+  "json_fixtures": [
+    {"fixture_id": "local20-search-documents-bboxes-v1", "path": "fixtures/search-documents-bboxes.json", "raw_sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517", "max_bytes": 65536, "covers": ["search-documents-and-bboxes"]},
+    {"fixture_id": "local20-alerts-incidents-tracks-v1", "path": "fixtures/alerts-incidents-tracks.json", "raw_sha256": "28c1fe5c84ee5a81e6ca32908b667dd6af4b141d971b928740756c50b06a0e8f", "max_bytes": 65536, "covers": ["candidate-alerts", "tiny-alert-stream", "smartcity-ui-incidents", "smartcity-synthetic-tracks"]},
+    {"fixture_id": "local20-hitl-state-transcript-v1", "path": "fixtures/hitl-state-transcript.json", "raw_sha256": "5252536b9e3d310887e3c6cf2e0559f89f9984345a57e5333df484e9626a11c5", "max_bytes": 65536, "covers": ["hitl-state-transcript"]},
+    {"fixture_id": "local20-vios-remediation-v1", "path": "fixtures/vios-remediation.json", "raw_sha256": "7899df8025ffc61968888d5b6a7490805794ab2cab9a3e8d24724e83eb7dfaf2", "max_bytes": 65536, "covers": ["systems-vios-playback-remediation"]}
+  ],
+  "safety": {
+    "warehouse_data_used": false,
+    "network_allowed": false,
+    "docker_allowed": false,
+    "downloads_allowed": false,
+    "service_lifecycle_allowed": false,
+    "default_mode": "inert_plan",
+    "generation_acknowledgement": "I_ACKNOWLEDGE_GENERATING_BOUNDED_LOCAL20_MEDIA_OUTSIDE_THE_REPOSITORY",
+    "allowed_tools": ["ffmpeg"],
+    "max_generated_files": 5,
+    "max_total_media_bytes": 8000000
+  }
+}

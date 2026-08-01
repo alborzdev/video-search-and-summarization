@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/local20-fixture-generation-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "pack_id", "purpose", "output_directory", "tool", "artifacts", "safety"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "pack_id": {"const": "thor-local20-fixture-pack-v1"},
+    "purpose": {"const": "candidate_inputs_only_non_promoting"},
+    "output_directory": {"type": "string", "pattern": "^/", "maxLength": 4096},
+    "tool": {"type": "object", "additionalProperties": false, "required": ["name", "path", "raw_sha256"], "properties": {"name": {"const": "ffmpeg"}, "path": {"type": "string", "pattern": "^/(usr/local/bin|usr/bin)/(ffmpeg)$"}, "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "artifacts": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["recipe_id", "filename", "raw_sha256", "size_bytes", "max_bytes"], "properties": {"recipe_id": {"type": "string", "pattern": "^tiny-[a-z0-9-]+-v1$"}, "filename": {"type": "string", "pattern": "^[a-z0-9-]+\\.(mp4|mkv)$"}, "raw_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000}, "max_bytes": {"const": 2000000}}}},
+    "safety": {"type": "object", "additionalProperties": false, "required": ["warehouse_data_used", "network_used", "docker_used", "downloads_used", "service_lifecycle_used", "acknowledgement"], "properties": {"warehouse_data_used": {"const": false}, "network_used": {"const": false}, "docker_used": {"const": false}, "downloads_used": {"const": false}, "service_lifecycle_used": {"const": false}, "acknowledgement": {"const": "I_ACKNOWLEDGE_GENERATING_BOUNDED_LOCAL20_MEDIA_OUTSIDE_THE_REPOSITORY"}}}
+  }
+}

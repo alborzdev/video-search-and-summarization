@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "fixture_id": "local20-hitl-state-transcript-v1",
+  "conversation_id": "conversation-local20-01",
+  "steps": [
+    {"sequence": 1, "action": "generate", "state_before": "idle", "state_after": "awaiting_review", "request_id": "request-01"},
+    {"sequence": 2, "action": "refine", "state_before": "awaiting_review", "state_after": "awaiting_review", "request_id": "request-02"},
+    {"sequence": 3, "action": "cancel", "state_before": "awaiting_review", "state_after": "cancelled", "request_id": "request-03"},
+    {"sequence": 4, "action": "restart", "state_before": "cancelled", "state_after": "awaiting_review", "request_id": "request-04"},
+    {"sequence": 5, "action": "persist", "state_before": "awaiting_review", "state_after": "completed", "request_id": "request-05"}
+  ],
+  "persistence": {"reload_expected_state": "completed", "retained_request_ids": ["request-01", "request-02", "request-03", "request-04", "request-05"]}
+}

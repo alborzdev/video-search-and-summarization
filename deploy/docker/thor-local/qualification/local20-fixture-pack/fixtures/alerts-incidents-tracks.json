@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "fixture_id": "local20-alerts-incidents-tracks-v1",
+  "alerts": [
+    {"alert_id": "alert-accepted-01", "sensor_id": "camera-01", "rule": "vehicle_at_east_gate", "candidate": true, "vlm_verdict": "verified", "expected_publish": true},
+    {"alert_id": "alert-rejected-01", "sensor_id": "camera-02", "rule": "vehicle_at_east_gate", "candidate": true, "vlm_verdict": "rejected", "expected_publish": false}
+  ],
+  "incidents": [
+    {"incident_id": "incident-01", "sensor_id": "camera-01", "timestamp": "2026-01-01T00:00:03Z", "severity": "warning", "status": "open", "report_id": "report-01"}
+  ],
+  "tracks": [
+    {"track_id": "track-speed", "sensor_id": "camera-01", "event": "speed", "samples": [[0, 0.1, 0.1], [1000, 0.3, 0.1], [2000, 0.5, 0.1]]},
+    {"track_id": "track-flow", "sensor_id": "camera-01", "event": "flow", "samples": [[0, 0.2, 0.2], [1000, 0.2, 0.4]]},
+    {"track_id": "track-collision", "sensor_id": "camera-02", "event": "collision", "samples": [[0, 0.4, 0.4], [1000, 0.5, 0.5]]},
+    {"track_id": "track-stall", "sensor_id": "camera-02", "event": "stall", "samples": [[0, 0.7, 0.7], [1000, 0.7, 0.7], [2000, 0.7, 0.7]]},
+    {"track_id": "track-wrong-way", "sensor_id": "camera-01", "event": "wrong_way", "samples": [[0, 0.8, 0.8], [1000, 0.6, 0.8], [2000, 0.4, 0.8]]}
+  ],
+  "dashboard": {"sensor_ids": ["camera-01", "camera-02"], "report_ids": ["report-01"], "incident_ids": ["incident-01"]}
+}

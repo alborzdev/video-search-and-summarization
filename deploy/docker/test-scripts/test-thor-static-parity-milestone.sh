@@ -214,6 +214,35 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/ui-runtime-contracts/tests"
 
+# The exact 20 non-Warehouse local-runtime rows have constructively derived
+# request/action envelopes. This static compiler checks the deterministic,
+# non-applied proposal only; canonical oracles remain open and unchanged.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/runtime-execution-bounds-audit/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/runtime-execution-bounds-audit/tests"
+
+# Nine local runtime rows now have strict, deterministic candidate-input
+# contracts. The static tier runs read-only validation and mocked tests only;
+# it does not invoke FFmpeg, generate media, start a service, or create runtime
+# evidence. Warehouse data remains excluded.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/local20-fixture-pack/fixture_pack.py" \
+  validate >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/local20-fixture-pack/tests"
+
+# Four architecture-blocked rows have exact source-locked implementation and
+# future-acceptance contracts. Static checking rejects AMC/manual-calibration,
+# SVG/Google, in-process-worker/scaling, and fixed-topology/scaling conflation;
+# it performs no live, host, container, or lifecycle action.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/architecture-gap-contracts/validator.py" \
+  check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/architecture-gap-contracts/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \

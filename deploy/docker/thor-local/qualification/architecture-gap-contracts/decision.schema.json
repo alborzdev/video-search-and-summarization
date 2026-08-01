@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vss.local/schemas/thor-architecture-gap-decision-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "record_type", "decision_id", "target_commit", "rows", "can_claim_runtime_qualified"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-architecture-gap-contracts-v1"},
+    "record_type": {"const": "implementation_decision"},
+    "decision_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{2,127}$"},
+    "target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "rows": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "selected_design_id", "planned_changes", "acknowledged_forbidden_shortcuts", "runtime_evidence", "can_claim_runtime_qualified"],
+        "properties": {
+          "id": {"enum": ["smartcity-manual-calibration", "smartcity-gis-calibration", "systems-alert-worker-scaling", "systems-vios-scaling"]},
+          "selected_design_id": {"type": "string", "minLength": 1},
+          "planned_changes": {"type": "array", "minItems": 5, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "acknowledged_forbidden_shortcuts": {"type": "array", "minItems": 3, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "runtime_evidence": {"type": "array", "maxItems": 0},
+          "can_claim_runtime_qualified": {"const": false}
+        }
+      }
+    },
+    "can_claim_runtime_qualified": {"const": false}
+  }
+}
