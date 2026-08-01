@@ -100,6 +100,12 @@ capability rows. Another 74 are enumerated in the empty/partial-family gap plan,
 while 137 still have family-only planning bindings. Those 211 entries without
 exact mappings block literal feature-completeness.
 
+`remaining-advertised-entry-candidates/` now provides a reviewed candidate row
+for every one of those 211 blockers. Its deterministic in-memory projection is
+a schema-valid 500-capability ledger with one exact same-family title mapping
+per advertised string. This is a merge candidate, not the live ledger and not
+runtime evidence; official counts remain 289 until a separate successor merge.
+
 A first current-ledger successor added the exact CPU multimedia advertised entry
 as capability 277. The tooling-entry successor then adds the eight exact Spatial
 AI utility entries and four exact synthetic-data tool entries as capabilities

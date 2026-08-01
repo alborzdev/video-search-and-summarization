@@ -1,0 +1,3608 @@
+{
+  "schema_version": 1,
+  "tranche_id": "features-10-18",
+  "feature_index_min": 10,
+  "feature_index_max": 18,
+  "entries": [
+    {
+      "manifest_pointer": "/features/10/advertised/0",
+      "feature_index": 10,
+      "feature_id": "rt-vlm-models",
+      "advertised_index": 0,
+      "advertised": "Cosmos Reason 1/2",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-models.00-cosmos-reason-1-2",
+        "feature_id": "rt-vlm-models",
+        "kind": "model",
+        "title": "Cosmos Reason 1/2",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Supported Models — Cosmos Reason 1 and 2 variants"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/10/advertised/0",
+          "advertised_literal": "Cosmos Reason 1/2",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+            "deploy/docker/thor-local/rt-vlm/model_matrix.py"
+          ],
+          "required_semantics": [
+            "Resolve the requested Cosmos Reason 1 or Reason 2 identity to its exact advertised variant and immutable artifact revision.",
+            "Return a successful bounded local visual-reasoning response whose model metadata identifies the selected Cosmos Reason variant."
+          ],
+          "dependency_capability_ids": [
+            "model.rt-vlm.default-cosmos3-nano-bf16",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "model-alternate-workflows"
+        ],
+        "gap": "Exact Reason 1/2 artifacts and a variant-specific local runtime oracle are not yet staged or executed."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Stage an operator-approved exact Cosmos Reason artifact, then run one digest-pinned tiny local clip per Reason 1/2 variant through the alternate RT-VLM lane.",
+        "required_observations": [
+          "Record artifact digest, configured model identity, and service-reported model identity for each exercised Reason variant.",
+          "Record a semantically valid response correlated to the bounded clip and prompt without any remote inference call."
+        ],
+        "adjacent_negative": [
+          "Reject a model directory or revision whose digest does not match the selected Reason variant."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-owned uploads, model sessions, and response captures; leave model artifacts and service configuration unchanged.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "stop_only_executor_started_model_service",
+          "executor_class": "bounded_local_model_contract",
+          "id": "oracle.manifest-entry.rt-vlm-models.00",
+          "literal_success_condition": "Directly execute and semantically verify \"Cosmos Reason 1/2\" through bounded_local_model_contract; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "exact_model_artifact_lock",
+            "served_model_identity",
+            "semantic_inference_transcript"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_model_artifact",
+            "local_inference_endpoint",
+            "memory_capacity_gate"
+          ],
+          "status": "open_unexecuted",
+          "type": "alternate_local_model_matrix"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/1",
+      "feature_index": 10,
+      "feature_id": "rt-vlm-models",
+      "advertised_index": 1,
+      "advertised": "Cosmos 3 Nano/Super",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-models.01-cosmos-3-nano-super",
+        "feature_id": "rt-vlm-models",
+        "kind": "model",
+        "title": "Cosmos 3 Nano/Super",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Supported Models — Cosmos 3 Nano and Super variants"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/10/advertised/1",
+          "advertised_literal": "Cosmos 3 Nano/Super",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+            "services/rtvi/rt-vlm/src/vllm_cosmos3/model.py"
+          ],
+          "required_semantics": [
+            "Distinguish Cosmos 3 Nano from Cosmos 3 Super by exact model identity, revision, and runtime configuration.",
+            "Produce a bounded local inference result for every claimed Nano/Super variant without silently substituting the default Nano BF16 model."
+          ],
+          "dependency_capability_ids": [
+            "model.rt-vlm.default-cosmos3-nano-bf16",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "model-alternate-workflows"
+        ],
+        "gap": "The combined Nano/Super literal lacks exact per-variant artifacts and a no-fallback runtime oracle."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Stage each exact approved Nano/Super artifact separately and run the same digest-pinned tiny clip and prompt through each selected local lane.",
+        "required_observations": [
+          "Record the selected Nano/Super identity and immutable artifact digest before each request.",
+          "Record successful response semantics and prove the server did not fall back to another matrix row."
+        ],
+        "adjacent_negative": [
+          "Request an unstaged Nano/Super variant and require an explicit unavailable-model failure rather than fallback."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-owned uploads, model sessions, and response captures; leave model artifacts and service configuration unchanged.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "stop_only_executor_started_model_service",
+          "executor_class": "bounded_local_model_contract",
+          "id": "oracle.manifest-entry.rt-vlm-models.01",
+          "literal_success_condition": "Directly execute and semantically verify \"Cosmos 3 Nano/Super\" through bounded_local_model_contract; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "exact_model_artifact_lock",
+            "served_model_identity",
+            "semantic_inference_transcript"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_model_artifact",
+            "local_inference_endpoint",
+            "memory_capacity_gate"
+          ],
+          "status": "open_unexecuted",
+          "type": "alternate_local_model_matrix"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/2",
+      "feature_index": 10,
+      "feature_id": "rt-vlm-models",
+      "advertised_index": 2,
+      "advertised": "Nemotron Omni",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-models.02-nemotron-omni",
+        "feature_id": "rt-vlm-models",
+        "kind": "model",
+        "title": "Nemotron Omni",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Supported Models — Nemotron Omni"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/10/advertised/2",
+          "advertised_literal": "Nemotron Omni",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+            "deploy/docker/thor-local/audio/omni.compose.yml"
+          ],
+          "required_semantics": [
+            "Load the exact advertised Nemotron Omni model revision through the local Omni overlay.",
+            "Return a response that demonstrates the enabled video-and-audio input contract while reporting the exact Omni model identity."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "model-alternate-workflows"
+        ],
+        "gap": "The Omni overlay is checked in, but the exact artifact and audiovisual runtime oracle remain unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use a tiny operator-owned audiovisual clip with a distinctive spoken and visual fact against a digest-pinned local Nemotron Omni artifact.",
+        "required_observations": [
+          "Record exact Omni artifact and codec configuration identities.",
+          "Observe a response containing both the fixture's visual fact and spoken fact with no external inference traffic."
+        ],
+        "adjacent_negative": [
+          "Remove the audio track and require the audio-specific expected fact to be absent while visual inference remains valid."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-owned uploads, model sessions, and response captures; leave model artifacts and service configuration unchanged.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "stop_only_executor_started_model_service",
+          "executor_class": "bounded_local_model_contract",
+          "id": "oracle.manifest-entry.rt-vlm-models.02",
+          "literal_success_condition": "Directly execute and semantically verify \"Nemotron Omni\" through bounded_local_model_contract; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "exact_model_artifact_lock",
+            "served_model_identity",
+            "semantic_inference_transcript"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_model_artifact",
+            "local_inference_endpoint",
+            "memory_capacity_gate"
+          ],
+          "status": "open_unexecuted",
+          "type": "alternate_local_model_matrix"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/3",
+      "feature_index": 10,
+      "feature_id": "rt-vlm-models",
+      "advertised_index": 3,
+      "advertised": "Qwen 3.5 and MoE",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-models.03-qwen-3-5-and-moe",
+        "feature_id": "rt-vlm-models",
+        "kind": "model",
+        "title": "Qwen 3.5 and MoE",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Supported Models — Qwen 3.5 and mixture-of-experts backend"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/10/advertised/3",
+          "advertised_literal": "Qwen 3.5 and MoE",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+            "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py"
+          ],
+          "required_semantics": [
+            "Select the exact advertised Qwen 3.5 model identity and its declared dense or MoE backend configuration.",
+            "Complete bounded local visual inference while proving that MoE routing/configuration was honored rather than ignored or replaced."
+          ],
+          "dependency_capability_ids": [
+            "behavior.rt-vlm.moe-backend",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "model-alternate-workflows"
+        ],
+        "gap": "The Qwen/MoE contract is inventoried, but exact artifact admission and local MoE execution are not proven."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Stage the exact approved Qwen 3.5 artifact and run a tiny local clip once with the advertised MoE configuration under the alternate-local lane.",
+        "required_observations": [
+          "Record exact Qwen revision, backend arguments, and service model identity.",
+          "Observe a valid visual response plus the configured MoE backend in bounded service telemetry."
+        ],
+        "adjacent_negative": [
+          "Supply an incompatible dense-only configuration to the MoE row and require admission failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-owned uploads, model sessions, and response captures; leave model artifacts and service configuration unchanged.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "stop_only_executor_started_model_service",
+          "executor_class": "bounded_local_model_contract",
+          "id": "oracle.manifest-entry.rt-vlm-models.03",
+          "literal_success_condition": "Directly execute and semantically verify \"Qwen 3.5 and MoE\" through bounded_local_model_contract; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "exact_model_artifact_lock",
+            "served_model_identity",
+            "semantic_inference_transcript"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_model_artifact",
+            "local_inference_endpoint",
+            "memory_capacity_gate"
+          ],
+          "status": "open_unexecuted",
+          "type": "alternate_local_model_matrix"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/4",
+      "feature_index": 10,
+      "feature_id": "rt-vlm-models",
+      "advertised_index": 4,
+      "advertised": "remote OpenAI-compatible endpoint",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-models.04-remote-openai-compatible-endpoint",
+        "feature_id": "rt-vlm-models",
+        "kind": "protocol",
+        "title": "remote OpenAI-compatible endpoint",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Remote OpenAI-compatible endpoint configuration and protocol"
+          }
+        ],
+        "acceptance_class": "external_optional",
+        "thor_state": "partial",
+        "runtime_state": "not_applicable",
+        "contract": {
+          "manifest_pointer": "/features/10/advertised/4",
+          "advertised_literal": "remote OpenAI-compatible endpoint",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py#CompOpenAIModel.configure_openai_common",
+            "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py#CompOpenAIModel.generate_text_only_stream"
+          ],
+          "required_semantics": [
+            "Treat the endpoint as a user-managed external integration and never as required Thor-local inference.",
+            "With explicit authorization, send the advertised OpenAI-compatible request shape and correlate its response, model identity, and endpoint boundary."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "model-alternate-workflows"
+        ],
+        "gap": "This is an external-optional protocol boundary; no authorized external attestation is currently recorded."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use only an explicitly authorized user-managed endpoint with redacted credentials and a bounded synthetic request; do not replace it with a local mock for acceptance.",
+        "required_observations": [
+          "Record authorization, redacted endpoint identity, request shape, status, and response correlation.",
+          "Prove the call crossed the declared external boundary and that no external result advances required-local parity."
+        ],
+        "adjacent_negative": [
+          "Use an invalid credential or unreachable approved test endpoint and require a bounded explicit external-integration error."
+        ],
+        "execution_boundary": "external",
+        "cleanup_boundary": "Delete only candidate-owned uploads, model sessions, and response captures; leave model artifacts and service configuration unchanged.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "no_external_mutation",
+          "executor_class": "user_managed_remote_model_attestation",
+          "id": "oracle.manifest-entry.rt-vlm-models.04",
+          "literal_success_condition": "Observe and correlate the literal advertised behavior \"remote OpenAI-compatible endpoint\" against the user-managed external system with explicit authorization; a local mock, source presence, or family-lane pass is not sufficient.",
+          "required_evidence": [
+            "user_authorized_endpoint_transcript",
+            "served_model_identity",
+            "semantic_inference_transcript"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "user_managed_endpoint",
+            "user_authorized_credentials"
+          ],
+          "status": "open_unexecuted",
+          "type": "external_optional_boundary"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/0",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 0,
+      "advertised": "efficient video sampling",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.00-efficient-video-sampling",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "performance",
+        "title": "efficient video sampling",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Performance and video sampling configuration"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/0",
+          "advertised_literal": "efficient video sampling",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+            "services/rtvi/rt-vlm/src/utils/media_io_kwargs.py"
+          ],
+          "required_semantics": [
+            "Apply the advertised sampling policy to a bounded video instead of decoding every frame unconditionally.",
+            "Record sampled frame count and timestamps so coverage, ordering, and configured sampling density can be verified."
+          ],
+          "dependency_capability_ids": [
+            "performance.rt-vlm",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "No exact runtime oracle currently proves sampling density, timestamp ordering, and inference together."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Generate a short timestamp-burned local clip and run identical requests at two supported sampling densities.",
+        "required_observations": [
+          "Observe ordered sampled timestamps and frame counts matching each configured density.",
+          "Observe valid inference output for both densities and record Thor latency without importing reference-hardware thresholds."
+        ],
+        "adjacent_negative": [
+          "Set an invalid sampling interval and require validation failure without starting inference."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.00",
+          "literal_success_condition": "Directly execute and semantically verify \"efficient video sampling\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/1",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 1,
+      "advertised": "GOP-aware decode",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.01-gop-aware-decode",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "performance",
+        "title": "GOP-aware decode",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Video decode and GOP-aware processing"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/1",
+          "advertised_literal": "GOP-aware decode",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+            "services/rtvi/rt-vlm/src/utils/media_io_kwargs.py"
+          ],
+          "required_semantics": [
+            "Decode a fixture with known keyframe/GOP placement while preserving requested temporal coverage.",
+            "Expose enough bounded decode observations to distinguish GOP-aware seeking from full sequential decode."
+          ],
+          "dependency_capability_ids": [
+            "performance.rt-vlm",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "GOP-related source paths exist, but no runtime fixture proves GOP-aware work reduction and temporal correctness."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Generate two tiny clips with identical frames but different fixed GOP intervals, then request the same bounded temporal window.",
+        "required_observations": [
+          "Record keyframe positions, seek/decode span, and returned sample timestamps for both GOP layouts.",
+          "Observe equal semantic output while decode work changes consistently with GOP placement."
+        ],
+        "adjacent_negative": [
+          "Use a malformed stream with no decodable keyframe and require a bounded decode error."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.01",
+          "literal_success_condition": "Directly execute and semantically verify \"GOP-aware decode\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/2",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 2,
+      "advertised": "decoder reuse",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.02-decoder-reuse",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "performance",
+        "title": "decoder reuse",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Decoder lifecycle and reuse"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/2",
+          "advertised_literal": "decoder reuse",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+            "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py"
+          ],
+          "required_semantics": [
+            "Reuse an eligible decoder across sequential requests for the same asset without leaking state between request windows.",
+            "Create a new decoder when media identity or incompatible decode parameters change."
+          ],
+          "dependency_capability_ids": [
+            "performance.rt-vlm",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "Decoder code is present, but reuse identity, isolation, and invalidation lack a runtime oracle."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Issue two bounded windows against one local asset followed by one request against a different digest-pinned asset.",
+        "required_observations": [
+          "Record decoder instance/lifecycle identifiers showing reuse for the first asset.",
+          "Record a distinct decoder for the second asset and correct independent response timestamps."
+        ],
+        "adjacent_negative": [
+          "Change an incompatible decode parameter and require non-reuse rather than stale decoder state."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.02",
+          "literal_success_condition": "Directly execute and semantically verify \"decoder reuse\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/3",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 3,
+      "advertised": "vLLM tuning",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.03-vllm-tuning",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "configuration",
+        "title": "vLLM tuning",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "vLLM runtime tuning controls"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/3",
+          "advertised_literal": "vLLM tuning",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",
+            "deploy/docker/thor-local/rt-vlm/model-matrix.json"
+          ],
+          "required_semantics": [
+            "Apply the admitted vLLM tuning values to the selected local model process.",
+            "Report effective tuning values and preserve a successful bounded inference within Thor admission limits."
+          ],
+          "dependency_capability_ids": [
+            "performance.rt-vlm",
+            "behavior.rt-vlm.generation-token-cap"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "The tuning surface exists, but effective-value propagation and Thor-bounded execution are unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Run one tiny local request with a safe non-default, model-compatible tuning tuple after recording pre-state and memory admission.",
+        "required_observations": [
+          "Record requested and effective vLLM arguments plus model identity.",
+          "Observe successful inference and bounded Thor resource measurements under the effective tuple."
+        ],
+        "adjacent_negative": [
+          "Provide a tuning value outside the model matrix or Thor admission limit and require pre-launch rejection."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.03",
+          "literal_success_condition": "Directly execute and semantically verify \"vLLM tuning\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/4",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 4,
+      "advertised": "asset limits and expiry",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "configuration",
+        "title": "asset limits and expiry",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Asset limits, storage pressure, and expiry"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/4",
+          "advertised_literal": "asset limits and expiry",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+            "services/rtvi/rt-vlm/tests/test_context_overflow.py"
+          ],
+          "required_semantics": [
+            "Enforce configured asset size/storage limits before unbounded disk growth.",
+            "Expire only assets older than the configured TTL and report their subsequent lookup as unavailable."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "Checked-in limit/TTL logic has no exact bounded runtime proof including cleanup and residual-file checks."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use two tiny candidate-owned assets with controlled mtimes under a temporary low storage threshold and TTL.",
+        "required_observations": [
+          "Observe rejection or eviction at the configured storage bound with recorded sizes.",
+          "Observe only the expired asset removed while the fresh asset remains retrievable."
+        ],
+        "adjacent_negative": [
+          "Attempt an over-limit upload and require rejection without a residual partial file."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.04",
+          "literal_success_condition": "Directly execute and semantically verify \"asset limits and expiry\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/5",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 5,
+      "advertised": "Kafka/Redis error publication",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "protocol",
+        "title": "Kafka/Redis error publication",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Kafka and Redis error publication"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/5",
+          "advertised_literal": "Kafka/Redis error publication",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_error_message_to_kafka",
+            "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_error_message_to_redis"
+          ],
+          "required_semantics": [
+            "Publish a schema-valid correlated error to each enabled Kafka and Redis sink for a failed candidate-owned request.",
+            "Preserve request/stream identity and error category without converting the failed operation into success."
+          ],
+          "dependency_capability_ids": [
+            "behavior.rt-vlm.kafka-queue-bound",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "Error publishers are source-visible, but dual-broker correlation and failure behavior are not runtime-qualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use namespaced local Kafka and Redis topics/keys, trigger one deterministic invalid-media error, and capture both publications.",
+        "required_observations": [
+          "Observe one correlated schema-valid error in Kafka and Redis with matching request identity.",
+          "Observe the originating API failure status and bounded publication latency."
+        ],
+        "adjacent_negative": [
+          "Disable one broker sink and require an explicit bounded sink failure without duplicate publication to the other."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.05",
+          "literal_success_condition": "Directly execute and semantically verify \"Kafka/Redis error publication\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/6",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 6,
+      "advertised": "Prometheus and OpenTelemetry",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "protocol",
+        "title": "Prometheus and OpenTelemetry",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Prometheus metrics and OpenTelemetry traces"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/6",
+          "advertised_literal": "Prometheus and OpenTelemetry",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/utils/otel_helper.py#init_otel",
+            "services/rtvi/rt-vlm/src/utils/otel_helper.py#get_prometheus_metrics",
+            "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py#RTVIServer.metrics"
+          ],
+          "required_semantics": [
+            "Expose Prometheus metrics for the bounded request with stable names and changed counters/histograms.",
+            "Emit an OpenTelemetry trace whose request correlation joins service span, inference span, and terminal status."
+          ],
+          "dependency_capability_ids": [
+            "performance.rt-vlm",
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "Metric and OTEL helpers exist, but correlated runtime metrics/traces and degraded-export behavior remain unproven."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Send one valid and one deterministic invalid local request while scraping a local Prometheus endpoint and in-memory OTLP collector.",
+        "required_observations": [
+          "Observe expected metric deltas for success and failure.",
+          "Observe correlated trace spans with model/request identity and correct terminal status."
+        ],
+        "adjacent_negative": [
+          "Send an invalid trace exporter configuration and require service health to report degraded telemetry without fabricating spans."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.06",
+          "literal_success_condition": "Directly execute and semantically verify \"Prometheus and OpenTelemetry\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/7",
+      "feature_index": 11,
+      "feature_id": "rt-vlm-performance-observability",
+      "advertised_index": 7,
+      "advertised": "absolute timestamp metadata",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
+        "feature_id": "rt-vlm-performance-observability",
+        "kind": "runtime_behavior",
+        "title": "absolute timestamp metadata",
+        "source_claims": [
+          {
+            "source_id": "rt-vlm-doc-3.2.1",
+            "locator": "Absolute timestamp request and response metadata"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/11/advertised/7",
+          "advertised_literal": "absolute timestamp metadata",
+          "implementation_surfaces": [
+            "services/rtvi/rt-vlm/src/api_models/file.py",
+            "services/rtvi/rt-vlm/src/common/chunk_info.py"
+          ],
+          "required_semantics": [
+            "Accept valid absolute source timestamps and preserve their timezone-normalized instant through chunk selection.",
+            "Return caption or inference metadata whose absolute timestamps align with the fixture's known frame times."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-vlm-27"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "observability-scale-workflows"
+        ],
+        "gap": "Timestamp fields are checked in, but exact absolute-time propagation and malformed-window behavior are unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use a tiny timestamp-burned local clip with a fixed UTC start time and request a bounded absolute interval.",
+        "required_observations": [
+          "Record normalized request start/end instants and selected frame timestamps.",
+          "Observe response metadata aligned to the expected absolute UTC interval within the documented precision."
+        ],
+        "adjacent_negative": [
+          "Submit a reversed or malformed absolute interval and require validation failure before decode."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned media, streams, broker messages, and telemetry captures; restore candidate-set environment values to their captured pre-state.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_media_and_streams",
+          "executor_class": "bounded_rt_vlm_observability_probe",
+          "id": "oracle.manifest-entry.rt-vlm-performance-observability.07",
+          "literal_success_condition": "Directly execute and semantically verify \"absolute timestamp metadata\" through bounded_rt_vlm_observability_probe; source presence or a family-lane pass is not sufficient.",
+          "required_evidence": [
+            "workload_transcript",
+            "metric_or_trace_capture",
+            "literal_behavior_assertion"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "local_rt_vlm",
+            "local_metrics_endpoint",
+            "tiny_operator_supplied_media"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_telemetry_and_behavior"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/12/advertised/0",
+      "feature_index": 12,
+      "feature_id": "rt-embed",
+      "advertised_index": 0,
+      "advertised": "video/image/text embedding",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-embed.00-video-image-text-embedding",
+        "feature_id": "rt-embed",
+        "kind": "api",
+        "title": "video/image/text embedding",
+        "source_claims": [
+          {
+            "source_id": "rt-embed-doc-3.2.1",
+            "locator": "API usage — video, image, and text embedding operations"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/12/advertised/0",
+          "advertised_literal": "video/image/text embedding",
+          "implementation_surfaces": [
+            "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+            "services/rtvi/rt-embed/src/api_models/embeddings.py"
+          ],
+          "required_semantics": [
+            "Produce embeddings for each advertised video, image, and text modality through its supported local request shape.",
+            "Return finite vectors with model-consistent dimensions while keeping modality and request identities correlated."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-embed-24",
+            "model.rt-embed.cosmos-embed1-448p"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Family coverage does not yet prove all three modalities with one exact, dimension-checked local oracle."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use a tiny color-motion video, extracted still image, and matching/contrasting text prompts against one pinned local RT-Embed model.",
+        "required_observations": [
+          "Observe finite dimension-consistent vectors for all three modalities.",
+          "Record request/model identities and demonstrate higher similarity for the matching prompt than the adjacent contrast."
+        ],
+        "adjacent_negative": [
+          "Submit an unsupported binary modality and require a typed 4xx response with no embedding."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned files and streams, drain candidate requests, and restore captured RT-Embed configuration without modifying model artifacts."
+      }
+    },
+    {
+      "manifest_pointer": "/features/12/advertised/1",
+      "feature_index": 12,
+      "feature_id": "rt-embed",
+      "advertised_index": 1,
+      "advertised": "live RTSP",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-embed.01-live-rtsp",
+        "feature_id": "rt-embed",
+        "kind": "protocol",
+        "title": "live RTSP",
+        "source_claims": [
+          {
+            "source_id": "rt-embed-doc-3.2.1",
+            "locator": "Live stream API — RTSP ingestion"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/12/advertised/1",
+          "advertised_literal": "live RTSP",
+          "implementation_surfaces": [
+            "services/rtvi/rt-embed/src/server/rtvi_embed_server.py#RTVIServer.add_live_streams",
+            "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler._create_rtsp_vlm_captions_request",
+            "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler.remove_rtsp_stream"
+          ],
+          "required_semantics": [
+            "Add a loopback RTSP source, produce time-correlated embeddings while it is live, and remove it cleanly.",
+            "Report stream state transitions and prevent inference after confirmed removal."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-embed-24",
+            "model.rt-embed.cosmos-embed1-448p"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "RTSP APIs are wired in source, but end-to-end live embedding lifecycle evidence is absent."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Serve a tiny candidate-owned looping clip over loopback RTSP and exercise add, observe, list, and remove.",
+        "required_observations": [
+          "Observe active stream identity plus at least one finite embedding correlated to source time.",
+          "Observe terminal removal and absence from stream inventory after bounded drain."
+        ],
+        "adjacent_negative": [
+          "Add an unreachable loopback RTSP URL and require a bounded failed/degraded stream state without leakage."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned files and streams, drain candidate requests, and restore captured RT-Embed configuration without modifying model artifacts."
+      }
+    },
+    {
+      "manifest_pointer": "/features/12/advertised/2",
+      "feature_index": 12,
+      "feature_id": "rt-embed",
+      "advertised_index": 2,
+      "advertised": "URL and inline base64 video",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-embed.02-url-and-inline-base64-video",
+        "feature_id": "rt-embed",
+        "kind": "protocol",
+        "title": "URL and inline base64 video",
+        "source_claims": [
+          {
+            "source_id": "rt-embed-doc-3.2.1",
+            "locator": "File input APIs — remote URL and inline base64 video"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/12/advertised/2",
+          "advertised_literal": "URL and inline base64 video",
+          "implementation_surfaces": [
+            "services/rtvi/rt-embed/src/server/rtvi_embed_server.py#RTVIServer.generate_video_embeddings",
+            "services/rtvi/rt-embed/src/utils/asset_manager.py#AssetManager.download_file",
+            "services/rtvi/rt-embed/src/utils/asset_manager.py#AssetManager.save_from_base64"
+          ],
+          "required_semantics": [
+            "Accept the same tiny video from an allowed loopback URL and an inline base64 payload.",
+            "Produce semantically equivalent finite embeddings while retaining distinct transport provenance."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-embed-24",
+            "behavior.rt-embed.base64-data-url",
+            "model.rt-embed.cosmos-embed1-448p"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Transport-specific tests exist, but an exact same-bytes URL/base64 runtime oracle is not recorded."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Serve one digest-pinned tiny video over loopback HTTP and encode the identical bytes as inline base64.",
+        "required_observations": [
+          "Observe successful ingestion and finite equal-dimension embeddings for both transports.",
+          "Record content digest and prove both requests processed identical bytes."
+        ],
+        "adjacent_negative": [
+          "Submit malformed base64 and a disallowed URL host; require typed rejection without residual assets."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned files and streams, drain candidate requests, and restore captured RT-Embed configuration without modifying model artifacts."
+      }
+    },
+    {
+      "manifest_pointer": "/features/12/advertised/3",
+      "feature_index": 12,
+      "feature_id": "rt-embed",
+      "advertised_index": 3,
+      "advertised": "Cosmos-Embed1",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-embed.03-cosmos-embed1",
+        "feature_id": "rt-embed",
+        "kind": "model",
+        "title": "Cosmos-Embed1",
+        "source_claims": [
+          {
+            "source_id": "rt-embed-doc-3.2.1",
+            "locator": "Supported Models — Cosmos-Embed1 family"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/12/advertised/3",
+          "advertised_literal": "Cosmos-Embed1",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/models/artifacts.lock.json",
+            "services/rtvi/rt-embed/src/models/custom/samples/cosmos-embed1/inference.py"
+          ],
+          "required_semantics": [
+            "Load an exact supported Cosmos-Embed1 artifact revision and report the selected variant.",
+            "Return finite embeddings with the declared dimensions and normalization contract for the selected variant."
+          ],
+          "dependency_capability_ids": [
+            "model.rt-embed.cosmos-embed1-448p",
+            "configuration.rt-embed.model-source"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Exact variant contracts exist, but the umbrella Cosmos-Embed1 literal lacks current local runtime qualification."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use a digest-pinned exact Cosmos-Embed1 variant with tiny local video and text fixtures under Thor model admission.",
+        "required_observations": [
+          "Record artifact, Triton repository, and service-reported model identities.",
+          "Observe finite expected-dimension embeddings and declared normalization behavior."
+        ],
+        "adjacent_negative": [
+          "Alter the artifact or repository identity and require pre-inference integrity rejection."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned files and streams, drain candidate requests, and restore captured RT-Embed configuration without modifying model artifacts."
+      }
+    },
+    {
+      "manifest_pointer": "/features/12/advertised/4",
+      "feature_index": 12,
+      "feature_id": "rt-embed",
+      "advertised_index": 4,
+      "advertised": "Kafka/Redis/OpenTelemetry",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-embed.04-kafka-redis-opentelemetry",
+        "feature_id": "rt-embed",
+        "kind": "protocol",
+        "title": "Kafka/Redis/OpenTelemetry",
+        "source_claims": [
+          {
+            "source_id": "rt-embed-doc-3.2.1",
+            "locator": "Messaging and observability integrations — Kafka, Redis, OpenTelemetry"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/12/advertised/4",
+          "advertised_literal": "Kafka/Redis/OpenTelemetry",
+          "implementation_surfaces": [
+            "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_protobuf_to_kafka",
+            "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_error_message_to_redis",
+            "services/rtvi/rt-embed/src/utils/otel_helper.py#init_otel"
+          ],
+          "required_semantics": [
+            "Publish correlated embedding results or errors to enabled local Kafka and Redis integrations.",
+            "Emit OpenTelemetry spans that correlate broker publication with the originating embedding request."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-embed-24",
+            "behavior.rt-embed.kafka-queue-bound",
+            "model.rt-embed.cosmos-embed1-448p"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "The three integrations are source-visible but lack one correlated, failure-aware local runtime oracle."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use namespaced local Kafka/Redis resources and an in-memory OTLP collector for one valid and one invalid tiny request.",
+        "required_observations": [
+          "Observe schema-valid correlated broker records with request/model identity.",
+          "Observe OTEL spans joining API, inference, and publication status."
+        ],
+        "adjacent_negative": [
+          "Disable one broker endpoint and require bounded degradation without duplicate or fabricated records."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned files and streams, drain candidate requests, and restore captured RT-Embed configuration without modifying model artifacts."
+      }
+    },
+    {
+      "manifest_pointer": "/features/12/advertised/5",
+      "feature_index": 12,
+      "feature_id": "rt-embed",
+      "advertised_index": 5,
+      "advertised": "original and CV-compatible stream APIs",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-embed.05-original-and-cv-compatible-stream-apis",
+        "feature_id": "rt-embed",
+        "kind": "api",
+        "title": "original and CV-compatible stream APIs",
+        "source_claims": [
+          {
+            "source_id": "rt-embed-doc-3.2.1",
+            "locator": "Stream APIs — original RTVI and CV-compatible endpoints"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/12/advertised/5",
+          "advertised_literal": "original and CV-compatible stream APIs",
+          "implementation_surfaces": [
+            "services/rtvi/rt-embed/src/api_models/live_stream.py",
+            "services/rtvi/rt-embed/tests/rtvi_embed/test_stream_cv_api.py"
+          ],
+          "required_semantics": [
+            "Exercise both original /v1/streams and CV-compatible /v1/stream endpoint families.",
+            "Preserve equivalent stream identity, lifecycle state, and embedding behavior across the two API shapes."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-embed-24",
+            "model.rt-embed.cosmos-embed1-448p"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Both API shapes are checked in, but their lifecycle equivalence and isolation are not runtime-qualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use one candidate-owned loopback RTSP fixture and separately run add/get/remove through each endpoint family.",
+        "required_observations": [
+          "Observe successful lifecycle and finite embeddings through both API families.",
+          "Record normalized stream state proving semantic equivalence despite request/response shape differences."
+        ],
+        "adjacent_negative": [
+          "Mix an identifier from one deleted lifecycle into the other API and require not-found without cross-deletion."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned files and streams, drain candidate requests, and restore captured RT-Embed configuration without modifying model artifacts."
+      }
+    },
+    {
+      "manifest_pointer": "/features/12/advertised/6",
+      "feature_index": 12,
+      "feature_id": "rt-embed",
+      "advertised_index": 6,
+      "advertised": "health/metadata/models/metrics",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-embed.06-health-metadata-models-metrics",
+        "feature_id": "rt-embed",
+        "kind": "api",
+        "title": "health/metadata/models/metrics",
+        "source_claims": [
+          {
+            "source_id": "rt-embed-doc-3.2.1",
+            "locator": "Service endpoints — health, metadata, models, and metrics"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/12/advertised/6",
+          "advertised_literal": "health/metadata/models/metrics",
+          "implementation_surfaces": [
+            "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+            "services/rtvi/rt-embed/src/common/health_status.py"
+          ],
+          "required_semantics": [
+            "Return coherent health, service metadata, loaded-model inventory, and metrics from the same running local instance.",
+            "Tie model identity and request counter deltas to one bounded embedding request."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-embed-24",
+            "model.rt-embed.cosmos-embed1-448p"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Endpoint source coverage exists, but cross-endpoint identity and request-delta consistency remain unproven."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Capture all four endpoint groups before and after one valid tiny local embedding request.",
+        "required_observations": [
+          "Observe ready health plus mutually consistent version/model identities.",
+          "Observe expected metric delta and unchanged model inventory after the request."
+        ],
+        "adjacent_negative": [
+          "Query an unknown model identifier and require typed not-found while health remains truthful."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned files and streams, drain candidate requests, and restore captured RT-Embed configuration without modifying model artifacts."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/0",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 0,
+      "advertised": "file and stream detection/tracking",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking",
+        "feature_id": "rt-cv-2d",
+        "kind": "runtime_behavior",
+        "title": "file and stream detection/tracking",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "Overview and Input Sources — file and stream detection/tracking"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/0",
+          "advertised_literal": "file and stream detection/tracking",
+          "implementation_surfaces": [
+            "services/rtvi/rt-cv/src/metropolis_perception_app.c",
+            "deploy/docker/services/rtvi/rtvi-cv/compose.yaml"
+          ],
+          "required_semantics": [
+            "Detect supported objects in both a finite local file and loopback stream.",
+            "Maintain tracker identities across consecutive frames and terminate each source cleanly."
+          ],
+          "dependency_capability_ids": [
+            "runtime.rt-cv.model-pipelines",
+            "runtime.rtvi.input-codec-boundary"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "The shared RT-CV pipeline exists, but paired file/stream detection and tracking semantics are unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use the same tiny custom object-motion clip once as a file and once through loopback RTSP.",
+        "required_observations": [
+          "Observe expected class detections and finite boxes for both inputs.",
+          "Observe stable track IDs across motion and terminal source cleanup."
+        ],
+        "adjacent_negative": [
+          "Provide an unsupported/corrupt media stream and require bounded source failure without phantom tracks."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/1",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 1,
+      "advertised": "warehouse and Smart City RT-DETR/GDINO",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.01-warehouse-and-smart-city-rt-detr-gdino",
+        "feature_id": "rt-cv-2d",
+        "kind": "model",
+        "title": "warehouse and Smart City RT-DETR/GDINO",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "2D model pipelines — Warehouse and Smart City RT-DETR/Grounding DINO"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/1",
+          "advertised_literal": "warehouse and Smart City RT-DETR/GDINO",
+          "implementation_surfaces": [
+            "services/rtvi/rt-cv/configs/warehouse-2d/ds-main-config.txt",
+            "services/rtvi/rt-cv/configs/smartcities/gdino/config_triton_nvinferserver_gdino.txt"
+          ],
+          "required_semantics": [
+            "Run the advertised Warehouse RT-DETR and Smart City RT-DETR/GDINO configurations without using the Warehouse sample bundle.",
+            "Report detector identity and class-map semantics for each custom-data run rather than treating one profile as proof of the others."
+          ],
+          "dependency_capability_ids": [
+            "runtime.rt-cv.model-pipelines",
+            "deployment.rt-cv.compose-extension-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Profile configurations are checked in, but exact artifacts and separate custom-data runtime oracles remain incomplete."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use tiny operator-supplied custom clips appropriate to each profile and exact admitted detector artifacts.",
+        "required_observations": [
+          "Observe model/config/class-map identity for each Warehouse and Smart City detector lane.",
+          "Observe expected detections with coordinates and confidence under each exercised lane."
+        ],
+        "adjacent_negative": [
+          "Pair a detector with the wrong class map and require preflight rejection."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/2",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 2,
+      "advertised": "RADIO-CLIP",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.02-radio-clip",
+        "feature_id": "rt-cv-2d",
+        "kind": "model",
+        "title": "RADIO-CLIP",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "Feature extraction and embedding models — RADIO-CLIP"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/2",
+          "advertised_literal": "RADIO-CLIP",
+          "implementation_surfaces": [
+            "services/rtvi/rt-cv/src/metropolis_perception_app.c",
+            "services/rtvi/rt-cv/README.md"
+          ],
+          "required_semantics": [
+            "Load the exact advertised RADIO-CLIP feature extractor for the selected RT-CV pipeline.",
+            "Attach finite, expected-dimension embeddings to detections and preserve object correlation."
+          ],
+          "dependency_capability_ids": [
+            "runtime.rt-cv.model-pipelines"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "No exact RADIO-CLIP artifact identity or object-correlated runtime embedding oracle is currently recorded."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Run a tiny custom clip containing two visually distinct tracked objects with an exact admitted RADIO-CLIP artifact.",
+        "required_observations": [
+          "Record RADIO-CLIP artifact/model identity and embedding dimensions.",
+          "Observe finite embeddings correlated to detected object and track identifiers."
+        ],
+        "adjacent_negative": [
+          "Configure an incompatible embedding dimension and require startup/admission failure."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/3",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 3,
+      "advertised": "SigLIP2 re-identification",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.03-siglip2-re-identification",
+        "feature_id": "rt-cv-2d",
+        "kind": "model",
+        "title": "SigLIP2 re-identification",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "Re-identification — SigLIP2 model"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/3",
+          "advertised_literal": "SigLIP2 re-identification",
+          "implementation_surfaces": [
+            "services/rtvi/rt-cv/configs/warehouse-2d/ds-main-config.txt",
+            "services/rtvi/rt-cv/configs/warehouse-2d/ds-nvdcf-accuracy-tracker-config.yml"
+          ],
+          "required_semantics": [
+            "Load the exact SigLIP2 re-identification model and tokenizer declared by the profile.",
+            "Preserve or correctly re-associate identity for a known object across a bounded occlusion/re-entry sequence."
+          ],
+          "dependency_capability_ids": [
+            "runtime.rt-cv.model-pipelines"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "SigLIP2 configuration slots are wired, but exact artifacts and re-entry identity behavior remain unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use a tiny custom clip with one distinct object that exits/occludes and re-enters, plus an exact admitted SigLIP2 artifact.",
+        "required_observations": [
+          "Record SigLIP2 artifact/tokenizer/engine identities.",
+          "Observe re-identification association and finite embedding evidence across the known re-entry."
+        ],
+        "adjacent_negative": [
+          "Use a mismatched tokenizer/model pair and require preflight failure rather than silent inference."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/4",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 4,
+      "advertised": "on-demand image embedding",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.04-on-demand-image-embedding",
+        "feature_id": "rt-cv-2d",
+        "kind": "api",
+        "title": "on-demand image embedding",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "Image embedding operation"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/4",
+          "advertised_literal": "on-demand image embedding",
+          "implementation_surfaces": [
+            "services/rtvi/rt-cv/src/metropolis_perception_app.c",
+            "deploy/docker/services/rtvi/rtvi-cv/compose.yaml"
+          ],
+          "required_semantics": [
+            "Accept a bounded on-demand image embedding request independently of continuous stream processing.",
+            "Return a finite embedding correlated to the requested image and active embedding model identity."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-cv-9",
+            "runtime.rt-cv.model-pipelines"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "The family advertises on-demand embedding, but no exact endpoint/runtime oracle is bound to this literal."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Submit one digest-pinned tiny image extracted from the custom tracking fixture.",
+        "required_observations": [
+          "Observe a finite expected-dimension image embedding and exact request correlation.",
+          "Record active model identity and verify repeated identical input remains numerically consistent within tolerance."
+        ],
+        "adjacent_negative": [
+          "Submit malformed image bytes and require typed rejection with no emitted embedding."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/5",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 5,
+      "advertised": "dynamic stream lifecycle",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle",
+        "feature_id": "rt-cv-2d",
+        "kind": "api",
+        "title": "dynamic stream lifecycle",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "Stream API — dynamic add, list, and remove"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/5",
+          "advertised_literal": "dynamic stream lifecycle",
+          "implementation_surfaces": [
+            "services/rtvi/rt-cv/tests/test-scripts/add-stream-test.sh",
+            "services/rtvi/rt-cv/tests/test-scripts/remove-stream-test.sh"
+          ],
+          "required_semantics": [
+            "Add a candidate-owned file or RTSP source dynamically and observe its active processing state.",
+            "Remove that exact source, observe terminal state, and leave pre-existing streams untouched."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-cv-9",
+            "behavior.rt-cv.delete-ended-stream",
+            "runtime.rt-cv.model-pipelines"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Lifecycle scripts exist, but namespaced state transitions, adjacent negatives, and non-owned preservation lack evidence."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use a unique namespaced loopback stream and execute add, inventory, message observation, and remove.",
+        "required_observations": [
+          "Observe assigned sensor/stream identity and active detections.",
+          "Observe removal, terminal cleanup, and unchanged pre-existing stream inventory."
+        ],
+        "adjacent_negative": [
+          "Attempt duplicate add and unknown remove; require explicit conflict/not-found outcomes."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/6",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 6,
+      "advertised": "health and metrics",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.06-health-and-metrics",
+        "feature_id": "rt-cv-2d",
+        "kind": "api",
+        "title": "health and metrics",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "Health and metrics endpoints"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/6",
+          "advertised_literal": "health and metrics",
+          "implementation_surfaces": [
+            "services/rtvi/rt-cv/tests/test-scripts/health-test.sh",
+            "services/rtvi/rt-cv/tests/test-scripts/kafka-messages-test.sh"
+          ],
+          "required_semantics": [
+            "Report truthful service and pipeline health for the active local RT-CV configuration.",
+            "Expose request/frame/detection metrics whose deltas correlate with one bounded custom-data run."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-cv-9",
+            "performance.rt-cv",
+            "runtime.rt-cv.model-pipelines"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "Health scripts exist, but coherent health transitions and metric deltas are not runtime-qualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Capture health and metrics before, during, and after one tiny custom file pipeline.",
+        "required_observations": [
+          "Observe ready/degraded transitions consistent with actual source/model state.",
+          "Observe bounded counter deltas matching processed frames and emitted detections."
+        ],
+        "adjacent_negative": [
+          "Configure an unavailable model and require degraded/not-ready health without fabricated successful metrics."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/13/advertised/7",
+      "feature_index": 13,
+      "feature_id": "rt-cv-2d",
+      "advertised_index": 7,
+      "advertised": "Thor VPI tracker tuning",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning",
+        "feature_id": "rt-cv-2d",
+        "kind": "configuration",
+        "title": "Thor VPI tracker tuning",
+        "source_claims": [
+          {
+            "source_id": "doc.rt-cv",
+            "locator": "Thor deployment — VPI tracker backend tuning"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/13/advertised/7",
+          "advertised_literal": "Thor VPI tracker tuning",
+          "implementation_surfaces": [
+            "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+            "services/rtvi/rt-cv/configs/warehouse-2d/ds-nvdcf-accuracy-tracker-config.yml"
+          ],
+          "required_semantics": [
+            "Apply the Thor-specific NvDCF VPI visual tracker type and backend values to the effective runtime config.",
+            "Preserve stable tracking on a bounded custom clip while reporting the effective tracker configuration."
+          ],
+          "dependency_capability_ids": [
+            "runtime.rt-cv.model-pipelines",
+            "deployment.rt-cv.compose-extension-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "rtvi-media-workflows"
+        ],
+        "gap": "The startup rewrite exists, but effective configuration and track-quality behavior are not runtime-qualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Render the Thor RT-CV configuration, capture its digest, and process a tiny custom object-motion clip.",
+        "required_observations": [
+          "Observe effective visualTrackerType and vpiBackend4DcfTracker values after rendering.",
+          "Observe stable track continuity and bounded Thor resource measurements."
+        ],
+        "adjacent_negative": [
+          "Supply an unsupported VPI backend value and require render/preflight rejection."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Remove only candidate-added streams and generated outputs, stop only candidate-owned fixture publishers, and restore captured RT-CV configuration."
+      }
+    },
+    {
+      "manifest_pointer": "/features/14/advertised/0",
+      "feature_index": 14,
+      "feature_id": "rt-cv-3d-sparse4d",
+      "advertised_index": 0,
+      "advertised": "Sparse4D multi-camera 3D detection and tracking",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking",
+        "feature_id": "rt-cv-3d-sparse4d",
+        "kind": "runtime_behavior",
+        "title": "Sparse4D multi-camera 3D detection and tracking",
+        "source_claims": [
+          {
+            "source_id": "warehouse-sparse4d-config-doc-3.2.1",
+            "locator": "Sparse4D configuration, model compatibility, and runtime adjustments"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/14/advertised/0",
+          "advertised_literal": "Sparse4D multi-camera 3D detection and tracking",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+            "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py"
+          ],
+          "required_semantics": [
+            "Ingest synchronized operator-supplied multiview video with matching calibration and the exact Sparse4D artifact/anchor contract.",
+            "Emit finite 3D boxes and stable track identities correlated across the calibrated cameras without using the Warehouse sample bundle."
+          ],
+          "dependency_capability_ids": [
+            "runtime.warehouse.profile-3d-sparse4d-pipeline",
+            "configuration.warehouse.sparse4d-deepstream"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "The sample-free launcher is checked in, but required exact model/anchor and synchronized custom-data execution remain absent."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use tiny synchronized custom four-camera clips, matching custom calibration, exact Sparse4D v2.2 ONNX, and matching anchor/class map.",
+        "required_observations": [
+          "Record all custom input/calibration/model/anchor digests and synchronization checks.",
+          "Observe finite 3D detections and stable multiview track identities in expected coordinates."
+        ],
+        "adjacent_negative": [
+          "Misalign one camera timestamp or calibration matrix and require preflight rejection."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, topics, and outputs; preserve operator data and models, and never access or delete Warehouse sample-bundle assets.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_sparse4d_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-sparse4d.00",
+          "literal_success_condition": "Execute and semantically verify \"Sparse4D multi-camera 3D detection and tracking\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "tracked_3d_output",
+            "health_and_metrics_capture"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_multicamera_data",
+            "matching_calibration",
+            "local_sparse4d_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/14/advertised/1",
+      "feature_index": 14,
+      "feature_id": "rt-cv-3d-sparse4d",
+      "advertised_index": 1,
+      "advertised": "shared RT-CV lifecycle/health/metrics",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics",
+        "feature_id": "rt-cv-3d-sparse4d",
+        "kind": "api",
+        "title": "shared RT-CV lifecycle/health/metrics",
+        "source_claims": [
+          {
+            "source_id": "warehouse-sparse4d-config-doc-3.2.1",
+            "locator": "Shared RT-CV lifecycle, health, and metrics in Sparse4D mode"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/14/advertised/1",
+          "advertised_literal": "shared RT-CV lifecycle/health/metrics",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+            "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh"
+          ],
+          "required_semantics": [
+            "Expose shared RT-CV add/list/remove lifecycle semantics while the service runs in Sparse4D mode.",
+            "Report health and metric deltas that identify the Sparse4D model and four custom camera inputs."
+          ],
+          "dependency_capability_ids": [
+            "api.core.rt-cv-9",
+            "runtime.warehouse.profile-3d-sparse4d-pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "Shared APIs are not yet proven against a running custom-data Sparse4D lane."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Against the custom-data Sparse4D lane, add four namespaced inputs, capture health/metrics, and remove only those inputs.",
+        "required_observations": [
+          "Observe all four lifecycle identities and terminal cleanup.",
+          "Observe truthful health plus processed-frame/3D-output metric deltas tied to Sparse4D mode."
+        ],
+        "adjacent_negative": [
+          "Remove an unknown sensor and require not-found without disturbing the four active candidate sensors."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, topics, and outputs; preserve operator data and models, and never access or delete Warehouse sample-bundle assets.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_sparse4d_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-sparse4d.01",
+          "literal_success_condition": "Execute and semantically verify \"shared RT-CV lifecycle/health/metrics\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "tracked_3d_output",
+            "health_and_metrics_capture"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_multicamera_data",
+            "matching_calibration",
+            "local_sparse4d_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/0",
+      "feature_index": 15,
+      "feature_id": "rt-cv-3d-mv3dt",
+      "advertised_index": 0,
+      "advertised": "per-camera RT-DETR",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-mv3dt.00-per-camera-rt-detr",
+        "feature_id": "rt-cv-3d-mv3dt",
+        "kind": "model",
+        "title": "per-camera RT-DETR",
+        "source_claims": [
+          {
+            "source_id": "warehouse-mv3dt-config-doc-3.2.1",
+            "locator": "RT-DETR per-camera configuration and model compatibility"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/15/advertised/0",
+          "advertised_literal": "per-camera RT-DETR",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+            "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py"
+          ],
+          "required_semantics": [
+            "Run the exact admitted RT-DETR detector independently on every custom camera input.",
+            "Emit finite per-camera 2D boxes/classes/confidence with camera and timestamp identity preserved for MV3DT input."
+          ],
+          "dependency_capability_ids": [
+            "runtime.warehouse.profile-mv3dt-pipeline",
+            "configuration.warehouse.mv3dt-deepstream"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "The custom-data lane exists, but exact detector artifacts and four-camera runtime detection evidence are absent."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use four tiny synchronized custom videos, matching calibration, and exact admitted RT-DETR artifact.",
+        "required_observations": [
+          "Record detector/class-map digest and per-camera source identities.",
+          "Observe expected per-camera detections with timestamps suitable for fusion."
+        ],
+        "adjacent_negative": [
+          "Omit one required camera or use a mismatched class map and require preflight rejection."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, MQTT/Kafka/Redis resources, and outputs; preserve operator data/models and exclude all Warehouse sample-bundle paths.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_mv3dt_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-mv3dt.00",
+          "literal_success_condition": "Execute and semantically verify \"per-camera RT-DETR\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "per_camera_and_bev_outputs",
+            "owned_resource_cleanup"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_four_camera_data",
+            "matching_calibration",
+            "local_mv3dt_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/1",
+      "feature_index": 15,
+      "feature_id": "rt-cv-3d-mv3dt",
+      "advertised_index": 1,
+      "advertised": "MV3DT BEV fusion",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion",
+        "feature_id": "rt-cv-3d-mv3dt",
+        "kind": "runtime_behavior",
+        "title": "MV3DT BEV fusion",
+        "source_claims": [
+          {
+            "source_id": "warehouse-mv3dt-config-doc-3.2.1",
+            "locator": "MV3DT BEV fusion and MQTT topology"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/15/advertised/1",
+          "advertised_literal": "MV3DT BEV fusion",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+            "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/pub_sub_info_config.yml"
+          ],
+          "required_semantics": [
+            "Fuse time-aligned per-camera detections from operator-supplied custom data into BEV tracks using matching projection matrices and MQTT topology.",
+            "Emit finite world-coordinate tracks with cross-camera identity continuity and no per-camera duplication after fusion."
+          ],
+          "dependency_capability_ids": [
+            "runtime.warehouse.profile-mv3dt-pipeline",
+            "configuration.warehouse.mv3dt-deepstream"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "Fusion configuration is present, but calibrated custom-data BEV identity continuity is unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use tiny synchronized custom four-camera clips with a known cross-camera trajectory and matching custom calibration/camInfo.",
+        "required_observations": [
+          "Observe one fused BEV identity across the known camera transition.",
+          "Record finite world coordinates, input timestamps, and fusion latency."
+        ],
+        "adjacent_negative": [
+          "Perturb one projection matrix and require calibration/topology admission failure or a recorded semantic failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, MQTT/Kafka/Redis resources, and outputs; preserve operator data/models and exclude all Warehouse sample-bundle paths.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_mv3dt_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-mv3dt.01",
+          "literal_success_condition": "Execute and semantically verify \"MV3DT BEV fusion\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "per_camera_and_bev_outputs",
+            "owned_resource_cleanup"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_four_camera_data",
+            "matching_calibration",
+            "local_mv3dt_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/2",
+      "feature_index": 15,
+      "feature_id": "rt-cv-3d-mv3dt",
+      "advertised_index": 2,
+      "advertised": "BodyPose3DNet",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-mv3dt.02-bodypose3dnet",
+        "feature_id": "rt-cv-3d-mv3dt",
+        "kind": "model",
+        "title": "BodyPose3DNet",
+        "source_claims": [
+          {
+            "source_id": "warehouse-mv3dt-config-doc-3.2.1",
+            "locator": "MV3DT BodyPose3DNet integration"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/15/advertised/2",
+          "advertised_literal": "BodyPose3DNet",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+            "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/warehouse-mv3dt-app.yml"
+          ],
+          "required_semantics": [
+            "Load the exact BodyPose3DNet artifact expected by the MV3DT profile for operator-supplied custom data.",
+            "Emit finite 3D keypoints tied to the correct fused person track and timestamps."
+          ],
+          "dependency_capability_ids": [
+            "runtime.warehouse.profile-mv3dt-pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "The profile advertises BodyPose3DNet, but exact artifact and track-correlated pose execution are not proven."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use a tiny synchronized custom multiview clip containing one visible person pose and matching calibration.",
+        "required_observations": [
+          "Record BodyPose3DNet artifact identity and keypoint schema.",
+          "Observe finite 3D keypoints correlated to a fused track across consecutive timestamps."
+        ],
+        "adjacent_negative": [
+          "Use an incompatible pose model output schema and require admission failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, MQTT/Kafka/Redis resources, and outputs; preserve operator data/models and exclude all Warehouse sample-bundle paths.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_mv3dt_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-mv3dt.02",
+          "literal_success_condition": "Execute and semantically verify \"BodyPose3DNet\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "per_camera_and_bev_outputs",
+            "owned_resource_cleanup"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_four_camera_data",
+            "matching_calibration",
+            "local_mv3dt_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/3",
+      "feature_index": 15,
+      "feature_id": "rt-cv-3d-mv3dt",
+      "advertised_index": 3,
+      "advertised": "four-camera calibrated multiview tracking",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking",
+        "feature_id": "rt-cv-3d-mv3dt",
+        "kind": "runtime_behavior",
+        "title": "four-camera calibrated multiview tracking",
+        "source_claims": [
+          {
+            "source_id": "warehouse-mv3dt-config-doc-3.2.1",
+            "locator": "Four-camera calibration and multiview tracking contract"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/15/advertised/3",
+          "advertised_literal": "four-camera calibrated multiview tracking",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py",
+            "deploy/docker/thor-local/WAREHOUSE_MV3DT.md"
+          ],
+          "required_semantics": [
+            "Require exactly four synchronized custom camera sources with finite matching calibration and camInfo projections.",
+            "Maintain a known identity across overlapping camera views in calibrated world coordinates."
+          ],
+          "dependency_capability_ids": [
+            "runtime.warehouse.profile-mv3dt-pipeline",
+            "calibration.auto.input-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "Static validation exists, but an independently checked four-camera custom tracking run remains unexecuted."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use operator-supplied four-camera custom clips with a known cross-view trajectory and independently checked calibration.",
+        "required_observations": [
+          "Observe preflight acceptance of all four source/calibration pairs and their digests.",
+          "Observe cross-view identity continuity and bounded spatial error for the known trajectory."
+        ],
+        "adjacent_negative": [
+          "Swap two camera calibrations and require preflight or semantic-oracle failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, MQTT/Kafka/Redis resources, and outputs; preserve operator data/models and exclude all Warehouse sample-bundle paths.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_mv3dt_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-mv3dt.03",
+          "literal_success_condition": "Execute and semantically verify \"four-camera calibrated multiview tracking\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "per_camera_and_bev_outputs",
+            "owned_resource_cleanup"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_four_camera_data",
+            "matching_calibration",
+            "local_mv3dt_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/4",
+      "feature_index": 15,
+      "feature_id": "rt-cv-3d-mv3dt",
+      "advertised_index": 4,
+      "advertised": "Compose deployment",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-mv3dt.04-compose-deployment",
+        "feature_id": "rt-cv-3d-mv3dt",
+        "kind": "deployment",
+        "title": "Compose deployment",
+        "source_claims": [
+          {
+            "source_id": "warehouse-mv3dt-config-doc-3.2.1",
+            "locator": "MV3DT Compose deployment and customization"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/15/advertised/4",
+          "advertised_literal": "Compose deployment",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+            "deploy/docker/scripts/thor-warehouse-mv3dt.sh"
+          ],
+          "required_semantics": [
+            "Render the exact sample-free MV3DT service graph with operator custom-data paths and immutable image identities.",
+            "Reach truthful readiness for the declared service graph without pulling or referencing the Warehouse sample bundle."
+          ],
+          "dependency_capability_ids": [
+            "deployment.rt-cv.compose-extension-contract",
+            "runtime.warehouse.profile-mv3dt-pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "Compose and launcher are checked in, but approved launch/readiness evidence with exact custom inputs is absent."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "After explicit lifecycle approval, render and launch the exact locked custom-data Compose graph with four tiny inputs.",
+        "required_observations": [
+          "Record rendered service graph, image identities, mounts, and zero sample-bundle references.",
+          "Observe bounded readiness and dependency health for every required MV3DT service."
+        ],
+        "adjacent_negative": [
+          "Remove one required custom input mount and require preflight failure before service launch."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, MQTT/Kafka/Redis resources, and outputs; preserve operator data/models and exclude all Warehouse sample-bundle paths.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_mv3dt_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-mv3dt.04",
+          "literal_success_condition": "Execute and semantically verify \"Compose deployment\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "per_camera_and_bev_outputs",
+            "owned_resource_cleanup"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_four_camera_data",
+            "matching_calibration",
+            "local_mv3dt_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/5",
+      "feature_index": 15,
+      "feature_id": "rt-cv-3d-mv3dt",
+      "advertised_index": 5,
+      "advertised": "associated skill",
+      "prior_mapping_class": "explicit_missing_entry_gap",
+      "proposed_capability": {
+        "id": "manifest-entry.rt-cv-3d-mv3dt.05-associated-skill",
+        "feature_id": "rt-cv-3d-mv3dt",
+        "kind": "tooling",
+        "title": "associated skill",
+        "source_claims": [
+          {
+            "source_id": "warehouse-mv3dt-config-doc-3.2.1",
+            "locator": "MV3DT profile Agent Skills workflow"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/15/advertised/5",
+          "advertised_literal": "associated skill",
+          "implementation_surfaces": [
+            "skills/vss-deploy-detection-tracking-3d/SKILL.md",
+            "deploy/docker/thor-local/WAREHOUSE_MV3DT.md"
+          ],
+          "required_semantics": [
+            "Guide MV3DT custom-data preflight, explicitly approved deployment, health verification, API use, and teardown with the documented boundaries.",
+            "Keep Warehouse sample data excluded and distinguish static planning from runtime evidence in every skill outcome."
+          ],
+          "dependency_capability_ids": [
+            "runtime.warehouse.profile-mv3dt-pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "industry-profile-workflows"
+        ],
+        "gap": "The skill is checked in, but its complete custom-data MV3DT workflow has no bounded qualification transcript."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Exercise the skill against a namespaced dry-run custom-data fixture, then separately record any explicitly approved runtime phase.",
+        "required_observations": [
+          "Observe correct mode selection, exact preflight invocation, and custom-data-only paths.",
+          "Observe that lifecycle steps pause for approval and that outputs do not claim runtime qualification from dry-run results."
+        ],
+        "adjacent_negative": [
+          "Present a Warehouse sample-bundle path and require the skill workflow to reject it for this parity lane."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Remove only candidate-owned custom streams, MQTT/Kafka/Redis resources, and outputs; preserve operator data/models and exclude all Warehouse sample-bundle paths.",
+        "authoritative_gap_requirement": {
+          "cleanup_policy": "delete_only_executor_owned_streams_and_outputs",
+          "executor_class": "bounded_mv3dt_custom_data_workflow",
+          "id": "oracle.manifest-entry.rt-cv-3d-mv3dt.05",
+          "literal_success_condition": "Execute and semantically verify \"associated skill\" with tiny operator-supplied custom multiview data and matching calibration; the excluded Warehouse sample bundle and family-lane status are not evidence.",
+          "required_evidence": [
+            "custom_data_manifest",
+            "calibration_lock",
+            "per_camera_and_bev_outputs",
+            "owned_resource_cleanup"
+          ],
+          "runtime_evidence": [],
+          "setup_requirements": [
+            "operator_supplied_tiny_custom_four_camera_data",
+            "matching_calibration",
+            "local_mv3dt_assets"
+          ],
+          "status": "open_unexecuted",
+          "type": "runtime_custom_data_multicamera"
+        }
+      }
+    },
+    {
+      "manifest_pointer": "/features/16/advertised/0",
+      "feature_index": 16,
+      "feature_id": "behavior-analytics",
+      "advertised_index": 0,
+      "advertised": "2D/3D/MV3DT/Smart City/warehouse/playback/fusion apps",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.behavior-analytics.00-2d-3d-mv3dt-smart-city-warehouse-playback-fusion-apps",
+        "feature_id": "behavior-analytics",
+        "kind": "runtime_behavior",
+        "title": "2D/3D/MV3DT/Smart City/warehouse/playback/fusion apps",
+        "source_claims": [
+          {
+            "source_id": "doc.behavior",
+            "locator": "Architecture and supported application configurations"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/16/advertised/0",
+          "advertised_literal": "2D/3D/MV3DT/Smart City/warehouse/playback/fusion apps",
+          "implementation_surfaces": [
+            "services/analytics/behavior-analytics/configs/warehouse_2d_config.json",
+            "services/analytics/behavior-analytics/configs/warehouse_3d_config.json",
+            "services/analytics/behavior-analytics/configs/smart_city_config.json",
+            "services/analytics/behavior-analytics/configs/frame_playback_config.json",
+            "services/analytics/behavior-analytics/configs/fusion_search_analytics_config.json",
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py"
+          ],
+          "required_semantics": [
+            "Select and process each advertised application mode using its own schema-valid custom fixture and configuration.",
+            "Do not use a pass from one mode or the excluded Warehouse sample bundle as evidence for another mode."
+          ],
+          "dependency_capability_ids": [
+            "runtime.behavior.pipeline",
+            "runtime.rt-cv.model-pipelines"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "industry-profile-workflows"
+        ],
+        "gap": "Family pipeline coverage does not separately qualify every combined advertised application mode."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use tiny mode-specific synthetic metadata fixtures; use operator custom data for Warehouse 3D/MV3DT modes and no Warehouse sample assets.",
+        "required_observations": [
+          "Record effective app mode/config digest and expected output type for every listed mode.",
+          "Observe mode-specific valid output with no cross-mode configuration leakage."
+        ],
+        "adjacent_negative": [
+          "Feed a 3D payload to a 2D-only mode and require typed rejection or documented filtering."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned broker topics, dynamic configuration records, calibration records, and analytics outputs; restore captured configuration and preserve non-owned incidents."
+      }
+    },
+    {
+      "manifest_pointer": "/features/16/advertised/1",
+      "feature_index": 16,
+      "feature_id": "behavior-analytics",
+      "advertised_index": 1,
+      "advertised": "events and incidents",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.behavior-analytics.01-events-and-incidents",
+        "feature_id": "behavior-analytics",
+        "kind": "runtime_behavior",
+        "title": "events and incidents",
+        "source_claims": [
+          {
+            "source_id": "doc.behavior",
+            "locator": "Behavior Analytics Features — events and incidents"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/16/advertised/1",
+          "advertised_literal": "events and incidents",
+          "implementation_surfaces": [
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/base_event.py",
+            "services/analytics/behavior-analytics/docs/incident-detection.md"
+          ],
+          "required_semantics": [
+            "Transform qualifying frame/object behavior into schema-valid events.",
+            "Aggregate the configured event sequence into an incident with correct sensor, object, category, and time bounds."
+          ],
+          "dependency_capability_ids": [
+            "runtime.behavior.events-incidents",
+            "runtime.behavior.pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "industry-profile-workflows"
+        ],
+        "gap": "Generic events/incidents capability exists, but this exact combined literal lacks a bounded correlated oracle."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Publish a tiny namespaced metadata sequence that deterministically satisfies one incident rule.",
+        "required_observations": [
+          "Observe expected event payloads correlated to input frames and objects.",
+          "Observe one incident with correct category/start/end and contributing event identities."
+        ],
+        "adjacent_negative": [
+          "Publish a near-threshold sequence and require no incident while retaining valid base processing."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned broker topics, dynamic configuration records, calibration records, and analytics outputs; restore captured configuration and preserve non-owned incidents."
+      }
+    },
+    {
+      "manifest_pointer": "/features/16/advertised/2",
+      "feature_index": 16,
+      "feature_id": "behavior-analytics",
+      "advertised_index": 2,
+      "advertised": "trajectories and occupancy",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
+        "feature_id": "behavior-analytics",
+        "kind": "runtime_behavior",
+        "title": "trajectories and occupancy",
+        "source_claims": [
+          {
+            "source_id": "doc.behavior",
+            "locator": "Trajectory processing and occupancy state"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/16/advertised/2",
+          "advertised_literal": "trajectories and occupancy",
+          "implementation_surfaces": [
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/trajectory/trajectory.py",
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/tools/space_utilization.py",
+            "services/analytics/behavior-analytics/configs/space_utilization_config_sample.json"
+          ],
+          "required_semantics": [
+            "Build an ordered trajectory from timestamped object locations without mixing object or sensor identities.",
+            "Derive occupancy state/counts for the configured region over the same bounded time window."
+          ],
+          "dependency_capability_ids": [
+            "runtime.behavior.pipeline",
+            "runtime.behavior.space-utilization"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "industry-profile-workflows"
+        ],
+        "gap": "Trajectory and space-utilization families exist, but their correlated occupancy semantics are not directly qualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Publish two short object trajectories entering and leaving one custom ROI with known occupancy over time.",
+        "required_observations": [
+          "Observe ordered per-object trajectory coordinates and timestamps.",
+          "Observe expected occupancy transitions/counts aligned to entries and exits."
+        ],
+        "adjacent_negative": [
+          "Send out-of-order duplicate points and require deterministic deduplication/rejection without inflated occupancy."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned broker topics, dynamic configuration records, calibration records, and analytics outputs; restore captured configuration and preserve non-owned incidents."
+      }
+    },
+    {
+      "manifest_pointer": "/features/16/advertised/3",
+      "feature_index": 16,
+      "feature_id": "behavior-analytics",
+      "advertised_index": 3,
+      "advertised": "tripwires and ROIs",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.behavior-analytics.03-tripwires-and-rois",
+        "feature_id": "behavior-analytics",
+        "kind": "runtime_behavior",
+        "title": "tripwires and ROIs",
+        "source_claims": [
+          {
+            "source_id": "doc.behavior",
+            "locator": "Behavior Analytics Features — tripwire and ROI rules"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/16/advertised/3",
+          "advertised_literal": "tripwires and ROIs",
+          "implementation_surfaces": [
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/tripwire_event.py",
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/roi_event.py",
+            "services/analytics/behavior-analytics/docs/configuration.md"
+          ],
+          "required_semantics": [
+            "Emit a tripwire event only for a configured directional crossing.",
+            "Emit ROI enter/exit or dwell behavior using the configured polygon and correct object/time identity."
+          ],
+          "dependency_capability_ids": [
+            "runtime.behavior.events-incidents",
+            "runtime.behavior.pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "industry-profile-workflows"
+        ],
+        "gap": "Rules are source-visible, but exact boundary-direction and adjacent-negative semantics lack runtime evidence."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use custom image-coordinate trajectories that cross one tripwire and enter/exit one ROI.",
+        "required_observations": [
+          "Observe the expected directional tripwire event.",
+          "Observe correct ROI transition/dwell semantics and correlated object identity."
+        ],
+        "adjacent_negative": [
+          "Run a trajectory parallel to the tripwire and outside the ROI; require no rule event."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned broker topics, dynamic configuration records, calibration records, and analytics outputs; restore captured configuration and preserve non-owned incidents."
+      }
+    },
+    {
+      "manifest_pointer": "/features/16/advertised/4",
+      "feature_index": 16,
+      "feature_id": "behavior-analytics",
+      "advertised_index": 4,
+      "advertised": "proximity and clustering",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.behavior-analytics.04-proximity-and-clustering",
+        "feature_id": "behavior-analytics",
+        "kind": "runtime_behavior",
+        "title": "proximity and clustering",
+        "source_claims": [
+          {
+            "source_id": "doc.behavior",
+            "locator": "Proximity and clustering analytics"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/16/advertised/4",
+          "advertised_literal": "proximity and clustering",
+          "implementation_surfaces": [
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/detection/proximity_detection.py",
+            "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+            "services/analytics/behavior-analytics/configs/smart_city_config.json"
+          ],
+          "required_semantics": [
+            "Compute proximity relationships from calibrated locations using the configured threshold.",
+            "Form and dissolve clusters deterministically as objects approach and separate."
+          ],
+          "dependency_capability_ids": [
+            "runtime.behavior.pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "industry-profile-workflows"
+        ],
+        "gap": "No exact threshold-bound runtime oracle currently covers both proximity and clustering."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Publish three synthetic calibrated object trajectories with known pairwise distances around the configured threshold.",
+        "required_observations": [
+          "Observe expected proximity pairs with object identities and distances.",
+          "Observe cluster membership transitions at the expected timestamps."
+        ],
+        "adjacent_negative": [
+          "Place all objects just outside threshold and require no proximity or cluster output."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned broker topics, dynamic configuration records, calibration records, and analytics outputs; restore captured configuration and preserve non-owned incidents."
+      }
+    },
+    {
+      "manifest_pointer": "/features/16/advertised/5",
+      "feature_index": 16,
+      "feature_id": "behavior-analytics",
+      "advertised_index": 5,
+      "advertised": "Kafka/Redis/MQTT dynamic configuration and calibration",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration",
+        "feature_id": "behavior-analytics",
+        "kind": "configuration",
+        "title": "Kafka/Redis/MQTT dynamic configuration and calibration",
+        "source_claims": [
+          {
+            "source_id": "doc.behavior",
+            "locator": "Dynamic configuration, broker inputs, and calibration updates"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/16/advertised/5",
+          "advertised_literal": "Kafka/Redis/MQTT dynamic configuration and calibration",
+          "implementation_surfaces": [
+            "services/analytics/behavior-analytics/docs/dynamic-config.md",
+            "services/analytics/behavior-analytics/docs/dynamic-calibration.md"
+          ],
+          "required_semantics": [
+            "Accept schema-valid namespaced configuration and calibration updates through each advertised Kafka, Redis, and MQTT path.",
+            "Apply revisions atomically to subsequent frames while retaining auditable prior/new version identity."
+          ],
+          "dependency_capability_ids": [
+            "configuration.behavior.dynamic-update",
+            "calibration.behavior.dynamic",
+            "protocol.behavior.broker-sinks",
+            "runtime.behavior.pipeline"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "industry-profile-workflows"
+        ],
+        "gap": "Individual broker/config contracts exist, but three-broker atomic update and calibration semantics remain unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Publish equivalent namespaced configuration/calibration revisions through local Kafka, Redis, and MQTT one at a time.",
+        "required_observations": [
+          "Observe acknowledged revision identity and effective configuration for each broker.",
+          "Observe behavior output changing only after the intended revision boundary."
+        ],
+        "adjacent_negative": [
+          "Publish a stale or schema-invalid revision and require rejection without changing effective state."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-owned broker topics, dynamic configuration records, calibration records, and analytics outputs; restore captured configuration and preserve non-owned incidents."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/0",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 0,
+      "advertised": "speed/flow/travel time/occupancy/space metrics",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.00-speed-flow-travel-time-occupancy-space-metrics",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "speed/flow/travel time/occupancy/space metrics",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Metrics API and library namespaces — speed, flow, travel time, occupancy, space"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/0",
+          "advertised_literal": "speed/flow/travel time/occupancy/space metrics",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/metrics.js",
+            "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+          ],
+          "required_semantics": [
+            "Return each advertised metric type for a bounded sensor/time query with correct units and aggregation window.",
+            "Keep speed, flow, travel-time, occupancy, and space-utilization values correlated to the seeded custom records."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "The API operation matrix is static-only; exact seeded metric semantics are not runtime-qualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Seed a namespaced minimal analytics dataset with hand-computable metric values and query each metric endpoint.",
+        "required_observations": [
+          "Observe schema-valid values, units, sensor identity, and time bounds for every metric group.",
+          "Recompute returned aggregates from seeded records and require exact/tolerance-bounded agreement."
+        ],
+        "adjacent_negative": [
+          "Query an empty adjacent interval and require an empty/zero documented result rather than reused data."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/1",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 1,
+      "advertised": "objects and locations",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.01-objects-and-locations",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "objects and locations",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Object and location query APIs"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/1",
+          "advertised_literal": "objects and locations",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/tracker.js",
+            "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+          ],
+          "required_semantics": [
+            "Return the requested tracked objects with sensor/time filters applied.",
+            "Return their associated location histories in order without crossing object or sensor identity."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "OpenAPI coverage exists, but filter and identity semantics for objects/locations lack runtime evidence."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Seed two namespaced objects on different sensors with distinct ordered locations.",
+        "required_observations": [
+          "Observe only filter-matching objects and complete identity fields.",
+          "Observe ordered location coordinates/timestamps correlated to each object."
+        ],
+        "adjacent_negative": [
+          "Query an unknown object and require documented empty/not-found behavior without leaking another object's locations."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/2",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 2,
+      "advertised": "frames/BEV/alerts/proximity",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.02-frames-bev-alerts-proximity",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "frames/BEV/alerts/proximity",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Frame, BEV, alert, and proximity query APIs"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/2",
+          "advertised_literal": "frames/BEV/alerts/proximity",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/frames.js",
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/alerts.js"
+          ],
+          "required_semantics": [
+            "Return frame and BEV records for the exact sensor/time window.",
+            "Return correlated alert and proximity records whose source frame/object identities resolve within the same dataset."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "Static routes do not prove runtime cross-resource correlation for this four-surface literal."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Seed one namespaced frame/BEV record with one linked alert and proximity relationship.",
+        "required_observations": [
+          "Observe schema-valid frame and BEV representations.",
+          "Observe alert/proximity links resolving to the seeded frame and object identities."
+        ],
+        "adjacent_negative": [
+          "Break one foreign-key identity in a rejected seed attempt and require no orphan query result."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/3",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 3,
+      "advertised": "behaviors/incidents/clustering",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.03-behaviors-incidents-clustering",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "behaviors/incidents/clustering",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Behavior, incident, and clustering query APIs"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/3",
+          "advertised_literal": "behaviors/incidents/clustering",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/behavior.js",
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/incidents.js"
+          ],
+          "required_semantics": [
+            "Return behavior and incident records with documented filters and pagination.",
+            "Return cluster membership that resolves to the same objects/time interval and does not duplicate members."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "Routes are inventoried, but behavior/incident/cluster correlation and pagination remain unqualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Seed a namespaced behavior sequence, derived incident, and two-member cluster.",
+        "required_observations": [
+          "Observe correct filtered behavior/incident pagination and identities.",
+          "Observe unique cluster membership and temporal correlation to the incident."
+        ],
+        "adjacent_negative": [
+          "Request an invalid pagination cursor and require typed rejection without partial results."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/4",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 4,
+      "advertised": "tripwire/ROI/AMR events",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.04-tripwire-roi-amr-events",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "tripwire/ROI/AMR events",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Event APIs — tripwire, ROI, and AMR categories"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/4",
+          "advertised_literal": "tripwire/ROI/AMR events",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/events.js",
+            "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+          ],
+          "required_semantics": [
+            "Return each advertised tripwire, ROI, and AMR event category without collapsing their schemas.",
+            "Apply sensor, category, and time filters exactly and retain source object/frame identities."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "OpenAPI presence does not yet prove category-specific event results and filter isolation."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Seed one namespaced event of each category with disjoint timestamps and identities.",
+        "required_observations": [
+          "Observe category-specific fields and exact filter results for all three types.",
+          "Observe source identities and time bounds matching seeded records."
+        ],
+        "adjacent_negative": [
+          "Query a category outside the allowed enum and require typed validation failure."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/5",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 5,
+      "advertised": "dynamic config and audit",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.05-dynamic-config-and-audit",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "dynamic config and audit",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Dynamic configuration and audit APIs"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/5",
+          "advertised_literal": "dynamic config and audit",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/config.js",
+            "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+          ],
+          "required_semantics": [
+            "Apply a namespaced valid dynamic configuration revision atomically.",
+            "Return an audit record containing actor, timestamp, old/new revision identity, and outcome while preserving pre-existing configuration."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "configuration.video-analytics.bootstrap",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "Configuration routes exist, but atomic revision, audit completeness, and restore behavior lack runtime evidence."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Create, read, update, and restore one candidate-owned configuration key through documented local endpoints.",
+        "required_observations": [
+          "Observe effective value and monotonic revision after update.",
+          "Observe complete audit record and restored pre-state after cleanup."
+        ],
+        "adjacent_negative": [
+          "Submit a stale revision or invalid schema and require rejection plus an unchanged effective config."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/6",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 6,
+      "advertised": "calibration/road network/USD/images",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.06-calibration-road-network-usd-images",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "calibration/road network/USD/images",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Calibration and spatial asset APIs — road network, USD, and images"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/6",
+          "advertised_literal": "calibration/road network/USD/images",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/specification/openapi.json",
+            "services/analytics/video-analytics-api/src/app/initializers/routes.js"
+          ],
+          "required_semantics": [
+            "Store and retrieve each advertised calibration, road-network, USD, and image asset type with exact sensor/project ownership.",
+            "Preserve content type and byte or semantic identity according to the documented representation."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "The operation matrix does not yet prove multi-asset content identity and ownership semantics at runtime."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use tiny candidate-owned calibration JSON, road graph, minimal USD text, and PNG fixtures with recorded digests.",
+        "required_observations": [
+          "Observe schema-valid retrieval and correct ownership for all asset types.",
+          "Observe byte identity for opaque assets and canonical semantic identity for JSON."
+        ],
+        "adjacent_negative": [
+          "Upload a mismatched content type or invalid calibration schema and require rejection without a partial asset."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/17/advertised/7",
+      "feature_index": 17,
+      "feature_id": "video-analytics-api",
+      "advertised_index": 7,
+      "advertised": "sensor lookup",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.video-analytics-api.07-sensor-lookup",
+        "feature_id": "video-analytics-api",
+        "kind": "api",
+        "title": "sensor lookup",
+        "source_claims": [
+          {
+            "source_id": "doc.va-api",
+            "locator": "Sensor lookup API"
+          }
+        ],
+        "acceptance_class": "required_local",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/17/advertised/7",
+          "advertised_literal": "sensor lookup",
+          "implementation_surfaces": [
+            "services/analytics/video-analytics-api/src/app/controllers/rest-apis/sensor.js",
+            "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+          ],
+          "required_semantics": [
+            "Resolve a known sensor by documented identifier and return its metadata.",
+            "Apply lookup filters without returning sensors outside the candidate namespace."
+          ],
+          "dependency_capability_ids": [
+            "api.core.video-analytics-56",
+            "runtime.video-analytics.query-and-library-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "analytics-vios-workflows",
+          "rest-api-operation-matrix"
+        ],
+        "gap": "Sensor routes are static-verified, but exact lookup/filter behavior lacks current runtime evidence."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Seed two namespaced sensors with distinct IDs/types/locations and query by ID plus supported filters.",
+        "required_observations": [
+          "Observe the exact known sensor record and stable metadata.",
+          "Observe filtered lists containing only matching candidate sensors."
+        ],
+        "adjacent_negative": [
+          "Lookup an unknown sensor ID and require documented empty/not-found behavior."
+        ],
+        "execution_boundary": "local",
+        "cleanup_boundary": "Delete only candidate-created API records and indices through documented endpoints; restore captured configuration and preserve all pre-existing analytics data."
+      }
+    },
+    {
+      "manifest_pointer": "/features/18/advertised/0",
+      "feature_index": 18,
+      "feature_id": "auto-calibration",
+      "advertised_index": 0,
+      "advertised": "single and multi-camera calibration",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.auto-calibration.00-single-and-multi-camera-calibration",
+        "feature_id": "auto-calibration",
+        "kind": "calibration",
+        "title": "single and multi-camera calibration",
+        "source_claims": [
+          {
+            "source_id": "autocalib-overview-doc-3.2.1",
+            "locator": "Key Features and Workflow — single-camera and multi-camera calibration"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/18/advertised/0",
+          "advertised_literal": "single and multi-camera calibration",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/auto-calibration/tool.py",
+            "deploy/docker/thor-local/auto-calibration/compose.yml"
+          ],
+          "required_semantics": [
+            "Complete the documented calibration workflow for one custom camera and for a synchronized custom multi-camera set.",
+            "Return finite camera parameters and distinguish single-camera results from cross-camera alignment outputs."
+          ],
+          "dependency_capability_ids": [
+            "calibration.auto.workflow-six-step",
+            "calibration.auto.input-contract"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "auto-calibration-workflows"
+        ],
+        "gap": "Workflow tooling exists, but neither single- nor multi-camera runtime calibration is currently qualified on Thor."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use tiny operator-owned synchronized custom videos with visible calibration geometry; run separate single- and multi-camera projects.",
+        "required_observations": [
+          "Observe successful project state progression and finite per-camera parameters.",
+          "Observe multi-camera alignment outputs with all input camera identities and bounded reprojection checks."
+        ],
+        "adjacent_negative": [
+          "Remove synchronization or a required camera from the multi-camera project and require validation failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-created projects, uploaded custom clips, jobs, and exports; preserve operator originals and exclude every Warehouse sample-bundle path."
+      }
+    },
+    {
+      "manifest_pointer": "/features/18/advertised/1",
+      "feature_index": 18,
+      "feature_id": "auto-calibration",
+      "advertised_index": 1,
+      "advertised": "file and RTSP through VIOS",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.auto-calibration.01-file-and-rtsp-through-vios",
+        "feature_id": "auto-calibration",
+        "kind": "calibration",
+        "title": "file and RTSP through VIOS",
+        "source_claims": [
+          {
+            "source_id": "autocalib-overview-doc-3.2.1",
+            "locator": "Video Configuration — file and VIOS-backed RTSP inputs"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/18/advertised/1",
+          "advertised_literal": "file and RTSP through VIOS",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/auto-calibration/tool.py",
+            "deploy/docker/scripts/thor-auto-calibration.sh"
+          ],
+          "required_semantics": [
+            "Configure calibration from an operator-owned local file and from a loopback RTSP sensor exposed through VIOS.",
+            "Preserve source/sensor identity and select equivalent bounded frames from identical media content."
+          ],
+          "dependency_capability_ids": [
+            "calibration.auto.input-contract",
+            "api.auto-calibration.operations"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "auto-calibration-workflows"
+        ],
+        "gap": "File/RTSP controls are static-covered, but VIOS-backed runtime ingestion and equivalence are unproven."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Serve the same tiny custom clip as a local MP4 and loopback RTSP/VIOS sensor, then create separate calibration projects.",
+        "required_observations": [
+          "Observe accepted source configuration and exact media/sensor identity for both modes.",
+          "Observe equivalent selected-frame timestamps/content digests within streaming tolerance."
+        ],
+        "adjacent_negative": [
+          "Use an unknown VIOS sensor and require a bounded explicit source-resolution failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-created projects, uploaded custom clips, jobs, and exports; preserve operator originals and exclude every Warehouse sample-bundle path."
+      }
+    },
+    {
+      "manifest_pointer": "/features/18/advertised/2",
+      "feature_index": 18,
+      "feature_id": "auto-calibration",
+      "advertised_index": 2,
+      "advertised": "camera pose/focal/lens distortion/rectification",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.auto-calibration.02-camera-pose-focal-lens-distortion-rectification",
+        "feature_id": "auto-calibration",
+        "kind": "calibration",
+        "title": "camera pose/focal/lens distortion/rectification",
+        "source_claims": [
+          {
+            "source_id": "autocalib-overview-doc-3.2.1",
+            "locator": "Calibration outputs — pose, focal length, lens distortion, and rectification"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/18/advertised/2",
+          "advertised_literal": "camera pose/focal/lens distortion/rectification",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/auto-calibration/tool.py",
+            "deploy/docker/thor-local/auto-calibration/tests/test_tool.py"
+          ],
+          "required_semantics": [
+            "Return finite camera pose and focal parameters in the documented coordinate/units contract.",
+            "Return lens-distortion coefficients and rectification transforms that pass schema and bounded reprojection validation."
+          ],
+          "dependency_capability_ids": [
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.result-verification"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "auto-calibration-workflows"
+        ],
+        "gap": "Output schemas are planned, but exact numerical result verification has not run."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Calibrate a tiny custom camera fixture with known geometry and independently computable reprojection landmarks.",
+        "required_observations": [
+          "Observe finite pose/focal/distortion/rectification fields with documented shapes.",
+          "Observe bounded reprojection error and rectified landmark consistency."
+        ],
+        "adjacent_negative": [
+          "Inject non-finite or wrong-shaped calibration output and require verification failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-created projects, uploaded custom clips, jobs, and exports; preserve operator originals and exclude every Warehouse sample-bundle path."
+      }
+    },
+    {
+      "manifest_pointer": "/features/18/advertised/3",
+      "feature_index": 18,
+      "feature_id": "auto-calibration",
+      "advertised_index": 3,
+      "advertised": "VGGT frame selection",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.auto-calibration.03-vggt-frame-selection",
+        "feature_id": "auto-calibration",
+        "kind": "calibration",
+        "title": "VGGT frame selection",
+        "source_claims": [
+          {
+            "source_id": "autocalib-overview-doc-3.2.1",
+            "locator": "VGGT calibration and frame-selection workflow"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/18/advertised/3",
+          "advertised_literal": "VGGT frame selection",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/auto-calibration/artifact-inventory.json",
+            "deploy/docker/thor-local/auto-calibration/tool.py"
+          ],
+          "required_semantics": [
+            "Use the exact admitted VGGT artifact to select ordered, sufficiently distinct frames from custom video.",
+            "Record selected frame identities/timestamps and feed them into the documented refinement workflow."
+          ],
+          "dependency_capability_ids": [
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.result-verification"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "auto-calibration-workflows"
+        ],
+        "gap": "VGGT is absent and optional for base AMC, so frame-selection refinement remains an unqualified alternate lane."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "After exact VGGT staging approval, use a tiny custom clip containing repeated and distinct viewpoints.",
+        "required_observations": [
+          "Record VGGT artifact identity and deterministic selected-frame list.",
+          "Observe distinct selected viewpoints and successful handoff to refinement."
+        ],
+        "adjacent_negative": [
+          "Provide a clip with insufficient distinct frames and require a bounded no-selection/insufficient-data outcome."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-created projects, uploaded custom clips, jobs, and exports; preserve operator originals and exclude every Warehouse sample-bundle path."
+      }
+    },
+    {
+      "manifest_pointer": "/features/18/advertised/4",
+      "feature_index": 18,
+      "feature_id": "auto-calibration",
+      "advertised_index": 4,
+      "advertised": "global ROI/tripwire",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.auto-calibration.04-global-roi-tripwire",
+        "feature_id": "auto-calibration",
+        "kind": "calibration",
+        "title": "global ROI/tripwire",
+        "source_claims": [
+          {
+            "source_id": "autocalib-overview-doc-3.2.1",
+            "locator": "Calibration outputs — global ROI and tripwire projection"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/18/advertised/4",
+          "advertised_literal": "global ROI/tripwire",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/auto-calibration/tool.py",
+            "deploy/docker/thor-local/auto-calibration/README.md"
+          ],
+          "required_semantics": [
+            "Project configured image-space ROI and tripwire geometry into a common global coordinate system.",
+            "Preserve polygon/line topology and camera ownership with finite coordinates across calibrated cameras."
+          ],
+          "dependency_capability_ids": [
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.result-verification"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "auto-calibration-workflows"
+        ],
+        "gap": "The tool surface exists, but global geometry projection and round-trip semantics lack runtime evidence."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Use custom per-camera ROI/tripwire annotations over a known planar calibration fixture.",
+        "required_observations": [
+          "Observe finite global geometry with correct camera/source identity.",
+          "Observe bounded round-trip projection error back into each source image."
+        ],
+        "adjacent_negative": [
+          "Submit a self-intersecting ROI or degenerate tripwire and require validation failure."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-created projects, uploaded custom clips, jobs, and exports; preserve operator originals and exclude every Warehouse sample-bundle path."
+      }
+    },
+    {
+      "manifest_pointer": "/features/18/advertised/5",
+      "feature_index": 18,
+      "feature_id": "auto-calibration",
+      "advertised_index": 5,
+      "advertised": "image-coordinate export",
+      "prior_mapping_class": "family_only_unreviewed",
+      "proposed_capability": {
+        "id": "manifest-entry.auto-calibration.05-image-coordinate-export",
+        "feature_id": "auto-calibration",
+        "kind": "calibration",
+        "title": "image-coordinate export",
+        "source_claims": [
+          {
+            "source_id": "autocalib-overview-doc-3.2.1",
+            "locator": "Results export — image-coordinate calibration representation"
+          }
+        ],
+        "acceptance_class": "alternate_local_lane",
+        "thor_state": "partial",
+        "runtime_state": "not_qualified",
+        "contract": {
+          "manifest_pointer": "/features/18/advertised/5",
+          "advertised_literal": "image-coordinate export",
+          "implementation_surfaces": [
+            "deploy/docker/thor-local/auto-calibration/tool.py",
+            "deploy/docker/thor-local/auto-calibration/tests/test_tool.py"
+          ],
+          "required_semantics": [
+            "Export completed calibration into the documented image-coordinate representation.",
+            "Preserve camera IDs, dimensions, coordinate convention, and finite transform values in the exported artifact."
+          ],
+          "dependency_capability_ids": [
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.result-verification"
+          ],
+          "warehouse_sample_bundle": "excluded"
+        },
+        "scenario_ids": [
+          "official-capability-contracts",
+          "auto-calibration-workflows"
+        ],
+        "gap": "Export operations are statically covered, but completed-project image-coordinate output is not runtime-qualified."
+      },
+      "oracle_plan": {
+        "fixture_strategy": "Run export against a candidate-owned completed custom calibration project with recorded result digest.",
+        "required_observations": [
+          "Observe schema-valid export and exact camera membership.",
+          "Observe coordinate round-trip checks and canonical export digest."
+        ],
+        "adjacent_negative": [
+          "Request export before project completion and require a typed not-ready response without an artifact."
+        ],
+        "execution_boundary": "alternate_local",
+        "cleanup_boundary": "Delete only candidate-created projects, uploaded custom clips, jobs, and exports; preserve operator originals and exclude every Warehouse sample-bundle path."
+      }
+    }
+  ]
+}

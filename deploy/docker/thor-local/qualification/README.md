@@ -298,6 +298,10 @@ in this directory:
   one fail-closed mapping class: 276 exact pre-existing capabilities, 13 exact
   canonical entry capabilities, 74 explicit gaps, or 137 family-only unreviewed
   entries. It keeps all 211 semantic blockers and all runtime evidence at zero;
+- `remaining-advertised-entry-candidates/` gives each of those 211 blockers a
+  source-bound exact-title capability and future-oracle candidate. Its in-memory
+  500-capability/500-exact-mapping projection satisfies the strict ledger
+  schema, but the package is candidate-only and neither merges nor promotes it;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite
