@@ -14,10 +14,14 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
+from jsonschema import Draft202012Validator
+from jsonschema.exceptions import SchemaError, ValidationError
+
 
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[4]
 DEFAULT_PLAN = HERE / "staging-plan.json"
+RESULT_SCHEMA = HERE / "result.schema.json"
 DEFAULT_HF_HUB = Path.home() / ".cache/huggingface/hub"
 DEFAULT_MEMINFO = Path("/proc/meminfo")
 DEFAULT_DISK_PATH = REPO_ROOT
@@ -88,6 +92,22 @@ def _expect(mapping: dict[str, Any], key: str, expected: Any, context: str) -> N
         raise ReadinessError(
             f"{context}.{key} is {mapping.get(key)!r}; expected {expected!r}"
         )
+
+
+def validate_result(result: dict[str, Any]) -> None:
+    """Fail closed unless a report satisfies the checked-in result schema."""
+
+    schema = _load_json(RESULT_SCHEMA)
+    try:
+        Draft202012Validator.check_schema(schema)
+        Draft202012Validator(schema).validate(result)
+    except SchemaError as exc:
+        raise ReadinessError(f"checked-in result schema is invalid: {exc.message}") from exc
+    except ValidationError as exc:
+        location = ".".join(str(part) for part in exc.absolute_path) or "<root>"
+        raise ReadinessError(
+            f"result schema validation failed at {location}: {exc.message}"
+        ) from exc
 
 
 def validate_plan(plan: dict[str, Any]) -> None:
@@ -1069,6 +1089,7 @@ def main(argv: list[str] | None = None) -> int:
                 meminfo=args.meminfo,
                 disk_path=args.disk_path,
             )
+        validate_result(result)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     except ReadinessError as exc:

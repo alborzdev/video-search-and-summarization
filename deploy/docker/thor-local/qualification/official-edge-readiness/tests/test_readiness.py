@@ -38,6 +38,40 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(payload["qualification_state"], "plan_only")
         self.assertFalse(payload["runtime_qualification_performed"])
 
+    def test_main_rejects_fabricated_invalid_result_before_printing(self) -> None:
+        output = io.StringIO()
+        errors = io.StringIO()
+        fabricated = rd.build_plan_result(rd._load_json(rd.DEFAULT_PLAN))
+        fabricated["runtime_qualification_performed"] = True
+        with (
+            mock.patch.object(rd, "build_plan_result", return_value=fabricated),
+            redirect_stdout(output),
+            redirect_stderr(errors),
+        ):
+            result = rd.main(["plan"])
+        self.assertEqual(result, 1)
+        self.assertEqual(output.getvalue(), "")
+        self.assertIn("result schema validation failed", errors.getvalue())
+
+    def test_main_fails_closed_when_checked_in_result_schema_is_invalid(self) -> None:
+        output = io.StringIO()
+        errors = io.StringIO()
+        with tempfile.TemporaryDirectory() as temporary:
+            invalid_schema = Path(temporary) / "result.schema.json"
+            invalid_schema.write_text(
+                json.dumps({"type": "not-a-valid-json-schema-type"}),
+                encoding="utf-8",
+            )
+            with (
+                mock.patch.object(rd, "RESULT_SCHEMA", invalid_schema),
+                redirect_stdout(output),
+                redirect_stderr(errors),
+            ):
+                result = rd.main(["plan"])
+        self.assertEqual(result, 1)
+        self.assertEqual(output.getvalue(), "")
+        self.assertIn("checked-in result schema is invalid", errors.getvalue())
+
     def test_plan_cannot_replace_official_images_or_lower_memory_gate(self) -> None:
         plan = rd._load_json(rd.DEFAULT_PLAN)
         mutations = (

@@ -37,7 +37,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/readiness.py",
-      "sha256": "a9609cfd57757f5a682a64a280021b70581cae0222650a45a127e21a9ef303fc"
+      "sha256": "867b16580472e1f9f88de40defb3d5b2658075a07565cf9bfb19e09f55b127a4"
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",

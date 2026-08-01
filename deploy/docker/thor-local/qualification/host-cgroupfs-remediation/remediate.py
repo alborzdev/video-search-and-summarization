@@ -1167,11 +1167,13 @@ class SystemRuntime:
             return ()
         if any(not CONTAINER_ID.fullmatch(item) for item in ids):
             raise RemediationError("container_inventory_invalid")
+        # Serialize State as one JSON value. Docker 29 evaluates a missing map
+        # key as a template error, so accessing ``.State.Health`` directly fails
+        # for containers without a HEALTHCHECK. Keep HostConfig field-specific
+        # so unrelated bind, logging, and runtime configuration is never read.
         template = (
-            "{{json .Id}} {{json .Name}} {{json .State.Status}} {{json .State.Running}} "
-            "{{json .State.Paused}} {{json .State.Restarting}} {{json .State.Dead}} "
-            "{{json .HostConfig.RestartPolicy.Name}} {{json .HostConfig.AutoRemove}} "
-            "{{json .State.StartedAt}} {{if .State.Health}}{{json .State.Health.Status}}{{else}}null{{end}}"
+            "{{json .Id}} {{json .Name}} {{json .State}} "
+            "{{json .HostConfig.RestartPolicy.Name}} {{json .HostConfig.AutoRemove}}"
         )
         lines = self._docker_text("container", "inspect", "--format", template, *ids)
         result: list[ContainerState] = []
@@ -1184,21 +1186,51 @@ class SystemRuntime:
                     index += 1
                 value, index = decoder.raw_decode(line, index)
                 values.append(value)
-            if len(values) != 11:
+            if len(values) != 5:
+                raise RemediationError("container_inspect_invalid")
+            state = values[2]
+            if not isinstance(state, dict):
+                raise RemediationError("container_inspect_invalid")
+            health_record = state.get("Health")
+            health = (
+                health_record.get("Status") if isinstance(health_record, dict) else None
+            )
+            required = (
+                values[0],
+                values[1],
+                state.get("Status"),
+                state.get("Running"),
+                state.get("Paused"),
+                state.get("Restarting"),
+                state.get("Dead"),
+                values[3],
+                values[4],
+                state.get("StartedAt"),
+            )
+            if (
+                not all(
+                    isinstance(item, str)
+                    for item in (*required[:3], required[7], required[9])
+                )
+                or not all(
+                    isinstance(item, bool) for item in (*required[3:7], required[8])
+                )
+                or (health is not None and not isinstance(health, str))
+            ):
                 raise RemediationError("container_inspect_invalid")
             result.append(
                 ContainerState(
-                    id=values[0],
-                    name=str(values[1]).removeprefix("/"),
-                    status=values[2],
-                    running=values[3],
-                    paused=values[4],
-                    restarting=values[5],
-                    dead=values[6],
-                    restart_policy=values[7],
-                    auto_remove=values[8],
-                    started_at=values[9],
-                    health=values[10],
+                    id=required[0],
+                    name=required[1].removeprefix("/"),
+                    status=required[2],
+                    running=required[3],
+                    paused=required[4],
+                    restarting=required[5],
+                    dead=required[6],
+                    restart_policy=required[7],
+                    auto_remove=required[8],
+                    started_at=required[9],
+                    health=health,
                 )
             )
         return tuple(sorted(result, key=lambda item: item.id))
@@ -1242,9 +1274,11 @@ class SystemRuntime:
             input_bytes=candidate,
             check=False,
         )
-        validated = (
-            validation.returncode == 0 and b"configuration OK" in validation.stdout
-        )
+        # Docker 29 writes its successful ``configuration OK`` message to
+        # stderr, while earlier releases wrote it to stdout.  The documented
+        # command contract is the exit status, so do not bind admission to a
+        # version-specific output stream.
+        validated = validation.returncode == 0
         blockers = admission_blockers(snapshot)
         if not validated:
             blockers.append("dockerd_candidate_validation_failed")

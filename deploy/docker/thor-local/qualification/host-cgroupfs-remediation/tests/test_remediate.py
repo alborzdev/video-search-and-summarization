@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 import signal
+import subprocess
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -370,6 +371,67 @@ def test_inspect_reports_hashes_not_config_values() -> None:
     assert value["containers"]["running_before_count"] == 2
     validate_schema(value)
     remediate.validate_evidence(value)
+
+
+def test_system_runtime_container_inventory_accepts_missing_healthcheck() -> None:
+    class StubRuntime(remediate.SystemRuntime):
+        def __init__(self) -> None:
+            super().__init__()
+            self.calls: list[tuple[str, ...]] = []
+
+        def _docker_text(self, *args: str) -> str:
+            self.calls.append(args)
+            if args[:4] == ("container", "ls", "-aq", "--no-trunc"):
+                return cid("a")
+            assert args[:3] == ("container", "inspect", "--format")
+            assert ".State.Health" not in args[3]
+            assert "{{json .HostConfig}}" not in args[3]
+            return " ".join(
+                json.dumps(value)
+                for value in (
+                    cid("a"),
+                    "/no-healthcheck",
+                    {
+                        "Status": "running",
+                        "Running": True,
+                        "Paused": False,
+                        "Restarting": False,
+                        "Dead": False,
+                        "StartedAt": "2026-01-01T00:00:00Z",
+                    },
+                    "unless-stopped",
+                    False,
+                )
+            )
+
+    runtime = StubRuntime()
+    inventory = runtime._containers()
+    assert len(inventory) == 1
+    assert inventory[0].name == "no-healthcheck"
+    assert inventory[0].health is None
+
+
+def test_system_runtime_accepts_dockerd_success_message_on_stderr() -> None:
+    class StderrValidationRuntime(remediate.SystemRuntime):
+        def snapshot(self) -> remediate.HostSnapshot:
+            return snapshot()
+
+        def _run(self, argv, **kwargs):
+            assert argv == (
+                remediate.DOCKERD,
+                "--validate",
+                "--config-file=/dev/stdin",
+            )
+            return subprocess.CompletedProcess(
+                argv,
+                0,
+                stdout=b"",
+                stderr=b"configuration OK\n",
+            )
+
+    inspection = StderrValidationRuntime().inspect()
+    assert inspection.candidate_validated is True
+    assert "dockerd_candidate_validation_failed" not in inspection.blockers
 
 
 def test_unvalidated_candidate_is_never_ready_or_executed() -> None:
