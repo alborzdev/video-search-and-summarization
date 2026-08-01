@@ -301,12 +301,25 @@ class OfficialCapabilityTests(unittest.TestCase):
             if item["id"] == "api.core.lvs-mcp-doc-13-repo-9"
         )
         self.assertEqual(capability["contract"]["docs_tool_count"], 13)
-        self.assertEqual(capability["contract"]["repository_tool_count"], 9)
+        self.assertEqual(capability["contract"]["upstream_repository_tool_count"], 9)
+        self.assertEqual(capability["contract"]["repository_tool_count"], 13)
         self.assertEqual(
-            capability["contract"]["docs_only_tools"],
+            capability["contract"]["upstream_missing_tools"],
             ["add_file", "list_files", "get_file_info", "delete_file"],
         )
-        self.assertEqual(capability["thor_state"], "blocked_upstream")
+        self.assertEqual(
+            capability["contract"]["thor_local_adapter_tools"],
+            ["add_file", "list_files", "get_file_info", "delete_file"],
+        )
+        self.assertEqual(capability["thor_state"], "wired")
+        self.assertEqual(capability["runtime_state"], "static_only")
+        discrepancy = next(
+            item
+            for item in self.ledger["source_discrepancies"]
+            if item["id"] == "lvs-mcp-doc-13-vs-repository-9"
+        )
+        self.assertIn("pinned upstream repository", discrepancy["resolution"])
+        self.assertIn("passed a live file lifecycle", discrepancy["must_not_claim"])
 
     def test_thor_support_boundary_does_not_claim_official_all_local(self) -> None:
         custom = next(

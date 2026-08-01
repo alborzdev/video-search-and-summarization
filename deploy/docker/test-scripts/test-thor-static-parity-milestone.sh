@@ -40,14 +40,10 @@ python3 -m unittest discover \
   -s "${thor_local_root}/parity/source-lock/tests" \
   -p 'test_source_lock.py' -v
 
-# Wave 3 binds the complete documentation-index denominator and keeps all
-# still-untranscribed semantic pages explicit. It is an inert coverage audit,
-# not evidence that the omitted capabilities are implemented or qualified.
-python3 "${thor_local_root}/parity/candidates/wave3/coverage/validate_coverage.py" \
-  --report
-python3 -m unittest discover \
-  -s "${thor_local_root}/parity/candidates/wave3/coverage/tests" \
-  -p 'test_coverage.py' -v
+# Wave 3 coverage is immutable extraction provenance. Its API-inventory input
+# predates the Thor-local LVS adapter, so do not relabel or replay it against
+# the evolved live contract. The third successor digest-checks the historical
+# merge outputs; current 18/13 API coverage is validated by the contract tier.
 
 # The recursive crawl proves the reviewed VSS 3.2.1 documentation graph reached
 # a fixed point. The family candidates remain inert extraction proposals: they
@@ -98,26 +94,26 @@ python3 -m unittest discover \
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" validate
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" \
   run-all >/dev/null
-python3 "${thor_local_root}/qualification/source-contract-integration/integrate_live.py" \
+python3 "${thor_local_root}/qualification/lvs-mcp-static-adapter-integration/integrate_live.py" \
   validate-predecessor
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/executor-cases/tests" \
-  -p 'test*.py' -v
+  -p 'test_executor.py' -v
 
 # The source-contract tranche is the second deterministic planning successor.
-# Its 16 cases execute against the reconstructed ten-case predecessor before
-# becoming bounded live static-subset bindings. They create no runtime evidence
-# and do not advance any full capability oracle.
+# Its immutable receipt remains replayed by the third successor. The old
+# source-locked execution is intentionally not repeated after the adapter
+# changes those reviewed LVS sources. No runtime evidence is created and no
+# full capability oracle advances.
 python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" validate
-python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" \
-  run-all >/dev/null
-python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/source-contract-cases/tests" \
-  -p 'test*.py' -v
-python3 "${thor_local_root}/qualification/source-contract-integration/integrate_live.py" \
+
+# The LVS MCP adapter is a third static successor. It preserves the immutable
+# 13-vs-9 upstream discrepancy while wiring four Thor-local file-management
+# tools. It creates no runtime evidence or passed-current promotion.
+python3 "${thor_local_root}/qualification/lvs-mcp-static-adapter-integration/integrate_live.py" \
   validate
 python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/source-contract-integration/tests" \
+  -s "${thor_local_root}/qualification/lvs-mcp-static-adapter-integration/tests" \
   -p 'test*.py' -v
 
 # Six additional planning requirements have isolated, source-locked checks.

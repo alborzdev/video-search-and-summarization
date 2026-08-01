@@ -33,11 +33,11 @@ SOURCE_PATHS = {
     "oracle_schema": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
 }
 SOURCE_SHA256 = {
-    "advertised_gap_plan": "e57f5fca4cc14b4b37a059823b23a191036ecfda1374791d6f9afde27047b4ec",
+    "advertised_gap_plan": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
     "advertised_gap_rules": "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314",
-    "manifest": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
-    "ledger": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
-    "oracles": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb",
+    "manifest": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
+    "ledger": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
+    "oracles": "dbc646a068cfb365a010640774e1ae0dff97f8fe11257dfa9e285f17955403e8",
     "oracle_schema": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498",
 }
 EXPECTED_DENOMINATORS = {

@@ -28,7 +28,7 @@ ORACLES = PARITY_DIR / "capability-oracles.json"
 ACCEPTANCE = QUALIFICATION_DIR / "acceptance_inventory.json"
 RECEIPT = SCRIPT_DIR / "merge-receipt.json"
 EXECUTOR_SUCCESSOR = (
-    QUALIFICATION_DIR / "source-contract-integration/integrate_live.py"
+    QUALIFICATION_DIR / "lvs-mcp-static-adapter-integration/integrate_live.py"
 )
 BASELINE_DIR = SCRIPT_DIR / "baseline"
 PLAN = SCRIPT_DIR / "merge-plan.json"

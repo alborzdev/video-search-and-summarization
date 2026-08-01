@@ -12,6 +12,9 @@ in this directory:
 - `source-contract-integration/` replays the immutable ten-case receipt and
   executes the next sixteen cases against that reconstructed state before
   binding them into live planning acceptance;
+- `lvs-mcp-static-adapter-integration/` is the third static successor. It
+  preserves the pinned upstream 13-versus-9 discrepancy while recording the
+  four Thor-local file-management adapters, with zero runtime evidence;
 - `advertised-entry-executors/` gives 8 of the 87 literal advertised-entry
   gaps bounded, source-locked candidate observations while leaving live state
   and the other 79 entries untouched;
@@ -69,10 +72,12 @@ The optional NVIDIA Warehouse sample bundle is excluded throughout. Small
 operator-owned custom media and calibration remain valid inputs for the
 Warehouse capability lanes.
 
-The two deterministic static successors currently materialize 26 of 110
+The first two deterministic static successors currently materialize 26 of 110
 planning requirements. All 276 full capability oracles remain
 `planning_index_only`; the 26 bindings are static subsets only, with zero
-runtime evidence and zero `passed_current` promotions. The separate 8 + 21 +
+runtime evidence and zero `passed_current` promotions. The third successor
+updates only the LVS adapter's static API contract and does not materialize an
+additional planning requirement. The separate 8 + 21 +
 23 advertised-entry candidates and 6 + 6 additional planning checks are
 non-advancing and do not change those live counts. They leave 35
 advertised entries without a candidate source executor and 72 planning

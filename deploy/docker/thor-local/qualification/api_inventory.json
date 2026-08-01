@@ -22,9 +22,9 @@
     "secret_inputs": []
   },
   "expected_totals": {
-    "declared_rest_operations": 326,
-    "normalized_unique_rest_operations": 325,
-    "mcp_tools": 38,
+    "declared_rest_operations": 327,
+    "normalized_unique_rest_operations": 326,
+    "mcp_tools": 42,
     "mcp_prompts": 5
   },
   "known_contract_differences": {
@@ -38,6 +38,10 @@
         [
           "GET",
           "/files"
+        ],
+        [
+          "GET",
+          "/files/{file_id}"
         ],
         [
           "POST",
@@ -184,7 +188,7 @@
       "kind": "rest",
       "extractor": "python_routes",
       "expected_manifest": "lvs.json",
-      "expected_operation_count": 17,
+      "expected_operation_count": 18,
       "substitutions": {
         "API_PREFIX": ""
       },
@@ -430,7 +434,7 @@
       "kind": "mcp",
       "extractor": "lvs_mcp",
       "expected_manifest": "lvs-mcp.json",
-      "expected_tool_count": 9,
+      "expected_tool_count": 13,
       "expected_prompt_count": 0,
       "direct": {
         "port_env": "LVS_MCP_PORT",

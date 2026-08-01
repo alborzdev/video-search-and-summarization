@@ -149,7 +149,7 @@
       ],
       "thor_state": "partial",
       "runtime_state": "not_qualified",
-      "gap": "All 17 LVS HTTP routes and nine SSE MCP tools are statically qualified, and MCP health tools now probe real LVS readiness/liveness. Exercise every tool and the separate dense-caption cache/embedding lanes at runtime."
+      "gap": "All 18 LVS HTTP routes and 13 SSE MCP tools, including the four Thor-local file-management adapters, are statically qualified. MCP health tools probe real LVS readiness/liveness, but every tool and the separate dense-caption cache/embedding lanes still require runtime exercise."
     },
     {
       "id": "semantic-search",
@@ -1026,7 +1026,7 @@
       ],
       "thor_state": "wired",
       "runtime_state": "not_qualified",
-      "gap": "The scoped core ledger passes 326 declared REST operations (325 normalized routes) plus all 38 tools and five prompts across 17 surfaces. It is not the complete product API: configuration and calibration surfaces are tracked separately by extended-api-surfaces. The GET-only loopback tier defines 32 probes across 22 services; the stopped unified stack still needs every inventoried route, tool, prompt, and VIOS-backed path exercised."
+      "gap": "The scoped core ledger passes 327 declared REST operations (326 normalized routes) plus all 42 tools and five prompts across 17 surfaces. It is not the complete product API: configuration and calibration surfaces are tracked separately by extended-api-surfaces. The GET-only loopback tier defines 32 probes across 22 services; the stopped unified stack still needs every inventoried route, tool, prompt, and VIOS-backed path exercised."
     },
     {
       "id": "infra-observability",
@@ -1945,8 +1945,8 @@
         "deploy/docker/thor-local/parity/official-capabilities.json"
       ],
       "thor_state": "partial",
-      "runtime_state": "not_qualified",
-      "gap": "Operation manifests are exact and digest-bound, but execution remains plan-only; the four docs-only LVS file-management MCP tools are an explicit upstream/source gap."
+      "runtime_state": "static_only",
+      "gap": "Operation manifests are exact and digest-bound, including the four Thor-local LVS file-management adapters. Execution remains plan-only, and the pinned upstream LVS repositories still expose only nine of the 13 documented MCP tools."
     },
     {
       "id": "agent-operability-surfaces",

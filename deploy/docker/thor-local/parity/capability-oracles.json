@@ -22862,9 +22862,9 @@
           "mcp_base": "http://<host>:38112",
           "conditional_prefix": "/v1",
           "auth": "bearer",
-          "operation_count": 17,
+          "operation_count": 18,
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-          "expected_manifest_sha256": "b24523d144442d32aee25908b7bac24da49b0117fd27ac15061fe4242c2a035c"
+          "expected_manifest_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
         },
         "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval."
       },
@@ -22890,9 +22890,9 @@
             "mcp_base": "http://<host>:38112",
             "conditional_prefix": "/v1",
             "auth": "bearer",
-            "operation_count": 17,
+            "operation_count": 18,
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-            "expected_manifest_sha256": "b24523d144442d32aee25908b7bac24da49b0117fd27ac15061fe4242c2a035c"
+            "expected_manifest_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
           },
           "namespace": "vss-oracle-api-core-lvs-17",
           "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -22935,7 +22935,7 @@
           "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
-          "expected": "b24523d144442d32aee25908b7bac24da49b0117fd27ac15061fe4242c2a035c"
+          "expected": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
         },
         {
           "id": "contract-05",
@@ -22947,7 +22947,7 @@
           "id": "contract-06",
           "observation": "contract_identity/contract/operation_count",
           "operator": "equals",
-          "expected": 17
+          "expected": 18
         },
         {
           "id": "contract-07",
@@ -22995,12 +22995,12 @@
         "collectors": [],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
-        "max_requests": 69,
+        "max_requests": 73,
         "workload": {
-          "units": 17,
+          "units": 18,
           "requests_per_unit": 4,
           "overhead_requests": 1,
-          "calculated_max_requests": 69,
+          "calculated_max_requests": 73,
           "phases": [
             "positive",
             "adjacent_negative",
@@ -25446,18 +25446,19 @@
           }
         ],
         "acceptance_class": "required_local",
-        "thor_state": "blocked_upstream",
-        "runtime_state": "blocked",
+        "thor_state": "wired",
+        "runtime_state": "static_only",
         "contract": {
           "docs_tool_count": 13,
-          "repository_tool_count": 9,
-          "docs_only_tools": [
+          "upstream_repository_tool_count": 9,
+          "repository_tool_count": 13,
+          "upstream_missing_tools": [
             "add_file",
             "list_files",
             "get_file_info",
             "delete_file"
           ],
-          "repository_tools": [
+          "upstream_repository_tools": [
             "health_ready",
             "health_live",
             "get_metrics",
@@ -25468,10 +25469,31 @@
             "generate_vlm_captions",
             "get_recommended_config"
           ],
+          "repository_tools": [
+            "add_file",
+            "delete_file",
+            "generate_captions",
+            "generate_vlm_captions",
+            "get_file_info",
+            "get_metrics",
+            "get_recommended_config",
+            "health_live",
+            "health_ready",
+            "list_files",
+            "list_models",
+            "stream_summarize",
+            "summarize_video"
+          ],
+          "thor_local_adapter_tools": [
+            "add_file",
+            "list_files",
+            "get_file_info",
+            "delete_file"
+          ],
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-          "expected_manifest_sha256": "31c7dba0a429ba6a8619db8231be579a5a8543fd19714adf0d6d8872d0cc89c3"
+          "expected_manifest_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
         },
-        "gap": "The four documented file-management MCP tools are absent from the pinned 3.2.1/current repository implementation; do not claim 13-tool parity until upstream or local source aligns."
+        "gap": "A Thor-local static adapter now supplies the four file-management MCP tools missing from the pinned upstream repositories. The exact 13-tool source contract is wired, but discovery and a disposable add/list/info/delete lifecycle still require runtime qualification."
       },
       "reviewed_scenario_ids": [
         "mcp-tool-operation-matrix",
@@ -25492,14 +25514,15 @@
           "capability_id": "api.core.lvs-mcp-doc-13-repo-9",
           "contract": {
             "docs_tool_count": 13,
-            "repository_tool_count": 9,
-            "docs_only_tools": [
+            "upstream_repository_tool_count": 9,
+            "repository_tool_count": 13,
+            "upstream_missing_tools": [
               "add_file",
               "list_files",
               "get_file_info",
               "delete_file"
             ],
-            "repository_tools": [
+            "upstream_repository_tools": [
               "health_ready",
               "health_live",
               "get_metrics",
@@ -25510,8 +25533,29 @@
               "generate_vlm_captions",
               "get_recommended_config"
             ],
+            "repository_tools": [
+              "add_file",
+              "delete_file",
+              "generate_captions",
+              "generate_vlm_captions",
+              "get_file_info",
+              "get_metrics",
+              "get_recommended_config",
+              "health_live",
+              "health_ready",
+              "list_files",
+              "list_models",
+              "stream_summarize",
+              "summarize_video"
+            ],
+            "thor_local_adapter_tools": [
+              "add_file",
+              "list_files",
+              "get_file_info",
+              "delete_file"
+            ],
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-            "expected_manifest_sha256": "31c7dba0a429ba6a8619db8231be579a5a8543fd19714adf0d6d8872d0cc89c3"
+            "expected_manifest_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
           },
           "namespace": "vss-oracle-api-core-lvs-mcp-doc-13-repo-9",
           "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -25534,7 +25578,51 @@
       "assertions": [
         {
           "id": "contract-01",
-          "observation": "contract_identity/contract/docs_only_tools",
+          "observation": "contract_identity/contract/docs_tool_count",
+          "operator": "equals",
+          "expected": 13
+        },
+        {
+          "id": "contract-02",
+          "observation": "contract_identity/contract/expected_manifest",
+          "operator": "equals",
+          "expected": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json"
+        },
+        {
+          "id": "contract-03",
+          "observation": "contract_identity/contract/expected_manifest_sha256",
+          "operator": "equals",
+          "expected": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
+        },
+        {
+          "id": "contract-04",
+          "observation": "contract_identity/contract/repository_tool_count",
+          "operator": "equals",
+          "expected": 13
+        },
+        {
+          "id": "contract-05",
+          "observation": "contract_identity/contract/repository_tools",
+          "operator": "equals",
+          "expected": [
+            "add_file",
+            "delete_file",
+            "generate_captions",
+            "generate_vlm_captions",
+            "get_file_info",
+            "get_metrics",
+            "get_recommended_config",
+            "health_live",
+            "health_ready",
+            "list_files",
+            "list_models",
+            "stream_summarize",
+            "summarize_video"
+          ]
+        },
+        {
+          "id": "contract-06",
+          "observation": "contract_identity/contract/thor_local_adapter_tools",
           "operator": "equals",
           "expected": [
             "add_file",
@@ -25544,32 +25632,25 @@
           ]
         },
         {
-          "id": "contract-02",
-          "observation": "contract_identity/contract/docs_tool_count",
+          "id": "contract-07",
+          "observation": "contract_identity/contract/upstream_missing_tools",
           "operator": "equals",
-          "expected": 13
+          "expected": [
+            "add_file",
+            "list_files",
+            "get_file_info",
+            "delete_file"
+          ]
         },
         {
-          "id": "contract-03",
-          "observation": "contract_identity/contract/expected_manifest",
-          "operator": "equals",
-          "expected": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json"
-        },
-        {
-          "id": "contract-04",
-          "observation": "contract_identity/contract/expected_manifest_sha256",
-          "operator": "equals",
-          "expected": "31c7dba0a429ba6a8619db8231be579a5a8543fd19714adf0d6d8872d0cc89c3"
-        },
-        {
-          "id": "contract-05",
-          "observation": "contract_identity/contract/repository_tool_count",
+          "id": "contract-08",
+          "observation": "contract_identity/contract/upstream_repository_tool_count",
           "operator": "equals",
           "expected": 9
         },
         {
-          "id": "contract-06",
-          "observation": "contract_identity/contract/repository_tools",
+          "id": "contract-09",
+          "observation": "contract_identity/contract/upstream_repository_tools",
           "operator": "equals",
           "expected": [
             "health_ready",
@@ -25623,12 +25704,12 @@
         "collectors": [],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
-        "max_requests": 37,
+        "max_requests": 53,
         "workload": {
-          "units": 9,
+          "units": 13,
           "requests_per_unit": 4,
           "overhead_requests": 1,
-          "calculated_max_requests": 37,
+          "calculated_max_requests": 53,
           "phases": [
             "positive",
             "adjacent_negative",

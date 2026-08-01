@@ -38,17 +38,17 @@ oracles exist.
 Digest locks:
 
 - manifest raw SHA-256:
-  `bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a`
+  `6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127`
 - manifest canonical SHA-256:
-  `e9ce811975db681a57a22663259462d212adf0af6afddce7b15dc2f94c1696b1`
+  `172a6ff8c33cd7d3e1378bf6cb643e4c56fd70f5d4c2e117166a640932f7c411`
 - classification rules raw SHA-256:
   `8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314`
 - classification rules canonical SHA-256:
   `631cccf7d20b68f82bdb384f36b2c409e26abe26fe4c1425b740bad1f2ba77d6`
 - compiled plan payload SHA-256:
-  `21dfd759455866923a12c9595422d2dc7a52af4ff6421a85ecde41f792bba5f5`
+  `97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d`
 - compiled plan raw SHA-256:
-  `e57f5fca4cc14b4b37a059823b23a191036ecfda1374791d6f9afde27047b4ec`
+  `dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122`
 
 The five external boundaries are Slack notification, a remote
 OpenAI-compatible model endpoint, AWS/GCS validation, Enterprise RAG report

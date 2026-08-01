@@ -9,7 +9,7 @@
   "source_bindings": {
     "advertised_gap_plan": {
       "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
-      "raw_sha256": "e57f5fca4cc14b4b37a059823b23a191036ecfda1374791d6f9afde27047b4ec"
+      "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122"
     },
     "advertised_gap_rules": {
       "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/classification-rules.json",
@@ -17,11 +17,11 @@
     },
     "ledger": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873"
+      "raw_sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"
     },
     "manifest": {
       "path": "deploy/docker/thor-local/parity/manifest.json",
-      "raw_sha256": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+      "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
     },
     "oracle_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
@@ -29,7 +29,7 @@
     },
     "oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb"
+      "raw_sha256": "dbc646a068cfb365a010640774e1ae0dff97f8fe11257dfa9e285f17955403e8"
     }
   },
   "policy": {
@@ -345,7 +345,7 @@
       ],
       "capability_count": 0,
       "advertised_entry_count": 8,
-      "manifest_feature_sha256": "65724a98d6334bfde34cf8c3b714233e48d1b9ce6c65f28cb76327df234a607c"
+      "manifest_feature_sha256": "edeb8898ed66a85c2d8af53200240e222dc528938d64ab9f1d313eb24bba4c16"
     },
     {
       "feature_id": "agent-evaluation",
@@ -493,7 +493,7 @@
       ],
       "capability_count": 14,
       "advertised_entry_count": 14,
-      "manifest_feature_sha256": "c544edfec6d4581155d13bd5e219227ca4b20b2ad0231a5f0d23380521379acf"
+      "manifest_feature_sha256": "3fb97b21e4bb1457aa093f41317d86591e09ad86d515ee28772680091b3d6edf"
     },
     {
       "feature_id": "docker-compose",
@@ -943,7 +943,7 @@
       ],
       "capability_count": 0,
       "advertised_entry_count": 6,
-      "manifest_feature_sha256": "c3532c37838c82ad7615c313da23a207824ec3ba8a1d90cb7fea0b8c2737fb88"
+      "manifest_feature_sha256": "4fed12c9166ccef7f8031227047b4b28fc266b53729dc5bbba6c414d8e582a69"
     },
     {
       "feature_id": "vios-codecs-audio",
@@ -23269,7 +23269,7 @@
       "oracle_profile": "api-core-lvs-17",
       "oracle_mode": "api",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "9131d7985fc0af0e07602de05047915752bb37066b05279ab52ff21b1cb28758",
+      "oracle_contract_sha256": "24c9d8d0b8026647c3382a9fe51ebb8b19f7242a141ca5c00954e28ad365b731",
       "deployment": {
         "profile_paths": [
           "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml"
@@ -23293,7 +23293,7 @@
             "locator": "Base URL, MCP port, version prefix, and Authentication, lines 160-178"
           }
         ],
-        "service_binding_capability_contract_sha256": "bf845a338b0fa4929cc1452bbf0ce0a205b12e968d8ea635f1f338350cbe55c7",
+        "service_binding_capability_contract_sha256": "777c9b209b19d4496fec6bb293e75106c6669c0766d6b75b670e7e1d9e20daaf",
         "service_binding_is_runtime_evidence": false,
         "boundary": "thor-local-required"
       },
@@ -23316,9 +23316,9 @@
               "mcp_base": "http://<host>:38112",
               "conditional_prefix": "/v1",
               "auth": "bearer",
-              "operation_count": 17,
+              "operation_count": 18,
               "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-              "expected_manifest_sha256": "b24523d144442d32aee25908b7bac24da49b0117fd27ac15061fe4242c2a035c"
+              "expected_manifest_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
             },
             "namespace": "vss-oracle-api-core-lvs-17",
             "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -23351,12 +23351,12 @@
           "collectors": [],
           "network_scope": "loopback-or-compose-internal",
           "max_duration_seconds": 900,
-          "max_requests": 69,
+          "max_requests": 73,
           "workload": {
-            "units": 17,
+            "units": 18,
             "requests_per_unit": 4,
             "overhead_requests": 1,
-            "calculated_max_requests": 69,
+            "calculated_max_requests": 73,
             "phases": [
               "positive",
               "adjacent_negative",
@@ -23414,11 +23414,11 @@
       "lane_id": "lvs",
       "kind": "api",
       "acceptance_class": "required_local",
-      "runtime_state": "blocked",
+      "runtime_state": "static_only",
       "oracle_profile": "api-core-lvs-mcp-doc-13-repo-9",
       "oracle_mode": "api",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "d43e24bf83f47b9426a83286863cc821789d00e65d5fe585430951707e8dffbd",
+      "oracle_contract_sha256": "eba74c4c84ab402b63cb7f4cd9a687b30b084884f972a174842a049620d31f81",
       "deployment": {
         "profile_paths": [
           "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml"
@@ -23446,7 +23446,7 @@
             "locator": "services/video-summarization/src/lvs_mcp.py list_tools registrations"
           }
         ],
-        "service_binding_capability_contract_sha256": "820f6e53e6eee641302a06c7e8783dc789c6d4c59e585fd98d82be401e2cb516",
+        "service_binding_capability_contract_sha256": "9bcdafcc9eab19e606e8120bcd3a8bbe3aca7d623ad24f93d30ffed5173475f1",
         "service_binding_is_runtime_evidence": false,
         "boundary": "thor-local-required"
       },
@@ -23466,14 +23466,15 @@
             "capability_id": "api.core.lvs-mcp-doc-13-repo-9",
             "contract": {
               "docs_tool_count": 13,
-              "repository_tool_count": 9,
-              "docs_only_tools": [
+              "upstream_repository_tool_count": 9,
+              "repository_tool_count": 13,
+              "upstream_missing_tools": [
                 "add_file",
                 "list_files",
                 "get_file_info",
                 "delete_file"
               ],
-              "repository_tools": [
+              "upstream_repository_tools": [
                 "health_ready",
                 "health_live",
                 "get_metrics",
@@ -23484,8 +23485,29 @@
                 "generate_vlm_captions",
                 "get_recommended_config"
               ],
+              "repository_tools": [
+                "add_file",
+                "delete_file",
+                "generate_captions",
+                "generate_vlm_captions",
+                "get_file_info",
+                "get_metrics",
+                "get_recommended_config",
+                "health_live",
+                "health_ready",
+                "list_files",
+                "list_models",
+                "stream_summarize",
+                "summarize_video"
+              ],
+              "thor_local_adapter_tools": [
+                "add_file",
+                "list_files",
+                "get_file_info",
+                "delete_file"
+              ],
               "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-              "expected_manifest_sha256": "31c7dba0a429ba6a8619db8231be579a5a8543fd19714adf0d6d8872d0cc89c3"
+              "expected_manifest_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
             },
             "namespace": "vss-oracle-api-core-lvs-mcp-doc-13-repo-9",
             "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -23503,6 +23525,9 @@
           "contract-04",
           "contract-05",
           "contract-06",
+          "contract-07",
+          "contract-08",
+          "contract-09",
           "observation-02",
           "observation-03"
         ],
@@ -23517,12 +23542,12 @@
           "collectors": [],
           "network_scope": "loopback-or-compose-internal",
           "max_duration_seconds": 900,
-          "max_requests": 37,
+          "max_requests": 53,
           "workload": {
-            "units": 9,
+            "units": 13,
             "requests_per_unit": 4,
             "overhead_requests": 1,
-            "calculated_max_requests": 37,
+            "calculated_max_requests": 53,
             "phases": [
               "positive",
               "adjacent_negative",

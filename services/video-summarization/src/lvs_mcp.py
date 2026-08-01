@@ -19,8 +19,14 @@ Exposes the same functionality as the REST API through MCP tools."""
 
 import json
 import os
+import re
+import stat
 import traceback
+from datetime import datetime
+from ipaddress import ip_address
+from pathlib import Path
 from typing import Any, Dict, List, Optional
+from uuid import UUID, uuid4
 
 from mcp.server import Server
 from mcp.server.sse import SseServerTransport
@@ -33,6 +39,52 @@ from via_logger import logger
 API_PREFIX = (
     "/v1" if os.environ.get("VSS_API_ENABLE_VERSIONING", "").lower() in ["true", "1"] else ""
 )
+
+_DEFAULT_MAX_MEDIA_BYTES = 8 * 1024 * 1024 * 1024
+_MAX_CONFIGURABLE_MEDIA_BYTES = 100 * 1000 * 1000 * 1000
+_RFC3339_MILLISECONDS = re.compile(
+    r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.\d{3}Z$"
+)
+_SENSOR_NAME = re.compile(r"^[A-Za-z0-9_. -]{0,256}$")
+_FILE_TOOLS = frozenset({"add_file", "list_files", "get_file_info", "delete_file"})
+
+
+def _mcp_bind_host() -> str:
+    """Return a loopback-only MCP bind address.
+
+    The legacy SSE transport has no authentication, so exposing it on all
+    interfaces would make the file-management tools remotely writable.
+    """
+
+    host = os.environ.get("LVS_MCP_HOST", "127.0.0.1").strip()
+    try:
+        is_loopback = ip_address(host).is_loopback
+    except ValueError as exc:
+        raise ValueError("LVS_MCP_HOST must be a loopback IP address") from exc
+    if not is_loopback:
+        raise ValueError("LVS_MCP_HOST must be a loopback IP address")
+    return host
+
+
+class _BoundedMediaReader:
+    """File proxy that refuses to stream more than the configured byte limit."""
+
+    def __init__(self, stream, limit: int):
+        self._stream = stream
+        self._limit = limit
+        self._read = 0
+
+    def read(self, size: int = -1):
+        remaining = self._limit - self._read
+        bounded_size = remaining + 1 if size < 0 or size > remaining + 1 else size
+        chunk = self._stream.read(bounded_size)
+        self._read += len(chunk)
+        if self._read > self._limit:
+            raise ValueError("path grew beyond LVS_MCP_MAX_FILE_BYTES while uploading")
+        return chunk
+
+    def __getattr__(self, name):
+        return getattr(self._stream, name)
 
 
 class LvsMCPServer:
@@ -79,6 +131,74 @@ class LvsMCPServer:
                     inputSchema={
                         "type": "object",
                         "properties": {},
+                    },
+                ),
+                # File-management API. NVIDIA's 3.2.1 documentation advertises
+                # these four tools but does not publish their MCP schemas. This
+                # source-derived local contract is deliberately narrower than
+                # the underlying REST API: local regular files only, rooted at
+                # LVS_MCP_MEDIA_ROOT, with remote URLs and base64 excluded.
+                Tool(
+                    name="add_file",
+                    description="Upload a local video from the configured read-only media root",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "path": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 1024,
+                                "description": "Relative path beneath LVS_MCP_MEDIA_ROOT",
+                            },
+                            "creation_time": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Optional UTC timestamp with millisecond precision",
+                            },
+                            "sensor_name": {
+                                "type": "string",
+                                "maxLength": 256,
+                                "pattern": r"^[A-Za-z0-9_. -]*$",
+                            },
+                        },
+                        "required": ["path"],
+                        "additionalProperties": False,
+                    },
+                ),
+                Tool(
+                    name="list_files",
+                    description="List uploaded video files",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": False,
+                    },
+                ),
+                Tool(
+                    name="get_file_info",
+                    description="Get metadata for an uploaded video file",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {"file_id": {"type": "string", "format": "uuid"}},
+                        "required": ["file_id"],
+                        "additionalProperties": False,
+                    },
+                ),
+                Tool(
+                    name="delete_file",
+                    description="Delete an uploaded video and its LVS collection",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "file_id": {"type": "string", "format": "uuid"},
+                            "confirm_file_id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "Must exactly repeat file_id",
+                            },
+                        },
+                        "required": ["file_id", "confirm_file_id"],
+                        "additionalProperties": False,
                     },
                 ),
                 # Summarization API
@@ -345,6 +465,9 @@ class LvsMCPServer:
                 ),
             ]
 
+        # Retain the pure registration closure for networkless contract tests.
+        self._list_tools_handler = list_tools
+
         @self._server.call_tool()
         async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
             """Handle tool calls by delegating to _invoke_call_tool."""
@@ -358,10 +481,15 @@ class LvsMCPServer:
         except Exception as e:
             error_msg = f"Error executing tool '{name}': {str(e)}\n{traceback.format_exc()}"
             logger.error(error_msg)
+            payload = (
+                {"error": f"{name} failed; see the LVS service log for details"}
+                if name in _FILE_TOOLS
+                else {"error": str(e), "type": type(e).__name__}
+            )
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({"error": str(e), "type": type(e).__name__}),
+                    text=json.dumps(payload),
                 )
             ]
 
@@ -378,6 +506,19 @@ class LvsMCPServer:
         # Models API
         elif name == "list_models":
             return await self._list_models()
+
+        # File-management API
+        elif name == "add_file":
+            return await self._add_file(arguments)
+
+        elif name == "list_files":
+            return await self._list_files(arguments)
+
+        elif name == "get_file_info":
+            return await self._get_file_info(arguments)
+
+        elif name == "delete_file":
+            return await self._delete_file(arguments)
 
         # Summarization API
         elif name == "summarize_video":
@@ -466,6 +607,327 @@ class LvsMCPServer:
         """List available models by calling the HTTP API."""
         return await self._call_http_api("GET", f"{API_PREFIX}/models")
 
+    @staticmethod
+    def _validate_arguments(
+        arguments: Dict[str, Any], *, allowed: set[str], required: set[str]
+    ) -> None:
+        if not isinstance(arguments, dict):
+            raise ValueError("tool arguments must be an object")
+        unknown = sorted(set(arguments) - allowed)
+        if unknown:
+            raise ValueError(f"unsupported arguments: {', '.join(unknown)}")
+        missing = sorted(required - set(arguments))
+        if missing:
+            raise ValueError(f"missing required arguments: {', '.join(missing)}")
+
+    @staticmethod
+    def _validated_uuid(value: Any, field: str) -> str:
+        if not isinstance(value, str):
+            raise ValueError(f"{field} must be a UUID string")
+        try:
+            parsed = UUID(value)
+        except (ValueError, AttributeError) as exc:
+            raise ValueError(f"{field} must be a valid UUID") from exc
+        canonical = str(parsed)
+        if value != canonical or parsed.int == 0:
+            raise ValueError(f"{field} must be a canonical non-nil UUID")
+        return canonical
+
+    @classmethod
+    def _validate_file_info(
+        cls,
+        value: Any,
+        *,
+        expected_id: Optional[str] = None,
+        expected_filename: Optional[str] = None,
+        expected_bytes: Optional[int] = None,
+        require_media_type: bool,
+    ) -> Dict[str, Any]:
+        if not isinstance(value, dict):
+            raise ValueError("LVS returned invalid file metadata")
+        if expected_id is not None and "id" in value:
+            response_id = cls._validated_uuid(value["id"], "response id")
+            if response_id != expected_id:
+                raise ValueError("LVS returned an unexpected asset identity")
+        required = {"id", "bytes", "filename", "purpose"}
+        if require_media_type:
+            required.add("media_type")
+        if not required.issubset(value):
+            raise ValueError("LVS returned incomplete file metadata")
+
+        cls._validated_uuid(value["id"], "response id")
+        byte_count = value["bytes"]
+        if (
+            isinstance(byte_count, bool)
+            or not isinstance(byte_count, int)
+            or not 0 <= byte_count <= _MAX_CONFIGURABLE_MEDIA_BYTES
+        ):
+            raise ValueError("LVS returned an invalid file size")
+        if expected_bytes is not None and byte_count != expected_bytes:
+            raise ValueError("LVS returned an unexpected file size")
+        filename = value["filename"]
+        if (
+            not isinstance(filename, str)
+            or not 0 < len(filename) <= 256
+            or filename in {".", ".."}
+            or "/" in filename
+            or "\\" in filename
+            or "\x00" in filename
+        ):
+            raise ValueError("LVS returned an invalid filename")
+        if expected_filename is not None and filename != expected_filename:
+            raise ValueError("LVS returned an unexpected filename")
+        if value["purpose"] != "vision":
+            raise ValueError("LVS returned an unexpected file purpose")
+        if "media_type" in value and value["media_type"] != "video":
+            raise ValueError("LVS returned an unexpected media type")
+        if require_media_type and value.get("media_type") != "video":
+            raise ValueError("LVS returned incomplete file metadata")
+        creation_time = value.get("creation_time")
+        if creation_time is not None:
+            if not isinstance(
+                creation_time, str
+            ) or not _RFC3339_MILLISECONDS.fullmatch(creation_time):
+                raise ValueError("LVS returned an invalid creation time")
+            try:
+                datetime.strptime(creation_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+            except ValueError as exc:
+                raise ValueError("LVS returned an invalid creation time") from exc
+        sensor_name = value.get("sensor_name", "")
+        if not isinstance(sensor_name, str) or not _SENSOR_NAME.fullmatch(sensor_name):
+            raise ValueError("LVS returned an invalid sensor name")
+        fields = (
+            "id",
+            "bytes",
+            "filename",
+            "purpose",
+            "creation_time",
+            "sensor_name",
+            "media_type",
+        )
+        return {field: value[field] for field in fields if field in value}
+
+    @staticmethod
+    def _media_size_limit() -> int:
+        raw = os.environ.get("LVS_MCP_MAX_FILE_BYTES", str(_DEFAULT_MAX_MEDIA_BYTES))
+        if not raw.isdecimal():
+            raise ValueError("LVS_MCP_MAX_FILE_BYTES must be a positive integer")
+        limit = int(raw)
+        if not 0 < limit <= _MAX_CONFIGURABLE_MEDIA_BYTES:
+            raise ValueError(
+                "LVS_MCP_MAX_FILE_BYTES must be between 1 and 100000000000"
+            )
+        return limit
+
+    @staticmethod
+    def _open_media_file(path: Any) -> tuple[int, str, os.stat_result]:
+        if not isinstance(path, str) or not 0 < len(path) <= 1024:
+            raise ValueError(
+                "path must be a non-empty string of at most 1024 characters"
+            )
+        relative = Path(path)
+        if relative.is_absolute() or any(
+            part in {"", ".", ".."} for part in relative.parts
+        ):
+            raise ValueError("path must be a normalized relative path")
+
+        configured = os.environ.get("LVS_MCP_MEDIA_ROOT", "").strip()
+        if not configured:
+            raise ValueError("LVS_MCP_MEDIA_ROOT is required for add_file")
+        root_path = Path(configured)
+        try:
+            root = root_path.resolve(strict=True)
+        except (OSError, ValueError) as exc:
+            raise ValueError(
+                "LVS_MCP_MEDIA_ROOT must be an absolute non-symlink directory"
+            ) from exc
+        if not root_path.is_absolute() or root != root_path or not root.is_dir():
+            raise ValueError(
+                "LVS_MCP_MEDIA_ROOT must be an absolute non-symlink directory"
+            )
+        if not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY"):
+            raise ValueError("secure media-root file opening is unavailable")
+
+        directory_flags = os.O_RDONLY | os.O_CLOEXEC | os.O_DIRECTORY | os.O_NOFOLLOW
+        current_directory = os.open(root, directory_flags)
+        try:
+            for part in relative.parts[:-1]:
+                try:
+                    component = os.stat(
+                        part, dir_fd=current_directory, follow_symlinks=False
+                    )
+                    if stat.S_ISLNK(component.st_mode):
+                        raise ValueError("path cannot contain symlink components")
+                    if not stat.S_ISDIR(component.st_mode):
+                        raise ValueError(
+                            "path must resolve to an existing file beneath the media root"
+                        )
+                    next_directory = os.open(
+                        part, directory_flags, dir_fd=current_directory
+                    )
+                except ValueError:
+                    raise
+                except (FileNotFoundError, OSError) as exc:
+                    raise ValueError(
+                        "path cannot contain symlink components"
+                    ) from exc
+                os.close(current_directory)
+                current_directory = next_directory
+
+            filename = relative.parts[-1]
+            try:
+                expected = os.stat(
+                    filename, dir_fd=current_directory, follow_symlinks=False
+                )
+            except (FileNotFoundError, OSError, ValueError) as exc:
+                raise ValueError(
+                    "path must resolve to an existing file beneath the media root"
+                ) from exc
+            if stat.S_ISLNK(expected.st_mode):
+                raise ValueError("path cannot contain symlink components")
+            if not stat.S_ISREG(expected.st_mode):
+                raise ValueError("path must resolve to a regular file")
+            if expected.st_size <= 0:
+                raise ValueError("path must resolve to a non-empty regular file")
+            if expected.st_size > LvsMCPServer._media_size_limit():
+                raise ValueError("path exceeds LVS_MCP_MAX_FILE_BYTES")
+
+            file_flags = os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
+            try:
+                descriptor = os.open(filename, file_flags, dir_fd=current_directory)
+            except OSError as exc:
+                raise ValueError("path changed while opening") from exc
+            try:
+                opened = os.fstat(descriptor)
+                if not stat.S_ISREG(opened.st_mode) or (
+                    opened.st_dev,
+                    opened.st_ino,
+                    opened.st_size,
+                ) != (expected.st_dev, expected.st_ino, expected.st_size):
+                    raise ValueError("path changed while opening")
+            except BaseException:
+                os.close(descriptor)
+                raise
+            return descriptor, filename, opened
+        finally:
+            os.close(current_directory)
+
+    async def _add_file(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        self._validate_arguments(
+            args,
+            allowed={"path", "creation_time", "sensor_name"},
+            required={"path"},
+        )
+        file_id = str(uuid4())
+        data = {"purpose": "vision", "media_type": "video", "id": file_id}
+        if "creation_time" in args:
+            creation_time = args["creation_time"]
+            if not isinstance(
+                creation_time, str
+            ) or not _RFC3339_MILLISECONDS.fullmatch(creation_time):
+                raise ValueError("creation_time must use YYYY-MM-DDTHH:MM:SS.mmmZ")
+            try:
+                datetime.strptime(creation_time, "%Y-%m-%dT%H:%M:%S.%fZ")
+            except ValueError as exc:
+                raise ValueError("creation_time must be a valid UTC timestamp") from exc
+            data["creation_time"] = creation_time
+        if "sensor_name" in args:
+            sensor_name = args["sensor_name"]
+            if not isinstance(sensor_name, str) or not _SENSOR_NAME.fullmatch(
+                sensor_name
+            ):
+                raise ValueError("sensor_name contains unsupported characters")
+            data["sensor_name"] = sensor_name
+
+        size_limit = self._media_size_limit()
+        descriptor, filename, opened = self._open_media_file(args["path"])
+        try:
+            try:
+                with os.fdopen(descriptor, "rb") as media:
+                    descriptor = -1
+                    bounded_media = _BoundedMediaReader(media, size_limit)
+                    result = await self._call_http_api(
+                        "POST",
+                        f"{API_PREFIX}/files",
+                        data=data,
+                        files={
+                            "file": (
+                                filename,
+                                bounded_media,
+                                "application/octet-stream",
+                            )
+                        },
+                    )
+            finally:
+                if descriptor >= 0:
+                    os.close(descriptor)
+            return self._validate_file_info(
+                result,
+                expected_id=file_id,
+                expected_filename=filename,
+                expected_bytes=opened.st_size,
+                require_media_type=True,
+            )
+        except Exception:
+            try:
+                await self._call_http_api("DELETE", f"{API_PREFIX}/files/{file_id}")
+            except Exception as cleanup_error:
+                logger.warning(
+                    "Best-effort cleanup failed for rejected LVS file asset %s: %s",
+                    file_id,
+                    cleanup_error,
+                )
+            raise
+
+    async def _list_files(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        self._validate_arguments(args, allowed=set(), required=set())
+        result = await self._call_http_api(
+            "GET", f"{API_PREFIX}/files", params={"purpose": "vision"}
+        )
+        data = result.get("data") if isinstance(result, dict) else None
+        if (
+            not isinstance(result, dict)
+            or result.get("object") != "list"
+            or not isinstance(data, list)
+            or len(data) > 1_000_000
+        ):
+            raise ValueError("LVS list_files returned an invalid response")
+        return {
+            "object": "list",
+            "data": [
+                self._validate_file_info(item, require_media_type=True)
+                for item in data
+            ],
+        }
+
+    async def _get_file_info(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        self._validate_arguments(args, allowed={"file_id"}, required={"file_id"})
+        file_id = self._validated_uuid(args["file_id"], "file_id")
+        result = await self._call_http_api("GET", f"{API_PREFIX}/files/{file_id}")
+        return self._validate_file_info(
+            result, expected_id=file_id, require_media_type=False
+        )
+
+    async def _delete_file(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        self._validate_arguments(
+            args,
+            allowed={"file_id", "confirm_file_id"},
+            required={"file_id", "confirm_file_id"},
+        )
+        file_id = self._validated_uuid(args["file_id"], "file_id")
+        confirmation = self._validated_uuid(args["confirm_file_id"], "confirm_file_id")
+        if confirmation != file_id:
+            raise ValueError("confirm_file_id must exactly match file_id")
+        result = await self._call_http_api("DELETE", f"{API_PREFIX}/files/{file_id}")
+        if (
+            not isinstance(result, dict)
+            or str(result.get("id")) != file_id
+            or result.get("object") != "file"
+            or result.get("deleted") is not True
+        ):
+            raise ValueError("LVS delete_file returned an invalid confirmation")
+        return result
+
     async def _health_ready(self) -> Dict[str, Any]:
         """Report readiness only after the LVS readiness route succeeds."""
         await self._call_http_api("GET", "/v1/ready", return_text=True)
@@ -510,7 +972,8 @@ class LvsMCPServer:
         """
         if port is not None:
             # Run with SSE transport on specified port
-            logger.info(f"Starting LVS MCP server on SSE (http://0.0.0.0:{port}/sse)...")
+            host = _mcp_bind_host()
+            logger.info(f"Starting LVS MCP server on SSE (http://{host}:{port}/sse)...")
 
             from starlette.requests import Request
 
@@ -572,7 +1035,7 @@ class LvsMCPServer:
 
             import uvicorn
 
-            config = uvicorn.Config(app_router, host="0.0.0.0", port=port, log_level="info")
+            config = uvicorn.Config(app_router, host=host, port=port, log_level="info")
             server = uvicorn.Server(config)
             await server.serve()
         else:
@@ -599,9 +1062,13 @@ async def run_mcp_server(lvs_server_instance):
     if mcp_port_str:
         try:
             mcp_port = int(mcp_port_str)
-            logger.info(f"LVS_MCP_PORT={mcp_port} detected, will use SSE transport")
-        except ValueError:
-            logger.warning(f"Invalid LVS_MCP_PORT value '{mcp_port_str}', falling back to stdio")
+        except ValueError as exc:
+            raise ValueError(
+                "LVS_MCP_PORT must be an integer from 1 through 65535"
+            ) from exc
+        if not 1 <= mcp_port <= 65535:
+            raise ValueError("LVS_MCP_PORT must be an integer from 1 through 65535")
+        logger.info(f"LVS_MCP_PORT={mcp_port} detected, will use SSE transport")
 
     mcp_server = LvsMCPServer(lvs_server_instance)
     await mcp_server.run(port=mcp_port)

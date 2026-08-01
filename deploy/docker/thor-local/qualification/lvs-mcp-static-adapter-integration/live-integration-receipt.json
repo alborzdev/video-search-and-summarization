@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "integration_id": "lvs-mcp-static-adapter-2026-08-01",
+  "predecessor": {
+    "integrator_path": "deploy/docker/thor-local/qualification/source-contract-integration/integrate_live.py",
+    "integrator_raw_sha256": "dcb2f8119da1c2b719c4398549861c0929af9bfdf53b933301b6d4677e4318f7",
+    "receipt_path": "deploy/docker/thor-local/qualification/source-contract-integration/live-integration-receipt.json",
+    "receipt_raw_sha256": "ae8716961b6a2ad30680cdf19587bd0578209594b6a39987b704ad2a29a1aad5",
+    "receipt_canonical_sha256": "b1bd743da7511d2034ab0755d458f6b019df493f34c76fe81c9b2af2291a31fa",
+    "contract_sha256": "1ba9dac99127932ddf8f517e1d87631bd13240fa61b8f360b123c42242f98cb9",
+    "outputs": {
+      "official-capabilities.json": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
+      "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+      "acceptance_inventory.json": "9b6a1f8e4aa3e6a6545f37baffdb346143608056aa21f88ad18dee3df9dbed47",
+      "capability-oracles.json": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb",
+      "capability-oracles.schema.json": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498"
+    }
+  },
+  "static_inputs": [
+    {
+      "path": "deploy/docker/services/video-summarization/compose.yml",
+      "raw_sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.video-summarization",
+      "raw_sha256": "50b77993332df61de4fc0a42dcdb1856ba3307b392b922d10de70eb08d591663"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "raw_sha256": "1106c34a4831c6545ed8024c92f8bcba413f1d90a22434844c9cd446d0069778"
+    },
+    {
+      "path": "deploy/docker/thor-local/patches/patch_lvs_file_management.py",
+      "raw_sha256": "d1c5e52fb908063362952d3fb28c38c675bb2adb4ccb2bfd4dfd06ba94ec95d1"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/api_inventory.json",
+      "raw_sha256": "5d7f5e9303eedebdaabaec25dd77677540475d968850b8481ab4422c2d6b525b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "raw_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs.json",
+      "raw_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+    },
+    {
+      "path": "services/video-summarization/src/rtvi_vlm_client.py",
+      "raw_sha256": "46cdf3abc75146497dd94b5fe0a41895ff900fc08f9ff278dc56de9858944383"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "raw_sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+    }
+  ],
+  "delta": {
+    "capability_ids": [
+      "api.core.lvs-17",
+      "api.core.lvs-mcp-doc-13-repo-9"
+    ],
+    "discrepancy_ids": [
+      "lvs-mcp-doc-13-vs-repository-9"
+    ],
+    "feature_ids": [
+      "video-summarization-live",
+      "agent-and-mcp-apis",
+      "core-api-operation-contracts"
+    ],
+    "api_surface_ids": [
+      "lvs",
+      "lvs-mcp"
+    ],
+    "local_adapter_tools": [
+      "add_file",
+      "list_files",
+      "get_file_info",
+      "delete_file"
+    ]
+  },
+  "expected_counts": {
+    "capabilities": 276,
+    "oracles": 276,
+    "planning_index_only_oracles": 276,
+    "static_subset_oracle_bindings": 26,
+    "runtime_evidence_records": 0,
+    "passed_current_promotions": 0,
+    "lvs_rest_operations": 18,
+    "lvs_mcp_tools": 13,
+    "upstream_lvs_mcp_tools": 9
+  },
+  "boundaries": {
+    "evidence_class": "deterministic_static_adapter_contract_not_runtime",
+    "upstream_discrepancy_preserved": true,
+    "runtime_evidence_added": false,
+    "passed_current_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "network": "forbidden",
+    "docker": "forbidden",
+    "subprocess": "forbidden"
+  },
+  "contract_sha256": "536a9321a99fee382bb775c1bae2da1565938e08522a17dc04d142178b1ae48c",
+  "outputs": {
+    "official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
+    "manifest.json": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
+    "acceptance_inventory.json": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f",
+    "capability-oracles.json": "dbc646a068cfb365a010640774e1ae0dff97f8fe11257dfa9e285f17955403e8"
+  },
+  "lifecycle": "third_static_adapter_successor_integrated"
+}

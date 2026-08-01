@@ -6,12 +6,20 @@
   "source_files": [
     {
       "path": "services/video-summarization/src/lvs_mcp.py",
-      "sha256": "1893ec8cd4115955e57da1645a60fe73e9f544f820647a6296deb9bb4bbef106"
+      "sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
     }
   ],
   "surface": "lvs-mcp",
-  "tool_count": 9,
+  "tool_count": 13,
   "tools": [
+    {
+      "input_schema_hash": "a043acb4e09e7aeab25f0ba21f9cbca9aaa14721cb37b64dc138904718fc8908",
+      "name": "add_file"
+    },
+    {
+      "input_schema_hash": "2f99fa76c3d2b4f8ff5d3c002b7c3e06d63a340842ffdf93184b2fe2fc82356c",
+      "name": "delete_file"
+    },
     {
       "input_schema_hash": "5e7a4eb709506ad8df16b751e58ed506fe356d6bf2ec50c94cbabaaa5e5193b2",
       "name": "generate_captions"
@@ -19,6 +27,10 @@
     {
       "input_schema_hash": "0c4bed7d41f90c172d613f1668415bca951ad93a6505878bf52d2821b34d2756",
       "name": "generate_vlm_captions"
+    },
+    {
+      "input_schema_hash": "b8ed21687b60dd7bd1061a05e6a73c86285c6e6538b6668296efb2fbc1eb1f58",
+      "name": "get_file_info"
     },
     {
       "input_schema_hash": "efddc7bd8bbcef73a14eb1ace1ffdaec81e518ef1e13c1e9271d0b8acb694a49",
@@ -35,6 +47,10 @@
     {
       "input_schema_hash": "efddc7bd8bbcef73a14eb1ace1ffdaec81e518ef1e13c1e9271d0b8acb694a49",
       "name": "health_ready"
+    },
+    {
+      "input_schema_hash": "99334726611ccf58a148b0814696bfa6fe08c1b2d027e946beccf5a74331c9aa",
+      "name": "list_files"
     },
     {
       "input_schema_hash": "efddc7bd8bbcef73a14eb1ace1ffdaec81e518ef1e13c1e9271d0b8acb694a49",

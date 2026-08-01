@@ -43,7 +43,7 @@
     },
     {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
+      "raw_sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
       "required_literals": []
     },
     {

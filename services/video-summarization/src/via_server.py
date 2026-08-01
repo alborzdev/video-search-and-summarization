@@ -27,6 +27,7 @@ import time
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+from ipaddress import ip_address
 from typing import Annotated, Optional
 from uuid import UUID
 
@@ -61,6 +62,7 @@ from vss_api_models import (
     CompletionResponseChoice,
     CompletionUsage,
     DeleteFileResponse,
+    FileInfo,
     GenerateCaptionsRequest,
     GenerateCaptionsResponse,
     ListFilesResponse,
@@ -158,6 +160,28 @@ def add_common_error_responses(errors=[]):
     )
 
 
+def _strict_environment_flag(name: str, default: bool) -> bool:
+    raw = os.environ.get(name, str(default)).strip().lower()
+    if raw in {"true", "1"}:
+        return True
+    if raw in {"false", "0"}:
+        return False
+    raise ValueError(f"{name} must be true, false, 1, or 0")
+
+
+def _is_numeric_loopback(host: str) -> bool:
+    try:
+        return ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def _file_api_request_allowed(path: str, client_host: str, loopback_only: bool) -> bool:
+    files_root = f"{API_PREFIX}/files"
+    is_file_api = path == files_root or path.startswith(f"{files_root}/")
+    return not loopback_only or not is_file_api or _is_numeric_loopback(client_host)
+
+
 class ViaServer:
     def __init__(self, args) -> None:
         self._args = args
@@ -205,6 +229,24 @@ class ViaServer:
         self._app.config = {}
         self._app.config["host"] = args.host
         self._app.config["port"] = args.port
+        file_api_loopback_only = _strict_environment_flag(
+            "VIA_FILE_API_LOOPBACK_ONLY", False
+        )
+        self._file_api_allow_filename = _strict_environment_flag(
+            "VIA_FILE_API_ALLOW_FILENAME", True
+        )
+
+        @self._app.middleware("http")
+        async def restrict_file_api(request: Request, call_next):
+            client_host = request.client.host if request.client else ""
+            if not _file_api_request_allowed(
+                request.url.path, client_host, file_api_loopback_only
+            ):
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": "The LVS Files API is restricted to loopback clients"},
+                )
+            return await call_next(request)
 
         self._setup_routes()
 
@@ -407,6 +449,12 @@ class ViaServer:
                 Form(description="User-defined sensor name.", max_length=256),
             ] = "",
         ) -> AddFileInfoResponse:
+            if filename and not self._file_api_allow_filename:
+                raise ViaException(
+                    "The filename source is disabled; upload multipart file content instead",
+                    "Forbidden",
+                    403,
+                )
             logger.info(
                 "Received add file request (RTVI proxy) - purpose=%s, media_type=%s, "
                 "file=%r, filename=%s, id=%s, sensor_name=%s",
@@ -440,6 +488,7 @@ class ViaServer:
                     creation_time=creation_time,
                     file_id=id,
                     sensor_name=sensor_name,
+                    upload_filename=file.filename if file else None,
                 )
             except Exception as e:
                 logger.error("RTVI-VLM file upload failed: %s", e)
@@ -450,6 +499,31 @@ class ViaServer:
                 )
 
             return rtvi_resp
+
+        @self._app.get(
+            f"{API_PREFIX}/files/{{file_id}}",
+            summary="Get file metadata (proxied to RTVI-VLM)",
+            description="Returns metadata for a file from the RTVI-VLM backend.",
+            responses={
+                200: {"description": "Successful Response."},
+                **add_common_error_responses(),
+            },
+            tags=["Files"],
+        )
+        async def get_video_file_info(
+            file_id: Annotated[UUID, Path(description="File ID to inspect.")],
+        ) -> FileInfo:
+            file_id = str(file_id)
+            logger.info("Received get file info request (RTVI proxy) for %s", file_id)
+            try:
+                return self._stream_handler._vlm_pipeline.get_file_info(file_id)
+            except Exception as e:
+                logger.error("RTVI-VLM get file info failed for %s: %s", file_id, e)
+                raise ViaException(
+                    f"Failed to get file metadata from RTVI-VLM: {e}",
+                    getattr(e, "code", "InternalServerError"),
+                    getattr(e, "status_code", 500),
+                )
 
         @self._app.delete(
             f"{API_PREFIX}/files/{{file_id}}",
@@ -1906,4 +1980,3 @@ if __name__ == "__main__":
 
     server = ViaServer(args)
     server.run()
-

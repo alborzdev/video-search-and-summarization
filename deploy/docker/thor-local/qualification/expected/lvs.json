@@ -1,13 +1,13 @@
 {
   "component_schema_hash": null,
-  "declared_operation_count": 17,
+  "declared_operation_count": 18,
   "kind": "rest",
   "method_counts": {
     "DELETE": 1,
-    "GET": 8,
+    "GET": 9,
     "POST": 8
   },
-  "normalized_unique_operation_count": 17,
+  "normalized_unique_operation_count": 18,
   "operations": [
     {
       "method": "GET",
@@ -23,6 +23,12 @@
     },
     {
       "method": "DELETE",
+      "operation_id": null,
+      "path": "/files/{file_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
       "operation_id": null,
       "path": "/files/{file_id}",
       "schema_hash": null
@@ -116,15 +122,15 @@
   "source_files": [
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
-      "sha256": "606428bc9bedaa3f983a876a79c716312c5a8ff1b4438ccebf35f4104ca52cc4"
+      "sha256": "a80aa33ed97ea2947caff05402e6a049d2aeec81b4152857063d178163cff718"
     },
     {
       "path": "deploy/docker/services/video-summarization/compose.yml",
-      "sha256": "b94f6bd0eca9eed5b14a1941f31477b85331a120da35efcb408e448a6d3d81c6"
+      "sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
     },
     {
       "path": "services/video-summarization/src/via_server.py",
-      "sha256": "c50d5dece2472206501cedf0c7c157f1d4a848e35e4a3e2e6f0f7ef168de8cc1"
+      "sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
     }
   ],
   "surface": "lvs"

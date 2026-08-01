@@ -48,7 +48,7 @@
     },
     {
       "path": "deploy/docker/thor-local/parity/manifest.json",
-      "sha256": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+      "sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
     }
   ],
   "fixture": {

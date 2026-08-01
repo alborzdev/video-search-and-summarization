@@ -329,6 +329,13 @@ services:
       LVS_LLM_MODEL_TYPE: ${LLM_MODEL_TYPE:-openai}
       LVS_LLM_ENABLE_THINKING: ${LVS_LLM_ENABLE_THINKING:-false}
       LVS_LLM_MAX_TOKENS: ${LVS_LLM_MAX_TOKENS:-1024}
+      LVS_MCP_HOST: 127.0.0.1
+      LVS_MCP_MEDIA_ROOT: /opt/nvidia/via/mcp-media
+      LVS_MCP_MAX_FILE_BYTES: ${LVS_MCP_MAX_FILE_BYTES:-8589934592}
+      VIA_FILE_API_LOOPBACK_ONLY: "true"
+      VIA_FILE_API_ALLOW_FILENAME: "false"
+    volumes:
+      - ${VSS_DATA_DIR}/videos:/opt/nvidia/via/mcp-media:ro
 
   vss-ui:
     image: vss-agent-ui:thor-local

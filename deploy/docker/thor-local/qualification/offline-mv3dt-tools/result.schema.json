@@ -50,7 +50,7 @@
           "const": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
         },
         "deploy/docker/thor-local/parity/manifest.json": {
-          "const": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+          "const": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
         },
         "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json": {
           "const": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33"

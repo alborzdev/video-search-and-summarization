@@ -197,11 +197,11 @@ class CheckedInInventoryTests(unittest.TestCase):
     def test_inventory_totals_are_exact(self) -> None:
         rest = [item for item in self.manifests.values() if item["kind"] == "rest"]
         mcp = [item for item in self.manifests.values() if item["kind"] == "mcp"]
-        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 326)
+        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 327)
         self.assertEqual(
-            sum(item["normalized_unique_operation_count"] for item in rest), 325
+            sum(item["normalized_unique_operation_count"] for item in rest), 326
         )
-        self.assertEqual(sum(item["tool_count"] for item in mcp), 38)
+        self.assertEqual(sum(item["tool_count"] for item in mcp), 42)
         self.assertEqual(sum(item["prompt_count"] for item in mcp), 5)
 
     def test_vios_mcp_declarations_are_exact(self) -> None:
@@ -290,7 +290,7 @@ class CheckedInInventoryTests(unittest.TestCase):
         self.assertEqual(len(colliding), 2)
 
     def test_lvs_source_and_documented_gap_are_exact(self) -> None:
-        self.assertEqual(self.manifests["lvs"]["declared_operation_count"], 17)
+        self.assertEqual(self.manifests["lvs"]["declared_operation_count"], 18)
         qualify._validate_lvs_documented_gap(self.inventory, self.manifests)
 
     def test_contract_cli_passes_without_regeneration(self) -> None:
@@ -301,8 +301,8 @@ class CheckedInInventoryTests(unittest.TestCase):
                 QUALIFICATION_DIR / "expected",
             )
         self.assertEqual(status, 0, output.getvalue())
-        self.assertIn("326 declared REST operations", output.getvalue())
-        self.assertIn("38 MCP tools plus 5 MCP prompts", output.getvalue())
+        self.assertIn("327 declared REST operations", output.getvalue())
+        self.assertIn("42 MCP tools plus 5 MCP prompts", output.getvalue())
 
     def test_local_live_openapi_helper_does_not_accept_urls(self) -> None:
         with self.assertRaises(contract.ContractError):

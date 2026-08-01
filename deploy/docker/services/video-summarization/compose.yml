@@ -69,6 +69,11 @@ services:
       # Port configuration
       - BACKEND_PORT=${BACKEND_PORT:-38111}
       - LVS_MCP_PORT=${LVS_MCP_PORT:-38112}
+      - LVS_MCP_HOST=${LVS_MCP_HOST:-127.0.0.1}
+      - LVS_MCP_MEDIA_ROOT=${LVS_MCP_MEDIA_ROOT:-}
+      - LVS_MCP_MAX_FILE_BYTES=${LVS_MCP_MAX_FILE_BYTES:-8589934592}
+      - VIA_FILE_API_LOOPBACK_ONLY=${VIA_FILE_API_LOOPBACK_ONLY:-false}
+      - VIA_FILE_API_ALLOW_FILENAME=${VIA_FILE_API_ALLOW_FILENAME:-true}
 
       # Model cache directory
       - MODEL_ROOT_DIR=${MODEL_ROOT_DIR:-/tmp/model_cache}

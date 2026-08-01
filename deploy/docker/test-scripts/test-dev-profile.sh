@@ -1114,16 +1114,38 @@ else
   ((TESTS_FAILED++)) || true
 fi
 
-if grep -q -- '- VIA_DEV_API=${VIA_DEV_API:-false}' \
-     "${REPO_ROOT}/deploy/docker/services/video-summarization/compose.yml" &&
+_lvs_compose="${REPO_ROOT}/deploy/docker/services/video-summarization/compose.yml"
+_thor_lvs_block="$(sed -n '/^  lvs-server:$/,/^  vss-ui:$/p' "${_thor_overlay:-${REPO_ROOT}/deploy/docker/thor-local/compose.yml}")"
+if grep -q -- '- VIA_DEV_API=${VIA_DEV_API:-false}' "${_lvs_compose}" &&
+   grep -Fq -- '- LVS_MCP_HOST=${LVS_MCP_HOST:-127.0.0.1}' "${_lvs_compose}" &&
+   grep -Fq -- '- LVS_MCP_MEDIA_ROOT=${LVS_MCP_MEDIA_ROOT:-}' "${_lvs_compose}" &&
+   grep -Fq -- '- LVS_MCP_MAX_FILE_BYTES=${LVS_MCP_MAX_FILE_BYTES:-8589934592}' "${_lvs_compose}" &&
+   grep -Fq -- '- VIA_FILE_API_LOOPBACK_ONLY=${VIA_FILE_API_LOOPBACK_ONLY:-false}' "${_lvs_compose}" &&
+   grep -Fq -- '- VIA_FILE_API_ALLOW_FILENAME=${VIA_FILE_API_ALLOW_FILENAME:-true}' "${_lvs_compose}" &&
    grep -q '^VIA_DEV_API=true$' \
      "${REPO_ROOT}/deploy/docker/developer-profiles/dev-profile-thor-full/.env" &&
+   grep -q '^LVS_MCP_HOST=127.0.0.1$' \
+     "${REPO_ROOT}/deploy/docker/developer-profiles/dev-profile-thor-full/.env" &&
+   grep -q '^LVS_MCP_MEDIA_ROOT=/opt/nvidia/via/mcp-media$' \
+     "${REPO_ROOT}/deploy/docker/developer-profiles/dev-profile-thor-full/.env" &&
+   grep -q '^VIA_FILE_API_LOOPBACK_ONLY=true$' \
+     "${REPO_ROOT}/deploy/docker/developer-profiles/dev-profile-thor-full/.env" &&
+   grep -q '^VIA_FILE_API_ALLOW_FILENAME=false$' \
+     "${REPO_ROOT}/deploy/docker/developer-profiles/dev-profile-thor-full/.env" &&
+   grep -Fq 'LVS_MCP_HOST: 127.0.0.1' <<<"${_thor_lvs_block}" &&
+   grep -Fq 'LVS_MCP_MEDIA_ROOT: /opt/nvidia/via/mcp-media' <<<"${_thor_lvs_block}" &&
+   grep -Fq 'LVS_MCP_MAX_FILE_BYTES: ${LVS_MCP_MAX_FILE_BYTES:-8589934592}' <<<"${_thor_lvs_block}" &&
+   grep -Fq 'VIA_FILE_API_LOOPBACK_ONLY: "true"' <<<"${_thor_lvs_block}" &&
+   grep -Fq 'VIA_FILE_API_ALLOW_FILENAME: "false"' <<<"${_thor_lvs_block}" &&
+   grep -Fq -- '- ${VSS_DATA_DIR}/videos:/opt/nvidia/via/mcp-media:ro' <<<"${_thor_lvs_block}" &&
    grep -q 'COPY services/video-summarization/src/lvs_mcp.py' \
+     "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
+   grep -q 'patch_lvs_file_management.py' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization"; then
-  echo "PASS: Thor enables and packages the complete LVS MCP development tool contract"
+  echo "PASS: Thor confines LVS file APIs to loopback multipart and packages a bounded read-only MCP media root"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: Thor LVS must package its MCP fixes and enable the advertised caption tool route"
+  echo "FAIL: Thor LVS file APIs must be loopback-only, multipart-only, bounded, read-only, and packaged"
   ((TESTS_FAILED++)) || true
 fi
 

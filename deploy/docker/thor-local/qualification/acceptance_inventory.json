@@ -169,8 +169,8 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 17,
-        "items_sha256": "4156e760431ce88f40f254ae8bc1e0bd6540cf2d289cedfe3b5de40bae81e2d4",
+        "expected_item_count": 18,
+        "items_sha256": "393a04089472b75b33fccd61650356ed52319b46450ad812657cedd8559bb214",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "lvs"
@@ -292,9 +292,9 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 9,
+        "expected_item_count": 13,
         "expected_prompt_count": 0,
-        "items_sha256": "b570e235f31e85789dc0b6e05c70bd40fdfe206618c0658f5b16df65118d3cfc",
+        "items_sha256": "b8166875144e5aab3cfa31730b1f40ed67dbba6dc8067fc74b667c3f6802a621",
         "prompt_names": [],
         "prompts_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "scenario_id": "mcp-tool-operation-matrix",

@@ -23,21 +23,21 @@ MAX_SOURCE_BYTES = 1_000_000
 
 EXPECTED_SOURCE_PLAN = {
     "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
-    "raw_sha256": "e57f5fca4cc14b4b37a059823b23a191036ecfda1374791d6f9afde27047b4ec",
-    "plan_payload_sha256": "21dfd759455866923a12c9595422d2dc7a52af4ff6421a85ecde41f792bba5f5",
+    "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+    "plan_payload_sha256": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d",
 }
 EXPECTED_SOURCE_MANIFEST = {
     "path": "deploy/docker/thor-local/parity/manifest.json",
-    "raw_sha256": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+    "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
 }
 EXPECTED_PREDECESSORS = [
     {
         "path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json",
-        "raw_sha256": "81c33e6723d35a8287380383935dc011865160536fa20ab1d64f3c794fc2ab4c",
+        "raw_sha256": "91406a15ff1340b9b4dba988507470234971fa4905997bc52e64fb983fc12a18",
     },
     {
         "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave2/inventory.json",
-        "raw_sha256": "cd964887b821c05706ea98d83a0760677a34f105324f13e04432da84dac021c9",
+        "raw_sha256": "2c14f8ae5ade22ccbc556a844b4fcb63661048826660073fb21c5f882047c5d2",
     },
 ]
 

@@ -230,6 +230,7 @@ class RtviVlmClient:
         creation_time=None,
         file_id=None,
         sensor_name="",
+        upload_filename=None,
     ):
         """Upload a file to RTVI-VLM via POST /v1/files (multipart).
 
@@ -256,7 +257,7 @@ class RtviVlmClient:
 
         if hasattr(file_obj_or_path, "read"):
             # UploadFile-like object
-            fname = getattr(file_obj_or_path, "filename", "upload")
+            fname = upload_filename or getattr(file_obj_or_path, "filename", "upload")
             resp = self._session.post(
                 f"{self._base_url}/v1/files",
                 files={"file": (fname, file_obj_or_path)},
@@ -307,6 +308,22 @@ class RtviVlmClient:
         )
         if resp.status_code != 200:
             self._raise_rtvi_error("list files", resp)
+        return resp.json()
+
+    def get_file_info(self, file_id):
+        """Get file metadata from RTVI-VLM via GET /v1/files/{file_id}.
+
+        Sticky-routed so the request reaches the same RTVI replica that owns
+        the asset.
+        """
+        logger.info("RTVI get_file_info: x-stream-id=%s", file_id)
+        resp = self._session.get(
+            f"{self._base_url}/v1/files/{file_id}",
+            timeout=RTVI_HEALTH_TIMEOUT,
+            headers={"x-stream-id": str(file_id)},
+        )
+        if resp.status_code != 200:
+            self._raise_rtvi_error("get file info", resp)
         return resp.json()
 
     def delete_file(self, file_id):
