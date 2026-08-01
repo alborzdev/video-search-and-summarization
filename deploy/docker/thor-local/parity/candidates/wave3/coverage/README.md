@@ -33,10 +33,11 @@ difference against the independently bound 152-URL denominator.
 At audit start, the byte lock had 52 records: 51 index-linked pages plus
 `index.html`. `release-notes.html` was a live ledger source but its distinct
 `release_notes` kind was excluded by the source-lock collector. The current
-lock has 53 records: 52 index-linked pages plus `index.html`, and now includes
-the release notes.
+recursive fixed-point lock has 172 records: every one of the 152 direct-index
+targets, `index.html`, and the 19 additional descendants. It includes the
+release notes.
 
-That transition closes a raw-page-byte provenance gap only. Release notes
+That transition closes raw-page-byte provenance gaps only. Release notes
 remain a `semantic_omission`: the live ledger represents one of the three VSS
 3.2.1 feature bullets and does not completely transcribe the conservatively
 counted 201 top-level VSS 3.2.0 bullets.

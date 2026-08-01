@@ -284,8 +284,8 @@ def validate() -> dict[str, Any]:
         raise CoverageError("release-note-linked live capability count differs from 34")
 
     locked_urls = {record["url"] for record in source_lock["records"]}
-    if len(source_lock["records"]) != 53 or len(locked_urls & set(target_urls)) != 52:
-        raise CoverageError("current source-lock transition no longer matches 53/52")
+    if len(source_lock["records"]) != 172 or len(locked_urls & set(target_urls)) != 152:
+        raise CoverageError("current source-lock transition no longer matches 172/152")
     if BASE_URL + "release-notes.html" not in locked_urls:
         raise CoverageError("release notes are not present in the current source lock")
 

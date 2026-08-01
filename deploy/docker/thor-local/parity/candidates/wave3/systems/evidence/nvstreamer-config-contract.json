@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "source": "https://docs.nvidia.com/vss/3.2.1/vios-nvstreamer.html#configuration",
+  "reference_only": true,
+  "network": {
+    "server_domain_name": "vst-service",
+    "stun": "Google STUN",
+    "socket_buffer": 1000000,
+    "webrtc_max_input": 8,
+    "webrtc_max_output": 8,
+    "rtsp_port": 8554,
+    "rtsp_instances": 8,
+    "rtsp_tcp_default": false,
+    "rtsp_udp_port_range": "31000-31200",
+    "rtsp_udp_latency_ms": 200,
+    "webrtc_latency_ms": 500,
+    "grpc_enabled": false,
+    "grpc_port": 50051,
+    "webrtc_port_range": "30001-30100",
+    "websocket_ping_enabled": false,
+    "websocket_ping_interval_ms": 5000
+  },
+  "onvif": {"timeouts_seconds":10,"frequency_seconds":5,"max_devices":8,"bitrate_kbps":8000,"fps":30,"resolution":"1920x1080","gov":60},
+  "data": {"storage_threshold_percent":95,"storage_check_frequency_seconds":2,"sync_playback":false,"sync_file_count":4,"max_upload_mb":10000,"containers":["mp4","mkv"],"metadata":"json","video_codecs":["h264","h265"],"audio_codecs":["pcmu","pcma","mpeg4-generic"],"aging_enabled":true,"max_download_mb":1000},
+  "notifications": {"broker":"kafka","topic":"vst.event","consumer":"mdx-bev","sensor_id_path":"sensor.id","redis_port":6379,"kafka_port":9092},
+  "debug": {"performance_probes":true,"qos_probes":true,"gstreamer_probes":true,"prometheus_enabled":false,"prometheus_port":8080,"debug_apis":true},
+  "overlay": {"metadata_endpoint":"10.0.0.1:9200/mdx-raw*","batch":300,"protobuf":true,"camera_groups":true},
+  "security": {"https_enabled":true,"rtsp_auth":true,"http_digest":true,"multi_user":false,"session_age_seconds":2592000,"secure_cookie":true,"same_site_cookie":true}
+}

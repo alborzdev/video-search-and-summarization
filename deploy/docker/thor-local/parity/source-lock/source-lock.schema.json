@@ -27,19 +27,19 @@
     }
   },
   "properties": {
-    "schema_version": {"const": 2},
+    "schema_version": {"const": 3},
     "product_version": {"const": "3.2.1"},
-    "captured_on": {"type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "captured_on": {"const": "2026-07-31"},
     "inputs": {
       "type": "array",
-      "minItems": 2,
-      "maxItems": 2,
+      "minItems": 3,
+      "maxItems": 3,
       "items": {
         "type": "object",
         "required": ["id", "path", "sha256"],
         "additionalProperties": false,
         "properties": {
-          "id": {"enum": ["live_ledger", "wave2_candidate"]},
+          "id": {"enum": ["live_ledger", "wave2_candidate", "recursive_targets"]},
           "path": {"type": "string", "pattern": "^deploy/docker/thor-local/parity/"},
           "sha256": {"$ref": "#/$defs/sha256"}
         }
@@ -149,7 +149,7 @@
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": {"enum": ["live_ledger", "wave2_candidate", "audited_index"]}
+            "items": {"enum": ["live_ledger", "wave2_candidate", "recursive_fixed_point"]}
           },
           "outcome": {"enum": ["success", "failure"]},
           "final_url": {"type": "string", "format": "uri", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/"},
@@ -186,12 +186,13 @@
     },
     "summary": {
       "type": "object",
-      "required": ["url_count", "success_count", "failure_count", "aggregate_sha256"],
+      "required": ["url_count", "success_count", "failure_count", "total_byte_count", "aggregate_sha256"],
       "additionalProperties": false,
       "properties": {
         "url_count": {"type": "integer", "minimum": 1},
         "success_count": {"type": "integer", "minimum": 0},
         "failure_count": {"type": "integer", "minimum": 0},
+        "total_byte_count": {"type": "integer", "minimum": 0},
         "aggregate_sha256": {"$ref": "#/$defs/sha256"}
       }
     }

@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "scope": {
+    "warehouse_sample_bundle": "excluded_optional",
+    "operator_custom_data": "in_scope",
+    "live_ledger_modified": false,
+    "runtime_qualified": false
+  },
+  "inputs": [
+    {
+      "id": "live-ledger",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "sha256": "e33eff2cc03f7770e0513a061732ec860ccb241721e40b9d60d6dbb2b0dafee8",
+      "canonical_sha256": "b5eac9d5dc076b4fb91fc3527de18d23f38f631f4167df5487a3065eeb7c7c07"
+    },
+    {
+      "id": "source-lock",
+      "path": "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+      "sha256": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07",
+      "canonical_sha256": "8d8a43afa4fc101f3735ae57437849d5e2b88a5c9893ea00ec4a296740d7f5a3"
+    },
+    {
+      "id": "recursive-targets",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/recursive-targets.json",
+      "sha256": "30e42ca2d085aa6e4b3ea99e537f9e2897864da1463979bb4768d06b8027a3aa",
+      "canonical_sha256": "3fe768b25f9feaa826846aba0b8185ec21f8ec81beba246af8644f2c5bd52f4a"
+    },
+    {
+      "id": "agent-smartcity",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
+      "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395",
+      "canonical_sha256": "a0c366965541898d6c9f978f938a1fe8fc77fac84c1b992af09f96fc8d5ea9b7"
+    },
+    {
+      "id": "systems",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json",
+      "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539",
+      "canonical_sha256": "b4417c11a667bf4a6b2fa8c780f90e5504107c25821e117f6a5adc83af19af93"
+    },
+    {
+      "id": "calibration-warehouse",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json",
+      "sha256": "1bc083b7ef0419a0f6975007cf672c477e9de0d164a7c350976f069199576ade",
+      "canonical_sha256": "e8aa7045c93cf0ef73e70034dd7d8efedb4f2c5e54153f10008c83eb70911783"
+    },
+    {
+      "id": "systems-broker-evidence",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/broker-topic-contracts.json",
+      "sha256": "21d6fd0724ce292ab0e09098485d3d12c8f3e357e81253c2e72ffdc07960b5ef",
+      "canonical_sha256": "9fbd0053aa91910a321c11af1aac846435b44c8ce005221066e3cb99b15064dd"
+    },
+    {
+      "id": "systems-nvstreamer-evidence",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/nvstreamer-config-contract.json",
+      "sha256": "968f413829ce9b14efa06f6128258e7ad25cd156bf71a37a5986928abc653e05",
+      "canonical_sha256": "84b82e19af16b67b74a878764c6ed829719feb373d5e1910b119980353f76a91"
+    },
+    {
+      "id": "systems-performance-evidence",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/performance-reference-contracts.json",
+      "sha256": "f5095fa0fbd5d26791c6dfe6d153ba97b63b6d46c51a6a09856c0f14bb089cec",
+      "canonical_sha256": "7b51ddde61aec520944ef9bd425bdab6ed8cf4a141f859a80014924f501749fd"
+    }
+  ],
+  "source_merge": {
+    "policy": "canonical_uri_reuse_live_first",
+    "duplicate_uri_resolutions": [
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
+        "canonical_source_id": "release-notes-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "release-notes-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "release-notes-3.2.1"},
+          {"input_id": "systems", "source_id": "doc.release-notes"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Configuration.html",
+        "canonical_source_id": "agent-config-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-config-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-config-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Customization.html",
+        "canonical_source_id": "agent-customization-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-customization-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-customization-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Evaluation.html",
+        "canonical_source_id": "agent-eval-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-eval-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-eval-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Known-Issues.html",
+        "canonical_source_id": "agent-known-issues-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-known-issues-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-known-issues-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-llm.html",
+        "canonical_source_id": "agent-llm-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-llm-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-llm-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-vlm.html",
+        "canonical_source_id": "agent-vlm-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-vlm-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-vlm-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-Observability.html",
+        "canonical_source_id": "agent-observability-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-observability-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-observability-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-report-generation.html",
+        "canonical_source_id": "agent-report-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "agent-report-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "agent-report-doc-3.2.1"}
+        ]
+      },
+      {
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-orchestrator-mcp.html",
+        "canonical_source_id": "orchestrator-mcp-doc-3.2.1",
+        "contributors": [
+          {"input_id": "live-ledger", "source_id": "orchestrator-mcp-doc-3.2.1"},
+          {"input_id": "agent-smartcity", "source_id": "orchestrator-mcp-doc-3.2.1"}
+        ]
+      }
+    ],
+    "source_id_remaps": [
+      {
+        "input_id": "systems",
+        "from_source_id": "doc.release-notes",
+        "to_source_id": "release-notes-3.2.1",
+        "uri": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
+        "claim_reference_count": 13
+      }
+    ],
+    "source_id_renames": [
+      {
+        "input_id": "agent-smartcity",
+        "from_source_id": "video-analytics-mcp-doc-3.2.1",
+        "to_source_id": "agent-video-analytics-mcp-doc-3.2.1",
+        "uri": "https://docs.nvidia.com/vss/3.2.1/vss-agent/Video-Analytics-MCP-Server.html",
+        "claim_reference_count": 1,
+        "reason": "same_source_id_distinct_uri"
+      }
+    ]
+  },
+  "capability_merge": {
+    "new_capability_collision_policy": "reject_all",
+    "approved_new_capability_collisions": [],
+    "approved_enrichment_collisions": [
+      {
+        "target_id": "api.core.video-analytics-56",
+        "contributors": ["agent-smartcity", "systems"],
+        "merge_policy": "deep_merge_disjoint",
+        "required_contract_keys": {
+          "agent-smartcity": ["smart_city_uploads"],
+          "systems": ["query_families"]
+        }
+      },
+      {
+        "target_id": "calibration.sdg.workflow",
+        "contributors": ["agent-smartcity", "calibration-warehouse"],
+        "merge_policy": "deep_merge_with_explicit_output_union",
+        "required_contract_keys": {
+          "agent-smartcity": ["documented_artifact_tag", "outputs", "ports", "simulator"],
+          "calibration-warehouse": ["acceptance_class_correction", "anchor_selection", "outputs"]
+        },
+        "output_union": [
+          "MDX JSON",
+          "camera_specs.yml",
+          "intrinsic",
+          "extrinsic",
+          "calibration.json",
+          "floor_plan",
+          "imageMetadata.json"
+        ],
+        "resolved_status": {
+          "acceptance_class": "external_optional",
+          "thor_state": "source_only",
+          "runtime_state": "not_applicable"
+        }
+      }
+    ]
+  },
+  "status_normalizations": [
+    {
+      "target_id": "calibration.sdg.workflow",
+      "reason": "no_official_thor_local_support_evidence",
+      "resolved_status": {
+        "acceptance_class": "external_optional",
+        "thor_state": "source_only",
+        "runtime_state": "not_applicable"
+      }
+    },
+    {
+      "target_id": "customization.smart-city.trafficcamnet-rtdetr",
+      "reason": "no_official_thor_local_support_evidence",
+      "resolved_status": {
+        "acceptance_class": "external_optional",
+        "thor_state": "external_optional",
+        "runtime_state": "not_applicable"
+      }
+    },
+    {
+      "target_id": "tooling.smart-city.synthetic-data-pipeline",
+      "reason": "no_official_thor_local_support_evidence",
+      "resolved_status": {
+        "acceptance_class": "external_optional",
+        "thor_state": "external_optional",
+        "runtime_state": "not_applicable"
+      }
+    }
+  ],
+  "fixture_merge": {
+    "collision_policy": "reject_all",
+    "approved_collisions": [],
+    "input_counts": {
+      "agent-smartcity": 41,
+      "systems-acceptance": 55,
+      "systems-performance": 7,
+      "calibration-warehouse": 7
+    }
+  },
+  "counts": {
+    "source_lock_urls": 172,
+    "live_source_records": 55,
+    "candidate_source_records": 96,
+    "all_source_records": 151,
+    "duplicate_source_records": 11,
+    "proposed_unique_sources": 140,
+    "live_capabilities": 161,
+    "new_capability_records": 115,
+    "proposed_capabilities": 276,
+    "enrichment_records": 46,
+    "unique_enrichment_targets": 44,
+    "approved_enrichment_collisions": 2,
+    "live_discrepancies": 18,
+    "new_discrepancy_records": 27,
+    "proposed_discrepancies": 45,
+    "unique_proposed_discrepancies": 45,
+    "guardrail_records": 10,
+    "unique_guardrails": 10,
+    "agent_fixture_records": 41,
+    "systems_acceptance_fixture_records": 55,
+    "systems_performance_fixture_records": 7,
+    "calibration_acceptance_vectors": 7,
+    "candidate_fixture_records": 110,
+    "unique_candidate_fixtures": 110
+  },
+  "planning_only": true
+}

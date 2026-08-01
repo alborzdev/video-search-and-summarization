@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "product_version": "3.2.1",
   "captured_on": "2026-07-31",
   "inputs": [
@@ -12,6 +12,11 @@
       "id": "wave2_candidate",
       "path": "deploy/docker/thor-local/parity/candidates/wave2/candidate.json",
       "sha256": "db42abe49cd2be32b63a54a7a7a1a5c628ae58e0aa36edaf65fc83600a617384"
+    },
+    {
+      "id": "recursive_targets",
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/recursive-targets.json",
+      "sha256": "30e42ca2d085aa6e4b3ea99e537f9e2897864da1463979bb4768d06b8027a3aa"
     }
   ],
   "fetch_policy": {
@@ -80,9 +85,52 @@
   },
   "records": [
     {
+      "url": "https://docs.nvidia.com/vss/3.2.1/API-Reference.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/API-Reference.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46617,
+      "sha256": "2d0880e634bad9dc705fcc7c983ec75c3616076647fa0f7c302bab3a18c89efd",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/Calibration-Camera-Positioning-Guide.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/Calibration-Camera-Positioning-Guide.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 52915,
+      "sha256": "3caa9e825e9ce0656f6f6512be24d99e2afa40fb5ad2c45ec67f43ab5f351367",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/JSON-Schema.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/JSON-Schema.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 109594,
+      "sha256": "e80b60f3ea2714b333dc6a9c41cce6f88faa4f6087737d2b43a585195c836583",
+      "failure": null
+    },
+    {
       "url": "https://docs.nvidia.com/vss/3.2.1/Known-Limitations.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -91,13 +139,70 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 47736,
-      "sha256": "fe4994090b1bbde20a388e50e9a382909387ceb3eed5de6fcc34b6451767ae25",
+      "sha256": "1c07f1b2102b9d689a735861c3c9105bd13f809895f4393390098d420e6fee90",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/License-Information.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/License-Information.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 47786,
+      "sha256": "4aea48a73883759d7056f8d5508ecd7d52e0dfa744a0e07fb995d8f3ad30a3ea",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/NvSchema.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/NvSchema.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 91279,
+      "sha256": "7f3437cca71f7dcbdb85ffa14f50e9bb627ca22d2b558ce2aaf0075d875cd4d4",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/Protobuf-Schema.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/Protobuf-Schema.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 160734,
+      "sha256": "735b6d674b498c123ff9d8c30365eef92fec4b741b1f90c95c567522bc90e02a",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/VSS-Agents.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/VSS-Agents.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 55532,
+      "sha256": "9ef4859b1cccf9040863d29b959159276d9522b1f47381af9a6699dc6acbc23a",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/agent-harnesses.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/agent-harnesses.html",
@@ -105,13 +210,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 55697,
-      "sha256": "0e06bffba4551e6a423fcbad7cec0772d68ee8aa42a03537ac7a871de552fa60",
+      "sha256": "64427130d09306995faf96b5615b8eea1452bb8cda7e877ad015f37a7d8ca8ce",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/agent-skills.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/agent-skills.html",
@@ -119,13 +225,84 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 68051,
-      "sha256": "b648b83d0d916ece5a0a463d7c927ef6b2be5d3cec86429509b423710ad1ea50",
+      "sha256": "cecdfc9ca5cee670d0b754af298fbd38c962ef11f52a3165173f377df0597ea5",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-alert-verification.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-alert-verification.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 95293,
+      "sha256": "c4886538658ee0c6f6968317100d20d287bfe1d52074cc81e9ba85325d2139d2",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-lvs.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-lvs.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 102135,
+      "sha256": "b662acb3f1dcd4d2285249b838d443293bdb0bf2f81550cad28ea658491b926c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-rt-alert.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-rt-alert.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 91713,
+      "sha256": "38fa2bdfbac3a70ea29eae3a5db06d76980d40e1e84b57ce1e4987b8dc1ed700",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-search.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/agent-workflow-search.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 153769,
+      "sha256": "a7ebe870cf668e71cf77bac4fa7a575a064850585586a6e7a536d262f46bbc5c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/agent-workflows.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/agent-workflows.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46474,
+      "sha256": "44cd6edfa30851a4f700dc9ad506f9270f0dd065d82184ea6e1eac4a655d0bca",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/alert-verification-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/alert-verification-api.html",
@@ -133,13 +310,56 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 47745,
-      "sha256": "f1abf81d2525bbe017f98f356f099355be93535369ca40a5014be58a5748cfe9",
+      "sha256": "ac0d8517327199168fa1e56f594dc6df22eeb290bc7f9b588293ae4ce17e15ac",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/alert-verification-service.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/alert-verification-service.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 189229,
+      "sha256": "a58a058af029da86fec0ca1d70eba14acd926b91fa4edf39cf8f85a280424177",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/analytics-microservices.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/analytics-microservices.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44586,
+      "sha256": "6c322eb1a9d49d620971a298a47e76daa84f65987ff1d7bd69cb409fd6293b7c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/api-gateway-mcp.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/api-gateway-mcp.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44379,
+      "sha256": "920b858a40532f80c3a7763ab125552fb16948cbeb90549710ab855bc9cadcb9",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/auto-calibration.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -148,13 +368,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 49978,
-      "sha256": "4a5b3b138fca61f0c50f7884afc4ebb3308cb2ead493af8760f026f890bec0cb",
+      "sha256": "6918d1780aeb88a4c64dbf592d869ca35944e41bed20478491824a4d0997a3b7",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-custom-dataset.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -163,13 +384,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 80603,
-      "sha256": "5a621aa46982fa8a0a1bbc95744ad86db2345f3f1ef92627b7e8382514ae2aa7",
+      "sha256": "4b3fa781bed0c07eec168bdde91cdc03985a4b0d23f78414f95d6b291c1579ca",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-getting-started.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -178,13 +400,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 103777,
-      "sha256": "66163f68e0a56b7704723f209d307a11e7258e3ed89fa0d725eef8cb5a24e2ad",
+      "sha256": "cfb523737545be92bf2f8588ba03a58a3535fd7ad6e5870a1d131c4dda91f2ee",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-troubleshooting.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/autocalib-troubleshooting.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 84660,
+      "sha256": "8f965979856932c4903bed50026a3530875fc2f28f4bd2fb54e90ede0694707b",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/autocalib-workflow-steps.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -193,13 +430,98 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 133904,
-      "sha256": "f981962e4a1dd1dc0377beba874c506fb517e5b9b09e58e1828c5945f6ac762b",
+      "sha256": "2fed0c72969756cc0ad6116b72308bfe24c4f5440df8eecb0f32d0cfe49d23ed",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/behavior-analytics.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/behavior-analytics.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 399611,
+      "sha256": "7dddfc35179a45052001f2b5c9978a1896ed7927d0efdf730e9acbb586e11166",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/calibration-schema.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/calibration-schema.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 180217,
+      "sha256": "8a497322da0ade04e16d6e161b6bd9245d25902b6ea6992bd59c2b62c7c42200",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/calibration.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/calibration.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45084,
+      "sha256": "9b75102bb75e7d511f3e3d2123e5398a8ff69a53d8bb9503c44eef8648ebb06a",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/cloud-brev.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/cloud-brev.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 48887,
+      "sha256": "04783173094044f379571dc2aa07600e20f37ba0aee763e5ffa877f8cf306999",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/configuration-management.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/configuration-management.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44201,
+      "sha256": "6839b0da8d919cd02e506e67d30621cfbd51c17492f88ac083167710005c2ca6",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/database.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/database.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 43888,
+      "sha256": "e96d1b93f40f170ff2fa9f8964dc2db0929b86a7d730c41f483a057e9272d48d",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/deepstream-configurator.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/deepstream-configurator.html",
@@ -207,13 +529,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 58019,
-      "sha256": "404e70250092bd2a7aa467404dcadd86bcf79b38110154913b06af2bca313f0f",
+      "sha256": "98e811220ae836c50004e1d26b53e588272b58420cbc9f965bf9be05c7fb1301",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/deployments.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/deployments.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46998,
+      "sha256": "4ddab92e326cc1ac714de755660aaf9c00f43505a03fc43e5bc82e801704380b",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/edge-deployment.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -222,13 +559,70 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 58304,
-      "sha256": "ac3ad31ab129513c2898e5d7b0d1f655bdc2ec6b160fad096d5bcb9356575322",
+      "sha256": "99b388c7d070179ba3fe502f3f8601928e2dd1ea8d4d8db7d2463707e45229a9",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/elk.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/elk.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 108891,
+      "sha256": "d768f08e25560839df88e4bcc91d69c4be93a20388e4a9f8dd0264a3f27e5feb",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/faq.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/faq.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 87537,
+      "sha256": "419943444e59a6b02795990eeeb79a71e4f561c067206d5304df62783a882e6c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/genindex.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/genindex.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46360,
+      "sha256": "ea830fc3185697c32246b6d6367ebaff3f731fc3a58835ec81836656e537e0ab",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/getting-started.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/getting-started.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44356,
+      "sha256": "079ec90debc9276e4aa408b9f5594ea498c1603ebe6dd9f3734956f9c791ab18",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/helm-deployment.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -237,13 +631,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 51541,
-      "sha256": "f95b346b7f922dfc5763b8333d516c731b06ab8b6a60ff733b69d01418bcd221",
+      "sha256": "8e0bd91751f470b7bd0c6d47b9615c748f18b9d42d37bb69dd076f26095be442",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/index.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/index.html",
@@ -251,13 +646,42 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 58735,
-      "sha256": "b7b2dc500f6e8727b42a0eeaf0754f7a8239df69797c8c13dbab508549c1e037",
+      "sha256": "d9c54a82ef189c28c04aef884664d4aef0b7832dbafa390579dc19952b912df4",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/industry-examples.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/industry-examples.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44700,
+      "sha256": "e93589b1ef0f0083493a11e674b8e80f008d0a08e67c69f2c8a12e896741cab0",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/kafka.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/kafka.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 52217,
+      "sha256": "c1dd46ed81e5816d8d02e56007a4f91d3241f7c89a5858ef7d71255a92ec51d9",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/legacy-calibration.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/legacy-calibration.html",
@@ -265,13 +689,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 123910,
-      "sha256": "d554bc8cd78452fe597daae23ec9a23e25b1df10d57add9c088bd5f2861a162f",
+      "sha256": "81a24df79971410a61a026c995387863ffbf4d9b77f7012012bc2ac99f7118aa",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/licenses.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/licenses.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46801,
+      "sha256": "931fda0dba675bf6ee3b6d5149493d7e9aa6f263924db521dcbf88321f2c682a",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/long-video-summarization-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/long-video-summarization-api.html",
@@ -279,13 +718,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 47322,
-      "sha256": "74e054ddc082fdd714f3201288df907470f4c6cd3cdacc9f49fab5f6ddc5d02c",
+      "sha256": "7e7704e8ca7cb5d94abbc7cefdb1ae47e0a1d5e16917efe54a6c742a42b13d11",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/long-video-summarization.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/long-video-summarization.html",
@@ -293,13 +733,42 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 185089,
-      "sha256": "c72ed6c86662670dc387bfd03dd866d333e73b1b6930d876c85b0df62777e8c9",
+      "sha256": "df081c4955bc546879e899883b38b7f465304bc9f8273c1edb8cc68e1bb0f5ce",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/message-broker.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/message-broker.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46778,
+      "sha256": "b340a6c7f8dae2dd8c078562b934c4e60c86117f9d5b2db11bbc0166d6a80ee5",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/middleware.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/middleware.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45044,
+      "sha256": "90838483e51e9d9427b5faf471cbf2e904359c83281a69393a4c61310a24f322",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/models/clip-object-embeddings.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -308,13 +777,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 84768,
-      "sha256": "5f508a0bb204acd0d5cd1f15f3a942a704c2713f4cccfa4fceee4be6d9c3bb6c",
+      "sha256": "2d8c1ac181dd1d49c705be3a793703242f5ad0c77223747764791c6b2047dd79",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/models/cosmos-embed1.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -323,13 +793,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 85310,
-      "sha256": "5baf164ccbd8b25e536bf68ff508642a5c2f300ca62266e0c80ab73900809ea5",
+      "sha256": "75daf59eb3da4bab85784a7167c6857cb724facef528c7ce3c5eef2ed6e1f5e8",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/models/index.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/models/index.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45374,
+      "sha256": "c2f55b4d98b801d17582578ea07b918992bb3c0a5b1ef71b8367a7b4101d3f89",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/models/model-customization.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/models/model-customization.html",
@@ -337,13 +822,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 52550,
-      "sha256": "86267759e73407ba61934023de21846f421475617ea34c0c6907e6c700614b47",
+      "sha256": "d1d6de0ae5b91545bea03a50b0d8458abcb8e70aa89e654bbdcd221e6662ca47",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/models/rt-detr.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -352,13 +838,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 109136,
-      "sha256": "b429a47582b14e9ed4ab9effbd17b9ac74d0db021c426c36494f1ece24361cf7",
+      "sha256": "9c499bb1cd864a3a73dd718c1a7d92f0995a2b6c1f3837231df5325c1d342f14",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/models/sparse4d.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -367,13 +854,70 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 151107,
-      "sha256": "0680807c1428061d9e5eb5ada1f9d2e72477154943660d71551404d45b43b50a",
+      "sha256": "7a613b8a220c021d83a3fa198a3c9b42e4565b45821870c3a617879cc8a8b40d",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-configuration.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-configuration.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 68910,
+      "sha256": "921063e76170ba20691590e6b162070f4849223c0f0f24e264f3d2f26edc0adb",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-deploy-vss-and-skills.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-deploy-vss-and-skills.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 62451,
+      "sha256": "26832386ce79ca4b3b56c5784a2f450f3ba6654a23426f0c36a6e98ce7ab9896",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-troubleshooting.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw-troubleshooting.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 67597,
+      "sha256": "13440b2a4ec60328a5ce7cafb759042200636b71d44a0fcd418fac5644890828",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/nemoclaw.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 49244,
+      "sha256": "3f36394288fb0f6db2d41a97d7f46ad75984c8611c0acb5dc1839eec6dc64c21",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/object-detection-tracking-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/object-detection-tracking-api.html",
@@ -381,13 +925,154 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 47375,
-      "sha256": "2d7c0049b0d84ef7e2f5c3a0360ca550b01ca6549fc4c24d8e38149df46d1ae9",
+      "sha256": "4a7b62fab8c583c0369929a235230a436e78d6948be173691c381846bc905429",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/object-detection-tracking.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/object-detection-tracking.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 264982,
+      "sha256": "1f5b4534d2d0d213e5bf050fd9f498084373eb89f94eeb0c13cfd155ebbb2616",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/observability.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/observability.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 48603,
+      "sha256": "22d1cbbd61c7b672265d9256f74b230959eee3e711e4e38b0fc6695e7052eaaa",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-alert-verification.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance-alert-verification.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 64493,
+      "sha256": "df885390f9cb6aea649cc96bf64adf37a821632887cfbc9067a0b28335e1bfbd",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-lvs.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance-lvs.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 60497,
+      "sha256": "3d73164da15a1db5fc3637f1e9b104a4d2d70857ee6fc5c9849831139bc3fab9",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-cv.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-cv.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 55570,
+      "sha256": "9c3d1c2625855b934224b6d48e61550595dbba781439b1dc4ca33bc47d41f9a9",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-embed.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-embed.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 60554,
+      "sha256": "1bb5fed1d870329bc1f75e850bfed109a920a3e34bbe24964a8f63bcf8497ce9",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-vlm.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance-rt-vlm.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 70910,
+      "sha256": "689eb2c4c82ac3dd2c52ec7edd2e6713d43bc32c87f1c8e962579d5fa141ab48",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-search.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance-search.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 67140,
+      "sha256": "5232e2084459ce7810a08a4580a79d47d8e3f3a94bacdb531897f60f4826baa6",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance-vios.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance-vios.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 104051,
+      "sha256": "073e31cc98325e08be6aa905ff5da8360c9f72d0843357da990ad663a2b50a8c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/performance.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/performance.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 49578,
+      "sha256": "6f26d60f1fd9fbea0393c2b45700c6b37064153f2d4291d0b8dc2a2891199bfd",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/prerequisites.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/prerequisites.html",
@@ -395,13 +1080,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 105709,
-      "sha256": "068892f5decb9de85962dd3740d6b2bef3c66a593935dbdee2ef1eed52ce0c74",
+      "sha256": "a59c690510697349d58e910c47f9301c465e0f5b40788846bae35f28fc45b533",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/quickstart.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/quickstart.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 113018,
+      "sha256": "13bbe24012e7cfea3431adcc0d71ceb62ca16ea19d7f5098f9e4bdeec3c40e8d",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/real-time-embedding-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/real-time-embedding-api.html",
@@ -409,13 +1109,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 46595,
-      "sha256": "65ff3bfe0b26fb72b9ec1f8d7bf14f7a6278584e8db9ed4fe18bf12875bafaee",
+      "sha256": "0cc83850684ab94d61e8ad58eeeaf5cb611bf378243621f0eb6b754c2255d4db",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/real-time-embedding.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -424,13 +1125,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 184365,
-      "sha256": "1e505be48d379e4393bdab89c1ad09b346f584e934001be5c35111c9e9e7f4a6",
+      "sha256": "57c53cd08d8854cb238aa6ab5b73b4b07998810abef2974c47c3265eacb3c0ca",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/real-time-vlm-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/real-time-vlm-api.html",
@@ -438,13 +1140,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 48060,
-      "sha256": "5b6cb7693b099af0439c8dce4cde644fbbd9ce4a5e3b614857eeeb78f03d04ad",
+      "sha256": "1d1dd8df4a53816d5dfb200c7b41b618373b5c90a59ccf4bbded3ff0cf798c52",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/real-time-vlm.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/real-time-vlm.html",
@@ -452,13 +1155,42 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 217982,
-      "sha256": "a1342871150198fe52608090dcd21c32bd450fe4442b99aea559ecaab50909ee",
+      "sha256": "796db3882c96a3404836212114b4b5afdad164031f92cab1a585be99605390c6",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/redis.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/redis.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 51109,
+      "sha256": "78e32fa99aee32c97cef8d0cc3eef14878b9be8ecc77aba16d9c5cf07043b3f6",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/release-notes-ver-2.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/release-notes-ver-2.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 52267,
+      "sha256": "9efa0cd1d289007b2af639d992a014e35d10dd6f7ea7eded00bec8828ca2a624",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/release-notes.html",
@@ -466,13 +1198,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 114994,
-      "sha256": "fead543436a37899bf36eeccba4624ad26857e4dd1b3fe5bb7038de1c865b58a",
+      "sha256": "df07a6929a7985e3171eada3de7877caf048ab47772a1902204316f13a7653a0",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/sdg-calibration.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/sdg-calibration.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 48035,
+      "sha256": "070a37ffe1c835032117ba26b4f20dda4dd55deec6094d1d20853cc1131d1021",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/sdrc.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/sdrc.html",
@@ -480,13 +1227,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 216989,
-      "sha256": "f46e6c48e1c78c41c4628081e494c5408d287fcc3dbc7f0c58346aaf0ae7dec9",
+      "sha256": "527fdff03fd1044ab426d8780793e52e195466df98134c038c0a6f25be0c18a5",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/search.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/search.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 43202,
+      "sha256": "49275e603ccbe7c2e2681740b2f3b41211db15fe4084e947d2556523b5d8a5e0",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/secure-deployment.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -495,13 +1257,238 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 49690,
-      "sha256": "fcb937c5082d9cef156918887f2280db71ddea967e2e2aee6cc6ec2513f4d5d0",
+      "sha256": "5cce054302859589a6e7fdb8080c8fa1dbc6a617da6d5ea55e93b3d221c1d36d",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Blueprint-deep-dive.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Blueprint-deep-dive.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 65232,
+      "sha256": "2670833d48f9a1073459c4f69e4f4946ae7bedddf7624d418165f4ac41fb18d2",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Calibration.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Calibration.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 84472,
+      "sha256": "54a2be73a49991e9e7d90d0c5af6a232e4aca691e678e990550078c81580dfc6",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Deployment.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Deployment.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 50332,
+      "sha256": "10888a8fd4859619f6a0d255409e6f1fe52a984ae5ffff628aec025cc2731eae",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/FAQ.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/FAQ.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44797,
+      "sha256": "c30923967ce344705abc0d8077731cbd1c3a42f66529bec0ca37155b3a0b8419",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Introduction.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Introduction.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 52074,
+      "sha256": "4f553be03b7396be2e97f6a0ff6c8bf6e86f82215c5d9822d9d24803b46ae3f5",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Known-Limitations.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Known-Limitations.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45967,
+      "sha256": "79bed94aa6aaf3d62c6fcf7594de2d2bd69dee2f7c32e76b4d2b2d61f10e287f",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/License-Information.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/License-Information.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 49038,
+      "sha256": "ce7707e8fe0e7747a7f242989e80a0a032f0138b4ff1697972d20a7060f958da",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Model-Fine-Tuning.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Model-Fine-Tuning.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 67341,
+      "sha256": "6dfd03e217416b803c164509e3f8390b09003524079042586652552f56650216",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Operations.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Operations.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45380,
+      "sha256": "cbe156ffcea86cc0d27006ec2aceb27142397714f7475731acdec29731883f45",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Prerequisites.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Prerequisites.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 69110,
+      "sha256": "415538c34b59a300ddac15e96ce5dc813cf2a5fc354eb3686af33cf392ed17ed",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Quickstart-Guide.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Quickstart-Guide.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 84241,
+      "sha256": "dfda551b587839a8e6f7a4e5da8f186e89062326dfb340bb81f8296d6f81698d",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Simulation-SDG.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Simulation-SDG.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 75818,
+      "sha256": "8670c587409ee81283dfdb87c081c693830219f66cc3664f51870067a3914389",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Smartcity-Development-Workflow.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Smartcity-Development-Workflow.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 47415,
+      "sha256": "54c2b943d3aa5bd6f75cf52ca54f77bf3784779d8f89a132c263105562aafcb5",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Troubleshooting-Guide.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Troubleshooting-Guide.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44807,
+      "sha256": "0bd5cb1f151d00da1d5f577260989df9b527e3b2a2a19d29a36e91e0703becf0",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/smartcity-toc.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/smartcity-toc.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46593,
+      "sha256": "6be35690a1f11a7335a75dc1e64f625737a3a30e05876b86ae62660ffe431c83",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-api-server.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-api-server.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 126932,
+      "sha256": "9be9e3ea49c6b2722e81e315235fed008758f44410800f09e5bff81a1cda09fa",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-api.html",
@@ -509,13 +1496,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 44920,
-      "sha256": "708b2e597f9e7fa85d65c4e60d5dfcea79e24988490c0684f6ddf343a487f0d6",
+      "sha256": "ad7dc012765acf1cf5b43e19090593d8215e69a606f84865ecc632e85bcf6875",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-mcp.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/video-analytics-mcp.html",
@@ -523,13 +1511,56 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 48436,
-      "sha256": "4c530c744a2378e985a33cb16aba324e4f737670073e81b4e066feb8736a55be",
+      "sha256": "a2ba7fa4bdc9011bc1414332c024801dea3ce10096c9029a20f760e4a2c15d5a",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vios-microservices.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vios-microservices.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 164804,
+      "sha256": "fbb77fe6faee9737ca40d80d612de939810c704899c76351fca0395540af1db2",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vios-nvstreamer.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vios-nvstreamer.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 78588,
+      "sha256": "ef2ae44c03a06608c492b6dd7a4ff395c11f5feda7744f2a7619177fed9014df",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vision-microservices.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vision-microservices.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45110,
+      "sha256": "300f0bd5c601d7d7d3d133b5d92fbdfb856f74bb84ad1d6402db871e532e8305",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Configuration.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -538,13 +1569,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 98059,
-      "sha256": "539d34195f7dd4da44e49095dc2d742efc3094c62f07d6b407be85ce18fb8313",
+      "sha256": "10bff26fd4d6485f8f35bd3ae9b789c2950a0b343f7f426d1ad7b0ae87b3f074",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Customization.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -553,13 +1585,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 63813,
-      "sha256": "a51d97d1ec5966f09650b42512c429afe0bfbcfd6827f93822e19f671c46ba8b",
+      "sha256": "3be40a0e6edfdd51b36fec7d6d4dba1e427bdeaef85585137fae206c4fe5566b",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Evaluation.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -568,13 +1601,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 148187,
-      "sha256": "7d1bb33d031abdb1d460c3f3ce83e0ed79211c85234f9581f67d02bee216e9b1",
+      "sha256": "949ac56d7b2476f7ea96d4a0dc7a56441f5661751fd929ee80ab8e65550455b6",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Known-Issues.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -583,13 +1617,56 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 52653,
-      "sha256": "316b547c473de5e6b5af23f1b2d115c1d5a9cd459cef689b0ed9aaacfa3a0cbf",
+      "sha256": "bb62bac23a5498ac86721f395f1789e0f9e33f8bd5faaad5422a5dcf9a6618d7",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Overview.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Overview.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 56242,
+      "sha256": "65e2299434463f5fe549f66e1c7c62a740192031cbf472492d2ad66e79cf27f4",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Profiles.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Profiles.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 62490,
+      "sha256": "aff4ce79cdea76254da52a3b9565d482b022d84bdb8e1742bb3d4d67f98bbcff",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/Video-Analytics-MCP-Server.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/Video-Analytics-MCP-Server.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 81251,
+      "sha256": "62082b680a8a915c51af78d09ede07ceecf21d6317b54f167f296e6923d687a8",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-llm.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-llm.html",
@@ -597,13 +1674,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 69671,
-      "sha256": "a9c85aae28dccf012634bb7c49c41888259427caf60ec0bc4cfee7a3b3a9a598",
+      "sha256": "3c949dd7fcb67c0d71c6630ac1143d75d99f5e98dc1ebe2a1287d396efa9b16a",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-vlm.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-vlm.html",
@@ -611,13 +1689,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 80068,
-      "sha256": "fa4e4fdcc4da694b525596b855ec61c657680bdabcb3e1cca43ad5535c266779",
+      "sha256": "2cd762e19def16049b7b17794528d92d8c1b652c3105c9464b95e5df505b9a34",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-Observability.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -626,13 +1705,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 58930,
-      "sha256": "4e9034a9a6f6d68c03e52acfafd22649a0ad82844e4643650a9fe54b49c7dea5",
+      "sha256": "cdda652a73380fa69773dd5b56a7ce43db5432146312a2e3e9fb53d02048f8b3",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-api.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-api.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45091,
+      "sha256": "d46a13ae0c70ad9898b50ab74f02bd5a2b108304622649cdac56529c2e65354a",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-report-generation.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -641,13 +1735,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 81141,
-      "sha256": "cc1d31095d271dcaae0af8a0cf945f4b6ef4f938ed8c2fc2b433ecb085bd7841",
+      "sha256": "7e0ca8925bce71cd048c972503e58d3053f1b8c4a2859ae762f8ef1d53654579",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-configurator.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-configurator.html",
@@ -655,13 +1750,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 310101,
-      "sha256": "c97f9834a609b2fe330a59812d94f00be5b1265305c249e1f164b123f6f9548d",
+      "sha256": "1d0f0d0e5193a77e4ccf648724efc089c62da886f355bbef8287a783f3a7bc04",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-orchestrator-mcp.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-orchestrator-mcp.html",
@@ -669,13 +1765,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 92132,
-      "sha256": "26099739792a2630487887e1ef8ec30b959b438a1a27f20388db15c22633dd8e",
+      "sha256": "f3f54f3fdbed7eed694a206840943af5dbe386b864cb90240070a699af35c170",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vss-scale.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-scale.html",
@@ -683,13 +1780,56 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 97317,
-      "sha256": "7472f32a4a6505591efddf17078372cee212fbd34b2e7c9581a384607b45b0b0",
+      "sha256": "5010bb1f028e5e094d0d9d69f6ceccdf17e1358ab1d2c7b1cd9fc978f6acfa3f",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-ui.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-ui.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 141429,
+      "sha256": "db89dd3d33ee02b1e81b2267f6d8df754bd7904fc6e78df2d6c874364897e4fc",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vss-vios.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vss-vios.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45231,
+      "sha256": "52cb23f4bf26fd24cb748da327dcad9b58803bd2816e9d6a2d829e71c06a8c7e",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-live-stream-management-api-reference.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-live-stream-management-api-reference.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45125,
+      "sha256": "38c3d06c38008990daed1d7eb05594c06252f8238060c2a3006c5ea3ca1be6bf",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vst-live-stream-management-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-live-stream-management-api.html",
@@ -697,13 +1837,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 48415,
-      "sha256": "f42f7ef18cccc8dd5f0f197b4cdf4d813045d8487e8cc9fd1921f3b98ae0267a",
+      "sha256": "20e260d27b142d77535d37b78f0d76b7e3cd8d5dabb2385bfd3f40f7a0f9302c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-proxy-stream-management-api-reference.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-proxy-stream-management-api-reference.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45115,
+      "sha256": "88635aa3a3ac0769737aa04abe72c184c4cb34a5b1fce94e60b896dfb6c8749c",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vst-proxy-stream-management-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-proxy-stream-management-api.html",
@@ -711,13 +1866,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 47893,
-      "sha256": "be094a1e0bb230f099131b1e55162d8ed162c364fa6e657389bd11ecf4a722cb",
+      "sha256": "ea0c55c8b90a1d9fbb0c39dd4c4cab8abc784d30b0998860050ba7c076dfff2b",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-record-stream-management-api-reference.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-record-stream-management-api-reference.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45149,
+      "sha256": "da16f8a493630319f2c9568fc7bc207094567bd1aaeb7ca1d4db1ed018ecead5",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vst-record-stream-management-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-record-stream-management-api.html",
@@ -725,13 +1895,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 48146,
-      "sha256": "2d6ac753be72505f82267eb4f48c90f3f495026dda7ac386c229df5271731288",
+      "sha256": "716a574ca268661f2ffd8e829e5dd4a74517ee5e75186a8c3bf511267a0bbf3a",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-replay-stream-management-api-reference.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-replay-stream-management-api-reference.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45153,
+      "sha256": "aecf789d387fa6a632c37232453ec4bdb043a5d1889bd0e8fe3eddd1bc1d856d",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vst-replay-stream-management-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-replay-stream-management-api.html",
@@ -739,13 +1924,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 48480,
-      "sha256": "6fa689aff6f6fabd0a877f3bf1c04d8f8a5e9b2d97c5ee0721a41d46215691c3",
+      "sha256": "5ca68628f47d338951e07f228fa96e0980052752c3e243c549bb8a71f673284a",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-sensor-management-api-reference.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-sensor-management-api-reference.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45047,
+      "sha256": "263f1ad9ffec17b139954df660463661fe56123829b815eed275d8ca0210cbf0",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vst-sensor-management-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-sensor-management-api.html",
@@ -753,13 +1953,28 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 48503,
-      "sha256": "e39b576d553dbf7521d758989c2a272e61991812fa016d7622d9bc169b79af1a",
+      "sha256": "2d77b7d747a33213b6546c54df4eac90cb77ab0f32f3ac8887247240b5164253",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/vst-storage-management-api-reference.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-storage-management-api-reference.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45001,
+      "sha256": "b8599ce4f093de48b881bebbcec0819a5500004bde83f61e2fbcf04cc1fb21fd",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/vst-storage-management-api.html",
       "referenced_by": [
-        "live_ledger"
+        "live_ledger",
+        "recursive_fixed_point"
       ],
       "outcome": "success",
       "final_url": "https://docs.nvidia.com/vss/3.2.1/vst-storage-management-api.html",
@@ -767,13 +1982,126 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 48354,
-      "sha256": "45f0be455a2fc7b73a98db44df7f32f93a01c9d332d125c8d2dcf8a80f630986",
+      "sha256": "b7d1d87e860d3d129b415ae7f48aa71286da2015f4f1b7ea31da723e2ca06d84",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-profile-with-agents.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-profile-with-agents.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 112200,
+      "sha256": "582585068084d2f9c3e1386d97a5d8d647fb4eb6590efa83c395c247223d9326",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-profile.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-profile.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 103505,
+      "sha256": "f908eb980ee572d8da7249e2be100c601cad80d8d57b8fbd40aa8a0707a6123c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-single-camera-detection-and-tracking-RTDETR.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-single-camera-detection-and-tracking-RTDETR.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 86653,
+      "sha256": "d0de5c8513689a8d75c0bfd2d6b5b59d420bf3ea9b9fabe1029a6db3625fa8ae",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-multi-camera-detection-and-tracking-MV3DT.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-multi-camera-detection-and-tracking-MV3DT.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 108984,
+      "sha256": "d06454ca733ecfcd1b4f7426946404a5f9ced7765f39a8c2f95ebddc64e86d4d",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-multi-camera-detection-and-tracking-Sparse4D.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-multi-camera-detection-and-tracking-Sparse4D.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 96005,
+      "sha256": "a4090f5427d1f701a6e0063218763618d39acc4692c72bbd9892d1e4902d4e8b",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-profile.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-profile.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 140879,
+      "sha256": "2aa9d3520793ecab59a3aced53318826a7e88ff1ed32df9086ad48c808ae25dc",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Accuracy-Performance-Benchmarks.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Accuracy-Performance-Benchmarks.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 48160,
+      "sha256": "f738b664c83376bf7881fa754020a8fc0971cbf65afc29d216266439cfe55907",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Appendix-toc.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Appendix-toc.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45666,
+      "sha256": "07ed71874b27db1e2e159b340a9ccf8ea6dacd99d5156fa1a09863688e81f051",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Behavior-Analytics.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -782,13 +2110,140 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 95513,
-      "sha256": "5af6d0599059182778947c7c3bb2e3ca84821b830f097b40be1c117b006a8294",
+      "sha256": "425a3c7467f8c19dac055419faa149a1072712653c0f85331de892a567783afb",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/CR.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/CR.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 48308,
+      "sha256": "94e6228b292b78f3bb0eaff3a7e11a8da48b1429b199a47fa84217af0ccdadb2",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Camera-Calibration.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Camera-Calibration.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 53561,
+      "sha256": "413f6b065316a6acace93e13923f306402cc5b7ec3f7ed577ca2decadf021d23",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Camera-Placement.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Camera-Placement.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 52891,
+      "sha256": "a8835603ee60772596e82e11a2af2f9de65658d05f661e7e43d89744b092daba",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46363,
+      "sha256": "273458b492ae464e2b2ded644d24da693b34ee6b83a315a6ab96fb5f05a6239b",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Customized-Scene-Saving.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Customized-Scene-Saving.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45553,
+      "sha256": "7273380bd8b8f3596813c3a9fcee476b162da645cb9071036bc6412ce464b2e9",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Dataset-Post-Processing.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Dataset-Post-Processing.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 50769,
+      "sha256": "2f9114d04d75622ac53476fcfb6183539f2169a8c20ec91036fac1f1a10e2ff1",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Development-Tools-Setup.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Development-Tools-Setup.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46717,
+      "sha256": "bdd104a98284232eaf27af07b0025b4426c3f595746d59198f385d45090826c7",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/FAQ.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/FAQ.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 106564,
+      "sha256": "b9f4675bf5a23cf72fc3c864229e04b105922105f9e13557b2427da8a620163c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Introduction.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Introduction.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 55548,
+      "sha256": "ab2e939c279ec588bfc7b5943001a498d6da42ce4183a3c4acfc56718ea01c7b",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Known-Limitations.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -797,13 +2252,238 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 72043,
-      "sha256": "797919ecf74bea232e550ef7bed61d033ac9017e239a5209c14b69933358ac2e",
+      "sha256": "58f1fcfb0cf2f99800e402a846047c3454e31603636b8334dcdce3a5cdae3af5",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/License-Information.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/License-Information.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 49989,
+      "sha256": "00a3c2c4f0447f7297fbef49e20da1728a61789aa886c6369b2280f5c4daac2f",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/MV3DT-profile.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/MV3DT-profile.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 164714,
+      "sha256": "b9ae5249282a1e102a2e02baa62b3c27a55e3c6155af16cc92ee61b273e9323c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Models.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Models.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 44863,
+      "sha256": "05354388a84e746954be7ea5455f05508f3e1d8bfb13e6d7d80c27b1ad7b1cc8",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/NavMesh-Setup.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/NavMesh-Setup.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 48214,
+      "sha256": "7ffc0209ca6848b88f4c149ac2065929cb348c87b60a75e8dbb61b94775b3fdb",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Perception.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Perception.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45283,
+      "sha256": "5a23f5477bdd7e50b356b0f5d7c5dfaaeab61296ce613a7f36c8480918c6a8d2",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Prerequisites.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Prerequisites.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 76459,
+      "sha256": "d970e6c067cde60b09f5e8971dbaf57ac63b317d96c882248498287ea71af299",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Quick-Start-for-SDG.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Quick-Start-for-SDG.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 49924,
+      "sha256": "b76a4800fdb31294e06842e956d2b6229e0aee731fb8aae226e2f96e2b280665",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Quickstart-Guide.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Quickstart-Guide.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 127025,
+      "sha256": "50f4cc2b3a36d47dc42ad2548d0fc3693af1654faea0364548277d58bb227373",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Release-Notes.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Release-Notes.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 57190,
+      "sha256": "f46d98114270c5d738c4fd7dc6c351afad345f2f5dc74a8fcfb71fd7100d8c15",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45351,
+      "sha256": "fab67a14db88f90cef75146db10b2640483237ebb69be7d51ceb8b97536f4174",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Semantic-Label-Setup.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Semantic-Label-Setup.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46825,
+      "sha256": "5078674c3b9289b9c0bb5d6223440c4e3952abd4ab036f1ce39cf80ddca72811",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Sim2Real-Data-Transfer.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Sim2Real-Data-Transfer.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46169,
+      "sha256": "695a05784029aa277737bb0a11f5aceb7e28bde52b59dd4220ef5913fceb8b43",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Simulation-and-Synthetic-Data-Generation.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Simulation-and-Synthetic-Data-Generation.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 46616,
+      "sha256": "770bf8354e000051a7b1c906f30506934b550e90a07534840f7f23b49a4a973b",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Synthetic-Data-Generation.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Synthetic-Data-Generation.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45519,
+      "sha256": "7a92ef41f0b6007428025e43642e1913641bdd231a9d5bc6e13c9a50a20ff833",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/System-Sizing-Guide.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/System-Sizing-Guide.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45125,
+      "sha256": "9005e0e5e818844510870dff79cd0024adae2203530d0e1a0a6adf92d5d3a571",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Troubleshooting-Guide.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Troubleshooting-Guide.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 118433,
+      "sha256": "b2ed520cd74c328f6b68cbd06f6e7334a67b7897951977f3f0189e2316b7da9d",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/agents.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -812,13 +2492,14 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 69680,
-      "sha256": "ea585ac9c846b15283b242a414b4aaa4145373a2c94b5dd926d9fffe832886fe",
+      "sha256": "dcd63677ab9c76ab569ee778b2c6614aeeaef90a77c231eb296a4659d7530a1e",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/alerting-service.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -827,13 +2508,42 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 193191,
-      "sha256": "ab9282a6878a48a53e6aaa5eba3c5bc2d0ef82a2f664a3980bbc14fa6aff4f00",
+      "sha256": "49d6979d05801959056e5f939104992dab364a6d0c3379fdc0dc288274d33b26",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/blueprint-profiles.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/blueprint-profiles.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 49338,
+      "sha256": "c9e5319b1b394e1b3a8e3b4cdb9606cc28000994d155e1089835ba6dc9d095b7",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/microservices-configs-and-outputs.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/microservices-configs-and-outputs.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 45325,
+      "sha256": "af11f8d3f4a505cd4b0de3ea5df2b5c2736a5687d47efb26cfe22069e316324f",
       "failure": null
     },
     {
       "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/vss-warehouse-ui.html",
       "referenced_by": [
         "live_ledger",
+        "recursive_fixed_point",
         "wave2_candidate"
       ],
       "outcome": "success",
@@ -842,14 +2552,29 @@
       "content_type": "text/html",
       "content_encoding": "identity",
       "byte_count": 50553,
-      "sha256": "027d1090550d04dd07c3b5fdee7c98d50de37c5ce4b2cad4c6dd8ce4314ece0d",
+      "sha256": "5f566839873770fe2b51833c67e6253babdc143fbd8b42a08b47e38d59f4575c",
+      "failure": null
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/warehouse-toc.html",
+      "referenced_by": [
+        "recursive_fixed_point"
+      ],
+      "outcome": "success",
+      "final_url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/warehouse-toc.html",
+      "http_status": 200,
+      "content_type": "text/html",
+      "content_encoding": "identity",
+      "byte_count": 63794,
+      "sha256": "0aeb7d95e1517142bd67a71df6866c52d98cabe4e185674fbac9597147f5912a",
       "failure": null
     }
   ],
   "summary": {
-    "url_count": 53,
-    "success_count": 53,
+    "url_count": 172,
+    "success_count": 172,
     "failure_count": 0,
-    "aggregate_sha256": "adbd613b2f36f16fa06deb4aa104948e275a164a33ff5f18750053a8fa1d5aa8"
+    "total_byte_count": 13351947,
+    "aggregate_sha256": "b37a617f351dbd32673983eee2299daed0db1f04b387db5d89ec2a89511d79eb"
   }
 }

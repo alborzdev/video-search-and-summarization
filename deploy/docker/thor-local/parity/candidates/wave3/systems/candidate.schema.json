@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/candidates/wave3/systems/candidate.schema.json",
+  "title": "VSS 3.2.1 Wave-3 systems candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target", "scope", "expected_counts", "sources", "proposed_capabilities", "enrichments", "discrepancies_and_boundaries", "faq_groups", "performance_fixture_requirements", "invariants"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "source_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "heading", "locator"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/id"},
+        "heading": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acceptance_class", "thor_state", "runtime_state", "scenario_id", "fixture_id"],
+      "properties": {
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "thor_state": {"enum": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"]},
+        "runtime_state": {"enum": ["passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]},
+        "scenario_id": {"$ref": "#/$defs/id"},
+        "fixture_id": {"$ref": "#/$defs/id"}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "ga_commit", "main_commit", "captured_on"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "ga_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "captured_on": {"const": "2026-07-31"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "reviewed_pages", "warehouse_sample_bundle", "live_files_untouched", "benchmark_values_are_thor_results"],
+      "properties": {
+        "name": {"const": "wave3-systems"},
+        "reviewed_pages": {"const": 23},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "live_files_untouched": {"const": true},
+        "benchmark_values_are_thor_results": {"const": false}
+      }
+    },
+    "expected_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "proposed_capabilities", "enrichments", "discrepancies_and_boundaries", "faq_duplicate_groups", "faq_external_groups", "performance_fixture_requirements"],
+      "properties": {
+        "sources": {"const": 23},
+        "proposed_capabilities": {"const": 55},
+        "enrichments": {"const": 19},
+        "discrepancies_and_boundaries": {"const": 18},
+        "faq_duplicate_groups": {"const": 4},
+        "faq_external_groups": {"const": 5},
+        "performance_fixture_requirements": {"const": 7}
+      }
+    },
+    "sources": {
+      "type": "array", "minItems": 23, "maxItems": 23,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "category", "url"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "category": {"enum": ["system", "performance", "release", "faq"]},
+          "url": {"type": "string", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/[A-Za-z0-9_-]+\\.html$"}
+        }
+      }
+    },
+    "proposed_capabilities": {
+      "type": "array", "minItems": 55, "maxItems": 55,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "family", "kind", "title", "source", "acceptance", "contract", "gap"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "family": {"$ref": "#/$defs/id"},
+          "kind": {"enum": ["runtime_behavior", "model", "configuration", "calibration", "deployment"]},
+          "title": {"type": "string", "minLength": 1},
+          "source": {"$ref": "#/$defs/source_claim"},
+          "acceptance": {"$ref": "#/$defs/acceptance"},
+          "contract": {"type": "object", "minProperties": 1},
+          "gap": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "enrichments": {
+      "type": "array", "minItems": 19, "maxItems": 19,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["target_id", "sources", "contract_merge"],
+        "properties": {
+          "target_id": {"$ref": "#/$defs/id"},
+          "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_claim"}},
+          "contract_merge": {"type": "object", "minProperties": 1}
+        }
+      }
+    },
+    "discrepancies_and_boundaries": {
+      "type": "array", "minItems": 18, "maxItems": 18,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "category", "sources", "resolution", "must_not_claim"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "category": {"enum": ["discrepancy", "boundary", "scoped_default", "known_limitation"]},
+          "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_claim"}},
+          "resolution": {"type": "string", "minLength": 1},
+          "must_not_claim": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "faq_groups": {
+      "type": "object", "additionalProperties": false,
+      "required": ["duplicates", "external_requirements"],
+      "properties": {
+        "duplicates": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "faq_heading", "canonical_claim"],
+            "properties": {"id": {"$ref": "#/$defs/id"}, "faq_heading": {"type": "string", "minLength": 1}, "canonical_claim": {"$ref": "#/$defs/id"}}
+          }
+        },
+        "external_requirements": {
+          "type": "array", "minItems": 5, "maxItems": 5,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["id", "heading", "thor_result"],
+            "properties": {"id": {"$ref": "#/$defs/id"}, "heading": {"type": "string", "minLength": 1}, "thor_result": {"const": false}}
+          }
+        }
+      }
+    },
+    "performance_fixture_requirements": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "source_id", "enrichment_target", "reference_only", "thor_remeasurement_required", "test_version_scope", "models", "hardware", "configuration", "required_matrices", "fixture_path"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "source_id": {"$ref": "#/$defs/id"},
+          "enrichment_target": {"$ref": "#/$defs/id"},
+          "reference_only": {"const": true},
+          "thor_remeasurement_required": {"const": true},
+          "test_version_scope": {"type": "string", "minLength": 1},
+          "models": {"type": "array", "items": {"type": "string"}},
+          "hardware": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "configuration": {"type": "object", "minProperties": 1},
+          "required_matrices": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "fixture_path": {"const": "evidence/performance-reference-contracts.json"}
+        }
+      }
+    },
+    "invariants": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reference_benchmarks_must_not_be_labeled_thor_results", "performance_runtime_state_must_remain_not_qualified", "external_hardware_must_not_prove_thor", "faq_duplicates_do_not_create_capabilities", "release_grouped_bullets_do_not_imply_one_to_one_capabilities", "warehouse_sample_bundle_remains_excluded"],
+      "properties": {
+        "reference_benchmarks_must_not_be_labeled_thor_results": {"const": true},
+        "performance_runtime_state_must_remain_not_qualified": {"const": true},
+        "external_hardware_must_not_prove_thor": {"const": true},
+        "faq_duplicates_do_not_create_capabilities": {"const": true},
+        "release_grouped_bullets_do_not_imply_one_to_one_capabilities": {"const": true},
+        "warehouse_sample_bundle_remains_excluded": {"const": true}
+      }
+    }
+  }
+}

@@ -48,8 +48,9 @@ Nested list items are excluded from the 204 count. Capability records are not
 assumed to map one-to-one to bullets.
 
 The audit-start source lock had 52 records and excluded release notes. The
-current lock has 53 records and includes them. A byte lock detects page drift;
-it does not close the semantic omission.
+current recursive fixed-point lock has 172 records, covers all 152 direct-index
+targets plus `index.html` and 19 descendants, and includes release notes. A
+byte lock detects page drift; it does not close the semantic omission.
 
 ## API semantic audit
 

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/wave3/crawl-graph.schema.json",
+  "title": "VSS 3.2.1 recursive crawl adjacency proof",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "captured_on", "target_binding", "fetch_summary", "graph_summary", "fixed_point_rounds", "scans"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "captured_on": {"const": "2026-07-31"},
+    "target_binding": {"$ref": "#/$defs/file_binding"},
+    "fetch_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fetched_count", "success_count", "failure_count", "redirect_count"],
+      "properties": {"fetched_count": {"const": 172}, "success_count": {"const": 172}, "failure_count": {"const": 0}, "redirect_count": {"const": 0}}
+    },
+    "graph_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_directed_edge_count", "self_edge_count", "canonical_url_pair_edge_set_sha256", "all_outbound_targets_in_reachable_set"],
+      "properties": {
+        "canonical_directed_edge_count": {"const": 26449},
+        "self_edge_count": {"const": 172},
+        "canonical_url_pair_edge_set_sha256": {"const": "58759d1dc9b060c90518aa2928190381d2838558d170746e9af783a0dbc35a55"},
+        "all_outbound_targets_in_reachable_set": {"const": true}
+      }
+    },
+    "fixed_point_rounds": {
+      "const": [
+        {"round": 0, "frontier_count": 1, "new_url_count": 152, "discovered_total": 153},
+        {"round": 1, "frontier_count": 152, "new_url_count": 13, "discovered_total": 166},
+        {"round": 2, "frontier_count": 13, "new_url_count": 6, "discovered_total": 172},
+        {"round": 3, "frontier_count": 6, "new_url_count": 0, "discovered_total": 172},
+        {"round": 4, "frontier_count": 0, "new_url_count": 0, "discovered_total": 172}
+      ]
+    },
+    "scans": {
+      "type": "array",
+      "minItems": 172,
+      "maxItems": 172,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url_index", "status", "final_url_matches_requested", "body_byte_count", "outbound_target_indexes"],
+        "properties": {
+          "url_index": {"type": "integer", "minimum": 0, "maximum": 171},
+          "status": {"const": "success"},
+          "final_url_matches_requested": {"const": true},
+          "body_byte_count": {"type": "integer", "minimum": 1, "maximum": 5242880},
+          "outbound_target_indexes": {"type": "array", "uniqueItems": true, "items": {"type": "integer", "minimum": 0, "maximum": 171}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "file_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

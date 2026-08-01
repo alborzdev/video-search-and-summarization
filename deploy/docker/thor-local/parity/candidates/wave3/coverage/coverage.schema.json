@@ -92,8 +92,8 @@
           "properties": {
             "path": {"$ref": "#/$defs/repo_path"},
             "sha256": {"$ref": "#/$defs/sha256"},
-            "record_count": {"const": 53},
-            "index_linked_record_count": {"const": 52},
+            "record_count": {"const": 172},
+            "index_linked_record_count": {"const": 152},
             "release_notes_locked": {"const": true},
             "aggregate_sha256": {"$ref": "#/$defs/sha256"}
           }

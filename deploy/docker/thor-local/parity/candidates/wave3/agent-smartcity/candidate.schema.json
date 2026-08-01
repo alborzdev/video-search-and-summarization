@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/candidates/wave3/agent-smartcity/candidate.schema.json",
+  "title": "VSS 3.2.1 Agent, UI, NemoClaw, and Smart City Wave3 candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target", "scope", "expected_counts", "live_inputs", "sources", "new_capabilities", "enrichments", "discrepancies", "guardrails"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "source_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "locator"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/id"},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acceptance_class", "thor_state", "runtime_state"],
+      "properties": {
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "thor_state": {"enum": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"]},
+        "runtime_state": {"enum": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "source_policy", "description"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "type": {"type": "string", "minLength": 1},
+        "source_policy": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "qualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenario_ids", "fixtures"],
+      "properties": {
+        "scenario_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "fixtures": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/fixture"}}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "ga_commit", "main_commit", "captured_on"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "ga_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "captured_on": {"const": "2026-07-31"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["warehouse_sample_bundle", "smart_city_sample_bundle", "operator_custom_data", "live_files_untouched"],
+      "properties": {
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "smart_city_sample_bundle": {"const": "optional_demo_only"},
+        "operator_custom_data": {"const": "in_scope"},
+        "live_files_untouched": {"const": true}
+      }
+    },
+    "expected_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewed_pages", "claim_bearing_sources", "new_capabilities", "enrichments", "discrepancies", "guardrails"],
+      "properties": {
+        "reviewed_pages": {"const": 40},
+        "claim_bearing_sources": {"const": 24},
+        "new_capabilities": {"const": 34},
+        "enrichments": {"const": 7},
+        "discrepancies": {"const": 5},
+        "guardrails": {"const": 4}
+      }
+    },
+    "live_inputs": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^deploy/docker/thor-local/(parity|qualification)/[a-z0-9/_-]+\\.json$"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 40,
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "uri", "classification", "locator_policy"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "uri": {"type": "string", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/.+\\.html$"},
+          "classification": {"enum": ["claim_bearing", "already_covered_duplicate", "navigation_or_placeholder", "empty_api_wrapper", "summary_duplicate", "legal_external"]},
+          "locator_policy": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "new_capabilities": {
+      "type": "array",
+      "minItems": 34,
+      "maxItems": 34,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "feature_id", "kind", "title", "source_claims", "status", "contract", "qualification", "gap"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "feature_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+          "kind": {"enum": ["api", "calibration", "configuration", "customization", "deployment", "evaluation", "model", "performance", "runtime_behavior", "security", "tooling"]},
+          "title": {"type": "string", "minLength": 1},
+          "source_claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_claim"}},
+          "status": {"$ref": "#/$defs/status"},
+          "contract": {"type": "object", "minProperties": 1},
+          "qualification": {"$ref": "#/$defs/qualification"},
+          "gap": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "enrichments": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target_id", "source_claims_add", "contract_merge", "qualification", "merge_note"],
+        "properties": {
+          "target_id": {"$ref": "#/$defs/id"},
+          "source_claims_add": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_claim"}},
+          "contract_merge": {"type": "object", "minProperties": 1},
+          "qualification": {"$ref": "#/$defs/qualification"},
+          "merge_note": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "discrepancies": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source_claims", "resolution", "must_not_claim"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "source_claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_claim"}},
+          "resolution": {"type": "string", "minLength": 1},
+          "must_not_claim": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "guardrails": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source_claims", "rule"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "source_claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_claim"}},
+          "rule": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

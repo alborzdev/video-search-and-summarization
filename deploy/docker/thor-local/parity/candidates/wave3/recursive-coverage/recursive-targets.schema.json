@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/wave3/recursive-targets.schema.json",
+  "title": "VSS 3.2.1 recursive documentation target set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "captured_on", "start_url", "crawl_policy", "reachable_count_including_start", "reachable_count_excluding_start", "direct_index_target_count", "added_descendant_count", "canonical_reachable_set_sha256", "canonical_reachable_excluding_start_sha256", "canonical_added_descendant_set_sha256", "depth_counts", "targets"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "captured_on": {"const": "2026-07-31"},
+    "start_url": {"const": "https://docs.nvidia.com/vss/3.2.1/index.html"},
+    "crawl_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scheme", "host", "path_prefix", "suffix", "query", "fragment", "href_attributes", "external_and_assets_excluded"],
+      "properties": {
+        "scheme": {"const": "https"},
+        "host": {"const": "docs.nvidia.com"},
+        "path_prefix": {"const": "/vss/3.2.1/"},
+        "suffix": {"const": ".html"},
+        "query": {"const": "stripped"},
+        "fragment": {"const": "stripped"},
+        "href_attributes": {"const": "all elements"},
+        "external_and_assets_excluded": {"const": true}
+      }
+    },
+    "reachable_count_including_start": {"const": 172},
+    "reachable_count_excluding_start": {"const": 171},
+    "direct_index_target_count": {"const": 152},
+    "added_descendant_count": {"const": 19},
+    "canonical_reachable_set_sha256": {"const": "74a1d6ae1f520049202e47dce69fa56d10c28c48aa3aa24a3a2c4214dad4b208"},
+    "canonical_reachable_excluding_start_sha256": {"const": "e95857861e5ace82021bf49c99c74dd0c9861b6cefc3a6e1606022505fed7616"},
+    "canonical_added_descendant_set_sha256": {"const": "85281ae9b39c548abda6fdea578953726feca2fe829479fb7a63d24cc51ddf25"},
+    "depth_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["0", "1", "2", "3"],
+      "properties": {"0": {"const": 1}, "1": {"const": 152}, "2": {"const": 13}, "3": {"const": 6}}
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 172,
+      "maxItems": 172,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/[A-Za-z0-9_./-]+\\.html$"}
+    }
+  }
+}

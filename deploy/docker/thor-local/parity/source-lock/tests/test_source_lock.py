@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import io
+import json
 import subprocess
 import sys
 import tempfile
@@ -34,28 +35,49 @@ class SourceLockTests(unittest.TestCase):
             "url_count": len(records),
             "success_count": success,
             "failure_count": len(records) - success,
+            "total_byte_count": sum(item["byte_count"] or 0 for item in records),
             "aggregate_sha256": source_lock.canonical_record_hash(records),
         }
 
     def test_checked_in_lock_validates(self) -> None:
-        summary = source_lock.validate()
-        self.assertEqual(summary["url_count"], 53)
+        with mock.patch.object(
+            source_lock.subprocess,
+            "run",
+            side_effect=AssertionError("validation must be offline"),
+        ):
+            summary = source_lock.validate()
+        self.assertEqual(summary["url_count"], 172)
         self.assertEqual(summary["failure_count"], 0)
+        self.assertGreater(summary["total_byte_count"], 0)
 
-    def test_source_set_is_deduplicated_across_both_inputs(self) -> None:
+    def test_source_set_is_exact_recursive_allowlist_with_provenance(self) -> None:
         urls = source_lock.source_urls()
-        self.assertEqual(len(urls), 53)
+        self.assertEqual(len(urls), 172)
+        self.assertEqual(
+            sum("recursive_fixed_point" in labels for labels in urls.values()), 172
+        )
         self.assertEqual(sum("live_ledger" in labels for labels in urls.values()), 53)
         self.assertEqual(
             sum("wave2_candidate" in labels for labels in urls.values()), 24
         )
-        self.assertEqual(sum(len(labels) == 2 for labels in urls.values()), 24)
+        self.assertEqual(sum(len(labels) == 3 for labels in urls.values()), 24)
         self.assertIn("https://docs.nvidia.com/vss/3.2.1/release-notes.html", urls)
+        self.assertIn("https://docs.nvidia.com/vss/3.2.1/index.html", urls)
 
-    def test_explicit_audited_index_urls_can_be_added_without_index_crawl(self) -> None:
-        url = "https://docs.nvidia.com/vss/3.2.1/future-audited.html"
-        urls = source_lock.source_urls(additional_audited_urls=[url])
-        self.assertEqual(urls[url], ["audited_index"])
+    def test_recursive_allowlist_hash_tamper_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            target_path = Path(temp) / "recursive-targets.json"
+            targets = source_lock.load_json(source_lock.INPUTS["recursive_targets"])
+            targets["targets"][0] = (
+                "https://docs.nvidia.com/vss/3.2.1/unreviewed.html"
+            )
+            targets["targets"].sort()
+            target_path.write_text(json.dumps(targets), encoding="utf-8")
+            inputs = {**source_lock.INPUTS, "recursive_targets": target_path}
+            with self.assertRaisesRegex(
+                source_lock.SourceLockError, "reviewed 172-URL set"
+            ):
+                source_lock.source_urls(inputs)
 
     def test_duplicate_json_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -191,6 +213,26 @@ class SourceLockTests(unittest.TestCase):
         document = self.mutation()
         document["summary"]["aggregate_sha256"] = "0" * 64
         with self.assertRaisesRegex(source_lock.SourceLockError, "aggregate hash"):
+            source_lock.validate(document)
+
+    def test_total_byte_count_tamper_is_rejected(self) -> None:
+        document = self.mutation()
+        document["summary"]["total_byte_count"] += 1
+        with self.assertRaisesRegex(source_lock.SourceLockError, "summary counts"):
+            source_lock.validate(document)
+
+    def test_recursive_provenance_tamper_is_rejected(self) -> None:
+        document = self.mutation()
+        record = next(
+            item
+            for item in document["records"]
+            if "live_ledger" in item["referenced_by"]
+        )
+        record["referenced_by"].remove("recursive_fixed_point")
+        self.rehash(document)
+        with self.assertRaisesRegex(
+            source_lock.SourceLockError, "exact provenance"
+        ):
             source_lock.validate(document)
 
     def test_input_byte_hash_tamper_is_rejected(self) -> None:
@@ -380,6 +422,14 @@ class SourceLockTests(unittest.TestCase):
                 self.assertRaises(source_lock.SourceLockError),
             ):
                 source_lock.validate_capture_date(value)
+
+    def test_build_rejects_non_snapshot_date_before_network(self) -> None:
+        with (
+            mock.patch.object(source_lock, "verify_curl_identity") as verify,
+            self.assertRaisesRegex(source_lock.SourceLockError, "2026-07-31"),
+        ):
+            source_lock.build_lock("2026-08-01")
+        verify.assert_not_called()
 
     def test_fetch_cli_requires_explicit_capture_date(self) -> None:
         with (

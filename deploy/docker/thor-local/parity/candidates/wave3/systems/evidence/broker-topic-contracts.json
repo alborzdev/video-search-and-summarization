@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "reference_only": true,
+  "kafka": [
+    {"name":"mdx-raw","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-bev","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-behavior","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-behavior-plus","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-alerts","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-events","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-frames","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-mtmc","encoding":"JSON","message":null},
+    {"name":"mdx-rtls","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-amr","encoding":"JSON","message":null},
+    {"name":"mdx-space-utilization","encoding":"Protobuf","message":"nv.SpaceUtilization"},
+    {"name":"mdx-notification","encoding":"JSON","message":null},
+    {"name":"mdx-vlm-alerts","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-incidents","encoding":"Protobuf","message":"nv.Incident"},
+    {"name":"mdx-vlm-incidents","encoding":"Protobuf","message":"nv.Incident"},
+    {"name":"mdx-embed","encoding":"Protobuf","message":"nv.VisionLLM"},
+    {"name":"mdx-vlm-captions","encoding":"Protobuf","message":"nv.VisionLLM"},
+    {"name":"mdx-structured-events-summary","encoding":"Protobuf","message":"nv.VisionLLM"}
+  ],
+  "redis": [
+    {"name":"mdx-raw","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-bev","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-behavior","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-behavior-plus","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-alerts","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-events","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-frames","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-mtmc","encoding":"JSON","message":null},
+    {"name":"mdx-rtls","encoding":"Protobuf","message":"nv.Frame"},
+    {"name":"mdx-amr","encoding":"JSON","message":null},
+    {"name":"mdx-space-utilization","encoding":"Protobuf","message":"nv.SpaceUtilization"},
+    {"name":"mdx-notification","encoding":"JSON","message":null},
+    {"name":"mdx-vlm-alerts","encoding":"Protobuf","message":"nv.Behavior"},
+    {"name":"mdx-incidents","encoding":"Protobuf","message":"nv.Incident"},
+    {"name":"mdx-vlm-incidents","encoding":"Protobuf","message":"nv.Incident"},
+    {"name":"mdx-embed","encoding":"Protobuf","message":"nv.VisionLLM"}
+  ],
+  "must_not_claim_equivalent_topic_sets": true
+}

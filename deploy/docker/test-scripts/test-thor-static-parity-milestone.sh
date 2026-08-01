@@ -6,6 +6,7 @@
 # Unified static-only Thor parity milestone. This script must not start, stop,
 # deploy, pull, build, or download anything.
 set -euo pipefail
+export PYTHONDONTWRITEBYTECODE=1
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../.." && pwd)"
@@ -32,8 +33,8 @@ python3 -m unittest discover \
   -s "${thor_local_root}/parity/candidates/wave2" \
   -p 'test_candidate.py' -v
 
-# The 53-page lock detects raw response-body drift only; a byte match is not
-# proof of correct semantic extraction or Thor implementation.
+# The 172-page recursive fixed-point lock detects raw response-body drift only;
+# a byte match is not proof of correct semantic extraction or Thor implementation.
 python3 "${thor_local_root}/parity/source-lock/source_lock.py" validate
 python3 -m unittest discover \
   -s "${thor_local_root}/parity/source-lock/tests" \
@@ -47,6 +48,40 @@ python3 "${thor_local_root}/parity/candidates/wave3/coverage/validate_coverage.p
 python3 -m unittest discover \
   -s "${thor_local_root}/parity/candidates/wave3/coverage/tests" \
   -p 'test_coverage.py' -v
+
+# The recursive crawl proves the reviewed VSS 3.2.1 documentation graph reached
+# a fixed point. The family candidates remain inert extraction proposals: they
+# cannot claim runtime qualification or make excluded sample data mandatory.
+python3 "${thor_local_root}/parity/candidates/wave3/recursive-coverage/validate_recursive_coverage.py" \
+  --report
+python3 -m unittest discover \
+  -s "${thor_local_root}/parity/candidates/wave3/recursive-coverage/tests" \
+  -p 'test_recursive_coverage.py' -v
+
+python3 "${thor_local_root}/parity/candidates/wave3/agent-smartcity/validate_candidate.py" \
+  --report
+python3 -m unittest discover \
+  -s "${thor_local_root}/parity/candidates/wave3/agent-smartcity" \
+  -p 'test_candidate.py' -v
+
+python3 "${thor_local_root}/parity/candidates/wave3/systems/validate_candidate.py" \
+  --report
+python3 -m unittest discover \
+  -s "${thor_local_root}/parity/candidates/wave3/systems/tests" \
+  -p 'test_candidate.py' -v
+
+python3 "${thor_local_root}/parity/candidates/wave3/calibration-warehouse/validate_candidate.py" \
+  --report
+python3 -m unittest discover \
+  -s "${thor_local_root}/parity/candidates/wave3/calibration-warehouse" \
+  -p 'test_candidate.py' -v
+
+# The bundle resolves cross-package source IDs and enrichments before any live
+# merge. It is planning-only and must remain bound to the exact reviewed inputs.
+python3 "${thor_local_root}/parity/candidates/wave3/bundle/validate_bundle.py" --json
+python3 -m unittest discover \
+  -s "${thor_local_root}/parity/candidates/wave3/bundle" \
+  -p 'test_bundle.py' -v
 
 python3 "${thor_local_root}/rt-vlm/model_matrix.py" \
   --matrix "${thor_local_root}/rt-vlm/model-matrix.json" \

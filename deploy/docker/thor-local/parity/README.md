@@ -42,18 +42,22 @@ The live 161-capability ledger is an intermediate denominator, not an exhaustive
 claim that all official documentation has been transcribed. A post-merge audit
 of the 152 distinct HTML targets linked by the versioned documentation index
 found 59 substantive semantic/workflow/configuration/benchmark pages that still
-need claim extraction, alongside 34 navigation/duplicate/reference pages and 8
-external/license/sample-dependency pages. The machine-readable Wave 3 coverage
+needed claim extraction, alongside 34 navigation/duplicate/reference pages and
+8 external/license/sample-dependency pages. The machine-readable Wave 3 coverage
 package under `candidates/wave3/coverage/` binds those counts to the exact index
-target set. Until those omissions are reviewed and merged, both feature and
-runtime parity remain open.
+target set. The reviewed Agent/Smart City, Systems, and Calibration/Warehouse
+candidates now stage the omitted claims, but feature and runtime parity remain
+open until those candidates are merged and qualified.
 
 That direct-index denominator is also not the final documentation graph. A
 recursive same-version follow-up reached a 172-page fixed point (including
 `index.html`) and found 19 additional Warehouse descendant pages that are not
-in the 152 direct-link set or the live ledger. Those descendants remain open
-until their recursive-crawl evidence and claim extraction are reviewed; the
-152-page package must not be described as whole-site coverage.
+in the 152 direct-link set or the live ledger. Their reviewed claim extraction
+is staged in the Wave 3 Calibration/Warehouse candidate but remains open until
+that candidate is merged into the live ledger. The exact URL set, 26,449-edge
+crawl graph, depth/frontier proof, and 8 semantic / 9 external-workflow / 2
+navigation classification are pinned under `candidates/wave3/recursive-coverage/`.
+The 152-page direct-index package must not be described as whole-site coverage.
 
 `official-capabilities.schema.json` documents the on-disk format. The validator
 requires every reviewed claim to be cross-linked from exactly one manifest
@@ -63,13 +67,23 @@ HTML. Adding a claim without an explicit status, gap, scenario, and blocker
 therefore fails the normal parity verifier. A generic plan-only scenario records
 an open gap, not capability-specific runtime acceptance.
 
-`source-lock/` separately records raw response-body SHA-256 metadata for the 53
-deduplicated versioned NVIDIA documentation and release-notes pages referenced by
-the live ledger and Wave 2 provenance. Its offline validator is part of the unified static
-wrapper. A byte match detects page drift only; it is not proof that extraction
-is semantically correct or that Thor implements the claim. See
+`source-lock/` separately records raw response-body SHA-256 metadata for the exact
+172-page recursive VSS 3.2.1 HTML fixed point, including the index. The live ledger
+and Wave 2 attach provenance but do not define or expand that allowlist. Its offline
+validator is part of the unified static wrapper. A byte match detects page drift
+only; it is not proof that extraction is semantically correct or that Thor
+implements the claim. See
 [`source-lock/README.md`](source-lock/README.md) for validation and deliberate
 network-refresh commands.
+
+`candidates/wave3/bundle/` is the planning-only merge contract for those three
+reviewed candidate families. It binds their exact bytes, resolves duplicate and
+conflicting source IDs, preserves both approved multi-package enrichments, and
+rejects unplanned capability or fixture collisions. Its current proposal would
+expand the live ledger from 161 to 276 capabilities and from 55 to 140 unique
+claim sources; these are proposed merge counts, not live or runtime-qualified
+counts. The optional Warehouse sample bundle remains excluded, while operator
+custom media, calibration, model, and configuration inputs remain in scope.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and

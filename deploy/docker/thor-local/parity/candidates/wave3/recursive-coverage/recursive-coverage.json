@@ -1,0 +1,298 @@
+{
+  "schema_version": 1,
+  "target": {
+    "product": "NVIDIA VSS",
+    "version": "3.2.1",
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "reviewed_main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "recursive_target_binding": {
+    "path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/recursive-targets.json",
+    "sha256": "30e42ca2d085aa6e4b3ea99e537f9e2897864da1463979bb4768d06b8027a3aa"
+  },
+  "crawl_graph_binding": {
+    "path": "deploy/docker/thor-local/parity/candidates/wave3/recursive-coverage/crawl-graph.json",
+    "sha256": "7f8fff1f1a540afe8663e461b687eeb24ba8b229f2d867d4bcf18ff83a157f99"
+  },
+  "direct_index_bindings": {
+    "targets": {
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/coverage/docs-index-targets.json",
+      "sha256": "825cbcfd90f7aa8c35290c7eb179f2e6af4775bc192ef5b3f7763559b7fd2850"
+    },
+    "coverage": {
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/coverage/coverage.json",
+      "sha256": "562d85e973557c7351955fc043dafc29038b6dea39458db8a6453c5c889bc29d"
+    }
+  },
+  "live_ledger_binding": {
+    "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+    "sha256": "e33eff2cc03f7770e0513a061732ec860ccb241721e40b9d60d6dbb2b0dafee8",
+    "source_count": 55,
+    "capability_count": 161,
+    "added_descendant_live_source_count": 0
+  },
+  "agent_smartcity_binding": {
+    "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
+    "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395",
+    "documentation_source_count": 40,
+    "recursive_graph_member_count": 40,
+    "corrected_urls": [
+      "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/License-Information.html",
+      "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Troubleshooting-Guide.html"
+    ],
+    "stale_404_urls": [
+      "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/License.html",
+      "https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Troubleshooting.html"
+    ],
+    "corrected_urls_present": true,
+    "stale_urls_absent": true
+  },
+  "comparison": {
+    "direct_index_targets_excluding_index": 152,
+    "recursive_targets_including_index": 172,
+    "recursive_targets_excluding_index": 171,
+    "added_descendants": 19,
+    "added_semantic_omissions": 8,
+    "added_external_workflow_dependencies": 9,
+    "added_navigation_duplicate_references": 2,
+    "canonical_added_descendant_set_sha256": "85281ae9b39c548abda6fdea578953726feca2fe829479fb7a63d24cc51ddf25"
+  },
+  "updated_recursive_classification_counts": {
+    "covered_live": 51,
+    "semantic_omission": 67,
+    "navigation_duplicate_reference": 36,
+    "external_license_sample_dependency": 17,
+    "total_excluding_index": 171
+  },
+  "new_descendants": [
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-profile-with-agents.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Accuracy-Performance-Benchmarks.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-profile.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/2D-single-camera-detection-and-tracking-RTDETR.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/models/rt-detr.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-multi-camera-detection-and-tracking-MV3DT.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/object-detection-tracking.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-multi-camera-detection-and-tracking-Sparse4D.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/models/sparse4d.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/3D-profile.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/models/sparse4d.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/CR.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/models/sparse4d.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Camera-Calibration.html",
+      "depth": 3,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Camera-Placement.html",
+      "depth": 3,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Customized-Scene-Saving.html",
+      "depth": 3,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Dataset-Post-Processing.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Dataset-Post-Processing.html",
+      "depth": 2,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/models/sparse4d.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Development-Tools-Setup.html",
+      "depth": 2,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/MV3DT-profile.html",
+      "depth": 2,
+      "category": "semantic_omission",
+      "reason": "Substantive Warehouse profile, perception configuration, model, deployment, custom-data, validation, latency, or lifecycle contracts are absent from the direct-index denominator and live source ledger.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/agent-skills.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add a precise Wave-3 source and capability extraction while keeping runtime qualification separate",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/NavMesh-Setup.html",
+      "depth": 3,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Quick-Start-for-SDG.html",
+      "depth": 3,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Synthetic-Data-Generation.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "depth": 2,
+      "category": "navigation_duplicate_reference",
+      "reason": "Descendant navigation hub links detailed synthetic-data or scene-customization children and has no independent runtime contract.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "retain in the recursive denominator and reclassify only if the rendered page gains independent semantics",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Semantic-Label-Setup.html",
+      "depth": 3,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Scene-Customization.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Sim2Real-Data-Transfer.html",
+      "depth": 2,
+      "category": "external_workflow_dependency",
+      "reason": "Substantive Isaac Sim, synthetic-data, scene preparation, calibration, post-processing, or Sim2Real workflow requires external tooling or assets and is absent from the direct-index denominator.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "add an explicit external_optional workflow boundary; do not require the excluded Warehouse sample bundle for Thor parity",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    },
+    {
+      "url": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Synthetic-Data-Generation.html",
+      "depth": 2,
+      "category": "navigation_duplicate_reference",
+      "reason": "Descendant navigation hub links detailed synthetic-data or scene-customization children and has no independent runtime contract.",
+      "first_referrer": "https://docs.nvidia.com/vss/3.2.1/warehouse-docs/Core-Development-Workflow.html",
+      "direct_index_member": false,
+      "live_source_ids": [],
+      "required_action": "retain in the recursive denominator and reclassify only if the rendered page gains independent semantics",
+      "candidate_wave": "wave3_recursive_warehouse",
+      "semantic_proof_from_crawl_reachability": false
+    }
+  ]
+}

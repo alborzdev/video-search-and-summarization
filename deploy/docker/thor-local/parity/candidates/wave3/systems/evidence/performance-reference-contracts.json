@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "reference_only": true,
+  "thor_results": false,
+  "purpose": "Pins benchmark transcription requirements and selected source-table cross-checks. A separate execution fixture must remeasure Thor.",
+  "fixtures": [
+    {
+      "id": "performance.alert-verification",
+      "source": "https://docs.nvidia.com/vss/3.2.1/performance-alert-verification.html",
+      "must_transcribe_all_source_rows": true,
+      "selected_cross_checks": {
+        "rtx": [{"streams":1,"e2e_avg":0.44,"e2e_p90":0.92,"e2e_p99":1.81,"vlm_p90":0.45},{"streams":20,"e2e_avg":0.63,"e2e_p90":0.95,"e2e_p99":3.59,"vlm_p90":0.76},{"streams":60,"e2e_avg":3.85,"e2e_p90":11.49,"e2e_p99":25.33,"vlm_p90":2.83}],
+        "spark": {"streams":1,"e2e_avg":1.25,"e2e_p90":2.35,"e2e_p99":2.49},
+        "thor": {"streams":1,"e2e_avg":0.91,"e2e_p90":1.85,"e2e_p99":2.44}
+      }
+    },
+    {
+      "id": "performance.lvs",
+      "source": "https://docs.nvidia.com/vss/3.2.1/performance-lvs.html",
+      "must_transcribe_all_source_rows": true,
+      "duration_minutes": [1,10,30,60,120,720],
+      "selected_cross_checks": {
+        "h100_4x4_seconds": [5.16,20.1,52.9,64.7,119,615],
+        "h100_2x2_seconds": [5.70,23.3,59.7,128,205,1151],
+        "rtx_4x4_seconds": [6.50,25.9,51.6,95.2,187,935],
+        "l40s_4x4_seconds": [8.99,39.1,91.4,164,330,1890],
+        "max_concurrency_targets_seconds": [60,300,600],
+        "h100_4x4_max_concurrency": [73,114,125],
+        "rtx_4x4_max_concurrency": [41,71,79],
+        "l40s_4x4_max_concurrency": [15,36,41]
+      }
+    },
+    {
+      "id": "performance.search",
+      "source": "https://docs.nvidia.com/vss/3.2.1/performance-search.html",
+      "must_transcribe_all_source_rows": true,
+      "selected_cross_checks": {
+        "concurrency": [1,10,20,50],
+        "rtx_e2e_avg": [3.611,12.542,19.006,38.318],
+        "rtx_e2e_p90": [4.241,22.736,24.370,51.712],
+        "rtx_qps": [0.277,0.782,0.987,1.018],
+        "h100_e2e_avg": [2.385,13.301,16.919,33.963],
+        "h100_e2e_p90": [2.875,26.317,23.738,46.520],
+        "h100_qps": [0.419,0.741,1.084,1.153]
+      }
+    },
+    {
+      "id": "performance.rt-cv",
+      "source": "https://docs.nvidia.com/vss/3.2.1/performance-rt-cv.html",
+      "must_transcribe_all_source_rows": true,
+      "columns": ["streams","average_latency_ms","p90_latency_ms","p95_latency_ms","gpu_percent","cpu_percent"],
+      "rows": {
+        "h100": {"rtdetr-r50":[50,408.46,858.32,901.02,92.1,2.6],"evit-l2":[11,56,67.34,69.11,88.4,1.1],"gdino":[6,61.47,75.25,75.61,90,0.9]},
+        "rtx-pro-6000": {"rtdetr-r50":[29,196.59,258.85,327.31,90.6,1.3],"evit-l2":[17,62.02,73.18,74.84,87,0.8],"gdino":[5,61.08,70.09,72.43,86.5,0.6]},
+        "l40s": {"rtdetr-r50":[15,65.64,72.97,73.72,87.3,0.9],"evit-l2":[4,53.14,66.07,70.5,88.9,0.6],"gdino":[3,52.35,64.27,68.04,84.6,0.5]},
+        "spark": {"rtdetr-r50":[5,171.91,206.27,221.29,95.5,21.9],"evit-l2":[3,116.67,127.64,128.9,95,19.4],"gdino":[1,26.71,44.37,45.07,54.3,13.7]},
+        "thor": {"rtdetr-r50":[4,56.39,68.25,72.33,59.8,22.3],"evit-l2":[3,60.31,76.68,78.48,88.1,20.6],"gdino":[1,43.23,62.2,64,67.7,17.6]}
+      }
+    },
+    {
+      "id": "performance.rt-vlm",
+      "source": "https://docs.nvidia.com/vss/3.2.1/performance-rt-vlm.html",
+      "must_transcribe_all_source_rows": true,
+      "selected_cross_checks": {
+        "thor_max_alert": {"streams":3,"average":6.52,"p90":8.12,"p95":8.14,"gpu_percent":81.1},
+        "thor_max_caption": {"streams":1,"average":7.62,"p90":7.65,"p95":7.65,"gpu_percent":76.6},
+        "thor_alert_throughput": [{"concurrency":1,"latency":0.37,"throughput":2.70},{"concurrency":2,"latency":0.47,"throughput":4.26},{"concurrency":4,"latency":0.72,"throughput":5.56},{"concurrency":8,"latency":0.99,"throughput":8.08}]
+      }
+    },
+    {
+      "id": "performance.rt-embed",
+      "source": "https://docs.nvidia.com/vss/3.2.1/performance-rt-embed.html",
+      "must_transcribe_all_source_rows": true,
+      "selected_cross_checks": {
+        "h100_max": {"streams":170,"average":3.0,"p90":6.76,"p95":8.62,"max":12.89,"gpu_percent":66.3,"nvdec_percent":93.9},
+        "rtx_max": {"streams":149,"average":2.70,"p90":4.92,"p95":6.06,"max":8.92,"gpu_percent":93.1,"nvdec_percent":40.2}
+      }
+    },
+    {
+      "id": "performance.vios",
+      "source": "https://docs.nvidia.com/vss/3.2.1/performance-vios.html",
+      "must_transcribe_all_source_rows": true,
+      "required_table_groups": ["A100 RTSP/WebRTC 30-stream utilization","L40 maximum 70 mixed workload","H100 maximum 20 mixed workload","RTX PRO 6000 Blackwell single-video 36 rows","RTX PRO 6000 Blackwell single-picture 12 rows","RTX PRO 6000 Blackwell concurrent-video 36 rows","RTX PRO 6000 Blackwell concurrent-picture 36 rows"],
+      "profiling_scope": "x86 Ubuntu 22.04 reference only"
+    }
+  ]
+}

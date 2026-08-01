@@ -30,10 +30,19 @@ SCHEMA = SCRIPT_DIR / "source-lock.schema.json"
 INPUTS = {
     "live_ledger": PARITY_DIR / "official-capabilities.json",
     "wave2_candidate": PARITY_DIR / "candidates/wave2/candidate.json",
+    "recursive_targets": (
+        PARITY_DIR
+        / "candidates/wave3/recursive-coverage/recursive-targets.json"
+    ),
 }
 DOC_SOURCE_KINDS = {"versioned_official_docs", "release_notes"}
 PRODUCT_VERSION = "3.2.1"
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
+CAPTURE_DATE = "2026-07-31"
+RECURSIVE_TARGET_COUNT = 172
+RECURSIVE_TARGET_SET_SHA256 = (
+    "74a1d6ae1f520049202e47dce69fa56d10c28c48aa3aa24a3a2c4214dad4b208"
+)
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 ALLOWED_CONTENT_TYPE = re.compile(
@@ -128,6 +137,15 @@ def sha256_file(path: Path) -> str:
     return sha256_bytes(path.read_bytes())
 
 
+def canonical_json_hash(value: Any) -> str:
+    canonical = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return sha256_bytes(canonical)
+
+
 def validate_capture_date(value: str) -> None:
     if not isinstance(value, str) or DATE.fullmatch(value) is None:
         raise SourceLockError("captured_on must be an explicit YYYY-MM-DD date")
@@ -215,12 +233,33 @@ def resolve_redirect(current_url: str, location: str) -> str:
 
 def source_urls(
     inputs: dict[str, Path] = INPUTS,
-    *,
-    additional_audited_urls: list[str] | None = None,
 ) -> dict[str, list[str]]:
-    """Return the locked semantic-source union plus an explicit future audited set."""
+    """Return the exact recursive allowlist with semantic-source provenance."""
+    if set(inputs) != {"live_ledger", "wave2_candidate", "recursive_targets"}:
+        raise SourceLockError("source inputs must be the reviewed three-input set")
+    target_document = load_json(inputs["recursive_targets"])
+    targets = target_document.get("targets")
+    if (
+        not isinstance(targets, list)
+        or targets != sorted(targets)
+        or len(targets) != RECURSIVE_TARGET_COUNT
+        or len(set(targets)) != RECURSIVE_TARGET_COUNT
+        or target_document.get("reachable_count_including_start")
+        != RECURSIVE_TARGET_COUNT
+        or target_document.get("canonical_reachable_set_sha256")
+        != RECURSIVE_TARGET_SET_SHA256
+        or canonical_json_hash(targets) != RECURSIVE_TARGET_SET_SHA256
+    ):
+        raise SourceLockError("recursive target allowlist is not the reviewed 172-URL set")
     result: dict[str, list[str]] = {}
-    for label, path in inputs.items():
+    for url in targets:
+        _validate_docs_url(url, require_versioned_path=True)
+        if not url.endswith(".html"):
+            raise SourceLockError(f"recursive target is not an HTML page: {url!r}")
+        result[url] = ["recursive_fixed_point"]
+
+    for label in ("live_ledger", "wave2_candidate"):
+        path = inputs[label]
         document = load_json(path)
         sources = document.get("sources")
         if not isinstance(sources, list):
@@ -232,20 +271,16 @@ def source_urls(
                 continue
             url = source.get("uri")
             _validate_docs_url(url, require_versioned_path=True)
-            result.setdefault(url, []).append(label)
-    for url in additional_audited_urls or []:
-        _validate_docs_url(url, require_versioned_path=True)
-        result.setdefault(url, []).append("audited_index")
+            if url not in result:
+                raise SourceLockError(
+                    f"{label}: documentation source is outside recursive allowlist: {url}"
+                )
+            result[url].append(label)
     return {url: sorted(set(labels)) for url, labels in sorted(result.items())}
 
 
 def canonical_record_hash(records: list[dict[str, Any]]) -> str:
-    canonical = json.dumps(
-        sorted(records, key=lambda item: item["url"]),
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
-    return sha256_bytes(canonical)
+    return canonical_json_hash(sorted(records, key=lambda item: item["url"]))
 
 
 def _final_header_block(header_bytes: bytes) -> bytes:
@@ -387,6 +422,10 @@ def fetch_url(
 
 def build_lock(captured_on: str, inputs: dict[str, Path] = INPUTS) -> dict[str, Any]:
     validate_capture_date(captured_on)
+    if captured_on != CAPTURE_DATE:
+        raise SourceLockError(
+            f"this source-lock snapshot requires captured_on {CAPTURE_DATE}"
+        )
     verify_curl_identity()
     urls = source_urls(inputs)
     records = [fetch_url(url, labels) for url, labels in urls.items()]
@@ -413,6 +452,9 @@ def build_lock(captured_on: str, inputs: dict[str, Path] = INPUTS) -> dict[str, 
             "url_count": len(records),
             "success_count": success_count,
             "failure_count": len(records) - success_count,
+            "total_byte_count": sum(
+                item["byte_count"] or 0 for item in records
+            ),
             "aggregate_sha256": canonical_record_hash(records),
         },
     }
@@ -446,6 +488,8 @@ def validate(
     if document["product_version"] != PRODUCT_VERSION:
         raise SourceLockError("product version changed")
     validate_capture_date(document["captured_on"])
+    if document["captured_on"] != CAPTURE_DATE:
+        raise SourceLockError("capture date differs from the reviewed snapshot")
     if document["interpretation"] != EXPECTED_INTERPRETATION:
         raise SourceLockError("source hash interpretation is not fail-closed")
     if document["fetch_policy"] != fetch_policy():
@@ -471,7 +515,7 @@ def validate(
         raise SourceLockError("records must have unique URLs in lexical order")
     if set(urls) != set(expected_urls):
         raise SourceLockError(
-            "locked URLs differ from the deduplicated live plus wave-2 set"
+            "locked URLs differ from the exact recursive target allowlist"
         )
     final_urls = [item["final_url"] for item in records]
     if len(final_urls) != len(set(final_urls)):
@@ -480,9 +524,9 @@ def validate(
         url = record["url"]
         _validate_docs_url(url, require_versioned_path=True)
         _validate_docs_url(record["final_url"], require_versioned_path=True)
-        if record["referenced_by"] != sorted(set(record["referenced_by"])):
+        if record["referenced_by"] != expected_urls[url]:
             raise SourceLockError(
-                f"{url}: captured source references are not canonical"
+                f"{url}: captured source references differ from exact provenance"
             )
         if record["outcome"] == "success":
             if record["http_status"] != 200:
@@ -501,6 +545,7 @@ def validate(
         "url_count": len(records),
         "success_count": success_count,
         "failure_count": len(records) - success_count,
+        "total_byte_count": sum(item["byte_count"] or 0 for item in records),
         "aggregate_sha256": canonical_record_hash(records),
     }
     if document["summary"] != expected_summary:
@@ -568,6 +613,7 @@ def main() -> int:
             "source lock: INCOMPLETE: "
             f"{summary['url_count']} URLs, {summary['success_count']} success, "
             f"{summary['failure_count']} failure, "
+            f"{summary['total_byte_count']} bytes, "
             f"aggregate={summary['aggregate_sha256']}",
             file=sys.stderr,
         )
@@ -575,7 +621,9 @@ def main() -> int:
     print(
         "source lock: PASS: "
         f"{summary['url_count']} URLs, {summary['success_count']} success, "
-        f"{summary['failure_count']} failure, aggregate={summary['aggregate_sha256']}"
+        f"{summary['failure_count']} failure, "
+        f"{summary['total_byte_count']} bytes, "
+        f"aggregate={summary['aggregate_sha256']}"
     )
     return 0
 

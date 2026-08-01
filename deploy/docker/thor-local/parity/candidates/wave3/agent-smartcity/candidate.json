@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "scope": {
+    "warehouse_sample_bundle": "excluded",
+    "smart_city_sample_bundle": "optional_demo_only",
+    "operator_custom_data": "in_scope",
+    "live_files_untouched": true
+  },
+  "expected_counts": {
+    "reviewed_pages": 40,
+    "claim_bearing_sources": 24,
+    "new_capabilities": 34,
+    "enrichments": 7,
+    "discrepancies": 5,
+    "guardrails": 4
+  },
+  "live_inputs": [
+    {"path":"deploy/docker/thor-local/parity/official-capabilities.json","sha256":"e33eff2cc03f7770e0513a061732ec860ccb241721e40b9d60d6dbb2b0dafee8"},
+    {"path":"deploy/docker/thor-local/parity/manifest.json","sha256":"4c2712271a0157522d2ad5b8335a0853309796d33f72ef1396605a3f3baecdc4"},
+    {"path":"deploy/docker/thor-local/parity/capability-oracles.json","sha256":"5462c555436b96ec3c2fab9f3af3223fce26b064d85ee4cfd1c38128bceff56b"},
+    {"path":"deploy/docker/thor-local/qualification/acceptance_inventory.json","sha256":"24f2ee284abc795cdc14537319f99c2b0655718ab541f1381132085cf20cff26"}
+  ],
+  "sources": [
+    {"id":"quickstart-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/quickstart.html","classification":"claim_bearing","locator_policy":"Rendered headings and line ranges 160-204, 410-531 captured 2026-07-31."},
+    {"id":"agent-workflows-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/agent-workflows.html","classification":"navigation_or_placeholder","locator_policy":"Navigation summary lines 160-173; no independent claim."},
+    {"id":"agent-lvs-workflow-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/agent-workflow-lvs.html","classification":"claim_bearing","locator_policy":"Workflow, deployed services, and skill boundaries lines 175-329."},
+    {"id":"agent-search-workflow-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/agent-workflow-search.html","classification":"claim_bearing","locator_policy":"Key features, data flow, and route semantics lines 160-230 and 680-727."},
+    {"id":"agent-alert-verification-workflow-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/agent-workflow-alert-verification.html","classification":"claim_bearing","locator_policy":"Overview, architecture, and Thor deployment boundary lines 160-190 and deployment sections."},
+    {"id":"agent-realtime-alert-workflow-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/agent-workflow-rt-alert.html","classification":"claim_bearing","locator_policy":"Overview, OpenClaw notification, and rule deletion lines 160-201, 220 onward, 295-339."},
+    {"id":"agent-overview-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Overview.html","classification":"claim_bearing","locator_policy":"Operational modes, agents, capabilities, and known issues lines 166-307."},
+    {"id":"agent-api-wrapper-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-api.html","classification":"empty_api_wrapper","locator_policy":"Heading-only rendered API wrapper lines 160-166; no extractable operation contract."},
+    {"id":"agent-profiles-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Profiles.html","classification":"claim_bearing","locator_policy":"Base, LVS, and Search profile contracts lines 185-325."},
+    {"id":"agent-config-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Configuration.html","classification":"already_covered_duplicate","locator_policy":"Already represented by live configuration.agent claims."},
+    {"id":"agent-customization-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Customization.html","classification":"already_covered_duplicate","locator_policy":"Already represented by live configuration.agent extension claims."},
+    {"id":"agent-llm-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-llm.html","classification":"already_covered_duplicate","locator_policy":"Already represented by live agent LLM model claims."},
+    {"id":"agent-vlm-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/configure-vlm.html","classification":"already_covered_duplicate","locator_policy":"Already represented by live agent VLM model claims."},
+    {"id":"agent-eval-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Evaluation.html","classification":"already_covered_duplicate","locator_policy":"Already represented by live evaluation.agent claims."},
+    {"id":"agent-report-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-report-generation.html","classification":"already_covered_duplicate","locator_policy":"Already represented by live report profile and artifact claims."},
+    {"id":"agent-observability-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/vss-agent-Observability.html","classification":"already_covered_duplicate","locator_policy":"Already represented by live Phoenix trace claim."},
+    {"id":"video-analytics-mcp-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/Video-Analytics-MCP-Server.html","classification":"claim_bearing","locator_policy":"Overview, quickstart, tools, and parameter invariants lines 160-450."},
+    {"id":"agent-known-issues-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-agent/VSS-Agent-Known-Issues.html","classification":"already_covered_duplicate","locator_policy":"Already represented by behavior.agent.known-issues; Overview supplies the enrichment."},
+    {"id":"vss-ui-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-ui.html","classification":"claim_bearing","locator_policy":"Global Chat, Alerts, Dashboard, Search, Video Management, and Known Issues lines 160-1032."},
+    {"id":"nemoclaw-overview-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/nemoclaw.html","classification":"claim_bearing","locator_policy":"Early Access overview, policy, plugin, skills, and host orchestrator lines 160-210."},
+    {"id":"nemoclaw-setup-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/nemoclaw-deploy-vss-and-skills.html","classification":"claim_bearing","locator_policy":"Topology, prerequisites, profiles, models, installer, policy, ports, and smoke test lines 160-300."},
+    {"id":"orchestrator-mcp-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/vss-orchestrator-mcp.html","classification":"claim_bearing","locator_policy":"Configuration precedence, IDs, tool reference, lifecycle, logs, and cleanup sections."},
+    {"id":"nemoclaw-config-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/nemoclaw-configuration.html","classification":"claim_bearing","locator_policy":"Model surfaces, Docker pins, sandbox reachability, and webhook token lines 176-257."},
+    {"id":"nemoclaw-troubleshooting-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/nemoclaw-troubleshooting.html","classification":"claim_bearing","locator_policy":"Node, ports, sandbox access, artifact paths, deep clean, and reinstall lines 160-342."},
+    {"id":"smartcity-toc-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/smartcity-toc.html","classification":"claim_bearing","locator_policy":"Current-version note and Simulate/Train/Deploy stages lines 160-177."},
+    {"id":"smartcity-introduction-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Introduction.html","classification":"summary_duplicate","locator_policy":"Architecture summary lines 160-206 duplicated by detailed pages."},
+    {"id":"smartcity-prerequisites-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Prerequisites.html","classification":"claim_bearing","locator_policy":"Validated hardware, host software, credentials, maps, and Docker constraints lines 160-418."},
+    {"id":"smartcity-quickstart-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Quickstart-Guide.html","classification":"claim_bearing","locator_policy":"bp_smc features, reference performance, endpoints, chat, alerts, dashboard, and map lines 175-454."},
+    {"id":"smartcity-development-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Smartcity-Development-Workflow.html","classification":"navigation_or_placeholder","locator_policy":"Workflow navigation lines 160-183; no independent claim."},
+    {"id":"smartcity-deep-dive-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Blueprint-deep-dive.html","classification":"claim_bearing","locator_policy":"Traffic analytics, detectors, tracker, behavior, verification, VIOS, and Agent lines 160-303."},
+    {"id":"smartcity-calibration-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Calibration.html","classification":"claim_bearing","locator_policy":"Manual GIS and DT calibration, ports, artifacts, CARLA, outputs, and ROI refiner lines 160-448."},
+    {"id":"smartcity-deployment-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Deployment.html","classification":"claim_bearing","locator_policy":"Custom location, uploads, media sources, and redeployment lines 160-182."},
+    {"id":"smartcity-sdg-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Simulation-SDG.html","classification":"claim_bearing","locator_policy":"CARLA, custom maps, RoadRunner, and Cosmos Transfer variants lines 160-341."},
+    {"id":"smartcity-model-tuning-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Model-Fine-Tuning.html","classification":"claim_bearing","locator_policy":"Models, TrafficCamNet RT-DETR recipe, training, export, and forthcoming VLM recipe lines 160-309."},
+    {"id":"smartcity-operations-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Operations.html","classification":"navigation_or_placeholder","locator_policy":"Operations navigation only; no independent claim."},
+    {"id":"smartcity-limitations-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Known-Limitations.html","classification":"claim_bearing","locator_policy":"Complete current limitation list lines 160-169."},
+    {"id":"smartcity-troubleshooting-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/Troubleshooting-Guide.html","classification":"navigation_or_placeholder","locator_policy":"Future-content placeholder; no independent claim."},
+    {"id":"smartcity-faq-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/FAQ.html","classification":"navigation_or_placeholder","locator_policy":"Future-content placeholder; no independent claim."},
+    {"id":"smartcity-license-doc-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/smartcity-docs/License-Information.html","classification":"legal_external","locator_policy":"Legal and external inventory only; no runtime capability claim."},
+    {"id":"release-notes-3.2.1","uri":"https://docs.nvidia.com/vss/3.2.1/release-notes.html","classification":"claim_bearing","locator_policy":"VSS 3.2.1 Key Features, Smart City release statement."}
+  ],
+  "new_capabilities": [
+    {
+      "id":"runtime.agent.operational-modes","feature_id":"base-agent-workflow","kind":"runtime_behavior","title":"Agent production and direct developer operating modes",
+      "source_claims":[{"source_id":"agent-overview-doc-3.2.1","locator":"Operational Modes, lines 166-203"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"production":{"path":"va_mcp","data":["incidents","sensors"],"multi_incident":true,"requires":["video_analytics_pipeline","elasticsearch","vst"]},"developer":{"path":"direct_media","data":["uploaded_video"],"incident_database":false,"embedding":"cosmos_embed","requires":["vst","vlm"]}},
+      "qualification":{"scenario_ids":["core-agent-workflows","official-capability-contracts"],"fixtures":[{"id":"agent-mode-mocks","type":"mock_services","source_policy":"generated","description":"Mock VA-MCP, VST, VLM, and direct-media dependencies for routing and rejection checks."}]},
+      "gap":"Both routes require claim-level runtime qualification on Thor."
+    },
+    {
+      "id":"runtime.workflow.base-chat-report","feature_id":"base-agent-workflow","kind":"runtime_behavior","title":"Base chat, follow-up, and report workflow",
+      "source_claims":[{"source_id":"quickstart-doc-3.2.1","locator":"Key Features and Access the Blueprint, lines 160-204 and 451-531"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"inputs":["MP4","MKV"],"actions":["qa","followup_qa","generate_report"],"interfaces":{"nat":["/chat/stream","/generate/stream"],"nemoclaw_port":9988,"direct_mcp_ports":[9901,9988],"rest_ports":[8081,30888]},"interfaces_combinable":true},
+      "qualification":{"scenario_ids":["core-agent-workflows","rtvi-media-workflows"],"fixtures":[{"id":"tiny-agent-media","type":"media","source_policy":"generated_or_operator_custom","description":"Tiny deterministic MP4 and MKV; no bundled sample is required."}]},
+      "gap":"Exact cross-interface behavior is not currently qualified."
+    },
+    {
+      "id":"runtime.agent.base-hitl","feature_id":"base-agent-workflow","kind":"runtime_behavior","title":"Base report HITL command state machine",
+      "source_claims":[{"source_id":"quickstart-doc-3.2.1","locator":"Generate Reports and HITL commands, lines 451-531"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"commands":["empty_submit","new_prompt","/generate <description>","/refine <instructions>","/cancel"],"outputs":["markdown","pdf"],"default_storage":"in_memory","persistent_storage_requires_host_mount":true},
+      "qualification":{"scenario_ids":["core-agent-workflows"],"fixtures":[{"id":"hitl-state-transcript","type":"conversation","source_policy":"generated","description":"Deterministic generate, refine, cancel, restart, and persistence transcript."}]},
+      "gap":"Command transitions and persistence boundary need qualification."
+    },
+    {
+      "id":"runtime.agent.lvs-profile","feature_id":"video-summarization-file","kind":"runtime_behavior","title":"LVS Agent profile tool and media contract",
+      "source_claims":[{"source_id":"agent-lvs-workflow-doc-3.2.1","locator":"Workflow, services, and Agent Skills boundaries, lines 175-329"},{"source_id":"agent-profiles-doc-3.2.1","locator":"LVS Profile, lines 211-283"}],
+      "status":{"acceptance_class":"required_local","thor_state":"wired","runtime_state":"not_qualified"},
+      "contract":{"tools":["lvs_video_understanding","lvs_config_media","lvs_stream_understanding","lvs_caption_retrieval","video_report_gen"],"uploaded_video_reports":"one_or_multiple","hitl_fields":["scenario","events","optional_objects"],"requirements":["lvs_backend","rtvi_vlm","elasticsearch"],"live_caption_requires":["kafka","logstash"],"experimental_ui_only":["stream_summary","stream_qa"],"latest_query_overwrites_shared_prompt":true,"cross_agent_prompt_visibility":false},
+      "qualification":{"scenario_ids":["core-agent-workflows","rtvi-media-workflows"],"fixtures":[{"id":"lvs-multi-file","type":"media","source_policy":"generated_or_operator_custom","description":"Two tiny clips for single and multi-video reporting and prompt-overwrite checks."}]},
+      "gap":"Prior LVS evidence does not prove all exact profile and shared-prompt semantics."
+    },
+    {
+      "id":"runtime.agent.search-profile","feature_id":"semantic-search","kind":"runtime_behavior","title":"Search Agent route and ranking contract",
+      "source_claims":[{"source_id":"agent-search-workflow-doc-3.2.1","locator":"Data Flow and route semantics, lines 207-230 and 680-727"},{"source_id":"agent-profiles-doc-3.2.1","locator":"Search Profile, lines 284-325"}],
+      "status":{"acceptance_class":"required_local","thor_state":"wired","runtime_state":"not_qualified"},
+      "contract":{"routes":["/api/v1/search","/api/v1/search/attribute","/api/v1/search/fusion","/api/v1/search/image"],"indices":["mdx-embed-filtered-*","mdx-behavior-*","mdx-raw-*"],"attribute":{"same_object_merge":true,"minimum_clip_seconds":1,"multiple_attributes":"append"},"fusion":{"order":["embedding","rerank_or_fallback"],"multiple_attributes":"fuse","same_video_top_k":1},"image":{"selected_bbox":true,"retrieval":"object_level_knn"},"default_rank_fusion":"rrf"},
+      "qualification":{"scenario_ids":["search-archive-workflows","rest-api-operation-matrix"],"fixtures":[{"id":"search-documents-and-bboxes","type":"search_index","source_policy":"generated","description":"Synthetic ES documents and selected-bbox images covering all four routes."}]},
+      "gap":"Exact merge, fusion, and image-search semantics are not proven by the operation inventory."
+    },
+    {
+      "id":"runtime.workflow.alert-verification","feature_id":"alert-verification","kind":"runtime_behavior","title":"Candidate-alert verification workflow",
+      "source_claims":[{"source_id":"agent-alert-verification-workflow-doc-3.2.1","locator":"Overview and Architecture, lines 160-190"}],
+      "status":{"acceptance_class":"required_local","thor_state":"wired","runtime_state":"not_qualified"},
+      "contract":{"input":"upstream_candidate_alert","pipeline":["grounding_dino_detection","behavior_filter","vlm_verification","storage_and_report"],"use_cases":["ppe","restricted_area","asset_monitoring","custom"],"distinct_from":"real_time_vlm_alerting","thor_official_constraint":"remote_llm"},
+      "qualification":{"scenario_ids":["alert-workflows","core-agent-workflows"],"fixtures":[{"id":"candidate-alerts","type":"alerts","source_policy":"generated_or_operator_custom","description":"Synthetic upstream candidates and deterministic VLM verdicts."}]},
+      "gap":"The wired Thor lane lacks current end-to-end verdict evidence."
+    },
+    {
+      "id":"runtime.workflow.real-time-alerts","feature_id":"realtime-alerts","kind":"runtime_behavior","title":"Natural-language real-time alert workflow",
+      "source_claims":[{"source_id":"agent-realtime-alert-workflow-doc-3.2.1","locator":"Overview, notification, and rule deletion sections, lines 160-339"}],
+      "status":{"acceptance_class":"required_local","thor_state":"wired","runtime_state":"not_qualified"},
+      "contract":{"input":"live_video_chunks","rule_language":"natural_language","configurable":["prompt","invocation"],"outputs":["alert","report"],"delete_requires_confirmation":true,"delete_is_idempotent":true,"optional_notification_relay":"openclaw"},
+      "qualification":{"scenario_ids":["alert-workflows","openclaw-workflows"],"fixtures":[{"id":"tiny-alert-stream","type":"rtsp","source_policy":"generated_or_operator_custom","description":"Tiny looping RTSP source and add/list/delete/repeated-delete transcript."}]},
+      "gap":"Rule lifecycle and optional relay remain unqualified."
+    },
+    {
+      "id":"runtime.ui.global-chat-sidebar","feature_id":"main-ui","kind":"runtime_behavior","title":"Profile-aware Global Chat sidebar",
+      "source_claims":[{"source_id":"vss-ui-doc-3.2.1","locator":"Overview, Global Chat, and Settings, lines 160-268"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"profile_controlled_tabs":true,"themes":["dark","light"],"legacy_and_global_chat_coexist":true,"sidebar":{"collapsible":true,"resizable_fraction":[0.333333,0.666667]},"uploads":["MP4","MKV"],"context_actions":["+ Chat","Generate Report"],"history_folders":true,"unseen_indicator":true,"settings":["http_url","websocket_url","websocket_schema","intermediate_steps"]},
+      "qualification":{"scenario_ids":["ui-workflows","core-agent-workflows"],"fixtures":[{"id":"ui-chat-state","type":"browser_fixture","source_policy":"generated","description":"Mocked profile matrix, histories, uploads, and chat transport settings."}]},
+      "gap":"Current UI evidence does not cover the complete state model."
+    },
+    {
+      "id":"runtime.ui.alerts-tab","feature_id":"main-ui","kind":"runtime_behavior","title":"Alerts view and rule-management semantics",
+      "source_claims":[{"source_id":"vss-ui-doc-3.2.1","locator":"Alerts, settings, and rule catalog, lines 270-530"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"views":["View Alerts","Manage Alerts"],"defaults":{"verified_only":true,"range_minutes":10,"fetch_count":100,"refresh_seconds":1,"rows":20,"max_search":"unlimited","bbox_overlay":false},"create_rule_refreshes":"GET /v1/live/streams","friendly_sensor_resolves_to":"rtsp_url","custom_sensor_forwarded_as":"name_only"},
+      "qualification":{"scenario_ids":["ui-workflows","alert-workflows"],"fixtures":[{"id":"ui-alert-api","type":"mock_services","source_policy":"generated","description":"Mock alerts and live-stream APIs with friendly and custom sensors."}]},
+      "gap":"Defaults and sensor-resolution behavior need browser qualification."
+    },
+    {
+      "id":"runtime.ui.dashboard-tab","feature_id":"main-ui","kind":"runtime_behavior","title":"Embedded Kibana dashboard tab",
+      "source_claims":[{"source_id":"vss-ui-doc-3.2.1","locator":"Dashboard, lines 542-550"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"backend":"kibana","embedded":true,"blueprint_preconfigured":true},
+      "qualification":{"scenario_ids":["ui-workflows"],"fixtures":[{"id":"kibana-availability","type":"mock_service","source_policy":"generated","description":"Mock Kibana availability and embedding state."}]},
+      "gap":"Embedded dashboard availability is not claim-level qualified."
+    },
+    {
+      "id":"runtime.ui.search-tab","feature_id":"main-ui","kind":"runtime_behavior","title":"Search tab filters, critic, and image-search semantics",
+      "source_claims":[{"source_id":"vss-ui-doc-3.2.1","locator":"Search and Search by Image, lines 551-837"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"sources":{"default":"Video File","values":["Video File","RTSP"]},"time_zone":"browser_local_no_conversion","similarity_range":[-1,1],"top_k":{"default":10,"minimum":1},"critic":{"default_enabled":true,"disable_env":"ENABLE_CRITIC=false","sort_order":["confirmed","unverified","rejected"]},"image_search_requires":["mediaWithObjectsBbox","mdx_frames_endpoint","vst_picture_api"]},
+      "qualification":{"scenario_ids":["ui-workflows","search-archive-workflows"],"fixtures":[{"id":"ui-search-api","type":"mock_services","source_policy":"generated","description":"Mock search, frames, and VST Picture APIs with bbox media."}]},
+      "gap":"Filter defaults, critic ordering, and image flow are not currently qualified."
+    },
+    {
+      "id":"runtime.ui.video-management-tab","feature_id":"main-ui","kind":"runtime_behavior","title":"Video and RTSP management semantics",
+      "source_claims":[{"source_id":"vss-ui-doc-3.2.1","locator":"Video Management, lines 838-1005"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"file_types":["MP4","MKV"],"multi_upload":true,"rtsp_management":true,"bulk_delete":"irreversible","upload_progress":true,"optional_template_environment":true},
+      "qualification":{"scenario_ids":["ui-workflows","analytics-vios-workflows"],"fixtures":[{"id":"ui-tiny-media","type":"media","source_policy":"generated_or_operator_custom","description":"Tiny MP4/MKV and mocked RTSP inventory; explicit delete confirmation."}]},
+      "gap":"Bulk operations and progress behavior need browser qualification."
+    },
+    {
+      "id":"behavior.ui.known-issues","feature_id":"main-ui","kind":"runtime_behavior","title":"Documented VSS UI limitations",
+      "source_claims":[{"source_id":"vss-ui-doc-3.2.1","locator":"Known Issues, lines 1007-1032"}],
+      "status":{"acceptance_class":"required_local","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"issues":["history_stale_after_agent_restart","removed_sensor_alert_media_missing","ui_created_manage_alert_rule_failure","top_k_below_100_can_reduce_recall","removed_nvstreamer_rtsp_can_remain_stale","video_rename_unsupported","mixed_delete_can_leave_stale_state"],"workarounds_required":true},
+      "qualification":{"scenario_ids":["ui-workflows","official-capability-contracts"],"fixtures":[{"id":"ui-negative-oracle","type":"static_oracle","source_policy":"generated","description":"Fail-closed limitation and workaround assertions."}]},
+      "gap":"Limitations must remain visible and must not be treated as remediated."
+    },
+    {
+      "id":"deployment.nemoclaw.same-host-operating-path","feature_id":"nemoclaw-openclaw","kind":"deployment","title":"NemoClaw same-host operating path",
+      "source_claims":[{"source_id":"nemoclaw-overview-doc-3.2.1","locator":"Early Access overview, lines 160-210"},{"source_id":"nemoclaw-setup-doc-3.2.1","locator":"Topology, hardware profiles, ports, and smoke test, lines 160-300"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"topology":"same_host_intended","host_orchestrator_port":9988,"tool_count":9,"host_alias":"host.openshell.internal","separate_machine_requires":"external_model_card","hardware_profiles":["H100","L40S","RTX","DGX","IGX","AGX","OTHER"],"official_edge_profiles":["base","alerts"],"safe_destructive_confirmation":true},
+      "qualification":{"scenario_ids":["openclaw-workflows","mcp-tool-operation-matrix"],"fixtures":[{"id":"nemoclaw-lifecycle-mocks","type":"mock_services","source_policy":"generated","description":"Same-host lifecycle with mocked provider and orchestrator; no container launch."}]},
+      "gap":"Thor has no current claim-level NemoClaw lifecycle evidence."
+    },
+    {
+      "id":"configuration.nemoclaw.model-surface-boundary","feature_id":"nemoclaw-openclaw","kind":"configuration","title":"NemoClaw and VSS model configuration separation",
+      "source_claims":[{"source_id":"nemoclaw-config-doc-3.2.1","locator":"Model configuration surfaces, lines 176-257"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"agent_orchestrator_prefix":"NEMOCLAW_*","vss_service_prefixes":["VSS_LLM_*","VSS_VLM_*"],"surfaces_independent":true,"compatible_api_key_must_be_nonempty_even_if_provider_ignores_it":true},
+      "qualification":{"scenario_ids":["openclaw-workflows"],"fixtures":[{"id":"nemoclaw-env-matrix","type":"configuration","source_policy":"generated","description":"Distinct endpoints and keys for orchestrator, VSS LLM, and VSS VLM."}]},
+      "gap":"Independent endpoint rendering is not currently qualified."
+    },
+    {
+      "id":"security.nemoclaw.policy-provider-network-boundary","feature_id":"nemoclaw-openclaw","kind":"security","title":"NemoClaw policy and provider network boundary",
+      "source_claims":[{"source_id":"nemoclaw-overview-doc-3.2.1","locator":"Policy and safe operation, lines 160-210"},{"source_id":"nemoclaw-config-doc-3.2.1","locator":"Sandbox verification and webhook token, lines 176-257"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"policy_enforced_provider_access":true,"host_probe_command":"nemoclaw connect","reachable_statuses":["404","non_policy_403"],"webhook_token":"random_required","direct_sandbox_host_access_disallowed":true},
+      "qualification":{"scenario_ids":["openclaw-workflows","external-integration-boundaries"],"fixtures":[{"id":"nemoclaw-policy-network","type":"security_fixture","source_policy":"generated","description":"Allow/deny policy cases and a fake provider endpoint."}]},
+      "gap":"Policy enforcement and reachability semantics need negative-path qualification."
+    },
+    {
+      "id":"behavior.nemoclaw.recovery-and-destructive-boundaries","feature_id":"nemoclaw-openclaw","kind":"runtime_behavior","title":"NemoClaw recovery and destructive-operation boundaries",
+      "source_claims":[{"source_id":"nemoclaw-troubleshooting-doc-3.2.1","locator":"Node, ports, sandbox access, deep clean, and reinstall, lines 160-342"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"minimum_node":"22.16","ui_port":18789,"mcp_port":9988,"sandbox_command":"nemoclaw exec","host_endpoint":"host.openshell.internal","deep_clean_deletes":"mdx_data_dir","deep_clean_requires_explicit_authorization":true,"clean_reinstall_is_destructive":true},
+      "qualification":{"scenario_ids":["openclaw-workflows","official-capability-contracts"],"fixtures":[{"id":"nemoclaw-recovery-oracle","type":"static_oracle","source_policy":"generated","description":"Recovery checks with all destructive actions disabled by default."}]},
+      "gap":"Recovery is source-present; destructive tools must remain operator-gated."
+    },
+    {
+      "id":"boundary.smart-city.version-skew","feature_id":"smart-city","kind":"deployment","title":"Smart City documentation version skew",
+      "source_claims":[{"source_id":"smartcity-toc-doc-3.2.1","locator":"Current-version note, lines 160-177"},{"source_id":"release-notes-3.2.1","locator":"VSS 3.2.1 Key Features, Smart City update"},{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"VSS 3.0 architecture description, lines 160 onward"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"source_only","runtime_state":"not_qualified"},
+      "contract":{"docs_container":"3.2.1","toc_claim":"VSS v3.1","release_note_claim":"3.2.0 microservices","deep_dive_claim":"VSS 3.0 architecture","qualification_rule":"pin actual artifact and image digests; never infer runtime version from docs path"},
+      "qualification":{"scenario_ids":["official-capability-contracts"],"fixtures":[{"id":"smartcity-version-lock","type":"source_lock","source_policy":"generated","description":"Digest manifest for every selected Smart City image and artifact."}]},
+      "gap":"The official pages do not expose one internally consistent version identity."
+    },
+    {
+      "id":"prereq.smart-city.reference-platform","feature_id":"official-platform-prerequisites","kind":"deployment","title":"Smart City x86 reference platform",
+      "source_claims":[{"source_id":"smartcity-prerequisites-doc-3.2.1","locator":"System and software requirements, lines 160-223 and 382-418"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"source_only","runtime_state":"not_applicable"},
+      "contract":{"architecture":"x86_64","validated_gpus":["H100","L40S","RTX PRO 6000"],"minimum":{"cpu_cores":18,"ram_gb":128,"storage_tb":1,"network_gbps":1},"os":"Ubuntu 24.04","ngc_cli":"4.10","driver":"580.105.08","docker_min":"27.2","docker_recommended_max_exclusive":"29.5","compose_min":"2.29","container_toolkit":"1.17.8","cgroup_driver":"cgroupfs","official_thor_support":false},
+      "qualification":{"scenario_ids":["official-capability-contracts"],"fixtures":[{"id":"smartcity-prereq-source","type":"static_oracle","source_policy":"generated","description":"Reference-only platform assertion; never a Thor pass criterion."}]},
+      "gap":"Official Smart City prerequisites exclude AGX Thor; the local lane is custom."
+    },
+    {
+      "id":"boundary.smart-city.google-maps-dependency","feature_id":"smart-city","kind":"configuration","title":"Smart City Google Maps external dependency boundary",
+      "source_claims":[{"source_id":"smartcity-prerequisites-doc-3.2.1","locator":"Google Maps API key, lines 241-301"},{"source_id":"smartcity-calibration-doc-3.2.1","locator":"ROI Refiner Google key and placeholders, lines 341-448"}],
+      "status":{"acceptance_class":"external_optional","thor_state":"external_optional","runtime_state":"not_applicable"},
+      "contract":{"official_ui_dependency":"Google Maps API key","consumers":["Video Analytics UI","ROI Refiner"],"local_thor_alternate":"provider_free_svg_map","alternate_is_not_official_google_map_parity":true},
+      "qualification":{"scenario_ids":["external-integration-boundaries"],"fixtures":[{"id":"maps-secret-presence","type":"configuration","source_policy":"operator_secret_or_local_alternate","description":"Check secret presence only; local qualification uses provider-free SVG."}]},
+      "gap":"External Google service is excluded from required-local qualification."
+    },
+    {
+      "id":"deployment.smart-city.bp-smc-surface","feature_id":"smart-city","kind":"deployment","title":"Smart City bp_smc service and endpoint surface",
+      "source_claims":[{"source_id":"smartcity-quickstart-doc-3.2.1","locator":"bp_smc deployment and endpoint sections, lines 175-293"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"static_only"},
+      "contract":{"profile":"bp_smc","detector_default":"RTDETR","detector_alternate":"GDINO","integrations":["alerts","agent","ui","video_analytics_api","kibana","kafka"],"ports":{"ui":7777,"map":3002,"grafana":35000,"nvstreamer":31000,"vst":30888,"va_api":8081,"vst_mcp":8001,"va_mcp":9901,"llm":30081,"vlm":8018}},
+      "qualification":{"scenario_ids":["industry-profile-workflows","official-capability-contracts"],"fixtures":[{"id":"smartcity-compose-surface","type":"configuration","source_policy":"generated","description":"Static compose and endpoint oracle without launching the official x86 profile."}]},
+      "gap":"The custom Thor profile has only static evidence for this official surface."
+    },
+    {
+      "id":"performance.smart-city.reference-stream-envelope","feature_id":"performance-envelopes","kind":"performance","title":"Smart City reference stream envelope",
+      "source_claims":[{"source_id":"smartcity-quickstart-doc-3.2.1","locator":"Reference performance table, lines 175-210"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"source_only","runtime_state":"not_qualified"},
+      "contract":{"input":"1080p@10fps","H100":{"streams":30,"analytics_streams":12,"gpus":{"full":3,"analytics":2,"ui":1}},"L40S":{"streams":30,"analytics_streams":6,"gpus":{"full":3,"analytics":null,"ui":1}},"RTX_PRO_6000":{"streams":30,"analytics_streams":12,"gpus":{"full":3,"analytics":2,"ui":1}},"applies_to_thor":false},
+      "qualification":{"scenario_ids":["observability-scale-workflows","official-capability-contracts"],"fixtures":[{"id":"smartcity-reference-envelope","type":"static_oracle","source_policy":"generated","description":"Reference table only; never used for Thor pass/fail."}]},
+      "gap":"No official Smart City performance envelope is supplied for Thor."
+    },
+    {
+      "id":"runtime.smart-city.chat-alert-dashboard","feature_id":"smart-city","kind":"runtime_behavior","title":"Smart City chat, alerts, and dashboard surfaces",
+      "source_claims":[{"source_id":"smartcity-quickstart-doc-3.2.1","locator":"Chat, Alerts, and Dashboard, lines 295-394"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"surfaces":["natural_language_chat","verified_alerts","kibana_dashboard"],"shared_location_context":true},
+      "qualification":{"scenario_ids":["industry-profile-workflows","ui-workflows"],"fixtures":[{"id":"smartcity-ui-incidents","type":"mock_services","source_policy":"generated_or_operator_custom","description":"Synthetic incidents, sensors, reports, and dashboard documents."}]},
+      "gap":"The custom Thor lane lacks current integrated UI evidence."
+    },
+    {
+      "id":"runtime.smart-city.map-ui","feature_id":"smart-city","kind":"runtime_behavior","title":"Smart City map layers and location inputs",
+      "source_claims":[{"source_id":"smartcity-quickstart-doc-3.2.1","locator":"Map workflow, lines 395-454"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"port":3002,"layers":["camera","road_segment","direction","traffic_metrics","alerts"],"location_inputs":["calibration","road_network"],"local_alternate_provider":"svg"},
+      "qualification":{"scenario_ids":["industry-profile-workflows","ui-workflows"],"fixtures":[{"id":"smartcity-minimal-map","type":"location_data","source_policy":"generated_or_operator_custom","description":"Minimal calibration, road network, and provider-free SVG."}]},
+      "gap":"Map behavior is only statically wired in the custom Thor lane."
+    },
+    {
+      "id":"runtime.smart-city.traffic-analytics","feature_id":"smart-city","kind":"runtime_behavior","title":"Smart City traffic metrics and incident analytics",
+      "source_claims":[{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"Traffic analytics and incidents, lines 160-220"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"metrics":["directional_speed","directional_flow"],"entities":["camera","road_segment"],"incidents":["collision","stalled_vehicle","wrong_way"],"outputs":["alert","report"]},
+      "qualification":{"scenario_ids":["industry-profile-workflows"],"fixtures":[{"id":"smartcity-synthetic-tracks","type":"analytics","source_policy":"generated_or_operator_custom","description":"Deterministic tracks producing speed, flow, collision, stall, and wrong-way events."}]},
+      "gap":"No current runtime evidence covers the complete traffic contract."
+    },
+    {
+      "id":"configuration.smart-city.behavior-rules","feature_id":"smart-city","kind":"configuration","title":"Smart City behavior rule defaults",
+      "source_claims":[{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"Behavior configuration, lines 160-220"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"static_only"},
+      "contract":{"speed_violation_mph":90,"stalled_vehicle":{"maximum_speed_mph":5,"duration_seconds":120},"anomaly_classes":["Car","Truck","Bus","Motorcycle","Bicycle","Scooter","Emergency Vehicle"],"per_sensor_overrides":true,"road_network_fields":["enable","osmQueryPlace"]},
+      "qualification":{"scenario_ids":["industry-profile-workflows","official-capability-contracts"],"fixtures":[{"id":"smartcity-behavior-config","type":"configuration","source_policy":"generated_or_operator_custom","description":"Default and per-sensor override schemas."}]},
+      "gap":"Defaults are source-backed but runtime rule behavior remains unqualified."
+    },
+    {
+      "id":"configuration.smart-city.alert-verification","feature_id":"smart-city","kind":"configuration","title":"Smart City alert-verification defaults",
+      "source_claims":[{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"Alert verification configuration, lines 221-238"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"static_only"},
+      "contract":{"fps":4,"resolution":"760x430","lookback_seconds":15},
+      "qualification":{"scenario_ids":["industry-profile-workflows","alert-workflows"],"fixtures":[{"id":"smartcity-verification-config","type":"configuration","source_policy":"generated","description":"Exact rendered FPS, resolution, and lookback assertions."}]},
+      "gap":"Configuration is not backed by current Thor verdict evidence."
+    },
+    {
+      "id":"configuration.smart-city.vios-defaults","feature_id":"smart-city","kind":"configuration","title":"Smart City VIOS recording and stream defaults",
+      "source_claims":[{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"VIOS defaults, lines 221-238"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"static_only"},
+      "contract":{"always_recording":true,"storage_tb":1,"auto_add_nvstreamer_stream_limit":100},
+      "qualification":{"scenario_ids":["industry-profile-workflows","analytics-vios-workflows"],"fixtures":[{"id":"smartcity-vios-boundary","type":"mock_services","source_policy":"generated","description":"Configuration plus first, 100th, and 101st stream behavior."}]},
+      "gap":"The exact 100-stream boundary is not runtime-qualified."
+    },
+    {
+      "id":"runtime.smart-city.agent-workflow","feature_id":"smart-city","kind":"runtime_behavior","title":"Smart City location-aware Agent workflow",
+      "source_claims":[{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"Agent semantics, lines 239-303"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"location_levels":["city","intersection","sensor"],"supports":["temporal_queries","pagination","multi_step_analysis","report_generation"],"backend":"va_mcp"},
+      "qualification":{"scenario_ids":["industry-profile-workflows","core-agent-workflows"],"fixtures":[{"id":"smartcity-agent-pages","type":"analytics","source_policy":"generated_or_operator_custom","description":"Paginated incidents and sensors across city, intersection, and sensor scopes."}]},
+      "gap":"The local lane has no current multi-step location-query evidence."
+    },
+    {
+      "id":"model.smart-city.perception-options","feature_id":"smart-city","kind":"model","title":"Smart City detector and tracker options",
+      "source_claims":[{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"Perception models, lines 160-220"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"source_only","runtime_state":"not_qualified"},
+      "contract":{"detectors":["fine_tuned_rt_detr","mask_grounding_dino"],"default_detector":"fine_tuned_rt_detr","tracker":"NvDCF Accuracy 2D"},
+      "qualification":{"scenario_ids":["industry-profile-workflows","model-alternate-workflows"],"fixtures":[{"id":"smartcity-model-locks","type":"artifact_lock","source_policy":"operator_credentials","description":"Digest locks for selected detector and tracker artifacts."}]},
+      "gap":"Exact model artifacts are not locked or runtime-qualified on Thor."
+    },
+    {
+      "id":"configuration.smart-city.custom-location","feature_id":"smart-city","kind":"configuration","title":"Smart City custom location and media onboarding",
+      "source_claims":[{"source_id":"smartcity-deployment-doc-3.2.1","locator":"Custom location deployment, lines 160-182"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"required_operator_inputs":["calibration.json","road-network.json","streams"],"road_network_place_field":"osmQueryPlace","uploads":{"calibration":"/config/upload-file/calibration","road_network":"/config/upload-file/road-network"},"media_sources":["operator_video","operator_rtsp"],"redeploy_after_change":true,"bundled_sample_required":false},
+      "qualification":{"scenario_ids":["industry-profile-workflows","rest-api-operation-matrix"],"fixtures":[{"id":"smartcity-custom-location","type":"location_data","source_policy":"generated_or_operator_custom","description":"Minimal calibration and road-network JSON with tiny custom video or RTSP."}]},
+      "gap":"Custom location uploads and redeployment are not runtime-qualified."
+    },
+    {
+      "id":"tooling.smart-city.synthetic-data-pipeline","feature_id":"synthetic-data-tools","kind":"tooling","title":"Smart City CARLA and Cosmos Transfer data-generation pipeline",
+      "source_claims":[{"source_id":"smartcity-sdg-doc-3.2.1","locator":"CARLA, maps, RoadRunner, and Cosmos Transfer, lines 160-341"}],
+      "status":{"acceptance_class":"external_optional","thor_state":"external_optional","runtime_state":"not_applicable"},
+      "contract":{"simulator":"CARLA 0.9.16","custom_map_sources":["CARLA","RoadRunner"],"augmentation":"Cosmos Transfer 2.5","augmentation_variants":18,"variant_groups":{"lighting":9,"weather":5,"surface":4},"ground_truth_retained":true,"runtime_dependency":false},
+      "qualification":{"scenario_ids":["offline-tool-workflows","official-capability-contracts"],"fixtures":[{"id":"smartcity-sdg-config","type":"static_oracle","source_policy":"generated","description":"Tiny scenario/config schema only; generated corpus is not a runtime fixture."}]},
+      "gap":"External development tooling is inventoried; no official Thor-local support is claimed."
+    },
+    {
+      "id":"customization.smart-city.trafficcamnet-rtdetr","feature_id":"model-customization","kind":"customization","title":"Smart City TrafficCamNet RT-DETR training recipe",
+      "source_claims":[{"source_id":"smartcity-model-tuning-doc-3.2.1","locator":"TrafficCamNet recipe and export, lines 160-309"}],
+      "status":{"acceptance_class":"external_optional","thor_state":"external_optional","runtime_state":"not_applicable"},
+      "contract":{"model":"nvidia/trafficcamnet_transformer_lite:trainable_resnet50_v2.0","format":"COCO","batch_size":8,"workers":4,"classes":4,"input":[544,960],"backbone":"ResNet50","queries":300,"decoder_layers":6,"encoder_layers":1,"optimizer":"AdamW","epochs":50,"export":{"format":"ONNX","width":960,"height":544},"tensorrt_step":"post_export","vlm_fine_tuning":"forthcoming"},
+      "qualification":{"scenario_ids":["model-alternate-workflows","official-capability-contracts"],"fixtures":[{"id":"trafficcamnet-recipe","type":"configuration","source_policy":"generated_or_operator_custom","description":"Static training/export recipe; no dataset bundle is required."}]},
+      "gap":"External training and export are inventoried; no official Thor-local support is claimed, and VLM fine-tuning is not delivered."
+    },
+    {
+      "id":"behavior.smart-city.known-limitations","feature_id":"smart-city","kind":"runtime_behavior","title":"Smart City documented runtime limitations",
+      "source_claims":[{"source_id":"smartcity-limitations-doc-3.2.1","locator":"Known Limitations, lines 160-169"}],
+      "status":{"acceptance_class":"alternate_local_lane","thor_state":"partial","runtime_state":"not_qualified"},
+      "contract":{"default_nims_only_tested_on_shared_gpu":true,"private_webrtc_requires_turn":true,"multi_sensor_ui_latency":"tens_of_seconds","long_run_crash_risks":["cosmos3_nim","vios"],"restart_recovery":{"after":["rtvi_restart","vios_restart"],"action":"restart perception-sdr-smc or delete and re-add streams"},"must_not_claim_remediated":true},
+      "qualification":{"scenario_ids":["industry-profile-workflows","official-capability-contracts"],"fixtures":[{"id":"smartcity-limitations-oracle","type":"static_oracle","source_policy":"generated","description":"Fail-closed limitation and recovery runbook assertions."}]},
+      "gap":"Documented limitations remain active boundaries, not passed functionality."
+    }
+  ],
+  "enrichments": [
+    {"target_id":"behavior.agent.known-issues","source_claims_add":[{"source_id":"agent-overview-doc-3.2.1","locator":"Known Issues, lines 298-307"}],"contract_merge":{"adaptive_thinking_required":true,"long_chat_risks":["instruction_drift","bad_urls"],"recursion_limit_possible":true,"multiple_reports_single_query":"unsupported_in_incident_report_scope"},"qualification":{"scenario_ids":["core-agent-workflows"],"fixtures":[{"id":"agent-known-issues-oracle","type":"static_oracle","source_policy":"generated","description":"Scoped negative assertions and long-chat regression transcript."}]},"merge_note":"Scope the multi-report limitation to incident reports; do not overwrite LVS multi-video support."},
+    {"target_id":"api.core.va-mcp-7","source_claims_add":[{"source_id":"video-analytics-mcp-doc-3.2.1","locator":"Overview, Quickstart, and parameter invariants, lines 160-450"}],"contract_merge":{"elasticsearch_versions":[7,8],"indices":["incidents-*","vlm-incidents-*","behavior-*","frames-*","calibration-*"],"optional_index_prefix":true,"default_transport":"streamable-http","default_url":"http://localhost:9901/mcp","optional_transport":"sse","source_invariant":"source and source_type must both be present or both omitted","place_resolution":["exact_sensor_match","place_wildcard","semantic_fallback"],"optional_active_sensor_filter":"vst"},"qualification":{"scenario_ids":["mcp-tool-operation-matrix"],"fixtures":[{"id":"va-mcp-semantic-fixture","type":"mock_services","source_policy":"generated_or_operator_custom","description":"Synthetic ES indices, VST sensors, source-pair validation, and place fallback."}]},"merge_note":"Add semantic and storage contracts without treating the seven-tool operation manifest as semantic proof."},
+    {"target_id":"api.orchestrator-mcp.tools-9","source_claims_add":[{"source_id":"orchestrator-mcp-doc-3.2.1","locator":"Configuration precedence and lifecycle tool reference"}],"contract_merge":{"precedence":["profile_env","hardware_rules","process_env","per_call_overrides"],"ids":["docker_compose_id","docker_compose_ops_id"],"profile_modes":["base","search","lvs","alerts"],"alert_modes":["verification","real-time"],"up_down_are_background":true,"poll_with":"docker_status","logs_tail_range":[1,200],"status_tail_range":[1,20],"down_options":["remove_volumes","remove_orphans","deep_clean"],"deep_clean_destructive":true},"qualification":{"scenario_ids":["mcp-tool-operation-matrix","openclaw-workflows"],"fixtures":[{"id":"orchestrator-lifecycle-oracle","type":"mock_services","source_policy":"generated","description":"Mock lifecycle state with destructive flags denied unless explicitly authorized."}]},"merge_note":"Retain not_qualified status; lifecycle-changing tools require explicit operator authorization."},
+    {"target_id":"calibration.legacy.core","source_claims_add":[{"source_id":"smartcity-calibration-doc-3.2.1","locator":"Manual calibration workflow, lines 160-184"}],"contract_merge":{"minimum_gis_points_per_polygon":8,"outputs":["calibration.json","road-network.json"],"validation_required":true},"qualification":{"scenario_ids":["industry-profile-workflows"],"fixtures":[{"id":"smartcity-manual-calibration","type":"location_data","source_policy":"generated_or_operator_custom","description":"Minimal eight-point polygons and validation outputs."}]},"merge_note":"Add Smart City-specific manual calibration constraints."},
+    {"target_id":"calibration.legacy.gis","source_claims_add":[{"source_id":"smartcity-calibration-doc-3.2.1","locator":"GIS, ROI, homography, and road-link workflow, lines 160-184 and 341-448"}],"contract_merge":{"transform":"3x3_homography","supports":["roi","road_links"],"google_maps_key_for_roi_refiner":true},"qualification":{"scenario_ids":["industry-profile-workflows","external-integration-boundaries"],"fixtures":[{"id":"smartcity-gis-calibration","type":"location_data","source_policy":"generated_or_operator_custom","description":"Minimal homography and road links; provider-free path for local qualification."}]},"merge_note":"Keep Google Maps external and optional for the local alternate lane."},
+    {"target_id":"calibration.sdg.workflow","source_claims_add":[{"source_id":"smartcity-calibration-doc-3.2.1","locator":"DT calibration ports, artifact, CARLA, workflows, and outputs, lines 222-448"}],"contract_merge":{"ports":[7860,7861,7865,8000,8080],"simulator":"CARLA 0.9.16","outputs":["MDX JSON","camera_specs.yml"],"documented_artifact_tag":"3.1.0"},"qualification":{"scenario_ids":["offline-tool-workflows"],"fixtures":[{"id":"smartcity-dt-calibration","type":"configuration","source_policy":"generated_or_operator_custom","description":"Workflow schema and output names; no large generated dataset."}]},"merge_note":"Preserve the documented 3.1.0 artifact tag as an explicit version-skew boundary."},
+    {"target_id":"api.core.video-analytics-56","source_claims_add":[{"source_id":"smartcity-deployment-doc-3.2.1","locator":"Configuration upload endpoints, lines 160-182"}],"contract_merge":{"smart_city_uploads":{"/config/upload-file/calibration":"calibration.json","/config/upload-file/road-network":"road-network.json"}},"qualification":{"scenario_ids":["rest-api-operation-matrix","industry-profile-workflows"],"fixtures":[{"id":"smartcity-config-uploads","type":"location_data","source_policy":"generated_or_operator_custom","description":"Minimal calibration and road-network request payloads."}]},"merge_note":"Add endpoint roles without asserting that the existing operation manifest proves upload semantics."}
+  ],
+  "discrepancies": [
+    {"id":"discrepancy.smart-city.version-identity","source_claims":[{"source_id":"smartcity-toc-doc-3.2.1","locator":"Current-version note, lines 160-177"},{"source_id":"release-notes-3.2.1","locator":"VSS 3.2.1 Key Features, Smart City update"},{"source_id":"smartcity-deep-dive-doc-3.2.1","locator":"VSS 3.0 architecture description"}],"resolution":"Pin image and artifact digests and report all three official statements.","must_not_claim":"The 3.2.1 documentation path proves one consistent Smart City runtime version."},
+    {"id":"discrepancy.smart-city.calibration-artifact-version","source_claims":[{"source_id":"smartcity-calibration-doc-3.2.1","locator":"DT calibration artifact section, lines 222-340"}],"resolution":"Retain vss-dt-based-calibration-compose:3.1.0 as the documented artifact pin.","must_not_claim":"The nested 3.2.1 page implies a 3.2.1 calibration artifact tag."},
+    {"id":"discrepancy.agent.search-route","source_claims":[{"source_id":"agent-profiles-doc-3.2.1","locator":"Search Profile uses /api/search, lines 284-325"},{"source_id":"agent-search-workflow-doc-3.2.1","locator":"Detailed workflow uses /api/v1/search, lines 207-230 and 680-727"}],"resolution":"Qualify /api/v1/search; inventory /api/search as a documented stale alias until live evidence proves it.","must_not_claim":"Both paths are equivalent or both are implemented."},
+    {"id":"discrepancy.agent.multi-report-scope","source_claims":[{"source_id":"agent-overview-doc-3.2.1","locator":"Known Issues says multiple report generation in one query is unsupported, lines 298-307"},{"source_id":"agent-lvs-workflow-doc-3.2.1","locator":"LVS supports one or multiple uploaded-video reports, lines 175-224"},{"source_id":"agent-profiles-doc-3.2.1","locator":"LVS Profile multi-video report contract, lines 211-283"}],"resolution":"Apply the limitation to incident-report Agent scope and preserve LVS uploaded-video multi-report support.","must_not_claim":"Multiple reports are either universally supported or universally unsupported."},
+    {"id":"discrepancy.smart-city.official-thor-support","source_claims":[{"source_id":"smartcity-prerequisites-doc-3.2.1","locator":"Validated x86-64 platform and GPU list, lines 160-223"}],"resolution":"Keep Smart City as alternate_local_lane and test the custom Thor profile separately.","must_not_claim":"Official VSS 3.2.1 Smart City supports AGX Thor."}
+  ],
+  "guardrails": [
+    {"id":"guardrail.sample-bundles-optional","source_claims":[{"source_id":"smartcity-quickstart-doc-3.2.1","locator":"Bundled clips are quickstart demonstration inputs"}],"rule":"No Warehouse or Smart City sample archive is a runtime prerequisite; generated tiny fixtures are sufficient."},
+    {"id":"guardrail.operator-custom-data","source_claims":[{"source_id":"smartcity-deployment-doc-3.2.1","locator":"Custom location, video, and RTSP deployment, lines 160-182"}],"rule":"Operator videos, RTSP streams, calibration JSON, and road-network JSON remain in scope."},
+    {"id":"guardrail.google-maps-external","source_claims":[{"source_id":"smartcity-prerequisites-doc-3.2.1","locator":"Google Maps API key, lines 241-301"},{"source_id":"smartcity-calibration-doc-3.2.1","locator":"ROI Refiner Google key, lines 341-448"}],"rule":"Google Maps is external optional; provider-free SVG is the local alternate and is not identical parity."},
+    {"id":"guardrail.vlm-fine-tuning-forthcoming","source_claims":[{"source_id":"smartcity-model-tuning-doc-3.2.1","locator":"VLM fine-tuning recipe marked forthcoming, lines 160-184"}],"rule":"Do not advertise Smart City VLM fine-tuning as delivered."}
+  ]
+}

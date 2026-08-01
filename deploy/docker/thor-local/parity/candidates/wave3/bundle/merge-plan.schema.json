@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor/wave3-merge-plan.schema.json",
+  "title": "VSS Thor Wave 3 merge plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "target",
+    "scope",
+    "inputs",
+    "source_merge",
+    "capability_merge",
+    "status_normalizations",
+    "fixture_merge",
+    "counts",
+    "planning_only"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {"$ref": "#/$defs/target"},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "warehouse_sample_bundle",
+        "operator_custom_data",
+        "live_ledger_modified",
+        "runtime_qualified"
+      ],
+      "properties": {
+        "warehouse_sample_bundle": {"const": "excluded_optional"},
+        "operator_custom_data": {"const": "in_scope"},
+        "live_ledger_modified": {"const": false},
+        "runtime_qualified": {"const": false}
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {"$ref": "#/$defs/input"}
+    },
+    "source_merge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "duplicate_uri_resolutions",
+        "source_id_remaps",
+        "source_id_renames"
+      ],
+      "properties": {
+        "policy": {"const": "canonical_uri_reuse_live_first"},
+        "duplicate_uri_resolutions": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "items": {"$ref": "#/$defs/sourceResolution"}
+        },
+        "source_id_remaps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/sourceRemap"}
+        },
+        "source_id_renames": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/sourceRename"}
+        }
+      }
+    },
+    "capability_merge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "new_capability_collision_policy",
+        "approved_new_capability_collisions",
+        "approved_enrichment_collisions"
+      ],
+      "properties": {
+        "new_capability_collision_policy": {"const": "reject_all"},
+        "approved_new_capability_collisions": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "approved_enrichment_collisions": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/enrichmentCollision"}
+        }
+      }
+    },
+    "status_normalizations": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/statusNormalization"}
+    },
+    "fixture_merge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collision_policy", "approved_collisions", "input_counts"],
+      "properties": {
+        "collision_policy": {"const": "reject_all"},
+        "approved_collisions": {"type": "array", "maxItems": 0},
+        "input_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent-smartcity",
+            "systems-acceptance",
+            "systems-performance",
+            "calibration-warehouse"
+          ],
+          "properties": {
+            "agent-smartcity": {"const": 41},
+            "systems-acceptance": {"const": 55},
+            "systems-performance": {"const": 7},
+            "calibration-warehouse": {"const": 7}
+          }
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_lock_urls",
+        "live_source_records",
+        "candidate_source_records",
+        "all_source_records",
+        "duplicate_source_records",
+        "proposed_unique_sources",
+        "live_capabilities",
+        "new_capability_records",
+        "proposed_capabilities",
+        "enrichment_records",
+        "unique_enrichment_targets",
+        "approved_enrichment_collisions",
+        "live_discrepancies",
+        "new_discrepancy_records",
+        "proposed_discrepancies",
+        "unique_proposed_discrepancies",
+        "guardrail_records",
+        "unique_guardrails",
+        "agent_fixture_records",
+        "systems_acceptance_fixture_records",
+        "systems_performance_fixture_records",
+        "calibration_acceptance_vectors",
+        "candidate_fixture_records",
+        "unique_candidate_fixtures"
+      ],
+      "properties": {
+        "source_lock_urls": {"const": 172},
+        "live_source_records": {"const": 55},
+        "candidate_source_records": {"const": 96},
+        "all_source_records": {"const": 151},
+        "duplicate_source_records": {"const": 11},
+        "proposed_unique_sources": {"const": 140},
+        "live_capabilities": {"const": 161},
+        "new_capability_records": {"const": 115},
+        "proposed_capabilities": {"const": 276},
+        "enrichment_records": {"const": 46},
+        "unique_enrichment_targets": {"const": 44},
+        "approved_enrichment_collisions": {"const": 2},
+        "live_discrepancies": {"const": 18},
+        "new_discrepancy_records": {"const": 27},
+        "proposed_discrepancies": {"const": 45},
+        "unique_proposed_discrepancies": {"const": 45},
+        "guardrail_records": {"const": 10},
+        "unique_guardrails": {"const": 10},
+        "agent_fixture_records": {"const": 41},
+        "systems_acceptance_fixture_records": {"const": 55},
+        "systems_performance_fixture_records": {"const": 7},
+        "calibration_acceptance_vectors": {"const": 7},
+        "candidate_fixture_records": {"const": 110},
+        "unique_candidate_fixtures": {"const": 110}
+      }
+    },
+    "planning_only": {"const": true}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "ga_commit", "main_commit", "captured_on"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "ga_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "captured_on": {"const": "2026-07-31"}
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "canonical_sha256"],
+      "properties": {
+        "id": {
+          "enum": [
+            "live-ledger",
+            "source-lock",
+            "recursive-targets",
+            "agent-smartcity",
+            "systems",
+            "calibration-warehouse",
+            "systems-broker-evidence",
+            "systems-nvstreamer-evidence",
+            "systems-performance-evidence"
+          ]
+        },
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sourceContributor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_id", "source_id"],
+      "properties": {
+        "input_id": {"enum": ["live-ledger", "agent-smartcity", "systems", "calibration-warehouse"]},
+        "source_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"}
+      }
+    },
+    "sourceResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "canonical_source_id", "contributors"],
+      "properties": {
+        "uri": {"type": "string", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/"},
+        "canonical_source_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+        "contributors": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/sourceContributor"}
+        }
+      }
+    },
+    "sourceRemap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_id",
+        "from_source_id",
+        "to_source_id",
+        "uri",
+        "claim_reference_count"
+      ],
+      "properties": {
+        "input_id": {"const": "systems"},
+        "from_source_id": {"const": "doc.release-notes"},
+        "to_source_id": {"const": "release-notes-3.2.1"},
+        "uri": {"const": "https://docs.nvidia.com/vss/3.2.1/release-notes.html"},
+        "claim_reference_count": {"const": 13}
+      }
+    },
+    "sourceRename": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_id",
+        "from_source_id",
+        "to_source_id",
+        "uri",
+        "claim_reference_count",
+        "reason"
+      ],
+      "properties": {
+        "input_id": {"const": "agent-smartcity"},
+        "from_source_id": {"const": "video-analytics-mcp-doc-3.2.1"},
+        "to_source_id": {"const": "agent-video-analytics-mcp-doc-3.2.1"},
+        "uri": {"const": "https://docs.nvidia.com/vss/3.2.1/vss-agent/Video-Analytics-MCP-Server.html"},
+        "claim_reference_count": {"const": 1},
+        "reason": {"const": "same_source_id_distinct_uri"}
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acceptance_class", "thor_state", "runtime_state"],
+      "properties": {
+        "acceptance_class": {"const": "external_optional"},
+        "thor_state": {"enum": ["source_only", "external_optional"]},
+        "runtime_state": {"const": "not_applicable"}
+      }
+    },
+    "enrichmentCollision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "contributors", "merge_policy"],
+      "properties": {
+        "target_id": {"enum": ["api.core.video-analytics-56", "calibration.sdg.workflow"]},
+        "contributors": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"enum": ["agent-smartcity", "systems", "calibration-warehouse"]}
+        },
+        "merge_policy": {
+          "enum": ["deep_merge_disjoint", "deep_merge_with_explicit_output_union"]
+        },
+        "required_contract_keys": {
+          "type": "object",
+          "additionalProperties": {"type": "array", "items": {"type": "string"}}
+        },
+        "output_union": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "resolved_status": {"$ref": "#/$defs/status"}
+      }
+    },
+    "statusNormalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_id", "reason", "resolved_status"],
+      "properties": {
+        "target_id": {
+          "enum": [
+            "calibration.sdg.workflow",
+            "customization.smart-city.trafficcamnet-rtdetr",
+            "tooling.smart-city.synthetic-data-pipeline"
+          ]
+        },
+        "reason": {"const": "no_official_thor_local_support_evidence"},
+        "resolved_status": {"$ref": "#/$defs/status"}
+      }
+    }
+  }
+}

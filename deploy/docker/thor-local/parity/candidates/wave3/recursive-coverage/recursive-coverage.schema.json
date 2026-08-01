@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/wave3/recursive-coverage.schema.json",
+  "title": "VSS 3.2.1 recursive coverage comparison",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target", "recursive_target_binding", "crawl_graph_binding", "direct_index_bindings", "live_ledger_binding", "agent_smartcity_binding", "comparison", "updated_recursive_classification_counts", "new_descendants"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product", "version", "captured_on", "ga_commit", "reviewed_main_commit"],
+      "properties": {
+        "product": {"const": "NVIDIA VSS"}, "version": {"const": "3.2.1"}, "captured_on": {"const": "2026-07-31"},
+        "ga_commit": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
+        "reviewed_main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"}
+      }
+    },
+    "recursive_target_binding": {"$ref": "#/$defs/file_binding"},
+    "crawl_graph_binding": {"$ref": "#/$defs/file_binding"},
+    "direct_index_bindings": {
+      "type": "object", "additionalProperties": false, "required": ["targets", "coverage"],
+      "properties": {"targets": {"$ref": "#/$defs/file_binding"}, "coverage": {"$ref": "#/$defs/file_binding"}}
+    },
+    "live_ledger_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "source_count", "capability_count", "added_descendant_live_source_count"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repo_path"}, "sha256": {"$ref": "#/$defs/sha256"},
+        "source_count": {"const": 55}, "capability_count": {"const": 161}, "added_descendant_live_source_count": {"const": 0}
+      }
+    },
+    "agent_smartcity_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "documentation_source_count", "recursive_graph_member_count", "corrected_urls", "stale_404_urls", "corrected_urls_present", "stale_urls_absent"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repo_path"}, "sha256": {"$ref": "#/$defs/sha256"},
+        "documentation_source_count": {"const": 40}, "recursive_graph_member_count": {"const": 40},
+        "corrected_urls": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/docs_url"}},
+        "stale_404_urls": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/docs_url"}},
+        "corrected_urls_present": {"const": true}, "stale_urls_absent": {"const": true}
+      }
+    },
+    "comparison": {
+      "type": "object", "additionalProperties": false,
+      "required": ["direct_index_targets_excluding_index", "recursive_targets_including_index", "recursive_targets_excluding_index", "added_descendants", "added_semantic_omissions", "added_external_workflow_dependencies", "added_navigation_duplicate_references", "canonical_added_descendant_set_sha256"],
+      "properties": {
+        "direct_index_targets_excluding_index": {"const": 152}, "recursive_targets_including_index": {"const": 172},
+        "recursive_targets_excluding_index": {"const": 171}, "added_descendants": {"const": 19},
+        "added_semantic_omissions": {"const": 8}, "added_external_workflow_dependencies": {"const": 9},
+        "added_navigation_duplicate_references": {"const": 2},
+        "canonical_added_descendant_set_sha256": {"const": "85281ae9b39c548abda6fdea578953726feca2fe829479fb7a63d24cc51ddf25"}
+      }
+    },
+    "updated_recursive_classification_counts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["covered_live", "semantic_omission", "navigation_duplicate_reference", "external_license_sample_dependency", "total_excluding_index"],
+      "properties": {"covered_live": {"const": 51}, "semantic_omission": {"const": 67}, "navigation_duplicate_reference": {"const": 36}, "external_license_sample_dependency": {"const": 17}, "total_excluding_index": {"const": 171}}
+    },
+    "new_descendants": {
+      "type": "array", "minItems": 19, "maxItems": 19,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["url", "depth", "category", "reason", "first_referrer", "direct_index_member", "live_source_ids", "required_action", "candidate_wave", "semantic_proof_from_crawl_reachability"],
+        "properties": {
+          "url": {"$ref": "#/$defs/docs_url"}, "depth": {"type": "integer", "minimum": 2, "maximum": 3},
+          "category": {"enum": ["semantic_omission", "external_workflow_dependency", "navigation_duplicate_reference"]},
+          "reason": {"type": "string", "minLength": 1}, "first_referrer": {"$ref": "#/$defs/docs_url"},
+          "direct_index_member": {"const": false}, "live_source_ids": {"type": "array", "maxItems": 0},
+          "required_action": {"type": "string", "minLength": 1}, "candidate_wave": {"const": "wave3_recursive_warehouse"},
+          "semantic_proof_from_crawl_reachability": {"const": false}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repo_path": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+$"},
+    "docs_url": {"type": "string", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/[A-Za-z0-9_./-]+\\.html$"},
+    "file_binding": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/repo_path"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    }
+  }
+}
