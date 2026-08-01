@@ -6,7 +6,7 @@
       "kind": "huggingface_snapshot",
       "identity": {
         "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
-        "revision": null
+        "revision": "3fe6dab75665a93884214ad4b1b95cf02717d081"
       },
       "state": "missing_exact_artifact_unqualified",
       "tree": null

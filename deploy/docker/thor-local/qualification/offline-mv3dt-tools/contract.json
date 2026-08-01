@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_offline_mv3dt_tools",
+  "feature_id": "mv3dt-config-utils",
+  "acceptance_boundary": "alternate_local_lane_custom_data_warehouse",
+  "planned_non_compose_role": "repository-tooling",
+  "policy": {
+    "candidate_only": true,
+    "official_capability_effect": "none_candidate_only",
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "writes": "private_temporary_directory_only"
+  },
+  "advertised_entries": [
+    {
+      "manifest_pointer": "/features/45/advertised/0",
+      "manifest_entry_sha256": "aba6e5119202d0b2f56acd860e5d93445b53a4a1dceeabb758a7c573b557dbd9",
+      "advertised": "MV3DT per-camera camInfo generator",
+      "capability_id": "tool.mv3dt.cam-info-generator",
+      "oracle_id": "oracle.tool.mv3dt.cam-info-generator"
+    },
+    {
+      "manifest_pointer": "/features/45/advertised/1",
+      "manifest_entry_sha256": "83be4b7e5360bb81afa8c725ab36a0d2f4f193e76506b007f7fcfbd5d1679f4a",
+      "advertised": "MV3DT MQTT FOV-overlap topology generator",
+      "capability_id": "tool.mv3dt.pub-sub-generator",
+      "oracle_id": "oracle.tool.mv3dt.pub-sub-generator"
+    }
+  ],
+  "source_locks": [
+    {
+      "path": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+      "sha256": "910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675"
+    },
+    {
+      "path": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py",
+      "sha256": "bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc"
+    },
+    {
+      "path": "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+      "sha256": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "sha256": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+    }
+  ],
+  "fixture": {
+    "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json",
+    "sha256": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33",
+    "fixture_id": "synthetic-mv3dt-two-camera-v1",
+    "camera_ids": ["custom_cam_a", "custom_cam_b"],
+    "warehouse_sample_bundle": false
+  },
+  "dependency_lock": {
+    "declared_requirements": [
+      "numpy==2.2.6",
+      "opencv-python~=4.12.0",
+      "PyYAML==6.0.2",
+      "tqdm==4.67.1"
+    ],
+    "distributions": ["numpy", "opencv-python", "PyYAML", "tqdm"]
+  },
+  "execution": {
+    "runs": 2,
+    "model_classes": [["0", "1.7", "0.3"], ["1", "1.2", "0.25"]],
+    "mqtt_broker": "localhost:1883",
+    "minimum_object_size": 1,
+    "neighbor_criteria": "overlap_threshold:0.1",
+    "range_of_interest": [-4, -2, 6, 10]
+  },
+  "output_locks": {
+    "cam_info_tree_sha256": "921b0fe8ef3d0f2417245623465ba5e5d0b1fb4a427bbd96915c3ebd430dcece",
+    "pub_sub_file_sha256": "f6f823e94e0e736c5c8ecba33c913338e5eeb3641e691d67948b53a6727195e7",
+    "full_output_tree_sha256": "4879020b21fe6ea449c01f566f951a111f41f76c18f40772433cd1d6b8104039"
+  }
+}

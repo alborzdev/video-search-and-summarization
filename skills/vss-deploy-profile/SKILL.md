@@ -61,6 +61,12 @@ The deployment flow is always: copy `.env` to `generated.env`, apply overrides, 
 2. **Credential gates** — see [`references/credentials.md`](references/credentials.md): `NGC_CLI_API_KEY` for local/local_shared NIM pulls, `NVIDIA_API_KEY` for remote NIM endpoints, and `HF_TOKEN` for edge artifact-staging flows that use gated HF models. The pull-free official Thor lane itself accepts no credentials.
 3. **System prerequisites (GPU driver, Docker, NVIDIA Container Toolkit, kernel sysctls, and — if `ufw` is active — the [Docker-bridge→host firewall allow](references/prerequisites.md#firewall) so bridge NIMs can fetch clips from host-mode VST)** — full checks in [`references/prerequisites.md`](references/prerequisites.md). Canonical hardware/driver matrix is the [VSS prerequisites page](https://docs.nvidia.com/vss/3.2.0/prerequisites.html).
 
+On AGX/IGX Thor, the Docker cgroup-driver procedure in
+[`references/thor-cgroupfs-remediation.md`](references/thor-cgroupfs-remediation.md)
+takes precedence over profile snippets that overwrite `daemon.json`. The
+transactional tool preserves the existing NVIDIA runtime configuration and is
+the only supported Thor path for this host prerequisite.
+
 The auto-detect snippet (git-root, then a common-path probe gated on
 `deploy/docker/compose.yml` + `dev-profile.sh` + `skills/vss-deploy-profile`)
 lives in [`references/prerequisites.md`](references/prerequisites.md#repo-detect).

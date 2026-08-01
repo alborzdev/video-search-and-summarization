@@ -521,6 +521,12 @@ def _planned_service_binding(
         "tooling.agent-harnesses.validated-4": ["repository-tooling"],
         "tooling.agent-skills.catalog-16": ["repository-tooling"],
         "configuration.agent.extension-points": ["agent", "repository-tooling"],
+        # These are offline repository utilities, not lifecycle-bound members
+        # of the Warehouse MV3DT Compose service. Their custom-data Warehouse
+        # acceptance boundary remains unchanged; only the executable role is
+        # narrowed to the checked-in tool sources.
+        "tool.mv3dt.cam-info-generator": ["repository-tooling"],
+        "tool.mv3dt.pub-sub-generator": ["repository-tooling"],
     }
     if capability_id in explicit_roles:
         return binding(

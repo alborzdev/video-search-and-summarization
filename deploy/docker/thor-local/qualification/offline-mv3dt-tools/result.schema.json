@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "candidate_only", "feature_id",
+    "capability_ids", "observation", "official_capability_effect",
+    "runtime_evidence", "warehouse_sample_bundle_used", "network_used",
+    "docker_used", "subprocess_used", "lifecycle_used",
+    "source_and_fixture_sha256", "dependency_lock", "run_count",
+    "deterministic_runs", "cleanup"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_only_offline_mv3dt_tools"},
+    "candidate_only": {"const": true},
+    "feature_id": {"const": "mv3dt-config-utils"},
+    "capability_ids": {
+      "const": [
+        "tool.mv3dt.cam-info-generator",
+        "tool.mv3dt.pub-sub-generator"
+      ]
+    },
+    "observation": {"const": "observed_match_candidate_only"},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "warehouse_sample_bundle_used": {"const": false},
+    "network_used": {"const": false},
+    "docker_used": {"const": false},
+    "subprocess_used": {"const": false},
+    "lifecycle_used": {"const": false},
+    "source_and_fixture_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+        "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py",
+        "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+        "deploy/docker/thor-local/parity/manifest.json",
+        "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json"
+      ],
+      "properties": {
+        "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py": {
+          "const": "910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675"
+        },
+        "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py": {
+          "const": "bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc"
+        },
+        "tools/rtvi-cv-mv3dt-utils/requirements.txt": {
+          "const": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
+        },
+        "deploy/docker/thor-local/parity/manifest.json": {
+          "const": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+        },
+        "deploy/docker/thor-local/qualification/offline-mv3dt-tools/fixtures/two-camera-calibration.json": {
+          "const": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33"
+        }
+      }
+    },
+    "dependency_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirements_path", "requirements_sha256", "declared_requirements",
+        "observed_distribution_versions", "observed_module_versions",
+        "observed_versions_sha256", "note"
+      ],
+      "properties": {
+        "requirements_path": {"const": "tools/rtvi-cv-mv3dt-utils/requirements.txt"},
+        "requirements_sha256": {
+          "const": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
+        },
+        "declared_requirements": {
+          "const": [
+            "numpy==2.2.6",
+            "opencv-python~=4.12.0",
+            "PyYAML==6.0.2",
+            "tqdm==4.67.1"
+          ]
+        },
+        "observed_distribution_versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["numpy", "opencv-python", "PyYAML", "tqdm"],
+          "properties": {
+            "numpy": {"type": "string", "minLength": 1},
+            "opencv-python": {"type": "string", "minLength": 1},
+            "PyYAML": {"type": "string", "minLength": 1},
+            "tqdm": {"type": "string", "minLength": 1}
+          }
+        },
+        "observed_module_versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["cv2", "numpy", "tqdm", "yaml"],
+          "properties": {
+            "cv2": {"type": "string", "minLength": 1},
+            "numpy": {"type": "string", "minLength": 1},
+            "tqdm": {"type": "string", "minLength": 1},
+            "yaml": {"type": "string", "minLength": 1}
+          }
+        },
+        "observed_versions_sha256": {"$ref": "#/$defs/sha256"},
+        "note": {
+          "const": "candidate execution records local versions; it does not claim they equal the reviewed pins"
+        }
+      }
+    },
+    "run_count": {"const": 2},
+    "deterministic_runs": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {"$ref": "#/$defs/run"}
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owned_root_removed", "adjacent_sentinel_unchanged",
+        "parent_removed_after_observation"
+      ],
+      "properties": {
+        "owned_root_removed": {"const": true},
+        "adjacent_sentinel_unchanged": {"const": true},
+        "parent_removed_after_observation": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["output_locks", "file_sha256", "semantic"],
+      "properties": {
+        "output_locks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cam_info_tree_sha256", "pub_sub_file_sha256",
+            "full_output_tree_sha256"
+          ],
+          "properties": {
+            "cam_info_tree_sha256": {
+              "const": "921b0fe8ef3d0f2417245623465ba5e5d0b1fb4a427bbd96915c3ebd430dcece"
+            },
+            "pub_sub_file_sha256": {
+              "const": "f6f823e94e0e736c5c8ecba33c913338e5eeb3641e691d67948b53a6727195e7"
+            },
+            "full_output_tree_sha256": {
+              "const": "4879020b21fe6ea449c01f566f951a111f41f76c18f40772433cd1d6b8104039"
+            }
+          }
+        },
+        "file_sha256": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "camInfo/custom_cam_a.yml", "camInfo/custom_cam_b.yml",
+            "peer_configs/pub_sub_info_config.yml"
+          ],
+          "properties": {
+            "camInfo/custom_cam_a.yml": {
+              "const": "6cac16042152305bf9d28d9dcd3f9f10d05f8d29a7ba0d753eacd6821c7d3465"
+            },
+            "camInfo/custom_cam_b.yml": {
+              "const": "c8c791fc89f31af86d901bd4c375b04dc958c7663172c48f34ed3b0a3becc344"
+            },
+            "peer_configs/pub_sub_info_config.yml": {
+              "const": "f6f823e94e0e736c5c8ecba33c913338e5eeb3641e691d67948b53a6727195e7"
+            }
+          }
+        },
+        "semantic": {
+          "const": {
+            "cam_info": {
+              "custom_cam_a": {
+                "projection_shape": [3, 4],
+                "projection_value_count": 12,
+                "class_ids": [0, 1]
+              },
+              "custom_cam_b": {
+                "projection_shape": [3, 4],
+                "projection_value_count": 12,
+                "class_ids": [0, 1]
+              }
+            },
+            "pub_sub": {
+              "broker": "localhost:1883",
+              "camera_ids": ["custom_cam_a", "custom_cam_b"],
+              "topics": [
+                "localhost:1883;/trck/custom_cam_a",
+                "localhost:1883;/trck/custom_cam_b"
+              ],
+              "peer_counts": {"custom_cam_a": 1, "custom_cam_b": 1},
+              "self_subscriptions": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -48,6 +48,26 @@
   },
   "allOf": [
     {
+      "oneOf": [
+        {
+          "properties": {
+            "inspection_mode": {"const": "plan"},
+            "qualification_state": {"const": "plan_only"}
+          },
+          "required": ["inspection_mode", "qualification_state"]
+        },
+        {
+          "properties": {
+            "inspection_mode": {"const": "read_only_host"},
+            "qualification_state": {
+              "enum": ["blocked_not_runtime_qualified", "prelaunch_ready_not_runtime_qualified"]
+            }
+          },
+          "required": ["inspection_mode", "qualification_state"]
+        }
+      ]
+    },
+    {
       "if": {
         "properties": {"qualification_state": {"const": "blocked_not_runtime_qualified"}},
         "required": ["qualification_state"]
@@ -72,15 +92,107 @@
       },
       "then": {
         "properties": {
+          "source_locks": {
+            "type": "object",
+            "required": ["state"],
+            "properties": {"state": {"const": "match"}}
+          },
+          "artifact_lock": {
+            "type": "object",
+            "required": ["lock_state", "entries"],
+            "properties": {
+              "lock_state": {"const": "complete_exact"},
+              "entries": {
+                "type": "object",
+                "required": ["edge_snapshot", "cosmos_cache"],
+                "properties": {
+                  "edge_snapshot": {
+                    "type": "object",
+                    "required": ["state", "tree_present"],
+                    "properties": {
+                      "state": {"const": "locked_exact"},
+                      "tree_present": {"const": true}
+                    }
+                  },
+                  "cosmos_cache": {
+                    "type": "object",
+                    "required": ["state", "tree_present"],
+                    "properties": {
+                      "state": {"const": "locked_exact"},
+                      "tree_present": {"const": true}
+                    }
+                  }
+                }
+              }
+            }
+          },
           "artifacts": {
             "type": "object",
-            "required": ["exact_tree_verification"],
+            "required": ["edge_snapshot", "cosmos_cache", "exact_tree_verification"],
             "properties": {
+              "edge_snapshot": {
+                "type": "object",
+                "required": ["state"],
+                "properties": {"state": {"const": "candidate_present_unlocked"}}
+              },
+              "cosmos_cache": {
+                "type": "object",
+                "required": ["state"],
+                "properties": {"state": {"const": "candidate_present_unlocked"}}
+              },
               "exact_tree_verification": {
                 "type": "object",
                 "required": ["state"],
                 "properties": {"state": {"const": "exact_match"}}
               }
+            }
+          },
+          "images": {
+            "type": "object",
+            "required": ["edge_vllm", "rt_vlm"],
+            "properties": {
+              "edge_vllm": {
+                "type": "object",
+                "required": ["state", "reference", "image_id", "contract_lock"],
+                "properties": {
+                  "state": {"const": "present_exact"},
+                  "reference": {"const": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"},
+                  "image_id": {"const": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"},
+                  "contract_lock": {
+                    "type": "object",
+                    "required": ["state"],
+                    "properties": {"state": {"const": "locked_exact"}}
+                  }
+                }
+              },
+              "rt_vlm": {
+                "type": "object",
+                "required": ["state", "reference", "image_id", "contract_lock"],
+                "properties": {
+                  "state": {"const": "present_exact"},
+                  "reference": {"const": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"},
+                  "image_id": {"const": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"},
+                  "contract_lock": {
+                    "type": "object",
+                    "required": ["state"],
+                    "properties": {"state": {"const": "locked_exact"}}
+                  }
+                }
+              }
+            }
+          },
+          "memory": {
+            "type": "object",
+            "required": ["state"],
+            "properties": {"state": {"const": "pass"}}
+          },
+          "disk": {
+            "type": "object",
+            "required": ["state", "capacity_qualified", "required_additional_bytes"],
+            "properties": {
+              "state": {"const": "pass_no_additional_staging_required"},
+              "capacity_qualified": {"const": true},
+              "required_additional_bytes": {"const": 0}
             }
           },
           "blockers": {

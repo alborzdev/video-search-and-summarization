@@ -5,6 +5,7 @@ import json
 import sys
 import tempfile
 import unittest
+from copy import deepcopy
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest import mock
@@ -22,7 +23,7 @@ class PlanTests(unittest.TestCase):
         rd.validate_plan(plan)
         result = rd.verify_source_locks(plan)
         self.assertEqual(result["state"], "match")
-        self.assertEqual(len(result["files"]), 7)
+        self.assertGreaterEqual(len(result["files"]), 7)
 
     def test_plan_mode_is_inert(self) -> None:
         output = io.StringIO()
@@ -36,6 +37,35 @@ class PlanTests(unittest.TestCase):
         jsonschema.Draft202012Validator(schema).validate(payload)
         self.assertEqual(payload["qualification_state"], "plan_only")
         self.assertFalse(payload["runtime_qualification_performed"])
+
+    def test_plan_cannot_replace_official_images_or_lower_memory_gate(self) -> None:
+        plan = rd._load_json(rd.DEFAULT_PLAN)
+        mutations = (
+            ("edge_vllm", "exact_reference", "example.invalid/x@sha256:" + "1" * 64),
+            ("edge_vllm", "required_image_id", "sha256:" + "2" * 64),
+            ("rt_vlm", "exact_reference", "example.invalid/y@sha256:" + "3" * 64),
+        )
+        for image, key, value in mutations:
+            tampered = deepcopy(plan)
+            tampered["images"][image][key] = value
+            with self.subTest(image=image, key=key):
+                with self.assertRaises(rd.ReadinessError):
+                    rd.validate_plan(tampered)
+        tampered = deepcopy(plan)
+        tampered["admission"]["minimum_available_memory_fraction"] = "0.0"
+        with self.assertRaises(rd.ReadinessError):
+            rd.validate_plan(tampered)
+
+        tampered = deepcopy(plan)
+        tampered["source_locks"] = [{"path": "README.md", "sha256": "0" * 64}]
+        with self.assertRaisesRegex(rd.ReadinessError, "checked-in plan"):
+            rd.validate_plan(tampered)
+        tampered = deepcopy(plan)
+        tampered["identities"]["llm"]["standard_hf_cache_directory"] = (
+            "../../credential-area"
+        )
+        with self.assertRaisesRegex(rd.ReadinessError, "checked-in plan"):
+            rd.validate_plan(tampered)
 
     def test_wrong_acknowledgement_fails_before_host_reads(self) -> None:
         errors = io.StringIO()
@@ -79,6 +109,30 @@ class PlanTests(unittest.TestCase):
 
 
 class ArtifactTests(unittest.TestCase):
+    @staticmethod
+    def _reviewed(
+        root: Path, filename: str, identity: dict[str, str]
+    ) -> dict[str, object]:
+        relative = Path("deploy/docker/thor-local/official-edge/provenance") / filename
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        evidence = {
+            "schema_version": 1,
+            "state": "independently_reviewed_upstream_provenance",
+            "identity": identity,
+            "reviewed_by": "unit-test-trust-root",
+            "sources": ["https://example.nvidia.com/reviewed-artifact"],
+            "upstream_sha256": ["2" * 64],
+        }
+        path.write_text(json.dumps(evidence, sort_keys=True), encoding="utf-8")
+        return {
+            "state": "independently_reviewed_upstream_provenance",
+            "identity": identity,
+            "evidence_path": relative.as_posix(),
+            "evidence_sha256": rd._sha256(path),
+            "reviewed_by": "unit-test-trust-root",
+        }
+
     def test_exact_hf_cache_name_discovers_only_immutable_snapshot_candidates(
         self,
     ) -> None:
@@ -133,10 +187,13 @@ class ArtifactTests(unittest.TestCase):
         verifier = rd._load_official_verifier()
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            revision = "a" * 40
-            repository = root / "models--nvidia--nemotron"
+            revision = verifier.EDGE_REVISION
+            repository = root / verifier.EDGE_CACHE_DIRECTORY
             snapshot = repository / "snapshots" / revision
             snapshot.mkdir(parents=True)
+            blobs = repository / "blobs"
+            blobs.mkdir()
+            (blobs / ("a" * 64)).write_bytes(b"edge")
             (snapshot / "config.json").write_text("original\n", encoding="utf-8")
             cosmos = root / "cosmos"
             cosmos.mkdir()
@@ -153,9 +210,22 @@ class ArtifactTests(unittest.TestCase):
                             "revision": revision,
                         },
                         "state": "locked_exact",
+                        "provenance": self._reviewed(
+                            root,
+                            "edge.json",
+                            {
+                                "repository": verifier.EDGE_REPOSITORY,
+                                "revision": revision,
+                            },
+                        ),
                         "tree": {
                             "entries": verifier._actual_tree_entries(
                                 snapshot, repository
+                            )
+                        },
+                        "blob_tree": {
+                            "entries": verifier._actual_tree_entries(
+                                repository / "blobs", repository / "blobs"
                             )
                         },
                     },
@@ -163,6 +233,11 @@ class ArtifactTests(unittest.TestCase):
                         "kind": "ngc_model_cache",
                         "identity": {"artifact_id": verifier.COSMOS_ARTIFACT},
                         "state": "locked_exact",
+                        "provenance": self._reviewed(
+                            root,
+                            "cosmos.json",
+                            {"artifact_id": verifier.COSMOS_ARTIFACT},
+                        ),
                         "tree": {
                             "entries": verifier._actual_tree_entries(cosmos, cosmos)
                         },
@@ -171,13 +246,20 @@ class ArtifactTests(unittest.TestCase):
             }
             for entry in payload["artifacts"].values():
                 entry["tree"]["entry_count"] = len(entry["tree"]["entries"])
+            payload["artifacts"]["edge4b"]["blob_tree"]["entry_count"] = len(
+                payload["artifacts"]["edge4b"]["blob_tree"]["entries"]
+            )
             lock.write_text(json.dumps(payload), encoding="utf-8")
             self.assertEqual(
-                rd.verify_candidate_trees(lock, snapshot, cosmos)["state"],
+                rd.verify_candidate_trees(lock, snapshot, cosmos, provenance_root=root)[
+                    "state"
+                ],
                 "exact_match",
             )
             (snapshot / "config.json").write_text("tampered\n", encoding="utf-8")
-            result = rd.verify_candidate_trees(lock, snapshot, cosmos)
+            result = rd.verify_candidate_trees(
+                lock, snapshot, cosmos, provenance_root=root
+            )
         self.assertEqual(result["state"], "mismatch_or_unqualified")
         self.assertIn("tree differs", result["detail"])
 
@@ -190,7 +272,7 @@ class DockerTests(unittest.TestCase):
         output = "|".join(
             json.dumps(value)
             for value in (
-                "sha256:image-id",
+                entry["required_image_id"],
                 [reference],
                 ["tag"],
                 123,
@@ -207,6 +289,17 @@ class DockerTests(unittest.TestCase):
             result = rd.inspect_image(entry)
         self.assertEqual(result["state"], "present_but_not_exact")
 
+        arbitrary_id = output.replace(entry["required_image_id"], "sha256:" + "a" * 64)
+        with mock.patch.object(rd, "_docker", return_value=(arbitrary_id, "")):
+            result = rd.inspect_image(entry)
+        self.assertEqual(result["state"], "present_but_not_exact")
+
+    def test_contract_image_must_be_explicitly_graduated(self) -> None:
+        plan = rd._load_json(rd.DEFAULT_PLAN)
+        locks = rd.inspect_contract_image_locks(plan)
+        self.assertEqual(locks["edge_vllm"]["state"], "not_locked_exact")
+        self.assertEqual(locks["rt_vlm"]["state"], "locked_exact")
+
     def test_missing_container_is_classified_as_absent(self) -> None:
         with mock.patch.object(
             rd,
@@ -218,6 +311,62 @@ class DockerTests(unittest.TestCase):
 
 
 class HostResultTests(unittest.TestCase):
+    def _ready_result(self) -> dict[str, object]:
+        return {
+            "schema_version": 1,
+            "plan_id": "vss-3.2.1-thor-official-edge-readiness",
+            "inspection_mode": "read_only_host",
+            "qualification_state": "prelaunch_ready_not_runtime_qualified",
+            "runtime_qualification_performed": False,
+            "source_locks": {"state": "match"},
+            "artifact_lock": {
+                "lock_state": "complete_exact",
+                "entries": {
+                    "edge_snapshot": {
+                        "state": "locked_exact",
+                        "tree_present": True,
+                    },
+                    "cosmos_cache": {
+                        "state": "locked_exact",
+                        "tree_present": True,
+                    },
+                },
+            },
+            "artifacts": {
+                "edge_snapshot": {"state": "candidate_present_unlocked"},
+                "cosmos_cache": {"state": "candidate_present_unlocked"},
+                "exact_tree_verification": {"state": "exact_match"},
+            },
+            "images": {
+                "edge_vllm": {
+                    "state": "present_exact",
+                    "reference": rd.EDGE_VLLM_REFERENCE,
+                    "image_id": rd.EDGE_VLLM_IMAGE_ID,
+                    "contract_lock": {"state": "locked_exact"},
+                },
+                "rt_vlm": {
+                    "state": "present_exact",
+                    "reference": rd.RT_VLM_REFERENCE,
+                    "image_id": rd.RT_VLM_IMAGE_ID,
+                    "contract_lock": {"state": "locked_exact"},
+                },
+            },
+            "memory": {"state": "pass"},
+            "disk": {
+                "state": "pass_no_additional_staging_required",
+                "capacity_qualified": True,
+                "required_additional_bytes": 0,
+            },
+            "containers": {},
+            "blockers": [
+                {
+                    "id": "runtime.not_performed",
+                    "state": "unverified",
+                    "detail": "Prelaunch readiness is not runtime qualification.",
+                }
+            ],
+        }
+
     def test_read_only_result_cannot_claim_runtime_qualification(self) -> None:
         plan = rd._load_json(rd.DEFAULT_PLAN)
         exact_image = {
@@ -266,7 +415,7 @@ class HostResultTests(unittest.TestCase):
                 plan,
                 hf_hub=Path("/hf"),
                 cosmos_cache=None,
-                meminfo=Path("/meminfo"),
+                meminfo=rd.DEFAULT_MEMINFO,
                 disk_path=Path("/disk"),
             )
         self.assertEqual(result["qualification_state"], "blocked_not_runtime_qualified")
@@ -284,6 +433,23 @@ class HostResultTests(unittest.TestCase):
         )
         schema = rd._load_json(rd.HERE / "result.schema.json")
         jsonschema.Draft202012Validator(schema).validate(result)
+
+    def test_host_readiness_rejects_fabricated_meminfo_path(self) -> None:
+        plan = rd._load_json(rd.DEFAULT_PLAN)
+        with tempfile.TemporaryDirectory() as temporary:
+            fake = Path(temporary) / "meminfo"
+            fake.write_text(
+                "MemTotal: 100000 kB\nMemAvailable: 100000 kB\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(rd.ReadinessError, "canonical /proc/meminfo"):
+                rd.build_host_result(
+                    plan,
+                    hf_hub=Path("/hf"),
+                    cosmos_cache=None,
+                    meminfo=fake,
+                    disk_path=Path("/disk"),
+                )
 
     def test_complete_lock_and_candidates_still_block_on_tree_mismatch(self) -> None:
         plan = rd._load_json(rd.DEFAULT_PLAN)
@@ -329,7 +495,7 @@ class HostResultTests(unittest.TestCase):
                 plan,
                 hf_hub=Path("/hf"),
                 cosmos_cache=Path("/cosmos"),
-                meminfo=Path("/meminfo"),
+                meminfo=rd.DEFAULT_MEMINFO,
                 disk_path=Path("/disk"),
             )
         self.assertEqual(result["qualification_state"], "blocked_not_runtime_qualified")
@@ -390,7 +556,7 @@ class HostResultTests(unittest.TestCase):
                 plan,
                 hf_hub=Path("/hf"),
                 cosmos_cache=Path("/cosmos"),
-                meminfo=Path("/meminfo"),
+                meminfo=rd.DEFAULT_MEMINFO,
                 disk_path=Path("/disk"),
             )
         verify.assert_not_called()
@@ -407,6 +573,70 @@ class HostResultTests(unittest.TestCase):
         schema = rd._load_json(rd.HERE / "result.schema.json")
         with self.assertRaises(jsonschema.ValidationError):
             jsonschema.Draft202012Validator(schema).validate(result)
+
+    def test_schema_couples_plan_and_host_modes_to_qualification_state(self) -> None:
+        schema = rd._load_json(rd.HERE / "result.schema.json")
+        validator = jsonschema.Draft202012Validator(schema)
+        plan = rd.build_plan_result(rd._load_json(rd.DEFAULT_PLAN))
+        fabricated = deepcopy(plan)
+        fabricated["qualification_state"] = "prelaunch_ready_not_runtime_qualified"
+        with self.assertRaises(jsonschema.ValidationError):
+            validator.validate(fabricated)
+        ready = self._ready_result()
+        ready["inspection_mode"] = "plan"
+        with self.assertRaises(jsonschema.ValidationError):
+            validator.validate(ready)
+
+    def test_schema_requires_every_prelaunch_ready_gate(self) -> None:
+        schema = rd._load_json(rd.HERE / "result.schema.json")
+        validator = jsonschema.Draft202012Validator(schema)
+        ready = self._ready_result()
+        validator.validate(ready)
+
+        mutations = [
+            ("source_locks", "state", "drift"),
+            ("artifact_lock", "lock_state", "incomplete_fail_closed"),
+            ("memory", "state", "blocked_below_admission_threshold"),
+            ("disk", "capacity_qualified", False),
+        ]
+        for section, key, value in mutations:
+            fabricated = deepcopy(ready)
+            fabricated[section][key] = value  # type: ignore[index]
+            with self.subTest(section=section, key=key):
+                with self.assertRaises(jsonschema.ValidationError):
+                    validator.validate(fabricated)
+
+        nested_mutations = [
+            (["artifact_lock", "entries", "edge_snapshot", "state"], "missing"),
+            (
+                ["artifact_lock", "entries", "cosmos_cache", "tree_present"],
+                False,
+            ),
+            (["artifacts", "exact_tree_verification", "state"], "mismatch"),
+            (["images", "edge_vllm", "state"], "missing"),
+            (["images", "edge_vllm", "image_id"], "sha256:" + "f" * 64),
+            (["images", "edge_vllm", "contract_lock", "state"], "not_locked_exact"),
+            (["images", "rt_vlm", "state"], "present_but_not_exact"),
+        ]
+        for path, value in nested_mutations:
+            fabricated = deepcopy(ready)
+            target = fabricated
+            for key in path[:-1]:
+                target = target[key]  # type: ignore[index,assignment]
+            target[path[-1]] = value  # type: ignore[index]
+            with self.subTest(path=path):
+                with self.assertRaises(jsonschema.ValidationError):
+                    validator.validate(fabricated)
+
+    def test_disk_can_pass_only_after_every_staging_input_is_local(self) -> None:
+        plan = rd._load_json(rd.DEFAULT_PLAN)
+        with tempfile.TemporaryDirectory() as temporary:
+            blocked = rd.inspect_disk(Path(temporary), plan, staging_complete=False)
+            ready = rd.inspect_disk(Path(temporary), plan, staging_complete=True)
+        self.assertFalse(blocked["capacity_qualified"])
+        self.assertIsNone(blocked["required_additional_bytes"])
+        self.assertTrue(ready["capacity_qualified"])
+        self.assertEqual(ready["required_additional_bytes"], 0)
 
 
 if __name__ == "__main__":

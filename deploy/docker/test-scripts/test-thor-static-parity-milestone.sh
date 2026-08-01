@@ -144,6 +144,14 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/host-preflight/tests" \
   -p 'test*.py' -v
 
+# The cgroupfs remediation defaults to an inert plan. Its mocked transaction
+# suite exercises execute/rollback/recover safety without inspecting or
+# changing this host, Docker, systemd, or any container lifecycle state.
+python3 "${thor_local_root}/qualification/host-cgroupfs-remediation/remediate.py" \
+  plan >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/host-cgroupfs-remediation/tests"
+
 # Every manifest entry in a family with no capability rows remains an explicit
 # open gap. The compiler proposes 87 literal entry oracles without promoting
 # family-level status or requiring the excluded Warehouse sample bundle.
@@ -193,6 +201,14 @@ python3 -m pytest -q \
 python3 "${thor_local_root}/qualification/runtime-lanes/runtime_lane_compiler.py" \
   --check
 python3 -m pytest -q "${thor_local_root}/qualification/runtime-lanes/tests"
+
+# Two custom-data MV3DT repository utilities execute twice against a tiny
+# synthetic calibration. This is candidate-only evidence: no Warehouse sample,
+# Docker, network, model, service lifecycle, or official-state promotion.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/offline-mv3dt-tools/executor.py" --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q \
+  "${thor_local_root}/qualification/offline-mv3dt-tools/tests"
 
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact

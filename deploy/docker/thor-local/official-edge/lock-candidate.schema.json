@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.vss/thor/official-edge-lock-candidate.schema.json",
+  "title": "Thor official-edge read-only artifact-lock candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mode",
+    "candidate_state",
+    "filesystem_reads_performed",
+    "filesystem_mutation_performed",
+    "network_performed",
+    "credential_reads_performed",
+    "docker_performed"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"enum": ["plan", "read_only_candidate"]},
+    "candidate_state": {"enum": ["inert_plan", "candidate_only_not_promoted"]},
+    "filesystem_reads_performed": {"type": "boolean"},
+    "filesystem_mutation_performed": {"const": false},
+    "network_performed": {"const": false},
+    "credential_reads_performed": {"const": false},
+    "docker_performed": {"const": false},
+    "identities": {"type": "object"},
+    "required_acknowledgement": {"type": "string"},
+    "source_evidence": {"type": "object"},
+    "paths": {"type": "object"},
+    "proposed_artifact_lock": {"type": "object"},
+    "proposed_artifact_lock_canonical_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "promotion_performed": {"const": false}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"mode": {"const": "plan"}}, "required": ["mode"]},
+      "then": {
+        "required": ["identities", "required_acknowledgement"],
+        "properties": {
+          "candidate_state": {"const": "inert_plan"},
+          "filesystem_reads_performed": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"mode": {"const": "read_only_candidate"}},
+        "required": ["mode"]
+      },
+      "then": {
+        "required": [
+          "source_evidence",
+          "paths",
+          "proposed_artifact_lock",
+          "proposed_artifact_lock_canonical_sha256",
+          "promotion_performed"
+        ],
+        "properties": {
+          "candidate_state": {"const": "candidate_only_not_promoted"},
+          "filesystem_reads_performed": {"const": true},
+          "proposed_artifact_lock": {
+            "type": "object",
+            "required": ["schema_version", "lock_state", "artifacts"],
+            "properties": {
+              "schema_version": {"const": 1},
+              "lock_state": {"const": "candidate_only_unqualified"},
+              "artifacts": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["edge4b", "cosmos3_nano_bf16"],
+                "properties": {
+                  "edge4b": {
+                    "allOf": [
+                      {"$ref": "#/$defs/candidateArtifact"},
+                      {"required": ["blob_tree"], "properties": {"blob_tree": {"type": "object"}}}
+                    ]
+                  },
+                  "cosmos3_nano_bf16": {"$ref": "#/$defs/candidateArtifact"}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "candidateArtifact": {
+      "type": "object",
+      "required": ["state", "provenance", "tree"],
+      "properties": {
+        "state": {"const": "local_bytes_only_unqualified"},
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "promotion_requires"],
+          "properties": {
+            "state": {"const": "local_bytes_only_not_independently_verified"},
+            "promotion_requires": {"const": "reviewed_upstream_identity_and_hash_evidence"}
+          }
+        },
+        "tree": {"type": "object"}
+      }
+    }
+  }
+}

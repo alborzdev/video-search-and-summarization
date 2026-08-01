@@ -92,7 +92,7 @@ python generate_cam_info_configs.py \
 |----------|----------|-------------|
 | `--calibration-json` | yes | Path to the input `calibration.json`. |
 | `--output-dir` | yes | Directory where one `<sensor_id>.yml` is written per camera sensor. Created if missing. |
-| `--class CLASS_ID HEIGHT RADIUS` | yes (repeatable) | One object class per flag. `CLASS_ID` is an integer; `HEIGHT` and `RADIUS` are numeric (meters). |
+| `--class CLASS_ID HEIGHT RADIUS` | yes (repeatable) | One object class per flag. `CLASS_ID` must be a unique non-negative integer; `HEIGHT` and `RADIUS` must be positive finite numbers (meters). Sparse/noncontiguous class IDs are supported. |
 
 **Input `calibration.json` shape**
 

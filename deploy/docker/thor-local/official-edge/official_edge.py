@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shlex
 import stat
 import subprocess
@@ -19,7 +20,9 @@ from typing import Any
 try:
     import yaml
 except ImportError as exc:  # pragma: no cover - exercised only on incomplete hosts
-    raise SystemExit("PyYAML is required to validate the official-edge contract") from exc
+    raise SystemExit(
+        "PyYAML is required to validate the official-edge contract"
+    ) from exc
 
 
 HERE = Path(__file__).resolve().parent
@@ -44,6 +47,8 @@ EDITABLE_THOR_GUIDANCE = (
 
 EDGE_REPOSITORY = "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8"
 EDGE_MODEL_ID = EDGE_REPOSITORY
+EDGE_REVISION = "3fe6dab75665a93884214ad4b1b95cf02717d081"
+EDGE_CACHE_DIRECTORY = "models--nvidia--NVIDIA-Nemotron-3-Nano-4B-FP8"
 EDGE_BASE_URL = "http://127.0.0.1:30081"
 COSMOS_ARTIFACT = "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
 COSMOS_MODEL_ID = "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
@@ -54,6 +59,9 @@ EDGE_IMAGE = (
 )
 EDGE_IMAGE_MANIFEST_DIGEST = (
     "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"
+)
+EDGE_IMAGE_CONFIG_DIGEST = (
+    "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"
 )
 RTVLM_IMAGE = (
     "nvcr.io/nvidia/vss-core/vss-rt-vlm@"
@@ -149,7 +157,9 @@ def _run(command: list[str], *, env: dict[str, str] | None = None) -> str:
             timeout=120,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
-        raise ContractError(f"command failed to execute: {shlex.join(command)}: {exc}") from exc
+        raise ContractError(
+            f"command failed to execute: {shlex.join(command)}: {exc}"
+        ) from exc
     if result.returncode != 0:
         detail = result.stderr.strip() or result.stdout.strip() or "no diagnostic"
         raise ContractError(
@@ -226,7 +236,9 @@ def verify_contract_identity(contract: dict[str, Any]) -> None:
         "older_fallback_unqualified",
         "documentation_discrepancy",
     )
-    _expect(discrepancy, "official_lane_model", EDGE_REPOSITORY, "documentation_discrepancy")
+    _expect(
+        discrepancy, "official_lane_model", EDGE_REPOSITORY, "documentation_discrepancy"
+    )
     _expect(discrepancy, "resolved", False, "documentation_discrepancy")
     _expect(
         upstream,
@@ -251,6 +263,7 @@ def verify_contract_identity(contract: dict[str, Any]) -> None:
             raise ContractError(f"contract.{name} must be an object")
 
     _expect(llm, "repository", EDGE_REPOSITORY, "llm")
+    _expect(llm, "revision", EDGE_REVISION, "llm")
     _expect(llm, "served_model_id", EDGE_MODEL_ID, "llm")
     _expect(llm, "adapter_mode", "remote", "llm")
     _expect(llm, "provider_type", "vllm", "llm")
@@ -300,13 +313,26 @@ def verify_contract_identity(contract: dict[str, Any]) -> None:
         EDGE_IMAGE_MANIFEST_DIGEST,
         "images.edge4b_vllm",
     )
-    _expect(edge_image, "image_id", None, "images.edge4b_vllm")
     _expect(
         edge_image,
-        "state",
-        "missing_exact_image_unqualified",
+        "manifest_config_digest",
+        EDGE_IMAGE_CONFIG_DIGEST,
         "images.edge4b_vllm",
     )
+    edge_state = edge_image.get("state")
+    edge_image_id = edge_image.get("image_id")
+    if edge_state == "missing_exact_image_unqualified":
+        if edge_image_id is not None:
+            raise ContractError(
+                "an unstaged Edge vLLM image cannot claim a local image ID"
+            )
+    elif edge_state == "locked_exact":
+        if edge_image_id != EDGE_IMAGE_CONFIG_DIGEST:
+            raise ContractError(
+                "a locked Edge vLLM image ID must equal the exact manifest config digest"
+            )
+    else:
+        raise ContractError(f"unsupported Edge vLLM image state: {edge_state!r}")
     _expect(rtvlm_image, "reference", RTVLM_IMAGE, "images.rt_vlm")
     _expect(rtvlm_image, "image_id", RTVLM_IMAGE_ID, "images.rt_vlm")
     _expect(rtvlm_image, "state", "locked_exact", "images.rt_vlm")
@@ -326,7 +352,10 @@ def verify_source_anchors(contract: dict[str, Any]) -> None:
         commit = anchor.get("commit")
         blob = anchor.get("git_blob")
         expected_sha = anchor.get("sha256")
-        if not all(isinstance(item, str) and item for item in (path_text, commit, blob, expected_sha)):
+        if not all(
+            isinstance(item, str) and item
+            for item in (path_text, commit, blob, expected_sha)
+        ):
             raise ContractError(f"source_anchors[{index}] has incomplete identity")
         if path_text in seen:
             raise ContractError(f"duplicate source anchor: {path_text}")
@@ -354,7 +383,9 @@ def verify_source_anchors(contract: dict[str, Any]) -> None:
         if anchor.get("worktree_must_match") is True:
             worktree_path = REPO_ROOT / path_text
             if _sha256_file(worktree_path) != expected_sha:
-                raise ContractError(f"required worktree source differs from anchor: {path_text}")
+                raise ContractError(
+                    f"required worktree source differs from anchor: {path_text}"
+                )
 
 
 def _parse_env(path: Path) -> dict[str, str]:
@@ -411,14 +442,20 @@ def verify_env_contract() -> None:
     if values != expected:
         missing = sorted(set(expected) - set(values))
         extra = sorted(set(values) - set(expected))
-        wrong = sorted(key for key in expected.keys() & values.keys() if expected[key] != values[key])
+        wrong = sorted(
+            key
+            for key in expected.keys() & values.keys()
+            if expected[key] != values[key]
+        )
         raise ContractError(
             f"official-edge.env drift (missing={missing}, extra={extra}, wrong={wrong})"
         )
 
 
 def _command_contains(command: Any, required: list[str], context: str) -> None:
-    if not isinstance(command, list) or not all(isinstance(item, str) for item in command):
+    if not isinstance(command, list) or not all(
+        isinstance(item, str) for item in command
+    ):
         raise ContractError(f"{context} command must be a string list")
     for token in required:
         if token not in command:
@@ -436,7 +473,11 @@ def verify_compose_contract() -> None:
     edge = services["nemotron-edge"]
     rtvlm = services["rtvi-vlm"]
     agent = services["vss-agent"]
-    for name, value in (("nemotron-edge", edge), ("rtvi-vlm", rtvlm), ("vss-agent", agent)):
+    for name, value in (
+        ("nemotron-edge", edge),
+        ("rtvi-vlm", rtvlm),
+        ("vss-agent", agent),
+    ):
         if not isinstance(value, dict):
             raise ContractError(f"compose service {name} must be an object")
 
@@ -445,6 +486,27 @@ def verify_compose_contract() -> None:
     _expect(edge, "runtime", "nvidia", "compose.nemotron-edge")
     _expect(edge, "read_only", True, "compose.nemotron-edge")
     _expect(edge, "command", EDGE_COMMAND, "compose.nemotron-edge")
+    expected_edge_environment = {
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1",
+        "HF_HUB_DISABLE_TELEMETRY": "1",
+        "HF_HOME": "/runtime/huggingface",
+        "XDG_CACHE_HOME": "/runtime/cache",
+        "NVIDIA_VISIBLE_DEVICES": "0",
+        "NVIDIA_DRIVER_CAPABILITIES": "all",
+    }
+    if edge.get("environment") != expected_edge_environment:
+        raise ContractError(
+            "compose Edge vLLM environment differs from exact offline lane"
+        )
+    expected_edge_volumes = [
+        "${THOR_OFFICIAL_EDGE4B_SNAPSHOT:?Set the exact verified Edge4B snapshot path}:/models/edge4b:ro",
+        "${THOR_OFFICIAL_EDGE4B_BLOBS_DIR:?Set the exact verified Edge4B blobs path}:/blobs:ro",
+    ]
+    if edge.get("volumes") != expected_edge_volumes:
+        raise ContractError(
+            "compose Edge vLLM artifact mounts differ from exact contract"
+        )
 
     _expect(rtvlm, "image", RTVLM_IMAGE, "compose.rtvi-vlm")
     rtvlm_env = rtvlm.get("environment")
@@ -455,6 +517,9 @@ def verify_compose_contract() -> None:
         "VIA_VLM_ENDPOINT": "",
         "VIA_VLM_API_KEY": "",
         "NGC_API_KEY": "",
+        "NVIDIA_API_KEY": "",
+        "HF_TOKEN": "",
+        "OPENAI_API_KEY": "",
         "VLM_MODEL_TO_USE": "cosmos-reason3",
         "MODEL_PATH": COSMOS_ARTIFACT,
         "VLLM_GPU_MEMORY_UTILIZATION": "0.35",
@@ -462,12 +527,18 @@ def verify_compose_contract() -> None:
         "NUM_VLM_PROCS": "1",
     }
     if rtvlm_env != expected_rtvlm:
-        raise ContractError("compose RT-VLM environment differs from exact Cosmos3 lane")
+        raise ContractError(
+            "compose RT-VLM environment differs from exact Cosmos3 lane"
+        )
 
     agent_env = agent.get("environment")
     if not isinstance(agent_env, dict):
         raise ContractError("compose.vss-agent.environment must be an object")
     expected_agent = {
+        "NVIDIA_API_KEY": "",
+        "OPENAI_API_KEY": "",
+        "HF_TOKEN": "",
+        "RAG_API_KEY": "",
         "LLM_MODE": "remote",
         "LLM_MODEL_TYPE": "vllm",
         "LLM_NAME": EDGE_MODEL_ID,
@@ -479,7 +550,9 @@ def verify_compose_contract() -> None:
         "VSS_AGENT_CONFIG_FILE": AGENT_CONFIG_CONTAINER,
     }
     if agent_env != expected_agent:
-        raise ContractError("compose Agent environment differs from exact edge contract")
+        raise ContractError(
+            "compose Agent environment differs from exact edge contract"
+        )
     _command_contains(agent.get("command"), [AGENT_CONFIG_CONTAINER], "vss-agent")
 
 
@@ -500,10 +573,14 @@ def verify_agent_prompt_overlay() -> None:
     if not isinstance(source_workflow, dict) or not isinstance(overlay_workflow, dict):
         raise ContractError("both Edge agent configs must contain workflow objects")
     if set(overlay_workflow) != {"plan_prompt", "response_format_prompt"}:
-        raise ContractError("official Edge prompt overlay may override only two prompt fields")
+        raise ContractError(
+            "official Edge prompt overlay may override only two prompt fields"
+        )
     for field in ("plan_prompt", "response_format_prompt"):
         if overlay_workflow.get(field) != source_workflow.get(field):
-            raise ContractError(f"official Edge prompt overlay drifted from source field {field}")
+            raise ContractError(
+                f"official Edge prompt overlay drifted from source field {field}"
+            )
 
 
 def verify_operator_guidance(contract: dict[str, Any]) -> None:
@@ -531,16 +608,28 @@ def verify_operator_guidance(contract: dict[str, Any]) -> None:
     )
     missing = [token for token in required_guidance if token not in guidance]
     if missing:
-        raise ContractError(f"Thor operator precedence guidance is incomplete: {missing}")
+        raise ContractError(
+            f"Thor operator precedence guidance is incomplete: {missing}"
+        )
 
     route = "references/thor-official-edge.md"
     if skill.count(route) < 3 or "Thor precedence gate" not in skill:
-        raise ContractError("deploy-profile skill does not mandate the Thor precedence route")
+        raise ContractError(
+            "deploy-profile skill does not mandate the Thor precedence route"
+        )
 
-    editable_text = {path: path.read_text(encoding="utf-8") for path in EDITABLE_THOR_GUIDANCE}
-    stale = [str(path.relative_to(REPO_ROOT)) for path, text in editable_text.items() if older in text]
+    editable_text = {
+        path: path.read_text(encoding="utf-8") for path in EDITABLE_THOR_GUIDANCE
+    }
+    stale = [
+        str(path.relative_to(REPO_ROOT))
+        for path, text in editable_text.items()
+        if older in text
+    ]
     if stale:
-        raise ContractError(f"editable Thor guidance still selects the older model: {stale}")
+        raise ContractError(
+            f"editable Thor guidance still selects the older model: {stale}"
+        )
 
     for path in EDITABLE_THOR_GUIDANCE[:3]:
         if "thor-official-edge.md" not in editable_text[path]:
@@ -549,7 +638,9 @@ def verify_operator_guidance(contract: dict[str, Any]) -> None:
             )
     credential_probe = editable_text[EDITABLE_THOR_GUIDANCE[3]]
     if current not in credential_probe:
-        raise ContractError("credential helper does not probe the current Thor model identity")
+        raise ContractError(
+            "credential helper does not probe the current Thor model identity"
+        )
 
 
 def verify_static(contract_path: Path = DEFAULT_CONTRACT) -> dict[str, Any]:
@@ -628,13 +719,17 @@ def _actual_tree_entries(root: Path, allowed_root: Path) -> list[dict[str, Any]]
 def _symlink_entry(path: Path, relative: str, allowed_root: Path) -> dict[str, Any]:
     target = os.readlink(path)
     if Path(target).is_absolute():
-        raise ContractError(f"absolute artifact symlink is forbidden: {path} -> {target}")
+        raise ContractError(
+            f"absolute artifact symlink is forbidden: {path} -> {target}"
+        )
     try:
         resolved = path.resolve(strict=True)
     except OSError as exc:
         raise ContractError(f"broken artifact symlink: {path}: {exc}") from exc
     if not _within(resolved, allowed_root):
-        raise ContractError(f"artifact symlink escapes repository/cache: {path} -> {target}")
+        raise ContractError(
+            f"artifact symlink escapes repository/cache: {path} -> {target}"
+        )
     if not resolved.is_file():
         raise ContractError(f"artifact symlink must resolve to a file: {path}")
     return {
@@ -679,7 +774,9 @@ def _validate_expected_tree(tree: Any, context: str) -> list[dict[str, Any]]:
             },
         }
         if kind not in allowed_keys or keys != allowed_keys[kind]:
-            raise ContractError(f"{context}.tree entry schema is invalid for {path_text}")
+            raise ContractError(
+                f"{context}.tree entry schema is invalid for {path_text}"
+            )
     if [item["path"] for item in entries] != sorted(item["path"] for item in entries):
         raise ContractError(f"{context}.tree entries must be sorted by path")
     return entries
@@ -693,6 +790,7 @@ def _verify_locked_artifact(
     expected_kind: str,
     expected_identity: dict[str, str],
     context: str,
+    provenance_root: Path,
 ) -> None:
     if not isinstance(entry, dict):
         raise ContractError(f"{context} lock entry must be an object")
@@ -706,6 +804,105 @@ def _verify_locked_artifact(
         raise ContractError(f"{context}.identity must be an object")
     for key, value in expected_identity.items():
         _expect(identity, key, value, f"{context}.identity")
+    provenance = entry.get("provenance")
+    if not isinstance(provenance, dict) or set(provenance) != {
+        "state",
+        "identity",
+        "evidence_path",
+        "evidence_sha256",
+        "reviewed_by",
+    }:
+        raise ContractError(f"{context}.provenance is absent or has invalid shape")
+    _expect(
+        provenance,
+        "state",
+        "independently_reviewed_upstream_provenance",
+        f"{context}.provenance",
+    )
+    _expect(provenance, "identity", expected_identity, f"{context}.provenance")
+    evidence_sha256 = provenance.get("evidence_sha256")
+    if (
+        not isinstance(evidence_sha256, str)
+        or not re.fullmatch(r"[0-9a-f]{64}", evidence_sha256)
+        or evidence_sha256 == "0" * 64
+    ):
+        raise ContractError(f"{context}.provenance evidence SHA-256 is invalid")
+    if (
+        not isinstance(provenance.get("reviewed_by"), str)
+        or not provenance["reviewed_by"].strip()
+    ):
+        raise ContractError(f"{context}.provenance reviewer is absent")
+    evidence_path_text = provenance.get("evidence_path")
+    if not isinstance(evidence_path_text, str):
+        raise ContractError(f"{context}.provenance evidence path is absent")
+    _safe_relative(evidence_path_text)
+    if not evidence_path_text.startswith(
+        "deploy/docker/thor-local/official-edge/provenance/"
+    ):
+        raise ContractError(f"{context}.provenance evidence path is outside trust root")
+    source_path = provenance_root / evidence_path_text
+    current = provenance_root
+    for component in Path(evidence_path_text).parts:
+        current /= component
+        if current.is_symlink():
+            raise ContractError(
+                f"{context}.provenance evidence path contains a symlink"
+            )
+    try:
+        resolved_source = source_path.resolve(strict=True)
+        resolved_source.relative_to(provenance_root.resolve(strict=True))
+    except (OSError, ValueError) as exc:
+        raise ContractError(
+            f"{context}.provenance evidence cannot resolve inside repository"
+        ) from exc
+    if source_path.is_symlink() or not resolved_source.is_file():
+        raise ContractError(f"{context}.provenance evidence must be a regular file")
+    if _sha256_file(resolved_source) != evidence_sha256:
+        raise ContractError(f"{context}.provenance evidence hash differs")
+    evidence = _load_json(resolved_source)
+    if set(evidence) != {
+        "schema_version",
+        "state",
+        "identity",
+        "reviewed_by",
+        "sources",
+        "upstream_sha256",
+    }:
+        raise ContractError(f"{context}.provenance evidence schema is invalid")
+    _expect(evidence, "schema_version", 1, f"{context}.provenance evidence")
+    _expect(
+        evidence,
+        "state",
+        "independently_reviewed_upstream_provenance",
+        f"{context}.provenance evidence",
+    )
+    _expect(evidence, "identity", expected_identity, f"{context}.provenance evidence")
+    _expect(
+        evidence,
+        "reviewed_by",
+        provenance["reviewed_by"],
+        f"{context}.provenance evidence",
+    )
+    sources = evidence.get("sources")
+    upstream_hashes = evidence.get("upstream_sha256")
+    if (
+        not isinstance(sources, list)
+        or not sources
+        or any(
+            not isinstance(item, str) or not item.startswith("https://")
+            for item in sources
+        )
+    ):
+        raise ContractError(f"{context}.provenance evidence sources are invalid")
+    if (
+        not isinstance(upstream_hashes, list)
+        or not upstream_hashes
+        or any(
+            not isinstance(item, str) or not re.fullmatch(r"[0-9a-f]{64}", item)
+            for item in upstream_hashes
+        )
+    ):
+        raise ContractError(f"{context}.provenance upstream SHA-256 list is invalid")
     if expected_kind == "huggingface_snapshot":
         revision = identity.get("revision")
         if not isinstance(revision, str) or len(revision) != 40:
@@ -718,6 +915,22 @@ def _verify_locked_artifact(
             )
     expected_entries = _validate_expected_tree(entry.get("tree"), context)
     actual_entries = _actual_tree_entries(root, allowed_root)
+    if expected_kind == "huggingface_snapshot":
+        repository = _verify_edge_snapshot_layout(root, actual_entries)
+        expected_blob_entries = _validate_expected_tree(
+            entry.get("blob_tree"), f"{context}.blob_tree"
+        )
+        actual_blob_entries = _actual_tree_entries(
+            repository / "blobs", repository / "blobs"
+        )
+        if actual_blob_entries != expected_blob_entries:
+            expected_blob_paths = {item["path"] for item in expected_blob_entries}
+            actual_blob_paths = {item["path"] for item in actual_blob_entries}
+            raise ContractError(
+                f"{context} mounted blob tree differs from lock "
+                f"(missing={sorted(expected_blob_paths - actual_blob_paths)}, "
+                f"extra={sorted(actual_blob_paths - expected_blob_paths)})"
+            )
     if actual_entries != expected_entries:
         expected_paths = {item["path"] for item in expected_entries}
         actual_paths = {item["path"] for item in actual_entries}
@@ -728,12 +941,67 @@ def _verify_locked_artifact(
         )
 
 
-def verify_artifacts(lock_path: Path, edge_snapshot: Path, cosmos_cache: Path) -> None:
+def _edge_repository(edge_snapshot: Path) -> Path:
+    if edge_snapshot.parent.name != "snapshots":
+        raise ContractError("Edge4B snapshot must be inside a snapshots directory")
+    repository = edge_snapshot.parent.parent
+    if repository.name != EDGE_CACHE_DIRECTORY:
+        raise ContractError(
+            f"Edge4B Hugging Face cache directory is {repository.name!r}; "
+            f"expected {EDGE_CACHE_DIRECTORY!r}"
+        )
+    blobs = repository / "blobs"
+    if not blobs.is_dir() or blobs.is_symlink():
+        raise ContractError(f"Edge4B Hugging Face blob store is unavailable: {blobs}")
+    return repository
+
+
+def _verify_edge_snapshot_layout(
+    edge_snapshot: Path, entries: list[dict[str, Any]]
+) -> Path:
+    repository = _edge_repository(edge_snapshot)
+    blobs = (repository / "blobs").resolve(strict=True)
+    for entry in entries:
+        if entry.get("type") != "symlink":
+            continue
+        target = entry.get("target")
+        parts = PurePosixPath(str(target)).parts
+        if (
+            len(parts) != 4
+            or parts[:3] != ("..", "..", "blobs")
+            or len(parts[3]) not in {40, 64}
+            or any(character not in "0123456789abcdef" for character in parts[3])
+        ):
+            raise ContractError(
+                f"Edge4B snapshot symlink is not a canonical HF blob target: "
+                f"{entry.get('path')} -> {target}"
+            )
+        resolved = (edge_snapshot / str(entry["path"])).resolve(strict=True)
+        if not _within(resolved, blobs):
+            raise ContractError(
+                f"Edge4B snapshot symlink does not resolve inside the mounted blob store: "
+                f"{entry.get('path')}"
+            )
+    return repository
+
+
+def verify_artifacts(
+    lock_path: Path,
+    edge_snapshot: Path,
+    cosmos_cache: Path,
+    *,
+    provenance_root: Path | None = None,
+) -> None:
     lock = _load_json(lock_path)
     _expect(lock, "schema_version", 1, "artifact_lock")
     artifacts = lock.get("artifacts")
-    if not isinstance(artifacts, dict) or set(artifacts) != {"edge4b", "cosmos3_nano_bf16"}:
-        raise ContractError("artifact lock must contain exactly Edge4B and Cosmos3 Nano BF16")
+    if not isinstance(artifacts, dict) or set(artifacts) != {
+        "edge4b",
+        "cosmos3_nano_bf16",
+    }:
+        raise ContractError(
+            "artifact lock must contain exactly Edge4B and Cosmos3 Nano BF16"
+        )
     if lock.get("lock_state") != "complete_exact":
         states = {
             key: value.get("state") if isinstance(value, dict) else None
@@ -741,14 +1009,17 @@ def verify_artifacts(lock_path: Path, edge_snapshot: Path, cosmos_cache: Path) -
         }
         raise ContractError(f"artifact lock is intentionally incomplete: {states}")
 
-    edge_repository_root = edge_snapshot.parent.parent
+    reviewed_root = REPO_ROOT if provenance_root is None else provenance_root
+
+    edge_repository_root = _edge_repository(edge_snapshot)
     _verify_locked_artifact(
         artifacts["edge4b"],
         root=edge_snapshot,
         allowed_root=edge_repository_root,
         expected_kind="huggingface_snapshot",
-        expected_identity={"repository": EDGE_REPOSITORY},
+        expected_identity={"repository": EDGE_REPOSITORY, "revision": EDGE_REVISION},
         context="artifacts.edge4b",
+        provenance_root=reviewed_root,
     )
     _verify_locked_artifact(
         artifacts["cosmos3_nano_bf16"],
@@ -757,6 +1028,7 @@ def verify_artifacts(lock_path: Path, edge_snapshot: Path, cosmos_cache: Path) -
         expected_kind="ngc_model_cache",
         expected_identity={"artifact_id": COSMOS_ARTIFACT},
         context="artifacts.cosmos3_nano_bf16",
+        provenance_root=reviewed_root,
     )
 
 
@@ -785,7 +1057,9 @@ def verify_images(contract: dict[str, Any]) -> None:
             ]
         ).strip()
         if "|" not in output:
-            raise ContractError(f"unexpected docker image inspection output for {reference}")
+            raise ContractError(
+                f"unexpected docker image inspection output for {reference}"
+            )
         image_id, digest_json = output.split("|", 1)
         try:
             repo_digests = json.loads(digest_json)
@@ -794,7 +1068,9 @@ def verify_images(contract: dict[str, Any]) -> None:
         if image_id != expected_image_id:
             raise ContractError(f"image ID mismatch for {reference}: {image_id}")
         if not isinstance(repo_digests, list) or reference not in repo_digests:
-            raise ContractError(f"repository digest is not locally proven for {reference}")
+            raise ContractError(
+                f"repository digest is not locally proven for {reference}"
+            )
 
 
 def _read_meminfo(path: Path) -> tuple[int, int]:
@@ -853,7 +1129,9 @@ def _compose_prefix(runtime_env: Path) -> list[str]:
 
 def _environment_list_to_map(value: Any, context: str) -> dict[str, str]:
     if isinstance(value, dict):
-        return {str(key): "" if item is None else str(item) for key, item in value.items()}
+        return {
+            str(key): "" if item is None else str(item) for key, item in value.items()
+        }
     if isinstance(value, list):
         result: dict[str, str] = {}
         for item in value:
@@ -865,6 +1143,59 @@ def _environment_list_to_map(value: Any, context: str) -> dict[str, str]:
     raise ContractError(f"{context} environment must be a list or object")
 
 
+CREDENTIAL_ENV_KEYS = {
+    "NGC_API_KEY",
+    "NVIDIA_API_KEY",
+    "HF_TOKEN",
+    "HUGGING_FACE_HUB_TOKEN",
+    "OPENAI_API_KEY",
+    "VIA_VLM_API_KEY",
+    "LVS_LLM_API_KEY",
+    "RAG_API_KEY",
+}
+
+
+def _reject_credential_leaks(environment: dict[str, str], context: str) -> None:
+    leaked = sorted(
+        key for key in CREDENTIAL_ENV_KEYS if environment.get(key) not in {None, ""}
+    )
+    if leaked:
+        raise ContractError(
+            f"{context} exposes non-empty credential environment: {leaked}"
+        )
+
+
+def _reject_mount_overlays(
+    mounts: Any,
+    protected_destinations: set[str],
+    context: str,
+    *,
+    allowed_overlaps: set[str] | None = None,
+) -> None:
+    if not isinstance(mounts, list):
+        raise ContractError(f"{context} has no inspectable mounts")
+    destinations: list[str] = []
+    for mount in mounts:
+        if not isinstance(mount, dict) or not isinstance(mount.get("target"), str):
+            raise ContractError(f"{context} has an invalid mount record")
+        destinations.append(mount["target"])
+    if len(destinations) != len(set(destinations)):
+        raise ContractError(f"{context} has duplicate mount destinations")
+    allowed = protected_destinations | (allowed_overlaps or set())
+    unexpected = sorted(
+        destination
+        for destination in destinations
+        if destination not in allowed
+        and any(
+            destination.startswith(f"{root.rstrip('/')}/")
+            or root.startswith(f"{destination.rstrip('/')}/")
+            for root in protected_destinations
+        )
+    )
+    if unexpected:
+        raise ContractError(f"{context} has protected-path shadow mounts: {unexpected}")
+
+
 def verify_resolved_compose(
     runtime_env: Path, edge_snapshot: Path, cosmos_cache: Path
 ) -> dict[str, Any]:
@@ -873,8 +1204,15 @@ def verify_resolved_compose(
     process_env = os.environ.copy()
     process_env["VSS_REPO_ROOT"] = str(REPO_ROOT)
     process_env["THOR_OFFICIAL_EDGE4B_SNAPSHOT"] = str(edge_snapshot)
+    process_env["THOR_OFFICIAL_EDGE4B_BLOBS_DIR"] = str(
+        _edge_repository(edge_snapshot) / "blobs"
+    )
     process_env["THOR_OFFICIAL_COSMOS3_CACHE_DIR"] = str(cosmos_cache)
-    output = _run(_compose_prefix(runtime_env) + ["config", "--format", "json"], env=process_env)
+    for key in CREDENTIAL_ENV_KEYS:
+        process_env[key] = ""
+    output = _run(
+        _compose_prefix(runtime_env) + ["config", "--format", "json"], env=process_env
+    )
     try:
         resolved = json.loads(output)
     except json.JSONDecodeError as exc:
@@ -889,10 +1227,17 @@ def verify_resolved_compose(
         raise ContractError("resolved Edge4B image differs from digest lock")
     if services["rtvi-vlm"].get("image") != RTVLM_IMAGE:
         raise ContractError("resolved RT-VLM image differs from digest lock")
-    _expect(services["nemotron-edge"], "command", EDGE_COMMAND, "resolved nemotron-edge")
+    _expect(
+        services["nemotron-edge"], "command", EDGE_COMMAND, "resolved nemotron-edge"
+    )
     rtvlm_env = _environment_list_to_map(
         services["rtvi-vlm"].get("environment"), "resolved rtvi-vlm"
     )
+    edge_env = _environment_list_to_map(
+        services["nemotron-edge"].get("environment"), "resolved nemotron-edge"
+    )
+    _reject_credential_leaks(edge_env, "resolved nemotron-edge")
+    _reject_credential_leaks(rtvlm_env, "resolved rtvi-vlm")
     agent_env = _environment_list_to_map(
         services["vss-agent"].get("environment"), "resolved vss-agent"
     )
@@ -901,6 +1246,9 @@ def verify_resolved_compose(
         "VIA_VLM_ENDPOINT": "",
         "VIA_VLM_API_KEY": "",
         "NGC_API_KEY": "",
+        "NVIDIA_API_KEY": "",
+        "HF_TOKEN": "",
+        "OPENAI_API_KEY": "",
         "VLM_MODEL_TO_USE": "cosmos-reason3",
         "MODEL_PATH": COSMOS_ARTIFACT,
         "VLLM_GPU_MEMORY_UTILIZATION": "0.35",
@@ -936,7 +1284,18 @@ def verify_resolved_compose(
     edge_mounts = services["nemotron-edge"].get("volumes")
     rtvlm_mounts = services["rtvi-vlm"].get("volumes")
     expected_edge_source = str(edge_snapshot.resolve())
+    expected_edge_blobs_source = str(
+        (_edge_repository(edge_snapshot) / "blobs").resolve()
+    )
     expected_cosmos_source = str(cosmos_cache.resolve())
+    _reject_mount_overlays(
+        edge_mounts, {"/models/edge4b", "/blobs"}, "resolved nemotron-edge"
+    )
+    _reject_mount_overlays(
+        rtvlm_mounts,
+        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache"},
+        "resolved rtvi-vlm",
+    )
     if not isinstance(edge_mounts, list) or not any(
         isinstance(mount, dict)
         and mount.get("type") == "bind"
@@ -946,6 +1305,15 @@ def verify_resolved_compose(
         for mount in edge_mounts
     ):
         raise ContractError("resolved Edge4B snapshot is not the exact read-only bind")
+    if not any(
+        isinstance(mount, dict)
+        and mount.get("type") == "bind"
+        and mount.get("source") == expected_edge_blobs_source
+        and mount.get("target") == "/blobs"
+        and mount.get("read_only") is True
+        for mount in edge_mounts
+    ):
+        raise ContractError("resolved Edge4B blobs are not the exact read-only bind")
     if not isinstance(rtvlm_mounts, list) or not any(
         isinstance(mount, dict)
         and mount.get("type") == "bind"
@@ -954,14 +1322,27 @@ def verify_resolved_compose(
         and mount.get("read_only") is True
         for mount in rtvlm_mounts
     ):
-        raise ContractError("resolved Cosmos3 cache is not the exact dedicated read-only bind")
+        raise ContractError(
+            "resolved Cosmos3 cache is not the exact dedicated read-only bind"
+        )
     for forbidden in ("qwen3-vl-8b-instruct", "qwen3-vl-8b-instruct-shared-gpu"):
         if forbidden in services:
-            raise ContractError(f"official-edge resolution unexpectedly selected {forbidden}")
+            raise ContractError(
+                f"official-edge resolution unexpectedly selected {forbidden}"
+            )
     for service_name, service in services.items():
         environment = service.get("environment") if isinstance(service, dict) else None
         if environment is not None:
             values = _environment_list_to_map(environment, f"resolved {service_name}")
+            if service_name in {
+                "nemotron-edge",
+                "rtvi-vlm",
+                "vss-agent",
+                "vss-va-mcp",
+                "lvs-server",
+                "vss-alert-bridge",
+            }:
+                _reject_credential_leaks(values, f"resolved {service_name}")
             if any(
                 value in {"datasheet-chat", "datasheet-vision"}
                 for value in values.values()
@@ -969,6 +1350,31 @@ def verify_resolved_compose(
                 raise ContractError(
                     f"resolved service {service_name} retained a Qwen-lane served model alias"
                 )
+    agent_mounts = services["vss-agent"].get("volumes")
+    agent_deploy_target = "/vss-agent/deploy/docker"
+    if isinstance(agent_mounts, list) and any(
+        isinstance(mount, dict) and mount.get("target") == AGENT_CONFIG_CONTAINER
+        for mount in agent_mounts
+    ):
+        raise ContractError("resolved vss-agent has a direct config shadow mount")
+    _reject_mount_overlays(
+        agent_mounts,
+        {AGENT_CONFIG_CONTAINER},
+        "resolved vss-agent",
+        allowed_overlaps={agent_deploy_target},
+    )
+    expected_agent_source = str(DEPLOY_DOCKER.resolve(strict=True))
+    if not any(
+        isinstance(mount, dict)
+        and mount.get("type") == "bind"
+        and mount.get("source") == expected_agent_source
+        and mount.get("target") == agent_deploy_target
+        and mount.get("read_only") is True
+        for mount in agent_mounts
+    ):
+        raise ContractError(
+            "resolved vss-agent config does not come from the exact read-only deploy bind"
+        )
     return resolved
 
 
@@ -980,7 +1386,16 @@ def render_pull_free_command(
             "env",
             f"VSS_REPO_ROOT={REPO_ROOT}",
             f"THOR_OFFICIAL_EDGE4B_SNAPSHOT={edge_snapshot}",
+            f"THOR_OFFICIAL_EDGE4B_BLOBS_DIR={_edge_repository(edge_snapshot) / 'blobs'}",
             f"THOR_OFFICIAL_COSMOS3_CACHE_DIR={cosmos_cache}",
+            "NVIDIA_API_KEY=",
+            "OPENAI_API_KEY=",
+            "HF_TOKEN=",
+            "HUGGING_FACE_HUB_TOKEN=",
+            "NGC_API_KEY=",
+            "VIA_VLM_API_KEY=",
+            "LVS_LLM_API_KEY=",
+            "RAG_API_KEY=",
         ]
         + _compose_prefix(runtime_env)
         + ["up", "-d", "--no-build", "--pull", "never"]
@@ -1004,6 +1419,7 @@ def _verify_running_container(
     expected_image_id: str,
     required_command: list[str],
     expected_env: dict[str, str],
+    expected_mounts: dict[str, Path] | None = None,
 ) -> None:
     container = _docker_container(name)
     state = container.get("State")
@@ -1012,7 +1428,10 @@ def _verify_running_container(
         raise ContractError(f"container {name} has incomplete inspection data")
     if state.get("Running") is not True:
         raise ContractError(f"container {name} is not running")
-    if config.get("Image") != expected_image or container.get("Image") != expected_image_id:
+    if (
+        config.get("Image") != expected_image
+        or container.get("Image") != expected_image_id
+    ):
         raise ContractError(f"container {name} image differs from exact lock")
     if name == "vss-nemotron-edge-4b":
         if config.get("Cmd") != required_command:
@@ -1023,6 +1442,64 @@ def _verify_running_container(
     for key, expected in expected_env.items():
         if environment.get(key) != expected:
             raise ContractError(f"container {name} environment {key} differs")
+    credential_keys = {
+        "NGC_API_KEY",
+        "NVIDIA_API_KEY",
+        "HF_TOKEN",
+        "HUGGING_FACE_HUB_TOKEN",
+        "OPENAI_API_KEY",
+        "VIA_VLM_API_KEY",
+    }
+    leaked = sorted(
+        key for key in credential_keys if environment.get(key) not in {None, ""}
+    )
+    if leaked:
+        raise ContractError(
+            f"container {name} exposes non-empty credential environment: {leaked}"
+        )
+    if expected_mounts:
+        mounts = container.get("Mounts")
+        if not isinstance(mounts, list):
+            raise ContractError(f"container {name} has no inspectable mounts")
+        destinations: list[str] = []
+        for mount in mounts:
+            if not isinstance(mount, dict) or not isinstance(
+                mount.get("Destination"), str
+            ):
+                raise ContractError(f"container {name} has an invalid mount record")
+            destinations.append(mount["Destination"])
+        if len(destinations) != len(set(destinations)):
+            raise ContractError(f"container {name} has duplicate mount destinations")
+        protected = tuple(expected_mounts)
+        unexpected_overlays = sorted(
+            destination
+            for destination in destinations
+            if destination not in expected_mounts
+            and any(
+                destination.startswith(f"{root.rstrip('/')}/")
+                or root.startswith(f"{destination.rstrip('/')}/")
+                for root in protected
+            )
+        )
+        if unexpected_overlays:
+            raise ContractError(
+                f"container {name} has mounts overlapping protected model paths: "
+                f"{unexpected_overlays}"
+            )
+        for destination, source in expected_mounts.items():
+            expected_source = str(source.resolve(strict=True))
+            if not any(
+                isinstance(mount, dict)
+                and mount.get("Type") == "bind"
+                and mount.get("Source") == expected_source
+                and mount.get("Destination") == destination
+                and mount.get("RW") is False
+                for mount in mounts
+            ):
+                raise ContractError(
+                    f"container {name} does not use exact read-only bind "
+                    f"{expected_source} -> {destination}"
+                )
 
 
 def _verify_running_environment(
@@ -1040,6 +1517,21 @@ def _verify_running_environment(
     for key, expected in expected_env.items():
         if environment.get(key) != expected:
             raise ContractError(f"container {name} environment {key} differs")
+    credential_keys = {
+        "NGC_API_KEY",
+        "NVIDIA_API_KEY",
+        "HF_TOKEN",
+        "HUGGING_FACE_HUB_TOKEN",
+        "OPENAI_API_KEY",
+        "VIA_VLM_API_KEY",
+    }
+    leaked = sorted(
+        key for key in credential_keys if environment.get(key) not in {None, ""}
+    )
+    if leaked:
+        raise ContractError(
+            f"container {name} exposes non-empty credential environment: {leaked}"
+        )
 
 
 def _get_json(url: str, timeout: float) -> Any:
@@ -1057,9 +1549,7 @@ def _verify_model_endpoint(base_url: str, model_id: str, timeout: float) -> None
     payload = _get_json(f"{base_url}/v1/models", timeout)
     if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
         raise ContractError(f"{base_url}/v1/models returned an invalid model list")
-    identifiers = {
-        item.get("id") for item in payload["data"] if isinstance(item, dict)
-    }
+    identifiers = {item.get("id") for item in payload["data"] if isinstance(item, dict)}
     if identifiers != {model_id}:
         raise ContractError(
             f"{base_url}/v1/models advertises {sorted(str(item) for item in identifiers)}; "
@@ -1067,7 +1557,12 @@ def _verify_model_endpoint(base_url: str, model_id: str, timeout: float) -> None
         )
 
 
-def verify_readiness(contract: dict[str, Any], timeout: float) -> None:
+def verify_readiness(
+    contract: dict[str, Any],
+    timeout: float,
+    edge_snapshot: Path,
+    cosmos_cache: Path,
+) -> None:
     edge_image_id = contract["images"]["edge4b_vllm"].get("image_id")
     if not isinstance(edge_image_id, str):
         raise ContractError("Edge4B image lacks a reviewed local image ID")
@@ -1077,6 +1572,10 @@ def verify_readiness(contract: dict[str, Any], timeout: float) -> None:
         edge_image_id,
         EDGE_COMMAND,
         {"HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1"},
+        {
+            "/models/edge4b": edge_snapshot,
+            "/blobs": _edge_repository(edge_snapshot) / "blobs",
+        },
     )
     _verify_running_container(
         "vss-rtvi-vlm",
@@ -1089,7 +1588,11 @@ def verify_readiness(contract: dict[str, Any], timeout: float) -> None:
             "VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME": COSMOS_MODEL_ID,
             "VLLM_GPU_MEMORY_UTILIZATION": "0.35",
             "NGC_API_KEY": "",
+            "NVIDIA_API_KEY": "",
+            "HF_TOKEN": "",
+            "OPENAI_API_KEY": "",
         },
+        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache": cosmos_cache},
     )
     _verify_running_environment(
         "vss-agent",
@@ -1185,7 +1688,12 @@ def _audit(args: argparse.Namespace) -> int:
         except ContractError as exc:
             failures.append(f"memory: {exc}")
             print(f"FAIL memory: {exc}")
-    if contract is not None and edge is not None and cosmos is not None and not failures:
+    if (
+        contract is not None
+        and edge is not None
+        and cosmos is not None
+        and not failures
+    ):
         try:
             verify_resolved_compose(args.runtime_env, edge, cosmos)
             print("PASS resolved pull-free Compose contract")
@@ -1195,7 +1703,9 @@ def _audit(args: argparse.Namespace) -> int:
     if failures:
         print(f"BLOCKED official-edge launch: {len(failures)} gate(s) failed")
         return 1
-    print("READY official-edge artifacts and admission are qualified for pull-free launch")
+    print(
+        "READY official-edge artifacts and admission are qualified for pull-free launch"
+    )
     return 0
 
 
@@ -1213,11 +1723,16 @@ def _parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("static", help="verify source anchors and inert lane files")
-    subparsers.add_parser("audit", help="run every pre-launch gate; expected to fail until staged")
     subparsers.add_parser(
-        "render-command", help="print a pull-free launch command only after every gate passes"
+        "audit", help="run every pre-launch gate; expected to fail until staged"
     )
-    ready = subparsers.add_parser("readiness", help="verify an already-running official lane")
+    subparsers.add_parser(
+        "render-command",
+        help="print a pull-free launch command only after every gate passes",
+    )
+    ready = subparsers.add_parser(
+        "readiness", help="verify an already-running official lane"
+    )
     ready.add_argument("--timeout", type=float, default=5.0)
     return parser
 
@@ -1243,7 +1758,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "readiness":
             verify_resolved_compose(args.runtime_env, edge, cosmos)
-            verify_readiness(contract, args.timeout)
+            verify_readiness(contract, args.timeout, edge, cosmos)
             print("PASS official-edge runtime identity/readiness contract")
             return 0
         raise ContractError(f"unsupported command: {args.command}")

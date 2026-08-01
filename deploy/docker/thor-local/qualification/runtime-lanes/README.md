@@ -56,6 +56,12 @@ executable service boundary: embedding re-index validation and the three
 NvSchema format/JSON/Protobuf contracts. The unresolved bindings machine-block
 runtime completeness instead of falling back to a generic repository role.
 
+The two `mv3dt-config-utils` capabilities retain the `custom-data-warehouse`
+lane and alternate-local acceptance boundary, but bind specifically to the
+non-Compose `repository-tooling` role. Their generators run in the separate
+`offline-mv3dt-tools` candidate package; that observation does not promote an
+official oracle or qualify the Warehouse service.
+
 The compiler also raw-locks the manifest, ledger, oracle set, oracle schema,
 advertised-entry classification rules, and advertised-entry gap plan. Any source change therefore
 requires a deliberate re-review instead of silently reclassifying a feature.

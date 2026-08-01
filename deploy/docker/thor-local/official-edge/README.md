@@ -31,14 +31,15 @@ image ID. RT-VLM is the only locally locked runtime image in this lane.
 ## Current intentional blocker
 
 The exact Nemotron 3 Nano 4B snapshot and Cosmos3 NGC cache were absent during
-this milestone, as was the exact vLLM image manifest described above.
+this milestone, as was the exact vLLM image described above.
 Consequently, `artifacts.lock.json` is intentionally marked
-`incomplete_fail_closed`; it contains no invented revision or content hashes.
+`incomplete_fail_closed`. The public immutable Nemotron revision is pinned, but
+the lock contains no invented local content hashes.
 The launcher will not print a command, much less execute one, until a later
 connected staging step:
 
 1. obtains the exact licensed/gated artifacts;
-2. records a reviewed immutable Edge 4B revision;
+2. confirms the staged snapshot matches the already reviewed immutable Edge 4B revision;
 3. records every snapshot/cache directory, file, symlink target, size and
    SHA-256 in the two exact tree locks;
 4. changes both entries to `locked_exact` and the top-level state to
@@ -47,6 +48,30 @@ connected staging step:
 There is deliberately no "capture and trust" command here. Creating an exact
 lock is a review operation, not a way to bless whatever happens to be in a
 cache.
+
+An inert-by-default helper can prepare a review candidate without changing the
+checked-in lock, the artifacts, Docker, credentials, or the network:
+
+```bash
+python3 deploy/docker/thor-local/official-edge/lock_candidate.py plan
+
+python3 deploy/docker/thor-local/official-edge/lock_candidate.py generate \
+  --acknowledgement I_ACCEPT_READ_ONLY_OFFICIAL_EDGE_ARTIFACT_HASHING \
+  --edge4b-snapshot /exact/hf/repository/snapshots/3fe6dab75665a93884214ad4b1b95cf02717d081 \
+  --cosmos3-cache /exact/ngc/model/cache
+```
+
+`generate` hashes the snapshot, the entire sibling blob store that Compose will
+mount, and the Cosmos cache. It prints a `candidate_only_not_promoted` JSON
+document whose proposed lock is deliberately `candidate_only_unqualified`.
+It never writes `artifacts.lock.json`, and the verifier will not accept its
+local-byte provenance as an independent upstream provenance review. Promotion
+requires a separate review of upstream identity/hash evidence and every emitted
+tree entry. A promoted entry must bind a regular, non-symlinked evidence JSON
+file below `deploy/docker/thor-local/official-edge/provenance/` by its exact
+SHA-256; the verifier also checks that document's identity, reviewer, HTTPS
+sources, and non-empty upstream SHA-256 list. No such evidence is fabricated by
+the candidate generator.
 
 ## Static verification
 
@@ -89,7 +114,10 @@ never`. Before printing, the tool resolves the combined Compose graph and
 rejects a wrong model ID, selector, endpoint, prompt path, image, or accidental
 Qwen service selection.
 
-The overlay uses host-private endpoints. Edge 4B binds only to loopback. The
+The overlay uses host-private endpoints. Edge 4B binds only to loopback. A
+standard Hugging Face cache snapshot is a symlink forest, so the snapshot and
+its sibling `blobs` directory are verified and mounted separately read-only;
+mounting the snapshot alone would leave its model files broken. The
 Cosmos3 NGC cache is a separate, read-only operator-provided bind path so it is not
 silently conflated with the existing exact Cosmos Embed volume lock.
 

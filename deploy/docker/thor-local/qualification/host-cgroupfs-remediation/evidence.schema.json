@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor-host-cgroupfs-remediation/evidence.schema.json",
+  "title": "Thor host Docker cgroupfs remediation evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "tool_id", "mode", "status",
+    "writes_or_lifecycle_actions", "acknowledgement", "failure", "blockers",
+    "transaction_id", "daemon_config", "docker", "containers", "rollback"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "tool_id": { "const": "thor-host-cgroupfs-remediation" },
+    "mode": { "enum": ["plan", "inspect", "execute", "recover"] },
+    "status": { "enum": ["planned", "ready", "blocked", "passed", "failed"] },
+    "writes_or_lifecycle_actions": { "type": "boolean" },
+    "acknowledgement": {
+      "enum": [
+        "I_AUTHORIZE_DOCKER_CGROUPFS_RESTART_AND_EXACT_WORKLOAD_RESTORATION",
+        "I_AUTHORIZE_DOCKER_CGROUPFS_FAILURE_RECOVERY"
+      ]
+    },
+    "failure": { "type": ["string", "null"] },
+    "blockers": {
+      "type": "array", "items": { "type": "string" }, "uniqueItems": true
+    },
+    "transaction_id": {
+      "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/transactionId" }]
+    },
+    "lifecycle": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "daemon_config": { "$ref": "#/$defs/daemonConfig" },
+    "docker": { "$ref": "#/$defs/dockerState" },
+    "containers": { "$ref": "#/$defs/containerState" },
+    "rollback": { "$ref": "#/$defs/rollbackState" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "nullableDigest": {
+      "anyOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }]
+    },
+    "transactionId": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+    "nullableCount": {
+      "anyOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }]
+    },
+    "containerIds": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "uniqueItems": true
+    },
+    "nullableContainerIds": {
+      "anyOf": [{ "$ref": "#/$defs/containerIds" }, { "type": "null" }]
+    },
+    "fileMetadata": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exists", "mode", "uid", "gid", "xattrs_sha256", "metadata_sha256"],
+      "properties": {
+        "exists": { "type": "boolean" },
+        "mode": { "type": "integer", "minimum": 0, "maximum": 4095 },
+        "uid": { "type": "integer", "minimum": 0 },
+        "gid": { "type": "integer", "minimum": 0 },
+        "xattrs_sha256": { "$ref": "#/$defs/digest" },
+        "metadata_sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "nullableFileMetadata": {
+      "anyOf": [{ "$ref": "#/$defs/fileMetadata" }, { "type": "null" }]
+    },
+    "daemonConfig": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "before_sha256", "candidate_sha256", "after_sha256",
+        "file_state_before", "file_state_candidate", "file_state_after",
+        "strict_json", "dockerd_validation", "semantic_delta_only",
+        "full_file_state_match", "original_restored"
+      ],
+      "properties": {
+        "before_sha256": { "$ref": "#/$defs/nullableDigest" },
+        "candidate_sha256": { "$ref": "#/$defs/nullableDigest" },
+        "after_sha256": { "$ref": "#/$defs/nullableDigest" },
+        "file_state_before": { "$ref": "#/$defs/nullableFileMetadata" },
+        "file_state_candidate": { "$ref": "#/$defs/nullableFileMetadata" },
+        "file_state_after": { "$ref": "#/$defs/nullableFileMetadata" },
+        "strict_json": { "type": ["boolean", "null"] },
+        "dockerd_validation": { "type": ["boolean", "null"] },
+        "semantic_delta_only": { "type": ["boolean", "null"] },
+        "full_file_state_match": { "type": ["boolean", "null"] },
+        "original_restored": { "type": ["boolean", "null"] }
+      }
+    },
+    "dockerState": {
+      "type": "object", "additionalProperties": false,
+      "required": ["driver_before", "driver_after", "restart_attempted", "rollback_restart_attempted"],
+      "properties": {
+        "driver_before": { "type": ["string", "null"] },
+        "driver_after": { "type": ["string", "null"] },
+        "restart_attempted": { "type": "boolean" },
+        "rollback_restart_attempted": { "type": "boolean" }
+      }
+    },
+    "containerState": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "inventory_before_count", "inventory_before_ids", "inventory_before_sha256",
+        "running_before_count", "running_before_ids", "running_before_sha256",
+        "inventory_after_count", "inventory_after_ids", "inventory_after_sha256",
+        "running_after_count", "running_after_ids", "running_after_sha256",
+        "start_action_count", "start_actions", "start_actions_sha256",
+        "all_start_targets_from_snapshot", "exact_set_restored", "healthy_set_restored"
+      ],
+      "properties": {
+        "inventory_before_count": { "$ref": "#/$defs/nullableCount" },
+        "inventory_before_ids": { "$ref": "#/$defs/nullableContainerIds" },
+        "inventory_before_sha256": { "$ref": "#/$defs/nullableDigest" },
+        "running_before_count": { "$ref": "#/$defs/nullableCount" },
+        "running_before_ids": { "$ref": "#/$defs/nullableContainerIds" },
+        "running_before_sha256": { "$ref": "#/$defs/nullableDigest" },
+        "inventory_after_count": { "$ref": "#/$defs/nullableCount" },
+        "inventory_after_ids": { "$ref": "#/$defs/nullableContainerIds" },
+        "inventory_after_sha256": { "$ref": "#/$defs/nullableDigest" },
+        "running_after_count": { "$ref": "#/$defs/nullableCount" },
+        "running_after_ids": { "$ref": "#/$defs/nullableContainerIds" },
+        "running_after_sha256": { "$ref": "#/$defs/nullableDigest" },
+        "start_action_count": { "type": "integer", "minimum": 0 },
+        "start_actions": { "$ref": "#/$defs/containerIds" },
+        "start_actions_sha256": { "$ref": "#/$defs/digest" },
+        "all_start_targets_from_snapshot": { "type": "boolean" },
+        "exact_set_restored": { "type": ["boolean", "null"] },
+        "healthy_set_restored": { "type": ["boolean", "null"] }
+      }
+    },
+    "rollbackState": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attempted", "config_restored", "exact_set_restored", "failures"],
+      "properties": {
+        "attempted": { "type": "boolean" },
+        "config_restored": { "type": ["boolean", "null"] },
+        "exact_set_restored": { "type": ["boolean", "null"] },
+        "failures": {
+          "type": "array", "items": { "type": "string" }, "uniqueItems": true
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "const": "plan" } }, "required": ["mode"] },
+      "then": {
+        "properties": {
+          "status": { "enum": ["planned", "failed"] },
+          "writes_or_lifecycle_actions": { "const": false },
+          "acknowledgement": { "const": "I_AUTHORIZE_DOCKER_CGROUPFS_RESTART_AND_EXACT_WORKLOAD_RESTORATION" },
+          "blockers": { "maxItems": 0 },
+          "transaction_id": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "planned" } }, "required": ["status"] },
+      "then": {
+        "required": ["lifecycle"],
+        "properties": { "mode": { "const": "plan" } }
+      },
+      "else": { "not": { "required": ["lifecycle"] } }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "inspect" } }, "required": ["mode"] },
+      "then": {
+        "properties": {
+          "status": { "enum": ["ready", "blocked", "failed"] },
+          "writes_or_lifecycle_actions": { "const": false },
+          "acknowledgement": { "const": "I_AUTHORIZE_DOCKER_CGROUPFS_RESTART_AND_EXACT_WORKLOAD_RESTORATION" },
+          "transaction_id": { "type": "null" },
+          "docker": { "properties": { "restart_attempted": { "const": false }, "rollback_restart_attempted": { "const": false } } },
+          "rollback": { "properties": { "attempted": { "const": false } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "execute" } }, "required": ["mode"] },
+      "then": {
+        "properties": {
+          "status": { "enum": ["passed", "failed"] },
+          "acknowledgement": { "const": "I_AUTHORIZE_DOCKER_CGROUPFS_RESTART_AND_EXACT_WORKLOAD_RESTORATION" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "recover" } }, "required": ["mode"] },
+      "then": {
+        "properties": {
+          "status": { "enum": ["ready", "passed", "failed"] },
+          "acknowledgement": { "const": "I_AUTHORIZE_DOCKER_CGROUPFS_FAILURE_RECOVERY" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "failed" } }, "required": ["status"] },
+      "then": { "properties": { "failure": { "type": "string", "minLength": 1 } } },
+      "else": { "properties": { "failure": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "blocked" } }, "required": ["status"] },
+      "then": { "properties": { "blockers": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "status": { "enum": ["planned", "ready", "passed"] } }, "required": ["status"] },
+      "then": { "properties": { "blockers": { "maxItems": 0 } } }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "execute" }, "transaction_id": { "$ref": "#/$defs/transactionId" } },
+        "required": ["mode", "transaction_id"]
+      },
+      "then": { "properties": { "writes_or_lifecycle_actions": { "const": true } } }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "recover" }, "transaction_id": { "type": "null" } },
+        "required": ["mode", "transaction_id"]
+      },
+      "then": { "properties": { "writes_or_lifecycle_actions": { "const": false } } }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "recover" }, "transaction_id": { "$ref": "#/$defs/transactionId" } },
+        "required": ["mode", "transaction_id"]
+      },
+      "then": { "properties": { "writes_or_lifecycle_actions": { "const": true } } }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "execute" }, "status": { "const": "passed" } },
+        "required": ["mode", "status"]
+      },
+      "then": {
+        "properties": {
+          "writes_or_lifecycle_actions": { "const": true },
+          "transaction_id": { "$ref": "#/$defs/transactionId" },
+          "daemon_config": {
+            "properties": {
+              "candidate_sha256": { "$ref": "#/$defs/digest" },
+              "after_sha256": { "$ref": "#/$defs/digest" },
+              "file_state_before": { "$ref": "#/$defs/fileMetadata" },
+              "file_state_candidate": { "$ref": "#/$defs/fileMetadata" },
+              "file_state_after": { "$ref": "#/$defs/fileMetadata" },
+              "strict_json": { "const": true }, "dockerd_validation": { "const": true },
+              "semantic_delta_only": { "const": true }, "full_file_state_match": { "const": true },
+              "original_restored": { "type": "null" }
+            }
+          },
+          "docker": {
+            "properties": {
+              "driver_before": { "type": "string" }, "driver_after": { "const": "cgroupfs" },
+              "restart_attempted": { "const": true }, "rollback_restart_attempted": { "const": false }
+            }
+          },
+          "containers": {
+            "properties": {
+              "inventory_before_ids": { "$ref": "#/$defs/containerIds" },
+              "running_before_ids": { "$ref": "#/$defs/containerIds" },
+              "inventory_after_ids": { "$ref": "#/$defs/containerIds" },
+              "running_after_ids": { "$ref": "#/$defs/containerIds" },
+              "all_start_targets_from_snapshot": { "const": true },
+              "exact_set_restored": { "const": true }, "healthy_set_restored": { "const": true }
+            }
+          },
+          "rollback": {
+            "properties": {
+              "attempted": { "const": false }, "config_restored": { "type": "null" },
+              "exact_set_restored": { "type": "null" }, "failures": { "maxItems": 0 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "recover" }, "status": { "const": "passed" } },
+        "required": ["mode", "status"]
+      },
+      "then": {
+        "properties": {
+          "containers": {
+            "properties": {
+              "all_start_targets_from_snapshot": { "const": true },
+              "exact_set_restored": { "const": true }, "healthy_set_restored": { "const": true }
+            }
+          },
+          "rollback": {
+            "properties": {
+              "config_restored": { "const": true },
+              "exact_set_restored": { "const": true }, "failures": { "maxItems": 0 }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

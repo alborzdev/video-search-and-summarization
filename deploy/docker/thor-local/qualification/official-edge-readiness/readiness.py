@@ -26,6 +26,26 @@ OFFICIAL_VERIFIER = (
 )
 ACKNOWLEDGEMENT = "I_ACCEPT_READ_ONLY_HOST_INSPECTION"
 DOCKER_HOST = "unix:///var/run/docker.sock"
+PLAN_ID = "vss-3.2.1-thor-official-edge-readiness"
+EDGE_VLLM_REFERENCE = (
+    "ghcr.io/nvidia-ai-iot/vllm@sha256:"
+    "b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"
+)
+EDGE_VLLM_IMAGE_ID = (
+    "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"
+)
+RT_VLM_REFERENCE = (
+    "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:"
+    "5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+)
+RT_VLM_IMAGE_ID = (
+    "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+)
+REQUIRED_IMAGE_IDENTITIES = {
+    "edge_vllm": (EDGE_VLLM_REFERENCE, EDGE_VLLM_IMAGE_ID),
+    "rt_vlm": (RT_VLM_REFERENCE, RT_VLM_IMAGE_ID),
+}
+CONTRACT_IMAGE_KEYS = {"edge_vllm": "edge4b_vllm", "rt_vlm": "rt_vlm"}
 
 
 class ReadinessError(RuntimeError):
@@ -71,8 +91,13 @@ def _expect(mapping: dict[str, Any], key: str, expected: Any, context: str) -> N
 
 
 def validate_plan(plan: dict[str, Any]) -> None:
+    canonical_plan = _load_json(DEFAULT_PLAN)
+    if plan != canonical_plan:
+        raise ReadinessError(
+            "caller-supplied readiness plans cannot alter the checked-in plan"
+        )
     _expect(plan, "schema_version", 1, "plan")
-    _expect(plan, "plan_id", "vss-3.2.1-thor-official-edge-readiness", "plan")
+    _expect(plan, "plan_id", PLAN_ID, "plan")
     _expect(plan, "scope", "read_only_prelaunch_inspection", "plan")
     policy = plan.get("inspection_policy")
     if not isinstance(policy, dict):
@@ -101,18 +126,47 @@ def validate_plan(plan: dict[str, Any]) -> None:
         "identities.llm",
     )
     _expect(
+        identities["llm"],
+        "served_model_id",
+        "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+        "identities.llm",
+    )
+    _expect(
+        identities["llm"],
+        "standard_hf_cache_directory",
+        "models--nvidia--NVIDIA-Nemotron-3-Nano-4B-FP8",
+        "identities.llm",
+    )
+    _expect(
         identities["vlm"],
         "artifact_id",
         "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
         "identities.vlm",
     )
     _expect(identities["vlm"], "selector", "cosmos-reason3", "identities.vlm")
-    for key in ("edge_vllm", "rt_vlm"):
+    _expect(
+        identities["vlm"],
+        "served_model_id",
+        "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "identities.vlm",
+    )
+    for key, (
+        required_reference,
+        required_image_id,
+    ) in REQUIRED_IMAGE_IDENTITIES.items():
         entry = images.get(key)
         if not isinstance(entry, dict):
             raise ReadinessError(f"images.{key} must be an object")
         reference = entry.get("exact_reference")
         digest = entry.get("required_manifest_digest")
+        _expect(entry, "exact_reference", required_reference, f"images.{key}")
+        _expect(
+            entry,
+            "required_manifest_digest",
+            required_reference.rsplit("@", 1)[1],
+            f"images.{key}",
+        )
+        _expect(entry, "required_image_id", required_image_id, f"images.{key}")
         if not isinstance(reference, str) or not reference.endswith(f"@{digest}"):
             raise ReadinessError(f"images.{key} reference is not digest-bound")
         _expect(entry, "required_architecture", "arm64", f"images.{key}")
@@ -154,8 +208,26 @@ def validate_plan(plan: dict[str, Any]) -> None:
     )
     _expect(
         plan["admission"],
+        "minimum_available_memory_fraction",
+        "0.80",
+        "admission",
+    )
+    _expect(
+        plan["admission"],
         "known_minimum_remote_payload_bytes_excluding_cosmos3",
         19871036871,
+        "admission",
+    )
+    _expect(
+        plan["admission"],
+        "cosmos3_bf16_documented_disk_space_bytes",
+        30000000000,
+        "admission",
+    )
+    _expect(
+        plan["admission"],
+        "known_planning_floor_bytes_including_cosmos3",
+        49871036871,
         "admission",
     )
 
@@ -444,6 +516,7 @@ def inspect_image(entry: dict[str, Any]) -> dict[str, Any]:
     exact = (
         isinstance(digests, list)
         and reference in digests
+        and image_id == entry["required_image_id"]
         and architecture == entry["required_architecture"]
         and operating_system == "linux"
     )
@@ -457,6 +530,36 @@ def inspect_image(entry: dict[str, Any]) -> dict[str, Any]:
         "architecture": architecture,
         "os": operating_system,
     }
+
+
+def inspect_contract_image_locks(plan: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Read the source-locked official contract and enforce image graduation."""
+    contract_path = REPO_ROOT / "deploy/docker/thor-local/official-edge/contract.json"
+    contract = _load_json(contract_path)
+    contract_images = contract.get("images")
+    if not isinstance(contract_images, dict):
+        raise ReadinessError("official contract images must be an object")
+    result: dict[str, dict[str, Any]] = {}
+    for plan_key, contract_key in CONTRACT_IMAGE_KEYS.items():
+        observed = contract_images.get(contract_key)
+        if not isinstance(observed, dict):
+            raise ReadinessError(f"official contract image {contract_key} is absent")
+        expected = plan["images"][plan_key]
+        locked = (
+            observed.get("state") == "locked_exact"
+            and observed.get("reference") == expected["exact_reference"]
+            and observed.get("image_id") == expected["required_image_id"]
+        )
+        result[plan_key] = {
+            "state": "locked_exact" if locked else "not_locked_exact",
+            "contract_key": contract_key,
+            "observed_state": observed.get("state"),
+            "reference_matches": observed.get("reference")
+            == expected["exact_reference"],
+            "image_id_matches": observed.get("image_id")
+            == expected["required_image_id"],
+        }
+    return result
 
 
 def inspect_mutable_tag(
@@ -568,7 +671,9 @@ def inspect_memory(path: Path, required_fraction: str) -> dict[str, Any]:
     }
 
 
-def inspect_disk(path: Path, plan: dict[str, Any]) -> dict[str, Any]:
+def inspect_disk(
+    path: Path, plan: dict[str, Any], *, staging_complete: bool
+) -> dict[str, Any]:
     absolute = path.expanduser().absolute()
     try:
         values = os.statvfs(absolute)
@@ -578,17 +683,37 @@ def inspect_disk(path: Path, plan: dict[str, Any]) -> dict[str, Any]:
             "state": "inspection_unavailable",
             "detail": str(exc),
         }
-    return {
+    result = {
         "path": str(absolute),
-        "state": "required_staging_bytes_unknown",
         "capacity_bytes": values.f_blocks * values.f_frsize,
         "available_bytes": values.f_bavail * values.f_frsize,
         "known_minimum_remote_payload_bytes_excluding_cosmos3": plan["admission"][
             "known_minimum_remote_payload_bytes_excluding_cosmos3"
         ],
-        "required_additional_bytes": None,
-        "capacity_qualified": False,
+        "cosmos3_bf16_documented_disk_space_bytes": plan["admission"][
+            "cosmos3_bf16_documented_disk_space_bytes"
+        ],
+        "known_planning_floor_bytes_including_cosmos3": plan["admission"][
+            "known_planning_floor_bytes_including_cosmos3"
+        ],
     }
+    if staging_complete:
+        result.update(
+            {
+                "state": "pass_no_additional_staging_required",
+                "required_additional_bytes": 0,
+                "capacity_qualified": True,
+            }
+        )
+    else:
+        result.update(
+            {
+                "state": "required_staging_bytes_still_not_exact",
+                "required_additional_bytes": None,
+                "capacity_qualified": False,
+            }
+        )
+    return result
 
 
 def inspect_artifact_lock(plan: dict[str, Any]) -> dict[str, Any]:
@@ -640,13 +765,22 @@ def _load_official_verifier() -> Any:
 
 
 def verify_candidate_trees(
-    lock_path: Path, edge_snapshot: Path, cosmos_cache: Path
+    lock_path: Path,
+    edge_snapshot: Path,
+    cosmos_cache: Path,
+    *,
+    provenance_root: Path | None = None,
 ) -> dict[str, Any]:
     """Delegate byte-exact tree verification to the source-locked verifier."""
 
     verifier = _load_official_verifier()
     try:
-        verifier.verify_artifacts(lock_path, edge_snapshot, cosmos_cache)
+        verifier.verify_artifacts(
+            lock_path,
+            edge_snapshot,
+            cosmos_cache,
+            provenance_root=provenance_root,
+        )
     except verifier.ContractError as exc:
         return {
             "state": "mismatch_or_unqualified",
@@ -706,6 +840,12 @@ def build_host_result(
     meminfo: Path,
     disk_path: Path,
 ) -> dict[str, Any]:
+    try:
+        canonical_meminfo = meminfo.resolve(strict=True)
+    except OSError as exc:
+        raise ReadinessError(f"cannot resolve host meminfo: {exc}") from exc
+    if canonical_meminfo != DEFAULT_MEMINFO:
+        raise ReadinessError("host readiness requires canonical /proc/meminfo")
     sources = verify_source_locks(plan)
     artifact_lock = inspect_artifact_lock(plan)
     edge = inspect_edge_artifact(plan, hf_hub.expanduser().absolute())
@@ -734,7 +874,14 @@ def build_host_result(
             "verifier": str(OFFICIAL_VERIFIER.relative_to(REPO_ROOT)),
         }
     volume = inspect_volume(plan["artifact_gates"]["cosmos_cache"]["discovery_volume"])
+    contract_image_locks = inspect_contract_image_locks(plan)
     edge_image = inspect_image(plan["images"]["edge_vllm"])
+    edge_image["contract_lock"] = contract_image_locks["edge_vllm"]
+    if (
+        edge_image["state"] == "present_exact"
+        and edge_image["contract_lock"]["state"] != "locked_exact"
+    ):
+        edge_image["state"] = "present_but_contract_unqualified"
     edge_image["reviewed_remote_staging_metadata"] = plan[
         "reviewed_remote_staging_metadata"
     ]["edge_vllm_image"]
@@ -744,6 +891,12 @@ def build_host_result(
         plan["images"]["edge_vllm"]["exact_reference"],
     )
     rtvlm_image = inspect_image(plan["images"]["rt_vlm"])
+    rtvlm_image["contract_lock"] = contract_image_locks["rt_vlm"]
+    if (
+        rtvlm_image["state"] == "present_exact"
+        and rtvlm_image["contract_lock"]["state"] != "locked_exact"
+    ):
+        rtvlm_image["state"] = "present_but_contract_unqualified"
     images = {
         "edge_vllm": edge_image,
         "edge_vllm_documented_mutable_tag": mutable_image,
@@ -752,7 +905,14 @@ def build_host_result(
     memory = inspect_memory(
         meminfo, plan["admission"]["minimum_available_memory_fraction"]
     )
-    disk = inspect_disk(disk_path, plan)
+    staging_complete = (
+        sources["state"] == "match"
+        and artifact_lock["lock_state"] == "complete_exact"
+        and tree_verification["state"] == "exact_match"
+        and edge_image["state"] == "present_exact"
+        and rtvlm_image["state"] == "present_exact"
+    )
+    disk = inspect_disk(disk_path, plan, staging_complete=staging_complete)
     containers: dict[str, Any] = {}
     for name, requirement in plan["containers"].items():
         image_key = requirement["required_image_key"]
@@ -816,13 +976,14 @@ def build_host_result(
                 f"Unified-memory admission state is {memory.get('state')}.",
             )
         )
-    blockers.append(
-        _blocker(
-            "admission.disk_bytes_unknown",
-            "unverified",
-            "Exact missing model/image byte requirements are not published in the reviewed lock; free bytes alone cannot qualify staging capacity.",
+    if disk.get("capacity_qualified") is not True:
+        blockers.append(
+            _blocker(
+                "admission.disk_bytes_unknown",
+                "blocked",
+                "Exact missing model/image byte requirements are not fully known; free bytes alone cannot qualify staging capacity.",
+            )
         )
-    )
     if volume["state"] == "present_metadata_only_not_identity_evidence":
         blockers.append(
             _blocker(

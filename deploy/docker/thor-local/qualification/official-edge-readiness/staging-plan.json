@@ -5,15 +5,15 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/official-edge/contract.json",
-      "sha256": "ff9deef74cb51942f33c056a08a19e60754e8b0498c4ccc0f98712b0d300ce4f"
+      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
-      "sha256": "66cff373171af11ef5be9715ef287484243fc0fef219e594b65da630cf37d891"
+      "sha256": "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/compose.yml",
-      "sha256": "e2101c8ad411f52f05bf9ac8446ce44a9bd52b3b37a76f3ca34db968b466480a"
+      "sha256": "8a57b27d6798fa1c4655994fecb1c7abd78a3f738e8d20370f0ecdbefb11369c"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official-edge.env",
@@ -21,11 +21,31 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official_edge.py",
-      "sha256": "f10d5e1c0ff17a2d682eba736fa6876c2d8fc65efe0b1029680af9264905977d"
+      "sha256": "779ef64bd134fa00934a7bdfdde3b1066678dd1e8ffa75c11c8b9b5af3f06faa"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
+      "sha256": "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/lock_candidate.py",
+      "sha256": "8e09377309640c09b2a3c50c1519d832f35f81fb8cf5a21f60d993dbf229c999"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/lock-candidate.schema.json",
+      "sha256": "210bb2abcddf2392f5308bdb3a07696ed5eb32f9011e569ce4e9ee2340231fb8"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/official-edge-readiness/readiness.py",
+      "sha256": "a9609cfd57757f5a682a64a280021b70581cae0222650a45a127e21a9ef303fc"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",
+      "sha256": "9afc561e582353998e162a7f7ae48c230db1d9480a2623607c1be3b38525f62d"
     },
     {
       "path": "skills/vss-deploy-profile/SKILL.md",
-      "sha256": "9d51066129bb36ef11eb51fef69437e6deed3538869077f4e2c5637f70204e21"
+      "sha256": "7f236d51a792fe5bb606ccbae79f039b331dcb707921249ebc1b337adc14ec72"
     },
     {
       "path": "skills/vss-deploy-profile/references/thor-official-edge.md",
@@ -48,12 +68,14 @@
     "edge_vllm": {
       "exact_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
       "required_manifest_digest": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+      "required_image_id": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09",
       "documented_mutable_tag": "ghcr.io/nvidia-ai-iot/vllm:latest-jetson-thor",
       "required_architecture": "arm64"
     },
     "rt_vlm": {
       "exact_reference": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
       "required_manifest_digest": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "required_image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
       "required_architecture": "arm64"
     }
   },
@@ -110,7 +132,9 @@
   "admission": {
     "minimum_available_memory_fraction": "0.80",
     "disk_rule": "unverified_until_exact_missing_artifact_and_image_bytes_are_known",
-    "known_minimum_remote_payload_bytes_excluding_cosmos3": 19871036871
+    "known_minimum_remote_payload_bytes_excluding_cosmos3": 19871036871,
+    "cosmos3_bf16_documented_disk_space_bytes": 30000000000,
+    "known_planning_floor_bytes_including_cosmos3": 49871036871
   },
   "containers": {
     "vss-nemotron-edge-4b": {

@@ -21,6 +21,10 @@ services:
       NVIDIA_DRIVER_CAPABILITIES: all
     volumes:
       - ${THOR_OFFICIAL_EDGE4B_SNAPSHOT:?Set the exact verified Edge4B snapshot path}:/models/edge4b:ro
+      # Hugging Face cache snapshots are symlink forests whose ../../blobs/*
+      # targets resolve to /blobs/* from /models/edge4b. Mount the separately
+      # verified sibling blob store so the immutable snapshot is usable.
+      - ${THOR_OFFICIAL_EDGE4B_BLOBS_DIR:?Set the exact verified Edge4B blobs path}:/blobs:ro
     tmpfs:
       - /tmp:size=2g,mode=1777,exec,nosuid,nodev
       - /runtime:size=8g,mode=0700,exec,nosuid,nodev
@@ -65,6 +69,9 @@ services:
       VIA_VLM_ENDPOINT: ""
       VIA_VLM_API_KEY: ""
       NGC_API_KEY: ""
+      NVIDIA_API_KEY: ""
+      HF_TOKEN: ""
+      OPENAI_API_KEY: ""
       VLM_MODEL_TO_USE: cosmos-reason3
       MODEL_PATH: ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final
       VLLM_GPU_MEMORY_UTILIZATION: "0.35"
@@ -75,6 +82,10 @@ services:
 
   vss-agent:
     environment:
+      NVIDIA_API_KEY: ""
+      OPENAI_API_KEY: ""
+      HF_TOKEN: ""
+      RAG_API_KEY: ""
       LLM_MODE: remote
       LLM_MODEL_TYPE: vllm
       LLM_NAME: nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8

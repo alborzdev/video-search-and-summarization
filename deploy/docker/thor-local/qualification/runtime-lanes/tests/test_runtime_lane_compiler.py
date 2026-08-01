@@ -280,6 +280,8 @@ def test_service_binding_audit_is_planning_only_and_unresolved_is_fail_closed(
             "protocol.kafka.nvschema",
             "protocol.redis.events",
             "runtime.rtvi.input-codec-boundary",
+            "tool.mv3dt.cam-info-generator",
+            "tool.mv3dt.pub-sub-generator",
         )
     } == {
         "api.vss-configurator.sensor": ["vss-configurator"],
@@ -291,6 +293,8 @@ def test_service_binding_audit_is_planning_only_and_unresolved_is_fail_closed(
         "protocol.kafka.nvschema": ["alerts", "infrastructure"],
         "protocol.redis.events": ["behavior-analytics", "infrastructure"],
         "runtime.rtvi.input-codec-boundary": ["rt-cv"],
+        "tool.mv3dt.cam-info-generator": ["repository-tooling"],
+        "tool.mv3dt.pub-sub-generator": ["repository-tooling"],
     }
 
 

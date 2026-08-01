@@ -32,10 +32,21 @@ in this directory:
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
   to a bounded execution lane without manufacturing runtime evidence;
+- `offline-mv3dt-tools/` executes the two custom-data MV3DT configuration
+  utilities twice against a tiny synthetic two-camera calibration, locking
+  schema, matrix, camera-ID, MQTT-topology, determinism, confinement, and
+  cleanup observations. It uses neither the Warehouse sample nor Docker,
+  models, cloud inference, network, or service lifecycle, and remains
+  candidate-only;
 - `advertised-entry-gaps/` gives each advertised entry from the 16 families
   that lack capability rows its own still-open semantic oracle plan;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
+- `host-cgroupfs-remediation/` provides an inert-by-default, exact-acknowledgement
+  transaction for preserving Docker daemon settings, switching only the native
+  cgroup driver, and restoring exactly the previously running container set.
+  Static qualification exercises only its mocked plan/rollback/recovery suite;
+  no host mutation or Docker restart is performed;
 - `official-edge-readiness/` fixes the exact Nemotron/Cosmos identities,
   source-locks all staging gates, and offers a separately acknowledged,
   allowlisted read-only inspection that cannot claim runtime qualification;
@@ -71,7 +82,9 @@ fourteen-family watchlist remains pointer-only; the adjacent exact diff package
 proves that every commit and path/status in the locked prerelease range was
 considered, but does not prove that a classifier captured every feature meaning.
 Neither adds official capabilities, runtime evidence, or `passed_current`
-results.
+results. The two offline MV3DT observations likewise leave their official
+capability/oracle states unchanged while proving that the checked-in
+repository tools execute deterministically on Thor with custom data.
 
 Run the contract tier from the repository root:
 

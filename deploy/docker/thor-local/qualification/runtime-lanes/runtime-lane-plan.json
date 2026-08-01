@@ -65340,14 +65340,14 @@
           "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
         ],
         "planned_service_roles": [
-          "warehouse-mv3dt"
+          "repository-tooling"
         ],
-        "planned_service_compose_paths": [
-          "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
         ],
-        "planned_non_compose_roles": [],
         "service_binding_state": "planning_only",
-        "service_binding_basis": "reviewed MV3DT family rule",
+        "service_binding_basis": "reviewed checked-in capability contract and service definition",
         "service_binding_source_claims": [
           {
             "source_id": "main-repository-7732edf8",
@@ -65505,14 +65505,14 @@
           "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
         ],
         "planned_service_roles": [
-          "warehouse-mv3dt"
+          "repository-tooling"
         ],
-        "planned_service_compose_paths": [
-          "deploy/docker/thor-local/warehouse-mv3dt.compose.yml"
+        "planned_service_compose_paths": [],
+        "planned_non_compose_roles": [
+          "repository-tooling"
         ],
-        "planned_non_compose_roles": [],
         "service_binding_state": "planning_only",
-        "service_binding_basis": "reviewed MV3DT family rule",
+        "service_binding_basis": "reviewed checked-in capability contract and service definition",
         "service_binding_source_claims": [
           {
             "source_id": "main-repository-7732edf8",

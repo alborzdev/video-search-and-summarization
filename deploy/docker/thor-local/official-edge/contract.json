@@ -79,6 +79,7 @@
   ],
   "llm": {
     "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "revision": "3fe6dab75665a93884214ad4b1b95cf02717d081",
     "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
     "adapter_mode": "remote",
     "provider_type": "vllm",
@@ -107,6 +108,7 @@
       "documented_tag": "ghcr.io/nvidia-ai-iot/vllm:latest-jetson-thor",
       "reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
       "manifest_digest": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+      "manifest_config_digest": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09",
       "image_id": null,
       "state": "missing_exact_image_unqualified"
     },
