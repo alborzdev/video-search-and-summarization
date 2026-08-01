@@ -37,14 +37,15 @@ else
   echo "NVIDIA_API_KEY: not set — skip (required only for remote NIM)"
 fi
 
-# HF — edge only (gated Edge 4B)
+# HF — connected staging only for the current gated Thor model. The pull-free
+# official-edge runtime accepts no credentials.
 if [[ -n "${HF_TOKEN:-}" ]]; then
   status=$(curl -sf -o /dev/null -w '%{http_code}' \
     -H "Authorization: Bearer ${HF_TOKEN}" \
-    "https://huggingface.co/api/models/nvidia/NVIDIA-Nemotron-Edge-4B-v2.1-EA-020126_FP8")
+    "https://huggingface.co/api/models/nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8")
   [[ "$status" = "200" ]] \
     && echo "HF_TOKEN ok" \
-    || echo "HF_TOKEN invalid or no access to gated Edge 4B (HTTP $status)"
+    || echo "HF_TOKEN invalid or no access to gated Nemotron 3 Nano 4B (HTTP $status)"
 else
-  echo "HF_TOKEN: not set — skip (required only on edge with Edge 4B)"
+  echo "HF_TOKEN: not set — skip (used only for connected edge artifact staging)"
 fi

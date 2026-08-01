@@ -104,8 +104,11 @@ record with the exact ledger semantics, scenario and prospective fixture
 identity, required observations/assertions, arithmetic work bounds, admission
 gates, and intended mutation ownership. These prose-derived requirements are
 useful for implementation review but do not provide fixture files/generators,
-commands/requests, collectors, or executable cleanup. All 276 entries are
-therefore explicitly `planning_index_only`; the executor-ready count is zero.
+commands/requests, collectors, or executable cleanup for the complete contract.
+All 276 entries are therefore explicitly `planning_index_only`; the full-oracle
+executor-ready count is zero. Ten oracles also bind a runnable file-only static
+subset from `../qualification/executor-cases/`. Those subset bindings cannot
+promote the full oracle, create runtime evidence, or change capability state.
 The seven planned modes are static, config, runtime, API, protocol, model, and
 deploy.
 

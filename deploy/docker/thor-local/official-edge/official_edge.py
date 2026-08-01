@@ -31,6 +31,16 @@ DEFAULT_RUNTIME_ENV = DEPLOY_DOCKER / "thor-local/generated.env"
 OFFICIAL_ENV = HERE / "official-edge.env"
 OFFICIAL_COMPOSE = HERE / "compose.yml"
 OFFICIAL_AGENT_CONFIG = HERE / "config_edge.yml"
+THOR_OPERATOR_GUIDANCE = (
+    REPO_ROOT / "skills/vss-deploy-profile/references/thor-official-edge.md"
+)
+DEPLOY_PROFILE_SKILL = REPO_ROOT / "skills/vss-deploy-profile/SKILL.md"
+EDITABLE_THOR_GUIDANCE = (
+    REPO_ROOT / "skills/vss-deploy-profile/references/credentials.md",
+    REPO_ROOT / "skills/vss-deploy-profile/references/lvs-profile.md",
+    REPO_ROOT / "skills/vss-deploy-profile/references/troubleshooting.md",
+    REPO_ROOT / "skills/vss-deploy-profile/scripts/check_credentials.sh",
+)
 
 EDGE_REPOSITORY = "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8"
 EDGE_MODEL_ID = EDGE_REPOSITORY
@@ -496,6 +506,52 @@ def verify_agent_prompt_overlay() -> None:
             raise ContractError(f"official Edge prompt overlay drifted from source field {field}")
 
 
+def verify_operator_guidance(contract: dict[str, Any]) -> None:
+    """Keep editable Thor instructions on the versioned-doc model contract.
+
+    The older upstream references are intentional byte anchors, so this gate
+    verifies the repository-local precedence route instead of rewriting them.
+    """
+
+    guidance = THOR_OPERATOR_GUIDANCE.read_text(encoding="utf-8")
+    skill = DEPLOY_PROFILE_SKILL.read_text(encoding="utf-8")
+    older = contract["documentation_discrepancy"]["checkout_skill_model"]
+    current = contract["llm"]["served_model_id"]
+    cosmos_artifact = contract["vlm"]["artifact_id"]
+    cosmos_model = contract["vlm"]["served_model_id"]
+    required_guidance = (
+        current,
+        cosmos_artifact,
+        cosmos_model,
+        older,
+        "MUST NOT run its AGX/IGX Thor model command",
+        "MUST NOT",
+        "deploy/docker/thor-local/official-edge/contract.json",
+        "deploy/docker/thor-local/official-edge/README.md",
+    )
+    missing = [token for token in required_guidance if token not in guidance]
+    if missing:
+        raise ContractError(f"Thor operator precedence guidance is incomplete: {missing}")
+
+    route = "references/thor-official-edge.md"
+    if skill.count(route) < 3 or "Thor precedence gate" not in skill:
+        raise ContractError("deploy-profile skill does not mandate the Thor precedence route")
+
+    editable_text = {path: path.read_text(encoding="utf-8") for path in EDITABLE_THOR_GUIDANCE}
+    stale = [str(path.relative_to(REPO_ROOT)) for path, text in editable_text.items() if older in text]
+    if stale:
+        raise ContractError(f"editable Thor guidance still selects the older model: {stale}")
+
+    for path in EDITABLE_THOR_GUIDANCE[:3]:
+        if "thor-official-edge.md" not in editable_text[path]:
+            raise ContractError(
+                f"editable Thor guidance bypasses precedence route: {path.relative_to(REPO_ROOT)}"
+            )
+    credential_probe = editable_text[EDITABLE_THOR_GUIDANCE[3]]
+    if current not in credential_probe:
+        raise ContractError("credential helper does not probe the current Thor model identity")
+
+
 def verify_static(contract_path: Path = DEFAULT_CONTRACT) -> dict[str, Any]:
     contract = _load_json(contract_path)
     verify_contract_identity(contract)
@@ -503,6 +559,7 @@ def verify_static(contract_path: Path = DEFAULT_CONTRACT) -> dict[str, Any]:
     verify_env_contract()
     verify_compose_contract()
     verify_agent_prompt_overlay()
+    verify_operator_guidance(contract)
     return contract
 
 

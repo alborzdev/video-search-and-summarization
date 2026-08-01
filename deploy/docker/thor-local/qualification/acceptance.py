@@ -17,8 +17,10 @@ from __future__ import annotations
 import argparse
 import base64
 import binascii
+import copy
 import fcntl
 import hashlib
+import importlib.util
 import ipaddress
 import json
 import os
@@ -47,6 +49,7 @@ DEFAULT_OFFICIAL_LEDGER = REPO_ROOT / "deploy/docker/thor-local/parity/official-
 DEFAULT_WAVE3_RECEIPT = REPO_ROOT / (
     "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
 )
+DEFAULT_EXECUTOR_LIVE_INTEGRATION = SCRIPT_DIR / "executor-cases/integrate_live.py"
 
 WAVE3_RECEIPT_PATH = (
     "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
@@ -87,6 +90,13 @@ WAVE3_FEATURE_MAP_CANONICAL_SHA256 = (
 WAVE3_RECEIPT_CONTRACT_SHA256 = (
     "733ff41b1aa473f7a6e1a117d7162c981dca99034d080677ece7b4b4c220c46b"
 )
+WAVE3_HISTORICAL_OUTPUTS = {
+    "official-capabilities.json": "0dcd9aabc508b79d863da60c6b7ab592dd3f57032037dac750b160f72ff2f9b0",
+    "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+    "acceptance_inventory.json": "ba7d1b6d81b511e525eaadb79aac54416711d2ed543984847ddb9e9a8df7cce6",
+    "capability-oracles.json": "afaa785d6f7fb830b92042f61284e363915548573615cdc051e1ca8211a2b54b",
+    "official-capabilities.schema.json": "6bbd5354db37f871a2a912a79a1bb45c477617ef65e54e1fb1a13f0269efad39",
+}
 WAVE3_EXTERNAL_CAPABILITIES = {
     "tooling.smart-city.synthetic-data-pipeline",
     "boundary.warehouse.sdg-toolchain",
@@ -1198,15 +1208,36 @@ def _validate_wave3_contracts(
         "policies",
         "planning_requirements",
         "guardrails",
+        "static_executor_integration",
     }:
         raise AcceptanceConfigError("configuration_error")
     if wave3.get("schema_version") != 1 or wave3.get("policies") != {
-        "planning_only": True,
-        "materialized_fixtures_added": False,
-        "executor_ready_added": False,
+        "planning_inventory": True,
+        "materialized_fixtures_added": True,
+        "executor_ready_added": True,
         "runtime_pass_evidence_added": False,
         "warehouse_sample_bundle": "excluded_optional",
     }:
+        raise AcceptanceConfigError("configuration_error")
+
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "acceptance_executor_live_integration",
+            DEFAULT_EXECUTOR_LIVE_INTEGRATION,
+        )
+        if spec is None or spec.loader is None:
+            raise AcceptanceConfigError("configuration_error")
+        integration = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = integration
+        spec.loader.exec_module(integration)
+        expected_live_wave3 = integration.build_expected(execute=True)[2][
+            "wave3_contracts"
+        ]
+    except AcceptanceConfigError:
+        raise
+    except Exception as exc:
+        raise AcceptanceConfigError("configuration_error") from exc
+    if wave3 != expected_live_wave3:
         raise AcceptanceConfigError("configuration_error")
 
     receipt = load_json(DEFAULT_WAVE3_RECEIPT)
@@ -1270,25 +1301,9 @@ def _validate_wave3_contracts(
     }:
         raise AcceptanceConfigError("configuration_error")
 
-    output_paths = {
-        "official-capabilities.json": DEFAULT_OFFICIAL_LEDGER,
-        "manifest.json": DEFAULT_PARITY_MANIFEST,
-        "acceptance_inventory.json": DEFAULT_INVENTORY,
-        "capability-oracles.json": REPO_ROOT
-        / "deploy/docker/thor-local/parity/capability-oracles.json",
-        "official-capabilities.schema.json": REPO_ROOT
-        / "deploy/docker/thor-local/parity/official-capabilities.schema.json",
-    }
     outputs = receipt.get("outputs")
-    if not isinstance(outputs, dict) or set(outputs) != set(output_paths):
+    if outputs != WAVE3_HISTORICAL_OUTPUTS:
         raise AcceptanceConfigError("configuration_error")
-    for name, path in output_paths.items():
-        try:
-            digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        except OSError as exc:
-            raise AcceptanceConfigError("configuration_error") from exc
-        if outputs.get(name) != digest:
-            raise AcceptanceConfigError("configuration_error")
 
     sources = ledger.get("sources")
     capabilities = ledger.get("capabilities")
@@ -1461,6 +1476,23 @@ def _validate_wave3_contracts(
         }
         if owners & WAVE3_EXTERNAL_CAPABILITIES:
             requirement["blocker_ids"] = [WAVE3_EXTERNAL_BLOCKER]
+    live_requirement_by_id = {
+        item["id"]: item for item in expected_live_wave3["planning_requirements"]
+    }
+    for requirement in expected_requirements:
+        live_requirement = live_requirement_by_id.get(requirement["id"])
+        if live_requirement is None:
+            raise AcceptanceConfigError("configuration_error")
+        for key in (
+            "materialized",
+            "executor_ready",
+            "runtime_evidence",
+            "static_executor_binding",
+        ):
+            if key in live_requirement:
+                requirement[key] = copy.deepcopy(live_requirement[key])
+            else:
+                requirement.pop(key, None)
     requirements = wave3.get("planning_requirements")
     if (
         not isinstance(requirements, list)
@@ -1575,7 +1607,16 @@ def _validate_wave3_contracts(
         if isinstance(item, dict) and item.get("id") == WAVE3_EXTERNAL_BLOCKER
     ] != [expected_external_blocker]:
         raise AcceptanceConfigError("configuration_error")
-    return {"guardrails": 10, "planning_requirements": 110}
+    return {
+        "guardrails": 10,
+        "planning_requirements": 110,
+        "materialized_planning_requirements": sum(
+            item["materialized"] is True for item in expected_requirements
+        ),
+        "executor_ready_planning_requirements": sum(
+            item["executor_ready"] is True for item in expected_requirements
+        ),
+    }
 
 
 def validate_inventory(
@@ -1685,6 +1726,12 @@ def validate_inventory(
     )
     counts["wave3_guardrails"] = wave3_counts["guardrails"]
     counts["wave3_planning_requirements"] = wave3_counts["planning_requirements"]
+    counts["wave3_materialized_planning_requirements"] = wave3_counts[
+        "materialized_planning_requirements"
+    ]
+    counts["wave3_executor_ready_planning_requirements"] = wave3_counts[
+        "executor_ready_planning_requirements"
+    ]
     return {
         "blocker_count": len(blockers),
         "counts": counts,

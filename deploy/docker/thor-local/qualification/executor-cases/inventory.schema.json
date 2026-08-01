@@ -79,19 +79,23 @@
     "planning_source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "denominator", "required_source_state"],
+      "required": [
+        "path", "denominator", "required_source_state",
+        "allowed_materialization_states"
+      ],
       "properties": {
         "path": {"const": "deploy/docker/thor-local/qualification/acceptance_inventory.json"},
         "denominator": {"const": 110},
         "required_source_state": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["materialized", "executor_ready", "runtime_evidence"],
+          "required": ["runtime_evidence"],
           "properties": {
-            "materialized": {"const": false},
-            "executor_ready": {"const": false},
             "runtime_evidence": {"const": []}
           }
+        },
+        "allowed_materialization_states": {
+          "const": ["isolated_candidate", "live_planning_integration"]
         }
       }
     },

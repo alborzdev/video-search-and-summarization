@@ -29,7 +29,13 @@ Match the user's request to a profile, then load that profile's reference for si
 | "deploy warehouse" / "warehouse blueprint" / "vss warehouse" | `warehouse` | [`references/warehouse.md`](references/warehouse.md) |
 | "debug warehouse" / "warehouse not working" / "warehouse FPS low" / "warehouse BEV out of sync" | `warehouse` (debug) | [`references/warehouse-debug.md`](references/warehouse-debug.md) |
 
-**Edge hardware routing** (DGX Spark, AGX/IGX Thor): see [`references/edge.md`](references/edge.md). DGX Spark uses the Spark Nano 9B standalone local LLM on port `30081`; AGX/IGX Thor uses the Edge 4B standalone vLLM fallback.
+**Edge hardware routing is platform-specific.** DGX Spark uses
+[`references/edge.md`](references/edge.md) and its Spark Nano 9B standalone
+local LLM on port `30081`. For every profile on AGX/IGX Thor, **MUST read and
+follow [`references/thor-official-edge.md`](references/thor-official-edge.md)
+first**. That repository-local precedence reference selects the current exact
+Nemotron 3 Nano 4B FP8 + Cosmos3 Nano BF16 contract and supersedes the older,
+upstream-anchored Thor model recipe in `edge.md`, `base.md`, and `alerts.md`.
 
 **Each profile's reference owns its sizing table.** Don't pick a deployment shape from this file — open the profile reference and check minimum GPU count for the host's hardware against the (mode × platform) matrix there.
 
@@ -52,7 +58,7 @@ The deployment flow is always: copy `.env` to `generated.env`, apply overrides, 
 1. **Repo path** — auto-detect `video-search-and-summarization/` before
    asking the user. Use the detected path as `$REPO` for all subsequent
    commands.
-2. **Credential gates** — see [`references/credentials.md`](references/credentials.md): `NGC_CLI_API_KEY` for local/local_shared NIM pulls, `NVIDIA_API_KEY` for remote NIM endpoints, and `HF_TOKEN` for edge recipes that use gated HF models.
+2. **Credential gates** — see [`references/credentials.md`](references/credentials.md): `NGC_CLI_API_KEY` for local/local_shared NIM pulls, `NVIDIA_API_KEY` for remote NIM endpoints, and `HF_TOKEN` for edge artifact-staging flows that use gated HF models. The pull-free official Thor lane itself accepts no credentials.
 3. **System prerequisites (GPU driver, Docker, NVIDIA Container Toolkit, kernel sysctls, and — if `ufw` is active — the [Docker-bridge→host firewall allow](references/prerequisites.md#firewall) so bridge NIMs can fetch clips from host-mode VST)** — full checks in [`references/prerequisites.md`](references/prerequisites.md). Canonical hardware/driver matrix is the [VSS prerequisites page](https://docs.nvidia.com/vss/3.2.0/prerequisites.html).
 
 The auto-detect snippet (git-root, then a common-path probe gated on
@@ -65,7 +71,9 @@ Export the resolved `$REPO`; if detection fails, ask the user for the checkout p
 Run before every deploy. The full system checklist and remediation steps live
 in [`references/prerequisites.md`](references/prerequisites.md#preflight).
 For DGX Spark / IGX Thor / AGX Thor, also run the cache-cleaner check in
-[`references/edge.md`](references/edge.md#cache-cleaner-every-edge-deploy).
+[`references/edge.md`](references/edge.md#cache-cleaner-every-edge-deploy). On
+Thor this link is for the host prerequisite only; model selection remains owned
+by [`references/thor-official-edge.md`](references/thor-official-edge.md).
 
 **Detect sudo mode first.** Several pre-flight remediations and the
 edge cache-cleaner installer call `sudo`. If the host requires a
@@ -114,7 +122,15 @@ silently deploy remote because a var happened to exist.
 
 If no combination on this host satisfies the profile's sizing requirements, **stop and report the blocker** — don't silently pick another shape.
 
-> **Edge shared mode is platform-specific.** Full recipes are in [`references/edge.md`](references/edge.md).
+> **Edge shared mode is platform-specific.** DGX Spark uses
+> [`references/edge.md`](references/edge.md). Every AGX/IGX Thor profile uses
+> [`references/thor-official-edge.md`](references/thor-official-edge.md).
+
+**Thor precedence gate.** On AGX/IGX Thor, do not select or probe a model from
+the anchored `edge.md`, `base.md`, or `alerts.md` recipes. Use
+[`references/thor-official-edge.md`](references/thor-official-edge.md) and its
+fail-closed local contract. Missing exact artifacts are a blocker, not permission
+to use the older checkout model.
 
 ## Deployment Flow
 

@@ -36,6 +36,29 @@ class OfficialEdgeStaticTests(unittest.TestCase):
         )
         self.assertIsNone(contract["images"]["edge4b_vllm"]["image_id"])
 
+    def test_thor_operator_guidance_routes_to_exact_current_contract(self) -> None:
+        contract = oe._load_json(oe.DEFAULT_CONTRACT)
+        oe.verify_operator_guidance(contract)
+        guidance = oe.THOR_OPERATOR_GUIDANCE.read_text(encoding="utf-8")
+        self.assertIn(oe.EDGE_MODEL_ID, guidance)
+        self.assertIn(oe.COSMOS_ARTIFACT, guidance)
+        self.assertIn("MUST NOT run its AGX/IGX Thor model command", guidance)
+
+    def test_thor_operator_guidance_rejects_current_model_drift(self) -> None:
+        contract = oe._load_json(oe.DEFAULT_CONTRACT)
+        with tempfile.TemporaryDirectory() as temporary:
+            drifted = Path(temporary) / "thor-official-edge.md"
+            guidance = oe.THOR_OPERATOR_GUIDANCE.read_text(encoding="utf-8")
+            drifted.write_text(
+                guidance.replace(oe.EDGE_MODEL_ID, "nvidia/drifted-model"),
+                encoding="utf-8",
+            )
+            with mock.patch.object(oe, "THOR_OPERATOR_GUIDANCE", drifted):
+                with self.assertRaisesRegex(
+                    oe.ContractError, "operator precedence guidance is incomplete"
+                ):
+                    oe.verify_operator_guidance(contract)
+
     def test_json_loader_rejects_duplicate_object_keys(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "duplicate.json"

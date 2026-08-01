@@ -10,7 +10,10 @@ Run this before mutating `generated.env` or starting any image pull. Validate cr
   the NGC CLI and VSS generated env use `NGC_CLI_API_KEY`; NIM / RT-VLM
   containers receive the key as `NGC_API_KEY`.
 - `NVIDIA_API_KEY`: required for remote NIM endpoints.
-- `HF_TOKEN`: required on edge targets that use the gated Edge 4B model.
+- `HF_TOKEN`: required only for a separate connected artifact-staging flow when
+  the selected edge model is gated. The pull-free AGX/IGX Thor official lane
+  accepts no credentials; follow
+  [`thor-official-edge.md`](thor-official-edge.md) before any Thor probe.
 - Customer LLM/VLM endpoint URL + model name: required for any selected
   remote endpoint. This includes build.nvidia.com / NVIDIA API catalog
   endpoints because their `/v1/models` response can list many models.

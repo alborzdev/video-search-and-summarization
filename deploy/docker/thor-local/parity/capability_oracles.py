@@ -29,6 +29,7 @@ REPO_ROOT = SCRIPT_DIR.parents[3]
 LEDGER = SCRIPT_DIR / "official-capabilities.json"
 ORACLES = SCRIPT_DIR / "capability-oracles.json"
 SCHEMA = SCRIPT_DIR / "capability-oracles.schema.json"
+ACCEPTANCE = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
 PROTOCOL_CASES_PATH = "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json"
 PROTOCOL_CASES = REPO_ROOT / PROTOCOL_CASES_PATH
 PROTOCOL_CASES_FILE_SHA256 = "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
@@ -545,9 +546,60 @@ def _protocol_case_bindings(document: dict[str, Any]) -> dict[str, dict[str, Any
     return bindings
 
 
+def _planning_executor_bindings(
+    acceptance_document: dict[str, Any] | None,
+) -> dict[str, list[dict[str, Any]]]:
+    """Index live static-subset bindings without promoting full oracles.
+
+    ``None`` deliberately means the historical pre-integration state.  Wave 3's
+    immutable merge replay calls :func:`compile_plan` without an acceptance
+    document, while live validation passes the checked-in acceptance inventory.
+    """
+    if acceptance_document is None:
+        return {}
+    requirements = acceptance_document.get("wave3_contracts", {}).get(
+        "planning_requirements"
+    )
+    if not isinstance(requirements, list):
+        raise OracleContractError("live planning requirements are malformed")
+    result: dict[str, list[dict[str, Any]]] = {}
+    for requirement in requirements:
+        if not isinstance(requirement, dict):
+            raise OracleContractError("live planning requirement is malformed")
+        materialized = requirement.get("materialized")
+        executor_ready = requirement.get("executor_ready")
+        binding = requirement.get("static_executor_binding")
+        if materialized is False and executor_ready is False and binding is None:
+            continue
+        if materialized is not True or executor_ready is not True or not isinstance(
+            binding, dict
+        ):
+            raise OracleContractError("partial live planning-executor integration")
+        if requirement.get("runtime_evidence") != []:
+            raise OracleContractError("planning executor must not contain runtime evidence")
+        capability_id = requirement.get("owner_id")
+        if not isinstance(capability_id, str):
+            raise OracleContractError("planning executor lacks a capability owner")
+        result.setdefault(capability_id, []).append(
+            {
+                "planning_requirement_id": requirement.get("id"),
+                "scope": "bounded_static_assertion_subset_only",
+                "materialization": copy.deepcopy(binding.get("materialization")),
+                "executor": copy.deepcopy(binding.get("executor")),
+                "case": copy.deepcopy(binding.get("case")),
+                "result": copy.deepcopy(binding.get("result")),
+                "can_advance_capability": False,
+                "can_mark_passed_current": False,
+                "runtime_evidence": [],
+            }
+        )
+    return result
+
+
 def compile_plan(
     ledger: dict[str, Any],
     protocol_document: dict[str, Any] | None = None,
+    acceptance_document: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     target = ledger.get("target")
     capabilities = ledger.get("capabilities")
@@ -555,6 +607,7 @@ def compile_plan(
         raise OracleContractError("official capability ledger is malformed")
     protocol_document = _load(PROTOCOL_CASES) if protocol_document is None else protocol_document
     protocol_bindings = _protocol_case_bindings(protocol_document)
+    planning_bindings = _planning_executor_bindings(acceptance_document)
     oracles = []
     for capability in capabilities:
         if not isinstance(capability, dict) or not isinstance(capability.get("id"), str):
@@ -614,6 +667,13 @@ def compile_plan(
             if binding is None:
                 raise OracleContractError(f"{capability_id}: exact protocol case is missing")
             oracle["protocol_case_binding"] = binding
+        if capability_id in planning_bindings:
+            oracle["planning_executor_bindings"] = planning_bindings[capability_id]
+            oracle["acceptance_readiness"]["blockers"] = [
+                "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+                "the full capability fixture, runtime executor, and collectors are not materialized",
+                "the full capability cleanup allowlist has no machine executor or postcondition collector",
+            ]
         oracles.append(oracle)
     return {
         "schema_version": 1,
@@ -652,7 +712,7 @@ def validate(
         error = errors[0]
         path = ".".join(str(item) for item in error.absolute_path) or "<root>"
         raise OracleContractError(f"oracle schema violation at {path}: {error.message}")
-    expected = compile_plan(ledger)
+    expected = compile_plan(ledger, acceptance_document=_load(ACCEPTANCE))
     if plan != expected:
         expected_by_id = {item["capability_id"]: item for item in expected["oracles"]}
         actual_by_id = {item.get("capability_id"): item for item in plan.get("oracles", []) if isinstance(item, dict)}
@@ -685,6 +745,16 @@ def validate(
     if any(item["current_state"] not in {"open_unexecuted", "external_boundary_unexecuted"} or item["evidence"] for item in plan["oracles"]):
         raise OracleContractError("unexecuted oracle plans must not contain passed state or evidence")
     for item in plan["oracles"]:
+        for binding in item.get("planning_executor_bindings", []):
+            if (
+                binding["can_advance_capability"] is not False
+                or binding["can_mark_passed_current"] is not False
+                or binding["runtime_evidence"] != []
+                or binding["scope"] != "bounded_static_assertion_subset_only"
+            ):
+                raise OracleContractError(
+                    f"{item['capability_id']}: static planning binding implies runtime advancement"
+                )
         workload = item["execution_bounds"]["workload"]
         calculated = (
             workload["units"] * workload["requests_per_unit"]
@@ -733,6 +803,9 @@ def validate(
         "profiles": len({item["profile"] for item in plan["oracles"]}),
         "planning_index_only": sum(item["acceptance_readiness"]["classification"] == "planning_index_only" for item in plan["oracles"]),
         "executor_ready": sum(item["acceptance_readiness"]["classification"] == "executor_ready" for item in plan["oracles"]),
+        "planning_executor_bindings": sum(
+            len(item.get("planning_executor_bindings", [])) for item in plan["oracles"]
+        ),
     }
 
 
@@ -743,7 +816,14 @@ def main() -> int:
     args = parser.parse_args()
     try:
         if args.compile:
-            print(json.dumps(compile_plan(_load(LEDGER)), indent=2) + "\n", end="")
+            print(
+                json.dumps(
+                    compile_plan(_load(LEDGER), acceptance_document=_load(ACCEPTANCE)),
+                    indent=2,
+                )
+                + "\n",
+                end="",
+            )
             return 0
         counts = validate()
     except (OSError, json.JSONDecodeError, OracleContractError) as exc:

@@ -45,7 +45,7 @@ EXPECTED_CASE_IDS = {
     "executor-case.alert-warmup-default",
 }
 INVENTORY_CANONICAL_SHA256 = (
-    "9b59f8d4d55aff427bd686e4c061c9b5b3e31ae1f0b5873b2fb296dd87762232"
+    "d1b6347d4b7caaf1944a0b2eebf1db81d581fbabfd86407fd660d5f95144e256"
 )
 EXCLUDED_SAMPLE_MARKERS = (
     "warehouse-4cams-20mx20m-synthetic",
@@ -278,6 +278,33 @@ def _planning_binding(
             raise ExecutorCaseError(
                 f"planning source state drift: {case['planning_requirement_id']}/{key}"
             )
+    live_integrated = (
+        record.get("materialized") is True
+        and record.get("executor_ready") is True
+        and isinstance(record.get("static_executor_binding"), dict)
+    )
+    isolated = (
+        record.get("materialized") is False
+        and record.get("executor_ready") is False
+        and "static_executor_binding" not in record
+    )
+    if not (live_integrated or isolated):
+        raise ExecutorCaseError("partial planning materialization state")
+    if live_integrated:
+        binding = record["static_executor_binding"]
+        if (
+            binding.get("case", {}).get("case_id") != case["case_id"]
+            or binding.get("case", {}).get("planning_requirement_id")
+            != case["planning_requirement_id"]
+            or binding.get("case", {}).get("capability_id")
+            != case["capability_id"]
+            or binding.get("case", {}).get("planning_payload_sha256")
+            != case["planning_payload_sha256"]
+            or binding.get("result", {}).get("runtime_evidence") != []
+            or binding.get("result", {}).get("can_advance_capability") is not False
+            or binding.get("result", {}).get("can_mark_passed_current") is not False
+        ):
+            raise ExecutorCaseError("live planning executor binding drift")
     if record.get("owner_id") != case["capability_id"]:
         raise ExecutorCaseError("planning owner/capability binding drift")
     if record.get("payload_canonical_sha256") != case["planning_payload_sha256"]:
@@ -318,6 +345,14 @@ def _planning_binding(
             "status": "match",
             "expected": case["planning_payload_sha256"],
             "observed": _sha_json(record["payload"]),
+            "sources": [source_path],
+        },
+        {
+            "assertion_id": "planning-materialization-state",
+            "adapter": "live_integration_guard",
+            "status": "match",
+            "expected": "live_planning_integration" if live_integrated else "isolated_candidate",
+            "observed": "live_planning_integration" if live_integrated else "isolated_candidate",
             "sources": [source_path],
         },
         {
@@ -382,13 +417,18 @@ def run_case(inventory: dict[str, Any], case_id: str) -> dict[str, Any]:
         if all(item["status"] == "match" for item in observations)
         else "observed_mismatch"
     )
+    planning_state = observations[1]["observed"]
     result = {
         "schema_version": 1,
         "case_id": case["case_id"],
         "planning_requirement_id": case["planning_requirement_id"],
         "capability_id": case["capability_id"],
         "materialized": True,
-        "materialization_scope": "isolated_candidate_only",
+        "materialization_scope": (
+            "live_planning_requirement"
+            if planning_state == "live_planning_integration"
+            else "isolated_candidate_only"
+        ),
         "executor_ready": True,
         "advancement_scope": "static_assertion_only",
         "can_advance_capability": False,
@@ -424,8 +464,14 @@ def run_all(inventory: dict[str, Any]) -> dict[str, Any]:
         "mode": "deterministic_file_static_execution",
         "candidate_materialized_count": len(results),
         "candidate_executor_ready_count": len(results),
-        "live_requirement_materialized_count": 0,
-        "live_requirement_executor_ready_count": 0,
+        "live_requirement_materialized_count": sum(
+            result["materialization_scope"] == "live_planning_requirement"
+            for result in results
+        ),
+        "live_requirement_executor_ready_count": sum(
+            result["materialization_scope"] == "live_planning_requirement"
+            for result in results
+        ),
         "runtime_evidence_count": 0,
         "can_advance_capability_count": 0,
         "can_mark_passed_current_count": 0,

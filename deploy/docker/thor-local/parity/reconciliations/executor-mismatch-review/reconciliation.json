@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "id": "executor-mismatch-semantic-review-2026-07-31",
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "ledger": {
+    "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+    "baseline_raw_sha256": "0dcd9aabc508b79d863da60c6b7ab592dd3f57032037dac750b160f72ff2f9b0",
+    "baseline_discrepancy_count": 45,
+    "output_raw_sha256": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
+    "output_discrepancy_count": 47
+  },
+  "decisions": [
+    {
+      "finding": "Incident protobuf field 7 analytics versus analyticsModule",
+      "classification": "official_documentation_to_repository_name_discrepancy",
+      "compatibility_boundary": "The tag and message type match, so the name drift alone does not establish binary wire incompatibility; the repository name remains canonical for its generated and JSON-facing APIs.",
+      "implementation_action": "Do not rename the checked-in Protobuf field or API without an authoritative compatible migration."
+    },
+    {
+      "finding": "VLM_WARMUP_ENABLED official default true versus Thor overlay false",
+      "classification": "explicit_unqualified_thor_override",
+      "compatibility_boundary": "The service implementation defaults true when unset; only the Thor overlay forces false, so this is neither an official-source contradiction nor missing implementation support.",
+      "implementation_action": "Keep the mismatch open until enabled warmup is qualified on Thor and the override is removed or narrowly justified by reproducible evidence."
+    }
+  ],
+  "reviewed_evidence": [
+    {
+      "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json",
+      "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"
+    },
+    {
+      "path": "libs/nvschema/protobuf/ext.proto",
+      "sha256": "1fc70039c5ad7c2d984f8f4085fef1bcee7ec704efe6e74450a38e1133f25764"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/protos/ext.proto",
+      "sha256": "c2fd45c51d52284fe3cf062a26a1029f3545f4c04208b52222dd3ddc82bffc43"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/server/protos/ext.proto",
+      "sha256": "c2fd45c51d52284fe3cf062a26a1029f3545f4c04208b52222dd3ddc82bffc43"
+    },
+    {
+      "path": "services/agent/src/vss_agents/video_analytics/interface.py",
+      "sha256": "260d9792097f38ac295e438d2b6105e38c36338d3e153b88d847365adcde3815"
+    },
+    {
+      "path": "services/agent/src/vss_agents/video_analytics/nvschema.py",
+      "sha256": "8c71e67e1fe1329d87486b46b57e35c271352cf0fe37c1c7bd0687939e15efe6"
+    },
+    {
+      "path": "services/alert/enhance_alert_with_vlm.py",
+      "sha256": "43b9759f03eb7bbc3776ca55966d0f59a6bf55311d74b9fc30d53ba097b3c8bd"
+    },
+    {
+      "path": "services/alert/test/vlm/test_warmup.py",
+      "sha256": "7312aa9544cda720839fedecf94ed947a6a1d73ba355e16540335c1d60308329"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "8a90d9ea1b6648138c24cba17bd3cfb768788a3a06fb6ac1fcb18425e0fc4132"
+    }
+  ],
+  "records": [
+    {
+      "id": "systems.nvschema-incident-field-name-doc-repository-drift",
+      "category": "discrepancy",
+      "record_semantics": "single_source_record",
+      "source_ids": [
+        "doc.protobuf-schema"
+      ],
+      "observations": [
+        {
+          "source_id": "doc.protobuf-schema",
+          "locator": "Protobuf Schema — ext.proto Incident field table, tag 7",
+          "claim": "Incident field tag 7 is named analytics."
+        }
+      ],
+      "resolution": "Preserve wire tag 7 and the repository's canonical analyticsModule field name; treat analytics as documentation-to-repository name drift and require binary plus Protobuf-JSON round trips before qualification. Do not rename the checked-in API without an authoritative compatible migration.",
+      "must_not_claim": "Do not claim exact field-name parity with the rendered table, and do not infer binary wire incompatibility from a name-only difference at the same field tag.",
+      "candidate_observations": [
+        "libs/nvschema/protobuf/ext.proto declares AnalyticsModule analyticsModule = 7.",
+        "The RT-VLM and RT-Embed ext.proto copies also declare AnalyticsModule analyticsModule = 7.",
+        "Generated Protobuf bindings and Alert JSON-facing code use analyticsModule."
+      ]
+    },
+    {
+      "id": "thor.alert-warmup-default-override",
+      "category": "scoped_default",
+      "record_semantics": "single_source_record",
+      "source_ids": [
+        "doc.alerts"
+      ],
+      "observations": [
+        {
+          "source_id": "doc.alerts",
+          "locator": "VLM Warmup — VLM_WARMUP_ENABLED default",
+          "claim": "VLM warmup is enabled by default."
+        }
+      ],
+      "resolution": "Keep the official and service implementation default as enabled, while recording the Thor overlay's explicit false value as an unqualified local override. Qualify enabled warmup on Thor and remove or narrowly justify the override before claiming local default parity.",
+      "must_not_claim": "Do not claim the current Thor profile conforms to the enabled warmup default, and do not claim the service lacks warmup support because this overlay disables it.",
+      "candidate_observations": [
+        "services/alert/enhance_alert_with_vlm.py defaults VLM_WARMUP_ENABLED to true when unset, and its unit test asserts that behavior.",
+        "deploy/docker/thor-local/compose.yml explicitly sets VLM_WARMUP_ENABLED to false.",
+        "No checked-in Thor-specific constraint or runtime evidence currently justifies that override."
+      ]
+    }
+  ]
+}

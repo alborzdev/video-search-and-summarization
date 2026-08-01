@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "integration_id": "executor-cases-live-planning-2026-07-31",
+  "predecessors": {
+    "wave3": {
+      "receipt_path": "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json",
+      "contract_sha256": "733ff41b1aa473f7a6e1a117d7162c981dca99034d080677ece7b4b4c220c46b",
+      "outputs": {
+        "official-capabilities.json": "0dcd9aabc508b79d863da60c6b7ab592dd3f57032037dac750b160f72ff2f9b0",
+        "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+        "acceptance_inventory.json": "ba7d1b6d81b511e525eaadb79aac54416711d2ed543984847ddb9e9a8df7cce6",
+        "capability-oracles.json": "afaa785d6f7fb830b92042f61284e363915548573615cdc051e1ca8211a2b54b",
+        "official-capabilities.schema.json": "6bbd5354db37f871a2a912a79a1bb45c477617ef65e54e1fb1a13f0269efad39"
+      }
+    },
+    "executor_mismatch_reconciliation": {
+      "descriptor_path": "deploy/docker/thor-local/parity/reconciliations/executor-mismatch-review/reconciliation.json",
+      "descriptor_canonical_sha256": "e35d56ac52de55a62612c16441141166ba27f2c5323831e4ae6e937fed2a2cd3",
+      "ledger_output_raw_sha256": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
+      "record_ids": [
+        "systems.nvschema-incident-field-name-doc-repository-drift",
+        "thor.alert-warmup-default-override"
+      ]
+    }
+  },
+  "executor_inputs": {
+    "inventory_path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json",
+    "inventory_raw_sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35",
+    "inventory_canonical_sha256": "d1b6347d4b7caaf1944a0b2eebf1db81d581fbabfd86407fd660d5f95144e256",
+    "inventory_schema_path": "deploy/docker/thor-local/qualification/executor-cases/inventory.schema.json",
+    "inventory_schema_raw_sha256": "416bd7a2213736a000d2bbb7e72c7be2aea57a652cee8b721ea2d57e8bff117e",
+    "executor_path": "deploy/docker/thor-local/qualification/executor-cases/executor.py",
+    "executor_raw_sha256": "241e85bcd0f7d26b85518a355b34fc6093f74876c247c935199cec05952c5e47",
+    "result_schema_path": "deploy/docker/thor-local/qualification/executor-cases/result.schema.json",
+    "result_schema_raw_sha256": "5b0403ee2a50424f0aace18d3e617306a60d196d7ece849acc4ad694e2b53af8",
+    "capability_oracle_schema_path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+    "capability_oracle_schema_raw_sha256": "47563fa4b4a98c77dd33edc4de38c3a4f2e932a0d47c4a83ba672d9631f3db97"
+  },
+  "cases": [
+    {
+      "case_id": "executor-case.alert-metrics-contract",
+      "planning_requirement_id": "systems-alert-metrics",
+      "capability_id": "observability.alerts.prometheus",
+      "planning_payload_sha256": "6fd52ad7c17ff196a1329d099343dad08b64d25f3b3065e47cdbb057cef98929",
+      "case_canonical_sha256": "5291ab593f62532b42bbbfdab1faeffa5de84721c31eb966e2887d11148a49c6",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.rtvi-input-codec-surface",
+      "planning_requirement_id": "systems-rtvi-input-codecs",
+      "capability_id": "runtime.rtvi.input-codec-boundary",
+      "planning_payload_sha256": "004c9eef2df009df8c26225ae2925df008bb695a3bf8aaf8d72bef6cb38b9c46",
+      "case_canonical_sha256": "96225aede002d110657ab3587f46e292859b4f4091098c34fa02012df282e3c5",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.broker-profile-choice",
+      "planning_requirement_id": "systems-broker-choice",
+      "capability_id": "configuration.message-broker.profile-choice",
+      "planning_payload_sha256": "fc5348257a7b087aaca993d4d7fa665b1ce12a12a5727de3eb8469ee0788e995",
+      "case_canonical_sha256": "9790206dbaf6f776d77a3ee883b17fa774dbc06b2424cdeea14ce52ca20ab7be",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.nvschema-format-selection",
+      "planning_requirement_id": "systems-nvschema-format",
+      "capability_id": "protocol.nvschema.format-selection",
+      "planning_payload_sha256": "05c22e278b8f6f972f7f36060c08d0557feb4d4bb77b9bcf8e229b2c110a18b0",
+      "case_canonical_sha256": "09e20b500f986439b126fbc5447530414dfe71b16b07ea062f433eb1f58fbd4a",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.nvschema-protobuf-fields",
+      "planning_requirement_id": "systems-nvschema-protobuf",
+      "capability_id": "protocol.nvschema.protobuf-messages",
+      "planning_payload_sha256": "2292a0e023ac1b1c3480f8de4eba4dd6405d5406db8fb09e2997c453a88e63a7",
+      "case_canonical_sha256": "347c01eceaf1d122ade11699b8704741a1ebc808e064b55353c7113b66551f8b",
+      "expected_outcome": "observed_mismatch"
+    },
+    {
+      "case_id": "executor-case.elk-stack-config",
+      "planning_requirement_id": "systems-elk-config",
+      "capability_id": "configuration.elk.stack",
+      "planning_payload_sha256": "c5dad27972b415220e71159b5a605201d6f827d95b36e19c61f0773150079bd3",
+      "case_canonical_sha256": "d35c093f76c3e9f0f2c5fdd88745a3e37b52d8079006d54020f58fe3638146a9",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.logstash-dual-ingestion",
+      "planning_requirement_id": "systems-logstash-ingestion",
+      "capability_id": "protocol.elk.logstash-ingestion",
+      "planning_payload_sha256": "19c80d6b48fe4ef1139ac187bb79f8aae71cd0876bd15da22cb0a98c346e9eae",
+      "case_canonical_sha256": "720e9a8eb7399e6737e991fa3a983d1587c7806f8853b6a438e4650bd37e8bbf",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.vios-effective-upload-limit",
+      "planning_requirement_id": "systems-vios-upload-limit",
+      "capability_id": "configuration.vios.upload-effective-limit",
+      "planning_payload_sha256": "555de95e525be7f1c4185cd0ef7e3abc3d196d3e7c442916a53c7f99c1f7ceb5",
+      "case_canonical_sha256": "64d39adf8d76a9af8f074b2ddaf12f041495ad20199dc2732612bf7c12a573db",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.lvs-custom-model-prompt-surface",
+      "planning_requirement_id": "systems-lvs-custom-model-prompt",
+      "capability_id": "configuration.lvs.custom-model-prompt",
+      "planning_payload_sha256": "bb17584af988d56ca93fdcd10a70050575eb3b0f865148eabfec1c95df03e8aa",
+      "case_canonical_sha256": "6cd656db156f907483c781079eb7e9f619d4ddf6f5b8580e1063a45f043b1854",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "executor-case.alert-warmup-default",
+      "planning_requirement_id": "systems-alert-prompt-warmup",
+      "capability_id": "configuration.alerts.prompt-vlm-warmup",
+      "planning_payload_sha256": "3efcf3e0fc683734bb4fa08a1a759dd781ab6ca559d7bd42c0977936fb57bf35",
+      "case_canonical_sha256": "91728fce985aee822c35d84a4050d70cdef42991fa630e2164572efab9d55bd5",
+      "expected_outcome": "observed_mismatch"
+    }
+  ],
+  "expected_counts": {
+    "capabilities": 276,
+    "discrepancies": 47,
+    "planning_requirements": 110,
+    "materialized_planning_requirements": 10,
+    "executor_ready_planning_requirements": 10,
+    "planning_index_only_oracles": 276,
+    "full_executor_ready_oracles": 0,
+    "runtime_evidence_records": 0,
+    "observed_match": 8,
+    "observed_mismatch": 2
+  },
+  "boundaries": {
+    "evidence_class": "deterministic_file_static_evidence_not_runtime",
+    "capability_runtime_state_changed": false,
+    "capability_oracle_promoted": false,
+    "runtime_evidence_added": false,
+    "warehouse_sample_bundle": "excluded",
+    "network": "forbidden",
+    "docker": "forbidden",
+    "subprocess": "forbidden",
+    "environment_mutation": "forbidden"
+  },
+  "contract_sha256": "2eb1812f8854ef0f03334f68ceadcda64ffbfd166422da253f48c52ec8cdab71",
+  "outputs": {
+    "official-capabilities.json": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
+    "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+    "acceptance_inventory.json": "d9b76c528cb47300fc9c8fa14805fcf7598764a359ba66d7066842141b5e53c4",
+    "capability-oracles.json": "363107069757bf6d87d7fc7b6c8810604494c09f6d127ff6c06d2e780f3a0990",
+    "capability-oracles.schema.json": "47563fa4b4a98c77dd33edc4de38c3a4f2e932a0d47c4a83ba672d9631f3db97"
+  },
+  "lifecycle": "live_planning_integrated"
+}

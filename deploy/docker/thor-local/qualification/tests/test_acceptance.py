@@ -376,7 +376,7 @@ class AcceptancePlanTests(unittest.TestCase):
             },
         )
 
-    def test_wave3_planning_contract_is_exact_and_plan_only(self) -> None:
+    def test_wave3_planning_contract_has_exact_static_executor_subset(self) -> None:
         validation = self.validate()
         wave3 = self.inventory["wave3_contracts"]
         requirements = wave3["planning_requirements"]
@@ -384,8 +384,20 @@ class AcceptancePlanTests(unittest.TestCase):
         self.assertEqual(validation["counts"]["wave3_planning_requirements"], 110)
         self.assertEqual(len(requirements), 110)
         self.assertEqual(len({item["id"] for item in requirements}), 110)
-        self.assertTrue(all(item["materialized"] is False for item in requirements))
-        self.assertTrue(all(item["executor_ready"] is False for item in requirements))
+        materialized = [item for item in requirements if item["materialized"] is True]
+        executor_ready = [item for item in requirements if item["executor_ready"] is True]
+        self.assertEqual(len(materialized), 10)
+        self.assertEqual(materialized, executor_ready)
+        self.assertTrue(
+            all(isinstance(item.get("static_executor_binding"), dict) for item in materialized)
+        )
+        self.assertTrue(
+            all(
+                "static_executor_binding" not in item
+                for item in requirements
+                if item["materialized"] is False
+            )
+        )
         self.assertTrue(all(item["runtime_evidence"] == [] for item in requirements))
         self.assertEqual(
             [item["id"] for item in requirements if item.get("blocker_ids")],

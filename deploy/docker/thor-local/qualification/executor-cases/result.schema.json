@@ -16,7 +16,9 @@
     "planning_requirement_id": {"type": "string"},
     "capability_id": {"type": "string"},
     "materialized": {"const": true},
-    "materialization_scope": {"const": "isolated_candidate_only"},
+    "materialization_scope": {
+      "enum": ["isolated_candidate_only", "live_planning_requirement"]
+    },
     "executor_ready": {"const": true},
     "advancement_scope": {"const": "static_assertion_only"},
     "can_advance_capability": {"const": false},

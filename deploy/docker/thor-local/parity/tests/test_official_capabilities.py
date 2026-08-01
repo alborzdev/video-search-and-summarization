@@ -183,7 +183,46 @@ class OfficialCapabilityTests(unittest.TestCase):
         self.assertEqual(counts["sources"], 126)
         self.assertEqual(counts["capabilities"], 276)
         self.assertEqual(counts["feature_families"], 39)
-        self.assertEqual(counts["discrepancies"], 45)
+        self.assertEqual(counts["discrepancies"], 47)
+
+    def test_executor_mismatch_semantic_resolutions_remain_exact(self) -> None:
+        discrepancies = {
+            item["id"]: item for item in self.ledger["source_discrepancies"]
+        }
+        proto = discrepancies[
+            "systems.nvschema-incident-field-name-doc-repository-drift"
+        ]
+        warmup = discrepancies["thor.alert-warmup-default-override"]
+        self.assertEqual(proto["record_semantics"], "single_source_record")
+        self.assertEqual(proto["category"], "discrepancy")
+        self.assertEqual(proto["source_ids"], ["doc.protobuf-schema"])
+        self.assertIn("analyticsModule", proto["resolution"])
+        self.assertIn("wire incompatibility", proto["must_not_claim"])
+        self.assertEqual(warmup["record_semantics"], "single_source_record")
+        self.assertEqual(warmup["category"], "scoped_default")
+        self.assertEqual(warmup["source_ids"], ["doc.alerts"])
+        self.assertIn("unqualified local override", warmup["resolution"])
+        self.assertIn("service lacks warmup support", warmup["must_not_claim"])
+
+    def test_executor_mismatch_resolution_cannot_be_weakened(self) -> None:
+        ledger = copy.deepcopy(self.ledger)
+        proto = next(
+            item
+            for item in ledger["source_discrepancies"]
+            if item["id"]
+            == "systems.nvschema-incident-field-name-doc-repository-drift"
+        )
+        proto["record_semantics"] = "cross_source_discrepancy"
+        proto["candidate_observations"] = []
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError,
+            "ledger schema violation|invalid discrepancy",
+        ):
+            verifier.validate(
+                ledger,
+                copy.deepcopy(self.manifest),
+                copy.deepcopy(self.acceptance),
+            )
 
     def test_single_source_discrepancy_retains_two_exact_sides(self) -> None:
         discrepancy = next(

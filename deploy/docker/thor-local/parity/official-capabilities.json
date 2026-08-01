@@ -12880,6 +12880,50 @@
         "The same example logs 20 attempts.",
         "The current compose and scripts default to 20."
       ]
+    },
+    {
+      "id": "systems.nvschema-incident-field-name-doc-repository-drift",
+      "category": "discrepancy",
+      "record_semantics": "single_source_record",
+      "source_ids": [
+        "doc.protobuf-schema"
+      ],
+      "observations": [
+        {
+          "source_id": "doc.protobuf-schema",
+          "locator": "Protobuf Schema — ext.proto Incident field table, tag 7",
+          "claim": "Incident field tag 7 is named analytics."
+        }
+      ],
+      "resolution": "Preserve wire tag 7 and the repository's canonical analyticsModule field name; treat analytics as documentation-to-repository name drift and require binary plus Protobuf-JSON round trips before qualification. Do not rename the checked-in API without an authoritative compatible migration.",
+      "must_not_claim": "Do not claim exact field-name parity with the rendered table, and do not infer binary wire incompatibility from a name-only difference at the same field tag.",
+      "candidate_observations": [
+        "libs/nvschema/protobuf/ext.proto declares AnalyticsModule analyticsModule = 7.",
+        "The RT-VLM and RT-Embed ext.proto copies also declare AnalyticsModule analyticsModule = 7.",
+        "Generated Protobuf bindings and Alert JSON-facing code use analyticsModule."
+      ]
+    },
+    {
+      "id": "thor.alert-warmup-default-override",
+      "category": "scoped_default",
+      "record_semantics": "single_source_record",
+      "source_ids": [
+        "doc.alerts"
+      ],
+      "observations": [
+        {
+          "source_id": "doc.alerts",
+          "locator": "VLM Warmup — VLM_WARMUP_ENABLED default",
+          "claim": "VLM warmup is enabled by default."
+        }
+      ],
+      "resolution": "Keep the official and service implementation default as enabled, while recording the Thor overlay's explicit false value as an unqualified local override. Qualify enabled warmup on Thor and remove or narrowly justify the override before claiming local default parity.",
+      "must_not_claim": "Do not claim the current Thor profile conforms to the enabled warmup default, and do not claim the service lacks warmup support because this overlay disables it.",
+      "candidate_observations": [
+        "services/alert/enhance_alert_with_vlm.py defaults VLM_WARMUP_ENABLED to true when unset, and its unit test asserts that behavior.",
+        "deploy/docker/thor-local/compose.yml explicitly sets VLM_WARMUP_ENABLED to false.",
+        "No checked-in Thor-specific constraint or runtime evidence currently justifies that override."
+      ]
     }
   ]
 }

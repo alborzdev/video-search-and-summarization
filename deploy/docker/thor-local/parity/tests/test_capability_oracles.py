@@ -37,7 +37,29 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertEqual(counts["external_boundaries"], external_count)
         self.assertEqual(counts["planning_index_only"], capability_count)
         self.assertEqual(counts["executor_ready"], 0)
+        self.assertEqual(counts["planning_executor_bindings"], 10)
         self.assertGreater(counts["profiles"], 0)
+
+    def test_static_planning_bindings_do_not_promote_full_oracles(self) -> None:
+        bound = [item for item in self.plan["oracles"] if item.get("planning_executor_bindings")]
+        self.assertEqual(len(bound), 10)
+        self.assertEqual(
+            sum(len(item["planning_executor_bindings"]) for item in bound), 10
+        )
+        for item in bound:
+            self.assertEqual(
+                item["acceptance_readiness"]["classification"],
+                "planning_index_only",
+            )
+            self.assertIsNone(item["execution_bounds"]["executor"])
+            self.assertEqual(item["execution_bounds"]["collectors"], [])
+            self.assertIsNone(item["cleanup"]["executor"])
+            self.assertEqual(item["cleanup"]["postcondition_collectors"], [])
+            self.assertEqual(item["evidence"], [])
+            for binding in item["planning_executor_bindings"]:
+                self.assertIs(binding["can_advance_capability"], False)
+                self.assertIs(binding["can_mark_passed_current"], False)
+                self.assertEqual(binding["runtime_evidence"], [])
 
     def test_every_execution_mode_is_covered(self) -> None:
         self.assertEqual(

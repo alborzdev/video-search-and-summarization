@@ -20,10 +20,12 @@
     "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
     "denominator": 110,
     "required_source_state": {
-      "materialized": false,
-      "executor_ready": false,
       "runtime_evidence": []
-    }
+    },
+    "allowed_materialization_states": [
+      "isolated_candidate",
+      "live_planning_integration"
+    ]
   },
   "cases": [
     {
@@ -161,6 +163,20 @@
           "expected": {"sensorId": 1, "timestamp": 2, "end": 3, "objectIds": 4, "frameIds": 5, "place": 6, "analytics": 7, "category": 8, "embeddings": 9, "isAnomaly": 10, "info": 11, "llm": 12}
         },
         {
+          "assertion_id": "incident-rt-vlm-repository-field-tags",
+          "adapter": "proto_message_fields",
+          "sources": ["services/rtvi/rt-vlm/src/server/protos/ext.proto"],
+          "message": "Incident",
+          "expected": {"sensorId": 1, "timestamp": 2, "end": 3, "objectIds": 4, "frameIds": 5, "place": 6, "analyticsModule": 7, "category": 8, "embeddings": 9, "isAnomaly": 10, "info": 11, "llm": 12}
+        },
+        {
+          "assertion_id": "incident-rt-embed-repository-field-tags",
+          "adapter": "proto_message_fields",
+          "sources": ["services/rtvi/rt-embed/src/server/protos/ext.proto"],
+          "message": "Incident",
+          "expected": {"sensorId": 1, "timestamp": 2, "end": 3, "objectIds": 4, "frameIds": 5, "place": 6, "analyticsModule": 7, "category": 8, "embeddings": 9, "isAnomaly": 10, "info": 11, "llm": 12}
+        },
+        {
           "assertion_id": "space-utilization-field-tags",
           "adapter": "proto_message_fields",
           "sources": ["libs/nvschema/protobuf/ext.proto"],
@@ -280,6 +296,12 @@
       "advancement_scope": "static_assertion_only",
       "runtime_evidence": [],
       "assertions": [
+        {
+          "assertion_id": "service-warmup-default-remains-enabled",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/enhance_alert_with_vlm.py"],
+          "expected": ["os.environ.get(\"VLM_WARMUP_ENABLED\", \"true\").lower() != \"false\""]
+        },
         {
           "assertion_id": "thor-warmup-matches-official-default",
           "adapter": "text_contains_all",

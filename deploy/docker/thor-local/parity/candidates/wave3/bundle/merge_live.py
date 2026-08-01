@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import importlib.util
 import json
 import sys
 from collections import defaultdict
@@ -26,6 +27,9 @@ MANIFEST = PARITY_DIR / "manifest.json"
 ORACLES = PARITY_DIR / "capability-oracles.json"
 ACCEPTANCE = QUALIFICATION_DIR / "acceptance_inventory.json"
 RECEIPT = SCRIPT_DIR / "merge-receipt.json"
+EXECUTOR_SUCCESSOR = (
+    QUALIFICATION_DIR / "executor-cases/integrate_live.py"
+)
 BASELINE_DIR = SCRIPT_DIR / "baseline"
 PLAN = SCRIPT_DIR / "merge-plan.json"
 FEATURE_MAP = SCRIPT_DIR / "systems-feature-map.json"
@@ -1073,9 +1077,28 @@ def validate_merged_state() -> dict[str, Any]:
         "acceptance_inventory.json": expected_acceptance,
         "capability-oracles.json": expected_oracles,
     }
+    drifted = [
+        name
+        for name, path in output_paths.items()
+        if path.read_bytes() != encoded(expected_values[name])
+    ]
+    if drifted:
+        spec = importlib.util.spec_from_file_location(
+            "wave3_executor_successor", EXECUTOR_SUCCESSOR
+        )
+        if spec is None or spec.loader is None:
+            raise MergeError(f"partial or drifted merged output: {drifted[0]}")
+        successor = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = successor
+        try:
+            spec.loader.exec_module(successor)
+            successor.validate_live()
+        except Exception as exc:
+            raise MergeError(
+                f"invalid reviewed successor after Wave 3: {exc}"
+            ) from exc
+        return receipt
     for name, path in output_paths.items():
-        if path.read_bytes() != encoded(expected_values[name]):
-            raise MergeError(f"partial or drifted merged output: {name}")
         if receipt["outputs"].get(name) != sha_file(path):
             raise MergeError(f"receipt output digest drift: {name}")
     schema_name = "official-capabilities.schema.json"

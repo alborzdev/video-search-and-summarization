@@ -75,6 +75,10 @@
             }
           }
         },
+        "planning_executor_bindings": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/planningExecutorBinding"}
+        },
         "ledger_binding": {
           "type": "object", "additionalProperties": false,
           "required": ["feature_id", "kind", "title", "source_claims", "acceptance_class", "thor_state", "runtime_state", "contract", "gap"],
@@ -208,6 +212,87 @@
         },
         "current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
         "evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "planningExecutorBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "planning_requirement_id", "scope", "materialization", "executor",
+        "case", "result", "can_advance_capability", "can_mark_passed_current",
+        "runtime_evidence"
+      ],
+      "properties": {
+        "planning_requirement_id": {"$ref": "#/$defs/plainId"},
+        "scope": {"const": "bounded_static_assertion_subset_only"},
+        "materialization": {"$ref": "#/$defs/staticMaterialization"},
+        "executor": {"$ref": "#/$defs/staticExecutor"},
+        "case": {"$ref": "#/$defs/staticCase"},
+        "result": {"$ref": "#/$defs/staticResult"},
+        "can_advance_capability": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "staticMaterialization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scope", "inventory_path", "case_json_pointer", "case_canonical_sha256"],
+      "properties": {
+        "scope": {"const": "live_planning_requirement_static_contract"},
+        "inventory_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/inventory.json"},
+        "case_json_pointer": {"type": "string", "pattern": "^/cases/[0-9]+$"},
+        "case_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "staticExecutor": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "path", "raw_sha256", "inventory_path", "inventory_raw_sha256",
+        "inventory_canonical_sha256", "inventory_schema_path",
+        "inventory_schema_raw_sha256", "invocation"
+      ],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/qualification/executor-cases/executor.py"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "inventory_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/inventory.json"},
+        "inventory_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "inventory_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "inventory_schema_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/inventory.schema.json"},
+        "inventory_schema_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "invocation": {
+          "type": "array", "prefixItems": [
+            {"const": "python3"},
+            {"const": "deploy/docker/thor-local/qualification/executor-cases/executor.py"},
+            {"const": "run"},
+            {"$ref": "#/$defs/plainId"}
+          ], "items": false, "minItems": 4, "maxItems": 4
+        }
+      }
+    },
+    "staticCase": {
+      "type": "object", "additionalProperties": false,
+      "required": ["case_id", "planning_requirement_id", "capability_id", "planning_payload_sha256"],
+      "properties": {
+        "case_id": {"$ref": "#/$defs/plainId"},
+        "planning_requirement_id": {"$ref": "#/$defs/plainId"},
+        "capability_id": {"$ref": "#/$defs/plainId"},
+        "planning_payload_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "staticResult": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "schema_path", "schema_raw_sha256", "expected_outcome", "evidence_class",
+        "can_advance_capability", "can_mark_passed_current", "runtime_evidence"
+      ],
+      "properties": {
+        "schema_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/result.schema.json"},
+        "schema_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "expected_outcome": {"enum": ["observed_match", "observed_mismatch"]},
+        "evidence_class": {"const": "deterministic_file_static_evidence_not_runtime"},
+        "can_advance_capability": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
       }
     }
   }

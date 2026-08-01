@@ -92,15 +92,16 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/static-cases/tests" \
   -p 'test_static_case_executor.py' -v
 
-# An isolated candidate tranche supplies ten deterministic, genuinely runnable
-# file-only executors. Live planning flags remain unchanged; even a match cannot
-# create runtime evidence or advance a capability to passed_current.
+# Ten deterministic file-only executors are integrated into the corresponding
+# live planning requirements. They remain bounded static-subset evidence: no
+# full capability oracle is executable and no runtime evidence can be created.
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" validate
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" \
   run-all >/dev/null
+python3 "${thor_local_root}/qualification/executor-cases/integrate_live.py" validate
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/executor-cases/tests" \
-  -p 'test_executor.py' -v
+  -p 'test*.py' -v
 
 python3 "${thor_local_root}/rt-vlm/model_matrix.py" \
   --matrix "${thor_local_root}/rt-vlm/model-matrix.json" \

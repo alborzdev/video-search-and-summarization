@@ -106,8 +106,8 @@ class ExecutorCaseTest(unittest.TestCase):
         report = EXECUTOR.run_all(self.inventory)
         self.assertEqual(report["candidate_materialized_count"], 10)
         self.assertEqual(report["candidate_executor_ready_count"], 10)
-        self.assertEqual(report["live_requirement_materialized_count"], 0)
-        self.assertEqual(report["live_requirement_executor_ready_count"], 0)
+        self.assertEqual(report["live_requirement_materialized_count"], 10)
+        self.assertEqual(report["live_requirement_executor_ready_count"], 10)
         self.assertEqual(report["runtime_evidence_count"], 0)
         self.assertEqual(report["can_advance_capability_count"], 0)
         self.assertEqual(report["can_mark_passed_current_count"], 0)
@@ -158,11 +158,40 @@ class ExecutorCaseTest(unittest.TestCase):
         self.assertEqual(incident["expected"]["analytics"], 7)
         self.assertEqual(incident["observed"]["analyticsModule"], 7)
         self.assertNotIn("analytics", incident["observed"])
+        repository_copies = [
+            item
+            for item in result["observations"]
+            if item["assertion_id"]
+            in {
+                "incident-rt-vlm-repository-field-tags",
+                "incident-rt-embed-repository-field-tags",
+            }
+        ]
+        self.assertEqual(len(repository_copies), 2)
+        self.assertTrue(all(item["status"] == "match" for item in repository_copies))
+        self.assertTrue(
+            all(item["observed"]["analyticsModule"] == 7 for item in repository_copies)
+        )
+        self.assertTrue(
+            all("analytics" not in item["observed"] for item in repository_copies)
+        )
 
     def test_warmup_override_is_not_reported_as_official_default(self) -> None:
         result = EXECUTOR.run_case(self.inventory, "executor-case.alert-warmup-default")
         self.assertEqual(result["outcome"], "observed_mismatch")
-        assertion = result["observations"][-1]
+        implementation = next(
+            item
+            for item in result["observations"]
+            if item["assertion_id"] == "service-warmup-default-remains-enabled"
+        )
+        self.assertEqual(implementation["status"], "match")
+        self.assertEqual(implementation["observed"]["missing"], [])
+        assertion = next(
+            item
+            for item in result["observations"]
+            if item["assertion_id"] == "thor-warmup-matches-official-default"
+        )
+        self.assertEqual(assertion["status"], "mismatch")
         self.assertEqual(
             assertion["observed"]["missing"], ['VLM_WARMUP_ENABLED: "true"']
         )
@@ -180,9 +209,18 @@ class ExecutorCaseTest(unittest.TestCase):
         self.assertEqual(len(records), 110)
         for case in self.inventory["cases"]:
             record = records[case["planning_requirement_id"]]
-            self.assertIs(record["materialized"], False)
-            self.assertIs(record["executor_ready"], False)
+            self.assertIs(record["materialized"], True)
+            self.assertIs(record["executor_ready"], True)
             self.assertEqual(record["runtime_evidence"], [])
+            binding = record["static_executor_binding"]
+            self.assertEqual(binding["case"]["case_id"], case["case_id"])
+            self.assertEqual(
+                binding["case"]["planning_requirement_id"],
+                case["planning_requirement_id"],
+            )
+            self.assertIs(binding["result"]["can_advance_capability"], False)
+            self.assertIs(binding["result"]["can_mark_passed_current"], False)
+            self.assertEqual(binding["result"]["runtime_evidence"], [])
 
     def test_planning_hash_tamper_fails_closed(self) -> None:
         altered = copy.deepcopy(self.inventory)
