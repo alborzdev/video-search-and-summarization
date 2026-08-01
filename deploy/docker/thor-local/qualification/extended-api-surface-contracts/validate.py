@@ -184,6 +184,21 @@ EXPECTED_IMAGES = {
     },
 }
 
+LEGACY_REGISTRY_CHILD_DIGEST = (
+    "sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8"
+)
+LEGACY_REGISTRY_NON_RUNTIME_DIGEST = (
+    "sha256:a1660162ab57e5639a2a838b8b5a791327d2584801e00847f85dae6db059856b"
+)
+LEGACY_REGISTRY_REFERENCE = (
+    "nvcr.io/nvidia/vss-core/calibration@" + LEGACY_REGISTRY_CHILD_DIGEST
+)
+LEGACY_REGISTRY_METADATA_SOURCE = (
+    "https://api.ngc.nvidia.com/v2/repos/nvidia/vss-core/calibration"
+    "?resolve-labels=true&remove-unresolved-labels=true"
+)
+LEGACY_PULL_COMMAND = "docker pull --platform=linux/amd64 " + LEGACY_REGISTRY_REFERENCE
+
 
 class ContractError(ValueError):
     """Raised when the reviewed contract is incomplete or has drifted."""
@@ -310,6 +325,100 @@ def _validate_image_provenance(provenance: dict[str, Any]) -> None:
     )
 
 
+def _validate_registry_provenance(provenance: dict[str, Any]) -> None:
+    _require(
+        provenance["id"] == "legacy-calibration-registry",
+        "unexpected registry provenance",
+    )
+    _require(
+        provenance["metadata_source"] == LEGACY_REGISTRY_METADATA_SOURCE,
+        "legacy registry metadata source drift",
+    )
+    _require(
+        provenance["mutable_tag"] == "nvcr.io/nvidia/vss-core/calibration:3.2.1",
+        "legacy registry mutable tag drift",
+    )
+    _require(
+        provenance["pinned_child_reference"] == LEGACY_REGISTRY_REFERENCE
+        and provenance["child_manifest_digest"] == LEGACY_REGISTRY_CHILD_DIGEST,
+        "legacy registry child digest drift",
+    )
+    _require(
+        provenance["child_os"] == "linux"
+        and provenance["child_architecture"] == "amd64",
+        "legacy registry child platform drift",
+    )
+    _require(
+        provenance["compressed_size_bytes"] == 981287603,
+        "legacy registry compressed size drift",
+    )
+    _require(
+        provenance["published_runtime_variants"]
+        == [
+            {
+                "digest": LEGACY_REGISTRY_CHILD_DIGEST,
+                "os": "linux",
+                "architecture": "amd64",
+                "compressed_size_bytes": 981287603,
+            }
+        ],
+        "legacy registry runnable variants drift",
+    )
+    _require(
+        provenance["non_runtime_descriptors"]
+        == [
+            {
+                "digest": LEGACY_REGISTRY_NON_RUNTIME_DIGEST,
+                "os": "unknown",
+                "architecture": "unknown",
+                "compressed_size_bytes": 1166,
+            }
+        ],
+        "legacy registry non-runtime descriptor drift",
+    )
+    _require(
+        provenance["registry_repository_multi_architecture"] is True
+        and provenance["arm64_variant_present"] is False,
+        "legacy registry ARM64 availability drift",
+    )
+    _require(
+        provenance["local_presence_observed"] is False
+        and provenance["runtime_state"] == "blocked_architecture",
+        "legacy local/runtime architecture boundary drift",
+    )
+    _require(
+        provenance["manifest_access_state"] == "denied"
+        and provenance["tag_index_digest"] is None
+        and provenance["unpacked_size_bytes"] is None,
+        "legacy unresolved registry fields must remain fail-closed",
+    )
+    _require(
+        provenance["observed_at"] == "2026-08-01"
+        and provenance["required_at_validation"] is False,
+        "legacy registry observation boundary drift",
+    )
+    _require(
+        provenance["lower_bound_provenance_id"] == "legacy-calibration-checkout",
+        "legacy registry lower-bound provenance drift",
+    )
+    _require(
+        provenance["approval_boundaries"]
+        == {
+            "pull_requires_explicit_approval": True,
+            "pull_approved_at_audit": False,
+            "pull_performed_at_audit": False,
+            "pull_platform": "linux/amd64",
+            "pull_reference": LEGACY_REGISTRY_REFERENCE,
+            "pull_command_after_approval": LEGACY_PULL_COMMAND,
+            "container_create_or_run_requires_separate_approval": True,
+            "host_emulation_requires_separate_approval": True,
+            "image_removal_or_prune_requires_separate_approval": True,
+            "runtime_qualification_allowed_from_registry_metadata": False,
+        },
+        "legacy registry approval boundary drift",
+    )
+
+
 def _extract_amc_catalog(path: Path) -> list[tuple[str, str]]:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     for node in tree.body:
@@ -383,6 +492,10 @@ def validate(document: dict[str, Any], schema_path: Path, repo_root: Path) -> No
                 ),
                 "legacy operations must remain lower-bound witnesses",
             )
+            _require(
+                surface["provenance_id"] == "legacy-calibration-registry",
+                "legacy registry provenance link drift",
+            )
         else:
             _require(
                 surface["contract_state"] == "exact_descriptor",
@@ -446,18 +559,24 @@ def validate(document: dict[str, Any], schema_path: Path, repo_root: Path) -> No
     )
 
     provenance = {item["id"]: item for item in document["extraction_provenance"]}
-    _require(len(provenance) == 5, "provenance denominator drift")
+    _require(len(provenance) == 6, "provenance denominator drift")
     _require(
         set(provenance)
         == set(EXPECTED_IMAGES)
-        | {"auto-calibration-checkout", "legacy-calibration-checkout"},
+        | {
+            "auto-calibration-checkout",
+            "legacy-calibration-checkout",
+            "legacy-calibration-registry",
+        },
         "provenance identity drift",
     )
     for item in provenance.values():
         if item["type"] == "pinned_local_image_snapshot":
             _validate_image_provenance(item)
-        else:
+        elif item["type"] == "checked_in_source_snapshot":
             _validate_checkout_provenance(item, repo_root, item["id"])
+        else:
+            _validate_registry_provenance(item)
     _require(
         {surface["provenance_id"] for surface in surfaces} <= set(provenance),
         "surface references unknown provenance",
@@ -491,6 +610,13 @@ def run(
         "recoverable_operation_count": 80,
         "legacy_contract_state": "authoritative_unknown",
         "legacy_minimum_operation_count": 14,
+        "legacy_registry_child_architecture": "amd64",
+        "legacy_registry_arm64_variant_present": False,
+        "legacy_registry_local_presence_observed": False,
+        "legacy_registry_runtime_state": "blocked_architecture",
+        "legacy_registry_tag_index_digest": None,
+        "legacy_registry_unpacked_size_bytes": None,
+        "legacy_registry_pull_approved": False,
         "complete_product_api": False,
         "docker_required": False,
         "warehouse_sample_required": False,

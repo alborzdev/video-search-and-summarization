@@ -37,12 +37,22 @@ in this directory:
   and Elasticsearch-storage literals, bringing isolated candidate coverage to
   57 of 87 while leaving 30 without a candidate executor. It performs no live
   request, storage operation, or official-state promotion;
+- `advertised-entry-executors-wave5/` adds six digest-locked VIOS codec/audio
+  source and offline-package candidates for B-frames, HEVC multislice/RFC7798,
+  H.264/H.265, audio record/republish, and CPU multimedia support. Isolated
+  candidate coverage reaches 63 of 87 while 24 lack a candidate; no codec
+  fixture, RTSP session, recording, CPU pipeline, or official-state promotion
+  occurs;
 - `planning-requirement-executors-wave3/` checks six of the 84 still-open
   planning requirements without promoting them, preserving five source
   matches and the search-upload HTTP 400/415 mismatch;
 - `planning-requirement-executors-wave4/` checks six of the 78 previously
   unselected open requirements, preserving five matches and the missing Alerts
   Qwen example as a source-contract mismatch;
+- `planning-requirement-executors-wave5/` checks six Smart City contracts from
+  the exact 72-requirement successor denominator. It preserves one source match
+  and five explicit source gaps, leaves 66 requirements without a candidate,
+  and keeps all 84 live-open planning requirements unpromoted;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -101,10 +111,10 @@ planning requirements. All 276 full capability oracles remain
 `planning_index_only`; the 26 bindings are static subsets only, with zero
 runtime evidence and zero `passed_current` promotions. The third successor
 updates only the LVS adapter's static API contract and does not materialize an
-additional planning requirement. The separate 8 + 21 + 23 + 5
-advertised-entry candidates and 6 + 6 additional planning checks are
-non-advancing and do not change those live counts. They leave 30
-advertised entries without a candidate source executor and 72 planning
+additional planning requirement. The separate 8 + 21 + 23 + 5 + 6
+advertised-entry candidates and 6 + 6 + 6 additional planning checks are
+non-advancing and do not change those live counts. They leave 24
+advertised entries without a candidate source executor and 66 planning
 requirements not yet selected by a planning executor package, respectively.
 The prerelease packages are separate from these stable 3.2.1 denominators. The
 fourteen-family watchlist remains pointer-only; the adjacent exact diff package

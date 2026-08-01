@@ -26,6 +26,15 @@ proves 14 distinct method/path pairs, but the absent official server image and
 absent server schema mean that 14 is only a lower bound. `L` must remain
 unresolved until an authoritative server route table is captured.
 
+Public NGC repository metadata narrows the legacy-image blocker without closing
+it. The exact published runnable child for `calibration:3.2.1` is
+`linux/amd64` at digest
+`sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8`
+and compressed size 981,287,603 bytes. No runnable `linux/arm64` child is
+published, even though the repository-level metadata says multi-architecture.
+The image was absent locally, so native Thor runtime remains architecture
+blocked. Registry denial left the tag-index digest and unpacked size unresolved.
+
 Relative to the observed 17-surface core inventory, the complete totals can
 currently be expressed only as:
 
@@ -37,7 +46,7 @@ Neither minimum is a complete total.
 ## Trust model
 
 [`contract.json`](contract.json) contains normalized operation descriptors and
-two types of provenance:
+three types of provenance:
 
 1. `pinned_local_image_snapshot` records immutable NGC image digest, ARM64
    platform, local image size, inner-file path, content hash, and extraction
@@ -46,6 +55,11 @@ two types of provenance:
    identity. The validator re-hashes these files every run. AutoMagicCalib's
    `REQUIRED_OPENAPI` dictionary is also parsed with Python AST and compared to
    the 26-operation descriptor.
+3. `registry_image_metadata` records the absent legacy image's exact runnable
+   child digest, platform, compressed size, non-runtime descriptor, local
+   absence, unresolved fields, architecture block, and approval boundaries.
+   It is registry provenance only: it does not claim a local snapshot, extracted
+   server source, runtime evidence, or an authoritative operation count.
 
 No proprietary implementation source or schema content is copied into this
 package. Only normalized method/path descriptors, cryptographic identities,
@@ -79,6 +93,14 @@ The validator is fail-closed:
   hash is recomputed;
 - image digests, image IDs, ARM64 platform, sizes, and inner-file hashes are
   locked without consulting Docker;
+- legacy registry provenance is locked to the exact amd64 child and compressed
+  size, with `arm64_variant_present: false`, local absence, and an architecture
+  block;
+- the unresolved tag-index digest and unpacked size must remain `null` while
+  manifest access remains denied;
+- no image pull is approved or performed; a future pinned amd64 pull requires
+  explicit approval, while container lifecycle, host emulation, and image
+  removal or Docker pruning each require separate approval;
 - checked-in source hashes and Git blob identities are revalidated;
 - legacy calibration cannot be promoted from `authoritative_unknown` or assigned
   `operation_count: 14`;
@@ -90,14 +112,18 @@ The validator is fail-closed:
 
 This is static contract recovery only. Complete closure still requires:
 
-1. approval to stage and inspect the official legacy `calibration:3.2.1` image
-   after its size and disk impact are known;
-2. an exact legacy server route/schema capture, replacing `L` with an
-   authoritative count;
-3. loopback-safe or private-network Thor deployment contracts for each service;
-4. isolated mutation fixtures and cleanup, especially for mutating GET routes;
-5. custom-data runtime qualification of every operation and workflow;
-6. a separately reviewed integration that updates shared API inventories and
+1. authenticated manifest metadata access to resolve the tag-index descriptor,
+   followed by a fresh disk-impact review;
+2. explicit approval to stage only the exact amd64 child for static inspection:
+   `docker pull --platform=linux/amd64 nvcr.io/nvidia/vss-core/calibration@sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8`;
+3. a containerless, streamed layer inspection to capture an exact legacy server
+   route/schema table and replace `L` with an authoritative count;
+4. a native ARM64 artifact from NVIDIA, or a separately approved and qualified
+   emulation lane, before legacy calibration can run locally on Thor;
+5. loopback-safe or private-network Thor deployment contracts for each service;
+6. isolated mutation fixtures and cleanup, especially for mutating GET routes;
+7. custom-data runtime qualification of every operation and workflow;
+8. a separately reviewed integration that updates shared API inventories and
    denominators only after the legacy count is exact.
 
 The roughly 100 GB Warehouse sample bundle is excluded. Operator-owned custom

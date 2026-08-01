@@ -40,7 +40,7 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
     def test_canonical_hash_is_stable(self) -> None:
         self.assertEqual(
             self.document["contract_set_sha256"],
-            "02143fad02cc83ae4f619ed899cf23ed547744ac695aade66feab306b42662be",
+            "d1aaf222278eb0b0ce73a98de54eb2d2139a717696743f2b3df5f99088850ad2",
         )
         self.assertEqual(
             VALIDATOR.canonical_contract_hash(self.document),
@@ -143,6 +143,78 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
         provenance["files"][0]["content_sha256"] = "0" * 64
         self._rehash(mutated)
         self._assert_rejected(mutated, "source SHA-256 drift")
+
+    def test_legacy_registry_child_digest_is_locked(self) -> None:
+        mutated = copy.deepcopy(self.document)
+        provenance = next(
+            item
+            for item in mutated["extraction_provenance"]
+            if item["id"] == "legacy-calibration-registry"
+        )
+        fake = "sha256:" + "0" * 64
+        provenance["child_manifest_digest"] = fake
+        provenance["pinned_child_reference"] = (
+            provenance["pinned_child_reference"].split("@")[0] + "@" + fake
+        )
+        self._rehash(mutated)
+        self._assert_rejected(mutated, "legacy registry child digest drift")
+
+    def test_legacy_registry_cannot_invent_arm64_support(self) -> None:
+        mutated = copy.deepcopy(self.document)
+        provenance = next(
+            item
+            for item in mutated["extraction_provenance"]
+            if item["id"] == "legacy-calibration-registry"
+        )
+        provenance["arm64_variant_present"] = True
+        self._rehash(mutated)
+        self._assert_rejected(mutated, "schema validation failed")
+
+    def test_legacy_registry_unresolved_sizes_cannot_be_invented(self) -> None:
+        mutated = copy.deepcopy(self.document)
+        provenance = next(
+            item
+            for item in mutated["extraction_provenance"]
+            if item["id"] == "legacy-calibration-registry"
+        )
+        provenance["tag_index_digest"] = "sha256:" + "1" * 64
+        provenance["unpacked_size_bytes"] = 1
+        self._rehash(mutated)
+        self._assert_rejected(mutated, "schema validation failed")
+
+    def test_legacy_registry_cannot_claim_local_presence(self) -> None:
+        mutated = copy.deepcopy(self.document)
+        provenance = next(
+            item
+            for item in mutated["extraction_provenance"]
+            if item["id"] == "legacy-calibration-registry"
+        )
+        provenance["local_presence_observed"] = True
+        provenance["runtime_state"] = "not_qualified"
+        self._rehash(mutated)
+        self._assert_rejected(mutated, "schema validation failed")
+
+    def test_legacy_registry_pull_boundary_is_locked(self) -> None:
+        mutated = copy.deepcopy(self.document)
+        provenance = next(
+            item
+            for item in mutated["extraction_provenance"]
+            if item["id"] == "legacy-calibration-registry"
+        )
+        provenance["approval_boundaries"]["pull_command_after_approval"] = (
+            "docker pull nvcr.io/nvidia/vss-core/calibration:3.2.1"
+        )
+        self._rehash(mutated)
+        self._assert_rejected(mutated, "legacy registry approval boundary drift")
+
+    def test_legacy_surface_must_link_registry_provenance(self) -> None:
+        mutated = copy.deepcopy(self.document)
+        legacy = next(
+            item for item in mutated["surfaces"] if item["id"] == "legacy-calibration"
+        )
+        legacy["provenance_id"] = "legacy-calibration-checkout"
+        self._rehash(mutated)
+        self._assert_rejected(mutated, "legacy registry provenance link drift")
 
     def test_get_reset_remains_classified_as_mutating(self) -> None:
         mutated = copy.deepcopy(self.document)

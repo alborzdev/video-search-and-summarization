@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "subprocess": false,
+    "writes": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave5-source-case.smartcity-compose-surface",
+      "planning_requirement_id": "smartcity-compose-surface",
+      "capability_id": "deployment.smart-city.bp-smc-surface",
+      "planning_payload_sha256": "8f6c562439f6283fc1bcb7090fc519a24b4b12e71c1c66d07e0a0b1f325de9e0",
+      "capability_sha256": "aa81a4d6fa01b718b4ee3bbc3714a83f5d1cdeb07b0a1f0eb81fc23c7013a686",
+      "contract_sha256": "f2a7c0589d894f9838dda690a1334b2454d1b0037e2a6d006c29f9cf085dda06",
+      "source_locks": [
+        {"path": "deploy/docker/industry-profiles/smartcities/.env", "sha256": "0efa85d4b48732decc70dfadd87259113515eb6852794f0e328be06e2814c2d0"},
+        {"path": "deploy/docker/industry-profiles/smartcities/compose.yml", "sha256": "c15631a68c8c6b51b317e640ad18f4156783082cff7ad98647ee9f50bbce96f4"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "sha256": "ac1e8d4b7cfada2870f2cd3f919a6dfe77e6b45ee4cce290e3b3144327b2a82d"},
+        {"path": "deploy/docker/scripts/thor-local.sh", "sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"},
+        {"path": "deploy/docker/services/infra/haproxy/compose.yml", "sha256": "3dab5af7fc453fdbd789e1f414f514da08805b95d75231ebab64c48c18c50630"},
+        {"path": "deploy/docker/thor-local/official-edge/official-edge.env", "sha256": "134e4369f21ce80c4fd2261552d83925da900ca80f23d93622cc7bf2756d8074"}
+      ],
+      "assertions": [
+        {"assertion_id": "official-profile-identity", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/.env", "deploy/docker/industry-profiles/smartcities/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml"], "expected": ["BP_PROFILE=bp_smc"]},
+        {"assertion_id": "detector-default-and-alternate", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/.env"], "expected": ["MODEL_NAME_2D=\"RTDETR\"", "GDINO"]},
+        {"assertion_id": "integration-surface", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/.env", "deploy/docker/industry-profiles/smartcities/compose.yml"], "expected": ["alerts", "vss-agent", "vss-video-analytics-api", "kibana", "Kafka", "UI"]},
+        {"assertion_id": "ten-default-ports", "adapter": "text_contains_all", "sources": ["deploy/docker/scripts/thor-local.sh", "deploy/docker/services/infra/haproxy/compose.yml", "deploy/docker/thor-local/official-edge/official-edge.env"], "expected": ["7777", "3002", "35000", "31000", "30888", "8081", "8001", "9901", "30081", "8018"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave5-source-case.smartcity-minimal-map",
+      "planning_requirement_id": "smartcity-minimal-map",
+      "capability_id": "runtime.smart-city.map-ui",
+      "planning_payload_sha256": "e281789beb170161dfadb46266e6a9442e6ed1a5147d6a6c8bba6514c1ce1ee0",
+      "capability_sha256": "99ce02afd011d58087d1ce850e121149ab8889aee901cf078cd1c418cd318b34",
+      "contract_sha256": "377cdeb9086bd92931c0bb2c6789943b0cd9eb9d6a036ab68366819553495f83",
+      "source_locks": [
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/map/app.js", "sha256": "b5ab8d59f06be8115e30a4aa304e6f4fdd80a795d0ce44021dcf2d945c21d913"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/map/index.html", "sha256": "5ac9c7adc299a13f23b6af7dfe575f8fd106ac705ba984dc9197fc3794aef52d"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/README.md", "sha256": "6ca22b2e0c0094505aa7256ff9471b066841dd8d8df21926dd9a590c35f5fbc8"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "sha256": "ac1e8d4b7cfada2870f2cd3f919a6dfe77e6b45ee4cce290e3b3144327b2a82d"}
+      ],
+      "assertions": [
+        {"assertion_id": "map-port-and-provider-free-svg", "adapter": "text_contains_all", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/README.md"], "expected": ["SMARTCITY_MAP_PORT:-3002", "local SVG", "no browser requests to a map or font provider"]},
+        {"assertion_id": "five-map-layers", "adapter": "text_contains_all", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-smartcity/map/app.js", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/map/index.html"], "expected": ["Road segment", "Camera", "Direction", "average-speed-with-flowrate", "incidents"]},
+        {"assertion_id": "location-inputs-and-fallback", "adapter": "text_contains_all", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-smartcity/map/app.js"], "expected": ["/config/calibration", "./assets/calibration.json", "/config/road-network", "./assets/road-network.json", "fetchWithFallback"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave5-source-case.smartcity-behavior-config",
+      "planning_requirement_id": "smartcity-behavior-config",
+      "capability_id": "configuration.smart-city.behavior-rules",
+      "planning_payload_sha256": "8dbd3a9deaacab41c960e31b5adb8b46b5449e195f896ac28a06952c579d55f0",
+      "capability_sha256": "75e1299b0896a86ef7506c0e524b29cd7edb7d0c8d543f54b0527bbcbb065fa6",
+      "contract_sha256": "26ee4a1e23c1be95b959e1127a6609291e7afdac4a9aae8f43851ec7983a319f",
+      "source_locks": [
+        {"path": "deploy/docker/industry-profiles/smartcities/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json", "sha256": "ab57baad6001617f95adec1a2abee72bd213e632f15787433a9ce37bfbf89c40"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json", "sha256": "56b59747e862cdb37ead1d28fec7d65b0a5f5bf70fa990ac40ef748e6bb0d1fd"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/config.py", "sha256": "fe2221d736dc63aefc999ffa853380342f36cea992cbc69fe89e072279c70fac"}
+      ],
+      "assertions": [
+        {"assertion_id": "speed-and-stall-defaults", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json"], "expected": ["\\\"mphThreshold\\\" : 90", "\\\"mphThreshold\\\" : 5", "\\\"timeIntervalSecThreshold\\\": 120"]},
+        {"assertion_id": "exact-seven-anomaly-classes", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json"], "expected": ["[\\\"Car\\\",\\\"Truck\\\",\\\"Bus\\\",\\\"Motorcycle\\\",\\\"Bicycle\\\",\\\"Scooter\\\",\\\"Emergency Vehicle\\\"]"]},
+        {"assertion_id": "per-sensor-overrides", "adapter": "text_contains_all", "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/schema/config.py"], "expected": ["def get_sensor_config(", "def set_sensor_config(", "sensor_id"]},
+        {"assertion_id": "road-network-fields", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json"], "expected": ["\"enable\": true", "\"osmQueryPlace\""]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave5-source-case.smartcity-verification-config",
+      "planning_requirement_id": "smartcity-verification-config",
+      "capability_id": "configuration.smart-city.alert-verification",
+      "planning_payload_sha256": "cadb114e5f431637e1824999ffa34d0203f7a30e09427b17f6072edfcc66b0a3",
+      "capability_sha256": "f35e93eda52e67ca4767bc13e921e90be7e868a4ab3fe05d71baa44240b68be6",
+      "contract_sha256": "2825bdbe932fdc6a984a0c9eac55cb258680c9c5e7f4217223e4c892234032c4",
+      "source_locks": [
+        {"path": "deploy/docker/industry-profiles/smartcities/vlm-as-verifier/configs/config.yml", "sha256": "9ff499614fbe35099eb85cc16a23cd7ac34e8e224ccd5e7d8ff016ca71ef987a"},
+        {"path": "services/alert/blueprint_config/config_smartcity_blueprint.yaml", "sha256": "d9e55cc8424dfef4889507fa826150c5e99e59362c02332dc4f6ed4652bcdc1a"}
+      ],
+      "assertions": [
+        {"assertion_id": "sampling-fps", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/vlm-as-verifier/configs/config.yml", "services/alert/blueprint_config/config_smartcity_blueprint.yaml"], "expected": ["sampling_fps: 4"]},
+        {"assertion_id": "exact-resolution-and-lookback", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/vlm-as-verifier/configs/config.yml", "services/alert/blueprint_config/config_smartcity_blueprint.yaml"], "expected": ["760x430", "lookback_seconds: 15"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave5-source-case.smartcity-custom-location",
+      "planning_requirement_id": "smartcity-custom-location",
+      "capability_id": "configuration.smart-city.custom-location",
+      "planning_payload_sha256": "2d0283be733c64df848e9665e12363daee4f86ba926d0b09e0ad98ac3aba95f7",
+      "capability_sha256": "664e573d3afae282fdaad5856aee2ccc6c0b2d0b7fe408032c1df0cdc97a29f2",
+      "contract_sha256": "0baab7a03555aae89f045914e858a68172f99e83b16aa0e081fa56465c5943eb",
+      "source_locks": [
+        {"path": "deploy/docker/industry-profiles/smartcities/smc-app/import-calibration/init-scripts/calibration-import.sh", "sha256": "ee9fce5594bd43fc5fa45381df0034a70fab0aa8aab252697d67b99b712bf359"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/scripts/import-calibration.sh", "sha256": "038032991534009ae2906c743d0be6fac5682d0e599c2059663764f54090a6f5"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "sha256": "ac1e8d4b7cfada2870f2cd3f919a6dfe77e6b45ee4cce290e3b3144327b2a82d"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/README.md", "sha256": "6ca22b2e0c0094505aa7256ff9471b066841dd8d8df21926dd9a590c35f5fbc8"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/assets/calibration.json", "sha256": "badbba8cf8ba42bd99ce21b31cd257befcb82382e0956ec558bc8b419a1d5875"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/assets/road-network.json", "sha256": "0971573a02729e7191a4f4ade728a3adf1dd53dc3eef4e05d5e448574feea403"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json", "sha256": "56b59747e862cdb37ead1d28fec7d65b0a5f5bf70fa990ac40ef748e6bb0d1fd"}
+      ],
+      "assertions": [
+        {"assertion_id": "two-upload-endpoints", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/smc-app/import-calibration/init-scripts/calibration-import.sh", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/scripts/import-calibration.sh"], "expected": ["/config/upload-file/calibration", "/config/upload-file/road-network"]},
+        {"assertion_id": "location-files-and-place", "adapter": "text_contains_all", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json"], "expected": ["calibration.json", "road-network.json", "osmQueryPlace"]},
+        {"assertion_id": "operator-media-redeploy-and-no-sample-dependency", "adapter": "text_contains_all", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/README.md"], "expected": ["operator_video", "operator_rtsp", "redeploy_after_change", "bundled_sample_required: false"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave5-source-case.maps-secret-presence",
+      "planning_requirement_id": "maps-secret-presence",
+      "capability_id": "boundary.smart-city.google-maps-dependency",
+      "planning_payload_sha256": "43bf0625d4b83b4e7f9046ddde7663da3bc9498cb79ed5c44aa42559c12631c6",
+      "capability_sha256": "a5e1a9439534a91dacee509b7b9d94b3a3b5763f728b99714913f2194e4ff06d",
+      "contract_sha256": "5d973c9d3425473c071b7e634b0db952daf0a744b3f757d7974d2cbe70ea6363",
+      "source_locks": [
+        {"path": "deploy/docker/industry-profiles/smartcities/compose.yml", "sha256": "c15631a68c8c6b51b317e640ad18f4156783082cff7ad98647ee9f50bbce96f4"},
+        {"path": "deploy/docker/industry-profiles/smartcities/.env", "sha256": "0efa85d4b48732decc70dfadd87259113515eb6852794f0e328be06e2814c2d0"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/README.md", "sha256": "6ca22b2e0c0094505aa7256ff9471b066841dd8d8df21926dd9a590c35f5fbc8"},
+        {"path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/map/app.js", "sha256": "b5ab8d59f06be8115e30a4aa304e6f4fdd80a795d0ce44021dcf2d945c21d913"}
+      ],
+      "assertions": [
+        {"assertion_id": "official-google-key-and-consumers", "adapter": "text_contains_all", "sources": ["deploy/docker/industry-profiles/smartcities/compose.yml", "deploy/docker/industry-profiles/smartcities/.env"], "expected": ["GOOGLE_MAPS_API_KEY", "Video Analytics UI", "ROI Refiner"]},
+        {"assertion_id": "provider-free-thor-alternate", "adapter": "text_contains_all", "sources": ["deploy/docker/developer-profiles/dev-profile-thor-smartcity/README.md", "deploy/docker/developer-profiles/dev-profile-thor-smartcity/map/app.js"], "expected": ["local SVG", "does not start the upstream Google Maps UI", "no browser requests to a map or font provider"]}
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}

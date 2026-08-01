@@ -132,6 +132,14 @@ python3 "${thor_local_root}/qualification/planning-requirement-executors-wave4/e
 python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave4/tests"
 
+# The third nonadvancing planning audit selects six Smart City contracts from
+# the exact 72-row successor denominator. One matches and five preserve source
+# gaps; all 84 live-open requirements remain unpromoted.
+python3 "${thor_local_root}/qualification/planning-requirement-executors-wave5/executor.py" \
+  --json >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave5/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
@@ -209,6 +217,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-executors-wave4/tests" \
+  -p 'test*.py' -v
+
+# Wave five checks six required-local VIOS codec/audio literals against exact
+# source, configuration, ARM64 package-lock, and networkless-Dockerfile
+# contracts. Candidate coverage reaches 63/87 and leaves 24 without a
+# candidate; no media fixture, service, Docker, or official status advances.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave5/executor.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/advertised-entry-executors-wave5/tests" \
   -p 'test*.py' -v
 
 # The four unresolved capability-to-service bindings have an authoritative

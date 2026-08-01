@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_vios_codec_audio_executor_tranche_wave5",
+  "source_plan": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "dd3c8cbbcae859137e73da4a8d4d9227f535dd674979b5d9e8f5cf25b885d122",
+    "plan_payload_sha256": "97cb92ffb83d05388759f7428324344f91ec294116e5d24721c1ba21d994ab7d"
+  },
+  "source_manifest": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "raw_sha256": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
+  },
+  "previous_candidate_inventories": [
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json",
+      "raw_sha256": "91406a15ff1340b9b4dba988507470234971fa4905997bc52e64fb983fc12a18"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave2/inventory.json",
+      "raw_sha256": "2c14f8ae5ade22ccbc556a844b4fcb63661048826660073fb21c5f882047c5d2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave3/inventory.json",
+      "raw_sha256": "0b7056eafce7686fc2b7315fef8ae491ddef03d2e52f41e7c7861247933f90ab"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave4/inventory.json",
+      "raw_sha256": "1de6e9be3c93c349e45b192506e3081758553582dda6f73b79877bc4ff5155a6"
+    }
+  ],
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "live_acceptance_mutation_allowed": false,
+    "live_oracle_mutation_allowed": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "file_writes_allowed": false
+  },
+  "denominator": {
+    "advertised_gap_entries": 87,
+    "previously_selected_candidate_entries": 57,
+    "prior_open_entries": 30,
+    "selected_candidate_entries": 6,
+    "entries_left_open": 24
+  },
+  "cases": [
+    {
+      "manifest_pointer": "/features/20/advertised/0",
+      "entry_id": "manifest-gap.vios-codecs-audio.00-b-frame-handling",
+      "proposed_capability_id": "manifest-entry.vios-codecs-audio.00-b-frame-handling",
+      "advertised": "B-frame handling",
+      "advertised_utf8_sha256": "b4ea93696e7026581cb2b31f6f67fe4628bf9290ba1fe2ad66ec2b68dd416c20",
+      "advertised_canonical_sha256": "9f8673fefe5bfe082854558ba63aa258e7bdddf82511538a5df6a5e9c4f44292",
+      "adapter_id": "b_frame_contract",
+      "evidence_scope": "subset: digest-locked B-frame detection, propagation, decoder-mode, and output-encoder source branches only; no media execution or RTSP proof",
+      "source_locks": [
+        {"path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp", "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"},
+        {"path": "services/vios/src/framework/media/media_utils/gst_utils.cpp", "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"},
+        {"path": "services/vios/src/framework/media/media_utils/mm_utils.cpp", "sha256": "686a0c7517c9ced807a833c5821f906231783792e525b669bff1ea1b0e1fa651"},
+        {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/20/advertised/1",
+      "entry_id": "manifest-gap.vios-codecs-audio.01-hevc-multislice-rfc7798",
+      "proposed_capability_id": "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
+      "advertised": "HEVC multislice/RFC7798",
+      "advertised_utf8_sha256": "e2a96f64fb2e87064a2e651fd6770162b23f346c993f01fe29d66aee3361f011",
+      "advertised_canonical_sha256": "1e7ddc86e27eec76ccbb92641f45e07ebfa713a0deff6ccb0b49838467c3e6f6",
+      "adapter_id": "hevc_multislice_rfc7798_contract",
+      "evidence_scope": "subset: digest-locked HEVC continuation-slice timing and H.265 RTP DON/framer/sink source branches only; no packet or stream execution",
+      "source_locks": [
+        {"path": "services/vios/src/modules/rtsp_server/H264ByteStreamSource.cpp", "sha256": "f3849194fd9fd17b5c3e10b8799f5d1bc08dbd125bcd122fee429eef3b5a2a12"},
+        {"path": "services/vios/src/framework/live555/inc/live/liveMedia/include/H265VideoRTPSource.hh", "sha256": "dfdcc154fb7c221072dc3cf336a971fb83573e3ec2457d484f5374da97ec290b"},
+        {"path": "services/vios/src/modules/rtsp_server/NvMediaServer.cpp", "sha256": "2225e0fc77557c434af1c0a221abb4675c1c8c81f629bd3b22a6cb14ae426b81"},
+        {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/20/advertised/2",
+      "entry_id": "manifest-gap.vios-codecs-audio.02-h-264-h-265",
+      "proposed_capability_id": "manifest-entry.vios-codecs-audio.02-h-264-h-265",
+      "advertised": "H.264/H.265",
+      "advertised_utf8_sha256": "2d26d1630ab603e2bfaa517287557f212164e0037ce1133f2d9ccce87f22b69e",
+      "advertised_canonical_sha256": "96814167d1a234b752522180503f07d4359aba94be763c873b756a99fd572325",
+      "adapter_id": "h264_h265_contract",
+      "evidence_scope": "subset: exact Thor codec allowlist plus digest-locked H.264/H.265 parser, framer, sink, and encoder source branches; no codec fixture execution",
+      "source_locks": [
+        {"path": "services/vios/src/modules/rtsp_server/NvMediaServer.cpp", "sha256": "2225e0fc77557c434af1c0a221abb4675c1c8c81f629bd3b22a6cb14ae426b81"},
+        {"path": "services/vios/src/framework/media/media_utils/gst_utils.cpp", "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"},
+        {"path": "deploy/docker/thor-local/vios/vst_config.json", "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"},
+        {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/20/advertised/3",
+      "entry_id": "manifest-gap.vios-codecs-audio.03-audio-recording",
+      "proposed_capability_id": "manifest-entry.vios-codecs-audio.03-audio-recording",
+      "advertised": "audio recording",
+      "advertised_utf8_sha256": "4d54680651bb1ebff450fb07a493c1cffcd80ae665903c0e631d3276f23c6839",
+      "advertised_canonical_sha256": "28586dc3c72d0a55e0492462c768f4d67f30128d57f8aefc61b5534d04836dfe",
+      "adapter_id": "audio_recording_contract",
+      "evidence_scope": "subset: digest-locked audio selection, AAC compatibility, remux-consumer, and transcode-encoder source branches only; no recording or extraction",
+      "source_locks": [
+        {"path": "services/vios/src/modules/storage_management/storage_management_apis.cpp", "sha256": "8e31cb2c138b98cb08c43a3e04fd6962479c5178fc5bdac13b1e1b5ad9e6d2f0"},
+        {"path": "services/vios/src/framework/media/media_pipelines/remux_writer_consumer.cpp", "sha256": "77e09bd3d48b3a1e3eb61794254d2417b74547b303fd42685aa22375013d937a"},
+        {"path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp", "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"},
+        {"path": "deploy/docker/thor-local/vios/vst_config.json", "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"},
+        {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/20/advertised/4",
+      "entry_id": "manifest-gap.vios-codecs-audio.04-audio-rtsp-republish",
+      "proposed_capability_id": "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish",
+      "advertised": "audio RTSP republish",
+      "advertised_utf8_sha256": "5603622f41b0295bb22e1d0120fe1c38b2f50b34cb01e481cc93cd01f99a22d3",
+      "advertised_canonical_sha256": "467da07049a7b01e476f541aa45589b06d0c471f964cf161093b39bed0c7158b",
+      "adapter_id": "audio_rtsp_republish_contract",
+      "evidence_scope": "subset: digest-locked includeAudio routing, audio subsession/source/sink, and A/V loop synchronization source branches only; no RTSP session",
+      "source_locks": [
+        {"path": "services/vios/src/modules/rtsp_server/DynamicRTSPServer.cpp", "sha256": "0592fd4d761e0a2d7409f0a33ca1eb66a87bd93722e99ce3182356ac0e09f8ce"},
+        {"path": "services/vios/src/modules/rtsp_server/NvMediaServer.cpp", "sha256": "2225e0fc77557c434af1c0a221abb4675c1c8c81f629bd3b22a6cb14ae426b81"},
+        {"path": "services/vios/src/modules/rtsp_server/AvLoopSyncCoordinator.h", "sha256": "be82cf19fd0abbf23f8ccc8d5497aa3cd10eacc43d524fb9d0bcdaf74ba482ab"},
+        {"path": "deploy/docker/thor-local/vios/vst_config.json", "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"},
+        {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/20/advertised/5",
+      "entry_id": "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support",
+      "proposed_capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+      "advertised": "CPU multimedia support",
+      "advertised_utf8_sha256": "b34d3960a00090cf81be1662d03ec19dc22331527426f6629bb875e76dda5491",
+      "advertised_canonical_sha256": "9efa0d484b1c7d3e18ada0fc68edbfbc2515e29ac0f1e93b0b1135dba41ab943",
+      "adapter_id": "cpu_multimedia_contract",
+      "evidence_scope": "subset: digest-locked software decoder/encoder selection and exact offline ARM64 package/image contract only; no CPU pipeline execution",
+      "source_locks": [
+        {"path": "services/vios/src/framework/media/media_utils/gst_utils.cpp", "sha256": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9"},
+        {"path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp", "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"},
+        {"path": "deploy/docker/thor-local/vios/vst_config.json", "sha256": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399"},
+        {"path": "deploy/docker/thor-local/audio/codec-bundle.lock.json", "sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"},
+        {"path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing", "sha256": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285"},
+        {"path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer", "sha256": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0"},
+        {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"}
+      ]
+    }
+  ]
+}

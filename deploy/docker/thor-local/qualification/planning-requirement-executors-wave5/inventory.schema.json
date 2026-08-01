@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scope", "policies", "baseline_locks", "cases"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"const": "isolated_candidate_only"},
+    "policies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advances_live_acceptance", "runtime_evidence_added", "network", "subprocess", "writes"],
+      "properties": {
+        "advances_live_acceptance": {"const": false},
+        "runtime_evidence_added": {"const": false},
+        "network": {"const": false},
+        "subprocess": {"const": false},
+        "writes": {"const": false}
+      }
+    },
+    "baseline_locks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/file_lock"}
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "planning_requirement_id", "capability_id", "planning_payload_sha256", "capability_sha256", "contract_sha256", "source_locks", "assertions", "runtime_evidence"],
+        "properties": {
+          "case_id": {"type": "string", "pattern": "^wave5-source-case\\."},
+          "planning_requirement_id": {"type": "string", "minLength": 1},
+          "capability_id": {"type": "string", "minLength": 1},
+          "planning_payload_sha256": {"$ref": "#/$defs/sha256"},
+          "capability_sha256": {"$ref": "#/$defs/sha256"},
+          "contract_sha256": {"$ref": "#/$defs/sha256"},
+          "source_locks": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/file_lock"}},
+          "assertions": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["assertion_id", "adapter", "sources", "expected"],
+              "properties": {
+                "assertion_id": {"type": "string", "minLength": 1},
+                "adapter": {"const": "text_contains_all"},
+                "sources": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+                "expected": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+              }
+            }
+          },
+          "runtime_evidence": {"const": []}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "file_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}
+    }
+  }
+}

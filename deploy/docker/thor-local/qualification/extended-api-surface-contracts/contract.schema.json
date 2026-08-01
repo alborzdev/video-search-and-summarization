@@ -25,12 +25,13 @@
     },
     "extraction_provenance": {
       "type": "array",
-      "minItems": 5,
-      "maxItems": 5,
+      "minItems": 6,
+      "maxItems": 6,
       "items": {
         "oneOf": [
           {"$ref": "#/$defs/imageProvenance"},
-          {"$ref": "#/$defs/checkoutProvenance"}
+          {"$ref": "#/$defs/checkoutProvenance"},
+          {"$ref": "#/$defs/registryImageProvenance"}
         ]
       }
     }
@@ -205,6 +206,107 @@
         "type": {"const": "checked_in_source_snapshot"},
         "extraction_method": {"type": "string", "minLength": 1},
         "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/checkoutFile"}}
+      }
+    },
+    "registryVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "os", "architecture", "compressed_size_bytes"],
+      "properties": {
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "os": {"type": "string", "minLength": 1},
+        "architecture": {"type": "string", "minLength": 1},
+        "compressed_size_bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "registryApprovalBoundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pull_requires_explicit_approval",
+        "pull_approved_at_audit",
+        "pull_performed_at_audit",
+        "pull_platform",
+        "pull_reference",
+        "pull_command_after_approval",
+        "container_create_or_run_requires_separate_approval",
+        "host_emulation_requires_separate_approval",
+        "image_removal_or_prune_requires_separate_approval",
+        "runtime_qualification_allowed_from_registry_metadata"
+      ],
+      "properties": {
+        "pull_requires_explicit_approval": {"const": true},
+        "pull_approved_at_audit": {"const": false},
+        "pull_performed_at_audit": {"const": false},
+        "pull_platform": {"const": "linux/amd64"},
+        "pull_reference": {"type": "string", "pattern": "^nvcr\\.io/.+@sha256:[0-9a-f]{64}$"},
+        "pull_command_after_approval": {"type": "string", "minLength": 1},
+        "container_create_or_run_requires_separate_approval": {"const": true},
+        "host_emulation_requires_separate_approval": {"const": true},
+        "image_removal_or_prune_requires_separate_approval": {"const": true},
+        "runtime_qualification_allowed_from_registry_metadata": {"const": false}
+      }
+    },
+    "registryImageProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "metadata_source",
+        "mutable_tag",
+        "pinned_child_reference",
+        "child_manifest_digest",
+        "child_os",
+        "child_architecture",
+        "compressed_size_bytes",
+        "tag_index_digest",
+        "unpacked_size_bytes",
+        "registry_repository_multi_architecture",
+        "published_runtime_variants",
+        "non_runtime_descriptors",
+        "arm64_variant_present",
+        "local_presence_observed",
+        "runtime_state",
+        "manifest_access_state",
+        "observed_at",
+        "required_at_validation",
+        "lower_bound_provenance_id",
+        "approval_boundaries"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "type": {"const": "registry_image_metadata"},
+        "metadata_source": {"type": "string", "pattern": "^https://api\\.ngc\\.nvidia\\.com/"},
+        "mutable_tag": {"type": "string", "pattern": "^nvcr\\.io/.+:[^@]+$"},
+        "pinned_child_reference": {"type": "string", "pattern": "^nvcr\\.io/.+@sha256:[0-9a-f]{64}$"},
+        "child_manifest_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "child_os": {"const": "linux"},
+        "child_architecture": {"const": "amd64"},
+        "compressed_size_bytes": {"const": 981287603},
+        "tag_index_digest": {"const": null},
+        "unpacked_size_bytes": {"const": null},
+        "registry_repository_multi_architecture": {"const": true},
+        "published_runtime_variants": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/registryVariant"}
+        },
+        "non_runtime_descriptors": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/registryVariant"}
+        },
+        "arm64_variant_present": {"const": false},
+        "local_presence_observed": {"const": false},
+        "runtime_state": {"const": "blocked_architecture"},
+        "manifest_access_state": {"const": "denied"},
+        "observed_at": {"type": "string", "format": "date"},
+        "required_at_validation": {"const": false},
+        "lower_bound_provenance_id": {"const": "legacy-calibration-checkout"},
+        "approval_boundaries": {"$ref": "#/$defs/registryApprovalBoundaries"}
       }
     }
   }

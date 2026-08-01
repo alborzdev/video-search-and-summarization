@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "target_commit": "98828261bdc7a6996b0b4c262d31d3356b535c99",
-  "contract_set_sha256": "02143fad02cc83ae4f619ed899cf23ed547744ac695aade66feab306b42662be",
+  "contract_set_sha256": "d1aaf222278eb0b0ce73a98de54eb2d2139a717696743f2b3df5f99088850ad2",
   "scope": {
     "advertised_claim_family_count": 5,
     "addressable_surface_count": 7,
@@ -221,7 +221,7 @@
       "runtime_evidence": [],
       "operation_count": null,
       "minimum_operation_count": 14,
-      "provenance_id": "legacy-calibration-checkout",
+      "provenance_id": "legacy-calibration-registry",
       "operations": [
         {"method": "GET", "path": "/api/projects/", "evidence": "client_lower_bound", "mutation": "read_only"},
         {"method": "POST", "path": "/api/projects/", "evidence": "client_lower_bound", "mutation": "mutating"},
@@ -240,6 +240,8 @@
       ],
       "limitations": [
         "The official calibration:3.2.1 server image was absent at audit time.",
+        "The only published runnable 3.2.1 child is linux/amd64; no linux/arm64 child is published for native Thor execution.",
+        "Registry metadata does not resolve the tag index digest or unpacked size because manifest access was denied.",
         "No authoritative server OpenAPI, URL table, or implementation source exists in the checkout.",
         "The 14 client-observed operations are a lower bound only; L must not be set to 14 without server evidence."
       ]
@@ -309,6 +311,55 @@
       "files": [
         {"path": "deploy/docker/thor-local/auto-calibration/tool.py", "content_sha256": "94664fc3a18b37f45f436ad6e0f74bed49d78d31b26dd809a489fef2f912b6c8", "git_blob_oid": "b7ed18a1cf091b52e943eba40a4b026bbb7e7bf6", "role": "exact 26-operation REQUIRED_OPENAPI catalog"}
       ]
+    },
+    {
+      "id": "legacy-calibration-registry",
+      "type": "registry_image_metadata",
+      "metadata_source": "https://api.ngc.nvidia.com/v2/repos/nvidia/vss-core/calibration?resolve-labels=true&remove-unresolved-labels=true",
+      "mutable_tag": "nvcr.io/nvidia/vss-core/calibration:3.2.1",
+      "pinned_child_reference": "nvcr.io/nvidia/vss-core/calibration@sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8",
+      "child_manifest_digest": "sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8",
+      "child_os": "linux",
+      "child_architecture": "amd64",
+      "compressed_size_bytes": 981287603,
+      "tag_index_digest": null,
+      "unpacked_size_bytes": null,
+      "registry_repository_multi_architecture": true,
+      "published_runtime_variants": [
+        {
+          "digest": "sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8",
+          "os": "linux",
+          "architecture": "amd64",
+          "compressed_size_bytes": 981287603
+        }
+      ],
+      "non_runtime_descriptors": [
+        {
+          "digest": "sha256:a1660162ab57e5639a2a838b8b5a791327d2584801e00847f85dae6db059856b",
+          "os": "unknown",
+          "architecture": "unknown",
+          "compressed_size_bytes": 1166
+        }
+      ],
+      "arm64_variant_present": false,
+      "local_presence_observed": false,
+      "runtime_state": "blocked_architecture",
+      "manifest_access_state": "denied",
+      "observed_at": "2026-08-01",
+      "required_at_validation": false,
+      "lower_bound_provenance_id": "legacy-calibration-checkout",
+      "approval_boundaries": {
+        "pull_requires_explicit_approval": true,
+        "pull_approved_at_audit": false,
+        "pull_performed_at_audit": false,
+        "pull_platform": "linux/amd64",
+        "pull_reference": "nvcr.io/nvidia/vss-core/calibration@sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8",
+        "pull_command_after_approval": "docker pull --platform=linux/amd64 nvcr.io/nvidia/vss-core/calibration@sha256:92dc91595316e10a85d0e6bc0bf9c2f2921b07030a246f9c0854ae6b61426ad8",
+        "container_create_or_run_requires_separate_approval": true,
+        "host_emulation_requires_separate_approval": true,
+        "image_removal_or_prune_requires_separate_approval": true,
+        "runtime_qualification_allowed_from_registry_metadata": false
+      }
     },
     {
       "id": "legacy-calibration-checkout",
