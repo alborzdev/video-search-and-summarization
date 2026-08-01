@@ -150,6 +150,14 @@ python3 "${thor_local_root}/qualification/planning-requirement-executors-wave6/e
 python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave6/tests"
 
+# The fifth nonadvancing planning audit checks three negative contracts, two
+# configuration subsets, and one illustrative NvSchema consumer subset from
+# the exact 60-row remainder. It leaves 54 unselected and all 84 live-open.
+python3 "${thor_local_root}/qualification/planning-requirement-executors-wave7/executor.py" \
+  --json >/dev/null
+python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave7/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
@@ -293,6 +301,14 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/offline-mv3dt-tools/executor.py" --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q \
   "${thor_local_root}/qualification/offline-mv3dt-tools/tests"
+
+# The known-speech H.264/AAC fixture tool defaults to a write-free plan. Its
+# static suite mocks the only two allowed local subprocesses and keeps the real
+# FFmpeg integration opt-in, so this milestone creates no media or receipt.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/tiny-audio-fixture/fixture.py" plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/tiny-audio-fixture/tests"
 
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact

@@ -149,5 +149,12 @@ provider, and enables the audio request flag in the agent, LVS, and alert path.
 This lane is not qualified until all of the following are current: the codec
 bundle is staged, the labeled image exists, the exact model snapshot exists,
 the memory gate passes, `/v1/models` returns the configured id with
-`audio_support=true`, and a tiny known-speech H.264/AAC fixture proves visible
-content, audible content, audio-disabled control behavior, LVS, and alerts.
+`audio_support=true`, and a runtime qualification run using a tiny known-speech
+H.264/AAC fixture proves visible content, audible content, audio-disabled
+control behavior, LVS, and alerts.
+The acknowledgement-gated
+`qualification/tiny-audio-fixture/fixture.py` tool now generates and verifies
+that candidate media locally without checking in a binary or using the
+network. Its receipt is input integrity evidence only; it does not satisfy any
+of the runtime conditions above, and per-chunk transcription still requires a
+real transcript-producing ASR path.

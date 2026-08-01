@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/tiny-audio-fixture-receipt.schema.json",
+  "title": "Bounded VSS tiny known-speech fixture receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "fixture_id",
+    "purpose",
+    "capability_gap_ids",
+    "phrase",
+    "generator",
+    "media",
+    "probe",
+    "safety"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "fixture_id": {"const": "vss-tiny-known-speech-h264-aac-v1"},
+    "purpose": {"const": "candidate_input_only"},
+    "capability_gap_ids": {
+      "const": [
+        "manifest-gap.audio-understanding.00-audio-aware-base-workflow",
+        "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
+        "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts"
+      ]
+    },
+    "phrase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "utf8_sha256"],
+      "properties": {
+        "text": {"const": "Attention operator. The blue crate is ready."},
+        "utf8_sha256": {
+          "const": "c20db4dfe2b82f3a2ebeb1cfc053e7b63baa3cf079140466827342930d641ec8"
+        }
+      }
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recipe_sha256",
+        "receipt_schema_sha256",
+        "video_source",
+        "audio_source",
+        "tool_provenance"
+      ],
+      "properties": {
+        "recipe_sha256": {
+          "const": "ef0765520b8efae3cd2258762cd9a0c20d9cfdc2360611aa8776139571589a3c"
+        },
+        "receipt_schema_sha256": {"$ref": "#/$defs/sha256"},
+        "video_source": {"const": "lavfi-color-plus-drawtext"},
+        "audio_source": {"const": "lavfi-flite"},
+        "tool_provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ffmpeg", "ffprobe"],
+          "properties": {
+            "ffmpeg": {
+              "allOf": [
+                {"$ref": "#/$defs/tool"},
+                {
+                  "properties": {
+                    "path": {"pattern": "/ffmpeg$"}
+                  }
+                }
+              ]
+            },
+            "ffprobe": {
+              "allOf": [
+                {"$ref": "#/$defs/tool"},
+                {
+                  "properties": {
+                    "path": {"pattern": "/ffprobe$"}
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["filename", "sha256", "size_bytes", "max_size_bytes"],
+      "properties": {
+        "filename": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*\\.mp4$",
+          "maxLength": 255
+        },
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+        "max_size_bytes": {"const": 2000000}
+      }
+    },
+    "probe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format_names", "duration_ms", "streams"],
+      "properties": {
+        "format_names": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "contains": {"const": "mp4"},
+          "items": {"type": "string", "pattern": "^[a-zA-Z0-9_-]{1,32}$"}
+        },
+        "duration_ms": {"$ref": "#/$defs/duration_ms"},
+        "streams": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {"$ref": "#/$defs/video_stream"},
+            {"$ref": "#/$defs/audio_stream"}
+          ],
+          "items": false
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_outside_repository",
+        "warehouse_data_used",
+        "network_used",
+        "docker_used",
+        "model_loaded",
+        "subprocesses"
+      ],
+      "properties": {
+        "generated_outside_repository": {"const": true},
+        "warehouse_data_used": {"const": false},
+        "network_used": {"const": false},
+        "docker_used": {"const": false},
+        "model_loaded": {"const": false},
+        "subprocesses": {"const": ["ffmpeg", "ffprobe"]}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "duration_ms": {"type": "integer", "minimum": 5500, "maximum": 6100},
+    "profile": {"type": "string", "minLength": 1, "maxLength": 64},
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^/(usr/local/bin|usr/bin|bin)/(ffmpeg|ffprobe)$"
+        },
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "stream_index": {"type": "integer", "minimum": 0, "maximum": 16},
+    "video_stream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "codec_type",
+        "codec_name",
+        "profile",
+        "width",
+        "height",
+        "pix_fmt",
+        "r_frame_rate",
+        "duration_ms"
+      ],
+      "properties": {
+        "index": {"$ref": "#/$defs/stream_index"},
+        "codec_type": {"const": "video"},
+        "codec_name": {"const": "h264"},
+        "profile": {"$ref": "#/$defs/profile"},
+        "width": {"const": 320},
+        "height": {"const": 240},
+        "pix_fmt": {"const": "yuv420p"},
+        "r_frame_rate": {"const": "10/1"},
+        "duration_ms": {"$ref": "#/$defs/duration_ms"}
+      }
+    },
+    "audio_stream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index",
+        "codec_type",
+        "codec_name",
+        "profile",
+        "sample_rate_hz",
+        "channels",
+        "channel_layout",
+        "duration_ms"
+      ],
+      "properties": {
+        "index": {"$ref": "#/$defs/stream_index"},
+        "codec_type": {"const": "audio"},
+        "codec_name": {"const": "aac"},
+        "profile": {"const": "LC"},
+        "sample_rate_hz": {"const": 48000},
+        "channels": {"const": 1},
+        "channel_layout": {"const": "mono"},
+        "duration_ms": {"$ref": "#/$defs/duration_ms"}
+      }
+    }
+  }
+}

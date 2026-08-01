@@ -73,6 +73,11 @@ in this directory:
   contracts from that exact 66-requirement remainder. It preserves five
   documented mismatches and one external-optional boundary, leaves 60
   requirements without a planning candidate, and keeps all 84 live-open;
+- `planning-requirement-executors-wave7/` audits that exact 60-requirement
+  remainder and adds six disjoint source subsets: three preserved negative
+  contracts, two configuration implementations, and one illustrative NvSchema
+  consumer/protocol subset. It leaves 54 without a planning candidate and all
+  84 live-open requirements unpromoted;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -84,6 +89,12 @@ in this directory:
   models, cloud inference, network, or service lifecycle. Its two observations
   are bound only to exact non-advancing oracle subsets; both full oracles remain
   open;
+- `tiny-audio-fixture/` provides an inert-by-default, acknowledgement-gated
+  generator and read-only verifier for a six-second known-speech H.264/AAC
+  candidate. It uses only local FFmpeg/FFprobe and publishes only the explicit
+  new media path and its adjacent receipt outside the repository. A private
+  transient work directory is removed non-recursively; the package claims no
+  VSS, model, ASR, summary, or alert runtime evidence;
 - `advertised-entry-gaps/` gives each advertised entry from the 16 families
   that lack capability rows its own still-open semantic oracle plan;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
@@ -134,9 +145,9 @@ bindings are static subsets only, with zero runtime evidence and zero
 `passed_current` promotions. The third successor updates the LVS adapter's
 static API contract and binds those two MV3DT subsets without materializing an
 additional planning requirement. The separate 8 + 21 + 23 + 5 + 6 + 8 + 1 +
-11 advertised-entry candidates and 6 + 6 + 6 + 6 additional planning checks
-are non-advancing and do not change those live counts. They leave four
-advertised entries as explicit external-attestation blockers and 60 planning
+11 advertised-entry candidates and 6 + 6 + 6 + 6 + 6 additional planning
+checks are non-advancing and do not change those live counts. They leave four
+advertised entries as explicit external-attestation blockers and 54 planning
 requirements not yet selected by a planning executor package, respectively.
 The prerelease packages are separate from these stable 3.2.1 denominators. The
 fourteen-family watchlist remains pointer-only; the adjacent exact diff package

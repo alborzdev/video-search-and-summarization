@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "docker": false,
+    "subprocess": false,
+    "writes": false,
+    "lifecycle": false,
+    "downloads": false,
+    "credentials": false,
+    "warehouse_sample_bundle_used": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "a061b5aca1a27df1e34a8a6480d01843b77609821b93792ed9047c8209ce808f"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave4/inventory.json", "sha256": "f171453f37d998eb26f56e9ed74d09bad9a00ef1ac4e1c7122e790219271d5a4"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave5/inventory.json", "sha256": "d10a511c482d80e6167b8ac3a7ed97070d758ea709a4635f3a97526c803ef942"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave6/inventory.json", "sha256": "bdcaf973fddf291fc35a0d27ae7a7a9414e5d62367c9100fef6d80f39d86fec7"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave7-source-case.ui-negative-oracle",
+      "planning_requirement_id": "ui-negative-oracle",
+      "capability_id": "behavior.ui.known-issues",
+      "planning_payload_sha256": "e79c44e02ce52dca94000e84def55d036ae237517119120651095edf6dd7acbb",
+      "capability_sha256": "add824ee6797ea91c49a15d7b9c761281e87a75533dbf6bd585abd28a26d0d32",
+      "contract_sha256": "71016a33aca8d4002476ba09a87ac9f2417b124b64cd07d48ebfb0aa08f79a3f",
+      "oracle_sha256": "05698ad25abc091c3a0ca5a37912de4cda5b84cc5d532fd05190d957de1f138e",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-seven-ui-limitations", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"issues\":[\"history_stale_after_agent_restart\",\"removed_sensor_alert_media_missing\",\"ui_created_manage_alert_rule_failure\",\"top_k_below_100_can_reduce_recall\",\"removed_nvstreamer_rtsp_can_remain_stale\",\"video_rename_unsupported\",\"mixed_delete_can_leave_stale_state\"]"]},
+        {"assertion_id": "workarounds-and-non-remediation", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"workarounds_required\":true", "Limitations must remain visible and must not be treated as remediated"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave7-source-case.nemoclaw-env-matrix",
+      "planning_requirement_id": "nemoclaw-env-matrix",
+      "capability_id": "configuration.nemoclaw.model-surface-boundary",
+      "planning_payload_sha256": "aaa8117bc502f63106b710b32f2a6d1ded8229624397e9654baacd23c6040f2c",
+      "capability_sha256": "bbbc1d4e3045be208a9cca5808ddbe746a38091ebc0c03bba7897a0ee4b52749",
+      "contract_sha256": "4498c489c250e8abdf41b5385ae06c0cf736a8217fbabac75dd1cfbbde791cc1",
+      "oracle_sha256": "e5e03700e9f2c2ff86465a2c3e4352f3dbba37ffd18b18b3ab0f902ec8c57a5d",
+      "evidence_class": "static_configuration_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/thor-local/openclaw/toolchain.py", "sha256": "43e8dd00be32567f710b579de6eb91137df06b4defca5316ecdb6bb8edec2ec4"},
+        {"path": "deploy/docker/thor-local/openclaw/toolchain.lock.json", "sha256": "3f0efb6b64741135d5551802ccbadd919a4a368b1b3ea2cd738b32d252a48ece"}
+      ],
+      "assertions": [
+        {"assertion_id": "documented-independent-model-surfaces", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"agent_orchestrator_prefix\":\"NEMOCLAW_*\"", "\"vss_service_prefixes\":[\"VSS_LLM_*\",\"VSS_VLM_*\"]", "\"surfaces_independent\":true", "\"compatible_api_key_must_be_nonempty_even_if_provider_ignores_it\":true"]},
+        {"assertion_id": "local-provider-env-is-nemoclaw-scoped", "sources": ["deploy/docker/thor-local/openclaw/toolchain.py", "deploy/docker/thor-local/openclaw/toolchain.lock.json"], "expected": ["\"NEMOCLAW_PROVIDER\": \"custom\"", "\"NEMOCLAW_ENDPOINT_URL\"", "\"COMPATIBLE_API_KEY\": lock[\"provider\"][\"api_key\"]", "\"api_key\": \"local\"", "\"sandbox_base_url\": \"http://host.openshell.internal:8000/v1\""]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave7-source-case.nemoclaw-recovery-oracle",
+      "planning_requirement_id": "nemoclaw-recovery-oracle",
+      "capability_id": "behavior.nemoclaw.recovery-and-destructive-boundaries",
+      "planning_payload_sha256": "bd22b6738e7d9dc897c2ac8a3b7cbc46bd7bad5e7aab78d2dccf79d97bab416d",
+      "capability_sha256": "4982646a187bf5b8574ee7b811ddcd50d956459ba9bf625c0c8bf074a87be4ae",
+      "contract_sha256": "ad41f32a6f3002e9608f1f1192cb6748d25aa516a61c60d847a428075462fab8",
+      "oracle_sha256": "3dfa55b06d0f105f6e5c4b9135da7ddd00630d5c4eb70fd35865b1208c6c4145",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "deploy/docker/thor-local/openclaw/toolchain.py", "sha256": "43e8dd00be32567f710b579de6eb91137df06b4defca5316ecdb6bb8edec2ec4"},
+        {"path": "deploy/docker/thor-local/openclaw/toolchain.lock.json", "sha256": "3f0efb6b64741135d5551802ccbadd919a4a368b1b3ea2cd738b32d252a48ece"},
+        {"path": ".openclaw/workspace/_nemoclaw/AGENTS.md", "sha256": "936f8b0b2089e4fc179822ecb3ba851922ecca733233c19607092106d1e42737"}
+      ],
+      "assertions": [
+        {"assertion_id": "exact-recovery-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "deploy/docker/thor-local/openclaw/toolchain.lock.json"], "expected": ["\"minimum_node\":\"22.16\"", "\"ui_port\":18789", "\"mcp_port\":9988", "\"sandbox_command\":\"nemoclaw exec\"", "\"host_endpoint\":\"host.openshell.internal\"", "\"node_minimum\": \"22.16.0\""]},
+        {"assertion_id": "destructive-actions-remain-gated", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "deploy/docker/thor-local/openclaw/toolchain.py", ".openclaw/workspace/_nemoclaw/AGENTS.md"], "expected": ["\"deep_clean_deletes\":\"mdx_data_dir\"", "\"deep_clean_requires_explicit_authorization\":true", "\"clean_reinstall_is_destructive\":true", "explicit lifecycle authorization", "Don't run destructive commands without asking"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave7-source-case.agent-known-issues-oracle",
+      "planning_requirement_id": "agent-known-issues-oracle",
+      "capability_id": "behavior.agent.known-issues",
+      "planning_payload_sha256": "ea3ab1fb29a252217a37a70701788ba6e5a56c4af7c563f3ba7f34add00ab3f7",
+      "capability_sha256": "4e983a320f2c62a07e7cc1245393fb73cfd7c2f2608fa865f7851ecd9dc2184d",
+      "contract_sha256": "23bfe90ac7f4100277a52b3a6ddb7375111cffe71fb07a0123c866ec54dee010",
+      "oracle_sha256": "8806c832a2584d89dd0f74102b4b2e81e7a02e21ab0435c1462afb68a2909903",
+      "evidence_class": "static_negative_contract_preserved",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json", "sha256": "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"},
+        {"path": "services/agent/src/vss_agents/agents/top_agent.py", "sha256": "a4aa4a051b589858078a7941cf32de8128d7c22f574bdf718974a70cb0c140c4"},
+        {"path": "services/agent/src/vss_agents/tools/fov_counts_with_chart.py", "sha256": "b61b8e8e8f0217101d1d3b3e0bb760c11a20adce17688a0ef81b95ab00b02d9b"}
+      ],
+      "assertions": [
+        {"assertion_id": "scoped-agent-negative-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json"], "expected": ["\"adaptive_thinking_required\":true", "\"long_chat_risks\":[\"instruction_drift\",\"bad_urls\"]", "\"recursion_limit_possible\":true", "\"multiple_reports_single_query\":\"unsupported_in_incident_report_scope\"", "do not overwrite LVS multi-video support"]},
+        {"assertion_id": "source-subset-recursion-and-empty-chart", "sources": ["services/agent/src/vss_agents/agents/top_agent.py", "services/agent/src/vss_agents/tools/fov_counts_with_chart.py"], "expected": ["recursion_limit=self.max_iterations", "All counts are zero — skipping chart generation"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave7-source-case.systems-nvstreamer-sync",
+      "planning_requirement_id": "systems-nvstreamer-sync",
+      "capability_id": "configuration.nvstreamer.sync",
+      "planning_payload_sha256": "351ad79f8dcf55f65d8eef50f1f6da56e0f9f5b87d533f363739ce892130b9a8",
+      "capability_sha256": "e3b85440901e9ca34f4717e6e7e998ad13358e65508a77a5c87714a2efa2c810",
+      "contract_sha256": "ca381cffcf6b613a286a38a75b81ae99790d0b6001fc315c7efd9bf898bf22a6",
+      "oracle_sha256": "0189c82b2db2e2a185767b22465aa053ee358d1f018f58278764da3a555e08fb",
+      "evidence_class": "static_configuration_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "services/vios/src/framework/utilities/config.cpp", "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"},
+        {"path": "services/vios/src/framework/media/media_pipelines/gstdemux.cpp", "sha256": "454523112fae75492243165a83d060b609646b5eecbf33fcc76e9c4e300d7236"},
+        {"path": "services/vios/src/modules/rtsp_server/NvMediaServer.cpp", "sha256": "2225e0fc77557c434af1c0a221abb4675c1c8c81f629bd3b22a6cb14ae426b81"}
+      ],
+      "assertions": [
+        {"assertion_id": "documented-sync-configuration", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"key\":\"nv_streamer_sync_file_count\"", "\"identical_encoding_required\":true", "\"recommended_bframes\":0", "\"recommended_keyint\":30", "Synchronized playback compatibility is unqualified"]},
+        {"assertion_id": "source-sync-gating", "sources": ["services/vios/src/framework/utilities/config.cpp", "services/vios/src/framework/media/media_pipelines/gstdemux.cpp", "services/vios/src/modules/rtsp_server/NvMediaServer.cpp"], "expected": ["data.get(\"nv_streamer_sync_file_count\", -1).asInt()", "GET_CONFIG().nv_streamer_sync_file_count <= 0", "getMediaSourceListSize() >= (size_t)GET_CONFIG().nv_streamer_sync_file_count", "startPlayingAllSources()"]}
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave7-source-case.systems-nvschema-json",
+      "planning_requirement_id": "systems-nvschema-json",
+      "capability_id": "protocol.nvschema.json-frame",
+      "planning_payload_sha256": "432af33c22551017f27c20e006bac9ab9aa629b21a491c36fa91bf52f2e3d6f2",
+      "capability_sha256": "449106d7aa81123702740239e069960b8bf18cadd7e33510f1f38c211127f6b6",
+      "contract_sha256": "5052e783d54b6782ea56e89762aecd8daddbf693c51997a9510ec937157bde02",
+      "oracle_sha256": "aa2717f3b692f5dfb2477fbf8f02f29efd3fb4c7c93199220aa56bf1581fc6a1",
+      "evidence_class": "static_protocol_subset_only",
+      "source_locks": [
+        {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py", "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e"},
+        {"path": "services/agent/src/vss_agents/video_analytics/nvschema.py", "sha256": "8c71e67e1fe1329d87486b46b57e35c271352cf0fe37c1c7bd0687939e15efe6"},
+        {"path": "services/agent/tests/unit_test/video_analytics/test_nvschema.py", "sha256": "caf91635661f4e85aca872a910aa0e9d6eb57f7e57e9a7a836d27bfa5775f834"}
+      ],
+      "assertions": [
+        {"assertion_id": "documented-json-frame-contract", "sources": ["deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"], "expected": ["\"frame_fields\":[\"version\",\"id\",\"@timestamp\",\"sensorId\",\"objects\"]", "\"event_values\":[\"entry\",\"exit\",\"moving\",\"stopped\",\"parked\",\"empty\",\"reset\"]", "\"object_delimiters\":[\"|\",\"|#|\"]", "\"illustrative_not_complete_validator\":true"]},
+        {"assertion_id": "checked-json-consumer-subset", "sources": ["libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py", "services/agent/src/vss_agents/video_analytics/nvschema.py", "services/agent/tests/unit_test/video_analytics/test_nvschema.py"], "expected": ["Each line of the input file is one frame", "frame_info[\"sensorId\"]", "frame_info[\"objects\"]", "alias=\"sensorId\"", "test_incident_with_aliases"]}
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}
