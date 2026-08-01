@@ -1,0 +1,104 @@
+# Optional Alert Bridge replica config. The existing single-instance configs are
+# unchanged; this file is mounted only by the thor-alert-scale profile.
+vst_config:
+  base_url: "http://host.docker.internal:30888"
+  sensor_list_endpoint: "/vst/api/v1/sensor/streams"
+  add_overlay: true
+  segment_anchor: "start"
+  segment_duration_seconds: 10
+  storage:
+    base_url: "http://host.docker.internal:30888"
+    media_file_path_by_id_endpoint: "/api/v1/storage/file/path"
+
+kafka:
+  bootstrap_servers: "host.docker.internal:9092"
+  group_id: "kafka-incidents-dumper"
+  max_poll_records: 20
+  auto_offset_reset: "latest"
+  enable_auto_commit: false
+  max_poll_interval_ms: 300000
+  poll_timeout: 10
+  message_type: "Incident"
+
+vlm:
+  base_url: "${VLM_BASE_URL}/v1"
+  model: "${VLM_NAME}"
+  max_tokens: 4096
+  do_resize: true
+  min_pixels: 1568
+  max_pixels: 345600
+  num_frames: 5
+  enable_sampling: false
+  sampling_fps: 4
+
+event_bridge:
+  sourceType: "kafka"
+  sinkType: "kafka"
+  kafka_source:
+    group_id: "alert-bridge-vlm-group"
+    topics:
+      incident: "mdx-incidents"
+      alert: "mdx-alerts"
+  redis_source:
+    host: "host.docker.internal"
+    port: 6379
+    db: 0
+    dedup_ttl_seconds: 300
+    streams:
+      anomaly_stream: "alert-bridge-input-stream"
+      heartbeat_stream: "alert-bridge-heartbeats-stream"
+    consumer_group: "vlm_agents_group"
+    consumer_config:
+      block_time: 10
+      count: 1
+      batch_size: 1
+  redis_sink:
+    host: "host.docker.internal"
+    port: 6379
+    db: 0
+    streams:
+      enhanced_anomaly_stream: "alert-bridge-enhanced-stream"
+      incidents_stream: "alert-bridge-incidents-stream"
+
+prompt:
+  prefer_payload_prompt: false
+  override_prompts_on_start: true
+
+alert_type_config_file: "blueprint_config/alert_type_config_smartcity_blueprint.json"
+
+alert_agent:
+  num_workers: 1
+  max_allowed_stream_size: 2
+  default_stream_interval: 1
+  vst_pass_through_mode: false
+  chunk_size: 1
+  metrics:
+    per_sensor_labels: false
+
+websocket:
+  enabled: false
+  consumer_group_prefix: "websocket_instance"
+  redis_consumer:
+    block_time: 1000
+    count: 1
+    reconnect_delay: 5
+
+elastic:
+  enabled: true
+  hosts:
+    - "http://host.docker.internal:9200"
+
+vlm_enhanced_sink:
+  incident:
+    type: "elastic"
+    elastic:
+      index: "mdx-vlm-incidents"
+  alert:
+    type: "elastic"
+    elastic:
+      index: "mdx-vlm-alerts"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(threadName)s - %(name)s - %(levelname)s - %(message)s"
+  third_party_level: "WARNING"

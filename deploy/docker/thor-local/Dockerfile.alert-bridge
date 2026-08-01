@@ -17,5 +17,6 @@ COPY services/alert/enhance_alert_with_vlm.py /app/enhance_alert_with_vlm.py
 COPY services/alert/vlm/vlm_client.py /app/vlm/vlm_client.py
 COPY services/alert/vst/snapshot_sampler.py /app/vst/snapshot_sampler.py
 COPY services/alert/handlers/prompt_handler/alert_type_config_loader.py /app/handlers/prompt_handler/alert_type_config_loader.py
+COPY services/alert/utils/schema_util.py /app/utils/schema_util.py
 
 USER 65532:65532

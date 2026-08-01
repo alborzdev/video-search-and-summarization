@@ -23,13 +23,13 @@
     "evidence_ceiling": {"const": "commit_tree_and_path_status_metadata_only"},
     "counts": {
       "const": {
-        "develop_side_commits": 498,
+        "develop_side_commits": 499,
         "main_only_exceptions": 2,
-        "develop_side_path_status_records": 109052,
+        "develop_side_path_status_records": 109058,
         "main_only_path_status_records": 2,
-        "all_path_status_records": 109054,
-        "unique_paths": 59914,
-        "status_counts": {"A": 39339, "D": 57058, "M": 12657},
+        "all_path_status_records": 109060,
+        "unique_paths": 59917,
+        "status_counts": {"A": 39340, "D": 57058, "M": 12662},
         "classification_counts": {
           "build-vision-agent": 9,
           "search-architecture": 58,
@@ -40,13 +40,13 @@
           "reports-sop": 5,
           "lvs-index-api": 52,
           "agent-ui-vlm-verification": 53,
-          "profile-compose-inversion": 149,
+          "profile-compose-inversion": 150,
           "thor-aarch64-multiarch": 21,
           "sdrc-configurator": 93,
           "kubernetes-helm": 79,
-          "nemoclaw-mcp-orchestration": 9,
+          "nemoclaw-mcp-orchestration": 10,
           "bugfix": 128,
-          "tests-docs": 233,
+          "tests-docs": 234,
           "vendor-generated-deletion": 4,
           "ci-release": 126,
           "supply-chain": 38,
@@ -57,10 +57,10 @@
     },
     "digests": {
       "const": {
-        "develop_commit_sequence_sha256": "71392342507ca18fc086b5c629c39f1f33c8c215e888a2af51516df6779c0344",
+        "develop_commit_sequence_sha256": "609ea564effe9c1bbebdd9e538bf546d843990d499757fc54826af77efabda0a",
         "main_exception_sequence_sha256": "601be158b38bcb039f3fa4e09487b4541fba9c576f3d257963724448636bd889",
-        "path_status_jsonl_sha256": "afd9f9717184526031c7ae4dc820eb78d260b6525f56c0f2a7dc6e344051d262",
-        "path_status_gzip_sha256": "f8fbc47104c0192727226d32b19180c27f839c83fda8ecc01028425605487ef7"
+        "path_status_jsonl_sha256": "137329738d0a2d2bcd7dc9c30ae9c6c21bfb36f38d81126491ba5bc8bbe8685e",
+        "path_status_gzip_sha256": "3e4010f2264396a7b86f4932b3126463bab5b66c1966d86a6f44107d275b4118"
       }
     },
     "all_develop_commits_classified": {"const": true},

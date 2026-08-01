@@ -41,7 +41,7 @@
         "merge_base_sha": {"const": "7640d917047cf7b0fd3085eefb8282754b56bc94"},
         "stable_main_sha": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
         "prerelease_branch": {"const": "develop"},
-        "prerelease_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+        "prerelease_sha": {"const": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5"},
         "nightly_tag": {"const": "nightly-20260801"},
         "nightly_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"}
       }
@@ -96,20 +96,20 @@
         "classification_counts"
       ],
       "properties": {
-        "develop_side_commits": {"const": 498},
+        "develop_side_commits": {"const": 499},
         "main_only_exceptions": {"const": 2},
-        "develop_side_path_status_records": {"const": 109052},
+        "develop_side_path_status_records": {"const": 109058},
         "main_only_path_status_records": {"const": 2},
-        "all_path_status_records": {"const": 109054},
-        "unique_paths": {"const": 59914},
+        "all_path_status_records": {"const": 109060},
+        "unique_paths": {"const": 59917},
         "status_counts": {
           "type": "object",
           "additionalProperties": false,
           "required": ["A", "D", "M"],
           "properties": {
-            "A": {"const": 39339},
+            "A": {"const": 39340},
             "D": {"const": 57058},
-            "M": {"const": 12657}
+            "M": {"const": 12662}
           }
         },
         "classification_counts": {
@@ -148,13 +148,13 @@
             "reports-sop": {"const": 5},
             "lvs-index-api": {"const": 52},
             "agent-ui-vlm-verification": {"const": 53},
-            "profile-compose-inversion": {"const": 149},
+            "profile-compose-inversion": {"const": 150},
             "thor-aarch64-multiarch": {"const": 21},
             "sdrc-configurator": {"const": 93},
             "kubernetes-helm": {"const": 79},
-            "nemoclaw-mcp-orchestration": {"const": 9},
+            "nemoclaw-mcp-orchestration": {"const": 10},
             "bugfix": {"const": 128},
-            "tests-docs": {"const": 233},
+            "tests-docs": {"const": 234},
             "vendor-generated-deletion": {"const": 4},
             "ci-release": {"const": 126},
             "supply-chain": {"const": 38},
@@ -174,10 +174,10 @@
         "path_status_gzip_sha256"
       ],
       "properties": {
-        "develop_commit_sequence_sha256": {"const": "71392342507ca18fc086b5c629c39f1f33c8c215e888a2af51516df6779c0344"},
+        "develop_commit_sequence_sha256": {"const": "609ea564effe9c1bbebdd9e538bf546d843990d499757fc54826af77efabda0a"},
         "main_exception_sequence_sha256": {"const": "601be158b38bcb039f3fa4e09487b4541fba9c576f3d257963724448636bd889"},
-        "path_status_jsonl_sha256": {"const": "afd9f9717184526031c7ae4dc820eb78d260b6525f56c0f2a7dc6e344051d262"},
-        "path_status_gzip_sha256": {"const": "f8fbc47104c0192727226d32b19180c27f839c83fda8ecc01028425605487ef7"}
+        "path_status_jsonl_sha256": {"const": "137329738d0a2d2bcd7dc9c30ae9c6c21bfb36f38d81126491ba5bc8bbe8685e"},
+        "path_status_gzip_sha256": {"const": "3e4010f2264396a7b86f4932b3126463bab5b66c1966d86a6f44107d275b4118"}
       }
     },
     "path_status_sidecar": {
@@ -194,14 +194,14 @@
         "path": {"const": "path-status.jsonl.gz"},
         "format": {"const": "gzip_json_lines"},
         "gzip_mtime": {"const": 0},
-        "compressed_bytes": {"const": 789321},
-        "uncompressed_bytes": {"const": 25039231}
+        "compressed_bytes": {"const": 789448},
+        "uncompressed_bytes": {"const": 25040081}
       }
     },
     "develop_side_commits": {
       "type": "array",
-      "minItems": 498,
-      "maxItems": 498,
+      "minItems": 499,
+      "maxItems": 499,
       "items": {"$ref": "#/$defs/commit"}
     },
     "main_only_exceptions": {

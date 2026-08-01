@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/vss/thor/candidate-alerts-runtime-evidence/contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collector_id", "mode", "default_execution_enabled", "planning_requirement_id", "capability_id", "oracle_id", "authorization", "target", "execution_bounds", "workflow", "cleanup", "evidence_scope", "source_locks"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "collector_id": { "const": "candidate-alerts-runtime-evidence" },
+    "mode": { "const": "authorization-gated-runtime" },
+    "default_execution_enabled": { "const": false },
+    "planning_requirement_id": { "const": "candidate-alerts" },
+    "capability_id": { "const": "runtime.workflow.alert-verification" },
+    "oracle_id": { "const": "oracle.runtime.workflow.alert-verification" },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorization_id", "acknowledgement"],
+      "properties": {
+        "authorization_id": { "const": "candidate-alerts-runtime" },
+        "acknowledgement": { "const": "I_ACK_CANDIDATE_ALERTS_CONFIG_MUTATION_AND_BACKGROUND_VLM" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_origin", "numeric_loopback_only", "proxies", "follow_redirects", "paths"],
+      "properties": {
+        "default_origin": { "const": "http://127.0.0.1:9080" },
+        "numeric_loopback_only": { "const": true },
+        "proxies": { "const": false },
+        "follow_redirects": { "const": false },
+        "paths": {
+          "const": ["/health", "/api/v1/verification/config", "/api/v1/verification/ondemand"]
+        }
+      }
+    },
+    "execution_bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_requests", "max_actions", "max_request_bytes", "max_response_bytes", "timeout_seconds", "phases"],
+      "properties": {
+        "max_requests": { "const": 8 },
+        "max_actions": { "const": 8 },
+        "max_request_bytes": { "const": 65536 },
+        "max_response_bytes": { "const": 1048576 },
+        "timeout_seconds": { "const": 10 },
+        "phases": { "const": ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"] }
+      }
+    },
+    "workflow": {
+      "const": ["health", "pre_state_config_list", "create_exact_owned_config", "inspect_exact_run_marker_and_admit_cleanup_ownership", "positive_ondemand_admission", "adjacent_unknown_category_rejection", "delete_exact_owned_config", "post_state_config_list_and_digest"]
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "owned_resource_type", "transitions_per_resource", "registration_gate", "ambiguous_create_policy", "postcondition"],
+      "properties": {
+        "order": { "const": "lifo" },
+        "owned_resource_type": { "const": "alert-verification-config" },
+        "transitions_per_resource": { "const": 2 },
+        "registration_gate": { "const": "POST 201 plus exact GET readback with unique run-owned marker" },
+        "ambiguous_create_policy": { "const": "fail closed without cleanup registration or deletion" },
+        "postcondition": { "const": "owned config absent and non-owned config digest restored" }
+      }
+    },
+    "evidence_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observes", "does_not_observe", "promotion_eligible"],
+      "properties": {
+        "observes": { "const": ["alert_bridge_health", "config_identity", "positive_202_admission", "adjacent_unknown_category_400", "exact_cleanup", "non_owned_config_digest_restore"] },
+        "does_not_observe": { "const": ["background_vlm_completion", "final_vlm_verdict", "kafka_or_elasticsearch_sink_delivery", "media_payload_digest", "fixture_server_identity"] },
+        "promotion_eligible": { "const": false }
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^deploy/docker/" },
+          "sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

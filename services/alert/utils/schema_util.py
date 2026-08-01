@@ -93,6 +93,31 @@ def _stringify_map_values(target: Dict[str, Any]) -> None:
             target[key] = str(value)
 
 
+def _normalize_incident_analytics_alias(incident: Dict[str, Any]) -> None:
+    """Map the documented Incident ``analytics`` field to its wire name.
+
+    VSS 3.2.1 documents field 7 as ``analytics`` while the released NvSchema
+    protobuf bindings expose the same field number as ``analyticsModule``.
+    ``ParseDict(..., ignore_unknown_fields=True)`` would otherwise silently
+    discard a documented ``analytics`` object.  Preserve both input spellings,
+    but fail closed when a payload supplies contradictory values.
+    """
+    if "analytics" not in incident:
+        return
+
+    documented_value = incident["analytics"]
+    if (
+        "analyticsModule" in incident
+        and incident["analyticsModule"] != documented_value
+    ):
+        raise ValueError(
+            "Incident analytics and analyticsModule fields must be identical when both are supplied"
+        )
+
+    incident["analyticsModule"] = documented_value
+    del incident["analytics"]
+
+
 def convert_incident_to_protobuf_incident(incident_json: dict,
                                           ignore_unknown_fields: bool = True) -> nvSchemaIncident:
     """Convert an incident JSON dictionary to an ``nvSchemaIncident`` protobuf message.
@@ -114,6 +139,7 @@ def convert_incident_to_protobuf_incident(incident_json: dict,
         proto_message = nvSchemaIncident()
 
         incident_copy = json.loads(json.dumps(incident_json))
+        _normalize_incident_analytics_alias(incident_copy)
 
         info_block = incident_copy.get("info")
         if isinstance(info_block, dict):

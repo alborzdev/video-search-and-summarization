@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "implementation_id": "thor-clean-room-provider-free-legacy-calibration-v1",
+  "license": "Apache-2.0",
+  "architecture": "native-python-aarch64-compatible",
+  "provider": "local_coordinate_plane",
+  "source_contracts": [
+    {
+      "path": "deploy/docker/thor-local/qualification/architecture-gap-contracts/contract.json",
+      "raw_sha256": "f2164050ab6f437c28561fbe05ba48d9cecb599d431af315e2c11ed56b44c765"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"
+    },
+    {
+      "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json",
+      "raw_sha256": "075c626431eb1b95913b970d67060a3ccafd5662eff50e6646a17fec29ee2b43"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/calibration.json",
+      "raw_sha256": "075c626431eb1b95913b970d67060a3ccafd5662eff50e6646a17fec29ee2b43"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/schemas/calibration.schema.json",
+      "raw_sha256": "b3022760155d738019d28a228cb76432539f1a853e91d371e81e70ae0983b03a"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/roadNetwork.json",
+      "raw_sha256": "5990004710a5fbcc4344b70039e2c625bc29b843932cf813fabb130fcfb58a5d"
+    }
+  ],
+  "planning_rows": ["smartcity-manual-calibration", "smartcity-gis-calibration"],
+  "capability_subset": ["calibration.legacy.core", "calibration.legacy.gis"],
+  "implemented": [
+    "manual_project_validation",
+    "gis_project_validation",
+    "cartesian_project_validation",
+    "image_project_validation",
+    "multi_camera_project_validation",
+    "three_by_three_homography_solve",
+    "eight_point_roi_validation",
+    "tripwire_validation",
+    "road_link_validation",
+    "deterministic_calibration_json_export",
+    "deterministic_road_network_json_export",
+    "strict_VSS_schema_validation_against_both_calibration_consumers",
+    "strict_VSS_road_network_schema_validation",
+    "strict_readback",
+    "loopback_clean_room_path_method_REST_subset"
+  ],
+  "not_implemented": [
+    "interactive_browser_editor",
+    "legacy_client_compatible_port_8003_body_and_response_API",
+    "legacy_multipart_image_upload_API",
+    "browser_CORS_and_UI_routing",
+    "five_upload_import_invert_and_warp_endpoints",
+    "official_Google_Maps_UI_or_ROI_Refiner",
+    "runtime_qualification_on_Thor"
+  ],
+  "warehouse_sample_bundle": "excluded",
+  "runtime_evidence": [],
+  "can_mark_capability_passed": false
+}

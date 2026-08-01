@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "collector_id": "candidate-alerts-runtime-evidence",
+  "mode": "authorization-gated-runtime",
+  "default_execution_enabled": false,
+  "planning_requirement_id": "candidate-alerts",
+  "capability_id": "runtime.workflow.alert-verification",
+  "oracle_id": "oracle.runtime.workflow.alert-verification",
+  "authorization": {
+    "authorization_id": "candidate-alerts-runtime",
+    "acknowledgement": "I_ACK_CANDIDATE_ALERTS_CONFIG_MUTATION_AND_BACKGROUND_VLM"
+  },
+  "target": {
+    "default_origin": "http://127.0.0.1:9080",
+    "numeric_loopback_only": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "paths": [
+      "/health",
+      "/api/v1/verification/config",
+      "/api/v1/verification/ondemand"
+    ]
+  },
+  "execution_bounds": {
+    "max_requests": 8,
+    "max_actions": 8,
+    "max_request_bytes": 65536,
+    "max_response_bytes": 1048576,
+    "timeout_seconds": 10,
+    "phases": [
+      "pre_state",
+      "positive",
+      "adjacent_negative",
+      "restore",
+      "postcondition"
+    ]
+  },
+  "workflow": [
+    "health",
+    "pre_state_config_list",
+    "create_exact_owned_config",
+    "inspect_exact_run_marker_and_admit_cleanup_ownership",
+    "positive_ondemand_admission",
+    "adjacent_unknown_category_rejection",
+    "delete_exact_owned_config",
+    "post_state_config_list_and_digest"
+  ],
+  "cleanup": {
+    "order": "lifo",
+    "owned_resource_type": "alert-verification-config",
+    "transitions_per_resource": 2,
+    "registration_gate": "POST 201 plus exact GET readback with unique run-owned marker",
+    "ambiguous_create_policy": "fail closed without cleanup registration or deletion",
+    "postcondition": "owned config absent and non-owned config digest restored"
+  },
+  "evidence_scope": {
+    "observes": [
+      "alert_bridge_health",
+      "config_identity",
+      "positive_202_admission",
+      "adjacent_unknown_category_400",
+      "exact_cleanup",
+      "non_owned_config_digest_restore"
+    ],
+    "does_not_observe": [
+      "background_vlm_completion",
+      "final_vlm_verdict",
+      "kafka_or_elasticsearch_sink_delivery",
+      "media_payload_digest",
+      "fixture_server_identity"
+    ],
+    "promotion_eligible": false
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/local20-fixture-pack/manifest.json",
+      "sha256": "f6f994992620fe34da36695be82b9092fc04b64a3f065a2472f614a71f77935b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/alerts-incidents-tracks.json",
+      "sha256": "28c1fe5c84ee5a81e6ca32908b667dd6af4b141d971b928740756c50b06a0e8f"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/alerts.json",
+      "sha256": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py",
+      "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-evidence-common/evidence.schema.json",
+      "sha256": "6a80f5465aaf12fc5ab7762f6162b58932e1a59fc88ba4bf818a33640cabef07"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-alerts-runtime-evidence/evidence.schema.json",
+      "sha256": "df43240f4b0d3a5fc0723cd4b3bab52892bf83ba85424ec43e01bd4bcde4d9d7"
+    }
+  ]
+}

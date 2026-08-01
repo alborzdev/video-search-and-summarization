@@ -34,8 +34,8 @@ def validated_result():
 
 def test_full_offline_denominator_validation(validated_result):
     assert validated_result["status"] == "static_denominator_valid"
-    assert validated_result["counts"]["develop_side_commits"] == 498
-    assert validated_result["counts"]["develop_side_path_status_records"] == 109052
+    assert validated_result["counts"]["develop_side_commits"] == 499
+    assert validated_result["counts"]["develop_side_path_status_records"] == 109058
     assert validated_result["counts"]["main_only_exceptions"] == 2
 
 
@@ -52,6 +52,7 @@ def test_all_json_documents_have_strict_valid_schemas(validated_result):
     pairs = [
         ("classification-rules.json", "classification-rules.schema.json"),
         ("denominator.json", "denominator.schema.json"),
+        ("head-delta.json", "head-delta.schema.json"),
         ("result.schema.json", "result.schema.json"),
     ]
     for document_name, schema_name in pairs:
@@ -71,13 +72,35 @@ def test_exact_commit_sequences_and_main_exceptions_are_unique():
     denominator = _load("denominator.json")
     develop = denominator["develop_side_commits"]
     exceptions = denominator["main_only_exceptions"]
-    assert len(develop) == 498
-    assert len({commit["sha"] for commit in develop}) == 498
+    assert len(develop) == 499
+    assert len({commit["sha"] for commit in develop}) == 499
     assert [commit["sha"] for commit in exceptions] == [
         "dc3746db57a008a0be203eaa0c130c6cb94a2661",
         "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
     ]
     assert not ({commit["sha"] for commit in develop} & {c["sha"] for c in exceptions})
+
+
+def test_latest_develop_hermes_commit_is_explicitly_accounted() -> None:
+    latest = _load("denominator.json")["develop_side_commits"][-1]
+
+    assert latest["sha"] == "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5"
+    assert latest["subject"] == (
+        "feat(NemoClaw):Add hermes support in nemoclaw notebook (#1308)"
+    )
+    assert latest["change_count"] == 6
+    assert latest["classifications"] == [
+        "profile-compose-inversion",
+        "nemoclaw-mcp-orchestration",
+        "tests-docs",
+    ]
+    delta = _load("head-delta.json")
+    assert delta["develop_head_sha"] == latest["sha"]
+    assert delta["commits"][0]["path_status_sha256"] == latest["path_status_sha256"]
+    assert delta["commits"][0]["feature_candidates"][0]["id"] == (
+        "prerelease.nemoclaw.hermes-agent-runtime"
+    )
+    assert delta["commits"][0]["feature_candidates"][0]["runtime_evidence"] == []
 
 
 def test_every_commit_has_a_replayable_classification_trace():
@@ -105,15 +128,13 @@ def test_path_sidecar_is_compact_deterministic_gzip():
     denominator = _load("denominator.json")
     compressed = (HERE / "path-status.jsonl.gz").read_bytes()
     raw = gzip.decompress(compressed)
-    assert len(compressed) == 789321
-    assert len(raw) == 25039231
-    assert (
-        hashlib.sha256(compressed).hexdigest()
-        == (denominator["digests"]["path_status_gzip_sha256"])
+    assert len(compressed) == 789448
+    assert len(raw) == 25040081
+    assert hashlib.sha256(compressed).hexdigest() == (
+        denominator["digests"]["path_status_gzip_sha256"]
     )
-    assert (
-        hashlib.sha256(raw).hexdigest()
-        == (denominator["digests"]["path_status_jsonl_sha256"])
+    assert hashlib.sha256(raw).hexdigest() == (
+        denominator["digests"]["path_status_jsonl_sha256"]
     )
 
 
@@ -140,6 +161,17 @@ def test_duplicate_denominator_key_is_rejected(tmp_path, monkeypatch):
     path.write_text(raw, encoding="utf-8")
     monkeypatch.setattr(module, "DENOMINATOR_PATH", path)
     with pytest.raises(module.DenominatorError, match="duplicate JSON key"):
+        module.validate_denominator()
+
+
+def test_head_delta_semantic_drift_is_content_locked(tmp_path, monkeypatch):
+    module = _module()
+    delta = _load("head-delta.json")
+    delta["commits"][0]["feature_candidates"][0]["title"] = "drifted"
+    path = tmp_path / "head-delta.json"
+    path.write_text(json.dumps(delta), encoding="utf-8")
+    monkeypatch.setattr(module, "HEAD_DELTA_PATH", path)
+    with pytest.raises(module.DenominatorError, match="head-delta lock drifted"):
         module.validate_denominator()
 
 

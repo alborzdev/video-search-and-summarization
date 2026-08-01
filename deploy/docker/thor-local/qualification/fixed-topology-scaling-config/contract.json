@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-fixed-topology-scaling-config-v1",
+  "mode": "static_configuration_candidate",
+  "policy": {
+    "default_inert": true,
+    "docker": false,
+    "network": false,
+    "subprocess": false,
+    "process_lifecycle": false,
+    "writes": false,
+    "runtime_evidence": [],
+    "can_mark_runtime_qualified": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "source_locks": [
+    {"path": "deploy/docker/compose.yml", "sha256": "aed3eb17a594eb278f8a3ec8c4e3a3590a1314504c28be646d28231d07a1f77e"},
+    {"path": "deploy/docker/thor-local/scaling/compose.yml", "sha256": "799ace6078bd1afd5ec505927290874f9987f79908a80a5edf7bcf580eb87b9e"},
+    {"path": "deploy/docker/thor-local/scaling/alert-scale-config.yml", "sha256": "da7edb4aca88e3d0be393218dfa52beee674355833fed2e6c9f264544dd4c3a9"},
+    {"path": "deploy/docker/thor-local/scaling/vios-scale-nginx.conf", "sha256": "ad206c90ce492c6613afece18928a0c393034b46a95eba921f7a22e4b6b6de63"},
+    {"path": "deploy/docker/thor-local/scaling/README.md", "sha256": "d379a419a4172bc83f879bd29f912eaf3e54b3dd5b53add9f17c9a3911ef06bd"},
+    {"path": "deploy/docker/thor-local/generated.env", "sha256": "3eb2c3a49c651083437e17b7bc75d1e44e5e21bd13d372ee62a8498206b97a3a"},
+    {"path": "deploy/docker/services/alert/scripts/env-substitute.py", "sha256": "fc2b52a3b4322657a5de1dbad4335ce395d17b179f004c7cec1a7dc2839af307"},
+    {"path": "deploy/docker/thor-local/qualification/architecture-gap-contracts/contract.json", "sha256": "f2164050ab6f437c28561fbe05ba48d9cecb599d431af315e2c11ed56b44c765"},
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d"},
+    {"path": "services/alert/enhance_alert_with_vlm.py", "sha256": "43b9759f03eb7bbc3776ca55966d0f59a6bf55311d74b9fc30d53ba097b3c8bd"},
+    {"path": "services/alert/metrics/prometheus_metrics.py", "sha256": "468db0ff806ea807ed3ba38ca3e18d76a3041a917b15839eda6cd9f397b86df2"},
+    {"path": "services/vios/src/framework/utilities/config.cpp", "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"},
+    {"path": "deploy/docker/services/vios/configs/vst_config.json", "sha256": "ef28cfab87be3199356a16554f7e92c0cd3e1f6a18b09cedfaed3a784bafca78"}
+  ],
+  "rows": [
+    {
+      "planning_requirement_id": "systems-alert-worker-scaling",
+      "planning_requirement_sha256": "c7efb0ac54286487e168cf6d14b6c8093aaa553afde2cae4606750c199177e56",
+      "planning_payload_sha256": "6ab4f9e3977d7eb3e25b538293376079603fb92c3e525cb042ea399f8eeb9c58",
+      "capability_id": "performance.alerts.worker-scaling",
+      "capability_sha256": "b1cc65159d965eda18844fb51aa939d3178b871c1a16475dac2c44376f54b039",
+      "capability_contract_sha256": "a6e834a99da5d9bea0db8181b26ceb860b89d2555e3ebbc42fe6dc19b4f508eb",
+      "service_id": "alert-worker",
+      "profile": "thor-alert-scale",
+      "default_replicas": 1,
+      "future_minimum_qualification_replicas": 2,
+      "implemented": [
+        "opt_in_profile_preserves_existing_defaults",
+        "no_fixed_container_name",
+        "bridge_network_without_replica_host_ports",
+        "compose_generated_replica_identity",
+        "thor_local_alert_derivative_default",
+        "thor_generated_vlm_endpoint_and_model_substitution",
+        "explicit_standalone_project_directory_bind_contract",
+        "shared_kafka_consumer_group",
+        "chunk_size_one_and_blocking_worker_queue",
+        "private_per_replica_api_and_metrics_ports"
+      ],
+      "remaining_runtime_constraints": [
+        "Kafka topic partition count must be at least the separately authorized replica count.",
+        "Thor GPU, memory, disk, and cgroup admission for two or more workers is unmeasured.",
+        "Partition assignment, saturation, queue wait, processing throughput, loss, duplication, and cleanup require live evidence."
+      ]
+    },
+    {
+      "planning_requirement_id": "systems-vios-scaling",
+      "planning_requirement_sha256": "01acb610723db924ae219516903653caba74a087954f9ccb6728906be00185f1",
+      "planning_payload_sha256": "e533c8278e9af1811509d1ba2be87b8e686c9ccb3c28974235fade46d0442a10",
+      "capability_id": "deployment.vios.horizontal-scaling",
+      "capability_sha256": "e8058b44f56bf9f434ef9d44cec1e9201e5881405816ffd66e5c48bb6e330cf0",
+      "capability_contract_sha256": "73fbb5720170613a9e60aa68e9a1eed13705eb0271c4e6bc8cbdc55e11f8b507",
+      "service_id": "vios-streamprocessor",
+      "profile": "thor-vios-scale",
+      "default_replicas": 1,
+      "future_minimum_qualification_replicas": 2,
+      "singleton_service_ids": ["vios-scale-db", "vios-scale-redis", "vios-sensor-singleton", "vios-scale-ingress"],
+      "implemented": [
+        "opt_in_profile_preserves_existing_defaults",
+        "no_fixed_container_names_or_host_networking",
+        "one_loopback_bound_singleton_ingress",
+        "one_explicit_sensor_singleton",
+        "compose_generated_streamprocessor_identity_exported_as_CONTAINER_NAME",
+        "per_replica_anonymous_config_data_video_clip_and_temp_volumes",
+        "Docker_DNS_routing_to_sensor_and_streamprocessor_service_names",
+        "remote_singleton_database_and_redis_service_names"
+      ],
+      "remaining_runtime_constraints": [
+        "VIOS image compatibility with bridge-network discovery and dynamic Docker DNS must be proven.",
+        "RTSP endpoint publication and returned playback URL ownership across replicas are not yet routed or qualified.",
+        "Stream assignment, database consistency, replica failure recovery, GPU capacity, and exact volume cleanup require live evidence."
+      ]
+    }
+  ],
+  "current_state": {
+    "classification": "implemented_static_scale_topology_runtime_unqualified",
+    "runtime_evidence": [],
+    "live_state_advanced": false,
+    "remaining_blocker": "A separately approved runtime must resolve exact images, capacity, Kafka partitions, RTSP routing, lifecycle, load, failure recovery, accounting, and exact cleanup before either capability can be promoted."
+  }
+}

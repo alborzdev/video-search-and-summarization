@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "scope": "develop_after_last_nightly_semantic_delta",
+  "stable_release_affected": false,
+  "stable_denominator_changed": false,
+  "base_nightly_sha": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+  "develop_head_sha": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5",
+  "commit_count": 1,
+  "commits": [
+    {
+      "sha": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5",
+      "tree": "f9805441e89269cb74e605661f2fe82c5b1d4f63",
+      "parent": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+      "subject": "feat(NemoClaw):Add hermes support in nemoclaw notebook (#1308)",
+      "path_count": 6,
+      "path_status_sha256": "fd1444637b2378e879d0695435e789301aaeb5e6b48b334ff72a2ece2886eb66",
+      "paths": [
+        ".openclaw/workspace/_nemoclaw/AGENTS.md",
+        ".openclaw/workspace/_nemoclaw/BOOTSTRAP.md",
+        ".openclaw/workspace/_nemoclaw/SOUL.md",
+        ".openclaw/workspace/_nemoclaw/TOOLS.md",
+        "deploy/docker/scripts/deploy_nemoclaw.ipynb",
+        "deploy/docker/scripts/deploy_vss_orchestrator.ipynb"
+      ],
+      "feature_candidates": [
+        {
+          "id": "prerelease.nemoclaw.hermes-agent-runtime",
+          "family_id": "nemoclaw-mcp-orchestration",
+          "title": "NemoClaw Hermes agent runtime support",
+          "advertised_semantics": [
+            "select Hermes or OpenClaw as the sandbox agent runtime",
+            "onboard through the nemohermes CLI",
+            "apply VSS policy and install VSS skills in a Hermes sandbox",
+            "upload Hermes workspace bootstrap documents",
+            "expose Hermes connection and VSS startup instructions"
+          ],
+          "release_state": "develop_only_after_nightly_20260801",
+          "thor_local_state": "not_implemented_prerelease_watchlist",
+          "runtime_evidence": [],
+          "can_promote_stable_parity": false
+        }
+      ]
+    }
+  ],
+  "warehouse_sample_bundle": "excluded",
+  "runtime_evidence": [],
+  "official_capability_promotions": 0
+}

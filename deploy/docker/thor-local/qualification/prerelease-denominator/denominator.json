@@ -9,7 +9,7 @@
     "merge_base_sha": "7640d917047cf7b0fd3085eefb8282754b56bc94",
     "stable_main_sha": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
     "prerelease_branch": "develop",
-    "prerelease_sha": "708dac2ff071c76971d5cc8cab24f3879e6aac63",
+    "prerelease_sha": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5",
     "nightly_tag": "nightly-20260801",
     "nightly_sha": "708dac2ff071c76971d5cc8cab24f3879e6aac63"
   },
@@ -51,16 +51,16 @@
     "classification_is_runtime_evidence": false
   },
   "counts": {
-    "develop_side_commits": 498,
+    "develop_side_commits": 499,
     "main_only_exceptions": 2,
-    "develop_side_path_status_records": 109052,
+    "develop_side_path_status_records": 109058,
     "main_only_path_status_records": 2,
-    "all_path_status_records": 109054,
-    "unique_paths": 59914,
+    "all_path_status_records": 109060,
+    "unique_paths": 59917,
     "status_counts": {
-      "A": 39339,
+      "A": 39340,
       "D": 57058,
-      "M": 12657
+      "M": 12662
     },
     "classification_counts": {
       "build-vision-agent": 9,
@@ -72,13 +72,13 @@
       "reports-sop": 5,
       "lvs-index-api": 52,
       "agent-ui-vlm-verification": 53,
-      "profile-compose-inversion": 149,
+      "profile-compose-inversion": 150,
       "thor-aarch64-multiarch": 21,
       "sdrc-configurator": 93,
       "kubernetes-helm": 79,
-      "nemoclaw-mcp-orchestration": 9,
+      "nemoclaw-mcp-orchestration": 10,
       "bugfix": 128,
-      "tests-docs": 233,
+      "tests-docs": 234,
       "vendor-generated-deletion": 4,
       "ci-release": 126,
       "supply-chain": 38,
@@ -87,17 +87,17 @@
     }
   },
   "digests": {
-    "develop_commit_sequence_sha256": "71392342507ca18fc086b5c629c39f1f33c8c215e888a2af51516df6779c0344",
+    "develop_commit_sequence_sha256": "609ea564effe9c1bbebdd9e538bf546d843990d499757fc54826af77efabda0a",
     "main_exception_sequence_sha256": "601be158b38bcb039f3fa4e09487b4541fba9c576f3d257963724448636bd889",
-    "path_status_jsonl_sha256": "afd9f9717184526031c7ae4dc820eb78d260b6525f56c0f2a7dc6e344051d262",
-    "path_status_gzip_sha256": "f8fbc47104c0192727226d32b19180c27f839c83fda8ecc01028425605487ef7"
+    "path_status_jsonl_sha256": "137329738d0a2d2bcd7dc9c30ae9c6c21bfb36f38d81126491ba5bc8bbe8685e",
+    "path_status_gzip_sha256": "3e4010f2264396a7b86f4932b3126463bab5b66c1966d86a6f44107d275b4118"
   },
   "path_status_sidecar": {
     "path": "path-status.jsonl.gz",
     "format": "gzip_json_lines",
     "gzip_mtime": 0,
-    "compressed_bytes": 789321,
-    "uncompressed_bytes": 25039231
+    "compressed_bytes": 789448,
+    "uncompressed_bytes": 25040081
   },
   "develop_side_commits": [
     {
@@ -10885,6 +10885,28 @@
       ],
       "change_count": 1,
       "path_status_sha256": "4e470ff49f3ed912486b0659199f8997945780a0a56f5ea95510c4627266c296"
+    },
+    {
+      "ordinal": 499,
+      "sha": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5",
+      "tree": "f9805441e89269cb74e605661f2fe82c5b1d4f63",
+      "parents": [
+        "708dac2ff071c76971d5cc8cab24f3879e6aac63"
+      ],
+      "committed_at": "2026-08-01T09:36:28-05:00",
+      "subject": "feat(NemoClaw):Add hermes support in nemoclaw notebook (#1308)",
+      "classifications": [
+        "profile-compose-inversion",
+        "nemoclaw-mcp-orchestration",
+        "tests-docs"
+      ],
+      "classification_rule_ids": [
+        "family-profile-compose-inversion",
+        "family-nemoclaw-mcp-orchestration",
+        "category-tests-docs"
+      ],
+      "change_count": 6,
+      "path_status_sha256": "fd1444637b2378e879d0695435e789301aaeb5e6b48b334ff72a2ece2886eb66"
     }
   ],
   "main_only_exceptions": [

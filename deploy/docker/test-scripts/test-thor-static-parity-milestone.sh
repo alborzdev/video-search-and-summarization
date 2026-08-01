@@ -233,7 +233,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/local20-fixture-pack/tests"
 
-# Four architecture-blocked rows have exact source-locked implementation and
+# Four architecture-gap rows have exact source-locked implementation and
 # future-acceptance contracts. Static checking rejects AMC/manual-calibration,
 # SVG/Google, in-process-worker/scaling, and fixed-topology/scaling conflation;
 # it performs no live, host, container, or lifecycle action.
@@ -242,6 +242,32 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/architecture-gap-contracts/tests"
+
+# The provider-free clean-room calibration backend performs real bounded
+# Cartesian/image/GIS/multi-camera validation, homography solving, geometry
+# validation, deterministic export/readback, and a nine-operation loopback REST
+# subset. These local functional tests do not start that server or claim the
+# five missing image/upload operations, browser UI, or Thor runtime evidence.
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/legacy-calibration/tests"
+
+# Two formerly fixed-topology architecture gaps now have an opt-in, default-
+# inert scaling configuration. The validator and adversarial tests inspect only
+# checked-in YAML/configuration: they invoke no Docker, network, subprocess, or
+# lifecycle operation and cannot promote either row without live evidence.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/fixed-topology-scaling-config/validator.py" \
+  >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/fixed-topology-scaling-config/tests"
+
+# The Thor Alert derivative accepts NVIDIA's documented Incident `analytics`
+# name as a lossless alias for released protobuf field 7 `analyticsModule`,
+# rejects conflicting dual spellings, and preserves the wire tag on roundtrip.
+# This source-level test uses no broker, endpoint, service, or lifecycle action.
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/alert" \
+  python3 -m pytest -q -p no:cacheprovider \
+  "${repo_root}/services/alert/test/test_schema_util_nvschema_alias.py"
 
 # Shared future runtime-evidence primitives are checked only through their
 # static contract and fake in-memory transport/resource self-test. The library
@@ -255,6 +281,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   self-test >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/runtime-evidence-common/test_common.py"
+
+# The first shared-framework consumer binds the candidate-alerts planning row
+# to an exact eight-request/eight-action future workflow. Static qualification
+# runs only its inert plan and injected fake transport tests; config mutation,
+# background VLM work, HTTP, and service lifecycle remain authorization-gated.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-alerts-runtime-evidence/collector.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-alerts-runtime-evidence/test_collector.py"
 
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
@@ -478,10 +514,11 @@ python3 "${thor_local_root}/qualification/prerelease-watchlist/validator.py" \
 python3 -m pytest -q \
   "${thor_local_root}/qualification/prerelease-watchlist/tests"
 
-# The adjacent prerelease denominator exhaustively locks all 498 develop-side
-# commits and 109,052 develop path/status records plus two main-only divergence
-# exceptions. This is commit/path accounting only: classification does not
-# claim semantic feature completeness, local implementation, or runtime parity.
+# The adjacent prerelease denominator exhaustively locks all 499 develop-side
+# commits and 109,058 develop path/status records plus two main-only divergence
+# exceptions. Its head-delta record separately classifies the one post-nightly
+# Hermes/NemoClaw commit. This is commit/path accounting and a bounded semantic
+# record, not complete feature semantics, implementation, or runtime parity.
 python3 "${thor_local_root}/qualification/prerelease-denominator/validator.py" \
   --json >/dev/null
 python3 -m pytest -q \

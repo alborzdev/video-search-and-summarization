@@ -27,22 +27,27 @@ RULES_SCHEMA_PATH = HERE / "classification-rules.schema.json"
 PATH_STATUS_PATH = HERE / "path-status.jsonl.gz"
 PATH_STATUS_SCHEMA_PATH = HERE / "path-status-record.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
+HEAD_DELTA_PATH = HERE / "head-delta.json"
+HEAD_DELTA_SCHEMA_PATH = HERE / "head-delta.schema.json"
 WATCHLIST_MANIFEST_PATH = HERE.parent / "prerelease-watchlist" / "manifest.json"
 
 EXPECTED_DENOMINATOR_CANONICAL_SHA256 = (
-    "172faf4d43be582497af17fb1e025ea082ebab4406e979d6f86615e950daab6b"
+    "64e4c4cdcb802201652c21db815f8d1f8594dcb840a795339cb4e132aba96224"
 )
 EXPECTED_RULES_CANONICAL_SHA256 = (
     "775fcf800abda55d793d2e74df792f68337fffde927501124553cbf155ba402f"
 )
+EXPECTED_HEAD_DELTA_CANONICAL_SHA256 = (
+    "dc7dc44d7e7a83a4aed2c53ed707cb90b48f5972775b2140d9b8796ee731a9d9"
+)
 EXPECTED_PATH_STATUS_GZIP_SHA256 = (
-    "f8fbc47104c0192727226d32b19180c27f839c83fda8ecc01028425605487ef7"
+    "3e4010f2264396a7b86f4932b3126463bab5b66c1966d86a6f44107d275b4118"
 )
 EXPECTED_PATH_STATUS_JSONL_SHA256 = (
-    "afd9f9717184526031c7ae4dc820eb78d260b6525f56c0f2a7dc6e344051d262"
+    "137329738d0a2d2bcd7dc9c30ae9c6c21bfb36f38d81126491ba5bc8bbe8685e"
 )
 EXPECTED_DEVELOP_SEQUENCE_SHA256 = (
-    "71392342507ca18fc086b5c629c39f1f33c8c215e888a2af51516df6779c0344"
+    "609ea564effe9c1bbebdd9e538bf546d843990d499757fc54826af77efabda0a"
 )
 EXPECTED_MAIN_SEQUENCE_SHA256 = (
     "601be158b38bcb039f3fa4e09487b4541fba9c576f3d257963724448636bd889"
@@ -205,13 +210,17 @@ def _safe_path(value: str, line_number: int) -> None:
 def validate_denominator() -> dict[str, Any]:
     denominator = _load(DENOMINATOR_PATH)
     rules = _load(RULES_PATH)
+    head_delta = _load(HEAD_DELTA_PATH)
     _validate_schema(denominator, DENOMINATOR_SCHEMA_PATH, "denominator")
     _validate_schema(rules, RULES_SCHEMA_PATH, "classification rules")
+    _validate_schema(head_delta, HEAD_DELTA_SCHEMA_PATH, "head delta")
 
     if _sha256(_canonical_bytes(denominator)) != EXPECTED_DENOMINATOR_CANONICAL_SHA256:
         raise DenominatorError("canonical denominator lock drifted")
     if _sha256(_canonical_bytes(rules)) != EXPECTED_RULES_CANONICAL_SHA256:
         raise DenominatorError("canonical classification-rules lock drifted")
+    if _sha256(_canonical_bytes(head_delta)) != EXPECTED_HEAD_DELTA_CANONICAL_SHA256:
+        raise DenominatorError("canonical head-delta lock drifted")
     if (
         denominator["classification_contract"]["rules_canonical_sha256"]
         != EXPECTED_RULES_CANONICAL_SHA256
@@ -268,6 +277,20 @@ def validate_denominator() -> dict[str, Any]:
         raise DenominatorError(
             "main exception sequence does not terminate at stable main"
         )
+
+    latest = develop[-1]
+    delta_commit = head_delta["commits"][0]
+    if (
+        head_delta["develop_head_sha"] != latest["sha"]
+        or head_delta["base_nightly_sha"] != delta_commit["parent"]
+        or delta_commit["sha"] != latest["sha"]
+        or delta_commit["tree"] != latest["tree"]
+        or delta_commit["parent"] not in latest["parents"]
+        or delta_commit["subject"] != latest["subject"]
+        or delta_commit["path_count"] != latest["change_count"]
+        or delta_commit["path_status_sha256"] != latest["path_status_sha256"]
+    ):
+        raise DenominatorError("head delta is not bound to the latest develop commit")
 
     ordered_commits = develop + main_exceptions
     commit_by_sha = {item["sha"]: item for item in ordered_commits}
@@ -329,6 +352,11 @@ def validate_denominator() -> dict[str, Any]:
         raw_by_commit[sha].extend(line)
         status_counts[record["status"]] += 1
         unique_paths.add(record["path"])
+
+    if delta_commit["paths"] != [
+        change["path"] for change in changes_by_commit[latest["sha"]]
+    ]:
+        raise DenominatorError("head-delta paths drifted from the exact sidecar")
 
     classification_counts: Counter[str] = Counter()
     develop_change_count = 0

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/vss/thor/candidate-alerts-runtime-evidence/evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collector_id", "planning_requirement_id", "capability_id", "oracle_id", "status", "promotion_eligible", "contract_sha256", "fixture_sha256", "target_origin_sha256", "media_url_sha256", "accepted_alert_sha256", "rejected_alert_sha256", "observations", "runtime_evidence"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "collector_id": { "const": "candidate-alerts-runtime-evidence" },
+    "planning_requirement_id": { "const": "candidate-alerts" },
+    "capability_id": { "const": "runtime.workflow.alert-verification" },
+    "oracle_id": { "const": "oracle.runtime.workflow.alert-verification" },
+    "status": { "const": "pass" },
+    "promotion_eligible": { "const": false },
+    "contract_sha256": { "$ref": "#/$defs/sha256" },
+    "fixture_sha256": { "const": "28c1fe5c84ee5a81e6ca32908b667dd6af4b141d971b928740756c50b06a0e8f" },
+    "target_origin_sha256": { "$ref": "#/$defs/sha256" },
+    "media_url_sha256": { "$ref": "#/$defs/sha256" },
+    "accepted_alert_sha256": { "$ref": "#/$defs/sha256" },
+    "rejected_alert_sha256": { "$ref": "#/$defs/sha256" },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["health", "pre_state_owned_absent", "config_created", "config_identity", "positive_admitted", "adjacent_rejected", "cleanup_complete", "non_owned_state_restored"],
+      "properties": {
+        "health": { "const": "ok" },
+        "pre_state_owned_absent": { "const": true },
+        "config_created": { "const": true },
+        "config_identity": { "const": true },
+        "positive_admitted": { "const": true },
+        "adjacent_rejected": { "const": true },
+        "cleanup_complete": { "const": true },
+        "non_owned_state_restored": { "const": true }
+      }
+    },
+    "runtime_evidence": { "$ref": "#/$defs/runtimeEvidence" }
+  },
+  "$defs": {
+    "plainId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "action_id", "kind", "status", "payload_bytes", "payload_sha256", "result_code"],
+      "properties": {
+        "order": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "action_id": { "$ref": "#/$defs/plainId" },
+        "kind": { "$ref": "#/$defs/plainId" },
+        "status": { "const": "pass" },
+        "payload_bytes": { "type": "integer", "minimum": 0, "maximum": 1048576 },
+        "payload_sha256": { "$ref": "#/$defs/sha256" },
+        "result_code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$" }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order", "resource_type", "target_sha256", "action_status", "postcondition_status"],
+      "properties": {
+        "order": { "const": 1 },
+        "resource_type": { "const": "alert-verification-config" },
+        "target_sha256": { "$ref": "#/$defs/sha256" },
+        "action_status": { "const": "pass" },
+        "postcondition_status": { "const": "pass" }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["comparison_id", "pre_sha256", "post_sha256", "expectation", "status"],
+      "properties": {
+        "comparison_id": { "const": "non-owned-configs" },
+        "pre_sha256": { "$ref": "#/$defs/sha256" },
+        "post_sha256": { "$ref": "#/$defs/sha256" },
+        "expectation": { "const": "equal" },
+        "status": { "const": "pass" }
+      }
+    },
+    "runtimeEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "package_id", "status", "identity", "budget", "actions", "cleanup", "comparisons"],
+      "properties": {
+        "schema_version": { "const": 1 },
+        "package_id": { "const": "runtime-evidence-common" },
+        "status": { "const": "pass" },
+        "identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["run_id", "authorization_id", "authorization_token_sha256"],
+          "properties": {
+            "run_id": { "$ref": "#/$defs/plainId" },
+            "authorization_id": { "const": "candidate-alerts-runtime" },
+            "authorization_token_sha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["actions", "max_actions", "requests", "max_requests"],
+          "properties": {
+            "actions": { "const": 8 },
+            "max_actions": { "const": 8 },
+            "requests": { "const": 8 },
+            "max_requests": { "const": 8 }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "order": { "const": 1 }, "action_id": { "const": "health" }, "kind": { "const": "http-get" }, "result_code": { "const": "service_healthy" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "order": { "const": 2 }, "action_id": { "const": "pre-state" }, "kind": { "const": "http-get" }, "result_code": { "const": "owned_absent" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "order": { "const": 3 }, "action_id": { "const": "create-config" }, "kind": { "const": "http-post" }, "result_code": { "const": "exact_config_created" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "order": { "const": 4 }, "action_id": { "const": "inspect-config" }, "kind": { "const": "http-get" }, "result_code": { "const": "config_identity" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "order": { "const": 5 }, "action_id": { "const": "positive" }, "kind": { "const": "http-post" }, "result_code": { "const": "accepted_202" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/action" }, { "properties": { "order": { "const": 6 }, "action_id": { "const": "adjacent-negative" }, "kind": { "const": "http-post" }, "result_code": { "const": "unknown_category_400" } } }] }
+          ],
+          "items": false
+        },
+        "cleanup": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "$ref": "#/$defs/cleanup" }
+        },
+        "comparisons": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "$ref": "#/$defs/comparison" }
+        }
+      }
+    }
+  }
+}

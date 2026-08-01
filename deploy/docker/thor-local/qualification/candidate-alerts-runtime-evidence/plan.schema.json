@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.com/vss/thor/candidate-alerts-runtime-evidence/plan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collector_id", "mode", "status", "runtime_actions", "default_execution_enabled", "planning_requirement_id", "capability_id", "oracle_id", "contract_sha256", "fixture_sha256", "canonical_sources", "execution_bounds", "authorization", "evidence_scope"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "collector_id": { "const": "candidate-alerts-runtime-evidence" },
+    "mode": { "const": "inert-plan" },
+    "status": { "const": "pass" },
+    "runtime_actions": { "const": 0 },
+    "default_execution_enabled": { "const": false },
+    "planning_requirement_id": { "const": "candidate-alerts" },
+    "capability_id": { "const": "runtime.workflow.alert-verification" },
+    "oracle_id": { "const": "oracle.runtime.workflow.alert-verification" },
+    "contract_sha256": { "$ref": "#/$defs/sha256" },
+    "fixture_sha256": { "const": "28c1fe5c84ee5a81e6ca32908b667dd6af4b141d971b928740756c50b06a0e8f" },
+    "canonical_sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_oracles_sha256", "verified_integrations_sha256", "expected_alerts_sha256"],
+      "properties": {
+        "capability_oracles_sha256": { "$ref": "#/$defs/sha256" },
+        "verified_integrations_sha256": { "$ref": "#/$defs/sha256" },
+        "expected_alerts_sha256": { "const": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b" }
+      }
+    },
+    "execution_bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_requests", "max_actions", "max_request_bytes", "max_response_bytes", "timeout_seconds"],
+      "properties": {
+        "max_requests": { "const": 8 },
+        "max_actions": { "const": 8 },
+        "max_request_bytes": { "const": 65536 },
+        "max_response_bytes": { "const": 1048576 },
+        "timeout_seconds": { "const": 10 }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorization_id", "acknowledgement_required"],
+      "properties": {
+        "authorization_id": { "const": "candidate-alerts-runtime" },
+        "acknowledgement_required": { "const": "I_ACK_CANDIDATE_ALERTS_CONFIG_MUTATION_AND_BACKGROUND_VLM" }
+      }
+    },
+    "evidence_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["promotion_eligible", "background_vlm_verdict_observed"],
+      "properties": {
+        "promotion_eligible": { "const": false },
+        "background_vlm_verdict_observed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scope", "stable_release_affected", "stable_denominator_changed", "base_nightly_sha", "develop_head_sha", "commit_count", "commits", "warehouse_sample_bundle", "runtime_evidence", "official_capability_promotions"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scope": {"const": "develop_after_last_nightly_semantic_delta"},
+    "stable_release_affected": {"const": false},
+    "stable_denominator_changed": {"const": false},
+    "base_nightly_sha": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+    "develop_head_sha": {"const": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5"},
+    "commit_count": {"const": 1},
+    "commits": {
+      "type": "array", "minItems": 1, "maxItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["sha", "tree", "parent", "subject", "path_count", "path_status_sha256", "paths", "feature_candidates"],
+        "properties": {
+          "sha": {"const": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5"},
+          "tree": {"pattern": "^[0-9a-f]{40}$"},
+          "parent": {"const": "708dac2ff071c76971d5cc8cab24f3879e6aac63"},
+          "subject": {"type": "string", "minLength": 1},
+          "path_count": {"const": 6},
+          "path_status_sha256": {"pattern": "^[0-9a-f]{64}$"},
+          "paths": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "feature_candidates": {
+            "type": "array", "minItems": 1, "maxItems": 1,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["id", "family_id", "title", "advertised_semantics", "release_state", "thor_local_state", "runtime_evidence", "can_promote_stable_parity"],
+              "properties": {
+                "id": {"const": "prerelease.nemoclaw.hermes-agent-runtime"},
+                "family_id": {"const": "nemoclaw-mcp-orchestration"},
+                "title": {"type": "string", "minLength": 1},
+                "advertised_semantics": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+                "release_state": {"const": "develop_only_after_nightly_20260801"},
+                "thor_local_state": {"const": "not_implemented_prerelease_watchlist"},
+                "runtime_evidence": {"const": []},
+                "can_promote_stable_parity": {"const": false}
+              }
+            }
+          }
+        }
+      }
+    },
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "runtime_evidence": {"const": []},
+    "official_capability_promotions": {"const": 0}
+  }
+}

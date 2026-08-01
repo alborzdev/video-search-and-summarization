@@ -25,8 +25,10 @@ PATH_STATUS_PATH = HERE / "path-status.jsonl.gz"
 
 MERGE_BASE_SHA = "7640d917047cf7b0fd3085eefb8282754b56bc94"
 STABLE_MAIN_SHA = "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
-PRERELEASE_SHA = "708dac2ff071c76971d5cc8cab24f3879e6aac63"
-EXPECTED_DEVELOP_COMMITS = 498
+PRERELEASE_SHA = "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5"
+LAST_NIGHTLY_TAG = "nightly-20260801"
+LAST_NIGHTLY_SHA = "708dac2ff071c76971d5cc8cab24f3879e6aac63"
+EXPECTED_DEVELOP_COMMITS = 499
 EXPECTED_MAIN_EXCEPTIONS = 2
 
 
@@ -304,8 +306,8 @@ def generate(git_dir: Path) -> dict[str, Any]:
             "stable_main_sha": STABLE_MAIN_SHA,
             "prerelease_branch": "develop",
             "prerelease_sha": PRERELEASE_SHA,
-            "nightly_tag": "nightly-20260801",
-            "nightly_sha": PRERELEASE_SHA,
+            "nightly_tag": LAST_NIGHTLY_TAG,
+            "nightly_sha": LAST_NIGHTLY_SHA,
         },
         "generation_contract": {
             "commit_traversal": "git rev-list --reverse --topo-order <merge-base>..<tip>",

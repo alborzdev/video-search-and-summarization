@@ -5,10 +5,10 @@ divergence rooted at VSS 3.2.1 commit
 `7640d917047cf7b0fd3085eefb8282754b56bc94`:
 
 - stable `main`: `7732edf8fb38ef896b20f2a0a6a701a4db10dc57`;
-- `develop` / `nightly-20260801`:
-  `708dac2ff071c76971d5cc8cab24f3879e6aac63`;
-- 498 commits reachable from the prerelease tip but not the merge base;
-- 109,052 develop-side path/status records covering 59,914 unique paths;
+- `develop`: `a34c6b0406bcadd380e4c4dac6ff7e830deb27e5` (the last
+  `nightly-20260801` remains `708dac2ff071c76971d5cc8cab24f3879e6aac63`);
+- 499 commits reachable from the prerelease tip but not the merge base;
+- 109,058 develop-side path/status records covering 59,917 unique paths;
 - two commits reachable from stable `main` but not the merge base, preserved as
   explicit divergence exceptions; and
 - every commit classified into one or more of the existing fourteen candidate
@@ -21,12 +21,17 @@ qualified capability.
 
 ## Files and evidence ceiling
 
-- `denominator.json` enumerates all 498 prerelease commits and both main-only
+- `denominator.json` enumerates all 499 prerelease commits and both main-only
   exceptions with tree, parent, timestamp, subject, classification trace,
   path/status count, and per-commit digest.
+- `head-delta.json` and its schema record the exact one-commit delta after
+  `nightly-20260801`: the develop-only NemoClaw Hermes agent runtime addition.
+  The validator content-locks and binds that bounded semantic record to the
+  latest denominator row without promoting it into the stable 3.2.1 capability
+  inventory.
 - `path-status.jsonl.gz` contains every path/status record. Its uncompressed
-  canonical JSON Lines stream is 25,039,231 bytes; deterministic gzip is
-  789,321 bytes. The validator checks both byte counts and both SHA-256s.
+  canonical JSON Lines stream is 25,040,081 bytes; deterministic gzip is
+  789,448 bytes. The validator checks both byte counts and both SHA-256s.
 - `classification-rules.json` is the deterministic, ordered classification
   contract. The fourteen family IDs must exactly match the adjacent curated
   watchlist. The Warehouse sample rule intentionally matches zero commits in

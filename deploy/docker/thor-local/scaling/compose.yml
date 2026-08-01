@@ -1,0 +1,249 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES.
+# SPDX-License-Identifier: Apache-2.0
+
+# Optional Thor-local scale topology. Every service is behind an opt-in profile;
+# loading this file without --profile starts nothing and existing single-instance
+# profiles are unchanged.
+services:
+  alert-worker:
+    image: ${THOR_LOCAL_ALERT_BRIDGE_IMAGE:-cti-vss-alert-bridge:thor-local}
+    profiles: ["thor-alert-scale"]
+    user: "0:0"
+    networks: [thor-alert-scale]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      FASTAPI_PORT: "9080"
+      PROMETHEUS_METRICS_ENABLED: "true"
+      PROMETHEUS_PORT: "9081"
+      VLM_WARMUP_ENABLED: "false"
+      STORAGE_MODULE_ENDPOINT: "http://host.docker.internal:${STORAGE_HTTP_PORT:-30000}"
+      VSS_BASE_URL: "http://host.docker.internal:${VSS_AGENT_HTTP_PORT:-8000}"
+      VLM_BASE_URL: ${VLM_BASE_URL:-http://host.docker.internal:8003}
+      VLM_NAME: ${VLM_NAME:-datasheet-vision}
+    volumes:
+      - ./alert-scale-config.yml:/app/configs/config.yml:ro
+      - ../../services/alert/scripts/env-substitute.py:/app/env-substitute.py:ro
+    tmpfs:
+      - /app/runtime:mode=1777,size=10M
+    entrypoint:
+      - /usr/local/bin/python
+      - /app/env-substitute.py
+      - --source
+      - /app/configs/config.yml
+      - --output
+      - /app/runtime/config.yml
+      - --
+    command:
+      - /usr/local/bin/python
+      - enhance_alert_with_vlm.py
+      - --config
+      - /app/runtime/config.yml
+    expose:
+      - "9080"
+      - "9081"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9080/health', timeout=5)"]
+      interval: 15s
+      timeout: 6s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    labels:
+      com.nvidia.vss.scaling-role: replica
+      com.nvidia.vss.scaling-capability: performance.alerts.worker-scaling
+
+  vios-scale-db:
+    image: ${POSTGRES_IMAGE:-postgres:17.9-alpine}
+    profiles: ["thor-vios-scale"]
+    user: "0:0"
+    networks: [thor-vios-scale]
+    environment:
+      POSTGRES_USER: ${CENTRALIZE_DB_USERNAME:-postgres}
+      POSTGRES_DB: ${CENTRALIZE_DB_NAME:-vst}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    command: ["postgres", "-c", "listen_addresses=*", "-c", "max_connections=500"]
+    volumes:
+      - vios-scale-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\" >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 3s
+      retries: 60
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    labels:
+      com.nvidia.vss.scaling-role: singleton
+
+  vios-scale-redis:
+    image: ${REDIS_IMAGE:-redis:8.6.2-alpine}
+    profiles: ["thor-vios-scale"]
+    user: "0:0"
+    networks: [thor-vios-scale]
+    volumes:
+      - vios-scale-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    labels:
+      com.nvidia.vss.scaling-role: singleton
+
+  vios-sensor-singleton:
+    image: ${VST_SENSOR_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-sensor:3.2.1}
+    profiles: ["thor-vios-scale"]
+    user: "0:0"
+    runtime: nvidia
+    networks: [thor-vios-scale]
+    entrypoint:
+      - /bin/bash
+      - -ec
+      - >-
+        cp -a /seed-config/. /home/vst/vst_release/configs/ &&
+        sed -i 's/"localhost:6379"/"vios-scale-redis:6379"/g'
+        /home/vst/vst_release/configs/vst_config.json &&
+        exec /home/vst/vst_release/launch_vst
+    environment:
+      ADAPTOR: ${VST_ADAPTOR:-vst_rtsp}
+      NEED_RECORDING: "false"
+      NEED_RTSPSERVER: "false"
+      NEED_STORAGE: "false"
+      NEED_STREAM_MONITORING: "true"
+      HTTP_PORT: "30000"
+      CENTRALIZE_DB_NAME: ${CENTRALIZE_DB_NAME:-vst}
+      CENTRALIZE_DB_USERNAME: ${CENTRALIZE_DB_USERNAME:-postgres}
+      CENTRALIZE_DB_LOCAL: "false"
+      CENTRALIZE_DB_HOSTADDR: vios-scale-db
+      CENTRALIZE_DB_PORT: "5432"
+      STREAM_PROCESSOR_MODULE_ENDPOINT: "http://vios-streamprocessor:30001"
+    volumes:
+      - ${VST_CONFIG_PATH:-${VSS_APPS_DIR}/services/vios/configs}:/seed-config:ro
+      - /home/vst/vst_release/configs
+      - vios-scale-sensor-data:/home/vst/vst_release/vst_data
+      - vios-scale-sensor-video:/home/vst/vst_release/vst_video
+    expose: ["30000"]
+    healthcheck:
+      test: ["CMD-SHELL", "bash -ec 'exec 3<>/dev/tcp/127.0.0.1/$${HTTP_PORT}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 30
+    depends_on:
+      vios-scale-db:
+        condition: service_healthy
+    restart: on-failure
+    deploy:
+      replicas: 1
+    labels:
+      com.nvidia.vss.scaling-role: singleton
+      com.nvidia.vss.scaling-capability: deployment.vios.horizontal-scaling
+
+  vios-streamprocessor:
+    image: ${VST_STREAM_PROCESSOR_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1}
+    profiles: ["thor-vios-scale"]
+    user: "0:0"
+    runtime: nvidia
+    networks: [thor-vios-scale]
+    entrypoint:
+      - /bin/bash
+      - -ec
+      - >-
+        cp -a /seed-config/. /home/vst/vst_release/configs/ &&
+        sed -i 's/"localhost:6379"/"vios-scale-redis:6379"/g'
+        /home/vst/vst_release/configs/vst_config.json &&
+        export CONTAINER_NAME="$${HOSTNAME}" &&
+        exec /home/vst/vst_release/launch_vst
+    environment:
+      VST_INSTALL_ADDITIONAL_PACKAGES: "false"
+      ADAPTOR: ${VST_ADAPTOR:-vst_rtsp}
+      HTTP_PORT: "30001"
+      RTSP_SERVER_PORT: "30554"
+      CENTRALIZE_DB_NAME: ${CENTRALIZE_DB_NAME:-vst}
+      CENTRALIZE_DB_USERNAME: ${CENTRALIZE_DB_USERNAME:-postgres}
+      CENTRALIZE_DB_LOCAL: "false"
+      CENTRALIZE_DB_HOSTADDR: vios-scale-db
+      CENTRALIZE_DB_PORT: "5432"
+      SENSOR_MODULE_ENDPOINT: "http://vios-sensor-singleton:30000"
+      VST_INGRESS_ENDPOINT: "vios-scale-ingress:30888/vst"
+      ENABLE_AGING_POLICY: "true"
+      VST_VIDEO_STORAGE_SIZE_MB: ${VST_VIDEO_STORAGE_SIZE_MB:-10240}
+    volumes:
+      - ${VST_CONFIG_PATH:-${VSS_APPS_DIR}/services/vios/configs}:/seed-config:ro
+      - /home/vst/vst_release/configs
+      - /home/vst/vst_release/vst_data
+      - /home/vst/vst_release/vst_video
+      - /home/vst/vst_release/streamer_videos
+      - /home/vst/vst_release/webroot/temp_files
+    expose:
+      - "30001"
+      - "30554"
+    ulimits:
+      nofile:
+        soft: 8192
+        hard: 8192
+    healthcheck:
+      test: ["CMD-SHELL", "bash -ec 'exec 3<>/dev/tcp/127.0.0.1/$${HTTP_PORT}'"]
+      interval: 20s
+      timeout: 10s
+      retries: 75
+    depends_on:
+      vios-scale-db:
+        condition: service_healthy
+      vios-scale-redis:
+        condition: service_healthy
+      vios-sensor-singleton:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    labels:
+      com.nvidia.vss.scaling-role: replica
+      com.nvidia.vss.scaling-capability: deployment.vios.horizontal-scaling
+
+  vios-scale-ingress:
+    image: ${NGINX_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-ingress:3.2.1}
+    profiles: ["thor-vios-scale"]
+    user: "0:0"
+    networks: [thor-vios-scale]
+    volumes:
+      - ./vios-scale-nginx.conf:/etc/nginx/nginx.conf:ro
+      - vios-scale-nginx-tmp:/tmp/nginx
+    ports:
+      - "127.0.0.1:${THOR_VIOS_SCALE_INGRESS_PORT:-31888}:30888"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -ec 'exec 3<>/dev/tcp/127.0.0.1/30888'"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    depends_on:
+      vios-sensor-singleton:
+        condition: service_healthy
+      vios-streamprocessor:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    labels:
+      com.nvidia.vss.scaling-role: singleton-router
+      com.nvidia.vss.scaling-capability: deployment.vios.horizontal-scaling
+
+networks:
+  thor-alert-scale:
+    driver: bridge
+    internal: false
+  thor-vios-scale:
+    driver: bridge
+    internal: false
+
+volumes:
+  vios-scale-db:
+  vios-scale-redis:
+  vios-scale-sensor-data:
+  vios-scale-sensor-video:
+  vios-scale-nginx-tmp:

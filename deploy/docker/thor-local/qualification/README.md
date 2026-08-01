@@ -138,12 +138,35 @@ in this directory:
   VIOS stream processing with a singleton Sensor. It source-locks the current
   blockers, rejects false equivalences such as AMC=legacy or `num_workers`=
   horizontal scaling, and defines future decision/acceptance receipt shapes;
+- `../legacy-calibration/` is the first functional clean-room calibration
+  slice: bounded provider-free Cartesian/image/GIS/multi-camera project
+  validation, pure-Python 3x3 homography solving, eight-point
+  ROI/tripwire/road-link validation, strict consumer-schema-compatible export,
+  and nine path/method-named project/sensor/homography operations behind an
+  inert-by-default numeric-loopback REST adapter. The adapter is not compatible
+  with the legacy UI's bodies/responses. Five image/upload/import/warp routes,
+  the interactive editor, multipart/browser routing, official Google Maps
+  identity, and Thor runtime proof remain open;
+- `fixed-topology-scaling-config/` statically qualifies an opt-in, default-one
+  Alert worker and VIOS stream-processor scaling topology while keeping VIOS
+  DB/Redis/Sensor/ingress singletons. It does not run Compose or claim Kafka
+  partitioning, image/network compatibility, Thor capacity, failure recovery,
+  RTSP ownership, or live cleanup;
+- `services/alert/utils/schema_util.py` now preserves the documented NvSchema
+  Incident field-7 name `analytics` by conflict-safely mapping it to the
+  released wire binding `analyticsModule`; the Thor Alert derivative installs
+  that converter and focused tests prove deterministic protobuf roundtrip;
 - `runtime-evidence-common/` provides reusable fail-closed primitives for
   future authorized collectors: numeric-loopback/exact-path transport through
   an injected proxy/redirect-disabled opener, independent request/action
   budgets, exact run/authorization binding, exact-owned LIFO cleanup, pre/post
   digests, and sanitized evidence. Its CLI is limited to a static check and an
   in-memory fake self-test; it constructs no opener and performs no live I/O;
+- `candidate-alerts-runtime-evidence/` is the first bounded consumer of those
+  primitives: an inert plan and fake-only tests bind one alert workflow to an
+  exact eight-request/eight-action future collector. Even an authorized run is
+  non-promoting because final background VLM verdict, sink delivery, fixture
+  identity, and media digest remain outside this collector;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -212,10 +235,12 @@ in this directory:
   conflict, keeps the Warehouse sample excluded, and cannot promote stable/live
   qualification state;
 - `prerelease-denominator/` complements that curated watchlist with exhaustive
-  Git-metadata accounting for the exact locked divergence: all 498 develop-side
-  commits, 109,052 develop path/status records, and two main-only exceptions.
-  This is commit/path exhaustiveness, not feature-semantic completeness, local
-  implementation, or runtime parity; and
+  Git-metadata accounting for the exact locked divergence: all 499 develop-side
+  commits, 109,058 develop path/status records, and two main-only exceptions.
+  Its exact one-commit head delta records the post-nightly NemoClaw Hermes
+  semantics as a develop-only watchlist item. Commit/path exhaustiveness plus
+  that bounded semantic record is not complete feature-semantic coverage,
+  local implementation, or runtime parity; and
 - `local-alternate-models/` defines an exact-acknowledgement, four-request
   qualifier for the non-official local Qwen endpoint pair.
 
