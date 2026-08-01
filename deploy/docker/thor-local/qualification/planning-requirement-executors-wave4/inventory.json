@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "scope": "isolated_candidate_only",
+  "policies": {
+    "advances_live_acceptance": false,
+    "runtime_evidence_added": false,
+    "network": false,
+    "subprocess": false,
+    "writes": false
+  },
+  "baseline_locks": [
+    {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "9b6a1f8e4aa3e6a6545f37baffdb346143608056aa21f88ad18dee3df9dbed47"},
+    {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
+    {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
+    {"path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json", "sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079"},
+    {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"}
+  ],
+  "cases": [
+    {
+      "case_id": "wave4-source-case.alert-vlm-backends",
+      "planning_requirement_id": "systems-alert-vlm-backends",
+      "capability_id": "model.alerts.vlm-backends",
+      "planning_payload_sha256": "b9074a078788c83b46857d821e220a2fe5ecb28ada2371bb4e05a1b4df41e0c9",
+      "capability_sha256": "623e10e14e9254cd37d098547cfd83c707fa94fb36707963597854e9c8bb4d5c",
+      "contract_sha256": "473fca9f2631ff9a81cc7a13875208b152f4e45247df246c0abe485c445ae948",
+      "source_locks": [
+        {"path": "services/alert/README.md", "sha256": "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "three-backend-families",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/README.md"],
+          "expected": ["OpenAI-compatible endpoint", "NVIDIA\nVLM NIM", "RTVI VLM microservice", "remote model\nendpoint"]
+        },
+        {
+          "assertion_id": "cosmos-and-qwen-examples",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/README.md"],
+          "expected": ["Cosmos Reason", "Qwen"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave4-source-case.alert-nvschema-ingestion",
+      "planning_requirement_id": "systems-alert-nvschema",
+      "capability_id": "protocol.alerts.nvschema-ingestion",
+      "planning_payload_sha256": "5c7586e0798de78ac4b59dd26c6af2c4043fe654c22967503338ff5c5a6220e8",
+      "capability_sha256": "ee369db6104af6d57220e768328bb1be9f7e2aa597eb5dd9aa48c20e2111aa8d",
+      "contract_sha256": "bb6059d58d25f7088dd2a3fd140c27d7a175c675538bf49d5520323f741e1536",
+      "source_locks": [
+        {"path": "services/alert/README.md", "sha256": "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"},
+        {"path": "services/alert/config.yaml", "sha256": "846e1a71aaf9765b55e20ba36a7d0da0e208a08037c1a6d78d8d675d9d6550b3"},
+        {"path": "services/alert/models/responses.py", "sha256": "0c658632db38f83a1a956f389c964f87dc44ba23032689983844cd2284b1c21f"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "json-protobuf-message-types",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/README.md"],
+          "expected": ["`nv.Incident`", "`nv.Behavior`", "formats (JSON or\nProtobuf)"]
+        },
+        {
+          "assertion_id": "input-output-topics",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/config.yaml"],
+          "expected": ["incident: 'mdx-incidents'", "alert: 'mdx-alerts'", "index: \"mdx-vlm-incidents\"", "index: \"mdx-vlm-alerts\""]
+        },
+        {
+          "assertion_id": "verification-fields",
+          "adapter": "text_contains_all",
+          "sources": ["services/alert/models/responses.py"],
+          "expected": ["serialization_alias=\"verificationResponseCode\"", "serialization_alias=\"verificationResponseStatus\""]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave4-source-case.behavior-dynamic-calibration",
+      "planning_requirement_id": "systems-behavior-calibration",
+      "capability_id": "calibration.behavior.dynamic",
+      "planning_payload_sha256": "5a3c88ee772a622a505f987be373e9037efbdf27907e017294b43d2dc91368de",
+      "capability_sha256": "77ad9817928618293e903fa249cdcb90044dacd14166ba3eee0b7c37a59dd8ef",
+      "contract_sha256": "2de398a831e1882af1214fb6179dedb5cc3c3a92cbc20f181631179dadb13cf0",
+      "source_locks": [
+        {"path": "skills/vss-setup-behavior-analytics/references/dynamic-calibration.md", "sha256": "09e3bdd9f209e33dd7f433aed108f4a756fb0aac013492432f5d0f883ef04e1d"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_dynamic.py", "sha256": "6d32e117770dd44e188ce828a7978306cfce1bb87a1e319b5107f608289ceb00"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_listener.py", "sha256": "6e64e9c576d069b1ce800af9d1a96ba6127ab8df553a48e755cb2a3d20221776"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_validator.py", "sha256": "109705c62b42a782300fca55e81605baf58e5a70a6d36f8c6d9c5732ef69691a"},
+        {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/constants.py", "sha256": "c591e4688b0c39531586c786c131bc88cd724896b8f3701ff5637f1c72f0da3a"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "notification-key-and-event-types",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_listener.py", "services/analytics/behavior-analytics/src/mdx/analytics/core/constants.py"],
+          "expected": ["CALIBRATION_NOTIFICATION_KEY: str = \"calibration\"", "CALIBRATION_ACTION_UPSERT_ALL = \"upsert-all\"", "CALIBRATION_ACTION_UPSERT = \"upsert\"", "CALIBRATION_ACTION_DELETE = \"delete\""]
+        },
+        {
+          "assertion_id": "three-types-image-default-and-one-time-switch",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_dynamic.py"],
+          "expected": ["image / cartesian / geo", "return CalibrationType.IMAGE  # Default fallback", "Starting with calibration file:", "(no switches allowed)"]
+        },
+        {
+          "assertion_id": "invalid-payload-does-not-change-state",
+          "adapter": "text_contains_all",
+          "sources": ["services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_listener.py", "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_validator.py"],
+          "expected": ["malformed payload never lands in", "validate_calibration", "rejecting invalid calibration payload at listener"]
+        },
+        {
+          "assertion_id": "no-acknowledgement",
+          "adapter": "text_contains_all",
+          "sources": ["skills/vss-setup-behavior-analytics/references/dynamic-calibration.md"],
+          "expected": ["No ACK back to video analytics api.", "the calibration flow does not"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave4-source-case.rt-cv-model-pipelines",
+      "planning_requirement_id": "systems-rt-cv-model-pipelines",
+      "capability_id": "runtime.rt-cv.model-pipelines",
+      "planning_payload_sha256": "a9259431e8fad0af0b1a56ddfcd2943b0306cc48eb00d7600f76364aeef33798",
+      "capability_sha256": "f36386586cf726c48e74d7bd05b7269ee9c5a3022a6c91ff8d49a679046267a4",
+      "contract_sha256": "c5b168c93148d08dbd3a2a3568455c06671d332f5e14aa0f3c40834d1e588684",
+      "source_locks": [
+        {"path": "deploy/docker/services/rtvi/rtvi-cv/README.md", "sha256": "b72ab7e30f9c796b240715b5223f9ac815b5fd23e34af221766c29281acf87d8"},
+        {"path": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh", "sha256": "24eb100f746ece4c1814e4290176fb6d8f36b99a379cc3674f4a4a352b82d879"},
+        {"path": "skills/vss-deploy-detection-tracking-2d/references/deploy-vss-detection-tracking-2d.md", "sha256": "bc98fa243cd7a072097ed90b13dc1129c718c05f9844ed00435523fe9a993a9e"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "two-and-three-dimensional-model-families",
+          "adapter": "text_contains_all",
+          "sources": ["skills/vss-deploy-detection-tracking-2d/references/deploy-vss-detection-tracking-2d.md"],
+          "expected": ["RT-DETR + NvDCF", "Grounding DINO", "Sparse4D (multi-camera BEV)"]
+        },
+        {
+          "assertion_id": "tensorrt-triton-and-multistream-batching",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/rtvi/rtvi-cv/ds-start.sh"],
+          "expected": ["Skipping TensorRT build", "TritonGdino", "max_batch_size: ${NUM_SENSORS}", "batch-size=${NUM_SENSORS}", "max-batch-size=${NUM_SENSORS}"]
+        },
+        {
+          "assertion_id": "shared-protobuf-output-surface",
+          "adapter": "text_contains_all",
+          "sources": ["deploy/docker/services/rtvi/rtvi-cv/README.md", "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh"],
+          "expected": ["repo-local unified entrypoint", "run_config-api-rtdetr-protobuf", "msg-conv-msg2p-lib"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave4-source-case.bridge-firewall-boundary",
+      "planning_requirement_id": "systems-bridge-firewall",
+      "capability_id": "deployment.network.bridge-firewall",
+      "planning_payload_sha256": "cfa50b141ff90e418d117329bcdf231313e3c341f75aa9c759554859d752806e",
+      "capability_sha256": "7e19a6fef0191ad9f0186b6f4e38cb72c3f643edbeb69c6c3e441a2c56869fd5",
+      "contract_sha256": "8cc33e7341dd654aaef882989ae03b64898e8b77ac1d525a19e0578103a8d2eb",
+      "source_locks": [
+        {"path": "skills/vss-deploy-profile/references/prerequisites.md", "sha256": "03043c4b2aeff61e9bd97abb4b4b18e5c7675781def8e37749a3bba14be54d4d"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "specific-common-subnets-not-broad-range",
+          "adapter": "text_contains_all",
+          "sources": ["skills/vss-deploy-profile/references/prerequisites.md"],
+          "expected": ["172.17.0.0/16", "172.18.0.0/16", "not** a broad `172.16.0.0/12`"]
+        },
+        {
+          "assertion_id": "discover-actual-subnet-and-replace-example",
+          "adapter": "text_contains_all",
+          "sources": ["skills/vss-deploy-profile/references/prerequisites.md"],
+          "expected": ["landed on a different subnet", "allow that one instead", "docker network inspect mdx_default"]
+        }
+      ],
+      "runtime_evidence": []
+    },
+    {
+      "case_id": "wave4-source-case.docker-ngc-29-5-boundary",
+      "planning_requirement_id": "systems-docker-ngc-29-5",
+      "capability_id": "behavior.docker.ngc-pull-29-5",
+      "planning_payload_sha256": "d82fe4b3ab3d4727c78e6593d3c0716bc36d2e62d0eb8a6219ab7561c44518e4",
+      "capability_sha256": "8e7ec62aaba524b302d678d7968ce85931ba622df328cd8d573df6427b3d74d7",
+      "contract_sha256": "c666b6f78e58b452feb2527567105067fd6cde2d7a526816a89a7b23c3b6866b",
+      "source_locks": [
+        {"path": "skills/vss-deploy-profile/references/prerequisites.md", "sha256": "03043c4b2aeff61e9bd97abb4b4b18e5c7675781def8e37749a3bba14be54d4d"}
+      ],
+      "assertions": [
+        {
+          "assertion_id": "version-scoped-known-failure",
+          "adapter": "text_contains_all",
+          "sources": ["skills/vss-deploy-profile/references/prerequisites.md"],
+          "expected": ["Docker Engine `29.5.0` and later fail to pull", "If the host is locked to Docker `29.5.0` or later"]
+        },
+        {
+          "assertion_id": "documented-daemon-override-and-restart",
+          "adapter": "text_contains_all",
+          "sources": ["skills/vss-deploy-profile/references/prerequisites.md"],
+          "expected": ["\"containerd-snapshotter\": false", "merge them manually", "systemctl restart docker"]
+        }
+      ],
+      "runtime_evidence": []
+    }
+  ]
+}

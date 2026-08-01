@@ -18,9 +18,16 @@ in this directory:
 - `advertised-entry-executors-wave2/` adds 21 disjoint helper/source-contract
   candidates, bringing isolated advertised-entry coverage to 29 of 87 while
   leaving 58 entries explicitly open;
+- `advertised-entry-executors-wave3/` adds 23 code-locked source/API-shape
+  candidates, bringing isolated advertised-entry coverage to 52 of 87 while
+  leaving 35 without a candidate executor; all 87 remain unpromoted in live
+  official status;
 - `planning-requirement-executors-wave3/` checks six of the 84 still-open
   planning requirements without promoting them, preserving five source
   matches and the search-upload HTTP 400/415 mismatch;
+- `planning-requirement-executors-wave4/` checks six of the 78 previously
+  unselected open requirements, preserving five matches and the missing Alerts
+  Qwen example as a source-contract mismatch;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -43,10 +50,11 @@ Warehouse capability lanes.
 The two deterministic static successors currently materialize 26 of 110
 planning requirements. All 276 full capability oracles remain
 `planning_index_only`; the 26 bindings are static subsets only, with zero
-runtime evidence and zero `passed_current` promotions. The separate 8 + 21
-advertised-entry candidates and six additional planning checks are
-non-advancing and do not change those live counts. They leave 58
-advertised-entry gaps and 78 planning requirements open, respectively.
+runtime evidence and zero `passed_current` promotions. The separate 8 + 21 +
+23 advertised-entry candidates and 6 + 6 additional planning checks are
+non-advancing and do not change those live counts. They leave 35
+advertised entries without a candidate source executor and 72 planning
+requirements not yet selected by a planning executor package, respectively.
 
 Run the contract tier from the repository root:
 

@@ -1,0 +1,369 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_file_executor_tranche_wave3",
+  "source_plan": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "e57f5fca4cc14b4b37a059823b23a191036ecfda1374791d6f9afde27047b4ec",
+    "plan_payload_sha256": "21dfd759455866923a12c9595422d2dc7a52af4ff6421a85ecde41f792bba5f5"
+  },
+  "source_manifest": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "raw_sha256": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+  },
+  "previous_candidate_inventories": [
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors/inventory.json",
+      "raw_sha256": "81c33e6723d35a8287380383935dc011865160536fa20ab1d64f3c794fc2ab4c"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave2/inventory.json",
+      "raw_sha256": "cd964887b821c05706ea98d83a0760677a34f105324f13e04432da84dac021c9"
+    }
+  ],
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "live_acceptance_mutation_allowed": false,
+    "live_oracle_mutation_allowed": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "file_writes_allowed": false
+  },
+  "denominator": {
+    "advertised_gap_entries": 87,
+    "previously_selected_candidate_entries": 29,
+    "prior_open_entries": 58,
+    "selected_candidate_entries": 23,
+    "entries_left_open": 35
+  },
+  "cases": [
+    {
+      "manifest_pointer": "/features/2/advertised/5",
+      "entry_id": "manifest-gap.video-summarization-live.05-sse-mcp-server",
+      "proposed_capability_id": "manifest-entry.video-summarization-live.05-sse-mcp-server",
+      "advertised": "SSE MCP server",
+      "advertised_utf8_sha256": "2bbbed21c8e3a409b8f5be59f944a51ead9fa52f0bf9c6b054497f2e36072894",
+      "advertised_canonical_sha256": "a5eeee96f73f9105bd65f10de267ee84c3b5d663371268907b1c8871f6090d05",
+      "adapter_id": "lvs_sse_mcp_source",
+      "evidence_scope": "subset: exact LVS SSE/MCP source and configuration fragments only; no server start, session, tool call, or workflow proof",
+      "source_locks": [
+        {"path": "services/video-summarization/src/lvs_mcp.py", "sha256": "1893ec8cd4115955e57da1645a60fe73e9f544f820647a6296deb9bb4bbef106"},
+        {"path": "services/video-summarization/src/via_server.py", "sha256": "c50d5dece2472206501cedf0c7c157f1d4a848e35e4a3e2e6f0f7ef168de8cc1"},
+        {"path": "deploy/docker/services/video-summarization/compose.yml", "sha256": "b94f6bd0eca9eed5b14a1941f31477b85331a120da35efcb408e448a6d3d81c6"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/8",
+      "entry_id": "manifest-gap.rt-vlm-media.08-categories",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.08-categories",
+      "advertised": "categories",
+      "advertised_utf8_sha256": "a6216ea03e578f212dd604ec5d675c5274a86891bac4e87f80bea10ef511f533",
+      "advertised_canonical_sha256": "dcb1a2e4822f96c6e599e3a46148afdf2b4241a09ee307306035e5eceabd0970",
+      "adapter_id": "category_source",
+      "evidence_scope": "subset: exact category request-field and incident-mapping source fragments only; no inference or Kafka proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/captions.py", "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/8/advertised/10",
+      "entry_id": "manifest-gap.rt-vlm-media.10-audio-transcript",
+      "proposed_capability_id": "manifest-entry.rt-vlm-media.10-audio-transcript",
+      "advertised": "audio transcript",
+      "advertised_utf8_sha256": "fa896265fa9482e00ffdd21a79f31e92e14a75ceb0ad5d46b51fb1da387a12c8",
+      "advertised_canonical_sha256": "67d76e95beb67fdcf5fae5c46cfb16bb7c5ac4614ce45d488bc0188401a08b49",
+      "adapter_id": "audio_transcript_source",
+      "evidence_scope": "subset: exact response-field and serialization source fragments only; no audio decode, ASR, or inference proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/captions.py", "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/0",
+      "entry_id": "manifest-gap.rt-vlm-api.00-openai-compatible-chat-completions",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.00-openai-compatible-chat-completions",
+      "advertised": "OpenAI-compatible chat/completions",
+      "advertised_utf8_sha256": "83a4af91ce2c27760287928a1896625cff8e903cae6299b91bc96f97155ae257",
+      "advertised_canonical_sha256": "76b80b2e2298c1b39bf7aa1a07cc07877a6f8ffc91f7ddbd334e75e288043a4d",
+      "adapter_id": "openai_routes_source",
+      "evidence_scope": "subset: exact request-model and route source fragments only; no HTTP or OpenAI compatibility conformance proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py", "sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/1",
+      "entry_id": "manifest-gap.rt-vlm-api.01-text-only-chat",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.01-text-only-chat",
+      "advertised": "text-only chat",
+      "advertised_utf8_sha256": "4b85fe2630d45aeb50bfa283fa762f6b23b2785ec28914a16b0dfd682020724f",
+      "advertised_canonical_sha256": "0bf36065800307fc6b48a1e70bfb53fdaf526dcfd8bde7e9475c233033e99244",
+      "adapter_id": "text_chat_source",
+      "evidence_scope": "subset: exact text-message and text-only dispatch source fragments only; no model response proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py", "sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/2",
+      "entry_id": "manifest-gap.rt-vlm-api.02-multimodal-multi-turn-chat",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.02-multimodal-multi-turn-chat",
+      "advertised": "multimodal multi-turn chat",
+      "advertised_utf8_sha256": "c8a809c32843a91e85593d777d5a30235d8943b3b623e2c4b5ed805485187ff0",
+      "advertised_canonical_sha256": "cff10c788125e5abcc078294c5105f4066004e1c9c429b9a439aaf1c54ffdaf7",
+      "adapter_id": "multimodal_chat_source",
+      "evidence_scope": "subset: exact multimodal content and multi-turn source fragments only; no media decode or conversation inference proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py", "sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/3",
+      "entry_id": "manifest-gap.rt-vlm-api.03-token-sse",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.03-token-sse",
+      "advertised": "token SSE",
+      "advertised_utf8_sha256": "21fb7f7fdde2d417b9c77e5234d710b5e64e3c9726a7083226418bd37c49a39b",
+      "advertised_canonical_sha256": "41b5b3f380c3569ed02e133ccef61c4397ca6f62119503a7dc1f9bd0ed72c610",
+      "adapter_id": "token_sse_source",
+      "evidence_scope": "subset: exact stream flag, chunk model, event response, and done-marker source fragments only; no SSE connection proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py", "sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/4",
+      "entry_id": "manifest-gap.rt-vlm-api.04-original-stream-api",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.04-original-stream-api",
+      "advertised": "original stream API",
+      "advertised_utf8_sha256": "675641112b7cf5edbd3a3f9bcfb3a373919d22405114320aa96a5cf78bb260a5",
+      "advertised_canonical_sha256": "ae9dc3ce86c579cab1c6d35353b3ab97bdd8fafdfdc812c78106a051a7ae4952",
+      "adapter_id": "original_stream_source",
+      "evidence_scope": "subset: exact original stream request-model and route source fragments only; no stream lifecycle proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/live_stream.py", "sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/5",
+      "entry_id": "manifest-gap.rt-vlm-api.05-cv-compatible-stream-api",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api",
+      "advertised": "CV-compatible stream API",
+      "advertised_utf8_sha256": "7bd79245515ec448fac9e4c3fe43e615034993383f4819be816134a0aec0e486",
+      "advertised_canonical_sha256": "55d7cb27a2d08f9a4eb704a84d226f16ce639b0fe47c14910c0df5a95a632212",
+      "adapter_id": "cv_stream_source",
+      "evidence_scope": "subset: exact CV-compatible request-model and route source fragments only; no interoperability or stream lifecycle proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/live_stream.py", "sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/6",
+      "entry_id": "manifest-gap.rt-vlm-api.06-file-api",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.06-file-api",
+      "advertised": "file API",
+      "advertised_utf8_sha256": "30200487f4c171b1040e43bcb73d2da2ba9ece8e40ab21a845041d55a9f5f811",
+      "advertised_canonical_sha256": "d45cb247f404730197fd572d81db0cce496bcb6115439c380a987e018649756b",
+      "adapter_id": "file_api_source",
+      "evidence_scope": "subset: exact file request-model and route source fragments only; no upload, storage, retrieval, or deletion proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/api_models/file.py", "sha256": "e403a7437b77a2d60e45255b3fc46c503d0e12673a2fa7babec38c0880a3f6f3"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/9/advertised/7",
+      "entry_id": "manifest-gap.rt-vlm-api.07-health-metadata-models-metrics",
+      "proposed_capability_id": "manifest-entry.rt-vlm-api.07-health-metadata-models-metrics",
+      "advertised": "health/metadata/models/metrics",
+      "advertised_utf8_sha256": "dc3e6482873a9e3610c6dc35e5b8beb4e66b3b9464be08bfa5113604118dbff6",
+      "advertised_canonical_sha256": "8af8a42a243424f1f3f3d8a578049b68ff1c8d481b7108e519029659d633cebb",
+      "adapter_id": "service_info_source",
+      "evidence_scope": "subset: exact service-information route source fragments only; no HTTP response, health, model availability, or metric emission proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/10/advertised/4",
+      "entry_id": "manifest-gap.rt-vlm-models.04-remote-openai-compatible-endpoint",
+      "proposed_capability_id": "manifest-entry.rt-vlm-models.04-remote-openai-compatible-endpoint",
+      "advertised": "remote OpenAI-compatible endpoint",
+      "advertised_utf8_sha256": "046d78628d29405d6ea6faf56930d279cf713357e6f4dbe1473f2e3aa5d56a9c",
+      "advertised_canonical_sha256": "78efd1f788b5886e15e4abf08cb5d4e014055968ac10da3bbfbc835e5fa73283",
+      "adapter_id": "remote_endpoint_source",
+      "evidence_scope": "subset: exact remote endpoint selection and client-construction source fragments only; no network, credentials, model, or readiness proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py", "sha256": "145be0b6744bc2a4f670339d76d50b66b09a629a7d4185466a163a65bad95c64"},
+        {"path": "services/rtvi/rt-vlm/README.md", "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/3",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.03-vllm-tuning",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.03-vllm-tuning",
+      "advertised": "vLLM tuning",
+      "advertised_utf8_sha256": "775aaf24430eddedfe2d0c758ccb5d4152f6fedc7b2d222d6ff9a7909c5a8262",
+      "advertised_canonical_sha256": "5288493526912a64824b0b1df7ea9e3ec869f87faadca62dfa6c7a4fa1f4869a",
+      "adapter_id": "vllm_tuning_source",
+      "evidence_scope": "subset: exact vLLM tuning option source fragments only; no vLLM import, model initialization, performance, or readiness proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py", "sha256": "c770c77c6b3ff8788efe57bd5469dd598d5a7fc965bf8fce5e20c11c460cfe10"},
+        {"path": "services/rtvi/rt-vlm/README.md", "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/5",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+      "advertised": "Kafka/Redis error publication",
+      "advertised_utf8_sha256": "6a437b9609a1a7b37851173bf0867a39e8d895a007672405ad95aed96814b7bf",
+      "advertised_canonical_sha256": "4d4466f743ab289466559019e7ef889455b18dd89514e8eb3abea73e43be5dec",
+      "adapter_id": "error_publication_source",
+      "evidence_scope": "subset: exact Kafka/Redis selection and client source fragments only; no broker connection, failure injection, or publication receipt proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"},
+        {"path": "services/rtvi/rt-vlm/README.md", "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/11/advertised/6",
+      "entry_id": "manifest-gap.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+      "proposed_capability_id": "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+      "advertised": "Prometheus and OpenTelemetry",
+      "advertised_utf8_sha256": "01cead86140960d0f7e34d7822a385014e6ebc45e1c9d788967e2ae44425e61e",
+      "advertised_canonical_sha256": "d2e85da3b7c472a56e6bb3c0b2d4e6c35435af0ac0a185fbe1445097057f893f",
+      "adapter_id": "telemetry_source",
+      "evidence_scope": "subset: exact telemetry initialization and metrics route source fragments only; no exporter, scrape, trace, or metric-value proof",
+      "source_locks": [
+        {"path": "services/rtvi/rt-vlm/src/utils/otel_helper.py", "sha256": "20b78835e9d87738935258a5807c2b13c05d872609bedf3558813694aa85da60"},
+        {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/15/advertised/4",
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.04-compose-deployment",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-mv3dt.04-compose-deployment",
+      "advertised": "Compose deployment",
+      "advertised_utf8_sha256": "340a2bb5f58e8781f3fcc82a21f5664c0e0c376e885953e135de10ac2a31d009",
+      "advertised_canonical_sha256": "29f9384e0264792fb6c7560f4532d5f5168538c9fac053d5f6c9591bc6166e9a",
+      "adapter_id": "mv3dt_compose_source",
+      "evidence_scope": "subset: exact upstream MV3DT and Thor override service fragments only; no Compose rendering, container lifecycle, 3D inference, data, or calibration proof",
+      "source_locks": [
+        {"path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/warehouse-mv3dt-app.yml", "sha256": "e69e1dd51f5c2468621d95c5764e32c1a7a74f1fce61dc607af71e7f32278f76"},
+        {"path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml", "sha256": "a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/1",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.01-health",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.01-health",
+      "advertised": "health",
+      "advertised_utf8_sha256": "62484e22a6a5ade1ba25cb1b7c55c4b8861de24caddab73c9409742734008b26",
+      "advertised_canonical_sha256": "69b7c75b4a0260f2e018aae0172314b00e80b3899c79ba4d71e070ba74cd8db4",
+      "adapter_id": "agent_health_source",
+      "evidence_scope": "subset: exact agent health route and response-literal source fragments only; no live health response proof",
+      "source_locks": [
+        {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/2",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.02-upload-handshake-and-completion",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.02-upload-handshake-and-completion",
+      "advertised": "upload handshake and completion",
+      "advertised_utf8_sha256": "0677915ec41636bfdc64000e60fd87b362041838e84fb8962195cc444e55c5c3",
+      "advertised_canonical_sha256": "ade2ebabc7db9f7e2bafc3f826c8474b2b4c1eb328adfbe9820fb7e8667f0eac",
+      "adapter_id": "upload_routes_source",
+      "evidence_scope": "subset: exact upload route registration, paths, and request/response model source fragments only; no upload or completion workflow proof",
+      "source_locks": [
+        {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"},
+        {"path": "services/agent/src/vss_agents/api/video_ingest.py", "sha256": "39416707048715db5957951efaf2e6b0b2898a1199eac0f1f9b2508b6e467af5"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/3",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.03-video-delete",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.03-video-delete",
+      "advertised": "video delete",
+      "advertised_utf8_sha256": "c646c46bcd49eb360fb31dcfa1af5bd8a6dbaab722fe4f5f121e1af68083a0f9",
+      "advertised_canonical_sha256": "386d58112aa69cb23b80279014b22c20b598614a3353d1a00776dce3c4ccccda",
+      "adapter_id": "video_delete_source",
+      "evidence_scope": "subset: exact video-delete route registration and path source fragments only; no deletion or cleanup proof",
+      "source_locks": [
+        {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"},
+        {"path": "services/agent/src/vss_agents/api/video_delete.py", "sha256": "d95d55aad6cd776431ea2c270a9e5796248755390b425879cc72ee8d14ae1657"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/4",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.04-rtsp-add-delete",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete",
+      "advertised": "RTSP add/delete",
+      "advertised_utf8_sha256": "6abaaeab6deb1e674dae8f0ed236e9dd7398e1c518c7d2cb89aeebc9516b36a6",
+      "advertised_canonical_sha256": "23df52f6465db1225e7c1c72f5b5675213fdeaf13d86aae032ad662ca0e113fb",
+      "adapter_id": "rtsp_routes_source",
+      "evidence_scope": "subset: exact RTSP add/delete route registration and path source fragments only; no RTSP connection or lifecycle proof",
+      "source_locks": [
+        {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"},
+        {"path": "services/agent/src/vss_agents/api/rtsp_ingest.py", "sha256": "df9a8808222d6c70fe40dc09707c1be05f9edf4e92f55c318d954cb511d0ded0"},
+        {"path": "services/agent/src/vss_agents/api/rtsp_delete.py", "sha256": "0eb625e884390c295c95a32d58afe1f1f17da87e3d97a5a852f1f1bd9e321898"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/5",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.05-va-mcp",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.05-va-mcp",
+      "advertised": "VA-MCP",
+      "advertised_utf8_sha256": "0dc4730a851de9d44b044ab21863ea3d730cf86e8caba556aed325570dcf6d12",
+      "advertised_canonical_sha256": "c4b5a0b138af7e7f653fa386f2d5d1b2b377651cb51e73905ec83ec1af09e095",
+      "adapter_id": "va_mcp_source",
+      "evidence_scope": "subset: exact VA-MCP server command, port, and endpoint documentation fragments only; no MCP handshake or tool proof",
+      "source_locks": [
+        {"path": "services/agent/src/vss_agents/video_analytics/README.md", "sha256": "058c50efe7f6effaab1bdb61c074f53b5a35cf2c62fa81d42c1fdd3b5a322218"},
+        {"path": "deploy/docker/services/agent/compose.yml", "sha256": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/6",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
+      "advertised": "LVS MCP",
+      "advertised_utf8_sha256": "09b9454aa84811a85ab5020f03abb3e3b8765e9a9c944e44bec90381aec44ff7",
+      "advertised_canonical_sha256": "715935b761ba89b4432acd01937e363971bbe1a8d0e5cfd1d00ff13686485152",
+      "adapter_id": "lvs_mcp_source",
+      "evidence_scope": "subset: exact LVS MCP server, enablement, and port source fragments only; no MCP handshake, tool, or summarization proof",
+      "source_locks": [
+        {"path": "services/video-summarization/src/lvs_mcp.py", "sha256": "1893ec8cd4115955e57da1645a60fe73e9f544f820647a6296deb9bb4bbef106"},
+        {"path": "services/video-summarization/src/via_server.py", "sha256": "c50d5dece2472206501cedf0c7c157f1d4a848e35e4a3e2e6f0f7ef168de8cc1"},
+        {"path": "deploy/docker/services/video-summarization/compose.yml", "sha256": "b94f6bd0eca9eed5b14a1941f31477b85331a120da35efcb408e448a6d3d81c6"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/27/advertised/7",
+      "entry_id": "manifest-gap.agent-and-mcp-apis.07-vios-mcp",
+      "proposed_capability_id": "manifest-entry.agent-and-mcp-apis.07-vios-mcp",
+      "advertised": "VIOS MCP",
+      "advertised_utf8_sha256": "d46ea18504e70fccbdde2badf3e3e75669c3feea9084f29c8ee3d1fa99dc2109",
+      "advertised_canonical_sha256": "8297d8ee1d688f937e9b7f7674e2b44e4927f6f08358588a31aae24745bc455b",
+      "adapter_id": "vios_mcp_source",
+      "evidence_scope": "subset: exact VIOS streamable-HTTP MCP server and endpoint source fragments only; no MCP handshake or VIOS operation proof",
+      "source_locks": [
+        {"path": "services/vios/mcp/src/server.py", "sha256": "54eb8f509d1653892c5bca9d24ca9976b776501d584727333b81d1fe3549c9d2"},
+        {"path": "services/vios/mcp/README.md", "sha256": "38f4a56d79467e6955d70d94dcda4b44d1dd3e018c6c567a7346a88ea7963682"}
+      ]
+    }
+  ]
+}

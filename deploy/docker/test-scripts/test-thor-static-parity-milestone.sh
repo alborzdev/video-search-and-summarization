@@ -128,6 +128,14 @@ python3 "${thor_local_root}/qualification/planning-requirement-executors-wave3/e
 python3 -m pytest -q \
   "${thor_local_root}/qualification/planning-requirement-executors-wave3/tests"
 
+# A second nonadvancing planning audit selects six of the 78 requirements not
+# previously covered by a planning executor package. Five source contracts
+# match and the Alerts Qwen example remains an explicit source mismatch.
+python3 "${thor_local_root}/qualification/planning-requirement-executors-wave4/executor.py" \
+  --json >/dev/null
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/planning-requirement-executors-wave4/tests"
+
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.
 python3 "${thor_local_root}/qualification/host-preflight/preflight.py" \
@@ -160,6 +168,16 @@ python3 "${thor_local_root}/qualification/advertised-entry-executors-wave2/execu
   >/dev/null
 python3 -m pytest -q \
   "${thor_local_root}/qualification/advertised-entry-executors-wave2/tests"
+
+# The third advertised-entry package code-locks the plan, manifest, both
+# predecessors, and all selected sources. Its 23 source-shape candidates bring
+# isolated coverage to 52/87; 35 lack even a candidate and all 87 remain
+# unpromoted in live official status.
+python3 "${thor_local_root}/qualification/advertised-entry-executors-wave3/executor.py" \
+  >/dev/null
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/advertised-entry-executors-wave3/tests" \
+  -p 'test*.py' -v
 
 # The four unresolved capability-to-service bindings have an authoritative
 # negative audit. None of the contracts selects a unique runtime participant
