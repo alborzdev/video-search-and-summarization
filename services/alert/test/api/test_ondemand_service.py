@@ -205,6 +205,27 @@ class TestProcessAndPublish:
         assert call_kwargs["info_block"] == msg["info"]
         assert call_kwargs["user_prompt"] == user
         assert call_kwargs["system_prompt"] == system
+        assert call_kwargs["config_overrides"]["model"] == "test-model"
+
+    def test_runtime_vlm_params_override_global_parser_config(self, ctx):
+        ctx.prompt_mgr.alert_config_loader = MagicMock()
+        ctx.prompt_mgr.alert_config_loader.get_vlm_params_for_alert_type.return_value = None
+        ctx.prompt_mgr.alert_config_store = MagicMock()
+        ctx.prompt_mgr.alert_config_store.get.return_value = {
+            "vlm_params": {
+                "model": "local-qwen",
+                "response_format": "json",
+                "json_parser": {"verdict_field": "qualified"},
+            }
+        }
+        msg, user, system = ctx.svc.prepare(_make_payload())
+
+        ctx.svc.process_and_publish(msg, user, system)
+
+        overrides = ctx.mock_handler.evaluate.call_args.kwargs["config_overrides"]
+        assert overrides["model"] == "local-qwen"
+        assert overrides["response_format"] == "json"
+        assert overrides["json_parser"] == {"verdict_field": "qualified"}
 
     def test_handler_receives_full_message(self, ctx):
         payload = _make_payload(id="test-123", sensorId="cam-77")

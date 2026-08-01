@@ -1,0 +1,9 @@
+{
+  "fixture_id": "candidate-alert-positive-v1",
+  "materialized_media": false,
+  "media_type": "video",
+  "semantic_scene": "A vehicle is visibly present inside the marked east-gate region.",
+  "visible_identity_token": "VSS-CANDIDATE-POSITIVE-V1",
+  "expected_verdict": "confirmed",
+  "expected_sink_delivery": true
+}

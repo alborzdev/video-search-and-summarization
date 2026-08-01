@@ -97,6 +97,8 @@ def merge_vlm_result(
     model_name: str,
     use_verdict: bool,
     media_type: str,
+    response_format: str = "auto",
+    json_config: Optional[Dict[str, Any]] = None,
     media_metadata: Optional[Dict[str, Any]] = None,
 ) -> None:
     """Parse VLM response and merge verification results into message['info'].
@@ -109,7 +111,10 @@ def merge_vlm_result(
     if use_verdict:
         try:
             vlm_data = VLMResponse.model_validate_text(
-                response_content, model_name=model_name
+                response_content,
+                model_name=model_name,
+                response_format=response_format,
+                json_config=json_config,
             )
             merge_info_with_response(
                 message,
@@ -190,7 +195,20 @@ class DirectMediaHandler:
         
         media_config = config.get('alert_agent', {}).get('media_download', {})
         self.enabled = media_config.get('enabled', True)
-        self.use_verdict = media_config.get('use_verdict', False)
+        # Thor's local JSON-verification lane opts into verdict parsing without
+        # mutating NVIDIA's shared profile template. Invalid environment values
+        # fail startup instead of silently degrading to freestyle output.
+        use_verdict_env = os.getenv('ALERT_DIRECT_MEDIA_USE_VERDICT')
+        if use_verdict_env is None:
+            self.use_verdict = media_config.get('use_verdict', False)
+        elif use_verdict_env.lower() in ('1', 'true', 'yes'):
+            self.use_verdict = True
+        elif use_verdict_env.lower() in ('0', 'false', 'no'):
+            self.use_verdict = False
+        else:
+            raise ValueError(
+                "ALERT_DIRECT_MEDIA_USE_VERDICT must be a boolean value"
+            )
         self.max_media_count = media_config.get('max_media_count', 5)
         self.model_name = config.get('vlm', {}).get('model', '')
         
@@ -304,6 +322,7 @@ class DirectMediaHandler:
             self._publish_success(
                 message, user_prompt, system_prompt, response_content,
                 media_type='video',
+                config_overrides=config_overrides,
             )
 
         except ValueError as e:
@@ -358,6 +377,7 @@ class DirectMediaHandler:
                     'images_processed': len(media_urls),
                     'images_total': len(media_urls),
                 },
+                config_overrides=config_overrides,
             )
 
         except ValueError as e:
@@ -378,6 +398,7 @@ class DirectMediaHandler:
         response_content: str,
         media_type: str,
         media_metadata: Optional[Dict[str, Any]] = None,
+        config_overrides: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Parse VLM response, merge into message, set metadata, and publish.
 
@@ -439,11 +460,17 @@ class DirectMediaHandler:
             message['info']['media_type'] = media_type
             _merge_media_metadata_into_info(message['info'], media_metadata)
         else:
+            effective_vlm_cfg = {
+                **self.config.get('vlm', {}),
+                **(config_overrides or {}),
+            }
             merge_vlm_result(
                 message,
                 response_content,
-                model_name=self.model_name,
+                model_name=effective_vlm_cfg.get('model', self.model_name),
                 use_verdict=self.use_verdict,
+                response_format=effective_vlm_cfg.get('response_format', 'auto'),
+                json_config=effective_vlm_cfg.get('json_parser'),
                 media_type=media_type,
                 media_metadata=media_metadata,
             )

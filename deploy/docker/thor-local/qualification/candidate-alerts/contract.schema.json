@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vss.local/schemas/candidate-alerts-completion-contract-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "mode",
+    "default_execution_enabled",
+    "promotion_eligible",
+    "planning_requirement_id",
+    "capability_id",
+    "oracle_id",
+    "intended_runtime",
+    "fixtures",
+    "execution_bounds",
+    "ownership",
+    "required_terminal_receipt",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "candidate-alerts-completion-scaffold"},
+    "mode": {"const": "offline-plan-only"},
+    "default_execution_enabled": {"const": false},
+    "promotion_eligible": {"const": false},
+    "planning_requirement_id": {"const": "candidate-alerts"},
+    "capability_id": {"const": "runtime.workflow.alert-verification"},
+    "oracle_id": {"const": "oracle.runtime.workflow.alert-verification"},
+    "intended_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_ingress",
+        "result_query",
+        "sink_lanes",
+        "primary_sink_lane",
+        "kafka_is_separate_lane"
+      ],
+      "properties": {
+        "candidate_ingress": {"$ref": "#/$defs/operation"},
+        "result_query": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "path", "allowed_query_keys"],
+          "properties": {
+            "method": {"const": "GET"},
+            "path": {"const": "/api/v1/realtime/incidents"},
+            "allowed_query_keys": {
+              "const": ["sensor_id", "category", "start_time", "limit", "offset"]
+            }
+          }
+        },
+        "sink_lanes": {"const": ["elasticsearch", "kafka"]},
+        "primary_sink_lane": {"const": "elasticsearch"},
+        "kafka_is_separate_lane": {"const": true}
+      }
+    },
+    "fixtures": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {"$ref": "#/$defs/fixture"},
+        {"$ref": "#/$defs/fixture"}
+      ],
+      "items": false
+    },
+    "execution_bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_requests",
+        "max_actions",
+        "max_poll_requests",
+        "max_response_bytes",
+        "max_request_bytes",
+        "max_duration_seconds",
+        "cleanup_reserve_requests",
+        "cleanup_reserve_actions",
+        "request_accounting",
+        "action_accounting"
+      ],
+      "properties": {
+        "max_requests": {"const": 53},
+        "max_actions": {"const": 56},
+        "max_poll_requests": {"const": 40},
+        "max_response_bytes": {"const": 1048576},
+        "max_request_bytes": {"const": 65536},
+        "max_duration_seconds": {"const": 900},
+        "cleanup_reserve_requests": {"const": 6},
+        "cleanup_reserve_actions": {"const": 8},
+        "request_accounting": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "non_cleanup_fixed",
+            "polls",
+            "config_cleanup_and_postcondition",
+            "two_sink_document_cleanup_and_postconditions"
+          ],
+          "properties": {
+            "non_cleanup_fixed": {"const": 7},
+            "polls": {"const": 40},
+            "config_cleanup_and_postcondition": {"const": 2},
+            "two_sink_document_cleanup_and_postconditions": {"const": 4}
+          }
+        },
+        "action_accounting": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "non_cleanup_requests",
+            "fixture_server_start",
+            "cleanup_and_postconditions"
+          ],
+          "properties": {
+            "non_cleanup_requests": {"const": 47},
+            "fixture_server_start": {"const": 1},
+            "cleanup_and_postconditions": {"const": 8}
+          }
+        }
+      }
+    },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registration_order",
+        "cleanup_order",
+        "transitions_per_resource",
+        "sink_registration_gate",
+        "late_publication_policy"
+      ],
+      "properties": {
+        "registration_order": {
+          "const": [
+            "fixture-server",
+            "alert-verification-config",
+            "positive-sink-document",
+            "negative-sink-document"
+          ]
+        },
+        "cleanup_order": {
+          "const": [
+            "negative-sink-document",
+            "positive-sink-document",
+            "alert-verification-config",
+            "fixture-server"
+          ]
+        },
+        "transitions_per_resource": {"const": 2},
+        "sink_registration_gate": {"type": "string", "minLength": 1, "maxLength": 512},
+        "late_publication_policy": {"type": "string", "minLength": 1, "maxLength": 512}
+      }
+    },
+    "required_terminal_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "states",
+        "requires_sink_delivery_receipt",
+        "requires_media_fetch_receipt"
+      ],
+      "properties": {
+        "schema": {"const": "terminal-result.schema.json"},
+        "states": {"const": ["succeeded", "failed", "cancelled"]},
+        "requires_sink_delivery_receipt": {"const": true},
+        "requires_media_fetch_receipt": {"const": true}
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["blocker_id", "active", "reason"],
+        "properties": {
+          "blocker_id": {
+            "enum": [
+              "media-not-materialized",
+              "terminal-status-api-missing",
+              "late-publication-not-reversible",
+              "sink-receipt-missing",
+              "verdict-propagation-unqualified",
+              "query-transport-integration-missing",
+              "runtime-image-identity-unproven",
+              "kafka-separate-lane-missing"
+            ]
+          },
+          "active": {"const": true},
+          "reason": {"type": "string", "minLength": 1, "maxLength": 512}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "path", "reason"],
+      "properties": {
+        "method": {"const": "POST"},
+        "path": {"const": "/api/v1/incidents"},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 256}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_id",
+        "descriptor_path",
+        "descriptor_sha256",
+        "materialized_media",
+        "expected_verdict",
+        "visible_identity_token"
+      ],
+      "properties": {
+        "fixture_id": {"pattern": "^candidate-alert-(positive|negative)-v1$"},
+        "descriptor_path": {
+          "pattern": "^deploy/docker/thor-local/qualification/candidate-alerts/fixtures/(positive|negative)\\.json$"
+        },
+        "descriptor_sha256": {"pattern": "^[0-9a-f]{64}$"},
+        "materialized_media": {"const": false},
+        "expected_verdict": {"enum": ["confirmed", "rejected"]},
+        "visible_identity_token": {"pattern": "^VSS-CANDIDATE-(POSITIVE|NEGATIVE)-V1$"}
+      }
+    }
+  }
+}

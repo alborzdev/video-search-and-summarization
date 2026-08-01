@@ -27,7 +27,7 @@
     },
     {
       "path": "deploy/docker/thor-local/compose.yml",
-      "raw_sha256": "1106c34a4831c6545ed8024c92f8bcba413f1d90a22434844c9cd446d0069778"
+      "raw_sha256": "1943cc40645c6b41d61f28dc9262aa3793149cc3f4c6aac8a91ee47fd2842352"
     },
     {
       "path": "deploy/docker/thor-local/patches/patch_lvs_file_management.py",
@@ -129,7 +129,7 @@
     "docker": "forbidden",
     "subprocess": "forbidden"
   },
-  "contract_sha256": "f65c04d92a97fb60c5c506b4de8f7ea4cf6035098d5870343f7aeebf64fb6bc2",
+  "contract_sha256": "8015432ecaa593d58bc21c7ac3d6d91dddc8773c19fb8bbeb533fd0671cebc12",
   "outputs": {
     "official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
     "manifest.json": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",

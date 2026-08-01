@@ -6,8 +6,10 @@ ARG ALERT_BRIDGE_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-alert-verification:3.2.0
 FROM ${ALERT_BRIDGE_BASE_IMAGE}
 
 # Keep NVIDIA's released runtime and dependencies intact. Only replace the
-# small alert modules needed by the Thor profile so the branch
-# remains easy to rebase onto future VSS releases.
+# small alert modules needed by the Thor profile so the branch remains easy to
+# rebase onto future VSS releases. Direct-media/on-demand files are copied as
+# one audited closure so source-tested verdict behavior is present in the
+# derivative rather than inherited accidentally from the older base image.
 COPY services/alert/realtime/defaults.py /app/realtime/defaults.py
 COPY services/alert/realtime/schemas/alert_config.py /app/realtime/schemas/alert_config.py
 COPY services/alert/realtime/services/rtvi_client.py /app/realtime/services/rtvi_client.py
@@ -17,6 +19,12 @@ COPY services/alert/enhance_alert_with_vlm.py /app/enhance_alert_with_vlm.py
 COPY services/alert/vlm/vlm_client.py /app/vlm/vlm_client.py
 COPY services/alert/vst/snapshot_sampler.py /app/vst/snapshot_sampler.py
 COPY services/alert/handlers/prompt_handler/alert_type_config_loader.py /app/handlers/prompt_handler/alert_type_config_loader.py
+COPY services/alert/handlers/direct_media/direct_media_handler.py /app/handlers/direct_media/direct_media_handler.py
+COPY services/alert/handlers/direct_media/media_analyzer.py /app/handlers/direct_media/media_analyzer.py
+COPY services/alert/handlers/direct_media/media_downloader.py /app/handlers/direct_media/media_downloader.py
+COPY services/alert/alert-agent-web/app/service/ondemand_verification_service.py /app/alert-agent-web/app/service/ondemand_verification_service.py
+COPY services/alert/alert-agent-web/app/api/verification_routes.py /app/alert-agent-web/app/api/verification_routes.py
+COPY services/alert/alert-agent-web/app/schema/verification_schemas.py /app/alert-agent-web/app/schema/verification_schemas.py
 COPY services/alert/utils/schema_util.py /app/utils/schema_util.py
 
 USER 65532:65532

@@ -245,11 +245,23 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 
 # The provider-free clean-room calibration backend performs real bounded
 # Cartesian/image/GIS/multi-camera validation, homography solving, geometry
-# validation, deterministic export/readback, and a nine-operation loopback REST
-# subset. These local functional tests do not start that server or claim the
-# five missing image/upload operations, browser UI, or Thor runtime evidence.
+# validation, deterministic export/readback, plus separate strict and VIOS-UI
+# compatibility adapters. These local functional tests do not start either
+# server or claim route/nav/proxy wiring, four pending transforms/uploads, the
+# UI-to-strict-export bridge, or Thor runtime evidence.
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/legacy-calibration/tests"
+
+# One isolated static executor now compiles generated geo/cartesian/image/MTMC
+# fixtures through the provider-free backend and validates deterministic output
+# against every exact checked-in VSS calibration/behavior/road schema. It is
+# explicitly non-advancing and invokes no network, Docker, subprocess, model,
+# Warehouse sample, service, or live runtime.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/calibration-schema-static-executor/executor.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/calibration-schema-static-executor/tests"
 
 # Two formerly fixed-topology architecture gaps now have an opt-in, default-
 # inert scaling configuration. The validator and adversarial tests inspect only
@@ -268,6 +280,14 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/alert" \
   python3 -m pytest -q -p no:cacheprovider \
   "${repo_root}/services/alert/test/test_schema_util_nvschema_alias.py"
+
+# Direct-media source tests prove the Thor-only verdict gate and exact
+# per-category model/response-format/JSON-parser propagation without importing
+# the full Alert runtime. The test supplies a minimal local OpenAI type stub
+# when that image-only dependency is absent; it performs no I/O.
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/alert" \
+  python3 -m pytest -q -p no:cacheprovider \
+  "${repo_root}/services/alert/test/test_direct_media_pluggable_parser_ft.py"
 
 # Shared future runtime-evidence primitives are checked only through their
 # static contract and fake in-memory transport/resource self-test. The library
@@ -291,6 +311,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-alerts-runtime-evidence/test_collector.py"
+
+# The completion scaffold separately models the final confirmed/rejected
+# verdict, exact media/server identity, terminal sink receipt, bounded query,
+# proof-gated ownership, and late-publication blocker. Only its inert plan and
+# fake-only tests run here; no execute command or network path exists.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-alerts/collector.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-alerts/test_collector.py"
 
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
 # intentionally excluded from this static wrapper.

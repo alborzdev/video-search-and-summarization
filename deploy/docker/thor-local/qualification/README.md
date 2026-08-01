@@ -142,11 +142,18 @@ in this directory:
   slice: bounded provider-free Cartesian/image/GIS/multi-camera project
   validation, pure-Python 3x3 homography solving, eight-point
   ROI/tripwire/road-link validation, strict consumer-schema-compatible export,
-  and nine path/method-named project/sensor/homography operations behind an
-  inert-by-default numeric-loopback REST adapter. The adapter is not compatible
-  with the legacy UI's bodies/responses. Five image/upload/import/warp routes,
-  the interactive editor, multipart/browser routing, official Google Maps
-  identity, and Thor runtime proof remain open;
+  and a strict path/method-named loopback adapter. A separate inert VIOS-client
+  compatibility server on private port 8013 implements bare numeric project
+  CRUD, partial sensor updates, persisted homography, bounded multipart image
+  storage/serving, staged local sensor import, and optional loopback CORS.
+  Route/nav and same-origin proxy wiring, four transform/ZIP/upload endpoints,
+  the UI-state-to-strict-export bridge, official Google Maps identity, and
+  Thor runtime proof remain open;
+- `calibration-schema-static-executor/` materializes the exact
+  `calibration-schema-static` planning candidate without advancing it: four
+  generated geo/cartesian/image/MTMC projects are exported twice, checked
+  against all exact VSS calibration/Behavior/Road schemas, subjected to seven
+  adjacent invalid cases, read back, confined, and cleaned deterministically;
 - `fixed-topology-scaling-config/` statically qualifies an opt-in, default-one
   Alert worker and VIOS stream-processor scaling topology while keeping VIOS
   DB/Redis/Sensor/ingress singletons. It does not run Compose or claim Kafka
@@ -167,6 +174,13 @@ in this directory:
   exact eight-request/eight-action future collector. Even an authorized run is
   non-promoting because final background VLM verdict, sink delivery, fixture
   identity, and media digest remain outside this collector;
+- `candidate-alerts/` is the offline completion scaffold for those missing
+  observations: two digest-bound confirmed/rejected descriptors, exact future
+  media/server/run identity, a 53-request/56-action ES lane, terminal ES/Kafka
+  delivery receipts, strict query construction, proof-gated LIFO ownership,
+  and an explicit late-publication blocker. It has no execute path and remains
+  non-promoting until media, terminal/cancel APIs, durable sink receipts,
+  bounded transport integration, and live runtime identity exist;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle

@@ -314,6 +314,9 @@ services:
       ALERT_VERIFICATION_NUM_WORKERS: "1"
       ALERT_VERIFICATION_ASYNC_IO: "false"
       ALERT_VERIFICATION_OVERRIDE_PROMPTS: "false"
+      # The local JSON verifier must produce confirmed/rejected incidents;
+      # upstream keeps direct-media parsing in freestyle mode by default.
+      ALERT_DIRECT_MEDIA_USE_VERDICT: "true"
 
   # Add a tiny provider-aware patch on top of NVIDIA's released LVS image.
   # Generic OpenAI/NIM requests remain unchanged; local vLLM can explicitly

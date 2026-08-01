@@ -60,7 +60,7 @@ STATIC_INPUTS = {
     "services/video-summarization/src/rtvi_vlm_client.py": "46cdf3abc75146497dd94b5fe0a41895ff900fc08f9ff278dc56de9858944383",
     "deploy/docker/thor-local/patches/patch_lvs_file_management.py": "d1c5e52fb908063362952d3fb28c38c675bb2adb4ccb2bfd4dfd06ba94ec95d1",
     "deploy/docker/thor-local/Dockerfile.video-summarization": "50b77993332df61de4fc0a42dcdb1856ba3307b392b922d10de70eb08d591663",
-    "deploy/docker/thor-local/compose.yml": "1106c34a4831c6545ed8024c92f8bcba413f1d90a22434844c9cd446d0069778",
+    "deploy/docker/thor-local/compose.yml": "1943cc40645c6b41d61f28dc9262aa3793149cc3f4c6aac8a91ee47fd2842352",
     "deploy/docker/services/video-summarization/compose.yml": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f",
     "deploy/docker/thor-local/qualification/offline-mv3dt-tools/contract.json": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984",
     "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273",

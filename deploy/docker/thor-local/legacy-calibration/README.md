@@ -10,12 +10,19 @@ schemas and both calibration consumers, and strict readback.
 
 It deliberately identifies itself as `thor-clean-room-provider-free-v1`. It is
 not the official Google Maps UI, the proprietary legacy server, AutoMagicCalib,
-or runtime qualification. A clean-room loopback port-8003 subset implements
-nine client-observed project, sensor, and homography operations; five image,
-upload, import, and warp/file operations remain explicitly unavailable. The
-interactive editor, legacy-client-compatible bodies and responses, multipart
-uploads, browser routing/CORS, official Google Maps identity, and an authorized
-Thor runtime run remain open. See `REST_API.md`.
+or runtime qualification. Two deliberately separate adapters now exist:
+
+- `rest_server.py` preserves the strict compiler-project REST subset. It is not
+  compatible with the checked-in VIOS browser client.
+- `ui_server.py` stores the browser's incomplete, incremental project/sensor
+  state separately on private numeric loopback port `8013`. It implements the
+  client-observed bare-array project CRUD shape, partial sensor JSON updates,
+  persisted homography, bounded multipart PNG/JPEG upload and confined static
+  media, and an operator-staged provider-free sensor import.
+
+The UI route and same-origin VIOS proxy, image inversion, image/warped ZIP
+downloads, outbound Web API upload, official Google Maps identity, and an
+authorized Thor runtime run remain open. See `REST_API.md`.
 
 The input project must explicitly supply semantics that cannot safely be
 invented: one of the three legal VSS output calibration types, the OSM URL,
@@ -39,6 +46,28 @@ Execute a generated/operator-custom project without a service lifecycle:
 python3 deploy/docker/thor-local/legacy-calibration/backend.py project.json \
   --output-root /private/operator-approved/output
 ```
+
+Inspect the client-compatible server's inert plan:
+
+```bash
+python3 deploy/docker/thor-local/legacy-calibration/ui_server.py
+```
+
+No client service is started by the package or its tests. Sensor import never
+dereferences the UI's editable `mmsURL`. An operator instead stages a bounded
+local manifest after creating a project:
+
+```bash
+python3 deploy/docker/thor-local/legacy-calibration/ui_server.py stage-sensors \
+  --data-root /private/operator-approved/calibration-state \
+  --project-id 1 \
+  --input /private/operator-approved/sensors.json
+```
+
+The manifest is exactly `{"sensors":[...]}`. Each row requires a plain
+`sensorId`, may provide a distinct plain `id`, and may contain only documented
+UI Sensor fields. `GET /api/importSensors/1/` then consumes that staged file;
+there is no DNS, proxy, redirect, VST, map-provider, or Web API request.
 
 The exporter never overwrites a project directory. Inputs are strict bounded
 JSON, output filenames are fixed, IDs cannot traverse paths, and the Warehouse

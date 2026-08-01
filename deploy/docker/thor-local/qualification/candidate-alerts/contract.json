@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "package_id": "candidate-alerts-completion-scaffold",
+  "mode": "offline-plan-only",
+  "default_execution_enabled": false,
+  "promotion_eligible": false,
+  "planning_requirement_id": "candidate-alerts",
+  "capability_id": "runtime.workflow.alert-verification",
+  "oracle_id": "oracle.runtime.workflow.alert-verification",
+  "intended_runtime": {
+    "candidate_ingress": {
+      "method": "POST",
+      "path": "/api/v1/incidents",
+      "reason": "Kafka-backed upstream_candidate_alert ingress"
+    },
+    "result_query": {
+      "method": "GET",
+      "path": "/api/v1/realtime/incidents",
+      "allowed_query_keys": [
+        "sensor_id",
+        "category",
+        "start_time",
+        "limit",
+        "offset"
+      ]
+    },
+    "sink_lanes": [
+      "elasticsearch",
+      "kafka"
+    ],
+    "primary_sink_lane": "elasticsearch",
+    "kafka_is_separate_lane": true
+  },
+  "fixtures": [
+    {
+      "fixture_id": "candidate-alert-positive-v1",
+      "descriptor_path": "deploy/docker/thor-local/qualification/candidate-alerts/fixtures/positive.json",
+      "descriptor_sha256": "2dc5c1a66968f04f38197fdafa5fd995a59b079238606900633697fe5d8daf05",
+      "materialized_media": false,
+      "expected_verdict": "confirmed",
+      "visible_identity_token": "VSS-CANDIDATE-POSITIVE-V1"
+    },
+    {
+      "fixture_id": "candidate-alert-negative-v1",
+      "descriptor_path": "deploy/docker/thor-local/qualification/candidate-alerts/fixtures/negative.json",
+      "descriptor_sha256": "51874b6a56ac85e20fd712845227422d8c3d8e2d0ce4eb2d1fe33ed552c4dca3",
+      "materialized_media": false,
+      "expected_verdict": "rejected",
+      "visible_identity_token": "VSS-CANDIDATE-NEGATIVE-V1"
+    }
+  ],
+  "execution_bounds": {
+    "max_requests": 53,
+    "max_actions": 56,
+    "max_poll_requests": 40,
+    "max_response_bytes": 1048576,
+    "max_request_bytes": 65536,
+    "max_duration_seconds": 900,
+    "cleanup_reserve_requests": 6,
+    "cleanup_reserve_actions": 8,
+    "request_accounting": {
+      "non_cleanup_fixed": 7,
+      "polls": 40,
+      "config_cleanup_and_postcondition": 2,
+      "two_sink_document_cleanup_and_postconditions": 4
+    },
+    "action_accounting": {
+      "non_cleanup_requests": 47,
+      "fixture_server_start": 1,
+      "cleanup_and_postconditions": 8
+    }
+  },
+  "ownership": {
+    "registration_order": [
+      "fixture-server",
+      "alert-verification-config",
+      "positive-sink-document",
+      "negative-sink-document"
+    ],
+    "cleanup_order": [
+      "negative-sink-document",
+      "positive-sink-document",
+      "alert-verification-config",
+      "fixture-server"
+    ],
+    "transitions_per_resource": 2,
+    "sink_registration_gate": "terminal receipt plus exact run marker, correlation id, fixture id, media digest, index and document id readback",
+    "late_publication_policy": "promotion blocked until terminal status/cancellation prevents publication after cleanup"
+  },
+  "required_terminal_receipt": {
+    "schema": "terminal-result.schema.json",
+    "states": [
+      "succeeded",
+      "failed",
+      "cancelled"
+    ],
+    "requires_sink_delivery_receipt": true,
+    "requires_media_fetch_receipt": true
+  },
+  "blockers": [
+    {
+      "blocker_id": "media-not-materialized",
+      "active": true,
+      "reason": "The two semantic media artifacts and their byte digests are not staged."
+    },
+    {
+      "blocker_id": "terminal-status-api-missing",
+      "active": true,
+      "reason": "Alert Bridge exposes admission but no terminal background-job result API."
+    },
+    {
+      "blocker_id": "late-publication-not-reversible",
+      "active": true,
+      "reason": "A background VLM task can publish after configuration and fixture-server cleanup."
+    },
+    {
+      "blocker_id": "sink-receipt-missing",
+      "active": true,
+      "reason": "Current sinks swallow delivery failures and return no durable delivery receipt."
+    },
+    {
+      "blocker_id": "verdict-propagation-unqualified",
+      "active": true,
+      "reason": "Static Thor source candidates now propagate effective verdict parsing, but no running image has proved confirmed/rejected output."
+    },
+    {
+      "blocker_id": "query-transport-integration-missing",
+      "active": true,
+      "reason": "runtime-evidence-common rejects query strings; the strict builder here is not connected to a live transport."
+    },
+    {
+      "blocker_id": "runtime-image-identity-unproven",
+      "active": true,
+      "reason": "The Thor derivative now copies the audited route, service, and handler candidates, but their running-image identity remains unproved."
+    },
+    {
+      "blocker_id": "kafka-separate-lane-missing",
+      "active": true,
+      "reason": "Kafka output requires an independent bounded Protobuf consumer lane and immutable-record policy."
+    }
+  ]
+}

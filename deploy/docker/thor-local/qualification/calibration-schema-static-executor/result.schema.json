@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "mode",
+    "policy",
+    "binding",
+    "source_hashes",
+    "binding_hashes",
+    "schema_contract",
+    "fixtures",
+    "adjacent_negatives",
+    "determinism",
+    "confinement",
+    "runtime_evidence",
+    "official_capability_effect",
+    "result"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-calibration-schema-static-executor-v1"},
+    "mode": {"const": "candidate_only_calibration_schema_static"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "binding": {"$ref": "#/$defs/binding"},
+    "source_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deploy/docker/thor-local/legacy-calibration/backend.py",
+        "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/capability-oracles.json",
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json",
+        "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/calibration.json",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/schemas/calibration.schema.json",
+        "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/roadNetwork.json"
+      ],
+      "properties": {
+        "deploy/docker/thor-local/legacy-calibration/backend.py": {"$ref": "#/$defs/sha256"},
+        "deploy/docker/thor-local/qualification/acceptance_inventory.json": {"$ref": "#/$defs/sha256"},
+        "deploy/docker/thor-local/parity/official-capabilities.json": {"$ref": "#/$defs/sha256"},
+        "deploy/docker/thor-local/parity/capability-oracles.json": {"$ref": "#/$defs/sha256"},
+        "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json": {"$ref": "#/$defs/sha256"},
+        "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/calibration.json": {"$ref": "#/$defs/sha256"},
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/schemas/calibration.schema.json": {"$ref": "#/$defs/sha256"},
+        "services/analytics/video-analytics-api/src/web-api-core/schemas/ajv/roadNetwork.json": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "binding_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "planning_requirement_sha256",
+        "planning_payload_sha256",
+        "capability_sha256",
+        "oracle_sha256"
+      ],
+      "properties": {
+        "planning_requirement_sha256": {"$ref": "#/$defs/sha256"},
+        "planning_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "capability_sha256": {"$ref": "#/$defs/sha256"},
+        "oracle_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "schema_contract": {"$ref": "#/$defs/schema_contract"},
+    "fixtures": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"$ref": "#/$defs/fixture"}
+    },
+    "adjacent_negatives": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "rejected"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "rejected": {"const": true},
+          "rejected_by": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "strict_spatialai_calibration",
+                "strict_video_api_calibration",
+                "behavior_calibration",
+                "road_network"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "determinism": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["independent_runs", "run_tree_sha256", "byte_identical"],
+      "properties": {
+        "independent_runs": {"const": 2},
+        "run_tree_sha256": {"const": "674bd43c12c904ff17519e2a8f9bbaa8cf4f1fb2349c85d49334034a629c2f5a"},
+        "byte_identical": {"const": true}
+      }
+    },
+    "confinement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_inputs_in_memory",
+        "private_temporary_root",
+        "exact_regular_output_files",
+        "symlinks_observed",
+        "cleanup_verified"
+      ],
+      "properties": {
+        "generated_inputs_in_memory": {"const": true},
+        "private_temporary_root": {"const": true},
+        "exact_regular_output_files": {"const": 16},
+        "symlinks_observed": {"const": 0},
+        "cleanup_verified": {"const": true}
+      }
+    },
+    "runtime_evidence": {"const": []},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "result": {"const": "candidate_static_pass_non_advancing"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_only",
+        "advances_live_acceptance",
+        "can_mark_passed_current",
+        "runtime_evidence",
+        "network_allowed",
+        "docker_allowed",
+        "subprocess_allowed",
+        "service_lifecycle_allowed",
+        "downloads_allowed",
+        "credentials_allowed",
+        "warehouse_sample_bundle",
+        "writes"
+      ],
+      "properties": {
+        "candidate_only": {"const": true},
+        "advances_live_acceptance": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "writes": {"const": "executor_owned_private_temporary_directory_only"}
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "planning_requirement_id",
+        "planning_owner_type",
+        "planning_requirement_sha256",
+        "planning_payload_sha256",
+        "planning_applicable_record_count",
+        "not_evaluated_record_ids",
+        "capability_id",
+        "capability_sha256",
+        "oracle_id",
+        "oracle_sha256",
+        "owner_type_observed",
+        "canonical_state_advanced"
+      ],
+      "properties": {
+        "planning_requirement_id": {"const": "calibration-schema-static"},
+        "planning_owner_type": {"const": "global_acceptance_vector"},
+        "planning_requirement_sha256": {"$ref": "#/$defs/sha256"},
+        "planning_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "planning_applicable_record_count": {"const": 7},
+        "not_evaluated_record_ids": {
+          "const": [
+            "calibration.camera-positioning.installation-contract",
+            "behavior.auto-calibration.failure-recovery",
+            "behavior.auto-calibration.result-verification",
+            "calibration.auto.alignment-schema",
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.known-limitations"
+          ]
+        },
+        "capability_id": {"const": "calibration.schema.vss-json"},
+        "capability_sha256": {"$ref": "#/$defs/sha256"},
+        "oracle_id": {"const": "oracle.calibration.schema.vss-json"},
+        "oracle_sha256": {"$ref": "#/$defs/sha256"},
+        "owner_type_observed": {"const": "global_acceptance_vector"},
+        "canonical_state_advanced": {"const": false}
+      }
+    },
+    "schema_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "top_required",
+        "sensor_required",
+        "calibration_types",
+        "matrix_shapes",
+        "strict_calibration_additional_properties",
+        "behavior_calibration_additional_properties",
+        "road_required"
+      ],
+      "properties": {
+        "top_required": {"const": ["version", "osmURL", "calibrationType", "sensors"]},
+        "sensor_required": {
+          "const": [
+            "type",
+            "id",
+            "origin",
+            "geoLocation",
+            "coordinates",
+            "scaleFactor",
+            "attributes",
+            "place",
+            "imageCoordinates",
+            "globalCoordinates"
+          ]
+        },
+        "calibration_types": {"const": ["geo", "cartesian", "image"]},
+        "matrix_shapes": {
+          "const": {
+            "intrinsic": [3, 3],
+            "extrinsic": [3, 4],
+            "camera": [3, 4],
+            "homography": [3, 3]
+          }
+        },
+        "strict_calibration_additional_properties": {"const": false},
+        "behavior_calibration_additional_properties": {"const": true},
+        "road_required": {"const": ["city", "docType", "intersections"]}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_id",
+        "project_type",
+        "legal_output_calibration_type",
+        "input_sha256",
+        "calibration_sha256",
+        "road_network_sha256",
+        "output_pair_sha256",
+        "sensor_ids",
+        "schema_roles_passed",
+        "strict_readback",
+        "provider_identity"
+      ],
+      "properties": {
+        "fixture_id": {"type": "string"},
+        "project_type": {"enum": ["geo", "cartesian", "image", "mtmc"]},
+        "legal_output_calibration_type": {"enum": ["geo", "cartesian", "image"]},
+        "input_sha256": {"$ref": "#/$defs/sha256"},
+        "calibration_sha256": {"$ref": "#/$defs/sha256"},
+        "road_network_sha256": {"$ref": "#/$defs/sha256"},
+        "output_pair_sha256": {"$ref": "#/$defs/sha256"},
+        "sensor_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "schema_roles_passed": {
+          "const": [
+            "behavior_calibration",
+            "road_network",
+            "strict_spatialai_calibration",
+            "strict_video_api_calibration"
+          ]
+        },
+        "strict_readback": {"const": true},
+        "provider_identity": {"const": "thor-clean-room-provider-free-v1"}
+      }
+    }
+  }
+}

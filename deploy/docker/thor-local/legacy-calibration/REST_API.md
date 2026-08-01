@@ -1,5 +1,64 @@
 # Local legacy calibration REST subset
 
+## VIOS browser-client compatibility adapter
+
+`ui_server.py` is the incremental compatibility surface for the checked-in
+VIOS `CalibrationWorkflow`. It is inert by default and uses private numeric
+loopback `127.0.0.1:8013`, deliberately avoiding Thor's port-8003 VLM. Its
+state lives below an explicit absolute `DATA_ROOT/ui-projects` and is never
+passed to the strict VSS compiler until a future explicit export bridge is
+implemented.
+
+Implemented client contracts:
+
+| Method | Path | Client-compatible behavior |
+| --- | --- | --- |
+| GET, POST | `/api/projects/` | Bare `Project[]`; create accepts exactly `name` and `calibrationType`, allocates a numeric ID, and returns the complete checked-in UI shape. |
+| GET, PATCH, DELETE | `/api/projects/{numeric_id}/` | Full Project response, bounded partial scalar updates, or exact-owned deletion. Editable URLs are persisted but never dereferenced. |
+| GET, PATCH | `/api/sensors/{plain_id}/` | Full Sensor response; bounded partial JSON updates and full-document echo are accepted. Server-owned identity/media fields cannot change. |
+| PATCH multipart | `/api/sensors/{plain_id}/` | Exact seven-part client upload; one PNG/JPEG plus calibration state, at most 16 MiB total. Filename input is ignored in favor of SHA-256 identity. |
+| GET | `/api/approxHomography/{plain_id}/` | Solve from `sensorPolygon`/`edgeLengths`, persist `sensor.homography` as the JSON string the client subsequently reads. |
+| GET | `/api/homography/{plain_id}/` | Same bounded clean-room solve with exact-route identity. |
+| GET | `/api/importSensors/{numeric_id}/` | Consume only the locally staged bounded sensor manifest; no `mmsURL` request. |
+| GET | `/media/projects/{numeric_id}/sensors/{plain_id}/{sha256}.(png|jpg)` | Serve only digest-verified media currently referenced by that sensor. |
+
+The compatibility store permits incomplete UI state. This is essential: the
+browser creates an empty project, imports sensor metadata, uploads an image,
+then patches drawing coordinates over several requests. The strict exporter
+continues to require a complete VSS-valid project and remains in `backend.py`.
+
+Still explicit `501` responses:
+
+- `/api/invertImage/{sensor_id}/`
+- `/api/getWarpedFiles/{project_id}/`
+- `/api/getImageFiles/{project_id}/`
+- `/api/uploadWebApi/{project_id}/`
+
+The first three require a reviewed local image decode/warp/ZIP implementation.
+The last must not become an arbitrary server-side request primitive; a future
+implementation may target only a configured local VSS analytics API and must
+disable DNS ambiguity, environment proxies, and redirects.
+
+The intended browser topology is a same-origin VIOS Nginx route such as
+`/vst/calibration-api/` proxying to private port 8013. That route and the
+`CalibrationWorkflow` navigation entry are not yet checked in, so browser
+equivalence and runtime evidence are not claimed. For isolated development,
+`serve` may receive repeated `--allowed-origin http://127.0.0.1:PORT` flags;
+only explicit numeric-loopback origins get CORS preflight/response headers.
+There is no wildcard or credentialed CORS mode.
+
+Inspect the inert plan:
+
+```bash
+python3 deploy/docker/thor-local/legacy-calibration/ui_server.py
+```
+
+An operator-approved future launch requires an absolute data root and the
+exact acknowledgement `I_ACCEPT_LOCAL_VIOS_CALIBRATION_UI_SERVER_8013`. This
+package does not launch it automatically.
+
+## Strict compiler-project adapter
+
 `rest_server.py` is a clean-room REST adapter over the local
 calibration backend. The default command is an inert plan. It does not bind a
 socket until `serve` receives the exact acknowledgement, and then binds only
@@ -36,9 +95,10 @@ Explicitly missing and returning `501`:
 - `/api/getImageFiles/{project_id}/`
 - `/api/uploadWebApi/{project_id}/`
 
-Those upload, image inversion, import, and warp/file endpoints need separate
-clean-room contracts and implementations. There is still no official legacy
-UI equivalence or runtime qualification claim.
+Those statements apply to `rest_server.py`; its strict store remains unchanged
+and intentionally does not share incremental UI state with `ui_server.py`.
+There is still no official legacy UI equivalence or runtime qualification
+claim.
 
 Inspect the inert plan:
 

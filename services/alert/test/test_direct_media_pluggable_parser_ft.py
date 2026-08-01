@@ -38,9 +38,39 @@ import importlib.util
 import json
 import os
 import sys
+import types
 from unittest.mock import Mock
 
 import pytest
+
+
+# The repository-level static milestone intentionally installs no Alert image
+# dependencies. This module exercises only DirectMediaHandler logic, so use a
+# minimal OpenAI type/exception surface when the real client is absent.
+try:
+    import openai  # noqa: F401
+except ModuleNotFoundError:
+    openai_stub = types.ModuleType("openai")
+    for exception_name in (
+        "APITimeoutError",
+        "APIConnectionError",
+        "InternalServerError",
+        "UnprocessableEntityError",
+        "BadRequestError",
+    ):
+        setattr(openai_stub, exception_name, type(exception_name, (Exception,), {}))
+    openai_types_stub = types.ModuleType("openai.types")
+    openai_chat_stub = types.ModuleType("openai.types.chat")
+    openai_chat_stub.ChatCompletionMessage = type("ChatCompletionMessage", (), {})
+    openai_types_stub.chat = openai_chat_stub
+    openai_stub.types = openai_types_stub
+    sys.modules.update(
+        {
+            "openai": openai_stub,
+            "openai.types": openai_types_stub,
+            "openai.types.chat": openai_chat_stub,
+        }
+    )
 
 
 def _load_direct_media_handler():
@@ -268,6 +298,45 @@ class TestMode3PluggableParserParity:
         assert info["sensorId"] == "cam-01"
         assert info["category"] == "ppe"
         assert info["primaryObjectId"] == "42"
+
+
+class TestMode3ResponseParserUsesConfigOverrides:
+    """The response parser must use the same effective config as the request."""
+
+    def test_json_parser_override_produces_binary_verdict(self):
+        handler = _make_handler(parser=None, use_verdict=True)
+        message = _base_message()
+
+        handler._publish_success(
+            message,
+            "u",
+            "s",
+            '{"qualified": true, "fixture": "positive-v1"}',
+            "image",
+            config_overrides={
+                "model": "local-qwen",
+                "response_format": "json",
+                "json_parser": {
+                    "verdict_field": "qualified",
+                    "verdict_mapping": {"true": "yes", "false": "no"},
+                    "reasoning_fields": ["fixture"],
+                },
+            },
+        )
+
+        assert message["info"]["verdict"] == "confirmed"
+        assert message["info"]["reasoning"] == "positive-v1"
+        handler.vlm_enhanced_event_sink.publish_success.assert_called_once()
+
+    def test_thor_environment_can_enable_verdict_parsing(self, monkeypatch):
+        monkeypatch.setenv("ALERT_DIRECT_MEDIA_USE_VERDICT", "true")
+        handler = _make_handler(parser=None, use_verdict=False)
+        assert handler.use_verdict is True
+
+    def test_invalid_environment_override_fails_closed(self, monkeypatch):
+        monkeypatch.setenv("ALERT_DIRECT_MEDIA_USE_VERDICT", "sometimes")
+        with pytest.raises(ValueError, match="must be a boolean"):
+            _make_handler(parser=None, use_verdict=False)
 
 
 class TestMode3SinkInvocation:

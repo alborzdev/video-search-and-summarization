@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vss.local/schemas/candidate-alert-terminal-result-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "correlation_id_sha256",
+    "state",
+    "terminal",
+    "fixture",
+    "verification",
+    "media_fetch",
+    "sink"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "correlation_id_sha256": {"$ref": "#/$defs/sha256"},
+    "state": {"enum": ["succeeded", "failed", "cancelled"]},
+    "terminal": {"const": true},
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_id", "descriptor_sha256", "media_sha256"],
+      "properties": {
+        "fixture_id": {"pattern": "^candidate-alert-(positive|negative)-v1$"},
+        "descriptor_sha256": {"$ref": "#/$defs/sha256"},
+        "media_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verdict",
+        "response_code",
+        "visible_identity_token_sha256",
+        "result_payload_sha256"
+      ],
+      "properties": {
+        "verdict": {"enum": ["confirmed", "rejected", "verification-failed"]},
+        "response_code": {"type": "integer", "minimum": 100, "maximum": 599},
+        "visible_identity_token_sha256": {"$ref": "#/$defs/sha256"},
+        "result_payload_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "media_fetch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_server_identity_sha256",
+        "capability_path_sha256",
+        "request_count",
+        "bytes_served",
+        "served_artifact_sha256",
+        "request_log_sha256"
+      ],
+      "properties": {
+        "fixture_server_identity_sha256": {"$ref": "#/$defs/sha256"},
+        "capability_path_sha256": {"$ref": "#/$defs/sha256"},
+        "request_count": {"type": "integer", "minimum": 1, "maximum": 32},
+        "bytes_served": {"type": "integer", "minimum": 1, "maximum": 67108864},
+        "served_artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "request_log_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sink": {
+      "oneOf": [
+        {"$ref": "#/$defs/elastic_sink"},
+        {"$ref": "#/$defs/kafka_sink"},
+        {"$ref": "#/$defs/no_sink"}
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"state": {"const": "succeeded"}},
+        "required": ["state"]
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "properties": {
+              "verdict": {"enum": ["confirmed", "rejected"]},
+              "response_code": {"const": 200}
+            }
+          },
+          "sink": {
+            "oneOf": [
+              {"$ref": "#/$defs/elastic_sink"},
+              {"$ref": "#/$defs/kafka_sink"}
+            ]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "verification": {
+            "properties": {
+              "verdict": {"const": "verification-failed"},
+              "response_code": {"minimum": 400, "maximum": 599}
+            }
+          },
+          "sink": {"$ref": "#/$defs/no_sink"}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sink_common": {
+      "type": "object",
+      "required": ["backend", "delivered", "run_marker_sha256", "payload_sha256"]
+    },
+    "elastic_sink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend",
+        "delivered",
+        "run_marker_sha256",
+        "payload_sha256",
+        "index_sha256",
+        "document_id_sha256",
+        "write_result"
+      ],
+      "properties": {
+        "backend": {"const": "elasticsearch"},
+        "delivered": {"const": true},
+        "run_marker_sha256": {"$ref": "#/$defs/sha256"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "index_sha256": {"$ref": "#/$defs/sha256"},
+        "document_id_sha256": {"$ref": "#/$defs/sha256"},
+        "write_result": {"enum": ["created", "updated"]}
+      }
+    },
+    "kafka_sink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend",
+        "delivered",
+        "run_marker_sha256",
+        "payload_sha256",
+        "topic_sha256",
+        "partition",
+        "offset",
+        "key_sha256"
+      ],
+      "properties": {
+        "backend": {"const": "kafka"},
+        "delivered": {"const": true},
+        "run_marker_sha256": {"$ref": "#/$defs/sha256"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "topic_sha256": {"$ref": "#/$defs/sha256"},
+        "partition": {"type": "integer", "minimum": 0, "maximum": 1023},
+        "offset": {"type": "integer", "minimum": 0},
+        "key_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "no_sink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend",
+        "delivered",
+        "run_marker_sha256",
+        "payload_sha256",
+        "failure_code"
+      ],
+      "properties": {
+        "backend": {"const": "none"},
+        "delivered": {"const": false},
+        "run_marker_sha256": {"$ref": "#/$defs/sha256"},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "failure_code": {
+          "enum": [
+            "cancelled_before_delivery",
+            "media_fetch_failed",
+            "sink_delivery_failed",
+            "vlm_failed"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -147,10 +147,55 @@ class OnDemandVerificationService:
         blocking (synchronous) and is intended to run inside a background task.
         """
         info_block = message.get("info", {})
+        config_overrides = self._get_merged_vlm_config(message.get("category", ""))
         self.direct_media_handler.evaluate(
             worker_id=0,
             message=message,
             info_block=info_block,
             user_prompt=user_prompt,
             system_prompt=system_prompt,
+            config_overrides=config_overrides,
         )
+
+    def _get_merged_vlm_config(self, category: str) -> Dict[str, Any]:
+        """Resolve the same per-category VLM overrides as Kafka ingestion.
+
+        Runtime API values win over the checked-in alert-type file, which wins
+        over the global ``vlm`` block. This keeps on-demand and Kafka-backed
+        direct-media parsing identical, including ``response_format`` and
+        ``json_parser``.
+        """
+        merged = dict(self.config.get("vlm", {}))
+        loader = getattr(self.prompt_manager, "alert_config_loader", None)
+        if loader is not None:
+            file_params = loader.get_vlm_params_for_alert_type(category)
+            if file_params:
+                file_values = file_params.model_dump(exclude_none=True)
+                if isinstance(file_values, dict):
+                    merged.update(file_values)
+
+        store = getattr(self.prompt_manager, "alert_config_store", None)
+        if store is not None:
+            try:
+                runtime_config = store.get(category)
+            except Exception:
+                self.logger.warning(
+                    "Failed to read runtime VLM config for category %s",
+                    category,
+                    exc_info=True,
+                )
+            else:
+                runtime_values = (
+                    runtime_config.get("vlm_params")
+                    if isinstance(runtime_config, dict)
+                    else None
+                )
+                if isinstance(runtime_values, dict):
+                    merged.update(
+                        {
+                            key: value
+                            for key, value in runtime_values.items()
+                            if value is not None
+                        }
+                    )
+        return merged

@@ -1,0 +1,9 @@
+{
+  "fixture_id": "candidate-alert-negative-v1",
+  "materialized_media": false,
+  "media_type": "video",
+  "semantic_scene": "The marked east-gate region is visibly empty and contains no vehicle.",
+  "visible_identity_token": "VSS-CANDIDATE-NEGATIVE-V1",
+  "expected_verdict": "rejected",
+  "expected_sink_delivery": true
+}
