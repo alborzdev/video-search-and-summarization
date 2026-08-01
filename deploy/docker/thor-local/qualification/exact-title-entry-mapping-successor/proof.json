@@ -1,0 +1,66 @@
+{
+  "effects": {
+    "can_mark_passed_current": false,
+    "docker_used": false,
+    "downloads_used": false,
+    "git_commands": [
+      "rev-parse",
+      "cat-file",
+      "show"
+    ],
+    "host_inspection_used": false,
+    "network_used": false,
+    "runtime_evidence": [],
+    "runtime_used": false,
+    "subprocess_scope": "read_only_local_git_objects_only"
+  },
+  "frozen_predecessor_package": {
+    "execution_state": "identity_verified_not_reexecuted",
+    "file_count": 7,
+    "id": "tooling-entry-ledger-successor",
+    "tree_oid": "919048958e1ac0122636ddd8afa8f749d09eebdd"
+  },
+  "limitations": [
+    "semantic_inventory_mapping_only_not_runtime_qualification",
+    "two_hundred_eleven_advertised_entries_still_lack_exact_capability_mapping",
+    "historical_tooling_successor_identity_verified_not_reexecuted",
+    "warehouse_sample_bundle_excluded_custom_data_warehouse_remains_in_scope"
+  ],
+  "mode": "read_only_exact_title_entry_mapping_successor",
+  "predecessor": {
+    "advertised_entry_count": 500,
+    "commit": "76596ccd1a2b02644506399b7e27ce36bbe3544b",
+    "exact_mapping_count": 13,
+    "explicit_missing_entry_gap_count": 74,
+    "family_only_unreviewed_count": 413,
+    "missing_exact_mapping_count": 487,
+    "plan_payload_sha256": "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26"
+  },
+  "schema_version": 1,
+  "successor": {
+    "advertised_entry_count": 500,
+    "exact_mapping_count": 289,
+    "explicit_missing_entry_gap_count": 74,
+    "family_only_unreviewed_count": 137,
+    "missing_exact_mapping_count": 211,
+    "plan_payload_sha256": "93981c6e1f277932614694e532de1514c196551109e5850305d88daf740b3bb0"
+  },
+  "transition": {
+    "all_exact_mapping_rows_sha256": "ad94e7c8a52f57ca77e462ed7050dda786b0f508466eb1fce021e8df381eb745",
+    "bound_oracle_count": 276,
+    "byte_identical_title_match_count": 276,
+    "capability_records_unchanged": 289,
+    "capability_runtime_evidence_count": 0,
+    "existing_non_manifest_entry_capability_count": 276,
+    "gap_entries_semantically_unchanged": 74,
+    "gap_semantics_sha256": "39bcd17adc42937b0cb28fac01bb1d098cf67d6bc6dac1f398fb981807b89c95",
+    "new_exact_mapping_count": 276,
+    "new_exact_mapping_rows_sha256": "e18c4b436f3b1db5132b5bd88bc32583220b34160198cdf9a7dccec4c310dfbf",
+    "oracle_records_unchanged": 289,
+    "oracle_runtime_evidence_count": 0,
+    "passed_current_promotions": 0,
+    "plan_runtime_evidence_count": 0,
+    "same_feature_match_count": 276,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

@@ -169,6 +169,11 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
                 if gap_entry is not None
                 else "canonical-entry-capability"
                 if is_entry_specific
+                and binding["entry_specific_capability_ids"][0].startswith(
+                    "manifest-entry."
+                )
+                else "exact-existing-capability-title-match"
+                if is_entry_specific
                 else "not-applicable-family-has-capability-rows"
             )
             if is_entry_specific:
@@ -180,6 +185,16 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
                 )
                 assert binding["default_lane_id"] == capability_binding["lane_id"]
                 assert binding["lane_ids"] == [capability_binding["lane_id"]]
+            elif (
+                gap_entry is not None
+                and gap_entry["proposed_capability"]["acceptance_class"]
+                == "external_optional"
+            ):
+                assert binding["default_lane_id"] == "external-optional"
+                assert binding["lane_ids"] == ["external-optional"]
+                assert binding["lane_binding_scope"] == (
+                    "entry_specific_gap_acceptance_boundary"
+                )
             else:
                 assert binding["default_lane_id"] == family["default_lane_id"]
                 assert binding["lane_ids"] == family["lane_ids"]
@@ -196,10 +211,14 @@ def test_every_advertised_entry_has_an_exact_pointer_and_family_lane_binding(
                     f"oracle.{binding['entry_specific_capability_ids'][0]}"
                 ]
                 assert binding["lane_binding_scope"] == (
-                    "entry_specific_canonical_capability"
+                    "entry_specific_exact_capability"
                 )
                 assert binding["capability_mapping_scope"] == (
-                    "entry_specific_canonical"
+                    "canonical_entry_capability"
+                    if binding["entry_specific_capability_ids"][0].startswith(
+                        "manifest-entry."
+                    )
+                    else "exact_existing_capability"
                 )
             else:
                 assert binding["entry_specific_capability_ids"] == []
@@ -246,7 +265,8 @@ def test_advertised_entry_semantic_and_runtime_gaps_are_explicit(plan: dict) -> 
     } == {
         "feature_family_only",
         "feature_family_only_with_open_entry_gap",
-        "entry_specific_canonical",
+        "canonical_entry_capability",
+        "exact_existing_capability",
     }
     assert {
         item["capability_mapping_scope"]
@@ -256,22 +276,24 @@ def test_advertised_entry_semantic_and_runtime_gaps_are_explicit(plan: dict) -> 
     entry_specific = [
         item for item in bindings if item["entry_specific_capability_ids"]
     ]
-    assert len(entry_specific) == 13
+    assert len(entry_specific) == 289
     assert {
         capability_id
         for item in entry_specific
         for capability_id in item["entry_specific_capability_ids"]
-    } == compiler.MIGRATED_ENTRY_CAPABILITY_IDS
+    } == {
+        item["capability_id"] for item in plan["capability_bindings"]
+    }
     assert sum(
         not item["entry_specific_capability_ids"] for item in bindings
-    ) == 487
+    ) == 211
     assert sum(
         item["capability_mapping_scope"] == "feature_family_only"
         for item in bindings
-    ) == 413
+    ) == 137
     assert all(not item["runtime_evidence_records"] for item in bindings)
     assert plan["policy"]["advertised_entry_mapping_scope"] == (
-        "feature_family_with_canonical_entry_overrides"
+        "feature_family_with_exact_entry_overrides"
     )
     assert not plan["policy"]["advertised_entry_bindings_are_runtime_evidence"]
     assert plan["policy"]["zero_capability_family_entries_block_runtime_completeness"]
@@ -412,6 +434,26 @@ def test_external_optional_is_fail_closed_and_cannot_count_local(plan: dict) -> 
     assert {item["lane_id"] for item in external} == {"external-optional"}
     assert plan["policy"]["external_optional_cannot_satisfy_local"] is True
     assert plan["policy"]["required_cloud_inference"] is False
+
+    external_gaps = [
+        item
+        for item in plan["advertised_entry_bindings"]
+        if item["entry_planning_acceptance_class"] == "external_optional"
+    ]
+    assert len(external_gaps) == 4
+    assert all(
+        item["default_lane_id"] == "external-optional"
+        and item["lane_ids"] == ["external-optional"]
+        and item["lane_binding_scope"]
+        == "entry_specific_gap_acceptance_boundary"
+        for item in external_gaps
+    )
+    assert all(
+        item["default_lane_id"] != "external-optional"
+        for item in plan["advertised_entry_bindings"]
+        if item["entry_planning_acceptance_class"]
+        in {"required_local", "alternate_local_lane"}
+    )
 
 
 def test_official_edge_identity_boundary_has_only_reviewed_five(plan: dict) -> None:

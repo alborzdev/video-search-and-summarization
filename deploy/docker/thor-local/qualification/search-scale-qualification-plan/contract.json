@@ -84,7 +84,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
-      "raw_sha256": "a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada",
+      "raw_sha256": "2fc3a8fbcbfd8afa62e657cf0d4b3f34d568294b089bd71f0f87354e9196745c",
       "role": "two_open_search_scale_oracles",
       "required_fragments": [
         "manifest-gap.search-scale.00-configuration-up-to-100-streams",

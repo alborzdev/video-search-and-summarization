@@ -3,9 +3,9 @@
 This artifact is planning evidence, not runtime evidence.
 
 The table covers the 74 entries selected from empty or partial capability
-families. It does not include the 413 additional advertised strings that still
-have family-only planning bindings; all 487 non-canonical entries remain global
-literal-completeness blockers.
+families. It does not include the 137 additional advertised strings that still
+have family-only planning bindings; all 211 entries without exact mappings
+remain global literal-completeness blockers.
 
 | Family | Entries | Required lane |
 |---|---:|---|
@@ -31,8 +31,9 @@ Classification totals:
 - alternate local: 15
 - external optional: 4
 - runtime evidence: 0
-- canonical entry-level capabilities: 13 (CPU multimedia plus 12 tooling entries)
-- runtime-qualified entry-level capabilities: 0
+- exact entry-level capability/oracle mappings: 289 (13 canonical
+  `manifest-entry.*` rows plus 276 pre-existing capability rows)
+- current runtime evidence records in this planning artifact: 0
 
 The eight `spatial-ai-utils` and four `synthetic-data-tools` advertised entries
 now have exact entry-level capabilities and literal semantic oracles, so they
@@ -56,9 +57,9 @@ Digest locks:
 - classification rules canonical SHA-256:
   `a3a1f938b777beb8d12a927f447bad0540f32e4b8e8401f1f3fee3a450671496`
 - compiled plan payload SHA-256:
-  `7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26`
+  `93981c6e1f277932614694e532de1514c196551109e5850305d88daf740b3bb0`
 - compiled plan raw SHA-256:
-  `a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada`
+  `2fc3a8fbcbfd8afa62e657cf0d4b3f34d568294b089bd71f0f87354e9196745c`
 
 The four remaining external gaps are Slack notification, a remote
 OpenAI-compatible model endpoint, Enterprise RAG report

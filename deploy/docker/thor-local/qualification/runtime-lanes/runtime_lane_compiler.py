@@ -33,7 +33,7 @@ SOURCE_PATHS = {
     "oracle_schema": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
 }
 SOURCE_SHA256 = {
-    "advertised_gap_plan": "a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada",
+    "advertised_gap_plan": "2fc3a8fbcbfd8afa62e657cf0d4b3f34d568294b089bd71f0f87354e9196745c",
     "advertised_gap_rules": "9938db401c3012d8ab39887291b0f013ae0b3c54ee94dabe25ec6f8bfed923ac",
     "manifest": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce",
     "ledger": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
@@ -74,10 +74,10 @@ EXPECTED_DENOMINATORS = {
     "advertised_gap_entries_proposed_required_local": 55,
     "advertised_gap_entries_proposed_alternate_local_lane": 15,
     "advertised_gap_entries_proposed_external_optional": 4,
-    "advertised_entries_with_entry_specific_capability_mapping": 13,
-    "advertised_entries_with_entry_specific_oracle_mapping": 13,
-    "advertised_entries_without_entry_specific_capability_mapping": 487,
-    "family_only_entries_outside_advertised_gap_plan": 413,
+    "advertised_entries_with_entry_specific_capability_mapping": 289,
+    "advertised_entries_with_entry_specific_oracle_mapping": 289,
+    "advertised_entries_without_entry_specific_capability_mapping": 211,
+    "family_only_entries_outside_advertised_gap_plan": 137,
     "advertised_entry_runtime_evidence_records": 0,
     "capabilities_with_planning_only_service_binding": 285,
     "capabilities_with_unresolved_service_binding": 4,
@@ -917,8 +917,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
             entry_specific_capability_ids = [
                 capability_id
                 for capability_id in family_capability_ids
-                if capability_id in MIGRATED_ENTRY_CAPABILITY_IDS
-                and capability_by_id[capability_id]["title"] == advertised_claim
+                if capability_by_id[capability_id]["title"] == advertised_claim
             ]
             if gap_entry is not None and entry_specific_capability_ids:
                 raise RuntimeLaneError(
@@ -953,6 +952,13 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
                     ]
                 ]
                 entry_default_lane_id = entry_lane_ids[0]
+            elif (
+                gap_entry is not None
+                and gap_entry["proposed_capability"]["acceptance_class"]
+                == "external_optional"
+            ):
+                entry_lane_ids = ["external-optional"]
+                entry_default_lane_id = "external-optional"
             else:
                 entry_lane_ids = copy.deepcopy(family_binding["lane_ids"])
                 entry_default_lane_id = family_binding["default_lane_id"]
@@ -974,13 +980,22 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
                         if gap_entry is not None
                         else "canonical-entry-capability"
                         if entry_specific_capability_ids
+                        and entry_specific_capability_ids[0].startswith(
+                            "manifest-entry."
+                        )
+                        else "exact-existing-capability-title-match"
+                        if entry_specific_capability_ids
                         else "not-applicable-family-has-capability-rows"
                     ),
                     "default_lane_id": entry_default_lane_id,
                     "lane_ids": entry_lane_ids,
                     "lane_binding_scope": (
-                        "entry_specific_canonical_capability"
+                        "entry_specific_exact_capability"
                         if entry_specific_capability_ids
+                        else "entry_specific_gap_acceptance_boundary"
+                        if gap_entry is not None
+                        and gap_entry["proposed_capability"]["acceptance_class"]
+                        == "external_optional"
                         else "feature_family_reviewed_not_entry_specific"
                     ),
                     "feature_capability_ids": family_capability_ids,
@@ -989,7 +1004,12 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
                         for capability_id in family_capability_ids
                     ],
                     "capability_mapping_scope": (
-                        "entry_specific_canonical"
+                        "canonical_entry_capability"
+                        if entry_specific_capability_ids
+                        and entry_specific_capability_ids[0].startswith(
+                            "manifest-entry."
+                        )
+                        else "exact_existing_capability"
                         if entry_specific_capability_ids
                         else "feature_family_only_with_open_entry_gap"
                         if family_capability_ids and gap_entry is not None
@@ -1099,6 +1119,15 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
         raise RuntimeLaneError(
             f"exact denominator drift: expected {EXPECTED_DENOMINATORS}, got {denominators}"
         )
+    mapped_capability_ids = {
+        capability_id
+        for item in advertised_bindings
+        for capability_id in item["entry_specific_capability_ids"]
+    }
+    if mapped_capability_ids != set(capability_by_id):
+        raise RuntimeLaneError(
+            "every canonical capability must map to exactly one advertised entry"
+        )
 
     return {
         "schema_version": 1,
@@ -1116,7 +1145,7 @@ def build_plan(repo_root: Path = REPO_ROOT) -> dict[str, Any]:
             "exactly_one_lane_per_capability": True,
             "all_feature_families_bound": True,
             "all_advertised_entries_bound": True,
-            "advertised_entry_mapping_scope": "feature_family_with_canonical_entry_overrides",
+            "advertised_entry_mapping_scope": "feature_family_with_exact_entry_overrides",
             "advertised_entry_bindings_are_runtime_evidence": False,
             "zero_capability_family_entries_block_runtime_completeness": True,
             "family_only_entry_bindings_block_runtime_completeness": True,
@@ -1212,6 +1241,22 @@ def validate_plan(plan: dict[str, Any], repo_root: Path = REPO_ROOT) -> None:
     if any(not item["lane_ids"] for item in plan["advertised_entry_bindings"]):
         raise RuntimeLaneError("advertised manifest entry has no lane binding")
     if any(
+        item["entry_planning_acceptance_class"] == "external_optional"
+        and (
+            item["default_lane_id"] != "external-optional"
+            or item["lane_ids"] != ["external-optional"]
+        )
+        for item in plan["advertised_entry_bindings"]
+    ):
+        raise RuntimeLaneError("external advertised gap escaped its boundary")
+    if any(
+        item["entry_planning_acceptance_class"]
+        in {"required_local", "alternate_local_lane"}
+        and item["default_lane_id"] == "external-optional"
+        for item in plan["advertised_entry_bindings"]
+    ):
+        raise RuntimeLaneError("local advertised gap defaulted to an external lane")
+    if any(
         len(item["feature_capability_ids"]) != len(item["feature_oracle_ids"])
         for item in plan["advertised_entry_bindings"]
     ):
@@ -1234,18 +1279,27 @@ def validate_plan(plan: dict[str, Any], repo_root: Path = REPO_ROOT) -> None:
         for item in entry_specific
         for capability_id in item["entry_specific_capability_ids"]
     }
+    expected_mapped_capabilities = {
+        item["capability_id"] for item in plan["capability_bindings"]
+    }
     if (
-        len(entry_specific) != len(MIGRATED_ENTRY_CAPABILITY_IDS)
-        or mapped_capabilities != MIGRATED_ENTRY_CAPABILITY_IDS
+        len(entry_specific) != len(expected_mapped_capabilities)
+        or mapped_capabilities != expected_mapped_capabilities
         or any(
             item["entry_specific_oracle_ids"]
             != [f"oracle.{item['entry_specific_capability_ids'][0]}"]
             or item["entry_classification_source"]
-            != "canonical-entry-capability"
+            != (
+                "canonical-entry-capability"
+                if item["entry_specific_capability_ids"][0].startswith(
+                    "manifest-entry."
+                )
+                else "exact-existing-capability-title-match"
+            )
             for item in entry_specific
         )
     ):
-        raise RuntimeLaneError("canonical migrated entry-specific mapping drift")
+        raise RuntimeLaneError("exact entry-specific mapping drift")
 
 
 def main(argv: list[str] | None = None) -> int:

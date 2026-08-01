@@ -24,7 +24,7 @@ CONTRACT_SCHEMA_PATH = HERE / "contract.schema.json"
 EVIDENCE_SCHEMA_PATH = HERE / "evidence.schema.json"
 PLAN_SCHEMA_PATH = HERE / "plan.schema.json"
 EXPECTED_PACKAGE_HASHES = {
-    "contract.json": "9fd075b04cf53e2c79ac75aefb9d8be77f31502338737f9c523ca3f208a5e81b",
+    "contract.json": "7a9d58fc0654d7004f1f74a20a6f611fef06500b834aaa6444b2ea9766601259",
     "contract.schema.json": "b41b030f78f3a227312be60625e4ec2c4adce63b0ec2ea54cac4008f195235b3",
     "evidence.schema.json": "8a2d12539ff3c0ecb27cd327b37fddeee7a2426bfb8a06053cba88647fe18784",
     "plan.schema.json": "95193c7c89fb6dc1077ffdeb9053a833c009ef5d25f8c8a5df9e5e90abaef424",

@@ -82,6 +82,10 @@ in this directory:
 - `tooling-entry-ledger-successor/` freezes the CPU-multimedia predecessor and
   proves that only those twelve tooling entries leave the advertised-entry gap
   plan, becoming capabilities/oracles 278 through 289 without promotion;
+- `exact-title-entry-mapping-successor/` freezes that tooling successor at the
+  published `76596c` predecessor, then proves that all 289 existing capability
+  titles have one exact same-family advertised entry and bound oracle. It
+  changes only the mapping denominator from 13/487/413 to 289/211/137;
 - `external-entry-attestations/` turns those exact four blockers into an inert,
   credential-free collection plan and strict validator for a future sanitized
   operator receipt. Source or mocks never count as delivery; Slack and
@@ -288,7 +292,12 @@ in this directory:
 - `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
   13 families with no capability rows plus the partial VIOS family its own
   still-open semantic oracle plan. Its 74-entry scope is not the global missing
-  entry-specific denominator: 413 more strings retain family-only bindings;
+  entry-specific denominator: 289 strings already have exact capability-title
+  and oracle mappings, while 137 more retain family-only bindings;
+- `advertised-entry-coverage/` compiles all 500 advertised strings into exactly
+  one fail-closed mapping class: 276 exact pre-existing capabilities, 13 exact
+  canonical entry capabilities, 74 explicit gaps, or 137 family-only unreviewed
+  entries. It keeps all 211 semantic blockers and all runtime evidence at zero;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

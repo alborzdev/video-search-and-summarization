@@ -29,6 +29,9 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.plan = COMPILER.check_checked_plan()
         cls.manifest = json.loads(COMPILER.MANIFEST_PATH.read_text(encoding="utf-8"))
+        cls.official = json.loads(
+            COMPILER.OFFICIAL_CAPABILITIES_PATH.read_text(encoding="utf-8")
+        )
         cls.plan_schema = json.loads(
             (LANE / "plan.schema.json").read_text(encoding="utf-8")
         )
@@ -62,9 +65,9 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
         )
         self.assertEqual(
             summary["advertised_entries_without_entry_specific_capability_mapping"],
-            487,
+            211,
         )
-        self.assertEqual(summary["family_only_entries_outside_this_plan"], 413)
+        self.assertEqual(summary["family_only_entries_outside_this_plan"], 137)
         self.assertEqual(summary["open_unverified_entries"], 74)
         self.assertEqual(summary["runtime_evidence_count"], 0)
         self.assertEqual(
@@ -77,6 +80,32 @@ class AdvertisedEntryGapCompilerTest(unittest.TestCase):
                 for item in self.plan["entries"]
             )
         )
+
+    def test_every_official_capability_has_one_exact_advertised_title_match(self) -> None:
+        capability_by_id = {
+            item["id"]: item for item in self.official["capabilities"]
+        }
+        mapped_ids: list[str] = []
+        mapped_pointers: list[str] = []
+        for feature_index, feature in enumerate(self.manifest["features"]):
+            title_to_ids: dict[str, list[str]] = {}
+            for capability_id in feature.get("official_capability_ids", []):
+                title_to_ids.setdefault(
+                    capability_by_id[capability_id]["title"], []
+                ).append(capability_id)
+            for advertised_index, advertised in enumerate(feature["advertised"]):
+                exact_ids = title_to_ids.get(advertised, [])
+                self.assertLessEqual(len(exact_ids), 1)
+                if exact_ids:
+                    mapped_ids.extend(exact_ids)
+                    mapped_pointers.append(
+                        f"/features/{feature_index}/advertised/{advertised_index}"
+                    )
+        self.assertEqual(len(mapped_ids), 289)
+        self.assertEqual(len(mapped_ids), len(set(mapped_ids)))
+        self.assertEqual(set(mapped_ids), set(capability_by_id))
+        self.assertEqual(len(mapped_pointers), len(set(mapped_pointers)))
+        self.assertEqual(500 - len(mapped_pointers), 211)
 
     def test_every_manifest_pointer_string_and_hash_round_trips_exactly(self) -> None:
         for item in self.plan["entries"]:

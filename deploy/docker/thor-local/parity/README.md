@@ -94,10 +94,11 @@ while operator custom media, calibration, model, and configuration inputs remain
 in scope.
 
 The claim-level ledger is not yet a literal one-row-per-advertised-string
-denominator. Thirteen of the 500 advertised strings have exact entry-specific
-capability/oracle mappings. Another 74 are enumerated in the empty/partial-family
-gap plan, while 413 still have family-only planning bindings. Those 487 entries
-without exact mappings block literal feature-completeness.
+denominator. Of the 500 advertised strings, 289 have exact capability-title and
+oracle mappings: 13 canonical `manifest-entry.*` rows plus 276 pre-existing
+capability rows. Another 74 are enumerated in the empty/partial-family gap plan,
+while 137 still have family-only planning bindings. Those 211 entries without
+exact mappings block literal feature-completeness.
 
 A first current-ledger successor added the exact CPU multimedia advertised entry
 as capability 277. The tooling-entry successor then adds the eight exact Spatial

@@ -14,9 +14,11 @@ runtime-unqualified, so this retirement from the missing-entry plan is not a
 runtime promotion. AWS/GCS validation remains an external-optional capability.
 
 This is not the global entry-specific denominator. Across all 500 advertised
-strings, only 13 currently have exact canonical mappings. The 74 entries here
-are explicit empty/partial-family gaps; another 413 retain family-only planning
-bindings. All 487 entries without exact mappings block literal completeness.
+strings, 289 have exact capability-title and oracle mappings: 13 canonical
+`manifest-entry.*` rows and 276 pre-existing capability rows. The 74 entries
+here are explicit empty/partial-family gaps; another 137 retain family-only
+planning bindings. All 211 entries without exact mappings block literal
+completeness.
 
 Every output entry preserves:
 

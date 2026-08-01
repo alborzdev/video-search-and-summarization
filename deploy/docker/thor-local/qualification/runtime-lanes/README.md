@@ -25,12 +25,12 @@ family lane set. This preserves duplicate claim text as distinct source entries
 and prevents any of the 500 claims from disappearing silently.
 
 The plan does not infer advertised-string coverage from family membership. It
-has exactly 13 entry-specific canonical mappings: CPU multimedia plus the eight
-Spatial AI and four synthetic-data tooling entries. Every mapped
-capability/oracle is still runtime-open. In total, 431 entries are in families
-with capability rows and 69 are in 13 families without capability rows. Of the
-487 entries without an exact mapping, 74 are enumerated in the empty/partial
-family gap plan and 413 retain family-only planning bindings. Both classes block
+has exactly 289 entry-specific exact capability-title and oracle mappings: 13
+canonical `manifest-entry.*` rows and 276 pre-existing capability rows. Every
+mapped capability/oracle remains evidence-empty. In total, 431 entries are in
+families with capability rows and 69 are in 13 families without capability
+rows. Of the 211 entries without an exact mapping, 74 are enumerated in the
+empty/partial-family gap plan and 137 retain family-only planning bindings. Both classes block
 literal completeness. The 74 source-locked classifications from
 `advertised-entry-gaps` are 55
 required-local, 15 alternate-local, and four
@@ -38,7 +38,11 @@ external-optional. These are exact semantic gaps that must be resolved before
 literal feature-completeness can be claimed; family-level lane bindings are
 planning coverage only. The machine contract consequently fixes
 `literal_runtime_feature_completeness_claim_allowed` to `false` and keeps all
-487 non-canonical entries as completeness blockers.
+211 entries without exact mappings as completeness blockers.
+
+Each of the four external-optional gap entries is forced to the
+`external-optional` lane even when its surrounding family has a local default;
+required and alternate-local gap entries may never default to that lane.
 
 The Warehouse sample bundle is unconditionally excluded. Warehouse runtime
 qualification remains in scope only with small user-owned custom media and

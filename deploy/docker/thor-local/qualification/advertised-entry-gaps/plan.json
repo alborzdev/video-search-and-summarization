@@ -3878,7 +3878,7 @@
     }
   ],
   "mode": "isolated_advertised_entry_gap_planning",
-  "plan_payload_sha256": "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26",
+  "plan_payload_sha256": "93981c6e1f277932614694e532de1514c196551109e5850305d88daf740b3bb0",
   "policy": {
     "can_mark_passed_current": false,
     "custom_data_warehouse_capability": "in_scope",
@@ -3912,11 +3912,11 @@
       "required_local": 55
     },
     "advertised_entries_in_scoped_empty_or_partial_families": 74,
-    "advertised_entries_without_entry_specific_capability_mapping": 487,
+    "advertised_entries_without_entry_specific_capability_mapping": 211,
     "families_with_partial_official_capability_ids": 1,
     "families_with_uncovered_advertised_entries": 14,
     "families_without_official_capability_ids": 13,
-    "family_only_entries_outside_this_plan": 413,
+    "family_only_entries_outside_this_plan": 137,
     "manifest_family_count": 55,
     "open_unverified_entries": 74,
     "oracle_type_counts": {

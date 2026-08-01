@@ -46,13 +46,13 @@ RULES_SCHEMA_RAW_SHA256 = (
     "9d2d085b7b313bd1c8681d208050e42c1c5884fcd5c843003d8345da5953d2b6"
 )
 PLAN_SCHEMA_RAW_SHA256 = (
-    "ba76a7a32213ad586503d1f6efc1cd205289ab7933e1f894a8717c949ef9b52e"
+    "f4231715137011d70bc4a21b377ebec5c8311c5eb002de7f6bd0d868e4063927"
 )
 EXPECTED_PLAN_PAYLOAD_SHA256 = (
-    "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26"
+    "93981c6e1f277932614694e532de1514c196551109e5850305d88daf740b3bb0"
 )
 EXPECTED_PLAN_RAW_SHA256 = (
-    "a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada"
+    "2fc3a8fbcbfd8afa62e657cf0d4b3f34d568294b089bd71f0f87354e9196745c"
 )
 EXPECTED_FAMILY_IDS = {
     "video-summarization-live",
@@ -388,25 +388,29 @@ def compile_plan() -> dict[str, Any]:
         len(feature.get("advertised", [])) for feature in manifest["features"]
     )
     entry_specific_mapping_count = 0
+    mapped_capability_ids: set[str] = set()
     for feature in manifest["features"]:
-        canonical_titles = {
-            capability_by_id[capability_id].get("title")
-            for capability_id in feature.get("official_capability_ids", [])
-            if capability_id in MIGRATED_ENTRY_CAPABILITY_IDS
-        }
-        entry_specific_mapping_count += sum(
-            advertised in canonical_titles
-            for advertised in feature.get("advertised", [])
-        )
+        title_to_capability_ids: dict[str, list[str]] = {}
+        for capability_id in feature.get("official_capability_ids", []):
+            title = capability_by_id[capability_id].get("title")
+            title_to_capability_ids.setdefault(title, []).append(capability_id)
+        for advertised in feature.get("advertised", []):
+            exact_ids = title_to_capability_ids.get(advertised, [])
+            if len(exact_ids) > 1:
+                raise CompileError("ambiguous exact advertised-title mapping")
+            if exact_ids:
+                entry_specific_mapping_count += 1
+                mapped_capability_ids.add(exact_ids[0])
     missing_entry_specific_mapping_count = (
         manifest_entry_count - entry_specific_mapping_count
     )
     family_only_outside_plan_count = missing_entry_specific_mapping_count - len(entries)
     if (
         manifest_entry_count != 500
-        or entry_specific_mapping_count != 13
-        or missing_entry_specific_mapping_count != 487
-        or family_only_outside_plan_count != 413
+        or entry_specific_mapping_count != 289
+        or mapped_capability_ids != set(capability_by_id)
+        or missing_entry_specific_mapping_count != 211
+        or family_only_outside_plan_count != 137
     ):
         raise CompileError("global advertised entry-specific denominator drift")
 

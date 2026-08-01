@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "exact-title-entry-mapping-successor-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "policy", "predecessor", "successor", "frozen_predecessor_package"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "read_only_exact_title_entry_mapping_successor"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["can_mark_passed_current", "runtime_evidence", "network_allowed", "docker_allowed", "runtime_allowed", "downloads_allowed", "host_inspection_allowed", "local_git_object_reads_allowed", "allowed_git_commands", "warehouse_sample_bundle", "custom_data_warehouse_capability"],
+      "properties": {
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "runtime_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "host_inspection_allowed": {"const": false},
+        "local_git_object_reads_allowed": {"const": true},
+        "allowed_git_commands": {"const": ["rev-parse", "cat-file", "show"]},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "custom_data_warehouse_capability": {"const": "in_scope"}
+      }
+    },
+    "predecessor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["commit", "parent_commit", "root_tree_oid", "plan_payload_sha256", "denominator", "source_objects"],
+      "properties": {
+        "commit": {"const": "76596ccd1a2b02644506399b7e27ce36bbe3544b"},
+        "parent_commit": {"const": "f638eb3421ec5620fe22609590c5e9d5872d33d0"},
+        "root_tree_oid": {"const": "b50e7abb845e669e9739e2a64f5c96ecef7bc872"},
+        "plan_payload_sha256": {"const": "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26"},
+        "denominator": {"$ref": "#/$defs/predecessorDenominator"},
+        "source_objects": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/pathSha"}}
+      }
+    },
+    "successor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["plan_payload_sha256", "denominator", "source_objects"],
+      "properties": {
+        "plan_payload_sha256": {"const": "93981c6e1f277932614694e532de1514c196551109e5850305d88daf740b3bb0"},
+        "denominator": {"$ref": "#/$defs/successorDenominator"},
+        "source_objects": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/pathSha"}}
+      }
+    },
+    "frozen_predecessor_package": {"$ref": "#/$defs/frozenPackage"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "oid": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "repoPath": {"type": "string", "pattern": "^deploy/docker/thor-local/[^/].+$"},
+    "pathSha": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/repoPath"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "predecessorDenominator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["advertised_entry_count", "exact_mapping_count", "missing_exact_mapping", "explicit_missing_entry_gap", "family_only_unreviewed"],
+      "properties": {
+        "advertised_entry_count": {"const": 500}, "exact_mapping_count": {"const": 13},
+        "missing_exact_mapping": {"const": 487}, "explicit_missing_entry_gap": {"const": 74},
+        "family_only_unreviewed": {"const": 413}
+      }
+    },
+    "successorDenominator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["advertised_entry_count", "exact_mapping_count", "missing_exact_mapping", "explicit_missing_entry_gap", "family_only_unreviewed"],
+      "properties": {
+        "advertised_entry_count": {"const": 500}, "exact_mapping_count": {"const": 289},
+        "missing_exact_mapping": {"const": 211}, "explicit_missing_entry_gap": {"const": 74},
+        "family_only_unreviewed": {"const": 137}
+      }
+    },
+    "frozenPackage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "path", "tree_oid", "files"],
+      "properties": {
+        "id": {"const": "tooling-entry-ledger-successor"},
+        "path": {"const": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor"},
+        "tree_oid": {"const": "919048958e1ac0122636ddd8afa8f749d09eebdd"},
+        "files": {"type": "array", "minItems": 7, "maxItems": 7, "items": {"$ref": "#/$defs/pathSha"}}
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "exact-title-entry-mapping-successor-proof.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "predecessor", "successor", "transition", "frozen_predecessor_package", "effects", "limitations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "read_only_exact_title_entry_mapping_successor"},
+    "predecessor": {"$ref": "#/$defs/predecessor"},
+    "successor": {"$ref": "#/$defs/successor"},
+    "transition": {"$ref": "#/$defs/transition"},
+    "frozen_predecessor_package": {"$ref": "#/$defs/frozenPackage"},
+    "effects": {"$ref": "#/$defs/effects"},
+    "limitations": {
+      "const": [
+        "semantic_inventory_mapping_only_not_runtime_qualification",
+        "two_hundred_eleven_advertised_entries_still_lack_exact_capability_mapping",
+        "historical_tooling_successor_identity_verified_not_reexecuted",
+        "warehouse_sample_bundle_excluded_custom_data_warehouse_remains_in_scope"
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "predecessor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["commit", "advertised_entry_count", "exact_mapping_count", "missing_exact_mapping_count", "family_only_unreviewed_count", "explicit_missing_entry_gap_count", "plan_payload_sha256"],
+      "properties": {
+        "commit": {"const": "76596ccd1a2b02644506399b7e27ce36bbe3544b"},
+        "advertised_entry_count": {"const": 500}, "exact_mapping_count": {"const": 13},
+        "missing_exact_mapping_count": {"const": 487}, "family_only_unreviewed_count": {"const": 413},
+        "explicit_missing_entry_gap_count": {"const": 74},
+        "plan_payload_sha256": {"const": "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26"}
+      }
+    },
+    "successor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["advertised_entry_count", "exact_mapping_count", "missing_exact_mapping_count", "family_only_unreviewed_count", "explicit_missing_entry_gap_count", "plan_payload_sha256"],
+      "properties": {
+        "advertised_entry_count": {"const": 500}, "exact_mapping_count": {"const": 289},
+        "missing_exact_mapping_count": {"const": 211}, "family_only_unreviewed_count": {"const": 137},
+        "explicit_missing_entry_gap_count": {"const": 74},
+        "plan_payload_sha256": {"const": "93981c6e1f277932614694e532de1514c196551109e5850305d88daf740b3bb0"}
+      }
+    },
+    "transition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["new_exact_mapping_count", "existing_non_manifest_entry_capability_count", "byte_identical_title_match_count", "same_feature_match_count", "bound_oracle_count", "all_exact_mapping_rows_sha256", "new_exact_mapping_rows_sha256", "capability_records_unchanged", "oracle_records_unchanged", "gap_entries_semantically_unchanged", "gap_semantics_sha256", "capability_runtime_evidence_count", "oracle_runtime_evidence_count", "plan_runtime_evidence_count", "passed_current_promotions", "warehouse_sample_bundle"],
+      "properties": {
+        "new_exact_mapping_count": {"const": 276},
+        "existing_non_manifest_entry_capability_count": {"const": 276},
+        "byte_identical_title_match_count": {"const": 276},
+        "same_feature_match_count": {"const": 276},
+        "bound_oracle_count": {"const": 276},
+        "all_exact_mapping_rows_sha256": {"$ref": "#/$defs/sha256"},
+        "new_exact_mapping_rows_sha256": {"$ref": "#/$defs/sha256"},
+        "capability_records_unchanged": {"const": 289},
+        "oracle_records_unchanged": {"const": 289},
+        "gap_entries_semantically_unchanged": {"const": 74},
+        "gap_semantics_sha256": {"$ref": "#/$defs/sha256"},
+        "capability_runtime_evidence_count": {"const": 0},
+        "oracle_runtime_evidence_count": {"const": 0},
+        "plan_runtime_evidence_count": {"const": 0},
+        "passed_current_promotions": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "frozenPackage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "tree_oid", "file_count", "execution_state"],
+      "properties": {
+        "id": {"const": "tooling-entry-ledger-successor"},
+        "tree_oid": {"const": "919048958e1ac0122636ddd8afa8f749d09eebdd"},
+        "file_count": {"const": 7},
+        "execution_state": {"const": "identity_verified_not_reexecuted"}
+      }
+    },
+    "effects": {
+      "type": "object", "additionalProperties": false,
+      "required": ["can_mark_passed_current", "runtime_evidence", "network_used", "docker_used", "runtime_used", "downloads_used", "host_inspection_used", "subprocess_scope", "git_commands"],
+      "properties": {
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"const": []},
+        "network_used": {"const": false},
+        "docker_used": {"const": false},
+        "runtime_used": {"const": false},
+        "downloads_used": {"const": false},
+        "host_inspection_used": {"const": false},
+        "subprocess_scope": {"const": "read_only_local_git_objects_only"},
+        "git_commands": {"const": ["rev-parse", "cat-file", "show"]}
+      }
+    }
+  }
+}

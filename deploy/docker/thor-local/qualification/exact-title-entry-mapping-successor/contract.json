@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "mode": "read_only_exact_title_entry_mapping_successor",
+  "policy": {
+    "can_mark_passed_current": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "runtime_allowed": false,
+    "downloads_allowed": false,
+    "host_inspection_allowed": false,
+    "local_git_object_reads_allowed": true,
+    "allowed_git_commands": ["rev-parse", "cat-file", "show"],
+    "warehouse_sample_bundle": "excluded",
+    "custom_data_warehouse_capability": "in_scope"
+  },
+  "predecessor": {
+    "commit": "76596ccd1a2b02644506399b7e27ce36bbe3544b",
+    "parent_commit": "f638eb3421ec5620fe22609590c5e9d5872d33d0",
+    "root_tree_oid": "b50e7abb845e669e9739e2a64f5c96ecef7bc872",
+    "plan_payload_sha256": "7a50b418c783de5e7a484616924e42bff884d3d4ef6b16b311b3e85a8a0a7d26",
+    "denominator": {
+      "advertised_entry_count": 500,
+      "exact_mapping_count": 13,
+      "missing_exact_mapping": 487,
+      "explicit_missing_entry_gap": 74,
+      "family_only_unreviewed": 413
+    },
+    "source_objects": [
+      {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json", "sha256": "a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada"},
+      {"path": "deploy/docker/thor-local/parity/manifest.json", "sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"},
+      {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"},
+      {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"},
+      {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/compiler.py", "sha256": "7632552e538702ee6ea4fd266efe80dad7417a4b54358729e92da24d6aa3b75e"},
+      {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.schema.json", "sha256": "ba76a7a32213ad586503d1f6efc1cd205289ab7933e1f894a8717c949ef9b52e"}
+    ]
+  },
+  "successor": {
+    "plan_payload_sha256": "93981c6e1f277932614694e532de1514c196551109e5850305d88daf740b3bb0",
+    "denominator": {
+      "advertised_entry_count": 500,
+      "exact_mapping_count": 289,
+      "missing_exact_mapping": 211,
+      "explicit_missing_entry_gap": 74,
+      "family_only_unreviewed": 137
+    },
+    "source_objects": [
+      {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json", "sha256": "2fc3a8fbcbfd8afa62e657cf0d4b3f34d568294b089bd71f0f87354e9196745c"},
+      {"path": "deploy/docker/thor-local/parity/manifest.json", "sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"},
+      {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"},
+      {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"},
+      {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/compiler.py", "sha256": "fc52e54395f86e20dc62862dbf896b247b21f4ced2f488e6bfff0d726ae5c442"},
+      {"path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.schema.json", "sha256": "f4231715137011d70bc4a21b377ebec5c8311c5eb002de7f6bd0d868e4063927"}
+    ]
+  },
+  "frozen_predecessor_package": {
+    "id": "tooling-entry-ledger-successor",
+    "path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor",
+    "tree_oid": "919048958e1ac0122636ddd8afa8f749d09eebdd",
+    "files": [
+      {"path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor/EVIDENCE.md", "sha256": "214c39d389d45d758bdb4fbadf1f371f526536c28bb4227ea291ed23c1eb3910"},
+      {"path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor/README.md", "sha256": "20b280db1dc018e5f9dba062b9942ff23224831b401e6865beb3a0f7ef9129f0"},
+      {"path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor/contract.json", "sha256": "530873511b175a3183abab7804a119ab2d68112c60cef70c4b4ac6b888461a77"},
+      {"path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor/contract.schema.json", "sha256": "088c7c14c4489196758588f0735ee58a883474064a7743e3ad7bd796d6918f1f"},
+      {"path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor/executor.py", "sha256": "1832da4c9f11a79d6ead056d62fcbf34bdf2dee10094c677cf57bf55c3444a75"},
+      {"path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor/result.schema.json", "sha256": "e55ee1f3ac310bc2a9cca056fff0ab40c70ba2097e6a6c94c1e4dfc76934a597"},
+      {"path": "deploy/docker/thor-local/qualification/tooling-entry-ledger-successor/tests/test_executor.py", "sha256": "05cf2ef54fefa155bb7918f2eb39a2a5d325bc525269cfed3703d39fd8bff65a"}
+    ]
+  }
+}

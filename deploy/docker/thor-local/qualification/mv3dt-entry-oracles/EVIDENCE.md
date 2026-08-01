@@ -10,7 +10,7 @@ The inert planner fail-closes on raw drift in nine existing inputs:
 | Thor MV3DT launcher | `e697a2a41a146bc84b701558918af1f24d10ba10cd4ffc05d9fd3d9818080499` |
 | camInfo generator | `910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675` |
 | FOV topology generator | `bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc` |
-| advertised-entry plan | `a1affc03163488d7027c4780bb85a69a2ab1fdd9a97ac466ccfbeeb093a1aada` |
+| advertised-entry plan | `2fc3a8fbcbfd8afa62e657cf0d4b3f34d568294b089bd71f0f87354e9196745c` |
 | parity manifest | `1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce` |
 | Thor MV3DT compose overlay | `a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b` |
 | MV3DT tracker configuration | `1053cc0a13f58b465cf28c5b59c65aa85f4feeb7d25c6aa7272d876f02a54b96` |

@@ -46,19 +46,18 @@ python3 -m unittest discover \
 # exact predecessor tree identity below; the live artifact semantics are
 # rechecked later by the separate offline documentation-drift package.
 
-# The tooling-ledger successor anchors the published f638 predecessor and its
-# earlier CPU successor, immutable candidates/receipts, and directly dependent
-# historical packages. It proves the exact 277/86 -> 289/74 transition for only
-# the twelve Spatial AI and synthetic-data entries. Historical executors are
-# identity-verified rather than replayed against the evolved live denominator;
-# no state or evidence advances.
+# The exact-title successor anchors the published 76596c predecessor and
+# freezes the earlier tooling successor at exact tree identity. It proves that
+# all 289 existing capabilities map byte-identically to one advertised title,
+# changing only the inventory denominator from 13/487/413 to 289/211/137.
+# Historical executors are identity-verified rather than replayed against the
+# evolved live denominator; no state or evidence advances.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/tooling-entry-ledger-successor/executor.py" \
+  "${thor_local_root}/qualification/exact-title-entry-mapping-successor/compiler.py" \
   --check \
   >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/tooling-entry-ledger-successor/tests" \
-  -p 'test*.py' -v
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/exact-title-entry-mapping-successor/tests"
 
 # These two entry-level contracts bind the exact checked-in implementation and
 # CLI surfaces for the twelve newly canonical tooling entries. They are
@@ -353,7 +352,7 @@ python3 -m pytest -q -p no:cacheprovider \
 # Every still-unmapped advertised string in an empty or partial capability
 # family remains an explicit gap: 69 entries across 13 zero-row families plus
 # five in partial VIOS. The compiler proposes 74 literal oracles without
-# promotion or Warehouse. Another 413 advertised strings retain family-only
+# promotion or Warehouse. Another 137 advertised strings retain family-only
 # planning bindings and separately block literal completeness.
 python3 "${thor_local_root}/qualification/advertised-entry-gaps/compiler.py" check
 python3 -m unittest discover \
@@ -402,11 +401,22 @@ python3 -m pytest -q \
   "${thor_local_root}/qualification/service-binding-resolution/tests"
 
 # The lane compiler binds every one of the 500 advertised entries and all 289
-# current capability oracles, while preserving all 487 missing entry-specific
+# current capability oracles. It records 289 exact capability-title mappings,
+# while preserving all 211 missing entry-specific
 # mappings, unresolved service bindings, and zero runtime evidence.
 python3 "${thor_local_root}/qualification/runtime-lanes/runtime_lane_compiler.py" \
   --check
 python3 -m pytest -q "${thor_local_root}/qualification/runtime-lanes/tests"
+
+# The global coverage compiler partitions every advertised string exactly once:
+# 276 exact pre-existing capability mappings, 13 exact canonical entry mappings,
+# 74 explicit missing-entry gaps, and 137 family-only unreviewed entries. It
+# preserves all 211 semantic blockers and contains no runtime evidence.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-coverage/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/advertised-entry-coverage/tests"
 
 # The candidate-only offline MV3DT observation and its immutable receipt are
 # verified above at exact predecessor identity by the CPU multimedia successor.

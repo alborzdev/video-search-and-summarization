@@ -68,7 +68,7 @@
         "exactly_one_lane_per_capability": { "const": true },
         "all_feature_families_bound": { "const": true },
         "all_advertised_entries_bound": { "const": true },
-        "advertised_entry_mapping_scope": { "const": "feature_family_with_canonical_entry_overrides" },
+        "advertised_entry_mapping_scope": { "const": "feature_family_with_exact_entry_overrides" },
         "advertised_entry_bindings_are_runtime_evidence": { "const": false },
         "zero_capability_family_entries_block_runtime_completeness": { "const": true },
         "family_only_entry_bindings_block_runtime_completeness": { "const": true },
@@ -129,10 +129,10 @@
         "advertised_gap_entries_proposed_required_local": { "const": 55 },
         "advertised_gap_entries_proposed_alternate_local_lane": { "const": 15 },
         "advertised_gap_entries_proposed_external_optional": { "const": 4 },
-        "advertised_entries_with_entry_specific_capability_mapping": { "const": 13 },
-        "advertised_entries_with_entry_specific_oracle_mapping": { "const": 13 },
-        "advertised_entries_without_entry_specific_capability_mapping": { "const": 487 },
-        "family_only_entries_outside_advertised_gap_plan": { "const": 413 },
+        "advertised_entries_with_entry_specific_capability_mapping": { "const": 289 },
+        "advertised_entries_with_entry_specific_oracle_mapping": { "const": 289 },
+        "advertised_entries_without_entry_specific_capability_mapping": { "const": 211 },
+        "family_only_entries_outside_advertised_gap_plan": { "const": 137 },
         "advertised_entry_runtime_evidence_records": { "const": 0 },
         "capabilities_with_planning_only_service_binding": { "const": 285 },
         "capabilities_with_unresolved_service_binding": { "const": 4 },
@@ -342,6 +342,7 @@
           "enum": [
             "advertised-entry-gap-plan",
             "canonical-entry-capability",
+            "exact-existing-capability-title-match",
             "not-applicable-family-has-capability-rows"
           ]
         },
@@ -355,7 +356,8 @@
         "lane_binding_scope": {
           "enum": [
             "feature_family_reviewed_not_entry_specific",
-            "entry_specific_canonical_capability"
+            "entry_specific_gap_acceptance_boundary",
+            "entry_specific_exact_capability"
           ]
         },
         "feature_capability_ids": {
@@ -372,7 +374,8 @@
           "enum": [
             "feature_family_only",
             "feature_family_only_with_open_entry_gap",
-            "entry_specific_canonical",
+            "canonical_entry_capability",
+            "exact_existing_capability",
             "none_family_has_zero_capability_rows"
           ]
         },
