@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/service-binding-resolution.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "mode",
+    "policy",
+    "source_bindings",
+    "official_document_byte_locks",
+    "summary",
+    "resolutions"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "plan_id": { "const": "thor-vss-service-binding-resolution-four" },
+    "mode": { "const": "static_authoritative_contract_audit" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observed_repository_roles_are_authoritative",
+        "open_bindings_may_update_runtime_lanes",
+        "runtime_evidence_created",
+        "live_parity_artifacts_mutated"
+      ],
+      "properties": {
+        "observed_repository_roles_are_authoritative": { "const": false },
+        "open_bindings_may_update_runtime_lanes": { "const": false },
+        "runtime_evidence_created": { "const": false },
+        "live_parity_artifacts_mutated": { "const": false }
+      }
+    },
+    "source_bindings": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/sourceBinding" }
+    },
+    "official_document_byte_locks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url", "sha256"],
+        "properties": {
+          "url": { "type": "string", "pattern": "^https://docs\\.nvidia\\.com/vss/3\\.2\\.1/" },
+          "sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_capabilities",
+        "resolved_unique_runtime_role_sets",
+        "open_authoritative_ambiguities",
+        "runtime_lanes_updates_allowed",
+        "runtime_evidence_records"
+      ],
+      "properties": {
+        "target_capabilities": { "const": 4 },
+        "resolved_unique_runtime_role_sets": { "const": 0 },
+        "open_authoritative_ambiguities": { "const": 4 },
+        "runtime_lanes_updates_allowed": { "const": 0 },
+        "runtime_evidence_records": { "const": 0 }
+      }
+    },
+    "resolutions": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/resolution" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]+$"
+    },
+    "stringList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "sourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256", "required_literals"],
+      "properties": {
+        "path": { "type": "string", "minLength": 3 },
+        "raw_sha256": { "$ref": "#/$defs/sha256" },
+        "required_literals": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "contractAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["json_pointer", "equals"],
+      "properties": {
+        "json_pointer": { "type": "string", "pattern": "^/" },
+        "equals": {}
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "ledger_pointer",
+        "contract_sha256",
+        "source_claims_sha256",
+        "resolution_state",
+        "runtime_service_roles",
+        "static_support_roles",
+        "observed_non_authoritative_roles",
+        "proof_code",
+        "required_contract_assertions",
+        "forbidden_contract_role_keys",
+        "source_evidence",
+        "runtime_lanes_update_allowed",
+        "runtime_evidence"
+      ],
+      "properties": {
+        "capability_id": { "$ref": "#/$defs/id" },
+        "ledger_pointer": { "type": "string", "pattern": "^/capabilities/[0-9]+$" },
+        "contract_sha256": { "$ref": "#/$defs/sha256" },
+        "source_claims_sha256": { "$ref": "#/$defs/sha256" },
+        "resolution_state": {
+          "const": "open_authoritative_contract_does_not_select_unique_runtime_role_set"
+        },
+        "runtime_service_roles": { "type": "array", "maxItems": 0 },
+        "static_support_roles": { "$ref": "#/$defs/stringList" },
+        "observed_non_authoritative_roles": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 1 }]
+        },
+        "proof_code": { "$ref": "#/$defs/id" },
+        "required_contract_assertions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/contractAssertion" }
+        },
+        "forbidden_contract_role_keys": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 5 }]
+        },
+        "source_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sourceBinding" }
+        },
+        "runtime_lanes_update_allowed": { "const": false },
+        "runtime_evidence": { "type": "array", "maxItems": 0 }
+      }
+    }
+  }
+}

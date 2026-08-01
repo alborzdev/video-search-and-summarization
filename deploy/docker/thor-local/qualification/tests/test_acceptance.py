@@ -386,7 +386,7 @@ class AcceptancePlanTests(unittest.TestCase):
         self.assertEqual(len({item["id"] for item in requirements}), 110)
         materialized = [item for item in requirements if item["materialized"] is True]
         executor_ready = [item for item in requirements if item["executor_ready"] is True]
-        self.assertEqual(len(materialized), 10)
+        self.assertEqual(len(materialized), 26)
         self.assertEqual(materialized, executor_ready)
         self.assertTrue(
             all(isinstance(item.get("static_executor_binding"), dict) for item in materialized)

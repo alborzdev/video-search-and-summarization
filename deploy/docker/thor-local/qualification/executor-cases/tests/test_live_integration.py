@@ -20,8 +20,14 @@ SPEC.loader.exec_module(INTEGRATION)
 
 
 class LiveIntegrationTests(unittest.TestCase):
-    def test_exact_combined_successor_state_validates(self) -> None:
-        report = INTEGRATION.validate_live()
+    def test_exact_historical_successor_replays_without_requiring_it_live(self) -> None:
+        _ledger, _manifest, _acceptance, _oracles, receipt = (
+            INTEGRATION.build_expected()
+        )
+        self.assertEqual(
+            INTEGRATION.RECEIPT.read_bytes(), INTEGRATION.encoded(receipt)
+        )
+        report = receipt["expected_counts"]
         self.assertEqual(report["materialized_planning_requirements"], 10)
         self.assertEqual(report["executor_ready_planning_requirements"], 10)
         self.assertEqual(report["planning_index_only_oracles"], 276)

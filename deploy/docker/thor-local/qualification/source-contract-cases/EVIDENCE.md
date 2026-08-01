@@ -2,10 +2,11 @@
 
 Evidence class: `deterministic_file_static_evidence_not_runtime`.
 
-Current isolated result:
+Current second-successor result:
 
 - candidate materialized/executor-ready: 16/16
-- live materialized/executor-ready: 0/0
+- new live materialized/executor-ready: 16/16
+- cumulative live materialized/executor-ready: 26/26; 84 open
 - outcomes: 15 `observed_match`, 1 `observed_mismatch`
 - runtime evidence: 0
 - capability advancement / `passed_current`: 0 / 0
@@ -29,11 +30,11 @@ operationally correct or prove VIOS runtime behavior.
 Package locks:
 
 - canonical `inventory.json` SHA-256:
-  `7b1df3c87148a1539e3035cda28755f7946174636a992db1dfb6b87f6f17f593`
+  `7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f`
 - raw `inventory.schema.json` SHA-256:
-  `9a5e9a6d3e41070b6c2d455c7b645318b1f9d1b874395aeaeba9b054ff65fc37`
+  `8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f`
 - raw `result.schema.json` SHA-256:
-  `87709030a4d00b1d3995688f69b604f37c95c18b9aa32d9d56039a993491ce5a`
+  `ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0`
 
 Every assertion source has an exact SHA-256 lock in `inventory.json`. The
 executor verifies those locks before evaluating assertions and re-hashes every

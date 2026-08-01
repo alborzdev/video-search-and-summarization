@@ -33,13 +33,13 @@ MAX_BYTES = 4 * 1024 * 1024
 MAX_FILES = 16
 DEADLINE_SECONDS = 5
 INVENTORY_CANONICAL_SHA256 = (
-    "7b1df3c87148a1539e3035cda28755f7946174636a992db1dfb6b87f6f17f593"
+    "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f"
 )
 INVENTORY_SCHEMA_RAW_SHA256 = (
-    "9a5e9a6d3e41070b6c2d455c7b645318b1f9d1b874395aeaeba9b054ff65fc37"
+    "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f"
 )
 RESULT_SCHEMA_RAW_SHA256 = (
-    "87709030a4d00b1d3995688f69b604f37c95c18b9aa32d9d56039a993491ce5a"
+    "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0"
 )
 EXPECTED_CASE_IDS = {
     "source-contract-case.performance-alert-verification",
@@ -228,8 +228,33 @@ def _planning_binding(
             raise SourceContractError(
                 f"planning source state drift: {case['planning_requirement_id']}/{key}"
             )
-    if "static_executor_binding" in record:
-        raise SourceContractError("isolated tranche unexpectedly has a live binding")
+    live_integrated = (
+        record.get("materialized") is True
+        and record.get("executor_ready") is True
+        and isinstance(record.get("static_executor_binding"), dict)
+    )
+    isolated = (
+        record.get("materialized") is False
+        and record.get("executor_ready") is False
+        and "static_executor_binding" not in record
+    )
+    if not (live_integrated or isolated):
+        raise SourceContractError("partial planning materialization state")
+    if live_integrated:
+        binding = record["static_executor_binding"]
+        if (
+            binding.get("case", {}).get("case_id") != case["case_id"]
+            or binding.get("case", {}).get("planning_requirement_id")
+            != case["planning_requirement_id"]
+            or binding.get("case", {}).get("capability_id")
+            != case["capability_id"]
+            or binding.get("case", {}).get("planning_payload_sha256")
+            != case["planning_payload_sha256"]
+            or binding.get("result", {}).get("runtime_evidence") != []
+            or binding.get("result", {}).get("can_advance_capability") is not False
+            or binding.get("result", {}).get("can_mark_passed_current") is not False
+        ):
+            raise SourceContractError("live planning executor binding drift")
     if record.get("owner_id") != case["capability_id"]:
         raise SourceContractError("planning owner/capability binding drift")
     if record.get("payload_canonical_sha256") != case["planning_payload_sha256"]:
@@ -270,13 +295,14 @@ def _planning_binding(
         },
         {
             "assertion_id": "planning-state-isolated",
-            "adapter": "isolated_state_guard",
+            "adapter": "live_integration_guard",
             "status": "match",
-            "expected": {"materialized": False, "executor_ready": False},
-            "observed": {
-                "materialized": record["materialized"],
-                "executor_ready": record["executor_ready"],
-            },
+            "expected": (
+                "live_planning_integration" if live_integrated else "isolated_candidate"
+            ),
+            "observed": (
+                "live_planning_integration" if live_integrated else "isolated_candidate"
+            ),
             "sources": [source_path],
         },
         {
@@ -404,7 +430,15 @@ def run_case(inventory: dict[str, Any], case_id: str) -> dict[str, Any]:
         "planning_requirement_id": case["planning_requirement_id"],
         "capability_id": case["capability_id"],
         "materialized": True,
-        "materialization_scope": "isolated_candidate_only",
+        "materialization_scope": (
+            "live_planning_requirement"
+            if any(
+                item["assertion_id"] == "planning-state-isolated"
+                and item["observed"] == "live_planning_integration"
+                for item in observations
+            )
+            else "isolated_candidate_only"
+        ),
         "executor_ready": True,
         "advancement_scope": "static_assertion_only",
         "can_advance_capability": False,
@@ -442,8 +476,15 @@ def run_all(inventory: dict[str, Any]) -> dict[str, Any]:
         "mode": "isolated_source_contract_static_execution",
         "candidate_materialized_count": len(results),
         "candidate_executor_ready_count": len(results),
-        "live_requirement_materialized_count": 0,
-        "live_requirement_executor_ready_count": 0,
+        "live_requirement_materialized_count": sum(
+            result["materialization_scope"] == "live_planning_requirement"
+            for result in results
+        ),
+        "live_requirement_executor_ready_count": sum(
+            result["materialization_scope"] == "live_planning_requirement"
+            and result["executor_ready"] is True
+            for result in results
+        ),
         "runtime_evidence_count": 0,
         "can_advance_capability_count": 0,
         "can_mark_passed_current_count": 0,

@@ -102,8 +102,8 @@ class SourceContractExecutorTest(unittest.TestCase):
         report = EXECUTOR.run_all(self.inventory)
         self.assertEqual(report["candidate_materialized_count"], 16)
         self.assertEqual(report["candidate_executor_ready_count"], 16)
-        self.assertEqual(report["live_requirement_materialized_count"], 0)
-        self.assertEqual(report["live_requirement_executor_ready_count"], 0)
+        self.assertEqual(report["live_requirement_materialized_count"], 16)
+        self.assertEqual(report["live_requirement_executor_ready_count"], 16)
         self.assertEqual(report["runtime_evidence_count"], 0)
         self.assertEqual(report["can_advance_capability_count"], 0)
         self.assertEqual(report["can_mark_passed_current_count"], 0)
@@ -167,7 +167,7 @@ class SourceContractExecutorTest(unittest.TestCase):
             }
             self.assertEqual(locks, sources, case["case_id"])
 
-    def test_all_live_planning_records_remain_unmaterialized_with_zero_evidence(
+    def test_all_live_planning_records_have_valid_static_bindings_with_zero_evidence(
         self,
     ) -> None:
         planning = json.loads(
@@ -182,10 +182,14 @@ class SourceContractExecutorTest(unittest.TestCase):
         self.assertEqual(len(records), 110)
         for case in self.inventory["cases"]:
             record = records[case["planning_requirement_id"]]
-            self.assertIs(record["materialized"], False)
-            self.assertIs(record["executor_ready"], False)
+            self.assertIs(record["materialized"], True)
+            self.assertIs(record["executor_ready"], True)
             self.assertEqual(record["runtime_evidence"], [])
-            self.assertNotIn("static_executor_binding", record)
+            binding = record["static_executor_binding"]
+            self.assertEqual(binding["case"]["case_id"], case["case_id"])
+            self.assertEqual(binding["result"]["runtime_evidence"], [])
+            self.assertIs(binding["result"]["can_advance_capability"], False)
+            self.assertIs(binding["result"]["can_mark_passed_current"], False)
 
     def test_results_are_deterministic(self) -> None:
         case_id = "source-contract-case.behavior-dynamic-config"

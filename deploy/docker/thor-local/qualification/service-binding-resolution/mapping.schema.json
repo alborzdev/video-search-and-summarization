@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.example/vss/thor/service-binding-mapping.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy", "capabilities"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mapping_kind",
+        "observed_repository_roles_are_authoritative",
+        "open_bindings_may_update_runtime_lanes",
+        "runtime_evidence"
+      ],
+      "properties": {
+        "mapping_kind": { "const": "authoritative-contract-only" },
+        "observed_repository_roles_are_authoritative": { "const": false },
+        "open_bindings_may_update_runtime_lanes": { "const": false },
+        "runtime_evidence": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/rule" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$" },
+    "stringList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["json_pointer", "equals"],
+      "properties": {
+        "json_pointer": { "type": "string", "pattern": "^/" },
+        "equals": {}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256", "required_literals"],
+      "properties": {
+        "path": { "type": "string", "minLength": 3 },
+        "raw_sha256": { "$ref": "#/$defs/sha256" },
+        "required_literals": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 1 }]
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "ledger_pointer",
+        "resolution_state",
+        "runtime_service_roles",
+        "static_support_roles",
+        "observed_non_authoritative_roles",
+        "proof_code",
+        "required_contract_assertions",
+        "forbidden_contract_role_keys",
+        "source_evidence"
+      ],
+      "properties": {
+        "capability_id": { "$ref": "#/$defs/id" },
+        "ledger_pointer": { "type": "string", "pattern": "^/capabilities/[0-9]+$" },
+        "resolution_state": {
+          "const": "open_authoritative_contract_does_not_select_unique_runtime_role_set"
+        },
+        "runtime_service_roles": { "type": "array", "maxItems": 0 },
+        "static_support_roles": { "$ref": "#/$defs/stringList" },
+        "observed_non_authoritative_roles": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 1 }]
+        },
+        "proof_code": { "$ref": "#/$defs/id" },
+        "required_contract_assertions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/assertion" }
+        },
+        "forbidden_contract_role_keys": {
+          "allOf": [{ "$ref": "#/$defs/stringList" }, { "minItems": 5 }]
+        },
+        "source_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/evidence" }
+        }
+      }
+    }
+  }
+}

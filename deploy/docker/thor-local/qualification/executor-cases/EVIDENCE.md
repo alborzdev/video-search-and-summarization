@@ -17,8 +17,10 @@ warmup override.
 ## Result
 
 `executor.py run-all` returns 8 matches and 2 mismatches across all 10
-materialized, executor-ready cases. The corresponding live planning-requirement
-materialized/executor-ready count is exactly 10. Every result carries
+materialized, executor-ready cases. The corresponding historical first-
+successor planning-requirement materialized/executor-ready count is exactly 10.
+The immutable receipt is replayed as the predecessor of the current 26-case
+live state. Every result carries
 before/after hashes for every file read and an empty `runtime_evidence` array.
 
 The NvSchema mismatch is exact and bounded: all selected Frame, VisionLLM, and
@@ -36,10 +38,11 @@ override rather than a source conflict or missing implementation. Two exact
 live discrepancy records preserve those boundaries. A digest-pinned
 reconciler proves they are the only changes from the 45-record Wave 3 ledger to
 the 47-record successor without modifying the historical Wave 3 receipt.
-The final live-integration receipt then deterministically replays both
+The first live-integration receipt then deterministically replays both
 predecessors, binds the executor inventory/schema/executable/result schema and
 all 10 expected outcomes, and locks the acceptance, oracle, ledger, manifest,
-and oracle-schema outputs.
+and oracle-schema outputs. It remains byte-for-byte unchanged after the second
+successor.
 
 ## Non-claims
 

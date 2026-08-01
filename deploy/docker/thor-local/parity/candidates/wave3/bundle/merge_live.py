@@ -28,7 +28,7 @@ ORACLES = PARITY_DIR / "capability-oracles.json"
 ACCEPTANCE = QUALIFICATION_DIR / "acceptance_inventory.json"
 RECEIPT = SCRIPT_DIR / "merge-receipt.json"
 EXECUTOR_SUCCESSOR = (
-    QUALIFICATION_DIR / "executor-cases/integrate_live.py"
+    QUALIFICATION_DIR / "source-contract-integration/integrate_live.py"
 )
 BASELINE_DIR = SCRIPT_DIR / "baseline"
 PLAN = SCRIPT_DIR / "merge-plan.json"
@@ -1092,6 +1092,13 @@ def validate_merged_state() -> dict[str, Any]:
         sys.modules[spec.name] = successor
         try:
             spec.loader.exec_module(successor)
+            # Validate the same output paths owned by this lifecycle adapter.
+            # This matters both for successor overlays and for tamper tests that
+            # deliberately redirect the Wave 3 live files to an isolated tree.
+            successor.LEDGER = LEDGER
+            successor.MANIFEST = MANIFEST
+            successor.ACCEPTANCE = ACCEPTANCE
+            successor.ORACLES = ORACLES
             successor.validate_live()
         except Exception as exc:
             raise MergeError(

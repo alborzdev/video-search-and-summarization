@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "mode": "candidate_only_file_executor_tranche",
+  "source_plan": {
+    "path": "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+    "raw_sha256": "e57f5fca4cc14b4b37a059823b23a191036ecfda1374791d6f9afde27047b4ec",
+    "plan_payload_sha256": "21dfd759455866923a12c9595422d2dc7a52af4ff6421a85ecde41f792bba5f5"
+  },
+  "source_manifest": {
+    "path": "deploy/docker/thor-local/parity/manifest.json",
+    "raw_sha256": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a"
+  },
+  "policy": {
+    "candidate_only": true,
+    "can_mark_passed_current": false,
+    "live_acceptance_mutation_allowed": false,
+    "live_oracle_mutation_allowed": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "file_writes_allowed": false
+  },
+  "denominator": {
+    "advertised_gap_entries": 87,
+    "selected_candidate_entries": 8,
+    "entries_left_open": 79
+  },
+  "cases": [
+    {
+      "manifest_pointer": "/features/15/advertised/5",
+      "entry_id": "manifest-gap.rt-cv-3d-mv3dt.05-associated-skill",
+      "proposed_capability_id": "manifest-entry.rt-cv-3d-mv3dt.05-associated-skill",
+      "advertised": "associated skill",
+      "advertised_utf8_sha256": "23bb882ee38b426f6e6bb7be52e74cf2cc935a035ce5f7f11c1d3a3403d603b5",
+      "advertised_canonical_sha256": "6afdbdc0a27cf48a32290a407be17c1e43aa2a9fe0766775c3038e50160554eb",
+      "adapter_id": "associated_skill_contract",
+      "evidence_scope": "subset: checked-in MV3DT skill routing and custom-video/RTSP semantics only; no service execution or runtime readiness",
+      "source_locks": [
+        {"path": "skills/vss-deploy-detection-tracking-3d/SKILL.md", "sha256": "edc7decfeae9a11fb1f959634fd17e175378b51e89880b8140960eeca2ce3a78"},
+        {"path": "skills/vss-deploy-detection-tracking-3d/references/configure-cameras.md", "sha256": "a66f25db90d981a56bd35a40de6ee1b37bae21e90c4365021f6a0371379c53db"},
+        {"path": "skills/vss-deploy-detection-tracking-3d/references/deploy-rtvi-cv-3d-stack.md", "sha256": "a1baf3fcd30a11a6b3c8c368ad6ff197978f1927461ae75589da46a3fd863cb5"},
+        {"path": "skills/vss-deploy-detection-tracking-3d/references/verify-and-view.md", "sha256": "a3d2b2ee71fd59d31554c125335e83a547aceadec47ebf9a19d2ef0b64973ff2"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/0",
+      "entry_id": "manifest-gap.spatial-ai-utils.00-calibration-and-camera-grouping",
+      "proposed_capability_id": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+      "advertised": "calibration and camera grouping",
+      "advertised_utf8_sha256": "fc1f3396446d617537e2cc03b563957cd90e1dee3e8e3d8e39faaa8b86656191",
+      "advertised_canonical_sha256": "044a03e8ee14eb67c2cbc9f59bac4caf1054da9f204d1292cf2d09c05e26739c",
+      "adapter_id": "calibration_grouping",
+      "evidence_scope": "subset: in-memory camera group reassignment and malformed move rejection",
+      "source_locks": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/group_utils.py", "sha256": "05336334cde57578e878462bcace3a598d65fcf1aebdd1ba722c39c96e6b09d8"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/1",
+      "entry_id": "manifest-gap.spatial-ai-utils.01-3d-2d-geometry",
+      "proposed_capability_id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "advertised": "3D/2D geometry",
+      "advertised_utf8_sha256": "d1c8f6bfa585c9761a5ddc256e88e5648eea145cd561285efe7bfec8d2d237d9",
+      "advertised_canonical_sha256": "5986ca0adbdebf09f46e683edb117463495988b599cb8f452c6517d68ec41453",
+      "adapter_id": "geometry_3d_2d",
+      "evidence_scope": "subset: in-memory canonical 9-DoF box corners and pinhole 3D-to-2D projection",
+      "source_locks": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_3d.py", "sha256": "8c7f61ff04ce7f68cb9f8ef29d0a5189dab299bb10b8b36ae9f343e1b8b7cabc"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/projection.py", "sha256": "8107092b08df576182e7a83ea1fa9babe27ea09f53ff7bd991e9f0d4f316958f"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/2",
+      "entry_id": "manifest-gap.spatial-ai-utils.02-multiview-visualization",
+      "proposed_capability_id": "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+      "advertised": "multiview visualization",
+      "advertised_utf8_sha256": "1332eabbf2a2a637fa111945fba8dad10fef1d7d9390d742a5a482746b7580ec",
+      "advertised_canonical_sha256": "3fd92d3e3558de53eda911cc29363a34a5c2f609e99c0147412e6517904ac325",
+      "adapter_id": "multiview_visualization",
+      "evidence_scope": "subset: two in-memory camera views plus BEV composition using source rendering functions",
+      "source_locks": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_3d.py", "sha256": "8c7f61ff04ce7f68cb9f8ef29d0a5189dab299bb10b8b36ae9f343e1b8b7cabc"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/projection.py", "sha256": "8107092b08df576182e7a83ea1fa9babe27ea09f53ff7bd991e9f0d4f316958f"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_3d.py", "sha256": "19d645818a480485d2d51d4471e89f70d4c7714f2c43b4181b9ae95154bd21f5"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/4",
+      "entry_id": "manifest-gap.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "proposed_capability_id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "advertised": "tracking HOTA/CLEAR/identity/count",
+      "advertised_utf8_sha256": "297cd6ea393671dcdb067811929c7a2f10b1190afdbfb6059c7a808c84c2773d",
+      "advertised_canonical_sha256": "8b09c5b0a9042813b0f41a45c4520ddc91fa543d3df5706dc8fad78b6b5612e5",
+      "adapter_id": "tracking_metrics",
+      "evidence_scope": "subset: source HOTA, CLEAR, Identity, and Count algorithms on one perfect deterministic track",
+      "source_locks": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/_base_metric.py", "sha256": "b48f033e11b0bfc81ece63242593896910d816df27d97d9008b40811babeadd3"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/hota.py", "sha256": "b225a9b4f0a0f1c823257c8d3d892285ffdbf2325aedba881175ae967f2f8d33"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/clear.py", "sha256": "5e5baadcb3b00c938bd929acf8bd1f8e1eface219cffabb6e4609fdb6f7cca4f"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/identity.py", "sha256": "f01a9d644bbeeaf6864c64d340164d3ac99c4e3a24abf77c28d0f2cc91f2e973"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py", "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/utils.py", "sha256": "58622fa0c85d145f6216372433afd183d26f33126cf751f1b9e74689c88f0249"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/5",
+      "entry_id": "manifest-gap.spatial-ai-utils.05-nvschema-conversion",
+      "proposed_capability_id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "advertised": "NVSchema conversion",
+      "advertised_utf8_sha256": "a5dd50eea5dfc6ad9dc4d118f6419d41c96fd3a65b9ad28fae23263a1fa797ea",
+      "advertised_canonical_sha256": "433b061e95e533a3f483900022be60dd8aac905b6210e25478193d39cb4172b6",
+      "adapter_id": "nvschema_conversion",
+      "evidence_scope": "subset: one in-memory Sparse4D result converted to deterministic NVSchema v4 JSONL",
+      "source_locks": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py", "sha256": "ccf56090b1fd9774d9c9615a03773ce85d4712e3239655d5348778eeeaaad3cb"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py", "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/29/advertised/6",
+      "entry_id": "manifest-gap.spatial-ai-utils.06-video-frame-tools",
+      "proposed_capability_id": "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+      "advertised": "video/frame tools",
+      "advertised_utf8_sha256": "f4d001f3ff91722fe09a98342d6942709d7a606ff018acd7eead05f61e179dad",
+      "advertised_canonical_sha256": "d312f5bbf2b6ee8957e3660e6810ed8c5e385bed80c1a50c1fe1f40d6a7970f5",
+      "adapter_id": "video_frame_tools",
+      "evidence_scope": "subset: in-memory three-frame assembly and frame-skip extraction through source tool bodies",
+      "source_locks": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video.py", "sha256": "7bbd3fa74d1ca1238716c0b95ac375127be629212cac8e7a457b563eb571916f"},
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/video2frame.py", "sha256": "3a0da452fc4c69c9d71242c3134adc81f5bfb3ed587355abcd615b713d7385bd"}
+      ]
+    },
+    {
+      "manifest_pointer": "/features/30/advertised/1",
+      "entry_id": "manifest-gap.synthetic-data-tools.01-dataset-checks",
+      "proposed_capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "advertised": "dataset checks",
+      "advertised_utf8_sha256": "51c1b7e777c47ffa0528130dd827a5431809cbc07f1d07f2ce226b2f18868b63",
+      "advertised_canonical_sha256": "65f903fcf3c2ef8acea349cf746a6fcd4fe89b1e893c5c58106ddbf1ac6d6610",
+      "adapter_id": "dataset_checks",
+      "evidence_scope": "subset: in-memory object-detection overflow and inter-frame velocity checks",
+      "source_locks": [
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_json.py", "sha256": "08fc48050364fcf1332f04fa09cbc41054c1ab4dc4250530ee906664e0988799"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_velocity.py", "sha256": "e3d1acbe6cb3fc135b4be648ca048308e1db1e2ecdd525fbde7ca9573ecd5fb0"}
+      ]
+    }
+  ]
+}

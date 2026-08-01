@@ -1,15 +1,16 @@
 # Source-contract static executor tranche
 
 This package supplies sixteen bounded executors for live planning requirements
-that remain unmaterialized. It reads only checked-in repository files. It does
+integrated by the second static successor. It reads only checked-in repository
+files. It does
 not use Docker, the network, credentials, subprocesses, environment mutation,
 downloads, or the optional Warehouse sample bundle.
 
-The tranche is deliberately isolated. `materialized: true` and
-`executor_ready: true` describe these candidate executors only. The live
-acceptance inventory and official capability ledger remain false/false, every
-`runtime_evidence` list remains empty, and no result can advance a capability
-or mark it `passed_current`.
+The successor executes the tranche against a reconstructed copy of the
+immutable ten-case predecessor before installing its live bindings. Candidate
+execution remains isolated from the checked-in live files. The official
+capability ledger remains unchanged, every `runtime_evidence` list remains
+empty, and no result can advance a capability or mark it `passed_current`.
 
 ## Scope
 
@@ -29,6 +30,7 @@ or mark it `passed_current`.
 python3 deploy/docker/thor-local/qualification/source-contract-cases/executor.py validate
 python3 deploy/docker/thor-local/qualification/source-contract-cases/executor.py plan
 python3 deploy/docker/thor-local/qualification/source-contract-cases/executor.py run-all
+python3 deploy/docker/thor-local/qualification/source-contract-integration/integrate_live.py validate
 python3 -m unittest discover -s deploy/docker/thor-local/qualification/source-contract-cases/tests -v
 ```
 

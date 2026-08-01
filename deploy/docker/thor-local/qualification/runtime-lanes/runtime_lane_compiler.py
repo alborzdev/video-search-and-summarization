@@ -37,8 +37,8 @@ SOURCE_SHA256 = {
     "advertised_gap_rules": "8b32b2fcfa8e669d1b45408c7a8e04c238e54c590be2b5bc24b3506ae1449314",
     "manifest": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
     "ledger": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
-    "oracles": "363107069757bf6d87d7fc7b6c8810604494c09f6d127ff6c06d2e780f3a0990",
-    "oracle_schema": "47563fa4b4a98c77dd33edc4de38c3a4f2e932a0d47c4a83ba672d9631f3db97",
+    "oracles": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb",
+    "oracle_schema": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498",
 }
 EXPECTED_DENOMINATORS = {
     "lanes": 8,

@@ -37,14 +37,14 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertEqual(counts["external_boundaries"], external_count)
         self.assertEqual(counts["planning_index_only"], capability_count)
         self.assertEqual(counts["executor_ready"], 0)
-        self.assertEqual(counts["planning_executor_bindings"], 10)
+        self.assertEqual(counts["planning_executor_bindings"], 26)
         self.assertGreater(counts["profiles"], 0)
 
     def test_static_planning_bindings_do_not_promote_full_oracles(self) -> None:
         bound = [item for item in self.plan["oracles"] if item.get("planning_executor_bindings")]
-        self.assertEqual(len(bound), 10)
+        self.assertEqual(len(bound), 26)
         self.assertEqual(
-            sum(len(item["planning_executor_bindings"]) for item in bound), 10
+            sum(len(item["planning_executor_bindings"]) for item in bound), 26
         )
         for item in bound:
             self.assertEqual(

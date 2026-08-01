@@ -1,0 +1,298 @@
+{
+  "schema_version": 1,
+  "policy": {
+    "mapping_kind": "authoritative-contract-only",
+    "observed_repository_roles_are_authoritative": false,
+    "open_bindings_may_update_runtime_lanes": false,
+    "runtime_evidence": []
+  },
+  "capabilities": [
+    {
+      "capability_id": "customization.embedding-reindex-validation",
+      "ledger_pointer": "/capabilities/28",
+      "resolution_state": "open_authoritative_contract_does_not_select_unique_runtime_role_set",
+      "runtime_service_roles": [],
+      "static_support_roles": [],
+      "observed_non_authoritative_roles": [
+        "agent",
+        "behavior-analytics",
+        "infrastructure",
+        "rt-cv",
+        "rt-embed"
+      ],
+      "proof_code": "contract_contains_downstream_disjunction_and_multiple_reindex_triggers",
+      "required_contract_assertions": [
+        {
+          "json_pointer": "/required_oracles/5",
+          "equals": "downstream_search_or_behavior_analytics"
+        },
+        {
+          "json_pointer": "/reindex_triggers",
+          "equals": [
+            "embedding_dimension_change",
+            "embedding_semantics_change",
+            "embedding_geometry_change"
+          ]
+        }
+      ],
+      "forbidden_contract_role_keys": [
+        "compose_paths",
+        "producer_roles",
+        "roles",
+        "service_roles",
+        "services"
+      ],
+      "source_evidence": [
+        {
+          "path": "deploy/docker/services/rtvi/rtvi-embed/rtvi-embed-docker-compose.yml",
+          "raw_sha256": "eea2f00020c0b9641fca8617ded7769a930cac73d6cbcb032f3c3a3016369a14",
+          "required_literals": [
+            "MODEL_IMPLEMENTATION_PATH",
+            "MODEL_REPOSITORY_SCRIPT_PATH",
+            "MODEL_PATH"
+          ]
+        },
+        {
+          "path": "services/agent/src/vss_agents/agents/search_agent.py",
+          "raw_sha256": "a5de8de3ab86839671de88dd5bc356339044806ad71c1e0d1310033ce5373040",
+          "required_literals": [
+            "similarity_score"
+          ]
+        },
+        {
+          "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/util.py",
+          "raw_sha256": "3725f06ac8a14874b916dadec6217e2ab4dd35bf14f5f26160d42412f5233250",
+          "required_literals": [
+            "cosine_similarity"
+          ]
+        }
+      ]
+    },
+    {
+      "capability_id": "protocol.nvschema.format-selection",
+      "ledger_pointer": "/capabilities/223",
+      "resolution_state": "open_authoritative_contract_does_not_select_unique_runtime_role_set",
+      "runtime_service_roles": [],
+      "static_support_roles": [],
+      "observed_non_authoritative_roles": [
+        "alerts",
+        "behavior-analytics",
+        "infrastructure",
+        "rt-cv",
+        "rt-embed",
+        "rt-vlm",
+        "vios"
+      ],
+      "proof_code": "deployment_wide_format_contract_omits_participant_registry",
+      "required_contract_assertions": [
+        {
+          "json_pointer": "/formats",
+          "equals": [
+            "JSON",
+            "Protobuf"
+          ]
+        },
+        {
+          "json_pointer": "/default",
+          "equals": "Protobuf"
+        },
+        {
+          "json_pointer": "/simultaneous_formats",
+          "equals": false
+        }
+      ],
+      "forbidden_contract_role_keys": [
+        "compose_paths",
+        "consumer_roles",
+        "participant_registry",
+        "producer_roles",
+        "roles",
+        "service_roles",
+        "services"
+      ],
+      "source_evidence": [
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-main-config.txt",
+          "raw_sha256": "24cf9ead36a2158f752b6916c1984e632b6690161c21ca1eec4fcec21011a07c",
+          "required_literals": [
+            "msg-conv-payload-type=0",
+            "msg-conv-payload-type=2"
+          ]
+        },
+        {
+          "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/vst/configs/vst_config.json",
+          "raw_sha256": "db5d7ca6e3fb37489758fae2c9a874e0cb16cfff12d667ee573abff70ddd90ec",
+          "required_literals": [
+            "use_video_metadata_protobuf"
+          ]
+        },
+        {
+          "path": "tools/message-broker-consumers/base_consumer.py",
+          "raw_sha256": "dda4232078446bd02a1bd7a31ea1d7ab366fe3c8463d5299fcf62cafc9de49db",
+          "required_literals": [
+            "JSON_SOURCES",
+            "PROTOBUF_SOURCE_TYPES"
+          ]
+        }
+      ]
+    },
+    {
+      "capability_id": "protocol.nvschema.json-frame",
+      "ledger_pointer": "/capabilities/224",
+      "resolution_state": "open_authoritative_contract_does_not_select_unique_runtime_role_set",
+      "runtime_service_roles": [],
+      "static_support_roles": [
+        "repository-tooling"
+      ],
+      "observed_non_authoritative_roles": [
+        "behavior-analytics",
+        "infrastructure",
+        "repository-tooling",
+        "rt-cv"
+      ],
+      "proof_code": "illustrative_representation_contract_omits_roundtrip_producer_and_consumer",
+      "required_contract_assertions": [
+        {
+          "json_pointer": "/illustrative_not_complete_validator",
+          "equals": true
+        },
+        {
+          "json_pointer": "/frame_fields",
+          "equals": [
+            "version",
+            "id",
+            "@timestamp",
+            "sensorId",
+            "objects"
+          ]
+        }
+      ],
+      "forbidden_contract_role_keys": [
+        "compose_paths",
+        "consumer_roles",
+        "producer_roles",
+        "roles",
+        "service_roles",
+        "services"
+      ],
+      "source_evidence": [
+        {
+          "path": "tools/message-broker-consumers/base_consumer.py",
+          "raw_sha256": "dda4232078446bd02a1bd7a31ea1d7ab366fe3c8463d5299fcf62cafc9de49db",
+          "required_literals": [
+            "JSON_SOURCES",
+            "json.loads(data.decode('utf-8'))"
+          ]
+        }
+      ]
+    },
+    {
+      "capability_id": "protocol.nvschema.protobuf-messages",
+      "ledger_pointer": "/capabilities/225",
+      "resolution_state": "open_authoritative_contract_does_not_select_unique_runtime_role_set",
+      "runtime_service_roles": [],
+      "static_support_roles": [
+        "repository-tooling"
+      ],
+      "observed_non_authoritative_roles": [
+        "alerts",
+        "behavior-analytics",
+        "infrastructure",
+        "repository-tooling",
+        "rt-cv",
+        "rt-embed",
+        "rt-vlm",
+        "video-analytics-api"
+      ],
+      "proof_code": "schema_contract_names_messages_but_omits_runtime_participant_registry",
+      "required_contract_assertions": [
+        {
+          "json_pointer": "/package",
+          "equals": "nv"
+        },
+        {
+          "json_pointer": "/files",
+          "equals": [
+            "schema.proto",
+            "ext.proto"
+          ]
+        },
+        {
+          "json_pointer": "/messages/Frame/sensorId",
+          "equals": 4
+        },
+        {
+          "json_pointer": "/messages/VisionLLM/llm",
+          "equals": 7
+        },
+        {
+          "json_pointer": "/messages/Incident/analytics",
+          "equals": 7
+        },
+        {
+          "json_pointer": "/messages/SpaceUtilization/layouts",
+          "equals": 5
+        }
+      ],
+      "forbidden_contract_role_keys": [
+        "compose_paths",
+        "consumer_roles",
+        "participant_registry",
+        "producer_roles",
+        "roles",
+        "service_roles",
+        "services"
+      ],
+      "source_evidence": [
+        {
+          "path": "tools/message-broker-consumers/schema_pb2.py",
+          "raw_sha256": "bfa3727bc8c72cd1975eb3169caae768a0e6a4e7fb0f72aa610747cf5ddde87c",
+          "required_literals": [
+            "source: schema.proto",
+            "VisionLLM"
+          ]
+        },
+        {
+          "path": "tools/message-broker-consumers/ext_pb2.py",
+          "raw_sha256": "1b1bbfe6d960a63d1df368d06e08c10e236b155546e49d2b39eb3a46850bab98",
+          "required_literals": [
+            "source: ext.proto",
+            "SpaceUtilization"
+          ]
+        },
+        {
+          "path": "services/rtvi/rt-embed/src/server/protos/ext.proto",
+          "raw_sha256": "c2fd45c51d52284fe3cf062a26a1029f3545f4c04208b52222dd3ddc82bffc43",
+          "required_literals": [
+            "message Incident",
+            "message SpaceUtilization"
+          ]
+        },
+        {
+          "path": "services/rtvi/rt-embed/src/server/protos/nv.proto",
+          "raw_sha256": "6887d2c2818141c38bcd3b336fd9045c1c3d4af7f6f98672cdd2d8e21fa71300",
+          "required_literals": [
+            "message Frame",
+            "message VisionLLM"
+          ]
+        },
+        {
+          "path": "services/analytics/video-analytics-api/src/web-api-core/schemas/proto/schema.proto",
+          "raw_sha256": "1553c31816847bffd308559aa6392bbf9b9bb053e56a3b9cfc56ff1b0aa6dee2",
+          "required_literals": [
+            "package nv",
+            "message Frame"
+          ]
+        },
+        {
+          "path": "deploy/docker/services/infra/elk/logstash/pipelines/kafka/mdx-logstash.conf",
+          "raw_sha256": "4911acb59ec97b96ba8d47b55283660a3adeb5d9f5d860d90942ffa9c924da8c",
+          "required_literals": [
+            "codec => protobuf",
+            "protobuf_root_directory"
+          ]
+        }
+      ]
+    }
+  ]
+}

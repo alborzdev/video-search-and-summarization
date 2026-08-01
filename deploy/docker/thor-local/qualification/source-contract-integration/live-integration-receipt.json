@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "integration_id": "source-contract-cases-live-planning-2026-07-31",
+  "predecessor": {
+    "receipt_path": "deploy/docker/thor-local/qualification/executor-cases/live-integration-receipt.json",
+    "receipt_raw_sha256": "1548dd1ca0871a24dd0adba231001ee5757e19ddfa6314d4d883656b9e8d432d",
+    "receipt_canonical_sha256": "ae0d9ac206018b79d84203bfa8af5c574cbb83ca7a7af8cb3a4e17f82898aaa0",
+    "contract_sha256": "2eb1812f8854ef0f03334f68ceadcda64ffbfd166422da253f48c52ec8cdab71",
+    "integrator_path": "deploy/docker/thor-local/qualification/executor-cases/integrate_live.py",
+    "integrator_raw_sha256": "de4f65b147db5dc8ef840cb8a054b05f1fb0713122b5cff2a7f738794b2f328b",
+    "live_contract_path": "deploy/docker/thor-local/qualification/executor-cases/live_contract.py",
+    "live_contract_raw_sha256": "891b85bddcb2f49302c13d733acd58a7c85a8b1ea8a3863a64021da0e9528ee0",
+    "outputs": {
+      "official-capabilities.json": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
+      "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+      "acceptance_inventory.json": "d9b76c528cb47300fc9c8fa14805fcf7598764a359ba66d7066842141b5e53c4",
+      "capability-oracles.json": "363107069757bf6d87d7fc7b6c8810604494c09f6d127ff6c06d2e780f3a0990",
+      "capability-oracles.schema.json": "47563fa4b4a98c77dd33edc4de38c3a4f2e932a0d47c4a83ba672d9631f3db97"
+    }
+  },
+  "executor_inputs": {
+    "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+    "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+    "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+    "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+    "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+    "executor_path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+    "executor_raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+    "result_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+    "result_schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+    "live_contract_path": "deploy/docker/thor-local/qualification/source-contract-integration/live_contract.py",
+    "live_contract_raw_sha256": "86df3c3e2159978c0e1b2a1deaa9d555fed4ea3728e6858eb0b017891d88b073",
+    "capability_oracles_path": "deploy/docker/thor-local/parity/capability_oracles.py",
+    "capability_oracles_raw_sha256": "bf029e8f1b3e50401368b77021d0b2b3373cb98ac9dafe7ffcd4f87e2bafd034",
+    "capability_oracle_schema_path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+    "capability_oracle_schema_raw_sha256": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498"
+  },
+  "cases": [
+    {
+      "case_id": "source-contract-case.performance-alert-verification",
+      "planning_requirement_id": "performance.alert-verification",
+      "capability_id": "performance.alert-verification",
+      "planning_payload_sha256": "38d382efce2f5bd2ecf803080a39432688a45d83f9dddf44e4a03caebbcb14f4",
+      "case_canonical_sha256": "e57ca597deee25b565964ec272fb8f7d90179837ee577c28e0fc5f8d2437eee1",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.performance-lvs",
+      "planning_requirement_id": "performance.lvs",
+      "capability_id": "performance.video-summarization",
+      "planning_payload_sha256": "b54dcbaaa3db474b7562a5ce26d2e22d07b1500373ef97a429846a40ae920873",
+      "case_canonical_sha256": "07ac96883a4249b10b7b23925368f4367116ea231755f1f1b79cb6f85a626229",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.performance-search",
+      "planning_requirement_id": "performance.search",
+      "capability_id": "performance.search",
+      "planning_payload_sha256": "b0c106ae02537d085fb6d6693da899932a8773581fc0b992fe44519f6d9459b2",
+      "case_canonical_sha256": "6d87c4034b1776a9b3d883e2dd4bb77b48a5c232d8e26f54efbdd4c9d4a42325",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.performance-rt-cv",
+      "planning_requirement_id": "performance.rt-cv",
+      "capability_id": "performance.rt-cv",
+      "planning_payload_sha256": "70872b9d8f1a65771362d9f5a4a8d7a1752469d169eece9d3b878151209203cb",
+      "case_canonical_sha256": "9d8dde980c3c5277d6f2759e3d806f7ad5f57066d566dbedad60af30eb842832",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.performance-rt-vlm",
+      "planning_requirement_id": "performance.rt-vlm",
+      "capability_id": "performance.rt-vlm",
+      "planning_payload_sha256": "303bf62c347e6f39d9a72363e9cca1dd14fac05b925ca409da2d0e840f572f6b",
+      "case_canonical_sha256": "d06abb13b466101f96dc7cb66bf6e661b037d65cd8ce5cc2105b660fc2175ca4",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.performance-rt-embed",
+      "planning_requirement_id": "performance.rt-embed",
+      "capability_id": "performance.rt-embed",
+      "planning_payload_sha256": "5c17d4aeff412836598cbac7d3f64bab6e62c55ce8bb182078212905e7e8f66a",
+      "case_canonical_sha256": "a048839ae109ed9ad5561d9b200ccce6540a78e6c17707b8ad7cc2cb54fa7277",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.performance-vios",
+      "planning_requirement_id": "performance.vios",
+      "capability_id": "performance.vios",
+      "planning_payload_sha256": "ad9937d621fbc68db243592f8d3c70d09e81d1f597a91919167dc52e385ea8f7",
+      "case_canonical_sha256": "3aa1a448ce0fa6cde08762d451cd8988924e20f17f1d2564221f865a06f77eeb",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.alert-parser",
+      "planning_requirement_id": "systems-alert-parser",
+      "capability_id": "customization.alerts.pluggable-parser",
+      "planning_payload_sha256": "4795ebc0130ae947cb24e40edf6ea59b222388f16bd47d289297cadba715c2ab",
+      "case_canonical_sha256": "75ba9adb547027217b3cc0e1917307f6fa7682aefaa864457e1aea390f9dfd92",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.behavior-dynamic-config",
+      "planning_requirement_id": "systems-behavior-dynamic-config",
+      "capability_id": "configuration.behavior.dynamic-update",
+      "planning_payload_sha256": "90a81e73ca006fd94b3d62fb792b9f426b36a81da124d75ec8fca6618e105e9c",
+      "case_canonical_sha256": "3f26210bb9f9a19056d1d3cfb7f597438c6dda1e700142a6206d35ef508edece",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.rt-cv-compose",
+      "planning_requirement_id": "systems-rt-cv-compose",
+      "capability_id": "deployment.rt-cv.compose-extension-contract",
+      "planning_payload_sha256": "1563af093647856ee28ef1e340c2fc00383d9b1d4b6bbef762dd2a064d173c35",
+      "case_canonical_sha256": "89407ac5e647f2e3f43315e33d3ae174fc5d2a74c0253ae443f18a202939e4f3",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.va-bootstrap",
+      "planning_requirement_id": "systems-va-bootstrap",
+      "capability_id": "configuration.video-analytics.bootstrap",
+      "planning_payload_sha256": "18876decd231fe35a3da9395c9d3f3b43c7d63df1c34539d3f6b1516364213be",
+      "case_canonical_sha256": "e108712c47bc7aba219af2efa1bc854e78ca617efee9066fd7cb73baa99fc179",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.elk-indices",
+      "planning_requirement_id": "systems-elk-indices",
+      "capability_id": "storage.elk.indices-ilm",
+      "planning_payload_sha256": "19585ae25b1ff2038f18b77aab290158cc124f63bb428805f662c5d0a8e2c315",
+      "case_canonical_sha256": "a61b881c0af3e451592a78cced07df1bffbe6be1d09944c31f50aade2d665533",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.observability-stack",
+      "planning_requirement_id": "systems-observability-stack",
+      "capability_id": "observability.system.prometheus-stack",
+      "planning_payload_sha256": "381f470e47bfa4a44842570fab17345f48c08f87ffe345a68bbaf9ae874c8a42",
+      "case_canonical_sha256": "25ccf089541c42e400dde62a1ae5ab898257886e08db4622cae91acc7b3c9f45",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.release-tags",
+      "planning_requirement_id": "systems-release-tags",
+      "capability_id": "deployment.release.mixed-container-tags",
+      "planning_payload_sha256": "6636b133fcff88eea83b0b7d75a7f76f8104f61ccbf45854cb72b0084a244006",
+      "case_canonical_sha256": "909151de66d72bc36056d23868d1ed9f735c5b3f9b084d52783e5eb5f1d07cc6",
+      "expected_outcome": "observed_match"
+    },
+    {
+      "case_id": "source-contract-case.nvstreamer-full-config",
+      "planning_requirement_id": "systems-nvstreamer-full-config",
+      "capability_id": "configuration.nvstreamer.full-contract",
+      "planning_payload_sha256": "74cda80c1b0f7e5a57284fde309080d804a7c378c7fde48d00bc54515e8403a2",
+      "case_canonical_sha256": "025ea0b5a99da9e8ea33e909ab6275cfaf566e30ffa0e51502634b63d12a4caa",
+      "expected_outcome": "observed_mismatch"
+    },
+    {
+      "case_id": "source-contract-case.vios-modules",
+      "planning_requirement_id": "systems-vios-modules",
+      "capability_id": "runtime.vios.modular-capabilities",
+      "planning_payload_sha256": "3d2b0f680c9bdd6ca5cc078a72d9987c11b05636c1749bb7f0d154de5f0df0f5",
+      "case_canonical_sha256": "744941f108e72b98346257afbcd7e811132964164b60454813d6f39d1cb20ad7",
+      "expected_outcome": "observed_match"
+    }
+  ],
+  "expected_counts": {
+    "capabilities": 276,
+    "discrepancies": 47,
+    "planning_requirements": 110,
+    "materialized_planning_requirements": 26,
+    "executor_ready_planning_requirements": 26,
+    "open_planning_requirements": 84,
+    "planning_index_only_oracles": 276,
+    "static_subset_oracle_bindings": 26,
+    "full_executor_ready_oracles": 0,
+    "runtime_evidence_records": 0,
+    "passed_current_promotions": 0,
+    "new_observed_match": 15,
+    "new_observed_mismatch": 1,
+    "cumulative_observed_match": 23,
+    "cumulative_observed_mismatch": 3
+  },
+  "boundaries": {
+    "execution_state": "reconstructed_ten_case_predecessor",
+    "evidence_class": "deterministic_file_static_evidence_not_runtime",
+    "capability_runtime_state_changed": false,
+    "capability_oracle_promoted": false,
+    "runtime_evidence_added": false,
+    "warehouse_sample_bundle": "excluded",
+    "network": "forbidden",
+    "docker": "forbidden",
+    "subprocess": "forbidden",
+    "environment_mutation": "forbidden"
+  },
+  "contract_sha256": "1ba9dac99127932ddf8f517e1d87631bd13240fa61b8f360b123c42242f98cb9",
+  "outputs": {
+    "official-capabilities.json": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
+    "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
+    "acceptance_inventory.json": "9b6a1f8e4aa3e6a6545f37baffdb346143608056aa21f88ad18dee3df9dbed47",
+    "capability-oracles.json": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb",
+    "capability-oracles.schema.json": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498"
+  },
+  "lifecycle": "second_live_planning_successor_integrated"
+}

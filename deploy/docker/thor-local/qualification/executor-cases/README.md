@@ -9,16 +9,18 @@ sample, or mutable host dependency.
 The evidence boundary is deliberately narrow. A match proves only the named
 static assertion over the hashed source files. It is not runtime evidence, does
 not prove service behavior, and cannot advance a capability to `passed_current`.
-The exact ten cases are now integrated into the live acceptance inventory as
-materialized, executor-ready planning requirements. Their related capability
-oracles remain `planning_index_only`: full fixtures, runtime executors,
-collectors, cleanup executors, and runtime evidence are still absent.
+The exact ten cases form the immutable first successor. The current live
+acceptance is a second successor with sixteen additional source-contract
+bindings. The original receipt and contract remain byte-for-byte historical
+provenance. All related capability oracles remain `planning_index_only`: full
+fixtures, runtime executors, collectors, cleanup executors, and runtime
+evidence are still absent.
 
 Current deterministic result:
 
 - 10 candidate-materialized cases
 - 10 candidate executor-ready cases
-- 10 live requirements materialized and executor-ready
+- 10 requirements materialized and executor-ready in this historical successor
 - 8 `observed_match`
 - 2 `observed_mismatch`
 - 0 runtime-evidence records
@@ -54,7 +56,8 @@ python3 deploy/docker/thor-local/qualification/executor-cases/executor.py plan
 python3 deploy/docker/thor-local/qualification/executor-cases/executor.py run \
   executor-case.vios-effective-upload-limit
 python3 deploy/docker/thor-local/qualification/executor-cases/executor.py run-all
-python3 deploy/docker/thor-local/qualification/executor-cases/integrate_live.py validate
+python3 deploy/docker/thor-local/qualification/source-contract-integration/integrate_live.py \
+  validate-predecessor
 python3 -m unittest discover \
   -s deploy/docker/thor-local/qualification/executor-cases/tests \
   -p 'test*.py' -v

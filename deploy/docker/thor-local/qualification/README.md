@@ -6,9 +6,17 @@ safe to run on an offline operator host: it reads only checked-in files, does
 not inspect secrets, does not open sockets, and never starts, stops, or mutates
 containers or VSS resources.
 
-The broader parity program also keeps four planning and admission boundaries
+The broader parity program also keeps seven planning and admission boundaries
 in this directory:
 
+- `source-contract-integration/` replays the immutable ten-case receipt and
+  executes the next sixteen cases against that reconstructed state before
+  binding them into live planning acceptance;
+- `advertised-entry-executors/` gives 8 of the 87 literal advertised-entry
+  gaps bounded, source-locked candidate observations while leaving live state
+  and the other 79 entries untouched;
+- `service-binding-resolution/` proves why four capability contracts do not
+  yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
   to a bounded execution lane without manufacturing runtime evidence;
 - `advertised-entry-gaps/` gives each advertised entry from the 16 families
@@ -21,6 +29,13 @@ in this directory:
 The optional NVIDIA Warehouse sample bundle is excluded throughout. Small
 operator-owned custom media and calibration remain valid inputs for the
 Warehouse capability lanes.
+
+The two deterministic static successors currently materialize 26 of 110
+planning requirements. All 276 full capability oracles remain
+`planning_index_only`; the 26 bindings are static subsets only, with zero
+runtime evidence and zero `passed_current` promotions. The separate eight-case
+advertised-entry tranche is candidate-only and does not change those live
+counts.
 
 Run the contract tier from the repository root:
 

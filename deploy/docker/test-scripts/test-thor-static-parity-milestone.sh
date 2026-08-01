@@ -98,19 +98,26 @@ python3 -m unittest discover \
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" validate
 python3 "${thor_local_root}/qualification/executor-cases/executor.py" \
   run-all >/dev/null
-python3 "${thor_local_root}/qualification/executor-cases/integrate_live.py" validate
+python3 "${thor_local_root}/qualification/source-contract-integration/integrate_live.py" \
+  validate-predecessor
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/executor-cases/tests" \
   -p 'test*.py' -v
 
-# The next source-contract tranche remains isolated from live acceptance. Its
-# 16 file-only candidates report static matches/mismatches without creating
-# runtime evidence or advancing a capability oracle.
+# The source-contract tranche is the second deterministic planning successor.
+# Its 16 cases execute against the reconstructed ten-case predecessor before
+# becoming bounded live static-subset bindings. They create no runtime evidence
+# and do not advance any full capability oracle.
 python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" validate
 python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" \
   run-all >/dev/null
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/source-contract-cases/tests" \
+  -p 'test*.py' -v
+python3 "${thor_local_root}/qualification/source-contract-integration/integrate_live.py" \
+  validate
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/source-contract-integration/tests" \
   -p 'test*.py' -v
 
 # Default host-preflight mode is an inert, inspectable plan. Live inspection is
@@ -128,6 +135,23 @@ python3 "${thor_local_root}/qualification/advertised-entry-gaps/compiler.py" che
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-gaps/tests" \
   -p 'test*.py' -v
+
+# Eight of the 87 literal gaps have bounded, source-locked, in-memory candidate
+# executors. Their observations remain subset-only: they do not mutate live
+# acceptance, create runtime evidence, or close any official capability.
+python3 "${thor_local_root}/qualification/advertised-entry-executors/executor.py" \
+  >/dev/null
+python3 -m unittest discover \
+  -s "${thor_local_root}/qualification/advertised-entry-executors/tests" \
+  -p 'test*.py' -v
+
+# The four unresolved capability-to-service bindings have an authoritative
+# negative audit. None of the contracts selects a unique runtime participant
+# set, so the audit must keep all four open and forbid runtime-lane updates.
+python3 "${thor_local_root}/qualification/service-binding-resolution/compiler.py" \
+  --check
+python3 -m pytest -q \
+  "${thor_local_root}/qualification/service-binding-resolution/tests"
 
 # The lane compiler binds every one of the 500 advertised entries and all 276
 # current capability oracles, while preserving entry-level semantic gaps,

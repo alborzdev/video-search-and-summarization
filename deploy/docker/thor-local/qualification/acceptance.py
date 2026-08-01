@@ -49,7 +49,9 @@ DEFAULT_OFFICIAL_LEDGER = REPO_ROOT / "deploy/docker/thor-local/parity/official-
 DEFAULT_WAVE3_RECEIPT = REPO_ROOT / (
     "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
 )
-DEFAULT_EXECUTOR_LIVE_INTEGRATION = SCRIPT_DIR / "executor-cases/integrate_live.py"
+DEFAULT_EXECUTOR_LIVE_INTEGRATION = (
+    SCRIPT_DIR / "source-contract-integration/integrate_live.py"
+)
 
 WAVE3_RECEIPT_PATH = (
     "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"

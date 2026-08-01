@@ -25,11 +25,11 @@
     },
     "oracle_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
-      "raw_sha256": "47563fa4b4a98c77dd33edc4de38c3a4f2e932a0d47c4a83ba672d9631f3db97"
+      "raw_sha256": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498"
     },
     "oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "363107069757bf6d87d7fc7b6c8810604494c09f6d127ff6c06d2e780f3a0990"
+      "raw_sha256": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb"
     }
   },
   "policy": {
@@ -39214,7 +39214,7 @@
       "oracle_profile": "configuration-behavior",
       "oracle_mode": "config",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "312b42ad933fe10eca8858be1dc75c00bde5f84172324bf8a570753831998fa2",
+      "oracle_contract_sha256": "38a78909e5f8394078fd2b79ee74852f2fb19b58ee9d57f32aa8c320a9430643",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -39365,12 +39365,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -40006,7 +40006,7 @@
       "oracle_profile": "configuration-nvstreamer",
       "oracle_mode": "config",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "9b01acc00dcfe85a24291508c6057cc7e5d07841ad80e6f5114bb7f2073e24c9",
+      "oracle_contract_sha256": "88499919725333bbf06bfc97a71b7311821bc9309589a8c7dafa766e55a62e1c",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -40168,12 +40168,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -41166,7 +41166,7 @@
       "oracle_profile": "configuration-video-analytics",
       "oracle_mode": "config",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "1873c52f93748f1961129b5e46c7a2371da4b24595cd8863152ff57a27acf617",
+      "oracle_contract_sha256": "5e7e3e0da2d78ab6e0b1f030b5931830368fe8db2e580f01185f91b5a8d5f01e",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -41302,12 +41302,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -42724,7 +42724,7 @@
       "oracle_profile": "configuration-alerts",
       "oracle_mode": "config",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "cd2a8bc5d2e543e7d4cbdb0b3c3f603d2613530c1221fff0218532e41bcd4e9b",
+      "oracle_contract_sha256": "d39530200ff6f54b4475e97ce90dbb3593b4faa817c5d4bf7a806811c1368a0f",
       "deployment": {
         "profile_paths": [
           "deploy/docker/developer-profiles/dev-profile-alerts/compose.yml",
@@ -42858,12 +42858,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "current exact alert-verification model artifacts are not admitted",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "namespaced broker, rule, notification, and persistence collectors are not complete",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -45018,7 +45018,7 @@
       "oracle_profile": "local-deployment-release",
       "oracle_mode": "deploy",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "d2fcfefb18b9bc274c32f73856426a813e0a64882115d64b0877d28fb4f1f7ba",
+      "oracle_contract_sha256": "dbe5874e8b0371b079713f98ef05d97a877189cc4a686e442e3965036b6d2025",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -45152,12 +45152,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -45315,7 +45315,7 @@
       "oracle_profile": "local-deployment-rt-cv",
       "oracle_mode": "deploy",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "f710e35a9b8af8115e708de3e217a5a07b333e4b87245abe232b4b7ec3fed21d",
+      "oracle_contract_sha256": "2d156d75ad876ee770bbb10cc365d373b7cd660b040de621f0e871c9636cdf58",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -45449,12 +45449,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -51673,7 +51673,7 @@
       "oracle_profile": "local-deployment-system",
       "oracle_mode": "deploy",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "6503d738e456bbba535ba34bdddc12c767fc0a4f3bc7f1775387a046a2c03188",
+      "oracle_contract_sha256": "9e37d221fbdf90ac9917c396fbfc0a8ebdacb28a42e2822b413efa10dac3901e",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -51819,12 +51819,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -51838,7 +51838,7 @@
       "oracle_profile": "thor-measurement-alert-verification",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "7b25aa81be10f405ddb0bd27560a0616dd7020035d80921390a5d13bfad4e146",
+      "oracle_contract_sha256": "14307fbe84ee754240424a4808e2adc3dfea814af94beb40f03a8e4cceda2637",
       "deployment": {
         "profile_paths": [
           "deploy/docker/developer-profiles/dev-profile-alerts/compose.yml",
@@ -51986,12 +51986,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "current exact alert-verification model artifacts are not admitted",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "namespaced broker, rule, notification, and persistence collectors are not complete",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -52163,7 +52163,7 @@
       "oracle_profile": "thor-measurement-rt-cv",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "4aa445ef44cb99fa80b08bf769fd8743f05411b3a87e94912a88e290e1c5408f",
+      "oracle_contract_sha256": "ed1f4fd0569d7c544e0e3646e6fd931106c18292fe51086a946cebd8988ff791",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -52305,12 +52305,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -52324,7 +52324,7 @@
       "oracle_profile": "thor-measurement-rt-embed",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "3cf84448cbb7395a0d66272986395d0de6ad92e108348968a0673e803e449261",
+      "oracle_contract_sha256": "c8b36e56efb85ec735cba10450944df3b6f089f3707434bcc350bf7ebd5aaf83",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -52466,12 +52466,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -52485,7 +52485,7 @@
       "oracle_profile": "thor-measurement-rt-vlm",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "ac2dab0227efa8dbeee2c461d2673be81c456b2fd0a09eebcd584a2dd60d8e37",
+      "oracle_contract_sha256": "346e7b2088eb76561ff7bb397822ab06d2ad9db448f80b0a89bfef7b7a6b0c8d",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -52627,12 +52627,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -52646,7 +52646,7 @@
       "oracle_profile": "thor-measurement-search",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "029d8eb387b71a8a5de59bc2bb7ed5157f91cbb15e2266cee1ed9e2ab9c8d4ec",
+      "oracle_contract_sha256": "724dec3029882854ca8147ec9fefb193735e1206ab727c6d9886417caada2de3",
       "deployment": {
         "profile_paths": [
           "deploy/docker/developer-profiles/dev-profile-search/compose.yml"
@@ -52794,11 +52794,11 @@
       },
       "blockers": [
         "capability-specific search executors and collectors are not complete",
-        "cleanup allowlist has no machine executor or postcondition collector",
         "exact search model artifacts and current index pre-state are not admitted",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -53012,7 +53012,7 @@
       "oracle_profile": "thor-measurement-video-summarization",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "00545366efb0a2547650bf99f59dbcb0c46a3f3c8637b08576ad6ff0b6fa8e0d",
+      "oracle_contract_sha256": "b26f9d195317910b43b0f87998d3d6bda206c7987b14d99a55f9ff301346b60b",
       "deployment": {
         "profile_paths": [
           "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml"
@@ -53158,11 +53158,11 @@
       },
       "blockers": [
         "HITL and async completion collectors are not complete",
-        "cleanup allowlist has no machine executor or postcondition collector",
         "exact local VLM/LLM artifacts and current LVS executor are not admitted",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -53176,7 +53176,7 @@
       "oracle_profile": "thor-measurement-vios",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "d1b6d3717478638f3e40d79808acdd50c0b2f7f210aeede38c03c937328f38d1",
+      "oracle_contract_sha256": "50753764272ac9f6a2288353a1766145d6a0e0996537b1cf59c40009744bd3b7",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -53318,12 +53318,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -61772,7 +61772,7 @@
       "oracle_profile": "behavior-runtime-vios-modular-capabilities",
       "oracle_mode": "runtime",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "d0c6064e3df3d15c4e40f87ddda5a69abe5b1ad74e08a152877c3d7201e36a7c",
+      "oracle_contract_sha256": "285b4a8397fa63b9bad6eb1c63c90de55edc880cc4400409f5b912b9829e2138",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -61925,12 +61925,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {
@@ -65152,7 +65152,7 @@
       "oracle_profile": "configuration-elk",
       "oracle_mode": "config",
       "oracle_current_state": "open_unexecuted",
-      "oracle_contract_sha256": "a037ad0f4d3881b025d7cf80c91b6c372a52fa515d889ad7e9e5d799b2ee9b58",
+      "oracle_contract_sha256": "1239368f17f27ff42ca6d118c4c87f0f9e17378d1d6b7b468539b844619d3676",
       "deployment": {
         "profile_paths": [
           "deploy/docker/thor-local/compose.yml",
@@ -65312,12 +65312,12 @@
         "may_promote_runtime_state_without_current_record": false
       },
       "blockers": [
-        "cleanup allowlist has no machine executor or postcondition collector",
         "explicit operator approval for service lifecycle is absent",
-        "fixture path, generator, and digest are not materialized",
         "one-service-at-a-time Thor scheduling plan has not been executed",
         "per-service exact artifact, capacity, fixture, executor, and collector admission remains open",
-        "request/command executor and collectors are not implemented"
+        "the bounded static executor covers only named planning assertions, not the full capability runtime contract",
+        "the full capability cleanup allowlist has no machine executor or postcondition collector",
+        "the full capability fixture, runtime executor, and collectors are not materialized"
       ]
     },
     {

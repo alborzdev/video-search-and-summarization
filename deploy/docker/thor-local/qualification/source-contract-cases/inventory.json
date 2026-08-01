@@ -19,7 +19,8 @@
   "planning_source": {
     "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
     "denominator": 110,
-    "required_source_state": {"materialized": false, "executor_ready": false, "runtime_evidence": []}
+    "required_source_state": {"runtime_evidence": []},
+    "allowed_materialization_states": ["isolated_candidate", "live_planning_integration"]
   },
   "cases": [
     {

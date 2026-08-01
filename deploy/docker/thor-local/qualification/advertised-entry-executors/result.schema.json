@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "candidate_only", "inventory_sha256", "denominator", "runtime_evidence", "official_capability_effect", "results"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "candidate_only_file_executor_tranche"},
+    "candidate_only": {"const": true},
+    "inventory_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "denominator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["advertised_gap_entries", "selected_candidate_entries", "entries_left_open"],
+      "properties": {
+        "advertised_gap_entries": {"const": 87},
+        "selected_candidate_entries": {"const": 8},
+        "entries_left_open": {"const": 79}
+      }
+    },
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "results": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["manifest_pointer", "entry_id", "proposed_capability_id", "advertised", "evidence_scope", "observation", "input_sha256", "semantic_output_sha256", "semantic_output", "runtime_evidence", "official_capability_effect"],
+        "properties": {
+          "manifest_pointer": {"type": "string"},
+          "entry_id": {"type": "string"},
+          "proposed_capability_id": {"type": "string"},
+          "advertised": {"type": "string"},
+          "evidence_scope": {"type": "string", "pattern": "^subset:"},
+          "observation": {"const": "observed_match"},
+          "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "semantic_output_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "semantic_output": {"type": "object"},
+          "runtime_evidence": {"type": "array", "maxItems": 0},
+          "official_capability_effect": {"const": "none_candidate_only"}
+        }
+      }
+    }
+  }
+}

@@ -51,6 +51,9 @@ WAVE3_OUTPUT_SHA256 = {
 ORACLE_SCHEMA_RAW_SHA256 = (
     "47563fa4b4a98c77dd33edc4de38c3a4f2e932a0d47c4a83ba672d9631f3db97"
 )
+SUCCESSOR_ORACLE_SCHEMA_RAW_SHA256 = (
+    "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498"
+)
 
 
 class IntegrationError(ValueError):
@@ -223,7 +226,10 @@ def _receipt_core(
 def build_expected(*, execute: bool = True) -> tuple[
     dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]
 ]:
-    if raw_sha256(ORACLE_SCHEMA.read_bytes()) != ORACLE_SCHEMA_RAW_SHA256:
+    if raw_sha256(ORACLE_SCHEMA.read_bytes()) not in {
+        ORACLE_SCHEMA_RAW_SHA256,
+        SUCCESSOR_ORACLE_SCHEMA_RAW_SHA256,
+    }:
         raise IntegrationError("reviewed capability oracle schema digest drift")
     ledger, manifest, acceptance = _predecessors()
     live_contract = _module("executor_live_contract", LIVE_CONTRACT)
@@ -297,7 +303,8 @@ def validate_live(*, execute: bool = True) -> dict[str, Any]:
     if (
         receipt["outputs"]["capability-oracles.schema.json"]
         != ORACLE_SCHEMA_RAW_SHA256
-        or raw_sha256(ORACLE_SCHEMA.read_bytes()) != ORACLE_SCHEMA_RAW_SHA256
+        or raw_sha256(ORACLE_SCHEMA.read_bytes())
+        not in {ORACLE_SCHEMA_RAW_SHA256, SUCCESSOR_ORACLE_SCHEMA_RAW_SHA256}
     ):
         raise IntegrationError("capability oracle schema digest drift")
     return {

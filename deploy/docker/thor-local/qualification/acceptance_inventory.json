@@ -3699,9 +3699,47 @@
             "doc.alerts"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/7",
+            "case_canonical_sha256": "75ba9adb547027217b3cc0e1917307f6fa7682aefaa864457e1aea390f9dfd92"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.alert-parser"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.alert-parser",
+            "planning_requirement_id": "systems-alert-parser",
+            "capability_id": "customization.alerts.pluggable-parser",
+            "planning_payload_sha256": "4795ebc0130ae947cb24e40edf6ea59b222388f16bd47d289297cadba715c2ab"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-alert-nvschema",
@@ -3887,9 +3925,47 @@
             "doc.behavior"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/8",
+            "case_canonical_sha256": "3f26210bb9f9a19056d1d3cfb7f597438c6dda1e700142a6206d35ef508edece"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.behavior-dynamic-config"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.behavior-dynamic-config",
+            "planning_requirement_id": "systems-behavior-dynamic-config",
+            "capability_id": "configuration.behavior.dynamic-update",
+            "planning_payload_sha256": "90a81e73ca006fd94b3d62fb792b9f426b36a81da124d75ec8fca6618e105e9c"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-behavior-calibration",
@@ -4087,9 +4163,47 @@
             "doc.rt-cv"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/9",
+            "case_canonical_sha256": "89407ac5e647f2e3f43315e33d3ae174fc5d2a74c0253ae443f18a202939e4f3"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.rt-cv-compose"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.rt-cv-compose",
+            "planning_requirement_id": "systems-rt-cv-compose",
+            "capability_id": "deployment.rt-cv.compose-extension-contract",
+            "planning_payload_sha256": "1563af093647856ee28ef1e340c2fc00383d9b1d4b6bbef762dd2a064d173c35"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-rtvi-input-codecs",
@@ -4200,9 +4314,47 @@
             "doc.va-api"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/10",
+            "case_canonical_sha256": "e108712c47bc7aba219af2efa1bc854e78ca617efee9066fd7cb73baa99fc179"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.va-bootstrap"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.va-bootstrap",
+            "planning_requirement_id": "systems-va-bootstrap",
+            "capability_id": "configuration.video-analytics.bootstrap",
+            "planning_payload_sha256": "18876decd231fe35a3da9395c9d3f3b43c7d63df1c34539d3f6b1516364213be"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-va-optional-kafka",
@@ -4250,9 +4402,47 @@
             "doc.vios"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/15",
+            "case_canonical_sha256": "744941f108e72b98346257afbcd7e811132964164b60454813d6f39d1cb20ad7"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.vios-modules"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.vios-modules",
+            "planning_requirement_id": "systems-vios-modules",
+            "capability_id": "runtime.vios.modular-capabilities",
+            "planning_payload_sha256": "3d2b0f680c9bdd6ca5cc078a72d9987c11b05636c1749bb7f0d154de5f0df0f5"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-vios-scaling",
@@ -4350,9 +4540,47 @@
             "doc.nvstreamer"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/14",
+            "case_canonical_sha256": "025ea0b5a99da9e8ea33e909ab6275cfaf566e30ffa0e51502634b63d12a4caa"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.nvstreamer-full-config"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.nvstreamer-full-config",
+            "planning_requirement_id": "systems-nvstreamer-full-config",
+            "capability_id": "configuration.nvstreamer.full-contract",
+            "planning_payload_sha256": "74cda80c1b0f7e5a57284fde309080d804a7c378c7fde48d00bc54515e8403a2"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_mismatch",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-broker-choice",
@@ -4652,9 +4880,47 @@
             "doc.elk"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/11",
+            "case_canonical_sha256": "a61b881c0af3e451592a78cced07df1bffbe6be1d09944c31f50aade2d665533"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.elk-indices"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.elk-indices",
+            "planning_requirement_id": "systems-elk-indices",
+            "capability_id": "storage.elk.indices-ilm",
+            "planning_payload_sha256": "19585ae25b1ff2038f18b77aab290158cc124f63bb428805f662c5d0a8e2c315"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-logstash-ingestion",
@@ -4790,9 +5056,47 @@
             "doc.observability"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/12",
+            "case_canonical_sha256": "25ccf089541c42e400dde62a1ae5ab898257886e08db4622cae91acc7b3c9f45"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.observability-stack"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.observability-stack",
+            "planning_requirement_id": "systems-observability-stack",
+            "capability_id": "observability.system.prometheus-stack",
+            "planning_payload_sha256": "381f470e47bfa4a44842570fab17345f48c08f87ffe345a68bbaf9ae874c8a42"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-vios-upload-limit",
@@ -5091,9 +5395,47 @@
             "release-notes-3.2.1"
           ]
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/13",
+            "case_canonical_sha256": "909151de66d72bc36056d23868d1ed9f735c5b3f9b084d52783e5eb5f1d07cc6"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.release-tags"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.release-tags",
+            "planning_requirement_id": "systems-release-tags",
+            "capability_id": "deployment.release.mixed-container-tags",
+            "planning_payload_sha256": "6636b133fcff88eea83b0b7d75a7f76f8104f61ccbf45854cb72b0084a244006"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "systems-lvs-empty-caption",
@@ -5370,9 +5712,47 @@
           "reference_only": true,
           "thor_remeasurement_required": true
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/0",
+            "case_canonical_sha256": "e57ca597deee25b565964ec272fb8f7d90179837ee577c28e0fc5f8d2437eee1"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.performance-alert-verification"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.performance-alert-verification",
+            "planning_requirement_id": "performance.alert-verification",
+            "capability_id": "performance.alert-verification",
+            "planning_payload_sha256": "38d382efce2f5bd2ecf803080a39432688a45d83f9dddf44e4a03caebbcb14f4"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "performance.lvs",
@@ -5432,9 +5812,47 @@
           "reference_only": true,
           "thor_remeasurement_required": true
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/1",
+            "case_canonical_sha256": "07ac96883a4249b10b7b23925368f4367116ea231755f1f1b79cb6f85a626229"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.performance-lvs"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.performance-lvs",
+            "planning_requirement_id": "performance.lvs",
+            "capability_id": "performance.video-summarization",
+            "planning_payload_sha256": "b54dcbaaa3db474b7562a5ce26d2e22d07b1500373ef97a429846a40ae920873"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "performance.search",
@@ -5489,9 +5907,47 @@
           "reference_only": true,
           "thor_remeasurement_required": true
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/2",
+            "case_canonical_sha256": "6d87c4034b1776a9b3d883e2dd4bb77b48a5c232d8e26f54efbdd4c9d4a42325"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.performance-search"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.performance-search",
+            "planning_requirement_id": "performance.search",
+            "capability_id": "performance.search",
+            "planning_payload_sha256": "b0c106ae02537d085fb6d6693da899932a8773581fc0b992fe44519f6d9459b2"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "performance.rt-cv",
@@ -5542,9 +5998,47 @@
           "reference_only": true,
           "thor_remeasurement_required": true
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/3",
+            "case_canonical_sha256": "9d8dde980c3c5277d6f2759e3d806f7ad5f57066d566dbedad60af30eb842832"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.performance-rt-cv"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.performance-rt-cv",
+            "planning_requirement_id": "performance.rt-cv",
+            "capability_id": "performance.rt-cv",
+            "planning_payload_sha256": "70872b9d8f1a65771362d9f5a4a8d7a1752469d169eece9d3b878151209203cb"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "performance.rt-vlm",
@@ -5594,9 +6088,47 @@
           "reference_only": true,
           "thor_remeasurement_required": true
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/4",
+            "case_canonical_sha256": "d06abb13b466101f96dc7cb66bf6e661b037d65cd8ce5cc2105b660fc2175ca4"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.performance-rt-vlm"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.performance-rt-vlm",
+            "planning_requirement_id": "performance.rt-vlm",
+            "capability_id": "performance.rt-vlm",
+            "planning_payload_sha256": "303bf62c347e6f39d9a72363e9cca1dd14fac05b925ca409da2d0e840f572f6b"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "performance.rt-embed",
@@ -5643,9 +6175,47 @@
           "reference_only": true,
           "thor_remeasurement_required": true
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/5",
+            "case_canonical_sha256": "a048839ae109ed9ad5561d9b200ccce6540a78e6c17707b8ad7cc2cb54fa7277"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.performance-rt-embed"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.performance-rt-embed",
+            "planning_requirement_id": "performance.rt-embed",
+            "capability_id": "performance.rt-embed",
+            "planning_payload_sha256": "5c17d4aeff412836598cbac7d3f64bab6e62c55ce8bb182078212905e7e8f66a"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "performance.vios",
@@ -5695,9 +6265,47 @@
           "reference_only": true,
           "thor_remeasurement_required": true
         },
-        "materialized": false,
-        "executor_ready": false,
-        "runtime_evidence": []
+        "materialized": true,
+        "executor_ready": true,
+        "runtime_evidence": [],
+        "static_executor_binding": {
+          "materialization": {
+            "scope": "live_planning_requirement_static_contract",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "case_json_pointer": "/cases/6",
+            "case_canonical_sha256": "3aa1a448ce0fa6cde08762d451cd8988924e20f17f1d2564221f865a06f77eeb"
+          },
+          "executor": {
+            "path": "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+            "raw_sha256": "f50fd59a9339a7a7bb35d74ce37bb15193dd7cbe8067b670043799d2d139811e",
+            "inventory_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json",
+            "inventory_raw_sha256": "e691a02128e60d3817474c9d19e0cda69da8cb238c86496fe2df1f658b25d079",
+            "inventory_canonical_sha256": "7c9d65fee42f0f6089ec705972ae900a001ab68eaafad23d3c983425b305fe7f",
+            "inventory_schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json",
+            "inventory_schema_raw_sha256": "8cf3261a8785d376af2d9bd1b9b5a4216e06f5408cb724af0db485ad2091f81f",
+            "invocation": [
+              "python3",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py",
+              "run",
+              "source-contract-case.performance-vios"
+            ]
+          },
+          "case": {
+            "case_id": "source-contract-case.performance-vios",
+            "planning_requirement_id": "performance.vios",
+            "capability_id": "performance.vios",
+            "planning_payload_sha256": "ad9937d621fbc68db243592f8d3c70d09e81d1f597a91919167dc52e385ea8f7"
+          },
+          "result": {
+            "schema_path": "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json",
+            "schema_raw_sha256": "ed542c6c39a2bcf9e754cada2d6b7d4114019dbeaa3a14789f907ca3c6d4fcd0",
+            "expected_outcome": "observed_match",
+            "evidence_class": "deterministic_file_static_evidence_not_runtime",
+            "can_advance_capability": false,
+            "can_mark_passed_current": false,
+            "runtime_evidence": []
+          }
+        }
       },
       {
         "id": "calibration-schema-static",
@@ -6349,12 +6957,20 @@
       }
     ],
     "static_executor_integration": {
-      "receipt_path": "deploy/docker/thor-local/qualification/executor-cases/live-integration-receipt.json",
-      "receipt_contract_sha256": "2eb1812f8854ef0f03334f68ceadcda64ffbfd166422da253f48c52ec8cdab71",
-      "materialized_requirement_count": 10,
-      "executor_ready_requirement_count": 10,
+      "receipt_path": "deploy/docker/thor-local/qualification/source-contract-integration/live-integration-receipt.json",
+      "receipt_contract_sha256": "1ba9dac99127932ddf8f517e1d87631bd13240fa61b8f360b123c42242f98cb9",
+      "predecessor_receipt_path": "deploy/docker/thor-local/qualification/executor-cases/live-integration-receipt.json",
+      "predecessor_receipt_raw_sha256": "1548dd1ca0871a24dd0adba231001ee5757e19ddfa6314d4d883656b9e8d432d",
+      "predecessor_contract_sha256": "2eb1812f8854ef0f03334f68ceadcda64ffbfd166422da253f48c52ec8cdab71",
+      "new_materialized_requirement_count": 16,
+      "new_executor_ready_requirement_count": 16,
+      "materialized_requirement_count": 26,
+      "executor_ready_requirement_count": 26,
+      "open_requirement_count": 84,
+      "static_subset_oracle_binding_count": 26,
       "runtime_evidence_count": 0,
-      "full_oracle_executor_ready_count": 0
+      "full_oracle_executor_ready_count": 0,
+      "passed_current_promotion_count": 0
     }
   }
 }

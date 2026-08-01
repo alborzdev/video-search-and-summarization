@@ -239,7 +239,10 @@
       "required": ["scope", "inventory_path", "case_json_pointer", "case_canonical_sha256"],
       "properties": {
         "scope": {"const": "live_planning_requirement_static_contract"},
-        "inventory_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/inventory.json"},
+        "inventory_path": {"enum": [
+          "deploy/docker/thor-local/qualification/executor-cases/inventory.json",
+          "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json"
+        ]},
         "case_json_pointer": {"type": "string", "pattern": "^/cases/[0-9]+$"},
         "case_canonical_sha256": {"$ref": "#/$defs/sha256"}
       }
@@ -252,17 +255,29 @@
         "inventory_schema_raw_sha256", "invocation"
       ],
       "properties": {
-        "path": {"const": "deploy/docker/thor-local/qualification/executor-cases/executor.py"},
+        "path": {"enum": [
+          "deploy/docker/thor-local/qualification/executor-cases/executor.py",
+          "deploy/docker/thor-local/qualification/source-contract-cases/executor.py"
+        ]},
         "raw_sha256": {"$ref": "#/$defs/sha256"},
-        "inventory_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/inventory.json"},
+        "inventory_path": {"enum": [
+          "deploy/docker/thor-local/qualification/executor-cases/inventory.json",
+          "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json"
+        ]},
         "inventory_raw_sha256": {"$ref": "#/$defs/sha256"},
         "inventory_canonical_sha256": {"$ref": "#/$defs/sha256"},
-        "inventory_schema_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/inventory.schema.json"},
+        "inventory_schema_path": {"enum": [
+          "deploy/docker/thor-local/qualification/executor-cases/inventory.schema.json",
+          "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json"
+        ]},
         "inventory_schema_raw_sha256": {"$ref": "#/$defs/sha256"},
         "invocation": {
           "type": "array", "prefixItems": [
             {"const": "python3"},
-            {"const": "deploy/docker/thor-local/qualification/executor-cases/executor.py"},
+            {"enum": [
+              "deploy/docker/thor-local/qualification/executor-cases/executor.py",
+              "deploy/docker/thor-local/qualification/source-contract-cases/executor.py"
+            ]},
             {"const": "run"},
             {"$ref": "#/$defs/plainId"}
           ], "items": false, "minItems": 4, "maxItems": 4
@@ -286,7 +301,10 @@
         "can_advance_capability", "can_mark_passed_current", "runtime_evidence"
       ],
       "properties": {
-        "schema_path": {"const": "deploy/docker/thor-local/qualification/executor-cases/result.schema.json"},
+        "schema_path": {"enum": [
+          "deploy/docker/thor-local/qualification/executor-cases/result.schema.json",
+          "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json"
+        ]},
         "schema_raw_sha256": {"$ref": "#/$defs/sha256"},
         "expected_outcome": {"enum": ["observed_match", "observed_mismatch"]},
         "evidence_class": {"const": "deterministic_file_static_evidence_not_runtime"},
