@@ -328,6 +328,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/semantic-executor-bindings-wave2-successor/tests"
 
+# Wave 3 links exactly five advertised entries to partial executor candidates
+# and five Search entries to the static fixture blocker. It deliberately
+# preserves binding_kind:none, zero concrete/full bindings, zero admission,
+# zero runtime receipts, zero promotions, and Warehouse exclusion.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-candidate-bindings-wave3-successor/compiler.py" \
+  check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/advertised-candidate-bindings-wave3-successor/tests"
+
 # The first candidate-alerts runtime-evidence package is an immutable old-
 # oracle snapshot. Its source lock is historical and is not replayed here.
 
@@ -394,6 +404,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-74-drift-observation-successor/tests"
+
+# The current-source 71-row rebase preserves the immutable historical receipt
+# while resolving all 182 row/source references through an exact nine-path
+# overlay. It independently checks cancellation-aware Kafka publication and
+# the 56-operation NAT inventory; evidence and promotion remain empty.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-71-current-source-rebase-successor/validator.py" \
+  --check --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/advertised-entry-executors-71-current-source-rebase-successor/tests"
 
 # Advertised-entry Waves 1-7 remain immutable 87-gap candidate snapshots. Their
 # exact trees, inventories, predecessor chains, 125 source locks, and 83-way
@@ -499,14 +519,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # extension are preserved transitively by the offline-verifier safety successor
 # below, so the historical compiler is not replayed against evolved live bytes.
 
-# Preserve the historical v1 classification: 206 mapped, three static/non-
-# activating, one contract conflict, and one scope gap. It grants no approval,
-# admits or executes no candidate, and excludes Warehouse.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-approval-mapping-rebase-successor/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-approval-mapping-rebase-successor/tests"
+# The historical v1 classification directly locks the pre-cancellation
+# canonical selector. Its exact artifact remains preserved downstream, but it
+# is intentionally not replayed after the current atomic selector activation.
 
 # The finalized 16-bundle approval successor is preserved by exact identity in
 # the offline-verifier safety successor. Do not replay its old direct lock
@@ -519,54 +534,23 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/offline-verifier-logdriver-successor/test_compiler.py"
 
-# This additive Sparse4D planning repair changes only the one objectively wrong
-# candidate dependency from the MV3DT pipeline to the existing Sparse4D pipeline.
-# It does not alter selected Metadata-500 files, grant approval, create evidence,
-# execute a service, or use the Warehouse sample.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/sparse4d-candidate-dependency-repair-rebase-successor/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/sparse4d-candidate-dependency-repair-rebase-successor/tests"
+# The Sparse4D repair rebase likewise directly locks the historical selector.
+# Later checked artifacts preserve its exact repair identity; do not replay it
+# against the current selector.
 
-# The v2 approval classification preserves 209 historical rows and resolves the
-# two former classification gaps through the checked 16-bundle vocabulary and
-# Sparse4D repair. Its split is 208 mapped, three static/non-activating, and zero
-# contract/scope gaps. All 211 rows remain receipt-free, not admitted, not
-# executable, and runtime-evidence-empty; Warehouse remains excluded.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-approval-mapping-rebase-successor-v2/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-approval-mapping-rebase-successor-v2/tests"
+# The v2 approval classification is also an exact historical-selector snapshot.
+# Its 211 receipt-free, non-executable rows remain preserved by identity, not
+# replayed against the current selector.
 
-# The admission-receipt successor binds all 211 ordered candidates to their
-# exact mapping, oracle, Metadata-500, and 16-bundle identities. It validates
-# only the canonical empty receipt state: 204 local/alternate candidates remain
-# blocked on exact execution bindings and receipts, four external candidates
-# cannot establish local admission, and three static entries are runtime N/A.
-# It has no receipt-consumption, write, action, or execution mode; Warehouse is
-# excluded and receipts/admissions/executable candidates remain zero.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-admission-receipts-rebase-successor/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-admission-receipts-rebase-successor/tests"
+# The empty admission-receipt snapshot directly locks the historical selector.
+# It remains immutable evidence of zero admissions/receipts and is not replayed.
 
 # The execution-binding registry is an immutable pre-Search API snapshot. Its
 # exact compiler and rebase identities are preserved by the Search readiness
 # successor above; all 208 rows stay inert and no binding is promoted.
 
-# The candidate authority successor freezes an empty, non-consuming trust
-# boundary and a design-only DSSEv1/Ed25519/JCS receipt-envelope contract. It
-# has zero roots, keys, policies, revocations, receipts, accepted/consumed
-# records, or spent-ledger entries and no sign/verify/write/execute mode. Hashes
-# provide integrity only; no candidate becomes admitted or executable.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-authority-registry-rebase-successor/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-authority-registry-rebase-successor/tests"
+# The empty candidate-authority registry also directly locks the historical
+# selector. Its zero-authority artifact stays preserved and is not replayed.
 
 # Wave1 is an immutable pre-cancellation overlay. Its v2 successor preserves
 # both candidate identities while rebinding repaired LVS MCP/server/handler
@@ -658,5 +642,18 @@ python3 "${thor_local_root}/qualification/official-edge-readiness/readiness.py" 
   plan >/dev/null
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/official-edge-readiness/tests" -v
+
+# Terminal metadata routing: reconstruct and byte-verify the exact current
+# 289+211 post-cancellation/post-Search projection, then resolve and run both
+# authoritative validator generations through the atomically selected set.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/metadata-500-current-cancellation-search-successor/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/metadata-500-current-cancellation-search-successor/tests" \
+  "${thor_local_root}/parity/metadata_sets/tests" \
+  "${thor_local_root}/parity/tests/test_verify_metadata_set.py"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/parity/verify_metadata_set.py" --json >/dev/null
 
 printf 'PASS: unified static-only Thor parity milestone\n'

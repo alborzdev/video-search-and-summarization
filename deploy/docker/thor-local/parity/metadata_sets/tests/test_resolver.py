@@ -239,7 +239,7 @@ def metadata_repo(tmp_path: Path) -> Path:
 
 def test_checked_in_500_set_resolves_as_selected_snapshot() -> None:
     snapshot = resolver.resolve_metadata_set()
-    assert snapshot.set_id == "thor-vss-3.2.1-metadata-500-staged"
+    assert snapshot.set_id == "thor-vss-3.2.1-current-cancellation-search-500"
     assert dict(snapshot.expected_counts) == {
         "capabilities": 500,
         "oracles": 500,
@@ -250,9 +250,9 @@ def test_checked_in_500_set_resolves_as_selected_snapshot() -> None:
     assert snapshot.document("manifest")["schema_version"] == 1
 
 
-def test_checked_in_historical_289_set_remains_explicitly_resolvable() -> None:
-    snapshot = resolver.resolve_metadata_set("thor-vss-3.2.1-live-289")
-    assert snapshot.set_id == "thor-vss-3.2.1-live-289"
+def test_checked_in_current_289_set_is_explicitly_resolvable() -> None:
+    snapshot = resolver.resolve_metadata_set("thor-vss-3.2.1-current-289")
+    assert snapshot.set_id == "thor-vss-3.2.1-current-289"
     assert dict(snapshot.expected_counts) == {
         "capabilities": 289,
         "oracles": 289,
@@ -260,7 +260,16 @@ def test_checked_in_historical_289_set_remains_explicitly_resolvable() -> None:
     }
     assert snapshot.document("capability_oracles")["schema_version"] == 1
     selected = resolver.resolve_metadata_set()
-    assert selected.set_id == "thor-vss-3.2.1-metadata-500-staged"
+    assert selected.set_id == "thor-vss-3.2.1-current-cancellation-search-500"
+
+
+def test_stale_historical_descriptors_are_not_registered_as_current() -> None:
+    for historical in (
+        "thor-vss-3.2.1-live-289",
+        "thor-vss-3.2.1-metadata-500-staged",
+    ):
+        with pytest.raises(resolver.MetadataSetError, match="unknown metadata set"):
+            resolver.resolve_metadata_set(historical)
 
 
 def test_unknown_set_and_document_fail_closed(metadata_repo: Path) -> None:

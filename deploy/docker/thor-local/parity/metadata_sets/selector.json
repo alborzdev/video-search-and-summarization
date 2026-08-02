@@ -1,16 +1,16 @@
 {
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-metadata-500-staged",
+  "selected_set": "thor-vss-3.2.1-current-cancellation-search-500",
   "available_sets": [
     {
-      "set_id": "thor-vss-3.2.1-live-289",
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-live-289.json",
-      "descriptor_raw_sha256": "dcae065b6a4ed93a51c92f7a1403f454738bd61c75536d6653ab14e563d59059"
+      "set_id": "thor-vss-3.2.1-current-289",
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-289.json",
+      "descriptor_raw_sha256": "9d4712c4e6add2c795baa9db152dd54afe7233f7ea479bb27de57013bd91943a"
     },
     {
-      "set_id": "thor-vss-3.2.1-metadata-500-staged",
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-metadata-500-staged.json",
-      "descriptor_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9"
+      "set_id": "thor-vss-3.2.1-current-cancellation-search-500",
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-cancellation-search-500.json",
+      "descriptor_raw_sha256": "ae2942b2a2991e322a0f4bf76a8e7a1567c44e071a5ee5eb004e7df1bc2319fe"
     }
   ]
 }

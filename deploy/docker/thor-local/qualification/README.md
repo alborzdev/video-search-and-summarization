@@ -331,6 +331,13 @@ in this directory:
   rows at null bindings and zero live receipts, and records the remaining
   ownership, fixture, Browser/tool-provenance, dependency, caption, quiescence,
   bound-review, and rendered-runtime gaps without promotion;
+- `advertised-candidate-bindings-wave3-successor/` cross-references the new
+  semantic packages to ten exact advertised-entry candidates: five partial
+  executor links and five Search blocker links. It explicitly creates no
+  concrete/full binding, does not change the authoritative `binding_kind:none`
+  rows, and leaves admission, executable, runtime-receipt, and promotion counts
+  at zero. The Search links are negative blocker correlations, not feature-pass
+  evidence;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -465,14 +472,22 @@ in this directory:
   a live-root-shaped strict v2 oracle registry/schema. Its migration journal
   locks every before/after byte and rollback object while keeping all 211
   candidates non-executable, evidence-empty, and non-promoting. The staged set
-  is registered with the atomic metadata-set resolver. Its additive v2
-  validator and atomic bundle verifier pass;
+  was the original registered snapshot; it is now an untouched, unregistered
+  historical descriptor after the current cancellation/Search successor. Its
+  additive v2 validator and atomic bundle verifier remain historical;
 - `live-metadata-500-activation/` binds and validates the exact metadata-default
   transaction: lifecycle-only promotion to `live_ready`, selector switch to
   the 500 set, unchanged fixed 289 prerequisites, zero candidate promotion,
   and exact rollback. The receipt compiler accepts only the complete pre-state
-  or complete applied state and rejects partial activation. This selects the
-  complete metadata inventory but does not qualify any runtime capability;
+  or complete applied state and rejects partial activation. This historical
+  activation is superseded by the current successor below and does not qualify
+  any runtime capability;
+- `metadata-500-current-cancellation-search-successor/` repairs the selected
+  atomic set after cancellation and Search evolution by combining the exact
+  current 289-row prefix with the unchanged 211-row candidate suffix. The
+  authoritative 289/500 resolvers now pass, all 500 rows remain unexecuted and
+  evidence-empty, and five historical selector-bound approval/admission
+  artifacts are exact-lock checked without replay or relabelling;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact
@@ -482,6 +497,13 @@ in this directory:
   `execute()` and `main()` paths are never invoked. The checked receipt remains
   candidate-only, evidence-empty, and non-promoting, so this is bounded adapter
   evidence rather than runtime qualification;
+- `advertised-entry-executors-71-current-source-rebase-successor/` preserves
+  that immutable receipt while rebasing all 71 retained candidate rows onto
+  current sources through an exact nine-path overlay: 44 rows are unchanged
+  and 27 are source-rebased. It checks the guarded cancellation-aware Kafka
+  publication chain and the 56-operation Agent/NAT inventory (44 historical
+  plus 12 Search routes) without replaying historical dispatch, creating live
+  evidence, or promoting a capability;
 - `successor-500-executable-subsets-wave1/` binds the two Wave 8 LVS/MCP
   production-code executable subsets to their exact selected Metadata-500
   oracle rows. It leaves the v2 oracle document byte-identical and records the

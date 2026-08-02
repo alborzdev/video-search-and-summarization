@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "mode": "advertised_entry_executors_71_current_source_rebase_successor",
+  "immutable_predecessor": {
+    "inventory_path": "deploy/docker/thor-local/qualification/advertised-entry-executors-74-successor/inventory.json",
+    "inventory_raw_sha256": "a9774af207f612e6c07936637d1141f5bc8e77df607363cfbac33aa447e19cb7",
+    "receipt_path": "deploy/docker/thor-local/qualification/advertised-entry-executors-74-successor/execution-receipt.json",
+    "receipt_raw_sha256": "acfe8215c0666a990109e2e1d34a531ba5c2b3c2fa415f7cf901c5e7bddec99c"
+  },
+  "partition": {
+    "retained_candidate_rows": 71,
+    "unchanged_rows": 44,
+    "rebased_rows": 27,
+    "rebased_entry_ids": [
+      "manifest-gap.agent-and-mcp-apis.00-nat-generate-chat",
+      "manifest-gap.agent-and-mcp-apis.06-lvs-mcp",
+      "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
+      "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts",
+      "manifest-gap.rt-vlm-api.00-openai-compatible-chat-completions",
+      "manifest-gap.rt-vlm-api.01-text-only-chat",
+      "manifest-gap.rt-vlm-api.02-multimodal-multi-turn-chat",
+      "manifest-gap.rt-vlm-api.03-token-sse",
+      "manifest-gap.rt-vlm-api.04-original-stream-api",
+      "manifest-gap.rt-vlm-api.05-cv-compatible-stream-api",
+      "manifest-gap.rt-vlm-api.06-file-api",
+      "manifest-gap.rt-vlm-api.07-health-metadata-models-metrics",
+      "manifest-gap.rt-vlm-media.03-allowlisted-file-uri",
+      "manifest-gap.rt-vlm-media.07-incidents",
+      "manifest-gap.rt-vlm-media.08-categories",
+      "manifest-gap.rt-vlm-media.09-reasoning",
+      "manifest-gap.rt-vlm-media.10-audio-transcript",
+      "manifest-gap.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+      "manifest-gap.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+      "manifest-gap.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
+      "manifest-gap.search-scale.00-configuration-up-to-100-streams",
+      "manifest-gap.video-summarization-live.00-live-captions",
+      "manifest-gap.video-summarization-live.01-live-stream-summaries",
+      "manifest-gap.video-summarization-live.02-stream-reports",
+      "manifest-gap.video-summarization-live.03-caption-backed-q-a",
+      "manifest-gap.video-summarization-live.04-elasticsearch-caption-storage",
+      "manifest-gap.video-summarization-live.05-sse-mcp-server"
+    ]
+  },
+  "current_source_overlay": [
+    {
+      "path": "deploy/docker/services/video-summarization/compose.yml",
+      "sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/agent.json",
+      "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+      "sha256": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"
+    },
+    {
+      "path": "services/video-summarization/src/rtvi_vlm_client.py",
+      "sha256": "bb10ff75f6cb13453b8c558a3060ee64b78d24b3c03469f7ae55d534c739bc6c"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"
+    }
+  ],
+  "kafka_topology": {
+    "source_path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+    "call_chain": [
+      "_on_vlm_chunk_response",
+      "_publish_chunk_messages_if_active",
+      "_send_protobuf_to_kafka"
+    ],
+    "terminal_state_flags": [
+      "abort_requested",
+      "finalized"
+    ],
+    "publisher_send_call_count": 2,
+    "on_response_direct_send_call_count": 0,
+    "on_response_pre_publish_terminal_rechecks": 2
+  },
+  "nat_inventory": {
+    "source_path": "deploy/docker/thor-local/qualification/expected/agent.json",
+    "historical_denominator": 44,
+    "current_denominator": 56,
+    "required_nat_generate_chat_routes": [
+      "POST /chat",
+      "POST /chat/stream",
+      "POST /generate",
+      "POST /generate/full",
+      "POST /generate/stream",
+      "POST /v1/chat",
+      "POST /v1/chat/completions",
+      "POST /v1/chat/stream"
+    ],
+    "search_additions": [
+      "POST /api/v1/search/attribute",
+      "POST /api/v1/search/attribute/atif",
+      "POST /api/v1/search/attribute/full",
+      "POST /api/v1/search/attribute/stream",
+      "POST /api/v1/search/fusion",
+      "POST /api/v1/search/fusion/atif",
+      "POST /api/v1/search/fusion/full",
+      "POST /api/v1/search/fusion/stream",
+      "POST /api/v1/search/image",
+      "POST /api/v1/search/image/atif",
+      "POST /api/v1/search/image/full",
+      "POST /api/v1/search/image/stream"
+    ]
+  },
+  "policy": {
+    "candidate_only": true,
+    "historical_inventory_rewritten": false,
+    "historical_receipt_rewritten": false,
+    "historical_dispatch_replayed": false,
+    "runtime_evidence": [],
+    "can_mark_passed_current": false,
+    "official_capability_effect": "none_candidate_only",
+    "warehouse_sample_bundle": "excluded"
+  }
+}

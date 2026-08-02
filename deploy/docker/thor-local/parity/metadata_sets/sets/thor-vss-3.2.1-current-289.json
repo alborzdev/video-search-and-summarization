@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "set_id": "thor-vss-3.2.1-current-289",
+  "mode": "immutable_static_metadata_set",
+  "lifecycle": "live_ready",
+  "target": {
+    "product_version": "3.2.1",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "expected_counts": {
+    "capabilities": 289,
+    "oracles": 289,
+    "feature_families": 55
+  },
+  "documents": {
+    "manifest": {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "fb80c2a96cc0951fc770b59a77c96d303fcf7c359e27201e16b1923e1a54a371",
+      "schema_version": 1,
+      "schema_id": "official_capabilities_schema"
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "4cfaa1996b6a46a1888035af773f444e505324c9edada2fee387c0399d9788ec",
+      "schema_version": 1,
+      "schema_id": "capability_oracles_schema"
+    },
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
+      "schema_version": 1
+    }
+  },
+  "schemas": {
+    "official_capabilities_schema": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896",
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json"
+    },
+    "capability_oracles_schema": {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+      "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1",
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://nvidia.com/vss/thor/capability-oracles.schema.json"
+    }
+  }
+}

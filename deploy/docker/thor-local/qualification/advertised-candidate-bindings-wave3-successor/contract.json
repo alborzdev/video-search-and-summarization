@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "package_id": "advertised-candidate-bindings-wave3-successor",
+  "mode": "additive-static-advertised-entry-candidate-crosswalk",
+  "default_execution_enabled": false,
+  "warehouse_sample_bundle": "excluded",
+  "canonical_mapping_mutated": false,
+  "mapping_source": {
+    "path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-rebase-successor-v2/mapping.json",
+    "sha256": "cb9bea95b4cfeab7c44441854e331a7093667d6b379fe0555692e5105ce4507f"
+  },
+  "advertised_source": {
+    "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json",
+    "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"
+  },
+  "bindings": [
+    {
+      "capability_id": "manifest-entry.base-agent-workflow.01-visual-question-answering",
+      "oracle_id": "oracle.manifest-entry.base-agent-workflow.01-visual-question-answering",
+      "oracle_index": 290,
+      "candidate_record_canonical_sha256": "22aab2d35d2d66a907f60b45e45e4203235b09684e9fbd9819f79653b505bf8d",
+      "advertised_literal": "visual question answering",
+      "required_semantics": [
+        "Answer a pixel-dependent question about the selected clip and retain that clip across one follow-up turn.",
+        "Name the fixture-visible object/action while excluding a planted visual distractor."
+      ],
+      "adjacent_negative": "A metadata-only or distractor question must not be reported as visually confirmed.",
+      "relationship_kind": "partial_executor_candidate",
+      "binding_strength": "partial",
+      "source_package_id": "base-semantic-full-envelope-successor",
+      "executor_reference": {
+        "package_id": "base-semantic-full-envelope-successor",
+        "path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py",
+        "authorization_gated": true,
+        "executor_ready": false
+      },
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "Pixel dependence, exact fixture digest selection, and stale-upload exclusion are not independently proven.",
+        "Report-object preexisting absence and a live Thor receipt are absent."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.base-agent-workflow.02-vlm-report-generation",
+      "oracle_id": "oracle.manifest-entry.base-agent-workflow.02-vlm-report-generation",
+      "oracle_index": 291,
+      "candidate_record_canonical_sha256": "2873895acf2862fbd65af6426cbad6f6820c9cb1d92a6421797801d0609d31e1",
+      "advertised_literal": "VLM report generation",
+      "required_semantics": [
+        "Drive the VLM report workflow to a served Markdown/PDF artifact grounded in the selected clip timeline.",
+        "Populate required report sections with the beginning and ending fixture events and no absent event."
+      ],
+      "adjacent_negative": "A cancelled or invalid request must not leave a completed report artifact.",
+      "relationship_kind": "partial_executor_candidate",
+      "binding_strength": "partial",
+      "source_package_id": "base-semantic-full-envelope-successor",
+      "executor_reference": {
+        "package_id": "base-semantic-full-envelope-successor",
+        "path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py",
+        "authorization_gated": true,
+        "executor_ready": false
+      },
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "Artifact format is checked, but required semantic sections and the absent-event negative are not checked inside the report.",
+        "Report-object preexisting absence and a live Thor receipt are absent."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.video-summarization-file.02-multi-video-report",
+      "oracle_id": "oracle.manifest-entry.video-summarization-file.02-multi-video-report",
+      "oracle_index": 298,
+      "candidate_record_canonical_sha256": "b38243b043a45f7da2f6eedbd12468fba3809f7ffe1135da00a14d2735cd8b11",
+      "advertised_literal": "multi-video report",
+      "required_semantics": [
+        "Accept multiple selected videos in one report call and retain per-video provenance.",
+        "Attribute each disjoint planted event to the correct source file in the report."
+      ],
+      "adjacent_negative": "A request containing one missing file must not look complete using only remaining files.",
+      "relationship_kind": "partial_executor_candidate",
+      "binding_strength": "partial",
+      "source_package_id": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+      "executor_reference": {
+        "package_id": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+        "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py",
+        "authorization_gated": true,
+        "executor_ready": false
+      },
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "Both sensors are checked globally, but disjoint planted events are not attributed to each source.",
+        "Fixture-byte readback, complete unrelated state restoration, and a live receipt are absent."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+      "oracle_id": "oracle.manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+      "oracle_index": 300,
+      "candidate_record_canonical_sha256": "3ff571a193ccc7c025485de2190819e7eef1667a598c9f234f51ed95e585b9c4",
+      "advertised_literal": "object/event/scenario focus",
+      "required_semantics": [
+        "Apply object, event, and scenario focus independently and together to one caption set.",
+        "Retain the requested relationship while excluding a planted irrelevant object/event."
+      ],
+      "adjacent_negative": "An absent focus term must not cause the service to assert that it occurred.",
+      "relationship_kind": "partial_executor_candidate",
+      "binding_strength": "partial",
+      "source_package_id": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+      "executor_reference": {
+        "package_id": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+        "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py",
+        "authorization_gated": true,
+        "executor_ready": false
+      },
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "Ordered HITL values are checked, but independent/combined focus over one caption set is not proven.",
+        "The irrelevant-object/event negative and a live receipt are absent."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.00-natural-language-action-event-search",
+      "oracle_id": "oracle.manifest-entry.semantic-search.00-natural-language-action-event-search",
+      "oracle_index": 311,
+      "candidate_record_canonical_sha256": "eb6ee0ddcd7df2fbf801025b704dd757393c53fecc8fe397801a96a3b8a4bacc",
+      "advertised_literal": "natural-language action/event search",
+      "required_semantics": [
+        "Retrieve archived clips semantically matching a natural-language action/event query.",
+        "Rank the planted-event clip above distractors with valid source and time bounds."
+      ],
+      "adjacent_negative": "A query for an absent action must not produce a confident target match.",
+      "relationship_kind": "static_blocker_link",
+      "binding_strength": "blocker",
+      "source_package_id": "search-semantic-fixture-provisioning-blocker-successor",
+      "executor_reference": null,
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": ["Exact functional Search fixture provisioning and rollback are not available through the public APIs."],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.01-cv-attribute-search",
+      "oracle_id": "oracle.manifest-entry.semantic-search.01-cv-attribute-search",
+      "oracle_index": 312,
+      "candidate_record_canonical_sha256": "1c7b1e3ba032ca33d8374414c9b71715c74f389386b34b5993e4cd991a015d62",
+      "advertised_literal": "CV attribute search",
+      "required_semantics": [
+        "Require all requested CV attributes on the same tracked object.",
+        "Return a clip of at least one second spanning the matching track interval."
+      ],
+      "adjacent_negative": "Attributes split across two tracks must not be merged into one positive.",
+      "relationship_kind": "static_blocker_link",
+      "binding_strength": "blocker",
+      "source_package_id": "search-semantic-fixture-provisioning-blocker-successor",
+      "executor_reference": null,
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": ["RTVI-CV registration is best-effort and attribute records cannot be correlated to an exact safely owned VST identity."],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.02-multi-embedding-fusion",
+      "oracle_id": "oracle.manifest-entry.semantic-search.02-multi-embedding-fusion",
+      "oracle_index": 313,
+      "candidate_record_canonical_sha256": "e72bb291350239faa16559d7dcfa2426dc5dad3888185959d1f54f694764e300",
+      "advertised_literal": "multi-embedding fusion",
+      "required_semantics": [
+        "Run embedding retrieval before rerank/fallback and preserve deterministic fusion ordering.",
+        "Collapse same-video duplicates to configured top-k while ranking the planted target first."
+      ],
+      "adjacent_negative": "A disabled embedding input must report fallback, not claim full fusion.",
+      "relationship_kind": "static_blocker_link",
+      "binding_strength": "blocker",
+      "source_package_id": "search-semantic-fixture-provisioning-blocker-successor",
+      "executor_reference": null,
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": ["Profile-fixed indices do not align with the run-scoped fixture indices required by the predecessor Search executor."],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.03-search-by-image",
+      "oracle_id": "oracle.manifest-entry.semantic-search.03-search-by-image",
+      "oracle_index": 314,
+      "candidate_record_canonical_sha256": "636d887a121eeee83b77adb2de9c0fd75c84d4c50155b19cb84cbf7d5e63ed7a",
+      "advertised_literal": "search by image",
+      "required_semantics": [
+        "Embed only the selected query-image bounding box for object-level nearest-neighbor search.",
+        "Rank the matching object above background and preserve box coordinates/digest."
+      ],
+      "adjacent_negative": "An out-of-bounds or zero-area box must be rejected before search.",
+      "relationship_kind": "static_blocker_link",
+      "binding_strength": "blocker",
+      "source_package_id": "search-semantic-fixture-provisioning-blocker-successor",
+      "executor_reference": null,
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": ["The public APIs expose neither explicit query vectors nor an exact functional image-search fixture namespace with rollback proof."],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.07-file-and-rtsp-archive-management",
+      "oracle_id": "oracle.manifest-entry.semantic-search.07-file-and-rtsp-archive-management",
+      "oracle_index": 318,
+      "candidate_record_canonical_sha256": "9d6ccd82e87727abbd1d847873db9c8a31202306ee09bb1371d6b53e5423653c",
+      "advertised_literal": "file and RTSP archive management",
+      "required_semantics": [
+        "Add/remove uploaded-file and RTSP archives with stable identifiers and readiness states.",
+        "Delete only candidate sources plus their search documents while retaining a control source."
+      ],
+      "adjacent_negative": "Deleting an unknown ID must not remove another archive.",
+      "relationship_kind": "static_blocker_link",
+      "binding_strength": "blocker",
+      "source_package_id": "search-semantic-fixture-provisioning-blocker-successor",
+      "executor_reference": null,
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": ["Public deletion is best-effort across systems and cannot prove exact rollback; RTSP addition is not exercised by the blocker package."],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.main-ui.05-chunked-upload-and-rtsp-management",
+      "oracle_id": "oracle.manifest-entry.main-ui.05-chunked-upload-and-rtsp-management",
+      "oracle_index": 440,
+      "candidate_record_canonical_sha256": "daa6f86155e045e8f213e78ff7671e9cf70baf4739d2f8fad0f9ffe5070569b6",
+      "advertised_literal": "chunked upload and RTSP management",
+      "required_semantics": [
+        "Chunked upload transfers ordered parts and completes registration before exposing the video",
+        "RTSP add and delete expose a stable stream identity and remain distinct from file-upload lifecycle."
+      ],
+      "adjacent_negative": "Do not accept successful Dashboard behavior as proof of chunked upload and RTSP management; its literal-specific observations must pass independently.",
+      "relationship_kind": "partial_executor_candidate",
+      "binding_strength": "partial",
+      "source_package_id": "thor-ui-video-management-playwright-successor-v1",
+      "executor_reference": {
+        "package_id": "thor-ui-video-management-playwright-successor-v1",
+        "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py",
+        "authorization_gated": true,
+        "executor_ready": false
+      },
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "Tiny files and mock APIs do not prove multiple ordered chunks or byte digest integrity.",
+        "RTSP archive readiness, the Playwright transitive graph, and a rendered live receipt are absent."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    }
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-rebase-successor-v2/mapping.json", "sha256": "cb9bea95b4cfeab7c44441854e331a7093667d6b379fe0555692e5105ce4507f"},
+    {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"},
+    {"path": "deploy/docker/thor-local/qualification/semantic-executor-bindings-wave2-successor/execution-status-registry.json", "sha256": "21c49443951e9a08b948b248e1dde7eef8d57b972d53eab9b50aace1b3ed569e"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "0f4c7c30d355aeedd668393e735b5b2afbdf649838a5882384dcf3bcee8b44b8"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py", "sha256": "93d197d0242cd09fd5853551aac6a1fa061dd8de8a462d911cc356f2f00cfaf8"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "18f33b2d2e078d731b5438c5bcbfeb0f48b7acf2c782cf34b568bc641bbc7329"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/contract.json", "sha256": "091bd2ced04569e6b5979d6fcb9c1cec0861f6ceaa5018550106e561891832a5"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/compiler.py", "sha256": "6d257de5641f61330e0dd6f6969594f9a101e5a29bc370ce15814893d980301a"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "b31a7b607809a7afaa97f9eff33ab4cd135111a849adade2be6afc18caf20a61"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py", "sha256": "1c80c2b12e9baa1963efdaa0ead130ef45c77160816ee81bc0c4f42448cd5e67"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs", "sha256": "0f2a47ec4e62dfabb22676777743d3998490ae0b863edf1d0edb76f03a835c69"}
+  ]
+}
