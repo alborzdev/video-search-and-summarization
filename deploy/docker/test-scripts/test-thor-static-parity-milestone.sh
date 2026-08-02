@@ -359,6 +359,16 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/advertised-entry-gaps/tests" \
   -p 'test*.py' -v
 
+# Rebase the immutable Waves 1-7 denominator onto the current 74-entry plan:
+# exactly 71 retained candidates, three external blockers, and a separate
+# 13-entry live-predecessor migration map. Phase 1 validates identities and
+# source locks only; consolidated adapter dispatch remains explicitly pending.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-74-successor/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/advertised-entry-executors-74-successor/tests"
+
 # Advertised-entry Waves 1-7 remain immutable 87-gap candidate snapshots. Their
 # exact trees, inventories, predecessor chains, 125 source locks, and 83-way
 # candidate/blocker partition are verified by the CPU successor above. They are

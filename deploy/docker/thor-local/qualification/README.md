@@ -349,6 +349,13 @@ in this directory:
   and exact rollback. The receipt compiler accepts only the complete pre-state
   or complete applied state and rejects partial activation. This selects the
   complete metadata inventory but does not qualify any runtime capability;
+- `advertised-entry-executors-74-successor/` rebases the immutable historical
+  Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
+  candidate rows, three external-attestation blockers, and a separate exact
+  map for all 13 IDs migrated into the fixed live predecessor. Phase 1 binds
+  182 source-lock references over 88 unique paths but deliberately leaves
+  every executor null and dispatch pending; it is inventory evidence, not
+  execution or runtime qualification;
 - `successor-500-executable-subsets-wave1/` binds the two currently executable
   Wave 8 LVS/MCP production-code subsets to their exact selected Metadata-500
   oracle rows. It leaves the v2 oracle document byte-identical and records the

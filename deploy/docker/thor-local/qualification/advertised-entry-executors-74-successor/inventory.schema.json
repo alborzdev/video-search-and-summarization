@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advertised-entry executor 74-row successor inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "source_plan", "source_manifest",
+    "source_official_capabilities", "source_capability_oracles",
+    "historical_waves", "policy", "summary", "source_files", "rows",
+    "inventory_payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "advertised_entry_executor_74_successor_phase1"},
+    "source_plan": {"$ref": "#/$defs/planLock"},
+    "source_manifest": {"$ref": "#/$defs/rawLock"},
+    "source_official_capabilities": {"$ref": "#/$defs/rawLock"},
+    "source_capability_oracles": {"$ref": "#/$defs/rawLock"},
+    "historical_waves": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "items": {"$ref": "#/$defs/historicalWave"}
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "planning_only", "candidate_only", "dispatch_implemented",
+        "can_mark_passed_current", "runtime_evidence", "network_allowed",
+        "docker_allowed", "subprocess_allowed", "credentials_allowed",
+        "lifecycle_allowed", "downloads_allowed", "host_inspection_allowed",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "planning_only": {"const": true},
+        "candidate_only": {"const": true},
+        "dispatch_implemented": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "host_inspection_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "historical_gap_entries", "current_gap_entries", "candidate_entries",
+        "external_blockers", "migrated_entries", "source_lock_references",
+        "unique_source_paths", "unique_adapter_ids", "per_wave_candidate_counts"
+      ],
+      "properties": {
+        "historical_gap_entries": {"const": 87},
+        "current_gap_entries": {"const": 74},
+        "candidate_entries": {"const": 71},
+        "external_blockers": {"const": 3},
+        "migrated_entries": {"const": 13},
+        "source_lock_references": {"const": 182},
+        "unique_source_paths": {"const": 88},
+        "unique_adapter_ids": {"const": 67},
+        "per_wave_candidate_counts": {
+          "const": {"1": 1, "2": 18, "3": 23, "4": 5, "5": 5, "6": 8, "7": 11}
+        }
+      }
+    },
+    "source_files": {
+      "type": "array", "minItems": 88, "maxItems": 88,
+      "items": {"$ref": "#/$defs/pathDigest"}
+    },
+    "rows": {
+      "type": "array", "minItems": 74, "maxItems": 74,
+      "items": {"oneOf": [{"$ref": "#/$defs/candidate"}, {"$ref": "#/$defs/blocker"}]}
+    },
+    "inventory_payload_sha256": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+    "rawLock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "raw_sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "planLock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "raw_sha256", "payload_sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "raw_sha256": {"$ref": "#/$defs/sha"},
+        "payload_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "historicalWave": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "wave", "inventory_path", "inventory_sha256", "executor_path",
+        "executor_sha256", "old_case_count", "retained_case_count"
+      ],
+      "properties": {
+        "wave": {"type": "integer", "minimum": 1, "maximum": 7},
+        "inventory_path": {"$ref": "#/$defs/path"},
+        "inventory_sha256": {"$ref": "#/$defs/sha"},
+        "executor_path": {"$ref": "#/$defs/path"},
+        "executor_sha256": {"$ref": "#/$defs/sha"},
+        "old_case_count": {"type": "integer", "minimum": 1},
+        "retained_case_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "pathDigest": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {"path": {"$ref": "#/$defs/path"}, "sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "commonRow": {
+      "type": "object",
+      "required": [
+        "entry_id", "manifest_pointer", "proposed_capability_id", "advertised",
+        "advertised_utf8_sha256", "advertised_canonical_sha256", "disposition",
+        "legacy_wave", "legacy_inventory_path", "legacy_row_canonical_sha256",
+        "executor", "runtime_evidence", "can_mark_passed_current"
+      ],
+      "properties": {
+        "entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "proposed_capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "advertised": {"type": "string", "minLength": 1},
+        "advertised_utf8_sha256": {"$ref": "#/$defs/sha"},
+        "advertised_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "disposition": {"enum": ["candidate", "external_blocker"]},
+        "legacy_wave": {"type": "integer", "minimum": 1, "maximum": 7},
+        "legacy_inventory_path": {"$ref": "#/$defs/path"},
+        "legacy_row_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "executor": {"type": "null"},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "can_mark_passed_current": {"const": false}
+      }
+    },
+    "candidate": {
+      "allOf": [
+        {"$ref": "#/$defs/commonRow"},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "entry_id", "manifest_pointer", "proposed_capability_id", "advertised",
+            "advertised_utf8_sha256", "advertised_canonical_sha256", "disposition",
+            "legacy_wave", "legacy_inventory_path", "legacy_row_canonical_sha256",
+            "adapter_id", "source_lock_count", "executor", "dispatch_status",
+            "runtime_evidence", "can_mark_passed_current"
+          ],
+          "properties": {
+            "entry_id": true, "manifest_pointer": true, "proposed_capability_id": true,
+            "advertised": true, "advertised_utf8_sha256": true,
+            "advertised_canonical_sha256": true, "legacy_wave": true,
+            "legacy_inventory_path": true, "legacy_row_canonical_sha256": true,
+            "executor": {"type": "null"}, "runtime_evidence": true,
+            "can_mark_passed_current": true,
+            "disposition": {"const": "candidate"},
+            "adapter_id": {"type": "string", "minLength": 1},
+            "source_lock_count": {"type": "integer", "minimum": 1},
+            "dispatch_status": {"const": "pending_phase_2"}
+          }
+        }
+      ]
+    },
+    "blocker": {
+      "allOf": [
+        {"$ref": "#/$defs/commonRow"},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": [
+            "entry_id", "manifest_pointer", "proposed_capability_id", "advertised",
+            "advertised_utf8_sha256", "advertised_canonical_sha256", "disposition",
+            "legacy_wave", "legacy_inventory_path", "legacy_row_canonical_sha256",
+            "blocker_type", "reason", "required_oracle_canonical_sha256",
+            "executor", "candidate_materialized", "runtime_evidence",
+            "can_mark_passed_current"
+          ],
+          "properties": {
+            "entry_id": true, "manifest_pointer": true, "proposed_capability_id": true,
+            "advertised": true, "advertised_utf8_sha256": true,
+            "advertised_canonical_sha256": true, "legacy_wave": {"const": 7},
+            "legacy_inventory_path": true, "legacy_row_canonical_sha256": true,
+            "executor": {"type": "null"}, "runtime_evidence": true,
+            "can_mark_passed_current": true,
+            "disposition": {"const": "external_blocker"},
+            "blocker_type": {"const": "external_optional_boundary"},
+            "reason": {"type": "string", "minLength": 1},
+            "required_oracle_canonical_sha256": {"$ref": "#/$defs/sha"},
+            "candidate_materialized": {"const": false}
+          }
+        }
+      ]
+    }
+  }
+}

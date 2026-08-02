@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advertised-entry 87-to-74 migration map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "source_inventory_payload_sha256", "policy",
+    "summary", "migrations", "migration_payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "advertised_entry_87_to_74_live_predecessor_migration_map"},
+    "source_inventory_payload_sha256": {"$ref": "#/$defs/sha"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "migration_is_runtime_qualification", "can_mark_passed_current",
+        "runtime_evidence", "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "migration_is_runtime_qualification": {"const": false},
+        "can_mark_passed_current": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "summary": {
+      "const": {
+        "former_gap_entries": 13,
+        "live_capabilities": 13,
+        "live_oracles": 13,
+        "not_qualified": 12,
+        "external_boundary": 1
+      }
+    },
+    "migrations": {
+      "type": "array", "minItems": 13, "maxItems": 13,
+      "items": {"$ref": "#/$defs/migration"}
+    },
+    "migration_payload_sha256": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "migration": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "former_gap_entry_id", "manifest_pointer", "legacy_owner",
+        "live_capability_id", "live_oracle_id", "title", "thor_state",
+        "runtime_state", "oracle_current_state",
+        "oracle_acceptance_classification", "live_capability_canonical_sha256",
+        "live_oracle_canonical_sha256", "runtime_evidence"
+      ],
+      "properties": {
+        "former_gap_entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "legacy_owner": {"enum": ["wave1", "wave2", "wave5", "separate_detection_map", "wave7_blocker"]},
+        "live_capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "live_oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\."},
+        "title": {"type": "string", "minLength": 1},
+        "thor_state": {"enum": ["wired", "external_optional"]},
+        "runtime_state": {"enum": ["not_qualified", "not_applicable"]},
+        "oracle_current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
+        "oracle_acceptance_classification": {"const": "planning_index_only"},
+        "live_capability_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "live_oracle_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    }
+  }
+}
