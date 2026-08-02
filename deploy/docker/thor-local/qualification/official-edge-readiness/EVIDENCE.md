@@ -44,3 +44,6 @@ compressed transfer size, additional disk required, or model artifact size.
 The machine-readable command is documented in `README.md`. Its output contains
 the complete blocker list, source-lock results, exact artifact/image identities,
 candidate paths, memory/disk measurements, and non-mutating container metadata.
+Current results also contain a producer-generated microsecond UTC capture time;
+downstream freshness checks bind that field through the complete result digest
+instead of trusting caller metadata or filesystem modification time.

@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -63,7 +64,7 @@ EXPECTED_SOURCE_LOCKS = {
         "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"
     ),
     "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json": (
-        "009e76c6c2a68c0628767052fd125c046716f46a25e60f222699729cfbc58ab7"
+        "857b9fb83662a99fcf37a66eed91d36fedf489068958ea48824c3fb9364d0609"
     ),
 }
 RUNTIME_COLLECTOR_DIR = (
@@ -71,11 +72,22 @@ RUNTIME_COLLECTOR_DIR = (
     / "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor"
 )
 APPROVED_RUNTIME_COLLECTOR_LOCKS = {
-    "contract.json": "046f1a9090127f6a2ca3c9f5b355b10f8a60c3498683bba758f8509374119744",
-    "executor.py": "8e18b9d04f9535a3f6aee40758d739f5be5767f918e7f4f38beb949390856d79",
-    "manifest.schema.json": "626e05b3cc4671f27cd2b2d48d2033e649f39358c175018670e1fbd2c727632a",
-    "receipt.schema.json": "9d97049e63083edab28e2a7a924c3f7e06677f32a560a9610317bde5b3fed421",
+    "contract.json": "50c627f2cdba661f744180fe4190cfc98b153d200845522c539b727904a9573f",
+    "contract.schema.json": (
+        "207aab65cb37cd18fa56a98539222604d8f32287d3beceb82201a6bc70b10dc9"
+    ),
+    "executor.py": "653546a1d3943c09f24b0c6e5e2fad6506696867e9bd10a531d6e9374075825c",
+    "manifest.schema.json": "a80b0c799b61a159c8799c6eb3eaa27c9eb24586aa7a3d070bce3a316c2c217a",
+    "receipt.schema.json": "6bfada0a7636dd3a9902d3f9b5827db35d9b2d514fa71762f543614a7052af34",
 }
+APPROVAL_AUTHORITY_RELATIVE_PATH = (
+    "deploy/docker/thor-local/agent-models/approved-runtime-receipt.json"
+)
+APPROVAL_AUTHORITY_PATH = REPO_ROOT / APPROVAL_AUTHORITY_RELATIVE_PATH
+APPROVAL_AUTHORITY_SHA256 = (
+    "c2bbedd094a3c4e43fcce796519881018e65c2e6c505150b967f2773e02c8fd4"
+)
+SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 EXPECTED_RUNTIME_EVIDENCE_CONTRACT: dict[str, Any] = {
     "state": "collector_contract_ready_no_live_receipt",
     "accepted_evidence_contract": {
@@ -206,8 +218,73 @@ def _selector_blockers(state: dict[str, Any]) -> list[str]:
     return blockers
 
 
+def _runtime_receipt_approval(errors: list[str]) -> dict[str, str] | None:
+    """Load the verifier-pinned, source-reviewed receipt approval authority."""
+
+    try:
+        if sha256(APPROVAL_AUTHORITY_PATH) != APPROVAL_AUTHORITY_SHA256:
+            errors.append("runtime receipt approval authority digest differs")
+            return None
+        authority = load_json(APPROVAL_AUTHORITY_PATH)
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        errors.append(f"runtime receipt approval authority is invalid: {error}")
+        return None
+    if (
+        set(authority)
+        != {
+            "schema_version",
+            "authority_id",
+            "state",
+            "package_id",
+            "collector_id",
+            "required_status",
+            "approvals",
+        }
+        or authority.get("schema_version") != 1
+        or authority.get("authority_id")
+        != "thor-official-edge-runtime-receipt-approval-v1"
+        or authority.get("package_id")
+        != "thor-official-edge-semantic-runtime-evidence-successor-v1"
+        or authority.get("collector_id") != "thor-official-edge-semantic-collector-v1"
+        or authority.get("required_status") != "passed_candidate_non_promoting"
+    ):
+        errors.append("runtime receipt approval authority contract differs")
+        return None
+    approvals = authority.get("approvals")
+    if authority.get("state") == "none_approved" and approvals == []:
+        return None
+    if (
+        authority.get("state") != "one_source_reviewed"
+        or not isinstance(approvals, list)
+        or len(approvals) != 1
+    ):
+        errors.append("runtime receipt approval authority state is invalid")
+        return None
+    approval = approvals[0]
+    if (
+        not isinstance(approval, dict)
+        or set(approval) != {"path", "sha256"}
+        or not isinstance(approval.get("sha256"), str)
+        or SHA256_PATTERN.fullmatch(approval["sha256"]) is None
+    ):
+        errors.append("source-reviewed runtime receipt approval is malformed")
+        return None
+    try:
+        approved_path = _safe_source_path(approval.get("path"))
+    except (OSError, ValueError) as error:
+        errors.append(str(error))
+        return None
+    if sha256(approved_path) != approval["sha256"]:
+        errors.append("source-reviewed runtime receipt digest differs")
+        return None
+    return {"path": str(approved_path), "sha256": approval["sha256"]}
+
+
 def _validate_runtime_receipt(
-    receipt_path: Path | None, receipt_sha256: str | None, errors: list[str]
+    receipt_path: Path | None,
+    receipt_sha256: str | None,
+    approval: dict[str, str] | None,
+    errors: list[str],
 ) -> bool:
     """Admit only a digest-bound receipt through the exact approved collector."""
 
@@ -219,8 +296,25 @@ def _validate_runtime_receipt(
     if not receipt_path.is_absolute():
         errors.append("runtime receipt path must be absolute")
         return False
-    if not isinstance(receipt_sha256, str) or len(receipt_sha256) != 64:
+    if (
+        not isinstance(receipt_sha256, str)
+        or SHA256_PATTERN.fullmatch(receipt_sha256) is None
+    ):
         errors.append("runtime receipt SHA-256 is invalid")
+        return False
+    if approval is None:
+        errors.append("runtime receipt is not source-approved")
+        return False
+    try:
+        resolved_receipt = receipt_path.resolve(strict=True)
+    except OSError:
+        errors.append("source-approved runtime receipt is unavailable")
+        return False
+    if (
+        str(resolved_receipt) != approval["path"]
+        or receipt_sha256 != approval["sha256"]
+    ):
+        errors.append("runtime receipt does not match the source-reviewed approval")
         return False
     for filename, expected in APPROVED_RUNTIME_COLLECTOR_LOCKS.items():
         path = RUNTIME_COLLECTOR_DIR / filename
@@ -573,8 +667,9 @@ def validate_requirements(
         runtime == EXPECTED_RUNTIME_EVIDENCE_CONTRACT,
         "canonical runtime-evidence boundary changed without a reviewed collector",
     )
+    receipt_approval = _runtime_receipt_approval(errors)
     if not _validate_runtime_receipt(
-        runtime_receipt_path, runtime_receipt_sha256, errors
+        runtime_receipt_path, runtime_receipt_sha256, receipt_approval, errors
     ):
         canonical_blockers.append(
             "canonical.runtime_evidence: approved semantic runtime receipt is absent"

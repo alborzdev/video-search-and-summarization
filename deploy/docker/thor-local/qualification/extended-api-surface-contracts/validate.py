@@ -503,6 +503,9 @@ def _validate_core_denominator(
         == {
             "declared_rest_operations": 342,
             "normalized_unique_rest_operations": 341,
+            "official_declared_rest_operations": 338,
+            "official_normalized_unique_rest_operations": 337,
+            "thor_local_extension_operations": 4,
             "mcp_tools": 42,
             "mcp_prompts": 5,
         },
@@ -510,11 +513,19 @@ def _validate_core_denominator(
     )
     declared = totals["declared_rest_operations"]
     normalized = totals["normalized_unique_rest_operations"]
+    official_declared = totals["official_declared_rest_operations"]
+    official_normalized = totals["official_normalized_unique_rest_operations"]
+    local_extensions = totals["thor_local_extension_operations"]
     legacy_minimum = scope["legacy_minimum_operation_count"]
     _require(
         scope["core_surface_count_observed"] == len(surface_ids)
         and scope["core_declared_rest_operations_observed"] == declared
-        and scope["core_normalized_rest_operations_observed"] == normalized,
+        and scope["core_normalized_rest_operations_observed"] == normalized
+        and scope["core_official_declared_rest_operations_observed"]
+        == official_declared
+        and scope["core_official_normalized_rest_operations_observed"]
+        == official_normalized
+        and scope["core_thor_local_extension_operations_observed"] == local_extensions,
         "scope core API denominator drift",
     )
     _require(
@@ -524,11 +535,25 @@ def _validate_core_denominator(
         "complete API formula drift",
     )
     _require(
+        scope["complete_official_declared_rest_formula"]
+        == f"{official_declared + recoverable_total} + L"
+        and scope["complete_official_normalized_rest_formula"]
+        == f"{official_normalized + recoverable_total} + L",
+        "complete official API formula drift",
+    )
+    _require(
         scope["minimum_declared_rest_operations"]
         == declared + recoverable_total + legacy_minimum
         and scope["minimum_normalized_rest_operations"]
         == normalized + recoverable_total + legacy_minimum,
         "minimum API denominator drift",
+    )
+    _require(
+        scope["minimum_official_declared_rest_operations"]
+        == official_declared + recoverable_total + legacy_minimum
+        and scope["minimum_official_normalized_rest_operations"]
+        == official_normalized + recoverable_total + legacy_minimum,
+        "minimum official API denominator drift",
     )
 
 

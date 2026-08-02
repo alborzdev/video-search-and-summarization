@@ -36,10 +36,18 @@ PREDECESSOR_RECEIPT = (
 )
 ORACLE_COMPILER = PARITY / "capability_oracles.py"
 
-PREDECESSOR_RAW_SHA256 = "dcb2f8119da1c2b719c4398549861c0929af9bfdf53b933301b6d4677e4318f7"
-PREDECESSOR_RECEIPT_RAW_SHA256 = "ae8716961b6a2ad30680cdf19587bd0578209594b6a39987b704ad2a29a1aad5"
-PREDECESSOR_RECEIPT_CANONICAL_SHA256 = "b1bd743da7511d2034ab0755d458f6b019df493f34c76fe81c9b2af2291a31fa"
-PREDECESSOR_CONTRACT_SHA256 = "1ba9dac99127932ddf8f517e1d87631bd13240fa61b8f360b123c42242f98cb9"
+PREDECESSOR_RAW_SHA256 = (
+    "dcb2f8119da1c2b719c4398549861c0929af9bfdf53b933301b6d4677e4318f7"
+)
+PREDECESSOR_RECEIPT_RAW_SHA256 = (
+    "ae8716961b6a2ad30680cdf19587bd0578209594b6a39987b704ad2a29a1aad5"
+)
+PREDECESSOR_RECEIPT_CANONICAL_SHA256 = (
+    "b1bd743da7511d2034ab0755d458f6b019df493f34c76fe81c9b2af2291a31fa"
+)
+PREDECESSOR_CONTRACT_SHA256 = (
+    "1ba9dac99127932ddf8f517e1d87631bd13240fa61b8f360b123c42242f98cb9"
+)
 PREDECESSOR_OUTPUTS = {
     "official-capabilities.json": "32befd108b8e4f3eb10c066c3a28a936b277ff68d2b4940cf9e1ef40107e1873",
     "manifest.json": "bd181bea21b053407da4df7767e73496c4defab100d109e4ee0a3e113e42f35a",
@@ -47,8 +55,12 @@ PREDECESSOR_OUTPUTS = {
     "capability-oracles.json": "000c2dfddd80ecaed14c416cb94827c34d68cb5b05e7111e17678b0aa94db1bb",
     "capability-oracles.schema.json": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498",
 }
-ORACLE_COMPILER_RAW_SHA256 = "32f18f2d74508a78282cf572c00ba5f7b739b7b0969019f963e04372e791de1c"
-LIVE_ORACLE_SCHEMA_RAW_SHA256 = "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"
+ORACLE_COMPILER_RAW_SHA256 = (
+    "32f18f2d74508a78282cf572c00ba5f7b739b7b0969019f963e04372e791de1c"
+)
+LIVE_ORACLE_SCHEMA_RAW_SHA256 = (
+    "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"
+)
 
 STATIC_INPUTS = {
     "deploy/docker/thor-local/qualification/api_inventory.json": "17d3f26a950b142c72e5d5003ac0429ac56f552247ca24458b05c964bf0edb6d",
@@ -135,7 +147,9 @@ def raw_sha256(payload: bytes) -> str:
 
 def canonical_sha256(value: Any) -> str:
     return hashlib.sha256(
-        json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+        json.dumps(
+            value, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+        ).encode()
     ).hexdigest()
 
 
@@ -158,7 +172,9 @@ def _module(name: str, path: Path) -> Any:
     return module
 
 
-def _historical_predecessor() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]:
+def _historical_predecessor() -> tuple[
+    dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]
+]:
     """Replay the immutable second successor while permitting reviewed source evolution.
 
     The old reconciliation verifies live source bytes, which necessarily drift
@@ -200,8 +216,7 @@ def _historical_predecessor() -> tuple[dict[str, Any], dict[str, Any], dict[str,
             )
         if path == executor.RECONCILE:
             module.verify_evidence = lambda descriptor, _repo_root: {
-                item["path"]: item["sha256"]
-                for item in descriptor["reviewed_evidence"]
+                item["path"]: item["sha256"] for item in descriptor["reviewed_evidence"]
             }
         if path == executor.CAPABILITY_ORACLES:
             module._offline_mv3dt_tool_bindings = lambda: {}
@@ -276,30 +291,43 @@ def _replace_exact_strings(value: Any, replacements: dict[str, str]) -> int:
     return count
 
 
-def _current_live_predecessor() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]:
+def _current_live_predecessor() -> tuple[
+    dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]
+]:
     """Load or reconstruct the exact current aggregate predecessor after our write."""
     paths = (LEDGER, MANIFEST, ACCEPTANCE, ORACLES)
     raw_values = [path.read_bytes() for path in paths]
     values = [json.loads(raw) for raw in raw_values]
     names = tuple(CURRENT_LIVE_PREDECESSOR)
     reverse = {new: old for old, new in MANIFEST_HASH_DELTA.items()}
-    for index, (name, value, raw) in enumerate(zip(names, values, raw_values, strict=True)):
+    for index, (name, value, raw) in enumerate(
+        zip(names, values, raw_values, strict=True)
+    ):
         expected = CURRENT_LIVE_PREDECESSOR[name]
         if raw_sha256(raw) == expected:
             continue
         reconstructed = copy.deepcopy(value)
         replaced = _replace_exact_strings(reconstructed, reverse)
-        expected_replacements = 2 if name == "official-capabilities.json" else 6 if name == "capability-oracles.json" else 0
+        expected_replacements = (
+            2
+            if name == "official-capabilities.json"
+            else 6
+            if name == "capability-oracles.json"
+            else 0
+        )
         if (
             replaced != expected_replacements
-            or canonical_sha256(reconstructed) != CURRENT_LIVE_PREDECESSOR_CANONICAL[name]
+            or canonical_sha256(reconstructed)
+            != CURRENT_LIVE_PREDECESSOR_CANONICAL[name]
         ):
             raise IntegrationError(f"current live predecessor drift: {name}")
         values[index] = reconstructed
     return values[0], values[1], values[2], values[3]
 
 
-def _apply_current_manifest_delta(ledger: dict[str, Any], oracles: dict[str, Any]) -> None:
+def _apply_current_manifest_delta(
+    ledger: dict[str, Any], oracles: dict[str, Any]
+) -> None:
     if _replace_exact_strings(ledger, MANIFEST_HASH_DELTA) != 2:
         raise IntegrationError("current LVS ledger manifest-hash denominator drift")
     if _replace_exact_strings(oracles, MANIFEST_HASH_DELTA) != 6:
@@ -310,7 +338,9 @@ def _prospective_live_bytes(path: Path, expected_replacements: int) -> bytes:
     """Apply the allowlisted hash delta without reformatting unrelated bytes."""
     raw = path.read_bytes()
     name = path.name
-    old_to_new = {old.encode(): new.encode() for old, new in MANIFEST_HASH_DELTA.items()}
+    old_to_new = {
+        old.encode(): new.encode() for old, new in MANIFEST_HASH_DELTA.items()
+    }
     new_to_old = {new: old for old, new in old_to_new.items()}
     if raw_sha256(raw) == CURRENT_LIVE_PREDECESSOR[name]:
         prospective = raw
@@ -320,7 +350,9 @@ def _prospective_live_bytes(path: Path, expected_replacements: int) -> bytes:
             prospective = prospective.replace(old, new)
             count += occurrences
         if count != expected_replacements:
-            raise IntegrationError(f"current live replacement denominator drift: {name}")
+            raise IntegrationError(
+                f"current live replacement denominator drift: {name}"
+            )
         return prospective
     reconstructed = raw
     count = 0
@@ -328,7 +360,10 @@ def _prospective_live_bytes(path: Path, expected_replacements: int) -> bytes:
         occurrences = reconstructed.count(new)
         reconstructed = reconstructed.replace(new, old)
         count += occurrences
-    if count != expected_replacements or raw_sha256(reconstructed) != CURRENT_LIVE_PREDECESSOR[name]:
+    if (
+        count != expected_replacements
+        or raw_sha256(reconstructed) != CURRENT_LIVE_PREDECESSOR[name]
+    ):
         raise IntegrationError(f"current live output drift: {name}")
     return raw
 
@@ -405,12 +440,14 @@ def _apply_delta(
     )
     api = _by_id(manifest["features"], "agent-and-mcp-apis")
     api["gap"] = (
-        "The scoped core ledger passes 327 declared REST operations (326 normalized "
-        "routes) plus all 42 tools and five prompts across 17 surfaces. It is not the "
-        "complete product API: configuration and calibration surfaces are tracked "
-        "separately by extended-api-surfaces. The GET-only loopback tier defines 32 "
-        "probes across 22 services; the stopped unified stack still needs every "
-        "inventoried route, tool, prompt, and VIOS-backed path exercised."
+        "The scoped core ledger passes 342 declared REST operations (341 normalized "
+        "routes) plus all 42 tools and five prompts across 17 surfaces. Four operations "
+        "are explicit Thor-local extensions, so the official core denominator is 338 "
+        "declared (337 normalized). It is not the complete product API: configuration "
+        "and calibration surfaces are tracked separately by extended-api-surfaces. The "
+        "GET-only loopback tier defines 32 probes across 22 services; the stopped "
+        "unified stack still needs every inventoried route, tool, prompt, and "
+        "VIOS-backed path exercised."
     )
     core = _by_id(manifest["features"], "core-api-operation-contracts")
     core["runtime_state"] = "static_only"
@@ -423,23 +460,26 @@ def _apply_delta(
     scenarios = acceptance["coverage"]["api_surfaces"]
     lvs_row = next(item for item in scenarios if item.get("surface_id") == "lvs")
     lvs_row["expected_item_count"] = 18
-    lvs_row["items_sha256"] = "393a04089472b75b33fccd61650356ed52319b46450ad812657cedd8559bb214"
+    lvs_row["items_sha256"] = (
+        "393a04089472b75b33fccd61650356ed52319b46450ad812657cedd8559bb214"
+    )
     mcp_row = next(item for item in scenarios if item.get("surface_id") == "lvs-mcp")
     mcp_row["expected_item_count"] = 13
-    mcp_row["items_sha256"] = "b8166875144e5aab3cfa31730b1f40ed67dbba6dc8067fc74b667c3f6802a621"
+    mcp_row["items_sha256"] = (
+        "b8166875144e5aab3cfa31730b1f40ed67dbba6dc8067fc74b667c3f6802a621"
+    )
 
 
 def _validate_semantics(
-    predecessor: tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]],
+    predecessor: tuple[
+        dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]
+    ],
     ledger: dict[str, Any],
     acceptance: dict[str, Any],
     oracles: dict[str, Any],
 ) -> None:
     old_ledger, _old_manifest, old_acceptance, _old_oracles, _receipt = predecessor
-    if (
-        len(ledger["capabilities"]) != 276
-        or len(old_ledger["capabilities"]) != 276
-    ):
+    if len(ledger["capabilities"]) != 276 or len(old_ledger["capabilities"]) != 276:
         raise IntegrationError("capability denominator drift")
     if len(ledger["source_discrepancies"]) != len(old_ledger["source_discrepancies"]):
         raise IntegrationError("upstream discrepancy denominator drift")
@@ -447,7 +487,8 @@ def _validate_semantics(
         raise IntegrationError("historical planning contracts changed")
     rows = oracles.get("oracles", [])
     if len(rows) != 276 or any(
-        row.get("acceptance_readiness", {}).get("classification") != "planning_index_only"
+        row.get("acceptance_readiness", {}).get("classification")
+        != "planning_index_only"
         for row in rows
     ):
         raise IntegrationError("capability oracle planning boundary drift")
@@ -455,13 +496,17 @@ def _validate_semantics(
         raise IntegrationError("runtime evidence was added")
     if any(row.get("current_state") == "passed_current" for row in rows):
         raise IntegrationError("passed_current promotion is forbidden")
-    planning_bindings = sum(len(row.get("planning_executor_bindings", [])) for row in rows)
+    planning_bindings = sum(
+        len(row.get("planning_executor_bindings", [])) for row in rows
+    )
     offline_bindings = [
         (row["capability_id"], binding)
         for row in rows
         for binding in row.get("offline_tool_observation_bindings", [])
     ]
-    if planning_bindings != 26 or {capability_id for capability_id, _binding in offline_bindings} != {
+    if planning_bindings != 26 or {
+        capability_id for capability_id, _binding in offline_bindings
+    } != {
         "tool.mv3dt.cam-info-generator",
         "tool.mv3dt.pub-sub-generator",
     }:
@@ -470,7 +515,8 @@ def _validate_semantics(
         binding.get("can_advance_capability") is not False
         or binding.get("can_mark_passed_current") is not False
         or binding.get("runtime_evidence") != []
-        or binding.get("result", {}).get("official_capability_effect") != "none_candidate_only"
+        or binding.get("result", {}).get("official_capability_effect")
+        != "none_candidate_only"
         or not binding.get("oracle_coverage", {}).get("uncovered_assertion_ids")
         for _capability_id, binding in offline_bindings
     ):
@@ -479,7 +525,9 @@ def _validate_semantics(
 
 def build_expected(
     *, execute: bool = False
-) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]:
+) -> tuple[
+    dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]
+]:
     # Kept for compatibility with acceptance.py's successor interface. This
     # lane is static-only, so either value deterministically replays receipts.
     del execute
@@ -490,7 +538,10 @@ def build_expected(
     current = _current_live_predecessor()
     ledger, manifest, acceptance, oracles = copy.deepcopy(current)
     _apply_current_manifest_delta(ledger, oracles)
-    if len(ledger.get("capabilities", [])) != 289 or len(oracles.get("oracles", [])) != 289:
+    if (
+        len(ledger.get("capabilities", [])) != 289
+        or len(oracles.get("oracles", [])) != 289
+    ):
         raise IntegrationError("current live capability/oracle denominator drift")
     if any(row.get("runtime_evidence") for row in oracles["oracles"]):
         raise IntegrationError("runtime evidence was added")
@@ -574,9 +625,10 @@ def validate_live() -> dict[str, Any]:
         (LEDGER, ledger, 2),
         (ORACLES, oracles, 6),
     ):
-        if path.read_bytes() != _prospective_live_bytes(path, count) or json.loads(
-            path.read_bytes()
-        ) != value:
+        if (
+            path.read_bytes() != _prospective_live_bytes(path, count)
+            or json.loads(path.read_bytes()) != value
+        ):
             raise IntegrationError(f"partial or drifted third successor: {path.name}")
     for path, expected in {
         MANIFEST: CURRENT_LIVE_PREDECESSOR["manifest.json"],
@@ -603,11 +655,15 @@ def review_live() -> dict[str, Any]:
         ORACLES: _prospective_live_bytes(ORACLES, 6),
         RECEIPT: encoded(receipt),
     }.items():
-        current = path.read_bytes() if path.is_file() and not path.is_symlink() else None
+        current = (
+            path.read_bytes() if path.is_file() and not path.is_symlink() else None
+        )
         rows.append(
             {
                 "path": str(path.relative_to(REPO_ROOT)),
-                "current_raw_sha256": raw_sha256(current) if current is not None else None,
+                "current_raw_sha256": raw_sha256(current)
+                if current is not None
+                else None,
                 "prospective_raw_sha256": raw_sha256(prospective),
                 "byte_identical": current == prospective,
             }
@@ -640,7 +696,15 @@ def main() -> int:
             return 0
         ledger, manifest, acceptance, oracles, receipt = build_expected()
         if args.command == "plan":
-            print(json.dumps({"lifecycle": "prospective_current_lvs_mcp_contract_successor", **receipt["expected_counts"]}, sort_keys=True))
+            print(
+                json.dumps(
+                    {
+                        "lifecycle": "prospective_current_lvs_mcp_contract_successor",
+                        **receipt["expected_counts"],
+                    },
+                    sort_keys=True,
+                )
+            )
             return 0
         for path, payload in {
             LEDGER: _prospective_live_bytes(LEDGER, 2),
@@ -648,7 +712,12 @@ def main() -> int:
             RECEIPT: encoded(receipt),
         }.items():
             path.write_bytes(payload)
-        print(json.dumps({"lifecycle": receipt["lifecycle"], **receipt["expected_counts"]}, sort_keys=True))
+        print(
+            json.dumps(
+                {"lifecycle": receipt["lifecycle"], **receipt["expected_counts"]},
+                sort_keys=True,
+            )
+        )
         return 0
     except (IntegrationError, OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

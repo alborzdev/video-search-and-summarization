@@ -36,13 +36,17 @@ The image was absent locally, so native Thor runtime remains architecture
 blocked. Registry denial left the tag-index digest and unpacked size unresolved.
 
 The current 17-surface core inventory is byte-locked at 342 declared and 341
-normalized-unique REST operations. Relative to that exact denominator, the
-complete totals can currently be expressed only as:
+normalized-unique implementation REST operations. That includes four explicit
+Thor-local extensions; the official core denominator is 338 declared and 337
+normalized unique. Relative to those exact denominators, the complete totals
+can currently be expressed only as:
 
 - declared REST operations: `422 + L` (minimum 436);
-- normalized REST operations: `421 + L` (minimum 435).
+- normalized REST operations: `421 + L` (minimum 435);
+- official-surface declared REST operations: `418 + L` (minimum 432);
+- official-surface normalized REST operations: `417 + L` (minimum 431).
 
-Neither minimum is a complete total.
+None of these minima is a complete total.
 
 ## Trust model
 

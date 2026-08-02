@@ -38,15 +38,15 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json",
-      "sha256": "009e76c6c2a68c0628767052fd125c046716f46a25e60f222699729cfbc58ab7"
+      "sha256": "857b9fb83662a99fcf37a66eed91d36fedf489068958ea48824c3fb9364d0609"
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",
-      "sha256": "9afc561e582353998e162a7f7ae48c230db1d9480a2623607c1be3b38525f62d"
+      "sha256": "f0e47d9aa03f5a016ab1d13cfb813f0ad7cbefb4b6b1badc1702f7389ebf5e8a"
     },
     {
       "path": "deploy/docker/thor-local/agent-models/thor-requirements.json",
-      "sha256": "b49b7dca397af888299d647f71868d9d26266973fd12b7e6142f9005f8680e3a"
+      "sha256": "a2ce1edcbe782bef22dbb6139c46591c377bd63ccf8cce78b27b4904b67fc885"
     },
     {
       "path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py",
@@ -99,7 +99,6 @@
     "required_inspection_mode": "read_only_host",
     "required_qualification_state": "prelaunch_ready_not_runtime_qualified",
     "maximum_age_seconds": 900,
-    "maximum_capture_mtime_skew_seconds": 60,
     "required_running_containers": [
       "vss-nemotron-edge-4b",
       "vss-rtvi-vlm",
@@ -108,7 +107,7 @@
   },
   "semantic_contract": {
     "llm_tool_name": "thor_contract_echo",
-    "llm_positive_argument": "thor-tool-positive",
+    "llm_challenge_prefix": "thor-tool-",
     "llm_negative_exact_content": "THOR_NO_TOOL_TARGET",
     "vlm_absent_exact_content": "THOR_VISUAL_ABSENT",
     "agent_workflow_sentinel": "THOR_AGENT_BOTH_MODELS",

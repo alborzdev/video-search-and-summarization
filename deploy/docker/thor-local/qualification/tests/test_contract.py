@@ -199,6 +199,20 @@ class CheckedInInventoryTests(unittest.TestCase):
         self.assertEqual(
             sum(item["normalized_unique_operation_count"] for item in rest), 341
         )
+        self.assertEqual(
+            self.inventory["expected_totals"]["official_declared_rest_operations"],
+            338,
+        )
+        self.assertEqual(
+            self.inventory["expected_totals"][
+                "official_normalized_unique_rest_operations"
+            ],
+            337,
+        )
+        self.assertEqual(
+            self.inventory["expected_totals"]["thor_local_extension_operations"],
+            4,
+        )
         self.assertEqual(sum(item["tool_count"] for item in mcp), 42)
         self.assertEqual(sum(item["prompt_count"] for item in mcp), 5)
 
@@ -287,7 +301,42 @@ class CheckedInInventoryTests(unittest.TestCase):
 
     def test_lvs_source_and_documented_gap_are_exact(self) -> None:
         self.assertEqual(self.manifests["lvs"]["declared_operation_count"], 18)
+        self.assertEqual(self.surfaces["lvs"]["official_operation_count"], 17)
+        self.assertEqual(
+            self.surfaces["lvs"]["thor_local_extensions"],
+            [{"method": "GET", "path": "/files/{file_id}"}],
+        )
         qualify._validate_lvs_documented_gap(self.inventory, self.manifests)
+
+    def test_rt_vlm_official_denominator_excludes_local_cancellation(self) -> None:
+        self.assertEqual(self.manifests["rt-vlm"]["declared_operation_count"], 28)
+        self.assertEqual(self.surfaces["rt-vlm"]["official_operation_count"], 27)
+        self.assertEqual(
+            self.surfaces["rt-vlm"]["thor_local_extensions"],
+            [
+                {
+                    "method": "DELETE",
+                    "path": "/v1/generate_captions/requests/{request_id}",
+                }
+            ],
+        )
+
+    def test_alerts_official_denominator_excludes_local_status_and_cancel(self) -> None:
+        self.assertEqual(self.manifests["alerts"]["declared_operation_count"], 21)
+        self.assertEqual(self.surfaces["alerts"]["official_operation_count"], 19)
+        self.assertEqual(
+            self.surfaces["alerts"]["thor_local_extensions"],
+            [
+                {
+                    "method": "DELETE",
+                    "path": "/api/v1/verification/ondemand/{correlation_id}",
+                },
+                {
+                    "method": "GET",
+                    "path": "/api/v1/verification/ondemand/{correlation_id}",
+                },
+            ],
+        )
 
     def test_contract_cli_passes_without_regeneration(self) -> None:
         output = io.StringIO()
@@ -298,6 +347,7 @@ class CheckedInInventoryTests(unittest.TestCase):
             )
         self.assertEqual(status, 0, output.getvalue())
         self.assertIn("342 declared REST operations", output.getvalue())
+        self.assertIn("official core denominator is 338 declared", output.getvalue())
         self.assertIn("42 MCP tools plus 5 MCP prompts", output.getvalue())
 
     def test_local_live_openapi_helper_does_not_accept_urls(self) -> None:

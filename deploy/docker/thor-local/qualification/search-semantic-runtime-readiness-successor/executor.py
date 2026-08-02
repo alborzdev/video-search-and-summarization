@@ -159,10 +159,28 @@ def execute() -> dict[str, Any]:
     if inventory["expected_totals"] != {
         "declared_rest_operations": 342,
         "normalized_unique_rest_operations": 341,
+        "official_declared_rest_operations": 338,
+        "official_normalized_unique_rest_operations": 337,
+        "thor_local_extension_operations": 4,
         "mcp_tools": 42,
         "mcp_prompts": 5,
     }:
         raise ContractError("successor aggregate API totals drift")
+    expected_inventory_result = {
+        "agent_declared_operations": 56,
+        "agent_normalized_unique_operations": 56,
+        "aggregate_declared_rest_operations": 342,
+        "aggregate_normalized_unique_rest_operations": 341,
+        "aggregate_official_declared_rest_operations": 338,
+        "aggregate_official_normalized_unique_rest_operations": 337,
+        "aggregate_thor_local_extension_operations": 4,
+        "derivation": (
+            "three additive configured endpoints times four NAT variants equals "
+            "twelve additive agent operations"
+        ),
+    }
+    if contract["api_inventory_result"] != expected_inventory_result:
+        raise ContractError("successor API inventory result drift")
 
     route_results: dict[str, bool] = {}
     for profile in contract["profile_paths"]:

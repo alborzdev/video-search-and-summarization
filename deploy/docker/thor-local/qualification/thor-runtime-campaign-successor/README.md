@@ -22,8 +22,8 @@ and the strongest receipt surfaces for:
 ## Inert commands
 
 `plan` is the default. It reads only checked-in regular files, validates all
-32 direct raw source locks and nine additional transitive collector/verifier
-locks (41 unique files), revalidates the selected ten-row overlay, and prints
+34 direct raw source locks and nine additional transitive collector/verifier
+locks (43 unique files), revalidates the selected ten-row overlay, and prints
 the fixed campaign order and retained blockers.
 
 ```bash
@@ -92,7 +92,7 @@ model-set, fixture, phase, or source drift is rejected.
 
 Every raw receipt is hash-checked and validated against its exact source-locked
 schema. A readiness report cannot substitute for the official semantic model
-receipt. That receipt must have the four exact collector hashes, seven ordered
+receipt. That receipt must have the five exact collector hashes, seven ordered
 semantic observations, exact release/artifact/image/served-model identities,
 the exact no-cloud projection, and the campaign run/media identity. The
 compiler additionally enforces available cross-receipt identity:

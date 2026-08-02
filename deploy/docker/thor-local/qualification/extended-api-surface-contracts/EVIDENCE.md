@@ -15,12 +15,16 @@ contract.
 ## Current core denominator rebase
 
 The checked-in 17-surface API inventory is now a direct source lock. Its exact
-current totals are 342 declared and 341 normalized-unique REST operations,
-plus 42 MCP tools and 5 MCP prompts. Adding the six exact extended surfaces
-contributes 80 REST operations, while legacy calibration remains the unresolved
-symbol `L` with a client-proven lower bound of 14. The complete-product formulas
-are therefore `422 + L` declared and `421 + L` normalized, with minima 436 and
-435. Those minima are still not complete totals.
+current implementation totals are 342 declared and 341 normalized-unique REST
+operations, plus 42 MCP tools and 5 MCP prompts. Four operations are explicit
+Thor-local extensions: RT-VLM request cancellation, LVS single-file metadata,
+and Alerts on-demand status and cancellation. The official core denominator is
+therefore 338 declared and 337 normalized unique. Adding the six exact extended
+surfaces contributes 80 REST operations, while legacy calibration remains the
+unresolved symbol `L` with a client-proven lower bound of 14. Complete-product
+implementation formulas are `422 + L` declared and `421 + L` normalized, with
+minima 436 and 435. Official-surface formulas are `418 + L` and `417 + L`, with
+minima 432 and 431. None of those minima is a complete total.
 
 ## Immutable image evidence
 

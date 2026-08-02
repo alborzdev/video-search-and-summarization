@@ -6,8 +6,8 @@ The package is static composition infrastructure, not runtime evidence.
 
 - The campaign contract and all three strict schemas are valid Draft 2020-12
   JSON Schemas.
-- Thirty-two direct exact locks plus nine distinct transitive collector and
-  model-verifier locks match 41 checked-in source files. They cover the current
+- Thirty-four direct exact locks plus nine distinct transitive collector and
+  model-verifier locks match 43 checked-in source files. They cover the current
   selected overlay, strongest feature receipts, host evidence, official model
   semantic collector, canonical requirements/verifier, and model contract.
 - The selected overlay remains exactly ten concrete, Warehouse-free,
@@ -22,7 +22,7 @@ The package is static composition infrastructure, not runtime evidence.
 - Every receipt independently satisfied the exact schema and contract identity
   frozen for its phase.
 - Readiness-only evidence was not accepted as model semantics. The mandatory
-  live receipt matched four collector hashes, seven semantic observations,
+  live receipt matched five collector hashes, seven semantic observations,
   exact release/artifact/image/served-model identities, and no-cloud wiring.
 - Every later phase and descriptor was bound to the raw semantic model receipt
   digest, so feature receipts cannot be composed without that admission.

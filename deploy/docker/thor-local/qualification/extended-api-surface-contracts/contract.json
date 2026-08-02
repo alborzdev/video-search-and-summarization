@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "target_commit": "862bdcc46db9c81d920703d1ba14c9a4dfa21377",
-  "contract_set_sha256": "283ece76966a903b1537a90449a3d52f593226a9c07ef50b511f4ee2f7fd91e1",
+  "contract_set_sha256": "215c57c82c350f1c5e9742ed6a570d898e6bf605398e91a409d8acb87a142047",
   "scope": {
     "advertised_claim_family_count": 5,
     "addressable_surface_count": 7,
@@ -12,11 +12,18 @@
     "core_surface_count_observed": 17,
     "core_declared_rest_operations_observed": 342,
     "core_normalized_rest_operations_observed": 341,
+    "core_official_declared_rest_operations_observed": 338,
+    "core_official_normalized_rest_operations_observed": 337,
+    "core_thor_local_extension_operations_observed": 4,
     "complete_declared_rest_formula": "422 + L",
     "complete_normalized_rest_formula": "421 + L",
+    "complete_official_declared_rest_formula": "418 + L",
+    "complete_official_normalized_rest_formula": "417 + L",
     "legacy_operation_count_symbol": "L",
     "minimum_declared_rest_operations": 436,
     "minimum_normalized_rest_operations": 435,
+    "minimum_official_declared_rest_operations": 432,
+    "minimum_official_normalized_rest_operations": 431,
     "complete_product_api": false,
     "warehouse_sample_required": false,
     "shared_ledgers_modified": false
@@ -253,7 +260,7 @@
       "type": "checked_in_source_snapshot",
       "extraction_method": "The current checked-in API inventory supplies the exact 17-surface core denominator; the extended formulas are derived from its declared and normalized totals",
       "files": [
-        {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "content_sha256": "e5ecb7072206269cadc7ab7213767d258d08228809aabf1d8db9b67e6b213afc", "git_blob_oid": "c20731da16799b5cf453ab9b105661353e6ceb8c", "role": "exact current 17-surface core API denominator"}
+        {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "content_sha256": "2842d11684a6f5ba5447649ad2224c688dfd87107e762b9fe7306d88944ceb39", "git_blob_oid": "22d6966fd45b96b2a066a0d0fcee4adb672be63b", "role": "exact current 17-surface implementation and official API denominators"}
       ]
     },
     {

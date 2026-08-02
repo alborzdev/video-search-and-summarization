@@ -54,7 +54,7 @@
     "capability_mappings": {"type": "array", "minItems": 15, "maxItems": 15, "items": {"$ref": "#/$defs/capabilityMapping"}},
     "forbidden_receipt_package_ids": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/plain"}},
     "required_blockers": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/plain"}},
-    "source_locks": {"type": "array", "minItems": 32, "maxItems": 32, "items": {"$ref": "#/$defs/sourceLock"}}
+    "source_locks": {"type": "array", "minItems": 34, "maxItems": 34, "items": {"$ref": "#/$defs/sourceLock"}}
   },
   "$defs": {
     "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},

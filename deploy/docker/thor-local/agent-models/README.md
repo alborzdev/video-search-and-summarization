@@ -114,9 +114,13 @@ semantic-request, and Agent-workflow checks. The approved collector is
 `qualification/official-edge-semantic-runtime-evidence-successor`; it is inert
 by default, excludes Warehouse, and accepts only a digest-bound fresh readiness
 prerequisite plus explicitly authorized numeric-loopback requests. A
-hand-authored list of passing checks still fails closed. Exactly one state row is
-allowed per model, and the aggregate all-selector state can become `qualified`
-only when all eight exact documented models qualify.
+hand-authored list of passing checks still fails closed. The canonical verifier
+also pins `approved-runtime-receipt.json`; its current `none_approved` state
+means even a schema-valid caller-supplied receipt cannot clear the gate. A
+future reviewed receipt must be checked into the repository and explicitly
+approved by path and SHA-256 in that authority before validation. Exactly one
+state row is allowed per model, and the aggregate all-selector state can become
+`qualified` only when all eight exact documented models qualify.
 
 The remaining implementation gap is intentional and explicit: no approved live
 semantic receipt has been captured. The official-edge readiness plan proves only

@@ -46,6 +46,11 @@ The report is intentionally not runtime evidence. It always emits
 `runtime_qualification_performed: false`; even a fully staged report can claim
 only `prelaunch_ready_not_runtime_qualified`.
 
+Every plan and host result generates its own microsecond UTC
+`captured_at_utc`. The field is inside the schema-validated result and therefore
+inside any downstream receipt digest. Callers cannot supply or replace it, and
+filesystem modification time is not readiness freshness evidence.
+
 Image readiness requires all three identities to agree: the immutable
 repository digest, Docker's exact image/config ID, and a `locked_exact`
 graduation in the source-locked official contract. A caller-supplied plan cannot

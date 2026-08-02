@@ -19,6 +19,7 @@ from contract import (  # noqa: E402
     ContractError,
     build_mcp_manifest,
     build_rest_manifest,
+    canonical_route,
     compare_manifest,
     extract_fastmcp_declarations,
     extract_lvs_mcp_tools,
@@ -281,6 +282,59 @@ def _validate_totals(
 ) -> None:
     rest = [manifest for manifest in manifests.values() if manifest["kind"] == "rest"]
     mcp = [manifest for manifest in manifests.values() if manifest["kind"] == "mcp"]
+    official_declared = 0
+    official_normalized = 0
+    extension_count = 0
+    for surface_id, manifest in manifests.items():
+        if manifest["kind"] != "rest":
+            continue
+        surface = next(
+            item for item in inventory["surfaces"] if item["id"] == surface_id
+        )
+        extensions = surface.get("thor_local_extensions", [])
+        extension_routes: list[tuple[str, str]] = []
+        for extension in extensions:
+            if not isinstance(extension, dict) or set(extension) != {"method", "path"}:
+                raise ContractError(
+                    f"{surface_id}: Thor-local extensions must contain exactly method and path"
+                )
+            route = (extension["method"], extension["path"])
+            if route in extension_routes:
+                raise ContractError(
+                    f"{surface_id}: duplicate Thor-local extension {route}"
+                )
+            extension_routes.append(route)
+        implementation_routes = {
+            (item["method"], item["path"]) for item in manifest["operations"]
+        }
+        missing_extensions = sorted(set(extension_routes) - implementation_routes)
+        if missing_extensions:
+            raise ContractError(
+                f"{surface_id}: Thor-local extensions are absent from the implementation: "
+                f"{missing_extensions}"
+            )
+        official_operations = [
+            item
+            for item in manifest["operations"]
+            if (item["method"], item["path"]) not in set(extension_routes)
+        ]
+        expected_official = surface.get(
+            "official_operation_count", surface["expected_operation_count"]
+        )
+        if len(official_operations) != expected_official:
+            raise ContractError(
+                f"{surface_id}: official denominator expects {expected_official}, "
+                f"derived {len(official_operations)} after excluding Thor-local extensions"
+            )
+        official_declared += len(official_operations)
+        official_normalized += len(
+            {
+                (item["method"], canonical_route(item["path"]))
+                for item in official_operations
+            }
+        )
+        extension_count += len(extension_routes)
+
     actual = {
         "declared_rest_operations": sum(
             item["declared_operation_count"] for item in rest
@@ -288,6 +342,9 @@ def _validate_totals(
         "normalized_unique_rest_operations": sum(
             item["normalized_unique_operation_count"] for item in rest
         ),
+        "official_declared_rest_operations": official_declared,
+        "official_normalized_unique_rest_operations": official_normalized,
+        "thor_local_extension_operations": extension_count,
         "mcp_tools": sum(item["tool_count"] for item in mcp),
         "mcp_prompts": sum(item["prompt_count"] for item in mcp),
     }
@@ -459,6 +516,13 @@ def run_contract(
             f"({totals['normalized_unique_rest_operations']} normalized unique) and "
             f"{totals['mcp_tools']} MCP tools plus "
             f"{totals['mcp_prompts']} MCP prompts"
+        )
+        print(
+            "NOTE: the REST implementation total includes "
+            f"{totals['thor_local_extension_operations']} explicit Thor-local extensions; "
+            "the official core denominator is "
+            f"{totals['official_declared_rest_operations']} declared "
+            f"({totals['official_normalized_unique_rest_operations']} normalized unique)."
         )
         if inventory.get("known_contract_differences"):
             print(

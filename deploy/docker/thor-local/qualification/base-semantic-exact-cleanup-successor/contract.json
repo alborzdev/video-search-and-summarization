@@ -41,7 +41,7 @@
   },
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/contract.json", "sha256": "91a24ab9027cf9f9b44e833fa99eef77db7db57f3524c32e0b1761f8ab1c7ae9"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/contract.json", "sha256": "9cd9aaf242fb9512a7af530d4ab6ce1bd8dc8f160645ebc013e4b16501fc49db"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/executor.py", "sha256": "40cedd6bc2ffa0e2c954528a9038070a177f62b666bc967dd834bf0b3d770318"},
     {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540"},
     {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},

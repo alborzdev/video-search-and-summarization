@@ -97,7 +97,7 @@
     "canonical_state_advanced": false
   },
   "source_locks": [
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "4cfaa1996b6a46a1888035af773f444e505324c9edada2fee387c0399d9788ec"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "03da833f7a663fb170bedc9e7ebcc2e3caa8d8978beb9aaa2818526032577b7a"},
     {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/contract.json", "sha256": "91816d82ccc13f6c01a2dfa062ee891388ad8569a13421e1c019accd9b7fa478"},
     {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json", "sha256": "428672fd5f6e79709995e1f8a39eb59ba4c9743cfa2b743feb7d7aefddc8612b"},
     {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540"},

@@ -93,7 +93,7 @@
     {"path": "deploy/docker/thor-local/qualification/ui-runtime-contracts/contract.json", "sha256": "33f78699ba1263f5d2fe33149c50f3070b01ede7757a0e10752a2278249a7d4c"},
     {"path": "deploy/docker/thor-local/qualification/ui-runtime-contracts/validator.py", "sha256": "291f8a0bd027eccdf1ac874a308961cbf1cec4a1843a56262b88ce3270d9eb8c"},
     {"path": "deploy/docker/thor-local/qualification/ui-runtime-contracts/evidence.schema.json", "sha256": "86a1feb196e2583d2a0a4a9ed42fafe766afd6960bba1911f13457686d71ea5b"},
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/contract.json", "sha256": "91a24ab9027cf9f9b44e833fa99eef77db7db57f3524c32e0b1761f8ab1c7ae9"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/contract.json", "sha256": "9cd9aaf242fb9512a7af530d4ab6ce1bd8dc8f160645ebc013e4b16501fc49db"},
     {"path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx", "sha256": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f"},
     {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/VideoManagementComponent.tsx", "sha256": "17a91535187dc35fb74e971f705b8a04a6778dce13276ce8bd0273698f379e5a"},
     {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/AgentUploadDialog.tsx", "sha256": "f6c0dbfd3c1763d9fef0e2e187fd1ef29a48a469943f7235f7064b3e38714559"},

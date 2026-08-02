@@ -24,6 +24,9 @@
   "expected_totals": {
     "declared_rest_operations": 342,
     "normalized_unique_rest_operations": 341,
+    "official_declared_rest_operations": 338,
+    "official_normalized_unique_rest_operations": 337,
+    "thor_local_extension_operations": 4,
     "mcp_tools": 42,
     "mcp_prompts": 5
   },
@@ -66,6 +69,34 @@
         "/v1/generate_captions/requests/{request_id}"
       ],
       "reason": "The pinned RT-VLM documentation enumerates 27 operations. Thor-local adds one exact request-id cancellation adapter while preserving the documented operation denominator in the capability identity."
+    },
+    "official_surface_extensions": {
+      "lvs": {
+        "official_operation_count": 17,
+        "implementation_operation_count": 18,
+        "thor_local_extensions": [
+          [
+            "GET",
+            "/files/{file_id}"
+          ]
+        ],
+        "reason": "The official LVS capability identity remains the advertised 17-operation surface. Thor-local adds exact single-file metadata retrieval without folding that route into the official denominator."
+      },
+      "alerts": {
+        "official_operation_count": 19,
+        "implementation_operation_count": 21,
+        "thor_local_extensions": [
+          [
+            "DELETE",
+            "/api/v1/verification/ondemand/{correlation_id}"
+          ],
+          [
+            "GET",
+            "/api/v1/verification/ondemand/{correlation_id}"
+          ]
+        ],
+        "reason": "The official Alerts capability identity remains the advertised 19-operation surface. Thor-local adds exact on-demand status and cancellation routes without folding them into the official denominator."
+      }
     },
     "vios_storage_route_collision": {
       "reason": "Swagger declares GET /v1/storage/file/{streamId} and GET /v1/storage/file/{sensorId}; these are one normalized runtime route."
@@ -120,7 +151,14 @@
       "kind": "rest",
       "extractor": "python_routes",
       "expected_manifest": "rt-vlm.json",
+      "official_operation_count": 27,
       "expected_operation_count": 28,
+      "thor_local_extensions": [
+        {
+          "method": "DELETE",
+          "path": "/v1/generate_captions/requests/{request_id}"
+        }
+      ],
       "substitutions": {
         "API_PREFIX": "/v1"
       },
@@ -174,7 +212,18 @@
       "kind": "rest",
       "extractor": "openapi_json",
       "expected_manifest": "alerts.json",
+      "official_operation_count": 19,
       "expected_operation_count": 21,
+      "thor_local_extensions": [
+        {
+          "method": "DELETE",
+          "path": "/api/v1/verification/ondemand/{correlation_id}"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/verification/ondemand/{correlation_id}"
+        }
+      ],
       "direct": {
         "port_env": "ALERT_BRIDGE_PORT",
         "default_port": 9080,
@@ -197,7 +246,14 @@
       "kind": "rest",
       "extractor": "python_routes",
       "expected_manifest": "lvs.json",
+      "official_operation_count": 17,
       "expected_operation_count": 18,
+      "thor_local_extensions": [
+        {
+          "method": "GET",
+          "path": "/files/{file_id}"
+        }
+      ],
       "substitutions": {
         "API_PREFIX": ""
       },

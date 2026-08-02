@@ -133,14 +133,14 @@
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/advertised-candidate-bindings-current-semantic-closure-successor/binding-overlay.json", "sha256": "6e73e3a8f3cd1b4af4e5f8190682d0f02d52929b5c6b8bcfc8d3c475316617c2"},
     {"path": "deploy/docker/thor-local/qualification/advertised-candidate-bindings-current-semantic-closure-successor/binding-overlay.schema.json", "sha256": "64a1fb1f77c06a5a6d9bf9d02bccd6efc683ef1219c36d83161b6751c0053bd5"},
-    {"path": "deploy/docker/thor-local/qualification/advertised-candidate-bindings-current-semantic-closure-successor/contract.json", "sha256": "90df1241d5a5d03f3633089f18d1f6f323f984d2ad016dcb7c423f35802db974"},
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.json", "sha256": "e271eae4bf347dc0038c052521093e20eceb83ab679e16f7a2453ca616e7e221"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-candidate-bindings-current-semantic-closure-successor/contract.json", "sha256": "474ecc11f17a09ece5a0c0f0cdc00742b3a8832662f847ed77c0894e0951efda"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.json", "sha256": "bbf849ae383150ae638ea1843d20141f967f8c4efd61eb04f2175060f70723c5"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/receipt.schema.json", "sha256": "0706fdeb365414e0d0c9159e76374a0faaa06b89abf5f1465094ac4830c41950"},
-    {"path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/contract.json", "sha256": "8bcda2119eafec6237ac4670e5e324d932dbf5a005d2df41988126246946406b"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/contract.json", "sha256": "b686a2020f2102a78a0bdde72dbcf734744a2992c079789466734b87ef52732c"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/receipt.schema.json", "sha256": "48f0bc331ccacd75f6a910aee05c2f680f9d87a2d861b31c276002b59476cf32"},
     {"path": "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor/contract.json", "sha256": "b016945d87e147409e93989f79e2793db742170b2f7bfd2fa5e48d326e2c5b23"},
     {"path": "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor/receipt.schema.json", "sha256": "c86fc892b9576917cd79c3343ab96f3ffb78be5f9b12e1ed6bfa747b5cded6f5"},
-    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "3ff83d2a6ea4cc3585ab9d2749046004d0f170f2fd3165d212b0643045104f2d"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "f26448c2e865df6c9b702a532b50826d27791967ee88d92071e8c02393434e0d"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/receipt.schema.json", "sha256": "25a4b87cf0b7aa77da38be0ef6e7ba88bcc5508eef4c76ccdc7e10b80d72483f"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/contract.json", "sha256": "6ed5f6fea66e96733e4cbd8091991b997d720a81274752985507c8acdcd2a960"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/receipt.schema.json", "sha256": "afdf507f1fe4da28ce7e3d43ab120e0fa5f21476f985db6490f6962417486032"},
@@ -157,11 +157,13 @@
     {"path": "deploy/docker/thor-local/qualification/host-prerequisite-evidence/result.schema.json", "sha256": "a187f6023a65f38216c92fb79f5788bbebc346e84a921125c677504a2b91c0aa"},
     {"path": "deploy/docker/thor-local/official-edge/contract.json", "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"},
     {"path": "deploy/docker/thor-local/official-edge/artifacts.lock.json", "sha256": "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"},
-    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/contract.json", "sha256": "046f1a9090127f6a2ca3c9f5b355b10f8a60c3498683bba758f8509374119744"},
-    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/executor.py", "sha256": "8e18b9d04f9535a3f6aee40758d739f5be5767f918e7f4f38beb949390856d79"},
-    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/manifest.schema.json", "sha256": "626e05b3cc4671f27cd2b2d48d2033e649f39358c175018670e1fbd2c727632a"},
-    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/receipt.schema.json", "sha256": "9d97049e63083edab28e2a7a924c3f7e06677f32a560a9610317bde5b3fed421"},
-    {"path": "deploy/docker/thor-local/agent-models/thor-requirements.json", "sha256": "b49b7dca397af888299d647f71868d9d26266973fd12b7e6142f9005f8680e3a"},
-    {"path": "deploy/docker/thor-local/agent-models/verify_thor_requirements.py", "sha256": "ad7cbf0d22639e0e4432196d4bba5b018bf6a9c273e062213f231ba0eef0c384"}
+    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/contract.json", "sha256": "50c627f2cdba661f744180fe4190cfc98b153d200845522c539b727904a9573f"},
+    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/contract.schema.json", "sha256": "207aab65cb37cd18fa56a98539222604d8f32287d3beceb82201a6bc70b10dc9"},
+    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/executor.py", "sha256": "653546a1d3943c09f24b0c6e5e2fad6506696867e9bd10a531d6e9374075825c"},
+    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/manifest.schema.json", "sha256": "a80b0c799b61a159c8799c6eb3eaa27c9eb24586aa7a3d070bce3a316c2c217a"},
+    {"path": "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor/receipt.schema.json", "sha256": "6bfada0a7636dd3a9902d3f9b5827db35d9b2d514fa71762f543614a7052af34"},
+    {"path": "deploy/docker/thor-local/agent-models/thor-requirements.json", "sha256": "a2ce1edcbe782bef22dbb6139c46591c377bd63ccf8cce78b27b4904b67fc885"},
+    {"path": "deploy/docker/thor-local/agent-models/verify_thor_requirements.py", "sha256": "4f8ab3f2b48ecf60f149378daf3a87653e36f9ef9c3cc9633c4c91c0bbe2f119"},
+    {"path": "deploy/docker/thor-local/agent-models/approved-runtime-receipt.json", "sha256": "c2bbedd094a3c4e43fcce796519881018e65c2e6c505150b967f2773e02c8fd4"}
   ]
 }

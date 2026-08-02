@@ -249,13 +249,13 @@
     {"path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-rebase-successor-v2/mapping.json", "sha256": "cb9bea95b4cfeab7c44441854e331a7093667d6b379fe0555692e5105ce4507f"},
     {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"},
     {"path": "deploy/docker/thor-local/qualification/semantic-executor-bindings-wave2-successor/execution-status-registry.json", "sha256": "6d39162690a6c7422828f21096515f3345aea7efd78a036e43760e3a35c8cb9f"},
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "6bb307d794a7097d7a9d498c0ccd0b7568721940331468390474a7da3473a4ff"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "088d0fcd6dfc0217cf67bfb3b252c8eadf168a268146417db110b71abeb117c1"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py", "sha256": "93d197d0242cd09fd5853551aac6a1fa061dd8de8a462d911cc356f2f00cfaf8"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "c65035f3932dfd540978803dc1b3b3b1afe091ce2b21a489abc9c57cda8f7858"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/contract.json", "sha256": "7fad91d1b858ecbbf5b6e36303241512ba9b387439f21b9cff1efe5f35ae6ffc"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/compiler.py", "sha256": "764c793923a8b216b010d2849063c493c6424dc07b8eef12028fdbe27587298c"},
-    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "3ff83d2a6ea4cc3585ab9d2749046004d0f170f2fd3165d212b0643045104f2d"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "f26448c2e865df6c9b702a532b50826d27791967ee88d92071e8c02393434e0d"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py", "sha256": "d193ddc9819d5db5d59b875000c217f45b3ce2b9d3eac0f7e16af57db7686e52"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs", "sha256": "6a8a7ee3dfa7ea55908056274a50d1d3983f4b58e0d85a1acb29b815bdc644aa"}
   ]

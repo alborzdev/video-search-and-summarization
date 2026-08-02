@@ -3571,16 +3571,17 @@
       "contract": {
         "auth": "bearer",
         "base_url": "http://<host>:8000",
-        "documented_operation_count": 27,
         "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
         "expected_manifest_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff",
-        "operation_count": 28,
+        "implementation_operation_count": 28,
+        "operation_count": 27,
         "prefix": "/v1",
-        "thor_local_extension": {
-          "method": "DELETE",
-          "path": "/v1/generate_captions/requests/{request_id}"
-        },
-        "thor_local_operation_count": 28
+        "thor_local_extensions": [
+          {
+            "method": "DELETE",
+            "path": "/v1/generate_captions/requests/{request_id}"
+          }
+        ]
       },
       "feature_id": "core-api-operation-contracts",
       "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval.",
@@ -3674,9 +3675,16 @@
         "conditional_prefix": "/v1",
         "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
         "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0",
+        "implementation_operation_count": 18,
         "mcp_base": "http://<host>:38112",
-        "operation_count": 18,
-        "rest_base": "http://<host>:38111"
+        "operation_count": 17,
+        "rest_base": "http://<host>:38111",
+        "thor_local_extensions": [
+          {
+            "method": "GET",
+            "path": "/files/{file_id}"
+          }
+        ]
       },
       "feature_id": "core-api-operation-contracts",
       "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval.",
@@ -3702,7 +3710,8 @@
         "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
         "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
         "gateway_auth": "optional",
-        "operation_count": 21,
+        "implementation_operation_count": 21,
+        "operation_count": 19,
         "prefix": "/api/v1",
         "semantic_surface": [
           "alerts",
@@ -3713,6 +3722,16 @@
           422,
           415,
           500
+        ],
+        "thor_local_extensions": [
+          {
+            "method": "DELETE",
+            "path": "/api/v1/verification/ondemand/{correlation_id}"
+          },
+          {
+            "method": "GET",
+            "path": "/api/v1/verification/ondemand/{correlation_id}"
+          }
         ],
         "wave3_acceptance": {
           "contributions": [
@@ -20095,7 +20114,7 @@
   ],
   "sources": [
     {
-      "claim_set_sha256": "4dd56cbf6453067e5d6515977fd681fdd51a1067823fd91710e777f778ec9de5",
+      "claim_set_sha256": "b016a98294bf2bdec940e42634395785b71840ca9cdaf4d8b8fecfc77a2aaad3",
       "id": "release-notes-3.2.1",
       "kind": "release_notes",
       "locator_policy": "Versioned HTML heading/table/line locator captured 2026-07-31.",
@@ -20207,7 +20226,7 @@
       "version": "3.2.1"
     },
     {
-      "claim_set_sha256": "14b50d33f2620d4338970abcca6b5e0a582ac8fc23ab171110ec95d2cee48417",
+      "claim_set_sha256": "970eeeb75e29d0c509ad81015e2a575b6ee0b0c2a0189fa3570bfb35be6070f6",
       "id": "rt-vlm-api-doc-3.2.1",
       "kind": "versioned_official_docs",
       "locator_policy": "Versioned HTML base URL, authentication, and API-category locator captured 2026-07-31.",
@@ -20231,7 +20250,7 @@
       "version": "3.2.1"
     },
     {
-      "claim_set_sha256": "330d42bbd7bd19c6f136c00ac97410b66476a771f13d451597ba5f85daee9e79",
+      "claim_set_sha256": "8e1734a8e730b85e8d1b605f3ec5043c579effc074b03bf7ee170dcdcc2e0d7d",
       "id": "lvs-api-doc-3.2.1",
       "kind": "versioned_official_docs",
       "locator_policy": "Versioned HTML REST/MCP base URL, version prefix, and authentication locator captured 2026-07-31.",
@@ -20247,7 +20266,7 @@
       "version": "3.2.1"
     },
     {
-      "claim_set_sha256": "ab5df280aec7dc38ae64c6873a5378e2104888f1fdbcc0f57bb7649dfeb8c83e",
+      "claim_set_sha256": "ef707e775022a65dc20c4a10b1648cfe48a7cb4fc115466b96e7e017d95fa059",
       "id": "alerts-api-doc-3.2.1",
       "kind": "versioned_official_docs",
       "locator_policy": "Versioned HTML base URL, submission scope, and authentication boundary locator captured 2026-07-31.",
@@ -20711,7 +20730,7 @@
       "version": "3.2.1"
     },
     {
-      "claim_set_sha256": "ffdabea5ad022b1ef87301860138ffe0c3e9532ef1304dfb9ab1bdca4ced4754",
+      "claim_set_sha256": "bff28d874a148a03d5bef14c32d7f9c208404b4144eea93d69a623a15a3925f2",
       "id": "doc.alerts",
       "kind": "versioned_official_docs",
       "locator_policy": "Wave 3 Systems system extraction captured 2026-07-31.",

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import importlib.util
 import json
@@ -14,8 +15,11 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
-from jsonschema import Draft202012Validator
-from jsonschema.exceptions import SchemaError, ValidationError
+from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
+from jsonschema.exceptions import (  # type: ignore[import-untyped]
+    SchemaError,
+    ValidationError,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -54,6 +58,16 @@ CONTRACT_IMAGE_KEYS = {"edge_vllm": "edge4b_vllm", "rt_vlm": "rt_vlm"}
 
 class ReadinessError(RuntimeError):
     """A source-lock, input, or inspection-policy violation."""
+
+
+def _captured_at_utc() -> str:
+    """Return the result's own hash-bound UTC capture time."""
+
+    return (
+        datetime.now(timezone.utc)
+        .isoformat(timespec="microseconds")
+        .replace("+00:00", "Z")
+    )
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -102,7 +116,9 @@ def validate_result(result: dict[str, Any]) -> None:
         Draft202012Validator.check_schema(schema)
         Draft202012Validator(schema).validate(result)
     except SchemaError as exc:
-        raise ReadinessError(f"checked-in result schema is invalid: {exc.message}") from exc
+        raise ReadinessError(
+            f"checked-in result schema is invalid: {exc.message}"
+        ) from exc
     except ValidationError as exc:
         location = ".".join(str(part) for part in exc.absolute_path) or "<root>"
         raise ReadinessError(
@@ -441,8 +457,8 @@ def inspect_cosmos_artifact(
     if cosmos_cache is None:
         return {
             "artifact_id": plan["identities"]["vlm"]["artifact_id"],
-            "path": null_value(),
-            "tree_summary": null_value(),
+            "path": None,
+            "tree_summary": None,
             "reviewed_remote_staging_metadata": plan[
                 "reviewed_remote_staging_metadata"
             ]["cosmos3_nano_bf16"],
@@ -468,12 +484,6 @@ def inspect_cosmos_artifact(
             else "missing_or_unreadable_exact_cache"
         ),
     }
-
-
-def null_value() -> None:
-    """Keep JSON null construction obvious without accepting magic strings."""
-
-    return None
 
 
 def _docker(args: list[str]) -> tuple[str, str]:
@@ -829,6 +839,7 @@ def build_plan_result(plan: dict[str, Any]) -> dict[str, Any]:
     return {
         "schema_version": 1,
         "plan_id": plan["plan_id"],
+        "captured_at_utc": _captured_at_utc(),
         "inspection_mode": "plan",
         "qualification_state": "plan_only",
         "runtime_qualification_performed": False,
@@ -1033,6 +1044,7 @@ def build_host_result(
     return {
         "schema_version": 1,
         "plan_id": plan["plan_id"],
+        "captured_at_utc": _captured_at_utc(),
         "inspection_mode": "read_only_host",
         "qualification_state": (
             "blocked_not_runtime_qualified"

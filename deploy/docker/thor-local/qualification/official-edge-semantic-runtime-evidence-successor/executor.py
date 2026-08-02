@@ -348,15 +348,9 @@ def _validate_prerequisite(
         or any(row.get("state") == "blocked" for row in receipt.get("blockers", []))
     ):
         raise CollectorError("invalid_prerequisite")
-    captured = _parse_time(entry["captured_at_utc"])
+    captured = _parse_time(receipt.get("captured_at_utc"))
     age = (now.astimezone(timezone.utc) - captured).total_seconds()
     if age < 0 or age > prereq["maximum_age_seconds"]:
-        raise CollectorError("stale_prerequisite")
-    try:
-        skew = abs(path.stat().st_mtime - captured.timestamp())
-    except OSError as exc:
-        raise CollectorError("invalid_prerequisite") from exc
-    if skew > prereq["maximum_capture_mtime_skew_seconds"]:
         raise CollectorError("stale_prerequisite")
     containers = receipt.get("containers", {})
     for name in prereq["required_running_containers"]:
@@ -562,6 +556,7 @@ def execute(
     positive = manifest["visual_oracle"]["positive_literal"]
     absent = manifest["visual_oracle"]["absent_literal"]
     semantics = contract["semantic_contract"]
+    challenge = semantics["llm_challenge_prefix"] + manifest["run_id"]
     llm_id = contract["canonical_models"]["llm"]["served_model_id"]
     vlm_id = contract["canonical_models"]["vlm"]["served_model_id"]
     data_url = (
@@ -587,7 +582,10 @@ def execute(
                         "messages": [
                             {
                                 "role": "user",
-                                "content": "Call the supplied function exactly once.",
+                                "content": (
+                                    "Call the supplied function exactly once with "
+                                    f"the value argument set to {challenge}."
+                                ),
                             }
                         ],
                         "tools": [
@@ -633,40 +631,63 @@ def execute(
             )
         )
         steps.append(("vlm", contract["canonical_models"]["vlm"]["models_path"], b""))
-        for literal, question in (
-            (positive, "Return only the exact visible oracle text."),
+        steps.append(
             (
-                absent,
-                "Return THOR_VISUAL_ABSENT only if the requested absent text is not visible.",
-            ),
-        ):
-            steps.append(
-                (
-                    "vlm",
-                    contract["canonical_models"]["vlm"]["semantic_path"],
-                    _json_body(
-                        {
-                            "model": vlm_id,
-                            "messages": [
-                                {
-                                    "role": "user",
-                                    "content": [
-                                        {
-                                            "type": "text",
-                                            "text": question + " Target: " + literal,
-                                        },
-                                        {
-                                            "type": "image_url",
-                                            "image_url": {"url": data_url},
-                                        },
-                                    ],
-                                }
-                            ],
-                        },
-                        owned_requests,
-                    ),
-                )
+                "vlm",
+                contract["canonical_models"]["vlm"]["semantic_path"],
+                _json_body(
+                    {
+                        "model": vlm_id,
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Return only the exact text visibly rendered in the image.",
+                                    },
+                                    {
+                                        "type": "image_url",
+                                        "image_url": {"url": data_url},
+                                    },
+                                ],
+                            }
+                        ],
+                    },
+                    owned_requests,
+                ),
             )
+        )
+        steps.append(
+            (
+                "vlm",
+                contract["canonical_models"]["vlm"]["semantic_path"],
+                _json_body(
+                    {
+                        "model": vlm_id,
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": (
+                                            "Return THOR_VISUAL_ABSENT only if this "
+                                            f"text is not visible: {absent}"
+                                        ),
+                                    },
+                                    {
+                                        "type": "image_url",
+                                        "image_url": {"url": data_url},
+                                    },
+                                ],
+                            }
+                        ],
+                    },
+                    owned_requests,
+                ),
+            )
+        )
         steps.append(
             (
                 "agent",
@@ -748,7 +769,7 @@ def execute(
                         raise CollectorError("invalid_response") from exc
                     if function.get("name") != semantics[
                         "llm_tool_name"
-                    ] or arguments != {"value": semantics["llm_positive_argument"]}:
+                    ] or arguments != {"value": challenge}:
                         raise CollectorError("invalid_response")
                     assertions = ["exact-tool-name", "exact-tool-arguments"]
                 elif observation_id == "llm-tool-negative":
@@ -820,17 +841,19 @@ def execute(
         "warehouse_sample_bundle": "excluded",
         "collector_locks": {
             "contract_sha256": _sha256_file(CONTRACT_PATH),
+            "contract_schema_sha256": _sha256_file(CONTRACT_SCHEMA_PATH),
             "executor_sha256": _sha256_file(Path(__file__).resolve()),
             "manifest_schema_sha256": _sha256_file(MANIFEST_SCHEMA_PATH),
             "receipt_schema_sha256": _sha256_file(RECEIPT_SCHEMA_PATH),
         },
-        "identity": identity.evidence(),
+        "identity": identity.evidence()
+        | {"llm_tool_challenge_sha256": _sha256_bytes(challenge.encode())},
         "prerequisite": {
             "receipt_sha256": _sha256_bytes(prereq_raw),
             "receipt_path_sha256": _sha256_bytes(
                 str(Path(manifest["prerequisite"]["receipt_path"]).resolve()).encode()
             ),
-            "captured_at_utc": manifest["prerequisite"]["captured_at_utc"],
+            "captured_at_utc": prereq["captured_at_utc"],
             "age_seconds": age,
             "qualification_state": prereq["qualification_state"],
             "source_projection_sha256": common.digest_value(prereq["source_locks"]),
@@ -897,6 +920,7 @@ def execute(
     validate_receipt_document(receipt)
     forbidden_values = [
         authorization_token,
+        challenge,
         str(media_path),
         str(Path(manifest["prerequisite"]["receipt_path"])),
         data_url,
@@ -962,6 +986,14 @@ def validate_receipt_document(receipt: dict[str, Any]) -> None:
         for row in receipt["observations"]
     ] != expected_observations:
         raise CollectorError("invalid_receipt")
+    expected_challenge = (
+        contract["semantic_contract"]["llm_challenge_prefix"]
+        + receipt["identity"]["run_id"]
+    )
+    if receipt["identity"]["llm_tool_challenge_sha256"] != _sha256_bytes(
+        expected_challenge.encode()
+    ):
+        raise CollectorError("invalid_receipt")
     expected_models = contract["canonical_models"]
     artifact_lock_sha256 = next(
         row["sha256"]
@@ -997,6 +1029,7 @@ def validate_receipt_document(receipt: dict[str, Any]) -> None:
     locks = receipt["collector_locks"]
     expected_locks = {
         "contract_sha256": _sha256_file(CONTRACT_PATH),
+        "contract_schema_sha256": _sha256_file(CONTRACT_SCHEMA_PATH),
         "executor_sha256": _sha256_file(Path(__file__).resolve()),
         "manifest_schema_sha256": _sha256_file(MANIFEST_SCHEMA_PATH),
         "receipt_schema_sha256": _sha256_file(RECEIPT_SCHEMA_PATH),

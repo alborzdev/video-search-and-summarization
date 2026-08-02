@@ -77,7 +77,7 @@
   "promotion_eligible": false,
   "warehouse_sample_bundle": "excluded",
   "source_locks": [
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "6bb307d794a7097d7a9d498c0ccd0b7568721940331468390474a7da3473a4ff"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "088d0fcd6dfc0217cf67bfb3b252c8eadf168a268146417db110b71abeb117c1"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py", "sha256": "93d197d0242cd09fd5853551aac6a1fa061dd8de8a462d911cc356f2f00cfaf8"},
     {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"},
     {"path": "deploy/docker/thor-local/compose.yml", "sha256": "93df3a27908ef6bd28b81c30c1525746a3eb5000e700d3bce4d31be84adafce9"},

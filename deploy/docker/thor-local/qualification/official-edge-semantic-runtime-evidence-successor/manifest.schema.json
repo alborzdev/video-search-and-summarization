@@ -28,11 +28,10 @@
     "prerequisite": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["receipt_path", "receipt_sha256", "captured_at_utc"],
+      "required": ["receipt_path", "receipt_sha256"],
       "properties": {
         "receipt_path": {"type": "string", "minLength": 1, "maxLength": 4096},
-        "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "captured_at_utc": {"type": "string", "format": "date-time"}
+        "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
       }
     },
     "origins": {

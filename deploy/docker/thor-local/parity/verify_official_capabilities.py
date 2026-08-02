@@ -23,7 +23,9 @@ REPO_ROOT = SCRIPT_DIR.parents[3]
 LEDGER = SCRIPT_DIR / "official-capabilities.json"
 SCHEMA = SCRIPT_DIR / "official-capabilities.schema.json"
 MANIFEST = SCRIPT_DIR / "manifest.json"
-ACCEPTANCE = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+ACCEPTANCE = (
+    REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+)
 ORACLES = SCRIPT_DIR / "capability-oracles.json"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
@@ -31,24 +33,15 @@ CPU_MULTIMEDIA_CAPABILITY_ID = (
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
 )
 CPU_MULTIMEDIA_SOURCE_CONTROLS = {
-    "services/vios/src/framework/media/media_utils/gst_utils.cpp":
-        "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9",
-    "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp":
-        "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787",
-    "services/vios/src/framework/utilities/config.cpp":
-        "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92",
-    "services/vios/src/framework/platform_specific/nvhwdetection.h":
-        "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0",
-    "deploy/docker/thor-local/vios/vst_config.json":
-        "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399",
-    "deploy/docker/thor-local/audio/codec-bundle.lock.json":
-        "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78",
-    "deploy/docker/thor-local/Dockerfile.vios-streamprocessing":
-        "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285",
-    "deploy/docker/thor-local/Dockerfile.vios-nvstreamer":
-        "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0",
-    "deploy/docker/thor-local/vios-codecs/vios_media.py":
-        "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b",
+    "services/vios/src/framework/media/media_utils/gst_utils.cpp": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9",
+    "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787",
+    "services/vios/src/framework/utilities/config.cpp": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92",
+    "services/vios/src/framework/platform_specific/nvhwdetection.h": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0",
+    "deploy/docker/thor-local/vios/vst_config.json": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399",
+    "deploy/docker/thor-local/audio/codec-bundle.lock.json": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78",
+    "deploy/docker/thor-local/Dockerfile.vios-streamprocessing": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285",
+    "deploy/docker/thor-local/Dockerfile.vios-nvstreamer": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0",
+    "deploy/docker/thor-local/vios-codecs/vios_media.py": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b",
 }
 
 
@@ -97,7 +90,9 @@ def _resolve_repo_file(
         for part in path.parts:
             candidate /= part
             if candidate.is_symlink():
-                raise CapabilityContractError(f"{label}: repository path contains a symlink")
+                raise CapabilityContractError(
+                    f"{label}: repository path contains a symlink"
+                )
         resolved = candidate.resolve(strict=True)
         resolved.relative_to(resolved_root)
     except CapabilityContractError:
@@ -105,7 +100,9 @@ def _resolve_repo_file(
     except (OSError, ValueError) as exc:
         raise CapabilityContractError(f"{label}: repository path is missing") from exc
     if not resolved.is_file():
-        raise CapabilityContractError(f"{label}: repository path must be a regular file")
+        raise CapabilityContractError(
+            f"{label}: repository path must be a regular file"
+        )
     return resolved
 
 
@@ -140,7 +137,9 @@ def _aggregate_family_status(capabilities: list[dict[str, Any]]) -> dict[str, st
     thor_state = (
         "external_optional"
         if acceptance_class == "external_optional"
-        else next(iter(thor_states)) if len(thor_states) == 1 else "partial"
+        else next(iter(thor_states))
+        if len(thor_states) == 1
+        else "partial"
     )
     runtime_states = {item["runtime_state"] for item in capabilities}
     runtime_state = (
@@ -226,8 +225,7 @@ def _validate_cpu_multimedia_contract(
         "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
         "architecture": "arm64",
         "package_count": 59,
-        "package_set_sha256":
-            "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f",
+        "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f",
     }
     expected_derivatives = {
         "runtime_network_install": "disabled",
@@ -245,9 +243,7 @@ def _validate_cpu_multimedia_contract(
         or bundle != expected_bundle
         or derivatives != expected_derivatives
     ):
-        raise CapabilityContractError(
-            f"{capability_id}: exact CPU path contract drift"
-        )
+        raise CapabilityContractError(f"{capability_id}: exact CPU path contract drift")
 
     source_controls = contract.get("source_controls")
     if not isinstance(source_controls, list):
@@ -276,7 +272,9 @@ def _validate_cpu_multimedia_contract(
             required_prefix=required_prefix,
         )
         if hashlib.sha256(resolved.read_bytes()).hexdigest() != expected_digest:
-            raise CapabilityContractError(f"{capability_id}: source control digest drift")
+            raise CapabilityContractError(
+                f"{capability_id}: source control digest drift"
+            )
         resolved_controls[relative] = resolved
 
     config_path = "deploy/docker/thor-local/vios/vst_config.json"
@@ -288,24 +286,42 @@ def _validate_cpu_multimedia_contract(
     ):
         raise CapabilityContractError(f"{capability_id}: default CPU selector drift")
     lock = _load(resolved_controls[bundle["lock_path"]])
-    if any(lock.get(key) != bundle[key] for key in (
-        "architecture", "package_count", "package_set_sha256"
-    )):
+    if any(
+        lock.get(key) != bundle[key]
+        for key in ("architecture", "package_count", "package_set_sha256")
+    ):
         raise CapabilityContractError(f"{capability_id}: offline bundle identity drift")
 
     required_fragments = {
-        "services/vios/src/framework/media/media_utils/gst_utils.cpp":
-            ["x264enc", "x265enc", "h264parse", "h265parse"],
-        "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp":
-            [
-                "m_useNvV4l2Dec", "m_useNvV4l2Enc", "nvv4l2decoder",
-                "nvv4l2h264enc", "nvv4l2h265enc", "avdec_h264", "avdec_h265",
-                "x264enc", "x265enc", "avenc_aac",
-            ],
-        "services/vios/src/framework/utilities/config.cpp":
-            ["use_software_path", "use_software_encoder", "USE_SOFTWARE_PATH"],
-        "services/vios/src/framework/platform_specific/nvhwdetection.h":
-            ["use_software_path", "use_software_encoder", "m_useNvV4l2Dec", "m_useNvV4l2Enc"],
+        "services/vios/src/framework/media/media_utils/gst_utils.cpp": [
+            "x264enc",
+            "x265enc",
+            "h264parse",
+            "h265parse",
+        ],
+        "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp": [
+            "m_useNvV4l2Dec",
+            "m_useNvV4l2Enc",
+            "nvv4l2decoder",
+            "nvv4l2h264enc",
+            "nvv4l2h265enc",
+            "avdec_h264",
+            "avdec_h265",
+            "x264enc",
+            "x265enc",
+            "avenc_aac",
+        ],
+        "services/vios/src/framework/utilities/config.cpp": [
+            "use_software_path",
+            "use_software_encoder",
+            "USE_SOFTWARE_PATH",
+        ],
+        "services/vios/src/framework/platform_specific/nvhwdetection.h": [
+            "use_software_path",
+            "use_software_encoder",
+            "m_useNvV4l2Dec",
+            "m_useNvV4l2Enc",
+        ],
     }
     for relative, fragments in required_fragments.items():
         text = resolved_controls[relative].read_text(encoding="utf-8")
@@ -314,8 +330,7 @@ def _validate_cpu_multimedia_contract(
     for relative in derivatives["dockerfiles"]:
         text = resolved_controls[relative].read_text(encoding="utf-8")
         if (
-            'com.nvidia.vss.thor.vios-runtime-network-install="disabled"'
-            not in text
+            'com.nvidia.vss.thor.vios-runtime-network-install="disabled"' not in text
             or 'ENTRYPOINT ["/usr/local/bin/vios-offline-entrypoint"]' not in text
         ):
             raise CapabilityContractError(
@@ -331,7 +346,9 @@ def _validate_bound_runtime_evidence(
 ) -> None:
     capability_id = capability["id"]
     if oracle.get("capability_id") != capability_id:
-        raise CapabilityContractError(f"{capability_id}: capability oracle is not bound")
+        raise CapabilityContractError(
+            f"{capability_id}: capability oracle is not bound"
+        )
     if oracle.get("acceptance_readiness", {}).get("classification") != "executor_ready":
         raise CapabilityContractError(
             f"{capability_id}: planning_index_only oracle cannot advance runtime state"
@@ -354,11 +371,16 @@ def _validate_bound_runtime_evidence(
     if binding != expected_binding:
         raise CapabilityContractError(f"{capability_id}: oracle ledger binding differs")
     materialization = oracle.get("fixture", {}).get("materialization", {})
-    if not all(
-        isinstance(materialization.get(key), str) and materialization[key]
-        for key in ("path", "generator", "sha256")
-    ) or re.fullmatch(r"[0-9a-f]{64}", materialization["sha256"]) is None:
-        raise CapabilityContractError(f"{capability_id}: executor-ready fixture is incomplete")
+    if (
+        not all(
+            isinstance(materialization.get(key), str) and materialization[key]
+            for key in ("path", "generator", "sha256")
+        )
+        or re.fullmatch(r"[0-9a-f]{64}", materialization["sha256"]) is None
+    ):
+        raise CapabilityContractError(
+            f"{capability_id}: executor-ready fixture is incomplete"
+        )
     if (
         not oracle.get("execution_bounds", {}).get("executor")
         or not oracle.get("execution_bounds", {}).get("collectors")
@@ -385,7 +407,9 @@ def _validate_bound_runtime_evidence(
     if protocol_binding is not None:
         expected_keys.add("protocol_case")
     if set(evidence) != expected_keys:
-        raise CapabilityContractError(f"{capability_id}: runtime evidence fields are not exact")
+        raise CapabilityContractError(
+            f"{capability_id}: runtime evidence fields are not exact"
+        )
     expected_target = {
         "product_version": target["product_version"],
         "ga_commit": target["ga_commit"],
@@ -468,7 +492,9 @@ def _validate_bound_runtime_evidence(
             "observed",
             "result",
         }:
-            raise CapabilityContractError(f"{capability_id}: malformed assertion evidence")
+            raise CapabilityContractError(
+                f"{capability_id}: malformed assertion evidence"
+            )
         if (
             observed["id"] != required["id"]
             or observed["observation"] != required["observation"]
@@ -483,8 +509,7 @@ def _validate_bound_runtime_evidence(
             required["operator"] == "equals"
             and observed["observed"] != required["expected"]
         ) or (
-            required["operator"] == "recorded_pass"
-            and observed["observed"] is not True
+            required["operator"] == "recorded_pass" and observed["observed"] is not True
         ):
             raise CapabilityContractError(
                 f"{capability_id}: assertion observed value does not satisfy the oracle"
@@ -533,7 +558,9 @@ def validate(
         # integrity of the repository's current oracle plan.
         oracle_contract.validate(oracle_plan, oracle_contract._load(LEDGER))
     except oracle_contract.OracleContractError as exc:
-        raise CapabilityContractError(f"capability oracle contract invalid: {exc}") from exc
+        raise CapabilityContractError(
+            f"capability oracle contract invalid: {exc}"
+        ) from exc
     oracle_by_capability = {
         item.get("capability_id"): item
         for item in oracle_plan.get("oracles", [])
@@ -545,54 +572,87 @@ def validate(
     try:
         Draft202012Validator.check_schema(schema)
     except SchemaError as exc:
-        raise CapabilityContractError(f"invalid official capability schema: {exc.message}") from exc
+        raise CapabilityContractError(
+            f"invalid official capability schema: {exc.message}"
+        ) from exc
     schema_errors = sorted(
-        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(ledger),
+        Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(
+            ledger
+        ),
         key=lambda error: tuple(str(item) for item in error.absolute_path),
     )
     if schema_errors:
         error = schema_errors[0]
         path = ".".join(str(item) for item in error.absolute_path) or "<root>"
-        raise CapabilityContractError(f"ledger schema violation at {path}: {error.message}")
+        raise CapabilityContractError(
+            f"ledger schema violation at {path}: {error.message}"
+        )
     if ledger.get("schema_version") != 1:
         raise CapabilityContractError("ledger schema_version must be 1")
 
     target = ledger.get("target")
     if not isinstance(target, dict) or target.get("product_version") != "3.2.1":
         raise CapabilityContractError("target must be VSS 3.2.1")
-    if not all(HEX40.fullmatch(str(target.get(key, ""))) for key in ("ga_commit", "main_commit")):
-        raise CapabilityContractError("target commits must be lowercase 40-character SHAs")
+    if not all(
+        HEX40.fullmatch(str(target.get(key, "")))
+        for key in ("ga_commit", "main_commit")
+    ):
+        raise CapabilityContractError(
+            "target commits must be lowercase 40-character SHAs"
+        )
     upstream = manifest.get("upstream", {})
-    if target["ga_commit"] != upstream.get("latest_ga_commit") or target["main_commit"] != upstream.get("target_commit"):
+    if target["ga_commit"] != upstream.get("latest_ga_commit") or target[
+        "main_commit"
+    ] != upstream.get("target_commit"):
         raise CapabilityContractError("ledger target differs from parity manifest")
 
     sources = ledger.get("sources")
     if not isinstance(sources, list) or not sources:
         raise CapabilityContractError("sources must be a non-empty list")
-    source_ids = _ids([item.get("id") for item in sources if isinstance(item, dict)], "sources")
+    source_ids = _ids(
+        [item.get("id") for item in sources if isinstance(item, dict)], "sources"
+    )
     if len(source_ids) != len(sources):
         raise CapabilityContractError("every source must be an object with an id")
     for source in sources:
-        if source.get("kind") not in {"versioned_official_docs", "release_notes", "tagged_repository", "main_repository"}:
+        if source.get("kind") not in {
+            "versioned_official_docs",
+            "release_notes",
+            "tagged_repository",
+            "main_repository",
+        }:
             raise CapabilityContractError(f"{source['id']}: invalid source kind")
-        if not all(isinstance(source.get(key), str) and source[key] for key in ("uri", "version", "locator_policy")):
+        if not all(
+            isinstance(source.get(key), str) and source[key]
+            for key in ("uri", "version", "locator_policy")
+        ):
             raise CapabilityContractError(f"{source['id']}: incomplete source record")
-        if re.fullmatch(r"[0-9a-f]{64}", str(source.get("claim_set_sha256", ""))) is None:
+        if (
+            re.fullmatch(r"[0-9a-f]{64}", str(source.get("claim_set_sha256", "")))
+            is None
+        ):
             raise CapabilityContractError(f"{source['id']}: invalid claim-set hash")
 
     features = manifest.get("features")
     if not isinstance(features, list):
         raise CapabilityContractError("manifest features must be a list")
-    feature_by_id = {item.get("id"): item for item in features if isinstance(item, dict)}
+    feature_by_id = {
+        item.get("id"): item for item in features if isinstance(item, dict)
+    }
     scenario_values = acceptance.get("scenarios")
     if not isinstance(scenario_values, list):
         raise CapabilityContractError("acceptance scenarios must be a list")
-    scenario_ids = {item.get("id") for item in scenario_values if isinstance(item, dict)}
+    scenario_ids = {
+        item.get("id") for item in scenario_values if isinstance(item, dict)
+    }
 
     capabilities = ledger.get("capabilities")
     if not isinstance(capabilities, list) or not capabilities:
         raise CapabilityContractError("capabilities must be a non-empty list")
-    capability_ids = _ids([item.get("id") for item in capabilities if isinstance(item, dict)], "capabilities")
+    capability_ids = _ids(
+        [item.get("id") for item in capabilities if isinstance(item, dict)],
+        "capabilities",
+    )
     if len(capability_ids) != len(capabilities):
         raise CapabilityContractError("every capability must be an object with an id")
     allowed_classes = set(manifest["status_contract"]["acceptance_class"])
@@ -604,24 +664,48 @@ def validate(
         feature_id = capability.get("feature_id")
         feature = feature_by_id.get(feature_id)
         if feature is None:
-            raise CapabilityContractError(f"{capability_id}: unknown feature_id {feature_id!r}")
-        if capability.get("acceptance_class") not in allowed_classes or capability.get("thor_state") not in allowed_thor or capability.get("runtime_state") not in allowed_runtime:
+            raise CapabilityContractError(
+                f"{capability_id}: unknown feature_id {feature_id!r}"
+            )
+        if (
+            capability.get("acceptance_class") not in allowed_classes
+            or capability.get("thor_state") not in allowed_thor
+            or capability.get("runtime_state") not in allowed_runtime
+        ):
             raise CapabilityContractError(f"{capability_id}: invalid status")
         if not isinstance(capability.get("title"), str) or not capability["title"]:
             raise CapabilityContractError(f"{capability_id}: title is required")
         if capability["title"] not in feature.get("advertised", []):
-            raise CapabilityContractError(f"{capability_id}: title is not an exact manifest capability")
+            raise CapabilityContractError(
+                f"{capability_id}: title is not an exact manifest capability"
+            )
         claims = capability.get("source_claims")
         if not isinstance(claims, list) or not claims:
-            raise CapabilityContractError(f"{capability_id}: source_claims are required")
+            raise CapabilityContractError(
+                f"{capability_id}: source_claims are required"
+            )
         for claim in claims:
-            if not isinstance(claim, dict) or claim.get("source_id") not in source_ids or not isinstance(claim.get("locator"), str) or not claim["locator"]:
+            if (
+                not isinstance(claim, dict)
+                or claim.get("source_id") not in source_ids
+                or not isinstance(claim.get("locator"), str)
+                or not claim["locator"]
+            ):
                 raise CapabilityContractError(f"{capability_id}: invalid source claim")
-        linked_scenarios = _ids(capability.get("scenario_ids"), f"{capability_id}.scenario_ids")
+        linked_scenarios = _ids(
+            capability.get("scenario_ids"), f"{capability_id}.scenario_ids"
+        )
         if not set(linked_scenarios) <= scenario_ids:
-            raise CapabilityContractError(f"{capability_id}: unknown acceptance scenario")
-        if not isinstance(capability.get("contract"), dict) or not capability["contract"]:
-            raise CapabilityContractError(f"{capability_id}: exact contract is required")
+            raise CapabilityContractError(
+                f"{capability_id}: unknown acceptance scenario"
+            )
+        if (
+            not isinstance(capability.get("contract"), dict)
+            or not capability["contract"]
+        ):
+            raise CapabilityContractError(
+                f"{capability_id}: exact contract is required"
+            )
         contract = capability["contract"]
         if capability_id == CPU_MULTIMEDIA_CAPABILITY_ID:
             _validate_cpu_multimedia_contract(capability, repo_root)
@@ -643,21 +727,58 @@ def validate(
                     f"{capability_id}: expected operation manifest digest differs"
                 )
             operation_manifest = _load(expected_manifest)
-            if "operation_count" in contract and operation_manifest.get(
-                "normalized_unique_operation_count"
-            ) != contract["operation_count"]:
+            implementation_count = contract.get(
+                "implementation_operation_count", contract.get("operation_count")
+            )
+            if (
+                implementation_count is not None
+                and operation_manifest.get("normalized_unique_operation_count")
+                != implementation_count
+            ):
                 raise CapabilityContractError(
                     f"{capability_id}: expected operation count differs"
                 )
-            if "tool_count" in contract and operation_manifest.get("tool_count") != contract[
-                "tool_count"
-            ]:
+            extensions = contract.get("thor_local_extensions", [])
+            if extensions:
+                if not isinstance(extensions, list) or any(
+                    not isinstance(item, dict)
+                    or set(item) != {"method", "path"}
+                    or not isinstance(item["method"], str)
+                    or not isinstance(item["path"], str)
+                    for item in extensions
+                ):
+                    raise CapabilityContractError(
+                        f"{capability_id}: malformed Thor-local extension set"
+                    )
+                extension_routes = {
+                    (item["method"], item["path"]) for item in extensions
+                }
+                manifest_routes = {
+                    (item["method"], item["path"])
+                    for item in operation_manifest.get("operations", [])
+                }
+                if (
+                    len(extension_routes) != len(extensions)
+                    or not extension_routes <= manifest_routes
+                    or type(contract.get("operation_count")) is not int
+                    or implementation_count
+                    != contract["operation_count"] + len(extensions)
+                ):
+                    raise CapabilityContractError(
+                        f"{capability_id}: official and Thor-local operation split differs"
+                    )
+            if (
+                "tool_count" in contract
+                and operation_manifest.get("tool_count") != contract["tool_count"]
+            ):
                 raise CapabilityContractError(
                     f"{capability_id}: expected MCP tool count differs"
                 )
-            if "repository_tool_count" in contract and operation_manifest.get(
-                "tool_count"
-            ) != contract["repository_tool_count"]:
+            if (
+                "repository_tool_count" in contract
+                and operation_manifest.get("tool_count")
+                != contract["repository_tool_count"]
+            ):
                 raise CapabilityContractError(
                     f"{capability_id}: repository MCP tool count differs"
                 )
@@ -676,7 +797,11 @@ def validate(
                     )
                 evidence_path = reference.get("path")
                 expected_digest = reference.get("sha256")
-                path = Path(evidence_path) if isinstance(evidence_path, str) else Path("..")
+                path = (
+                    Path(evidence_path)
+                    if isinstance(evidence_path, str)
+                    else Path("..")
+                )
                 if (
                     not isinstance(evidence_path, str)
                     or path.is_absolute()
@@ -743,8 +868,7 @@ def validate(
                         }
                     )
         canonical = sorted(
-            json.dumps(item, sort_keys=True, separators=(",", ":"))
-            for item in claims
+            json.dumps(item, sort_keys=True, separators=(",", ":")) for item in claims
         )
         if not claims:
             raise CapabilityContractError(
@@ -762,7 +886,9 @@ def validate(
         declared = feature.get("official_capability_ids")
         declared_ids = set(_ids(declared, f"{feature_id}.official_capability_ids"))
         if declared_ids != expected:
-            raise CapabilityContractError(f"{feature_id}: official capability cross-link drift")
+            raise CapabilityContractError(
+                f"{feature_id}: official capability cross-link drift"
+            )
         group = [item for item in capabilities if item["feature_id"] == feature_id]
         expected_status = _aggregate_family_status(group)
         expected_class = expected_status["acceptance_class"]
@@ -782,23 +908,38 @@ def validate(
             )
         manifest_linked.update(declared_ids)
     if manifest_linked != set(capability_ids):
-        raise CapabilityContractError("not every official capability is linked from the manifest")
+        raise CapabilityContractError(
+            "not every official capability is linked from the manifest"
+        )
 
     coverage = acceptance.get("coverage", {}).get("features")
     if not isinstance(coverage, list):
         raise CapabilityContractError("acceptance feature coverage must be a list")
-    covered = {item.get("feature_id"): item for item in coverage if isinstance(item, dict)}
+    covered = {
+        item.get("feature_id"): item for item in coverage if isinstance(item, dict)
+    }
     for feature_id in by_feature:
         record = covered.get(feature_id)
         if record is None or not set(record.get("scenario_ids", [])) >= set().union(
-            *(set(capability["scenario_ids"]) for capability in capabilities if capability["feature_id"] == feature_id)
+            *(
+                set(capability["scenario_ids"])
+                for capability in capabilities
+                if capability["feature_id"] == feature_id
+            )
         ):
-            raise CapabilityContractError(f"{feature_id}: acceptance cross-link is incomplete")
+            raise CapabilityContractError(
+                f"{feature_id}: acceptance cross-link is incomplete"
+            )
 
     discrepancies = ledger.get("source_discrepancies")
     if not isinstance(discrepancies, list) or not discrepancies:
-        raise CapabilityContractError("at least one source discrepancy must remain explicit")
-    discrepancy_ids = _ids([item.get("id") for item in discrepancies if isinstance(item, dict)], "source_discrepancies")
+        raise CapabilityContractError(
+            "at least one source discrepancy must remain explicit"
+        )
+    discrepancy_ids = _ids(
+        [item.get("id") for item in discrepancies if isinstance(item, dict)],
+        "source_discrepancies",
+    )
     if len(discrepancy_ids) != len(discrepancies):
         raise CapabilityContractError("invalid source discrepancy record")
     for discrepancy in discrepancies:
@@ -819,14 +960,16 @@ def validate(
             (semantics is None and len(observations) < 2)
             or (
                 semantics == "single_source_record"
-                and (
-                    len(observations) != 1
-                    or len(discrepancy_source_ids) != 1
-                )
+                and (len(observations) != 1 or len(discrepancy_source_ids) != 1)
             )
             or (semantics == "cross_source_discrepancy" and len(observations) < 2)
-            or semantics not in {None, "single_source_record", "cross_source_discrepancy"}
-            or (semantics is not None and category not in {"boundary", "discrepancy", "scoped_default", "known_limitation"})
+            or semantics
+            not in {None, "single_source_record", "cross_source_discrepancy"}
+            or (
+                semantics is not None
+                and category
+                not in {"boundary", "discrepancy", "scoped_default", "known_limitation"}
+            )
         )
         generic_values = {
             "official source boundary",
@@ -843,7 +986,10 @@ def validate(
         invalid_candidate_observations = candidate_observations is not None and (
             not isinstance(candidate_observations, list)
             or not candidate_observations
-            or any(not isinstance(value, str) or not value for value in candidate_observations)
+            or any(
+                not isinstance(value, str) or not value
+                for value in candidate_observations
+            )
         )
         if (
             not discrepancy_source_ids

@@ -37,11 +37,11 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/readiness.py",
-      "sha256": "867b16580472e1f9f88de40defb3d5b2658075a07565cf9bfb19e09f55b127a4"
+      "sha256": "ce850cd3bc5b2044d6522bd46b646ae69517b4db70b061b0fc080d3b287525b1"
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",
-      "sha256": "9afc561e582353998e162a7f7ae48c230db1d9480a2623607c1be3b38525f62d"
+      "sha256": "f0e47d9aa03f5a016ab1d13cfb813f0ad7cbefb4b6b1badc1702f7389ebf5e8a"
     },
     {
       "path": "skills/vss-deploy-profile/SKILL.md",

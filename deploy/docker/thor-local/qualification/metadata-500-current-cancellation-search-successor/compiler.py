@@ -29,11 +29,11 @@ BASE = "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebas
 SOURCES: dict[str, tuple[str, str]] = {
     "current_ledger": (
         "deploy/docker/thor-local/parity/official-capabilities.json",
-        "fb80c2a96cc0951fc770b59a77c96d303fcf7c359e27201e16b1923e1a54a371",
+        "8639e39c636a2bd1682cf5b80063bb6d4a0545274e8f247c3cce580f30cef0bd",
     ),
     "current_oracles": (
         "deploy/docker/thor-local/parity/capability-oracles.json",
-        "4cfaa1996b6a46a1888035af773f444e505324c9edada2fee387c0399d9788ec",
+        "03da833f7a663fb170bedc9e7ebcc2e3caa8d8978beb9aaa2818526032577b7a",
     ),
     "base_ledger": (
         f"{BASE}/post-state-official-capabilities.json",
@@ -45,7 +45,7 @@ SOURCES: dict[str, tuple[str, str]] = {
     ),
     "manifest": (
         f"{BASE}/post-state-manifest.json",
-        "c71f75246fc1e4cbc388f93849d27c3b7dc7edf2d0a516fb3fa13f6d412a4a93",
+        "f0efb35c49b2f6b5e23692203aa0e5e6588046927f35ab2725250e27a0d1faad",
     ),
     "acceptance": (
         f"{BASE}/post-state-acceptance-inventory.json",
@@ -63,21 +63,21 @@ SOURCES: dict[str, tuple[str, str]] = {
 
 # Filled only after deterministic outputs and atomic selector descriptors exist.
 EXPECTED_OUTPUTS = {
-    "ledger": "52d4c6f7f8c864938a9dead5aca6732e2b1f9c4ee9cc5836692d8af5e958078b",
-    "oracles": "79821885825b63764349272d6a89871faa3e2d5a3c9d437d941a7498182b6ad2",
+    "ledger": "bb03840d8ec05339758a9788f406d78b5c412eb1d56cdc90028bea5ad887d6a2",
+    "oracles": "355679322116451972cb2366a61bfba23a72762863796aea84c93a7bb412db14",
 }
 ATOMIC = {
     "selector": (
         "deploy/docker/thor-local/parity/metadata_sets/selector.json",
-        "410e8de75b4a0aab4f5fc98c47ec81e404e9b58baae13c6dc5d30baed316ede1",
+        "2f3b5415b7a0ba082406af0ecdfdd03a53b74a91ae39e55262577d1f19241ddb",
     ),
     "descriptor_289": (
         "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-289.json",
-        "9d4712c4e6add2c795baa9db152dd54afe7233f7ea479bb27de57013bd91943a",
+        "a566d9f1d710964519b02cc9bc42a0bc0614fa8a40a8ec564a54b3e1fa8f3405",
     ),
     "descriptor_500": (
         "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-cancellation-search-500.json",
-        "ae2942b2a2991e322a0f4bf76a8e7a1567c44e071a5ee5eb004e7df1bc2319fe",
+        "6dbe22f169f01a0e9866b7f24d0a9a8612774ff2e78eb51cac411aa354653f46",
     ),
 }
 HISTORICAL_LINEAGE = {

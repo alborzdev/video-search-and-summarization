@@ -58,12 +58,16 @@ MODEL_SEMANTIC_ROOT = (
     "official-edge-semantic-runtime-evidence-successor/"
 )
 MODEL_SEMANTIC_CONTRACT_PATH = MODEL_SEMANTIC_ROOT + "contract.json"
+MODEL_SEMANTIC_CONTRACT_SCHEMA_PATH = MODEL_SEMANTIC_ROOT + "contract.schema.json"
 MODEL_SEMANTIC_EXECUTOR_PATH = MODEL_SEMANTIC_ROOT + "executor.py"
 MODEL_SEMANTIC_MANIFEST_SCHEMA_PATH = MODEL_SEMANTIC_ROOT + "manifest.schema.json"
 MODEL_SEMANTIC_RECEIPT_SCHEMA_PATH = MODEL_SEMANTIC_ROOT + "receipt.schema.json"
 THOR_REQUIREMENTS_PATH = "deploy/docker/thor-local/agent-models/thor-requirements.json"
 THOR_REQUIREMENTS_VERIFIER_PATH = (
     "deploy/docker/thor-local/agent-models/verify_thor_requirements.py"
+)
+RUNTIME_RECEIPT_APPROVAL_PATH = (
+    "deploy/docker/thor-local/agent-models/approved-runtime-receipt.json"
 )
 MODEL_RECEIPT_ID = "official-model-semantic-admission"
 EXPECTED_PHASES = (
@@ -377,7 +381,7 @@ def _load_contract_and_sources() -> tuple[
         MODEL_SEMANTIC_CONTRACT_PATH, source_payloads, source_objects
     )
     _verify_transitive_locks(THOR_REQUIREMENTS_PATH, source_payloads, source_objects)
-    if len(source_payloads) != 41:
+    if len(source_payloads) != 43:
         raise CampaignError("expanded direct/transitive source closure drift")
 
     overlay = source_objects[OVERLAY_PATH]
@@ -439,10 +443,12 @@ def _load_contract_and_sources() -> tuple[
         LVS_MULTI_FIXTURE_PATH,
         OFFICIAL_EDGE_CONTRACT_PATH,
         OFFICIAL_EDGE_ARTIFACT_LOCK_PATH,
+        MODEL_SEMANTIC_CONTRACT_SCHEMA_PATH,
         MODEL_SEMANTIC_EXECUTOR_PATH,
         MODEL_SEMANTIC_MANIFEST_SCHEMA_PATH,
         THOR_REQUIREMENTS_PATH,
         THOR_REQUIREMENTS_VERIFIER_PATH,
+        RUNTIME_RECEIPT_APPROVAL_PATH,
         *(
             path
             for row in contract["receipt_types"]
@@ -695,8 +701,15 @@ def _validate_model_semantic_receipt(
     contract: Mapping[str, Any],
     source_payloads: Mapping[str, bytes],
 ) -> None:
+    model_semantic_contract = _strict_json(
+        source_payloads[MODEL_SEMANTIC_CONTRACT_PATH],
+        "official semantic model contract",
+    )
     expected_locks = {
         "contract_sha256": sha256(source_payloads[MODEL_SEMANTIC_CONTRACT_PATH]),
+        "contract_schema_sha256": sha256(
+            source_payloads[MODEL_SEMANTIC_CONTRACT_SCHEMA_PATH]
+        ),
         "executor_sha256": sha256(source_payloads[MODEL_SEMANTIC_EXECUTOR_PATH]),
         "manifest_schema_sha256": sha256(
             source_payloads[MODEL_SEMANTIC_MANIFEST_SCHEMA_PATH]
@@ -761,9 +774,17 @@ def _validate_model_semantic_receipt(
         ),
     ]
     observations = receipt.get("observations", [])
+    expected_challenge_sha256 = sha256(
+        (
+            model_semantic_contract["semantic_contract"]["llm_challenge_prefix"]
+            + namespace
+        ).encode("utf-8")
+    )
     if (
         receipt.get("collector_locks") != expected_locks
         or receipt.get("identity", {}).get("run_id") != namespace
+        or receipt.get("identity", {}).get("llm_tool_challenge_sha256")
+        != expected_challenge_sha256
         or receipt.get("model_contract") != expected_model_contract
         or receipt.get("no_cloud_agent_wiring")
         != {

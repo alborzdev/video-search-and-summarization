@@ -21,6 +21,9 @@
     "agent_normalized_unique_operations": 56,
     "aggregate_declared_rest_operations": 342,
     "aggregate_normalized_unique_rest_operations": 341,
+    "aggregate_official_declared_rest_operations": 338,
+    "aggregate_official_normalized_unique_rest_operations": 337,
+    "aggregate_thor_local_extension_operations": 4,
     "derivation": "three additive configured endpoints times four NAT variants equals twelve additive agent operations"
   },
   "profile_paths": [
@@ -63,7 +66,7 @@
     {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
     {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
     {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts", "sha256": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f"},
-    {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "sha256": "e5ecb7072206269cadc7ab7213767d258d08228809aabf1d8db9b67e6b213afc"},
+    {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "sha256": "2842d11684a6f5ba5447649ad2224c688dfd87107e762b9fe7306d88944ceb39"},
     {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540"},
     {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/compiler.py", "sha256": "528388ffbe13e53b1a2164d0084b905865561b86423ae52400f6b02d4978eef0"},
     {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/layered-current-contract.json", "sha256": "cb3e1e2b15374a9a2a60715a475aaae055b4564f73b59987a0ca34b6ae454a59"},

@@ -40,7 +40,7 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
     def test_canonical_hash_is_stable(self) -> None:
         self.assertEqual(
             self.document["contract_set_sha256"],
-            "283ece76966a903b1537a90449a3d52f593226a9c07ef50b511f4ee2f7fd91e1",
+            "215c57c82c350f1c5e9742ed6a570d898e6bf605398e91a409d8acb87a142047",
         )
         self.assertEqual(
             VALIDATOR.canonical_contract_hash(self.document),
@@ -76,6 +76,9 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
             {
                 "declared_rest_operations": 342,
                 "normalized_unique_rest_operations": 341,
+                "official_declared_rest_operations": 338,
+                "official_normalized_unique_rest_operations": 337,
+                "thor_local_extension_operations": 4,
                 "mcp_tools": 42,
                 "mcp_prompts": 5,
             },
@@ -84,6 +87,10 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
         self.assertEqual(scope["complete_normalized_rest_formula"], "421 + L")
         self.assertEqual(scope["minimum_declared_rest_operations"], 436)
         self.assertEqual(scope["minimum_normalized_rest_operations"], 435)
+        self.assertEqual(scope["complete_official_declared_rest_formula"], "418 + L")
+        self.assertEqual(scope["complete_official_normalized_rest_formula"], "417 + L")
+        self.assertEqual(scope["minimum_official_declared_rest_operations"], 432)
+        self.assertEqual(scope["minimum_official_normalized_rest_operations"], 431)
 
     def test_core_denominator_cannot_be_rebased_without_source_lock(self) -> None:
         mutated = copy.deepcopy(self.document)

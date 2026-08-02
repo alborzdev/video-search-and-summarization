@@ -22674,13 +22674,14 @@
           "base_url": "http://<host>:8000",
           "prefix": "/v1",
           "auth": "bearer",
-          "operation_count": 28,
-          "documented_operation_count": 27,
-          "thor_local_operation_count": 28,
-          "thor_local_extension": {
-            "method": "DELETE",
-            "path": "/v1/generate_captions/requests/{request_id}"
-          },
+          "operation_count": 27,
+          "implementation_operation_count": 28,
+          "thor_local_extensions": [
+            {
+              "method": "DELETE",
+              "path": "/v1/generate_captions/requests/{request_id}"
+            }
+          ],
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
           "expected_manifest_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
         },
@@ -22707,13 +22708,14 @@
             "base_url": "http://<host>:8000",
             "prefix": "/v1",
             "auth": "bearer",
-            "operation_count": 28,
-            "documented_operation_count": 27,
-            "thor_local_operation_count": 28,
-            "thor_local_extension": {
-              "method": "DELETE",
-              "path": "/v1/generate_captions/requests/{request_id}"
-            },
+            "operation_count": 27,
+            "implementation_operation_count": 28,
+            "thor_local_extensions": [
+              {
+                "method": "DELETE",
+                "path": "/v1/generate_captions/requests/{request_id}"
+              }
+            ],
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
             "expected_manifest_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
           },
@@ -22750,27 +22752,27 @@
         },
         {
           "id": "contract-03",
-          "observation": "contract_identity/contract/documented_operation_count",
-          "operator": "equals",
-          "expected": 27
-        },
-        {
-          "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest",
           "operator": "equals",
           "expected": "deploy/docker/thor-local/qualification/expected/rt-vlm.json"
         },
         {
-          "id": "contract-05",
+          "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
           "expected": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
         },
         {
+          "id": "contract-05",
+          "observation": "contract_identity/contract/implementation_operation_count",
+          "operator": "equals",
+          "expected": 28
+        },
+        {
           "id": "contract-06",
           "observation": "contract_identity/contract/operation_count",
           "operator": "equals",
-          "expected": 28
+          "expected": 27
         },
         {
           "id": "contract-07",
@@ -22780,21 +22782,14 @@
         },
         {
           "id": "contract-08",
-          "observation": "contract_identity/contract/thor_local_extension/method",
+          "observation": "contract_identity/contract/thor_local_extensions",
           "operator": "equals",
-          "expected": "DELETE"
-        },
-        {
-          "id": "contract-09",
-          "observation": "contract_identity/contract/thor_local_extension/path",
-          "operator": "equals",
-          "expected": "/v1/generate_captions/requests/{request_id}"
-        },
-        {
-          "id": "contract-10",
-          "observation": "contract_identity/contract/thor_local_operation_count",
-          "operator": "equals",
-          "expected": 28
+          "expected": [
+            {
+              "method": "DELETE",
+              "path": "/v1/generate_captions/requests/{request_id}"
+            }
+          ]
         },
         {
           "id": "observation-02",
@@ -22836,12 +22831,12 @@
         "collectors": [],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
-        "max_requests": 113,
+        "max_requests": 109,
         "workload": {
-          "units": 28,
+          "units": 27,
           "requests_per_unit": 4,
           "overhead_requests": 1,
-          "calculated_max_requests": 113,
+          "calculated_max_requests": 109,
           "phases": [
             "positive",
             "adjacent_negative",
@@ -22851,7 +22846,7 @@
         },
         "model_staging": "prerequisite_only",
         "warehouse_sample_bundle": "excluded",
-        "max_actions": 113
+        "max_actions": 109
       },
       "cleanup": {
         "mutation": "namespaced_and_reversible",
@@ -23337,7 +23332,14 @@
           "mcp_base": "http://<host>:38112",
           "conditional_prefix": "/v1",
           "auth": "bearer",
-          "operation_count": 18,
+          "operation_count": 17,
+          "implementation_operation_count": 18,
+          "thor_local_extensions": [
+            {
+              "method": "GET",
+              "path": "/files/{file_id}"
+            }
+          ],
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
           "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"
         },
@@ -23365,7 +23367,14 @@
             "mcp_base": "http://<host>:38112",
             "conditional_prefix": "/v1",
             "auth": "bearer",
-            "operation_count": 18,
+            "operation_count": 17,
+            "implementation_operation_count": 18,
+            "thor_local_extensions": [
+              {
+                "method": "GET",
+                "path": "/files/{file_id}"
+              }
+            ],
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
             "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"
           },
@@ -23414,21 +23423,38 @@
         },
         {
           "id": "contract-05",
+          "observation": "contract_identity/contract/implementation_operation_count",
+          "operator": "equals",
+          "expected": 18
+        },
+        {
+          "id": "contract-06",
           "observation": "contract_identity/contract/mcp_base",
           "operator": "equals",
           "expected": "http://<host>:38112"
         },
         {
-          "id": "contract-06",
+          "id": "contract-07",
           "observation": "contract_identity/contract/operation_count",
           "operator": "equals",
-          "expected": 18
+          "expected": 17
         },
         {
-          "id": "contract-07",
+          "id": "contract-08",
           "observation": "contract_identity/contract/rest_base",
           "operator": "equals",
           "expected": "http://<host>:38111"
+        },
+        {
+          "id": "contract-09",
+          "observation": "contract_identity/contract/thor_local_extensions",
+          "operator": "equals",
+          "expected": [
+            {
+              "method": "GET",
+              "path": "/files/{file_id}"
+            }
+          ]
         },
         {
           "id": "observation-02",
@@ -23470,12 +23496,12 @@
         "collectors": [],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
-        "max_requests": 73,
+        "max_requests": 69,
         "workload": {
-          "units": 18,
+          "units": 17,
           "requests_per_unit": 4,
           "overhead_requests": 1,
-          "calculated_max_requests": 73,
+          "calculated_max_requests": 69,
           "phases": [
             "positive",
             "adjacent_negative",
@@ -23485,7 +23511,7 @@
         },
         "model_staging": "prerequisite_only",
         "warehouse_sample_bundle": "excluded",
-        "max_actions": 73
+        "max_actions": 69
       },
       "cleanup": {
         "mutation": "namespaced_and_reversible",
@@ -23545,7 +23571,18 @@
           "prefix": "/api/v1",
           "direct_auth": "none",
           "gateway_auth": "optional",
-          "operation_count": 21,
+          "operation_count": 19,
+          "implementation_operation_count": 21,
+          "thor_local_extensions": [
+            {
+              "method": "DELETE",
+              "path": "/api/v1/verification/ondemand/{correlation_id}"
+            },
+            {
+              "method": "GET",
+              "path": "/api/v1/verification/ondemand/{correlation_id}"
+            }
+          ],
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
           "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
           "semantic_surface": [
@@ -23592,7 +23629,18 @@
             "prefix": "/api/v1",
             "direct_auth": "none",
             "gateway_auth": "optional",
-            "operation_count": 21,
+            "operation_count": 19,
+            "implementation_operation_count": 21,
+            "thor_local_extensions": [
+              {
+                "method": "DELETE",
+                "path": "/api/v1/verification/ondemand/{correlation_id}"
+              },
+              {
+                "method": "GET",
+                "path": "/api/v1/verification/ondemand/{correlation_id}"
+              }
+            ],
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
             "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
             "semantic_surface": [
@@ -23661,18 +23709,24 @@
         },
         {
           "id": "contract-05",
-          "observation": "contract_identity/contract/operation_count",
+          "observation": "contract_identity/contract/implementation_operation_count",
           "operator": "equals",
           "expected": 21
         },
         {
           "id": "contract-06",
+          "observation": "contract_identity/contract/operation_count",
+          "operator": "equals",
+          "expected": 19
+        },
+        {
+          "id": "contract-07",
           "observation": "contract_identity/contract/prefix",
           "operator": "equals",
           "expected": "/api/v1"
         },
         {
-          "id": "contract-07",
+          "id": "contract-08",
           "observation": "contract_identity/contract/semantic_surface",
           "operator": "equals",
           "expected": [
@@ -23681,7 +23735,7 @@
           ]
         },
         {
-          "id": "contract-08",
+          "id": "contract-09",
           "observation": "contract_identity/contract/status_codes",
           "operator": "equals",
           "expected": [
@@ -23692,7 +23746,22 @@
           ]
         },
         {
-          "id": "contract-09",
+          "id": "contract-10",
+          "observation": "contract_identity/contract/thor_local_extensions",
+          "operator": "equals",
+          "expected": [
+            {
+              "method": "DELETE",
+              "path": "/api/v1/verification/ondemand/{correlation_id}"
+            },
+            {
+              "method": "GET",
+              "path": "/api/v1/verification/ondemand/{correlation_id}"
+            }
+          ]
+        },
+        {
+          "id": "contract-11",
           "observation": "contract_identity/contract/wave3_acceptance/contributions",
           "operator": "equals",
           "expected": [
@@ -23703,13 +23772,13 @@
           ]
         },
         {
-          "id": "contract-10",
+          "id": "contract-12",
           "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
           "operator": "equals",
           "expected": false
         },
         {
-          "id": "contract-11",
+          "id": "contract-13",
           "observation": "contract_identity/contract/wave3_acceptance/materialized",
           "operator": "equals",
           "expected": false
@@ -23754,12 +23823,12 @@
         "collectors": [],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
-        "max_requests": 85,
+        "max_requests": 77,
         "workload": {
-          "units": 21,
+          "units": 19,
           "requests_per_unit": 4,
           "overhead_requests": 1,
-          "calculated_max_requests": 85,
+          "calculated_max_requests": 77,
           "phases": [
             "positive",
             "adjacent_negative",
@@ -23769,7 +23838,7 @@
         },
         "model_staging": "prerequisite_only",
         "warehouse_sample_bundle": "excluded",
-        "max_actions": 85
+        "max_actions": 77
       },
       "cleanup": {
         "mutation": "namespaced_and_reversible",

@@ -5,12 +5,12 @@
     {
       "set_id": "thor-vss-3.2.1-current-289",
       "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-289.json",
-      "descriptor_raw_sha256": "9d4712c4e6add2c795baa9db152dd54afe7233f7ea479bb27de57013bd91943a"
+      "descriptor_raw_sha256": "a566d9f1d710964519b02cc9bc42a0bc0614fa8a40a8ec564a54b3e1fa8f3405"
     },
     {
       "set_id": "thor-vss-3.2.1-current-cancellation-search-500",
       "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-cancellation-search-500.json",
-      "descriptor_raw_sha256": "ae2942b2a2991e322a0f4bf76a8e7a1567c44e071a5ee5eb004e7df1bc2319fe"
+      "descriptor_raw_sha256": "6dbe22f169f01a0e9866b7f24d0a9a8612774ff2e78eb51cac411aa354653f46"
     }
   ]
 }

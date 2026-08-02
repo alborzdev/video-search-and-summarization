@@ -37,6 +37,37 @@ class PlanTests(unittest.TestCase):
         jsonschema.Draft202012Validator(schema).validate(payload)
         self.assertEqual(payload["qualification_state"], "plan_only")
         self.assertFalse(payload["runtime_qualification_performed"])
+        self.assertRegex(
+            payload["captured_at_utc"],
+            r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$",
+        )
+
+    def test_capture_time_is_generated_inside_each_result(self) -> None:
+        plan = rd._load_json(rd.DEFAULT_PLAN)
+        with mock.patch.object(
+            rd,
+            "_captured_at_utc",
+            side_effect=[
+                "2026-08-02T15:00:00.000001Z",
+                "2026-08-02T15:00:00.000002Z",
+            ],
+        ):
+            first = rd.build_plan_result(plan)
+            second = rd.build_plan_result(plan)
+        self.assertEqual(first["captured_at_utc"], "2026-08-02T15:00:00.000001Z")
+        self.assertEqual(second["captured_at_utc"], "2026-08-02T15:00:00.000002Z")
+        self.assertNotEqual(first["captured_at_utc"], second["captured_at_utc"])
+
+    def test_schema_rejects_missing_or_non_utc_capture_time(self) -> None:
+        schema = rd._load_json(rd.HERE / "result.schema.json")
+        result = rd.build_plan_result(rd._load_json(rd.DEFAULT_PLAN))
+        missing = deepcopy(result)
+        del missing["captured_at_utc"]
+        with self.assertRaises(jsonschema.ValidationError):
+            jsonschema.Draft202012Validator(schema).validate(missing)
+        result["captured_at_utc"] = "2026-08-02T15:00:00+00:00"
+        with self.assertRaises(jsonschema.ValidationError):
+            jsonschema.Draft202012Validator(schema).validate(result)
 
     def test_main_rejects_fabricated_invalid_result_before_printing(self) -> None:
         output = io.StringIO()
@@ -349,6 +380,7 @@ class HostResultTests(unittest.TestCase):
         return {
             "schema_version": 1,
             "plan_id": "vss-3.2.1-thor-official-edge-readiness",
+            "captured_at_utc": "2026-08-02T15:00:00.000000Z",
             "inspection_mode": "read_only_host",
             "qualification_state": "prelaunch_ready_not_runtime_qualified",
             "runtime_qualification_performed": False,

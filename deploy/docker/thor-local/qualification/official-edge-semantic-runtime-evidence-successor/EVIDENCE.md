@@ -12,12 +12,15 @@ Approved collector hashes:
 
 | File | SHA-256 |
 | --- | --- |
-| `contract.json` | `046f1a9090127f6a2ca3c9f5b355b10f8a60c3498683bba758f8509374119744` |
-| `executor.py` | `8e18b9d04f9535a3f6aee40758d739f5be5767f918e7f4f38beb949390856d79` |
-| `manifest.schema.json` | `626e05b3cc4671f27cd2b2d48d2033e649f39358c175018670e1fbd2c727632a` |
-| `receipt.schema.json` | `9d97049e63083edab28e2a7a924c3f7e06677f32a560a9610317bde5b3fed421` |
+| `contract.json` | `50c627f2cdba661f744180fe4190cfc98b153d200845522c539b727904a9573f` |
+| `contract.schema.json` | `207aab65cb37cd18fa56a98539222604d8f32287d3beceb82201a6bc70b10dc9` |
+| `executor.py` | `653546a1d3943c09f24b0c6e5e2fad6506696867e9bd10a531d6e9374075825c` |
+| `manifest.schema.json` | `a80b0c799b61a159c8799c6eb3eaa27c9eb24586aa7a3d070bce3a316c2c217a` |
+| `receipt.schema.json` | `6bfada0a7636dd3a9902d3f9b5827db35d9b2d514fa71762f543614a7052af34` |
 
-The fake suite covers inert planning, missing acknowledgement, success,
+The fake suite covers inert planning, producer-bound readiness timestamps,
+caller-time and mtime rejection, hidden positive visual oracles, per-run LLM
+tool challenges, missing acknowledgement, success,
 incorrect/aliased model IDs, hostname/cloud targets, missing and stale
 prerequisites, source/readiness mismatch, cloud credentials, forbidden Qwen
 fallback, tool and visual false positives, incomplete dual-model Agent proof,

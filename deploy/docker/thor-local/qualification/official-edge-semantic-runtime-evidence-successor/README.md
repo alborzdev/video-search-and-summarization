@@ -24,6 +24,13 @@ both visual consumption and the final LLM sentinel. Proxy-enabled openers,
 redirects, hostname aliases, cloud targets, Qwen/older-Edge substitutions,
 over-budget runs, and incomplete cleanup fail closed.
 
+Freshness comes only from `captured_at_utc` inside the digest-bound readiness
+receipt. The manifest supplies no capture time and receipt file modification
+time is ignored. The positive visual oracle is never placed in its VLM prompt;
+it must be recovered from the pinned visual bytes. The positive LLM tool call
+uses `thor-tool-<run_id>` as an explicit per-run argument and binds its digest in
+the receipt.
+
 ```bash
 python3 executor.py
 python3 executor.py plan
@@ -42,8 +49,9 @@ raw media, authorization values, prompts, response bodies, and local paths. Its
 status is `passed_candidate_non_promoting`; it cannot modify canonical state.
 
 The canonical Thor requirements gate recognizes only the exact approved hashes
-of `contract.json`, `executor.py`, `manifest.schema.json`, and
-`receipt.schema.json`, then invokes this package's strict receipt validator. A
+of `contract.json`, `contract.schema.json`, `executor.py`,
+`manifest.schema.json`, and `receipt.schema.json`, then invokes this package's
+strict receipt validator. A
 valid receipt removes only the semantic-runtime-receipt blocker. Existing exact
 artifact-tree and image blockers remain until independently satisfied.
 

@@ -131,7 +131,7 @@ class ThorRequirementsTests(unittest.TestCase):
         )
         self.assertTrue(any("runtime_evidence" in item for item in canonical))
 
-    def test_runtime_receipt_must_be_absolute_and_cryptographically_valid(self) -> None:
+    def test_runtime_receipt_must_be_absolute_and_source_approved(self) -> None:
         errors, _, _ = VERIFIER.validate_requirements(
             runtime_receipt_path=Path("relative.json"),
             runtime_receipt_sha256="0" * 64,
@@ -144,10 +144,17 @@ class ThorRequirementsTests(unittest.TestCase):
                 runtime_receipt_path=receipt,
                 runtime_receipt_sha256=VERIFIER.sha256(receipt),
             )
-        self.assertIn(
-            "runtime receipt failed cryptographic collector validation", errors
-        )
+        self.assertIn("runtime receipt is not source-approved", errors)
         self.assertTrue(any("runtime_evidence" in item for item in canonical))
+
+    def test_approval_authority_is_verifier_pinned_and_empty(self) -> None:
+        authority = VERIFIER.load_json(ROOT / "approved-runtime-receipt.json")
+        self.assertEqual(authority["state"], "none_approved")
+        self.assertEqual(authority["approvals"], [])
+        self.assertEqual(
+            VERIFIER.sha256(ROOT / "approved-runtime-receipt.json"),
+            VERIFIER.APPROVAL_AUTHORITY_SHA256,
+        )
 
     def test_duplicate_json_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

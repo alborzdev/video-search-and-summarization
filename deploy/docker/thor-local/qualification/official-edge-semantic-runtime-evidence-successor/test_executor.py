@@ -98,7 +98,7 @@ def successful_openers() -> dict[str, QueueOpener]:
                                 "function": {
                                     "name": "thor_contract_echo",
                                     "arguments": json.dumps(
-                                        {"value": "thor-tool-positive"}
+                                        {"value": "thor-tool-fake-run-1"}
                                     ),
                                 }
                             }
@@ -144,6 +144,9 @@ def readiness_receipt() -> dict[str, object]:
     return {
         "schema_version": 1,
         "plan_id": "vss-3.2.1-thor-official-edge-readiness",
+        "captured_at_utc": NOW.isoformat(timespec="microseconds").replace(
+            "+00:00", "Z"
+        ),
         "inspection_mode": "read_only_host",
         "qualification_state": "prelaunch_ready_not_runtime_qualified",
         "runtime_qualification_performed": False,
@@ -215,7 +218,6 @@ class Fixture:
         self.manifest = root / "manifest.json"
         prereq_raw = encoded(readiness_receipt())
         self.prerequisite.write_bytes(prereq_raw)
-        os.utime(self.prerequisite, (NOW.timestamp(), NOW.timestamp()))
         media_raw = b"fake inert visual bytes " + POSITIVE.encode()
         self.media.write_bytes(media_raw)
         self.value = {
@@ -229,7 +231,6 @@ class Fixture:
             "prerequisite": {
                 "receipt_path": str(self.prerequisite),
                 "receipt_sha256": hashlib.sha256(prereq_raw).hexdigest(),
-                "captured_at_utc": NOW.isoformat().replace("+00:00", "Z"),
             },
             "origins": {
                 "llm": "http://127.0.0.1:30081",
@@ -312,6 +313,37 @@ class ExecutorTests(unittest.TestCase):
         ):
             self.assertNotIn(raw, serialized)
 
+    def test_per_run_tool_challenge_is_explicit_and_hash_bound(self) -> None:
+        receipt = self.run_success()
+        challenge = "thor-tool-fake-run-1"
+        request = self.openers["llm"].requests[1]
+        self.assertIn(challenge, request.data.decode("utf-8"))
+        self.assertEqual(
+            receipt["identity"]["llm_tool_challenge_sha256"],
+            hashlib.sha256(challenge.encode()).hexdigest(),
+        )
+        self.assertNotIn(challenge, json.dumps(receipt))
+
+    def test_positive_visual_oracle_is_hidden_from_prompt(self) -> None:
+        self.run_success()
+        positive_request = self.openers["vlm"].requests[1]
+        prompt = positive_request.data.decode("utf-8")
+        self.assertNotIn(POSITIVE, prompt)
+        self.assertNotIn(ABSENT, prompt)
+
+    def test_manifest_cannot_supply_prerequisite_capture_time(self) -> None:
+        self.fixture.value["prerequisite"]["captured_at_utc"] = (
+            "2026-08-02T15:00:00.000000Z"
+        )
+        self.fixture.write()
+        self.assert_code("invalid_manifest", self.run_success)
+
+    def test_file_mtime_cannot_replace_hash_bound_capture_time(self) -> None:
+        old = (NOW - timedelta(days=30)).timestamp()
+        os.utime(self.fixture.prerequisite, (old, old))
+        receipt = self.run_success()
+        self.assertEqual(receipt["prerequisite"]["age_seconds"], 0)
+
     def test_wrong_llm_and_vlm_ids_are_rejected(self) -> None:
         self.openers["llm"].bodies[0] = (model("wrong-id"), "application/json")
         self.assert_code("identity_mismatch", self.run_success)
@@ -332,9 +364,17 @@ class ExecutorTests(unittest.TestCase):
         self.assert_code("invalid_prerequisite", self.run_success)
         self.fixture.close()
         self.fixture = Fixture()
-        self.fixture.value["prerequisite"]["captured_at_utc"] = (
-            (NOW - timedelta(seconds=901)).isoformat().replace("+00:00", "Z")
+        value = readiness_receipt()
+        value["captured_at_utc"] = (
+            (NOW - timedelta(seconds=901))
+            .isoformat(timespec="microseconds")
+            .replace("+00:00", "Z")
         )
+        raw = encoded(value)
+        self.fixture.prerequisite.write_bytes(raw)
+        self.fixture.value["prerequisite"]["receipt_sha256"] = hashlib.sha256(
+            raw
+        ).hexdigest()
         self.fixture.write()
         self.assert_code("stale_prerequisite", self.run_success)
 
@@ -345,7 +385,6 @@ class ExecutorTests(unittest.TestCase):
         value["containers"]["vss-rtvi-vlm"]["state"] = "missing"
         raw = encoded(value)
         self.fixture.prerequisite.write_bytes(raw)
-        os.utime(self.fixture.prerequisite, (NOW.timestamp(), NOW.timestamp()))
         self.fixture.value["prerequisite"]["receipt_sha256"] = hashlib.sha256(
             raw
         ).hexdigest()
@@ -413,6 +452,11 @@ class ExecutorTests(unittest.TestCase):
         )
         tampered = copy.deepcopy(receipt)
         tampered["observations"][0]["observation_id"] = "vlm-model-identity"
+        self.assert_code(
+            "invalid_receipt", lambda: EXECUTOR.validate_receipt_document(tampered)
+        )
+        tampered = copy.deepcopy(receipt)
+        tampered["collector_locks"]["contract_schema_sha256"] = "0" * 64
         self.assert_code(
             "invalid_receipt", lambda: EXECUTOR.validate_receipt_document(tampered)
         )

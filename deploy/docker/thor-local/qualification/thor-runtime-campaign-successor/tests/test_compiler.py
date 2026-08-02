@@ -297,6 +297,9 @@ def _build_receipts(
         "contract_sha256": _sha(
             (REPO / campaign.MODEL_SEMANTIC_CONTRACT_PATH).read_bytes()
         ),
+        "contract_schema_sha256": _sha(
+            (REPO / campaign.MODEL_SEMANTIC_CONTRACT_SCHEMA_PATH).read_bytes()
+        ),
         "executor_sha256": _sha(
             (REPO / campaign.MODEL_SEMANTIC_EXECUTOR_PATH).read_bytes()
         ),
@@ -310,6 +313,15 @@ def _build_receipts(
     model_receipt["identity"]["run_id"] = _phase(manifest, campaign.MODEL_RECEIPT_ID)[
         "run_namespace"
     ]
+    semantic_contract = json.loads(
+        (REPO / campaign.MODEL_SEMANTIC_CONTRACT_PATH).read_text(encoding="utf-8")
+    )
+    model_receipt["identity"]["llm_tool_challenge_sha256"] = _sha(
+        (
+            semantic_contract["semantic_contract"]["llm_challenge_prefix"]
+            + model_receipt["identity"]["run_id"]
+        ).encode("utf-8")
+    )
     models = contract["official_thor_models"]
     model_receipt["model_contract"] = {
         "release_commit": models["release_commit"],
@@ -589,8 +601,8 @@ def test_plan_is_inert_and_complete() -> None:
     assert result["receipt_count"] == 12
     assert result["selected_capability_count"] == 10
     assert result["mapped_capability_count"] == 15
-    assert result["source_lock_count"] == 32
-    assert result["verified_source_file_count"] == 41
+    assert result["source_lock_count"] == 34
+    assert result["verified_source_file_count"] == 43
     assert result["model_semantic_receipt_required"] is True
     assert result["runtime_activity_performed"] is False
     assert result["authorization_granted"] is False
@@ -709,6 +721,21 @@ def test_wrong_model_collector_hash_rejected(tmp_path: Path) -> None:
     descriptor["sha256"] = _sha(path.read_bytes())
     _rewrite(receipt_set_path, receipt_set)
     with pytest.raises(campaign.CampaignError, match="collector"):
+        campaign.check_campaign(manifest_path, receipt_set_path)
+
+
+def test_wrong_model_tool_challenge_rejected(tmp_path: Path) -> None:
+    manifest_path, receipt_set_path, _manifest_value, receipt_set = _write_campaign(
+        tmp_path
+    )
+    descriptor = _descriptor(receipt_set, campaign.MODEL_RECEIPT_ID)
+    path = tmp_path / descriptor["path"]
+    receipt = json.loads(path.read_text())
+    receipt["identity"]["llm_tool_challenge_sha256"] = "f" * 64
+    path.write_text(json.dumps(receipt))
+    descriptor["sha256"] = _sha(path.read_bytes())
+    _rewrite(receipt_set_path, receipt_set)
+    with pytest.raises(campaign.CampaignError, match="semantics"):
         campaign.check_campaign(manifest_path, receipt_set_path)
 
 
