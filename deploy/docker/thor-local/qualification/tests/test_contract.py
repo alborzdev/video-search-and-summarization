@@ -145,9 +145,7 @@ def help_prompt():
                 second_path
             )
         self.assertEqual([item["name"] for item in first_tools], ["lookup"])
-        self.assertEqual(
-            [item["name"] for item in first_prompts], ["sensor_help"]
-        )
+        self.assertEqual([item["name"] for item in first_prompts], ["sensor_help"])
         self.assertNotEqual(
             first_tools[0]["input_schema_hash"],
             second_tools[0]["input_schema_hash"],
@@ -197,9 +195,9 @@ class CheckedInInventoryTests(unittest.TestCase):
     def test_inventory_totals_are_exact(self) -> None:
         rest = [item for item in self.manifests.values() if item["kind"] == "rest"]
         mcp = [item for item in self.manifests.values() if item["kind"] == "mcp"]
-        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 330)
+        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 342)
         self.assertEqual(
-            sum(item["normalized_unique_operation_count"] for item in rest), 329
+            sum(item["normalized_unique_operation_count"] for item in rest), 341
         )
         self.assertEqual(sum(item["tool_count"] for item in mcp), 42)
         self.assertEqual(sum(item["prompt_count"] for item in mcp), 5)
@@ -272,9 +270,7 @@ class CheckedInInventoryTests(unittest.TestCase):
             with self.subTest(surface=surface_id):
                 manifest = self.manifests[surface_id]
                 self.assertEqual(manifest["schema_version"], 2)
-                self.assertEqual(
-                    manifest["prompt_count"], len(manifest["prompts"])
-                )
+                self.assertEqual(manifest["prompt_count"], len(manifest["prompts"]))
 
     def test_vios_storage_collision_is_explicit(self) -> None:
         storage = self.manifests["vios-storage"]
@@ -301,7 +297,7 @@ class CheckedInInventoryTests(unittest.TestCase):
                 QUALIFICATION_DIR / "expected",
             )
         self.assertEqual(status, 0, output.getvalue())
-        self.assertIn("330 declared REST operations", output.getvalue())
+        self.assertIn("342 declared REST operations", output.getvalue())
         self.assertIn("42 MCP tools plus 5 MCP prompts", output.getvalue())
 
     def test_local_live_openapi_helper_does_not_accept_urls(self) -> None:

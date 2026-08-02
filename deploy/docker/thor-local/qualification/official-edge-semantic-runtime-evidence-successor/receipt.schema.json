@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "collector_id",
+    "status",
+    "promotion_eligible",
+    "runtime_activity_performed",
+    "required_cloud_inference",
+    "warehouse_sample_bundle",
+    "collector_locks",
+    "identity",
+    "prerequisite",
+    "model_contract",
+    "no_cloud_agent_wiring",
+    "media",
+    "observations",
+    "budget",
+    "cleanup",
+    "sanitization",
+    "canonical_effect"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-official-edge-semantic-runtime-evidence-successor-v1"},
+    "collector_id": {"const": "thor-official-edge-semantic-collector-v1"},
+    "status": {"const": "passed_candidate_non_promoting"},
+    "promotion_eligible": {"const": false},
+    "runtime_activity_performed": {"const": true},
+    "required_cloud_inference": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "collector_locks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_sha256", "executor_sha256", "manifest_schema_sha256", "receipt_schema_sha256"],
+      "properties": {
+        "contract_sha256": {"$ref": "#/$defs/sha"},
+        "executor_sha256": {"$ref": "#/$defs/sha"},
+        "manifest_schema_sha256": {"$ref": "#/$defs/sha"},
+        "receipt_schema_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "authorization_id", "authorization_token_sha256"],
+      "properties": {
+        "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+        "authorization_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+        "authorization_token_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "prerequisite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_sha256", "receipt_path_sha256", "captured_at_utc", "age_seconds", "qualification_state", "source_projection_sha256"],
+      "properties": {
+        "receipt_sha256": {"$ref": "#/$defs/sha"},
+        "receipt_path_sha256": {"$ref": "#/$defs/sha"},
+        "captured_at_utc": {"type": "string", "format": "date-time"},
+        "age_seconds": {"type": "number", "minimum": 0, "maximum": 900},
+        "qualification_state": {"const": "prelaunch_ready_not_runtime_qualified"},
+        "source_projection_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "model_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["release_commit", "main_commit", "artifact_lock_sha256", "llm", "vlm"],
+      "properties": {
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "main_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "artifact_lock_sha256": {"$ref": "#/$defs/sha"},
+        "llm": {"$ref": "#/$defs/model"},
+        "vlm": {"$ref": "#/$defs/model"}
+      }
+    },
+    "no_cloud_agent_wiring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "projection_sha256", "blank_api_key_count", "forbidden_substitution_count"],
+      "properties": {
+        "status": {"const": "pass"},
+        "projection_sha256": {"$ref": "#/$defs/sha"},
+        "blank_api_key_count": {"const": 5},
+        "forbidden_substitution_count": {"const": 0}
+      }
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "byte_count", "media_type", "positive_literal_sha256", "absent_literal_sha256"],
+      "properties": {
+        "sha256": {"$ref": "#/$defs/sha"},
+        "byte_count": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "media_type": {"enum": ["image/jpeg", "image/png", "video/mp4"]},
+        "positive_literal_sha256": {"$ref": "#/$defs/sha"},
+        "absent_literal_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {"$ref": "#/$defs/observation"}
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requests", "max_requests", "actions", "max_actions", "duration_seconds", "max_duration_seconds", "cleanup_reserve_actions", "cleanup_reserve_seconds"],
+      "properties": {
+        "requests": {"const": 7},
+        "max_requests": {"const": 7},
+        "actions": {"const": 9},
+        "max_actions": {"const": 9},
+        "duration_seconds": {"type": "number", "minimum": 0, "maximum": 105},
+        "max_duration_seconds": {"const": 120},
+        "cleanup_reserve_actions": {"const": 2},
+        "cleanup_reserve_seconds": {"const": 15}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "raw_media_buffer_cleared", "request_buffers_cleared", "postcondition_verified"],
+      "properties": {
+        "status": {"const": "pass"},
+        "raw_media_buffer_cleared": {"const": true},
+        "request_buffers_cleared": {"const": true},
+        "postcondition_verified": {"const": true}
+      }
+    },
+    "sanitization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_media_included", "credential_values_included", "raw_prompts_included", "response_bodies_included", "local_paths_included"],
+      "properties": {
+        "raw_media_included": {"const": false},
+        "credential_values_included": {"const": false},
+        "raw_prompts_included": {"const": false},
+        "response_bodies_included": {"const": false},
+        "local_paths_included": {"const": false}
+      }
+    },
+    "canonical_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["admitted", "promoted", "binding_changed"],
+      "properties": {
+        "admitted": {"const": false},
+        "promoted": {"const": false},
+        "binding_changed": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["served_model_id", "endpoint", "image_reference", "image_id"],
+      "properties": {
+        "served_model_id": {"type": "string", "minLength": 1},
+        "endpoint": {"type": "string", "pattern": "^http://127\\.0\\.0\\.1:[0-9]+$"},
+        "image_reference": {"type": "string", "pattern": "@sha256:[0-9a-f]{64}$"},
+        "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "observation_id", "role", "status", "result_code", "request_sha256", "response_sha256", "response_bytes", "response_status", "assertion_ids"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 7},
+        "observation_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$"},
+        "role": {"enum": ["llm", "vlm", "agent"]},
+        "status": {"const": "pass"},
+        "result_code": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"},
+        "request_sha256": {"$ref": "#/$defs/sha"},
+        "response_sha256": {"$ref": "#/$defs/sha"},
+        "response_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "response_status": {"const": 200},
+        "assertion_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$"}
+        }
+      }
+    }
+  }
+}

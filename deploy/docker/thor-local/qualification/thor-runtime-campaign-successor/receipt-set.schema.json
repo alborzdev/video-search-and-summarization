@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "campaign_id", "repository_commit",
+    "manifest_sha256", "status", "evidence_complete", "promotion_eligible",
+    "canonical_state_advanced", "warehouse_sample_bundle", "model_semantic_receipt_sha256", "receipts",
+    "capability_evidence", "lvs_multi_provenance", "unresolved_blockers"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-runtime-campaign-successor-v1"},
+    "campaign_id": {"$ref": "#/$defs/plain"},
+    "repository_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "manifest_sha256": {"$ref": "#/$defs/sha"},
+    "status": {"const": "candidate-receipts-validated-incomplete-nonpromoting"},
+    "evidence_complete": {"const": false},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "model_semantic_receipt_sha256": {"$ref": "#/$defs/sha"},
+    "receipts": {"type": "array", "minItems": 12, "maxItems": 12, "items": {"$ref": "#/$defs/receipt"}},
+    "capability_evidence": {"type": "array", "minItems": 15, "maxItems": 15, "items": {"$ref": "#/$defs/capabilityEvidence"}},
+    "lvs_multi_provenance": {"$ref": "#/$defs/lvsMulti"},
+    "unresolved_blockers": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/plain"}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nullableSha": {"oneOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]},
+    "plain": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,191}$"},
+    "relativePath": {"type": "string", "pattern": "^[A-Za-z0-9._/-]+\\.json$", "not": {"pattern": "(^/|(^|/)\\.\\.?(/|$))"}},
+    "receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receipt_id", "phase_id", "path", "sha256", "contract_sha256", "schema_sha256", "run_namespace_sha256", "executor_input_sha256", "model_semantic_receipt_sha256"],
+      "properties": {
+        "receipt_id": {"$ref": "#/$defs/plain"}, "phase_id": {"$ref": "#/$defs/plain"}, "path": {"$ref": "#/$defs/relativePath"},
+        "sha256": {"$ref": "#/$defs/sha"}, "contract_sha256": {"$ref": "#/$defs/sha"}, "schema_sha256": {"$ref": "#/$defs/sha"},
+        "run_namespace_sha256": {"$ref": "#/$defs/nullableSha"}, "executor_input_sha256": {"$ref": "#/$defs/nullableSha"},
+        "model_semantic_receipt_sha256": {"$ref": "#/$defs/nullableSha"}
+      }
+    },
+    "capabilityEvidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capability_id", "receipt_ids", "evidence_status"],
+      "properties": {
+        "capability_id": {"$ref": "#/$defs/plain"},
+        "receipt_ids": {"type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/plain"}},
+        "evidence_status": {"enum": ["host-prerequisite-pass-nonqualifying", "candidate-receipt-valid-nonpromoting", "blocked-disconnected-live-static-provenance", "blocked-cross-run-and-media-identity-unverifiable"]}
+      }
+    },
+    "lvsMulti": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_receipt_sha256", "static_result_sha256", "live_artifact_set_sha256", "static_fixture_sha256", "connected", "blocker"],
+      "properties": {
+        "agent_receipt_sha256": {"$ref": "#/$defs/sha"}, "static_result_sha256": {"$ref": "#/$defs/sha"},
+        "live_artifact_set_sha256": {"$ref": "#/$defs/sha"}, "static_fixture_sha256": {"$ref": "#/$defs/sha"},
+        "connected": {"const": false},
+        "blocker": {"const": "lvs-multi-live-artifacts-are-not-inputs-to-the-static-semantic-oracle"}
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "run_id",
+    "authorization",
+    "prerequisite",
+    "origins",
+    "media",
+    "visual_oracle"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-official-edge-semantic-runtime-evidence-successor-v1"},
+    "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorization_id", "token_sha256"],
+      "properties": {
+        "authorization_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+        "token_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "prerequisite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_path", "receipt_sha256", "captured_at_utc"],
+      "properties": {
+        "receipt_path": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "captured_at_utc": {"type": "string", "format": "date-time"}
+      }
+    },
+    "origins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["llm", "vlm", "agent"],
+      "properties": {
+        "llm": {"const": "http://127.0.0.1:30081"},
+        "vlm": {"const": "http://127.0.0.1:8018"},
+        "agent": {"const": "http://127.0.0.1:8000"}
+      }
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "byte_count", "media_type"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "byte_count": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "media_type": {"enum": ["image/jpeg", "image/png", "video/mp4"]}
+      }
+    },
+    "visual_oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["positive_literal", "absent_literal"],
+      "properties": {
+        "positive_literal": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 _.-]{0,63}$"},
+        "absent_literal": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 _.-]{0,63}$"}
+      }
+    }
+  }
+}

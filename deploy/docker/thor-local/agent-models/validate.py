@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -18,24 +19,41 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[3]
 DEFAULT_MANIFEST = HERE / "official-vss-3.2.1.json"
 DEFAULT_STATE = HERE / "thor-state.json"
+THOR_REQUIREMENTS_VALIDATOR = HERE / "verify_thor_requirements.py"
 RELEASE_COMMIT = "7640d917047cf7b0fd3085eefb8282754b56bc94"
 TARGET_MAIN_COMMIT = "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
 CAPTURED_ON = "2026-07-31"
-OFFICIAL_ORACLE_SHA256 = "d6d44086a1a5a26fe0c02f8a6623e48282c66d50019c7ab8aa31c97d44c8ed71"
+OFFICIAL_ORACLE_SHA256 = (
+    "d6d44086a1a5a26fe0c02f8a6623e48282c66d50019c7ab8aa31c97d44c8ed71"
+)
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 IMAGE_DIGEST = re.compile(r"^.+@sha256:[0-9a-f]{64}$")
 IMMUTABLE_REVISION = re.compile(r"^(?:[0-9a-f]{40,64}|sha256:[0-9a-f]{64})$")
+# Runtime qualification remains fail-closed until the separately reviewed
+# semantic collector exists. A hand-authored JSON file cannot become evidence
+# merely by labelling a fixed set of checks as passed.
+APPROVED_RUNTIME_EVIDENCE_COLLECTORS: dict[str, str] = {}
 
 EXPECTED_LLM = [
-    ("nvidia/nvidia-nemotron-nano-9b-v2", "nvidia-nemotron-nano-9b-v2", "default", "verified"),
+    (
+        "nvidia/nvidia-nemotron-nano-9b-v2",
+        "nvidia-nemotron-nano-9b-v2",
+        "default",
+        "verified",
+    ),
     (
         "nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8",
         "nvidia-nemotron-nano-9b-v2-fp8",
         "supported-alternate",
         "not-verified",
     ),
-    ("nvidia/nemotron-3-nano", "nemotron-3-nano", "supported-alternate", "not-verified"),
+    (
+        "nvidia/nemotron-3-nano",
+        "nemotron-3-nano",
+        "supported-alternate",
+        "not-verified",
+    ),
     (
         "nvidia/llama-3.3-nemotron-super-49b-v1.5",
         "llama-3.3-nemotron-super-49b-v1.5",
@@ -207,7 +225,10 @@ def _expect(errors: list[str], condition: bool, message: str) -> None:
 def _tuple_rows(rows: Any, keys: tuple[str, ...]) -> list[tuple[Any, ...]]:
     if not isinstance(rows, list):
         return []
-    return [tuple(row.get(key) for key in keys) if isinstance(row, dict) else () for row in rows]
+    return [
+        tuple(row.get(key) for key in keys) if isinstance(row, dict) else ()
+        for row in rows
+    ]
 
 
 def _reviewed_file_reference(
@@ -223,8 +244,10 @@ def _reviewed_file_reference(
         or ".." in Path(path_text).parts
     ):
         return None, [f"{model_id}: {path_key} must be a safe reviewed repository path"]
-    if not isinstance(digest, str) or len(digest) != 64 or any(
-        character not in "0123456789abcdef" for character in digest
+    if (
+        not isinstance(digest, str)
+        or len(digest) != 64
+        or any(character not in "0123456789abcdef" for character in digest)
     ):
         errors.append(f"{model_id}: {digest_key} must be an exact SHA-256")
     path = REPO_ROOT
@@ -240,10 +263,14 @@ def _reviewed_file_reference(
         resolved = path.resolve(strict=True)
         resolved.relative_to(resolved_root)
     except (OSError, ValueError):
-        errors.append(f"{model_id}: reviewed file does not exist inside the repository: {path_text}")
+        errors.append(
+            f"{model_id}: reviewed file does not exist inside the repository: {path_text}"
+        )
         return None, errors
     if not resolved.is_file():
-        errors.append(f"{model_id}: reviewed path must be a regular non-symlink file: {path_text}")
+        errors.append(
+            f"{model_id}: reviewed path must be a regular non-symlink file: {path_text}"
+        )
         return None, errors
     if isinstance(digest, str) and sha256(resolved) != digest:
         errors.append(f"{model_id}: reviewed file digest differs: {path_text}")
@@ -298,7 +325,9 @@ def _within(path: Path, root: Path) -> bool:
     return True
 
 
-def _artifact_tree(root: Path, allowed_root: Path, model_id: str) -> list[dict[str, Any]]:
+def _artifact_tree(
+    root: Path, allowed_root: Path, model_id: str
+) -> list[dict[str, Any]]:
     if not root.is_dir() or root.is_symlink():
         raise ValueError(f"{model_id}: artifact root must be a real directory")
     resolved_root = root.resolve(strict=True)
@@ -311,7 +340,9 @@ def _artifact_tree(root: Path, allowed_root: Path, model_id: str) -> list[dict[s
         for directory in list(directories):
             path = current_path / directory
             if path.is_symlink():
-                raise ValueError(f"{model_id}: artifact directory symlinks are forbidden")
+                raise ValueError(
+                    f"{model_id}: artifact directory symlinks are forbidden"
+                )
         for name in files:
             path = current_path / name
             relative = _safe_artifact_path(path.relative_to(root).as_posix(), model_id)
@@ -319,10 +350,14 @@ def _artifact_tree(root: Path, allowed_root: Path, model_id: str) -> list[dict[s
             if stat.S_ISLNK(mode):
                 target = os.readlink(path)
                 if Path(target).is_absolute():
-                    raise ValueError(f"{model_id}: absolute artifact symlink is forbidden")
+                    raise ValueError(
+                        f"{model_id}: absolute artifact symlink is forbidden"
+                    )
                 resolved = path.resolve(strict=True)
                 if not _within(resolved, resolved_allowed) or not resolved.is_file():
-                    raise ValueError(f"{model_id}: artifact symlink escapes its repository")
+                    raise ValueError(
+                        f"{model_id}: artifact symlink escapes its repository"
+                    )
                 entries.append(
                     {
                         "path": relative,
@@ -366,20 +401,21 @@ def _validate_artifact_lock(
             source.get("kind") in {"huggingface_snapshot", "ngc_model_cache"},
             f"{model_id}: artifact source kind is not recognized",
         )
+        uri = source.get("uri")
+        exact_hf_uri = f"https://huggingface.co/{model_id}"
+        exact_ngc_prefixes = (f"ngc:nim/{model_id}:", f"ngc:{model_id}:")
         _expect(
             errors,
-            isinstance(source.get("uri"), str)
+            isinstance(uri, str)
             and (
-                (
-                    source.get("kind") == "huggingface_snapshot"
-                    and source["uri"].startswith("https://huggingface.co/")
-                )
+                (source.get("kind") == "huggingface_snapshot" and uri == exact_hf_uri)
                 or (
                     source.get("kind") == "ngc_model_cache"
-                    and source["uri"].startswith("ngc:")
+                    and uri.startswith(exact_ngc_prefixes)
+                    and len(uri.rsplit(":", 1)[-1]) > 0
                 )
             ),
-            f"{model_id}: artifact source URI does not match its recognized source kind",
+            f"{model_id}: artifact source URI must bind the exact model identity",
         )
         _expect(
             errors,
@@ -437,8 +473,15 @@ def _validate_artifact_lock(
     )
     root_text = row.get("artifact_root_path")
     allowed_text = row.get("artifact_allowed_root_path")
-    if not all(isinstance(value, str) and Path(value).is_absolute() for value in (root_text, allowed_text)):
-        errors.append(f"{model_id}: staged artifact requires absolute root and allowed-root paths")
+    if (
+        not isinstance(root_text, str)
+        or not isinstance(allowed_text, str)
+        or not Path(root_text).is_absolute()
+        or not Path(allowed_text).is_absolute()
+    ):
+        errors.append(
+            f"{model_id}: staged artifact requires absolute root and allowed-root paths"
+        )
         return errors
     try:
         actual = _artifact_tree(Path(root_text), Path(allowed_text), model_id)
@@ -462,10 +505,22 @@ def _validate_backend_lock(lock: dict[str, Any], model_id: str) -> list[str]:
         errors.append(f"{model_id}: backend image lock must be an object")
     else:
         reference = image.get("reference")
+        registry = (
+            reference.split("/", 1)[0].lower() if isinstance(reference, str) else ""
+        )
         _expect(
             errors,
-            isinstance(reference, str) and IMAGE_DIGEST.fullmatch(reference) is not None,
+            isinstance(reference, str)
+            and IMAGE_DIGEST.fullmatch(reference) is not None,
             f"{model_id}: backend image reference must use an immutable repo digest",
+        )
+        _expect(
+            errors,
+            bool(registry)
+            and registry not in {"localhost", "example.com", "registry.example.com"}
+            and not registry.endswith(".invalid")
+            and not registry.startswith("127."),
+            f"{model_id}: backend image reference uses a placeholder registry",
         )
         _expect(
             errors,
@@ -490,7 +545,10 @@ def _validate_backend_lock(lock: dict[str, Any], model_id: str) -> list[str]:
         errors,
         isinstance(environment, dict)
         and bool(environment)
-        and all(isinstance(key, str) and isinstance(value, str) for key, value in environment.items())
+        and all(
+            isinstance(key, str) and isinstance(value, str)
+            for key, value in environment.items()
+        )
         and environment.get("SERVED_MODEL_ID") == model_id,
         f"{model_id}: backend environment must bind SERVED_MODEL_ID",
     )
@@ -545,7 +603,9 @@ def _validate_model_lock(
 def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     release = manifest.get("release", {})
-    _expect(errors, manifest.get("schema_version") == 1, "manifest schema_version must be 1")
+    _expect(
+        errors, manifest.get("schema_version") == 1, "manifest schema_version must be 1"
+    )
     _expect(errors, release.get("version") == "3.2.1", "release version must be 3.2.1")
     _expect(
         errors,
@@ -555,22 +615,52 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
 
     sources = manifest.get("sources", [])
     source_ids = {source.get("id") for source in sources if isinstance(source, dict)}
-    _expect(errors, source_ids == EXPECTED_SOURCE_IDS, "source inventory is incomplete or has extras")
-    _expect(errors, len(sources) == len(EXPECTED_SOURCE_IDS), "source inventory contains duplicates")
+    _expect(
+        errors,
+        source_ids == EXPECTED_SOURCE_IDS,
+        "source inventory is incomplete or has extras",
+    )
+    _expect(
+        errors,
+        len(sources) == len(EXPECTED_SOURCE_IDS),
+        "source inventory contains duplicates",
+    )
     for source in sources if isinstance(sources, list) else []:
         if not isinstance(source, dict):
             errors.append("every source must be an object")
             continue
+        source_id = source.get("id")
+        if not isinstance(source_id, str):
+            errors.append("every source id must be a string")
+            continue
         url = source.get("url", "")
-        expected_url, expected_sha256 = EXPECTED_SOURCES.get(source.get("id"), (None, None))
-        _expect(errors, url == expected_url, f"source URL changed for {source.get('id')}")
-        _expect(errors, isinstance(url, str) and url.startswith("https://"), f"invalid source URL: {url!r}")
+        expected_url, expected_sha256 = EXPECTED_SOURCES.get(source_id, ("", None))
+        _expect(
+            errors, url == expected_url, f"source URL changed for {source.get('id')}"
+        )
+        _expect(
+            errors,
+            isinstance(url, str) and url.startswith("https://"),
+            f"invalid source URL: {url!r}",
+        )
         if source.get("id", "").startswith("tag-"):
-            _expect(errors, RELEASE_COMMIT in url, f"repository source is not commit-pinned: {url}")
+            _expect(
+                errors,
+                RELEASE_COMMIT in url,
+                f"repository source is not commit-pinned: {url}",
+            )
             sha256 = source.get("sha256", "")
-            _expect(errors, sha256 == expected_sha256, f"repository source SHA-256 changed: {url}")
+            _expect(
+                errors,
+                sha256 == expected_sha256,
+                f"repository source SHA-256 changed: {url}",
+            )
         else:
-            _expect(errors, "/3.2.1/" in url, f"documentation source is not versioned: {url}")
+            _expect(
+                errors,
+                "/3.2.1/" in url,
+                f"documentation source is not versioned: {url}",
+            )
 
     llm = manifest.get("llm", {})
     _expect(errors, llm.get("selector") == "--llm", "LLM selector changed")
@@ -583,7 +673,11 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
         llm.get("local_models"),
         ("model_id", "profile_slug", "official_role", "official_local_verification"),
     )
-    _expect(errors, actual_llm == EXPECTED_LLM, "exact local LLM inventory or semantics changed")
+    _expect(
+        errors,
+        actual_llm == EXPECTED_LLM,
+        "exact local LLM inventory or semantics changed",
+    )
 
     vlm = manifest.get("vlm", {})
     _expect(errors, vlm.get("selector") == "--vlm", "VLM selector changed")
@@ -594,9 +688,19 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     )
     actual_vlm = _tuple_rows(
         vlm.get("explicit_local_models"),
-        ("model_id", "profile_slug", "nim_model_size", "official_role", "official_local_verification"),
+        (
+            "model_id",
+            "profile_slug",
+            "nim_model_size",
+            "official_role",
+            "official_local_verification",
+        ),
     )
-    _expect(errors, actual_vlm == EXPECTED_VLM, "exact local VLM inventory or semantics changed")
+    _expect(
+        errors,
+        actual_vlm == EXPECTED_VLM,
+        "exact local VLM inventory or semantics changed",
+    )
     actual_ambiguous = _tuple_rows(
         vlm.get("repository_only_or_ambiguous_local_references"),
         ("model_id", "profile_slug", "nim_model_size", "classification", "resolved"),
@@ -609,7 +713,11 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
 
     for kind in ("llm", "vlm"):
         remote = manifest.get(kind, {}).get("remote_contract", {})
-        _expect(errors, remote.get("model_set") == "open-ended", f"{kind.upper()} remote set must stay open-ended")
+        _expect(
+            errors,
+            remote.get("model_set") == "open-ended",
+            f"{kind.upper()} remote set must stay open-ended",
+        )
         _expect(
             errors,
             remote.get("named_examples") == EXPECTED_REMOTE[kind],
@@ -617,14 +725,27 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
         )
     _expect(
         errors,
-        vlm.get("remote_contract", {}).get("omni_vllm_settings") == EXPECTED_OMNI_SETTINGS,
+        vlm.get("remote_contract", {}).get("omni_vllm_settings")
+        == EXPECTED_OMNI_SETTINGS,
         "Nemotron Omni vLLM settings changed",
     )
 
     custom = vlm.get("custom_weights", {})
-    _expect(errors, custom.get("supported") is True, "custom VLM weights capability was dropped")
-    _expect(errors, custom.get("setting") == "VLM_CUSTOM_WEIGHTS", "custom weights setting changed")
-    _expect(errors, custom.get("deploy_flag") == "--vlm-custom-weights", "custom weights flag changed")
+    _expect(
+        errors,
+        custom.get("supported") is True,
+        "custom VLM weights capability was dropped",
+    )
+    _expect(
+        errors,
+        custom.get("setting") == "VLM_CUSTOM_WEIGHTS",
+        "custom weights setting changed",
+    )
+    _expect(
+        errors,
+        custom.get("deploy_flag") == "--vlm-custom-weights",
+        "custom weights flag changed",
+    )
 
     boundary = manifest.get("thor_platform_boundary", {})
     _expect(
@@ -658,7 +779,11 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
     )
     _expect(
         errors,
-        all(item.get("resolution") != "resolved" for item in ambiguities if isinstance(item, dict)),
+        all(
+            item.get("resolution") != "resolved"
+            for item in ambiguities
+            if isinstance(item, dict)
+        ),
         "an ambiguity was silently marked resolved",
     )
     return errors
@@ -675,7 +800,11 @@ def validate_state(state: dict[str, Any]) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     blockers: list[str] = []
     _expect(errors, state.get("schema_version") == 1, "state schema_version must be 1")
-    _expect(errors, state.get("observed_on") == CAPTURED_ON, "state observation date changed")
+    _expect(
+        errors,
+        state.get("observed_on") == CAPTURED_ON,
+        "state observation date changed",
+    )
     _expect(
         errors,
         state.get("target_commit") == TARGET_MAIN_COMMIT,
@@ -691,7 +820,11 @@ def validate_state(state: dict[str, Any]) -> tuple[list[str], list[str]]:
     actual_models = {
         (row.get("kind"), row.get("model_id")) for row in rows if isinstance(row, dict)
     }
-    _expect(errors, actual_models == expected_state_models(), "Thor state does not cover every official/ambiguous model")
+    _expect(
+        errors,
+        actual_models == expected_state_models(),
+        "Thor state does not cover every official/ambiguous model",
+    )
     _expect(
         errors,
         isinstance(rows, list) and len(rows) == len(expected_state_models()),
@@ -776,6 +909,28 @@ def validate_state(state: dict[str, Any]) -> tuple[list[str], list[str]]:
                         {"models-endpoint", "semantic-request", "agent-workflow"},
                     )
                     errors.extend(evidence_errors)
+                    collector = evidence.get("collector")
+                    collector_id = (
+                        collector.get("id") if isinstance(collector, dict) else None
+                    )
+                    collector_sha256 = (
+                        collector.get("sha256") if isinstance(collector, dict) else None
+                    )
+                    approved_collector_sha256 = (
+                        APPROVED_RUNTIME_EVIDENCE_COLLECTORS.get(collector_id)
+                        if isinstance(collector_id, str)
+                        else None
+                    )
+                    collector_approved = (
+                        isinstance(collector_sha256, str)
+                        and SHA256.fullmatch(collector_sha256) is not None
+                        and approved_collector_sha256 == collector_sha256
+                    )
+                    _expect(
+                        errors,
+                        collector_approved,
+                        f"{model_id}: no source-locked runtime evidence collector is approved",
+                    )
                     _expect(
                         errors,
                         type(evidence.get("schema_version")) is int
@@ -793,6 +948,7 @@ def validate_state(state: dict[str, Any]) -> tuple[list[str], list[str]]:
                         == row.get("backend_lock_path")
                         and evidence.get("backend_lock_sha256")
                         == row.get("backend_lock_sha256")
+                        and collector_approved
                         and not evidence_errors,
                         f"{model_id}: runtime evidence is not bound to this exact model and locks",
                     )
@@ -800,20 +956,30 @@ def validate_state(state: dict[str, Any]) -> tuple[list[str], list[str]]:
         # models and therefore do not inflate the completeness denominator.
         if row.get("kind") in {"llm", "vlm"}:
             if row.get("exact_artifact_state") != "staged-and-locked":
-                blockers.append(f"{model_id}: exact Agent artifact is not staged and locked")
+                blockers.append(
+                    f"{model_id}: exact Agent artifact is not staged and locked"
+                )
             if row.get("agent_backend_state") != "staged-and-locked":
                 blockers.append(f"{model_id}: Agent backend is not staged and locked")
             if row.get("runtime_qualification") != "qualified":
                 blockers.append(f"{model_id}: runtime qualification is absent")
 
     if state.get("runtime_qualification") == "qualified" and blockers:
-        errors.append("aggregate runtime qualification requires every exact official model")
+        errors.append(
+            "aggregate runtime qualification requires every exact official model"
+        )
     if not blockers and state.get("runtime_qualification") != "qualified":
-        errors.append("every exact official model is qualified but aggregate state is not qualified")
+        errors.append(
+            "every exact official model is qualified but aggregate state is not qualified"
+        )
 
     expected_alternates = {
         ("llm", "Qwen/Qwen3.6-35B-A3B-FP8", "95a723d08a9490559dae23d0cff1d9466213d989"),
-        ("vlm", "Qwen/Qwen3-VL-8B-Instruct-FP8", "9cdc6310a8cb770ce18efaf4e9935334512aee45"),
+        (
+            "vlm",
+            "Qwen/Qwen3-VL-8B-Instruct-FP8",
+            "9cdc6310a8cb770ce18efaf4e9935334512aee45",
+        ),
         ("vlm", "nvidia/Cosmos-Reason2-8B", "a9fae2cf89dc64db96b12860417f0eb403013bb9"),
     }
     actual_alternates = {
@@ -821,7 +987,11 @@ def validate_state(state: dict[str, Any]) -> tuple[list[str], list[str]]:
         for row in state.get("non_official_local_alternates", [])
         if isinstance(row, dict)
     }
-    _expect(errors, actual_alternates == expected_alternates, "reviewed local alternate inventory changed")
+    _expect(
+        errors,
+        actual_alternates == expected_alternates,
+        "reviewed local alternate inventory changed",
+    )
     _expect(
         errors,
         all(
@@ -834,7 +1004,9 @@ def validate_state(state: dict[str, Any]) -> tuple[list[str], list[str]]:
     return errors, blockers
 
 
-def validate_files(manifest_path: Path, state_path: Path) -> tuple[list[str], list[str]]:
+def validate_files(
+    manifest_path: Path, state_path: Path
+) -> tuple[list[str], list[str]]:
     try:
         if sha256(manifest_path) != OFFICIAL_ORACLE_SHA256:
             return ["official VSS 3.2.1 Agent-model oracle digest differs"], []
@@ -848,16 +1020,61 @@ def validate_files(manifest_path: Path, state_path: Path) -> tuple[list[str], li
     return errors, blockers
 
 
+def validate_canonical_thor_requirements(
+    runtime_receipt: Path | None = None,
+    runtime_receipt_sha256: str | None = None,
+) -> tuple[list[str], list[str]]:
+    """Load the source-locked canonical Thor-pair verifier."""
+
+    spec = importlib.util.spec_from_file_location(
+        "vss_thor_model_requirements", THOR_REQUIREMENTS_VALIDATOR
+    )
+    if spec is None or spec.loader is None:
+        return ["cannot load canonical Thor model requirements verifier"], []
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+        errors, blockers, _ = module.validate_requirements(
+            runtime_receipt_path=runtime_receipt,
+            runtime_receipt_sha256=runtime_receipt_sha256,
+        )
+    except (Exception, SystemExit) as error:  # defensive fail-closed boundary
+        return [f"canonical Thor model requirements verifier failed: {error}"], []
+    return errors, blockers
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--state", type=Path, default=DEFAULT_STATE)
-    parser.add_argument(
+    completeness = parser.add_mutually_exclusive_group()
+    completeness.add_argument(
         "--require-thor-complete",
         action="store_true",
-        help="also fail unless every exact official model has staged backend and runtime evidence",
+        help="also fail unless the canonical official-edge model pair is complete",
+    )
+    parser.add_argument(
+        "--runtime-receipt",
+        type=Path,
+        help="absolute approved official-edge semantic receipt path",
+    )
+    parser.add_argument(
+        "--runtime-receipt-sha256",
+        help="SHA-256 of --runtime-receipt (both options are required together)",
+    )
+    completeness.add_argument(
+        "--require-all-selector-models-complete",
+        action="store_true",
+        help=(
+            "also fail unless all eight explicit general Agent selector models "
+            "have exact artifacts, backends, and runtime evidence"
+        ),
     )
     args = parser.parse_args(argv)
+    if (
+        args.runtime_receipt is not None or args.runtime_receipt_sha256 is not None
+    ) and not args.require_thor_complete:
+        parser.error("runtime receipt options require --require-thor-complete")
     errors, blockers = validate_files(args.manifest, args.state)
     if errors:
         for error in errors:
@@ -868,12 +1085,29 @@ def main(argv: list[str] | None = None) -> int:
     if state.get("runtime_qualification") == "qualified" and not blockers:
         print("[OK] Every exact model has current Thor runtime qualification evidence.")
     else:
-        print("[OK] Thor state covers every exact model and makes no runtime qualification claim.")
-    print(f"[INFO] Thor-completeness blockers: {len(blockers)}")
-    if args.require_thor_complete and blockers:
+        print(
+            "[OK] Thor state covers every exact model and makes no runtime qualification claim."
+        )
+    print(f"[INFO] All-advertised-selector completeness blockers: {len(blockers)}")
+    if args.require_all_selector_models_complete and blockers:
         for blocker in blockers:
             print(f"[BLOCKED] {blocker}", file=sys.stderr)
         return 2
+    if args.require_thor_complete:
+        requirement_errors, canonical_blockers = validate_canonical_thor_requirements(
+            args.runtime_receipt, args.runtime_receipt_sha256
+        )
+        if requirement_errors:
+            for error in requirement_errors:
+                print(f"[ERROR] {error}", file=sys.stderr)
+            return 1
+        print(
+            f"[INFO] Canonical official-edge pair blockers: {len(canonical_blockers)}"
+        )
+        if canonical_blockers:
+            for blocker in canonical_blockers:
+                print(f"[BLOCKED] {blocker}", file=sys.stderr)
+            return 2
     return 0
 
 

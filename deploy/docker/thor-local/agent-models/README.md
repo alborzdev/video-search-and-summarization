@@ -17,6 +17,24 @@ does not mean every model is officially supported on Thor. `thor-state.json`
 records what is staged on this host without promoting a partial artifact, a
 quantized alternate, or an endpoint adapter into an exact-model qualification.
 
+## Two denominators
+
+`thor-requirements.json` makes two deliberately separate questions
+machine-readable:
+
+1. `canonical_official_edge_pair` is the required Thor-local deployment lane:
+   exact Nemotron 3 Nano 4B FP8 plus the Cosmos3 Nano BF16 RT-VLM artifact. Its
+   identities come from `official-edge/contract.json`, not from the general
+   Agent selector list. This is what `--require-thor-complete` means.
+2. `all_advertised_agent_selectors` is the stronger, exhaustive compatibility
+   matrix for all five explicit LLM and three explicit VLM selector IDs below.
+   It is useful coverage, but it is not the canonical Thor model pair. This is
+   what `--require-all-selector-models-complete` means.
+
+Qualification in one denominator cannot satisfy the other. The static
+cross-verifier locks the Agent oracle/state, official-edge contract/artifact
+lock, and official-edge readiness plan and rejects identity drift between them.
+
 ## Contract summary
 
 | Role | Official default | Other explicit local selections | Officially verified local |
@@ -44,7 +62,9 @@ The validator rejects any attempt to silently resolve those discrepancies.
   contract, versioned NVIDIA URLs, and commit-pinned repository anchors.
 - `thor-state.json`: read-only host observation, including exact artifacts,
   partial artifacts, non-official alternates, and explicit non-qualification.
+- `thor-requirements.json`: exact two-denominator contract and source locks.
 - `validate.py`: exact-value validator and optional Thor-completeness gate.
+- `verify_thor_requirements.py`: offline cross-contract/coherence verifier.
 - `tests/test_agent_models.py`: focused positive and mutation tests.
 - `evidence/2026-07-31-static-agent-model-contract.md`: capture and test record.
 
@@ -52,18 +72,30 @@ The validator rejects any attempt to silently resolve those discrepancies.
 
 ```bash
 python3 deploy/docker/thor-local/agent-models/validate.py
+python3 deploy/docker/thor-local/agent-models/verify_thor_requirements.py static
 python3 -m unittest discover -s deploy/docker/thor-local/agent-models/tests -v
 ```
 
-The first command succeeds when the static contract is honest and complete. It
-prints the number of remaining runtime blockers. To make missing artifacts,
-backends, and runtime evidence fatal:
+The first two commands succeed when the static contracts are honest. They print
+separate blocker counts without claiming model readiness. To make missing
+canonical Thor artifacts, backend image, and semantic runtime evidence fatal:
 
 ```bash
 python3 deploy/docker/thor-local/agent-models/validate.py --require-thor-complete
 ```
 
-That gate is expected to exit `2` today. A green static validator is not a model
+To gate the distinct eight-selector compatibility matrix instead:
+
+```bash
+python3 deploy/docker/thor-local/agent-models/validate.py \
+  --require-all-selector-models-complete
+```
+
+Both gates are expected to exit `2` today. The canonical gate has five explicit
+blockers: incomplete official-edge artifact lock, two absent exact artifact
+trees, absent exact Edge vLLM backend image, and absent source-locked identity
+plus semantic runtime receipt. The all-selector gate retains 24 blockers (eight
+models times artifact/backend/runtime). A green static validator is not a model
 download, a running service, or runtime qualification.
 
 Future `staged-and-locked` rows must reference repository-local, SHA-256-bound
@@ -74,11 +106,23 @@ aggregate tree digest, and byte verification against the declared local root.
 Backend locks require a repo-digest image reference, exact image ID, exact
 command and served-model environment, and an aggregate contract digest. Both
 lock types are bound to the model ID and reviewed release/main commits and
-require their named pass-only checks. Runtime evidence must bind both lock paths
-and digests, the same commits, the current reviewed date, and the models-
-endpoint, semantic-request, and Agent-workflow checks. Exactly one state row is
-allowed per model, and the aggregate state can become `qualified` only when all
-eight exact documented models qualify.
+require their named pass-only checks. Placeholder artifact repositories and
+placeholder backend registries are rejected. Runtime evidence must bind both
+lock paths and digests, the same commits, the current reviewed date, and a
+separately reviewed, source-locked collector in addition to models-endpoint,
+semantic-request, and Agent-workflow checks. The approved collector is
+`qualification/official-edge-semantic-runtime-evidence-successor`; it is inert
+by default, excludes Warehouse, and accepts only a digest-bound fresh readiness
+prerequisite plus explicitly authorized numeric-loopback requests. A
+hand-authored list of passing checks still fails closed. Exactly one state row is
+allowed per model, and the aggregate all-selector state can become `qualified`
+only when all eight exact documented models qualify.
+
+The remaining implementation gap is intentional and explicit: no approved live
+semantic receipt has been captured. The official-edge readiness plan proves only
+prelaunch identity/readiness and cannot be promoted as semantic evidence. Even
+a valid semantic receipt removes only that one blocker; the exact artifact-tree
+and backend-image gates remain independent.
 
 ## Authoritative sources
 

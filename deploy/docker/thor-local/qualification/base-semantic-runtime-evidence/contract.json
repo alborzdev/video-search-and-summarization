@@ -100,7 +100,7 @@
     {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "4cfaa1996b6a46a1888035af773f444e505324c9edada2fee387c0399d9788ec"},
     {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/contract.json", "sha256": "91816d82ccc13f6c01a2dfa062ee891388ad8569a13421e1c019accd9b7fa478"},
     {"path": "deploy/docker/thor-local/qualification/runtime-execution-bounds-audit/verified-integrations.json", "sha256": "428672fd5f6e79709995e1f8a39eb59ba4c9743cfa2b743feb7d7aefddc8612b"},
-    {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"},
+    {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540"},
     {"path": "deploy/docker/thor-local/qualification/ui-runtime-contracts/contract.json", "sha256": "33f78699ba1263f5d2fe33149c50f3070b01ede7757a0e10752a2278249a7d4c"},
     {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/hitl-state-transcript.json", "sha256": "5252536b9e3d310887e3c6cf2e0559f89f9984345a57e5333df484e9626a11c5"},
     {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py", "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"}

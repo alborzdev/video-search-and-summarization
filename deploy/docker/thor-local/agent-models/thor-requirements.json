@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "requirements_id": "vss-3.2.1-thor-model-denominators",
+  "reviewed_release": {
+    "version": "3.2.1",
+    "tag_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/agent-models/official-vss-3.2.1.json",
+      "sha256": "d6d44086a1a5a26fe0c02f8a6623e48282c66d50019c7ab8aa31c97d44c8ed71"
+    },
+    {
+      "path": "deploy/docker/thor-local/agent-models/thor-state.json",
+      "sha256": "7ab2323ac155fdcfa551a664d6c854fe046871bf43e38979fa8010850bb8cf33"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/contract.json",
+      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
+      "sha256": "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json",
+      "sha256": "009e76c6c2a68c0628767052fd125c046716f46a25e60f222699729cfbc58ab7"
+    }
+  ],
+  "denominators": {
+    "canonical_official_edge_pair": {
+      "purpose": "required Thor-local model lane for feature deployment",
+      "required_for_thor_feature_parity": true,
+      "llm": {
+        "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+        "revision": "3fe6dab75665a93884214ad4b1b95cf02717d081",
+        "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+        "adapter_mode": "remote",
+        "base_url": "http://127.0.0.1:30081",
+        "artifact_lock_key": "edge4b",
+        "backend_image_key": "edge4b_vllm",
+        "backend_image_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+        "backend_image_id": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"
+      },
+      "vlm": {
+        "agent_selector_model_id": "nvidia/cosmos3-nano-reasoner",
+        "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+        "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "selector": "cosmos-reason3",
+        "adapter_mode": "local_shared",
+        "base_url": "http://127.0.0.1:8018",
+        "artifact_lock_key": "cosmos3_nano_bf16",
+        "backend_image_key": "rt_vlm",
+        "backend_image_reference": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "backend_image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+      },
+      "mapping_policy": {
+        "llm_relation_to_agent_selector_inventory": "separate_later_versioned_thor_edge_identity",
+        "vlm_relation_to_agent_selector_inventory": "agent_selector_maps_to_exact_rt_vlm_artifact_and_served_identity",
+        "all_selector_qualification_cannot_satisfy_this_denominator": true
+      },
+      "required_gates": [
+        "exact_artifact_lock",
+        "exact_backend_image_lock",
+        "source_locked_runtime_identity_and_semantic_receipt"
+      ],
+      "runtime_evidence": {
+        "state": "collector_contract_ready_no_live_receipt",
+        "accepted_evidence_contract": {
+          "package_id": "thor-official-edge-semantic-runtime-evidence-successor-v1",
+          "collector_id": "thor-official-edge-semantic-collector-v1",
+          "receipt_schema_version": 1,
+          "required_status": "passed_candidate_non_promoting"
+        },
+        "readiness_only_is_sufficient": false
+      }
+    },
+    "all_advertised_agent_selectors": {
+      "purpose": "exhaustive compatibility matrix for every explicit general Agent local selector",
+      "required_for_thor_feature_parity": false,
+      "llm_model_ids": [
+        "nvidia/nvidia-nemotron-nano-9b-v2",
+        "nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8",
+        "nvidia/nemotron-3-nano",
+        "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "openai/gpt-oss-20b"
+      ],
+      "vlm_model_ids": [
+        "nvidia/cosmos3-nano-reasoner",
+        "nvidia/cosmos-reason2-8b",
+        "Qwen/Qwen3-VL-8B-Instruct"
+      ],
+      "required_gates_per_model": [
+        "exact_agent_artifact",
+        "exact_agent_backend",
+        "runtime_qualification"
+      ],
+      "current_expected_blocker_count": 24,
+      "excludes": [
+        "repository_or_documentation_ambiguous_vlm_ids",
+        "open_ended_remote_examples",
+        "operator_supplied_custom_weights"
+      ]
+    }
+  },
+  "current_state": {
+    "canonical_official_edge_pair": "incomplete_fail_closed",
+    "all_advertised_agent_selectors": "not_runtime_qualified",
+    "runtime_evidence_promoted": false,
+    "warehouse_sample_required": false
+  }
+}

@@ -242,8 +242,8 @@ def _production_semantics(sources: Mapping[str, bytes]) -> None:
         [
             "VST returns",
             "``sensorId`` on the final-chunk response",
-            "except httpx.ConnectError:",
-            "except httpx.TimeoutException:",
+            "except httpx.ConnectError as exc:",
+            "except httpx.TimeoutException as exc:",
             'result.get("usage", {}).get("total_chunks_processed", 0)',
             '"/api/v1/videos/{sensor_id}/complete"',
         ],

@@ -46,14 +46,28 @@ pull, or container lifecycle operation was performed.
 $ python3 deploy/docker/thor-local/agent-models/validate.py
 [OK] Exact NVIDIA VSS 3.2.1 Agent model contract is internally consistent.
 [OK] Thor state covers every exact model and makes no runtime qualification claim.
-[INFO] Thor-completeness blockers: 24
+[INFO] All-advertised-selector completeness blockers: 24
+
+$ python3 deploy/docker/thor-local/agent-models/validate.py \
+    --require-all-selector-models-complete
+exit 2 (expected; selector artifacts, Agent backends, and runtime evidence are absent)
+
+$ python3 deploy/docker/thor-local/agent-models/verify_thor_requirements.py static
+PASS Thor model denominator static coherence
+INFO canonical official-edge blockers: 5
+INFO all-advertised-selector blockers: 24
 
 $ python3 deploy/docker/thor-local/agent-models/validate.py --require-thor-complete
-exit 2 (expected; exact artifacts, Agent backends, and runtime evidence are absent)
+exit 2 (expected; the canonical official-edge pair remains incomplete)
 
 $ python3 -m unittest discover -s deploy/docker/thor-local/agent-models/tests -v
-21 tests, OK
+30 tests, OK
 ```
 
 This is static evidence only. It must not be cited as proof that any model can
 serve requests on Thor.
+
+The two-denominator contract and cross-verifier were added after this original
+2026-07-31 capture. They preserve its byte-locked Agent inventory while making
+clear that the 24-selector gate and canonical Thor official-edge pair are not
+interchangeable.

@@ -40,7 +40,7 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
     def test_canonical_hash_is_stable(self) -> None:
         self.assertEqual(
             self.document["contract_set_sha256"],
-            "d1aaf222278eb0b0ce73a98de54eb2d2139a717696743f2b3df5f99088850ad2",
+            "283ece76966a903b1537a90449a3d52f593226a9c07ef50b511f4ee2f7fd91e1",
         )
         self.assertEqual(
             VALIDATOR.canonical_contract_hash(self.document),
@@ -62,10 +62,39 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
 
     def test_hash_mismatch_is_rejected(self) -> None:
         mutated = copy.deepcopy(self.document)
-        mutated["scope"]["minimum_declared_rest_operations"] = 422
+        mutated["scope"]["minimum_declared_rest_operations"] = 437
         self._assert_rejected(
             mutated, "schema validation failed|contract_set_sha256 mismatch"
         )
+
+    def test_core_denominator_matches_current_api_inventory(self) -> None:
+        inventory = VALIDATOR.load_json(REPO_ROOT / VALIDATOR.CORE_API_INVENTORY_PATH)
+        scope = self.document["scope"]
+        self.assertEqual(len(inventory["surfaces"]), 17)
+        self.assertEqual(
+            inventory["expected_totals"],
+            {
+                "declared_rest_operations": 342,
+                "normalized_unique_rest_operations": 341,
+                "mcp_tools": 42,
+                "mcp_prompts": 5,
+            },
+        )
+        self.assertEqual(scope["complete_declared_rest_formula"], "422 + L")
+        self.assertEqual(scope["complete_normalized_rest_formula"], "421 + L")
+        self.assertEqual(scope["minimum_declared_rest_operations"], 436)
+        self.assertEqual(scope["minimum_normalized_rest_operations"], 435)
+
+    def test_core_denominator_cannot_be_rebased_without_source_lock(self) -> None:
+        mutated = copy.deepcopy(self.document)
+        provenance = next(
+            item
+            for item in mutated["extraction_provenance"]
+            if item["id"] == "core-api-inventory-checkout"
+        )
+        provenance["files"][0]["content_sha256"] = "0" * 64
+        self._rehash(mutated)
+        self._assert_rejected(mutated, "source SHA-256 drift")
 
     def test_exact_operation_removal_fails_even_after_rehash(self) -> None:
         mutated = copy.deepcopy(self.document)

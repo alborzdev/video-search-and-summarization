@@ -12,7 +12,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("agent_model_validator", ROOT / "validate.py")
+SPEC = importlib.util.spec_from_file_location(
+    "agent_model_validator", ROOT / "validate.py"
+)
 assert SPEC is not None and SPEC.loader is not None
 VALIDATOR = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(VALIDATOR)
@@ -69,7 +71,7 @@ class AgentModelContractTests(unittest.TestCase):
                     "source": {
                         "kind": "huggingface_snapshot",
                         "model_id": model_id,
-                        "uri": f"https://huggingface.co/example/model-{index}",
+                        "uri": f"https://huggingface.co/{model_id}",
                         "revision": f"{index + 1:040x}",
                     },
                     "files": artifact_files,
@@ -81,8 +83,8 @@ class AgentModelContractTests(unittest.TestCase):
                 },
             )
             image = {
-                "reference": f"registry.invalid/backend@sha256:{index + 1:064x}",
-                "repo_digest": f"registry.invalid/backend@sha256:{index + 1:064x}",
+                "reference": f"nvcr.io/reviewed/backend@sha256:{index + 1:064x}",
+                "repo_digest": f"nvcr.io/reviewed/backend@sha256:{index + 1:064x}",
                 "image_id": f"sha256:{index + 2:064x}",
             }
             command = ["serve", "--model", model_id]
@@ -121,6 +123,10 @@ class AgentModelContractTests(unittest.TestCase):
                 "artifact_lock_sha256": artifact_digest,
                 "backend_lock_path": backend_path,
                 "backend_lock_sha256": backend_digest,
+                "collector": {
+                    "id": "hand-authored-test-collector",
+                    "sha256": "0" * 64,
+                },
                 "checks": [
                     {"id": "models-endpoint", "result": "pass"},
                     {"id": "served-model-identity", "result": "pass"},
@@ -128,9 +134,7 @@ class AgentModelContractTests(unittest.TestCase):
                     {"id": "agent-workflow", "result": "pass"},
                 ],
             }
-            evidence_digest = self._write_reviewed_json(
-                root, evidence_path, evidence
-            )
+            evidence_digest = self._write_reviewed_json(root, evidence_path, evidence)
             row.update(
                 {
                     "exact_artifact_state": "staged-and-locked",
@@ -154,22 +158,39 @@ class AgentModelContractTests(unittest.TestCase):
         self.assertEqual(state_errors, [])
         self.assertEqual(len(blockers), 24)
 
-    def test_default_cli_succeeds_and_complete_gate_fails(self) -> None:
+    def test_cli_separates_canonical_thor_and_all_selector_gates(self) -> None:
         normal = subprocess.run(
             [sys.executable, str(ROOT / "validate.py")],
             check=False,
             capture_output=True,
             text=True,
         )
-        complete = subprocess.run(
+        thor_complete = subprocess.run(
             [sys.executable, str(ROOT / "validate.py"), "--require-thor-complete"],
             check=False,
             capture_output=True,
             text=True,
         )
+        selectors_complete = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "validate.py"),
+                "--require-all-selector-models-complete",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
         self.assertEqual(normal.returncode, 0, normal.stderr)
-        self.assertEqual(complete.returncode, 2)
-        self.assertIn("[BLOCKED]", complete.stderr)
+        self.assertEqual(thor_complete.returncode, 2)
+        self.assertEqual(selectors_complete.returncode, 2)
+        self.assertIn("Canonical official-edge pair blockers: 5", thor_complete.stdout)
+        self.assertIn(
+            "All-advertised-selector completeness blockers: 24",
+            selectors_complete.stdout,
+        )
+        self.assertIn("canonical.artifact.edge4b", thor_complete.stderr)
+        self.assertIn("nvidia/nvidia-nemotron-nano-9b-v2", selectors_complete.stderr)
 
     def test_missing_local_llm_is_rejected(self) -> None:
         mutated = copy.deepcopy(self.manifest)
@@ -190,7 +211,9 @@ class AgentModelContractTests(unittest.TestCase):
 
     def test_named_remote_example_omission_is_rejected(self) -> None:
         mutated = copy.deepcopy(self.manifest)
-        mutated["vlm"]["remote_contract"]["named_examples"]["downloadable_nim_images"].pop()
+        mutated["vlm"]["remote_contract"]["named_examples"][
+            "downloadable_nim_images"
+        ].pop()
         self.assertTrue(VALIDATOR.validate_manifest(mutated))
 
     def test_omni_setting_mutation_is_rejected(self) -> None:
@@ -200,12 +223,16 @@ class AgentModelContractTests(unittest.TestCase):
 
     def test_ambiguous_model_cannot_be_silently_resolved(self) -> None:
         mutated = copy.deepcopy(self.manifest)
-        mutated["vlm"]["repository_only_or_ambiguous_local_references"][0]["resolved"] = True
+        mutated["vlm"]["repository_only_or_ambiguous_local_references"][0][
+            "resolved"
+        ] = True
         self.assertTrue(VALIDATOR.validate_manifest(mutated))
 
     def test_thor_official_boundary_cannot_be_promoted(self) -> None:
         mutated = copy.deepcopy(self.manifest)
-        mutated["thor_platform_boundary"]["fully_local_all_agent_workflows_supported"] = True
+        mutated["thor_platform_boundary"][
+            "fully_local_all_agent_workflows_supported"
+        ] = True
         self.assertTrue(VALIDATOR.validate_manifest(mutated))
 
     def test_state_must_cover_every_model(self) -> None:
@@ -260,7 +287,7 @@ class AgentModelContractTests(unittest.TestCase):
         self.assertTrue(any("does not exist" in error for error in errors))
         self.assertEqual(blockers, [])
 
-    def test_complete_gate_requires_model_bound_locks_and_pass_only_evidence(self) -> None:
+    def test_hand_authored_pass_checks_cannot_clear_complete_gate(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             mutated = copy.deepcopy(self.state)
@@ -268,8 +295,13 @@ class AgentModelContractTests(unittest.TestCase):
             mutated["runtime_qualification"] = "qualified"
             with mock.patch.object(VALIDATOR, "REPO_ROOT", root):
                 errors, blockers = VALIDATOR.validate_state(mutated)
-            self.assertEqual(errors, [])
             self.assertEqual(blockers, [])
+            self.assertTrue(
+                any(
+                    "no source-locked runtime evidence collector is approved" in error
+                    for error in errors
+                )
+            )
 
             evidence_path = root / mutated["official_model_state"][0]["evidence_path"]
             evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
@@ -281,6 +313,60 @@ class AgentModelContractTests(unittest.TestCase):
                 errors, _ = VALIDATOR.validate_state(mutated)
             self.assertTrue(any("did not pass" in error for error in errors))
 
+    def test_placeholder_artifact_provenance_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            mutated = copy.deepcopy(self.state)
+            self._qualify_exact_rows(root, mutated)
+            row = mutated["official_model_state"][0]
+            artifact_path = root / row["artifact_lock_path"]
+            artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
+            artifact["source"]["uri"] = "https://huggingface.co/example/model"
+            artifact_path.write_text(json.dumps(artifact), encoding="utf-8")
+            row["artifact_lock_sha256"] = VALIDATOR.sha256(artifact_path)
+            evidence_path = root / row["evidence_path"]
+            evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+            evidence["artifact_lock_sha256"] = row["artifact_lock_sha256"]
+            evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+            row["evidence_sha256"] = VALIDATOR.sha256(evidence_path)
+            with mock.patch.object(VALIDATOR, "REPO_ROOT", root):
+                errors, _ = VALIDATOR.validate_state(mutated)
+            self.assertTrue(
+                any(
+                    "source URI must bind the exact model identity" in error
+                    for error in errors
+                )
+            )
+
+    def test_placeholder_backend_registry_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            mutated = copy.deepcopy(self.state)
+            self._qualify_exact_rows(root, mutated)
+            row = mutated["official_model_state"][0]
+            backend_path = root / row["backend_lock_path"]
+            backend = json.loads(backend_path.read_text(encoding="utf-8"))
+            placeholder = "registry.invalid/backend@sha256:" + "1" * 64
+            backend["image"]["reference"] = placeholder
+            backend["image"]["repo_digest"] = placeholder
+            backend["contract_sha256"] = VALIDATOR._canonical_sha256(
+                {
+                    "image": backend["image"],
+                    "command": backend["command"],
+                    "environment": backend["environment"],
+                }
+            )
+            backend_path.write_text(json.dumps(backend), encoding="utf-8")
+            row["backend_lock_sha256"] = VALIDATOR.sha256(backend_path)
+            evidence_path = root / row["evidence_path"]
+            evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+            evidence["backend_lock_sha256"] = row["backend_lock_sha256"]
+            evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+            row["evidence_sha256"] = VALIDATOR.sha256(evidence_path)
+            with mock.patch.object(VALIDATOR, "REPO_ROOT", root):
+                errors, _ = VALIDATOR.validate_state(mutated)
+            self.assertTrue(any("placeholder registry" in error for error in errors))
+
     def test_qualified_rows_require_qualified_aggregate_state(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -290,7 +376,15 @@ class AgentModelContractTests(unittest.TestCase):
             with mock.patch.object(VALIDATOR, "REPO_ROOT", root):
                 errors, blockers = VALIDATOR.validate_state(mutated)
             self.assertEqual(blockers, [])
-            self.assertTrue(any("aggregate state is not qualified" in error for error in errors))
+            self.assertTrue(
+                any("aggregate state is not qualified" in error for error in errors)
+            )
+            self.assertTrue(
+                any(
+                    "no source-locked runtime evidence collector" in error
+                    for error in errors
+                )
+            )
 
     def test_artifact_tree_mutation_cannot_clear_complete_gate(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -331,7 +425,9 @@ class AgentModelContractTests(unittest.TestCase):
     def test_duplicate_json_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "duplicate.json"
-            path.write_text('{"schema_version": 1, "schema_version": 2}', encoding="utf-8")
+            path.write_text(
+                '{"schema_version": 1, "schema_version": 2}', encoding="utf-8"
+            )
             with self.assertRaises(VALIDATOR.DuplicateKeyError):
                 VALIDATOR.load_json(path)
 

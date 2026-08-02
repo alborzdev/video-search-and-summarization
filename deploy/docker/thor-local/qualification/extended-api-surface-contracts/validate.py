@@ -19,6 +19,33 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[4]
 DEFAULT_CONTRACT = HERE / "contract.json"
 DEFAULT_SCHEMA = HERE / "contract.schema.json"
+CORE_API_INVENTORY_PATH = "deploy/docker/thor-local/qualification/api_inventory.json"
+CORE_SURFACE_IDS = {
+    "agent",
+    "alerts",
+    "lvs",
+    "lvs-mcp",
+    "rt-cv",
+    "rt-embed",
+    "rt-vlm",
+    "va-mcp",
+    "video-analytics",
+    "vios-live",
+    "vios-mcp",
+    "vios-proxy",
+    "vios-recorder",
+    "vios-replay",
+    "vios-sensor",
+    "vios-storage",
+    "vios-stream-bridge",
+}
+EXCLUDED_OFFICIAL_SURFACES = [
+    "auto-calibration",
+    "deepstream-configurator",
+    "legacy-calibration",
+    "sdrc-controller-router-workload-coordinator",
+    "vss-configurator-sensor-management",
+]
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 
@@ -441,6 +468,70 @@ def _extract_amc_catalog(path: Path) -> list[tuple[str, str]]:
     raise ContractError("AMC REQUIRED_OPENAPI catalog is missing")
 
 
+def _validate_core_denominator(
+    provenance: dict[str, Any],
+    repo_root: Path,
+    scope: dict[str, Any],
+    recoverable_total: int,
+) -> None:
+    files = provenance["files"]
+    _require(
+        len(files) == 1 and files[0]["path"] == CORE_API_INVENTORY_PATH,
+        "core API inventory provenance drift",
+    )
+    inventory = load_json(_resolve_source(repo_root, CORE_API_INVENTORY_PATH))
+    surfaces = inventory.get("surfaces")
+    _require(isinstance(surfaces, list), "core API inventory surfaces are invalid")
+    surface_ids = [item.get("id") for item in surfaces if isinstance(item, dict)]
+    _require(
+        len(surface_ids) == 17
+        and len(set(surface_ids)) == 17
+        and set(surface_ids) == CORE_SURFACE_IDS,
+        "core API inventory surface denominator drift",
+    )
+    inventory_scope = inventory.get("scope")
+    _require(isinstance(inventory_scope, dict), "core API inventory scope is invalid")
+    _require(
+        inventory_scope.get("complete_product_api") is False
+        and inventory_scope.get("excluded_official_surfaces")
+        == EXCLUDED_OFFICIAL_SURFACES,
+        "core API inventory incomplete-product boundary drift",
+    )
+    totals = inventory.get("expected_totals")
+    _require(
+        totals
+        == {
+            "declared_rest_operations": 342,
+            "normalized_unique_rest_operations": 341,
+            "mcp_tools": 42,
+            "mcp_prompts": 5,
+        },
+        "core API inventory totals drift",
+    )
+    declared = totals["declared_rest_operations"]
+    normalized = totals["normalized_unique_rest_operations"]
+    legacy_minimum = scope["legacy_minimum_operation_count"]
+    _require(
+        scope["core_surface_count_observed"] == len(surface_ids)
+        and scope["core_declared_rest_operations_observed"] == declared
+        and scope["core_normalized_rest_operations_observed"] == normalized,
+        "scope core API denominator drift",
+    )
+    _require(
+        scope["complete_declared_rest_formula"] == f"{declared + recoverable_total} + L"
+        and scope["complete_normalized_rest_formula"]
+        == f"{normalized + recoverable_total} + L",
+        "complete API formula drift",
+    )
+    _require(
+        scope["minimum_declared_rest_operations"]
+        == declared + recoverable_total + legacy_minimum
+        and scope["minimum_normalized_rest_operations"]
+        == normalized + recoverable_total + legacy_minimum,
+        "minimum API denominator drift",
+    )
+
+
 def validate(document: dict[str, Any], schema_path: Path, repo_root: Path) -> None:
     _validate_schema(document, schema_path)
     _require(
@@ -559,12 +650,13 @@ def validate(document: dict[str, Any], schema_path: Path, repo_root: Path) -> No
     )
 
     provenance = {item["id"]: item for item in document["extraction_provenance"]}
-    _require(len(provenance) == 6, "provenance denominator drift")
+    _require(len(provenance) == 7, "provenance denominator drift")
     _require(
         set(provenance)
         == set(EXPECTED_IMAGES)
         | {
             "auto-calibration-checkout",
+            "core-api-inventory-checkout",
             "legacy-calibration-checkout",
             "legacy-calibration-registry",
         },
@@ -580,6 +672,13 @@ def validate(document: dict[str, Any], schema_path: Path, repo_root: Path) -> No
     _require(
         {surface["provenance_id"] for surface in surfaces} <= set(provenance),
         "surface references unknown provenance",
+    )
+
+    _validate_core_denominator(
+        provenance["core-api-inventory-checkout"],
+        repo_root,
+        scope,
+        recoverable_total,
     )
 
     amc_source = _resolve_source(

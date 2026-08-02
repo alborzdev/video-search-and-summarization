@@ -1,4 +1,4 @@
-# Extended API surface static evidence — 2026-08-01
+# Extended API surface static evidence — 2026-08-02
 
 ## Scope and safety
 
@@ -11,6 +11,16 @@ the repository.
 
 The Warehouse sample bundle was not used and is not a prerequisite for this
 contract.
+
+## Current core denominator rebase
+
+The checked-in 17-surface API inventory is now a direct source lock. Its exact
+current totals are 342 declared and 341 normalized-unique REST operations,
+plus 42 MCP tools and 5 MCP prompts. Adding the six exact extended surfaces
+contributes 80 REST operations, while legacy calibration remains the unresolved
+symbol `L` with a client-proven lower bound of 14. The complete-product formulas
+are therefore `422 + L` declared and `421 + L` normalized, with minima 436 and
+435. Those minima are still not complete totals.
 
 ## Immutable image evidence
 
@@ -125,18 +135,19 @@ Accordingly:
 
 ## Validation evidence
 
-Focused validation on 2026-08-01:
+Focused validation on 2026-08-02:
 
 ```text
 PASS: validated 7 extended API surfaces — 6 exact descriptors / 80 operations; legacy remains authoritative_unknown with L>=14
 
-Ran 23 tests
+Ran 25 tests
 OK
 ```
 
 The adversarial suite covers duplicate keys, strict-schema rejection,
 contract-hash drift, removed/substituted routes after hash recomputation,
-invented legacy totals, reduced legacy lower bounds, false complete-product
+current-core denominator/source-lock drift, invented legacy totals, reduced
+legacy lower bounds, false complete-product
 claims, image digest drift, checkout source drift, the mutating `GET /reset`
 guard, the six-route SDRC discrepancy, AMC catalog parity, and absence of Docker
 or subprocess dependencies in the validator. Registry-specific adversarial

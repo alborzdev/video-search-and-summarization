@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "collector_id",
+    "mode",
+    "promotion_policy",
+    "warehouse_sample_bundle",
+    "required_cloud_inference",
+    "reviewed_release",
+    "source_locks",
+    "canonical_models",
+    "forbidden_substitutions",
+    "prerequisite",
+    "semantic_contract",
+    "execution_bounds",
+    "sanitization"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-official-edge-semantic-runtime-evidence-successor-v1"},
+    "collector_id": {"const": "thor-official-edge-semantic-collector-v1"},
+    "mode": {"const": "inert_by_default_authorization_gated_execute"},
+    "promotion_policy": {"const": "candidate_receipt_only_non_promoting"},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "required_cloud_inference": {"const": false},
+    "reviewed_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "tag_commit", "main_commit"],
+      "properties": {
+        "version": {"const": "3.2.1"},
+        "tag_commit": {"pattern": "^[0-9a-f]{40}$"},
+        "main_commit": {"pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/source_lock"}
+    },
+    "canonical_models": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["llm", "vlm", "agent"],
+      "properties": {
+        "llm": {"type": "object"},
+        "vlm": {"type": "object"},
+        "agent": {"type": "object"}
+      }
+    },
+    "forbidden_substitutions": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "prerequisite": {"type": "object"},
+    "semantic_contract": {"type": "object"},
+    "execution_bounds": {"type": "object"},
+    "sanitization": {"type": "object"}
+  },
+  "$defs": {
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^deploy/docker/thor-local/"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

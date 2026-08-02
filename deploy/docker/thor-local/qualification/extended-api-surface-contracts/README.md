@@ -35,11 +35,12 @@ published, even though the repository-level metadata says multi-architecture.
 The image was absent locally, so native Thor runtime remains architecture
 blocked. Registry denial left the tag-index digest and unpacked size unresolved.
 
-Relative to the observed 17-surface core inventory, the complete totals can
-currently be expressed only as:
+The current 17-surface core inventory is byte-locked at 342 declared and 341
+normalized-unique REST operations. Relative to that exact denominator, the
+complete totals can currently be expressed only as:
 
-- declared REST operations: `407 + L` (minimum 421);
-- normalized REST operations: `406 + L` (minimum 420).
+- declared REST operations: `422 + L` (minimum 436);
+- normalized REST operations: `421 + L` (minimum 435).
 
 Neither minimum is a complete total.
 
@@ -52,9 +53,10 @@ three types of provenance:
    platform, local image size, inner-file path, content hash, and extraction
    method observed during the read-only audit. Tests never require those images.
 2. `checked_in_source_snapshot` records repository path, SHA-256, and Git blob
-   identity. The validator re-hashes these files every run. AutoMagicCalib's
-   `REQUIRED_OPENAPI` dictionary is also parsed with Python AST and compared to
-   the 26-operation descriptor.
+identity. The validator re-hashes these files every run. It parses the current
+core API inventory to derive the 342/341 denominator and formulas, then parses
+AutoMagicCalib's `REQUIRED_OPENAPI` dictionary with Python AST and compares it
+to the 26-operation descriptor.
 3. `registry_image_metadata` records the absent legacy image's exact runnable
    child digest, platform, compressed size, non-runtime descriptor, local
    absence, unresolved fields, architecture block, and approval boundaries.

@@ -62,7 +62,7 @@ EXPECTED_OVERLAY = {
     "services/agent/src/vss_agents/api/rtsp_delete.py": "d90e887b26f518a15a628224a33577e3469c4f3f29b66d84dae0470fe75285cb",
     "services/agent/src/vss_agents/tools/video_report_gen.py": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab",
     "deploy/docker/services/video-summarization/compose.yml": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74",
-    "deploy/docker/thor-local/qualification/expected/agent.json": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350",
+    "deploy/docker/thor-local/qualification/expected/agent.json": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540",
     "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
     "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d",
     "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44",

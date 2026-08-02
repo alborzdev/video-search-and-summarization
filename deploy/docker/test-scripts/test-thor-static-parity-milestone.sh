@@ -712,8 +712,23 @@ python3 -m unittest discover \
   -s "${thor_local_root}/rt-vlm/tests" -v
 
 python3 "${thor_local_root}/agent-models/validate.py"
+python3 "${thor_local_root}/agent-models/verify_thor_requirements.py" static
 python3 -m unittest discover \
   -s "${thor_local_root}/agent-models/tests" -v
+
+semantic_collector_root="${thor_local_root}/qualification/official-edge-semantic-runtime-evidence-successor"
+PYTHONDONTWRITEBYTECODE=1 python3 "${semantic_collector_root}/executor.py" plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -v \
+  "${semantic_collector_root}/test_executor.py"
+
+# The Warehouse-free runtime campaign successor composes the strongest future
+# receipt surfaces into one exact 12-phase order. The static milestone runs
+# only its source-locking plan and synthetic tests; `check` requires a separately
+# reviewed live manifest and receipt set and is intentionally not invoked here.
+runtime_campaign_root="${thor_local_root}/qualification/thor-runtime-campaign-successor"
+PYTHONDONTWRITEBYTECODE=1 python3 "${runtime_campaign_root}/compiler.py" plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${runtime_campaign_root}/tests"
 
 # Deliberately use only the static Edge contract gate. The audit,
 # render-command, and readiness modes concern staged or running artifacts.

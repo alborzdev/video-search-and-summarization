@@ -35,7 +35,7 @@
     },
     {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+      "raw_sha256": "fb80c2a96cc0951fc770b59a77c96d303fcf7c359e27201e16b1923e1a54a371",
       "role": "advertised_calibration_and_scaling_contracts",
       "required_fragments": [
         "\"id\": \"calibration.legacy.core\"",
@@ -49,7 +49,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/extended-api-surface-contracts/contract.json",
-      "raw_sha256": "3725eacc9e44b83857f4c3a2a285f2361ef18e571898d88030d01a9c0be9f6ad",
+      "raw_sha256": "01e53b78030eac709d3ebfe1af34c567c3d5c7919b33c7d5f46a107a9ff54469",
       "role": "legacy_calibration_registry_platform_provenance",
       "required_fragments": [
         "The only published runnable 3.2.1 child is linux/amd64; no linux/arm64 child is published for native Thor execution.",

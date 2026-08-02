@@ -77,7 +77,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/expected/agent.json",
-      "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"
+      "sha256": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540"
     },
     {
       "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",

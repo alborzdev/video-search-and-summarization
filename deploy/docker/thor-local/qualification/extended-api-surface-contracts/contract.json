@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "target_commit": "98828261bdc7a6996b0b4c262d31d3356b535c99",
-  "contract_set_sha256": "d1aaf222278eb0b0ce73a98de54eb2d2139a717696743f2b3df5f99088850ad2",
+  "target_commit": "862bdcc46db9c81d920703d1ba14c9a4dfa21377",
+  "contract_set_sha256": "283ece76966a903b1537a90449a3d52f593226a9c07ef50b511f4ee2f7fd91e1",
   "scope": {
     "advertised_claim_family_count": 5,
     "addressable_surface_count": 7,
@@ -10,13 +10,13 @@
     "recoverable_operation_count": 80,
     "legacy_minimum_operation_count": 14,
     "core_surface_count_observed": 17,
-    "core_declared_rest_operations_observed": 327,
-    "core_normalized_rest_operations_observed": 326,
-    "complete_declared_rest_formula": "407 + L",
-    "complete_normalized_rest_formula": "406 + L",
+    "core_declared_rest_operations_observed": 342,
+    "core_normalized_rest_operations_observed": 341,
+    "complete_declared_rest_formula": "422 + L",
+    "complete_normalized_rest_formula": "421 + L",
     "legacy_operation_count_symbol": "L",
-    "minimum_declared_rest_operations": 421,
-    "minimum_normalized_rest_operations": 420,
+    "minimum_declared_rest_operations": 436,
+    "minimum_normalized_rest_operations": 435,
     "complete_product_api": false,
     "warehouse_sample_required": false,
     "shared_ledgers_modified": false
@@ -248,6 +248,14 @@
     }
   ],
   "extraction_provenance": [
+    {
+      "id": "core-api-inventory-checkout",
+      "type": "checked_in_source_snapshot",
+      "extraction_method": "The current checked-in API inventory supplies the exact 17-surface core denominator; the extended formulas are derived from its declared and normalized totals",
+      "files": [
+        {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "content_sha256": "e5ecb7072206269cadc7ab7213767d258d08228809aabf1d8db9b67e6b213afc", "git_blob_oid": "c20731da16799b5cf453ab9b105661353e6ceb8c", "role": "exact current 17-surface core API denominator"}
+      ]
+    },
     {
       "id": "vss-configurator-image",
       "type": "pinned_local_image_snapshot",

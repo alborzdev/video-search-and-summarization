@@ -99,7 +99,7 @@
   },
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebase-successor/post-state-capability-oracles.json", "sha256": "911c38e2db0f92bdcc46938c90bac67626ef1009a4e131f1feee5538dcbee021"},
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "7e7e329fd1d7eb259336297c9e279aa1e8fed6933ff96dc28368061cb318e7db"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "c65035f3932dfd540978803dc1b3b3b1afe091ce2b21a489abc9c57cda8f7858"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
     {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "b9b5354f32dd32c89e798559c7080b045d55cee8df41ca4822bdabab48f88075"},
     {"path": "services/video-summarization/src/via_server.py", "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},

@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-official-edge-semantic-runtime-evidence-successor-v1",
+  "collector_id": "thor-official-edge-semantic-collector-v1",
+  "mode": "inert_by_default_authorization_gated_execute",
+  "promotion_policy": "candidate_receipt_only_non_promoting",
+  "warehouse_sample_bundle": "excluded",
+  "required_cloud_inference": false,
+  "reviewed_release": {
+    "version": "3.2.1",
+    "tag_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/official-edge/contract.json",
+      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
+      "sha256": "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/official_edge.py",
+      "sha256": "779ef64bd134fa00934a7bdfdde3b1066678dd1e8ffa75c11c8b9b5af3f06faa"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.yml",
+      "sha256": "8a57b27d6798fa1c4655994fecb1c7abd78a3f738e8d20370f0ecdbefb11369c"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/official-edge.env",
+      "sha256": "134e4369f21ce80c4fd2261552d83925da900ca80f23d93622cc7bf2756d8074"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
+      "sha256": "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json",
+      "sha256": "009e76c6c2a68c0628767052fd125c046716f46a25e60f222699729cfbc58ab7"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",
+      "sha256": "9afc561e582353998e162a7f7ae48c230db1d9480a2623607c1be3b38525f62d"
+    },
+    {
+      "path": "deploy/docker/thor-local/agent-models/thor-requirements.json",
+      "sha256": "b49b7dca397af888299d647f71868d9d26266973fd12b7e6142f9005f8680e3a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py",
+      "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"
+    }
+  ],
+  "canonical_models": {
+    "llm": {
+      "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+      "revision": "3fe6dab75665a93884214ad4b1b95cf02717d081",
+      "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+      "origin": "http://127.0.0.1:30081",
+      "models_path": "/v1/models",
+      "semantic_path": "/v1/chat/completions",
+      "image_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+      "image_id": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"
+    },
+    "vlm": {
+      "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "selector": "cosmos-reason3",
+      "origin": "http://127.0.0.1:8018",
+      "models_path": "/v1/models",
+      "semantic_path": "/v1/chat/completions",
+      "image_reference": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+    },
+    "agent": {
+      "origin": "http://127.0.0.1:8000",
+      "workflow_path": "/chat/stream",
+      "llm_mode": "remote",
+      "vlm_mode": "local_shared",
+      "api_keys_must_be_blank": [
+        "NVIDIA_API_KEY",
+        "OPENAI_API_KEY",
+        "HF_TOKEN",
+        "RAG_API_KEY",
+        "RTVI_VLM_API_KEY"
+      ]
+    }
+  },
+  "forbidden_substitutions": [
+    "nvidia/NVIDIA-Nemotron-Edge-4B-v2.1-EA-020126_FP8",
+    "datasheet-chat",
+    "datasheet-vision",
+    "Qwen/Qwen3-VL-8B-Instruct-FP8"
+  ],
+  "prerequisite": {
+    "plan_id": "vss-3.2.1-thor-official-edge-readiness",
+    "required_inspection_mode": "read_only_host",
+    "required_qualification_state": "prelaunch_ready_not_runtime_qualified",
+    "maximum_age_seconds": 900,
+    "maximum_capture_mtime_skew_seconds": 60,
+    "required_running_containers": [
+      "vss-nemotron-edge-4b",
+      "vss-rtvi-vlm",
+      "vss-agent"
+    ]
+  },
+  "semantic_contract": {
+    "llm_tool_name": "thor_contract_echo",
+    "llm_positive_argument": "thor-tool-positive",
+    "llm_negative_exact_content": "THOR_NO_TOOL_TARGET",
+    "vlm_absent_exact_content": "THOR_VISUAL_ABSENT",
+    "agent_workflow_sentinel": "THOR_AGENT_BOTH_MODELS",
+    "request_template_ids": [
+      "llm-model-identity",
+      "llm-tool-positive",
+      "llm-tool-negative",
+      "vlm-model-identity",
+      "vlm-visual-positive",
+      "vlm-visual-absent-negative",
+      "agent-both-models-workflow"
+    ]
+  },
+  "execution_bounds": {
+    "max_requests": 7,
+    "max_actions": 9,
+    "cleanup_reserve_actions": 2,
+    "max_duration_seconds": 120,
+    "cleanup_reserve_seconds": 15,
+    "request_timeout_seconds": 10,
+    "max_request_bytes": 2097152,
+    "max_response_bytes": 1048576,
+    "max_media_bytes": 1048576
+  },
+  "sanitization": {
+    "receipt_must_exclude": [
+      "raw_media",
+      "credential_values",
+      "raw_prompts",
+      "response_bodies",
+      "authorization_token",
+      "local_media_path",
+      "prerequisite_local_path"
+    ],
+    "receipt_records_only": [
+      "digests",
+      "byte_counts",
+      "stable_status_labels",
+      "exact_public_model_identities",
+      "bounded_counters"
+    ]
+  }
+}

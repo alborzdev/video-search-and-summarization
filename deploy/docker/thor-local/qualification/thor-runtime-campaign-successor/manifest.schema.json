@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "campaign_id", "repository_commit",
+    "selected_binding_overlay_sha256", "required_cloud_inference",
+    "warehouse_sample_bundle", "model_semantic_receipt_sha256", "profiles", "fixtures", "phases"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-runtime-campaign-successor-v1"},
+    "campaign_id": {"$ref": "#/$defs/plain"},
+    "repository_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "selected_binding_overlay_sha256": {"$ref": "#/$defs/sha"},
+    "required_cloud_inference": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "model_semantic_receipt_sha256": {"$ref": "#/$defs/sha"},
+    "profiles": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/profile"}},
+    "fixtures": {"type": "array", "minItems": 16, "maxItems": 16, "items": {"$ref": "#/$defs/fixture"}},
+    "phases": {"type": "array", "minItems": 12, "maxItems": 12, "items": {"$ref": "#/$defs/phase"}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$", "not": {"const": "0000000000000000000000000000000000000000000000000000000000000000"}},
+    "nullableSha": {"oneOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]},
+    "plain": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "image": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "reference", "digest"],
+      "properties": {"role": {"$ref": "#/$defs/plain"}, "reference": {"type": "string", "minLength": 72, "maxLength": 512}, "digest": {"$ref": "#/$defs/sha"}}
+    },
+    "model": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "identity", "served_model_id", "artifact_sha256", "local_thor"],
+      "properties": {
+        "role": {"$ref": "#/$defs/plain"}, "identity": {"type": "string", "minLength": 1, "maxLength": 512},
+        "served_model_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "artifact_sha256": {"$ref": "#/$defs/sha"}, "local_thor": {"const": true}
+      }
+    },
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["profile_id", "resolved_compose_sha256", "generated_env_sha256", "image_set_sha256", "images", "model_set_sha256", "models", "local_inference_only", "remote_endpoints"],
+      "properties": {
+        "profile_id": {"enum": ["base", "search", "lvs", "alerts"]},
+        "resolved_compose_sha256": {"$ref": "#/$defs/sha"}, "generated_env_sha256": {"$ref": "#/$defs/sha"},
+        "image_set_sha256": {"$ref": "#/$defs/sha"}, "images": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"$ref": "#/$defs/image"}},
+        "model_set_sha256": {"$ref": "#/$defs/sha"}, "models": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/model"}},
+        "local_inference_only": {"const": true}, "remote_endpoints": {"type": "array", "maxItems": 0}
+      }
+    },
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixture_id", "sha256", "bytes", "media_type", "provenance", "warehouse_sample_bundle"],
+      "properties": {
+        "fixture_id": {"$ref": "#/$defs/plain"}, "sha256": {"$ref": "#/$defs/sha"},
+        "bytes": {"type": "integer", "minimum": 1, "maximum": 1073741824},
+        "media_type": {"enum": ["video/mp4", "video/x-matroska", "application/json", "application/rtsp-descriptor", "application/static-oracle"]},
+        "provenance": {"type": "string", "minLength": 1, "maxLength": 512},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "phase": {
+      "type": "object", "additionalProperties": false,
+      "required": ["order", "phase_id", "profile_id", "receipt_id", "run_namespace", "executor_input_sha256", "model_semantic_receipt_sha256", "fixture_ids"],
+      "properties": {
+        "order": {"type": "integer", "minimum": 1, "maximum": 12}, "phase_id": {"$ref": "#/$defs/plain"},
+        "profile_id": {"enum": ["none", "base", "search", "lvs", "alerts"]}, "receipt_id": {"$ref": "#/$defs/plain"},
+        "run_namespace": {"oneOf": [{"$ref": "#/$defs/plain"}, {"type": "null"}]},
+        "executor_input_sha256": {"$ref": "#/$defs/nullableSha"},
+        "model_semantic_receipt_sha256": {"$ref": "#/$defs/nullableSha"},
+        "fixture_ids": {"type": "array", "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/plain"}}
+      }
+    }
+  }
+}
