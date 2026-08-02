@@ -675,6 +675,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-authority-registry-successor/tests"
 
+# Wave 1 resolves the two strongest LVS/MCP candidates to exact static
+# `lvs-server`/`vss-lvs` Thor service/profile wiring while retaining every
+# deployed-action, transport, real-video, cleanup, evidence, authorization,
+# and runtime blocker. It remains non-admission-grade and performs no lifecycle
+# or network action; Warehouse is excluded and cloud inference is not required.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-execution-bindings-wave1/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-execution-bindings-wave1/tests"
+
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact
 # remote pointers define no authoritative full-diff denominator and make no

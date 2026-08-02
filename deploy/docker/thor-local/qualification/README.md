@@ -318,6 +318,11 @@ in this directory:
   revocations, receipts, accepted/consumed records, and spent-ledger entries
   are all zero. It performs no cryptography and grants no authority, admission,
   or executability;
+- `candidate-execution-bindings-wave1/` resolves the two Wave 1 LVS/MCP rows
+  to exact static `lvs-server`/`vss-lvs` service and Thor profile wiring. It
+  retains explicit production-contract defects and leaves action, model/input,
+  cleanup/postcondition, evidence, authorization, deployment, and runtime
+  fields unresolved, so both rows remain non-admission-grade;
 - `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
   13 families with no capability rows plus the partial VIOS family its own
   still-open semantic oracle plan. Its 74-entry scope is not the global missing
