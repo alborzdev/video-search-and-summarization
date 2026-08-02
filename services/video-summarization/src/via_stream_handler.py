@@ -26,9 +26,10 @@ import traceback
 import uuid
 from argparse import ArgumentParser
 from copy import deepcopy
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
-from threading import Event, RLock, Thread
+from threading import Condition, Event, RLock, Thread
 
 import json_repair
 import prometheus_client as prom
@@ -89,6 +90,15 @@ def _safe_collection_name(stream_id) -> str:
 MAX_MILVUS_STRING_LEN = 65535
 
 
+@dataclass
+class _DeferredSourceCleanup:
+    """One source-owned destructive cleanup deferred behind sibling leases."""
+
+    ctx_mgr: object | None = None
+    delete_external_collection: bool = False
+    drop_collection: bool = False
+
+
 class RequestInfo:
     """Store information for a request"""
 
@@ -100,6 +110,22 @@ class RequestInfo:
         SUCCESSFUL = "successful"
         FAILED = "failed"
         STOPPING = "stopping"
+        CANCELLED = "cancelled"
+
+    class LeaseState(Enum):
+        """Ownership state for one exact HTTP request.
+
+        The lease exists before the request is submitted to the worker pool so
+        cancellation can never race ahead of request registration.
+        """
+
+        RESERVED = "reserved"
+        RUNNING = "running"
+        CANCELLING = "cancelling"
+        TERMINAL = "terminal"
+        QUIESCENT = "quiescent"
+        CLEANING = "cleaning"
+        CLEANED = "cleaned"
 
     class Response:
         def __init__(
@@ -155,6 +181,17 @@ class RequestInfo:
         self.file_duration = 0
         self.status = RequestInfo.Status.QUEUED
         self.status_event = Event()
+        self.lease_state = RequestInfo.LeaseState.RESERVED
+        self.cancel_event = Event()
+        self.terminal_event = Event()
+        self.quiescent_event = Event()
+        self.cleanup_event = Event()
+        self.cancel_reason = ""
+        self.active_operations = 0
+        self.cleanup_started = False
+        self.cleanup_complete = False
+        self.submission_queued = False
+        self._pending_metric_active = False
         self.enable_vlm_structured_output = True
         self.objects_of_interest = None
         self._ca_rag_latency = 0
@@ -404,6 +441,13 @@ class ViaStreamHandler:
         logger.info("Initializing VIA Stream Handler")
 
         self._lock = RLock()
+        self._source_cleanup_condition = Condition(self._lock)
+        self._source_cleanup_in_progress: set[str] = set()
+        self._source_teardown_in_progress: set[str] = set()
+        self._deferred_source_cleanup: dict[str, _DeferredSourceCleanup] = {}
+        self._initial_db_reset_condition = Condition(self._lock)
+        self._initial_db_reset_state = "pending"
+        self._initial_db_reset_error: BaseException | None = None
         self._running = True
         self._request_info_map: dict[str, RequestInfo] = {}
         self._notification_llm_api_key = None
@@ -627,6 +671,9 @@ class ViaStreamHandler:
         is_live_stream_ended: bool,
         chunk_responses: list[VlmChunkResponse],
     ):
+        if not req_info.is_live and req_info.cancel_event.is_set():
+            self._mark_request_cancelled(req_info)
+            return
         new_response = []
         if not is_live_stream_ended and req_info.status != RequestInfo.Status.FAILED:
             try:
@@ -649,6 +696,9 @@ class ViaStreamHandler:
                             "Summarization failed",
                         )
                     ]
+            if req_info.cancel_event.is_set():
+                self._mark_request_cancelled(req_info)
+                return
             req_info.response += new_response
 
         if req_info.is_live:
@@ -708,9 +758,11 @@ class ViaStreamHandler:
                     "",
                 )
 
-            self._metrics.queries_processed.inc()
-            self._metrics.queries_pending.dec()
-        req_info.status_event.set()
+            self._complete_pending_metric(req_info)
+        if not req_info.is_live or is_live_stream_ended:
+            self._mark_request_terminal(req_info, req_info.status)
+        else:
+            req_info.status_event.set()
         # For live streams _process_output runs per intermediate chunk
         # (is_live_stream_ended=False) and once at end-of-stream (True). Only end
         # the E2E span on the final call so the live span isn't truncated to the
@@ -865,7 +917,7 @@ class ViaStreamHandler:
 
     def _on_vlm_chunk_response(self, response: VlmChunkResponse, req_info: RequestInfo):
         """Gather chunks processed by the pipeline and run any further post-processing"""
-        if not self._running:
+        if not self._running or req_info.cancel_event.is_set():
             return
         # Create per-chunk parent span that covers all operations for this chunk
         vlm_pipeline_ctx = getattr(req_info, "_vlm_pipeline_span_context", None)
@@ -1279,7 +1331,9 @@ class ViaStreamHandler:
                         " size or tuning the CA-RAG config for reduced latency."
                     )
 
-                fut = req_info._output_process_thread_pool.submit(
+                fut = self._submit_request_operation(
+                    req_info,
+                    req_info._output_process_thread_pool,
                     self._process_output,
                     req_info,
                     False,
@@ -1314,7 +1368,9 @@ class ViaStreamHandler:
 
                 # Queue that the request be marked completed
                 # once all pending aggregation requests are completed.
-                fut = req_info._output_process_thread_pool.submit(
+                fut = self._submit_request_operation(
+                    req_info,
+                    req_info._output_process_thread_pool,
                     self._process_output, req_info, True, []
                 )
                 fut.add_done_callback(
@@ -1368,7 +1424,9 @@ class ViaStreamHandler:
 
             # Queue for getting the aggregated summary
             if req_info._output_process_thread_pool:
-                req_info._output_process_thread_pool.submit(
+                self._submit_request_operation(
+                    req_info,
+                    req_info._output_process_thread_pool,
                     self._process_output, req_info, False, req_info.processed_chunk_list
                 )
                 req_info._output_process_thread_pool.shutdown(wait=False)
@@ -1403,6 +1461,9 @@ class ViaStreamHandler:
         """Trigger a file-based query via RTVI-VLM SSE streaming."""
 
         logger.info("Triggering RTVI query %s", req_info.request_id)
+        if req_info.cancel_event.is_set():
+            self._mark_request_cancelled(req_info)
+            return
         req_info.status = RequestInfo.Status.PROCESSING
         req_info.start_time = time.time()
 
@@ -1498,6 +1559,7 @@ class ViaStreamHandler:
                 )
 
             for sse_chunk in self._vlm_pipeline.generate_captions_stream(
+                owner_id=req_info.request_id,
                 url=source_url or None,
                 file_id=file_id,
                 prompt=req_info.vlm_request_params.vlm_prompt or "",
@@ -1529,11 +1591,15 @@ class ViaStreamHandler:
                 api_type=getattr(req_info, "api_type", None),
                 mm_processor_kwargs=getattr(req_info, "mm_processor_kwargs", None),
             ):
+                if req_info.cancel_event.is_set():
+                    break
                 chunk_responses = sse_chunk.get("chunk_responses", [])
                 if not chunk_responses:
                     continue
 
                 for cr in chunk_responses:
+                    if req_info.cancel_event.is_set():
+                        break
                     start_sec = self._parse_rtvi_time(cr.get("start_time", 0))
                     end_sec = self._parse_rtvi_time(cr.get("end_time", 0))
 
@@ -1633,7 +1699,14 @@ class ViaStreamHandler:
                     self._on_vlm_chunk_response(response, req_info)
                     chunk_idx += 1
 
+            if req_info.cancel_event.is_set():
+                self._mark_request_cancelled(req_info)
+                return
+
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as ex:
+            if req_info.cancel_event.is_set():
+                self._mark_request_cancelled(req_info)
+                return
             logger.error(
                 "RTVI dependency is down (url=%s, request_id=%s): %s",
                 self._vlm_pipeline._base_url,
@@ -1646,14 +1719,16 @@ class ViaStreamHandler:
             req_info.rtvi_error_code = "DependencyUnavailable"
             req_info.end_time = time.time()
             req_info.progress = 100
-            self._metrics.queries_processed.inc()
-            self._metrics.queries_pending.dec()
+            self._complete_pending_metric(req_info)
             self._end_vlm_pipeline_span(req_info)
             # This error exit returns before _process_output runs, so end the E2E span here too.
             self._end_e2e_span(req_info)
-            req_info.status_event.set()
+            self._mark_request_terminal(req_info, RequestInfo.Status.FAILED)
             return
         except Exception as ex:
+            if req_info.cancel_event.is_set():
+                self._mark_request_cancelled(req_info)
+                return
             logger.error("RTVI query %s failed: %s", req_info.request_id, ex)
             req_info.status = RequestInfo.Status.FAILED
             if isinstance(ex, RtviError):
@@ -1664,12 +1739,11 @@ class ViaStreamHandler:
                 req_info.error_message = str(ex)
             req_info.end_time = time.time()
             req_info.progress = 100
-            self._metrics.queries_processed.inc()
-            self._metrics.queries_pending.dec()
+            self._complete_pending_metric(req_info)
             self._end_vlm_pipeline_span(req_info)
             # This error exit returns before _process_output runs, so end the E2E span here too.
             self._end_e2e_span(req_info)
-            req_info.status_event.set()
+            self._mark_request_terminal(req_info, RequestInfo.Status.FAILED)
             return
 
         req_info.chunk_count = chunk_idx
@@ -1703,7 +1777,9 @@ class ViaStreamHandler:
 
         # All chunks received — trigger aggregated summary
         if req_info._output_process_thread_pool:
-            req_info._output_process_thread_pool.submit(
+            self._submit_request_operation(
+                req_info,
+                req_info._output_process_thread_pool,
                 self._process_output, req_info, False, req_info.processed_chunk_list
             )
             req_info._output_process_thread_pool.shutdown(wait=False)
@@ -2396,7 +2472,13 @@ class ViaStreamHandler:
                 )
         return http_status, user_message
 
-    def drop_collection_for_asset(self, asset_id: str, *, force_legacy: bool = False) -> dict:
+    def drop_collection_for_asset(
+        self,
+        asset_id: str,
+        *,
+        force_legacy: bool = False,
+        ctx_mgr: RagAdapter | None = None,
+    ) -> dict:
         """Drop the Elasticsearch index/collection associated with `asset_id`.
 
         Used by /files DELETE (and stream removal) when KAFKA_ENABLED=true so
@@ -2412,6 +2494,10 @@ class ViaStreamHandler:
         Other callers (DELETE /files, live-stream teardown) keep their
         existing semantics by leaving the flag at its default.
 
+        ``ctx_mgr`` lets request cleanup reuse its source-owned destructive
+        manager instead of borrowing a second process from an exhausted pool.
+        Other callers omit it and retain the existing borrow/return behavior.
+
         Returns the acknowledged context-manager subprocess response dict;
         idempotent on a missing index. Raises when the context manager is
         unavailable, throws, or does not acknowledge the deletion.
@@ -2422,17 +2508,18 @@ class ViaStreamHandler:
         if self._args.disable_ca_rag:
             return {"skipped": True, "reason": "ca-rag disabled"}
 
-        ctx_mgr = None
+        borrowed_ctx_mgr = ctx_mgr is None
         try:
-            with self._lock:
-                self._create_ctx_mgr_pool(self._ca_rag_config)
-                if not self._ctx_mgr_pool:
-                    raise ViaException(
-                        "No context manager available to delete the asset collection",
-                        "DependencyUnavailable",
-                        503,
-                    )
-                ctx_mgr = self._ctx_mgr_pool.pop()
+            if borrowed_ctx_mgr:
+                with self._lock:
+                    self._create_ctx_mgr_pool(self._ca_rag_config)
+                    if not self._ctx_mgr_pool:
+                        raise ViaException(
+                            "No context manager available to delete the asset collection",
+                            "DependencyUnavailable",
+                            503,
+                        )
+                    ctx_mgr = self._ctx_mgr_pool.pop()
 
             config = deepcopy(self._ca_rag_config)
             config["context_manager"]["uuid"] = asset_id
@@ -2460,39 +2547,275 @@ class ViaStreamHandler:
             http_status, user_message = classify_es_error(ex)
             raise ViaException(user_message, "DependencyError", http_status) from ex
         finally:
-            if ctx_mgr is not None:
+            if borrowed_ctx_mgr and ctx_mgr is not None:
                 with self._lock:
-                    self._ctx_mgr_pool.append(ctx_mgr)
+                    if all(existing is not ctx_mgr for existing in self._ctx_mgr_pool):
+                        self._ctx_mgr_pool.append(ctx_mgr)
 
-    def get_ctx_mgr(self, source_id: str) -> None:
+    def get_ctx_mgr(
+        self, source_id: str, exclude_request_id: str | None = None
+    ) -> RagAdapter:
         """
-        Return a ContextManager associated with the given source_id.
+        Lease one request-exclusive ContextManager for ``source_id``.
+
+        Concurrent requests for the same source still point their independently
+        configured managers at the same collection UUID.  They must not share a
+        process instance, however: each request can carry different CA-RAG
+        settings, and returning one request's manager to the pool must never
+        expose a sibling's still-active manager to an unrelated request.
+
+        ``exclude_request_id`` is retained for compatibility with existing
+        callers; request exclusivity makes a request-map lookup unnecessary.
         """
         with self._lock:
-            for _, request_info in self._request_info_map.items():
-                if request_info.source_id == source_id:
-                    # Remove old data for the same source
-                    if request_info.summarize:
-                        request_info._ctx_mgr.reset(
-                            {
-                                "summarization": {"uuid": request_info.source_id},
-                            }
-                        )
-                    return request_info._ctx_mgr
-            # If ctx mgr not found in request info map
-            logger.info(f"Getting new Context Manager for {source_id}")
+            logger.info("Getting request-exclusive Context Manager for %s", source_id)
             return self._ctx_mgr_pool.pop()
 
-    def remove_request_id(self, request_id: str) -> None:
-        """Remove request info for a single request ID"""
+    def reserve_request(self, source_id: str) -> str:
+        """Reserve and publish an exact request lease before worker submission."""
+
+        source_id = str(source_id)
+        req_info = RequestInfo()
+        req_info.source_id = source_id
+        with self._source_cleanup_condition:
+            source_teardown_in_progress = getattr(
+                self, "_source_teardown_in_progress", set()
+            )
+            while (
+                source_id in self._source_cleanup_in_progress
+                or source_id in source_teardown_in_progress
+            ):
+                self._source_cleanup_condition.wait()
+            while req_info.request_id in self._request_info_map:
+                req_info.request_id = str(uuid.uuid4())
+            self._request_info_map[req_info.request_id] = req_info
+        return req_info.request_id
+
+    def _configure_ctx_mgr_with_initial_reset(self, ctx_mgr, config: dict) -> None:
+        """Configure one manager behind the process-wide initial-reset barrier.
+
+        One request configures its manager and performs the destructive initial
+        reset. Concurrent requests wait before configuring their own managers.
+        A winner failure is sticky and fails later setup closed instead of
+        allowing ingestion against an uncertain database state.
+        """
+
+        reset_disabled = os.environ.get(
+            "VSS_DISABLE_DB_RESET_ON_INIT", "false"
+        ).lower() in ["true", "1"]
+        if reset_disabled:
+            ctx_mgr.configure(config=config)
+            return
+
+        with self._initial_db_reset_condition:
+            while self._initial_db_reset_state == "running":
+                self._initial_db_reset_condition.wait()
+            if self._initial_db_reset_state == "failed":
+                raise RuntimeError("Initial CA-RAG database reset failed") from (
+                    self._initial_db_reset_error
+                )
+            if self._initial_db_reset_state == "succeeded":
+                reset_winner = False
+            else:
+                self._initial_db_reset_state = "running"
+                self.first_init = False
+                reset_winner = True
+
+        if not reset_winner:
+            ctx_mgr.configure(config=config)
+            return
+
+        try:
+            ctx_mgr.configure(config=config)
+            ctx_mgr.reset({"summarization": {"erase_db": True}})
+        except BaseException as ex:
+            with self._initial_db_reset_condition:
+                self._initial_db_reset_error = ex
+                self._initial_db_reset_state = "failed"
+                self._initial_db_reset_condition.notify_all()
+            raise
+        else:
+            with self._initial_db_reset_condition:
+                self._initial_db_reset_state = "succeeded"
+                self._initial_db_reset_condition.notify_all()
+
+    def queue_request_submission(self, request_id: str) -> None:
+        """Count executor-queued ownership before a worker can claim the lease."""
+
         with self._lock:
-            if request_id in self._request_info_map:
-                del self._request_info_map[request_id]
+            req_info = self._request_info_map.get(request_id)
+            if req_info is None:
+                raise ViaException(
+                    f"No such request-id {request_id}", "InvalidParameterValue", 400
+                )
+            if req_info.lease_state is not RequestInfo.LeaseState.RESERVED:
+                raise ViaException(
+                    f"Request-id {request_id} has already been submitted",
+                    "Conflict",
+                    409,
+                )
+            req_info.submission_queued = True
+            req_info.active_operations += 1
+            req_info.quiescent_event.clear()
+
+    def release_queued_submission(self, request_id: str) -> bool:
+        """Release ownership if executor submission failed before worker claim."""
+
+        with self._lock:
+            req_info = self._request_info_map.get(request_id)
+            if req_info is None or not req_info.submission_queued:
+                return False
+            req_info.submission_queued = False
+        self._request_operation_finished(req_info)
+        return True
+
+    def _claim_request(self, request_id: str, source_id: str) -> RequestInfo:
+        with self._lock:
+            req_info = self._request_info_map.get(request_id)
+            if req_info is None:
+                raise ViaException(
+                    f"No such request-id {request_id}", "InvalidParameterValue", 400
+                )
+            if req_info.source_id != str(source_id):
+                raise ViaException(
+                    f"Request-id {request_id} is not owned by source {source_id}",
+                    "Conflict",
+                    409,
+                )
+            ownership_precounted = req_info.submission_queued
+            if ownership_precounted:
+                # Transfer the ownership counted before run_in_executor to the
+                # worker. The worker's finally block releases this same slot.
+                req_info.submission_queued = False
+                if req_info.cancel_event.is_set():
+                    return req_info
+            if req_info.lease_state is not RequestInfo.LeaseState.RESERVED:
+                if req_info.cancel_event.is_set() and req_info.terminal_event.is_set():
+                    # Cleanup may still be waiting after an executor submission
+                    # failure. A stale worker must not make it non-quiescent.
+                    return req_info
+                raise ViaException(
+                    f"Request-id {request_id} has already been submitted",
+                    "Conflict",
+                    409,
+                )
+            req_info.lease_state = RequestInfo.LeaseState.RUNNING
+            if not ownership_precounted:
+                req_info.active_operations += 1
+            req_info.quiescent_event.clear()
+            return req_info
+
+    def _request_operation_started(self, req_info: RequestInfo) -> None:
+        with self._lock:
+            req_info.active_operations += 1
+            req_info.quiescent_event.clear()
+
+    def _request_operation_finished(self, req_info: RequestInfo) -> None:
+        with self._lock:
+            req_info.active_operations = max(0, req_info.active_operations - 1)
+            if req_info.terminal_event.is_set() and req_info.active_operations == 0:
+                req_info.lease_state = RequestInfo.LeaseState.QUIESCENT
+                req_info.quiescent_event.set()
+
+    def _submit_request_operation(self, req_info, executor, operation, *args):
+        """Submit owned background work and include it in quiescence."""
+
+        self._request_operation_started(req_info)
+        try:
+            future = executor.submit(operation, *args)
+        except Exception:
+            self._request_operation_finished(req_info)
+            raise
+        future.add_done_callback(lambda _future: self._request_operation_finished(req_info))
+        return future
+
+    def _complete_pending_metric(self, req_info: RequestInfo) -> None:
+        with self._lock:
+            if not req_info._pending_metric_active:
+                return
+            req_info._pending_metric_active = False
+        self._metrics.queries_processed.inc()
+        self._metrics.queries_pending.dec()
+
+    def _mark_request_terminal(
+        self, req_info: RequestInfo, status: "RequestInfo.Status"
+    ) -> None:
+        """Publish terminal state, then quiescence once all owned work exits."""
+
+        with self._lock:
+            if not req_info.terminal_event.is_set():
+                req_info.status = status
+                req_info.progress = 100
+                req_info.end_time = req_info.end_time or time.time()
+                req_info.lease_state = RequestInfo.LeaseState.TERMINAL
+                req_info.status_event.set()
+                req_info.terminal_event.set()
+            if req_info.active_operations == 0:
+                req_info.lease_state = RequestInfo.LeaseState.QUIESCENT
+                req_info.quiescent_event.set()
+
+    def _mark_request_cancelled(self, req_info: RequestInfo) -> None:
+        self._complete_pending_metric(req_info)
+        self._end_vlm_pipeline_span(req_info)
+        self._end_e2e_span(req_info)
+        self._mark_request_terminal(req_info, RequestInfo.Status.CANCELLED)
+
+    def cancel_request(self, request_id: str, reason: str) -> bool:
+        """Cancel only the exact leased request, never every request for a source."""
+
+        with self._lock:
+            req_info = self._request_info_map.get(request_id)
+            if req_info is None or req_info.cleanup_complete:
+                return False
+            if req_info.cancel_event.is_set() or req_info.terminal_event.is_set():
+                return False
+            req_info.cancel_reason = str(reason)
+            req_info.cancel_event.set()
+            req_info.status = RequestInfo.Status.STOPPING
+            req_info.lease_state = RequestInfo.LeaseState.CANCELLING
+            has_active_operation = req_info.active_operations > 0
+
+        # The downstream bridge is request-owner scoped. Do not fall back to
+        # abort_chunks(source_id): a source may have independent sibling work.
+        if has_active_operation:
+            try:
+                self._vlm_pipeline.cancel_request(request_id, str(reason))
+            except Exception as ex:
+                logger.warning(
+                    "Exact RTVI cancellation failed for request %s: %s",
+                    request_id,
+                    ex,
+                )
+        else:
+            self._mark_request_cancelled(req_info)
+        return True
+
+    def wait_for_request_terminal(self, request_id: str, timeout: float | None = None) -> bool:
+        with self._lock:
+            req_info = self._request_info_map.get(request_id)
+            if req_info is None:
+                return True
+            event = req_info.terminal_event
+        return event.wait(timeout=timeout)
+
+    def wait_for_request_quiescent(self, request_id: str, timeout: float | None = None) -> bool:
+        with self._lock:
+            req_info = self._request_info_map.get(request_id)
+            if req_info is None:
+                return True
+            event = req_info.quiescent_event
+        return event.wait(timeout=timeout)
+
+    def remove_request_id(self, request_id: str) -> None:
+        """Compatibility wrapper for exact, quiescence-gated cleanup."""
+
+        self.cleanup_request(request_id)
 
     def summarize(
         self,
         source: RequestSource,
         query: SummarizationQuery,
+        request_id: str | None = None,
     ):
         """Run a summarization query on a file"""
         # Enable summarization if summarization config is enabled  OR API passes enable flag
@@ -2510,6 +2833,7 @@ class ViaStreamHandler:
             source=source,
             query=query,
             is_summarization=True,
+            request_id=request_id,
         )
 
     def query(
@@ -2518,8 +2842,44 @@ class ViaStreamHandler:
         query: SummarizationQuery,
         is_summarization=False,
         skip_ca_rag=False,
+        request_id: str | None = None,
     ):
-        """Run a query on a file"""
+        """Run a query under one pre-published exact request lease."""
+
+        if request_id is None:
+            request_id = self.reserve_request(source.source_id)
+        req_info = self._claim_request(request_id, source.source_id)
+        try:
+            if req_info.cancel_event.is_set():
+                self._mark_request_cancelled(req_info)
+                return req_info.request_id
+            return self._query_reserved(
+                req_info,
+                source,
+                query,
+                is_summarization=is_summarization,
+                skip_ca_rag=skip_ca_rag,
+            )
+        except Exception:
+            if req_info.cancel_event.is_set():
+                self._mark_request_cancelled(req_info)
+            elif not req_info.terminal_event.is_set():
+                req_info.error_message = "Request setup failed"
+                self._complete_pending_metric(req_info)
+                self._mark_request_terminal(req_info, RequestInfo.Status.FAILED)
+            raise
+        finally:
+            self._request_operation_finished(req_info)
+
+    def _query_reserved(
+        self,
+        req_info: RequestInfo,
+        source: RequestSource,
+        query: SummarizationQuery,
+        is_summarization=False,
+        skip_ca_rag=False,
+    ):
+        """Populate and execute a request whose identity is already reserved."""
 
         if self._args.enable_audio is False and (query.enable_audio is True):
             raise ViaException(
@@ -2564,8 +2924,7 @@ class ViaStreamHandler:
         if query.ignore_eos is not None:
             vlm_generation_config["ignore_eos"] = query.ignore_eos
 
-        # Create a RequestInfo object and populate it
-        req_info = RequestInfo()
+        # Populate the pre-reserved RequestInfo object.
         req_info.file = source.url or ""
         req_info.chunk_size = query.chunk_duration
         req_info.is_summarization = is_summarization
@@ -2623,14 +2982,20 @@ class ViaStreamHandler:
         req_info.enable_vlm_structured_output = query.enable_vlm_structured_output
         req_info.objects_of_interest = query.objects_of_interest
         req_info.enable_qa = getattr(query, "enable_qa", False)
+        if req_info.cancel_event.is_set():
+            self._mark_request_cancelled(req_info)
+            return req_info.request_id
         if not self._args.disable_ca_rag and not skip_ca_rag:
             with self._lock:
                 self._create_ctx_mgr_pool(self._ca_rag_config)
-                req_info._ctx_mgr = self.get_ctx_mgr(req_info.source_id)
+                req_info._ctx_mgr = self.get_ctx_mgr(
+                    req_info.source_id,
+                    exclude_request_id=req_info.request_id,
+                )
             try:
                 config = deepcopy(self._ca_rag_config)
                 config["context_manager"]["uuid"] = req_info.source_id
-                req_info._ctx_mgr.configure(config=config)
+                self._configure_ctx_mgr_with_initial_reset(req_info._ctx_mgr, config)
             except Exception as ex:
                 logger.error(traceback.format_exc())
                 logger.error("Query failed for %s - %s", req_info.request_id, str(ex))
@@ -2638,18 +3003,13 @@ class ViaStreamHandler:
                     with self._lock:
                         self._ctx_mgr_pool.append(req_info._ctx_mgr)
                         req_info._ctx_mgr = None
+                req_info.error_message = str(ex)
+                req_info._output_process_thread_pool.shutdown(wait=False)
+                self._mark_request_terminal(req_info, RequestInfo.Status.FAILED)
                 return req_info.request_id
-            # Reset the context manager for the first time
-            if self.first_init and os.environ.get(
-                "VSS_DISABLE_DB_RESET_ON_INIT", "false"
-            ).lower() not in ["true", "1"]:
-                self.first_init = False
-                req_info._ctx_mgr.reset(
-                    {
-                        "summarization": {"erase_db": True},
-                    }
-                )
-
+            if req_info.cancel_event.is_set():
+                self._mark_request_cancelled(req_info)
+                return req_info.request_id
             if req_info.enable_qa:
                 try:
                     self._create_qa_ctx_mgr_pool(self._ca_rag_config)
@@ -2683,14 +3043,15 @@ class ViaStreamHandler:
         req_info.chunk_overlap_duration = query.chunk_overlap_duration
 
         req_info.queue_time = time.time()
-        # Adding the request info to the request info map
-        with self._lock:
-            self._request_info_map[req_info.request_id] = req_info
-
         # Add the request to the pending queue
         self._metrics.queries_pending.inc()
+        req_info._pending_metric_active = True
 
         req_info.source_url = source.url or ""
+
+        if req_info.cancel_event.is_set():
+            self._mark_request_cancelled(req_info)
+            return req_info.request_id
 
         self._store_event_prompt_in_db(
             req_info.source_id,
@@ -2705,7 +3066,11 @@ class ViaStreamHandler:
         return req_info.request_id
 
     def generate_vlm_captions(
-        self, source: RequestSource, query: SummarizationQuery, is_rtsp=False
+        self,
+        source: RequestSource,
+        query: SummarizationQuery,
+        is_rtsp=False,
+        request_id: str | None = None,
     ):
         """Run VLM captions generation on a file or RTSP stream.
         This reuses the query function since they have identical logic.
@@ -2735,6 +3100,7 @@ class ViaStreamHandler:
             query=query,
             is_summarization=False,
             skip_ca_rag=True,
+            request_id=request_id,
         )
 
     def _create_vlm_prompt(
@@ -2933,57 +3299,143 @@ This is very important and you must follow this strictly.
 
     def remove_rtsp_stream(self, source_id: str):
         """Remove a live stream from the server"""
-        with self._lock:
+        source_id = str(source_id)
+        with self._source_cleanup_condition:
             if source_id not in self._live_stream_info_map:
                 logger.debug(f"Live stream {source_id} not active")
                 return
+            source_teardown_in_progress = getattr(
+                self, "_source_teardown_in_progress", None
+            )
+            if source_teardown_in_progress is None:
+                source_teardown_in_progress = set()
+                self._source_teardown_in_progress = source_teardown_in_progress
+            while (
+                source_id in self._source_cleanup_in_progress
+                or source_id in source_teardown_in_progress
+            ):
+                self._source_cleanup_condition.wait()
+            source_teardown_in_progress.add(source_id)
             logger.info("Removing live stream %s from pipeline", source_id)
             live_stream_info = self._live_stream_info_map[source_id]
-        live_stream_info.stop = True
+            live_stream_info.stop = True
+            source_requests = [
+                req_info
+                for req_info in self._request_info_map.values()
+                if req_info.source_id == source_id
+            ]
 
-        self._vlm_pipeline.remove_live_stream(source_id)
+        for req_info in source_requests:
+            self.cancel_request(req_info.request_id, "live_stream_removed")
 
-        with self._lock:
-            self._live_stream_info_map.pop(source_id)
-
-        logger.info("Removed live stream %s from pipeline", source_id)
-
-        ctx_mgrs_to_be_removed = []
-        with self._lock:
-            for req_info in self._request_info_map.values():
-                if req_info.source_id == source_id and req_info._ctx_mgr:
-                    ctx_mgrs_to_be_removed.append((req_info._ctx_mgr, req_info))
-                    req_info._ctx_mgr = None
-            self._request_info_map = {
-                req_id: req_info
-                for req_id, req_info in self._request_info_map.items()
-                if req_info.source_id != source_id
-            }
-        for ctx_mgr, req_info in ctx_mgrs_to_be_removed:
-            try:
-                if req_info.summarize:
-                    ctx_mgr.reset(
-                        {
-                            "summarization": {"uuid": req_info.source_id},
-                            "delete_external_collection": req_info.delete_external_collection,
-                        }
-                    )
-            except Exception as ex:
-                logger.error(
-                    "ctx_mgr.reset failed during remove_rtsp_stream for source_id=%s: %s",
-                    req_info.source_id,
-                    ex,
-                )
-            finally:
-                with self._lock:
-                    logger.info(
-                        f"Adding Context Manager no.: {ctx_mgr._process_index} back to process pool."
-                    )
-                    self._ctx_mgr_pool.append(ctx_mgr)
+        removal_error = None
         try:
-            shutil.rmtree(f"/tmp/via/cached_frames/{source_id}")
-        except FileNotFoundError:
-            pass
+            try:
+                self._vlm_pipeline.remove_live_stream(source_id)
+            except BaseException as ex:
+                removal_error = ex
+
+            for req_info in source_requests:
+                self.wait_for_request_quiescent(req_info.request_id)
+                if req_info.cleanup_started:
+                    req_info.cleanup_event.wait()
+
+            ctx_mgrs_to_return = []
+            with self._source_cleanup_condition:
+                self._live_stream_info_map.pop(source_id, None)
+                deferred_by_source = getattr(self, "_deferred_source_cleanup", {})
+                deferred_cleanup = deferred_by_source.pop(source_id, None)
+                remaining_source_requests = [
+                    (request_id, req_info)
+                    for request_id, req_info in self._request_info_map.items()
+                    if req_info.source_id == source_id
+                ]
+                for request_id, req_info in remaining_source_requests:
+                    if req_info._ctx_mgr is not None:
+                        ctx_mgrs_to_return.append(
+                            (
+                                req_info._ctx_mgr,
+                                bool(req_info.summarize),
+                                bool(req_info.delete_external_collection),
+                                False,
+                            )
+                        )
+                        req_info._ctx_mgr = None
+                    if req_info._qa_ctx_mgr is not None:
+                        if all(
+                            existing is not req_info._qa_ctx_mgr
+                            for existing in self._qa_ctx_mgr_pool
+                        ):
+                            self._qa_ctx_mgr_pool.append(req_info._qa_ctx_mgr)
+                        req_info._qa_ctx_mgr = None
+                    self._request_info_map.pop(request_id, None)
+                    req_info.cleanup_started = True
+                    req_info.cleanup_complete = True
+                    req_info.lease_state = RequestInfo.LeaseState.CLEANED
+                    req_info.cleanup_event.set()
+
+            if deferred_cleanup is not None and deferred_cleanup.ctx_mgr is not None:
+                ctx_mgrs_to_return.insert(
+                    0,
+                    (
+                        deferred_cleanup.ctx_mgr,
+                        True,
+                        deferred_cleanup.delete_external_collection,
+                        deferred_cleanup.drop_collection,
+                    ),
+                )
+
+            returned_ids = set()
+            for (
+                ctx_mgr,
+                reset_required,
+                delete_external_collection,
+                drop_collection,
+            ) in ctx_mgrs_to_return:
+                manager_id = id(ctx_mgr)
+                if manager_id in returned_ids:
+                    continue
+                returned_ids.add(manager_id)
+                try:
+                    if reset_required:
+                        ctx_mgr.reset(
+                            {
+                                "summarization": {"uuid": source_id},
+                                "delete_external_collection": delete_external_collection,
+                            }
+                        )
+                        if drop_collection:
+                            self.drop_collection_for_asset(
+                                source_id,
+                                force_legacy=True,
+                                ctx_mgr=ctx_mgr,
+                            )
+                except Exception as ex:
+                    logger.error(
+                        "ctx_mgr.reset failed during remove_rtsp_stream for source_id=%s: %s",
+                        source_id,
+                        ex,
+                    )
+                finally:
+                    with self._lock:
+                        if all(existing is not ctx_mgr for existing in self._ctx_mgr_pool):
+                            self._ctx_mgr_pool.append(ctx_mgr)
+                    logger.info(
+                        "Adding Context Manager no.: %s back to process pool.",
+                        ctx_mgr._process_index,
+                    )
+
+            logger.info("Removed live stream %s from pipeline", source_id)
+            try:
+                shutil.rmtree(f"/tmp/via/cached_frames/{source_id}")
+            except FileNotFoundError:
+                pass
+            if removal_error is not None:
+                raise removal_error
+        finally:
+            with self._source_cleanup_condition:
+                self._source_teardown_in_progress.discard(source_id)
+                self._source_cleanup_condition.notify_all()
 
     def stop(self, force=False):
         """Stop the VIA Stream Handler"""
@@ -2992,10 +3444,48 @@ This is very important and you must follow this strictly.
 
         lsinfo_to_be_removed = list(self._live_stream_info_map.values())
         for lsinfo in lsinfo_to_be_removed:
-            self.remove_rtsp_stream(lsinfo.source_id)
+            try:
+                self.remove_rtsp_stream(lsinfo.source_id)
+            except Exception as ex:
+                safe_log(
+                    logger,
+                    "error",
+                    "Error removing live stream %s during shutdown: %s",
+                    lsinfo.source_id,
+                    ex,
+                )
+
+        with self._source_cleanup_condition:
+            remaining_requests = list(self._request_info_map.values())
+            remaining_sources = {req_info.source_id for req_info in remaining_requests}
+            source_teardown_in_progress = getattr(
+                self, "_source_teardown_in_progress", None
+            )
+            if source_teardown_in_progress is None:
+                source_teardown_in_progress = set()
+                self._source_teardown_in_progress = source_teardown_in_progress
+            while any(
+                source_id in self._source_cleanup_in_progress
+                or source_id in source_teardown_in_progress
+                for source_id in remaining_sources
+            ):
+                self._source_cleanup_condition.wait()
+            source_teardown_in_progress.update(remaining_sources)
+
+        for req_info in remaining_requests:
+            self.cancel_request(req_info.request_id, "server_stopping")
+        for req_info in remaining_requests:
+            self.wait_for_request_quiescent(req_info.request_id)
+            if req_info.cleanup_started:
+                req_info.cleanup_event.wait()
+        for req_info in remaining_requests:
+            self.cleanup_request(req_info.request_id, teardown_owned=True)
 
         if hasattr(self, "_vlm_pipeline") and self._vlm_pipeline is not None:
-            self._vlm_pipeline.stop(force=True)
+            try:
+                self._vlm_pipeline.stop(force=True)
+            except Exception as ex:
+                safe_log(logger, "error", "Error stopping RTVI pipeline: %s", ex)
 
         if hasattr(self, "_kafka_producer") and self._kafka_producer is not None:
             try:
@@ -3004,49 +3494,56 @@ This is very important and you must follow this strictly.
                 logger.warning("Error closing Kafka producer: %s", ex)
             self._kafka_producer = None
 
-        self._metrics.unregister()
+        try:
+            self._metrics.unregister()
+        except Exception as ex:
+            safe_log(logger, "error", "Error unregistering metrics: %s", ex)
 
         self._ctx_mgr = None
 
-        for ctx_mgr in self._ctx_mgr_pool:
+        with self._source_cleanup_condition:
+            managers = list(self._ctx_mgr_pool)
+            managers.extend(self._qa_ctx_mgr_pool)
+            for req_info in self._request_info_map.values():
+                if req_info._ctx_mgr is not None:
+                    managers.append(req_info._ctx_mgr)
+                    req_info._ctx_mgr = None
+                if req_info._qa_ctx_mgr is not None:
+                    managers.append(req_info._qa_ctx_mgr)
+                    req_info._qa_ctx_mgr = None
+                req_info.cleanup_started = True
+                req_info.cleanup_complete = True
+                req_info.lease_state = RequestInfo.LeaseState.CLEANED
+                req_info.cleanup_event.set()
+            deferred_by_source = getattr(self, "_deferred_source_cleanup", {})
+            for deferred_cleanup in deferred_by_source.values():
+                if deferred_cleanup.ctx_mgr is not None:
+                    managers.append(deferred_cleanup.ctx_mgr)
+            deferred_by_source.clear()
+            self._request_info_map.clear()
+            self._ctx_mgr_pool.clear()
+            self._qa_ctx_mgr_pool.clear()
+            self._source_cleanup_in_progress.clear()
+            source_teardown_in_progress.clear()
+            self._source_cleanup_condition.notify_all()
+
+        terminated_ids = set()
+        for manager in managers:
+            manager_id = id(manager)
+            if manager_id in terminated_ids:
+                continue
+            terminated_ids.add(manager_id)
             try:
-                ctx_mgr.process.kill()
-                ctx_mgr.process.join(timeout=2)
+                manager.process.kill()
+                manager.process.join(timeout=2)
             except Exception as e:
                 safe_log(
                     logger,
                     "error",
-                    "Error shutting down context manager for request %s: %s",
-                    ctx_mgr._process_index,
+                    "Error shutting down context manager %s: %s",
+                    getattr(manager, "_process_index", "unknown"),
                     e,
                 )
-
-        for qa_ctx in self._qa_ctx_mgr_pool:
-            try:
-                qa_ctx.process.kill()
-                qa_ctx.process.join(timeout=2)
-            except Exception as e:
-                safe_log(
-                    logger,
-                    "error",
-                    "Error shutting down QA context manager %s: %s",
-                    qa_ctx._process_index,
-                    e,
-                )
-
-        for req_info in self._request_info_map.values():
-            if req_info._ctx_mgr:
-                try:
-                    req_info._ctx_mgr.process.kill()
-                    req_info._ctx_mgr.process.join(timeout=2)
-                except Exception as e:
-                    safe_log(
-                        logger,
-                        "error",
-                        "Error shutting down context manager for request %s: %s",
-                        req_info._ctx_mgr._process_index,
-                        e,
-                    )
 
         safe_log(logger, "info", "Stopped VIA Stream Handler")
 
@@ -3078,15 +3575,199 @@ This is very important and you must follow this strictly.
             req_info.response = req_info.response[chunk_response_size:]
         return req_info, response
 
+    def cleanup_request(self, request_id: str, *, teardown_owned: bool = False) -> bool:
+        """Clean an exact quiescent lease once, preserving source siblings."""
+
+        with self._source_cleanup_condition:
+            req_info = self._request_info_map.get(request_id)
+            source_teardown_in_progress = getattr(
+                self, "_source_teardown_in_progress", set()
+            )
+            while (
+                req_info is not None
+                and (
+                    req_info.source_id in self._source_cleanup_in_progress
+                    or (
+                        not teardown_owned
+                        and req_info.source_id in source_teardown_in_progress
+                    )
+                )
+            ):
+                self._source_cleanup_condition.wait()
+                req_info = self._request_info_map.get(request_id)
+            if req_info is None or req_info.cleanup_complete:
+                return False
+            if not req_info.quiescent_event.is_set():
+                return False
+            if req_info.cleanup_started:
+                cleanup_event = req_info.cleanup_event
+                wait_for_existing_cleanup = True
+            else:
+                req_info.cleanup_started = True
+                req_info.lease_state = RequestInfo.LeaseState.CLEANING
+                cleanup_event = req_info.cleanup_event
+                wait_for_existing_cleanup = False
+                sibling_exists = any(
+                    other is not req_info
+                    and other.source_id == req_info.source_id
+                    and not other.cleanup_complete
+                    and not other.cleanup_started
+                    for other in self._request_info_map.values()
+                )
+                ctx_mgr = req_info._ctx_mgr
+                qa_ctx_mgr = req_info._qa_ctx_mgr
+                req_info._ctx_mgr = None
+                req_info._qa_ctx_mgr = None
+                reset_enabled = os.environ.get(
+                    "LVS_DISABLE_DB_RESET_ON_REQUEST_DONE", "false"
+                ).lower() not in ["true", "1"]
+                deferred_by_source = getattr(self, "_deferred_source_cleanup", None)
+                if deferred_by_source is None:
+                    deferred_by_source = {}
+                    self._deferred_source_cleanup = deferred_by_source
+                deferred_cleanup = deferred_by_source.get(req_info.source_id)
+
+                # A source cleanup belongs to the complete sibling group, not
+                # whichever request happens to finish last. Captions deliberately
+                # skip CA-RAG and therefore cannot perform a reset themselves.
+                # Retain exactly one manager until the final sibling starts
+                # cleanup; additional managers can be returned independently.
+                if deferred_cleanup is not None or (reset_enabled and sibling_exists):
+                    if deferred_cleanup is None:
+                        deferred_cleanup = _DeferredSourceCleanup()
+                        deferred_by_source[req_info.source_id] = deferred_cleanup
+                    deferred_cleanup.delete_external_collection |= bool(
+                        req_info.delete_external_collection
+                    )
+                    deferred_cleanup.drop_collection |= not req_info.is_live
+
+                ctx_mgrs_to_return = []
+                if ctx_mgr is not None:
+                    if reset_enabled or (
+                        deferred_cleanup is not None
+                        and deferred_cleanup.ctx_mgr is not None
+                    ):
+                        if deferred_cleanup is None:
+                            deferred_cleanup = _DeferredSourceCleanup()
+                            deferred_by_source[req_info.source_id] = deferred_cleanup
+                        deferred_cleanup.delete_external_collection |= bool(
+                            req_info.delete_external_collection
+                        )
+                        deferred_cleanup.drop_collection |= not req_info.is_live
+                        if deferred_cleanup.ctx_mgr is None:
+                            deferred_cleanup.ctx_mgr = ctx_mgr
+                        elif deferred_cleanup.ctx_mgr is not ctx_mgr:
+                            ctx_mgrs_to_return.append(ctx_mgr)
+                    else:
+                        ctx_mgrs_to_return.append(ctx_mgr)
+
+                destructive_cleanup = False
+                destructive_ctx_mgr = None
+                cleanup_delete_external_collection = False
+                cleanup_drop_collection = False
+                if not sibling_exists:
+                    if deferred_cleanup is not None:
+                        deferred_cleanup.delete_external_collection |= bool(
+                            req_info.delete_external_collection
+                        )
+                        deferred_cleanup.drop_collection |= not req_info.is_live
+                        destructive_ctx_mgr = deferred_cleanup.ctx_mgr
+                        cleanup_delete_external_collection = (
+                            deferred_cleanup.delete_external_collection
+                        )
+                        cleanup_drop_collection = deferred_cleanup.drop_collection
+                        deferred_by_source.pop(req_info.source_id, None)
+                    destructive_cleanup = destructive_ctx_mgr is not None
+                    if destructive_cleanup:
+                        self._source_cleanup_in_progress.add(req_info.source_id)
+                    if (
+                        ctx_mgr is not None
+                        and ctx_mgr is not destructive_ctx_mgr
+                        and all(manager is not ctx_mgr for manager in ctx_mgrs_to_return)
+                    ):
+                        ctx_mgrs_to_return.append(ctx_mgr)
+
+        if wait_for_existing_cleanup:
+            cleanup_event.wait()
+            return False
+
+        try:
+            if destructive_ctx_mgr:
+                try:
+                    destructive_ctx_mgr.reset(
+                        {
+                            "summarization": {"uuid": req_info.source_id},
+                            "delete_external_collection": cleanup_delete_external_collection,
+                        }
+                    )
+                    if cleanup_drop_collection:
+                        try:
+                            self.drop_collection_for_asset(
+                                req_info.source_id,
+                                force_legacy=True,
+                                ctx_mgr=destructive_ctx_mgr,
+                            )
+                        except Exception as drop_ex:
+                            logger.warning(
+                                "post-summarize drop_collection_for_asset failed for %s: %s",
+                                req_info.source_id,
+                                drop_ex,
+                            )
+                except Exception as cleanup_ex:
+                    logger.warning(
+                        "Context cleanup failed for request %s: %s",
+                        request_id,
+                        cleanup_ex,
+                    )
+                finally:
+                    ctx_mgrs_to_return.append(destructive_ctx_mgr)
+            elif sibling_exists and deferred_cleanup is not None:
+                logger.info(
+                    "Preserving source %s while sibling requests remain",
+                    req_info.source_id,
+                )
+        finally:
+            try:
+                for manager in ctx_mgrs_to_return:
+                    with self._lock:
+                        if all(existing is not manager for existing in self._ctx_mgr_pool):
+                            self._ctx_mgr_pool.append(manager)
+                    logger.info(
+                        "Returning Context Manager Process%s to process pool",
+                        manager._process_index,
+                    )
+                if qa_ctx_mgr:
+                    with self._lock:
+                        if all(
+                            existing is not qa_ctx_mgr
+                            for existing in self._qa_ctx_mgr_pool
+                        ):
+                            self._qa_ctx_mgr_pool.append(qa_ctx_mgr)
+                    logger.info(
+                        "Returning QA Context Manager Process%s to QA pool",
+                        qa_ctx_mgr._process_index,
+                    )
+            finally:
+                with self._source_cleanup_condition:
+                    # A stale cleanup must not erase a replacement with the same ID.
+                    if self._request_info_map.get(request_id) is req_info:
+                        del self._request_info_map[request_id]
+                    req_info.cleanup_complete = True
+                    req_info.lease_state = RequestInfo.LeaseState.CLEANED
+                    req_info.cleanup_event.set()
+                    if destructive_cleanup:
+                        self._source_cleanup_in_progress.discard(req_info.source_id)
+                        self._source_cleanup_condition.notify_all()
+        return True
+
     def check_status_remove_req_id(self, request_id):
         with self._lock:
-            req_info = self._request_info_map.get(request_id, None)
+            req_info = self._request_info_map.get(request_id)
             if not req_info:
                 return
-            # If request for file summarization has completed
             lsinfo = self._live_stream_info_map.get(req_info.source_id)
-            if (
-                (not req_info.is_live and req_info.progress == 100)
+            eligible = (
+                (not req_info.is_live and req_info.terminal_event.is_set())
                 or (
                     req_info.is_live
                     and lsinfo is not None
@@ -3094,56 +3775,10 @@ This is very important and you must follow this strictly.
                     and len(req_info.response) == 0
                 )
                 or (req_info.is_live and lsinfo is None)
-            ):
-                # Remove only this specific request, not all requests for the same asset
-                # This allows concurrent processing of the same asset by multiple requests
-                self.remove_request_id(request_id)
-                if req_info._ctx_mgr:
-                    if not os.environ.get(
-                        "LVS_DISABLE_DB_RESET_ON_REQUEST_DONE", "false"
-                    ).lower() in [
-                        "true",
-                        "1",
-                    ]:  # noqa: E501
-                        req_info._ctx_mgr.reset(
-                            {
-                                "summarization": {"uuid": req_info.source_id},
-                                "delete_external_collection": req_info.delete_external_collection,
-                            }
-                        )
-                        # Drop the per-file Elasticsearch
-                        # index after the summarize completes so the
-                        # cluster shard pool drains as fast as it fills.
-                        # Strictly file-path only; live-stream summarize
-                        # completion never triggers this drop because
-                        # streams reuse the same source_id across multiple
-                        # /v1/stream_summarize calls. force_legacy=True
-                        # bypasses drop_collection_for_asset's KAFKA_ENABLED
-                        # guard so the legacy in-process file path also
-                        # benefits — both paths create per-file indices.
-                        if not req_info.is_live:
-                            try:
-                                self.drop_collection_for_asset(
-                                    req_info.source_id, force_legacy=True
-                                )
-                            except Exception as drop_ex:
-                                logger.warning(
-                                    "post-summarize drop_collection_for_asset" " failed for %s: %s",
-                                    req_info.source_id,
-                                    drop_ex,
-                                )
-                    self._ctx_mgr_pool.append(req_info._ctx_mgr)
-                    logger.info(
-                        f"Returning Context Manager Process"
-                        f"{req_info._ctx_mgr._process_index} to process pool"
-                    )
-                if req_info._qa_ctx_mgr:
-                    self._qa_ctx_mgr_pool.append(req_info._qa_ctx_mgr)
-                    logger.info(
-                        "Returning QA Context Manager Process%s to QA pool",
-                        req_info._qa_ctx_mgr._process_index,
-                    )
-                    req_info._qa_ctx_mgr = None
+            )
+        if eligible:
+            self.wait_for_request_quiescent(request_id)
+            self.cleanup_request(request_id)
 
     def wait_for_request_done(self, request_id):
         """Wait for request to either complete or fail."""
@@ -3153,7 +3788,7 @@ This is very important and you must follow this strictly.
                 raise ViaException(f"No such request-id {request_id}", "InvalidParameterValue", 400)
             req_info = self._request_info_map[request_id]
 
-        while req_info.status not in [RequestInfo.Status.FAILED, RequestInfo.Status.SUCCESSFUL]:
+        while not req_info.terminal_event.is_set():
             logger.info(
                 "Status for query %s is %s, percent complete is %.2f, size of response list is %d",
                 req_info.request_id,
@@ -3161,7 +3796,7 @@ This is very important and you must follow this strictly.
                 req_info.progress,
                 len(req_info.response),
             )
-            req_info.status_event.wait(timeout=5)
+            req_info.terminal_event.wait(timeout=5)
 
     def get_models_info(self):
         return self._vlm_pipeline.get_models_info()

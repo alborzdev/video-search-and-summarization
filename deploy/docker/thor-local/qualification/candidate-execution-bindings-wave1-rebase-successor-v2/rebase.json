@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-3.2.1-candidate-execution-bindings-wave1-rebase-successor-v2",
+  "mode": "static_source_rebase_only_no_execution",
+  "predecessors": [
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-bindings-wave1-rebase-successor/binding-overlay.json",
+      "raw_sha256": "d0052aaaac394b93d9e13a560411982d1d81690fcd9a2c0ebabdee15a1cbb0c1"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-bindings-wave1-rebase-successor/binding-overlay.schema.json",
+      "raw_sha256": "6769e0a982d17290b2374d72713b696c74c92117859937164f5aa19b116f4294"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-bindings-wave1-rebase-successor/compiler.py",
+      "raw_sha256": "efbcb6eeb86c28144c894ea559cba548f658538285c17812a7727b4168307370"
+    }
+  ],
+  "source_overrides": [
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "raw_sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "raw_sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"
+    }
+  ],
+  "manifest_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "raw_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
+      "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"
+    }
+  ],
+  "order_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-bindings-wave1-rebase-successor/binding-overlay.json",
+      "pointer": "/bindings",
+      "identity_field": "candidate_id",
+      "count": 2,
+      "ordered_identities_sha256": "20a4e1eb0ffbb91a7c02f1adc18fc6652ad71a2f6302358d2f247b576a77c7ba"
+    }
+  ],
+  "facts": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "pointer": "/tool_count",
+      "equals": 13
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-bindings-wave1-rebase-successor/binding-overlay.json",
+      "pointer": "/summary/binding_count",
+      "equals": 2
+    }
+  ],
+  "constraints": {
+    "source_override_count": 3
+  },
+  "policy": {
+    "runtime_evidence_created": false,
+    "runtime_activity_performed": false,
+    "candidate_admitted": false,
+    "candidate_promoted": false,
+    "historical_executor_invoked": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "retained_blockers": [
+    "runtime MCP and SSE transport evidence remains absent",
+    "cleanup and rollback execution remains unresolved fail closed",
+    "admission and promotion remain prohibited without separate authorization"
+  ]
+}

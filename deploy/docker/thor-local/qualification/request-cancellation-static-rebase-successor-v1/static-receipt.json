@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "receipt_id": "request-cancellation-static-rebase-successor-v1-static-validation",
+  "evidence_class": "deterministic_source_and_contract_validation_only",
+  "contract_raw_sha256": "66b9323c8dfbd790fd4e63aaeac20a81cda4a1f70446a955fa3e22bc1139e393",
+  "contract_canonical_sha256": "d646c66ae47c663f19f4c64379cb9fd1b74fe61a113d97ce0acacaf09c1aafaa",
+  "source_lock_count": 13,
+  "production_source_count": 8,
+  "test_source_count": 5,
+  "predecessor_package_count": 8,
+  "current_contract_counts": {"lvs-mcp": 13, "lvs": 18, "rt-vlm": 28},
+  "rt_vlm_documented_denominator": 27,
+  "validated_test_invocations": [
+    ["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "--noconftest", "services/rtvi/rt-vlm/tests/rtvi_vlm/test_request_abort.py"],
+    ["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "services/video-summarization/tests/test_lvs_delete_cleanup.py", "services/video-summarization/tests/test_lvs_mcp.py", "services/video-summarization/tests/test_lvs_request_ownership.py", "services/video-summarization/tests/test_rtvi_vlm_abort.py"]
+  ],
+  "tests_executed_by_receipt": true,
+  "static_test_results": [
+    {"lane": "rt-vlm-isolated", "passed": 18, "subtests_passed": 0, "failed": 0},
+    {"lane": "lvs-normal-conftest", "passed": 97, "subtests_passed": 82, "failed": 0}
+  ],
+  "runtime_evidence": [],
+  "passed_current_promotions": 0,
+  "admission_state_changed": false,
+  "executable_state_changed": false,
+  "authorization_state_changed": false,
+  "warehouse_sample_bundle": "excluded"
+}

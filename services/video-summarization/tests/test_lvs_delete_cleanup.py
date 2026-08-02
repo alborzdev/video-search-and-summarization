@@ -9,7 +9,7 @@ import logging
 import sys
 import types
 from contextlib import nullcontext
-from threading import RLock
+from threading import Condition, RLock
 from unittest.mock import MagicMock
 
 import pytest
@@ -262,6 +262,8 @@ def _stream_handler_with_context_manager(ctx_mgr):
     handler._kafka_enabled = True
     handler._args = argparse.Namespace(disable_ca_rag=False)
     handler._lock = RLock()
+    handler._source_cleanup_condition = Condition(handler._lock)
+    handler._source_cleanup_in_progress = set()
     handler._ca_rag_config = {"context_manager": {"functions": []}}
     handler._ctx_mgr_pool = [ctx_mgr]
     handler._create_ctx_mgr_pool = MagicMock()
@@ -349,6 +351,8 @@ class TestDropCollectionForAsset:
 def test_failed_file_request_reaches_terminal_cleanup_gate():
     handler = ViaStreamHandler.__new__(ViaStreamHandler)
     handler._lock = RLock()
+    handler._source_cleanup_condition = Condition(handler._lock)
+    handler._source_cleanup_in_progress = set()
     handler._request_info_map = {}
     handler._live_stream_info_map = {}
     handler._metrics = MagicMock()

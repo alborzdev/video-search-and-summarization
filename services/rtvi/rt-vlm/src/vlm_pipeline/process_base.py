@@ -342,9 +342,15 @@ class ProcessBase(mp_ctx.Process):
             command = cmd.pop("command")
             ret = None
             if command == "drop-chunks":
-                self._drop_chunks_stream_list.append(cmd["stream_id"])
+                if cmd["stream_id"] not in self._drop_chunks_stream_list:
+                    self._drop_chunks_stream_list.append(cmd["stream_id"])
             elif command == "stop-drop-chunks":
-                self._drop_chunks_stream_list.remove(cmd["stream_id"])
+                if cmd["stream_id"] in self._drop_chunks_stream_list:
+                    self._drop_chunks_stream_list.remove(cmd["stream_id"])
+            elif command == "drop-request":
+                self._drop_request_ids.add(cmd["request_id"])
+            elif command == "clear-drop-request":
+                self._drop_request_ids.discard(cmd["request_id"])
             else:
                 ret = self._handle_command(command, **cmd)
             self._cmd_response_queue.put(ret)
@@ -375,6 +381,7 @@ class ProcessBase(mp_ctx.Process):
             self._init_done_event.set()
 
         self._drop_chunks_stream_list = []
+        self._drop_request_ids = set()
         self._cmd_handler_thread = Thread(target=self._cmd_handler_thread_func)
         self._cmd_handler_thread.start()
 
@@ -430,6 +437,11 @@ class ProcessBase(mp_ctx.Process):
 
                 for _ in range(min(self._batch_size - len(items), qsize)):
                     item = self._queue.get()
+                    if item.get("request_id") in self._drop_request_ids:
+                        self._final_output_queue.put(
+                            {k: v for k, v in item.items() if not isinstance(v, torch.Tensor)}
+                        )
+                        continue
                     if "chunk" in item and item["chunk"].streamId in self._drop_chunks_stream_list:
                         self._final_output_queue.put(
                             {k: v for k, v in item.items() if not isinstance(v, torch.Tensor)}

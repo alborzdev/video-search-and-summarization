@@ -1515,6 +1515,31 @@ class RTVIServer:
             chunk_response["audio_transcript"] = resp.audio_transcript.strip()
         return chunk_response
 
+    async def _create_caption_stream_response(self, generator, request_id: str, video_id: str):
+        """Construct the SSE response or synchronously retire its created request."""
+        try:
+            return EventSourceResponse(
+                generator,
+                send_timeout=5,
+                ping=1,
+                headers={"x-request-id": request_id},
+            )
+        except Exception as ex:
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(
+                self._async_executor,
+                self._stream_handler.abort_request,
+                request_id,
+            )
+            self._stream_handler._send_error_message_to_kafka(
+                VLM_CAPTIONS_ERROR_MESSAGE % str(ex),
+                video_id,
+            )
+            logger.error(VLM_CAPTIONS_ERROR_MESSAGE, str(ex), exc_info=True)
+            raise ServiceException(
+                "Failed to generate VLM captions.", "InternalServerError", 500
+            ) from ex
+
     def run(self):
         # Configure and start the uvicorn web server
         config = uvicorn.Config(
@@ -2614,6 +2639,7 @@ class RTVIServer:
                     last_status = None
                     total_prompt_tokens = 0
                     total_completion_tokens = 0
+                    completed = False
                     try:
                         while True:
                             self._sse_active_clients[sse_client_key] = time.time()
@@ -2664,6 +2690,7 @@ class RTVIServer:
                                     RequestInfo.Status.SUCCESSFUL,
                                     RequestInfo.Status.FAILED,
                                 ]:
+                                    completed = True
                                     if req_info.status == RequestInfo.Status.FAILED:
                                         # Create the response json
                                         response = {
@@ -2738,6 +2765,12 @@ class RTVIServer:
                                     break
                     finally:
                         self._sse_active_clients.pop(sse_client_key, None)
+                        if not completed:
+                            await loop.run_in_executor(
+                                self._async_executor,
+                                self._stream_handler.abort_request,
+                                request_id,
+                            )
 
                     # Generate usage data and send as server-sent event if requested
                     if (
@@ -2768,17 +2801,9 @@ class RTVIServer:
                             pass
                     yield "[DONE]"
 
-                try:
-                    return EventSourceResponse(message_generator(), send_timeout=5, ping=1)
-                except Exception as ex:
-                    self._stream_handler._send_error_message_to_kafka(
-                        VLM_CAPTIONS_ERROR_MESSAGE % str(ex),
-                        videoId,
-                    )
-                    logger.error(VLM_CAPTIONS_ERROR_MESSAGE, str(ex), exc_info=True)
-                    raise ServiceException(
-                        "Failed to generate VLM captions.", "InternalServerError", 500
-                    ) from ex
+                return await self._create_caption_stream_response(
+                    message_generator(), request_id, videoId
+                )
             else:
                 # Non-streaming output. Wait for request to be completed.
                 try:
@@ -2865,6 +2890,39 @@ class RTVIServer:
                     ) from ex
 
         # ======================= Summarize API
+        # ======================= Abort exact VLM request API
+        @self._app.delete(
+            f"{API_PREFIX}/generate_captions/requests/{{request_id}}",
+            summary="Abort one exact caption request",
+            description="Abort the exact caption request matching `request_id`.",
+            responses={
+                200: {"description": "Successful Response."},
+                **add_common_error_responses(),
+            },
+            tags=["Captions"],
+        )
+        async def abort_caption_request(
+            request_id: Annotated[
+                UUID,
+                Path(description="Unique identifier of the caption request to abort."),
+            ],
+        ):
+            request_id = str(request_id)
+            logger.info("Received exact VLM request abort for %s", request_id)
+            loop = asyncio.get_running_loop()
+            aborted = await loop.run_in_executor(
+                self._async_executor,
+                self._stream_handler.abort_request,
+                request_id,
+            )
+            if not aborted:
+                raise ServiceException(
+                    f"No active request-id {request_id}",
+                    "InvalidParameter",
+                    400,
+                )
+            return Response(status_code=200)
+
         # ======================= Stop Live Stream VLM API
         @self._app.delete(
             f"{API_PREFIX}/generate_captions/{{stream_id}}",
@@ -2900,7 +2958,6 @@ class RTVIServer:
 
             await _await_stream_setup_complete(asset, stream_id)
 
-            # Remove RTSP stream from the pipeline if it is being summarized
             await loop.run_in_executor(
                 self._async_executor, self._stream_handler.remove_rtsp_stream, asset
             )

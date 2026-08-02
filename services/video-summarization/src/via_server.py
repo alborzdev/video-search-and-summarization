@@ -338,6 +338,177 @@ class ViaServer:
 
         self._stream_settings_cache = StreamSettingsCache(logger=logger)
 
+    def _sse_client_recent(self, source_id: str) -> bool:
+        entry = self._sse_active_clients.get(source_id)
+        return bool(entry and time.time() - entry[1] < 3)
+
+    def _touch_sse_client(self, source_id: str, request_id: str) -> None:
+        self._sse_active_clients[source_id] = (request_id, time.time())
+
+    def _claim_sse_client(self, source_id: str, request_id: str) -> bool:
+        """Claim one source's SSE slot before any downstream work starts."""
+
+        if self._sse_client_recent(source_id):
+            return False
+        # A pre-response worker may run longer than the three-second heartbeat
+        # window. Keep the slot sticky until its generator starts touching it.
+        self._sse_active_clients[source_id] = (request_id, float("inf"))
+        return True
+
+    def _remove_sse_client(self, source_id: str, request_id: str) -> bool:
+        """Remove only the exact client registration this request owns."""
+
+        entry = self._sse_active_clients.get(source_id)
+        if entry is None or entry[0] != request_id:
+            return False
+        del self._sse_active_clients[source_id]
+        return True
+
+    @staticmethod
+    async def _await_shielded_future(future):
+        """Converge on executor work while preserving caller cancellation."""
+
+        cancellation = None
+        while True:
+            try:
+                result = await asyncio.shield(future)
+                return result, cancellation
+            except asyncio.CancelledError as exc:
+                cancellation = cancellation or exc
+                if future.done():
+                    return future.result(), cancellation
+
+    async def _reserve_request(self, source_id: str) -> str:
+        """Reserve one request off-loop without leaking on caller cancellation."""
+
+        loop = asyncio.get_running_loop()
+        reserve_future = loop.run_in_executor(
+            None,
+            self._stream_handler.reserve_request,
+            source_id,
+        )
+        request_id, cancellation = await self._await_shielded_future(reserve_future)
+        if cancellation:
+            await self._cancel_wait_and_cleanup_request(
+                request_id, "request_cancelled_during_reservation"
+            )
+            raise cancellation
+        return request_id
+
+    async def _wait_and_cleanup_request(self, request_id: str) -> None:
+        loop = asyncio.get_running_loop()
+        wait_future = loop.run_in_executor(
+            None,
+            self._stream_handler.wait_for_request_quiescent,
+            request_id,
+        )
+        _, cancellation = await self._await_shielded_future(wait_future)
+        cleanup_future = loop.run_in_executor(
+            None,
+            self._stream_handler.cleanup_request,
+            request_id,
+        )
+        _, cleanup_cancellation = await self._await_shielded_future(cleanup_future)
+        if cancellation or cleanup_cancellation:
+            raise cancellation or cleanup_cancellation
+
+    async def _cancel_wait_and_cleanup_request(
+        self, request_id: str, reason: str
+    ) -> None:
+        loop = asyncio.get_running_loop()
+        cancel_future = loop.run_in_executor(
+            None,
+            self._stream_handler.cancel_request,
+            request_id,
+            reason,
+        )
+        _, cancellation = await self._await_shielded_future(cancel_future)
+        try:
+            await self._wait_and_cleanup_request(request_id)
+        except asyncio.CancelledError as exc:
+            cancellation = cancellation or exc
+        if cancellation:
+            raise cancellation
+
+    async def _wait_for_nonstream_request(self, request_id: str) -> None:
+        """Wait for a response, retiring its exact lease if the caller leaves."""
+
+        loop = asyncio.get_running_loop()
+        try:
+            await loop.run_in_executor(
+                self._async_executor,
+                self._stream_handler.wait_for_request_done,
+                request_id,
+            )
+        except BaseException:
+            await self._cancel_wait_and_cleanup_request(
+                request_id, "nonstream_client_disconnected"
+            )
+            raise
+
+    async def _finalize_sse_request(
+        self, source_id: str, request_id: str, completed: bool
+    ) -> None:
+        """Release one SSE registration after exact request teardown."""
+
+        self._remove_sse_client(source_id, request_id)
+        if completed:
+            await self._wait_and_cleanup_request(request_id)
+        else:
+            await self._cancel_wait_and_cleanup_request(
+                request_id, "sse_client_disconnected"
+            )
+
+    async def _run_reserved_operation(
+        self, request_id: str, operation, *operation_args
+    ) -> str:
+        """Run one reserved lease without a queued-worker cancellation gap."""
+
+        loop = asyncio.get_running_loop()
+        self._stream_handler.queue_request_submission(request_id)
+        try:
+            worker_future = loop.run_in_executor(
+                self._async_executor,
+                operation,
+                *operation_args,
+            )
+        except BaseException:
+            self._stream_handler.release_queued_submission(request_id)
+            await self._cancel_wait_and_cleanup_request(
+                request_id, "request_submission_failed"
+            )
+            raise
+
+        try:
+            # Do not let cancellation of the HTTP coroutine cancel work that is
+            # still queued in the executor; its lease owns an active-operation
+            # slot until the worker claims and releases it.
+            return await asyncio.shield(worker_future)
+        except BaseException:
+            await self._cancel_wait_and_cleanup_request(
+                request_id, "request_cancelled_before_response"
+            )
+            raise
+
+    async def _run_reserved_summarize(self, source, query, request_id: str) -> str:
+        return await self._run_reserved_operation(
+            request_id,
+            self._stream_handler.summarize,
+            source,
+            query,
+            request_id,
+        )
+
+    async def _run_reserved_vlm_captions(self, source, query, request_id: str) -> str:
+        return await self._run_reserved_operation(
+            request_id,
+            self._stream_handler.generate_vlm_captions,
+            source,
+            query,
+            False,
+            request_id,
+        )
+
     def run(self):
         from via_stream_handler import ViaStreamHandler
 
@@ -755,8 +926,6 @@ class ViaServer:
                     400,
                 )
 
-            loop = asyncio.get_event_loop()
-
             # Convert VlmQuery to SummarizationQuery for internal processing
             query_dict = {
                 "id": query.id,
@@ -800,14 +969,43 @@ class ViaServer:
 
             summarization_query = SummarizationQuery(**query_dict)
 
-            # Dispatch to stream handler (file-based only)
-            request_id = await loop.run_in_executor(
-                self._async_executor,
-                self._stream_handler.generate_vlm_captions,
-                source,
-                summarization_query,
-                False,  # is_rtsp=False, always file
-            )
+            # Reserve identity and the SSE slot before downstream work starts.
+            request_id = await self._reserve_request(videoId)
+            sse_claimed = False
+            if query.stream:
+                sse_claimed = self._claim_sse_client(videoId, request_id)
+                if not sse_claimed:
+                    await self._cancel_wait_and_cleanup_request(
+                        request_id, "sse_client_conflict"
+                    )
+                    raise ViaException(
+                        "Another client is already connected to this source",
+                        "Conflict",
+                        409,
+                    )
+
+            # Dispatch to stream handler (file-based only).
+            try:
+                submitted_request_id = await self._run_reserved_vlm_captions(
+                    source,
+                    summarization_query,
+                    request_id,
+                )
+            except BaseException:
+                if sse_claimed:
+                    self._remove_sse_client(videoId, request_id)
+                raise
+            if submitted_request_id != request_id:
+                if sse_claimed:
+                    self._remove_sse_client(videoId, request_id)
+                await self._cancel_wait_and_cleanup_request(
+                    request_id, "request_identity_mismatch"
+                )
+                raise ViaException(
+                    "Caption request identity changed during submission",
+                    "InternalServerError",
+                    500,
+                )
             logger.info(
                 "Created generate_vlm_captions query %s for %s",
                 request_id,
@@ -817,24 +1015,20 @@ class ViaServer:
             logger.info("Waiting for results of query %s", request_id)
 
             if query.stream:
-                # Allow only a single client for streaming output per live stream
-                if time.time() - self._sse_active_clients.get(videoId, 0) < 3:
-                    raise ViaException(
-                        "Another client is already connected to live stream", "Conflict", 409
-                    )
-
                 # Server side events generator
-                async def message_generator():
+                caption_disconnect = {"received": False}
+
+                async def _message_generator_body():
                     last_status_report_time = 0
                     last_status = None
                     while True:
-                        self._sse_active_clients[videoId] = time.time()
+                        self._touch_sse_client(videoId, request_id)
                         try:
                             message = await asyncio.wait_for(request._receive(), timeout=0.01)
                             if message.get("type") == "http.disconnect":
-                                self._sse_active_clients.pop(videoId, None)
+                                caption_disconnect["received"] = True
                                 logger.info(
-                                    "Client %s disconnected for live-stream %s",
+                                    "Client %s disconnected for source %s",
                                     request.client.host,
                                     videoId,
                                 )
@@ -868,6 +1062,7 @@ class ViaServer:
                             if req_info.status in [
                                 RequestInfo.Status.SUCCESSFUL,
                                 RequestInfo.Status.FAILED,
+                                RequestInfo.Status.CANCELLED,
                             ]:
                                 if req_info.status == RequestInfo.Status.FAILED:
                                     # Create the response json
@@ -969,17 +1164,35 @@ class ViaServer:
                         except ViaException:
                             pass
                     yield "[DONE]"
-                    self._sse_active_clients.pop(videoId, None)
-                    self._stream_handler.check_status_remove_req_id(request_id)
 
-                return EventSourceResponse(message_generator(), send_timeout=5, ping=1)
+                async def message_generator():
+                    completed = False
+                    try:
+                        async for message in _message_generator_body():
+                            if message == "[DONE]":
+                                completed = True
+                            yield message
+                    finally:
+                        await self._finalize_sse_request(
+                            videoId,
+                            request_id,
+                            completed and not caption_disconnect["received"],
+                        )
+
+                try:
+                    return EventSourceResponse(message_generator(), send_timeout=5, ping=1)
+                except BaseException:
+                    await self._finalize_sse_request(
+                        videoId,
+                        request_id,
+                        completed=False,
+                    )
+                    raise
             else:
                 # Non-streaming output. Wait for request to be completed.
-                await loop.run_in_executor(
-                    self._async_executor, self._stream_handler.wait_for_request_done, request_id
-                )
+                await self._wait_for_nonstream_request(request_id)
                 req_info, resp_list = self._stream_handler.get_response(request_id)
-                self._stream_handler.check_status_remove_req_id(request_id)
+                await self._wait_and_cleanup_request(request_id)
                 if req_info.status == RequestInfo.Status.FAILED:
                     raise ViaException(
                         "Failed to generate VLM captions", "InternalServerError", 500
@@ -1597,37 +1810,58 @@ class ViaServer:
                     400,
                 )
 
-            loop = asyncio.get_event_loop()
             videoId = source.source_id
+            request_id = await self._reserve_request(videoId)
+            sse_claimed = False
+            if query.stream:
+                sse_claimed = self._claim_sse_client(videoId, request_id)
+                if not sse_claimed:
+                    await self._cancel_wait_and_cleanup_request(
+                        request_id, "sse_client_conflict"
+                    )
+                    raise ViaException(
+                        "Another client is already connected to this source",
+                        "Conflict",
+                        409,
+                    )
 
             # File-based summarization
-            request_id = await loop.run_in_executor(
-                self._async_executor,
-                self._stream_handler.summarize,
-                source,
-                query,
-            )
+            try:
+                submitted_request_id = await self._run_reserved_summarize(
+                    source, query, request_id
+                )
+            except BaseException:
+                if sse_claimed:
+                    self._remove_sse_client(videoId, request_id)
+                raise
+            if submitted_request_id != request_id:
+                if sse_claimed:
+                    self._remove_sse_client(videoId, request_id)
+                await self._cancel_wait_and_cleanup_request(
+                    request_id, "request_identity_mismatch"
+                )
+                raise ViaException(
+                    "Summarization request identity changed during submission",
+                    "InternalServerError",
+                    500,
+                )
             logger.info("Created video file query %s for source %s", request_id, videoId)
 
             logger.info("Waiting for results of query %s", request_id)
 
             if query.stream:
-                # Allow only a single client for streaming output per source
-                if time.time() - self._sse_active_clients.get(videoId, 0) < 3:
-                    raise ViaException(
-                        "Another client is already connected to this source", "Conflict", 409
-                    )
+                summarize_disconnect = {"received": False}
 
                 # Server side events generator
-                async def message_generator():
+                async def _summarize_message_generator_body():
                     last_status_report_time = 0
                     last_status = None
                     while True:
-                        self._sse_active_clients[videoId] = time.time()
+                        self._touch_sse_client(videoId, request_id)
                         try:
                             message = await asyncio.wait_for(request._receive(), timeout=0.01)
                             if message.get("type") == "http.disconnect":
-                                self._sse_active_clients.pop(videoId, None)
+                                summarize_disconnect["received"] = True
                                 logger.info(
                                     "Client %s disconnected for source %s",
                                     request.client.host,
@@ -1663,6 +1897,7 @@ class ViaServer:
                             if req_info.status in [
                                 RequestInfo.Status.SUCCESSFUL,
                                 RequestInfo.Status.FAILED,
+                                RequestInfo.Status.CANCELLED,
                             ]:
                                 if req_info.status == RequestInfo.Status.FAILED:
                                     # Create the response json (include media_info for API consistency)
@@ -1782,17 +2017,35 @@ class ViaServer:
                         except ViaException:
                             pass
                     yield "[DONE]"
-                    self._sse_active_clients.pop(videoId, None)
-                    self._stream_handler.check_status_remove_req_id(request_id)
 
-                return EventSourceResponse(message_generator(), send_timeout=5, ping=1)
+                async def message_generator():
+                    completed = False
+                    try:
+                        async for message in _summarize_message_generator_body():
+                            if message == "[DONE]":
+                                completed = True
+                            yield message
+                    finally:
+                        await self._finalize_sse_request(
+                            videoId,
+                            request_id,
+                            completed and not summarize_disconnect["received"],
+                        )
+
+                try:
+                    return EventSourceResponse(message_generator(), send_timeout=5, ping=1)
+                except BaseException:
+                    await self._finalize_sse_request(
+                        videoId,
+                        request_id,
+                        completed=False,
+                    )
+                    raise
             else:
                 # Non-streaming output. Wait for request to be completed.
-                await loop.run_in_executor(
-                    self._async_executor, self._stream_handler.wait_for_request_done, request_id
-                )
+                await self._wait_for_nonstream_request(request_id)
                 req_info, resp_list = self._stream_handler.get_response(request_id)
-                self._stream_handler.check_status_remove_req_id(request_id)
+                await self._wait_and_cleanup_request(request_id)
                 if req_info.status == RequestInfo.Status.FAILED:
                     # Forward RTVI error codes if available. A
                     # classified ES dependency error sets

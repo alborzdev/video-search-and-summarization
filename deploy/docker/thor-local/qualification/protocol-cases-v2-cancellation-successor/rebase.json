@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-3.2.1-protocol-v2-candidate-source-drift-operation-28-rebase",
+  "mode": "static_source_rebase_only_no_execution",
+  "predecessors": [
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/design.json",
+      "raw_sha256": "f20dcf43cab6f629c076826b8ac087187f425e55a240c1317a2896d34dea89a9"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
+      "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.schema.json",
+      "raw_sha256": "399471d0efd73614e507426095390a4a2e731aa4970b916199344b89b0304fbb"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/compiler.py",
+      "raw_sha256": "87e3fb6b0894c09ad91b2494bf3e4c6838639d3659eba934ea8ea6183bc961af"
+    }
+  ],
+  "source_overrides": [
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "raw_sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "raw_sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py",
+      "raw_sha256": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+      "raw_sha256": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "raw_sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/tests/rtvi_vlm/test_request_abort.py",
+      "raw_sha256": "65add09ae953e2f1d3b1def3626a16134381378aa5539bb15f6d8d0f602bc530"
+    }
+  ],
+  "manifest_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "raw_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
+    }
+  ],
+  "order_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
+      "pointer": "/cases",
+      "identity_field": "case_id",
+      "exclude_substrings": [
+        "warehouse"
+      ],
+      "count": 29,
+      "ordered_identities_sha256": "88bf982cfb9431f83b5e4b0f5918955d45664ce7bdc62b42fc3219295c6ff71a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
+      "pointer": "/bindings",
+      "identity_field": "case_id",
+      "exclude_substrings": [
+        "warehouse"
+      ],
+      "count": 29,
+      "ordered_identities_sha256": "88bf982cfb9431f83b5e4b0f5918955d45664ce7bdc62b42fc3219295c6ff71a"
+    }
+  ],
+  "facts": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "pointer": "/declared_operation_count",
+      "equals": 28
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "pointer": "/normalized_unique_operation_count",
+      "equals": 28
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "pointer": "/operations/9",
+      "equals": {
+        "method": "DELETE",
+        "operation_id": null,
+        "path": "/v1/generate_captions/requests/{request_id}",
+        "schema_hash": null
+      }
+    }
+  ],
+  "constraints": {
+    "source_override_count": 7
+  },
+  "policy": {
+    "runtime_evidence_created": false,
+    "runtime_activity_performed": false,
+    "candidate_admitted": false,
+    "candidate_promoted": false,
+    "historical_executor_invoked": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "retained_blockers": [
+    "runtime cancellation transport remains unobserved",
+    "cleanup and rollback postconditions remain unresolved fail closed",
+    "admission and promotion require separately authorized runtime evidence"
+  ]
+}

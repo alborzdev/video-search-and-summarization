@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "successor_id": "prerelease-20260802-warehouse-exclusion-successor",
+  "mode": "additive_static_latest_upstream_delta",
+  "predecessor_packages": [
+    {
+      "id": "prerelease-watchlist-20260801",
+      "path": "deploy/docker/thor-local/qualification/prerelease-watchlist",
+      "file_count": 6,
+      "raw_identity_sha256": "492d8c0e34107ffdef7279c7179819f65bc66d3db6547750f8909154d568192e",
+      "canonical_identity_sha256": "56b6dbf01935525af1e94ca149a4cf5c7c8daa4657a8ecabe6cd058ebd3c932e",
+      "tree_sha256": "7f60812224fce2b4cc286942e26abaf3b5b1369c22b7a5366364e35cad6e7e34"
+    },
+    {
+      "id": "prerelease-denominator-through-a34c6b040",
+      "path": "deploy/docker/thor-local/qualification/prerelease-denominator",
+      "file_count": 14,
+      "raw_identity_sha256": "851bfc2000255054d8ab190ab29cebb9f4edfc71837f2d29b014d89304b6ff05",
+      "canonical_identity_sha256": "756e7450e1b761b64890bf8ea8e170ee4e5ada9ed9fd039cb12a80ffd26d7722",
+      "tree_sha256": "827736029d4673c3a4455014d1830b735ec38a98d6ca47c8328573fe76cc1c79"
+    }
+  ],
+  "upstream_transition": {
+    "repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "stable_release_tag": "v3.2.1",
+    "stable_release_sha": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "stable_main_sha": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "previous_develop_sha": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5",
+    "latest_develop_sha": "8db763b4632864ec2875cef2004447d0f8bf1086",
+    "latest_nightly_tag": "nightly-20260802",
+    "latest_nightly_sha": "8db763b4632864ec2875cef2004447d0f8bf1086",
+    "latest_tree_sha": "223a9c8850eb92ca04208a88598b222283c2ea25",
+    "linear_commit_count": 1
+  },
+  "commit": {
+    "ordinal": 500,
+    "sha": "8db763b4632864ec2875cef2004447d0f8bf1086",
+    "tree": "223a9c8850eb92ca04208a88598b222283c2ea25",
+    "parent": "a34c6b0406bcadd380e4c4dac6ff7e830deb27e5",
+    "committed_at": "2026-08-02T01:38:33+05:30",
+    "subject": "fix(deploy): Warehouse: start Phoenix so agent tracing has a collector",
+    "classifications": [
+      "profile-compose-inversion",
+      "sdrc-configurator",
+      "bugfix"
+    ],
+    "classification_rule_ids": [
+      "family-profile-compose-inversion",
+      "family-sdrc-configurator",
+      "category-bugfix"
+    ],
+    "path_record": {
+      "commit": "8db763b4632864ec2875cef2004447d0f8bf1086",
+      "path": "deploy/docker/industry-profiles/warehouse-operations/overrides.env",
+      "range": "develop_side",
+      "status": "M"
+    },
+    "path_status_sha256": "9677dec33fd25efb3e5d1f2848aa949882967140baa1e3b6f9a95251f5f7af80",
+    "old_blob_sha1": "e1b77dedc8329e22923a233e20751ee3c72d8b13",
+    "new_blob_sha1": "5c96410077183a878db3d10df8006c81b934ba30",
+    "unified_zero_context_diff_sha256": "ab4e29eea8c0bb4b5937fc1828f43370bf4941858795e8b9cd0f5a39d7f6f7ed",
+    "semantic_change": "append phoenix between vss-ui and elasticsearch in COMPOSE_PROFILES_WH_2D"
+  },
+  "latest_denominator_projection": {
+    "develop_side_commits": 500,
+    "main_only_exceptions": 2,
+    "develop_side_path_status_records": 109059,
+    "main_only_path_status_records": 2,
+    "all_path_status_records": 109061,
+    "unique_paths": 59917,
+    "status_counts": {"A": 39340, "D": 57058, "M": 12663},
+    "classification_increments": {
+      "profile-compose-inversion": 1,
+      "sdrc-configurator": 1,
+      "bugfix": 1
+    },
+    "develop_commit_sequence_sha256": "eb88608301f487d442b22a80dbc441871da7acd0c469f8857ff0745205169a2e",
+    "path_status_jsonl_sha256": "f4859f64b68b7f0171dc246ccb12e24040994f0de22efc8ac81e1a5de3baf130",
+    "path_status_gzip_sha256": "7a49036f4adf3ebece81b3eb94eb42702af3a90d035e8f5d3900625f672cf5a3",
+    "path_status_uncompressed_bytes": 25040247,
+    "path_status_compressed_bytes": 789489
+  },
+  "thor_local_equivalence": {
+    "path": "deploy/docker/services/infra/compose.yml",
+    "raw_sha256": "a1b38492963006e9cf0b55bb0a57a14de8e898abae5833babb9d20c1931b369c",
+    "service": "phoenix",
+    "required_profile": "bp_wh_2d",
+    "upstream_path_is_absent_locally": true,
+    "source_port_required": false
+  },
+  "scope": {
+    "stable_ga_affected": false,
+    "rest_api_changed": false,
+    "mcp_api_changed": false,
+    "openapi_or_schema_changed": false,
+    "model_or_inference_changed": false,
+    "skill_changed": false,
+    "curated_prerelease_family_count": 14,
+    "warehouse_profile": "excluded_by_operator_scope",
+    "warehouse_sample_bundle": "excluded",
+    "runtime_evidence": [],
+    "official_capability_promotions": 0
+  }
+}

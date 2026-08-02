@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "successor_id", "mode", "predecessor_packages", "upstream_transition", "commit", "latest_denominator_projection", "thor_local_equivalence", "scope"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "successor_id": {"const": "prerelease-20260802-warehouse-exclusion-successor"},
+    "mode": {"const": "additive_static_latest_upstream_delta"},
+    "predecessor_packages": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "path", "file_count", "raw_identity_sha256", "canonical_identity_sha256", "tree_sha256"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1}, "file_count": {"type": "integer", "minimum": 1},
+          "raw_identity_sha256": {"$ref": "#/$defs/sha256"}, "canonical_identity_sha256": {"$ref": "#/$defs/sha256"}, "tree_sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "upstream_transition": {"type": "object"},
+    "commit": {"type": "object"},
+    "latest_denominator_projection": {"type": "object"},
+    "thor_local_equivalence": {"type": "object"},
+    "scope": {"type": "object"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

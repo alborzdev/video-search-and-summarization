@@ -1,13 +1,13 @@
 {
   "component_schema_hash": null,
-  "declared_operation_count": 27,
+  "declared_operation_count": 28,
   "kind": "rest",
   "method_counts": {
-    "DELETE": 4,
+    "DELETE": 5,
     "GET": 16,
     "POST": 7
   },
-  "normalized_unique_operation_count": 27,
+  "normalized_unique_operation_count": 28,
   "operations": [
     {
       "method": "GET",
@@ -61,6 +61,12 @@
       "method": "POST",
       "operation_id": null,
       "path": "/v1/generate_captions",
+      "schema_hash": null
+    },
+    {
+      "method": "DELETE",
+      "operation_id": null,
+      "path": "/v1/generate_captions/requests/{request_id}",
       "schema_hash": null
     },
     {
@@ -176,7 +182,7 @@
   "source_files": [
     {
       "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
-      "sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+      "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
     }
   ],
   "surface": "rt-vlm"

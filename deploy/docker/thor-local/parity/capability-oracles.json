@@ -22674,9 +22674,15 @@
           "base_url": "http://<host>:8000",
           "prefix": "/v1",
           "auth": "bearer",
-          "operation_count": 27,
+          "operation_count": 28,
+          "documented_operation_count": 27,
+          "thor_local_operation_count": 28,
+          "thor_local_extension": {
+            "method": "DELETE",
+            "path": "/v1/generate_captions/requests/{request_id}"
+          },
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
-          "expected_manifest_sha256": "2f64f1e9bb208ea3fd9a4b0aaa581bee852cbd819a3b753e53eb6325c6d1121b"
+          "expected_manifest_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
         },
         "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval."
       },
@@ -22701,9 +22707,15 @@
             "base_url": "http://<host>:8000",
             "prefix": "/v1",
             "auth": "bearer",
-            "operation_count": 27,
+            "operation_count": 28,
+            "documented_operation_count": 27,
+            "thor_local_operation_count": 28,
+            "thor_local_extension": {
+              "method": "DELETE",
+              "path": "/v1/generate_captions/requests/{request_id}"
+            },
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
-            "expected_manifest_sha256": "2f64f1e9bb208ea3fd9a4b0aaa581bee852cbd819a3b753e53eb6325c6d1121b"
+            "expected_manifest_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
           },
           "namespace": "vss-oracle-api-core-rt-vlm-27",
           "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -22738,27 +22750,51 @@
         },
         {
           "id": "contract-03",
+          "observation": "contract_identity/contract/documented_operation_count",
+          "operator": "equals",
+          "expected": 27
+        },
+        {
+          "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest",
           "operator": "equals",
           "expected": "deploy/docker/thor-local/qualification/expected/rt-vlm.json"
         },
         {
-          "id": "contract-04",
+          "id": "contract-05",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
-          "expected": "2f64f1e9bb208ea3fd9a4b0aaa581bee852cbd819a3b753e53eb6325c6d1121b"
-        },
-        {
-          "id": "contract-05",
-          "observation": "contract_identity/contract/operation_count",
-          "operator": "equals",
-          "expected": 27
+          "expected": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
         },
         {
           "id": "contract-06",
+          "observation": "contract_identity/contract/operation_count",
+          "operator": "equals",
+          "expected": 28
+        },
+        {
+          "id": "contract-07",
           "observation": "contract_identity/contract/prefix",
           "operator": "equals",
           "expected": "/v1"
+        },
+        {
+          "id": "contract-08",
+          "observation": "contract_identity/contract/thor_local_extension/method",
+          "operator": "equals",
+          "expected": "DELETE"
+        },
+        {
+          "id": "contract-09",
+          "observation": "contract_identity/contract/thor_local_extension/path",
+          "operator": "equals",
+          "expected": "/v1/generate_captions/requests/{request_id}"
+        },
+        {
+          "id": "contract-10",
+          "observation": "contract_identity/contract/thor_local_operation_count",
+          "operator": "equals",
+          "expected": 28
         },
         {
           "id": "observation-02",
@@ -22800,12 +22836,12 @@
         "collectors": [],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
-        "max_requests": 109,
+        "max_requests": 113,
         "workload": {
-          "units": 27,
+          "units": 28,
           "requests_per_unit": 4,
           "overhead_requests": 1,
-          "calculated_max_requests": 109,
+          "calculated_max_requests": 113,
           "phases": [
             "positive",
             "adjacent_negative",
@@ -22815,7 +22851,7 @@
         },
         "model_staging": "prerequisite_only",
         "warehouse_sample_bundle": "excluded",
-        "max_actions": 109
+        "max_actions": 113
       },
       "cleanup": {
         "mutation": "namespaced_and_reversible",
@@ -23303,7 +23339,7 @@
           "auth": "bearer",
           "operation_count": 18,
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-          "expected_manifest_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17"
+          "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"
         },
         "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval."
       },
@@ -23331,7 +23367,7 @@
             "auth": "bearer",
             "operation_count": 18,
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-            "expected_manifest_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17"
+            "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"
           },
           "namespace": "vss-oracle-api-core-lvs-17",
           "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -23374,7 +23410,7 @@
           "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
-          "expected": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17"
+          "expected": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"
         },
         {
           "id": "contract-05",
@@ -25940,7 +25976,7 @@
             "delete_file"
           ],
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-          "expected_manifest_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
+          "expected_manifest_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
         },
         "gap": "A Thor-local static adapter now supplies the four file-management MCP tools missing from the pinned upstream repositories. The exact 13-tool source contract is wired, but discovery and a disposable add/list/info/delete lifecycle still require runtime qualification."
       },
@@ -26004,7 +26040,7 @@
               "delete_file"
             ],
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-            "expected_manifest_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
+            "expected_manifest_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
           },
           "namespace": "vss-oracle-api-core-lvs-mcp-doc-13-repo-9",
           "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -26041,7 +26077,7 @@
           "id": "contract-03",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
-          "expected": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
+          "expected": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
         },
         {
           "id": "contract-04",

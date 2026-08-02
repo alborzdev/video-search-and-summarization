@@ -52,6 +52,7 @@ _DEFAULT_MAX_SSE_EVENTS = 1024
 _MAX_CONFIGURABLE_SSE_EVENTS = 100_000
 _DEFAULT_SSE_TIMEOUT_SECONDS = 600
 _MAX_CONFIGURABLE_SSE_TIMEOUT_SECONDS = 24 * 60 * 60
+_SSE_DISCONNECT_GRACE_SECONDS = 1.0
 _MAX_CONCURRENT_SSE_STREAMS = 4
 _RFC3339_MILLISECONDS = re.compile(
     r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.\d{3}Z$"
@@ -134,9 +135,9 @@ class LvsMCPServer:
         """
         self._lvs_server = lvs_server_instance
         self._server = Server("lvs-engine")
-        # A timed-out or caller-cancelled in-process ASGI request keeps draining
-        # in the background. Retain those tasks strongly and count them against
-        # the same per-server limit as requests whose callers are still waiting.
+        # Active requests consume capacity synchronously. Only an ASGI app that
+        # ignores a delivered disconnect past the bounded cleanup grace is kept
+        # strongly as a fail-safe and continues to consume its capacity slot.
         self._sse_stream_lock = Lock()
         self._sse_stream_count = 0
         self._sse_stream_tasks: set[asyncio.Task[Any]] = set()
@@ -153,21 +154,21 @@ class LvsMCPServer:
                 )
             self._sse_stream_count += 1
 
-    def _release_unstarted_sse_stream(self) -> None:
-        """Release a reservation only when no ASGI task was successfully started."""
+    def _release_sse_stream(self) -> None:
+        """Release one synchronously owned stream-capacity reservation."""
 
         with self._sse_stream_lock:
             self._sse_stream_count -= 1
 
     def _retain_sse_stream_task(self, task: asyncio.Task[Any]) -> None:
-        """Keep an ASGI task alive until its done callback releases capacity."""
+        """Retain only an app that ignored disconnect past the cleanup grace."""
 
         with self._sse_stream_lock:
             self._sse_stream_tasks.add(task)
         task.add_done_callback(self._sse_stream_done)
 
     def _sse_stream_done(self, task: asyncio.Task[Any]) -> None:
-        """Consume every task result; release only its capacity, not claimed cleanup."""
+        """Consume a fail-safe task result and release its retained capacity."""
 
         try:
             task.result()
@@ -735,6 +736,12 @@ class LvsMCPServer:
         return values[0], values[1], values[2]
 
     @staticmethod
+    def _sse_disconnect_grace_seconds() -> float:
+        """Return the bounded interval allowed for ASGI disconnect cleanup."""
+
+        return _SSE_DISCONNECT_GRACE_SECONDS
+
+    @staticmethod
     def _parse_sse_body(body: bytes, *, max_events: int) -> List[str]:
         """Return strict, data-only SSE payloads from one complete response."""
 
@@ -964,6 +971,9 @@ class LvsMCPServer:
             request_arguments, ensure_ascii=False, separators=(",", ":")
         ).encode("utf-8")
         request_sent = False
+        disconnect_delivered = False
+        disconnect_requested = asyncio.Event()
+        receive_lock = asyncio.Lock()
         response_started = False
         response_complete = False
         policy_error: Optional[_SseResponseError] = None
@@ -994,18 +1004,33 @@ class LvsMCPServer:
         }
 
         async def receive() -> Dict[str, Any]:
-            nonlocal request_sent
-            if not request_sent:
-                request_sent = True
-                return {"type": "http.request", "body": request_body, "more_body": False}
-            # Caller cancellation and local timeout are not client disconnects.
-            # A retained app task remains pending here until the ASGI app itself
-            # completes or cancels this receive waiter during its own shutdown.
+            nonlocal disconnect_delivered, request_sent
+            async with receive_lock:
+                if not request_sent:
+                    request_sent = True
+                    return {
+                        "type": "http.request",
+                        "body": request_body,
+                        "more_body": False,
+                    }
+            await disconnect_requested.wait()
+            async with receive_lock:
+                if not disconnect_delivered:
+                    disconnect_delivered = True
+                    return {"type": "http.disconnect"}
+            # ASGI applications must treat disconnect as terminal. If a broken
+            # application asks again, do not manufacture a second disconnect.
             await asyncio.Future()
             raise AssertionError("unreachable")
 
+        def set_policy_error(message: str) -> None:
+            nonlocal policy_error
+            if policy_error is None:
+                policy_error = _SseResponseError(message)
+                disconnect_requested.set()
+
         def accept_byte(value: int) -> None:
-            nonlocal event_count, policy_error
+            nonlocal event_count
             frame.append(value)
             if frame.endswith(b"\n\n"):
                 candidate = frame[:-2]
@@ -1014,15 +1039,18 @@ class LvsMCPServer:
                     for line in candidate.split(b"\n")
                 ):
                     event_count += 1
-                    if event_count > max_events and policy_error is None:
-                        policy_error = _SseResponseError(
-                            "LVS SSE response exceeded the event limit"
-                        )
+                    if event_count > max_events:
+                        set_policy_error("LVS SSE response exceeded the event limit")
                 frame.clear()
 
         async def send(message: Dict[str, Any]) -> None:
             nonlocal response_started, response_complete, status_code, previous_was_cr
-            nonlocal policy_error
+            if policy_error is not None:
+                raise policy_error
+            if disconnect_requested.is_set():
+                raise _SseResponseError(
+                    "LVS SSE response continued after client disconnect"
+                )
             message_type = message.get("type")
             if message_type == "http.response.start":
                 if response_started:
@@ -1043,9 +1071,7 @@ class LvsMCPServer:
                 raise _SseResponseError("LVS SSE response body is not bytes")
             if policy_error is None:
                 if len(response_body) + len(chunk) > max_bytes:
-                    policy_error = _SseResponseError(
-                        "LVS SSE response exceeded the byte limit"
-                    )
+                    set_policy_error("LVS SSE response exceeded the byte limit")
                 else:
                     response_body.extend(chunk)
                     for value in chunk:
@@ -1060,6 +1086,8 @@ class LvsMCPServer:
                             accept_byte(value)
                         if policy_error is not None:
                             break
+            if policy_error is not None:
+                raise policy_error
             if not message.get("more_body", False):
                 if previous_was_cr and policy_error is None:
                     accept_byte(ord("\n"))
@@ -1070,20 +1098,76 @@ class LvsMCPServer:
         try:
             app_task = asyncio.create_task(self._lvs_server._app(scope, receive, send))
         except BaseException:
-            self._release_unstarted_sse_stream()
+            self._release_sse_stream()
             raise
-        self._retain_sse_stream_task(app_task)
+
+        caller_cancelled: Optional[asyncio.CancelledError] = None
+        policy_waiter = asyncio.create_task(disconnect_requested.wait())
         try:
-            await asyncio.wait_for(
-                asyncio.shield(app_task),
+            finished, _ = await asyncio.wait(
+                {app_task, policy_waiter},
                 timeout=timeout_seconds,
+                return_when=asyncio.FIRST_COMPLETED,
             )
-        except asyncio.TimeoutError as exc:
+        except asyncio.CancelledError as exc:
+            caller_cancelled = exc
+            disconnect_requested.set()
+            finished = set()
+        finally:
+            if not policy_waiter.done():
+                policy_waiter.cancel()
+
+        app_finished = app_task in finished
+        if not finished and caller_cancelled is None:
+            set_policy_error("LVS SSE response exceeded the time limit")
+
+        if caller_cancelled is not None or policy_error is not None:
+            try:
+                cleaned, _ = await asyncio.wait(
+                    {app_task}, timeout=self._sse_disconnect_grace_seconds()
+                )
+            except asyncio.CancelledError:
+                # A repeated caller cancellation must still propagate promptly.
+                # Preserve the task and capacity until its eventual exit.
+                if app_task.done():
+                    self._release_sse_stream()
+                    try:
+                        app_task.result()
+                    except BaseException:
+                        pass
+                else:
+                    self._retain_sse_stream_task(app_task)
+                raise
+
+            if cleaned:
+                self._release_sse_stream()
+                try:
+                    app_task.result()
+                except BaseException:
+                    # The initiating cancellation/policy error remains the
+                    # authoritative result after terminal app cleanup.
+                    pass
+            else:
+                self._retain_sse_stream_task(app_task)
+
+            if caller_cancelled is not None:
+                raise caller_cancelled
+            if not cleaned:
+                raise _SseResponseError(
+                    f"{policy_error}; ASGI disconnect cleanup exceeded the grace "
+                    "period and its capacity remains retained"
+                )
+            raise policy_error
+
+        if not app_finished:
+            self._retain_sse_stream_task(app_task)
             raise _SseResponseError(
-                "LVS SSE response exceeded the time limit; its bounded ASGI "
-                "task is still draining and cleanup is not guaranteed"
-            ) from exc
-        except Exception as exc:
+                "LVS SSE response terminated without an app result; capacity remains retained"
+            )
+        self._release_sse_stream()
+        try:
+            app_task.result()
+        except BaseException as exc:
             stream_error = _find_sse_response_error(exc)
             if stream_error is not None:
                 raise stream_error from exc

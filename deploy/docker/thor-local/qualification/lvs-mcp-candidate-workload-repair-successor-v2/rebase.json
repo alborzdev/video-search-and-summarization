@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-3.2.1-lvs-mcp-candidate-workload-repair-successor-v2",
+  "mode": "static_source_rebase_only_no_execution",
+  "predecessors": [
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor/repair-overlay.json",
+      "raw_sha256": "a637ee239903683c8c38176b270bc8da831c6e5fbb0a08520455e92ab15a84a7"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor/repair-overlay.schema.json",
+      "raw_sha256": "6f9444839fc7d90e048b19b0b60b3462def03991d75c00829dd6c2e255268473"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor/compiler.py",
+      "raw_sha256": "6e663550eebbe38ef4ab909fd132a9687e88ecf1dd2779fedb241e7be6cb6466"
+    }
+  ],
+  "source_overrides": [
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"
+    }
+  ],
+  "manifest_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "raw_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
+    }
+  ],
+  "order_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor/repair-overlay.json",
+      "pointer": "/repaired_workload/operation_units",
+      "identity_field": "unit_id",
+      "count": 4,
+      "ordered_identities_sha256": "b45c3a2492c20cc9ee5f477d240e4e7ca1772299d1c71be665c245c66d39fb43"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor/repair-overlay.json",
+      "pointer": "/expected_tool_catalog/tool_names",
+      "count": 13,
+      "ordered_identities_sha256": "e303ee9db9c6dc28b925f2ce9048cfa91a5db7071aa976b2e5a01c9e2bcc907f"
+    }
+  ],
+  "facts": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "pointer": "/tool_count",
+      "equals": 13
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor/repair-overlay.json",
+      "pointer": "/qualification_state/runtime_evidence_count",
+      "equals": 0
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor/repair-overlay.json",
+      "pointer": "/repaired_workload/cleanup_boundary/status",
+      "equals": "unresolved_fail_closed"
+    }
+  ],
+  "constraints": {
+    "source_override_count": 1
+  },
+  "policy": {
+    "runtime_evidence_created": false,
+    "runtime_activity_performed": false,
+    "candidate_admitted": false,
+    "candidate_promoted": false,
+    "historical_executor_invoked": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "retained_blockers": [
+    "runtime MCP workload evidence remains absent",
+    "cleanup boundary and rollback execution remain unresolved fail closed",
+    "admission and promotion remain prohibited without separate authorization"
+  ]
+}

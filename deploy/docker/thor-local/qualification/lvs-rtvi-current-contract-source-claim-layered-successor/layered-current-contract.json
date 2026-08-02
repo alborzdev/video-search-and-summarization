@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "observation_id": "thor-vss-3.2.1-lvs-rtvi-current-contract-source-claim-layered-successor",
+  "mode": "read_only_layered_current_contract_observation_no_writes",
+  "predecessor_layers": {
+    "layered_observation_path": "deploy/docker/thor-local/qualification/alerts-source-claim-layered-observation-successor/layered-observation.json",
+    "layered_observation_raw_sha256": "5014c7338ab2f003e818302015d10448a7509db4cdfc23ad5f345ad847e43ae9",
+    "source_claim_receipt_path": "deploy/docker/thor-local/qualification/source-claim-hash-repair-successor/live-integration-receipt.json",
+    "source_claim_receipt_raw_sha256": "edc3c30ef79a720551fb16682555dc66d01533efd11a3ee40a6386883cde680d",
+    "alerts_receipt_path": "deploy/docker/thor-local/qualification/alerts-current-contract-successor/live-integration-receipt.json",
+    "alerts_receipt_raw_sha256": "ad4e461066e658b1cbc016a4ab5bc209a7c4e1c3246306367bb6c4aeca32c8e9",
+    "official_raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098",
+    "oracles_raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
+  },
+  "current_contract_inputs": [
+    {
+      "path": "deploy/docker/thor-local/qualification/api_inventory.json",
+      "raw_sha256": "e621f0b8a9e8be6fa04535965bdefc17910c6d88284779fc95daafeb4f66c482"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "raw_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs.json",
+      "raw_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "raw_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "raw_sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "raw_sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"
+    }
+  ],
+  "preserved_live_identities": [
+    {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+    }
+  ],
+  "changed_records": [
+    {
+      "capability_id": "api.core.rt-vlm-27",
+      "capability_index": 114,
+      "oracle_index": 114,
+      "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "expected_manifest_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff",
+      "source_ids": [
+        "rt-vlm-api-doc-3.2.1"
+      ],
+      "official_semantic_pointers": [
+        "/capabilities/114/contract/documented_operation_count",
+        "/capabilities/114/contract/expected_manifest_sha256",
+        "/capabilities/114/contract/operation_count",
+        "/capabilities/114/contract/thor_local_extension",
+        "/capabilities/114/contract/thor_local_operation_count"
+      ],
+      "oracle_semantic_pointers": [
+        "/oracles/114/assertions",
+        "/oracles/114/execution_bounds/max_actions",
+        "/oracles/114/execution_bounds/max_requests",
+        "/oracles/114/execution_bounds/workload/calculated_max_requests",
+        "/oracles/114/execution_bounds/workload/units",
+        "/oracles/114/fixture/input/contract/documented_operation_count",
+        "/oracles/114/fixture/input/contract/expected_manifest_sha256",
+        "/oracles/114/fixture/input/contract/operation_count",
+        "/oracles/114/fixture/input/contract/thor_local_extension",
+        "/oracles/114/fixture/input/contract/thor_local_operation_count",
+        "/oracles/114/ledger_binding/contract/documented_operation_count",
+        "/oracles/114/ledger_binding/contract/expected_manifest_sha256",
+        "/oracles/114/ledger_binding/contract/operation_count",
+        "/oracles/114/ledger_binding/contract/thor_local_extension",
+        "/oracles/114/ledger_binding/contract/thor_local_operation_count"
+      ]
+    },
+    {
+      "capability_id": "api.core.lvs-17",
+      "capability_index": 117,
+      "oracle_index": 117,
+      "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
+      "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0",
+      "source_ids": [
+        "lvs-api-doc-3.2.1"
+      ],
+      "official_semantic_pointers": [
+        "/capabilities/117/contract/expected_manifest_sha256"
+      ],
+      "oracle_semantic_pointers": [
+        "/oracles/117/assertions/3/expected",
+        "/oracles/117/fixture/input/contract/expected_manifest_sha256",
+        "/oracles/117/ledger_binding/contract/expected_manifest_sha256"
+      ]
+    },
+    {
+      "capability_id": "api.core.lvs-mcp-doc-13-repo-9",
+      "capability_index": 127,
+      "oracle_index": 127,
+      "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "expected_manifest_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a",
+      "source_ids": [
+        "lvs-doc-3.2.1",
+        "main-repository-7732edf8"
+      ],
+      "official_semantic_pointers": [
+        "/capabilities/127/contract/expected_manifest_sha256"
+      ],
+      "oracle_semantic_pointers": [
+        "/oracles/127/assertions/2/expected",
+        "/oracles/127/fixture/input/contract/expected_manifest_sha256",
+        "/oracles/127/ledger_binding/contract/expected_manifest_sha256"
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "predecessor_raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098",
+      "current_raw_sha256": "fb80c2a96cc0951fc770b59a77c96d303fcf7c359e27201e16b1923e1a54a371",
+      "semantic_leaf_count": 11,
+      "semantic_pointers": [
+        "/capabilities/114/contract/documented_operation_count",
+        "/capabilities/114/contract/expected_manifest_sha256",
+        "/capabilities/114/contract/operation_count",
+        "/capabilities/114/contract/thor_local_extension",
+        "/capabilities/114/contract/thor_local_operation_count",
+        "/capabilities/117/contract/expected_manifest_sha256",
+        "/capabilities/127/contract/expected_manifest_sha256",
+        "/sources/14/claim_set_sha256",
+        "/sources/17/claim_set_sha256",
+        "/sources/18/claim_set_sha256",
+        "/sources/32/claim_set_sha256"
+      ]
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "predecessor_raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e",
+      "current_raw_sha256": "4cfaa1996b6a46a1888035af773f444e505324c9edada2fee387c0399d9788ec",
+      "semantic_leaf_count": 21,
+      "semantic_pointers": [
+        "/oracles/114/assertions",
+        "/oracles/114/execution_bounds/max_actions",
+        "/oracles/114/execution_bounds/max_requests",
+        "/oracles/114/execution_bounds/workload/calculated_max_requests",
+        "/oracles/114/execution_bounds/workload/units",
+        "/oracles/114/fixture/input/contract/documented_operation_count",
+        "/oracles/114/fixture/input/contract/expected_manifest_sha256",
+        "/oracles/114/fixture/input/contract/operation_count",
+        "/oracles/114/fixture/input/contract/thor_local_extension",
+        "/oracles/114/fixture/input/contract/thor_local_operation_count",
+        "/oracles/114/ledger_binding/contract/documented_operation_count",
+        "/oracles/114/ledger_binding/contract/expected_manifest_sha256",
+        "/oracles/114/ledger_binding/contract/operation_count",
+        "/oracles/114/ledger_binding/contract/thor_local_extension",
+        "/oracles/114/ledger_binding/contract/thor_local_operation_count",
+        "/oracles/117/assertions/3/expected",
+        "/oracles/117/fixture/input/contract/expected_manifest_sha256",
+        "/oracles/117/ledger_binding/contract/expected_manifest_sha256",
+        "/oracles/127/assertions/2/expected",
+        "/oracles/127/fixture/input/contract/expected_manifest_sha256",
+        "/oracles/127/ledger_binding/contract/expected_manifest_sha256"
+      ]
+    }
+  ],
+  "policy": {
+    "writes_performed": false,
+    "network_allowed": false,
+    "docker_allowed": false,
+    "services_allowed": false,
+    "runtime_evidence_added": false,
+    "passed_current_promotions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "summary": {
+    "changed_capability_records": 3,
+    "changed_oracle_records": 3,
+    "official_semantic_leaf_count": 11,
+    "oracle_semantic_leaf_count": 21,
+    "total_semantic_leaf_count": 32,
+    "rt_vlm_operation_count": 28,
+    "lvs_operation_count": 18,
+    "lvs_mcp_tool_count": 13,
+    "runtime_evidence_records": 0,
+    "promotions": 0
+  }
+}

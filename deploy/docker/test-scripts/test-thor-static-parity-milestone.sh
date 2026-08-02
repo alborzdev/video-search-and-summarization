@@ -19,30 +19,17 @@ python3 -m unittest discover \
   -s "${thor_local_root}/parity/tests" \
   -p 'test_capability_oracles.py' -v
 
-# The live official ledger contains two intentionally layered, static-only
-# successors. Validate the terminal six-leaf source-claim repair, then observe
-# its exact rollback to the Alerts post-state and the Alerts layer's exact
-# rollback to its predecessor. The old single-layer Alerts validator is not a
-# standalone validator of this later live state. No rollback or write runs.
+# The LVS/RT-VLM current-contract layer validates the additive cancellation
+# transition over the two historical source-claim layers without mutating or
+# rolling back either live ledger. Those old layers are immutable predecessors
+# and are no longer replayed against later live bytes; their identities and
+# rollback lineage are checked by this successor. The v1 protocol package is
+# likewise identity-checked by the cancellation umbrella below.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/source-claim-hash-repair-successor/integrate_live.py" \
-  validate >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/source-claim-hash-repair-successor/tests" \
-  -p 'test*.py' -v
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/alerts-source-claim-layered-observation-successor/compiler.py" \
+  "${thor_local_root}/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/compiler.py" \
   validate >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/alerts-source-claim-layered-observation-successor/tests"
-
-# Exact protocol vectors are source-pinned but deliberately unexecuted.
-python3 "${thor_local_root}/qualification/protocol-cases/validate_protocol_cases.py"
-python3 "${thor_local_root}/qualification/protocol-cases/protocol_case_executor.py" \
-  plan >/dev/null
-python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/protocol-cases/tests" \
-  -p 'test_protocol*.py' -v
+  "${thor_local_root}/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/tests"
 
 # Wave 2 remains immutable extraction provenance and validates its full live merge.
 python3 "${thor_local_root}/parity/candidates/wave2/validate_candidate.py" --report
@@ -307,25 +294,14 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # exact predecessor tree is verified by the tooling successor above; the new
 # canonical entry remains runtime-unqualified and is not replayed here.
 
-# Wave eight upgrades the two LVS MCP literals from source-shape candidates to
-# a real in-process production-server subset. Its two IDs remain in the current
-# 74-gap plan, so its live locks are refreshed while its old Wave3/Wave7
-# predecessor hashes stay frozen. Runtime transport/inference remains open.
+# Wave8 and its Metadata-500 subset are immutable pre-cancellation snapshots.
+# Their exact trees and ordering are preserved by this additive source rebase;
+# only current cancellation sources and final expected/live ledgers are bound.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave8/executor.py" \
+  "${thor_local_root}/qualification/advertised-entry-executors-wave8-cancellation-successor/compiler.py" \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave8/tests"
-
-# Bind the two passing Wave 8 production-code subsets to their exact selected
-# Metadata-500 oracle rows. The selected v2 oracle document remains byte-for-
-# byte identical; the separate annotation index retains every runtime blocker,
-# an unmet operator gate, and zero promotion or runtime evidence.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/successor-500-executable-subsets-wave1/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/successor-500-executable-subsets-wave1/tests"
+  "${thor_local_root}/qualification/advertised-entry-executors-wave8-cancellation-successor/tests"
 
 # The old four-entry external-attestation package includes the now-canonical
 # AWS/GCS boundary and is therefore a historical snapshot. Its exact predecessor
@@ -346,83 +322,31 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # identities are consumed by the current 500-candidate chain below; the stale
 # live-source replays are intentionally omitted.
 
-# Three candidate-only successor inputs make the future 289-to-500 oracle
-# transition explicit without changing the live ledgers. They preserve all 289
-# current oracle states/evidence, adapt all 211 exact semantic contracts, expand
-# the protocol design from 7 to 30 cases with all 23 additions non-activating,
-# and bind exact workloads for the 41 API and 19 deployment candidates.
+# The candidate-oracle adapter is an immutable pre-cancellation input to the
+# Metadata-500 projection. Its 211 candidate rows remain preserved by the
+# downstream successor artifacts; it is not replayed against later live bytes.
+# Protocol-v2 is an immutable pre-cancellation candidate. Its additive
+# successor preserves the 29 non-Warehouse case/binding identities and binds
+# the exact request-cancellation route without calling any endpoint.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-oracle-adapter/compiler.py" \
+  "${thor_local_root}/qualification/protocol-cases-v2-cancellation-successor/compiler.py" \
   --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-oracle-adapter/tests"
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/protocol-cases-v2-candidates/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/protocol-cases-v2-candidates/tests"
+  "${thor_local_root}/qualification/protocol-cases-v2-cancellation-successor/tests"
 # The original remaining-entry-workloads package is an immutable old-ledger
 # snapshot and is consumed by the current successor chain without replay.
 
-# The isolated oracle successor preserves the 289 live rows exactly, then
-# appends all 211 candidate contracts in manifest-pointer order. The ledger
-# successor binds that same 500-row order to an exact-title manifest and
-# capability-ledger projection. Both remain candidate-only: evidence and
-# promotions stay empty, while nine family aggregates and eight acceptance
-# coverage records remain explicit live-merge blockers.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/oracle-500-successor/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/oracle-500-successor/tests"
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/ledger-500-successor/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/ledger-500-successor/tests"
+# The original oracle/ledger 500 projections preserve the pre-cancellation 289
+# live-row prefix and are immutable inputs to the metadata successors below.
+# Their exact projected artifacts remain source-locked downstream; the current
+# 289-row ledger/oracle pair is validated by the layered successor above.
 
-# Two isolated metadata successors close the projected merge blockers without
-# touching live parity files. The manifest projection applies six policy-valid
-# aggregate fields and preserves three external_optional family boundaries; the
-# acceptance projection appends exactly eight missing scenario links. Together
-# they leave zero policy-correct aggregate or acceptance-coverage gaps, but do
-# not merge or promote any capability.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/manifest-500-aggregate-successor/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/manifest-500-aggregate-successor/tests"
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/acceptance-500-successor/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/acceptance-500-successor/tests"
-
-# The composition proof binds the final ledger, oracle, policy-valid manifest,
-# and acceptance successors. The authoritative validator must accept exactly
-# 500 capabilities / 55 families / 47 discrepancies with zero aggregate or
-# acceptance gaps. Live predecessor files remain at 289, candidate evidence is
-# empty, and live/oracle/runtime migration remains explicitly blocked.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/metadata-500-composition-successor/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/metadata-500-composition-successor/tests"
-
-# The versioned migration and activation rebase packages bind the current
-# source-claim/Alerts ledger, selected Metadata-500 projection, and immutable
-# historical package identities without replaying the stale applied packages.
-# They perform no canonical write and preserve zero evidence or promotion.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/live-metadata-500-migration-rebase-successor/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/live-metadata-500-migration-rebase-successor/tests"
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/live-metadata-500-activation-rebase-successor/compiler.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/live-metadata-500-activation-rebase-successor/tests"
+# The manifest, acceptance, composition, migration-rebase, and activation-
+# rebase Metadata-500 packages are frozen pre-cancellation snapshots. Their
+# projected outputs remain inputs to the current candidate mapping/admission
+# chain below, while the new layered and cancellation successors own validation
+# of the evolved live contracts. None is replayed or relabelled against the
+# current official/oracle/operation-manifest bytes.
 
 # The historical 289 descriptor remains immutable and binds the pre-layer live
 # hashes, so it cannot be relabelled as authoritatively valid against the
@@ -526,17 +450,14 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-admission-receipts-rebase-successor/tests"
 
-# The execution-binding registry source-locks all 208 mapped candidates and
-# keeps semantic, planning-action, observer, and lane projections distinct from
-# authoritative executable bindings. It directly checks 235 semantic files and
-# 26 active-lane profile/Compose files. Every executor, service/profile,
-# cleanup/rollback, postcondition, and evidence binding remains null or empty;
-# admission-grade bindings remain zero and Warehouse remains excluded.
+# The execution-binding registry is an immutable pre-cancellation snapshot.
+# Its v2 successor preserves all 208 inert rows while rebinding the repaired
+# production sources and final expected/live ledgers. No binding is promoted.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-execution-binding-registry-rebase-successor/compiler.py" \
+  "${thor_local_root}/qualification/candidate-execution-binding-registry-rebase-successor-v2/compiler.py" \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-execution-binding-registry-rebase-successor/tests"
+  "${thor_local_root}/qualification/candidate-execution-binding-registry-rebase-successor-v2/tests"
 
 # The candidate authority successor freezes an empty, non-consuming trust
 # boundary and a design-only DSSEv1/Ed25519/JCS receipt-envelope contract. It
@@ -549,25 +470,36 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-authority-registry-rebase-successor/tests"
 
-# Wave 1 resolves the two strongest LVS/MCP candidates to exact static
-# `lvs-server`/`vss-lvs` Thor service/profile wiring while retaining every
-# deployed-action, transport, real-video, cleanup, evidence, authorization,
-# and runtime blocker. It remains non-admission-grade and performs no lifecycle
-# or network action; Warehouse is excluded and cloud inference is not required.
+# Wave1 is an immutable pre-cancellation overlay. Its v2 successor preserves
+# both candidate identities while rebinding repaired LVS MCP/server/handler
+# sources; transport, cleanup execution, evidence, and admission remain open.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-execution-bindings-wave1-rebase-successor/compiler.py" \
+  "${thor_local_root}/qualification/candidate-execution-bindings-wave1-rebase-successor-v2/compiler.py" \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-execution-bindings-wave1-rebase-successor/tests"
+  "${thor_local_root}/qualification/candidate-execution-bindings-wave1-rebase-successor-v2/tests"
 
-# The terminal LVS MCP workload repair binds the finalized 13-tool production
-# catalog and current mapping/execution identities while retaining an unresolved
-# candidate-scoped cleanup blocker. Check and tests are static and read-only.
+# The terminal workload repair is an immutable pre-cancellation overlay. Its
+# v2 successor binds the repaired MCP source and final 13-tool manifest while
+# retaining its fail-closed cleanup blocker and zero runtime evidence.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/lvs-mcp-candidate-workload-repair-successor/compiler.py" \
+  "${thor_local_root}/qualification/lvs-mcp-candidate-workload-repair-successor-v2/compiler.py" \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/lvs-mcp-candidate-workload-repair-successor/tests"
+  "${thor_local_root}/qualification/lvs-mcp-candidate-workload-repair-successor-v2/tests"
+
+# The cancellation umbrella freezes all eight replaced predecessor packages,
+# validates eight production files, five focused tests, and the refreshed
+# contracts, then runs only its two source-locked static pytest invocations.
+# It performs no network, Docker, service lifecycle, inference, or Warehouse I/O.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/request-cancellation-static-rebase-successor-v1/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/request-cancellation-static-rebase-successor-v1/compiler.py" \
+  --execute-tests >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/request-cancellation-static-rebase-successor-v1/tests"
 
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact
@@ -589,6 +521,17 @@ python3 "${thor_local_root}/qualification/prerelease-denominator/validator.py" \
   --json >/dev/null
 python3 -m pytest -q \
   "${thor_local_root}/qualification/prerelease-denominator/tests"
+
+# The additive Aug. 2 successor advances that frozen denominator to the exact
+# current NVIDIA develop/nightly tip: 500 commits and 109,059 develop path
+# records. The sole delta is a Warehouse 2D Phoenix-profile fix; Warehouse is
+# operator-excluded and Thor's older layout already has the equivalent profile.
+# This validator is offline-only and creates no runtime evidence or promotion.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/prerelease-20260802-warehouse-exclusion-successor/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/prerelease-20260802-warehouse-exclusion-successor/tests"
 
 # The local Qwen alternate model contract is checked only in its inert plan
 # mode. Runtime HTTP probes require a separate exact acknowledgement.

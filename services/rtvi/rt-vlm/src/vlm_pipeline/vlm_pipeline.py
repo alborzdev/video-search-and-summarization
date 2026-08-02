@@ -1312,6 +1312,11 @@ class VlmPipeline:
 
         self._chunk_counter = 0
         self._chunk_callback_map: dict[int, Callable[[PipelineChunkResult], None]] = {}
+        self._chunk_request_map: dict[int, str] = {}
+        self._aborted_request_ids: set[str] = set()
+        self._request_enrollment_closed: set[str] = set()
+        self._request_outstanding_chunks: dict[str, int] = {}
+        self._request_quiescent_events: dict[str, Event] = {}
         self._live_stream_id_map: dict[str, VlmPipeline._LiveStreamInfo] = {}
 
         self._enqueue_lock = Lock()
@@ -1540,6 +1545,14 @@ class VlmPipeline:
             chunk_result.error = item.get("error", None)
             chunk_result.error_status_code = item.get("error_status_code", 500)
             chunk_result.chunk = item["chunk"]
+            request_id = item.get("request_id", "")
+            if request_id in self._aborted_request_ids:
+                chunk_id = item.get("chunk_id")
+                if chunk_id is not None:
+                    with self._enqueue_lock:
+                        self._chunk_callback_map.pop(chunk_id, None)
+                    self._finish_request_chunk(chunk_id)
+                continue
             chunk_result.decode_retry_count = item.get("decode_retry_count", 0)
             if not chunk_result.error:
                 # vlm_output is a single VlmModelOutput object (already unbatched)
@@ -1591,9 +1604,71 @@ class VlmPipeline:
                         lsinfo.on_chunk_result(chunk_result)
                         lsinfo.all_chunks_processed = True
                 continue
-            callback = self._chunk_callback_map.pop(item["chunk_id"], None)
-            if callback:
-                callback(chunk_result)
+            chunk_id = item["chunk_id"]
+            with self._enqueue_lock:
+                callback = self._chunk_callback_map.pop(chunk_id, None)
+            try:
+                if callback:
+                    callback(chunk_result)
+            finally:
+                self._finish_request_chunk(chunk_id)
+
+    def _finish_request_chunk(self, chunk_id: int) -> None:
+        with self._enqueue_lock:
+            request_id = self._chunk_request_map.pop(chunk_id, None)
+            if not request_id:
+                return
+            remaining = max(0, self._request_outstanding_chunks.get(request_id, 1) - 1)
+            if remaining:
+                self._request_outstanding_chunks[request_id] = remaining
+                return
+            self._request_outstanding_chunks[request_id] = 0
+            event = self._request_quiescent_events.get(request_id)
+            if event is not None:
+                event.set()
+            if request_id not in self._aborted_request_ids:
+                self._request_outstanding_chunks.pop(request_id, None)
+
+    def abort_request(self, request_id: str):
+        """Suppress queued and late output for exactly one request ID."""
+        with self._enqueue_lock:
+            if request_id in self._aborted_request_ids:
+                return False
+            self._aborted_request_ids.add(request_id)
+            self._request_enrollment_closed.add(request_id)
+            event = self._request_quiescent_events.setdefault(request_id, Event())
+            if self._request_outstanding_chunks.get(request_id, 0) == 0:
+                event.set()
+        for proc in self._decoder_procs + self._vlm_procs + self._asr_procs:
+            proc.send_command("drop-request", request_id=request_id)
+        return True
+
+    def wait_for_request_quiescent(self, request_id: str, timeout: float | None = None):
+        with self._enqueue_lock:
+            event = self._request_quiescent_events.setdefault(request_id, Event())
+            if self._request_outstanding_chunks.get(request_id, 0) == 0:
+                event.set()
+        return event.wait(timeout)
+
+    def complete_request(self, request_id: str) -> None:
+        """Discard exact-request suppression state after proven quiescence."""
+        if not self.wait_for_request_quiescent(request_id, timeout=0):
+            raise RuntimeError(f"request {request_id} is not quiescent")
+        clear_errors = []
+        for proc in self._decoder_procs + self._vlm_procs + self._asr_procs:
+            try:
+                proc.send_command("clear-drop-request", request_id=request_id)
+            except Exception as exc:
+                clear_errors.append(exc)
+        with self._enqueue_lock:
+            self._aborted_request_ids.discard(request_id)
+            self._request_enrollment_closed.discard(request_id)
+            self._request_outstanding_chunks.pop(request_id, None)
+            self._request_quiescent_events.pop(request_id, None)
+        if clear_errors:
+            raise RuntimeError(
+                f"failed to clear request suppression in {len(clear_errors)} process(es)"
+            ) from clear_errors[0]
 
     def abort_chunks(self, stream_id: str):
         for proc in self._decoder_procs + self._vlm_procs + self._asr_procs:
@@ -1679,9 +1754,19 @@ class VlmPipeline:
         request_params = VlmRequestParams.from_vlm_query(vlm_query)
 
         with self._enqueue_lock:
+            if request_id and request_id in self._request_enrollment_closed:
+                return False
             curr_chunk_counter = self._chunk_counter
             self._chunk_counter += 1
             self._chunk_callback_map[curr_chunk_counter] = on_chunk_result
+            if request_id:
+                self._chunk_request_map[curr_chunk_counter] = request_id
+                self._request_outstanding_chunks[request_id] = (
+                    self._request_outstanding_chunks.get(request_id, 0) + 1
+                )
+                event = self._request_quiescent_events.get(request_id)
+                if event is not None:
+                    event.clear()
         self._decoder_procs[curr_chunk_counter % self._args.num_gpus].enqueue_chunk(
             chunk,
             vlm_query=vlm_query,
@@ -1692,6 +1777,7 @@ class VlmPipeline:
             video_codec=video_codec,
             decode_only=decode_only,
         )
+        return True
 
     def enqueue_vlm_text_chunk(
         self,
@@ -1715,9 +1801,19 @@ class VlmPipeline:
         if chat_messages:
             request_params.chat_messages = chat_messages
         with self._enqueue_lock:
+            if request_id and request_id in self._request_enrollment_closed:
+                return False
             curr_chunk_counter = self._chunk_counter
             self._chunk_counter += 1
             self._chunk_callback_map[curr_chunk_counter] = on_chunk_result
+            if request_id:
+                self._chunk_request_map[curr_chunk_counter] = request_id
+                self._request_outstanding_chunks[request_id] = (
+                    self._request_outstanding_chunks.get(request_id, 0) + 1
+                )
+                event = self._request_quiescent_events.get(request_id)
+                if event is not None:
+                    event.clear()
             decode_start_time = decode_end_time = time.time()
             self._vlm_procs[curr_chunk_counter % self._args.num_vlm_procs].enqueue_chunk(
                 chunk,
@@ -1734,6 +1830,7 @@ class VlmPipeline:
                 error=None,
                 is_live_stream=False,
             )
+        return True
 
     def enqueue_text_chunk(
         self,
@@ -1744,9 +1841,19 @@ class VlmPipeline:
     ):
         request_params = VlmRequestParams.from_text_embeddings_query(text_embeddings_query)
         with self._enqueue_lock:
+            if request_id and request_id in self._request_enrollment_closed:
+                return False
             curr_chunk_counter = self._chunk_counter
             self._chunk_counter += 1
             self._chunk_callback_map[curr_chunk_counter] = on_chunk_result
+            if request_id:
+                self._chunk_request_map[curr_chunk_counter] = request_id
+                self._request_outstanding_chunks[request_id] = (
+                    self._request_outstanding_chunks.get(request_id, 0) + 1
+                )
+                event = self._request_quiescent_events.get(request_id)
+                if event is not None:
+                    event.clear()
             decode_start_time = decode_end_time = time.time()
             self._vlm_procs[curr_chunk_counter % self._args.num_vlm_procs].enqueue_chunk(
                 chunk,
@@ -1763,6 +1870,7 @@ class VlmPipeline:
                 error=None,
                 is_live_stream=False,
             )
+        return True
 
     def add_live_stream(
         self,
@@ -1854,6 +1962,42 @@ class VlmPipeline:
             proc.send_command("stop-drop-chunks", stream_id=live_stream_id)
 
         return drain_elapsed
+
+    def abort_live_stream_exact(
+        self, live_stream_id: str, timeout_sec: Optional[float] = None
+    ) -> bool:
+        """Stop one request-owned live pipeline only after proven quiescence.
+
+        Unlike the legacy bounded stream-delete path, a timeout leaves the
+        stream registered and its drop guards enabled. Callers must not unlock
+        request assets unless this method returns ``True``.
+        """
+
+        if live_stream_id not in self._live_stream_id_map:
+            return True
+        lsinfo = self._live_stream_id_map[live_stream_id]
+        self._decoder_procs[lsinfo.gpu_id].send_command(
+            "stop-live-stream", live_stream_id=live_stream_id
+        )
+        for proc in self._vlm_procs + self._asr_procs:
+            proc.send_command("drop-chunks", stream_id=live_stream_id)
+
+        deadline = None if timeout_sec is None else time.monotonic() + timeout_sec
+        while not lsinfo.all_chunks_processed:
+            if deadline is not None and time.monotonic() >= deadline:
+                logger.error(
+                    "Exact live abort did not quiesce within %.1fs for %s; "
+                    "preserving drop guards and request ownership",
+                    timeout_sec,
+                    live_stream_id,
+                )
+                return False
+            time.sleep(0.1)
+
+        self._live_stream_id_map.pop(live_stream_id, None)
+        for proc in self._vlm_procs + self._asr_procs:
+            proc.send_command("stop-drop-chunks", stream_id=live_stream_id)
+        return True
 
     def get_health_status(self):
         checks = []

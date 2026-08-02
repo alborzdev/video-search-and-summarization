@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-3.2.1-candidate-execution-binding-registry-rebase-successor-v2",
+  "mode": "static_source_rebase_only_no_execution",
+  "predecessors": [
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/registry.json",
+      "raw_sha256": "af3927c15f9e5c1efb67690ee7ca3f3e6ee9fb77e720767db2264d68a935b6b5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/registry.schema.json",
+      "raw_sha256": "8c2f7fa335340ceaf6870236e11fa2f4d290ba0ee3029f101495b6f66dda1f61"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/locator-locks.json",
+      "raw_sha256": "d1882d4811bd661fd011f8cf91894951cc8af806c56968218ef0100b500b69a0"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/locator-locks.schema.json",
+      "raw_sha256": "3cad143f04ebb9a80b11e180aed9a6ccb573d247d52b617ea8caeb9805075cb2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/compiler.py",
+      "raw_sha256": "d40400fb1089694b6c83f8700db0fc3fdbc0dd1b2c4333f17d4ea3c668985831"
+    }
+  ],
+  "source_overrides": [
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "raw_sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "raw_sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py",
+      "raw_sha256": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+      "raw_sha256": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"
+    },
+    {
+      "path": "services/video-summarization/src/rtvi_vlm_client.py",
+      "raw_sha256": "bb10ff75f6cb13453b8c558a3060ee64b78d24b3c03469f7ae55d534c739bc6c"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "raw_sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "raw_sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"
+    }
+  ],
+  "manifest_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "raw_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "raw_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs.json",
+      "raw_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/api_inventory.json",
+      "raw_sha256": "e621f0b8a9e8be6fa04535965bdefc17910c6d88284779fc95daafeb4f66c482"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "fb80c2a96cc0951fc770b59a77c96d303fcf7c359e27201e16b1923e1a54a371"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "4cfaa1996b6a46a1888035af773f444e505324c9edada2fee387c0399d9788ec"
+    }
+  ],
+  "order_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/registry.json",
+      "pointer": "/bindings",
+      "identity_field": "candidate_id",
+      "count": 208,
+      "ordered_identities_sha256": "d0f187c5b92eaa0578c8a1d9b85a01aeae9653ca31e55ca0365cf2b6de820ad4"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/locator-locks.json",
+      "pointer": "/semantic_base_files",
+      "identity_field": "path",
+      "count": 235,
+      "ordered_identities_sha256": "22f0398fb043de69c8310876d218c7dcb7c8beef310fe905bbb9b33cba9d0c5c"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/locator-locks.json",
+      "pointer": "/active_lane_files",
+      "identity_field": "path",
+      "count": 26,
+      "ordered_identities_sha256": "248700151e5277c52f83cbde52d1c8bd6ece0dc95446df1e81178a2213af7a6f"
+    }
+  ],
+  "facts": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "pointer": "/declared_operation_count",
+      "equals": 28
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/locator-locks.json",
+      "pointer": "/locator_lock_id",
+      "equals": "thor-vss-3.2.1-candidate-execution-projection-locators"
+    }
+  ],
+  "constraints": {
+    "source_override_count": 8
+  },
+  "policy": {
+    "runtime_evidence_created": false,
+    "runtime_activity_performed": false,
+    "candidate_admitted": false,
+    "candidate_promoted": false,
+    "historical_executor_invoked": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "retained_blockers": [
+    "runtime execution evidence remains absent",
+    "cleanup executors and rollback contracts remain unresolved fail closed",
+    "admission and promotion remain prohibited without separate authorization"
+  ]
+}

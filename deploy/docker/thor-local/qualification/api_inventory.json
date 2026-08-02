@@ -22,8 +22,8 @@
     "secret_inputs": []
   },
   "expected_totals": {
-    "declared_rest_operations": 329,
-    "normalized_unique_rest_operations": 328,
+    "declared_rest_operations": 330,
+    "normalized_unique_rest_operations": 329,
     "mcp_tools": 42,
     "mcp_prompts": 5
   },
@@ -57,6 +57,15 @@
         ]
       ],
       "reason": "The current LVS source exposes graph-QA chat plus Thor-enabled development file/caption routes, while the checked-in generated OpenAPI has not yet been refreshed."
+    },
+    "rt_vlm_exact_request_abort": {
+      "documented_operation_count": 27,
+      "thor_local_operation_count": 28,
+      "thor_local_extension": [
+        "DELETE",
+        "/v1/generate_captions/requests/{request_id}"
+      ],
+      "reason": "The pinned RT-VLM documentation enumerates 27 operations. Thor-local adds one exact request-id cancellation adapter while preserving the documented operation denominator in the capability identity."
     },
     "vios_storage_route_collision": {
       "reason": "Swagger declares GET /v1/storage/file/{streamId} and GET /v1/storage/file/{sensorId}; these are one normalized runtime route."
@@ -111,7 +120,7 @@
       "kind": "rest",
       "extractor": "python_routes",
       "expected_manifest": "rt-vlm.json",
-      "expected_operation_count": 27,
+      "expected_operation_count": 28,
       "substitutions": {
         "API_PREFIX": "/v1"
       },

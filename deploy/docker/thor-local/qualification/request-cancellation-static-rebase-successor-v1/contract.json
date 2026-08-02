@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "successor_id": "request-cancellation-static-rebase-successor-v1",
+  "mode": "static_only_additive_non_promoting_rebase",
+  "source_locks": [
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "role": "production", "raw_sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "role": "production", "raw_sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"},
+    {"path": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py", "role": "production", "raw_sha256": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"},
+    {"path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py", "role": "production", "raw_sha256": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"},
+    {"path": "services/video-summarization/src/lvs_mcp.py", "role": "production", "raw_sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"},
+    {"path": "services/video-summarization/src/rtvi_vlm_client.py", "role": "production", "raw_sha256": "bb10ff75f6cb13453b8c558a3060ee64b78d24b3c03469f7ae55d534c739bc6c"},
+    {"path": "services/video-summarization/src/via_server.py", "role": "production", "raw_sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},
+    {"path": "services/video-summarization/src/via_stream_handler.py", "role": "production", "raw_sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"},
+    {"path": "services/rtvi/rt-vlm/tests/rtvi_vlm/test_request_abort.py", "role": "test", "raw_sha256": "65add09ae953e2f1d3b1def3626a16134381378aa5539bb15f6d8d0f602bc530"},
+    {"path": "services/video-summarization/tests/test_lvs_delete_cleanup.py", "role": "test", "raw_sha256": "afee07145eee79d77cc764749cc0af01c05ae1f210ed1cb418d5590e7c6a0bc3"},
+    {"path": "services/video-summarization/tests/test_lvs_mcp.py", "role": "test", "raw_sha256": "1d04388903db7a31601cb9d0e5f36e7eaa06a96920145ebc41fe2265f57d99ff"},
+    {"path": "services/video-summarization/tests/test_lvs_request_ownership.py", "role": "test", "raw_sha256": "e959f7b5ed0238453e29e176713dc7d965a37b9536b2ea11965307aff4dada77"},
+    {"path": "services/video-summarization/tests/test_rtvi_vlm_abort.py", "role": "test", "raw_sha256": "5b50c368c196fbaaa4a1d110c0e7b0f6a17fffd05a7d26c699b02395b0764b6b"}
+  ],
+  "predecessor_packages": [
+    {"id": "lvs-mcp-static-adapter-integration", "path": "deploy/docker/thor-local/qualification/lvs-mcp-static-adapter-integration", "file_count": 4, "raw_identity_sha256": "dc822f1716fea1cca554fdd66f0786ff8b72b4766323b15fa722152adca075f6", "canonical_identity_sha256": "8878fb73e84451d1c262ab38eb3ef39a1ecd63b7c10f01c3a60a303e6dc90957", "tree_sha256": "7291fcec683f43fc789cee695c4b33a3ee8e8b9aaad14953917347ded0b8dc1c"},
+    {"id": "advertised-entry-executors-wave8", "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8", "file_count": 7, "raw_identity_sha256": "80b9dc633b6876c95fd88c376cb1c7e01d8e879f4ad980ba63bf7ad7f5dcb8b6", "canonical_identity_sha256": "f4ecf4a108ebcfd8f24ad73292a09f93ae5ad2f0b8ce46b1ba4abdfbf9ad9795", "tree_sha256": "60866dadf0874eff02d91a1da0ed94c49852141c0a0427d2f8a9d084823d9071"},
+    {"id": "successor-500-executable-subsets-wave1", "path": "deploy/docker/thor-local/qualification/successor-500-executable-subsets-wave1", "file_count": 10, "raw_identity_sha256": "2785ea71de6d193322bcb50231bd2a78180c547f5f66e93e80de14d61ca3fefe", "canonical_identity_sha256": "9ee6a37b2b251f5165145334d1749feaa559e6ad358350bb1ce0daa66f4fb2e6", "tree_sha256": "f6c4bc94676ebebd6e94c70f50b2bae9e8b73c8981eecc97abb34ed1a406a28a"},
+    {"id": "protocol-cases-v1", "path": "deploy/docker/thor-local/qualification/protocol-cases", "file_count": 12, "raw_identity_sha256": "c9ce9808243dddaff49b3c86643602895ade88522dc0ba3de74e891bb3074cc5", "canonical_identity_sha256": "a3b65a528de9189a42dcde1be9c6cc2eb1f795c200229f064fa9375ce9f4120e", "tree_sha256": "0ffec08cb4a13aca6590c4ba0972872f2eab081669fd40e9892f48f01973be36"},
+    {"id": "protocol-cases-v2-candidates", "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates", "file_count": 7, "raw_identity_sha256": "d4f9fe9de07457cc021e7e5a863c4a2e03a0cefd711991b608d9026439ef5699", "canonical_identity_sha256": "082e132287c6dd39a79c504c856db7cb431d6b24d6c4380ab5655b1c5f5d8521", "tree_sha256": "3e26efeb2bfde26b7e8422252ee4456a9fa4d3e6a192f3578872546a28a6ebdd"},
+    {"id": "candidate-execution-binding-registry-rebase-successor", "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor", "file_count": 8, "raw_identity_sha256": "08f6ccb551cee0127358c93d4cec7f81a6b571fac18f6ab15ddeaab2710a8ded", "canonical_identity_sha256": "e6c1d50b26da0cdc5e343eff5c20f7ba14e50ecf94801b45a366cdf0ba1e9636", "tree_sha256": "4dddbe4139c78e67a18159cfae09a260d91d28b5360f6141ee2d787ff2f776b5"},
+    {"id": "candidate-execution-bindings-wave1-rebase-successor", "path": "deploy/docker/thor-local/qualification/candidate-execution-bindings-wave1-rebase-successor", "file_count": 6, "raw_identity_sha256": "616f9f6b0f8d8376f3cdbc7013b0987e47796bd0c754b7a4b7f1c0e44763e245", "canonical_identity_sha256": "0d88d75f7317c6cb63d24257e43f1dd39f9cd954acd1a4c1a2d659bfb1b2375e", "tree_sha256": "d4c1ff60a354628c3849460bedee5cbf82f4914c443e802f576755d6721f7f67"},
+    {"id": "lvs-mcp-candidate-workload-repair-successor", "path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor", "file_count": 6, "raw_identity_sha256": "f1c47717039e2649e939a61a1c25a1d32fc0a88600c2bf54806a94387c3f2a1e", "canonical_identity_sha256": "4804b0ee1dc6e825d8d43cb98b2be51375a0f3f5699191e8d5b3a598eaa8661a", "tree_sha256": "fea51d62b48e81432576a671d5c6ff361d641682d9fded53e4b7c4868166174d"}
+  ],
+  "current_contracts": [
+    {"id": "lvs-mcp", "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json", "historical_predecessor_raw_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c", "historical_predecessor_canonical_sha256": "939cdcea457f2aeaa163fb24307c2a53d0bc61fd5d094ac74a423afceadad865", "current_raw_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a", "current_canonical_sha256": "3ca5542d97fc55a61df991b74b2ebfddddd43d8d676ee2a3e241a40ad79bc5d7", "surface_canonical_sha256": "33edafedb7a55ebc5d885e1f17e0edad671e436052b445668bb743b3a886b59b", "count_field": "tool_count", "current_count": 13, "official_denominator": 13, "local_extension_count": 0, "local_extension": null},
+    {"id": "lvs", "path": "deploy/docker/thor-local/qualification/expected/lvs.json", "historical_predecessor_raw_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17", "historical_predecessor_canonical_sha256": "6f284e52ad81940776b796dc7b5e75166e281b6f9b40048ed1bd10a52d76234e", "current_raw_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0", "current_canonical_sha256": "dfacc824cdf6d74a8006e786a0a382cef7fbfd50946dc327e13893879d8d8125", "surface_canonical_sha256": "0a5c913a9b081be14dd2027afe931c673e4c5a32bd20eb85bc2dcd474558a230", "count_field": "declared_operation_count", "current_count": 18, "official_denominator": 18, "local_extension_count": 0, "local_extension": null},
+    {"id": "rt-vlm", "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json", "historical_predecessor_raw_sha256": "2f64f1e9bb208ea3fd9a4b0aaa581bee852cbd819a3b753e53eb6325c6d1121b", "historical_predecessor_canonical_sha256": "40bc4b7c0e42e080f3fc2336c929b8a06c5e2de831c7f3ea83bf4e134564a961", "current_raw_sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff", "current_canonical_sha256": "1126e57a18069c6f8d557927817810768f27d914f34f374b4b7f1b2a788bbf40", "surface_canonical_sha256": "c4b9f480442266b257636644be469bcff404995d04abec967ebc672ab434c70d", "count_field": "declared_operation_count", "current_count": 28, "official_denominator": 27, "local_extension_count": 1, "local_extension": {"method": "DELETE", "path": "/v1/generate_captions/requests/{request_id}", "reason": "Thor-local exact request-id cancellation adapter; the documented denominator remains 27"}}
+  ],
+  "current_ledger_inputs": [
+    {"id": "api-inventory", "path": "deploy/docker/thor-local/qualification/api_inventory.json", "raw_sha256": "e621f0b8a9e8be6fa04535965bdefc17910c6d88284779fc95daafeb4f66c482", "canonical_sha256": "bad0143073a31ba16745bcce668784d562efab8983358fa1031170dfdcefe88b", "required_counts": {"declared_rest_operations": 330, "normalized_unique_rest_operations": 329}},
+    {"id": "live-official-capabilities", "path": "deploy/docker/thor-local/parity/official-capabilities.json", "raw_sha256": "fb80c2a96cc0951fc770b59a77c96d303fcf7c359e27201e16b1923e1a54a371", "canonical_sha256": "d22c47633aa7b86752f5a3402d18045a47082c842814f2fcac30b90eb4262cbe", "required_counts": {"capabilities": 289}},
+    {"id": "live-capability-oracles", "path": "deploy/docker/thor-local/parity/capability-oracles.json", "raw_sha256": "4cfaa1996b6a46a1888035af773f444e505324c9edada2fee387c0399d9788ec", "canonical_sha256": "480fbe31c3a0a69db89d70a9efc1b05c74f20077a37f60f1d2e1d399ca6984a9", "required_counts": {"oracles": 289}}
+  ],
+  "test_policy": {
+    "validation_mode": "exact_invocation_validated_static_tests_may_run_separately",
+    "allowed_invocations": [
+      ["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "--noconftest", "services/rtvi/rt-vlm/tests/rtvi_vlm/test_request_abort.py"],
+      ["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "services/video-summarization/tests/test_lvs_delete_cleanup.py", "services/video-summarization/tests/test_lvs_mcp.py", "services/video-summarization/tests/test_lvs_request_ownership.py", "services/video-summarization/tests/test_rtvi_vlm_abort.py"]
+    ],
+    "services_allowed": false,
+    "network_allowed": false,
+    "docker_allowed": false,
+    "other_subprocess_allowed": false
+  },
+  "qualification_state": {
+    "runtime_evidence": [],
+    "passed_current_promotions": 0,
+    "admission_state_changed": false,
+    "executable_state_changed": false,
+    "authorization_state_changed": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "static_invariants": [
+    "exact request identity is owned from reservation through cleanup",
+    "cancellation before worker registration converges without leaking work",
+    "queued and active work reaches quiescence before cleanup acknowledgement",
+    "exact file DELETE remains distinct from legacy stream deletion",
+    "SSE and MCP disconnects cancel and clean their exact requests",
+    "same-source CA-RAG cleanup barriers block reuse until reset or drop completes"
+  ],
+  "deployed_runtime_blockers": [
+    "No deployed-service receipt proves HTTP or MCP disconnect cancellation on Thor.",
+    "No deployed GPU or queue telemetry receipt proves exact request quiescence.",
+    "No deployed CA-RAG or Elasticsearch receipt proves same-source cleanup convergence.",
+    "No admission, executable-state, authorization, or passed-current promotion is granted by static tests."
+  ]
+}

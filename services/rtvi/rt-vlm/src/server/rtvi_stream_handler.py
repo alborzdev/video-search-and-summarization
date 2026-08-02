@@ -226,6 +226,10 @@ class RequestInfo:
     # Error tracking
     error_message: str = ""
     error_status_code: int = 500
+    abort_requested: bool = False
+    finalization_started: bool = False
+    finalized: bool = False
+    abort_complete_event: Event = field(default_factory=Event)
 
     # File handles for test data
     vlm_testdata_file_handle: object | None = None
@@ -988,111 +992,111 @@ class RTVIStreamHandler:
         is_live_stream_ended: bool,
         chunk_responses: list[PipelineChunkResult],
     ):
+        is_terminal = not req_info.is_live or is_live_stream_ended
+        if is_terminal:
+            with self._lock:
+                if req_info.finalized or req_info.finalization_started:
+                    return
+                req_info.finalization_started = True
 
-        if req_info.assets and len(req_info.assets) > 0:
-            saved_dc_file = req_info.assets[0].path + ".dc.json"
-            should_write_dc = (
-                not req_info.is_live
-                and not os.access(saved_dc_file, os.R_OK)
-                and self._args.enable_dev_dc_gen
-            )
-            if should_write_dc:
-                logger.info("Generating DC file at %s", saved_dc_file)
-                # Serialize the object to a JSON file
-                DenseCaptionSerializer.to_json(req_info.processed_chunk_list, saved_dc_file)
-
-        chunk_responses = [chunk for chunk in chunk_responses if chunk.chunk]
-
-        if chunk_responses and len(chunk_responses) > 0:
-            if chunk_responses[0].chunk.chunk_type == "text":
-                chunk_responses.sort(key=lambda item: item.chunk.chunkIdx)
-            else:
-                # Sort chunks based on their start times
-                chunk_responses.sort(key=lambda item: ntp_to_unix_timestamp(item.chunk.start_ntp))
-
-        if req_info.vlm_testdata_file_handle:
-            for proc_chunk in chunk_responses:
-                if proc_chunk.vlm_model_output:
-                    idx = proc_chunk.chunk.chunkIdx
-                    summ = proc_chunk.vlm_model_output.output.replace("\n", "  ")
-                    req_info.vlm_testdata_file_handle.write(f'{idx},"{summ}"\n')
-
-        req_info.response += chunk_responses
-
-        if req_info.is_live:
-            if is_live_stream_ended:
-                req_info.end_time = time.time()
-                self._metrics._active_live_streams_counter.add(-1)
-                self.stop_request_profiling(req_info, chunk_responses)
-                self._cleanup_request_files(req_info)
-                # Unlock the asset and update metrics
+        try:
+            try:
                 if req_info.assets:
-                    for asset in req_info.assets:
-                        asset.unlock()
-                # End OTEL end-to-end pipeline span
-                if req_info._e2e_span:
-                    try:
-                        req_info._e2e_span.set_attribute(
-                            "e2e_latency_ms", (time.time() - req_info.start_time) * 1000
+                    saved_dc_file = req_info.assets[0].path + ".dc.json"
+                    if (
+                        not req_info.is_live
+                        and not os.access(saved_dc_file, os.R_OK)
+                        and self._args.enable_dev_dc_gen
+                    ):
+                        DenseCaptionSerializer.to_json(
+                            req_info.processed_chunk_list, saved_dc_file
                         )
-                        req_info._e2e_span.set_attribute("chunk_count", req_info.chunk_count)
-                        req_info._e2e_span.set_attribute(
-                            "total_chunks_processed", len(chunk_responses)
+            except Exception as exc:
+                logger.warning("Dense-caption serialization failed: %s", exc)
+
+            try:
+                chunk_responses = [chunk for chunk in chunk_responses if chunk.chunk]
+                if chunk_responses:
+                    if chunk_responses[0].chunk.chunk_type == "text":
+                        chunk_responses.sort(key=lambda item: item.chunk.chunkIdx)
+                    else:
+                        chunk_responses.sort(
+                            key=lambda item: ntp_to_unix_timestamp(item.chunk.start_ntp)
                         )
-                        req_info._e2e_span.end()
-                        logger.info("Ended e2e OTEL span")
-                    except Exception as e:
-                        logger.warning("Failed to end e2e OTEL span: %s", e)
+                if req_info.vlm_testdata_file_handle:
+                    for proc_chunk in chunk_responses:
+                        if proc_chunk.vlm_model_output:
+                            idx = proc_chunk.chunk.chunkIdx
+                            summary = proc_chunk.vlm_model_output.output.replace("\n", "  ")
+                            req_info.vlm_testdata_file_handle.write(f'{idx},"{summary}"\n')
+                req_info.response += chunk_responses
+            except Exception as exc:
+                logger.error(
+                    "Terminal response processing failed for request %s: %s",
+                    req_info.request_id,
+                    exc,
+                    exc_info=True,
+                )
+                req_info.status = RequestInfo.Status.FAILED
+                req_info.error_message = str(exc)
+                req_info.error_status_code = 500
+            if not is_terminal:
+                return
 
-                req_info.status_event.set()
-                req_info.status = RequestInfo.Status.SUCCESSFUL
-        else:
-            request_files_cleaned_up = False
-            if req_info.status == RequestInfo.Status.FAILED:
-                logger.info("Processing failed for video file request %s", req_info.request_id)
-                self.stop_request_profiling(req_info, chunk_responses)
-                self._cleanup_request_files(req_info)
-                request_files_cleaned_up = True
-            else:
-                req_info.end_time = time.time()
-                self.stop_request_profiling(req_info, chunk_responses)
-                cuda.bindings.runtime.cudaProfilerStop()
-                if not req_info.text_query:
-                    nvtx.end_range(req_info.nvtx_summarization_start)
-                    logger.info(
-                        "Processing completed for video file request %s,"
-                        " total processing time - %.2f seconds",
-                        req_info.request_id,
-                        req_info.end_time - req_info.start_time,
-                    )
-
-            # End OTEL end-to-end pipeline span
-            if req_info._e2e_span:
+            req_info.end_time = req_info.end_time or time.time()
+            for label, operation in (
+                ("profiling", lambda: self.stop_request_profiling(req_info, chunk_responses)),
+                ("request files", lambda: self._cleanup_request_files(req_info)),
+            ):
                 try:
-                    req_info._e2e_span.set_attribute(
-                        "e2e_latency_ms", (time.time() - req_info.start_time) * 1000
-                    )
-                    req_info._e2e_span.set_attribute("chunk_count", req_info.chunk_count)
-                    req_info._e2e_span.set_attribute("total_chunks_processed", len(chunk_responses))
-                    req_info._e2e_span.end()
-                    logger.info("Ended e2e OTEL span")
-                except Exception as e:
-                    logger.warning("Failed to end e2e OTEL span: %s", e)
+                    operation()
+                except Exception as exc:
+                    logger.warning("Failed to clean %s for %s: %s", label, req_info.request_id, exc)
 
-            # Unlock the asset and update metrics
-            if req_info.assets:
-                for asset in req_info.assets:
-                    asset.unlock()
+            if not req_info.is_live and req_info.status != RequestInfo.Status.FAILED:
+                try:
+                    cuda.bindings.runtime.cudaProfilerStop()
+                except Exception as exc:
+                    logger.warning("Failed to stop CUDA profiler: %s", exc)
+                if not req_info.text_query:
+                    try:
+                        nvtx.end_range(req_info.nvtx_summarization_start)
+                    except Exception as exc:
+                        logger.warning("Failed to end NVTX range: %s", exc)
 
-            if not req_info.text_query:
-                self._metrics._queries_processed_counter.add(1)
-                self._metrics._queries_pending_counter.add(-1)
+            for asset in req_info.assets or []:
+                try:
+                    if asset.use_count > 0:
+                        asset.unlock()
+                except Exception as exc:
+                    logger.warning("Failed to unlock asset for %s: %s", req_info.request_id, exc)
 
-            if not request_files_cleaned_up:
-                self._cleanup_request_files(req_info)
-            if req_info.status != RequestInfo.Status.FAILED:
-                req_info.status = RequestInfo.Status.SUCCESSFUL
-            req_info.status_event.set()
+            try:
+                if req_info.is_live:
+                    self._metrics._active_live_streams_counter.add(-1)
+                elif not req_info.text_query:
+                    self._metrics._queries_processed_counter.add(1)
+                    self._metrics._queries_pending_counter.add(-1)
+            except Exception as exc:
+                logger.warning("Failed to finalize metrics for %s: %s", req_info.request_id, exc)
+
+            for span_name in ("vlm_pipeline_span", "_e2e_span"):
+                span = getattr(req_info, span_name, None)
+                if span:
+                    try:
+                        span.end()
+                    except Exception as exc:
+                        logger.warning("Failed to end %s: %s", span_name, exc)
+                    finally:
+                        setattr(req_info, span_name, None)
+        finally:
+            if is_terminal:
+                with self._lock:
+                    if req_info.status != RequestInfo.Status.FAILED:
+                        req_info.status = RequestInfo.Status.SUCCESSFUL
+                    req_info.finalized = True
+                    req_info.status_event.set()
+                    req_info.abort_complete_event.set()
 
     def _cleanup_request_files(self, req_info: RequestInfo):
         """Close file handles that were opened for the request"""
@@ -2046,8 +2050,61 @@ class RTVIStreamHandler:
 
         self._submit_redis_publish(f"error message for stream {stream_id}", publish_to_redis)
 
+    def _publish_chunk_messages_if_active(
+        self,
+        chunk_result: PipelineChunkResult,
+        req_info: RequestInfo,
+        vision_llm_message,
+        incident_message,
+    ) -> bool:
+        """Serialize Kafka publication against the request abort linearization."""
+
+        with self._lock:
+            if req_info.abort_requested or req_info.finalized:
+                return False
+            if vision_llm_message:
+                chunk_result.vision_llm_proto = vision_llm_message
+                try:
+                    serialized = vision_llm_message.SerializeToString()
+                    chunk_result.vision_llm_proto_serialized = serialized
+                    if serialized:
+                        self._send_protobuf_to_kafka(serialized, chunk_result, req_info)
+                except Exception as exc:
+                    error_message = "Failed to serialize VisionLLM protobuf for chunk %s: %s" % (
+                        getattr(chunk_result.chunk, "chunkIdx", "unknown"),
+                        exc,
+                    )
+                    self._send_error_message_to_kafka(error_message, req_info.stream_id)
+                    logger.error(error_message)
+
+            if incident_message:
+                chunk_result.incident_proto = incident_message
+                try:
+                    serialized = incident_message.SerializeToString()
+                    chunk_result.incident_proto_serialized = serialized
+                    if serialized:
+                        self._send_protobuf_to_kafka(
+                            serialized,
+                            chunk_result,
+                            req_info,
+                            message_type="incident",
+                            kafka_topic=self._kafka_incident_topic or self._kafka_topic,
+                        )
+                except Exception as exc:
+                    error_message = "Failed to serialize Incident protobuf for chunk %s: %s" % (
+                        getattr(chunk_result.chunk, "chunkIdx", "unknown"),
+                        exc,
+                    )
+                    self._send_error_message_to_kafka(error_message, req_info.stream_id)
+                    logger.error(error_message)
+            return True
+
     def _on_vlm_chunk_response(self, chunk_result: PipelineChunkResult, req_info: RequestInfo):
         """Gather chunks processed by the pipeline and run any further post-processing"""
+        with self._lock:
+            if req_info.abort_requested or req_info.finalized:
+                logger.debug("Ignoring output for terminal request %s", req_info.request_id)
+                return
         try:
             if self._kafka_enabled:
                 vision_llm_message, incident_message = self._chunk_result_to_vision_llm(
@@ -2066,44 +2123,20 @@ class RTVIStreamHandler:
             self._send_error_message_to_kafka(error_message, req_info.stream_id)
             logger.error(error_message, exc_info=True)
 
-        if vision_llm_message:
-            chunk_result.vision_llm_proto = vision_llm_message
-            try:
-                chunk_result.vision_llm_proto_serialized = vision_llm_message.SerializeToString()
-                # Send to Kafka if producer is available
-                if chunk_result.vision_llm_proto_serialized:
-                    self._send_protobuf_to_kafka(
-                        chunk_result.vision_llm_proto_serialized,
-                        chunk_result,
-                        req_info,
-                    )
-            except Exception as exc:
-                error_message = "Failed to serialize VisionLLM protobuf for chunk %s: %s" % (
-                    getattr(chunk_result.chunk, "chunkIdx", "unknown"),
-                    exc,
-                )
-                self._send_error_message_to_kafka(error_message, req_info.stream_id)
-                logger.error(error_message)
+        # Protobuf construction may block while another thread aborts this request.
+        # Recheck immediately before publishing or touching request-owned state.
+        with self._lock:
+            if req_info.abort_requested or req_info.finalized:
+                logger.debug("Ignoring late output for aborted request %s", req_info.request_id)
+                return
 
-        if incident_message:
-            chunk_result.incident_proto = incident_message
-            try:
-                chunk_result.incident_proto_serialized = incident_message.SerializeToString()
-                if chunk_result.incident_proto_serialized:
-                    self._send_protobuf_to_kafka(
-                        chunk_result.incident_proto_serialized,
-                        chunk_result,
-                        req_info,
-                        message_type="incident",
-                        kafka_topic=self._kafka_incident_topic or self._kafka_topic,
-                    )
-            except Exception as exc:
-                error_message = "Failed to serialize Incident protobuf for chunk %s: %s" % (
-                    getattr(chunk_result.chunk, "chunkIdx", "unknown"),
-                    exc,
-                )
-                self._send_error_message_to_kafka(error_message, req_info.stream_id)
-                logger.error(error_message)
+        if not self._publish_chunk_messages_if_active(
+            chunk_result,
+            req_info,
+            vision_llm_message,
+            incident_message,
+        ):
+            return
 
         if chunk_result.decode_retry_count:
             self._metrics._decode_retry_counter.add(
@@ -2248,7 +2281,7 @@ class RTVIStreamHandler:
                 req_info.status = RequestInfo.Status.FAILED
                 req_info.error_message = chunk_result.error
                 req_info.error_status_code = chunk_result.error_status_code
-                self._vlm_pipeline.abort_chunks(req_info.assets[0].asset_id)
+                self._abort_failed_file_request(req_info)
                 req_info.status_event.set()
 
             self._send_error_message_to_kafka(chunk_result.error, req_info.stream_id)
@@ -2258,6 +2291,8 @@ class RTVIStreamHandler:
                 req_info.request_id,
                 chunk_result.error,
             )
+            if not req_info.is_live:
+                return
 
         if req_info.is_live:
             live_stream_id = req_info.assets[0].asset_id
@@ -2338,9 +2373,7 @@ class RTVIStreamHandler:
 
             self._finalize_stream_fps_tracking(req_info)
 
-            if req_info.status == RequestInfo.Status.FAILED:
-                self._vlm_pipeline.abort_chunks_done(req_info.assets[0].asset_id)
-            else:
+            if req_info.status != RequestInfo.Status.FAILED:
                 latency = cur_time - req_info.start_time
                 logger.info(
                     "Processed all chunks for query %s, VLM pipeline time %.2f sec",
@@ -2366,6 +2399,40 @@ class RTVIStreamHandler:
             else:
                 # Non-streaming: deliver all chunks at once
                 self._process_output(req_info, False, req_info.processed_chunk_list)
+
+    def _abort_failed_file_request(self, req_info: RequestInfo) -> None:
+        """Suppress and asynchronously finalize one failed file request."""
+
+        # The current callback is itself counted as outstanding. Suppress new
+        # work immediately, then wait/finalize outside the callback to avoid a
+        # self-deadlock in abort_request().
+        self._vlm_pipeline.abort_request(req_info.request_id)
+        if self._cleanup_executor is not None:
+            try:
+                self._cleanup_executor.submit(self.abort_request, req_info.request_id)
+                return
+            except RuntimeError:
+                logger.warning(
+                    "Cleanup executor rejected abort for request %s; using fallback thread",
+                    req_info.request_id,
+                )
+        Thread(
+            target=self.abort_request,
+            args=(req_info.request_id,),
+            daemon=True,
+        ).start()
+
+    def _publish_saved_response_if_active(
+        self, req_info: RequestInfo, saved_response: PipelineChunkResult
+    ) -> bool:
+        """Publish a direct saved response before abort can claim quiescence."""
+
+        with self._lock:
+            if req_info.abort_requested or req_info.finalization_started:
+                return False
+            req_info.chunk_count += 1
+            self._on_vlm_chunk_response(saved_response, req_info)
+            return True
 
     def _trigger_query(self, req_info: RequestInfo, start_time: float = None):
         """Trigger a query on a file"""
@@ -2433,23 +2500,22 @@ class RTVIStreamHandler:
 
         def _on_new_chunk(chunk: ChunkInfo, saved_responses=None):
             """Callback for when a new chunk is created"""
-            if chunk is None:
+            if chunk is None or req_info.abort_requested or req_info.finalization_started:
                 return
             chunk.streamId = req_info.stream_id
-            req_info.chunk_count += 1
 
             saved_response = saved_responses.get(chunk.chunkIdx)
 
             # If we have a saved dense caption response, use it directly
             if saved_response:
                 logger.info("Using saved dense caption for chunk %s", chunk.chunkIdx)
-                self._on_vlm_chunk_response(saved_response, req_info)
+                self._publish_saved_response_if_active(req_info, saved_response)
             else:
                 # Decode-only mode: we have saved response but need to decode for frame images
                 decode_only = bool(saved_response)
 
                 # No saved response, enqueue the chunk for normal VLM processing
-                self._vlm_pipeline.enqueue_chunk(
+                accepted = self._vlm_pipeline.enqueue_chunk(
                     chunk,
                     lambda response, saved_response=saved_response, req_info=req_info: (
                         self._on_vlm_chunk_response(saved_response or response, req_info)
@@ -2459,6 +2525,8 @@ class RTVIStreamHandler:
                     video_codec,
                     decode_only,
                 )
+                if accepted is not False:
+                    req_info.chunk_count += 1
 
         nvtx_file_split_start = nvtx.start_range(
             message="File Splitting-" + str(req_info.request_id), color="blue"
@@ -3043,6 +3111,113 @@ class RTVIStreamHandler:
             # Remove the responses that will be returned
             req_info.response = req_info.response[chunk_response_size:]
         return req_info, response
+
+    def abort_request(self, request_id: str) -> bool:
+        """Abort and finalize exactly one request without affecting asset siblings."""
+        with self._lock:
+            req_info = self._request_info_map.get(request_id)
+            if req_info is None or req_info.finalized:
+                return False
+            if req_info.finalization_started:
+                waiter = req_info.abort_complete_event
+                abort_owner = False
+            else:
+                req_info.abort_requested = True
+                req_info.finalization_started = True
+                req_info.status = RequestInfo.Status.FAILED
+                req_info.error_message = "Request aborted after downstream disconnect"
+                req_info.error_status_code = 499
+                waiter = req_info.abort_complete_event
+                waiter.clear()
+                abort_owner = True
+
+        if not abort_owner:
+            waiter.wait()
+            return False
+
+        if req_info.is_live:
+            try:
+                pipeline_stream_id = getattr(req_info, "pipeline_stream_id", request_id)
+                quiescent = self._vlm_pipeline.abort_live_stream_exact(pipeline_stream_id)
+            except Exception as exc:
+                logger.warning("Live pipeline abort failed for request %s: %s", request_id, exc)
+                quiescent = False
+            if not quiescent:
+                with self._lock:
+                    req_info.finalization_started = False
+                    waiter.set()
+                return False
+        else:
+            try:
+                self._vlm_pipeline.abort_request(request_id)
+            except Exception as exc:
+                logger.warning("Pipeline suppression failed for request %s: %s", request_id, exc)
+            try:
+                is_quiescent = self._vlm_pipeline.wait_for_request_quiescent(request_id)
+                if not is_quiescent:
+                    raise RuntimeError("pipeline quiescence wait returned false")
+            except Exception as exc:
+                logger.error("Failed to prove quiescence for request %s: %s", request_id, exc)
+                with self._lock:
+                    req_info.finalization_started = False
+                    waiter.set()
+                return False
+
+        try:
+            if req_info.is_live:
+                self._metrics._active_live_streams_counter.add(-1)
+            elif not req_info.text_query:
+                self._metrics._queries_pending_counter.add(-1)
+        except Exception as exc:
+            logger.warning("Metric cleanup failed for request %s: %s", request_id, exc)
+
+        try:
+            if req_info._monitor or req_info._request_metrics:
+                self.stop_request_profiling(req_info, [])
+        except Exception as exc:
+            logger.warning("Profiling cleanup failed for request %s: %s", request_id, exc)
+        try:
+            self._cleanup_request_files(req_info)
+        except Exception as exc:
+            logger.warning("File cleanup failed for request %s: %s", request_id, exc)
+
+        for asset in req_info.assets or []:
+            if asset.use_count > 0:
+                try:
+                    asset.unlock()
+                except Exception as exc:
+                    logger.warning("Asset unlock failed for request %s: %s", request_id, exc)
+
+        for span_name in ("vlm_pipeline_span", "_e2e_span"):
+            span = getattr(req_info, span_name, None)
+            if span:
+                try:
+                    span.end()
+                except Exception as exc:
+                    logger.warning(
+                        "Failed to end %s for aborted request %s: %s",
+                        span_name,
+                        request_id,
+                        exc,
+                    )
+                finally:
+                    setattr(req_info, span_name, None)
+
+        if not req_info.is_live:
+            try:
+                self._vlm_pipeline.complete_request(request_id)
+            except Exception as exc:
+                logger.warning("Request suppression cleanup failed for %s: %s", request_id, exc)
+
+        with self._lock:
+            if self._request_info_map.get(request_id) is req_info:
+                self._request_info_map.pop(request_id, None)
+            req_info.end_time = req_info.end_time or time.time()
+            req_info.finalized = True
+            req_info.status_event.set()
+            waiter.set()
+        logger.info("Aborted exact VLM request %s after quiescence", request_id)
+        return True
 
     def wait_for_request_done(self, request_id):
         """Wait for request to either complete or fail."""

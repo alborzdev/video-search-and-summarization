@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import asyncio
+import hashlib
 import io
 import json
 import logging
@@ -430,10 +431,10 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
                 media_type="application/json",
             )
 
-    def test_limit_error_drains_through_terminal_body_and_app_cleanup(self):
-        async def scenario(limit_name, limit_value, body):
+    def test_timeout_disconnects_once_and_awaits_cleanup(self):
+        async def scenario():
             lvs = FakeLvsServer()
-            terminal_sent = asyncio.Event()
+            disconnects = []
             cleanup_reached = asyncio.Event()
 
             async def app(_scope, receive, send):
@@ -447,12 +448,72 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
                         }
                     )
                     await send(
-                        {"type": "http.response.body", "body": body, "more_body": True}
+                        {
+                            "type": "http.response.body",
+                            "body": self._frame(self._progress()),
+                            "more_body": True,
+                        }
                     )
+                    disconnects.append(await receive())
+                finally:
+                    cleanup_reached.set()
+
+            lvs._app = app
+            mcp = LvsMCPServer(lvs)
+            mcp._sse_limits = lambda: (4 * 1024 * 1024, 1024, 0.01)
+            with self.assertRaisesRegex(ValueError, "time limit"):
+                await mcp._call_sse_api(
+                    "POST", f"{API_PREFIX}/summarize", request_arguments=self._arguments()
+                )
+            self.assertEqual(disconnects, [{"type": "http.disconnect"}])
+            self.assertTrue(cleanup_reached.is_set())
+            self.assertEqual(mcp._sse_stream_count, 0)
+            self.assertEqual(mcp._sse_stream_tasks, set())
+
+        asyncio.run(scenario())
+
+    def test_policy_abort_disconnects_once_rejects_done_and_awaits_cleanup(self):
+        async def scenario(limit_name, limit_value, body):
+            lvs = FakeLvsServer()
+            cleanup_reached = asyncio.Event()
+            disconnects = []
+            late_done_rejected = asyncio.Event()
+
+            async def app(_scope, receive, send):
+                await receive()
+                try:
                     await send(
-                        {"type": "http.response.body", "body": b"", "more_body": False}
+                        {
+                            "type": "http.response.start",
+                            "status": 200,
+                            "headers": [(b"content-type", b"text/event-stream")],
+                        }
                     )
-                    terminal_sent.set()
+                    try:
+                        await send(
+                            {
+                                "type": "http.response.body",
+                                "body": body,
+                                "more_body": True,
+                            }
+                        )
+                    except ValueError:
+                        disconnects.append(await receive())
+                        duplicate = asyncio.create_task(receive())
+                        await asyncio.sleep(0)
+                        self.assertFalse(duplicate.done())
+                        duplicate.cancel()
+                        with self.assertRaises(asyncio.CancelledError):
+                            await duplicate
+                        with self.assertRaises(ValueError):
+                            await send(
+                                {
+                                    "type": "http.response.body",
+                                    "body": self._frame("[DONE]"),
+                                    "more_body": False,
+                                }
+                            )
+                        late_done_rejected.set()
                 finally:
                     cleanup_reached.set()
 
@@ -465,9 +526,11 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
                 await mcp._call_sse_api(
                     "POST", f"{API_PREFIX}/summarize", request_arguments=self._arguments()
                 )
-            self.assertTrue(terminal_sent.is_set())
+            self.assertEqual(disconnects, [{"type": "http.disconnect"}])
+            self.assertTrue(late_done_rejected.is_set())
             self.assertTrue(cleanup_reached.is_set())
             self.assertEqual(mcp._sse_stream_count, 0)
+            self.assertEqual(mcp._sse_stream_tasks, set())
 
         asyncio.run(
             scenario(
@@ -484,18 +547,18 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
             )
         )
 
-    def test_caller_cancellation_keeps_strong_task_and_drains_without_disconnect(self):
+    def test_caller_cancellation_disconnects_waits_cleanup_and_propagates(self):
         async def scenario():
             lvs = FakeLvsServer()
             started = asyncio.Event()
-            release = asyncio.Event()
-            terminal_sent = asyncio.Event()
+            allow_cleanup = asyncio.Event()
+            disconnect_received = asyncio.Event()
             cleanup_reached = asyncio.Event()
-            synthetic_disconnect = []
+            late_send_rejected = asyncio.Event()
+            disconnects = []
 
             async def app(_scope, receive, send):
                 await receive()
-                probe = None
                 try:
                     await send(
                         {
@@ -511,30 +574,20 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
                             "more_body": True,
                         }
                     )
-                    probe = asyncio.create_task(receive())
-                    probe.add_done_callback(
-                        lambda done: synthetic_disconnect.append(done.result())
-                        if not done.cancelled() and done.exception() is None
-                        else None
-                    )
                     started.set()
-                    await release.wait()
-                    self.assertFalse(probe.done())
-                    await send(
-                        {
-                            "type": "http.response.body",
-                            "body": self._frame("[DONE]"),
-                            "more_body": False,
-                        }
-                    )
-                    terminal_sent.set()
+                    disconnects.append(await receive())
+                    disconnect_received.set()
+                    with self.assertRaisesRegex(ValueError, "after client disconnect"):
+                        await send(
+                            {
+                                "type": "http.response.body",
+                                "body": self._frame("[DONE]"),
+                                "more_body": False,
+                            }
+                        )
+                    late_send_rejected.set()
+                    await allow_cleanup.wait()
                 finally:
-                    if probe is not None and not probe.done():
-                        probe.cancel()
-                        try:
-                            await probe
-                        except asyncio.CancelledError:
-                            pass
                     cleanup_reached.set()
 
             lvs._app = app
@@ -546,17 +599,14 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
             )
             await asyncio.wait_for(started.wait(), timeout=1)
             caller.cancel()
+            await asyncio.wait_for(disconnect_received.wait(), timeout=1)
+            self.assertFalse(caller.done())
+            self.assertEqual(disconnects, [{"type": "http.disconnect"}])
+            self.assertTrue(late_send_rejected.is_set())
+            allow_cleanup.set()
             with self.assertRaises(asyncio.CancelledError):
                 await caller
-            self.assertEqual(mcp._sse_stream_count, 1)
-            self.assertEqual(len(mcp._sse_stream_tasks), 1)
-            self.assertFalse(cleanup_reached.is_set())
-
-            release.set()
-            await asyncio.wait_for(cleanup_reached.wait(), timeout=1)
-            await asyncio.sleep(0)
-            self.assertTrue(terminal_sent.is_set())
-            self.assertEqual(synthetic_disconnect, [])
+            self.assertTrue(cleanup_reached.is_set())
             self.assertEqual(mcp._sse_stream_count, 0)
             self.assertEqual(mcp._sse_stream_tasks, set())
 
@@ -600,9 +650,10 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
 
             lvs._app = app
             mcp = LvsMCPServer(lvs)
-            # Exercise detached, retained tasks without spending a full second
-            # per timeout; policy parsing itself is covered separately.
+            # Deliberately ignore disconnect past both bounded intervals to
+            # exercise the retained-capacity fail-safe.
             mcp._sse_limits = lambda: (4 * 1024 * 1024, 1024, 0.01)
+            mcp._sse_disconnect_grace_seconds = lambda: 0.01
             callers = [
                 asyncio.create_task(
                     mcp._call_sse_api(
@@ -645,16 +696,12 @@ class TestLvsMcpStreamingSummarization(unittest.TestCase):
 
             lvs._app = app
             mcp = LvsMCPServer(lvs)
-            with (
-                mock.patch("lvs_mcp.logger.error") as error_log,
-                self.assertRaisesRegex(ValueError, "terminated unexpectedly"),
-            ):
+            with self.assertRaisesRegex(ValueError, "terminated unexpectedly"):
                 await mcp._call_sse_api(
                     "POST", f"{API_PREFIX}/summarize", request_arguments=self._arguments()
                 )
             self.assertEqual(mcp._sse_stream_count, 0)
             self.assertEqual(mcp._sse_stream_tasks, set())
-            self.assertIn("cleanup is not guaranteed", error_log.call_args.args[0])
 
         asyncio.run(scenario())
 
@@ -686,6 +733,29 @@ class TestLvsMcpFileManagement(unittest.TestCase):
                 "get_metrics",
             },
         )
+        expected_contract = json.loads(
+            (
+                Path(__file__).resolve().parents[3]
+                / "deploy/docker/thor-local/qualification/expected/lvs-mcp.json"
+            ).read_text(encoding="utf-8")
+        )
+        expected_schema_hashes = {
+            item["name"]: item["input_schema_hash"]
+            for item in expected_contract["tools"]
+        }
+        actual_schema_hashes = {
+            name: hashlib.sha256(
+                json.dumps(
+                    schema,
+                    ensure_ascii=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                ).encode("utf-8")
+            ).hexdigest()
+            for name, schema in by_name.items()
+        }
+        self.assertEqual(expected_contract["tool_count"], 13)
+        self.assertEqual(actual_schema_hashes, expected_schema_hashes)
         for name in ("add_file", "list_files", "get_file_info", "delete_file"):
             self.assertIs(by_name[name]["additionalProperties"], False)
         self.assertEqual(

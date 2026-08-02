@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "successor_id", "mode", "source_locks", "predecessor_packages", "current_contracts", "current_ledger_inputs", "test_policy", "qualification_state", "static_invariants", "deployed_runtime_blockers"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "successor_id": {"const": "request-cancellation-static-rebase-successor-v1"},
+    "mode": {"const": "static_only_additive_non_promoting_rebase"},
+    "source_locks": {"type": "array", "minItems": 13, "maxItems": 13, "items": {"$ref": "#/$defs/source_lock"}},
+    "predecessor_packages": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/package"}},
+    "current_contracts": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/current_contract"}},
+    "current_ledger_inputs": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/ledger_input"}},
+    "test_policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["validation_mode", "allowed_invocations", "services_allowed", "network_allowed", "docker_allowed", "other_subprocess_allowed"],
+      "properties": {
+        "validation_mode": {"const": "exact_invocation_validated_static_tests_may_run_separately"},
+        "allowed_invocations": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "array", "minItems": 7, "items": {"type": "string", "minLength": 1}}},
+        "services_allowed": {"const": false}, "network_allowed": {"const": false}, "docker_allowed": {"const": false}, "other_subprocess_allowed": {"const": false}
+      }
+    },
+    "qualification_state": {
+      "type": "object", "additionalProperties": false,
+      "required": ["runtime_evidence", "passed_current_promotions", "admission_state_changed", "executable_state_changed", "authorization_state_changed", "warehouse_sample_bundle"],
+      "properties": {
+        "runtime_evidence": {"const": []}, "passed_current_promotions": {"const": 0},
+        "admission_state_changed": {"const": false}, "executable_state_changed": {"const": false}, "authorization_state_changed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "static_invariants": {"type": "array", "minItems": 6, "items": {"type": "string", "minLength": 1}},
+    "deployed_runtime_blockers": {"type": "array", "minItems": 4, "items": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_lock": {
+      "type": "object", "additionalProperties": false, "required": ["path", "role", "raw_sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "role": {"enum": ["production", "test"]}, "raw_sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "package": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "path", "file_count", "raw_identity_sha256", "canonical_identity_sha256", "tree_sha256"],
+      "properties": {"id": {"type": "string"}, "path": {"type": "string"}, "file_count": {"type": "integer", "minimum": 1}, "raw_identity_sha256": {"$ref": "#/$defs/sha"}, "canonical_identity_sha256": {"$ref": "#/$defs/sha"}, "tree_sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "current_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "path", "historical_predecessor_raw_sha256", "historical_predecessor_canonical_sha256", "current_raw_sha256", "current_canonical_sha256", "surface_canonical_sha256", "count_field", "current_count", "official_denominator", "local_extension_count", "local_extension"],
+      "properties": {
+        "id": {"enum": ["lvs-mcp", "lvs", "rt-vlm"]}, "path": {"type": "string"},
+        "historical_predecessor_raw_sha256": {"$ref": "#/$defs/sha"}, "historical_predecessor_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "current_raw_sha256": {"$ref": "#/$defs/sha"}, "current_canonical_sha256": {"$ref": "#/$defs/sha"}, "surface_canonical_sha256": {"$ref": "#/$defs/sha"},
+        "count_field": {"enum": ["tool_count", "declared_operation_count"]}, "current_count": {"type": "integer", "minimum": 1}, "official_denominator": {"type": "integer", "minimum": 1}, "local_extension_count": {"type": "integer", "minimum": 0},
+        "local_extension": {"type": ["object", "null"]}
+      }
+    },
+    "ledger_input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "path", "raw_sha256", "canonical_sha256", "required_counts"],
+      "properties": {
+        "id": {"enum": ["api-inventory", "live-official-capabilities", "live-capability-oracles"]},
+        "path": {"type": "string", "minLength": 1}, "raw_sha256": {"$ref": "#/$defs/sha"}, "canonical_sha256": {"$ref": "#/$defs/sha"},
+        "required_counts": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "integer", "minimum": 1}}
+      }
+    }
+  }
+}

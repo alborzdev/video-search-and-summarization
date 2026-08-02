@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/thor-vss/lvs-rtvi-current-contract-source-claim-layered-successor.schema.json",
+  "title": "LVS and RT-VLM layered current-contract observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "observation_id",
+    "mode",
+    "predecessor_layers",
+    "current_contract_inputs",
+    "preserved_live_identities",
+    "changed_records",
+    "transitions",
+    "policy",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "observation_id": {
+      "const": "thor-vss-3.2.1-lvs-rtvi-current-contract-source-claim-layered-successor"
+    },
+    "mode": {"const": "read_only_layered_current_contract_observation_no_writes"},
+    "predecessor_layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layered_observation_path",
+        "layered_observation_raw_sha256",
+        "source_claim_receipt_path",
+        "source_claim_receipt_raw_sha256",
+        "alerts_receipt_path",
+        "alerts_receipt_raw_sha256",
+        "official_raw_sha256",
+        "oracles_raw_sha256"
+      ],
+      "properties": {
+        "layered_observation_path": {"type": "string"},
+        "layered_observation_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "source_claim_receipt_path": {"type": "string"},
+        "source_claim_receipt_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "alerts_receipt_path": {"type": "string"},
+        "alerts_receipt_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "official_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "oracles_raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "current_contract_inputs": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/lock"}
+    },
+    "preserved_live_identities": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/lock"}
+    },
+    "changed_records": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability_id",
+          "capability_index",
+          "oracle_index",
+          "expected_manifest",
+          "expected_manifest_sha256",
+          "source_ids",
+          "official_semantic_pointers",
+          "oracle_semantic_pointers"
+        ],
+        "properties": {
+          "capability_id": {"type": "string"},
+          "capability_index": {"type": "integer", "minimum": 0},
+          "oracle_index": {"type": "integer", "minimum": 0},
+          "expected_manifest": {"type": "string"},
+          "expected_manifest_sha256": {"$ref": "#/$defs/sha256"},
+          "source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "official_semantic_pointers": {"$ref": "#/$defs/pointers"},
+          "oracle_semantic_pointers": {"$ref": "#/$defs/pointers"}
+        }
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "predecessor_raw_sha256", "current_raw_sha256", "semantic_leaf_count", "semantic_pointers"],
+        "properties": {
+          "path": {"type": "string"},
+          "predecessor_raw_sha256": {"$ref": "#/$defs/sha256"},
+          "current_raw_sha256": {"$ref": "#/$defs/sha256"},
+          "semantic_leaf_count": {"type": "integer", "minimum": 1},
+          "semantic_pointers": {"$ref": "#/$defs/pointers"}
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["writes_performed", "network_allowed", "docker_allowed", "services_allowed", "runtime_evidence_added", "passed_current_promotions", "warehouse_sample_bundle"],
+      "properties": {
+        "writes_performed": {"const": false},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "services_allowed": {"const": false},
+        "runtime_evidence_added": {"const": false},
+        "passed_current_promotions": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["changed_capability_records", "changed_oracle_records", "official_semantic_leaf_count", "oracle_semantic_leaf_count", "total_semantic_leaf_count", "rt_vlm_operation_count", "lvs_operation_count", "lvs_mcp_tool_count", "runtime_evidence_records", "promotions"],
+      "properties": {
+        "changed_capability_records": {"const": 3},
+        "changed_oracle_records": {"const": 3},
+        "official_semantic_leaf_count": {"type": "integer", "minimum": 1},
+        "oracle_semantic_leaf_count": {"type": "integer", "minimum": 1},
+        "total_semantic_leaf_count": {"type": "integer", "minimum": 1},
+        "rt_vlm_operation_count": {"const": 28},
+        "lvs_operation_count": {"const": 18},
+        "lvs_mcp_tool_count": {"const": 13},
+        "runtime_evidence_records": {"const": 0},
+        "promotions": {"const": 0}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "pointers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^/"}
+    }
+  }
+}

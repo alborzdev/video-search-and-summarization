@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "receipt_id", "evidence_class", "contract_raw_sha256", "contract_canonical_sha256", "source_lock_count", "production_source_count", "test_source_count", "predecessor_package_count", "current_contract_counts", "rt_vlm_documented_denominator", "validated_test_invocations", "tests_executed_by_receipt", "static_test_results", "runtime_evidence", "passed_current_promotions", "admission_state_changed", "executable_state_changed", "authorization_state_changed", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "receipt_id": {"const": "request-cancellation-static-rebase-successor-v1-static-validation"},
+    "evidence_class": {"const": "deterministic_source_and_contract_validation_only"},
+    "contract_raw_sha256": {"$ref": "#/$defs/sha"}, "contract_canonical_sha256": {"$ref": "#/$defs/sha"},
+    "source_lock_count": {"const": 13}, "production_source_count": {"const": 8}, "test_source_count": {"const": 5}, "predecessor_package_count": {"const": 8},
+    "current_contract_counts": {"const": {"lvs-mcp": 13, "lvs": 18, "rt-vlm": 28}},
+    "rt_vlm_documented_denominator": {"const": 27},
+    "validated_test_invocations": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "array", "minItems": 7, "items": {"type": "string"}}},
+    "tests_executed_by_receipt": {"const": true},
+    "static_test_results": {
+      "const": [
+        {"lane": "rt-vlm-isolated", "passed": 18, "subtests_passed": 0, "failed": 0},
+        {"lane": "lvs-normal-conftest", "passed": 97, "subtests_passed": 82, "failed": 0}
+      ]
+    },
+    "runtime_evidence": {"const": []}, "passed_current_promotions": {"const": 0},
+    "admission_state_changed": {"const": false}, "executable_state_changed": {"const": false}, "authorization_state_changed": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

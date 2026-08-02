@@ -24,6 +24,9 @@ microservice via REST API.
 import json
 import os
 import time
+from collections import OrderedDict
+from dataclasses import dataclass, field
+from threading import Event, Lock
 from typing import Optional
 
 import requests
@@ -93,6 +96,17 @@ RTVI_HEALTH_RETRIES = int(os.environ.get("RTVI_HEALTH_RETRIES", 30))
 RTVI_HEALTH_RETRY_INTERVAL = int(os.environ.get("RTVI_HEALTH_RETRY_INTERVAL", 5))
 
 
+@dataclass
+class _ActiveCaptionRequest:
+    owner_id: str
+    routing_id: str
+    request_id: str | None = None
+    response: object | None = None
+    cancelled: bool = False
+    abort_started: bool = False
+    terminal_event: Event = field(default_factory=Event)
+
+
 class RtviVlmClient:
     """HTTP client for RTVI-VLM microservice."""
 
@@ -103,6 +117,9 @@ class RtviVlmClient:
         self._live_stream_threads = {}
         self._live_stream_stop_events = {}
         self._rtvi_stream_id_map = {}
+        self._active_caption_requests: dict[str, _ActiveCaptionRequest] = {}
+        self._active_caption_requests_lock = Lock()
+        self._cancelled_caption_owners: OrderedDict[str, float] = OrderedDict()
 
         # Health check — fail fast if RTVI-VLM is not reachable
         self._wait_for_ready()
@@ -368,8 +385,14 @@ class RtviVlmClient:
         {id, model, created, media_info, chunk_responses: [{chunk_id, start_time, end_time, content, ...}]}
         Terminates when [DONE] is received.
         """
+        owner_id = kwargs.pop("owner_id", None)
         req = self._build_generate_captions_request(**kwargs)
         payload = req.model_dump(exclude_none=True)
+        lease = (
+            self._begin_caption_request(str(owner_id), str(req.id))
+            if owner_id is not None
+            else None
+        )
 
         logger.info(
             "RTVI generate_captions_stream: url=%s, id=%s, model=%s, chunk_duration=%d",
@@ -380,46 +403,186 @@ class RtviVlmClient:
         )
         logger.info("RTVI generate_captions_stream: x-stream-id=%s", req.id)
 
-        resp = self._session.post(
-            f"{self._base_url}/v1/generate_captions",
-            json=payload,
-            stream=True,
-            timeout=600,
-            headers={"x-stream-id": str(req.id)},
-        )
+        try:
+            resp = self._session.post(
+                f"{self._base_url}/v1/generate_captions",
+                json=payload,
+                stream=True,
+                timeout=600,
+                headers={"x-stream-id": str(req.id)},
+            )
+        except BaseException:
+            if lease is not None:
+                self._finish_caption_request(lease)
+            raise
         if resp.status_code != 200:
-            self._raise_rtvi_error("generate_captions", resp)
+            try:
+                self._raise_rtvi_error("generate_captions", resp)
+            finally:
+                resp.close()
+                if lease is not None:
+                    self._finish_caption_request(lease)
 
-        for line in resp.iter_lines(decode_unicode=True):
-            if not line:
-                continue
-            # SSE comment lines (keepalive pings, etc.)
-            if line.startswith(":"):
-                continue
-            # SSE event type lines — skip, we only care about data
-            if line.startswith("event:"):
-                continue
-            # SSE data lines
-            if line.startswith("data:"):
-                data = line[len("data:") :].strip()
-            else:
-                # Unknown line format — skip
-                logger.debug("RTVI SSE unexpected line: %s", line)
-                continue
-
-            if not data or data == "ping" or data == ": ping":
-                continue
-            if data == "[DONE]":
-                logger.info("RTVI generate_captions_stream: received [DONE]")
+        request_id = resp.headers.get("x-request-id")
+        if lease is not None:
+            if not request_id:
+                resp.close()
+                self._finish_caption_request(lease)
+                raise RtviError(
+                    502,
+                    "MissingRequestId",
+                    "RTVI streaming response did not identify its exact request",
+                )
+            if self._register_caption_response(lease, str(request_id), resp):
+                self._abort_caption_request(lease)
+                self._finish_caption_request(lease)
                 return
 
-            try:
-                chunk = json.loads(data)
-                yield chunk
-            except Exception as e:
-                logger.warning("RTVI SSE parse error: %s, line: %s", e, data)
+        try:
+            for line in resp.iter_lines(decode_unicode=True):
+                if not line:
+                    continue
+                if line.startswith(":") or line.startswith("event:"):
+                    continue
+                if line.startswith("data:"):
+                    data = line[len("data:") :].strip()
+                else:
+                    logger.debug("RTVI SSE unexpected line: %s", line)
+                    continue
 
-        logger.info("RTVI generate_captions_stream: stream ended")
+                if not data or data == "ping" or data == ": ping":
+                    continue
+                if data == "[DONE]":
+                    logger.info("RTVI generate_captions_stream: received [DONE]")
+                    return
+
+                try:
+                    yield json.loads(data)
+                except Exception as e:
+                    logger.warning("RTVI SSE parse error: %s, line: %s", e, data)
+
+            logger.info("RTVI generate_captions_stream: stream ended")
+        finally:
+            if lease is None:
+                resp.close()
+            else:
+                self._finish_caption_request(lease)
+
+    def _prune_cancel_tombstones_locked(self) -> None:
+        cutoff = time.monotonic() - 600
+        while self._cancelled_caption_owners:
+            owner_id, created = next(iter(self._cancelled_caption_owners.items()))
+            if created >= cutoff and len(self._cancelled_caption_owners) <= 1024:
+                break
+            self._cancelled_caption_owners.pop(owner_id, None)
+
+    def _begin_caption_request(
+        self, owner_id: str, routing_id: str
+    ) -> _ActiveCaptionRequest:
+        if not owner_id:
+            raise ValueError("owner_id must be nonempty")
+        with self._active_caption_requests_lock:
+            self._prune_cancel_tombstones_locked()
+            if owner_id in self._active_caption_requests:
+                raise ValueError(f"owner_id {owner_id} already has an active request")
+            cancelled = self._cancelled_caption_owners.pop(owner_id, None) is not None
+            lease = _ActiveCaptionRequest(owner_id, routing_id, cancelled=cancelled)
+            self._active_caption_requests[owner_id] = lease
+        return lease
+
+    def _register_caption_response(
+        self, lease: _ActiveCaptionRequest, request_id: str, response
+    ) -> bool:
+        """Attach the exact response and report whether cancellation won the race."""
+        if not request_id:
+            raise ValueError("request_id must be nonempty")
+        with self._active_caption_requests_lock:
+            if self._active_caption_requests.get(lease.owner_id) is not lease:
+                raise RuntimeError("caption request ownership changed before registration")
+            lease.request_id = request_id
+            lease.response = response
+            return lease.cancelled
+
+    def _abort_caption_request(self, lease: _ActiveCaptionRequest) -> None:
+        with self._active_caption_requests_lock:
+            if lease.abort_started:
+                waiter = lease.terminal_event
+                abort_owner = False
+            else:
+                lease.abort_started = True
+                waiter = lease.terminal_event
+                abort_owner = True
+        if not abort_owner:
+            waiter.wait()
+            return
+
+        delete_response = None
+        try:
+            if lease.request_id is not None:
+                delete_response = self._session.delete(
+                    f"{self._base_url}/v1/generate_captions/requests/{lease.request_id}",
+                    timeout=RTVI_HEALTH_TIMEOUT,
+                    headers={"x-stream-id": lease.routing_id},
+                )
+                if delete_response.status_code not in (200, 404):
+                    logger.warning(
+                        "RTVI exact request abort returned status=%d owner_id=%s request_id=%s",
+                        delete_response.status_code,
+                        lease.owner_id,
+                        lease.request_id,
+                    )
+        except Exception:
+            logger.warning(
+                "RTVI exact request abort failed owner_id=%s request_id=%s",
+                lease.owner_id,
+                lease.request_id,
+                exc_info=True,
+            )
+        finally:
+            if delete_response is not None:
+                delete_response.close()
+            if lease.response is not None:
+                lease.response.close()
+            waiter.set()
+
+    def _finish_caption_request(self, lease: _ActiveCaptionRequest) -> None:
+        """Close and unregister only the exact response identity owned by ``lease``."""
+        with self._active_caption_requests_lock:
+            if self._active_caption_requests.get(lease.owner_id) is lease:
+                self._active_caption_requests.pop(lease.owner_id, None)
+        if lease.response is not None:
+            lease.response.close()
+        lease.terminal_event.set()
+
+    def abort_request(self, owner_id: str) -> bool:
+        """Abort the exact active RTVI request registered to an LVS owner."""
+        with self._active_caption_requests_lock:
+            self._prune_cancel_tombstones_locked()
+            lease = self._active_caption_requests.get(str(owner_id))
+            if lease is None:
+                if str(owner_id) in self._cancelled_caption_owners:
+                    return False
+                self._cancelled_caption_owners[str(owner_id)] = time.monotonic()
+                self._prune_cancel_tombstones_locked()
+                return True
+            first_caller = not lease.cancelled
+            lease.cancelled = True
+            registered = lease.request_id is not None
+        if registered:
+            self._abort_caption_request(lease)
+        else:
+            # The POST owns request identity discovery.  Do not acknowledge
+            # cancellation until it registers and performs the exact abort (or
+            # fails and retires the lease in its exception path).
+            lease.terminal_event.wait()
+        return first_caller
+
+    def cancel_request(
+        self, request_id: str, reason: str = "downstream_disconnect"
+    ) -> bool:
+        """LVS-facing alias for owner-scoped exact RTVI request cancellation."""
+        logger.info("Cancelling RTVI request owner=%s reason=%s", request_id, reason)
+        return self.abort_request(request_id)
 
     def start_captions(self, **kwargs):
         """Fire-and-forget kickoff for RTVI live-stream captioning.
@@ -484,4 +647,12 @@ class RtviVlmClient:
         logger.info("remove_live_stream called for %s (no-op in RTVI mode)", source_id)
 
     def stop(self, force=False):
+        with self._active_caption_requests_lock:
+            leases = list(self._active_caption_requests.values())
+            self._active_caption_requests.clear()
+            self._cancelled_caption_owners.clear()
+        for lease in leases:
+            if lease.response is not None:
+                lease.response.close()
+            lease.terminal_event.set()
         self._session.close()
