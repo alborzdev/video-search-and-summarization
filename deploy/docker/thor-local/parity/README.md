@@ -50,6 +50,16 @@ package under `candidates/wave3/coverage/` preserves that pre-merge denominator;
 the reviewed Agent/Smart City, Systems, and Calibration/Warehouse claims are now
 merged into the live ledger.
 
+Two isolated successor packages under `qualification/` now prove the next
+inventory transition without changing that live denominator. The oracle
+successor preserves the 289 live rows exactly and appends 211 planning-only
+candidate contracts in manifest-pointer order. The ledger successor projects
+the same ordered 500 capability IDs and exact same-family advertised-title
+mappings. Both retain zero candidate evidence or promotions and exclude the
+Warehouse sample bundle. The projection is intentionally not live-merge-ready:
+nine feature-family aggregates and eight acceptance-coverage records remain
+machine-recorded blockers.
+
 That direct-index denominator is also not the final documentation graph. A
 recursive same-version follow-up reached a 172-page fixed point (including
 `index.html`) and found 19 additional Warehouse descendant pages outside the 152

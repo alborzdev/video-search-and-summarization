@@ -312,6 +312,16 @@ in this directory:
 - `remaining-entry-workloads/` replaces generic workload defaults for the 41
   API and 19 deployment candidates with 134 exact operation units and 58
   ordered actions. Its three external workloads remain zero-activation;
+- `oracle-500-successor/` preserves the 289 live capability oracles exactly and
+  appends all 211 candidate adapters in manifest-pointer order under a strict
+  successor schema. It binds the exact protocol and workload candidates while
+  keeping evidence, execution, readiness promotion, cloud inference, and the
+  Warehouse sample at zero;
+- `ledger-500-successor/` projects the live manifest and capability ledger to
+  the same ordered 500 IDs with exact same-family title mappings. It preserves
+  the 289 existing capability rows, recomputes only 17 derived source claim
+  hashes, and records nine family-aggregate plus eight acceptance-coverage
+  blockers; it does not change the live parity files;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

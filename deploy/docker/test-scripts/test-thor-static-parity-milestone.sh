@@ -450,6 +450,23 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/remaining-entry-workloads/tests"
 
+# The isolated oracle successor preserves the 289 live rows exactly, then
+# appends all 211 candidate contracts in manifest-pointer order. The ledger
+# successor binds that same 500-row order to an exact-title manifest and
+# capability-ledger projection. Both remain candidate-only: evidence and
+# promotions stay empty, while nine family aggregates and eight acceptance
+# coverage records remain explicit live-merge blockers.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/oracle-500-successor/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/oracle-500-successor/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/ledger-500-successor/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/ledger-500-successor/tests"
+
 # The candidate-only offline MV3DT observation and its immutable receipt are
 # verified above at exact predecessor identity by the CPU multimedia successor.
 # They are intentionally not replayed against the evolved current manifest.

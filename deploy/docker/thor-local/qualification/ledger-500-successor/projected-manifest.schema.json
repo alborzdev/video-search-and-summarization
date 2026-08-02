@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/ledger-500-projected-manifest.schema.json",
+  "title": "VSS 3.2.1 Thor-local projected 500-entry manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "audit_date", "upstream", "status_contract", "features", "skills"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "audit_date": {"const": "2026-07-31"},
+    "upstream": {
+      "const": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+        "latest_ga": "v3.2.1",
+        "latest_ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+        "target_branch": "main",
+        "target_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+        "nightly_observed": "nightly-20260731",
+        "nightly_is_acceptance_target": false
+      }
+    },
+    "status_contract": {
+      "const": {
+        "thor_state": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"],
+        "runtime_state": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"],
+        "acceptance_class": ["required_local", "alternate_local_lane", "external_optional"]
+      }
+    },
+    "features": {
+      "type": "array",
+      "minItems": 55,
+      "maxItems": 55,
+      "items": {"$ref": "#/$defs/feature"}
+    },
+    "skills": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 16,
+      "items": {"$ref": "#/$defs/skill"}
+    }
+  },
+  "$defs": {
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "acceptance_class",
+        "category",
+        "advertised",
+        "source_evidence",
+        "thor_evidence",
+        "thor_state",
+        "runtime_state",
+        "gap",
+        "official_capability_ids"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "category": {"enum": ["analytics", "api", "calibration", "configuration", "deployment", "evaluation", "industry", "integration", "media", "model", "platform", "scale", "service", "storage", "tooling", "ui", "workflow"]},
+        "advertised": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "official_capability_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        },
+        "source_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "thor_evidence": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "thor_state": {"enum": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"]},
+        "runtime_state": {"enum": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]},
+        "external_dependency": {"type": "string", "minLength": 1},
+        "boundary_reason": {"type": "string", "minLength": 1},
+        "gap": {"type": "string", "minLength": 1}
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "thor_state", "runtime_state"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "thor_state": {"enum": ["wired", "partial", "source_only", "external_optional", "blocked_upstream"]},
+        "runtime_state": {"enum": ["passed_current", "passed_prior", "static_only", "not_qualified", "blocked", "not_applicable"]}
+      }
+    }
+  }
+}

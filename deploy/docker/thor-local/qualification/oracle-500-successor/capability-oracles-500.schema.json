@@ -1,0 +1,682 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/oracle-500-successor.schema.json",
+  "title": "VSS Thor-local isolated 500-oracle successor projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "successor_id",
+    "mode",
+    "target",
+    "source_locks",
+    "policy",
+    "summary",
+    "ordering",
+    "live_preservation",
+    "candidate_integrity",
+    "projected_oracles",
+    "projected_oracle_records_canonical_sha256",
+    "successor_payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "successor_id": {"const": "vss-3.2.1-thor-oracle-500-candidate-successor"},
+    "mode": {"const": "isolated_candidate_only_projection"},
+    "target": {
+      "const": {
+        "captured_on": "2026-07-31",
+        "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+        "product_version": "3.2.1"
+      }
+    },
+    "source_locks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_adapter",
+        "candidate_adapter_schema",
+        "candidate_source",
+        "candidate_source_schema",
+        "official_capabilities",
+        "official_capabilities_schema",
+        "live_oracles",
+        "live_oracles_schema",
+        "protocol_v2",
+        "protocol_v2_schema",
+        "workloads",
+        "workloads_schema"
+      ],
+      "properties": {
+        "candidate_adapter": {"const": {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "raw_sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235"}},
+        "candidate_adapter_schema": {"const": {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json", "raw_sha256": "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb"}},
+        "candidate_source": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "raw_sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"}},
+        "candidate_source_schema": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.schema.json", "raw_sha256": "e3f09d7c86c46e236b9786f5eb3aa60868e67363224922ce04cfab3d60cd12a8"}},
+        "official_capabilities": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"}},
+        "official_capabilities_schema": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.schema.json", "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896"}},
+        "live_oracles": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"}},
+        "live_oracles_schema": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.schema.json", "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"}},
+        "protocol_v2": {"const": {"path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json", "raw_sha256": "886151fee9ce27b24601499011151e827c4742b32d400c609c8c0b149851db62"}},
+        "protocol_v2_schema": {"const": {"path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.schema.json", "raw_sha256": "831d982f6912358b8dfae049cd10ed709af299d91cb7196031d28b29a092877d"}},
+        "workloads": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workloads.json", "raw_sha256": "ca4170118a94a659acca600d9ab00dca6504544f062edabd5cef0ed3311e8312"}},
+        "workloads_schema": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workload.schema.json", "raw_sha256": "736f9295e4f89afbb1aaed7c086155e30a09b6dc2c583433b9cb98ad2c005c14"}}
+      }
+    },
+    "policy": {
+      "const": {
+        "can_promote_runtime_state": false,
+        "candidate_only_extension": true,
+        "live_registry_modified": false,
+        "required_cloud_inference": false,
+        "runtime_evidence": [],
+        "runtime_execution": "forbidden",
+        "warehouse_sample_bundle": "excluded",
+        "wrapper_modified": false
+      }
+    },
+    "summary": {
+      "const": {
+        "api_workload_bound_candidates": 41,
+        "authoritative_gap_requirements": 74,
+        "candidate_evidence_records": 0,
+        "candidate_execution_boundary_counts": {
+          "alternate_local": 46,
+          "external": 6,
+          "local": 159
+        },
+        "candidate_executor_ready": 0,
+        "candidate_promoted": 0,
+        "candidate_successor_oracles": 211,
+        "deployment_workload_bound_candidates": 19,
+        "external_candidate_oracles": 6,
+        "preserved_live_oracles": 289,
+        "projected_oracles": 500,
+        "protocol_v2_bound_candidates": 23,
+        "unbound_planning_candidates": 128,
+        "workload_bound_candidates": 60
+      }
+    },
+    "ordering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_order",
+        "candidate_order",
+        "live_capability_id_order_sha256",
+        "candidate_capability_id_order_sha256",
+        "projected_capability_id_order_sha256"
+      ],
+      "properties": {
+        "live_order": {"const": "official_capabilities_source_order"},
+        "candidate_order": {"const": "strict_manifest_pointer_order"},
+        "live_capability_id_order_sha256": {"const": "bcff14e8d0122fbd1da6c5075a6d2b4c3abfd03823834f33b60c69531708d728"},
+        "candidate_capability_id_order_sha256": {"const": "1c0cc33efa1aa6283e467e5fc78bbed8b4cbe8ff23fdbf6db3190144996a3ef9"},
+        "projected_capability_id_order_sha256": {"const": "31ad7e72b405a52c6cb9e7f6f77a7f9a61b73c05a87c87678f089c265c306555"}
+      }
+    },
+    "live_preservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_document_raw_sha256",
+        "live_oracle_records_canonical_sha256",
+        "projected_live_prefix_canonical_sha256",
+        "live_record_hashes_by_capability_id"
+      ],
+      "properties": {
+        "live_document_raw_sha256": {"const": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"},
+        "live_oracle_records_canonical_sha256": {"const": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2"},
+        "projected_live_prefix_canonical_sha256": {"const": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2"},
+        "live_record_hashes_by_capability_id": {
+          "type": "object",
+          "minProperties": 289,
+          "maxProperties": 289,
+          "propertyNames": {"enum": ["model.rt-vlm.default-cosmos3-nano-bf16","model.agent-llm.nemotron-nano-9b-v2","model.agent-llm.nemotron-nano-9b-v2-fp8","model.agent-llm.nemotron-3-nano","model.agent-llm.llama-3.3-nemotron-super-49b","model.agent-llm.gpt-oss-20b","model.agent-vlm.cosmos-reason2-8b","model.agent-vlm.qwen3-vl-8b","model.agent-vlm.cosmos3-nano","model.agent-vlm.cosmos3-super","model.agent-vlm.custom-weights","model.agent.openai-compatible-endpoints","model.edge.nemotron-3-nano-4b-fp8","model.edge.cosmos3-nano-served-id","config.vss-configurator.profile-manager","config.vss-configurator.sensor-manager","config.sdrc.docker-distribution","config.sdrc.envoy-routing","config.sdrc.session-restoration","config.deepstream.init-adaptor","evaluation.agent.report","evaluation.agent.qa","evaluation.agent.trajectory","evaluation.agent.multi-turn","customization.siglip2","customization.cosmos-embed1","customization.sparse4d","customization.rt-detr","customization.embedding-reindex-validation","calibration.sdg.workflow","calibration.legacy.core","calibration.legacy.gis","calibration.legacy.cartesian","calibration.legacy.multi-camera","calibration.legacy.image","deployment.vlm-autoscaling.hpa","deployment.brev.launchable","security.external-ingress-controls","performance.alert-verification","performance.video-summarization","performance.search","performance.rt-cv","performance.rt-vlm","performance.rt-embed","performance.vios","tool.mv3dt.cam-info-generator","tool.mv3dt.pub-sub-generator","api.vss-configurator.sensor","api.sdrc.control-plane","api.deepstream-configurator.post-config","api.auto-calibration.operations","api.legacy-calibration.ui-server","protocol.agent.websocket","protocol.alert.websocket","protocol.rt-vlm.sse","protocol.kafka.nvschema","protocol.redis.events","protocol.vios.webrtc-live","protocol.vios.webrtc-replay","behavior.rt-embed.duplicate-id-409","behavior.rt-vlm.url-auth","behavior.rt-vlm.url-redirect-limit","behavior.rt-vlm.url-size-limit","behavior.rt-vlm.url-tls-exception","behavior.rt-vlm.generation-token-cap","behavior.rt-vlm.user-prompt-cap","behavior.rt-vlm.system-prompt-cap","behavior.rt-vlm.moe-backend","behavior.rt-vlm.kafka-queue-bound","behavior.rt-cv.smart-infer","behavior.rt-cv.ofa-predict","behavior.vios.per-camera-timestamps","behavior.vios.floor-map-formats","behavior.vios.sensor-add-conflicts","behavior.vios.byte-identical-download","model.remote-agent-llm.nemotron-3-nano-30b-a3b","model.remote-agent-llm.gpt-oss-120b","model.remote-agent-llm.glm5","model.remote-agent-llm.gpt-5.2","model.remote-agent-llm.gpt-4.1","model.remote-agent-vlm.gpt-5.2","model.remote-agent-vlm.gpt-4.1","model.remote-agent-vlm.reka-flash","model.remote-agent-vlm.cosmos3-reasoner-1.7","model.remote-agent-vlm.cosmos-reason2-8b-latest","model.remote-agent-vlm.cosmos-reason2-2b-latest","model.remote-agent-vlm.qwen3-vl-8b-vllm","model.remote-agent-vlm.nemotron-omni-nvfp4","behavior.rt-vlm.duplicate-id-409","behavior.rt-vlm.independent-rtsp-jobs","behavior.rt-vlm.delete-stops-all-stream-jobs","behavior.rt-vlm.generate-captions-endpoint-rename","behavior.rt-embed.base64-data-url","behavior.rt-embed.ngc-scheme-key","behavior.rt-embed.trt-precision","behavior.rt-embed.trt-extra-args","behavior.rt-embed.gop-decode-opt","behavior.rt-embed.kafka-queue-bound","behavior.rt-embed.file-url-allowlist","behavior.rt-embed.url-tls-exception","behavior.rt-embed.url-redirect-limit","behavior.rt-embed.url-size-limit","behavior.rt-embed.url-auth","behavior.rt-embed.asset-max-age","prereq.platform.validated-gpus","prereq.platform.agx-thor-software","prereq.platform.toolchain-versions","prereq.platform.kernel-and-thor-runtime","prereq.platform.docker-cgroupfs","prereq.platform.capacity-and-access","prereq.platform.credentials","boundary.thor.official-profiles","boundary.thor.fully-local-future","boundary.thor.custom-all-local-extension","api.core.rt-vlm-27","api.core.rt-embed-24","api.core.rt-cv-9","api.core.lvs-17","api.core.alerts-19","api.core.vst-sensor-28","api.core.vst-live-20","api.core.vst-replay-21","api.core.vst-record-16","api.core.vst-proxy-7","api.core.vst-storage-26-25","api.core.video-analytics-56","api.core.va-mcp-7","api.core.lvs-mcp-doc-13-repo-9","tooling.agent-skills.catalog-16","tooling.agent-harnesses.validated-4","api.orchestrator-mcp.tools-9","configuration.agent.file-llm-schema","configuration.agent.mcp-client","configuration.agent.extension-points","configuration.agent.knowledge-retrieval-backends","configuration.agent.hierarchy","runtime.agent.report-profile-contracts","runtime.agent.report-artifacts","observability.agent.phoenix-traces","evaluation.agent.execution-artifacts","model.rt-embed.cosmos-embed1-448p","model.rt-embed.cosmos-embed1-336p","model.rt-embed.cosmos-embed1-224p","model.rt-embed.cosmos-embed1-448p-anomaly","configuration.rt-embed.model-source","calibration.auto.workflow-six-step","calibration.auto.input-contract","calibration.auto.alignment-schema","calibration.auto.ground-truth-schema","boundary.auto-calibration.thor-extension","behavior.auto-calibration.known-limitations","configuration.warehouse.behavior-analytics","runtime.warehouse.alert-modes-rules","runtime.warehouse.agent-hierarchy","runtime.warehouse.ui-surfaces","deployment.helm.developer-profiles","security.trusted-network-boundary","security.external-edge-controls","security.known-unmitigated-limitations","behavior.warehouse.known-limitations","behavior.agent.known-issues","runtime.agent.operational-modes","runtime.workflow.base-chat-report","runtime.agent.base-hitl","runtime.agent.lvs-profile","runtime.agent.search-profile","runtime.workflow.alert-verification","runtime.workflow.real-time-alerts","runtime.ui.global-chat-sidebar","runtime.ui.alerts-tab","runtime.ui.dashboard-tab","runtime.ui.search-tab","runtime.ui.video-management-tab","behavior.ui.known-issues","deployment.nemoclaw.same-host-operating-path","configuration.nemoclaw.model-surface-boundary","security.nemoclaw.policy-provider-network-boundary","behavior.nemoclaw.recovery-and-destructive-boundaries","boundary.smart-city.version-skew","prereq.smart-city.reference-platform","boundary.smart-city.google-maps-dependency","deployment.smart-city.bp-smc-surface","performance.smart-city.reference-stream-envelope","runtime.smart-city.chat-alert-dashboard","runtime.smart-city.map-ui","runtime.smart-city.traffic-analytics","configuration.smart-city.behavior-rules","configuration.smart-city.alert-verification","configuration.smart-city.vios-defaults","runtime.smart-city.agent-workflow","model.smart-city.perception-options","configuration.smart-city.custom-location","tooling.smart-city.synthetic-data-pipeline","customization.smart-city.trafficcamnet-rtdetr","behavior.smart-city.known-limitations","runtime.alerts.workflow-modes","model.alerts.vlm-backends","configuration.alerts.prompt-vlm-warmup","customization.alerts.pluggable-parser","protocol.alerts.nvschema-ingestion","runtime.alerts.persistence-output","performance.alerts.worker-scaling","observability.alerts.prometheus","runtime.behavior.pipeline","configuration.behavior.dynamic-update","calibration.behavior.dynamic","runtime.behavior.events-incidents","runtime.behavior.embedding-downsampling","protocol.behavior.broker-sinks","runtime.behavior.space-utilization","customization.behavior.sink-extension","runtime.rt-cv.model-pipelines","deployment.rt-cv.compose-extension-contract","runtime.rtvi.input-codec-boundary","runtime.video-analytics.query-and-library-contract","configuration.video-analytics.bootstrap","behavior.video-analytics.optional-kafka","runtime.vios.modular-capabilities","deployment.vios.horizontal-scaling","runtime.nvstreamer.file-streaming","configuration.nvstreamer.sync","configuration.nvstreamer.full-contract","configuration.message-broker.profile-choice","protocol.nvschema.format-selection","protocol.nvschema.json-frame","protocol.nvschema.protobuf-messages","configuration.elk.stack","storage.elk.indices-ilm","protocol.elk.logstash-ingestion","deployment.elk.gpu-vector-indexing","behavior.elk.disk-watermark-recovery","observability.system.prometheus-stack","configuration.vios.upload-effective-limit","behavior.vios.upload-playback-remediation","runtime.lvs.single-request-queue","runtime.lvs.supported-formats","configuration.lvs.custom-model-prompt","deployment.remote-nim.video-fetch","deployment.network.bridge-firewall","behavior.search-upload.content-type","deployment.release.mixed-container-tags","behavior.lvs.live-caption-empty-window","behavior.lvs.shared-caption-prompt","behavior.lvs.caption-spurious-index","behavior.base.cr2-nim-recovery","runtime.base.report-persistence","deployment.base.shared-gpu-memory","behavior.search.retention-indexing-quality","behavior.rt-cv.delete-ended-stream","behavior.docker.ngc-pull-29-5","calibration.camera-positioning.installation-contract","calibration.schema.vss-json","behavior.auto-calibration.failure-recovery","behavior.auto-calibration.result-verification","runtime.warehouse.architecture-and-use-cases","prereq.warehouse.thor-platform","configuration.warehouse.profile-hardware-matrix","configuration.warehouse.custom-inputs","configuration.warehouse.broker-minimal-retention","runtime.warehouse.service-access","release.warehouse.3.2.1","runtime.warehouse.operational-health","behavior.warehouse.destructive-troubleshooting-boundaries","runtime.warehouse.profile-event-incident-semantics","performance.warehouse.profile-latency","runtime.warehouse.profile-2d-pipeline","runtime.warehouse.profile-2d-agent-pipeline","runtime.warehouse.profile-3d-sparse4d-pipeline","runtime.warehouse.profile-mv3dt-pipeline","configuration.warehouse.rtdetr-deepstream","configuration.warehouse.sparse4d-deepstream","configuration.warehouse.mv3dt-deepstream","boundary.warehouse.sdg-toolchain","boundary.warehouse.sdg-scene-calibration","boundary.warehouse.sdg-postprocess","boundary.warehouse.sim2real","manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping","manifest-entry.spatial-ai-utils.01-3d-2d-geometry","manifest-entry.spatial-ai-utils.02-multiview-visualization","manifest-entry.spatial-ai-utils.03-detection-map","manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count","manifest-entry.spatial-ai-utils.05-nvschema-conversion","manifest-entry.spatial-ai-utils.06-video-frame-tools","manifest-entry.spatial-ai-utils.07-aws-gcs-validation","manifest-entry.synthetic-data-tools.00-semantic-label-helpers","manifest-entry.synthetic-data-tools.01-dataset-checks","manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion","manifest-entry.synthetic-data-tools.03-ground-truth-conversion","manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"]},
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "candidate_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adapter_payload_sha256",
+        "protocol_v2_payload_sha256",
+        "workloads_payload_sha256",
+        "candidate_record_hashes_by_capability_id"
+      ],
+      "properties": {
+        "adapter_payload_sha256": {"const": "e7b67f4e4c3f25641eeb95fd665b2dc0b0d9224c1fec81007b4b7cdc4a40b541"},
+        "protocol_v2_payload_sha256": {"const": "65715e2ebfbe164ae38a6b20ca7dc23b6f3a65aaa9dd1632bdda746c4c929f24"},
+        "workloads_payload_sha256": {"const": "0e8512e64399af7d8acc0c7136efbd52da4ebf9119ad0826859e6fce6906d847"},
+        "candidate_record_hashes_by_capability_id": {
+          "type": "object",
+          "minProperties": 211,
+          "maxProperties": 211,
+          "propertyNames": {"enum": ["manifest-entry.agent-and-mcp-apis.00-nat-generate-chat","manifest-entry.agent-and-mcp-apis.01-health","manifest-entry.agent-and-mcp-apis.02-upload-handshake-and-completion","manifest-entry.agent-and-mcp-apis.03-video-delete","manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete","manifest-entry.agent-and-mcp-apis.05-va-mcp","manifest-entry.agent-and-mcp-apis.06-lvs-mcp","manifest-entry.agent-and-mcp-apis.07-vios-mcp","manifest-entry.alert-notifications-slack.00-slack-notification","manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification","manifest-entry.alert-verification.01-post-alert-verification","manifest-entry.alert-verification.02-contextualization","manifest-entry.alert-verification.03-multi-category-classification","manifest-entry.alert-verification.04-on-demand-verification","manifest-entry.alert-verification.05-custom-vlm-parsing","manifest-entry.alert-verification.06-non-blocking-multithreaded-execution","manifest-entry.audio-understanding.00-audio-aware-base-workflow","manifest-entry.audio-understanding.01-audio-transcript-per-rt-vlm-chunk","manifest-entry.audio-understanding.02-audio-aware-summarization-and-alerts","manifest-entry.auto-calibration.00-single-and-multi-camera-calibration","manifest-entry.auto-calibration.01-file-and-rtsp-through-vios","manifest-entry.auto-calibration.02-camera-pose-focal-lens-distortion-rectification","manifest-entry.auto-calibration.03-vggt-frame-selection","manifest-entry.auto-calibration.04-global-roi-tripwire","manifest-entry.auto-calibration.05-image-coordinate-export","manifest-entry.base-agent-workflow.00-short-video-retrieval","manifest-entry.base-agent-workflow.01-visual-question-answering","manifest-entry.base-agent-workflow.02-vlm-report-generation","manifest-entry.base-agent-workflow.03-templated-reports","manifest-entry.base-agent-workflow.04-large-file-chunked-upload","manifest-entry.base-agent-workflow.05-local-shared-remote-model-layouts","manifest-entry.base-agent-workflow.06-public-media-url-rewriting","manifest-entry.behavior-analytics.00-2d-3d-mv3dt-smart-city-warehouse-playback-fusion-apps","manifest-entry.behavior-analytics.01-events-and-incidents","manifest-entry.behavior-analytics.02-trajectories-and-occupancy","manifest-entry.behavior-analytics.03-tripwires-and-rois","manifest-entry.behavior-analytics.04-proximity-and-clustering","manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration","manifest-entry.docker-compose.00-base-compose","manifest-entry.docker-compose.01-search-compose","manifest-entry.docker-compose.02-lvs-compose","manifest-entry.docker-compose.03-alerts-compose","manifest-entry.docker-compose.04-warehouse-compose","manifest-entry.docker-compose.05-smart-city-launchable-compose","manifest-entry.enterprise-rag.00-rag-report-generation","manifest-entry.enterprise-rag.01-frag-retrieval-integration","manifest-entry.helm.00-helm-for-four-developer-workflows","manifest-entry.helm.01-helm-for-most-standalone-services","manifest-entry.infra-observability.00-api-gateway","manifest-entry.infra-observability.01-kafka","manifest-entry.infra-observability.02-redis","manifest-entry.infra-observability.03-elasticsearch-kibana","manifest-entry.infra-observability.04-prometheus-grafana","manifest-entry.infra-observability.05-phoenix-opentelemetry","manifest-entry.infra-observability.06-nvschema","manifest-entry.infra-observability.07-broker-debugging-tools","manifest-entry.main-ui.00-streaming-agent-chat","manifest-entry.main-ui.01-websocket-recovery","manifest-entry.main-ui.02-hitl","manifest-entry.main-ui.03-search-and-search-by-image","manifest-entry.main-ui.04-alerts-and-realtime-rule-creation","manifest-entry.main-ui.05-chunked-upload-and-rtsp-management","manifest-entry.main-ui.06-dashboard","manifest-entry.main-ui.07-map","manifest-entry.nemoclaw-openclaw.00-nemoclaw-openclaw-sandbox","manifest-entry.nemoclaw-openclaw.01-vss-sandbox-policy","manifest-entry.nemoclaw-openclaw.02-vss-skills-upload","manifest-entry.nemoclaw-openclaw.03-orchestrator-mcp","manifest-entry.nemoclaw-openclaw.04-local-openai-compatible-provider-option","manifest-entry.nemoclaw-openclaw.05-openclaw-alert-notification-integration","manifest-entry.offline-security.00-offline-restart","manifest-entry.offline-security.01-content-addressed-image-locks","manifest-entry.offline-security.02-model-checksums","manifest-entry.offline-security.03-credential-scrubbing","manifest-entry.offline-security.04-loopback-ingress","manifest-entry.offline-security.05-physical-interface-firewall","manifest-entry.realtime-alerts.00-live-stream-vlm-rules","manifest-entry.realtime-alerts.01-rule-crud","manifest-entry.realtime-alerts.02-rule-replay","manifest-entry.realtime-alerts.03-always-on-lifecycle","manifest-entry.realtime-alerts.04-incident-retrieval","manifest-entry.realtime-alerts.05-websocket-delivery","manifest-entry.realtime-alerts.06-natural-language-alert-management","manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking","manifest-entry.rt-cv-2d.01-warehouse-and-smart-city-rt-detr-gdino","manifest-entry.rt-cv-2d.02-radio-clip","manifest-entry.rt-cv-2d.03-siglip2-re-identification","manifest-entry.rt-cv-2d.04-on-demand-image-embedding","manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle","manifest-entry.rt-cv-2d.06-health-and-metrics","manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning","manifest-entry.rt-cv-3d-mv3dt.00-per-camera-rt-detr","manifest-entry.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion","manifest-entry.rt-cv-3d-mv3dt.02-bodypose3dnet","manifest-entry.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking","manifest-entry.rt-cv-3d-mv3dt.04-compose-deployment","manifest-entry.rt-cv-3d-mv3dt.05-associated-skill","manifest-entry.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking","manifest-entry.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics","manifest-entry.rt-embed.00-video-image-text-embedding","manifest-entry.rt-embed.01-live-rtsp","manifest-entry.rt-embed.02-url-and-inline-base64-video","manifest-entry.rt-embed.03-cosmos-embed1","manifest-entry.rt-embed.04-kafka-redis-opentelemetry","manifest-entry.rt-embed.05-original-and-cv-compatible-stream-apis","manifest-entry.rt-embed.06-health-metadata-models-metrics","manifest-entry.rt-vlm-api.00-openai-compatible-chat-completions","manifest-entry.rt-vlm-api.01-text-only-chat","manifest-entry.rt-vlm-api.02-multimodal-multi-turn-chat","manifest-entry.rt-vlm-api.03-token-sse","manifest-entry.rt-vlm-api.04-original-stream-api","manifest-entry.rt-vlm-api.05-cv-compatible-stream-api","manifest-entry.rt-vlm-api.06-file-api","manifest-entry.rt-vlm-api.07-health-metadata-models-metrics","manifest-entry.rt-vlm-media.00-file-upload","manifest-entry.rt-vlm-media.01-http-s","manifest-entry.rt-vlm-media.02-s3","manifest-entry.rt-vlm-media.03-allowlisted-file-uri","manifest-entry.rt-vlm-media.04-inline-data-uri","manifest-entry.rt-vlm-media.05-rtsp","manifest-entry.rt-vlm-media.06-dense-captions","manifest-entry.rt-vlm-media.07-incidents","manifest-entry.rt-vlm-media.08-categories","manifest-entry.rt-vlm-media.09-reasoning","manifest-entry.rt-vlm-media.10-audio-transcript","manifest-entry.rt-vlm-models.00-cosmos-reason-1-2","manifest-entry.rt-vlm-models.01-cosmos-3-nano-super","manifest-entry.rt-vlm-models.02-nemotron-omni","manifest-entry.rt-vlm-models.03-qwen-3-5-and-moe","manifest-entry.rt-vlm-models.04-remote-openai-compatible-endpoint","manifest-entry.rt-vlm-performance-observability.00-efficient-video-sampling","manifest-entry.rt-vlm-performance-observability.01-gop-aware-decode","manifest-entry.rt-vlm-performance-observability.02-decoder-reuse","manifest-entry.rt-vlm-performance-observability.03-vllm-tuning","manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry","manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication","manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry","manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata","manifest-entry.search-scale.00-configuration-up-to-100-streams","manifest-entry.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia","manifest-entry.semantic-search.00-natural-language-action-event-search","manifest-entry.semantic-search.01-cv-attribute-search","manifest-entry.semantic-search.02-multi-embedding-fusion","manifest-entry.semantic-search.03-search-by-image","manifest-entry.semantic-search.04-follow-up-q-a","manifest-entry.semantic-search.05-query-time-source-count-refinement","manifest-entry.semantic-search.06-default-critic-vlm","manifest-entry.semantic-search.07-file-and-rtsp-archive-management","manifest-entry.smart-city.00-traffic-rt-detr","manifest-entry.smart-city.01-traffic-behavior-analytics","manifest-entry.smart-city.02-geo-map-matching","manifest-entry.smart-city.03-calibration-toolkit-import","manifest-entry.smart-city.04-its-analytics-api-ui","manifest-entry.smart-city.05-smart-city-reports-and-va-mcp","manifest-entry.smart-city.06-kibana-dashboard","manifest-entry.smart-city.07-ten-sensor-sample-profile","manifest-entry.video-analytics-api.00-speed-flow-travel-time-occupancy-space-metrics","manifest-entry.video-analytics-api.01-objects-and-locations","manifest-entry.video-analytics-api.02-frames-bev-alerts-proximity","manifest-entry.video-analytics-api.03-behaviors-incidents-clustering","manifest-entry.video-analytics-api.04-tripwire-roi-amr-events","manifest-entry.video-analytics-api.05-dynamic-config-and-audit","manifest-entry.video-analytics-api.06-calibration-road-network-usd-images","manifest-entry.video-analytics-api.07-sensor-lookup","manifest-entry.video-summarization-file.00-chunked-dense-captions","manifest-entry.video-summarization-file.01-file-summarization","manifest-entry.video-summarization-file.02-multi-video-report","manifest-entry.video-summarization-file.03-structured-output","manifest-entry.video-summarization-file.04-object-event-scenario-focus","manifest-entry.video-summarization-file.05-reasoning","manifest-entry.video-summarization-file.06-partial-video-offsets","manifest-entry.video-summarization-file.07-recommended-configuration","manifest-entry.video-summarization-file.08-prometheus-metrics","manifest-entry.video-summarization-live.00-live-captions","manifest-entry.video-summarization-live.01-live-stream-summaries","manifest-entry.video-summarization-live.02-stream-reports","manifest-entry.video-summarization-live.03-caption-backed-q-a","manifest-entry.video-summarization-live.04-elasticsearch-caption-storage","manifest-entry.video-summarization-live.05-sse-mcp-server","manifest-entry.vios-codecs-audio.00-b-frame-handling","manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798","manifest-entry.vios-codecs-audio.02-h-264-h-265","manifest-entry.vios-codecs-audio.03-audio-recording","manifest-entry.vios-codecs-audio.04-audio-rtsp-republish","manifest-entry.vios-core.00-camera-discovery-and-sensor-management","manifest-entry.vios-core.01-file-upload-and-registration","manifest-entry.vios-core.02-file-to-rtsp-republish","manifest-entry.vios-core.03-recording-schedules-and-timelines","manifest-entry.vios-core.04-clip-and-raw-full-file-download","manifest-entry.vios-core.05-snapshots","manifest-entry.vios-core.06-live-replay-webrtc","manifest-entry.vios-core.07-rtsp-proxy-and-stream-bridge","manifest-entry.vios-core.08-qos-and-storage-caps","manifest-entry.vios-ui.00-vios-dashboard","manifest-entry.vios-ui.01-sensor-and-stream-management","manifest-entry.vios-ui.02-recording-schedules","manifest-entry.vios-ui.03-media-management-upload","manifest-entry.vios-ui.04-live-replay-video-wall","manifest-entry.vios-ui.05-qos-system-stream-stats","manifest-entry.vios-ui.06-debug-and-playback-automation","manifest-entry.warehouse-2d.00-single-camera-2d-warehouse","manifest-entry.warehouse-2d.01-kafka-and-redis-paths","manifest-entry.warehouse-2d.02-ppe-load-quality-spillover-pathway-rules","manifest-entry.warehouse-2d.03-dynamic-analytics-configuration","manifest-entry.warehouse-2d.04-api-ui-dashboard","manifest-entry.warehouse-2d.05-playback","manifest-entry.warehouse-3d-and-mv3dt.00-sparse4d-3d-warehouse","manifest-entry.warehouse-3d-and-mv3dt.01-mv3dt-multiview-warehouse","manifest-entry.warehouse-3d-and-mv3dt.02-bev-fusion","manifest-entry.warehouse-3d-and-mv3dt.03-auto-calibration-variants","manifest-entry.warehouse-3d-and-mv3dt.04-top-view-visualization"]},
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "projected_oracles": {
+      "type": "array",
+      "minItems": 500,
+      "maxItems": 500,
+      "items": {
+        "oneOf": [
+          {"$ref": "#/$defs/preservedLiveOracle"},
+          {"$ref": "#/$defs/candidateSuccessorOracle"}
+        ]
+      }
+    },
+    "projected_oracle_records_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "successor_payload_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "plainId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+    "sourceLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^deploy/docker/thor-local/"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "preservedLiveOracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "oracle_id",
+        "profile",
+        "mode",
+        "ledger_binding",
+        "reviewed_scenario_ids",
+        "fixture",
+        "expected_observations",
+        "assertions",
+        "admission_prerequisites",
+        "execution_bounds",
+        "cleanup",
+        "acceptance_readiness",
+        "current_state",
+        "evidence"
+      ],
+      "properties": {
+        "capability_id": {"$ref": "#/$defs/plainId"},
+        "oracle_id": {"$ref": "#/$defs/plainId"},
+        "profile": {"$ref": "#/$defs/plainId"},
+        "mode": {"enum": ["static", "config", "runtime", "api", "protocol", "model", "deploy"]},
+        "protocol_case_binding": {"type": "object"},
+        "planning_executor_bindings": {"type": "array", "minItems": 1},
+        "offline_tool_observation_bindings": {"type": "array", "minItems": 1, "maxItems": 1},
+        "ledger_binding": {"type": "object", "minProperties": 9},
+        "reviewed_scenario_ids": {"type": "array", "minItems": 2, "uniqueItems": true},
+        "fixture": {"type": "object"},
+        "expected_observations": {"type": "array", "minItems": 3},
+        "assertions": {"type": "array", "minItems": 2},
+        "admission_prerequisites": {"type": "array", "minItems": 3},
+        "execution_bounds": {"type": "object"},
+        "cleanup": {"type": "object"},
+        "acceptance_readiness": {"type": "object"},
+        "current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
+        "evidence": {"const": []},
+        "successor_schema_version": false
+      }
+    },
+    "sourceClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "locator"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^(required-observation|adjacent-negative)-[0-9]{2}$"},
+        "description": {"type": "string", "minLength": 4}
+      }
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "observation_id", "operator", "expected"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^assertion\\.(required-observation|adjacent-negative)-[0-9]{2}$"},
+        "observation_id": {"type": "string", "pattern": "^(required-observation|adjacent-negative)-[0-9]{2}$"},
+        "operator": {"enum": ["recorded_pass", "recorded_absent"]},
+        "expected": {"const": true}
+      }
+    },
+    "candidateContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_pointer",
+        "advertised_literal",
+        "implementation_surfaces",
+        "required_semantics",
+        "dependency_capability_ids",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "advertised_literal": {"type": "string", "minLength": 1},
+        "implementation_surfaces": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "required_semantics": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "dependency_capability_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "candidateLedgerBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["feature_id", "kind", "title", "source_claims", "acceptance_class", "thor_state", "runtime_state", "contract", "gap"],
+      "properties": {
+        "feature_id": {"$ref": "#/$defs/plainId"},
+        "kind": {"enum": ["api", "calibration", "configuration", "deployment", "evaluation", "model", "model_customization", "performance", "protocol", "runtime_behavior", "security", "tooling"]},
+        "title": {"type": "string", "minLength": 1},
+        "source_claims": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceClaim"}},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "thor_state": {"enum": ["wired", "partial"]},
+        "runtime_state": {"enum": ["not_qualified", "not_applicable"]},
+        "contract": {"$ref": "#/$defs/candidateContract"},
+        "gap": {"type": "string", "minLength": 24}
+      }
+    },
+    "gapRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cleanup_policy", "executor_class", "id", "literal_success_condition", "required_evidence", "runtime_evidence", "setup_requirements", "status", "type"],
+      "properties": {
+        "cleanup_policy": {"type": "string", "minLength": 1},
+        "executor_class": {"type": "string", "minLength": 1},
+        "id": {"type": "string", "minLength": 1},
+        "literal_success_condition": {"type": "string", "minLength": 1},
+        "required_evidence": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "runtime_evidence": {"const": []},
+        "setup_requirements": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "status": {"const": "open_unexecuted"},
+        "type": {"type": "string", "minLength": 1}
+      }
+    },
+    "candidateOraclePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_strategy", "required_observations", "adjacent_negative", "execution_boundary", "cleanup_boundary"],
+      "properties": {
+        "fixture_strategy": {"type": "string", "minLength": 12},
+        "required_observations": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+        "adjacent_negative": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+        "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+        "cleanup_boundary": {"type": "string", "minLength": 12},
+        "authoritative_gap_requirement": {"$ref": "#/$defs/gapRequirement"}
+      }
+    },
+    "fixtureInputContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "manifest_pointer", "advertised_literal", "dependency_capability_ids", "implementation_surfaces", "required_semantics", "source_claims"],
+      "properties": {
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "advertised_literal": {"type": "string", "minLength": 1},
+        "dependency_capability_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "implementation_surfaces": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "required_semantics": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "source_claims": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceClaim"}}
+      }
+    },
+    "protocolSourceHash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "candidateProtocolBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "case_id", "case_payload_sha256", "binding_sha256", "transport_components", "boundary", "readiness", "activation_supported", "vector_projection", "source_hashes"],
+      "properties": {
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "case_id": {"type": "string", "pattern": "^protocol-v2-case\\."},
+        "case_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "binding_sha256": {"$ref": "#/$defs/sha256"},
+        "transport_components": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"}},
+        "boundary": {"enum": ["local", "alternate_local", "external"]},
+        "readiness": {"const": "planning_only"},
+        "activation_supported": {"const": false},
+        "vector_projection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "contract"],
+          "properties": {
+            "kind": {"const": "planning_only"},
+            "contract": {"$ref": "#/$defs/candidateOraclePlan"}
+          }
+        },
+        "source_hashes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/protocolSourceHash"}}
+      }
+    },
+    "operationUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "covers", "transport", "activation", "mutation", "max_requests", "phase", "request_shape", "required_observations", "adjacent_negative", "cleanup"],
+      "properties": {
+        "unit_id": {"type": "string", "pattern": "^[a-z0-9_-]+$"},
+        "covers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "transport": {"enum": ["http_or_ui_api", "mcp", "external_http"]},
+        "activation": {"enum": ["candidate_owned_local", "external_non_activating"]},
+        "mutation": {"type": "boolean"},
+        "max_requests": {"type": "integer", "minimum": 0, "maximum": 8},
+        "phase": {"const": "operation_exercise"},
+        "request_shape": {"type": "string", "minLength": 20},
+        "required_observations": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+        "adjacent_negative": {"type": "string", "minLength": 20},
+        "cleanup": {"type": "string", "minLength": 12}
+      }
+    },
+    "requestPerUnit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit_id", "max_requests"],
+      "properties": {"unit_id": {"type": "string"}, "max_requests": {"type": "integer", "minimum": 0, "maximum": 8}}
+    },
+    "deploymentAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "action_id", "action", "mode", "max_attempts", "max_requests"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1},
+        "action_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+        "action": {"type": "string", "minLength": 8},
+        "mode": {"enum": ["planning_only", "static_non_activating"]},
+        "max_attempts": {"type": "integer", "minimum": 0, "maximum": 1},
+        "max_requests": {"type": "integer", "minimum": 0, "maximum": 4}
+      }
+    },
+    "requestPerAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action_id", "max_requests"],
+      "properties": {"action_id": {"type": "string"}, "max_requests": {"type": "integer", "minimum": 0, "maximum": 4}}
+    },
+    "candidateWorkload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_pointer", "candidate_id", "advertised", "acceptance_class", "workload_type", "activation", "source_surfaces", "calculated_max_requests", "max_actions"],
+      "properties": {
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "candidate_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "advertised": {"type": "string", "minLength": 1},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "workload_type": {"enum": ["api", "deployment"]},
+        "activation": {"enum": ["candidate_owned_local", "planning_only_local", "external_non_activating"]},
+        "source_surfaces": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "calculated_max_requests": {"type": "integer", "minimum": 0, "maximum": 128},
+        "max_actions": {"type": "integer", "minimum": 0, "maximum": 64},
+        "unit_count": {"type": "integer", "minimum": 1},
+        "phases": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string"}},
+        "literal_facets": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "operation_units": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/operationUnit"}},
+        "requests_per_unit": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/requestPerUnit"}},
+        "overhead_requests": {"type": "integer", "minimum": 0},
+        "total_request_budget": {"type": "integer", "minimum": 0},
+        "preconditions": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/deploymentAction"}},
+        "readiness_observations": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+        "adjacent_negative": {"type": "string", "minLength": 12},
+        "cleanup": {"type": "string", "minLength": 12},
+        "requests_per_action": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/requestPerAction"}}
+      }
+    },
+    "candidateSuccessorOracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "successor_schema_version",
+        "origin",
+        "capability_id",
+        "oracle_id",
+        "profile_seed",
+        "mode_seed",
+        "profile",
+        "mode",
+        "candidate_entry_sha256",
+        "manifest_pointer",
+        "feature_id",
+        "advertised",
+        "prior_mapping_class",
+        "acceptance_class",
+        "execution_boundary",
+        "source_claims",
+        "implementation_surfaces",
+        "ledger_binding",
+        "reviewed_scenario_ids",
+        "candidate_oracle_plan",
+        "fixture",
+        "expected_observations",
+        "adjacent_negative_observations",
+        "assertions",
+        "admission_gates",
+        "cleanup",
+        "execution_bounds",
+        "readiness",
+        "current_state",
+        "runtime_state",
+        "evidence",
+        "can_promote_runtime_state",
+        "protocol_v2_binding",
+        "workload_binding",
+        "binding_integrity",
+        "successor_row_payload_sha256"
+      ],
+      "properties": {
+        "successor_schema_version": {"const": 1},
+        "origin": {"const": "candidate_successor_planning_only"},
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\.[a-z0-9.-]+$"},
+        "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\."},
+        "profile_seed": {"$ref": "#/$defs/plainId"},
+        "mode_seed": {"enum": ["static", "config", "runtime", "api", "protocol", "model", "deploy"]},
+        "profile": {"$ref": "#/$defs/plainId"},
+        "mode": {"enum": ["static", "config", "runtime", "api", "protocol", "model", "deploy"]},
+        "candidate_entry_sha256": {"$ref": "#/$defs/sha256"},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "feature_id": {"$ref": "#/$defs/plainId"},
+        "advertised": {"type": "string", "minLength": 1},
+        "prior_mapping_class": {"enum": ["explicit_missing_entry_gap", "family_only_unreviewed"]},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+        "source_claims": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceClaim"}},
+        "implementation_surfaces": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "ledger_binding": {"$ref": "#/$defs/candidateLedgerBinding"},
+        "reviewed_scenario_ids": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "candidate_oracle_plan": {"$ref": "#/$defs/candidateOraclePlan"},
+        "fixture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "kind", "availability", "strategy", "namespace", "materialization", "input_contract"],
+          "properties": {
+            "id": {"type": "string", "pattern": "^fixture\\.manifest-entry\\."},
+            "kind": {"const": "candidate_generated_bounded"},
+            "availability": {"const": "not_staged"},
+            "strategy": {"type": "string", "minLength": 12},
+            "namespace": {"type": "string", "pattern": "^vss-candidate-[0-9a-f]{20}$"},
+            "materialization": {"type": "null"},
+            "input_contract": {"$ref": "#/$defs/fixtureInputContract"}
+          }
+        },
+        "expected_observations": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/observation"}},
+        "adjacent_negative_observations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/observation"}},
+        "assertions": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/assertion"}},
+        "admission_gates": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "requirement", "status"],
+            "properties": {
+              "id": {"$ref": "#/$defs/plainId"},
+              "requirement": {"type": "string", "minLength": 12},
+              "status": {"enum": ["satisfied_static", "unmet"]}
+            }
+          }
+        },
+        "cleanup": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["intent", "ownership_boundary", "pre_state_required", "targets", "allowlist", "executor", "postcondition_collectors"],
+          "properties": {
+            "intent": {"type": "string", "minLength": 12},
+            "ownership_boundary": {"const": "candidate_owned_resources_only"},
+            "pre_state_required": {"const": true},
+            "targets": {"type": "null"},
+            "allowlist": {"type": "null"},
+            "executor": {"type": "null"},
+            "postcondition_collectors": {"type": "null"}
+          }
+        },
+        "execution_bounds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["acceptance_class", "execution_boundary", "namespace", "network_scope", "max_duration_seconds", "max_requests", "max_actions", "executor", "collectors"],
+          "properties": {
+            "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+            "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+            "namespace": {"type": "string", "pattern": "^vss-candidate-[0-9a-f]{20}$"},
+            "network_scope": {"enum": ["loopback_or_compose_internal", "operator_selected_local_alternate", "operator_approved_external_only"]},
+            "max_duration_seconds": {"type": "null"},
+            "max_requests": {"type": "null"},
+            "max_actions": {"type": "null"},
+            "executor": {"type": "null"},
+            "collectors": {"type": "null"}
+          }
+        },
+        "readiness": {
+          "const": {
+            "blockers": ["fixture_not_materialized", "executor_not_implemented", "collectors_not_implemented", "operator_approval_absent"],
+            "classification": "planning_index_only",
+            "executor_ready": false,
+            "fixture_materialized": false
+          }
+        },
+        "current_state": {"enum": ["open_unexecuted", "external_boundary_unexecuted"]},
+        "runtime_state": {"enum": ["not_qualified", "not_applicable"]},
+        "evidence": {"const": []},
+        "can_promote_runtime_state": {"const": false},
+        "protocol_v2_binding": {"oneOf": [{"$ref": "#/$defs/candidateProtocolBinding"}, {"type": "null"}]},
+        "workload_binding": {"oneOf": [{"$ref": "#/$defs/candidateWorkload"}, {"type": "null"}]},
+        "binding_integrity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["adapter_record_canonical_sha256", "protocol_v2_binding_canonical_sha256", "workload_binding_canonical_sha256"],
+          "properties": {
+            "adapter_record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+            "protocol_v2_binding_canonical_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+            "workload_binding_canonical_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}
+          }
+        },
+        "successor_row_payload_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["prior_mapping_class"],
+            "properties": {"prior_mapping_class": {"const": "explicit_missing_entry_gap"}}
+          },
+          "then": {
+            "properties": {"candidate_oracle_plan": {"required": ["authoritative_gap_requirement"]}}
+          },
+          "else": {
+            "properties": {"candidate_oracle_plan": {"not": {"required": ["authoritative_gap_requirement"]}}}
+          }
+        },
+        {
+          "if": {
+            "required": ["ledger_binding"],
+            "properties": {
+              "ledger_binding": {
+                "required": ["kind"],
+                "properties": {"kind": {"const": "protocol"}}
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "protocol_v2_binding": {"$ref": "#/$defs/candidateProtocolBinding"},
+              "workload_binding": {"type": "null"},
+              "binding_integrity": {
+                "properties": {
+                  "protocol_v2_binding_canonical_sha256": {"$ref": "#/$defs/sha256"},
+                  "workload_binding_canonical_sha256": {"type": "null"}
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "protocol_v2_binding": {"type": "null"},
+              "binding_integrity": {
+                "properties": {"protocol_v2_binding_canonical_sha256": {"type": "null"}}
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["ledger_binding"],
+            "properties": {
+              "ledger_binding": {
+                "required": ["kind"],
+                "properties": {"kind": {"enum": ["api", "deployment"]}}
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "workload_binding": {"$ref": "#/$defs/candidateWorkload"},
+              "binding_integrity": {
+                "properties": {"workload_binding_canonical_sha256": {"$ref": "#/$defs/sha256"}}
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "workload_binding": {"type": "null"},
+              "binding_integrity": {
+                "properties": {"workload_binding_canonical_sha256": {"type": "null"}}
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["ledger_binding"],
+            "properties": {"ledger_binding": {"properties": {"kind": {"const": "api"}}}}
+          },
+          "then": {"properties": {"workload_binding": {"properties": {"workload_type": {"const": "api"}}}}}
+        },
+        {
+          "if": {
+            "required": ["ledger_binding"],
+            "properties": {"ledger_binding": {"properties": {"kind": {"const": "deployment"}}}}
+          },
+          "then": {"properties": {"workload_binding": {"properties": {"workload_type": {"const": "deployment"}}}}}
+        }
+      ]
+    }
+  }
+}

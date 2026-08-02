@@ -12,16 +12,18 @@ bash deploy/docker/test-scripts/test-thor-static-parity-milestone.sh
 ```
 
 It validates the doctor contract, parity ledgers, all 500 advertised-entry
-bindings, the explicit 87-entry semantic gap plan, eight source-locked literal
-entry candidates, the authoritative four-binding ambiguity audit, bounded
-static executor tranches, the inert host/model admission plans, official
-RT-VLM and Agent model inventories, and the official Edge contract. It performs
-no deployment, container lifecycle operation, image pull/build, artifact
-download, or live HTTP probe.
+bindings, the exact 211-entry candidate set, isolated 500-row oracle and ledger
+successors, the authoritative four-binding ambiguity audit, bounded static
+executor tranches, the inert host/model admission plans, official RT-VLM and
+Agent model inventories, and the official Edge contract. It performs no
+deployment, container lifecycle operation, image pull/build, artifact download,
+or live HTTP probe.
 
-The static successor chain currently materializes 26 of 110 planning
-requirements while keeping all 276 full capability oracles planning-only and
-all runtime-evidence collections empty.
+The live parity ledger remains at 289 capabilities. The isolated successor
+projection proves one exact same-family capability and planning-oracle binding
+for each of the 500 advertised literals, but it is not a live merge or runtime
+qualification: nine family aggregates and eight acceptance-coverage records
+remain explicit blockers, and every candidate evidence collection is empty.
 
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 

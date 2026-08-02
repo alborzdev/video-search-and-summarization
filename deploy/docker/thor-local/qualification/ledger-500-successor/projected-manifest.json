@@ -1,0 +1,2398 @@
+{
+  "audit_date": "2026-07-31",
+  "features": [
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "short-video retrieval",
+        "visual question answering",
+        "VLM report generation",
+        "templated reports",
+        "large-file chunked upload",
+        "local/shared/remote model layouts",
+        "public media URL rewriting",
+        "Agent configuration file and LLM schema",
+        "Agent MCP client transport and include contract",
+        "Agent custom functions and MCP extension points",
+        "Agent pluggable knowledge-retrieval backends",
+        "Agent top-level and report sub-agent hierarchy",
+        "Base, LVS, and search report-generation profile contracts",
+        "Agent report output and persistence contract",
+        "Agent audio, restart, timestamp, and empty-chart known issues",
+        "Agent production and direct developer operating modes",
+        "Base chat, follow-up, and report workflow",
+        "Base report HITL command state machine"
+      ],
+      "category": "workflow",
+      "gap": "The 3.2.1 agent and production UI images are staged; repeat upload, Q&A, report, URL, restart, and deletion tests on the current runtime. Wave 2 also requires field-level Agent configuration, MCP resolution, profile-specific report persistence, hierarchy, known-issue, and semantic report oracles before current-runtime qualification. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "base-agent-workflow",
+      "official_capability_ids": [
+        "configuration.agent.file-llm-schema",
+        "configuration.agent.mcp-client",
+        "configuration.agent.extension-points",
+        "configuration.agent.knowledge-retrieval-backends",
+        "configuration.agent.hierarchy",
+        "runtime.agent.report-profile-contracts",
+        "runtime.agent.report-artifacts",
+        "behavior.agent.known-issues",
+        "runtime.agent.operational-modes",
+        "runtime.workflow.base-chat-report",
+        "runtime.agent.base-hitl",
+        "manifest-entry.base-agent-workflow.00-short-video-retrieval",
+        "manifest-entry.base-agent-workflow.01-visual-question-answering",
+        "manifest-entry.base-agent-workflow.02-vlm-report-generation",
+        "manifest-entry.base-agent-workflow.03-templated-reports",
+        "manifest-entry.base-agent-workflow.04-large-file-chunked-upload",
+        "manifest-entry.base-agent-workflow.05-local-shared-remote-model-layouts",
+        "manifest-entry.base-agent-workflow.06-public-media-url-rewriting"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/agent",
+        "deploy/docker/developer-profiles/dev-profile-base"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+        "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "chunked dense captions",
+        "file summarization",
+        "multi-video report",
+        "structured output",
+        "object/event/scenario focus",
+        "reasoning",
+        "partial-video offsets",
+        "recommended configuration",
+        "Prometheus metrics",
+        "LVS Agent profile tool and media contract",
+        "LVS request serialization",
+        "LVS supported video formats"
+      ],
+      "category": "workflow",
+      "gap": "The 3.2.1 local derivative now includes upstream main's strict Purpose enum and a 422 semantic probe; its exact-patch tests and networkless ARM64 build pass. Prove that semantic response, multi-video single-call routing, and every summarization/report request option on the current runtime. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "video-summarization-file",
+      "official_capability_ids": [
+        "runtime.agent.lvs-profile",
+        "runtime.lvs.single-request-queue",
+        "runtime.lvs.supported-formats",
+        "manifest-entry.video-summarization-file.00-chunked-dense-captions",
+        "manifest-entry.video-summarization-file.01-file-summarization",
+        "manifest-entry.video-summarization-file.02-multi-video-report",
+        "manifest-entry.video-summarization-file.03-structured-output",
+        "manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+        "manifest-entry.video-summarization-file.05-reasoning",
+        "manifest-entry.video-summarization-file.06-partial-video-offsets",
+        "manifest-entry.video-summarization-file.07-recommended-configuration",
+        "manifest-entry.video-summarization-file.08-prometheus-metrics"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/video-summarization",
+        "deploy/docker/developer-profiles/dev-profile-lvs"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/Dockerfile.video-summarization",
+        "deploy/docker/thor-local/patches/patch_lvs_files_purpose.py",
+        "deploy/docker/thor-local/qualification/tests/test_lvs_files_purpose_patch.py",
+        "deploy/docker/thor-local/qualification/runtime_inventory.json",
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-lvs-main-parity.md",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "live captions",
+        "live stream summaries",
+        "stream reports",
+        "caption-backed Q&A",
+        "Elasticsearch caption storage",
+        "SSE MCP server"
+      ],
+      "category": "workflow",
+      "gap": "All 18 LVS HTTP routes and 13 SSE MCP tools, including the four Thor-local file-management adapters, are statically qualified. MCP health tools probe real LVS readiness/liveness, but every tool and the separate dense-caption cache/embedding lanes still require runtime exercise.",
+      "id": "video-summarization-live",
+      "official_capability_ids": [
+        "manifest-entry.video-summarization-live.00-live-captions",
+        "manifest-entry.video-summarization-live.01-live-stream-summaries",
+        "manifest-entry.video-summarization-live.02-stream-reports",
+        "manifest-entry.video-summarization-live.03-caption-backed-q-a",
+        "manifest-entry.video-summarization-live.04-elasticsearch-caption-storage",
+        "manifest-entry.video-summarization-live.05-sse-mcp-server"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/video-summarization/src",
+        "services/video-summarization/src/lvs_mcp.py"
+      ],
+      "thor_evidence": [
+        "deploy/docker/services/video-summarization/compose.yml",
+        "deploy/docker/thor-local/Dockerfile.video-summarization",
+        "services/video-summarization/tests/test_lvs_mcp.py",
+        "deploy/docker/thor-local/qualification/expected/lvs.json",
+        "deploy/docker/thor-local/qualification/expected/lvs-mcp.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "natural-language action/event search",
+        "CV attribute search",
+        "multi-embedding fusion",
+        "search by image",
+        "follow-up Q&A",
+        "query/time/source/count refinement",
+        "default critic VLM",
+        "file and RTSP archive management",
+        "Search Agent route and ranking contract",
+        "Search upload Content-Type contract"
+      ],
+      "category": "workflow",
+      "gap": "The 3.2.1 RT-CV/RT-Embed images and Thor engines are staged; re-run text, attribute, fused, critic, follow-up, and image-search cases. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "semantic-search",
+      "official_capability_ids": [
+        "runtime.agent.search-profile",
+        "behavior.search-upload.content-type",
+        "manifest-entry.semantic-search.00-natural-language-action-event-search",
+        "manifest-entry.semantic-search.01-cv-attribute-search",
+        "manifest-entry.semantic-search.02-multi-embedding-fusion",
+        "manifest-entry.semantic-search.03-search-by-image",
+        "manifest-entry.semantic-search.04-follow-up-q-a",
+        "manifest-entry.semantic-search.05-query-time-source-count-refinement",
+        "manifest-entry.semantic-search.06-default-critic-vlm",
+        "manifest-entry.semantic-search.07-file-and-rtsp-archive-management"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-search",
+        "services/ui"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+        "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "configuration up to 100 streams",
+        "16 concurrent 1080p streams tested by NVIDIA"
+      ],
+      "category": "scale",
+      "gap": "Thor's qualified envelope is one conservative stream and two supervised demo streams; upstream scale figures are not Thor claims.",
+      "id": "search-scale",
+      "official_capability_ids": [
+        "manifest-entry.search-scale.00-configuration-up-to-100-streams",
+        "manifest-entry.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-search"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/README.md"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "CV perception to behavior analytics to VLM verification",
+        "post-alert verification",
+        "contextualization",
+        "multi-category classification",
+        "on-demand verification",
+        "custom VLM parsing",
+        "non-blocking multithreaded execution",
+        "Candidate-alert verification workflow",
+        "Alert verification workflow modes",
+        "Alert structured output and persistence"
+      ],
+      "category": "workflow",
+      "gap": "The current alert derivative, snapshot verification, direct-media path, and enrichment path are selected; prove every checked-in Alert OpenAPI operation and both optional processing modes. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "alert-verification",
+      "official_capability_ids": [
+        "runtime.workflow.alert-verification",
+        "runtime.alerts.workflow-modes",
+        "runtime.alerts.persistence-output",
+        "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+        "manifest-entry.alert-verification.01-post-alert-verification",
+        "manifest-entry.alert-verification.02-contextualization",
+        "manifest-entry.alert-verification.03-multi-category-classification",
+        "manifest-entry.alert-verification.04-on-demand-verification",
+        "manifest-entry.alert-verification.05-custom-vlm-parsing",
+        "manifest-entry.alert-verification.06-non-blocking-multithreaded-execution"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/alert",
+        "deploy/docker/developer-profiles/dev-profile-alerts"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+        "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "live-stream VLM rules",
+        "rule CRUD",
+        "rule replay",
+        "always-on lifecycle",
+        "incident retrieval",
+        "WebSocket delivery",
+        "natural-language alert management",
+        "Natural-language real-time alert workflow"
+      ],
+      "category": "workflow",
+      "gap": "Realtime rules, persistence/replay, always-on lifecycle, and WebSocket broadcast are selected; exercise them with bounded local rules and verify restart recovery. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "realtime-alerts",
+      "official_capability_ids": [
+        "runtime.workflow.real-time-alerts",
+        "manifest-entry.realtime-alerts.00-live-stream-vlm-rules",
+        "manifest-entry.realtime-alerts.01-rule-crud",
+        "manifest-entry.realtime-alerts.02-rule-replay",
+        "manifest-entry.realtime-alerts.03-always-on-lifecycle",
+        "manifest-entry.realtime-alerts.04-incident-retrieval",
+        "manifest-entry.realtime-alerts.05-websocket-delivery",
+        "manifest-entry.realtime-alerts.06-natural-language-alert-management"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/alert/openapi.json",
+        "services/alert/realtime"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vlm-as-verifier/configs/realtime-config.yml",
+        "deploy/docker/scripts/thor-local.sh",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "wired"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "Slack notification"
+      ],
+      "boundary_reason": "VSS ships the notification integration but cannot provide or locally emulate the third-party Slack service.",
+      "category": "integration",
+      "external_dependency": "A user-managed Slack workspace, app, token, and destination channel.",
+      "gap": "Optional Slack delivery remains available when the user supplies a Slack workspace and credentials; it is outside local Thor inference acceptance.",
+      "id": "alert-notifications-slack",
+      "official_capability_ids": [
+        "manifest-entry.alert-notifications-slack.00-slack-notification"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "services/alert"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"
+      ],
+      "thor_state": "external_optional"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "file upload",
+        "HTTP/S",
+        "S3",
+        "allowlisted file URI",
+        "inline data URI",
+        "RTSP",
+        "dense captions",
+        "incidents",
+        "categories",
+        "reasoning",
+        "audio transcript"
+      ],
+      "category": "service",
+      "gap": "The local OpenAI-compatible image path and opt-in native-audio Omni source lane are wired. Stage the Omni assets and exercise every file/URL/data/RTSP media variant, dense captions, incidents/categories/reasoning, and audio at runtime.",
+      "id": "rt-vlm-media",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-media.00-file-upload",
+        "manifest-entry.rt-vlm-media.01-http-s",
+        "manifest-entry.rt-vlm-media.02-s3",
+        "manifest-entry.rt-vlm-media.03-allowlisted-file-uri",
+        "manifest-entry.rt-vlm-media.04-inline-data-uri",
+        "manifest-entry.rt-vlm-media.05-rtsp",
+        "manifest-entry.rt-vlm-media.06-dense-captions",
+        "manifest-entry.rt-vlm-media.07-incidents",
+        "manifest-entry.rt-vlm-media.08-categories",
+        "manifest-entry.rt-vlm-media.09-reasoning",
+        "manifest-entry.rt-vlm-media.10-audio-transcript"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-vlm/src",
+        "services/rtvi/rt-vlm/README.md"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/compose.yml",
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/thor-local/audio/omni.compose.yml",
+        "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json",
+        "deploy/docker/thor-local/qualification/acceptance_executor.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "OpenAI-compatible chat/completions",
+        "text-only chat",
+        "multimodal multi-turn chat",
+        "token SSE",
+        "original stream API",
+        "CV-compatible stream API",
+        "file API",
+        "health/metadata/models/metrics"
+      ],
+      "category": "api",
+      "gap": "Export live OpenAPI/route metadata and exercise every operation through the supported local ingress or a documented loopback-only service port.",
+      "id": "rt-vlm-api",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-api.00-openai-compatible-chat-completions",
+        "manifest-entry.rt-vlm-api.01-text-only-chat",
+        "manifest-entry.rt-vlm-api.02-multimodal-multi-turn-chat",
+        "manifest-entry.rt-vlm-api.03-token-sse",
+        "manifest-entry.rt-vlm-api.04-original-stream-api",
+        "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api",
+        "manifest-entry.rt-vlm-api.06-file-api",
+        "manifest-entry.rt-vlm-api.07-health-metadata-models-metrics"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-vlm/src"
+      ],
+      "thor_evidence": [
+        "deploy/docker/services/rtvi/rtvi-vlm/rtvi-vlm-docker-compose.yml",
+        "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json",
+        "deploy/docker/thor-local/qualification/acceptance_executor.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md"
+      ],
+      "thor_state": "wired"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "Cosmos Reason 1/2",
+        "Cosmos 3 Nano/Super",
+        "Nemotron Omni",
+        "Qwen 3.5 and MoE",
+        "remote OpenAI-compatible endpoint"
+      ],
+      "category": "model",
+      "gap": "The exact 11-variant advertised matrix is source-anchored and keeps every missing exact artifact unqualified. Existing official CR2 8B/2B snapshots are byte/semantic locked, and the inactive CR2 plus Omni overlays keep model trees read-only with corrected memory admission. The 8B Hugging Face revision is not claimed equivalent to NGC hf-0303, 2B is non-advertised, and current memory blocks launch; runtime-qualify each staged lane and obtain/lock the remaining exact advertised artifacts before claiming full model parity.",
+      "id": "rt-vlm-models",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-models.00-cosmos-reason-1-2",
+        "manifest-entry.rt-vlm-models.01-cosmos-3-nano-super",
+        "manifest-entry.rt-vlm-models.02-nemotron-omni",
+        "manifest-entry.rt-vlm-models.03-qwen-3-5-and-moe",
+        "manifest-entry.rt-vlm-models.04-remote-openai-compatible-endpoint"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-vlm"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/thor-local/provision-local-models.sh",
+        "deploy/docker/thor-local/models/artifacts.lock.json",
+        "deploy/docker/thor-local/models/verify_artifacts.py",
+        "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+        "deploy/docker/thor-local/rt-vlm/artifacts.lock.json",
+        "deploy/docker/thor-local/rt-vlm/model_matrix.py",
+        "deploy/docker/thor-local/rt-vlm/cr2-bf16.compose.yml",
+        "deploy/docker/thor-local/rt-vlm/thor-cr2-bf16.sh",
+        "deploy/docker/thor-local/audio/omni.compose.yml",
+        "deploy/docker/thor-local/audio/omni_snapshot.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-model-matrix.md"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "efficient video sampling",
+        "GOP-aware decode",
+        "decoder reuse",
+        "vLLM tuning",
+        "asset limits and expiry",
+        "Kafka/Redis error publication",
+        "Prometheus and OpenTelemetry",
+        "absolute timestamp metadata"
+      ],
+      "category": "service",
+      "gap": "Timestamp prompt controls are pinned by the Thor contract; prove custom templates and model-gated absolute metadata at runtime.",
+      "id": "rt-vlm-performance-observability",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-performance-observability.00-efficient-video-sampling",
+        "manifest-entry.rt-vlm-performance-observability.01-gop-aware-decode",
+        "manifest-entry.rt-vlm-performance-observability.02-decoder-reuse",
+        "manifest-entry.rt-vlm-performance-observability.03-vllm-tuning",
+        "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry",
+        "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+        "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+        "manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-vlm/src"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/scripts/thor-local.sh"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "video/image/text embedding",
+        "live RTSP",
+        "URL and inline base64 video",
+        "Cosmos-Embed1",
+        "Kafka/Redis/OpenTelemetry",
+        "original and CV-compatible stream APIs",
+        "health/metadata/models/metrics",
+        "RT-Embed Cosmos-Embed1 448p base variant",
+        "RT-Embed Cosmos-Embed1 336p variant",
+        "RT-Embed Cosmos-Embed1 224p variant",
+        "RT-Embed Cosmos-Embed1 448p anomaly-detection variant",
+        "RT-Embed custom model-source and Triton repository paths"
+      ],
+      "category": "service",
+      "gap": "The 3.2.1 image, exact Cosmos revision/model tree, and Thor batch-8 Triton configs/engines pass semantic offline verification; exercise all media/API variants in the current runtime. Batch-64 files are integrity-locked but not runtime-qualified. Model-default claims remain scoped: 448p is the base-service default and 448p-anomaly is the search-workflow default. Exact identity, dimensions, custom model-source integration, and reindex semantics remain unqualified.",
+      "id": "rt-embed",
+      "official_capability_ids": [
+        "model.rt-embed.cosmos-embed1-448p",
+        "model.rt-embed.cosmos-embed1-336p",
+        "model.rt-embed.cosmos-embed1-224p",
+        "model.rt-embed.cosmos-embed1-448p-anomaly",
+        "configuration.rt-embed.model-source",
+        "manifest-entry.rt-embed.00-video-image-text-embedding",
+        "manifest-entry.rt-embed.01-live-rtsp",
+        "manifest-entry.rt-embed.02-url-and-inline-base64-video",
+        "manifest-entry.rt-embed.03-cosmos-embed1",
+        "manifest-entry.rt-embed.04-kafka-redis-opentelemetry",
+        "manifest-entry.rt-embed.05-original-and-cv-compatible-stream-apis",
+        "manifest-entry.rt-embed.06-health-metadata-models-metrics"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-embed"
+      ],
+      "thor_evidence": [
+        "deploy/docker/scripts/thor-local.sh",
+        "deploy/docker/services/rtvi/rtvi-embed",
+        "deploy/docker/thor-local/models/artifacts.lock.json",
+        "deploy/docker/thor-local/models/verify_artifacts.py",
+        "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json",
+        "deploy/docker/thor-local/qualification/acceptance_executor.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md",
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "file and stream detection/tracking",
+        "warehouse and Smart City RT-DETR/GDINO",
+        "RADIO-CLIP",
+        "SigLIP2 re-identification",
+        "on-demand image embedding",
+        "dynamic stream lifecycle",
+        "health and metrics",
+        "Thor VPI tracker tuning",
+        "RT-CV 2D and 3D model pipelines",
+        "RTVI input and codec boundary"
+      ],
+      "category": "service",
+      "gap": "The unified lane selects fusion 2D; Smart City detector behavior and the full RT-CV API still need separate proof. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "rt-cv-2d",
+      "official_capability_ids": [
+        "runtime.rt-cv.model-pipelines",
+        "runtime.rtvi.input-codec-boundary",
+        "manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking",
+        "manifest-entry.rt-cv-2d.01-warehouse-and-smart-city-rt-detr-gdino",
+        "manifest-entry.rt-cv-2d.02-radio-clip",
+        "manifest-entry.rt-cv-2d.03-siglip2-re-identification",
+        "manifest-entry.rt-cv-2d.04-on-demand-image-embedding",
+        "manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle",
+        "manifest-entry.rt-cv-2d.06-health-and-metrics",
+        "manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-cv"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml",
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "Sparse4D multi-camera 3D detection and tracking",
+        "shared RT-CV lifecycle/health/metrics"
+      ],
+      "category": "service",
+      "gap": "The sample-free launcher now enforces exact 19/31-service Redis graphs, private snapshots, pull-free startup, and strict four-camera/model/calibration contracts. Stage the missing Sparse4D v2.2 ONNX and (900,11) anchor plus aligned operator data, then run preflight and runtime qualification.",
+      "id": "rt-cv-3d-sparse4d",
+      "official_capability_ids": [
+        "manifest-entry.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking",
+        "manifest-entry.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"
+      ],
+      "thor_evidence": [
+        "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml",
+        "deploy/docker/scripts/thor-warehouse-sparse4d.sh",
+        "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+        "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py",
+        "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh",
+        "deploy/docker/thor-local/WAREHOUSE_SPARSE4D.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-sparse4d-launcher.md"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "per-camera RT-DETR",
+        "MV3DT BEV fusion",
+        "BodyPose3DNet",
+        "four-camera calibrated multiview tracking",
+        "Compose deployment",
+        "associated skill"
+      ],
+      "category": "service",
+      "gap": "The sample-free custom-data launcher enforces exact 20/28-service Redis graphs, private snapshots, pull-free startup, synchronized H.264/H.265 media, finite calibration/projection matrices, top-view metadata, and ONNX-only model inputs. Provide the missing matching videos/calibration/models, then run preflight and runtime qualification.",
+      "id": "rt-cv-3d-mv3dt",
+      "official_capability_ids": [
+        "manifest-entry.rt-cv-3d-mv3dt.00-per-camera-rt-detr",
+        "manifest-entry.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion",
+        "manifest-entry.rt-cv-3d-mv3dt.02-bodypose3dnet",
+        "manifest-entry.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking",
+        "manifest-entry.rt-cv-3d-mv3dt.04-compose-deployment",
+        "manifest-entry.rt-cv-3d-mv3dt.05-associated-skill"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app",
+        "services/rtvi/rt-cv"
+      ],
+      "thor_evidence": [
+        "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml",
+        "deploy/docker/scripts/thor-warehouse-mv3dt.sh",
+        "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+        "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py",
+        "deploy/docker/test-scripts/test-thor-warehouse-mv3dt.sh",
+        "deploy/docker/thor-local/WAREHOUSE_MV3DT.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-mv3dt-launcher.md"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "2D/3D/MV3DT/Smart City/warehouse/playback/fusion apps",
+        "events and incidents",
+        "trajectories and occupancy",
+        "tripwires and ROIs",
+        "proximity and clustering",
+        "Kafka/Redis/MQTT dynamic configuration and calibration",
+        "Behavior analytics processing pipeline",
+        "Behavior events and incidents",
+        "Behavior embedding downsampling",
+        "Behavior space utilization"
+      ],
+      "category": "analytics",
+      "gap": "Fusion and Thor candidate apps are selected; remaining app modes follow the unqualified industry lanes. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "behavior-analytics",
+      "official_capability_ids": [
+        "runtime.behavior.pipeline",
+        "runtime.behavior.events-incidents",
+        "runtime.behavior.embedding-downsampling",
+        "runtime.behavior.space-utilization",
+        "manifest-entry.behavior-analytics.00-2d-3d-mv3dt-smart-city-warehouse-playback-fusion-apps",
+        "manifest-entry.behavior-analytics.01-events-and-incidents",
+        "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
+        "manifest-entry.behavior-analytics.03-tripwires-and-rois",
+        "manifest-entry.behavior-analytics.04-proximity-and-clustering",
+        "manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/analytics/behavior-analytics"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "speed/flow/travel time/occupancy/space metrics",
+        "objects and locations",
+        "frames/BEV/alerts/proximity",
+        "behaviors/incidents/clustering",
+        "tripwire/ROI/AMR events",
+        "dynamic config and audit",
+        "calibration/road network/USD/images",
+        "sensor lookup",
+        "Video Analytics query and library contract",
+        "Video Analytics optional Kafka failure behavior"
+      ],
+      "category": "api",
+      "gap": "All 56 HTTP operations and seven VA-MCP tools pass the offline contract tier against NVIDIA's intentional 3.2.0 API image; exercise them against the running Thor service. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "video-analytics-api",
+      "official_capability_ids": [
+        "runtime.video-analytics.query-and-library-contract",
+        "behavior.video-analytics.optional-kafka",
+        "manifest-entry.video-analytics-api.00-speed-flow-travel-time-occupancy-space-metrics",
+        "manifest-entry.video-analytics-api.01-objects-and-locations",
+        "manifest-entry.video-analytics-api.02-frames-bev-alerts-proximity",
+        "manifest-entry.video-analytics-api.03-behaviors-incidents-clustering",
+        "manifest-entry.video-analytics-api.04-tripwire-roi-amr-events",
+        "manifest-entry.video-analytics-api.05-dynamic-config-and-audit",
+        "manifest-entry.video-analytics-api.06-calibration-road-network-usd-images",
+        "manifest-entry.video-analytics-api.07-sensor-lookup"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+      ],
+      "thor_evidence": [
+        "deploy/docker/services/analytics/video-analytics-api/compose.yml",
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "single and multi-camera calibration",
+        "file and RTSP through VIOS",
+        "camera pose/focal/lens distortion/rectification",
+        "VGGT frame selection",
+        "global ROI/tripwire",
+        "image-coordinate export",
+        "Auto Calibration six-step project workflow",
+        "Auto Calibration synchronized custom-video input contract",
+        "Auto Calibration alignment-data schema",
+        "Auto Calibration ground-truth evaluation schema",
+        "Auto Calibration unsupported Thor extension boundary",
+        "Auto Calibration documented runtime limitations",
+        "Auto Calibration failure and recovery semantics",
+        "AMC and VGGT result verification semantics"
+      ],
+      "category": "calibration",
+      "gap": "The warehouse-bundle-free lane has strict MP4/RTSP contracts, loopback-only Compose, GET-only coverage of all 26 skill-advertised operations, and the official 160,499,115-byte AMC fixture staged under an exact archive/content lock. The backend image is absent and unlocked, VGGT is absent (optional for base AMC but required for refinement), and no calibration job has run; stage the backend, qualify the official fixture or operator data, then separately qualify refinement if VGGT is provided. Official Auto Calibration remains x86_64/Ubuntu 24.04/driver 590 only; the Thor lane is a custom unsupported extension and must not claim official Thor support. The Warehouse sample is not required; qualify custom data. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "auto-calibration",
+      "official_capability_ids": [
+        "calibration.auto.workflow-six-step",
+        "calibration.auto.input-contract",
+        "calibration.auto.alignment-schema",
+        "calibration.auto.ground-truth-schema",
+        "boundary.auto-calibration.thor-extension",
+        "behavior.auto-calibration.known-limitations",
+        "behavior.auto-calibration.failure-recovery",
+        "behavior.auto-calibration.result-verification",
+        "manifest-entry.auto-calibration.00-single-and-multi-camera-calibration",
+        "manifest-entry.auto-calibration.01-file-and-rtsp-through-vios",
+        "manifest-entry.auto-calibration.02-camera-pose-focal-lens-distortion-rectification",
+        "manifest-entry.auto-calibration.03-vggt-frame-selection",
+        "manifest-entry.auto-calibration.04-global-roi-tripwire",
+        "manifest-entry.auto-calibration.05-image-coordinate-export"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/services/auto-calibration",
+        "skills/vss-generate-video-calibration"
+      ],
+      "thor_evidence": [
+        "deploy/docker/scripts/thor-auto-calibration.sh",
+        "deploy/docker/thor-local/auto-calibration/artifact-inventory.json",
+        "deploy/docker/thor-local/auto-calibration/compose.yml",
+        "deploy/docker/thor-local/auto-calibration/tool.py",
+        "deploy/docker/thor-local/auto-calibration/tests/test_tool.py",
+        "deploy/docker/test-scripts/test-thor-auto-calibration.sh",
+        "deploy/docker/test-scripts/test-auto-calibration-compose.sh",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-audit.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-thor-lane.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-auto-calibration-official-fixture.md",
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "camera discovery and sensor management",
+        "file upload and registration",
+        "file-to-RTSP republish",
+        "recording schedules and timelines",
+        "clip and raw/full-file download",
+        "snapshots",
+        "live/replay WebRTC",
+        "RTSP proxy and stream bridge",
+        "QoS and storage caps",
+        "VIOS modular capabilities",
+        "nvStreamer file-to-stream workflow"
+      ],
+      "category": "storage",
+      "gap": "All selected 3.2.1 VIOS images, including immutable networkless codec-repaired streamprocessor and NvStreamer derivatives, are staged and pass offline preflight; run the seven Swagger surfaces including raw download, pictures, QoS and recording on the current runtime. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "vios-core",
+      "official_capability_ids": [
+        "runtime.vios.modular-capabilities",
+        "runtime.nvstreamer.file-streaming",
+        "manifest-entry.vios-core.00-camera-discovery-and-sensor-management",
+        "manifest-entry.vios-core.01-file-upload-and-registration",
+        "manifest-entry.vios-core.02-file-to-rtsp-republish",
+        "manifest-entry.vios-core.03-recording-schedules-and-timelines",
+        "manifest-entry.vios-core.04-clip-and-raw-full-file-download",
+        "manifest-entry.vios-core.05-snapshots",
+        "manifest-entry.vios-core.06-live-replay-webrtc",
+        "manifest-entry.vios-core.07-rtsp-proxy-and-stream-bridge",
+        "manifest-entry.vios-core.08-qos-and-storage-caps"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/vios",
+        "services/vios/doc/api"
+      ],
+      "thor_evidence": [
+        "deploy/docker/services/vios",
+        "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+        "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+        "deploy/docker/thor-local/vios-codecs/vios_media.py",
+        "deploy/docker/test-scripts/test-thor-vios-media-offline.sh",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-media-offline.md",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "B-frame handling",
+        "HEVC multislice/RFC7798",
+        "H.264/H.265",
+        "audio recording",
+        "audio RTSP republish",
+        "CPU multimedia support"
+      ],
+      "category": "media",
+      "gap": "The exact locked 59-package ARM64 bundle and both immutable networkless VIOS derivatives are staged and pass source/bundle/image preflight. Exercise B-frame republish, multislice HEVC/RFC7798, H.264/H.265, AAC record/republish/extract, and the isolated CPU software path on the current runtime.",
+      "id": "vios-codecs-audio",
+      "official_capability_ids": [
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+        "manifest-entry.vios-codecs-audio.00-b-frame-handling",
+        "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
+        "manifest-entry.vios-codecs-audio.02-h-264-h-265",
+        "manifest-entry.vios-codecs-audio.03-audio-recording",
+        "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/vios"
+      ],
+      "thor_evidence": [
+        "deploy/docker/services/vios/scripts/user_additional_install.sh",
+        "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+        "deploy/docker/thor-local/vios-codecs/vios_media.py",
+        "deploy/docker/thor-local/vios-codecs/install-codec-bundle.sh",
+        "deploy/docker/thor-local/vios-codecs/vios-offline-entrypoint.sh",
+        "deploy/docker/thor-local/Dockerfile.vios-streamprocessing",
+        "deploy/docker/thor-local/Dockerfile.vios-nvstreamer",
+        "deploy/docker/test-scripts/test-thor-vios-media-offline.sh",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-media-offline.md"
+      ],
+      "thor_state": "wired"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "audio-aware Base workflow",
+        "audio transcript per RT-VLM chunk",
+        "audio-aware summarization and alerts"
+      ],
+      "category": "model",
+      "gap": "The exact locked 59-package ARM64 bundle and 3.2.1 audio-codec RT-VLM derivative are staged; the pinned Omni inventory and mutually exclusive memory-gated overlay pass source checks. Stage the FP8 Omni snapshot, free at least 80 GiB, add a tiny known-speech fixture, then qualify H.264/AAC through RT-VLM, agent, LVS, and alerts.",
+      "id": "audio-understanding",
+      "official_capability_ids": [
+        "manifest-entry.audio-understanding.00-audio-aware-base-workflow",
+        "manifest-entry.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
+        "manifest-entry.audio-understanding.02-audio-aware-summarization-and-alerts"
+      ],
+      "runtime_state": "blocked",
+      "source_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml",
+        "services/rtvi/rt-vlm"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+        "services/agent/tests/unit_test/test_thor_full_profile_config.py",
+        "deploy/docker/thor-local/audio/README.md",
+        "deploy/docker/thor-local/audio/omni.compose.yml",
+        "deploy/docker/thor-local/audio/thor-omni-audio.sh",
+        "deploy/docker/thor-local/audio/Dockerfile.rtvi-vlm-codecs",
+        "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+        "deploy/docker/thor-local/audio/codec_bundle.py",
+        "deploy/docker/thor-local/audio/install-codec-bundle.sh",
+        "deploy/docker/thor-local/audio/rtvi-vlm-offline-entrypoint.sh",
+        "deploy/docker/thor-local/audio/omni_snapshot.py",
+        "deploy/docker/test-scripts/test-thor-audio-offline.sh",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-audio-audit.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "VIOS dashboard",
+        "sensor and stream management",
+        "recording schedules",
+        "media management/upload",
+        "live/replay/video wall",
+        "QoS/system/stream stats",
+        "debug and playback automation"
+      ],
+      "category": "ui",
+      "gap": "The full ARM64 VIOS SPA is selected and routed at /vst, and Thor overrides public STUN with a loopback-only config. Run browser/WebRTC/replay/video-wall/schedule/media/stats/debug acceptance with external-attempt monitoring and repeat after a pull-free restart. Calibration remains in the dedicated auto-calibration family.",
+      "id": "vios-ui",
+      "official_capability_ids": [
+        "manifest-entry.vios-ui.00-vios-dashboard",
+        "manifest-entry.vios-ui.01-sensor-and-stream-management",
+        "manifest-entry.vios-ui.02-recording-schedules",
+        "manifest-entry.vios-ui.03-media-management-upload",
+        "manifest-entry.vios-ui.04-live-replay-video-wall",
+        "manifest-entry.vios-ui.05-qos-system-stream-stats",
+        "manifest-entry.vios-ui.06-debug-and-playback-automation"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/vios/ui"
+      ],
+      "thor_evidence": [
+        "deploy/docker/services/vios/foundational/docker-compose.yaml",
+        "deploy/docker/services/vios/configs/nginx-vst-direct.conf",
+        "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+        "deploy/docker/thor-local/compose.yml",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-ui-audit.md"
+      ],
+      "thor_state": "wired"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "streaming agent chat",
+        "WebSocket recovery",
+        "HITL",
+        "search and search-by-image",
+        "alerts and realtime rule creation",
+        "chunked upload and RTSP management",
+        "Dashboard",
+        "Map",
+        "Profile-aware Global Chat sidebar",
+        "Alerts view and rule-management semantics",
+        "Embedded Kibana dashboard tab",
+        "Search tab filters, critic, and image-search semantics",
+        "Video and RTSP management semantics",
+        "Documented VSS UI limitations"
+      ],
+      "category": "ui",
+      "gap": "Search/Alerts/Dashboard/Video Management/sidebar chat are enabled; the alternate Smart City profile adds a provider-free local SVG Map tab, which still needs runtime UI qualification. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "main-ui",
+      "official_capability_ids": [
+        "runtime.ui.global-chat-sidebar",
+        "runtime.ui.alerts-tab",
+        "runtime.ui.dashboard-tab",
+        "runtime.ui.search-tab",
+        "runtime.ui.video-management-tab",
+        "behavior.ui.known-issues",
+        "manifest-entry.main-ui.00-streaming-agent-chat",
+        "manifest-entry.main-ui.01-websocket-recovery",
+        "manifest-entry.main-ui.02-hitl",
+        "manifest-entry.main-ui.03-search-and-search-by-image",
+        "manifest-entry.main-ui.04-alerts-and-realtime-rule-creation",
+        "manifest-entry.main-ui.05-chunked-upload-and-rtsp-management",
+        "manifest-entry.main-ui.06-dashboard",
+        "manifest-entry.main-ui.07-map"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/ui"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/developer-profiles/dev-profile-thor-smartcity/map",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "traffic RT-DETR",
+        "traffic behavior analytics",
+        "geo/map matching",
+        "calibration toolkit/import",
+        "ITS analytics API/UI",
+        "Smart City reports and VA-MCP",
+        "Kibana dashboard",
+        "ten-sensor sample profile",
+        "Smart City documentation version skew",
+        "Smart City Google Maps external dependency boundary",
+        "Smart City bp_smc service and endpoint surface",
+        "Smart City chat, alerts, and dashboard surfaces",
+        "Smart City map layers and location inputs",
+        "Smart City traffic metrics and incident analytics",
+        "Smart City behavior rule defaults",
+        "Smart City alert-verification defaults",
+        "Smart City VIOS recording and stream defaults",
+        "Smart City location-aware Agent workflow",
+        "Smart City detector and tracker options",
+        "Smart City custom location and media onboarding",
+        "Smart City documented runtime limitations"
+      ],
+      "category": "industry",
+      "gap": "The immutable one-stream Thor lane, deterministic OSMnx GraphML, calibration importer, local map, API/dashboard/report wiring, and exact-image offline tests pass statically; exercise the full lane and alert rules at runtime. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "smart-city",
+      "official_capability_ids": [
+        "boundary.smart-city.version-skew",
+        "boundary.smart-city.google-maps-dependency",
+        "deployment.smart-city.bp-smc-surface",
+        "runtime.smart-city.chat-alert-dashboard",
+        "runtime.smart-city.map-ui",
+        "runtime.smart-city.traffic-analytics",
+        "configuration.smart-city.behavior-rules",
+        "configuration.smart-city.alert-verification",
+        "configuration.smart-city.vios-defaults",
+        "runtime.smart-city.agent-workflow",
+        "model.smart-city.perception-options",
+        "configuration.smart-city.custom-location",
+        "behavior.smart-city.known-limitations",
+        "manifest-entry.smart-city.00-traffic-rt-detr",
+        "manifest-entry.smart-city.01-traffic-behavior-analytics",
+        "manifest-entry.smart-city.02-geo-map-matching",
+        "manifest-entry.smart-city.03-calibration-toolkit-import",
+        "manifest-entry.smart-city.04-its-analytics-api-ui",
+        "manifest-entry.smart-city.05-smart-city-reports-and-va-mcp",
+        "manifest-entry.smart-city.06-kibana-dashboard",
+        "manifest-entry.smart-city.07-ten-sensor-sample-profile"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/industry-profiles/smartcities",
+        "deploy/docker/scripts/deploy_smartcities_launchable.ipynb"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-smartcity",
+        "deploy/docker/thor-local/Dockerfile.behavior-analytics",
+        "deploy/docker/test-scripts/test-thor-smartcity-profile.sh",
+        "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/crs.py",
+        "services/analytics/behavior-analytics/tests/unit/mdx/analytics/core/utils/test_road_network_file_loading.py",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "single-camera 2D warehouse",
+        "Kafka and Redis paths",
+        "PPE/load-quality/spillover/pathway rules",
+        "dynamic analytics/configuration",
+        "API/UI/dashboard",
+        "playback",
+        "Warehouse Behavior Analytics custom-data configuration",
+        "Warehouse alert modes, rules, and verdicts",
+        "Warehouse agent hierarchy, tools, and query classes",
+        "Warehouse enabled and disabled UI surfaces",
+        "Warehouse perception, agent, and real-camera limitations",
+        "Warehouse layered architecture and use cases",
+        "Warehouse IGX-THOR platform prerequisite",
+        "Warehouse profile and hardware matrix",
+        "Warehouse custom MP4 and RTSP input contract",
+        "Warehouse broker, minimal profile, and retention contract",
+        "Warehouse service access surface",
+        "Warehouse 3.2.1 release delta",
+        "Warehouse operational health and recovery checks",
+        "Warehouse destructive troubleshooting boundary",
+        "Warehouse profile event and incident semantics",
+        "Warehouse documented profile latency references",
+        "Warehouse 2D RT-DETR pipeline",
+        "Warehouse 2D Agent pipeline",
+        "Warehouse RT-DETR DeepStream contract"
+      ],
+      "category": "industry",
+      "gap": "The isolated AGX-Thor minimal Redis lane accepts operator-provided compatible models and MP4s and passes its static graph/failure-path suite. Adapt calibration and analytics rules, then qualify one- and three-camera custom data at runtime. NVIDIA's roughly 100 GB sample bundle is optional and excluded from parity. Wave 2 retains the custom-data-only scope for behavior configuration, alerts, agent hierarchy, UI surfaces, and known limitations; the excluded roughly 100 GB Warehouse sample is not a parity prerequisite. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "warehouse-2d",
+      "official_capability_ids": [
+        "configuration.warehouse.behavior-analytics",
+        "runtime.warehouse.alert-modes-rules",
+        "runtime.warehouse.agent-hierarchy",
+        "runtime.warehouse.ui-surfaces",
+        "behavior.warehouse.known-limitations",
+        "runtime.warehouse.architecture-and-use-cases",
+        "prereq.warehouse.thor-platform",
+        "configuration.warehouse.profile-hardware-matrix",
+        "configuration.warehouse.custom-inputs",
+        "configuration.warehouse.broker-minimal-retention",
+        "runtime.warehouse.service-access",
+        "release.warehouse.3.2.1",
+        "runtime.warehouse.operational-health",
+        "behavior.warehouse.destructive-troubleshooting-boundaries",
+        "runtime.warehouse.profile-event-incident-semantics",
+        "performance.warehouse.profile-latency",
+        "runtime.warehouse.profile-2d-pipeline",
+        "runtime.warehouse.profile-2d-agent-pipeline",
+        "configuration.warehouse.rtdetr-deepstream",
+        "manifest-entry.warehouse-2d.00-single-camera-2d-warehouse",
+        "manifest-entry.warehouse-2d.01-kafka-and-redis-paths",
+        "manifest-entry.warehouse-2d.02-ppe-load-quality-spillover-pathway-rules",
+        "manifest-entry.warehouse-2d.03-dynamic-analytics-configuration",
+        "manifest-entry.warehouse-2d.04-api-ui-dashboard",
+        "manifest-entry.warehouse-2d.05-playback"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app",
+        "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/WAREHOUSE_2D.md",
+        "deploy/docker/thor-local/warehouse-2d.compose.yml",
+        "deploy/docker/scripts/thor-warehouse-2d.sh",
+        "deploy/docker/test-scripts/test-thor-warehouse-2d.sh",
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "Sparse4D 3D warehouse",
+        "MV3DT multiview warehouse",
+        "BEV fusion",
+        "auto-calibration variants",
+        "top-view visualization",
+        "Warehouse Sparse4D 3D pipeline",
+        "Warehouse RT-DETR plus MV3DT pipeline",
+        "Warehouse Sparse4D DeepStream contract",
+        "Warehouse MV3DT DeepStream and MQTT contract"
+      ],
+      "category": "industry",
+      "gap": "The custom-data Redis MV3DT and Sparse4D lanes now have fail-closed AGX-Thor launchers, exact 20/28 and 19/31-service graphs, private immutable snapshots, and pull-free contracts without the excluded sample bundle. Stage each lane's missing model assets plus matching synchronized operator video/calibration, then runtime-qualify both. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "warehouse-3d-and-mv3dt",
+      "official_capability_ids": [
+        "runtime.warehouse.profile-3d-sparse4d-pipeline",
+        "runtime.warehouse.profile-mv3dt-pipeline",
+        "configuration.warehouse.sparse4d-deepstream",
+        "configuration.warehouse.mv3dt-deepstream",
+        "manifest-entry.warehouse-3d-and-mv3dt.00-sparse4d-3d-warehouse",
+        "manifest-entry.warehouse-3d-and-mv3dt.01-mv3dt-multiview-warehouse",
+        "manifest-entry.warehouse-3d-and-mv3dt.02-bev-fusion",
+        "manifest-entry.warehouse-3d-and-mv3dt.03-auto-calibration-variants",
+        "manifest-entry.warehouse-3d-and-mv3dt.04-top-view-visualization"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app"
+      ],
+      "thor_evidence": [
+        "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml",
+        "deploy/docker/scripts/thor-warehouse-mv3dt.sh",
+        "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+        "deploy/docker/test-scripts/test-thor-warehouse-mv3dt.sh",
+        "deploy/docker/thor-local/WAREHOUSE_MV3DT.md",
+        "deploy/docker/scripts/thor-warehouse-sparse4d.sh",
+        "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+        "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh",
+        "deploy/docker/thor-local/WAREHOUSE_SPARSE4D.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-cv-3d-audit.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-mv3dt-launcher.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-sparse4d-launcher.md",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "NAT generate/chat",
+        "health",
+        "upload handshake and completion",
+        "video delete",
+        "RTSP add/delete",
+        "VA-MCP",
+        "LVS MCP",
+        "VIOS MCP"
+      ],
+      "category": "api",
+      "gap": "The scoped core ledger passes 327 declared REST operations (326 normalized routes) plus all 42 tools and five prompts across 17 surfaces. It is not the complete product API: configuration and calibration surfaces are tracked separately by extended-api-surfaces. The GET-only loopback tier defines 32 probes across 22 services; the stopped unified stack still needs every inventoried route, tool, prompt, and VIOS-backed path exercised.",
+      "id": "agent-and-mcp-apis",
+      "official_capability_ids": [
+        "manifest-entry.agent-and-mcp-apis.00-nat-generate-chat",
+        "manifest-entry.agent-and-mcp-apis.01-health",
+        "manifest-entry.agent-and-mcp-apis.02-upload-handshake-and-completion",
+        "manifest-entry.agent-and-mcp-apis.03-video-delete",
+        "manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete",
+        "manifest-entry.agent-and-mcp-apis.05-va-mcp",
+        "manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
+        "manifest-entry.agent-and-mcp-apis.07-vios-mcp"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/agent",
+        "services/video-summarization/src/lvs_mcp.py",
+        "services/vios/mcp"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+        "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml",
+        "deploy/docker/thor-local/Dockerfile.vios-mcp",
+        "deploy/docker/thor-local/vios-mcp",
+        "deploy/docker/thor-local/compose.yml",
+        "deploy/docker/thor-local/qualification/api_inventory.json",
+        "deploy/docker/thor-local/qualification/runtime.py",
+        "deploy/docker/thor-local/qualification/runtime_inventory.json",
+        "deploy/docker/thor-local/qualification/tests/test_runtime.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-runtime-qualification.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-mcp-local.md"
+      ],
+      "thor_state": "wired"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "API gateway",
+        "Kafka",
+        "Redis",
+        "Elasticsearch/Kibana",
+        "Prometheus/Grafana",
+        "Phoenix/OpenTelemetry",
+        "NvSchema",
+        "broker debugging tools",
+        "Agent Phoenix distributed-trace contract",
+        "Alert verification Prometheus metrics",
+        "ELK indices and ILM",
+        "Optional GPU dense-vector indexing",
+        "Prometheus observability stack"
+      ],
+      "category": "platform",
+      "gap": "The 32-probe GET-only contract covers the VIOS MCP transport, exact seven-job Prometheus targets, the Grafana dashboard, Kibana, Phoenix, Logstash, and a fail-closed local tegrastats exporter; external telemetry/registries are disabled and service ingress is loopback-bound. Prove the live probe/scrape set, traces, pull-free Kafka protobuf ingestion, bounded broker captures, and physical-interface firewall scope. Agent Phoenix qualification must prove the documented root agent span, child LLM/tool spans, report sub-agent spans, and error/status propagation. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "infra-observability",
+      "official_capability_ids": [
+        "observability.agent.phoenix-traces",
+        "observability.alerts.prometheus",
+        "storage.elk.indices-ilm",
+        "deployment.elk.gpu-vector-indexing",
+        "observability.system.prometheus-stack",
+        "manifest-entry.infra-observability.00-api-gateway",
+        "manifest-entry.infra-observability.01-kafka",
+        "manifest-entry.infra-observability.02-redis",
+        "manifest-entry.infra-observability.03-elasticsearch-kibana",
+        "manifest-entry.infra-observability.04-prometheus-grafana",
+        "manifest-entry.infra-observability.05-phoenix-opentelemetry",
+        "manifest-entry.infra-observability.06-nvschema",
+        "manifest-entry.infra-observability.07-broker-debugging-tools"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/services/infra",
+        "libs/nvschema",
+        "tools/message-broker-consumers"
+      ],
+      "thor_evidence": [
+        "deploy/docker/scripts/thor-local.sh",
+        "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+        "deploy/docker/services/infra/elk/kibana/configs/kibana.yml",
+        "deploy/docker/services/monitoring/compose.yml",
+        "deploy/docker/thor-local/observability/prometheus.yml",
+        "deploy/docker/thor-local/observability/tegrastats_exporter.py",
+        "deploy/docker/thor-local/observability/tests/test_tegrastats_exporter.py",
+        "deploy/docker/thor-local/infra/logstash.yml",
+        "deploy/docker/test-scripts/test-thor-observability.sh",
+        "deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh",
+        "deploy/docker/services/infra/elk/logstash/Dockerfile.protobuf-offline",
+        "deploy/docker/services/infra/elk/logstash/offline-packs/logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip.expected.sha256",
+        "deploy/docker/test-scripts/test-thor-logstash-offline.sh",
+        "deploy/docker/thor-local/qualification/runtime_inventory.json",
+        "tools/message-broker-consumers/tests/test_consumers.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-observability-wiring.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-logstash-offline-pack.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-broker-consumer-qualification.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-infrastructure-audit.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-runtime-infrastructure-coverage.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-tegrastats-exporter.md",
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "calibration and camera grouping",
+        "3D/2D geometry",
+        "multiview visualization",
+        "detection mAP",
+        "tracking HOTA/CLEAR/identity/count",
+        "NVSchema conversion",
+        "video/frame tools",
+        "AWS/GCS validation"
+      ],
+      "category": "tooling",
+      "gap": "All seven provider-free tools are source-wired and the historical 1902-test family run is retained, but entry-level target-bound receipts remain open. AWS/GCS is an external optional boundary.",
+      "id": "spatial-ai-utils",
+      "official_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "libs/analytics/spatialai-data-utils"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/qualification/qualify-spatialai.sh",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-tooling-qualification.md"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "semantic label helpers",
+        "dataset checks",
+        "RGB/depth/video conversion",
+        "ground-truth conversion"
+      ],
+      "category": "tooling",
+      "gap": "All four tooling entries are source-wired, including a bounded deterministic ground-truth conversion CLI. The historical native family run remains corroborating evidence, but target-bound entry-level receipts remain open.",
+      "id": "synthetic-data-tools",
+      "official_capability_ids": [
+        "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+        "manifest-entry.synthetic-data-tools.01-dataset-checks",
+        "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+        "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "tools/sdg-postprocessing"
+      ],
+      "thor_evidence": [
+        "tools/sdg-postprocessing/thor/README.md",
+        "tools/sdg-postprocessing/thor/conda-linux-aarch64.lock",
+        "tools/sdg-postprocessing/thor/requirements-pip.txt",
+        "tools/sdg-postprocessing/thor/wheels-linux-aarch64.sha256",
+        "tools/sdg-postprocessing/thor/materialize_local_lock.py",
+        "tools/sdg-postprocessing/thor/verify_offline_cache.py",
+        "tools/sdg-postprocessing/thor/stage-offline-cache.sh",
+        "tools/sdg-postprocessing/thor/create-offline-env.sh",
+        "tools/sdg-postprocessing/thor/test-thor-sdg-offline.sh",
+        "tools/sdg-postprocessing/thor/qualify-thor-env.sh",
+        "tools/sdg-postprocessing/semantic_labeling/box_check.py",
+        "tools/sdg-postprocessing/semantic_labeling/remove_label.py",
+        "tools/sdg-postprocessing/utils/export_xform_semantics.py",
+        "tools/sdg-postprocessing/tests/test_sdg_regressions.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-sdg-thor-offline.md"
+      ],
+      "thor_state": "wired"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "Base Compose",
+        "Search Compose",
+        "LVS Compose",
+        "Alerts Compose",
+        "Warehouse Compose",
+        "Smart City launchable Compose",
+        "RT-CV compose extension contract",
+        "VIOS horizontal scaling boundary"
+      ],
+      "category": "deployment",
+      "gap": "The 33-service unified 2D graph, including the locally packaged VIOS MCP, plus Smart City, MV3DT, Sparse4D, auto-calibration, audio, and inactive CR2 replacement graphs pass static/offline contracts. Stage each alternate lane's remaining models/operator data and runtime-qualify the graphs under their resource-isolation gates. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "docker-compose",
+      "official_capability_ids": [
+        "deployment.rt-cv.compose-extension-contract",
+        "deployment.vios.horizontal-scaling",
+        "manifest-entry.docker-compose.00-base-compose",
+        "manifest-entry.docker-compose.01-search-compose",
+        "manifest-entry.docker-compose.02-lvs-compose",
+        "manifest-entry.docker-compose.03-alerts-compose",
+        "manifest-entry.docker-compose.04-warehouse-compose",
+        "manifest-entry.docker-compose.05-smart-city-launchable-compose"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/compose.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/compose.yml",
+        "deploy/docker/scripts/thor-local.sh",
+        "deploy/docker/thor-local/warehouse-2d.compose.yml",
+        "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+        "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+        "deploy/docker/thor-local/auto-calibration/compose.yml",
+        "deploy/docker/thor-local/audio/omni.compose.yml",
+        "deploy/docker/thor-local/rt-vlm/cr2-bf16.compose.yml",
+        "deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "Helm for four developer workflows",
+        "Helm for most standalone services",
+        "Helm deployment for four developer profiles"
+      ],
+      "boundary_reason": "Helm is an alternative deployment target; this Thor acceptance target is the supported single-node Docker Compose deployment.",
+      "category": "deployment",
+      "external_dependency": "A user-managed Kubernetes cluster, StorageClass, kubectl, and Helm runtime.",
+      "gap": "Charts are preserved exactly; this single-node Compose deployment has no Kubernetes cluster, StorageClass, kubectl or Helm runtime. The four developer-profile charts remain an external Kubernetes surface, not a Thor-local Compose runtime requirement.",
+      "id": "helm",
+      "official_capability_ids": [
+        "deployment.helm.developer-profiles",
+        "manifest-entry.helm.00-helm-for-four-developer-workflows",
+        "manifest-entry.helm.01-helm-for-most-standalone-services"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "deploy/helm"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json"
+      ],
+      "thor_state": "external_optional"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "NemoClaw/OpenClaw sandbox",
+        "VSS sandbox policy",
+        "VSS skills upload",
+        "orchestrator MCP",
+        "local OpenAI-compatible provider option",
+        "OpenClaw alert notification integration",
+        "NemoClaw same-host operating path",
+        "NemoClaw and VSS model configuration separation",
+        "NemoClaw policy and provider network boundary",
+        "NemoClaw recovery and destructive-operation boundaries"
+      ],
+      "category": "deployment",
+      "gap": "The exact NemoClaw 0.0.48/OpenShell 0.0.39/OpenClaw 2026.4.24 ARM64 toolchain, complete 1.6 GiB cache, sandbox image, persistent user-local install, policy, 16 skills, and datasheet-chat provider all verify. With explicit lifecycle approval, create the sandbox and complete chat/tool/MCP/hook/alert runtime acceptance. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "nemoclaw-openclaw",
+      "official_capability_ids": [
+        "deployment.nemoclaw.same-host-operating-path",
+        "configuration.nemoclaw.model-surface-boundary",
+        "security.nemoclaw.policy-provider-network-boundary",
+        "behavior.nemoclaw.recovery-and-destructive-boundaries",
+        "manifest-entry.nemoclaw-openclaw.00-nemoclaw-openclaw-sandbox",
+        "manifest-entry.nemoclaw-openclaw.01-vss-sandbox-policy",
+        "manifest-entry.nemoclaw-openclaw.02-vss-skills-upload",
+        "manifest-entry.nemoclaw-openclaw.03-orchestrator-mcp",
+        "manifest-entry.nemoclaw-openclaw.04-local-openai-compatible-provider-option",
+        "manifest-entry.nemoclaw-openclaw.05-openclaw-alert-notification-integration"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/scripts/nemoclaw",
+        "assets/vss_nemoclaw_policy.yaml",
+        ".openclaw"
+      ],
+      "thor_evidence": [
+        "deploy/docker/scripts/nemoclaw/init_nemoclaw.sh",
+        "assets/vss_nemoclaw_policy.yaml",
+        ".openclaw",
+        "deploy/docker/thor-local/openclaw/toolchain.py",
+        "deploy/docker/thor-local/openclaw/toolchain.lock.json",
+        "deploy/docker/thor-local/openclaw/README.md",
+        "deploy/docker/scripts/tests/test_init_nemoclaw.py",
+        "deploy/docker/scripts/tests/test_openclaw_package.py",
+        "deploy/docker/scripts/tests/test_thor_openclaw_toolchain.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-openclaw-audit.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-thor-openclaw-offline-toolchain.md",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "RAG report generation",
+        "frag retrieval integration"
+      ],
+      "boundary_reason": "The VSS repository ships an Enterprise RAG integration client and workflow, not the Enterprise RAG product or server.",
+      "category": "workflow",
+      "external_dependency": "A separately deployed NVIDIA Enterprise RAG server implementing the configured retrieval endpoint.",
+      "gap": "The integration remains available for a user-supplied Enterprise RAG endpoint; the external server is not part of local VSS product parity.",
+      "id": "enterprise-rag",
+      "official_capability_ids": [
+        "manifest-entry.enterprise-rag.00-rag-report-generation",
+        "manifest-entry.enterprise-rag.01-frag-retrieval-integration"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_rag.yml",
+        "skills/vss-generate-video-report-rag"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "offline restart",
+        "content-addressed image locks",
+        "model checksums",
+        "credential scrubbing",
+        "loopback ingress",
+        "physical-interface firewall",
+        "Trusted isolated VSS network boundary",
+        "External deployment security controls",
+        "Known unmitigated VSS security limitations",
+        "Docker bridge firewall boundary"
+      ],
+      "category": "platform",
+      "gap": "The protected runtime, all 29 selected image locks, host assets, exact embedding/model trees, local provider snapshots/containers, and active cache cleaner pass offline verification. Current pull-free restart proof still requires enough memory to start the VLM/stack plus the physical-interface firewall. Network isolation and external edge controls are mitigations only: they must not be represented as remediation of missing internal TLS, message integrity, consistent authentication, or complete limits/timeouts. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "offline-security",
+      "official_capability_ids": [
+        "security.trusted-network-boundary",
+        "security.external-edge-controls",
+        "security.known-unmitigated-limitations",
+        "deployment.network.bridge-firewall",
+        "manifest-entry.offline-security.00-offline-restart",
+        "manifest-entry.offline-security.01-content-addressed-image-locks",
+        "manifest-entry.offline-security.02-model-checksums",
+        "manifest-entry.offline-security.03-credential-scrubbing",
+        "manifest-entry.offline-security.04-loopback-ingress",
+        "manifest-entry.offline-security.05-physical-interface-firewall"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/scripts/thor-local.sh"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/README.md",
+        "deploy/docker/thor-local/models/artifacts.lock.json",
+        "deploy/docker/thor-local/models/verify_artifacts.py",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md",
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md",
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "RT-VLM and agent default Cosmos3 Nano BF16",
+        "Agent LLM Nemotron Nano 9B v2 default",
+        "Agent LLM Nemotron Nano 9B v2 FP8",
+        "Agent LLM Nemotron 3 Nano",
+        "Agent LLM Llama 3.3 Nemotron Super 49B v1.5",
+        "Agent LLM GPT-OSS 20B",
+        "Agent VLM Cosmos Reason2 8B",
+        "Agent VLM Qwen3-VL-8B Instruct",
+        "Agent VLM Cosmos3 Nano Reasoner",
+        "Agent VLM Cosmos3 Super Reasoner",
+        "Agent VLM custom weights directory",
+        "Agent OpenAI-compatible model endpoints",
+        "Thor Edge Nemotron 3 Nano 4B FP8 LLM",
+        "Thor Edge Cosmos3 Nano served VLM identity",
+        "Alert verification VLM backends"
+      ],
+      "category": "model",
+      "gap": "The official agent and Edge model set is now exact and fail-closed, but Thor currently selects alternate Qwen providers. Stage, content-lock, memory-admit, and runtime-qualify each exact model before claiming model parity. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "official-agent-models",
+      "official_capability_ids": [
+        "model.rt-vlm.default-cosmos3-nano-bf16",
+        "model.agent-llm.nemotron-nano-9b-v2",
+        "model.agent-llm.nemotron-nano-9b-v2-fp8",
+        "model.agent-llm.nemotron-3-nano",
+        "model.agent-llm.llama-3.3-nemotron-super-49b",
+        "model.agent-llm.gpt-oss-20b",
+        "model.agent-vlm.cosmos-reason2-8b",
+        "model.agent-vlm.qwen3-vl-8b",
+        "model.agent-vlm.cosmos3-nano",
+        "model.agent-vlm.cosmos3-super",
+        "model.agent-vlm.custom-weights",
+        "model.agent.openai-compatible-endpoints",
+        "model.edge.nemotron-3-nano-4b-fp8",
+        "model.edge.cosmos3-nano-served-id",
+        "model.alerts.vlm-backends"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/services/nim",
+        "deploy/docker/developer-profiles/dev-profile-base",
+        "skills/vss-deploy-profile/references/edge.md"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+        "deploy/docker/thor-local/models/artifacts.lock.json",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "VSS Configurator profile configuration manager",
+        "VSS Configurator sensor configuration manager",
+        "SDRC Docker stream distribution and stable assignment",
+        "SDRC stream-ID routing through Envoy",
+        "SDRC autonomous stream-session restoration",
+        "DeepStream Configurator init-style pipeline adaptation",
+        "Alert prompts, VLM parameters, and warmup",
+        "Behavior analytics dynamic configuration",
+        "Video Analytics bootstrap configuration",
+        "nvStreamer synchronized playback",
+        "nvStreamer complete configuration table",
+        "Message broker profile choice",
+        "ELK stack configuration",
+        "VIOS effective upload limit"
+      ],
+      "category": "configuration",
+      "gap": "The service definitions are retained in the checkout, but the VSS Configurator, SDRC routing/recovery, and DeepStream init-adaptor behaviors have no sample-free Thor runtime qualification. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "configuration-control-plane",
+      "official_capability_ids": [
+        "config.vss-configurator.profile-manager",
+        "config.vss-configurator.sensor-manager",
+        "config.sdrc.docker-distribution",
+        "config.sdrc.envoy-routing",
+        "config.sdrc.session-restoration",
+        "config.deepstream.init-adaptor",
+        "configuration.alerts.prompt-vlm-warmup",
+        "configuration.behavior.dynamic-update",
+        "configuration.video-analytics.bootstrap",
+        "configuration.nvstreamer.sync",
+        "configuration.nvstreamer.full-contract",
+        "configuration.message-broker.profile-choice",
+        "configuration.elk.stack",
+        "configuration.vios.upload-effective-limit"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/services/infra/sdrc",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "Agent report evaluator",
+        "Agent question-answering evaluator",
+        "Agent trajectory evaluator",
+        "Agent multi-turn evaluation datasets",
+        "Agent evaluation execution filters and output artifacts"
+      ],
+      "category": "evaluation",
+      "gap": "All evaluator implementations and configs are present, but no Thor-local report, QA, trajectory, or multi-turn evaluation run has produced current evidence. A qualifying run must execute nat eval and retain all five documented evaluation artifacts; static evaluator source is not runtime proof.",
+      "id": "agent-evaluation",
+      "official_capability_ids": [
+        "evaluation.agent.report",
+        "evaluation.agent.qa",
+        "evaluation.agent.trajectory",
+        "evaluation.agent.multi-turn",
+        "evaluation.agent.execution-artifacts"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/agent/src/vss_agents/evaluators",
+        "deploy/docker/developer-profiles/dev-profile-base/eval",
+        "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave2/candidate.json"
+      ],
+      "thor_state": "source_only"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "Fine-tuned SigLIP2 object embeddings",
+        "Fine-tuned Cosmos-Embed1 video embeddings",
+        "Fine-tuned Sparse4D perception model",
+        "Fine-tuned RT-DETR perception model",
+        "Embedding dimension, re-index, and similarity validation",
+        "Smart City TrafficCamNet RT-DETR training recipe",
+        "Alert pluggable response parser",
+        "Custom behavior sink extension",
+        "LVS custom model and prompt contract"
+      ],
+      "category": "model",
+      "gap": "Custom-weight integration surfaces exist, but no fine-tuned SigLIP2, Cosmos-Embed1, Sparse4D, or RT-DETR artifact has been qualified with vector-size, re-index, and similarity-scale oracles on Thor. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "model-customization",
+      "official_capability_ids": [
+        "customization.siglip2",
+        "customization.cosmos-embed1",
+        "customization.sparse4d",
+        "customization.rt-detr",
+        "customization.embedding-reindex-validation",
+        "customization.smart-city.trafficcamnet-rtdetr",
+        "customization.alerts.pluggable-parser",
+        "customization.behavior.sink-extension",
+        "configuration.lvs.custom-model-prompt"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-cv",
+        "services/rtvi/rt-embed",
+        "README.md"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "SDG camera-calibration workflow",
+        "Legacy 2D camera calibration toolkit",
+        "Legacy GIS calibration project",
+        "Legacy Cartesian calibration project",
+        "Legacy multi-camera tracking calibration project",
+        "Legacy image calibration project",
+        "Behavior analytics dynamic calibration",
+        "Physical camera positioning contract",
+        "Exact VSS calibration JSON schema"
+      ],
+      "category": "calibration",
+      "gap": "SDG post-processing and the legacy calibration image selection are preserved, but the distinct SDG calibration workflow and the four legacy calibration project types/UI have no Thor runtime evidence. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "calibration-toolchains",
+      "official_capability_ids": [
+        "calibration.sdg.workflow",
+        "calibration.legacy.core",
+        "calibration.legacy.gis",
+        "calibration.legacy.cartesian",
+        "calibration.legacy.multi-camera",
+        "calibration.legacy.image",
+        "calibration.behavior.dynamic",
+        "calibration.camera-positioning.installation-contract",
+        "calibration.schema.vss-json"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "tools/sdg-postprocessing",
+        "deploy/docker/industry-profiles/smartcities/compose.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "Kubernetes HPA for VLM NIM latency autoscaling"
+      ],
+      "boundary_reason": "The official autoscaling workflow is Kubernetes-only; the Thor target is single-node Docker Compose.",
+      "category": "deployment",
+      "external_dependency": "A Kubernetes cluster with HPA, Prometheus Adapter, NVIDIA NIM Operator, and ReadWriteMany storage.",
+      "gap": "Preserve the Kubernetes manifests and documentation contract; do not claim single-node Compose autoscaling.",
+      "id": "vlm-autoscaling",
+      "official_capability_ids": [
+        "deployment.vlm-autoscaling.hpa"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "deploy/helm"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "Brev Launchable deployment"
+      ],
+      "boundary_reason": "Brev is an alternative hosted deployment environment rather than a service that can be emulated by the local Thor stack.",
+      "category": "deployment",
+      "external_dependency": "A user-managed NVIDIA Brev environment and its secure-link/runtime services.",
+      "gap": "The launchable notebook remains available, but Brev platform acceptance is outside local Thor runtime parity.",
+      "id": "brev-launchable",
+      "official_capability_ids": [
+        "deployment.brev.launchable"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "deploy/docker/scripts/deploy_vss_launchable.ipynb"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "External authentication, TLS, rate limiting, and access controls"
+      ],
+      "boundary_reason": "VSS documents these controls as deployment-infrastructure responsibilities and does not ship a complete identity or certificate authority.",
+      "category": "platform",
+      "external_dependency": "Operator-managed authentication, TLS termination, rate limiting, and external access-control infrastructure.",
+      "gap": "Keep the official external security boundary explicit; local loopback/offline hardening is tracked separately.",
+      "id": "secure-deployment-boundary",
+      "official_capability_ids": [
+        "security.external-ingress-controls"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "deploy/docker/services/infra/haproxy",
+        "README.md"
+      ],
+      "thor_evidence": [],
+      "thor_state": "external_optional"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "Alert Verification performance envelope",
+        "Video Summarization performance envelope",
+        "Search performance envelope",
+        "RT-CV performance envelope",
+        "RT-VLM performance envelope",
+        "RT-Embed performance envelope",
+        "VIOS performance envelope",
+        "Smart City reference stream envelope",
+        "Alert worker pool scaling contract"
+      ],
+      "category": "scale",
+      "gap": "NVIDIA reference-hardware envelopes are inventoried but are not Thor claims. Define bounded Thor fixtures and measure each service separately before recording any Thor envelope. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "performance-envelopes",
+      "official_capability_ids": [
+        "performance.alert-verification",
+        "performance.video-summarization",
+        "performance.search",
+        "performance.rt-cv",
+        "performance.rt-vlm",
+        "performance.rt-embed",
+        "performance.vios",
+        "performance.smart-city.reference-stream-envelope",
+        "performance.alerts.worker-scaling"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/alert",
+        "services/video-summarization",
+        "services/rtvi",
+        "services/vios"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "MV3DT per-camera camInfo generator",
+        "MV3DT MQTT FOV-overlap topology generator"
+      ],
+      "category": "tooling",
+      "gap": "The two offline generators are present but lack deterministic Thor qualification for projection/class-prior output and FOV-overlap MQTT topology.",
+      "id": "mv3dt-config-utils",
+      "official_capability_ids": [
+        "tool.mv3dt.cam-info-generator",
+        "tool.mv3dt.pub-sub-generator"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "tools/rtvi-cv-mv3dt-utils"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "VSS Configurator sensor-management API surface",
+        "SDRC controller, router, and workload-coordinator APIs",
+        "DeepStream Configurator POST /config",
+        "Auto-calibration REST operation surface",
+        "Legacy calibration UI/server API surface"
+      ],
+      "category": "api",
+      "gap": "These five official surfaces are now explicitly outside the scoped 17-surface route ledger. Export exact schemas/operations and add loopback-safe acceptance before increasing API totals.",
+      "id": "extended-api-surfaces",
+      "official_capability_ids": [
+        "api.vss-configurator.sensor",
+        "api.sdrc.control-plane",
+        "api.deepstream-configurator.post-config",
+        "api.auto-calibration.operations",
+        "api.legacy-calibration.ui-server"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/services/infra/sdrc",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app",
+        "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app",
+        "deploy/docker/services/auto-calibration",
+        "deploy/docker/industry-profiles/smartcities/compose.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "source_only"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "Agent streaming and recovery WebSocket",
+        "Real-time alert delivery WebSocket",
+        "RT-VLM token and caption SSE streams",
+        "Kafka NvSchema event publication",
+        "Redis event-stream publication",
+        "VIOS live WebRTC playback",
+        "VIOS replay WebRTC playback",
+        "Alert NvSchema ingestion and output",
+        "Behavior broker sinks",
+        "NvSchema format selection",
+        "NvSchema JSON frame representation",
+        "NvSchema Protobuf message contracts",
+        "Logstash Kafka and Redis ingestion"
+      ],
+      "category": "api",
+      "gap": "Protocol support is wired or source-present, but exact WebSocket, SSE, Kafka/NvSchema, Redis, and WebRTC event/handshake oracles have not been exercised on the current Thor runtime. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "non-rest-protocols",
+      "official_capability_ids": [
+        "protocol.agent.websocket",
+        "protocol.alert.websocket",
+        "protocol.rt-vlm.sse",
+        "protocol.kafka.nvschema",
+        "protocol.redis.events",
+        "protocol.vios.webrtc-live",
+        "protocol.vios.webrtc-replay",
+        "protocol.alerts.nvschema-ingestion",
+        "protocol.behavior.broker-sinks",
+        "protocol.nvschema.format-selection",
+        "protocol.nvschema.json-frame",
+        "protocol.nvschema.protobuf-messages",
+        "protocol.elk.logstash-ingestion"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/agent",
+        "services/alert",
+        "services/rtvi",
+        "services/vios"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "RT-Embed duplicate stream and camera IDs return HTTP 409",
+        "RT-VLM per-domain URL authentication headers",
+        "RT-VLM bounded URL redirects",
+        "RT-VLM bounded URL download size",
+        "RT-VLM domain-scoped TLS verification exceptions",
+        "RT-VLM generation token cap",
+        "RT-VLM user-prompt character cap",
+        "RT-VLM system-prompt character cap",
+        "RT-VLM configurable MoE backend",
+        "RT-VLM bounded asynchronous Kafka send queue",
+        "RT-CV smart vision-encoder inference default",
+        "RT-CV optical-flow-assisted prediction default",
+        "VIOS per-camera timestamps for 3D multi-camera playback",
+        "VIOS floor-map SVG and JPEG support on Thor",
+        "VIOS conflict-aware sensor-add contracts",
+        "VIOS byte-identical full-file download bypass",
+        "RT-VLM duplicate stream and camera IDs return HTTP 409",
+        "RT-VLM repeated RTSP caption requests create independent jobs",
+        "RT-VLM caption deletion stops all active jobs for a stream",
+        "RT-VLM generate-captions endpoint replaces the 3.1 alerts suffix",
+        "RT-Embed accepts RFC 2397 base64 data URLs for video embeddings",
+        "RT-Embed NGC model downloads require the NGC_API_KEY contract",
+        "RT-Embed Cosmos-Embed1 TensorRT precision selection",
+        "RT-Embed Cosmos-Embed1 TensorRT extra build arguments",
+        "RT-Embed GOP-aware file decode optimization defaults on",
+        "RT-Embed bounded asynchronous Kafka send queue",
+        "RT-Embed file URL ingestion is denied without an absolute-directory allowlist",
+        "RT-Embed domain-scoped URL TLS verification exceptions",
+        "RT-Embed bounded URL redirects",
+        "RT-Embed bounded URL download size",
+        "RT-Embed per-domain URL authentication headers",
+        "RT-Embed uploaded-asset age eviction contract",
+        "Elasticsearch disk-watermark recovery",
+        "VIOS upload and playback remediation",
+        "VSS 3.2.1 mixed container tag policy",
+        "LVS empty live-caption window limitation",
+        "LVS shared caption prompt limitation",
+        "LVS spurious caption index limitation",
+        "CR2 NIM crash recovery",
+        "Base report persistence boundary",
+        "Search retention, indexing, and quality limitations",
+        "RT-CV ended-stream deletion behavior",
+        "Docker 29.5 NGC pull recovery"
+      ],
+      "category": "service",
+      "gap": "The 3.2.1 request limits, error statuses, optimization defaults, URL security controls, and VIOS behavioral contracts are source-present but lack individual current Thor runtime oracles. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "release-behavior-contracts",
+      "official_capability_ids": [
+        "behavior.rt-embed.duplicate-id-409",
+        "behavior.rt-vlm.url-auth",
+        "behavior.rt-vlm.url-redirect-limit",
+        "behavior.rt-vlm.url-size-limit",
+        "behavior.rt-vlm.url-tls-exception",
+        "behavior.rt-vlm.generation-token-cap",
+        "behavior.rt-vlm.user-prompt-cap",
+        "behavior.rt-vlm.system-prompt-cap",
+        "behavior.rt-vlm.moe-backend",
+        "behavior.rt-vlm.kafka-queue-bound",
+        "behavior.rt-cv.smart-infer",
+        "behavior.rt-cv.ofa-predict",
+        "behavior.vios.per-camera-timestamps",
+        "behavior.vios.floor-map-formats",
+        "behavior.vios.sensor-add-conflicts",
+        "behavior.vios.byte-identical-download",
+        "behavior.rt-vlm.duplicate-id-409",
+        "behavior.rt-vlm.independent-rtsp-jobs",
+        "behavior.rt-vlm.delete-stops-all-stream-jobs",
+        "behavior.rt-vlm.generate-captions-endpoint-rename",
+        "behavior.rt-embed.base64-data-url",
+        "behavior.rt-embed.ngc-scheme-key",
+        "behavior.rt-embed.trt-precision",
+        "behavior.rt-embed.trt-extra-args",
+        "behavior.rt-embed.gop-decode-opt",
+        "behavior.rt-embed.kafka-queue-bound",
+        "behavior.rt-embed.file-url-allowlist",
+        "behavior.rt-embed.url-tls-exception",
+        "behavior.rt-embed.url-redirect-limit",
+        "behavior.rt-embed.url-size-limit",
+        "behavior.rt-embed.url-auth",
+        "behavior.rt-embed.asset-max-age",
+        "behavior.elk.disk-watermark-recovery",
+        "behavior.vios.upload-playback-remediation",
+        "deployment.release.mixed-container-tags",
+        "behavior.lvs.live-caption-empty-window",
+        "behavior.lvs.shared-caption-prompt",
+        "behavior.lvs.caption-spurious-index",
+        "behavior.base.cr2-nim-recovery",
+        "runtime.base.report-persistence",
+        "behavior.search.retention-indexing-quality",
+        "behavior.rt-cv.delete-ended-stream",
+        "behavior.docker.ngc-pull-29-5"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "services/rtvi/rt-vlm",
+        "services/rtvi/rt-embed",
+        "services/rtvi/rt-cv",
+        "services/vios"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "VSS validated GPU platform set includes AGX Thor and IGX Thor",
+        "AGX Thor requires Jetson Linux BSP 38.4 and NVIDIA driver 580.00",
+        "VSS Docker, Compose, container-toolkit, and NGC CLI version contract",
+        "VSS kernel network settings and Thor MAXN, max-clocks, cache-cleaner contract",
+        "VSS requires Docker native.cgroupdriver=cgroupfs",
+        "VSS minimum host capacity and browser port 7777 access contract",
+        "VSS NGC Personal API key and Hugging Face read-token prerequisite",
+        "Smart City x86 reference platform",
+        "Shared GPU layout memory boundary"
+      ],
+      "category": "platform",
+      "gap": "Most host contracts are statically checked, but Docker still uses the unsupported systemd cgroup driver and the documented 1 TB storage minimum is not met. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "official-platform-prerequisites",
+      "official_capability_ids": [
+        "prereq.platform.validated-gpus",
+        "prereq.platform.agx-thor-software",
+        "prereq.platform.toolchain-versions",
+        "prereq.platform.kernel-and-thor-runtime",
+        "prereq.platform.docker-cgroupfs",
+        "prereq.platform.capacity-and-access",
+        "prereq.platform.credentials",
+        "prereq.smart-city.reference-platform",
+        "deployment.base.shared-gpu-memory"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/scripts/dev-profile.sh",
+        "deploy/docker/scripts/thor-capacity-check.sh"
+      ],
+      "thor_evidence": [
+        "deploy/docker/scripts/thor-local.sh",
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "Official AGX and IGX Thor support is limited to base and alerts remote-LLM profiles",
+        "Official fully local all-workflow Thor deployment is future-planned, not VSS 3.2.1 support",
+        "Thor-local all-profile offline operation is an explicit custom extension lane"
+      ],
+      "category": "platform",
+      "gap": "The custom all-local goal is explicitly separated from NVIDIA's narrower 3.2.1 Thor support statement; its profiles still require individual runtime qualification.",
+      "id": "official-thor-support-boundary",
+      "official_capability_ids": [
+        "boundary.thor.official-profiles",
+        "boundary.thor.fully-local-future",
+        "boundary.thor.custom-all-local-extension"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "deploy/docker/scripts/dev-profile.sh"
+      ],
+      "thor_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-thor-full",
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "required_local",
+      "advertised": [
+        "RT-VLM 27-operation REST surface",
+        "RT-Embed 24-operation REST surface",
+        "RT-CV 9-operation REST surface",
+        "Video Summarization 17-operation REST surface",
+        "Alerts 19-operation REST and WebSocket-health surface",
+        "VST Sensor 28-operation REST surface",
+        "VST Live 20-operation REST surface",
+        "VST Replay 21-operation REST surface",
+        "VST Record 16-operation REST surface",
+        "VST Proxy 7-operation REST surface",
+        "VST Storage 26-declared and 25-normalized-operation REST surface",
+        "Video Analytics API 56-operation REST surface",
+        "Video Analytics MCP 7-tool operation surface",
+        "Video Summarization MCP documentation 13-tool versus repository 9-tool discrepancy"
+      ],
+      "category": "api",
+      "gap": "Operation manifests are exact and digest-bound, including the four Thor-local LVS file-management adapters. Execution remains plan-only, and the pinned upstream LVS repositories still expose only nine of the 13 documented MCP tools.",
+      "id": "core-api-operation-contracts",
+      "official_capability_ids": [
+        "api.core.rt-vlm-27",
+        "api.core.rt-embed-24",
+        "api.core.rt-cv-9",
+        "api.core.lvs-17",
+        "api.core.alerts-19",
+        "api.core.vst-sensor-28",
+        "api.core.vst-live-20",
+        "api.core.vst-replay-21",
+        "api.core.vst-record-16",
+        "api.core.vst-proxy-7",
+        "api.core.vst-storage-26-25",
+        "api.core.video-analytics-56",
+        "api.core.va-mcp-7",
+        "api.core.lvs-mcp-doc-13-repo-9"
+      ],
+      "runtime_state": "static_only",
+      "source_evidence": [
+        "services/rtvi",
+        "services/video-summarization",
+        "services/alert",
+        "services/vios",
+        "services/analytics",
+        "services/agent/src/vss_agents/video_analytics"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/qualification/api_inventory.json",
+        "deploy/docker/thor-local/qualification/expected",
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "alternate_local_lane",
+      "advertised": [
+        "VSS Early Access Agent Skills 16-skill catalog",
+        "VSS Skills validated agent harness set",
+        "VSS Orchestrator MCP 9-tool operation surface"
+      ],
+      "category": "tooling",
+      "gap": "The catalog, validated harness names, and nine orchestrator tools are exact; cross-harness and lifecycle-changing tool runtime evidence is still absent.",
+      "id": "agent-operability-surfaces",
+      "official_capability_ids": [
+        "tooling.agent-skills.catalog-16",
+        "tooling.agent-harnesses.validated-4",
+        "api.orchestrator-mcp.tools-9"
+      ],
+      "runtime_state": "not_qualified",
+      "source_evidence": [
+        "skills",
+        "services/agent/src/vss_agents/orchestrator/tools.py",
+        "deploy/docker/scripts/vss_orchestrator_mcp_config.yml"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/install-vss-skills.sh",
+        "deploy/docker/thor-local/openclaw",
+        "deploy/docker/thor-local/parity/official-capabilities.json"
+      ],
+      "thor_state": "partial"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "Managed remote Agent LLM Nemotron 3 Nano 30B A3B",
+        "Managed remote Agent LLM GPT-OSS 120B",
+        "Managed remote Agent LLM GLM5",
+        "Frontier remote Agent LLM GPT-5.2",
+        "Frontier remote Agent LLM GPT-4.1",
+        "Frontier remote Agent VLM GPT-5.2",
+        "Frontier remote Agent VLM GPT-4.1",
+        "Managed remote Agent VLM Reka Flash",
+        "Self-hosted remote Agent VLM Cosmos3 Reasoner NIM 1.7",
+        "Self-hosted remote Agent VLM Cosmos Reason2 8B NIM",
+        "Self-hosted remote Agent VLM Cosmos Reason2 2B NIM",
+        "Self-hosted remote Agent VLM Qwen3-VL-8B vLLM",
+        "Self-hosted remote Agent VLM Nemotron 3 Nano Omni NVFP4",
+        "Remote NIM media fetch boundary"
+      ],
+      "boundary_reason": "These named models are advertised endpoint options; VSS supplies clients and recipes but does not supply the managed providers or additional model-hosting machines.",
+      "category": "model",
+      "external_dependency": "Operator-provided managed or self-hosted model endpoints, credentials, provider entitlements, and any required hosting hardware.",
+      "gap": "Keep every named remote LLM/VLM option explicit without treating a generic OpenAI-compatible adapter as exact-model qualification. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "official-remote-agent-models",
+      "official_capability_ids": [
+        "model.remote-agent-llm.nemotron-3-nano-30b-a3b",
+        "model.remote-agent-llm.gpt-oss-120b",
+        "model.remote-agent-llm.glm5",
+        "model.remote-agent-llm.gpt-5.2",
+        "model.remote-agent-llm.gpt-4.1",
+        "model.remote-agent-vlm.gpt-5.2",
+        "model.remote-agent-vlm.gpt-4.1",
+        "model.remote-agent-vlm.reka-flash",
+        "model.remote-agent-vlm.cosmos3-reasoner-1.7",
+        "model.remote-agent-vlm.cosmos-reason2-8b-latest",
+        "model.remote-agent-vlm.cosmos-reason2-2b-latest",
+        "model.remote-agent-vlm.qwen3-vl-8b-vllm",
+        "model.remote-agent-vlm.nemotron-omni-nvfp4",
+        "deployment.remote-nim.video-fetch"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "deploy/docker/developer-profiles/dev-profile-base",
+        "deploy/docker/services/nim"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "external_optional"
+    },
+    {
+      "acceptance_class": "external_optional",
+      "advertised": [
+        "Smart City CARLA and Cosmos Transfer data-generation pipeline",
+        "Warehouse Isaac Sim SDG toolchain boundary",
+        "Warehouse synthetic scene and calibration workflow boundary",
+        "Warehouse synthetic dataset post-processing boundary",
+        "Warehouse Cosmos Transfer Sim2Real boundary"
+      ],
+      "boundary_reason": "CARLA, RoadRunner, Isaac Sim, Cosmos Transfer, and training/simulation workflows are external development boundaries rather than Thor-local VSS runtime services.",
+      "category": "tooling",
+      "external_dependency": "Operator-managed CARLA, RoadRunner, Isaac Sim, Cosmos Transfer, and associated training/simulation environments outside the Thor-local VSS runtime.",
+      "gap": "These workflows remain planning-only external integrations; no Thor-local runtime pass evidence is claimed. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "id": "synthetic-data-workflows-external",
+      "official_capability_ids": [
+        "tooling.smart-city.synthetic-data-pipeline",
+        "boundary.warehouse.sdg-toolchain",
+        "boundary.warehouse.sdg-scene-calibration",
+        "boundary.warehouse.sdg-postprocess",
+        "boundary.warehouse.sim2real"
+      ],
+      "runtime_state": "not_applicable",
+      "source_evidence": [
+        "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",
+        "deploy/docker/thor-local/parity/candidates/wave3/calibration-warehouse/candidate.json"
+      ],
+      "thor_evidence": [
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+      ],
+      "thor_state": "external_optional"
+    }
+  ],
+  "schema_version": 1,
+  "skills": [
+    {
+      "id": "vss-ask-video",
+      "runtime_state": "passed_prior",
+      "thor_state": "wired"
+    },
+    {
+      "id": "vss-deploy-dense-captioning",
+      "runtime_state": "not_qualified",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-deploy-detection-tracking-2d",
+      "runtime_state": "passed_prior",
+      "thor_state": "wired"
+    },
+    {
+      "id": "vss-deploy-detection-tracking-3d",
+      "runtime_state": "not_qualified",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-deploy-profile",
+      "runtime_state": "not_qualified",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-deploy-video-embedding",
+      "runtime_state": "passed_prior",
+      "thor_state": "wired"
+    },
+    {
+      "id": "vss-generate-video-calibration",
+      "runtime_state": "blocked",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-generate-video-report",
+      "runtime_state": "passed_prior",
+      "thor_state": "wired"
+    },
+    {
+      "id": "vss-generate-video-report-rag",
+      "runtime_state": "blocked",
+      "thor_state": "blocked_upstream"
+    },
+    {
+      "id": "vss-manage-alerts",
+      "runtime_state": "passed_prior",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-manage-video-io-storage",
+      "runtime_state": "passed_prior",
+      "thor_state": "wired"
+    },
+    {
+      "id": "vss-query-analytics",
+      "runtime_state": "not_qualified",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-search-archive",
+      "runtime_state": "passed_prior",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-setup-behavior-analytics",
+      "runtime_state": "passed_prior",
+      "thor_state": "partial"
+    },
+    {
+      "id": "vss-setup-video-analytics-api",
+      "runtime_state": "not_qualified",
+      "thor_state": "wired"
+    },
+    {
+      "id": "vss-summarize-video",
+      "runtime_state": "passed_prior",
+      "thor_state": "partial"
+    }
+  ],
+  "status_contract": {
+    "acceptance_class": [
+      "required_local",
+      "alternate_local_lane",
+      "external_optional"
+    ],
+    "runtime_state": [
+      "passed_current",
+      "passed_prior",
+      "static_only",
+      "not_qualified",
+      "blocked",
+      "not_applicable"
+    ],
+    "thor_state": [
+      "wired",
+      "partial",
+      "source_only",
+      "external_optional",
+      "blocked_upstream"
+    ]
+  },
+  "upstream": {
+    "latest_ga": "v3.2.1",
+    "latest_ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "nightly_is_acceptance_target": false,
+    "nightly_observed": "nightly-20260731",
+    "repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "target_branch": "main",
+    "target_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  }
+}
