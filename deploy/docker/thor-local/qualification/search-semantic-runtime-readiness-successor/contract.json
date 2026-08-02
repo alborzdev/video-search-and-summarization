@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "package_id": "search-semantic-runtime-readiness-successor",
+  "predecessor_package": "search-documents-bboxes-runtime-evidence",
+  "layered_current_contract_predecessor": "lvs-rtvi-current-contract-source-claim-layered-successor",
+  "capability_id": "runtime.agent.search-profile",
+  "promotion_eligible": false,
+  "warehouse_sample_bundle": "excluded",
+  "required_route_bindings": {
+    "/api/v1/search": "search",
+    "/api/v1/search/attribute": "attribute_search",
+    "/api/v1/search/fusion": "search",
+    "/api/v1/search/image": "search"
+  },
+  "legacy_route_bindings": {
+    "/api/v1/attribute_search": "attribute_search",
+    "/api/v1/embed_search": "embed_search"
+  },
+  "api_inventory_result": {
+    "agent_declared_operations": 56,
+    "agent_normalized_unique_operations": 56,
+    "aggregate_declared_rest_operations": 342,
+    "aggregate_normalized_unique_rest_operations": 341,
+    "derivation": "three additive configured endpoints times four NAT variants equals twelve additive agent operations"
+  },
+  "profile_paths": [
+    "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml",
+    "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml"
+  ],
+  "input_contract": {
+    "attribute_route_model": "AttributeSearchInput",
+    "attribute_route_required_fields": ["query", "source_type", "video_sources"],
+    "fusion_route_model": "SearchInput",
+    "image_route_model": "SearchInput",
+    "search_required_fields": ["agent_mode", "query", "reference_object", "source_type"],
+    "reference_object_model": "ReferenceObject",
+    "reference_object_required_fields": ["object_id", "sensor_id", "sensor_name", "timestamp"],
+    "image_request_semantics": "selected-object metadata; raw image bytes and bbox are fixture integrity evidence, not SearchInput fields"
+  },
+  "fixture_path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/selected-bbox-fixture.json",
+  "fixture_sha256": "3e5edfcabd4b69973c4b0700c1a257b16384d5e84c7c31488b483ca0e976f8ee",
+  "runtime_executor_boundary": {
+    "implemented": false,
+    "activation": "separately_authorized_future_loopback_runtime_only",
+    "runtime_endpoint": null,
+    "deployed_route_inventory_receipt": null,
+    "elasticsearch_fixture_namespace_receipt": null,
+    "owned_cleanup_and_delayed_reappearance_receipt": null,
+    "reason": "the authorized scope excludes network and service lifecycle, no deployed exact-route identity is available, and Elasticsearch fixture ownership plus cleanup-race evidence cannot be inferred from static source"
+  },
+  "remaining_blockers": [
+    "live execution is not authorized by this code-tests-docs-only no-network no-lifecycle task",
+    "no deployed exact-route inventory or runtime endpoint identity is available",
+    "no approved Elasticsearch fixture namespace, owned cleanup, cleanup-race, or delayed-reappearance receipt is available",
+    "no Search service, Elasticsearch query, index write, HTTP response, semantic result, cleanup race, or delayed reappearance was observed"
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/search-documents-bboxes-runtime-evidence/contract.json", "sha256": "29757e99c08551d5c1d7a95fdef329274d8dafa7e4742fad5e4288fd485f1ea9"},
+    {"path": "deploy/docker/thor-local/qualification/search-documents-bboxes-runtime-evidence/collector.py", "sha256": "8cf1ee4efd9b51b314b0d86acfbcdda2aa7f7179426b3ece6034e82291747aeb"},
+    {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/search-documents-bboxes.json", "sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "09701f84f6f7786a053eb05201c0679a5606591721d9307735e1be6a40fbcaa4"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
+    {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts", "sha256": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f"},
+    {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "sha256": "e5ecb7072206269cadc7ab7213767d258d08228809aabf1d8db9b67e6b213afc"},
+    {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/compiler.py", "sha256": "528388ffbe13e53b1a2164d0084b905865561b86423ae52400f6b02d4978eef0"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/layered-current-contract.json", "sha256": "cb3e1e2b15374a9a2a60715a475aaae055b4564f73b59987a0ca34b6ae454a59"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/layered-current-contract.schema.json", "sha256": "9bb6b3c9be5028a8c1ca8d3f4bcdaef46d787c4fa82f89476c9484ed2b5412f8"},
+    {"path": "deploy/docker/thor-local/qualification/expected/lvs.json", "sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0"},
+    {"path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json", "sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"},
+    {"path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json", "sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8-cancellation-successor/compiler.py", "sha256": "83c0d6e7fb6bfcd34a02cfede17de2344c14a80cd9d36bf3f6f71cb00bea82d0"},
+    {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8-cancellation-successor/rebase.json", "sha256": "5461638c79813a59e6e96ca22465b7be20376f3122cd1018655d9c5fd84e72ee"},
+    {"path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor-v2/compiler.py", "sha256": "83c0d6e7fb6bfcd34a02cfede17de2344c14a80cd9d36bf3f6f71cb00bea82d0"},
+    {"path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor-v2/rebase.json", "sha256": "e50b643283c1d3782b54cf804da925f3b9697ee9ced5fa5968adcf301d696028"},
+    {"path": "deploy/docker/thor-local/qualification/request-cancellation-static-rebase-successor-v1/compiler.py", "sha256": "80447e7383f155381e34de47584eccca7018575b5f7cd38c8f25e384e9ee885d"},
+    {"path": "deploy/docker/thor-local/qualification/request-cancellation-static-rebase-successor-v1/contract.json", "sha256": "66b9323c8dfbd790fd4e63aaeac20a81cda4a1f70446a955fa3e22bc1139e393"}
+  ]
+}

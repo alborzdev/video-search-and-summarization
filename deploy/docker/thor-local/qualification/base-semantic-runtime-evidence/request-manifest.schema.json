@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "case_id", "run_id", "owned_namespace_path", "operations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "case_id": {"enum": ["tiny-agent-media", "hitl-state-transcript"]},
+    "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+    "owned_namespace_path": {"type": "string", "minLength": 1, "maxLength": 256},
+    "operations": {"type": "array", "minItems": 8, "maxItems": 11, "items": {"$ref": "#/$defs/operation"}}
+  },
+  "$defs": {
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["step_id", "method", "path", "body", "headers", "oracle"],
+      "properties": {
+        "step_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$"},
+        "method": {"enum": ["DELETE", "GET", "POST"]},
+        "path": {"type": "string", "pattern": "^/[A-Za-z0-9_.~/-]{1,511}$"},
+        "body": {"type": ["object", "null"]},
+        "headers": {"type": "object", "additionalProperties": false, "properties": {"Conversation-Id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"}, "User-Message-ID": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"}, "X-Timezone": {"type": "string", "pattern": "^[A-Za-z0-9_+./:-]{1,64}$"}}},
+        "oracle": {"type": "object", "additionalProperties": false, "required": ["allowed_statuses", "response_mode", "require_nonempty", "required_literals", "forbidden_literals"], "properties": {"allowed_statuses": {"type": "array", "minItems": 1, "maxItems": 4, "uniqueItems": true, "items": {"type": "integer", "minimum": 100, "maximum": 599}}, "response_mode": {"enum": ["json", "sse", "binary", "empty"]}, "require_nonempty": {"type": "boolean"}, "required_literals": {"type": "array", "maxItems": 16, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 256}}, "forbidden_literals": {"type": "array", "maxItems": 16, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 256}}}}
+      }
+    }
+  }
+}

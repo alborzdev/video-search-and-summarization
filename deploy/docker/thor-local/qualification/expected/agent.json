@@ -1,14 +1,14 @@
 {
   "component_schema_hash": null,
-  "declared_operation_count": 44,
+  "declared_operation_count": 56,
   "kind": "rest",
   "method_counts": {
     "DELETE": 3,
     "GET": 5,
-    "POST": 34,
+    "POST": 46,
     "PUT": 2
   },
-  "normalized_unique_operation_count": 44,
+  "normalized_unique_operation_count": 56,
   "operations": [
     {
       "method": "POST",
@@ -109,7 +109,79 @@
     {
       "method": "POST",
       "operation_id": null,
+      "path": "/api/v1/search/attribute",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/attribute/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/attribute/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/attribute/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
       "path": "/api/v1/search/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/fusion",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/fusion/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/fusion/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/fusion/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/image",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/image/atif",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/image/full",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/search/image/stream",
       "schema_hash": null
     },
     {
@@ -279,7 +351,7 @@
   "source_files": [
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
-      "sha256": "d465b9b45416b38639894ee477ce12c238ec48518ea365a7ba32c7ace4ac483c"
+      "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"
     },
     {
       "path": "deploy/docker/services/agent/compose.yml",

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "fixture_id": "thor-search-selected-bbox-v2",
+  "predecessor_fixture_path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/search-documents-bboxes.json",
+  "predecessor_fixture_sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517",
+  "query_frame_id": "frame-camera-01-0001",
+  "image_media_type": "image/svg+xml",
+  "image_base64": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IiMxMTE4MjciLz48cmVjdCB4PSIyIiB5PSI0IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMjU2M2ViIi8+PGNpcmNsZSBjeD0iNCIgY3k9IjEzIiByPSIxIiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iOSIgY3k9IjEzIiByPSIxIiBmaWxsPSIjZmZmIi8+PC9zdmc+Cg==",
+  "image_sha256": "8777513062cd5474166cfbe527f1e36c87c06f18b65e1133d4cb69ef8b911a7f",
+  "bbox_xyxy_normalized": [0.125, 0.25, 0.625, 0.75],
+  "reference_object": {
+    "object_id": "vehicle-0001",
+    "sensor_name": "camera-01",
+    "sensor_id": "00000000-0000-4000-8000-000000000001",
+    "timestamp": "2026-01-01T00:00:01Z"
+  },
+  "expected_document_id": "doc-camera-01-0001"
+}

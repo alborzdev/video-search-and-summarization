@@ -26,13 +26,8 @@ REPO_ROOT = Path(__file__).resolve().parents[4]
 CONFIG_PATH = REPO_ROOT / "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml"
 VA_MCP_CONFIG_PATH = CONFIG_PATH.with_name("va_mcp_server_config.yml")
 PROFILE_ENV_PATH = CONFIG_PATH.parents[2] / ".env"
-ALERT_CONFIG_PATH = (
-    REPO_ROOT
-    / "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"
-)
-ALERT_ENV_SUBSTITUTION_PATH = (
-    REPO_ROOT / "deploy/docker/services/alert/scripts/env-substitute.py"
-)
+ALERT_CONFIG_PATH = REPO_ROOT / "deploy/docker/developer-profiles/dev-profile-alerts/vlm-as-verifier/configs/config.yml"
+ALERT_ENV_SUBSTITUTION_PATH = REPO_ROOT / "deploy/docker/services/alert/scripts/env-substitute.py"
 
 
 def _load_config() -> dict[str, Any]:
@@ -94,10 +89,17 @@ def test_unified_profile_has_one_top_agent_and_all_search_routes() -> None:
     assert top_agents == ["top_agent"]
     assert {endpoint["path"] for endpoint in endpoints} == {
         "/api/v1/search",
+        "/api/v1/search/attribute",
+        "/api/v1/search/fusion",
+        "/api/v1/search/image",
         "/api/v1/attribute_search",
         "/api/v1/embed_search",
         "/api/v1/critic",
     }
+    endpoint_functions = {endpoint["path"]: endpoint["function_name"] for endpoint in endpoints}
+    assert endpoint_functions["/api/v1/search/attribute"] == "attribute_search"
+    assert endpoint_functions["/api/v1/search/fusion"] == "search"
+    assert endpoint_functions["/api/v1/search/image"] == "search"
 
 
 def test_unified_profile_does_not_embed_service_hosts() -> None:
@@ -129,12 +131,8 @@ def test_top_agent_exposes_every_local_video_analytics_mcp_tool() -> None:
         "get_average_speeds",
         "analyze",
     }
-    expected_remote_tools = {
-        f"video_analytics__{name}" for name in expected_server_tools
-    }
-    expected_agent_tools = {
-        f"video_analytics_mcp.{name}" for name in expected_remote_tools
-    }
+    expected_remote_tools = {f"video_analytics__{name}" for name in expected_server_tools}
+    expected_agent_tools = {f"video_analytics_mcp.{name}" for name in expected_remote_tools}
 
     with VA_MCP_CONFIG_PATH.open(encoding="utf-8") as config_file:
         server_config = yaml.safe_load(config_file)
@@ -164,15 +162,11 @@ def test_thor_enables_all_local_alert_extensions(monkeypatch: Any) -> None:
         assert f"{flag}=true" in profile_env
         monkeypatch.setenv(flag, "true")
 
-    spec = importlib.util.spec_from_file_location(
-        "alert_env_substitute", ALERT_ENV_SUBSTITUTION_PATH
-    )
+    spec = importlib.util.spec_from_file_location("alert_env_substitute", ALERT_ENV_SUBSTITUTION_PATH)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    rendered = module.substitute_env_vars(
-        ALERT_CONFIG_PATH.read_text(encoding="utf-8")
-    )
+    rendered = module.substitute_env_vars(ALERT_CONFIG_PATH.read_text(encoding="utf-8"))
     config = yaml.safe_load(rendered)
 
     assert config["alert_agent"]["media_download"]["enabled"] is True
@@ -240,9 +234,7 @@ def test_thor_audio_flag_reaches_every_audio_aware_agent_path() -> None:
     expected_value = "${ENABLE_AUDIO:-false}"
 
     audio_flags = {
-        "general.front_end.streaming_ingest": config["general"]["front_end"][
-            "streaming_ingest"
-        ]["enable_audio"],
+        "general.front_end.streaming_ingest": config["general"]["front_end"]["streaming_ingest"]["enable_audio"],
         "functions.video_understanding": functions["video_understanding"]["enable_audio"],
         "functions.video_understanding_iso": functions["video_understanding_iso"]["enable_audio"],
         "functions.vst_video_clip": functions["vst_video_clip"]["enable_audio"],

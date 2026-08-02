@@ -44,6 +44,18 @@ general:
       method: POST
       description: "Search for objects by visual attributes"
       function_name: attribute_search
+    - path: /api/v1/search/attribute
+      method: POST
+      description: "Search for objects by visual attributes (canonical Search API alias)"
+      function_name: attribute_search
+    - path: /api/v1/search/fusion
+      method: POST
+      description: "Run embedding and attribute fusion search (canonical Search API alias)"
+      function_name: search
+    - path: /api/v1/search/image
+      method: POST
+      description: "Search from a selected reference object (canonical Search API alias)"
+      function_name: search
     - path: /api/v1/embed_search
       method: POST
       description: "Direct embedding search (bypasses agent)"

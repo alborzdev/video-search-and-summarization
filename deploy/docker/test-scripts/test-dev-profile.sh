@@ -1016,6 +1016,7 @@ if grep -q 'verify-offline)' "${_thor_local}" &&
    grep -q 'model_artifact_lock=' "${_thor_local}" &&
    grep -q 'stream_embedding_volume_tree' "${_thor_local}" &&
    grep -q 'docker run --rm --pull never --network none --read-only' "${_thor_local}" &&
+   grep -q -- '--log-driver none' "${_thor_local}" &&
    grep -q 'readonly,volume-nocopy' "${_thor_local}" &&
    grep -q -- '--artifact cosmos_embed_model' "${_thor_local}" &&
    grep -q -- '--artifact cosmos_embed_triton' "${_thor_local}"; then

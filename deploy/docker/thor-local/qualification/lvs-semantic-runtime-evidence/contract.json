@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-lvs-semantic-runtime-evidence-v1",
+  "mode": "authorization-gated-injected-adapter-runtime",
+  "default_execution_enabled": false,
+  "capability_id": "runtime.agent.lvs-profile",
+  "oracle_id": "oracle.runtime.agent.lvs-profile",
+  "planning_requirement_id": "lvs-multi-file",
+  "warehouse_sample_bundle": "excluded",
+  "authorization": {
+    "authorization_id": "lvs-semantic-runtime",
+    "acknowledgement": "I_ACK_LVS_SEMANTIC_RUNTIME_AND_EXACT_OWNED_CLEANUP"
+  },
+  "declared_tools": [
+    "lvs_video_understanding",
+    "lvs_config_media",
+    "lvs_stream_understanding",
+    "lvs_caption_retrieval",
+    "video_report_gen"
+  ],
+  "execution_bounds": {
+    "max_requests": 14,
+    "max_actions": 14,
+    "max_duration_seconds": 900,
+    "semantic_actions": 12,
+    "cleanup_transitions": 2,
+    "owned_resources": 1,
+    "phases": ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"]
+  },
+  "actions": [
+    {"order": 1, "id": "capture-pre-state", "kind": "pre-state"},
+    {"order": 2, "id": "discover-five-tools", "kind": "tool-contract"},
+    {"order": 3, "id": "verify-local-dependencies", "kind": "readiness"},
+    {"order": 4, "id": "setup-owned-fixtures", "kind": "owned-setup"},
+    {"order": 5, "id": "single-video-report", "kind": "semantic-positive"},
+    {"order": 6, "id": "multi-video-report", "kind": "semantic-positive"},
+    {"order": 7, "id": "start-live-caption", "kind": "semantic-positive"},
+    {"order": 8, "id": "retrieve-live-caption", "kind": "semantic-positive"},
+    {"order": 9, "id": "write-shared-prompt-first", "kind": "semantic-boundary"},
+    {"order": 10, "id": "overwrite-shared-prompt-latest", "kind": "semantic-boundary"},
+    {"order": 11, "id": "reject-cross-agent-prompt-visibility", "kind": "adjacent-negative"},
+    {"order": 12, "id": "probe-disconnect-cancel-quiescence", "kind": "cancellation-proof"},
+    {"order": 13, "id": "cleanup-exact-owned", "kind": "owned-cleanup"},
+    {"order": 14, "id": "verify-owned-absence-and-restore", "kind": "postcondition"}
+  ],
+  "cleanup_contract": {
+    "registration_gate": "setup response proves exact run ownership and two digest-pinned fixture inputs",
+    "resource_type": "lvs-semantic-run-namespace",
+    "cleanup_order": "lifo",
+    "exact_owned_only": true,
+    "preserve_unrelated_state": true,
+    "required_cleanup_proof": [
+      "disconnect_delivered_once",
+      "exact_cancel_accepted",
+      "quiescent_before_cleanup",
+      "ca_rag_scope_absent",
+      "only_owned_targets_deleted"
+    ],
+    "required_postcondition_proof": [
+      "owned_namespace_absent",
+      "owned_reports_absent",
+      "owned_stream_state_absent",
+      "unrelated_state_restored"
+    ]
+  },
+  "evidence_scope": {
+    "records_raw_payloads": false,
+    "records_raw_resource_ids": false,
+    "records_payload_sha256": true,
+    "promotion_eligible_without_deployed_receipt": false,
+    "requires_deployed_receipt": true
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/runtime-lanes/runtime-lane-plan.json", "sha256": "bf863fac268d1247eda71b9edbfd497580453c52cd3ced7fcdb333386efa25c9"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-mcp-candidate-workload-repair-successor-v2/rebase.json", "sha256": "a6181faae2fad42e0a01815da73061bbd1ddf87446d880c8e22c6e8284cfaa05"},
+    {"path": "deploy/docker/thor-local/qualification/request-cancellation-static-rebase-successor-v1/contract.json", "sha256": "66b9323c8dfbd790fd4e63aaeac20a81cda4a1f70446a955fa3e22bc1139e393"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py", "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/evidence.schema.json", "sha256": "6a80f5465aaf12fc5ab7762f6162b58932e1a59fc88ba4bf818a33640cabef07"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/executor.py", "sha256": "3ddc4e08f2013e1f512254dc1309020ef63d88b8fce203f6c2a34537f1d57df4"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/receipt.schema.json", "sha256": "6f6f24ac6bdb26ac54d7130415055726d2736b41193f6f89b18a0bf2340c94db"},
+    {"path": "services/agent/src/vss_agents/tools/lvs_video_understanding.py", "sha256": "e58fcd165177c126f242abc53445d4d3e7b465c738bed6a5843a9d7590c4f508"},
+    {"path": "services/agent/src/vss_agents/tools/lvs_config_media.py", "sha256": "a3854f056dd88f43a62fb3d6d19d2613776a74a875558b112e67ee0c4ced97ea"},
+    {"path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py", "sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/register_knowledge_layers.py", "sha256": "f0bd23c4bf49b322a9c61ee507ab8edd9a91e9f48df1ae725653123fd3efd6b1"},
+    {"path": "services/video-summarization/src/via_stream_handler.py", "sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"},
+    {"path": "services/video-summarization/src/via_server.py", "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},
+    {"path": "services/video-summarization/src/lvs_mcp.py", "sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"}
+  ]
+}

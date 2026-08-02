@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "promotion_eligible", "planning_requirement_id", "capability_id", "oracle_id", "contract_sha256", "manifest_sha256", "target_origin_sha256", "identity", "budget", "observations", "cleanup", "canonical_state_advanced"],
+  "properties": {
+    "schema_version": {"const": 1}, "package_id": {"const": "base-semantic-runtime-evidence"},
+    "mode": {"enum": ["bounded-http-candidate", "manual-browser-candidate"]},
+    "status": {"const": "candidate_evidence_complete_non_promoting"}, "promotion_eligible": {"const": false},
+    "planning_requirement_id": {"enum": ["tiny-agent-media", "hitl-state-transcript", "ui-tiny-media"]},
+    "capability_id": {"type": "string"}, "oracle_id": {"type": "string"},
+    "contract_sha256": {"$ref": "#/$defs/sha"}, "manifest_sha256": {"$ref": "#/$defs/sha"}, "target_origin_sha256": {"$ref": "#/$defs/sha"},
+    "identity": {"type": "object", "additionalProperties": false, "required": ["run_id", "authorization_id", "authorization_token_sha256"], "properties": {"run_id": {"type": "string"}, "authorization_id": {"const": "base-semantic-runtime"}, "authorization_token_sha256": {"$ref": "#/$defs/sha"}}},
+    "budget": {"type": "object", "additionalProperties": false, "required": ["actions", "max_actions", "requests", "max_requests"], "properties": {"actions": {"enum": [8, 11]}, "max_actions": {"enum": [8, 11]}, "requests": {"enum": [8, 11]}, "max_requests": {"enum": [8, 11]}}},
+    "observations": {"type": "array", "minItems": 8, "maxItems": 11, "items": {"$ref": "#/$defs/observation"}},
+    "cleanup": {"type": "object", "additionalProperties": false, "required": ["owned_namespace_sha256", "preexisting_absent", "delete_exact_owned_only", "postcondition_absent", "foreign_resources_mutated"], "properties": {"owned_namespace_sha256": {"$ref": "#/$defs/sha"}, "preexisting_absent": {"const": true}, "delete_exact_owned_only": {"const": true}, "postcondition_absent": {"const": true}, "foreign_resources_mutated": {"const": false}}},
+    "canonical_state_advanced": {"const": false}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observation": {"type": "object", "additionalProperties": false, "required": ["sequence", "step_id", "status", "result_code", "response_status", "response_bytes", "response_sha256", "oracle_sha256"], "properties": {"sequence": {"type": "integer", "minimum": 1, "maximum": 11}, "step_id": {"type": "string"}, "status": {"const": "pass"}, "result_code": {"type": "string"}, "response_status": {"type": "integer", "minimum": 0, "maximum": 599}, "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1048576}, "response_sha256": {"$ref": "#/$defs/sha"}, "oracle_sha256": {"$ref": "#/$defs/sha"}}}
+  }
+}

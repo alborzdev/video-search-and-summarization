@@ -1440,8 +1440,11 @@ stream_embedding_volume_tree() {
   # Verification must also work immediately after `compose down`, when only
   # the named volumes and locked image remain. Use a disposable, networkless,
   # read-only helper and disable volume copy-up so neither source volume can be
-  # modified while its exact subtree is streamed to the host verifier.
-  docker run --rm --pull never --network none --read-only \
+  # modified while its exact subtree is streamed to the host verifier. Disable
+  # Docker's container log driver: the attached stdout stream still feeds the
+  # verifier, while the multi-gigabyte tar stream is not duplicated into a
+  # json-file container log and cannot exhaust the host filesystem.
+  docker run --rm --pull never --network none --read-only --log-driver none \
     --cap-drop ALL --security-opt no-new-privileges:true \
     --entrypoint /bin/tar \
     --mount "type=volume,src=${volume},dst=/artifact,readonly,volume-nocopy" \

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "package_id": "offline-verifier-logdriver-successor",
+  "predecessor_package": "runtime-approval-bundles-rebase-successor",
+  "warehouse_sample_bundle": "excluded",
+  "runtime_activity_performed": false,
+  "approval_scope_changed": false,
+  "predecessor_bundle_count": 16,
+  "change": {
+    "function": "stream_embedding_volume_tree",
+    "required_argument": "--log-driver none",
+    "reason": "prevent an attached multi-gigabyte verification tar stream from being duplicated into Docker container logs",
+    "source_volume_read_only": true,
+    "network_disabled": true,
+    "helper_removed_on_exit": true
+  },
+  "predecessor_live_source_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5",
+  "current_live_source_sha256": "7bfd773fc6126cf9ae0f78aa68d95db231dcaa0651319be974ad477707afae40",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/runtime-approval-bundles-rebase-successor/contract.json", "sha256": "415931c48a231c150c62d90e134da5f60a75adb8bed653dcef45251ef6caf194"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-approval-bundles-rebase-successor/compiler.py", "sha256": "291cccb9d120e074e3139e6827efab530643085ac64d581c649bca682625883e"},
+    {"path": "deploy/docker/scripts/thor-local.sh", "sha256": "7bfd773fc6126cf9ae0f78aa68d95db231dcaa0651319be974ad477707afae40"},
+    {"path": "deploy/docker/test-scripts/test-dev-profile.sh", "sha256": "4d8f1791c4a7b0f26448da1543ad10a16e71e4f712d57b45da729fb470f50d3e"},
+    {"path": "deploy/docker/test-scripts/test-thor-local-security-models.sh", "sha256": "17f42d49f760ba9be05609b704f05c636ddfb005abea63943b576106ce773908"}
+  ]
+}

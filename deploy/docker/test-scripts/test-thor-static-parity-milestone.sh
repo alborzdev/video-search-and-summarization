@@ -19,17 +19,15 @@ python3 -m unittest discover \
   -s "${thor_local_root}/parity/tests" \
   -p 'test_capability_oracles.py' -v
 
-# The LVS/RT-VLM current-contract layer validates the additive cancellation
-# transition over the two historical source-claim layers without mutating or
-# rolling back either live ledger. Those old layers are immutable predecessors
-# and are no longer replayed against later live bytes; their identities and
-# rollback lineage are checked by this successor. The v1 protocol package is
-# likewise identity-checked by the cancellation umbrella below.
+# The Search readiness successor preserves the exact preceding LVS/RT-VLM
+# current-contract layer while binding the later additive Search routes and
+# reviewed API totals. The immutable predecessor is identity-checked, not
+# replayed against the evolved API inventory.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/compiler.py" \
-  validate >/dev/null
+  "${thor_local_root}/qualification/search-semantic-runtime-readiness-successor/executor.py" \
+  >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/tests"
+  "${thor_local_root}/qualification/search-semantic-runtime-readiness-successor/test_executor.py"
 
 # Wave 2 remains immutable extraction provenance and validates its full live merge.
 python3 "${thor_local_root}/parity/candidates/wave2/validate_candidate.py" --report
@@ -218,6 +216,21 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/runtime-evidence-common/test_common.py"
 
+# Base/HITL/UI and LVS now have authorization-gated semantic executor
+# packages. The static milestone runs only their inert plans and fake/injected
+# transport tests: no localhost request, browser, Docker action, model call,
+# fixture write, cleanup, receipt promotion, or Warehouse input is permitted.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/base-semantic-runtime-evidence/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/base-semantic-runtime-evidence/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-evidence/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-evidence/tests"
+
 # The first candidate-alerts runtime-evidence package is an immutable old-
 # oracle snapshot. Its source lock is historical and is not replayed here.
 
@@ -294,14 +307,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # exact predecessor tree is verified by the tooling successor above; the new
 # canonical entry remains runtime-unqualified and is not replayed here.
 
-# Wave8 and its Metadata-500 subset are immutable pre-cancellation snapshots.
-# Their exact trees and ordering are preserved by this additive source rebase;
-# only current cancellation sources and final expected/live ledgers are bound.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave8-cancellation-successor/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/advertised-entry-executors-wave8-cancellation-successor/tests"
+# Wave8 and its Metadata-500 subset are immutable pre-Search API snapshots.
+# Their exact compiler and rebase identities are preserved by the Search
+# readiness successor above rather than replayed against the evolved inventory.
 
 # The old four-entry external-attestation package includes the now-canonical
 # AWS/GCS boundary and is therefore a historical snapshot. Its exact predecessor
@@ -389,13 +397,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # The audio-entry-oracles package is an immutable old-ledger/oracle snapshot.
 # Its candidate contracts remain historical and are not replayed here.
 
-# Preserve the historical 14 explicit, non-inheriting approval scopes. This
-# predecessor compiler has no execute mode and takes no material action.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/runtime-approval-bundles/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/runtime-approval-bundles/tests"
+# The historical 14-scope approval predecessor directly locks the older live
+# launcher. Its exact contract/compiler identity and its later 16-scope
+# extension are preserved transitively by the offline-verifier safety successor
+# below, so the historical compiler is not replayed against evolved live bytes.
 
 # Preserve the historical v1 classification: 206 mapped, three static/non-
 # activating, one contract conflict, and one scope gap. It grants no approval,
@@ -406,15 +411,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-approval-mapping-rebase-successor/tests"
 
-# The current additive approval successor preserves the historical 14-bundle
-# prefix exactly and appends read-only firewall inspection followed by firewall
-# configuration. It is an inert contract compiler: it grants no approval,
-# consumes no receipt, performs no host/firewall action, and excludes Warehouse.
+# The finalized 16-bundle approval successor is preserved by exact identity in
+# the offline-verifier safety successor. Do not replay its old direct lock
+# against the evolved live launcher. The new successor proves only that large
+# attached verification archives bypass Docker container logging; it changes
+# no approval, receipt, execution, model, or Warehouse state.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/runtime-approval-bundles-rebase-successor/compiler.py" \
-  --check >/dev/null
+  "${thor_local_root}/qualification/offline-verifier-logdriver-successor/compiler.py" \
+  >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/runtime-approval-bundles-rebase-successor/tests"
+  "${thor_local_root}/qualification/offline-verifier-logdriver-successor/test_compiler.py"
 
 # This additive Sparse4D planning repair changes only the one objectively wrong
 # candidate dependency from the MV3DT pipeline to the existing Sparse4D pipeline.
@@ -450,14 +456,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-admission-receipts-rebase-successor/tests"
 
-# The execution-binding registry is an immutable pre-cancellation snapshot.
-# Its v2 successor preserves all 208 inert rows while rebinding the repaired
-# production sources and final expected/live ledgers. No binding is promoted.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/candidate-execution-binding-registry-rebase-successor-v2/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/candidate-execution-binding-registry-rebase-successor-v2/tests"
+# The execution-binding registry is an immutable pre-Search API snapshot. Its
+# exact compiler and rebase identities are preserved by the Search readiness
+# successor above; all 208 rows stay inert and no binding is promoted.
 
 # The candidate authority successor freezes an empty, non-consuming trust
 # boundary and a design-only DSSEv1/Ed25519/JCS receipt-envelope contract. It
@@ -488,18 +489,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/lvs-mcp-candidate-workload-repair-successor-v2/tests"
 
-# The cancellation umbrella freezes all eight replaced predecessor packages,
-# validates eight production files, five focused tests, and the refreshed
-# contracts, then runs only its two source-locked static pytest invocations.
-# It performs no network, Docker, service lifecycle, inference, or Warehouse I/O.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/request-cancellation-static-rebase-successor-v1/compiler.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/request-cancellation-static-rebase-successor-v1/compiler.py" \
-  --execute-tests >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/request-cancellation-static-rebase-successor-v1/tests"
+# The cancellation umbrella is an immutable pre-Search API snapshot. Its exact
+# compiler and contract identities are preserved by the Search readiness
+# successor above instead of replaying its stale aggregate inventory lock.
 
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact

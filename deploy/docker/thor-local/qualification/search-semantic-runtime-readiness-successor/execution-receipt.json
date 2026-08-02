@@ -1,0 +1,47 @@
+{
+  "input_contracts": {
+    "AttributeSearchInput": ["exclude_videos", "fuse_multi_attribute", "min_similarity", "query", "source_type", "timestamp_end", "timestamp_start", "top_k", "video_sources"],
+    "ReferenceObject": ["object_id", "sensor_id", "sensor_name", "timestamp"],
+    "SearchInput": ["agent_mode", "description", "min_cosine_similarity", "query", "reference_object", "source_type", "timestamp_end", "timestamp_start", "top_k", "use_critic", "video_sources"]
+  },
+  "package_id": "search-semantic-runtime-readiness-successor",
+  "promotion_eligible": false,
+  "predecessor_current_contract_preserved": true,
+  "remaining_blockers": [
+    "live execution is not authorized by this code-tests-docs-only no-network no-lifecycle task",
+    "no deployed exact-route inventory or runtime endpoint identity is available",
+    "no approved Elasticsearch fixture namespace, owned cleanup, cleanup-race, or delayed-reappearance receipt is available",
+    "no Search service, Elasticsearch query, index write, HTTP response, semantic result, cleanup race, or delayed reappearance was observed"
+  ],
+  "route_bindings": {
+    "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml:/api/v1/search": true,
+    "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml:/api/v1/search/attribute": true,
+    "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml:/api/v1/search/fusion": true,
+    "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml:/api/v1/search/image": true,
+    "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml:/api/v1/search": true,
+    "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml:/api/v1/search/attribute": true,
+    "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml:/api/v1/search/fusion": true,
+    "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml:/api/v1/search/image": true
+  },
+  "runtime_actions": 0,
+  "runtime_executor_boundary": {
+    "implemented": false,
+    "activation": "separately_authorized_future_loopback_runtime_only",
+    "runtime_endpoint": null,
+    "deployed_route_inventory_receipt": null,
+    "elasticsearch_fixture_namespace_receipt": null,
+    "owned_cleanup_and_delayed_reappearance_receipt": null,
+    "reason": "the authorized scope excludes network and service lifecycle, no deployed exact-route identity is available, and Elasticsearch fixture ownership plus cleanup-race evidence cannot be inferred from static source"
+  },
+  "runtime_requests": 0,
+  "schema_version": 1,
+  "selected_bbox_fixture": {
+    "fixture_sha256": "3e5edfcabd4b69973c4b0700c1a257b16384d5e84c7c31488b483ca0e976f8ee",
+    "image_bytes": 274,
+    "image_sha256": "8777513062cd5474166cfbe527f1e36c87c06f18b65e1133d4cb69ef8b911a7f",
+    "request_semantics": "reference_object_metadata_not_raw_image"
+  },
+  "source_locks_verified": 22,
+  "status": "static_contract_verified_non_promoting",
+  "valid": true
+}

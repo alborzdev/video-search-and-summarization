@@ -228,6 +228,16 @@ in this directory:
   budgets, exact run/authorization binding, exact-owned LIFO cleanup, pre/post
   digests, and sanitized evidence. Its CLI is limited to a static check and an
   in-memory fake self-test; it constructs no opener and performs no live I/O;
+- `base-semantic-runtime-evidence/` supplies authorization-gated, bounded
+  numeric-loopback HTTP execution for Base chat/report and HITL plus a strict
+  manual-browser receipt for video management. Its 8/11/11 envelopes enforce
+  exact-run ownership and sanitized evidence; receipts remain non-promoting
+  until deployed execution and exhaustive generated-child cleanup are proven;
+- `lvs-semantic-runtime-evidence/` supplies the corresponding exact 14-action
+  LVS envelope for five tools, single/multi reports, live captions, prompt
+  overwrite/isolation, disconnect cancellation, quiescence, CA-RAG absence,
+  sibling preservation, and exact-owned cleanup. Static tests use only an
+  injected adapter and create no runtime evidence;
 - `candidate-alerts-runtime-evidence/` is the first bounded consumer of those
   primitives: an inert plan and fake-only tests bind one alert workflow to an
   exact eight-request/eight-action future collector. Even an authorized run is
@@ -245,6 +255,11 @@ in this directory:
   strict plain-JSON fake transcript. The CLI exposes no execute mode or live
   adapter; exact official `/api/v1/search/{attribute,fusion,image}` route gaps
   and the missing selected-bbox image payload remain explicit blockers;
+- `search-semantic-runtime-readiness-successor/` preserves that predecessor
+  while adding the three canonical route bindings, their generator-derived
+  342/341 aggregate REST totals, exact NAT input-model checks, and a
+  digest-bound selected-object image fixture. It is static and non-promoting;
+  live Search/Elasticsearch semantics and exact-owned cleanup remain open;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle
@@ -290,6 +305,10 @@ in this directory:
   and appends separate physical-interface firewall inspection and configuration
   scopes. Both are inert and non-inheriting; the current firewall apply/remove
   path remains blocked pending a lossless transaction executor and receipt;
+- `offline-verifier-logdriver-successor/` preserves the resulting 16 scopes
+  while binding the later `--log-driver none` safety correction for disposable
+  model-volume hashing helpers. It prevents archive duplication into Docker
+  logs without changing authorization or performing a live verification;
 - `sparse4d-candidate-dependency-repair/` is an additive one-field planning
   overlay that replaces the objectively wrong MV3DT dependency with the
   existing Sparse4D pipeline. It does not modify selected Metadata-500 files,

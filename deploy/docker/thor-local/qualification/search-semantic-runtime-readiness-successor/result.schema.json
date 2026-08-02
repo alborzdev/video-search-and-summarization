@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "valid", "promotion_eligible", "runtime_requests", "runtime_actions", "route_bindings", "input_contracts", "selected_bbox_fixture", "predecessor_current_contract_preserved", "runtime_executor_boundary", "source_locks_verified", "remaining_blockers"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "search-semantic-runtime-readiness-successor"},
+    "status": {"const": "static_contract_verified_non_promoting"},
+    "valid": {"const": true},
+    "promotion_eligible": {"const": false},
+    "runtime_requests": {"const": 0},
+    "runtime_actions": {"const": 0},
+    "route_bindings": {"type": "object", "minProperties": 4, "additionalProperties": {"const": true}},
+    "input_contracts": {"type": "object", "minProperties": 3, "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+    "selected_bbox_fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixture_sha256", "image_bytes", "image_sha256", "request_semantics"],
+      "properties": {
+        "fixture_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "image_bytes": {"type": "integer", "minimum": 1, "maximum": 8192},
+        "image_sha256": {"const": "8777513062cd5474166cfbe527f1e36c87c06f18b65e1133d4cb69ef8b911a7f"},
+        "request_semantics": {"const": "reference_object_metadata_not_raw_image"}
+      }
+    },
+    "predecessor_current_contract_preserved": {"const": true},
+    "runtime_executor_boundary": {
+      "const": {
+        "implemented": false,
+        "activation": "separately_authorized_future_loopback_runtime_only",
+        "runtime_endpoint": null,
+        "deployed_route_inventory_receipt": null,
+        "elasticsearch_fixture_namespace_receipt": null,
+        "owned_cleanup_and_delayed_reappearance_receipt": null,
+        "reason": "the authorized scope excludes network and service lifecycle, no deployed exact-route identity is available, and Elasticsearch fixture ownership plus cleanup-race evidence cannot be inferred from static source"
+      }
+    },
+    "source_locks_verified": {"const": 22},
+    "remaining_blockers": {"const": ["live execution is not authorized by this code-tests-docs-only no-network no-lifecycle task", "no deployed exact-route inventory or runtime endpoint identity is available", "no approved Elasticsearch fixture namespace, owned cleanup, cleanup-race, or delayed-reappearance receipt is available", "no Search service, Elasticsearch query, index write, HTTP response, semantic result, cleanup race, or delayed reappearance was observed"]}
+  }
+}

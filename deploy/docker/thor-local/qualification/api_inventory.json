@@ -22,8 +22,8 @@
     "secret_inputs": []
   },
   "expected_totals": {
-    "declared_rest_operations": 330,
-    "normalized_unique_rest_operations": 329,
+    "declared_rest_operations": 342,
+    "normalized_unique_rest_operations": 341,
     "mcp_tools": 42,
     "mcp_prompts": 5
   },
@@ -77,7 +77,7 @@
       "kind": "rest",
       "extractor": "agent_routes",
       "expected_manifest": "agent.json",
-      "expected_operation_count": 44,
+      "expected_operation_count": 56,
       "direct": {
         "port_env": "VSS_AGENT_PORT",
         "default_port": 8100,

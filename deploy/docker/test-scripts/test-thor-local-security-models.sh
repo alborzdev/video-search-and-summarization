@@ -173,6 +173,7 @@ model_verification_paths_are_fail_closed_and_read_only() {
     grep -q -- '--artifact "${artifact}"' "${model_provisioner}" &&
     grep -q 'stream_embedding_volume_tree' "${thor_local}" &&
     grep -q 'docker run --rm --pull never --network none --read-only' "${thor_local}" &&
+    grep -q -- '--log-driver none' "${thor_local}" &&
     grep -q -- '--cap-drop ALL --security-opt no-new-privileges:true' "${thor_local}" &&
     grep -q 'readonly,volume-nocopy' "${thor_local}" &&
     grep -q -- '--artifact cosmos_embed_model' "${thor_local}" &&

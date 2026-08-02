@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thor LVS semantic runtime evidence receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "status", "identity", "contract_sha256",
+    "fixture_sha256", "budget", "actions", "cleanup", "comparisons",
+    "semantic_observations", "cleanup_proof", "postcondition_proof"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-vss-lvs-semantic-runtime-evidence-v1"},
+    "status": {"const": "pass"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "authorization_id", "authorization_token_sha256"],
+      "properties": {
+        "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+        "authorization_id": {"const": "lvs-semantic-runtime"},
+        "authorization_token_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fixture_sha256": {
+      "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["actions", "max_actions", "requests", "max_requests"],
+      "properties": {
+        "actions": {"type": "integer", "minimum": 0, "maximum": 14},
+        "max_actions": {"const": 14},
+        "requests": {"type": "integer", "minimum": 0, "maximum": 14},
+        "max_requests": {"const": 14}
+      }
+    },
+    "actions": {
+      "type": "array", "minItems": 12, "maxItems": 12,
+      "prefixItems": [
+        {"properties": {"order": {"const": 1}, "action_id": {"const": "capture-pre-state"}, "kind": {"const": "pre-state"}}},
+        {"properties": {"order": {"const": 2}, "action_id": {"const": "discover-five-tools"}, "kind": {"const": "tool-contract"}}},
+        {"properties": {"order": {"const": 3}, "action_id": {"const": "verify-local-dependencies"}, "kind": {"const": "readiness"}}},
+        {"properties": {"order": {"const": 4}, "action_id": {"const": "setup-owned-fixtures"}, "kind": {"const": "owned-setup"}}},
+        {"properties": {"order": {"const": 5}, "action_id": {"const": "single-video-report"}, "kind": {"const": "semantic-positive"}}},
+        {"properties": {"order": {"const": 6}, "action_id": {"const": "multi-video-report"}, "kind": {"const": "semantic-positive"}}},
+        {"properties": {"order": {"const": 7}, "action_id": {"const": "start-live-caption"}, "kind": {"const": "semantic-positive"}}},
+        {"properties": {"order": {"const": 8}, "action_id": {"const": "retrieve-live-caption"}, "kind": {"const": "semantic-positive"}}},
+        {"properties": {"order": {"const": 9}, "action_id": {"const": "write-shared-prompt-first"}, "kind": {"const": "semantic-boundary"}}},
+        {"properties": {"order": {"const": 10}, "action_id": {"const": "overwrite-shared-prompt-latest"}, "kind": {"const": "semantic-boundary"}}},
+        {"properties": {"order": {"const": 11}, "action_id": {"const": "reject-cross-agent-prompt-visibility"}, "kind": {"const": "adjacent-negative"}}},
+        {"properties": {"order": {"const": 12}, "action_id": {"const": "probe-disconnect-cancel-quiescence"}, "kind": {"const": "cancellation-proof"}}}
+      ],
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["order", "action_id", "kind", "status", "payload_bytes", "payload_sha256", "result_code"],
+        "properties": {
+          "order": {"type": "integer", "minimum": 1, "maximum": 12},
+          "action_id": {"type": "string"}, "kind": {"type": "string"},
+          "status": {"enum": ["pass", "fail"]},
+          "payload_bytes": {"type": "integer", "minimum": 0, "maximum": 1048576},
+          "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "result_code": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}
+        }
+      }
+    },
+    "cleanup": {
+      "type": "array", "minItems": 1, "maxItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["order", "resource_type", "target_sha256", "action_status", "postcondition_status"],
+        "properties": {
+          "order": {"const": 1},
+          "resource_type": {"const": "lvs-semantic-run-namespace"},
+          "target_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "action_status": {"enum": ["pass", "fail"]},
+          "postcondition_status": {"enum": ["pass", "fail", "not_run"]}
+        }
+      }
+    },
+    "comparisons": {
+      "type": "array", "minItems": 1, "maxItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["comparison_id", "pre_sha256", "post_sha256", "expectation", "status"],
+        "properties": {
+          "comparison_id": {"const": "unrelated-state-restored"},
+          "pre_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "post_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "expectation": {"const": "equal"}, "status": {"enum": ["pass", "fail"]}
+        }
+      }
+    },
+    "semantic_observations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["five_tools", "single_video_report", "multi_video_report", "live_caption", "latest_prompt_overwrite", "cross_agent_isolation", "disconnect_cancel_quiescence"],
+      "properties": {
+        "five_tools": {"type": "boolean"}, "single_video_report": {"type": "boolean"},
+        "multi_video_report": {"type": "boolean"}, "live_caption": {"type": "boolean"},
+        "latest_prompt_overwrite": {"type": "boolean"}, "cross_agent_isolation": {"type": "boolean"},
+        "disconnect_cancel_quiescence": {"type": "boolean"}
+      }
+    },
+    "cleanup_proof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["disconnect_delivered_once", "exact_cancel_accepted", "quiescent_before_cleanup", "ca_rag_scope_absent", "only_owned_targets_deleted"],
+      "properties": {
+        "disconnect_delivered_once": {"type": "boolean"}, "exact_cancel_accepted": {"type": "boolean"},
+        "quiescent_before_cleanup": {"type": "boolean"}, "ca_rag_scope_absent": {"type": "boolean"},
+        "only_owned_targets_deleted": {"type": "boolean"}
+      }
+    },
+    "postcondition_proof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owned_namespace_absent", "owned_reports_absent", "owned_stream_state_absent", "unrelated_state_restored"],
+      "properties": {
+        "owned_namespace_absent": {"type": "boolean"}, "owned_reports_absent": {"type": "boolean"},
+        "owned_stream_state_absent": {"type": "boolean"}, "unrelated_state_restored": {"type": "boolean"}
+      }
+    }
+  }
+}
