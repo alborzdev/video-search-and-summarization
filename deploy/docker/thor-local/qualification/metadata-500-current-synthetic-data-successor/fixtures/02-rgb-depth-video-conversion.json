@@ -1,0 +1,11 @@
+{
+  "adapter": "rgb_depth_video_conversion",
+  "capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+  "fixture_id": "fixture.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+  "generated_input_sha256": "03aee407f21573d70baef0756f3d34fb7e5aae1fa2f5038dcf1cb19332ca17ba",
+  "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+  "origin": "executor-generated tiny custom data",
+  "runtime_contract": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/contract.json",
+  "schema_version": 1,
+  "warehouse_sample_bundle": "excluded"
+}

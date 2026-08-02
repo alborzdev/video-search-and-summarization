@@ -13,6 +13,10 @@ from jsonschema import Draft202012Validator
 
 PACKAGE = Path(__file__).resolve().parents[1]
 REPO_ROOT = PACKAGE.parents[4]
+FUTURE_ORACLES = (
+    REPO_ROOT
+    / "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/post-state-capability-oracles.json"
+)
 
 
 def load_executor() -> ModuleType:
@@ -36,7 +40,11 @@ def test_contract_schema_and_exact_four_capability_bindings() -> None:
     assert [
         row["capability_id"] for row in contract["capabilities"]
     ] == EXECUTOR.EXPECTED_CAPABILITIES
-    assert len({row["fixture_sha256"] for row in contract["capabilities"]}) == 4
+    assert len({row["generated_input_sha256"] for row in contract["capabilities"]}) == 4
+    assert (
+        len({row["fixture_manifest"]["sha256"] for row in contract["capabilities"]})
+        == 4
+    )
     assert contract["policy"]["warehouse_sample_bundle"] == "excluded"
     assert contract["policy"]["network_allowed"] is False
 
@@ -62,11 +70,31 @@ def test_current_planning_rows_cannot_authorize_promotable_receipt() -> None:
         )
 
 
+def test_future_rows_are_exact_executor_ready_receipt_authority() -> None:
+    contract = EXECUTOR.strict_json(PACKAGE / "contract.json")
+    bindings = EXECUTOR.verify_bindings(
+        contract,
+        require_clean=False,
+        oracle_document=FUTURE_ORACLES,
+        require_executor_ready=True,
+    )
+    assert bindings["execution_oracles_executor_ready"] is True
+    assert bindings["execution_oracle_fixture_sha256"] == {
+        row["capability_id"]: row["fixture_manifest"]["sha256"]
+        for row in contract["capabilities"]
+    }
+
+
 def test_all_locked_sources_match_current_checkout() -> None:
     contract = EXECUTOR.strict_json(PACKAGE / "contract.json")
     for capability in contract["capabilities"]:
         for lock in capability["source_controls"]:
             assert EXECUTOR.sha_file(REPO_ROOT / lock["path"]) == lock["sha256"]
+        fixture_lock = capability["fixture_manifest"]
+        assert (
+            EXECUTOR.sha_file(REPO_ROOT / fixture_lock["path"])
+            == fixture_lock["sha256"]
+        )
 
 
 @pytest.mark.skipif(
@@ -81,6 +109,8 @@ def test_full_nonpromoting_native_execution(tmp_path: Path) -> None:
             str(PACKAGE / "executor.py"),
             "--execute",
             "--allow-dirty-development",
+            "--oracle-document",
+            str(FUTURE_ORACLES),
             "--acknowledge",
             EXECUTOR.ACK,
             "--output",

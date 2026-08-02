@@ -105,6 +105,27 @@ def verify_bindings(
                 or sha_file(path) != lock["sha256"]
             ):
                 raise EvidenceError(f"source lock mismatch: {lock['path']}")
+        fixture_lock = row["fixture_manifest"]
+        fixture_path = REPO_ROOT / fixture_lock["path"]
+        if (
+            not fixture_path.is_file()
+            or fixture_path.is_symlink()
+            or sha_file(fixture_path) != fixture_lock["sha256"]
+        ):
+            raise EvidenceError(
+                f"fixture manifest lock mismatch: {row['capability_id']}"
+            )
+        fixture_manifest = strict_json(fixture_path)
+        if (
+            fixture_manifest.get("capability_id") != row["capability_id"]
+            or fixture_manifest.get("fixture_id") != f"fixture.{row['capability_id']}"
+            or fixture_manifest.get("generated_input_sha256")
+            != row["generated_input_sha256"]
+            or fixture_manifest.get("warehouse_sample_bundle") != "excluded"
+        ):
+            raise EvidenceError(
+                f"fixture manifest semantics drift: {row['capability_id']}"
+            )
     for section in ("selected_oracle_document", "selected_manifest_document"):
         lock = contract["target"][section]
         path = REPO_ROOT / lock["path"]
@@ -1157,16 +1178,16 @@ def execute(
                 run_root.mkdir(parents=True)
                 observations.append(ADAPTERS[capability["adapter"]](run_root, runner))
             first, second = observations
-            if first["fixture_sha256"] != capability["fixture_sha256"]:
+            if first["fixture_sha256"] != capability["generated_input_sha256"]:
                 raise EvidenceError(
                     f"generated fixture identity drift: {capability['capability_id']}"
                 )
             if (
-                not development
+                bindings["execution_oracles_executor_ready"]
                 and bindings["execution_oracle_fixture_sha256"][
                     capability["capability_id"]
                 ]
-                != first["fixture_sha256"]
+                != capability["fixture_manifest"]["sha256"]
             ):
                 raise EvidenceError(
                     f"executor-ready oracle fixture digest drift: {capability['capability_id']}"
@@ -1189,7 +1210,8 @@ def execute(
                     "status": "pass",
                     "independent_runs": 2,
                     "deterministic_output": True,
-                    "fixture_sha256": first["fixture_sha256"],
+                    "fixture_sha256": capability["fixture_manifest"]["sha256"],
+                    "generated_input_sha256": first["fixture_sha256"],
                     "run_output_sha256": [digest, digest],
                     "positive_observations": first["positive"],
                     "adjacent_negatives": first["negatives"],
@@ -1282,7 +1304,8 @@ def plan(
                 "status": "plan",
                 "independent_runs": 0,
                 "deterministic_output": False,
-                "fixture_sha256": "0" * 64,
+                "fixture_sha256": row["fixture_manifest"]["sha256"],
+                "generated_input_sha256": row["generated_input_sha256"],
                 "run_output_sha256": [],
                 "positive_observations": {},
                 "adjacent_negatives": [],

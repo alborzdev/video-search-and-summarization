@@ -17,7 +17,7 @@
       "maxItems": 4,
       "items": {
         "type": "object",
-        "required": ["capability_id", "oracle_id", "status", "independent_runs", "deterministic_output", "fixture_sha256", "run_output_sha256", "positive_observations", "adjacent_negatives", "cleanup"]
+        "required": ["capability_id", "oracle_id", "status", "independent_runs", "deterministic_output", "fixture_sha256", "generated_input_sha256", "run_output_sha256", "positive_observations", "adjacent_negatives", "cleanup"]
       }
     },
     "cleanup": {"type": "object"},

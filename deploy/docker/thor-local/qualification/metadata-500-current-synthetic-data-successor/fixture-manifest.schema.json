@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "adapter": {
+      "enum": [
+        "semantic_label_helpers",
+        "dataset_checks",
+        "rgb_depth_video_conversion",
+        "ground_truth_conversion"
+      ]
+    },
+    "capability_id": {
+      "pattern": "^manifest-entry\\.synthetic-data-tools\\.0[0-3]-[a-z0-9-]+$",
+      "type": "string"
+    },
+    "fixture_id": {
+      "pattern": "^fixture\\.manifest-entry\\.synthetic-data-tools\\.0[0-3]-[a-z0-9-]+$",
+      "type": "string"
+    },
+    "generated_input_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "generator": {
+      "const": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+    },
+    "origin": {
+      "const": "executor-generated tiny custom data"
+    },
+    "runtime_contract": {
+      "const": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/contract.json"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "warehouse_sample_bundle": {
+      "const": "excluded"
+    }
+  },
+  "required": [
+    "schema_version",
+    "capability_id",
+    "fixture_id",
+    "adapter",
+    "generator",
+    "runtime_contract",
+    "origin",
+    "warehouse_sample_bundle",
+    "generated_input_sha256"
+  ],
+  "type": "object"
+}

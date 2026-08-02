@@ -1,0 +1,11 @@
+{
+  "adapter": "dataset_checks",
+  "capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
+  "fixture_id": "fixture.manifest-entry.synthetic-data-tools.01-dataset-checks",
+  "generated_input_sha256": "ec3984e184710eaee97e2b2fb3dc1fe418e46888aaf561e956008841f699dad3",
+  "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+  "origin": "executor-generated tiny custom data",
+  "runtime_contract": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/contract.json",
+  "schema_version": 1,
+  "warehouse_sample_bundle": "excluded"
+}

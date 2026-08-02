@@ -1,0 +1,11 @@
+{
+  "adapter": "semantic_label_helpers",
+  "capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+  "fixture_id": "fixture.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+  "generated_input_sha256": "ddca66c7b6a6ee671f995d1f2e8d2652ff21d97f12223556fff756b1e5bda183",
+  "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+  "origin": "executor-generated tiny custom data",
+  "runtime_contract": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/contract.json",
+  "schema_version": 1,
+  "warehouse_sample_bundle": "excluded"
+}

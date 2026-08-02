@@ -16,7 +16,7 @@
       "maxItems": 4,
       "items": {
         "type": "object",
-        "required": ["capability_id", "oracle_id", "selected_oracle_sha256", "adapter", "fixture_sha256", "source_controls", "positive_semantics", "adjacent_negative"]
+        "required": ["capability_id", "oracle_id", "selected_oracle_sha256", "adapter", "generated_input_sha256", "fixture_manifest", "source_controls", "positive_semantics", "adjacent_negative"]
       }
     }
   }

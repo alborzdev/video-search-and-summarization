@@ -83,7 +83,11 @@
       "oracle_id": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
       "selected_oracle_sha256": "e5c6de59a8254f0482750a275a4568676e1f1334005535687ab245e98f4a7881",
       "adapter": "semantic_label_helpers",
-      "fixture_sha256": "ddca66c7b6a6ee671f995d1f2e8d2652ff21d97f12223556fff756b1e5bda183",
+      "generated_input_sha256": "ddca66c7b6a6ee671f995d1f2e8d2652ff21d97f12223556fff756b1e5bda183",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/00-semantic-label-helpers.json",
+        "sha256": "0a079066c4ad506e8589206c8b51e21a0ecacdecb16fc9785c52033b0d279d27"
+      },
       "source_controls": [
         {"path": "tools/sdg-postprocessing/semantic_labeling/box_check.py", "sha256": "0f92e5a7bbce77d0f44622c9abe68f1dec59d1aab0268c8776094a9f0fb1d634"},
         {"path": "tools/sdg-postprocessing/utils/export_xform_semantics.py", "sha256": "38a0f79876626754563ed306fdd9a41a4fe505d36b16e883c49a24d2ab8663c3"},
@@ -97,7 +101,11 @@
       "oracle_id": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
       "selected_oracle_sha256": "bf986ed0795471831ea9ea9b02ba7288dfad48a4835bc756de731a47f87714db",
       "adapter": "dataset_checks",
-      "fixture_sha256": "ec3984e184710eaee97e2b2fb3dc1fe418e46888aaf561e956008841f699dad3",
+      "generated_input_sha256": "ec3984e184710eaee97e2b2fb3dc1fe418e46888aaf561e956008841f699dad3",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/01-dataset-checks.json",
+        "sha256": "0cc773dd0ec64aa4a45c379b298dc7580eddf89ab7702172fe101807d52c1ff2"
+      },
       "source_controls": [
         {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_rgb.py", "sha256": "1da31b208b1e772de48779aee8c08621abe0a75f7b7129ee0607e980126cf656"},
         {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_npy.py", "sha256": "59307b80214542c9ed02d01f27f3e9042cc501bf3edafee26be09310b35646ab"},
@@ -118,7 +126,11 @@
       "oracle_id": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
       "selected_oracle_sha256": "fb330ce02d73c4bfd304fcbd51e0a2a16f7647de1c595a7c5d5f94aa37b3f4de",
       "adapter": "rgb_depth_video_conversion",
-      "fixture_sha256": "03aee407f21573d70baef0756f3d34fb7e5aae1fa2f5038dcf1cb19332ca17ba",
+      "generated_input_sha256": "03aee407f21573d70baef0756f3d34fb7e5aae1fa2f5038dcf1cb19332ca17ba",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/02-rgb-depth-video-conversion.json",
+        "sha256": "171aef78bdd4738fa78f7114b27b9ca9cd0ec528ed52ae2f8be051c5b14dfd25"
+      },
       "source_controls": [
         {"path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py", "sha256": "c149099e5055143aa536df717c61f339d76c1b02cbd6645458d3f854f7f0a811"},
         {"path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py", "sha256": "f2191dde3b7ea03387871c0ddad53f1d0d76e04634dc09cecad676a11b579b45"},
@@ -132,7 +144,11 @@
       "oracle_id": "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
       "selected_oracle_sha256": "ecb4eb12e4408cbf199e60f2f30f15b63b851103dc4be1515dfa6778bdbc9003",
       "adapter": "ground_truth_conversion",
-      "fixture_sha256": "a5b890f6653f631e9d70753e1067cb57fefea338103cb27491d84c154dbed6a9",
+      "generated_input_sha256": "a5b890f6653f631e9d70753e1067cb57fefea338103cb27491d84c154dbed6a9",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/03-ground-truth-conversion.json",
+        "sha256": "0a1f7d857d582aa47cd54aa1a956175a67976719443c8a9ed946962d8ef77939"
+      },
       "source_controls": [
         {"path": "tools/sdg-postprocessing/data_conversion/convert_ground_truth.py", "sha256": "4d81551c3a143f52f3fa4bfdc52f1af6aa01fac864d250a9a3f2547dfdaeef9f"},
         {"path": "tools/sdg-postprocessing/tests/test_sdg_regressions.py", "sha256": "f8ab44235f52f60414bdbabb96e5fbc49082c0560faea980073b14edd3c06230"}

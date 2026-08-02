@@ -1,0 +1,11 @@
+{
+  "adapter": "ground_truth_conversion",
+  "capability_id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+  "fixture_id": "fixture.manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+  "generated_input_sha256": "a5b890f6653f631e9d70753e1067cb57fefea338103cb27491d84c154dbed6a9",
+  "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+  "origin": "executor-generated tiny custom data",
+  "runtime_contract": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/contract.json",
+  "schema_version": 1,
+  "warehouse_sample_bundle": "excluded"
+}
