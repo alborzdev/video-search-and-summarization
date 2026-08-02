@@ -124,7 +124,14 @@ def test_full_nonpromoting_native_execution(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, result.stderr
     receipt = json.loads(output.read_text())
+    future = json.loads(FUTURE_ORACLES.read_text())
+    future_by_id = {row["capability_id"]: row for row in future["oracles"]}
     assert receipt["status"] == "pass"
     assert receipt["promotion"]["receipt_is_runtime_evidence"] is False
     assert [row["status"] for row in receipt["capability_results"]] == ["pass"] * 4
     assert all(row["deterministic_output"] for row in receipt["capability_results"])
+    assert all(
+        row["cleanup"]["namespace"]
+        == future_by_id[row["capability_id"]]["cleanup"]["targets"][0]
+        for row in receipt["capability_results"]
+    )

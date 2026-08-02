@@ -222,6 +222,7 @@ def verify_bindings(
         materialization = row.get("fixture", {}).get("materialization", {})
         oracle_fixture_sha256[capability_id] = materialization.get("sha256")
         readiness = row.get("acceptance_readiness", {})
+        expected_namespace = f"vss-oracle-{capability_id.replace('.', '-')}"
         row_ready = (
             row.get("execution_bounds", {}).get("executor") == executor_relative
             and executor_relative
@@ -236,6 +237,9 @@ def verify_bindings(
             and len(materialization.get("sha256")) == 64
             and readiness.get("classification") == "executor_ready"
             and readiness.get("blockers") == []
+            and row.get("cleanup", {}).get("mutation") == "temporary_files_only"
+            and row.get("cleanup", {}).get("targets") == [expected_namespace]
+            and row.get("cleanup", {}).get("allowlist") == [expected_namespace]
         )
         executor_ready &= row_ready
     if require_executor_ready and not executor_ready:
@@ -1172,9 +1176,10 @@ def execute(
     try:
         environment = verify_environment(contract, runner)
         for capability in contract["capabilities"]:
+            namespace = f"vss-oracle-{capability['capability_id'].replace('.', '-')}"
             observations = []
             for index in range(2):
-                run_root = temporary / capability["adapter"] / f"run-{index + 1}"
+                run_root = temporary / namespace / f"run-{index + 1}"
                 run_root.mkdir(parents=True)
                 observations.append(ADAPTERS[capability["adapter"]](run_root, runner))
             first, second = observations
@@ -1228,7 +1233,7 @@ def execute(
                         ]
                     ],
                     "cleanup": {
-                        "namespace": capability["adapter"],
+                        "namespace": namespace,
                         "temporary_files_only": True,
                     },
                 }
