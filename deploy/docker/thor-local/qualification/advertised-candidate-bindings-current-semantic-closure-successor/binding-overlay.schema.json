@@ -17,8 +17,8 @@
       "required": ["row_count", "concrete_implementation_count", "partial_implementation_count", "executor_ready_count", "required_cloud_inference_count", "warehouse_sample_dependency_count", "concrete_full_binding_count", "canonical_binding_change_count", "admitted_count", "executable_count", "runtime_receipt_count", "promotion_count"],
       "properties": {
         "row_count": {"const": 10},
-        "concrete_implementation_count": {"const": 4},
-        "partial_implementation_count": {"const": 6},
+        "concrete_implementation_count": {"const": 10},
+        "partial_implementation_count": {"const": 0},
         "executor_ready_count": {"const": 0},
         "required_cloud_inference_count": {"const": 0},
         "warehouse_sample_dependency_count": {"const": 0},
@@ -52,7 +52,7 @@
         "package_id": {"type": "string", "minLength": 1},
         "path": {"type": "string", "pattern": "^deploy/docker/thor-local/qualification/.+/executor\\.py$"},
         "role": {"type": "string", "minLength": 1},
-        "authorization_gated": {"const": true},
+        "authorization_gated": {"type": "boolean"},
         "executor_ready": {"const": false}
       }
     },
@@ -73,7 +73,7 @@
         "implementation_state": {"enum": ["concrete", "partial"]},
         "relationship_kind": {"enum": ["concrete_executor_candidate", "partial_executor_candidate"]},
         "executor_ready": {"const": false},
-        "executor_references": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/executorReference"}},
+        "executor_references": {"type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/executorReference"}},
         "coverage_status": {"const": "incomplete_no_live_receipt"},
         "retained_gaps": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
         "canonical_effect": {"$ref": "#/$defs/canonicalEffect"}

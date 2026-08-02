@@ -13,18 +13,17 @@ The result deliberately separates three concepts:
 - `executor_ready=false` means the package is not eligible for canonical
   execution/admission. This remains false for every row.
 
-The exact split is four concrete implementations (the two Base rows, Search
-archive management, and the UI row), six partial implementations (two LVS and
-four Search rows), and
-zero executor-ready, admitted, executable, evidenced, or promoted rows. Base
-still lacks stored Agent-media digest readback. UI still lacks the canonical
-bound review. LVS retains advertised per-source event attribution and exact
-focus negatives. Four Search semantic executors still need a concrete adapter
-from the new dynamic fixture handoff. Search archive management now has
-separate exact file and RTSP lifecycle candidates but no live receipt.
+The exact split is now ten concrete implementations and zero partial
+implementations, with zero executor-ready, admitted, executable, evidenced, or
+promoted rows. Base still lacks stored Agent-media digest readback. UI still
+lacks the canonical-bound review. LVS now adds exact two-source artifact
+attribution and a six-case focus matrix. Search now consumes its dynamic owned
+fixture under the same request/deadline/cleanup budget and can remediate exact
+bounded delayed writes. Search archive management has separate exact file and
+RTSP lifecycle candidates. None of these lanes has a live Thor receipt.
 
 Every direct classification input is byte-locked. The compiler also verifies
-the nested source/implementation locks declared by all seven source packages,
+the nested source/implementation locks declared by all nine source packages,
 so a transitive implementation change fails closed. Warehouse remains
 excluded.
 

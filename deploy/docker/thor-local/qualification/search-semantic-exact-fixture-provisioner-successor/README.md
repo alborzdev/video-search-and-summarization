@@ -27,10 +27,14 @@ All executor-managed HTTP requests share one 900-second wall-clock deadline;
 180 seconds are reserved for cleanup and each request timeout is clamped to the
 remaining phase budget.
 
-The former in-process `fixture_consumer` hook is fail-closed disabled. An
-unbounded callback could prevent `finally` cleanup from running, so a future
-combined semantic runner must first provide an isolated consumer that shares
-this executor's wall-clock deadline and cleanup reserve.
+The optional semantic path accepts only the concrete
+`BoundedSemanticFixtureConsumer`; arbitrary callbacks fail before transport.
+The consumer materializes the dynamic run namespace, VST UUID, and selected
+object into the eleven reviewed Search operations, then uses the lifecycle's
+same opener, 77-request budget, wall-clock deadline, and cleanup reserve. The
+CLI enables it only when both `--search-origin` and `--semantic-template` are
+provided. The template must carry the exact media target/distractor attestation
+and the fixed operation order enforced by the executor.
 
 The supplied MP4 must be a reviewed custom clip no larger than 16 MiB and must
 contain at least one consistently tracked object. Readiness requires:
@@ -47,11 +51,13 @@ contain at least one consistently tracked object. Readiness requires:
 
 Cleanup succeeds only when agent deletion reports `success`, the VST UUID/name
 is absent, every discovered document is absent by exact `_mget`, all three
-identity-scoped searches return zero, and a delayed second check shows no
-reappearance.
+identity-scoped searches return zero, and two consecutive observations show no
+reappearance. A bounded delayed write visible through an exact run-identity
+query is removed by exact document ID through Elasticsearch `_bulk`; an exact
+ID that cannot be reconciled to that identity scope fails closed and is never
+deleted.
 
-The production failed-ingest rollback removes state visible at rollback time,
-but it has no proven pipeline-drain/remediation loop for writes that arrive
-later. This executor detects such reappearance and fails closed; it does not
-claim to repair it automatically, so live validation and remediation of that
-failure path remain open.
+The production failed-ingest rollback removes state visible at rollback time.
+This qualification lifecycle adds a bounded delayed-write remediation window,
+but neither that path nor the integrated semantic consumer has been executed
+on Thor. Live validation remains open, and no runtime receipt is claimed.

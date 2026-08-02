@@ -61,6 +61,96 @@ def _append_artifact_display_note(side_effects: dict[str, Any]) -> None:
         side_effects["artifact_note"] = _ARTIFACT_DISPLAY_NOTE
 
 
+def _video_report_observability(report_result: Any, requested_sensor_ids: list[str]) -> dict[str, Any]:
+    """Build a structured, fail-closed source-to-artifact correlation envelope."""
+
+    correlation_id = getattr(report_result, "report_correlation_id", None)
+    if (
+        not isinstance(correlation_id, str)
+        or not correlation_id.startswith("lvs-")
+        or len(correlation_id) != 36
+        or any(character not in "0123456789abcdef" for character in correlation_id[4:])
+    ):
+        raise ValueError("Report Agent: missing or invalid report correlation ID")
+    output_requested = list(getattr(report_result, "requested_sensor_ids", []) or requested_sensor_ids)
+    failed_sensor_ids = list(getattr(report_result, "failed_sensor_ids", []) or [])
+    if output_requested != requested_sensor_ids or len(set(output_requested)) != len(output_requested):
+        raise ValueError("Report Agent: report source correlation does not match the ordered request")
+
+    raw_reports = list(getattr(report_result, "all_reports", None) or [])
+    if not raw_reports and getattr(report_result, "http_url", None):
+        raw_reports = [
+            {
+                "sensor_id": output_requested[0],
+                "source_index": 0,
+                "source_count": len(output_requested),
+                "report_correlation_id": correlation_id,
+                "http_url": report_result.http_url,
+                "pdf_url": getattr(report_result, "pdf_url", None),
+                "object_store_key": getattr(report_result, "object_store_key", None),
+                "pdf_object_store_key": (
+                    report_result.object_store_key.replace(".md", ".pdf")
+                    if getattr(report_result, "object_store_key", None) and getattr(report_result, "pdf_url", None)
+                    else None
+                ),
+                "file_size": getattr(report_result, "file_size", 0),
+                "pdf_file_size": getattr(report_result, "pdf_file_size", 0),
+            }
+        ]
+
+    artifacts: list[dict[str, Any]] = []
+    successful_sensor_ids: list[str] = []
+    for raw_report in raw_reports:
+        report = raw_report.model_dump() if hasattr(raw_report, "model_dump") else dict(raw_report)
+        sensor_id = report.get("sensor_id")
+        source_index = report.get("source_index")
+        if (
+            not isinstance(sensor_id, str)
+            or not isinstance(source_index, int)
+            or source_index < 0
+            or source_index >= len(output_requested)
+            or output_requested[source_index] != sensor_id
+            or report.get("source_count") != len(output_requested)
+            or report.get("report_correlation_id") != correlation_id
+            or sensor_id in successful_sensor_ids
+        ):
+            raise ValueError("Report Agent: invalid per-artifact source correlation")
+        successful_sensor_ids.append(sensor_id)
+        artifacts.append(
+            {
+                "sensor_id": sensor_id,
+                "source_index": source_index,
+                "source_count": len(output_requested),
+                "report_correlation_id": correlation_id,
+                "markdown": {
+                    "url": report.get("http_url"),
+                    "object_store_key": report.get("object_store_key"),
+                    "size_bytes": report.get("file_size", 0),
+                },
+                "pdf": {
+                    "url": report.get("pdf_url"),
+                    "object_store_key": report.get("pdf_object_store_key"),
+                    "size_bytes": report.get("pdf_file_size", 0),
+                },
+            }
+        )
+
+    if set(successful_sensor_ids) & set(failed_sensor_ids):
+        raise ValueError("Report Agent: source cannot be both successful and failed")
+    if set(successful_sensor_ids) | set(failed_sensor_ids) != set(output_requested):
+        raise ValueError("Report Agent: every requested source must have an observable outcome")
+
+    return {
+        "report_correlation_id": correlation_id,
+        "requested_sensor_ids": output_requested,
+        "successful_sensor_ids": successful_sensor_ids,
+        "failed_sensor_ids": failed_sensor_ids,
+        "report_count": len(artifacts),
+        "complete": successful_sensor_ids == output_requested and not failed_sensor_ids,
+        "artifacts": artifacts,
+    }
+
+
 # ========== REPORT AGENT MODELS ==========
 
 
@@ -657,12 +747,18 @@ async def report_agent(config: ReportAgentConfig, builder: Builder) -> AsyncGene
                 messages=[report_result.summary or "Report generation was cancelled."],
                 side_effects={},
                 status="success",
-                metadata={"sensor_id": video_report_input.sensor_id},
+                metadata={
+                    "sensor_id": video_report_input.sensor_id,
+                    "report_correlation_id": getattr(report_result, "report_correlation_id", None),
+                    "requested_sensor_ids": sensor_ids,
+                    "report_count": 0,
+                },
             )
             yield AgentMessageChunk(type=AgentMessageChunkType.FINAL, content=agent_output.model_dump_json())
             return
 
         logger.info(f"Video(uploaded) report generated successfully for {sensor_ids}")
+        report_observability = _video_report_observability(report_result, sensor_ids)
 
         # Format output
         side_effects = {}
@@ -746,12 +842,18 @@ async def report_agent(config: ReportAgentConfig, builder: Builder) -> AsyncGene
         agent_output = AgentOutput(
             messages=messages,
             side_effects=side_effects,
-            status="success",
+            status="success" if report_observability["complete"] else "partial_success",
+            error_message=(
+                None
+                if report_observability["complete"]
+                else "One or more requested videos did not produce a report artifact."
+            ),
             metadata={
                 "sensor_id": video_report_input.sensor_id,
                 "report_type": "video_report",
                 "file_size": report_result.file_size,
                 "pdf_file_size": report_result.pdf_file_size,
+                "report_correlation": report_observability,
             },
         )
         yield AgentMessageChunk(type=AgentMessageChunkType.FINAL, content=agent_output.model_dump_json())

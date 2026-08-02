@@ -26,6 +26,7 @@ EXPECTED_REBASED_IDS = {
     "manifest-gap.agent-and-mcp-apis.03-video-delete",
     "manifest-gap.agent-and-mcp-apis.04-rtsp-add-delete",
     "manifest-gap.agent-and-mcp-apis.06-lvs-mcp",
+    "manifest-gap.audio-understanding.00-audio-aware-base-workflow",
     "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
     "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts",
     "manifest-gap.rt-vlm-api.00-openai-compatible-chat-completions",
@@ -59,6 +60,7 @@ EXPECTED_OVERLAY = {
     "services/agent/src/vss_agents/api/video_ingest.py": "0074a4165684e207d629d2e56ed47d7abf0cc26b3a39f42bf197bc7bf4566534",
     "services/agent/src/vss_agents/api/rtsp_ingest.py": "b246293be1a0919a3620a35fb9e0fc423955186e31b91b900c2ae45a1302a38e",
     "services/agent/src/vss_agents/api/rtsp_delete.py": "d90e887b26f518a15a628224a33577e3469c4f3f29b66d84dae0470fe75285cb",
+    "services/agent/src/vss_agents/tools/video_report_gen.py": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab",
     "deploy/docker/services/video-summarization/compose.yml": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74",
     "deploy/docker/thor-local/qualification/expected/agent.json": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350",
     "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
@@ -217,7 +219,8 @@ def _is_terminal_guard(node: ast.If) -> bool:
         and child.value.id == "req_info"
     }
     return attrs == {"abort_requested", "finalized"} and any(
-        isinstance(child, ast.Return) for child in ast.walk(ast.Module(body=node.body))
+        isinstance(child, ast.Return)
+        for child in ast.walk(ast.Module(body=node.body, type_ignores=[]))
     )
 
 
@@ -438,7 +441,7 @@ def validate() -> dict[str, Any]:
         if isinstance(row, dict)
     }
     if overlay != EXPECTED_OVERLAY or len(overlay_rows) != len(overlay):
-        raise RebaseError("exact fourteen-path overlay drift")
+        raise RebaseError("exact fifteen-path overlay drift")
     for path, digest in overlay.items():
         if _sha(_read(path)) != digest:
             raise RebaseError(f"current overlay source drift: {path}")
@@ -505,17 +508,17 @@ def validate() -> dict[str, Any]:
         raise RebaseError("partition contract missing")
     if (
         partition.get("retained_candidate_rows") != 71
-        or partition.get("unchanged_rows") != 40
-        or partition.get("rebased_rows") != 31
+        or partition.get("unchanged_rows") != 39
+        or partition.get("rebased_rows") != 32
         or rebased != EXPECTED_REBASED_IDS
         or set(partition.get("rebased_entry_ids", [])) != EXPECTED_REBASED_IDS
         or len(partition.get("rebased_entry_ids", [])) != len(EXPECTED_REBASED_IDS)
-        or len(unchanged) != 40
-        or len(rebased) != 31
+        or len(unchanged) != 39
+        or len(rebased) != 32
         or unchanged & rebased
         or unchanged | rebased != {row["entry_id"] for row in candidate_rows}
     ):
-        raise RebaseError("exact 40 unchanged + 31 rebased partition drift")
+        raise RebaseError("exact 39 unchanged + 32 rebased partition drift")
     if set(overlay_usage) != set(EXPECTED_OVERLAY):
         raise RebaseError("one or more overlay paths are not used by retained rows")
     if current_lock_references != 182:
@@ -540,9 +543,9 @@ def validate() -> dict[str, Any]:
         "schema_version": 1,
         "status": "pass_current_source_rebase_static_only",
         "retained_candidate_rows": 71,
-        "unchanged_rows": 40,
-        "rebased_rows": 31,
-        "current_source_overlay_paths": 14,
+        "unchanged_rows": 39,
+        "rebased_rows": 32,
+        "current_source_overlay_paths": 15,
         "current_source_lock_references": 182,
         "overlay_reference_counts": dict(sorted(overlay_usage.items())),
         "rebased_entry_ids": sorted(rebased),
@@ -580,8 +583,8 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, indent=2, sort_keys=True))
     else:
         print(
-            "PASS: 71 retained rows = 40 unchanged + 31 current-source rebased; "
-            "fourteen locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
+            "PASS: 71 retained rows = 39 unchanged + 32 current-source rebased; "
+            "fifteen locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
         )
     return 0
 

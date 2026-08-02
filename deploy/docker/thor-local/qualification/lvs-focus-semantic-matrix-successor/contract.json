@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "package_id": "lvs-focus-semantic-matrix-successor",
+  "capability_id": "manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+  "oracle_id": "oracle.manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+  "default_execution_enabled": false,
+  "warehouse_sample_bundle": "excluded",
+  "authorization": {
+    "acknowledgement": "I_ACK_LVS_FOCUS_MATRIX_AND_EXACT_FILE_CLEANUP",
+    "live_execution_requires_separate_operator_authorization": true
+  },
+  "transport": {
+    "numeric_loopback_http_only": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "max_fixture_bytes": 33554432,
+    "max_request_bytes": 36700160,
+    "max_response_bytes": 4194304,
+    "short_timeout_seconds": 10,
+    "summarize_timeout_seconds": 300
+  },
+  "execution_bounds": {
+    "max_requests": 14,
+    "max_actions": 14,
+    "max_duration_seconds": 2400,
+    "owned_file_count": 1,
+    "semantic_matrix_cases": 6
+  },
+  "action_envelope": [
+    {"order": 1, "id": "capture-complete-file-prestate", "method": "GET", "path": "/files"},
+    {"order": 2, "id": "verify-lvs-ready", "method": "GET", "path": "/v1/ready"},
+    {"order": 3, "id": "verify-model-advertised", "method": "GET", "path": "/models"},
+    {"order": 4, "id": "upload-one-owned-caption-source", "method": "POST", "path": "/files"},
+    {"order": 5, "id": "verify-owned-caption-source", "method": "GET", "path": "/files/{owned_file_id}"},
+    {"order": 6, "id": "focus-object-only", "method": "POST", "path": "/v1/summarize"},
+    {"order": 7, "id": "focus-event-only", "method": "POST", "path": "/v1/summarize"},
+    {"order": 8, "id": "focus-scenario-only", "method": "POST", "path": "/v1/summarize"},
+    {"order": 9, "id": "focus-combined-relationship", "method": "POST", "path": "/v1/summarize"},
+    {"order": 10, "id": "focus-distractor-control", "method": "POST", "path": "/v1/summarize"},
+    {"order": 11, "id": "focus-absent-negative", "method": "POST", "path": "/v1/summarize"},
+    {"order": 12, "id": "delete-exact-owned-caption-source", "method": "DELETE", "path": "/files/{owned_file_id}"},
+    {"order": 13, "id": "prove-owned-absence-and-unrelated-restoration", "method": "GET", "path": "/files"},
+    {"order": 14, "id": "verify-lvs-ready-after-cleanup", "method": "GET", "path": "/v1/ready"}
+  ],
+  "semantic_matrix": [
+    {"order": 1, "case_id": "object_only", "expected_assertions": ["target_object"]},
+    {"order": 2, "case_id": "event_only", "expected_assertions": ["target_event"]},
+    {"order": 3, "case_id": "scenario_only", "expected_assertions": ["target_scenario"]},
+    {"order": 4, "case_id": "combined_relationship", "expected_assertions": ["target_relationship"]},
+    {"order": 5, "case_id": "distractor_control", "expected_assertions": ["distractor_object", "distractor_event"]},
+    {"order": 6, "case_id": "absent_negative", "expected_assertions": []}
+  ],
+  "decision": {
+    "deterministic_semantic_matrix_implemented": true,
+    "request_artifact_correlation_implemented": true,
+    "frozen_action_envelope_reconciled": true,
+    "runtime_receipt_present": false,
+    "executor_ready": false,
+    "promotion_eligible": false,
+    "canonical_state_advanced": false
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "b0cb6bdd4830ce4f4e4de902820e74dd35d31977c630a17ee3fe2962fe5cfbee"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/executor.py", "sha256": "42bfdeeef88d947fdb6e5138b86d0c248620f4b65754a71b70b936c71d064ca7"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "7e7e329fd1d7eb259336297c9e279aa1e8fed6933ff96dc28368061cb318e7db"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
+    {"path": "services/video-summarization/api_spec/openapi.json", "sha256": "2ce997975112a3e6e43c511612d7df682de0dc4283b7c96fb38e078aad2150e8"},
+    {"path": "services/video-summarization/src/via_server.py", "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},
+    {"path": "services/video-summarization/src/vss_api_models.py", "sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"}
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collector_id", "status", "contract_sha256", "fixture_sha256", "target_origin_sha256", "media_url_sha256", "accepted_alert_sha256", "cancel_alert_sha256", "positive", "cancellation", "budget", "actions", "cleanup", "runtime_evidence_published", "executor_ready", "promotion_eligible", "canonical_state_advanced", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "collector_id": {"const": "candidate-alerts-terminal-runtime-evidence-successor"},
+    "status": {"const": "candidate_terminal_evidence_pass_non_promoting"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "fixture_sha256": {"const": "28c1fe5c84ee5a81e6ca32908b667dd6af4b141d971b928740756c50b06a0e8f"},
+    "target_origin_sha256": {"$ref": "#/$defs/sha"},
+    "media_url_sha256": {"$ref": "#/$defs/sha"},
+    "accepted_alert_sha256": {"$ref": "#/$defs/sha"},
+    "cancel_alert_sha256": {"$ref": "#/$defs/sha"},
+    "positive": {
+      "type": "object", "additionalProperties": false,
+      "required": ["correlation_id_sha256", "status_url_sha256", "polls", "terminal_state", "processing_outcome", "sink_transport", "sink_outcome", "sink_identity_sha256"],
+      "properties": {
+        "correlation_id_sha256": {"$ref": "#/$defs/sha"},
+        "status_url_sha256": {"$ref": "#/$defs/sha"},
+        "polls": {"type": "integer", "minimum": 1, "maximum": 10},
+        "terminal_state": {"const": "completed"},
+        "processing_outcome": {"const": "verified"},
+        "sink_transport": {"enum": ["elastic", "kafka"]},
+        "sink_outcome": {"const": "acknowledged"},
+        "sink_identity_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "cancellation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["correlation_id_sha256", "status_url_sha256", "delete_accepted", "terminal_state", "terminal_observations", "result_absent", "delayed_no_publish_result"],
+      "properties": {
+        "correlation_id_sha256": {"$ref": "#/$defs/sha"},
+        "status_url_sha256": {"$ref": "#/$defs/sha"},
+        "delete_accepted": {"const": true},
+        "terminal_state": {"const": "cancelled"},
+        "terminal_observations": {"const": 2},
+        "result_absent": {"const": true},
+        "delayed_no_publish_result": {"const": true}
+      }
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requests", "max_requests", "actions", "max_actions", "max_duration_seconds", "cleanup_reserve_seconds"],
+      "properties": {
+        "requests": {"type": "integer", "minimum": 13, "maximum": 22},
+        "max_requests": {"const": 22},
+        "actions": {"type": "integer", "minimum": 13, "maximum": 22},
+        "max_actions": {"const": 22},
+        "max_duration_seconds": {"const": 300},
+        "cleanup_reserve_seconds": {"const": 30}
+      }
+    },
+    "actions": {
+      "type": "array", "minItems": 13, "maxItems": 22,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["order", "action_id", "method", "path_kind", "http_status", "payload_bytes", "payload_sha256"],
+        "properties": {
+          "order": {"type": "integer", "minimum": 1, "maximum": 22},
+          "action_id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$"},
+          "method": {"enum": ["GET", "POST", "DELETE"]},
+          "path_kind": {"enum": ["health", "config-collection", "config-exact", "ondemand-collection", "ondemand-server-job"]},
+          "http_status": {"type": "integer", "minimum": 100, "maximum": 599},
+          "payload_bytes": {"type": "integer", "minimum": 0, "maximum": 1048576},
+          "payload_sha256": {"$ref": "#/$defs/sha"}
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exact_config_deleted", "owned_config_absent", "non_owned_config_projection_restored", "terminal_job_delete_api_available", "terminal_records_retained_until_ttl_or_restart"],
+      "properties": {
+        "exact_config_deleted": {"const": true},
+        "owned_config_absent": {"const": true},
+        "non_owned_config_projection_restored": {"const": true},
+        "terminal_job_delete_api_available": {"const": false},
+        "terminal_records_retained_until_ttl_or_restart": {"const": true}
+      }
+    },
+    "runtime_evidence_published": {"const": false},
+    "executor_ready": {"const": false},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

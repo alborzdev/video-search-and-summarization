@@ -57,7 +57,7 @@ def test_exact_ten_advertised_identities_and_semantics() -> None:
     assert all(row["warehouse_sample_bundle"] is False for row in rows)
 
 
-def test_concrete_partial_and_readiness_are_distinct() -> None:
+def test_all_implementations_are_concrete_but_not_ready() -> None:
     result = compiler.compile_overlay()
     concrete = [
         row for row in result["rows"] if row["implementation_state"] == "concrete"
@@ -65,8 +65,8 @@ def test_concrete_partial_and_readiness_are_distinct() -> None:
     partial = [
         row for row in result["rows"] if row["implementation_state"] == "partial"
     ]
-    assert len(concrete) == 4
-    assert len(partial) == 6
+    assert len(concrete) == 10
+    assert len(partial) == 0
     assert all(
         row["relationship_kind"] == "concrete_executor_candidate" for row in concrete
     )
@@ -78,12 +78,21 @@ def test_concrete_partial_and_readiness_are_distinct() -> None:
     assert result["summary"]["concrete_full_binding_count"] == 0
 
 
-def test_search_composition_gap_is_explicit() -> None:
+def test_search_integration_and_runtime_boundaries_are_explicit() -> None:
     rows = {row["capability_id"]: row for row in compiler.compile_overlay()["rows"]}
     semantic = [rows[capability_id] for capability_id in EXPECTED_IDS[4:8]]
     assert all(len(row["executor_references"]) == 2 for row in semantic)
+    assert all(row["implementation_state"] == "concrete" for row in semantic)
     assert all(
-        any("adapter" in gap for gap in row["retained_gaps"]) for row in semantic
+        any("live Thor receipt" in gap for gap in row["retained_gaps"])
+        for row in semantic
+    )
+    assert all(
+        any(
+            ref["role"] == "source-locked-integrated-semantic-executor"
+            for ref in row["executor_references"]
+        )
+        for row in semantic
     )
     archive = rows[EXPECTED_IDS[8]]
     assert len(archive["executor_references"]) == 2
@@ -97,9 +106,12 @@ def test_search_composition_gap_is_explicit() -> None:
 
 def test_lvs_and_ui_retained_boundaries_are_explicit() -> None:
     rows = {row["capability_id"]: row for row in compiler.compile_overlay()["rows"]}
-    assert any("attributed" in gap for gap in rows[EXPECTED_IDS[2]]["retained_gaps"])
     assert any(
-        "one caption set" in gap for gap in rows[EXPECTED_IDS[3]]["retained_gaps"]
+        ref["package_id"] == "thor-lvs-multi-video-artifact-oracle-successor-v1"
+        for ref in rows[EXPECTED_IDS[2]]["executor_references"]
+    )
+    assert any(
+        "caption-set digest" in gap for gap in rows[EXPECTED_IDS[3]]["retained_gaps"]
     )
     assert any(
         "40-browser-action" in gap for gap in rows[EXPECTED_IDS[9]]["retained_gaps"]
@@ -149,10 +161,10 @@ def test_source_lock_drift_fails_closed(tmp_path: Path) -> None:
         _compile_modified(tmp_path, contract)
 
 
-def test_classification_upgrade_fails_closed(tmp_path: Path) -> None:
+def test_classification_downgrade_fails_closed(tmp_path: Path) -> None:
     contract = copy.deepcopy(_contract())
-    contract["bindings"][2]["implementation_state"] = "concrete"
-    contract["bindings"][2]["relationship_kind"] = "concrete_executor_candidate"
+    contract["bindings"][2]["implementation_state"] = "partial"
+    contract["bindings"][2]["relationship_kind"] = "partial_executor_candidate"
     with pytest.raises(compiler.BindingError, match="candidate classification drift"):
         _compile_modified(tmp_path, contract)
 

@@ -65,7 +65,14 @@ BINDING_CONTRACT_SCHEMA = f"{BINDING_DIR}/contract.schema.json"
 BINDING_OVERLAY_SCHEMA = f"{BINDING_DIR}/binding-overlay.schema.json"
 BINDING_ARTIFACT = f"{BINDING_DIR}/binding-overlay.json"
 
-EXPECTED_CHANGED_ROWS = {
+EXPECTED_CHANGED_ROWS: dict[str, dict[str, set[str]]] = {
+    "services/agent/src/vss_agents/agents/report_agent.py": {
+        "metadata": {
+            "manifest-entry.base-agent-workflow.02-vlm-report-generation",
+            "protocol.agent.websocket",
+        },
+        "rebase": set(),
+    },
     "services/agent/src/vss_agents/api/custom_fastapi_worker.py": {
         "metadata": {"manifest-entry.agent-and-mcp-apis.00-nat-generate-chat"},
         "rebase": {
@@ -114,6 +121,18 @@ EXPECTED_CHANGED_ROWS = {
         "metadata": set(),
         "rebase": set(),
     },
+    "services/agent/src/vss_agents/tools/video_report_gen.py": {
+        "metadata": {
+            "manifest-entry.base-agent-workflow.02-vlm-report-generation",
+            "manifest-entry.video-summarization-file.02-multi-video-report",
+            "manifest-entry.video-summarization-live.02-stream-reports",
+        },
+        "rebase": {
+            "manifest-gap.audio-understanding.00-audio-aware-base-workflow",
+            "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts",
+            "manifest-gap.video-summarization-live.02-stream-reports",
+        },
+    },
 }
 EXPECTED_SUCCESSORS = {
     "base": {
@@ -137,14 +156,19 @@ EXPECTED_SUCCESSORS = {
     },
 }
 EXPECTED_METADATA_INDICES = {
+    "protocol.agent.websocket": 52,
     "manifest-entry.base-agent-workflow.00-short-video-retrieval": 289,
+    "manifest-entry.base-agent-workflow.02-vlm-report-generation": 291,
     "manifest-entry.base-agent-workflow.04-large-file-chunked-upload": 293,
+    "manifest-entry.video-summarization-file.02-multi-video-report": 298,
+    "manifest-entry.video-summarization-live.02-stream-reports": 307,
     "manifest-entry.semantic-search.07-file-and-rtsp-archive-management": 318,
     "manifest-entry.agent-and-mcp-apis.00-nat-generate-chat": 462,
     "manifest-entry.agent-and-mcp-apis.02-upload-handshake-and-completion": 464,
     "manifest-entry.agent-and-mcp-apis.03-video-delete": 465,
     "manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete": 466,
 }
+EXPECTED_IMPLICIT_NON_PROMOTION_ROWS = {"protocol.agent.websocket"}
 EXPECTED_RUNTIME_INDICES = {
     "runtime.workflow.base-chat-report": 162,
     "runtime.agent.base-hitl": 163,
@@ -412,7 +436,7 @@ def _validate_changed_sources(
     contract: dict[str, Any], ledger: dict[str, Any], oracles: dict[str, Any]
 ) -> None:
     rows = contract.get("changed_agent_sources")
-    if not isinstance(rows, list) or len(rows) != 7:
+    if not isinstance(rows, list) or len(rows) != 9:
         raise AuditError("changed Agent source denominator drift")
     declared: dict[str, dict[str, set[str]]] = {}
     for row in rows:
@@ -453,15 +477,24 @@ def _validate_changed_sources(
         for capability_id in observed:
             index, oracle = by_oracle[capability_id]
             capability = capabilities[index]
+            implicit_non_promotion = (
+                capability_id in EXPECTED_IMPLICIT_NON_PROMOTION_ROWS
+            )
+            oracle_policy_valid = (
+                "runtime_state" not in oracle
+                and "can_promote_runtime_state" not in oracle
+                if implicit_non_promotion
+                else oracle.get("runtime_state") == "not_qualified"
+                and oracle.get("can_promote_runtime_state") is False
+            )
             if (
                 index != EXPECTED_METADATA_INDICES[capability_id]
                 or capability.get("id") != capability_id
                 or capability.get("runtime_state") != "not_qualified"
                 or oracle.get("current_state") != "open_unexecuted"
-                or oracle.get("runtime_state") != "not_qualified"
                 or oracle.get("evidence") != []
                 or oracle.get("execution_bounds", {}).get("executor") is not None
-                or oracle.get("can_promote_runtime_state") is not False
+                or not oracle_policy_valid
             ):
                 raise AuditError(
                     f"changed-source row was promoted without evidence: {capability_id}"
@@ -485,16 +518,16 @@ def _validate_changed_sources(
 
 
 def _validate_current_source_rebase(contract: dict[str, Any]) -> None:
-    expected = {
+    expected_contract = {
         "contract_path": REBASE_CONTRACT,
         "validator_path": REBASE_VALIDATOR,
         "retained_candidate_rows": 71,
-        "unchanged_rows": 40,
-        "rebased_rows": 31,
-        "overlay_paths": 14,
+        "unchanged_rows": 39,
+        "rebased_rows": 32,
+        "overlay_paths": 15,
         "source_lock_references": 182,
     }
-    if contract.get("current_source_rebase") != expected:
+    if contract.get("current_source_rebase") != expected_contract:
         raise AuditError("current-source rebase contract drift")
     module = _load_module(REBASE_VALIDATOR, "metadata500_overlay_source_rebase")
     report = module.validate()
@@ -509,9 +542,9 @@ def _validate_current_source_rebase(contract: dict[str, Any]) -> None:
         )
     } != {
         "retained_candidate_rows": 71,
-        "unchanged_rows": 40,
-        "rebased_rows": 31,
-        "current_source_overlay_paths": 14,
+        "unchanged_rows": 39,
+        "rebased_rows": 32,
+        "current_source_overlay_paths": 15,
         "current_source_lock_references": 182,
     } or any(
         (
@@ -527,8 +560,8 @@ def _validate_current_source_rebase(contract: dict[str, Any]) -> None:
         row.get("path"): row.get("sha256")
         for row in source_contract.get("current_source_overlay", [])
     }
-    for path, expected in EXPECTED_CHANGED_ROWS.items():
-        if expected["rebase"]:
+    for path, mapping in EXPECTED_CHANGED_ROWS.items():
+        if mapping["rebase"]:
             if overlay.get(path) != _sha(_read(path)):
                 raise AuditError(
                     f"changed Agent source is absent from current overlay: {path}"
@@ -549,7 +582,7 @@ def _validate_current_source_rebase(contract: dict[str, Any]) -> None:
         )
         for case in wave_inventory["cases"]:
             historical_cases[case["entry_id"]] = case
-    for path, expected in EXPECTED_CHANGED_ROWS.items():
+    for path, mapping in EXPECTED_CHANGED_ROWS.items():
         observed = {
             row["entry_id"]
             for row in inventory["rows"]
@@ -559,7 +592,7 @@ def _validate_current_source_rebase(contract: dict[str, Any]) -> None:
                 for lock in historical_cases[row["entry_id"]]["source_locks"]
             )
         }
-        if observed != expected["rebase"]:
+        if observed != mapping["rebase"]:
             raise AuditError(f"current-source rebase row-impact drift: {path}")
 
 
@@ -670,8 +703,8 @@ def _validate_current_candidate_binding(
         "overlay_schema_path": BINDING_OVERLAY_SCHEMA,
         "artifact_path": BINDING_ARTIFACT,
         "row_count": 10,
-        "concrete_implementation_count": 4,
-        "partial_implementation_count": 6,
+        "concrete_implementation_count": 10,
+        "partial_implementation_count": 0,
         "executor_ready_count": 0,
         "canonical_binding_change_count": 0,
         "runtime_receipt_count": 0,
@@ -688,8 +721,8 @@ def _validate_current_candidate_binding(
     summary = artifact.get("summary")
     if summary != {
         "row_count": 10,
-        "concrete_implementation_count": 4,
-        "partial_implementation_count": 6,
+        "concrete_implementation_count": 10,
+        "partial_implementation_count": 0,
         "executor_ready_count": 0,
         "required_cloud_inference_count": 0,
         "warehouse_sample_dependency_count": 0,
@@ -792,14 +825,14 @@ def validate(contract: dict[str, Any] | None = None) -> dict[str, Any]:
         "capabilities": 500,
         "oracles": 500,
         "candidate_rows": 211,
-        "changed_agent_sources": 7,
-        "changed_source_metadata_rows": 7,
-        "current_source_rebased_rows": 31,
+        "changed_agent_sources": 9,
+        "changed_source_metadata_rows": 11,
+        "current_source_rebased_rows": 32,
         "runtime_successor_packages": 4,
         "runtime_successor_canonical_rows": 5,
         "current_candidate_binding_rows": 10,
-        "current_candidate_concrete_implementations": 4,
-        "current_candidate_partial_implementations": 6,
+        "current_candidate_concrete_implementations": 10,
+        "current_candidate_partial_implementations": 0,
         "runtime_evidence": 0,
         "canonical_state_advanced": False,
         "selector_mutated": False,
@@ -825,7 +858,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(report, indent=2, sort_keys=True))
     else:
         print(
-            "PASS: selected Metadata-500 remains exact; seven current Agent "
+            "PASS: selected Metadata-500 remains exact; nine current Agent "
             "sources and four runtime successors are overlay-bound; no promotion"
         )
     return 0

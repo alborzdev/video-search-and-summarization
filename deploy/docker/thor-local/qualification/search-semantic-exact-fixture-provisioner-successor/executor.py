@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 import hashlib
+import importlib.util
 import ipaddress
 import json
 import math
@@ -20,7 +21,7 @@ import re
 import stat
 import sys
 import time
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence, cast
 from urllib.error import HTTPError
 from urllib.parse import quote, urlparse
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
@@ -33,6 +34,9 @@ ROOT = HERE.parents[4].resolve(strict=True)
 CONTRACT_PATH = HERE / "contract.json"
 RECEIPT_SCHEMA_PATH = HERE / "receipt.schema.json"
 MAX_CONFIG_BYTES = 32 * 1024 * 1024
+SEMANTIC_EXECUTOR_PATH = (
+    HERE.parent / "search-semantic-runtime-evidence-successor" / "executor.py"
+)
 RUN_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,47}\Z")
 UUID_RE = re.compile(
     r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}\Z"
@@ -193,20 +197,28 @@ def compile_plan() -> dict[str, Any]:
         or [row.get("order") for row in contract.get("workflow", [])]
         != list(range(1, 13))
         or [row.get("id") for row in contract.get("workflow", [])] != expected_workflow
-        or bounds.get("max_requests") != 52
-        or bounds.get("max_actions") != 12
+        or bounds.get("max_requests") != 77
+        or bounds.get("max_actions") != 23
         or bounds.get("readiness_poll_attempts") != 10
-        or bounds.get("cleanup_poll_attempts") != 2
+        or bounds.get("cleanup_poll_attempts") != 4
         or bounds.get("cleanup_reserve_seconds") != 180
         or contract.get("fixture_consumer")
         != {
-            "enabled": False,
-            "reason": "disabled until the consumer can share the executor deadline and cleanup reserve",
+            "enabled": True,
+            "kind": "source-locked-bounded-dynamic-semantic-consumer",
+            "max_operations": 11,
+            "shared_request_budget": True,
+            "shared_deadline": True,
+            "cleanup_reserve_preserved": True,
+            "arbitrary_callback_allowed": False,
+            "media_attestation_required": True,
         }
         or transport.get("numeric_loopback_only") is not True
         or transport.get("proxies") is not False
         or transport.get("follow_redirects") is not False
         or decision.get("safe_exact_full_fixture_creation_implemented") is not True
+        or decision.get("failed_ingest_delayed_write_remediation_implemented")
+        is not True
         or decision.get("failed_ingest_delayed_write_remediation_proven") is not False
         or decision.get("runtime_receipt_present") is not False
         or decision.get("promotion_eligible") is not False
@@ -221,7 +233,7 @@ def compile_plan() -> dict[str, Any]:
         raise LifecycleError("configuration_error")
 
     locks = contract.get("source_locks")
-    if not isinstance(locks, list) or len(locks) != 13:
+    if not isinstance(locks, list) or len(locks) != 14:
         raise LifecycleError("configuration_error")
     seen: set[str] = set()
     for lock in locks:
@@ -278,8 +290,9 @@ def compile_plan() -> dict[str, Any]:
         "status": "inert_exact_fixture_lifecycle_valid",
         "runtime_requests": 0,
         "runtime_actions": 0,
-        "request_bound": 52,
-        "action_bound": 12,
+        "request_bound": 77,
+        "action_bound": 23,
+        "integrated_dynamic_consumer_available": True,
         "operator_preprovisioned_fixture_required": False,
         "runtime_receipt_present": False,
         "promotion_eligible": False,
@@ -354,6 +367,177 @@ class DeadlineOpener:
         if remaining <= 0:
             raise LifecycleError("transport_error")
         return self._opener.open(request, timeout=min(float(timeout), remaining))
+
+
+class _SemanticResult:
+    def __init__(self, status: int, media_type: str, body: bytes) -> None:
+        self.status = status
+        self.media_type = media_type
+        self.body = body
+
+
+def _load_semantic_executor() -> Any:
+    spec = importlib.util.spec_from_file_location(
+        "search_semantic_integrated_oracle", SEMANTIC_EXECUTOR_PATH
+    )
+    if spec is None or spec.loader is None:
+        raise LifecycleError("configuration_error")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    except Exception as exc:
+        raise LifecycleError("configuration_error") from exc
+    return module
+
+
+def _replace_dynamic(value: Any, replacements: Mapping[str, Any]) -> Any:
+    if isinstance(value, str):
+        if value.startswith("$"):
+            if value not in replacements:
+                raise LifecycleError("configuration_error")
+            return replacements[value]
+        return value
+    if isinstance(value, list):
+        return [_replace_dynamic(item, replacements) for item in value]
+    if isinstance(value, dict):
+        return {
+            key: _replace_dynamic(item, replacements) for key, item in value.items()
+        }
+    return value
+
+
+class BoundedSemanticFixtureConsumer:
+    """Consume a dynamic handoff with the lifecycle's opener and budgets."""
+
+    ATTESTATION = (
+        "I_ATTEST_THE_OWNED_MEDIA_CONTAINS_THE_TARGET_ACTION_AND_EXCLUDES_"
+        "THE_DISTRACTOR_ACTION"
+    )
+    STEPS = [
+        ("search-route", "/api/v1/search", 200),
+        ("attribute-route", "/api/v1/search/attribute", 200),
+        ("fusion-route", "/api/v1/search/fusion", 200),
+        ("image-route", "/api/v1/search/image", 200),
+        ("same-object-merge", "/api/v1/search", 200),
+        ("append-multiple-attributes", "/api/v1/search/attribute", 200),
+        ("rerank-or-fallback", "/api/v1/search/fusion", 200),
+        ("fuse-multiple-attributes", "/api/v1/search/attribute", 200),
+        ("same-video-top-k", "/api/v1/search", 200),
+        ("selected-bbox-knn", "/api/v1/search/image", 200),
+        ("reject-invalid-index-family", "/api/v1/search", 422),
+    ]
+
+    def __init__(self, *, search_origin: str, template: Mapping[str, Any]) -> None:
+        self.search_origin = _origin(search_origin)
+        self.template = _decode(_canonical(template), "configuration_error")
+        operations = self.template.get("operations")
+        if (
+            self.template.get("schema_version") != 1
+            or self.template.get("media_attestation") != self.ATTESTATION
+            or not isinstance(operations, list)
+            or len(operations) != len(self.STEPS)
+        ):
+            raise LifecycleError("configuration_error")
+        for operation, (step_id, path, status) in zip(
+            operations, self.STEPS, strict=True
+        ):
+            if (
+                not isinstance(operation, dict)
+                or operation.get("step_id") != step_id
+                or operation.get("method") != "POST"
+                or operation.get("path") != path
+                or operation.get("allowed_statuses") != [status]
+                or not isinstance(operation.get("body"), dict)
+                or not isinstance(operation.get("assertion"), dict)
+            ):
+                raise LifecycleError("configuration_error")
+
+    def consume(
+        self,
+        handoff: Mapping[str, Any],
+        *,
+        opener: Any,
+        budget: RequestBudget,
+        timeout: float,
+        maximum_response: int,
+    ) -> dict[str, Any]:
+        selected = handoff["selected_object"]
+        replacements = {
+            "$namespace": handoff["namespace"],
+            "$sensor_id": handoff["sensor_id"],
+            "$selected_object_id": selected["object_id"],
+            "$selected_object": selected,
+        }
+        operations = _replace_dynamic(self.template["operations"], replacements)
+        semantic = _load_semantic_executor()
+        dynamic_manifest = {
+            "namespace": handoff["namespace"],
+            "selected_object": selected,
+        }
+        observation_digests: list[str] = []
+        for operation, (step_id, path, status) in zip(
+            operations, self.STEPS, strict=True
+        ):
+            assertion = operation.get("assertion", {})
+            allowed_sensor_ids = assertion.get("expected_sensor_ids", [])
+            allowed_object_ids = assertion.get("expected_object_ids", [])
+            if (
+                operation.get("step_id") != step_id
+                or operation.get("path") != path
+                or operation.get("allowed_statuses") != [status]
+                or not isinstance(allowed_sensor_ids, list)
+                or not isinstance(allowed_object_ids, list)
+                or any(item != handoff["sensor_id"] for item in allowed_sensor_ids)
+                or any(item != selected["object_id"] for item in allowed_object_ids)
+                or assertion.get("top_video_name") not in (None, handoff["namespace"])
+                or assertion.get("top_sensor_id") not in (None, handoff["sensor_id"])
+            ):
+                raise LifecycleError("configuration_error")
+            try:
+                semantic._validate_operation_body(
+                    step_id, operation["body"], dynamic_manifest
+                )
+            except Exception as exc:
+                raise LifecycleError("configuration_error") from exc
+            response_status, media_type, raw = _request(
+                opener,
+                budget,
+                method="POST",
+                url=f"{self.search_origin}{path}",
+                timeout=timeout,
+                maximum=maximum_response,
+                body=_canonical(operation["body"]),
+                content_type="application/json",
+            )
+            result = _SemanticResult(response_status, media_type, raw)
+            try:
+                semantic._assert_semantic(result, operation)
+            except Exception as exc:
+                raise LifecycleError("fixture_not_ready") from exc
+            observation_digests.append(
+                hashlib.sha256(
+                    _canonical(
+                        {
+                            "step_id": step_id,
+                            "status": response_status,
+                            "response_bytes": len(raw),
+                            "response_sha256": hashlib.sha256(raw).hexdigest(),
+                            "assertion_sha256": hashlib.sha256(
+                                _canonical(operation["assertion"])
+                            ).hexdigest(),
+                        }
+                    )
+                ).hexdigest()
+            )
+        return {
+            "schema_version": 1,
+            "status": "dynamic_semantic_fixture_consumed_non_promoting",
+            "operations": len(operations),
+            "observation_digests": observation_digests,
+            "runtime_receipt_present": False,
+            "promotion_eligible": False,
+        }
 
 
 def _origin(value: str) -> str:
@@ -502,8 +686,12 @@ def _hits(value: Any, maximum: int) -> list[dict[str, Any]]:
         not isinstance(shards, dict)
         or len(shard_counts) != 4
         or any(type(count) is not int or count < 0 for count in shard_counts)
-        or shard_counts[3] != 0
-        or shard_counts[1] + shard_counts[2] != shard_counts[0]
+    ):
+        raise LifecycleError("transport_error")
+    complete_counts = cast(tuple[int, int, int, int], shard_counts)
+    if (
+        complete_counts[3] != 0
+        or complete_counts[1] + complete_counts[2] != complete_counts[0]
     ):
         raise LifecycleError("transport_error")
     try:
@@ -672,9 +860,9 @@ def _selected_object(
         if isinstance(embeddings, list):
             embeddings = embeddings[0] if embeddings else None
         vector = embeddings.get("vector") if isinstance(embeddings, dict) else None
-        raw_object = next(
+        raw_match = next(
             (
-                item
+                (frame_time, item)
                 for frame_time, item in raw_objects.get(str(object_id), [])
                 if start_time is not None
                 and end_time is not None
@@ -682,24 +870,29 @@ def _selected_object(
             ),
             None,
         )
+        raw_object = raw_match[1] if raw_match is not None else None
         bbox = raw_object.get("bbox") if isinstance(raw_object, Mapping) else None
         coordinates = (
             [bbox.get(key) for key in ("leftX", "rightX", "topY", "bottomY")]
             if isinstance(bbox, Mapping)
             else []
         )
-        bbox_ok = (
-            len(coordinates) == 4
+        numeric_coordinates = (
+            cast(list[int | float], coordinates)
+            if len(coordinates) == 4
             and all(
                 isinstance(value, (int, float))
                 and not isinstance(value, bool)
                 and math.isfinite(float(value))
                 for value in coordinates
             )
-            and coordinates[0] >= 0
-            and coordinates[2] >= 0
-            and coordinates[1] > coordinates[0]
-            and coordinates[3] > coordinates[2]
+            else []
+        )
+        bbox_ok = bool(numeric_coordinates) and (
+            numeric_coordinates[0] >= 0
+            and numeric_coordinates[2] >= 0
+            and numeric_coordinates[1] > numeric_coordinates[0]
+            and numeric_coordinates[3] > numeric_coordinates[2]
         )
         if (
             object_id is not None
@@ -709,12 +902,12 @@ def _selected_object(
             and isinstance(vector, list)
             and vector
             and bbox_ok
+            and raw_match is not None
         ):
             return {
                 "object_id": str(object_id),
                 "sensor_name": namespace,
-                "timestamp": timestamp,
-                "end": end,
+                "timestamp": raw_match[0].isoformat().replace("+00:00", "Z"),
             }
     raise LifecycleError("fixture_not_ready")
 
@@ -762,7 +955,7 @@ def _multipart(media: bytes, filename: str, run_id: str) -> tuple[bytes, str]:
     return b"".join(lines), f"multipart/form-data; boundary={boundary}"
 
 
-def _exact_absence(
+def _cleanup_candidates(
     opener: Any,
     budget: RequestBudget,
     *,
@@ -775,7 +968,7 @@ def _exact_absence(
     timeout: float,
     maximum_response: int,
     maximum_documents: int,
-) -> None:
+) -> list[dict[str, str]]:
     streams = _streams(
         _json_request(
             opener,
@@ -799,8 +992,11 @@ def _exact_absence(
         maximum_response=maximum_response,
         maximum_documents=maximum_documents,
     )
-    if any(owned.values()):
-        raise LifecycleError("cleanup_failed")
+    scoped: dict[tuple[str, str], dict[str, str]] = {}
+    for family in ("embed", "behavior", "raw"):
+        for row in owned[family]:
+            key = (row["_index"], row["_id"])
+            scoped[key] = {"index": key[0], "document_id": key[1]}
     mget = _json_request(
         opener,
         budget,
@@ -822,11 +1018,81 @@ def _exact_absence(
             not isinstance(row, dict)
             or row.get("_index") != requested["index"]
             or row.get("_id") != requested["document_id"]
-            or row.get("found") is not False
             for row, requested in zip(rows, documents)
         )
     ):
         raise LifecycleError("cleanup_failed")
+    exact_found: set[tuple[str, str]] = set()
+    for row in rows:
+        if row.get("found") is True:
+            if not isinstance(row.get("_source"), dict):
+                raise LifecycleError("cleanup_failed")
+            exact_found.add((row["_index"], row["_id"]))
+        elif row.get("found") is not False or "_source" in row:
+            raise LifecycleError("cleanup_failed")
+    # A reappeared exact ID must still be visible through the reviewed exact
+    # run-identity query. Otherwise its ownership is ambiguous and this tool
+    # must not delete it.
+    if not exact_found.issubset(scoped):
+        raise LifecycleError("cleanup_failed")
+    return [scoped[key] for key in sorted(scoped)]
+
+
+def _delete_exact_documents(
+    opener: Any,
+    budget: RequestBudget,
+    *,
+    es_origin: str,
+    documents: Sequence[Mapping[str, str]],
+    timeout: float,
+    maximum_response: int,
+) -> None:
+    if not documents:
+        return
+    body = (
+        b"\n".join(
+            _canonical(
+                {
+                    "delete": {
+                        "_index": row["index"],
+                        "_id": row["document_id"],
+                    }
+                }
+            )
+            for row in documents
+        )
+        + b"\n"
+    )
+    status, media_type, raw = _request(
+        opener,
+        budget,
+        method="POST",
+        url=f"{es_origin}/_bulk",
+        timeout=timeout,
+        maximum=maximum_response,
+        body=body,
+        content_type="application/x-ndjson",
+    )
+    value = _decode(raw)
+    items = value.get("items") if isinstance(value, dict) else None
+    if (
+        status != 200
+        or media_type != "application/json"
+        or value.get("errors") is not False
+        or not isinstance(items, list)
+        or len(items) != len(documents)
+    ):
+        raise LifecycleError("cleanup_failed")
+    for item, requested in zip(items, documents):
+        deleted = item.get("delete") if isinstance(item, dict) else None
+        if (
+            not isinstance(deleted, dict)
+            or deleted.get("_index") != requested["index"]
+            or deleted.get("_id") != requested["document_id"]
+            or deleted.get("status") not in (200, 404)
+            or deleted.get("result") not in ("deleted", "not_found")
+        ):
+            raise LifecycleError("cleanup_failed")
 
 
 def execute_lifecycle(
@@ -839,7 +1105,7 @@ def execute_lifecycle(
     elasticsearch_origin: str,
     opener_factory: Callable[[], Any] = LiveOpener,
     sleeper: Callable[[float], None] = time.sleep,
-    fixture_consumer: Callable[[dict[str, Any]], Any] | None = None,
+    fixture_consumer: BoundedSemanticFixtureConsumer | None = None,
 ) -> dict[str, Any]:
     """Provision, prove, and roll back one model-generated Search fixture."""
 
@@ -847,7 +1113,10 @@ def execute_lifecycle(
     contract = _contract()
     if acknowledgement != contract["authorization"]["acknowledgement"]:
         raise LifecycleError("authorization_required")
-    if fixture_consumer is not None:
+    if (
+        fixture_consumer is not None
+        and type(fixture_consumer) is not BoundedSemanticFixtureConsumer
+    ):
         raise LifecycleError("configuration_error")
     if not RUN_RE.fullmatch(run_id):
         raise LifecycleError("configuration_error")
@@ -886,8 +1155,11 @@ def execute_lifecycle(
     handoff: dict[str, Any] | None = None
     handoff_sha256: str | None = None
     consumer_receipt_sha256: str | None = None
+    consumer_invoked = False
     original_error: LifecycleError | None = None
     cleanup_complete = False
+    remediation_deletes = 0
+    consecutive_absence_observations = 0
     try:
         streams = _streams(
             _json_request(
@@ -1038,6 +1310,7 @@ def execute_lifecycle(
                     selected = _selected_object(
                         discovered["behavior"], discovered["raw"], namespace
                     )
+                    selected["sensor_id"] = sensor_id
                     break
                 except LifecycleError as exc:
                     if exc.code not in {"fixture_not_ready"}:
@@ -1058,6 +1331,18 @@ def execute_lifecycle(
         }
         handoff_bytes = _canonical(handoff)
         handoff_sha256 = hashlib.sha256(handoff_bytes).hexdigest()
+        if fixture_consumer is not None:
+            consumer_receipt = fixture_consumer.consume(
+                handoff,
+                opener=opener,
+                budget=budget,
+                timeout=timeout,
+                maximum_response=maximum_response,
+            )
+            consumer_receipt_sha256 = hashlib.sha256(
+                _canonical(consumer_receipt)
+            ).hexdigest()
+            consumer_invoked = True
     except LifecycleError as exc:
         original_error = exc
     finally:
@@ -1127,7 +1412,7 @@ def execute_lifecycle(
                         sleeper(
                             float(contract["execution_bounds"]["poll_delay_seconds"])
                         )
-                    _exact_absence(
+                    candidates = _cleanup_candidates(
                         opener,
                         budget,
                         vst_origin=vst,
@@ -1140,7 +1425,22 @@ def execute_lifecycle(
                         maximum_response=maximum_response,
                         maximum_documents=maximum_documents,
                     )
-                cleanup_complete = True
+                    if candidates:
+                        _delete_exact_documents(
+                            opener,
+                            budget,
+                            es_origin=es,
+                            documents=candidates,
+                            timeout=timeout,
+                            maximum_response=maximum_response,
+                        )
+                        remediation_deletes += len(candidates)
+                        consecutive_absence_observations = 0
+                    else:
+                        consecutive_absence_observations += 1
+                        if consecutive_absence_observations == 2:
+                            break
+                cleanup_complete = consecutive_absence_observations == 2
             except LifecycleError:
                 cleanup_complete = False
         if upload_attempted and not cleanup_complete:
@@ -1176,8 +1476,8 @@ def execute_lifecycle(
         "budget": {
             "requests": budget.used,
             "max_requests": budget.maximum,
-            "actions": 12,
-            "max_actions": 12,
+            "actions": 23 if consumer_invoked else 12,
+            "max_actions": 23,
         },
         "fixture": {
             "embed_documents": len(discovered["embed"]),
@@ -1185,9 +1485,13 @@ def execute_lifecycle(
             "raw_documents": len(discovered["raw"]),
             "selected_object_reconciled": True,
             "handoff_sha256": handoff_sha256,
-            "consumer_invoked": False,
+            "consumer_invoked": consumer_invoked,
             "consumer_receipt_sha256": consumer_receipt_sha256,
-            "consumer_transport_accounting": "disabled",
+            "consumer_transport_accounting": (
+                "shared-lifecycle-budget-and-deadline"
+                if consumer_invoked
+                else "not-requested"
+            ),
             "raw_document_ids_recorded": True,
             "operator_preprovisioned": False,
         },
@@ -1197,6 +1501,8 @@ def execute_lifecycle(
             "identity_scoped_documents_absent": True,
             "exact_discovered_documents_absent": True,
             "delayed_no_reappearance": True,
+            "remediation_deleted_documents": remediation_deletes,
+            "consecutive_absence_observations": consecutive_absence_observations,
             "foreign_delete_attempted": False,
         },
         "warehouse_sample_bundle": "excluded",
@@ -1216,6 +1522,8 @@ def _parser() -> argparse.ArgumentParser:
     execute.add_argument("--agent-origin", required=True)
     execute.add_argument("--vst-origin", required=True)
     execute.add_argument("--elasticsearch-origin", required=True)
+    execute.add_argument("--search-origin")
+    execute.add_argument("--semantic-template", type=Path)
     return parser
 
 
@@ -1225,6 +1533,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "plan":
             result = compile_plan()
         else:
+            if bool(args.search_origin) != bool(args.semantic_template):
+                raise LifecycleError("configuration_error")
+            consumer = (
+                BoundedSemanticFixtureConsumer(
+                    search_origin=args.search_origin,
+                    template=_decode(
+                        _read_regular(args.semantic_template, MAX_CONFIG_BYTES),
+                        "configuration_error",
+                    ),
+                )
+                if args.semantic_template is not None
+                else None
+            )
             result = execute_lifecycle(
                 run_id=args.run_id,
                 acknowledgement=args.acknowledgement,
@@ -1232,6 +1553,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 agent_origin=args.agent_origin,
                 vst_origin=args.vst_origin,
                 elasticsearch_origin=args.elasticsearch_origin,
+                fixture_consumer=consumer,
             )
         print(json.dumps(result, sort_keys=True, separators=(",", ":")))
         return 0

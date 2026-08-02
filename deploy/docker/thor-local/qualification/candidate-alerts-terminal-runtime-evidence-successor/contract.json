@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "collector_id": "candidate-alerts-terminal-runtime-evidence-successor",
+  "predecessor_collector_id": "candidate-alerts-runtime-evidence",
+  "mode": "authorization-gated-terminal-runtime-candidate",
+  "default_execution_enabled": false,
+  "planning_requirement_id": "candidate-alerts",
+  "capability_id": "runtime.workflow.alert-verification",
+  "oracle_id": "oracle.runtime.workflow.alert-verification",
+  "warehouse_sample_bundle": "excluded",
+  "authorization": {
+    "authorization_id": "candidate-alerts-terminal-runtime",
+    "acknowledgement": "I_ACK_CANDIDATE_ALERTS_TERMINAL_JOBS_AND_CONFIG_CLEANUP"
+  },
+  "target": {
+    "default_origin": "http://127.0.0.1:9080",
+    "numeric_loopback_only": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "static_paths": [
+      "/health",
+      "/api/v1/verification/config",
+      "/api/v1/verification/ondemand"
+    ],
+    "server_job_path_template": "/api/v1/verification/ondemand/{server_correlation_id}"
+  },
+  "execution_bounds": {
+    "max_requests": 22,
+    "max_actions": 22,
+    "positive_terminal_poll_attempts": 10,
+    "cancel_terminal_observations": 2,
+    "poll_delay_seconds": 1,
+    "max_duration_seconds": 300,
+    "cleanup_reserve_seconds": 30,
+    "max_request_bytes": 65536,
+    "max_response_bytes": 1048576,
+    "timeout_seconds": 10
+  },
+  "workflow": [
+    "health",
+    "pre_state_config_list",
+    "create_exact_owned_config",
+    "inspect_and_admit_exact_config_cleanup",
+    "submit_positive_without_client_correlation_id",
+    "poll_server_generated_positive_job_to_terminal",
+    "require_completed_verified_acknowledged_sink_receipt",
+    "submit_cancellation_job_without_client_correlation_id",
+    "delete_server_generated_cancellation_job_before_publish",
+    "observe_cancelled_terminal_twice_without_sink_result",
+    "adjacent_unknown_category_rejection",
+    "delete_exact_owned_config",
+    "restore_non_owned_config_projection"
+  ],
+  "terminal_contract": {
+    "server_generated_correlation_id": true,
+    "get_status_required": true,
+    "delete_cancel_required": true,
+    "positive_terminal_state": "completed",
+    "positive_processing_outcome": "verified",
+    "positive_sink_outcome": "acknowledged",
+    "cancel_terminal_state": "cancelled",
+    "cancel_before_publish_requires_cancellation_accepted": true,
+    "cancelled_result_must_be_absent": true,
+    "atomic_pre_publish_gate_source_locked": true
+  },
+  "cleanup": {
+    "exact_config_cleanup": true,
+    "non_owned_config_projection_restored": true,
+    "terminal_job_delete_api_available": false,
+    "terminal_jobs_retained_until_ttl_or_restart": true
+  },
+  "decision": {
+    "stale_client_correlation_assumption_removed": true,
+    "terminal_completion_and_sink_receipt_observable": true,
+    "cancellation_before_publish_observable": true,
+    "runtime_receipt_present": false,
+    "executor_ready": false,
+    "promotion_eligible": false,
+    "canonical_state_advanced": false
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/candidate-alerts-runtime-evidence/contract.json", "sha256": "3a997c38ab038284018b8f70d99e7a3e47f02f4b9c55ec94823d270796ecdc8a"},
+    {"path": "deploy/docker/thor-local/qualification/candidate-alerts-runtime-evidence/collector.py", "sha256": "37b7fc999c7beb9888f1928ec41329b8abc8f51e08a2db2984dff72477eacb89"},
+    {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/manifest.json", "sha256": "f6f994992620fe34da36695be82b9092fc04b64a3f065a2472f614a71f77935b"},
+    {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/alerts-incidents-tracks.json", "sha256": "28c1fe5c84ee5a81e6ca32908b667dd6af4b141d971b928740756c50b06a0e8f"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py", "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"},
+    {"path": "services/alert/alert-agent-web/app/api/verification_routes.py", "sha256": "17fc24551c4c7651923917caa51cf52371237760d1b4f6900dfbef8e28980386"},
+    {"path": "services/alert/alert-agent-web/app/schema/verification_schemas.py", "sha256": "49e043be086926d9f39b8f992932c9c94a607a6465cb7ea9bf55a765ce5638cb"},
+    {"path": "services/alert/alert-agent-web/app/service/ondemand_verification_service.py", "sha256": "a17cf630af890cf3417ecb294468c4dc5bb14de941dfbf4e21b91b37da62e6d1"},
+    {"path": "services/alert/alert-agent-web/app/service/terminal_job_store.py", "sha256": "e2bd209a442aa9acce8b14525ca8525927cd85b9fa3aba119889e4a3c0e862c7"},
+    {"path": "services/alert/handlers/direct_media/direct_media_handler.py", "sha256": "b02d2f011b77f735d63ceffcad12d341d1888505bbe83ab47fed8154900d6a0d"},
+    {"path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py", "sha256": "dad6c8c7c5a361e416df8e54c4f7c71af58cf9ad089347e029ece6f75688746e"},
+    {"path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_kafka.py", "sha256": "f70901d5523c131552a0e2dece63559b83f1c30131306d4c84add3adcacb2bee"},
+    {"path": "services/alert/test/api/test_terminal_publish_gate.py", "sha256": "b0a24c96573b120a749a9dcfed734745ecd64a18097cb45df5104ffe822ba10f"},
+    {"path": "services/alert/test/api/test_ondemand_routes.py", "sha256": "f0bcefcfbc37064d13e476d4d8f1dcdb0df0c6f8f3bcf8457a44a889dabaad06"}
+  ]
+}

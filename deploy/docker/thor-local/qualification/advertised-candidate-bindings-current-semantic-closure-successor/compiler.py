@@ -41,6 +41,12 @@ LVS_PREDECESSOR_DIR = (
     "deploy/docker/thor-local/qualification/"
     "lvs-semantic-runtime-agent-session-successor"
 )
+LVS_MULTI_DIR = (
+    "deploy/docker/thor-local/qualification/lvs-multi-video-artifact-oracle-successor"
+)
+LVS_FOCUS_DIR = (
+    "deploy/docker/thor-local/qualification/lvs-focus-semantic-matrix-successor"
+)
 SEARCH_DIR = (
     "deploy/docker/thor-local/qualification/"
     "search-semantic-exact-fixture-provisioner-successor"
@@ -71,6 +77,16 @@ EXPECTED_LOCK_PATHS = {
     f"{LVS_PREDECESSOR_DIR}/executor.py",
     f"{LVS_PREDECESSOR_DIR}/manifest.schema.json",
     f"{LVS_PREDECESSOR_DIR}/receipt.schema.json",
+    f"{LVS_MULTI_DIR}/contract.json",
+    f"{LVS_MULTI_DIR}/contract.schema.json",
+    f"{LVS_MULTI_DIR}/fixture.json",
+    f"{LVS_MULTI_DIR}/fixture.schema.json",
+    f"{LVS_MULTI_DIR}/executor.py",
+    f"{LVS_MULTI_DIR}/result.schema.json",
+    f"{LVS_FOCUS_DIR}/contract.json",
+    f"{LVS_FOCUS_DIR}/executor.py",
+    f"{LVS_FOCUS_DIR}/manifest.schema.json",
+    f"{LVS_FOCUS_DIR}/receipt.schema.json",
     f"{SEARCH_DIR}/contract.json",
     f"{SEARCH_DIR}/executor.py",
     f"{SEARCH_DIR}/receipt.schema.json",
@@ -109,6 +125,23 @@ LVS_REFS = (
         "identity-and-live-caption-supplement",
     ),
 )
+LVS_MULTI_REFS = (
+    *LVS_REFS,
+    (
+        "thor-lvs-multi-video-artifact-oracle-successor-v1",
+        f"{LVS_MULTI_DIR}/executor.py",
+        "provider-free-per-artifact-semantic-oracle",
+        False,
+    ),
+)
+LVS_FOCUS_REFS = (
+    *LVS_REFS,
+    (
+        "lvs-focus-semantic-matrix-successor",
+        f"{LVS_FOCUS_DIR}/executor.py",
+        "complete-focus-semantic-matrix",
+    ),
+)
 SEARCH_REFS = (
     (
         "search-semantic-exact-fixture-provisioner-successor",
@@ -118,7 +151,7 @@ SEARCH_REFS = (
     (
         "search-semantic-runtime-evidence-successor",
         f"{SEARCH_EXECUTOR_DIR}/executor.py",
-        "semantic-executor-requiring-adapter",
+        "source-locked-integrated-semantic-executor",
     ),
 )
 SEARCH_ARCHIVE_REFS = (
@@ -151,33 +184,33 @@ EXPECTED_BINDINGS = {
         BASE_REF,
     ),
     "manifest-entry.video-summarization-file.02-multi-video-report": (
-        "partial",
-        "partial_executor_candidate",
-        LVS_REFS,
+        "concrete",
+        "concrete_executor_candidate",
+        LVS_MULTI_REFS,
     ),
     "manifest-entry.video-summarization-file.04-object-event-scenario-focus": (
-        "partial",
-        "partial_executor_candidate",
-        LVS_REFS,
+        "concrete",
+        "concrete_executor_candidate",
+        LVS_FOCUS_REFS,
     ),
     "manifest-entry.semantic-search.00-natural-language-action-event-search": (
-        "partial",
-        "partial_executor_candidate",
+        "concrete",
+        "concrete_executor_candidate",
         SEARCH_REFS,
     ),
     "manifest-entry.semantic-search.01-cv-attribute-search": (
-        "partial",
-        "partial_executor_candidate",
+        "concrete",
+        "concrete_executor_candidate",
         SEARCH_REFS,
     ),
     "manifest-entry.semantic-search.02-multi-embedding-fusion": (
-        "partial",
-        "partial_executor_candidate",
+        "concrete",
+        "concrete_executor_candidate",
         SEARCH_REFS,
     ),
     "manifest-entry.semantic-search.03-search-by-image": (
-        "partial",
-        "partial_executor_candidate",
+        "concrete",
+        "concrete_executor_candidate",
         SEARCH_REFS,
     ),
     "manifest-entry.semantic-search.07-file-and-rtsp-archive-management": (
@@ -346,6 +379,8 @@ def _verify_packages() -> None:
     base = _json(_path(f"{BASE_DIR}/contract.json"))
     lvs = _json(_path(f"{LVS_DIR}/contract.json"))
     lvs_predecessor = _json(_path(f"{LVS_PREDECESSOR_DIR}/contract.json"))
+    lvs_multi = _json(_path(f"{LVS_MULTI_DIR}/contract.json"))
+    lvs_focus = _json(_path(f"{LVS_FOCUS_DIR}/contract.json"))
     search = _json(_path(f"{SEARCH_DIR}/contract.json"))
     search_executor = _json(_path(f"{SEARCH_EXECUTOR_DIR}/contract.json"))
     search_rtsp = _json(_path(f"{SEARCH_RTSP_DIR}/contract.json"))
@@ -354,6 +389,8 @@ def _verify_packages() -> None:
         base,
         lvs,
         lvs_predecessor,
+        lvs_multi,
+        lvs_focus,
         search,
         search_executor,
         search_rtsp,
@@ -399,6 +436,25 @@ def _verify_packages() -> None:
     ):
         raise BindingError("LVS candidate boundary drift")
     if (
+        lvs_multi.get("package_id")
+        != "thor-lvs-multi-video-artifact-oracle-successor-v1"
+        or lvs_multi.get("policy", {}).get("warehouse_sample_bundle") != "excluded"
+        or lvs_multi.get("policy", {}).get("default_execution_enabled") is not False
+        or lvs_multi.get("policy", {}).get("runtime_evidence") != []
+        or lvs_multi.get("policy", {}).get("promotion_eligible") is not False
+        or lvs_focus.get("package_id") != "lvs-focus-semantic-matrix-successor"
+        or lvs_focus.get("warehouse_sample_bundle") != "excluded"
+        or lvs_focus.get("decision", {}).get(
+            "deterministic_semantic_matrix_implemented"
+        )
+        is not True
+        or lvs_focus.get("decision", {}).get("request_artifact_correlation_implemented")
+        is not True
+        or lvs_focus.get("decision", {}).get("runtime_receipt_present") is not False
+        or lvs_focus.get("decision", {}).get("promotion_eligible") is not False
+    ):
+        raise BindingError("LVS semantic successor boundary drift")
+    if (
         search.get("package_id")
         != "search-semantic-exact-fixture-provisioner-successor"
         or search.get("warehouse_sample_bundle") != "excluded"
@@ -406,6 +462,13 @@ def _verify_packages() -> None:
             "safe_exact_full_fixture_creation_implemented"
         )
         is not True
+        or search.get("decision", {}).get(
+            "failed_ingest_delayed_write_remediation_implemented"
+        )
+        is not True
+        or search.get("fixture_consumer", {}).get("enabled") is not True
+        or search.get("fixture_consumer", {}).get("arbitrary_callback_allowed")
+        is not False
         or search.get("decision", {}).get("runtime_receipt_present") is not False
         or search.get("decision", {}).get("promotion_eligible") is not False
         or search_executor.get("package_id")
@@ -448,16 +511,22 @@ def _verify_packages() -> None:
 
 
 def _expected_references(expected: tuple[Any, ...]) -> list[dict[str, Any]]:
-    return [
-        {
-            "package_id": package_id,
-            "path": path,
-            "role": role,
-            "authorization_gated": True,
-            "executor_ready": False,
-        }
-        for package_id, path, role in expected
-    ]
+    references: list[dict[str, Any]] = []
+    for reference in expected:
+        if len(reference) not in {3, 4}:
+            raise BindingError("executor reference shape drift")
+        package_id, path, role = reference[:3]
+        authorization_gated = reference[3] if len(reference) == 4 else True
+        references.append(
+            {
+                "package_id": package_id,
+                "path": path,
+                "role": role,
+                "authorization_gated": authorization_gated,
+                "executor_ready": False,
+            }
+        )
+    return references
 
 
 def compile_overlay(contract_path: Path = CONTRACT) -> dict[str, Any]:
@@ -564,7 +633,7 @@ def compile_overlay(contract_path: Path = CONTRACT) -> dict[str, Any]:
 
     concrete = sum(row["implementation_state"] == "concrete" for row in rows)
     partial = sum(row["implementation_state"] == "partial" for row in rows)
-    if concrete != 4 or partial != 6:
+    if concrete != 10 or partial != 0:
         raise BindingError("implementation classification split drift")
     result = {
         "schema_version": 1,
@@ -621,7 +690,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 raise BindingError("checked-in overlay is stale")
             print(
                 "PASS: current semantic candidate links verified "
-                "(4 concrete, 6 partial, 0 ready/admitted/evidenced/promoted)"
+                "(10 concrete, 0 partial, 0 ready/admitted/evidenced/promoted)"
             )
         return 0
     except BindingError as exc:

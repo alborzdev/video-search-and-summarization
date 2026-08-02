@@ -34,6 +34,7 @@ from typing import Any
 from typing import Literal
 from typing import NamedTuple
 import urllib.parse
+from uuid import uuid4
 
 try:
     import markdown
@@ -552,6 +553,14 @@ class VideoReportGenInput(BaseModel):
             "use 0 for 'no upper bound (until now)'. Ignored when media_type='video'."
         ),
     )
+    report_correlation_id: str = Field(
+        default_factory=lambda: f"lvs-{uuid4().hex}",
+        pattern=r"^lvs-[0-9a-f]{32}$",
+        description=(
+            "Opaque request correlation ID copied to every report artifact. "
+            "Callers may provide one to correlate a retried or delegated request."
+        ),
+    )
 
     model_config = {
         "extra": "forbid",
@@ -604,6 +613,75 @@ class VideoReportGenOutput(BaseModel):
         default=None,
         description="List of individual report details for multi-video processing. Each dict contains sensor_id, http_url, pdf_url, etc.",
     )
+    report_correlation_id: str | None = Field(
+        default=None,
+        pattern=r"^lvs-[0-9a-f]{32}$",
+        description="Correlation ID shared by every artifact produced for this request.",
+    )
+    requested_sensor_ids: list[str] = Field(
+        default_factory=list,
+        description="Ordered source-video identities requested by the caller.",
+    )
+    failed_sensor_ids: list[str] = Field(
+        default_factory=list,
+        description="Ordered requested source identities for which no report artifact was produced.",
+    )
+
+
+def _correlate_video_reports(
+    reports: list[dict[str, Any]],
+    requested_sensor_ids: list[str],
+    failed_sensor_ids: list[str],
+    report_correlation_id: str,
+) -> list[dict[str, Any]]:
+    """Return reports in request order with an exact per-source correlation contract.
+
+    This is deliberately stricter than the display layer: duplicate, foreign, or
+    unaccounted source identities are rejected instead of allowing a partial batch
+    to look complete. Failed requested sources remain observable separately.
+    """
+
+    if not requested_sensor_ids or len(set(requested_sensor_ids)) != len(requested_sensor_ids):
+        raise ValueError("Video Analysis Report: requested sensor IDs must be non-empty and unique")
+    if len(set(failed_sensor_ids)) != len(failed_sensor_ids):
+        raise ValueError("Video Analysis Report: failed sensor IDs must be unique")
+
+    requested = set(requested_sensor_ids)
+    failed = set(failed_sensor_ids)
+    if not failed.issubset(requested):
+        raise ValueError("Video Analysis Report: failed sensor IDs must belong to the request")
+
+    by_sensor: dict[str, dict[str, Any]] = {}
+    for raw_report in reports:
+        report = dict(raw_report)
+        sensor_id = report.get("sensor_id")
+        if not isinstance(sensor_id, str) or sensor_id not in requested:
+            raise ValueError("Video Analysis Report: report contains an unknown source sensor")
+        if sensor_id in by_sensor:
+            raise ValueError("Video Analysis Report: report contains a duplicate source sensor")
+        if sensor_id in failed:
+            raise ValueError("Video Analysis Report: a source cannot be both successful and failed")
+        by_sensor[sensor_id] = report
+
+    if set(by_sensor) | failed != requested:
+        raise ValueError("Video Analysis Report: every requested source must be successful or failed")
+
+    source_count = len(requested_sensor_ids)
+    correlated: list[dict[str, Any]] = []
+    for source_index, sensor_id in enumerate(requested_sensor_ids):
+        correlated_report = by_sensor.get(sensor_id)
+        if correlated_report is None:
+            continue
+        correlated_report.update(
+            {
+                "sensor_id": sensor_id,
+                "source_index": source_index,
+                "source_count": source_count,
+                "report_correlation_id": report_correlation_id,
+            }
+        )
+        correlated.append(correlated_report)
+    return correlated
 
 
 async def _save_markdown_to_object_store(
@@ -1719,6 +1797,9 @@ Enter your choice or press Submit to keep current value:"""
                 return VideoReportGenOutput(
                     summary=f"⚠️ **Error:** Could not determine duration for video '{sid}': {e}",
                     http_url=None,
+                    report_correlation_id=report_input.report_correlation_id,
+                    requested_sensor_ids=list(sensor_ids),
+                    failed_sensor_ids=list(sensor_ids),
                 )
 
         lvs_available = lvs_video_understanding_tool is not None
@@ -1763,6 +1844,9 @@ Enter your choice or press Submit to keep current value:"""
                 return VideoReportGenOutput(
                     summary="Report generation was cancelled by the user.",
                     http_url=None,
+                    report_correlation_id=report_input.report_correlation_id,
+                    requested_sensor_ids=list(sensor_ids),
+                    failed_sensor_ids=list(sensor_ids),
                 )
             vlm_prompt_override = resolved_prompt
             _store_prompt(thread_id, resolved_prompt)
@@ -1778,6 +1862,7 @@ Enter your choice or press Submit to keep current value:"""
                 sensor_id=lvs_sensor_ids if len(lvs_sensor_ids) > 1 else lvs_sensor_ids[0],
                 user_query=report_input.user_query,
                 vlm_reasoning=report_input.vlm_reasoning,
+                report_correlation_id=report_input.report_correlation_id,
             )
             tasks.append(
                 (
@@ -1791,6 +1876,7 @@ Enter your choice or press Submit to keep current value:"""
                 sensor_id=sid,
                 user_query=report_input.user_query,
                 vlm_reasoning=report_input.vlm_reasoning,
+                report_correlation_id=report_input.report_correlation_id,
             )
             tasks.append(([sid], _video_report_gen_single(base_input, vlm_prompt_override=vlm_prompt_override)))
 
@@ -1802,6 +1888,7 @@ Enter your choice or press Submit to keep current value:"""
         total_pdf_file_size = 0
         successful_count = 0
         failed_videos: list[str] = []
+        failed_sensor_ids: list[str] = []
         shared_hitl_prompts: dict[str, Any] | None = None
 
         for (task_sids, _), result_or_exception in zip(tasks, results, strict=True):
@@ -1809,6 +1896,7 @@ Enter your choice or press Submit to keep current value:"""
                 logger.error(f"Failed to process {task_sids}: {result_or_exception}")
                 for sid in task_sids:
                     failed_videos.append(f"{sid} (Error: {result_or_exception!s})")
+                    failed_sensor_ids.append(sid)
                 continue
 
             video_result: VideoReportGenOutput = result_or_exception
@@ -1825,6 +1913,7 @@ Enter your choice or press Submit to keep current value:"""
                     all_reports.append(report)
                     total_file_size += report.get("file_size", 0)
                     total_pdf_file_size += report.get("pdf_file_size", 0)
+                failed_sensor_ids.extend(video_result.failed_sensor_ids)
             elif video_result.http_url:
                 successful_count += 1
                 all_reports.append(
@@ -1835,10 +1924,36 @@ Enter your choice or press Submit to keep current value:"""
                         "file_size": video_result.file_size,
                         "pdf_file_size": video_result.pdf_file_size,
                         "video_url": video_result.video_url,
+                        "object_store_key": video_result.object_store_key,
+                        "pdf_object_store_key": (
+                            video_result.object_store_key.replace(".md", ".pdf")
+                            if video_result.object_store_key and video_result.pdf_url
+                            else None
+                        ),
                     }
                 )
                 total_file_size += video_result.file_size
                 total_pdf_file_size += video_result.pdf_file_size
+            else:
+                failed_sensor_ids.extend(task_sids)
+
+        # Every requested identity must be accounted for exactly once. A partial
+        # result stays useful, but cannot be mistaken for a complete batch.
+        successful_sensor_ids = {
+            report.get("sensor_id") for report in all_reports if isinstance(report.get("sensor_id"), str)
+        }
+        failed_sensor_ids = [
+            sid for sid in sensor_ids if sid in set(failed_sensor_ids) or sid not in successful_sensor_ids
+        ]
+        all_reports = _correlate_video_reports(
+            all_reports,
+            sensor_ids,
+            failed_sensor_ids,
+            report_input.report_correlation_id,
+        )
+        for sid in failed_sensor_ids:
+            if not any(item.startswith(f"{sid} (") for item in failed_videos):
+                failed_videos.append(f"{sid} (No report artifact was produced)")
 
         # Build summary
         method_parts = []
@@ -1877,6 +1992,9 @@ Enter your choice or press Submit to keep current value:"""
             all_reports=all_reports,
             hitl_prompts=shared_hitl_prompts,
             lvs_fallback_warning=multi_lvs_fallback_warning,
+            report_correlation_id=report_input.report_correlation_id,
+            requested_sensor_ids=list(sensor_ids),
+            failed_sensor_ids=failed_sensor_ids,
         )
 
     async def _generate_single_report(
@@ -1958,6 +2076,8 @@ Enter your choice or press Submit to keep current value:"""
             "sensor_id": sensor_id,
             "http_url": http_url,
             "pdf_url": pdf_url,
+            "object_store_key": filename,
+            "pdf_object_store_key": pdf_filename if pdf_url else None,
             "file_size": file_size,
             "pdf_file_size": pdf_file_size,
             "video_url": video_url,
@@ -1982,6 +2102,9 @@ Enter your choice or press Submit to keep current value:"""
                     "Stream report generation is disabled: no LVS stream understanding tool is configured. "
                     "Set 'lvs_stream_understanding_tool' on video_report_gen to enable this option."
                 ),
+                report_correlation_id=report_input.report_correlation_id,
+                requested_sensor_ids=[str(report_input.sensor_id)],
+                failed_sensor_ids=[str(report_input.sensor_id)],
             )
 
         stream_name = report_input.sensor_id if isinstance(report_input.sensor_id, str) else report_input.sensor_id[0]
@@ -2026,6 +2149,9 @@ Enter your choice or press Submit to keep current value:"""
             return VideoReportGenOutput(
                 http_url=None,
                 summary=message or f"LVS stream understanding returned status '{status}' for stream '{stream_name}'.",
+                report_correlation_id=report_input.report_correlation_id,
+                requested_sensor_ids=[stream_name],
+                failed_sensor_ids=[stream_name],
             )
 
         content = stream_data.get("content")
@@ -2068,13 +2194,15 @@ Enter your choice or press Submit to keep current value:"""
         return VideoReportGenOutput(
             http_url=http_url,
             pdf_url=pdf_url,
-            object_store_key=None,
+            object_store_key=filename,
             summary=f"Stream report generated for '{stream_name}'.",
             file_size=file_size,
             pdf_file_size=pdf_file_size,
             content=None,
             video_url=None,
             hitl_prompts=hitl_prompts,
+            report_correlation_id=report_input.report_correlation_id,
+            requested_sensor_ids=[stream_name],
         )
 
     async def _video_report_gen_single(
@@ -2172,6 +2300,9 @@ Enter your choice or press Submit to keep current value:"""
                         pdf_file_size=0,
                         content=None,
                         video_url=None,
+                        report_correlation_id=report_input.report_correlation_id,
+                        requested_sensor_ids=[sensor_id],
+                        failed_sensor_ids=[sensor_id],
                     )
 
                 _store_prompt(thread_id, resolved_prompt)
@@ -2297,6 +2428,17 @@ Enter your choice or press Submit to keep current value:"""
                     return VideoReportGenOutput(
                         http_url=None,
                         summary=lvs_data.get("message", "Video analysis was cancelled by user."),
+                        report_correlation_id=report_input.report_correlation_id,
+                        requested_sensor_ids=(
+                            list(report_input.sensor_id)
+                            if isinstance(report_input.sensor_id, list)
+                            else [report_input.sensor_id]
+                        ),
+                        failed_sensor_ids=(
+                            list(report_input.sensor_id)
+                            if isinstance(report_input.sensor_id, list)
+                            else [report_input.sensor_id]
+                        ),
                     )
 
                 hitl_prompts = lvs_data.get("hitl_prompts")
@@ -2340,6 +2482,18 @@ Enter your choice or press Submit to keep current value:"""
                     if lvs_data.get("failed_videos"):
                         summary_parts.append(f"\n**Failed videos:** {', '.join(lvs_data['failed_videos'])}")
 
+                    requested_lvs_sensor_ids = (
+                        list(report_input.sensor_id)
+                        if isinstance(report_input.sensor_id, list)
+                        else [report_input.sensor_id]
+                    )
+                    failed_lvs_sensor_ids = [
+                        sid
+                        for sid in requested_lvs_sensor_ids
+                        if sid in set(lvs_data.get("failed_videos") or [])
+                        or sid not in {report.get("sensor_id") for report in all_reports}
+                    ]
+
                     return VideoReportGenOutput(
                         http_url=all_reports[0]["http_url"] if all_reports else None,
                         pdf_url=all_reports[0]["pdf_url"] if all_reports else None,
@@ -2348,6 +2502,9 @@ Enter your choice or press Submit to keep current value:"""
                         pdf_file_size=total_pdf_file_size,
                         hitl_prompts=hitl_prompts,
                         all_reports=all_reports,
+                        report_correlation_id=report_input.report_correlation_id,
+                        requested_sensor_ids=requested_lvs_sensor_ids,
+                        failed_sensor_ids=failed_lvs_sensor_ids,
                     )
 
         # Format results based on tool type
@@ -2391,7 +2548,7 @@ Enter your choice or press Submit to keep current value:"""
         return VideoReportGenOutput(
             http_url=report_metadata["http_url"],
             pdf_url=report_metadata["pdf_url"],
-            object_store_key=None,  # Not set in helper
+            object_store_key=report_metadata["object_store_key"],
             summary=summary,
             file_size=report_metadata["file_size"],
             pdf_file_size=report_metadata["pdf_file_size"],
@@ -2399,6 +2556,8 @@ Enter your choice or press Submit to keep current value:"""
             video_url=report_metadata["video_url"],
             hitl_prompts=hitl_prompts,
             lvs_fallback_warning=lvs_fallback_warning or None,
+            report_correlation_id=report_input.report_correlation_id,
+            requested_sensor_ids=[sensor_id],
         )
 
     async def _video_report_gen(report_input: VideoReportGenInput) -> VideoReportGenOutput:

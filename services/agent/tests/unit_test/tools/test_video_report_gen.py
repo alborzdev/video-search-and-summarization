@@ -25,6 +25,7 @@ from vss_agents.tools.video_report_gen import TimestampMatch
 from vss_agents.tools.video_report_gen import VideoReportGenInput
 from vss_agents.tools.video_report_gen import VideoReportGenOutput
 from vss_agents.tools.video_report_gen import _convert_markdown_to_pdf
+from vss_agents.tools.video_report_gen import _correlate_video_reports
 from vss_agents.tools.video_report_gen import _divide_video_into_chunks
 from vss_agents.tools.video_report_gen import _inject_video_clips
 from vss_agents.tools.video_report_gen import _normalize_chunk_timestamps
@@ -285,6 +286,73 @@ class TestVideoReportGenOutput:
         assert "pdf_file_size" in data
         assert "summary" in data
         assert "content" in data
+
+
+class TestMultiVideoReportCorrelation:
+    CORRELATION_ID = "lvs-" + "a" * 32
+
+    @staticmethod
+    def _report(sensor_id: str) -> dict:
+        return {
+            "sensor_id": sensor_id,
+            "http_url": f"http://localhost/{sensor_id}.md",
+            "pdf_url": f"http://localhost/{sensor_id}.pdf",
+            "object_store_key": f"{sensor_id}.md",
+            "pdf_object_store_key": f"{sensor_id}.pdf",
+            "file_size": 100,
+            "pdf_file_size": 200,
+        }
+
+    def test_reports_are_ordered_and_correlated_to_exact_sources(self):
+        reports = _correlate_video_reports(
+            [self._report("beta.mp4"), self._report("alpha.mp4")],
+            ["alpha.mp4", "beta.mp4"],
+            [],
+            self.CORRELATION_ID,
+        )
+        assert [report["sensor_id"] for report in reports] == ["alpha.mp4", "beta.mp4"]
+        assert [report["source_index"] for report in reports] == [0, 1]
+        assert all(report["source_count"] == 2 for report in reports)
+        assert all(report["report_correlation_id"] == self.CORRELATION_ID for report in reports)
+
+    def test_partial_result_keeps_failed_source_observable(self):
+        reports = _correlate_video_reports(
+            [self._report("alpha.mp4")],
+            ["alpha.mp4", "beta.mp4"],
+            ["beta.mp4"],
+            self.CORRELATION_ID,
+        )
+        assert [report["sensor_id"] for report in reports] == ["alpha.mp4"]
+        assert reports[0]["source_count"] == 2
+
+    @pytest.mark.parametrize(
+        ("reports", "failed"),
+        [
+            ([_report.__func__("alpha.mp4"), _report.__func__("alpha.mp4")], []),
+            ([_report.__func__("foreign.mp4")], ["alpha.mp4", "beta.mp4"]),
+            ([_report.__func__("alpha.mp4")], []),
+            ([_report.__func__("alpha.mp4")], ["alpha.mp4", "beta.mp4"]),
+        ],
+    )
+    def test_ambiguous_or_cross_correlated_results_fail_closed(self, reports, failed):
+        with pytest.raises(ValueError, match="Video Analysis Report"):
+            _correlate_video_reports(
+                reports,
+                ["alpha.mp4", "beta.mp4"],
+                failed,
+                self.CORRELATION_ID,
+            )
+
+    def test_input_generates_and_validates_correlation_id(self):
+        generated = VideoReportGenInput(sensor_id="alpha.mp4", user_query="report")
+        assert generated.report_correlation_id.startswith("lvs-")
+        assert len(generated.report_correlation_id) == 36
+        with pytest.raises(ValidationError):
+            VideoReportGenInput(
+                sensor_id="alpha.mp4",
+                user_query="report",
+                report_correlation_id="caller-controlled-free-text",
+            )
 
 
 class TestTimestampFormatDetection:

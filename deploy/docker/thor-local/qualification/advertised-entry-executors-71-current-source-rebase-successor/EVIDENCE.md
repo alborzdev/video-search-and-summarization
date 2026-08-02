@@ -2,8 +2,13 @@
 
 This package proves a current-source, static-only rebase of the 71 retained
 advertised-entry candidate rows. It locks the immutable predecessor inventory
-and receipt, resolves all 182 row/source references using exactly fourteen changed
-paths, and preserves the exact 40 unchanged / 31 rebased partition.
+and receipt, resolves all 182 row/source references using exactly fifteen changed
+paths, and preserves the exact 39 unchanged / 32 rebased partition.
+
+The `video_report_gen.py` overlay is referenced by three retained rows. It moves
+only `manifest-gap.audio-understanding.00-audio-aware-base-workflow` from the
+unchanged partition; its other two references were already rebased by existing
+overlay paths.
 
 The changed semantics are checked directly against current source: guarded
 Kafka publication suppresses work after abort/finalization, and the Agent/NAT

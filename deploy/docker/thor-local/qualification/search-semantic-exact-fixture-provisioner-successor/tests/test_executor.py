@@ -196,8 +196,9 @@ def test_inert_plan_source_locks_current_production_contracts():
         "status": "inert_exact_fixture_lifecycle_valid",
         "runtime_requests": 0,
         "runtime_actions": 0,
-        "request_bound": 52,
-        "action_bound": 12,
+        "request_bound": 77,
+        "action_bound": 23,
+        "integrated_dynamic_consumer_available": True,
         "operator_preprovisioned_fixture_required": False,
         "runtime_receipt_present": False,
         "promotion_eligible": False,
@@ -257,11 +258,13 @@ def test_success_discovers_model_documents_and_proves_delayed_cleanup(tmp_path: 
         "handoff_sha256": receipt["fixture"]["handoff_sha256"],
         "consumer_invoked": False,
         "consumer_receipt_sha256": None,
-        "consumer_transport_accounting": "disabled",
+        "consumer_transport_accounting": "not-requested",
         "raw_document_ids_recorded": True,
         "operator_preprovisioned": False,
     }
     assert receipt["cleanup"]["delayed_no_reappearance"] is True
+    assert receipt["cleanup"]["remediation_deleted_documents"] == 0
+    assert receipt["cleanup"]["consecutive_absence_observations"] == 2
     assert receipt["cleanup"]["foreign_delete_attempted"] is False
     assert receipt["budget"]["requests"] == 24
     assert opener.deleted is True
@@ -282,6 +285,275 @@ def test_unbounded_consumer_is_rejected_before_transport(tmp_path: Path):
             fixture_consumer=lambda _handoff: None,
         )
     assert opener.requests == []
+
+
+def _semantic_template() -> dict[str, Any]:
+    def assertion(shape: str, *, maximum: int = 10, span: int = 0) -> dict[str, Any]:
+        return {
+            "response_shape": shape,
+            "minimum_results": 1,
+            "maximum_results": maximum,
+            "expected_sensor_ids": ["$sensor_id"],
+            "expected_object_ids": ["$selected_object_id"],
+            "expected_ordered_sensor_ids": [],
+            "top_sensor_id": "$sensor_id",
+            "top_video_name": "$namespace",
+            "minimum_span_seconds": span,
+        }
+
+    search_body = {
+        "query": "person walking",
+        "source_type": "video_file",
+        "video_sources": ["$namespace"],
+        "agent_mode": False,
+        "use_critic": False,
+    }
+    attribute_body = {
+        "query": "red clothing",
+        "source_type": "video_file",
+        "video_sources": ["$namespace"],
+        "fuse_multi_attribute": False,
+    }
+    specs = [
+        ("search-route", "/api/v1/search", search_body, assertion("search"), 200),
+        (
+            "attribute-route",
+            "/api/v1/search/attribute",
+            attribute_body,
+            assertion("attribute"),
+            200,
+        ),
+        (
+            "fusion-route",
+            "/api/v1/search/fusion",
+            search_body | {"agent_mode": True},
+            assertion("search"),
+            200,
+        ),
+        (
+            "image-route",
+            "/api/v1/search/image",
+            search_body | {"reference_object": "$selected_object"},
+            assertion("search"),
+            200,
+        ),
+        (
+            "same-object-merge",
+            "/api/v1/search",
+            search_body,
+            assertion("search", span=1),
+            200,
+        ),
+        (
+            "append-multiple-attributes",
+            "/api/v1/search/attribute",
+            attribute_body | {"query": ["red clothing", "walking"]},
+            assertion("attribute"),
+            200,
+        ),
+        (
+            "rerank-or-fallback",
+            "/api/v1/search/fusion",
+            search_body | {"agent_mode": True},
+            assertion("search"),
+            200,
+        ),
+        (
+            "fuse-multiple-attributes",
+            "/api/v1/search/attribute",
+            attribute_body
+            | {
+                "query": ["red clothing", "walking"],
+                "fuse_multi_attribute": True,
+            },
+            assertion("attribute"),
+            200,
+        ),
+        (
+            "same-video-top-k",
+            "/api/v1/search",
+            search_body | {"top_k": 1},
+            assertion("search", maximum=1),
+            200,
+        ),
+        (
+            "selected-bbox-knn",
+            "/api/v1/search/image",
+            search_body | {"reference_object": "$selected_object"},
+            assertion("search"),
+            200,
+        ),
+        (
+            "reject-invalid-index-family",
+            "/api/v1/search",
+            {
+                "query": "reject invalid index family",
+                "source_type": "vss-invalid-search-*",
+                "agent_mode": False,
+                "use_critic": False,
+            },
+            {
+                "response_shape": "validation_error",
+                "minimum_results": 0,
+                "maximum_results": 0,
+                "expected_sensor_ids": [],
+                "expected_object_ids": [],
+                "expected_ordered_sensor_ids": [],
+                "top_sensor_id": None,
+                "top_video_name": None,
+                "minimum_span_seconds": 0,
+            },
+            422,
+        ),
+    ]
+    return {
+        "schema_version": 1,
+        "media_attestation": executor.BoundedSemanticFixtureConsumer.ATTESTATION,
+        "operations": [
+            {
+                "step_id": step_id,
+                "method": "POST",
+                "path": path,
+                "body": body,
+                "allowed_statuses": [status],
+                "assertion": expected,
+            }
+            for step_id, path, body, expected, status in specs
+        ],
+    }
+
+
+def test_dynamic_consumer_uses_handoff_and_shared_transport(tmp_path: Path):
+    class SemanticOpener(FakeOpener):
+        def open(self, request: Any, timeout: float) -> Response:
+            path = urlparse(request.full_url).path
+            if request.get_method() == "POST" and path.startswith("/api/v1/search"):
+                self.requests.append((request.get_method(), request.full_url))
+                body = json.loads(request.data)
+                if body.get("source_type") == "vss-invalid-search-*":
+                    return Response(422, {"detail": [{"msg": "invalid"}]})
+                assert body["video_sources"] == [NAMESPACE]
+                if path.endswith("/attribute"):
+                    return Response(
+                        200,
+                        [
+                            {
+                                "metadata": {
+                                    "sensor_id": SENSOR_ID,
+                                    "video_name": NAMESPACE,
+                                    "object_id": "object-7",
+                                    "start_time": "2025-01-01T00:00:01Z",
+                                    "end_time": "2025-01-01T00:00:03Z",
+                                }
+                            }
+                        ],
+                    )
+                return Response(
+                    200,
+                    {
+                        "data": [
+                            {
+                                "sensor_id": SENSOR_ID,
+                                "video_name": NAMESPACE,
+                                "object_ids": ["object-7"],
+                                "start_time": "2025-01-01T00:00:01Z",
+                                "end_time": "2025-01-01T00:00:03Z",
+                            }
+                        ],
+                        "search_messages": [],
+                    },
+                )
+            return super().open(request, timeout)
+
+    opener = SemanticOpener()
+    consumer = executor.BoundedSemanticFixtureConsumer(
+        search_origin="http://127.0.0.1:8001", template=_semantic_template()
+    )
+    receipt = executor.execute_lifecycle(
+        run_id=RUN_ID,
+        acknowledgement=ACK,
+        media_path=_media(tmp_path),
+        agent_origin="http://127.0.0.1:8000",
+        vst_origin="http://127.0.0.1:30888",
+        elasticsearch_origin="http://127.0.0.1:9200",
+        opener_factory=lambda: opener,
+        sleeper=lambda _seconds: None,
+        fixture_consumer=consumer,
+    )
+    assert receipt["fixture"]["consumer_invoked"] is True
+    assert receipt["fixture"]["consumer_receipt_sha256"] is not None
+    assert (
+        receipt["fixture"]["consumer_transport_accounting"]
+        == "shared-lifecycle-budget-and-deadline"
+    )
+    assert receipt["budget"] == {
+        "requests": 35,
+        "max_requests": 77,
+        "actions": 23,
+        "max_actions": 23,
+    }
+
+
+def test_delayed_scoped_writes_are_exactly_remediated(tmp_path: Path):
+    class DelayedWriteOpener(FakeOpener):
+        def __init__(self) -> None:
+            super().__init__()
+            self.late = False
+
+        def _search(self, index: str) -> Response:
+            if not self.late:
+                return super()._search(index)
+            deleted = self.deleted
+            self.deleted = False
+            try:
+                return super()._search(index)
+            finally:
+                self.deleted = deleted
+
+        def open(self, request: Any, timeout: float) -> Response:
+            path = urlparse(request.full_url).path
+            method = request.get_method()
+            if method == "POST" and path == "/_bulk":
+                self.requests.append((method, request.full_url))
+                rows = [json.loads(line) for line in request.data.splitlines()]
+                self.late = False
+                return Response(
+                    200,
+                    {
+                        "errors": False,
+                        "items": [
+                            {
+                                "delete": {
+                                    "_index": row["delete"]["_index"],
+                                    "_id": row["delete"]["_id"],
+                                    "status": 200,
+                                    "result": "deleted",
+                                }
+                            }
+                            for row in rows
+                        ],
+                    },
+                )
+            if method == "POST" and path == "/_mget" and self.late:
+                self.requests.append((method, request.full_url))
+                requested = json.loads(request.data)["docs"]
+                documents = []
+                for item in requested:
+                    search = json.loads(self._search(item["_index"])._body)
+                    source = search["hits"]["hits"][0]["_source"]
+                    documents.append(item | {"found": True, "_source": source})
+                return Response(200, {"docs": documents})
+            response = super().open(request, timeout)
+            if method == "DELETE" and path == f"/api/v1/videos/{SENSOR_ID}":
+                self.late = True
+            return response
+
+    opener = DelayedWriteOpener()
+    receipt = _execute(tmp_path, opener)
+    assert receipt["cleanup"]["remediation_deleted_documents"] == 3
+    assert receipt["cleanup"]["consecutive_absence_observations"] == 2
+    assert receipt["budget"]["requests"] == 30
+    assert sum(path.endswith("/_bulk") for _, path in opener.requests) == 1
 
 
 def test_empty_vst_stream_entry_is_not_misclassified_as_absent():
@@ -445,6 +717,42 @@ def test_selected_object_rejects_bbox_outside_behavior_interval():
     ]
     with pytest.raises(executor.LifecycleError, match="fixture_not_ready"):
         executor._selected_object(behavior, raw, NAMESPACE)
+
+
+def test_selected_object_uses_raw_bbox_frame_timestamp():
+    behavior = [
+        {
+            "_source": {
+                "sensor": {"id": NAMESPACE},
+                "object": {"id": "object-7"},
+                "timestamp": "2025-01-01T00:00:01Z",
+                "end": "2025-01-01T00:00:03Z",
+                "embeddings": {"vector": [0.3]},
+            }
+        }
+    ]
+    raw = [
+        {
+            "_source": {
+                "sensorId": NAMESPACE,
+                "timestamp": "2025-01-01T00:00:02Z",
+                "objects": [
+                    {
+                        "id": "object-7",
+                        "bbox": {
+                            "leftX": 1,
+                            "rightX": 10,
+                            "topY": 2,
+                            "bottomY": 20,
+                        },
+                    }
+                ],
+            }
+        }
+    ]
+    assert executor._selected_object(behavior, raw, NAMESPACE)["timestamp"] == (
+        "2025-01-01T00:00:02Z"
+    )
 
 
 def test_not_ready_still_uses_agent_delete_and_exact_absence_checks(tmp_path: Path):

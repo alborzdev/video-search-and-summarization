@@ -4,15 +4,20 @@ This additive package rebases the retained 71 advertised-entry candidates onto
 the current checkout without changing or relabeling the immutable
 `advertised-entry-executors-74-successor` inventory or execution receipt.
 
-The exact partition is 40 rows whose complete historical source-lock sets still
-match and 31 rows affected by an exact fourteen-path current-source overlay. All 182
+The exact partition is 39 rows whose complete historical source-lock sets still
+match and 32 rows affected by an exact fifteen-path current-source overlay. All 182
 retained row/source references resolve against either their immutable historical
 digest or the overlay digest. The historical dispatcher is never imported or
 replayed.
 
 The overlay includes the current RTSP add/delete API surfaces so their stable
 VST `sensorId` response contract is provenance-bound without rewriting the
-historical inventory.
+historical inventory. It also rebases the multi-video report tool so current
+per-artifact source correlation remains visible to retained stream-report and
+audio rows. Its three retained references add
+`manifest-gap.audio-understanding.00-audio-aware-base-workflow` to the exact
+rebased ID set; the stream-report and audio-aware summarization rows were already
+rebased by other overlay paths.
 
 The validator additionally proves two semantics that changed with those files:
 

@@ -77,15 +77,15 @@
   "promotion_eligible": false,
   "warehouse_sample_bundle": "excluded",
   "source_locks": [
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "0f4c7c30d355aeedd668393e735b5b2afbdf649838a5882384dcf3bcee8b44b8"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "d5725b38e96629c295831366cec0bd9db53875d126334583aa46973d6ba5d75e"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py", "sha256": "93d197d0242cd09fd5853551aac6a1fa061dd8de8a462d911cc356f2f00cfaf8"},
     {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"},
     {"path": "deploy/docker/thor-local/compose.yml", "sha256": "93df3a27908ef6bd28b81c30c1525746a3eb5000e700d3bce4d31be84adafce9"},
     {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
     {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
     {"path": "services/agent/src/vss_agents/tools/video_understanding.py", "sha256": "59511bb172a030e0945a9c9a0ccb432e5b299ae1697e9ba023f4246d61c7c095"},
-    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
-    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab"},
+    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "cf6a41427a561acb388d921c0c16544b7c0a6bdc3ace7ee3a43f3bfd4a28e256"},
     {"path": "services/vios/test/bdd_tests/data/test_video.mp4", "sha256": "c569a1a381a9b8f1f86cd4cb665285044cc16d05a79c96e992f938ca3a2470ad"}
   ]
 }

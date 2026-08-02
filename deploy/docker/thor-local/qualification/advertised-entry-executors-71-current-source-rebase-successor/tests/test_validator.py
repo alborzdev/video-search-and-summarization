@@ -5,6 +5,7 @@ import copy
 import importlib.util
 from pathlib import Path
 import sys
+from typing import Any
 import unittest
 from unittest import mock
 
@@ -20,6 +21,9 @@ SPEC.loader.exec_module(VALIDATOR)
 
 
 class CurrentSourceRebaseTest(unittest.TestCase):
+    result: dict[str, Any]
+    contract: dict[str, Any]
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.result = VALIDATOR.validate()
@@ -27,17 +31,27 @@ class CurrentSourceRebaseTest(unittest.TestCase):
 
     def test_exact_71_row_partition(self) -> None:
         self.assertEqual(self.result["retained_candidate_rows"], 71)
-        self.assertEqual(self.result["unchanged_rows"], 40)
-        self.assertEqual(self.result["rebased_rows"], 31)
+        self.assertEqual(self.result["unchanged_rows"], 39)
+        self.assertEqual(self.result["rebased_rows"], 32)
         self.assertEqual(
             set(self.result["rebased_entry_ids"]), VALIDATOR.EXPECTED_REBASED_IDS
         )
+        self.assertIn(
+            "manifest-gap.audio-understanding.00-audio-aware-base-workflow",
+            self.result["rebased_entry_ids"],
+        )
 
-    def test_exact_fourteen_path_overlay_is_current(self) -> None:
-        self.assertEqual(self.result["current_source_overlay_paths"], 14)
+    def test_exact_fifteen_path_overlay_is_current(self) -> None:
+        self.assertEqual(self.result["current_source_overlay_paths"], 15)
         self.assertEqual(
             set(self.result["overlay_reference_counts"]),
             set(VALIDATOR.EXPECTED_OVERLAY),
+        )
+        self.assertEqual(
+            self.result["overlay_reference_counts"][
+                "services/agent/src/vss_agents/tools/video_report_gen.py"
+            ],
+            3,
         )
         for path, digest in VALIDATOR.EXPECTED_OVERLAY.items():
             with self.subTest(path=path):

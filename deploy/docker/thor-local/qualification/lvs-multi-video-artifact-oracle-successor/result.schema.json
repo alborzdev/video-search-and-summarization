@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "candidate_implementation_state", "runtime_evidence", "canonical_state_advanced", "promotion_eligible", "warehouse_sample_bundle", "contract_sha256", "fixture_sha256", "source_lock_count", "fixture", "production_observability", "semantic_oracle", "retained_gaps", "confinement"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-lvs-multi-video-artifact-oracle-successor-v1"},
+    "status": {"const": "static_semantic_oracle_complete_non_promoting"},
+    "candidate_implementation_state": {"const": "concrete_static_candidate"},
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "canonical_state_advanced": {"const": false},
+    "promotion_eligible": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "fixture_sha256": {"$ref": "#/$defs/sha"},
+    "source_lock_count": {"const": 6},
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_id", "video_count", "artifact_count", "disjoint_event_count", "materialized_video_count"],
+      "properties": {
+        "fixture_id": {"const": "thor-lvs-two-video-disjoint-events-v1"},
+        "video_count": {"const": 2},
+        "artifact_count": {"const": 4},
+        "disjoint_event_count": {"const": 2},
+        "materialized_video_count": {"const": 0}
+      }
+    },
+    "production_observability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ordered_source_ids", "source_indexes", "source_count", "report_count", "shared_correlation_id", "complete"],
+      "properties": {
+        "ordered_source_ids": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"type": "string"}},
+        "source_indexes": {"const": [0, 1]},
+        "source_count": {"const": 2},
+        "report_count": {"const": 2},
+        "shared_correlation_id": {"type": "string", "pattern": "^lvs-[0-9a-f]{32}$"},
+        "complete": {"const": true}
+      }
+    },
+    "semantic_oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["per_source_attribution", "reciprocal_negative_exclusion", "markdown_pdf_pairing", "semantic_digest_match", "one_missing_source_cannot_pass"],
+      "properties": {
+        "per_source_attribution": {"const": true},
+        "reciprocal_negative_exclusion": {"const": true},
+        "markdown_pdf_pairing": {"const": true},
+        "semantic_digest_match": {"const": true},
+        "one_missing_source_cannot_pass": {"const": true}
+      }
+    },
+    "retained_gaps": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "string"}},
+    "confinement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network_calls", "docker_calls", "subprocess_calls", "downloads", "service_lifecycle_calls", "model_calls", "filesystem_writes", "warehouse_sample_bundle"],
+      "properties": {
+        "network_calls": {"const": 0},
+        "docker_calls": {"const": 0},
+        "subprocess_calls": {"const": 0},
+        "downloads": {"const": 0},
+        "service_lifecycle_calls": {"const": 0},
+        "model_calls": {"const": 0},
+        "filesystem_writes": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

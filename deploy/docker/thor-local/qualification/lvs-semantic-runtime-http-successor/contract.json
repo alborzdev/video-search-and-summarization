@@ -86,7 +86,7 @@
   },
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/contract.json", "sha256": "37c260cfa6458e02b9975562d38b95324644e975b8f4564866dfa6f99c5dcfde"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/contract.json", "sha256": "d02f08d1ecf7dad579fc36cfa568937daa185c7c55b192dc282933f20be50b10"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/executor.py", "sha256": "3ddc4e08f2013e1f512254dc1309020ef63d88b8fce203f6c2a34537f1d57df4"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/receipt.schema.json", "sha256": "6f6f24ac6bdb26ac54d7130415055726d2736b41193f6f89b18a0bf2340c94db"},
     {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py", "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"},
@@ -96,7 +96,7 @@
     {"path": "services/agent/src/vss_agents/tools/lvs_video_understanding.py", "sha256": "e58fcd165177c126f242abc53445d4d3e7b465c738bed6a5843a9d7590c4f508"},
     {"path": "services/agent/src/vss_agents/tools/lvs_config_media.py", "sha256": "a3854f056dd88f43a62fb3d6d19d2613776a74a875558b112e67ee0c4ced97ea"},
     {"path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py", "sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"},
-    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab"},
     {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"},
     {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
     {"path": "deploy/docker/thor-local/generated.env", "sha256": "3eb2c3a49c651083437e17b7bc75d1e44e5e21bd13d372ee62a8498206b97a3a"}

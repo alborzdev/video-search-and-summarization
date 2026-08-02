@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "contract_sha256", "run_id_sha256", "origin_sha256", "model_sha256", "fixture_sha256", "caption_source_sha256", "budget", "matrix", "cleanup", "canonical_runtime_evidence", "executor_ready", "promotion_eligible", "canonical_state_advanced", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "lvs-focus-semantic-matrix-successor"},
+    "status": {"const": "candidate_focus_matrix_pass_non_promoting"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "run_id_sha256": {"$ref": "#/$defs/sha"},
+    "origin_sha256": {"$ref": "#/$defs/sha"},
+    "model_sha256": {"$ref": "#/$defs/sha"},
+    "fixture_sha256": {"$ref": "#/$defs/sha"},
+    "caption_source_sha256": {"$ref": "#/$defs/sha"},
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requests", "max_requests", "actions", "max_actions", "max_duration_seconds"],
+      "properties": {
+        "requests": {"const": 14}, "max_requests": {"const": 14},
+        "actions": {"const": 14}, "max_actions": {"const": 14},
+        "max_duration_seconds": {"const": 2400}
+      }
+    },
+    "matrix": {
+      "type": "array", "minItems": 6, "maxItems": 6,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["order", "case_id", "request_sha256", "response_sha256", "response_id_sha256", "expected_assertion_count", "observed_assertion_count", "evidence_count", "source_identity_correlated", "forbidden_terms_excluded"],
+        "properties": {
+          "order": {"type": "integer", "minimum": 1, "maximum": 6},
+          "case_id": {"enum": ["object_only", "event_only", "scenario_only", "combined_relationship", "distractor_control", "absent_negative"]},
+          "request_sha256": {"$ref": "#/$defs/sha"},
+          "response_sha256": {"$ref": "#/$defs/sha"},
+          "response_id_sha256": {"$ref": "#/$defs/sha"},
+          "expected_assertion_count": {"type": "integer", "minimum": 0, "maximum": 2},
+          "observed_assertion_count": {"type": "integer", "minimum": 0, "maximum": 2},
+          "evidence_count": {"type": "integer", "minimum": 0, "maximum": 2},
+          "source_identity_correlated": {"const": true},
+          "forbidden_terms_excluded": {"const": true}
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["registered_owned_files", "deleted_owned_files", "owned_absent", "unrelated_state_restored", "exact_delete_confirmation"],
+      "properties": {
+        "registered_owned_files": {"const": 1}, "deleted_owned_files": {"const": 1},
+        "owned_absent": {"const": true}, "unrelated_state_restored": {"const": true},
+        "exact_delete_confirmation": {"const": true}
+      }
+    },
+    "canonical_runtime_evidence": {"const": false},
+    "executor_ready": {"const": false},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

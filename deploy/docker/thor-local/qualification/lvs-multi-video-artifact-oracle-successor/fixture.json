@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "fixture_id": "thor-lvs-two-video-disjoint-events-v1",
+  "fixture_kind": "deterministic_video_recipe_and_static_artifact_observation",
+  "report_correlation_id": "lvs-0123456789abcdef0123456789abcdef",
+  "user_query": "Attribute each planted event to the video in which it occurs.",
+  "videos": [
+    {
+      "source_index": 0,
+      "sensor_id": "lvs_fixture_alpha.mp4",
+      "duration_seconds": 61,
+      "recipe": {
+        "canvas": "160x120:yuv420p:5fps",
+        "background": "light-gray",
+        "timeline": [
+          "0-11s empty scene",
+          "12-18s amber triangle crosses the left gate",
+          "19-61s empty scene"
+        ]
+      },
+      "recipe_canonical_sha256": "c322526345dc7ec2017f11677c1ffea5bd626313d1f32f2aaf45c253de43674d",
+      "required_event_token": "amber-triangle-crosses-left-gate",
+      "forbidden_event_tokens": ["violet-circle-stops-at-right-gate"],
+      "materialized_video_sha256": null
+    },
+    {
+      "source_index": 1,
+      "sensor_id": "lvs_fixture_beta.mp4",
+      "duration_seconds": 62,
+      "recipe": {
+        "canvas": "160x120:yuv420p:5fps",
+        "background": "dark-gray",
+        "timeline": [
+          "0-32s empty scene",
+          "33-41s violet circle stops at the right gate",
+          "42-62s empty scene"
+        ]
+      },
+      "recipe_canonical_sha256": "1f1fae9f89091f830dd4a2eecfdea26255830cde8e27b962366c71c054b0d2a5",
+      "required_event_token": "violet-circle-stops-at-right-gate",
+      "forbidden_event_tokens": ["amber-triangle-crosses-left-gate"],
+      "materialized_video_sha256": null
+    }
+  ],
+  "artifacts": [
+    {
+      "sensor_id": "lvs_fixture_alpha.mp4",
+      "source_index": 0,
+      "source_count": 2,
+      "report_correlation_id": "lvs-0123456789abcdef0123456789abcdef",
+      "extension": "md",
+      "object_store_key": "vss_report_lvs_fixture_alpha.mp4_20260802_000001.md",
+      "semantic_text": "Source: lvs_fixture_alpha.mp4. [12.0s-18.0s] amber-triangle-crosses-left-gate.",
+      "semantic_text_sha256": "89e13b00b96193170e7c701095a48af69c08de385ed09cd1925290a80e6fd1cb"
+    },
+    {
+      "sensor_id": "lvs_fixture_alpha.mp4",
+      "source_index": 0,
+      "source_count": 2,
+      "report_correlation_id": "lvs-0123456789abcdef0123456789abcdef",
+      "extension": "pdf",
+      "object_store_key": "vss_report_lvs_fixture_alpha.mp4_20260802_000001.pdf",
+      "semantic_text": "Source: lvs_fixture_alpha.mp4. [12.0s-18.0s] amber-triangle-crosses-left-gate.",
+      "semantic_text_sha256": "89e13b00b96193170e7c701095a48af69c08de385ed09cd1925290a80e6fd1cb"
+    },
+    {
+      "sensor_id": "lvs_fixture_beta.mp4",
+      "source_index": 1,
+      "source_count": 2,
+      "report_correlation_id": "lvs-0123456789abcdef0123456789abcdef",
+      "extension": "md",
+      "object_store_key": "vss_report_lvs_fixture_beta.mp4_20260802_000002.md",
+      "semantic_text": "Source: lvs_fixture_beta.mp4. [33.0s-41.0s] violet-circle-stops-at-right-gate.",
+      "semantic_text_sha256": "f547dd4530161f2ff3b25e685ab2ef7260577f02615287cdb4b7518956e1453e"
+    },
+    {
+      "sensor_id": "lvs_fixture_beta.mp4",
+      "source_index": 1,
+      "source_count": 2,
+      "report_correlation_id": "lvs-0123456789abcdef0123456789abcdef",
+      "extension": "pdf",
+      "object_store_key": "vss_report_lvs_fixture_beta.mp4_20260802_000002.pdf",
+      "semantic_text": "Source: lvs_fixture_beta.mp4. [33.0s-41.0s] violet-circle-stops-at-right-gate.",
+      "semantic_text_sha256": "f547dd4530161f2ff3b25e685ab2ef7260577f02615287cdb4b7518956e1453e"
+    }
+  ]
+}

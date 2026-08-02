@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-lvs-multi-video-artifact-oracle-successor-v1",
+  "mode": "provider-free-static-production-helper-and-semantic-oracle",
+  "capability_id": "manifest-entry.video-summarization-file.02-multi-video-report",
+  "oracle_id": "oracle.manifest-entry.video-summarization-file.02-multi-video-report",
+  "policy": {
+    "default_execution_enabled": false,
+    "runtime_evidence": [],
+    "network_allowed": false,
+    "docker_allowed": false,
+    "subprocess_allowed": false,
+    "downloads_allowed": false,
+    "service_lifecycle_allowed": false,
+    "model_calls_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "canonical_state_advanced": false,
+    "promotion_eligible": false
+  },
+  "static_coverage": [
+    "two ordered deterministic video recipes with disjoint planted-event tokens",
+    "one shared request correlation identity across both source reports",
+    "exact source index and source count on every report artifact",
+    "one Markdown and one PDF semantic observation paired per source",
+    "reciprocal exclusion of the other source's planted event"
+  ],
+  "retained_gaps": [
+    "The deterministic recipes are not rendered or registered in VST; both materialized video SHA-256 values remain absent.",
+    "No Thor LVS, RT-VLM, VST, Agent WebSocket, object-store, or model request was executed by this static package.",
+    "The four semantic artifact observations are fixture-owned oracle inputs, not bytes or extracted PDF text returned by a live report run.",
+    "No live receipt, model and image identity proof, preexisting-object absence proof, cleanup receipt, admission, or canonical promotion exists."
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-multi-video-artifact-oracle-successor/fixture.json", "sha256": "750e7a81b17464110ccaa3c80ccad04a0809ed5f2aadc348c4f76289c0e28664"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab"},
+    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "cf6a41427a561acb388d921c0c16544b7c0a6bdc3ace7ee3a43f3bfd4a28e256"},
+    {"path": "services/agent/tests/unit_test/tools/test_video_report_gen.py", "sha256": "2a6953ded99b5d32895339e0abee2053e41e401417fbf755bc72c1a2699b87d3"},
+    {"path": "services/agent/tests/unit_test/agents/test_report_agent.py", "sha256": "475c808cb60d2cc83e2b1b213558549112f407d984ad379ff9c6d0fbfdd7e161"}
+  ]
+}

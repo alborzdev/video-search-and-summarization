@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "capability_id", "oracle_id", "policy", "static_coverage", "retained_gaps", "source_locks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-lvs-multi-video-artifact-oracle-successor-v1"},
+    "mode": {"const": "provider-free-static-production-helper-and-semantic-oracle"},
+    "capability_id": {"const": "manifest-entry.video-summarization-file.02-multi-video-report"},
+    "oracle_id": {"const": "oracle.manifest-entry.video-summarization-file.02-multi-video-report"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_execution_enabled", "runtime_evidence", "network_allowed", "docker_allowed", "subprocess_allowed", "downloads_allowed", "service_lifecycle_allowed", "model_calls_allowed", "warehouse_sample_bundle", "canonical_state_advanced", "promotion_eligible"],
+      "properties": {
+        "default_execution_enabled": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "model_calls_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "canonical_state_advanced": {"const": false},
+        "promotion_eligible": {"const": false}
+      }
+    },
+    "static_coverage": {"type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 8}},
+    "retained_gaps": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 20}},
+    "source_locks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^(deploy/docker|services)/.+"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}

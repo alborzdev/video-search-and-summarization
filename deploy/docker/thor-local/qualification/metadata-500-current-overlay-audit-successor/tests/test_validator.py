@@ -30,14 +30,14 @@ def test_exact_selected_metadata_and_overlay_audit_passes() -> None:
         "capabilities": 500,
         "oracles": 500,
         "candidate_rows": 211,
-        "changed_agent_sources": 7,
-        "changed_source_metadata_rows": 7,
-        "current_source_rebased_rows": 31,
+        "changed_agent_sources": 9,
+        "changed_source_metadata_rows": 11,
+        "current_source_rebased_rows": 32,
         "runtime_successor_packages": 4,
         "runtime_successor_canonical_rows": 5,
         "current_candidate_binding_rows": 10,
-        "current_candidate_concrete_implementations": 4,
-        "current_candidate_partial_implementations": 6,
+        "current_candidate_concrete_implementations": 10,
+        "current_candidate_partial_implementations": 0,
         "runtime_evidence": 0,
         "canonical_state_advanced": False,
         "selector_mutated": False,
@@ -57,7 +57,7 @@ def test_changed_agent_source_mapping_is_exact_and_complete() -> None:
                 for capability_id in row["metadata_capability_ids"]
             }
         )
-        == 7
+        == 11
     )
     assert {
         path: set(row["current_source_rebase_entry_ids"]) for path, row in rows.items()

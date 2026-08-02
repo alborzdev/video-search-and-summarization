@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "fixture_id", "fixture_kind", "report_correlation_id", "user_query", "videos", "artifacts"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "fixture_id": {"const": "thor-lvs-two-video-disjoint-events-v1"},
+    "fixture_kind": {"const": "deterministic_video_recipe_and_static_artifact_observation"},
+    "report_correlation_id": {"type": "string", "pattern": "^lvs-[0-9a-f]{32}$"},
+    "user_query": {"type": "string", "minLength": 20, "maxLength": 256},
+    "videos": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_index", "sensor_id", "duration_seconds", "recipe", "recipe_canonical_sha256", "required_event_token", "forbidden_event_tokens", "materialized_video_sha256"],
+        "properties": {
+          "source_index": {"type": "integer", "minimum": 0, "maximum": 1},
+          "sensor_id": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+\\.mp4$"},
+          "duration_seconds": {"type": "integer", "exclusiveMinimum": 60, "maximum": 120},
+          "recipe": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["canvas", "background", "timeline"],
+            "properties": {
+              "canvas": {"type": "string", "minLength": 8},
+              "background": {"type": "string", "minLength": 3},
+              "timeline": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "minLength": 8}}
+            }
+          },
+          "recipe_canonical_sha256": {"$ref": "#/$defs/sha"},
+          "required_event_token": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "forbidden_event_tokens": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9-]+$"}},
+          "materialized_video_sha256": {"type": "null"}
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sensor_id", "source_index", "source_count", "report_correlation_id", "extension", "object_store_key", "semantic_text", "semantic_text_sha256"],
+        "properties": {
+          "sensor_id": {"type": "string", "minLength": 5},
+          "source_index": {"type": "integer", "minimum": 0, "maximum": 1},
+          "source_count": {"const": 2},
+          "report_correlation_id": {"type": "string", "pattern": "^lvs-[0-9a-f]{32}$"},
+          "extension": {"enum": ["md", "pdf"]},
+          "object_store_key": {"type": "string", "pattern": "^vss_report_[A-Za-z0-9_.-]+_[0-9]{8}_[0-9]{6}\\.(md|pdf)$"},
+          "semantic_text": {"type": "string", "minLength": 40, "maxLength": 512},
+          "semantic_text_sha256": {"$ref": "#/$defs/sha"}
+        }
+      }
+    }
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

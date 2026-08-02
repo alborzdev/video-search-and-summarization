@@ -22,18 +22,24 @@
     "complete_timeout_seconds": 600
   },
   "execution_bounds": {
-    "max_requests": 52,
-    "max_actions": 12,
+    "max_requests": 77,
+    "max_actions": 23,
     "max_duration_seconds": 900,
     "cleanup_reserve_seconds": 180,
     "readiness_poll_attempts": 10,
-    "cleanup_poll_attempts": 2,
+    "cleanup_poll_attempts": 4,
     "poll_delay_seconds": 2,
     "max_documents_per_index": 1000
   },
   "fixture_consumer": {
-    "enabled": false,
-    "reason": "disabled until the consumer can share the executor deadline and cleanup reserve"
+    "enabled": true,
+    "kind": "source-locked-bounded-dynamic-semantic-consumer",
+    "max_operations": 11,
+    "shared_request_budget": true,
+    "shared_deadline": true,
+    "cleanup_reserve_preserved": true,
+    "arbitrary_callback_allowed": false,
+    "media_attestation_required": true
   },
   "indices": {
     "embed": "mdx-embed-filtered-2025-01-01",
@@ -56,13 +62,14 @@
   ],
   "decision": {
     "safe_exact_full_fixture_creation_implemented": true,
+    "failed_ingest_delayed_write_remediation_implemented": true,
     "failed_ingest_delayed_write_remediation_proven": false,
     "runtime_receipt_present": false,
     "operator_preprovisioned_fixture_required": false,
     "fixed_sensor_or_document_identity_required": false,
     "promotion_eligible": false,
     "canonical_state_advanced": false,
-    "reason": "The successor binds one run-derived filename to VST's allocated UUID, reconciles an ambiguous or malformed upload response through the unique exact VST name before cleanup, requires zero matching ES documents before completion, requires configured RTVI-CV to fail closed, discovers the complete bounded model-generated document set in the profile's actual fixed indices with complete shard accounting, reconciles a selected object with a valid bbox in a raw frame inside the behavior interval, records exact document identities, and independently proves VST plus exact ES absence twice after agent-backed deletion. The unbounded fixture-consumer hook is disabled until it can share the lifecycle deadline and cleanup reserve. A failed ingest's delayed downstream writes are detected by this lifecycle but not automatically remediated, so that path remains a live blocker. It has not been executed on the live Thor stack."
+    "reason": "The successor binds one run-derived filename to VST's allocated UUID, reconciles an ambiguous or malformed upload response through the unique exact VST name before cleanup, requires zero matching ES documents before completion, requires configured RTVI-CV to fail closed, discovers the complete bounded model-generated document set in the profile's actual fixed indices with complete shard accounting, reconciles a selected object with a valid bbox in a raw frame inside the behavior interval, and records exact document identities. Its concrete source-locked semantic consumer materializes run-derived namespace, sensor, and selected-object placeholders and executes all eleven reviewed Search semantic operations through the same request budget, wall-clock deadline, and cleanup reserve; arbitrary callbacks remain rejected. Bounded delayed writes found by the reviewed identity queries are remediated with exact document-ID bulk deletes, ambiguous ownership fails closed, and two consecutive absence observations are required. The media target/distractor statement remains operator-attested, and neither the integrated path nor remediation has been proven on the live Thor stack."
   },
   "source_locks": [
     {"path": "services/agent/src/vss_agents/api/video_ingest.py", "sha256": "0074a4165684e207d629d2e56ed47d7abf0cc26b3a39f42bf197bc7bf4566534"},
@@ -76,6 +83,7 @@
     {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/contract.json", "sha256": "091bd2ced04569e6b5979d6fcb9c1cec0861f6ceaa5018550106e561891832a5"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "sha256": "2a2c739600fb45293811334fbee6bda0cb21f64d117dd8390897de01c2c2b2ff"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py", "sha256": "ae8d669faa819e9a07ef4bd0903f33ada98f0cb0cc1236c8a03f1f12528d1946"},
     {"path": "services/ui/packages/common/lib-src/utils/videoUpload.ts", "sha256": "9d893263bcf7d6742ac876778781bdc2ba902c55f4ea425af6ccea175b503d62"},
     {"path": "skills/vss-search-archive/SKILL.md", "sha256": "337ae027bfa4de55716a0ee0c7ba4f22d2c965aa863191d0337ec1eb957f331b"}
   ]

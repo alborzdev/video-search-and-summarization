@@ -316,6 +316,25 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/lvs-semantic-runtime-closure-successor/tests"
 
+# The provider-free LVS multi-video oracle validates ordered per-source
+# Markdown/PDF correlation, planted-event isolation, and reversed-completion
+# restoration without rendering its recipes or calling a provider. Its JSON
+# plan and tests are file-only, non-promoting, and Warehouse-free.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/lvs-multi-video-artifact-oracle-successor/executor.py" \
+  --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/lvs-multi-video-artifact-oracle-successor/tests"
+
+# The LVS focus matrix adds object, event, scenario, combined-target,
+# distractor-control, and absent-focus semantics under the frozen 14-action
+# envelope. Only its inert plan and fake transport tests run here.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/lvs-focus-semantic-matrix-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/lvs-focus-semantic-matrix-successor/tests"
+
 # Search now has a concrete, authorization-gated numeric-loopback
 # candidate executor with exact owned-document cleanup. Static qualification
 # runs only its source-locked plan and fake openers; it provisions no fixture,
@@ -327,9 +346,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/search-semantic-runtime-evidence-successor/tests"
 
 # The prior Search provisioning blocker is now a frozen pre-remediation source
-# snapshot and is not replayed. The exact provisioner supersedes it with a bounded,
-# authorization-gated VST/RTVI/ES lifecycle and exact double-absence cleanup.
-# Static qualification runs only its plan and fake transport tests.
+# snapshot and is not replayed. The exact provisioner supersedes it with a
+# bounded authorization-gated VST/RTVI/ES lifecycle, integrated dynamic
+# semantic consumer, exact delayed-write remediation, and consecutive-absence
+# cleanup. Static qualification runs only its plan and fake transport tests.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py" \
   plan >/dev/null
@@ -378,8 +398,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-candidate-bindings-wave3-successor/tests"
 
 # The current semantic closure successor rebinds the same exact advertised
-# rows to the hardened Base/LVS/Search/UI packages. It records four concrete
-# and six partial candidate implementations while preserving zero readiness,
+# rows to the hardened Base/LVS/Search/UI packages. It records ten concrete and
+# zero partial candidate implementations while preserving zero readiness,
 # admission, execution evidence, promotion, cloud requirements, and Warehouse
 # dependencies.
 PYTHONDONTWRITEBYTECODE=1 python3 \
@@ -400,6 +420,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-alerts/test_collector.py"
+
+# The terminal Alerts successor binds server-generated job correlation IDs,
+# completed sink receipts, cancellation terminality, and exact config cleanup.
+# Its default plan and injected fake-transport tests perform no service,
+# network, broker, media, or Warehouse action and create no runtime receipt.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-alerts-terminal-runtime-evidence-successor/collector.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-alerts-terminal-runtime-evidence-successor/test_collector.py"
 
 # The Search documents/bboxes runtime-evidence package is likewise a frozen
 # predecessor snapshot. The tooling successor verifies its exact tree and core

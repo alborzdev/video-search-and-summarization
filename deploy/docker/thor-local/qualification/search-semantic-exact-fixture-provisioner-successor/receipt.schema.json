@@ -26,10 +26,10 @@
       "additionalProperties": false,
       "required": ["requests", "max_requests", "actions", "max_actions"],
       "properties": {
-        "requests": {"type": "integer", "minimum": 24, "maximum": 52},
-        "max_requests": {"const": 52},
-        "actions": {"const": 12},
-        "max_actions": {"const": 12}
+        "requests": {"type": "integer", "minimum": 24, "maximum": 77},
+        "max_requests": {"const": 77},
+        "actions": {"enum": [12, 23]},
+        "max_actions": {"const": 23}
       }
     },
     "fixture": {
@@ -42,9 +42,9 @@
         "raw_documents": {"type": "integer", "minimum": 1, "maximum": 1000},
         "selected_object_reconciled": {"const": true},
         "handoff_sha256": {"$ref": "#/$defs/sha"},
-        "consumer_invoked": {"const": false},
-        "consumer_receipt_sha256": {"type": "null"},
-        "consumer_transport_accounting": {"const": "disabled"},
+        "consumer_invoked": {"type": "boolean"},
+        "consumer_receipt_sha256": {"oneOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]},
+        "consumer_transport_accounting": {"enum": ["not-requested", "shared-lifecycle-budget-and-deadline"]},
         "raw_document_ids_recorded": {"const": true},
         "operator_preprovisioned": {"const": false}
       }
@@ -52,18 +52,47 @@
     "cleanup": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["agent_delete_success", "vst_absent", "identity_scoped_documents_absent", "exact_discovered_documents_absent", "delayed_no_reappearance", "foreign_delete_attempted"],
+      "required": ["agent_delete_success", "vst_absent", "identity_scoped_documents_absent", "exact_discovered_documents_absent", "delayed_no_reappearance", "remediation_deleted_documents", "consecutive_absence_observations", "foreign_delete_attempted"],
       "properties": {
         "agent_delete_success": {"const": true},
         "vst_absent": {"const": true},
         "identity_scoped_documents_absent": {"const": true},
         "exact_discovered_documents_absent": {"const": true},
         "delayed_no_reappearance": {"const": true},
+        "remediation_deleted_documents": {"type": "integer", "minimum": 0, "maximum": 12000},
+        "consecutive_absence_observations": {"const": 2},
         "foreign_delete_attempted": {"const": false}
       }
     },
     "warehouse_sample_bundle": {"const": "excluded"}
   },
+  "allOf": [
+    {
+      "if": {"properties": {"fixture": {"properties": {"consumer_invoked": {"const": true}}}}},
+      "then": {
+        "properties": {
+          "budget": {"properties": {"actions": {"const": 23}}},
+          "fixture": {
+            "properties": {
+              "consumer_receipt_sha256": {"$ref": "#/$defs/sha"},
+              "consumer_transport_accounting": {"const": "shared-lifecycle-budget-and-deadline"}
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "budget": {"properties": {"actions": {"const": 12}}},
+          "fixture": {
+            "properties": {
+              "consumer_receipt_sha256": {"type": "null"},
+              "consumer_transport_accounting": {"const": "not-requested"}
+            }
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
   }

@@ -46,9 +46,9 @@
     {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"},
     {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
     {"path": "services/agent/src/vss_agents/tools/report_gen.py", "sha256": "d6d0f3fd2540dfd7e9bf284c9922c0f27766c5fd03399007b0e5f6f0ebaf5e6f"},
-    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab"},
     {"path": "services/agent/src/vss_agents/tools/template_report_gen.py", "sha256": "61f9f88a540e8d725946ae95ded3241569051934ebb103da8a9532b897561ec5"},
-    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"}
+    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "cf6a41427a561acb388d921c0c16544b7c0a6bdc3ace7ee3a43f3bfd4a28e256"}
   ],
   "warehouse_sample_bundle": "excluded",
   "promotion_eligible": false

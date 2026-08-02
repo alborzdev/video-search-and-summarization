@@ -9,11 +9,11 @@ Current evidence state:
 
 - selected set: `thor-vss-3.2.1-current-cancellation-search-500`;
 - authoritative counts: 500 capabilities, 500 oracles, 55 families;
-- changed Agent source files: 7;
-- affected Metadata-500 candidate rows: 7;
-- current-source rebase: 71 rows = 40 unchanged + 31 rebased;
+- changed Agent source files: 9;
+- affected Metadata-500 rows: 11;
+- current-source rebase: 71 rows = 39 unchanged + 32 rebased;
 - runtime successors: 4 packages covering 5 canonical runtime rows;
-- current advertised binding successor: 10 rows = 4 concrete + 6 partial, all
+- current advertised binding successor: 10 rows = 10 concrete + 0 partial, all
   non-ready and non-promoting;
 - runtime receipts: 0;
 - canonical runtime advancements: 0; and
