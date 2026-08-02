@@ -5,7 +5,7 @@
   "required": [
     "schema_version", "package_id", "status", "contract_sha256",
     "manifest_sha256", "run_id_sha256", "origin_sha256", "tool_entry_file_sha256",
-    "fixture_sha256", "budget", "checks", "cleanup", "browser_plugin",
+    "fixture_sha256", "playwright_tree_sha256", "budget", "checks", "cleanup", "browser_plugin",
     "playwright_entry_files_pinned", "playwright_transitive_graph_pinned",
     "canonical_bound", "executor_ready", "promotion_eligible",
     "warehouse_sample_bundle"
@@ -17,9 +17,10 @@
     "contract_sha256": {"$ref": "#/$defs/sha256"},
     "manifest_sha256": {"$ref": "#/$defs/sha256"},
     "run_id_sha256": {"$ref": "#/$defs/sha256"},
-    "origin_sha256": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+    "origin_sha256": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/sha256"}},
     "tool_entry_file_sha256": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
     "fixture_sha256": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+    "playwright_tree_sha256": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
     "budget": {
       "type": "object", "additionalProperties": false,
       "required": ["semantic_checkpoints", "browser_actions", "api_exchanges", "max_browser_actions", "max_api_exchanges", "max_duration_seconds"],
@@ -34,7 +35,7 @@
     },
     "checks": {
       "type": "object", "additionalProperties": false,
-      "required": ["page_identity", "not_blank", "no_framework_overlay", "console_health", "desktop_screenshot", "mobile_screenshot", "interaction_proof", "mp4", "mkv", "multi_upload", "rtsp_positive", "rtsp_adjacent_negative", "upload_progress", "template_environment", "bulk_delete_confirm", "bulk_delete_cancel"],
+      "required": ["page_identity", "not_blank", "no_framework_overlay", "console_health", "desktop_screenshot", "mobile_screenshot", "interaction_proof", "mp4", "mkv", "multi_upload", "rtsp_positive", "rtsp_adjacent_negative", "upload_progress", "template_environment", "bulk_delete_confirm", "bulk_delete_cancel", "ordered_multichunk_protocol", "upload_payload_digest_integrity"],
       "properties": {
         "page_identity": {"const": true}, "not_blank": {"const": true},
         "no_framework_overlay": {"const": true}, "console_health": {"const": true},
@@ -43,7 +44,9 @@
         "multi_upload": {"const": true}, "rtsp_positive": {"const": true},
         "rtsp_adjacent_negative": {"const": true}, "upload_progress": {"const": true},
         "template_environment": {"const": true}, "bulk_delete_confirm": {"const": true},
-        "bulk_delete_cancel": {"const": true}
+        "bulk_delete_cancel": {"const": true},
+        "ordered_multichunk_protocol": {"const": true},
+        "upload_payload_digest_integrity": {"const": true}
       }
     },
     "cleanup": {
@@ -58,7 +61,7 @@
     },
     "browser_plugin": {"const": "absent_regular_playwright_fallback"},
     "playwright_entry_files_pinned": {"const": true},
-    "playwright_transitive_graph_pinned": {"const": false},
+    "playwright_transitive_graph_pinned": {"const": true},
     "canonical_bound": {"const": false},
     "executor_ready": {"const": false},
     "promotion_eligible": {"const": false},

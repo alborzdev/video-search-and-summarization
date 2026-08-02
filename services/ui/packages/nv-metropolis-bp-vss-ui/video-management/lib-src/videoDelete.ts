@@ -7,9 +7,13 @@
  */
 
 export interface DeleteVideoResult {
-  status: string;
+  status: 'success';
   message: string;
   video_id: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 /**
@@ -42,11 +46,19 @@ export async function deleteVideo(
     throw new Error(text || `Failed to delete video: ${response.statusText}`);
   }
 
-  const result: DeleteVideoResult = await response.json();
+  const result: unknown = await response.json();
 
-  if (result.status === 'failure') {
-    throw new Error(result.message || `Failed to delete video: ${result.video_id}`);
+  if (
+    !isRecord(result) ||
+    result.status !== 'success' ||
+    result.video_id !== videoId
+  ) {
+    const message =
+      isRecord(result) && typeof result.message === 'string'
+        ? result.message
+        : `Failed to delete video: ${videoId}`;
+    throw new Error(message);
   }
 
-  return result;
+  return result as unknown as DeleteVideoResult;
 }

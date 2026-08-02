@@ -21,6 +21,10 @@ MAX_BYTES = 32_000_000
 
 EXPECTED_REBASED_IDS = {
     "manifest-gap.agent-and-mcp-apis.00-nat-generate-chat",
+    "manifest-gap.agent-and-mcp-apis.01-health",
+    "manifest-gap.agent-and-mcp-apis.02-upload-handshake-and-completion",
+    "manifest-gap.agent-and-mcp-apis.03-video-delete",
+    "manifest-gap.agent-and-mcp-apis.04-rtsp-add-delete",
     "manifest-gap.agent-and-mcp-apis.06-lvs-mcp",
     "manifest-gap.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
     "manifest-gap.audio-understanding.02-audio-aware-summarization-and-alerts",
@@ -50,6 +54,9 @@ EXPECTED_REBASED_IDS = {
 }
 
 EXPECTED_OVERLAY = {
+    "services/agent/src/vss_agents/api/custom_fastapi_worker.py": "b9b5354f32dd32c89e798559c7080b045d55cee8df41ca4822bdabab48f88075",
+    "services/agent/src/vss_agents/api/video_delete.py": "67d2146665f7750c4bdd65513a3061e5b3955c95595f9ae3e4c7a23f7c13851c",
+    "services/agent/src/vss_agents/api/video_ingest.py": "0074a4165684e207d629d2e56ed47d7abf0cc26b3a39f42bf197bc7bf4566534",
     "deploy/docker/services/video-summarization/compose.yml": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74",
     "deploy/docker/thor-local/qualification/expected/agent.json": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350",
     "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
@@ -429,7 +436,7 @@ def validate() -> dict[str, Any]:
         if isinstance(row, dict)
     }
     if overlay != EXPECTED_OVERLAY or len(overlay_rows) != len(overlay):
-        raise RebaseError("exact nine-path overlay drift")
+        raise RebaseError("exact twelve-path overlay drift")
     for path, digest in overlay.items():
         if _sha(_read(path)) != digest:
             raise RebaseError(f"current overlay source drift: {path}")
@@ -496,17 +503,17 @@ def validate() -> dict[str, Any]:
         raise RebaseError("partition contract missing")
     if (
         partition.get("retained_candidate_rows") != 71
-        or partition.get("unchanged_rows") != 44
-        or partition.get("rebased_rows") != 27
+        or partition.get("unchanged_rows") != 40
+        or partition.get("rebased_rows") != 31
         or rebased != EXPECTED_REBASED_IDS
         or set(partition.get("rebased_entry_ids", [])) != EXPECTED_REBASED_IDS
         or len(partition.get("rebased_entry_ids", [])) != len(EXPECTED_REBASED_IDS)
-        or len(unchanged) != 44
-        or len(rebased) != 27
+        or len(unchanged) != 40
+        or len(rebased) != 31
         or unchanged & rebased
         or unchanged | rebased != {row["entry_id"] for row in candidate_rows}
     ):
-        raise RebaseError("exact 44 unchanged + 27 rebased partition drift")
+        raise RebaseError("exact 40 unchanged + 31 rebased partition drift")
     if set(overlay_usage) != set(EXPECTED_OVERLAY):
         raise RebaseError("one or more overlay paths are not used by retained rows")
     if current_lock_references != 182:
@@ -531,9 +538,9 @@ def validate() -> dict[str, Any]:
         "schema_version": 1,
         "status": "pass_current_source_rebase_static_only",
         "retained_candidate_rows": 71,
-        "unchanged_rows": 44,
-        "rebased_rows": 27,
-        "current_source_overlay_paths": 9,
+        "unchanged_rows": 40,
+        "rebased_rows": 31,
+        "current_source_overlay_paths": 12,
         "current_source_lock_references": 182,
         "overlay_reference_counts": dict(sorted(overlay_usage.items())),
         "rebased_entry_ids": sorted(rebased),
@@ -571,8 +578,8 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, indent=2, sort_keys=True))
     else:
         print(
-            "PASS: 71 retained rows = 44 unchanged + 27 current-source rebased; "
-            "nine locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
+            "PASS: 71 retained rows = 40 unchanged + 31 current-source rebased; "
+            "twelve locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
         )
     return 0
 

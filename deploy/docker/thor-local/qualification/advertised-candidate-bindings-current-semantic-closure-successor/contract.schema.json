@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "default_execution_enabled", "warehouse_sample_bundle", "canonical_mapping_mutated", "runtime_evidence_inputs", "admission_inputs", "mapping_source", "advertised_source", "bindings", "source_locks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "advertised-candidate-bindings-current-semantic-closure-successor"},
+    "mode": {"const": "additive-static-current-semantic-candidate-crosswalk"},
+    "default_execution_enabled": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "canonical_mapping_mutated": {"const": false},
+    "runtime_evidence_inputs": {"type": "array", "maxItems": 0},
+    "admission_inputs": {"type": "array", "maxItems": 0},
+    "mapping_source": {"$ref": "#/$defs/sourceLock"},
+    "advertised_source": {"$ref": "#/$defs/sourceLock"},
+    "bindings": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"$ref": "#/$defs/binding"}},
+    "source_locks": {"type": "array", "minItems": 28, "maxItems": 28, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceLock"}}
+  },
+  "$defs": {
+    "sourceLock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^deploy/docker/.+|^services/.+|^skills/.+"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "canonicalEffect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["admitted", "binding_kind_changed", "executable", "promoted", "runtime_evidence"],
+      "properties": {
+        "admitted": {"const": false},
+        "binding_kind_changed": {"const": false},
+        "executable": {"const": false},
+        "promoted": {"const": false},
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "executorReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_id", "path", "role", "authorization_gated", "executor_ready"],
+      "properties": {
+        "package_id": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "pattern": "^deploy/docker/thor-local/qualification/.+/executor\\.py$"},
+        "role": {"type": "string", "minLength": 1},
+        "authorization_gated": {"const": true},
+        "executor_ready": {"const": false}
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "implementation_state", "relationship_kind", "executor_ready", "executor_references", "coverage_status", "retained_gaps", "canonical_effect"],
+      "properties": {
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "implementation_state": {"enum": ["concrete", "partial"]},
+        "relationship_kind": {"enum": ["concrete_executor_candidate", "partial_executor_candidate"]},
+        "executor_ready": {"const": false},
+        "executor_references": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/executorReference"}},
+        "coverage_status": {"const": "incomplete_no_live_receipt"},
+        "retained_gaps": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "canonical_effect": {"$ref": "#/$defs/canonicalEffect"}
+      }
+    }
+  }
+}

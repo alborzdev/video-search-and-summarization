@@ -4,8 +4,8 @@ This additive package rebases the retained 71 advertised-entry candidates onto
 the current checkout without changing or relabeling the immutable
 `advertised-entry-executors-74-successor` inventory or execution receipt.
 
-The exact partition is 44 rows whose complete historical source-lock sets still
-match and 27 rows affected by an exact nine-path current-source overlay. All 182
+The exact partition is 40 rows whose complete historical source-lock sets still
+match and 31 rows affected by an exact twelve-path current-source overlay. All 182
 retained row/source references resolve against either their immutable historical
 digest or the overlay digest. The historical dispatcher is never imported or
 replayed.

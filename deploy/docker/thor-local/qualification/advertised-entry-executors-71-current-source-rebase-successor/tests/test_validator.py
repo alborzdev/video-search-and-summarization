@@ -27,14 +27,14 @@ class CurrentSourceRebaseTest(unittest.TestCase):
 
     def test_exact_71_row_partition(self) -> None:
         self.assertEqual(self.result["retained_candidate_rows"], 71)
-        self.assertEqual(self.result["unchanged_rows"], 44)
-        self.assertEqual(self.result["rebased_rows"], 27)
+        self.assertEqual(self.result["unchanged_rows"], 40)
+        self.assertEqual(self.result["rebased_rows"], 31)
         self.assertEqual(
             set(self.result["rebased_entry_ids"]), VALIDATOR.EXPECTED_REBASED_IDS
         )
 
-    def test_exact_nine_path_overlay_is_current(self) -> None:
-        self.assertEqual(self.result["current_source_overlay_paths"], 9)
+    def test_exact_twelve_path_overlay_is_current(self) -> None:
+        self.assertEqual(self.result["current_source_overlay_paths"], 12)
         self.assertEqual(
             set(self.result["overlay_reference_counts"]),
             set(VALIDATOR.EXPECTED_OVERLAY),

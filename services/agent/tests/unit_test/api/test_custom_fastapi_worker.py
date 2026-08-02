@@ -25,12 +25,15 @@ per-profile capability flags:
   * ``register_video_delete_routes``        — DELETE /api/v1/videos/{video_id}
 """
 
+from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
 
+from vss_agents.api.custom_fastapi_worker import LVS_RUNTIME_TOOL_NAMES
 from vss_agents.api.custom_fastapi_worker import CustomFastApiFrontEndWorker
+from vss_agents.api.custom_fastapi_worker import discover_lvs_runtime_tools
 from vss_agents.api.front_end_config import StreamingIngestConfig
 
 _MISSING = object()
@@ -150,3 +153,41 @@ class TestRegisterStreamingRoutesDispatcher:
         rtsp_ingest.assert_not_called()
         rtsp_delete.assert_not_called()
         video_delete.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_lvs_runtime_discovery_resolves_all_five_live_tools():
+    builder = MagicMock()
+    builder.get_tool = AsyncMock(return_value=object())
+
+    result = await discover_lvs_runtime_tools(builder)
+
+    assert result == {
+        "schema_version": 1,
+        "catalog": "lvs-advertised-runtime-tools",
+        "expected": list(LVS_RUNTIME_TOOL_NAMES),
+        "available": list(LVS_RUNTIME_TOOL_NAMES),
+        "missing": [],
+        "ready": True,
+    }
+    assert [call.args[0] for call in builder.get_tool.await_args_list] == list(LVS_RUNTIME_TOOL_NAMES)
+
+
+@pytest.mark.asyncio
+async def test_lvs_runtime_discovery_is_fail_closed_and_complete():
+    builder = MagicMock()
+
+    async def get_tool(name, **_kwargs):
+        if name == "lvs_caption_retrieval":
+            raise RuntimeError("not constructed")
+        if name == "video_report_gen":
+            return None
+        return object()
+
+    builder.get_tool = AsyncMock(side_effect=get_tool)
+    result = await discover_lvs_runtime_tools(builder)
+
+    assert result["ready"] is False
+    assert result["available"] == list(LVS_RUNTIME_TOOL_NAMES[:3])
+    assert result["missing"] == ["lvs_caption_retrieval", "video_report_gen"]
+    assert builder.get_tool.await_count == 5

@@ -14,6 +14,7 @@
 # limitations under the License.
 """Unit tests for the video_ingest module's three-step chat upload flow."""
 
+import asyncio
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
@@ -36,6 +37,7 @@ from vss_agents.api.video_ingest import _parse_optional_http_url
 from vss_agents.api.video_ingest import _parse_timeout_seconds
 from vss_agents.api.video_ingest import _resolve_timeout_seconds
 from vss_agents.api.video_ingest import _resolve_video_upload_config
+from vss_agents.api.video_ingest import _rollback_search_post_processing
 from vss_agents.api.video_ingest import _run_post_upload_processing
 from vss_agents.api.video_ingest import create_video_upload_complete_router
 from vss_agents.api.video_ingest import create_video_upload_router
@@ -253,9 +255,10 @@ class TestRunPostUploadProcessing:
 
     @staticmethod
     def _timeline_patch(start="2025-01-01T00:00:00.000Z", end="2025-01-01T00:00:10.000Z"):
-        return patch(
-            "vss_agents.api.video_ingest.get_timeline",
-            new=AsyncMock(return_value=(start, end)),
+        return patch.multiple(
+            "vss_agents.api.video_ingest",
+            get_timeline=AsyncMock(return_value=(start, end)),
+            get_sensor_id_from_stream_id=AsyncMock(return_value="clip"),
         )
 
     @staticmethod
@@ -268,12 +271,7 @@ class TestRunPostUploadProcessing:
 
     @staticmethod
     def _post_router(routes: dict):
-        """Build an AsyncMock that dispatches POSTs by URL.
-
-        RTVI-CV and embedding generation now run in parallel via asyncio.gather,
-        so callbacks may consume the side_effect list in either order. Route by
-        URL substring instead of by call order.
-        """
+        """Build an AsyncMock that dispatches POSTs by URL."""
 
         def _dispatch(url, *args, **kwargs):
             for substring, response in routes.items():
@@ -317,7 +315,7 @@ class TestRunPostUploadProcessing:
         assert "embeddings generated" in result.message
 
     @pytest.mark.asyncio
-    async def test_rtvi_cv_unreachable_is_skipped_not_fatal(self):
+    async def test_configured_rtvi_cv_unreachable_fails_closed(self):
         import httpx
 
         storage_resp = self._mock_response(200, {"videoUrl": "http://vst/vst/storage/temp_files/clip.mp4"})
@@ -335,16 +333,167 @@ class TestRunPostUploadProcessing:
         )
 
         with self._timeline_patch(), patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client):
-            result = await _run_post_upload_processing(
-                camera_name="clip",
+            with pytest.raises(HTTPException) as exc_info:
+                await _run_post_upload_processing(
+                    camera_name="clip",
+                    sensor_id="sensor-abc",
+                    filename="clip.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url="http://rtvi-embed:8017",
+                    rtvi_cv_base_url="http://rtvi-cv:9000",
+                )
+
+        assert exc_info.value.status_code == 502
+        assert exc_info.value.detail == "RTVI-CV add failed: service not reachable"
+        assert all("/v1/generate_video_embeddings" not in call.args[0] for call in client.post.await_args_list)
+
+    @pytest.mark.asyncio
+    async def test_embedding_failure_rolls_back_cv_and_partial_embedding_documents(self):
+        storage_resp = self._mock_response(200, {"videoUrl": "http://vst/vst/storage/temp_files/clip.mp4"})
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        client.get = AsyncMock(return_value=storage_resp)
+        register = AsyncMock(return_value=None)
+        embed = AsyncMock(side_effect=HTTPException(status_code=502, detail="embedding failed"))
+        rollback = AsyncMock(return_value=[])
+
+        with (
+            self._timeline_patch(),
+            patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client),
+            patch("vss_agents.api.video_ingest._register_with_rtvi_cv", new=register),
+            patch("vss_agents.api.video_ingest._run_rtvi_embedding", new=embed),
+            patch("vss_agents.api.video_ingest._rollback_search_post_processing", new=rollback),
+        ):
+            with pytest.raises(HTTPException, match="embedding failed"):
+                await _run_post_upload_processing(
+                    camera_name="clip",
+                    sensor_id="sensor-abc",
+                    filename="clip.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url="http://rtvi-embed:8017",
+                    rtvi_cv_base_url="http://rtvi-cv:9000",
+                    elasticsearch_url="http://elasticsearch:9200",
+                    rtvi_embed_es_index="owned-embed-index",
+                )
+
+        register.assert_awaited_once()
+        embed.assert_awaited_once()
+        rollback.assert_awaited_once_with(
+            sensor_id="sensor-abc",
+            camera_name="clip",
+            rtvi_cv_base_url="http://rtvi-cv:9000",
+            cv_may_be_registered=True,
+            embedding_may_have_written=True,
+            elasticsearch_url="http://elasticsearch:9200",
+            rtvi_embed_es_index="owned-embed-index",
+            rtvi_cv_timeout_seconds=60.0,
+        )
+
+    @pytest.mark.asyncio
+    async def test_embedding_cancellation_runs_bounded_shielded_rollback(self):
+        storage_resp = self._mock_response(200, {"videoUrl": "http://vst/vst/storage/temp_files/clip.mp4"})
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        client.get = AsyncMock(return_value=storage_resp)
+        register = AsyncMock(return_value=None)
+        embed = AsyncMock(side_effect=asyncio.CancelledError)
+        rollback = AsyncMock(return_value=[])
+
+        with (
+            self._timeline_patch(),
+            patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client),
+            patch("vss_agents.api.video_ingest._register_with_rtvi_cv", new=register),
+            patch("vss_agents.api.video_ingest._run_rtvi_embedding", new=embed),
+            patch("vss_agents.api.video_ingest._rollback_search_post_processing", new=rollback),
+        ):
+            with pytest.raises(asyncio.CancelledError):
+                await _run_post_upload_processing(
+                    camera_name="clip",
+                    sensor_id="sensor-abc",
+                    filename="clip.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url="http://rtvi-embed:8017",
+                    rtvi_cv_base_url="http://rtvi-cv:9000",
+                    elasticsearch_url="http://elasticsearch:9200",
+                    rtvi_embed_es_index="owned-embed-index",
+                )
+
+        rollback.assert_awaited_once_with(
+            sensor_id="sensor-abc",
+            camera_name="clip",
+            rtvi_cv_base_url="http://rtvi-cv:9000",
+            cv_may_be_registered=True,
+            embedding_may_have_written=True,
+            elasticsearch_url="http://elasticsearch:9200",
+            rtvi_embed_es_index="owned-embed-index",
+            rtvi_cv_timeout_seconds=60.0,
+        )
+
+    @pytest.mark.asyncio
+    async def test_cv_failure_prevents_embedding_from_starting(self):
+        storage_resp = self._mock_response(200, {"videoUrl": "http://vst/vst/storage/temp_files/clip.mp4"})
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        client.get = AsyncMock(return_value=storage_resp)
+        register = AsyncMock(side_effect=HTTPException(status_code=502, detail="cv failed"))
+        embed = AsyncMock(return_value=7)
+        rollback = AsyncMock(return_value=[])
+
+        with (
+            self._timeline_patch(),
+            patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client),
+            patch("vss_agents.api.video_ingest._register_with_rtvi_cv", new=register),
+            patch("vss_agents.api.video_ingest._run_rtvi_embedding", new=embed),
+            patch("vss_agents.api.video_ingest._rollback_search_post_processing", new=rollback),
+        ):
+            with pytest.raises(HTTPException, match="cv failed"):
+                await _run_post_upload_processing(
+                    camera_name="clip",
+                    sensor_id="sensor-abc",
+                    filename="clip.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url="http://rtvi-embed:8017",
+                    rtvi_cv_base_url="http://rtvi-cv:9000",
+                )
+
+        register.assert_awaited_once()
+        embed.assert_not_awaited()
+        rollback.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_real_rollback_removes_cv_and_all_three_scoped_index_families(self):
+        remove = AsyncMock(return_value=(True, "OK"))
+        delete = AsyncMock(return_value=(True, "Deleted"))
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+
+        with (
+            patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client),
+            patch("vss_agents.api.video_delete._remove_from_rtvi_cv", new=remove),
+            patch("vss_agents.api.video_delete._delete_es_documents", new=delete),
+        ):
+            failures = await _rollback_search_post_processing(
                 sensor_id="sensor-abc",
-                filename="clip.mp4",
-                vst_url="http://vst:30888",
-                rtvi_embed_base_url="http://rtvi-embed:8017",
+                camera_name="clip",
                 rtvi_cv_base_url="http://rtvi-cv:9000",
+                cv_may_be_registered=True,
+                embedding_may_have_written=True,
+                elasticsearch_url="http://elasticsearch:9200",
+                rtvi_embed_es_index="embed-index",
+                rtvi_cv_timeout_seconds=60.0,
             )
 
-        assert result.chunks_processed == 5
+        assert failures == []
+        remove.assert_awaited_once()
+        assert [call.args[1:] for call in delete.await_args_list] == [
+            ("embed-index", "sensor-abc", "sensor.id.keyword"),
+            ("mdx-behavior-2025-01-01", "clip", "sensor.id.keyword"),
+            ("mdx-raw-2025-01-01", "clip", "sensorId.keyword"),
+        ]
 
     @pytest.mark.asyncio
     async def test_embed_not_configured_skips_embeddings(self):
@@ -371,6 +520,34 @@ class TestRunPostUploadProcessing:
         assert client.post.call_count == 0
 
     @pytest.mark.asyncio
+    async def test_zero_embedding_chunks_fails_and_rolls_back(self):
+        storage_resp = self._mock_response(200, {"videoUrl": "http://vst/vst/storage/temp_files/clip.mp4"})
+        embed_resp = self._mock_response(200, {"usage": {"total_chunks_processed": 0}})
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        client.get = AsyncMock(return_value=storage_resp)
+        client.post = self._post_router({"/v1/generate_video_embeddings": embed_resp})
+        rollback = AsyncMock(return_value=[])
+
+        with (
+            self._timeline_patch(),
+            patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client),
+            patch("vss_agents.api.video_ingest._rollback_search_post_processing", new=rollback),
+        ):
+            with pytest.raises(HTTPException, match="no chunks processed"):
+                await _run_post_upload_processing(
+                    camera_name="caller-name",
+                    sensor_id="sensor-abc",
+                    filename="caller-name.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url="http://rtvi-embed:8017",
+                    elasticsearch_url="http://elasticsearch:9200",
+                )
+
+        assert rollback.await_args.kwargs["camera_name"] == "clip"
+
+    @pytest.mark.asyncio
     async def test_storage_api_missing_video_url_is_502(self):
         storage_resp = self._mock_response(200, {"unexpected": "shape"})
 
@@ -390,6 +567,74 @@ class TestRunPostUploadProcessing:
                     rtvi_embed_base_url="http://rtvi-embed:8017",
                 )
         assert exc_info.value.status_code == 502
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        ("cv_url", "embed_url", "detail"),
+        [
+            ("http://host:", "", "RTVI-CV configuration is invalid"),
+            ("", "http://", "RTVI Embed configuration is invalid"),
+        ],
+    )
+    async def test_nonempty_malformed_rtvi_url_fails_closed(self, cv_url, embed_url, detail):
+        storage_resp = self._mock_response(200, {"videoUrl": "http://vst/vst/storage/temp_files/clip.mp4"})
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        client.get = AsyncMock(return_value=storage_resp)
+
+        with self._timeline_patch(), patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client):
+            with pytest.raises(HTTPException) as exc_info:
+                await _run_post_upload_processing(
+                    camera_name="clip",
+                    sensor_id="sensor-abc",
+                    filename="clip.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url=embed_url,
+                    rtvi_cv_base_url=cv_url,
+                )
+        assert exc_info.value.status_code == 502
+        assert exc_info.value.detail == detail
+
+    @pytest.mark.asyncio
+    async def test_storage_transport_error_is_controlled_502(self):
+        import httpx
+
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        client.get = AsyncMock(side_effect=httpx.ReadError("broken storage transport"))
+        with self._timeline_patch(), patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client):
+            with pytest.raises(HTTPException) as exc_info:
+                await _run_post_upload_processing(
+                    camera_name="clip",
+                    sensor_id="sensor-abc",
+                    filename="clip.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url="",
+                )
+        assert exc_info.value.status_code == 502
+        assert exc_info.value.detail == "Storage API request failed"
+
+    @pytest.mark.asyncio
+    async def test_storage_malformed_json_is_controlled_502(self):
+        storage_resp = self._mock_response(200)
+        storage_resp.json.side_effect = ValueError("malformed")
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        client.get = AsyncMock(return_value=storage_resp)
+        with self._timeline_patch(), patch("vss_agents.api.video_ingest.httpx.AsyncClient", return_value=client):
+            with pytest.raises(HTTPException) as exc_info:
+                await _run_post_upload_processing(
+                    camera_name="clip",
+                    sensor_id="sensor-abc",
+                    filename="clip.mp4",
+                    vst_url="http://vst:30888",
+                    rtvi_embed_base_url="",
+                )
+        assert exc_info.value.status_code == 502
+        assert exc_info.value.detail == "Storage API response invalid: malformed JSON"
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("disable_audio", [True, False])
@@ -618,6 +863,8 @@ class TestResolveVideoUploadConfig:
             vst_external_url="http://vst.public:8080",
             rtvi_embed_base_url="http://rtvi-embed:8017",
             rtvi_cv_base_url="http://rtvi-cv:9000",
+            elasticsearch_url="http://elasticsearch:9200",
+            rtvi_embed_es_index="owned-embed-index",
             rtvi_embed_model="cosmos-embed1-448p",
             rtvi_embed_chunk_duration=5,
         )
@@ -628,6 +875,8 @@ class TestResolveVideoUploadConfig:
         assert resolved.vst_internal_url == "http://vst:8080"
         assert resolved.vst_external_url == "http://vst.public:8080"
         assert resolved.rtvi_embed_base_url == "http://rtvi-embed:8017"
+        assert resolved.elasticsearch_url == "http://elasticsearch:9200"
+        assert resolved.rtvi_embed_es_index == "owned-embed-index"
         assert resolved.vst_upload_timeout_seconds == 300.0
         assert resolved.vst_storage_timeout_seconds == 60.0
         assert resolved.rtvi_cv_timeout_seconds == 60.0
@@ -639,6 +888,8 @@ class TestResolveVideoUploadConfig:
             vst_external_url="",
             rtvi_embed_base_url="",
             rtvi_cv_base_url="",
+            elasticsearch_url="",
+            rtvi_embed_es_index="mdx-embed-filtered-2025-01-01",
             rtvi_embed_model="cosmos-embed1-448p",
             rtvi_embed_chunk_duration=5,
             vst_upload_timeout_seconds="301.5",
@@ -690,6 +941,8 @@ class TestResolveVideoUploadConfig:
             "HOST_IP": "10.0.0.5",
             "RTVI_EMBED_PORT": "8017",
             "RTVI_CV_PORT": "9000",
+            "ELASTIC_SEARCH_ENDPOINT": "http://10.0.0.5:9200",
+            "ELASTIC_SEARCH_INDEX": "owned-embed-index",
         }
         with patch.dict("os.environ", env, clear=False):
             resolved = _resolve_video_upload_config(config)
@@ -699,6 +952,8 @@ class TestResolveVideoUploadConfig:
         assert resolved.vst_external_url == "http://vst.public:30888"
         assert resolved.rtvi_embed_base_url == "http://10.0.0.5:8017"
         assert resolved.rtvi_cv_base_url == "http://10.0.0.5:9000"
+        assert resolved.elasticsearch_url == "http://10.0.0.5:9200"
+        assert resolved.rtvi_embed_es_index == "owned-embed-index"
 
     def test_falls_back_to_env_timeout_overrides_when_streaming_ingest_missing(self):
         config = MagicMock()
@@ -728,6 +983,8 @@ class TestResolveVideoUploadConfig:
             vst_external_url="",
             rtvi_embed_base_url="",
             rtvi_cv_base_url="",
+            elasticsearch_url="",
+            rtvi_embed_es_index="mdx-embed-filtered-2025-01-01",
             rtvi_embed_model="cosmos-embed1-448p",
             rtvi_embed_chunk_duration=5,
             enable_audio=True,
@@ -792,6 +1049,8 @@ class TestRegisterVideoUpload:
             vst_external_url="http://vst.public:8080",
             rtvi_embed_base_url="",
             rtvi_cv_base_url="",
+            elasticsearch_url="",
+            rtvi_embed_es_index="mdx-embed-filtered-2025-01-01",
             rtvi_embed_model="cosmos-embed1-448p",
             rtvi_embed_chunk_duration=5,
         )
@@ -822,6 +1081,8 @@ class TestRegisterVideoUploadComplete:
             vst_external_url="http://vst:8080",
             rtvi_embed_base_url="http://rtvi-embed:8017",
             rtvi_cv_base_url="",
+            elasticsearch_url="http://elasticsearch:9200",
+            rtvi_embed_es_index="owned-embed-index",
             rtvi_embed_model="cosmos-embed1-448p",
             rtvi_embed_chunk_duration=5,
         )

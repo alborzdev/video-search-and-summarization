@@ -121,10 +121,13 @@ async def _remove_from_rtvi_cv(
     logger.info(f"Removing from RTVI-CV: POST {url}")
 
     try:
-        response = await client.post(url, json=payload)
-        if response.status_code in (200, 201, 204):
+        # Match the add path's SDR affinity contract. Without this header an
+        # SDR-fronted deployment may route removal to a worker that does not
+        # own the stream and leave the actual registration behind.
+        response = await client.post(url, json=payload, headers={"x-stream-id": sensor_id})
+        if response.status_code in (200, 201, 204, 404):
             logger.info("RTVI-CV stream removed: %s", scrub_log(sensor_id))
-            return True, "OK"
+            return True, "Already absent" if response.status_code == 404 else "OK"
         return False, f"RTVI-CV returned {response.status_code}: {response.text}"
     except Exception as e:
         logger.error(f"RTVI-CV remove failed: {e}", exc_info=True)
@@ -171,7 +174,26 @@ async def _delete_es_documents(es_endpoint: str, index_pattern: str, id_value: s
             refresh=True,
             conflicts="proceed",  # Don't fail on version conflicts
         )
-        deleted = result.get("deleted", 0)
+        timed_out = result.get("timed_out")
+        failures = result.get("failures")
+        version_conflicts = result.get("version_conflicts")
+        deleted = result.get("deleted")
+        complete = (
+            timed_out is False
+            and failures == []
+            and type(version_conflicts) is int
+            and version_conflicts == 0
+            and type(deleted) is int
+            and deleted >= 0
+        )
+        if not complete:
+            details = (
+                f"timed_out_valid={timed_out is False}, failures_valid={failures == []}, "
+                f"version_conflicts_valid={type(version_conflicts) is int and version_conflicts == 0}, "
+                f"deleted_valid={type(deleted) is int and deleted >= 0}"
+            )
+            logger.error("ES delete_by_query was incomplete for index '%s': %s", index_pattern, details)
+            return False, f"Delete incomplete: {details}"
         logger.info(
             "Deleted %s docs from ES index '%s' (field=%s, value=%s)",
             deleted,
@@ -279,6 +301,11 @@ def create_video_delete_router(
                         scrub_log(e),
                     )
                     sensor_name = ""
+                    # This is not an optional step when ES cleanup is enabled:
+                    # behavior/raw documents are keyed by the VST name. Keep
+                    # cleaning everything that can be identified, but ensure
+                    # the aggregate result cannot report success.
+                    results.append(False)
 
             # --- ES cleanup (done first to avoid 'not found' issues) ---
             # Each index uses .keyword for exact match (avoids accidental match on similar names):
@@ -387,7 +414,10 @@ def register_video_delete_routes(app: "FastAPI", config: "Any") -> None:
         # Uploaded videos use a fixed timestamp (2025-01-01) so they always land
         # in these specific indexes. Only build the ES config when a URL is set;
         # otherwise pass None and ES cleanup self-skips at request time.
-        es_config = EsCleanupConfig(url=elasticsearch_url) if elasticsearch_url else None
+        embed_index = (
+            getattr(streaming_config, "rtvi_embed_es_index", "") or EsCleanupConfig.model_fields["embed_index"].default
+        )
+        es_config = EsCleanupConfig(url=elasticsearch_url, embed_index=embed_index) if elasticsearch_url else None
 
         router = create_video_delete_router(
             vst_internal_url=vst_internal_url,

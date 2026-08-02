@@ -2,8 +2,8 @@
 
 This package proves a current-source, static-only rebase of the 71 retained
 advertised-entry candidate rows. It locks the immutable predecessor inventory
-and receipt, resolves all 182 row/source references using exactly nine changed
-paths, and preserves the exact 44 unchanged / 27 rebased partition.
+and receipt, resolves all 182 row/source references using exactly twelve changed
+paths, and preserves the exact 40 unchanged / 31 rebased partition.
 
 The changed semantics are checked directly against current source: guarded
 Kafka publication suppresses work after abort/finalization, and the Agent/NAT

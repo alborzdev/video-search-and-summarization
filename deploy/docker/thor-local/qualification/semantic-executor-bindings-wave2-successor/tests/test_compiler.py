@@ -123,7 +123,8 @@ def test_ui_browser_candidate_records_plugin_and_provenance_gaps() -> None:
         "Browser plugin is absent" in reason for reason in candidate["unbound_reasons"]
     )
     assert any(
-        "transitive module graph" in reason for reason in candidate["unbound_reasons"]
+        "package trees are digest-pinned" in reason
+        for reason in candidate["unbound_reasons"]
     )
     assert any(
         "rendered live runtime receipt" in reason
@@ -200,7 +201,7 @@ def test_candidate_contract_truth_drift_fails_closed(
     ui_path = compiler._path(ui_lock["path"])
     ui = compiler._json(ui_path)
     changed = copy.deepcopy(ui)
-    changed["canonical_boundary"]["playwright_transitive_graph_pinned"] = True
+    changed["canonical_boundary"]["playwright_transitive_graph_pinned"] = False
     original = compiler._json
 
     def altered(path: Path) -> dict:

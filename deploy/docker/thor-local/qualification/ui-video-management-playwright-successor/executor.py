@@ -29,6 +29,7 @@ RECEIPT_SCHEMA_PATH = HERE / "receipt.schema.json"
 HARNESS_PATH = HERE / "harness.mjs"
 MAX_CONFIG_BYTES = 32 * 1024 * 1024
 MAX_TOOL_BYTES = 256 * 1024 * 1024
+MAX_PLAYWRIGHT_FILES = 4096
 RUN_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\Z")
 SHA256_RE = re.compile(r"[0-9a-f]{64}\Z")
 
@@ -186,6 +187,67 @@ def _repo_path(relative: str) -> Path:
     return current
 
 
+def _absolute_directory(path: Path, code: str) -> Path:
+    if not path.is_absolute():
+        raise ExecutorError(code)
+    current = Path(path.anchor)
+    for part in path.parts[1:]:
+        current /= part
+        try:
+            mode = current.lstat().st_mode
+        except OSError as exc:
+            raise ExecutorError(code) from exc
+        if stat.S_ISLNK(mode):
+            raise ExecutorError(code)
+    try:
+        resolved = path.resolve(strict=True)
+    except (OSError, ValueError) as exc:
+        raise ExecutorError(code) from exc
+    if resolved != path or not path.is_dir():
+        raise ExecutorError(code)
+    return path
+
+
+def _tree_digest(root: Path, code: str) -> str:
+    root = _absolute_directory(root, code)
+    pending = [root]
+    rows: list[dict[str, Any]] = []
+    total = 0
+    while pending:
+        directory = pending.pop()
+        try:
+            entries = sorted(os.scandir(directory), key=lambda item: item.name)
+        except OSError as exc:
+            raise ExecutorError(code) from exc
+        for entry in entries:
+            path = Path(entry.path)
+            try:
+                if entry.is_symlink():
+                    raise ExecutorError(code)
+                if entry.is_dir(follow_symlinks=False):
+                    pending.append(path)
+                    continue
+                if not entry.is_file(follow_symlinks=False):
+                    raise ExecutorError(code)
+            except OSError as exc:
+                raise ExecutorError(code) from exc
+            raw = _read_regular(path, MAX_TOOL_BYTES, code, absolute=True)
+            total += len(raw)
+            if len(rows) >= MAX_PLAYWRIGHT_FILES or total > MAX_TOOL_BYTES:
+                raise ExecutorError(code)
+            rows.append(
+                {
+                    "path": path.relative_to(root).as_posix(),
+                    "sha256": _digest(raw),
+                    "size": len(raw),
+                }
+            )
+    rows.sort(key=lambda row: row["path"])
+    if not rows:
+        raise ExecutorError(code)
+    return _digest(_canonical(rows))
+
+
 def _one(rows: Any, key: str, expected: str) -> dict[str, Any]:
     if not isinstance(rows, list):
         raise ExecutorError("configuration_error")
@@ -225,6 +287,16 @@ def compile_plan() -> dict[str, Any]:
         is not False
         or contract.get("runtime_boundary", {}).get("preexisting_browser_preserved")
         is not True
+        or contract.get("ownership", {}).get(
+            "agent_delete_requires_exact_success_and_identity"
+        )
+        is not True
+        or contract.get("ownership", {}).get("empty_vst_sensor_identity_preserved")
+        is not True
+        or contract.get("ownership", {}).get(
+            "destructive_dialog_irreversible_warning_observed"
+        )
+        is not True
         or contract.get("canonical_boundary", {}).get("canonical_bound") is not False
         or contract.get("canonical_boundary", {}).get("executor_ready") is not False
         or contract.get("canonical_boundary", {}).get("promotion_eligible") is not False
@@ -233,22 +305,26 @@ def compile_plan() -> dict[str, Any]:
         or contract.get("canonical_boundary", {}).get(
             "playwright_transitive_graph_pinned"
         )
-        is not False
+        is not True
         or contract.get("bounds")
         != {
             "max_duration_seconds": 240,
+            "internal_workflow_deadline_seconds": 175,
+            "cleanup_reserve_seconds": 45,
+            "parent_failsafe_margin_seconds": 20,
             "max_browser_actions": 40,
             "max_api_exchanges": 32,
             "semantic_checkpoints": 11,
             "max_tool_stdout_bytes": 4194304,
             "max_tool_stderr_bytes": 1048576,
-            "max_fixture_bytes_each": 10485760,
+            "min_fixture_bytes_each_exclusive": 10485760,
+            "max_fixture_bytes_each": 12582912,
         }
     ):
         raise ExecutorError("configuration_error")
 
     locks = contract.get("source_locks")
-    if not isinstance(locks, list) or len(locks) != 18:
+    if not isinstance(locks, list) or len(locks) != 22:
         raise ExecutorError("configuration_error")
     seen: set[str] = set()
     for lock in locks:
@@ -259,6 +335,28 @@ def compile_plan() -> dict[str, Any]:
             or not SHA256_RE.fullmatch(str(lock["sha256"]))
         ):
             raise ExecutorError("configuration_error")
+        seen.add(lock["path"])
+        if (
+            _digest(
+                _read_regular(
+                    _repo_path(lock["path"]), MAX_CONFIG_BYTES, "configuration_error"
+                )
+            )
+            != lock["sha256"]
+        ):
+            raise ExecutorError("configuration_error")
+
+    required_lifecycle_and_topology_paths = {
+        "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/"
+        "lib-src/videoDelete.ts",
+        "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/"
+        "lib-src/rtspStream.ts",
+        "deploy/docker/services/ui/compose.yml",
+        "deploy/docker/services/infra/haproxy/compose.yml",
+        "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+    }
+    if not required_lifecycle_and_topology_paths.issubset(seen):
+        raise ExecutorError("configuration_error")
 
     implementation_locks = contract.get("implementation_locks")
     if not isinstance(implementation_locks, list) or len(implementation_locks) != 2:
@@ -289,16 +387,6 @@ def compile_plan() -> dict[str, Any]:
         "ui-video-management-playwright-successor/harness.mjs",
     }:
         raise ExecutorError("configuration_error")
-        seen.add(lock["path"])
-        if (
-            _digest(
-                _read_regular(
-                    _repo_path(lock["path"]), MAX_CONFIG_BYTES, "configuration_error"
-                )
-            )
-            != lock["sha256"]
-        ):
-            raise ExecutorError("configuration_error")
 
     selected = _json(
         _repo_path(
@@ -394,7 +482,7 @@ def compile_plan() -> dict[str, Any]:
         "browser_plugin": "absent_regular_playwright_fallback",
         "browser_launch_allowed": False,
         "playwright_entry_files_pinned": True,
-        "playwright_transitive_graph_pinned": False,
+        "playwright_transitive_graph_pinned": True,
         "canonical_bound": False,
         "executor_ready": False,
         "promotion_eligible": False,
@@ -438,7 +526,7 @@ def _validate_manifest_value(value: dict[str, Any]) -> dict[str, Any]:
         _origin(value[key])
         for key in ("ui_origin", "cdp_origin", "vst_origin", "agent_origin")
     ]
-    if len(set(origins)) != 4:
+    if origins[1] in {origins[0], origins[2], origins[3]}:
         raise ExecutorError("invalid_manifest")
     for key, origin in zip(
         ("ui_origin", "cdp_origin", "vst_origin", "agent_origin"), origins
@@ -446,13 +534,8 @@ def _validate_manifest_value(value: dict[str, Any]) -> dict[str, Any]:
         value[key] = origin
 
     run_id = value["run_id"]
-    expected_names = [f"{run_id}.video.mp4", f"{run_id}.video.mkv"]
-    expected_ids = [
-        f"{run_id}.video-mp4",
-        f"{run_id}.video-mkv",
-        f"{run_id}.rtsp-sensor",
-    ]
-    if value["owned_sensor_ids"] != expected_ids:
+    expected_names = [f"{run_id}.video-mp4.mp4", f"{run_id}.video-mkv.mkv"]
+    if value["owned_rtsp_name"] != f"{run_id}.rtsp-sensor":
         raise ExecutorError("invalid_manifest")
     fixture_hashes: set[str] = set()
     for index, item in enumerate(value["fixtures"]):
@@ -467,8 +550,12 @@ def _validate_manifest_value(value: dict[str, Any]) -> dict[str, Any]:
             or item["extension"] != (".mp4" if index == 0 else ".mkv")
         ):
             raise ExecutorError("invalid_manifest")
-        raw = _read_regular(fixture_path, 10485760, "invalid_manifest", absolute=True)
-        if _digest(raw) != item["sha256"] or item["sha256"] in fixture_hashes:
+        raw = _read_regular(fixture_path, 12582912, "invalid_manifest", absolute=True)
+        if (
+            len(raw) <= 10485760
+            or _digest(raw) != item["sha256"]
+            or item["sha256"] in fixture_hashes
+        ):
             raise ExecutorError("invalid_manifest")
         fixture_hashes.add(item["sha256"])
 
@@ -492,6 +579,53 @@ def _validate_manifest_value(value: dict[str, Any]) -> dict[str, Any]:
         )
         if _digest(raw) != value[hash_key]:
             raise ExecutorError("invalid_manifest")
+
+    packages: dict[str, tuple[Path, dict[str, Any]]] = {}
+    for item in value["playwright_packages"]:
+        name = item["name"]
+        root = _absolute_directory(Path(item["path"]), "invalid_manifest")
+        if root.name != name or name in packages:
+            raise ExecutorError("invalid_manifest")
+        if _tree_digest(root, "invalid_manifest") != item["tree_sha256"]:
+            raise ExecutorError("invalid_manifest")
+        package = _decode(
+            _read_regular(
+                root / "package.json",
+                MAX_CONFIG_BYTES,
+                "invalid_manifest",
+                absolute=True,
+            ),
+            "invalid_manifest",
+        )
+        if package.get("name") != name or package.get("version") != item["version"]:
+            raise ExecutorError("invalid_manifest")
+        item["path"] = str(root)
+        packages[name] = (root, package)
+    if set(packages) != {"playwright", "playwright-core"}:
+        raise ExecutorError("invalid_manifest")
+    playwright_root, playwright_package = packages["playwright"]
+    _core_root, core_package = packages["playwright-core"]
+    version = value["playwright_packages"][0]["version"]
+    versions = {row["version"] for row in value["playwright_packages"]}
+    playwright_dependencies = playwright_package.get("dependencies")
+    playwright_optional = playwright_package.get("optionalDependencies", {})
+    core_dependencies = core_package.get("dependencies", {})
+    core_optional = core_package.get("optionalDependencies", {})
+    if (
+        len(versions) != 1
+        or playwright_dependencies != {"playwright-core": version}
+        or not isinstance(playwright_optional, dict)
+        or set(playwright_optional) - {"fsevents"}
+        or core_dependencies != {}
+        or core_optional != {}
+        or playwright_package.get("peerDependencies", {}) != {}
+        or core_package.get("peerDependencies", {}) != {}
+    ):
+        raise ExecutorError("invalid_manifest")
+    try:
+        Path(value["playwright_module"]).relative_to(playwright_root)
+    except ValueError as exc:
+        raise ExecutorError("invalid_manifest") from exc
     return value
 
 
@@ -639,6 +773,8 @@ def execute(
         "template_environment": True,
         "bulk_delete_confirm": True,
         "bulk_delete_cancel": True,
+        "ordered_multichunk_protocol": True,
+        "upload_payload_digest_integrity": True,
     }
     checks = result.get("checks")
     if (
@@ -678,6 +814,9 @@ def execute(
             value["playwright_sha256"],
         ],
         "fixture_sha256": [row["sha256"] for row in value["fixtures"]],
+        "playwright_tree_sha256": [
+            row["tree_sha256"] for row in value["playwright_packages"]
+        ],
         "budget": {
             "semantic_checkpoints": 11,
             "browser_actions": result["browser_actions"],
@@ -690,7 +829,7 @@ def execute(
         "cleanup": result["cleanup"],
         "browser_plugin": "absent_regular_playwright_fallback",
         "playwright_entry_files_pinned": True,
-        "playwright_transitive_graph_pinned": False,
+        "playwright_transitive_graph_pinned": True,
         "canonical_bound": False,
         "executor_ready": False,
         "promotion_eligible": False,

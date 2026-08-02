@@ -22,7 +22,7 @@ export interface AddRtspStreamRequest {
  * Response from adding RTSP stream
  */
 export interface AddRtspStreamResult {
-  status?: string;
+  status: "success";
   message?: string;
   sensorId?: string;
   vst_sensor_id?: string;
@@ -36,9 +36,14 @@ export interface AddRtspStreamResult {
  * Response from deleting RTSP stream
  */
 export interface DeleteRtspStreamResult {
-  status?: string;
-  message?: string;
+  status: "success";
+  message: string;
+  name: string;
   error?: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 /**
@@ -77,15 +82,17 @@ export async function addRtspStream(
     );
   }
 
-  const result: AddRtspStreamResult = await response.json();
+  const result: unknown = await response.json();
 
-  if (result.status === "failure") {
+  if (!isRecord(result) || result.status !== "success") {
     throw new Error(
-      result.message || result.error || "Failed to add RTSP stream"
+      (isRecord(result) && typeof result.message === "string" && result.message) ||
+        (isRecord(result) && typeof result.error === "string" && result.error) ||
+        "Failed to add RTSP stream"
     );
   }
 
-  return result;
+  return result as unknown as AddRtspStreamResult;
 }
 
 /**
@@ -123,13 +130,19 @@ export async function deleteRtspStream(
     );
   }
 
-  const result: DeleteRtspStreamResult = await response.json();
+  const result: unknown = await response.json();
 
-  if (result.status === "failure") {
+  if (
+    !isRecord(result) ||
+    result.status !== "success" ||
+    result.name !== sensorName
+  ) {
     throw new Error(
-      result.message || result.error || "Failed to delete RTSP stream"
+      (isRecord(result) && typeof result.message === "string" && result.message) ||
+        (isRecord(result) && typeof result.error === "string" && result.error) ||
+        `Failed to delete RTSP stream: ${sensorName}`
     );
   }
 
-  return result;
+  return result as unknown as DeleteRtspStreamResult;
 }

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "promotion_eligible", "canonical_state_advanced", "identity", "budget", "fixture", "cleanup", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "search-semantic-exact-fixture-provisioner-successor"},
+    "mode": {"const": "bounded-numeric-loopback-functional-fixture-lifecycle"},
+    "status": {"const": "candidate_fixture_lifecycle_complete_non_promoting"},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "namespace_sha256", "sensor_id_sha256", "media_sha256"],
+      "properties": {
+        "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,47}$"},
+        "namespace_sha256": {"$ref": "#/$defs/sha"},
+        "sensor_id_sha256": {"$ref": "#/$defs/sha"},
+        "media_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requests", "max_requests", "actions", "max_actions"],
+      "properties": {
+        "requests": {"type": "integer", "minimum": 24, "maximum": 52},
+        "max_requests": {"const": 52},
+        "actions": {"const": 12},
+        "max_actions": {"const": 12}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["embed_documents", "behavior_documents", "raw_documents", "selected_object_reconciled", "handoff_sha256", "consumer_invoked", "consumer_receipt_sha256", "consumer_transport_accounting", "raw_document_ids_recorded", "operator_preprovisioned"],
+      "properties": {
+        "embed_documents": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "behavior_documents": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "raw_documents": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "selected_object_reconciled": {"const": true},
+        "handoff_sha256": {"$ref": "#/$defs/sha"},
+        "consumer_invoked": {"const": false},
+        "consumer_receipt_sha256": {"type": "null"},
+        "consumer_transport_accounting": {"const": "disabled"},
+        "raw_document_ids_recorded": {"const": true},
+        "operator_preprovisioned": {"const": false}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_delete_success", "vst_absent", "identity_scoped_documents_absent", "exact_discovered_documents_absent", "delayed_no_reappearance", "foreign_delete_attempted"],
+      "properties": {
+        "agent_delete_success": {"const": true},
+        "vst_absent": {"const": true},
+        "identity_scoped_documents_absent": {"const": true},
+        "exact_discovered_documents_absent": {"const": true},
+        "delayed_no_reappearance": {"const": true},
+        "foreign_delete_attempted": {"const": false}
+      }
+    },
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

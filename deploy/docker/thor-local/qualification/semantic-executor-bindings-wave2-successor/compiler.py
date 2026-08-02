@@ -313,7 +313,7 @@ def _verify_candidates(candidates: dict[str, dict[str, Any]]) -> None:
         != (32, 40)
         or bounds.get("semantic_checkpoints") != 11
         or boundary.get("playwright_entry_files_pinned") is not True
-        or boundary.get("playwright_transitive_graph_pinned") is not False
+        or boundary.get("playwright_transitive_graph_pinned") is not True
         or boundary.get("canonical_bound") is not False
         or boundary.get("executor_ready") is not False
         or boundary.get("promotion_eligible") is not False
@@ -447,7 +447,7 @@ def _candidate(expected: dict[str, Any]) -> dict[str, Any]:
             "exact_owned_cleanup": True,
             "unbound_reasons": [
                 "Codex Browser plugin is absent; the candidate uses regular Playwright over preexisting CDP",
-                "Playwright entry files are pinned but the transitive module graph is not",
+                "Playwright entry files and complete package trees are digest-pinned",
                 "40 browser actions and 32 API exchanges exceed the frozen selected 11/11 bounds",
                 "no rendered live runtime receipt has been collected or admitted",
             ],

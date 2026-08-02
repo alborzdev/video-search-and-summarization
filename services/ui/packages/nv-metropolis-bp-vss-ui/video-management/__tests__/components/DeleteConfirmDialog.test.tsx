@@ -48,11 +48,11 @@ describe('DeleteConfirmDialog — visibility', () => {
     expect(screen.getByText('Are you sure you want to delete the following?')).toBeInTheDocument();
   });
 
-  it('does not render the legacy red warning callout (removed per UX feedback)', () => {
+  it('warns explicitly that deletion is irreversible', () => {
     renderDialog();
     expect(
-      screen.queryByText(/permanently removed from the Video Storage Toolkit/i),
-    ).not.toBeInTheDocument();
+      screen.getByTestId('delete-irreversible-warning'),
+    ).toHaveTextContent('This deletion is irreversible and cannot be undone.');
   });
 
   it('exposes the dialog with accessible alertdialog semantics', () => {

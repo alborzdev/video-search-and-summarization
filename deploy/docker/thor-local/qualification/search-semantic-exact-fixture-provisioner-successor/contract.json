@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "package_id": "search-semantic-exact-fixture-provisioner-successor",
+  "kind": "authorization-gated-exact-owned-functional-search-fixture-lifecycle",
+  "default_execution_enabled": false,
+  "warehouse_sample_bundle": "excluded",
+  "predecessor_package": "search-semantic-fixture-provisioning-blocker-successor",
+  "planning_requirement_id": "search-documents-and-bboxes",
+  "capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.agent.search-profile",
+  "authorization": {
+    "authorization_id": "search-exact-fixture-lifecycle",
+    "acknowledgement": "I_ACK_SEARCH_EXACT_FIXTURE_LIFECYCLE_AND_OWNED_CLEANUP"
+  },
+  "transport": {
+    "numeric_loopback_only": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "max_media_bytes": 16777216,
+    "max_response_bytes": 8388608,
+    "timeout_seconds": 60,
+    "complete_timeout_seconds": 600
+  },
+  "execution_bounds": {
+    "max_requests": 52,
+    "max_actions": 12,
+    "max_duration_seconds": 900,
+    "cleanup_reserve_seconds": 180,
+    "readiness_poll_attempts": 10,
+    "cleanup_poll_attempts": 2,
+    "poll_delay_seconds": 2,
+    "max_documents_per_index": 1000
+  },
+  "fixture_consumer": {
+    "enabled": false,
+    "reason": "disabled until the consumer can share the executor deadline and cleanup reserve"
+  },
+  "indices": {
+    "embed": "mdx-embed-filtered-2025-01-01",
+    "behavior": "mdx-behavior-2025-01-01",
+    "raw": "mdx-raw-2025-01-01"
+  },
+  "workflow": [
+    {"order": 1, "id": "validate-owned-media-and-origins"},
+    {"order": 2, "id": "prove-vst-name-absent"},
+    {"order": 3, "id": "request-exact-upload-url"},
+    {"order": 4, "id": "upload-one-owned-file-and-capture-vst-id"},
+    {"order": 5, "id": "prove-vst-allocation-and-es-prestate-absence"},
+    {"order": 6, "id": "complete-ingest-fail-closed"},
+    {"order": 7, "id": "discover-model-generated-exact-documents"},
+    {"order": 8, "id": "reconcile-selected-object-across-behavior-and-raw"},
+    {"order": 9, "id": "emit-dynamic-fixture-handoff"},
+    {"order": 10, "id": "delete-through-agent-owned-lifecycle"},
+    {"order": 11, "id": "prove-exact-cross-system-absence"},
+    {"order": 12, "id": "prove-delayed-no-reappearance"}
+  ],
+  "decision": {
+    "safe_exact_full_fixture_creation_implemented": true,
+    "failed_ingest_delayed_write_remediation_proven": false,
+    "runtime_receipt_present": false,
+    "operator_preprovisioned_fixture_required": false,
+    "fixed_sensor_or_document_identity_required": false,
+    "promotion_eligible": false,
+    "canonical_state_advanced": false,
+    "reason": "The successor binds one run-derived filename to VST's allocated UUID, reconciles an ambiguous or malformed upload response through the unique exact VST name before cleanup, requires zero matching ES documents before completion, requires configured RTVI-CV to fail closed, discovers the complete bounded model-generated document set in the profile's actual fixed indices with complete shard accounting, reconciles a selected object with a valid bbox in a raw frame inside the behavior interval, records exact document identities, and independently proves VST plus exact ES absence twice after agent-backed deletion. The unbounded fixture-consumer hook is disabled until it can share the lifecycle deadline and cleanup reserve. A failed ingest's delayed downstream writes are detected by this lifecycle but not automatically remediated, so that path remains a live blocker. It has not been executed on the live Thor stack."
+  },
+  "source_locks": [
+    {"path": "services/agent/src/vss_agents/api/video_ingest.py", "sha256": "0074a4165684e207d629d2e56ed47d7abf0cc26b3a39f42bf197bc7bf4566534"},
+    {"path": "services/agent/src/vss_agents/api/video_delete.py", "sha256": "67d2146665f7750c4bdd65513a3061e5b3955c95595f9ae3e4c7a23f7c13851c"},
+    {"path": "services/agent/src/vss_agents/tools/vst/utils.py", "sha256": "d929b27af4e4e0e47940d023555659e2effa0d730c0d379cb893a6a79530732c"},
+    {"path": "services/agent/src/vss_agents/api/front_end_config.py", "sha256": "99328bacf3f82bfe383d9448cfc0e6fec49313eccf530b1265fcfaf335f40ea4"},
+    {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
+    {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
+    {"path": "services/agent/src/vss_agents/tools/embed_search.py", "sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "09701f84f6f7786a053eb05201c0679a5606591721d9307735e1be6a40fbcaa4"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/contract.json", "sha256": "091bd2ced04569e6b5979d6fcb9c1cec0861f6ceaa5018550106e561891832a5"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "sha256": "2a2c739600fb45293811334fbee6bda0cb21f64d117dd8390897de01c2c2b2ff"},
+    {"path": "services/ui/packages/common/lib-src/utils/videoUpload.ts", "sha256": "9d893263bcf7d6742ac876778781bdc2ba902c55f4ea425af6ccea175b503d62"},
+    {"path": "skills/vss-search-archive/SKILL.md", "sha256": "337ae027bfa4de55716a0ee0c7ba4f22d2c965aa863191d0337ec1eb957f331b"}
+  ]
+}

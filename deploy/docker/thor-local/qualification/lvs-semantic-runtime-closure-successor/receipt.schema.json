@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "contract_sha256", "manifest_sha256", "identity", "budget", "observations", "fixture_readback", "live_caption", "state_preservation", "cleanup", "coverage", "promotion_eligible", "executor_ready", "canonical_state_advanced", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-vss-lvs-semantic-runtime-closure-successor-v1"},
+    "status": {"const": "closure_supplement_complete_non_promoting"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "manifest_sha256": {"$ref": "#/$defs/sha"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id_sha256", "agent_origin_sha256", "lvs_origin_sha256", "rtvi_vlm_origin_sha256", "vst_origin_sha256", "elasticsearch_origin_sha256", "lvs_version_sha256", "lvs_sub_version_sha256", "model_sha256"],
+      "properties": {
+        "run_id_sha256": {"$ref": "#/$defs/sha"}, "agent_origin_sha256": {"$ref": "#/$defs/sha"}, "lvs_origin_sha256": {"$ref": "#/$defs/sha"}, "rtvi_vlm_origin_sha256": {"$ref": "#/$defs/sha"}, "vst_origin_sha256": {"$ref": "#/$defs/sha"}, "elasticsearch_origin_sha256": {"$ref": "#/$defs/sha"}, "lvs_version_sha256": {"$ref": "#/$defs/sha"}, "lvs_sub_version_sha256": {"$ref": "#/$defs/sha"}, "model_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requests", "max_requests", "actions", "max_actions", "max_duration_seconds"],
+      "properties": {
+        "requests": {"type": "integer", "minimum": 20, "maximum": 24}, "max_requests": {"const": 24}, "actions": {"type": "integer", "minimum": 20, "maximum": 24}, "max_actions": {"const": 24}, "max_duration_seconds": {"const": 1800}
+      }
+    },
+    "observations": {
+      "type": "array", "minItems": 20, "maxItems": 24,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["order", "action_id", "surface", "method", "path_template", "http_status", "response_bytes", "response_sha256"],
+        "properties": {
+          "order": {"type": "integer", "minimum": 1, "maximum": 24}, "action_id": {"type": "string"}, "surface": {"enum": ["agent", "lvs", "rtvi-vlm", "vst", "media", "elasticsearch"]}, "method": {"enum": ["GET", "POST", "DELETE"]}, "path_template": {"type": "string"}, "http_status": {"type": "integer", "minimum": 100, "maximum": 599}, "response_bytes": {"type": "integer", "minimum": 0, "maximum": 67108864}, "response_sha256": {"$ref": "#/$defs/sha"}
+        }
+      }
+    },
+    "fixture_readback": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["sensor_id_sha256", "stored_media_sha256", "stored_media_bytes", "duration_microseconds", "timeline_readback", "exact_bytes_readback"],
+        "properties": {
+          "sensor_id_sha256": {"$ref": "#/$defs/sha"}, "stored_media_sha256": {"$ref": "#/$defs/sha"}, "stored_media_bytes": {"type": "integer", "minimum": 1, "maximum": 67108864}, "duration_microseconds": {"type": "integer", "minimum": 60000001}, "timeline_readback": {"const": true}, "exact_bytes_readback": {"const": true}
+        }
+      }
+    },
+    "live_caption": {
+      "type": "object", "additionalProperties": false,
+      "required": ["stream_id_sha256", "preexisting_collection_empty", "generation_accepted", "logstash_delivery_observed", "ca_rag_retrieval_nonempty", "poll_attempts"],
+      "properties": {"stream_id_sha256": {"$ref": "#/$defs/sha"}, "preexisting_collection_empty": {"const": true}, "generation_accepted": {"const": true}, "logstash_delivery_observed": {"const": true}, "ca_rag_retrieval_nonempty": {"const": true}, "poll_attempts": {"type": "integer", "minimum": 1, "maximum": 5}}
+    },
+    "state_preservation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["complete_vst_timeline_digest_before", "complete_vst_timeline_digest_after", "complete_vst_timeline_preserved", "stream_registration_deleted"],
+      "properties": {"complete_vst_timeline_digest_before": {"$ref": "#/$defs/sha"}, "complete_vst_timeline_digest_after": {"$ref": "#/$defs/sha"}, "complete_vst_timeline_preserved": {"const": true}, "stream_registration_deleted": {"const": false}}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["stop_acknowledged", "delivery_quiescent", "quiescence_observations", "deleted_documents", "owned_collection_absent", "delayed_no_reappearance"],
+      "properties": {
+        "stop_acknowledged": {"const": true},
+        "delivery_quiescent": {"const": true},
+        "quiescence_observations": {"const": 2},
+        "deleted_documents": {"type": "integer", "minimum": 1},
+        "owned_collection_absent": {"const": true},
+        "delayed_no_reappearance": {"const": true}
+      }
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["closed_by_this_successor", "closed_by_predecessor", "still_unavoidable"],
+      "properties": {"closed_by_this_successor": {"type": "array", "minItems": 12, "maxItems": 12, "uniqueItems": true, "items": {"type": "string"}}, "closed_by_predecessor": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string"}}, "still_unavoidable": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string"}}}
+    },
+    "promotion_eligible": {"const": false}, "executor_ready": {"const": false}, "canonical_state_advanced": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

@@ -143,27 +143,27 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json",
-      "sha256": "b31a7b607809a7afaa97f9eff33ab4cd135111a849adade2be6afc18caf20a61"
+      "sha256": "93dba40bc1ccaf7dd2d3496af67d4908af878110b3bf75eb50d10f248c6c6592"
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py",
-      "sha256": "1c80c2b12e9baa1963efdaa0ead130ef45c77160816ee81bc0c4f42448cd5e67"
+      "sha256": "d193ddc9819d5db5d59b875000c217f45b3ce2b9d3eac0f7e16af57db7686e52"
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs",
-      "sha256": "0f2a47ec4e62dfabb22676777743d3998490ae0b863edf1d0edb76f03a835c69"
+      "sha256": "6a8a7ee3dfa7ea55908056274a50d1d3983f4b58e0d85a1acb29b815bdc644aa"
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/manifest.schema.json",
-      "sha256": "d697c7f534e3c0209fd1277ab7ecae7b1bbab8c749c68c517f556189cac3a6bd"
+      "sha256": "e67a162b482c81488f2d3fa55df096d262da205dfdfc96ac8ed2b826079d35cb"
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/receipt.schema.json",
-      "sha256": "95e950924ea4b29a0a4358d0d012832ebd59f73c139027221c2c7b43eb5094f0"
+      "sha256": "25a4b87cf0b7aa77da38be0ef6e7ba88bcc5508eef4c76ccdc7e10b80d72483f"
     },
     {
       "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json",
-      "sha256": "18f33b2d2e078d731b5438c5bcbfeb0f48b7acf2c782cf34b568bc641bbc7329"
+      "sha256": "d0b5840a565407989b5db9e72038f0f565c262f7f99df7975ad8e98177459dcd"
     },
     {
       "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py",

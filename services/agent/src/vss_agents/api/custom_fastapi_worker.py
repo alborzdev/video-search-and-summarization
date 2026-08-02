@@ -21,6 +21,8 @@ to support additional streaming endpoints and a lightweight health check.
 import logging
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from nat.builder.framework_enum import LLMFrameworkEnum
 from nat.builder.workflow_builder import WorkflowBuilder
 from nat.data_models.config import Config
 from nat.front_ends.fastapi.fastapi_front_end_plugin_worker import FastApiFrontEndPluginWorker
@@ -33,6 +35,54 @@ from vss_agents.api.video_ingest import register_video_upload_complete
 from vss_agents.api.video_search_ingest import register_video_search_ingest_routes
 
 logger = logging.getLogger(__name__)
+
+
+# This is deliberately the advertised LVS semantic surface, rather than every
+# function configured in the process.  The endpoint below resolves each name
+# through the live WorkflowBuilder and returns no configuration values, URLs,
+# credentials, prompts, or tool schemas.
+LVS_RUNTIME_TOOL_NAMES = (
+    "lvs_video_understanding",
+    "lvs_config_media",
+    "lvs_stream_understanding",
+    "lvs_caption_retrieval",
+    "video_report_gen",
+)
+
+
+async def discover_lvs_runtime_tools(builder: WorkflowBuilder) -> dict:
+    """Resolve the five advertised LVS tools from the running NAT builder.
+
+    A source-config grep cannot prove that the deployed builder successfully
+    constructed a tool.  This small, read-only probe performs the same
+    ``get_tool`` resolution used by the agents and exposes only exact requested
+    names and an aggregate readiness bit.
+    """
+
+    available: list[str] = []
+    missing: list[str] = []
+    for name in LVS_RUNTIME_TOOL_NAMES:
+        try:
+            tool = await builder.get_tool(
+                name,
+                wrapper_type=LLMFrameworkEnum.LANGCHAIN,
+            )
+        except Exception:
+            logger.warning("LVS runtime tool resolution failed for %s", name, exc_info=True)
+            missing.append(name)
+            continue
+        if tool is None:
+            missing.append(name)
+        else:
+            available.append(name)
+    return {
+        "schema_version": 1,
+        "catalog": "lvs-advertised-runtime-tools",
+        "expected": list(LVS_RUNTIME_TOOL_NAMES),
+        "available": available,
+        "missing": missing,
+        "ready": not missing,
+    }
 
 
 class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
@@ -65,6 +115,13 @@ class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
             return {"value": {"isAlive": True}}
 
         logger.info("Registered custom /health endpoint (replaced NAT default)")
+
+        @app.get("/api/v1/runtime-tools/lvs", include_in_schema=False)
+        async def lvs_runtime_tools():
+            result = await discover_lvs_runtime_tools(builder)
+            return JSONResponse(status_code=200 if result["ready"] else 503, content=result)
+
+        logger.info("Registered read-only /api/v1/runtime-tools/lvs discovery endpoint")
 
         # Register custom streaming routes per capability flags in streaming_ingest
         self._register_streaming_routes(app)

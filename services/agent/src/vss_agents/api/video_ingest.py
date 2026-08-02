@@ -57,6 +57,7 @@ from pydantic import Field
 
 from vss_agents.tools.vst.timeline import get_timeline
 from vss_agents.tools.vst.utils import VSTError
+from vss_agents.tools.vst.utils import get_sensor_id_from_stream_id
 from vss_agents.utils.time_measure import TimeMeasure
 from vss_agents.utils.url_translation import rewrite_url_host
 
@@ -66,6 +67,9 @@ DEFAULT_RTVI_CV_TIMEOUT_SECONDS = 60.0
 DEFAULT_RTVI_EMBED_TIMEOUT_SECONDS = 600.0
 DEFAULT_VST_STORAGE_TIMEOUT_SECONDS = 60.0
 DEFAULT_VST_UPLOAD_TIMEOUT_SECONDS = 300.0
+DEFAULT_BEHAVIOR_ES_INDEX = "mdx-behavior-2025-01-01"
+DEFAULT_RAW_ES_INDEX = "mdx-raw-2025-01-01"
+CANCELLATION_ROLLBACK_TIMEOUT_SECONDS = 120.0
 
 ENV_RTVI_CV_TIMEOUT_SECONDS = "VIDEO_INGEST_RTVI_CV_TIMEOUT_SECONDS"
 ENV_RTVI_EMBED_TIMEOUT_SECONDS = "VIDEO_INGEST_RTVI_EMBED_TIMEOUT_SECONDS"
@@ -242,6 +246,8 @@ class _VideoUploadConfig(BaseModel):
     vst_external_url: str = ""
     rtvi_embed_base_url: str = ""
     rtvi_cv_base_url: str = ""
+    elasticsearch_url: str = ""
+    rtvi_embed_es_index: str = "mdx-embed-filtered-2025-01-01"
     rtvi_embed_model: str = "cosmos-embed1-448p"
     rtvi_embed_chunk_duration: int = 5
     disable_audio: bool = True
@@ -264,6 +270,8 @@ def _resolve_video_upload_config(config: "Any") -> _VideoUploadConfig | None:
         vst_external_url = getattr(streaming_config, "vst_external_url", None) or os.getenv("VST_EXTERNAL_URL", "")
         rtvi_embed_base_url = getattr(streaming_config, "rtvi_embed_base_url", None) or ""
         rtvi_cv_base_url = getattr(streaming_config, "rtvi_cv_base_url", None) or ""
+        elasticsearch_url = getattr(streaming_config, "elasticsearch_url", None) or ""
+        rtvi_embed_es_index = getattr(streaming_config, "rtvi_embed_es_index", None) or "mdx-embed-filtered-2025-01-01"
         rtvi_embed_model = getattr(streaming_config, "rtvi_embed_model", "cosmos-embed1-448p")
         rtvi_embed_chunk_duration = getattr(streaming_config, "rtvi_embed_chunk_duration", 5)
         disable_audio = not bool(getattr(streaming_config, "enable_audio", False))
@@ -279,6 +287,8 @@ def _resolve_video_upload_config(config: "Any") -> _VideoUploadConfig | None:
         rtvi_cv_port = os.getenv("RTVI_CV_PORT", "")
         rtvi_embed_base_url = f"http://{host_ip}:{rtvi_embed_port}" if host_ip and rtvi_embed_port else ""
         rtvi_cv_base_url = f"http://{host_ip}:{rtvi_cv_port}" if host_ip and rtvi_cv_port else ""
+        elasticsearch_url = os.getenv("ELASTIC_SEARCH_ENDPOINT", "")
+        rtvi_embed_es_index = os.getenv("ELASTIC_SEARCH_INDEX", "mdx-embed-filtered-2025-01-01")
         rtvi_embed_model = os.getenv("RTVI_EMBED_MODEL", "cosmos-embed1-448p")
         rtvi_embed_chunk_duration = 5
         disable_audio = os.getenv("ENABLE_AUDIO", "false").strip().lower() not in ("true", "1", "yes")
@@ -316,6 +326,8 @@ def _resolve_video_upload_config(config: "Any") -> _VideoUploadConfig | None:
         vst_external_url=vst_external_url or vst_internal_url,
         rtvi_embed_base_url=rtvi_embed_base_url,
         rtvi_cv_base_url=rtvi_cv_base_url,
+        elasticsearch_url=elasticsearch_url,
+        rtvi_embed_es_index=rtvi_embed_es_index,
         rtvi_embed_model=rtvi_embed_model,
         rtvi_embed_chunk_duration=rtvi_embed_chunk_duration,
         disable_audio=disable_audio,
@@ -335,12 +347,13 @@ async def _register_with_rtvi_cv(
     start_timestamp: str,
     timeout_seconds: float = DEFAULT_RTVI_CV_TIMEOUT_SECONDS,
 ) -> None:
-    """POST ``/api/v1/stream/add`` to RTVI-CV. Best-effort (tolerates network errors).
+    """POST ``/api/v1/stream/add`` to RTVI-CV.
 
-    Connect/timeout failures degrade to a warning and silent skip — same as the
-    original inline path — because RTVI-CV is treated as optional infra. Other
-    HTTP errors (non-2xx) raise ``HTTPException(502)`` so the caller surfaces a
-    hard failure.
+    URL absence is how profiles declare RTVI-CV optional.  Once a URL is
+    configured, every transport or HTTP failure is fatal: returning a
+    successful ``/complete`` response after a silent registration skip makes
+    an uploaded Search source look ready even though attribute and fusion
+    search cannot see it.
     """
     # `x-stream-id` is the routing key for SDR-fronted RTVI deployments: the
     # in-front-of-RTVI proxy (HAProxy Ingress or Envoy via SDR coordinator)
@@ -378,10 +391,103 @@ async def _register_with_rtvi_cv(
                 logger.error(error_msg)
                 raise HTTPException(status_code=502, detail=f"RTVI-CV add failed: {error_msg}")
             logger.info(f"RTVI-CV video added: {sensor_id}")
-    except httpx.ConnectError:
-        logger.warning("RTVI-CV not reachable at %s, skipping (service may not be deployed)", rtvi_cv_add_url)
-    except httpx.TimeoutException:
-        logger.warning("RTVI-CV timed out at %s, skipping", rtvi_cv_add_url)
+    except httpx.ConnectError as exc:
+        logger.error("Configured RTVI-CV is not reachable at %s", rtvi_cv_add_url)
+        raise HTTPException(status_code=502, detail="RTVI-CV add failed: service not reachable") from exc
+    except httpx.TimeoutException as exc:
+        logger.error("Configured RTVI-CV timed out at %s", rtvi_cv_add_url)
+        raise HTTPException(status_code=502, detail="RTVI-CV add failed: request timed out") from exc
+    except httpx.RequestError as exc:
+        logger.error("Configured RTVI-CV request failed at %s: %s", rtvi_cv_add_url, exc)
+        raise HTTPException(status_code=502, detail="RTVI-CV add failed: request error") from exc
+
+
+async def _rollback_search_post_processing(
+    *,
+    sensor_id: str,
+    camera_name: str,
+    rtvi_cv_base_url: str,
+    cv_may_be_registered: bool,
+    embedding_may_have_written: bool,
+    elasticsearch_url: str,
+    rtvi_embed_es_index: str,
+    rtvi_cv_timeout_seconds: float,
+) -> list[str]:
+    """Remove downstream state created before a failed embedding call.
+
+    VST media is intentionally retained so an operator can safely retry the
+    ``/complete`` step. Only state created by this post-processing attempt is
+    rolled back, scoped by the VST-assigned sensor id.
+    """
+    # Imported lazily to keep the upload module usable in profiles that do not
+    # instantiate the delete router until application registration.
+    from vss_agents.api.video_delete import _delete_es_documents
+    from vss_agents.api.video_delete import _remove_from_rtvi_cv
+
+    failures: list[str] = []
+    if cv_may_be_registered:
+        async with httpx.AsyncClient(timeout=rtvi_cv_timeout_seconds) as client:
+            success, message = await _remove_from_rtvi_cv(
+                client,
+                rtvi_cv_base_url.rstrip("/"),
+                sensor_id,
+                camera_name,
+            )
+        if not success:
+            logger.error("RTVI-CV rollback failed for %s: %s", sensor_id, message)
+            failures.append("rtvi-cv")
+
+    es_targets: list[tuple[str, str, str, str]] = []
+    if embedding_may_have_written:
+        es_targets.append(("rtvi-embed", rtvi_embed_es_index, "sensor.id.keyword", sensor_id))
+    if cv_may_be_registered:
+        es_targets.extend(
+            [
+                ("behavior", DEFAULT_BEHAVIOR_ES_INDEX, "sensor.id.keyword", camera_name),
+                ("raw", DEFAULT_RAW_ES_INDEX, "sensorId.keyword", camera_name),
+            ]
+        )
+    if es_targets and not elasticsearch_url:
+        logger.error("Search rollback is incomplete: Elasticsearch cleanup is not configured")
+        failures.append("elasticsearch-cleanup-unconfigured")
+    else:
+        for label, index_name, id_field, id_value in es_targets:
+            if not index_name:
+                failures.append(f"{label}-index-unconfigured")
+                continue
+            success, message = await _delete_es_documents(
+                elasticsearch_url,
+                index_name,
+                id_value,
+                id_field,
+            )
+            if not success:
+                logger.error("%s rollback failed for %s: %s", label, sensor_id, message)
+                failures.append(label)
+    return failures
+
+
+async def _rollback_after_cancellation(**kwargs: Any) -> list[str]:
+    """Run compensating cleanup despite request-task cancellation.
+
+    The rollback is isolated in its own task and shielded from the cancellation
+    already delivered to the request. A hard outer timeout prevents shutdown
+    from waiting indefinitely on a downstream cleanup service.
+    """
+
+    rollback = asyncio.create_task(_rollback_search_post_processing(**kwargs))
+    try:
+        return await asyncio.wait_for(
+            asyncio.shield(rollback),
+            timeout=CANCELLATION_ROLLBACK_TIMEOUT_SECONDS,
+        )
+    except TimeoutError:
+        rollback.cancel()
+        await asyncio.gather(rollback, return_exceptions=True)
+        return ["cancellation-rollback-timeout"]
+    except Exception:
+        logger.exception("Cancellation rollback raised unexpectedly")
+        return ["cancellation-rollback-error"]
 
 
 async def _run_rtvi_embedding(
@@ -441,7 +547,10 @@ async def _run_rtvi_embedding(
         logger.info("RTVI Embedding generation successful")
         # `usage.total_chunks_processed` is the server-side count; coerce
         # explicitly so mypy keeps the helper's int return type intact.
-        return int(result.get("usage", {}).get("total_chunks_processed", 0) or 0)
+        chunks_processed = int(result.get("usage", {}).get("total_chunks_processed", 0) or 0)
+        if chunks_processed <= 0:
+            raise HTTPException(status_code=502, detail="Embedding generation failed: no chunks processed")
+        return chunks_processed
 
 
 async def _run_post_upload_processing(
@@ -451,6 +560,8 @@ async def _run_post_upload_processing(
     vst_url: str,
     rtvi_embed_base_url: str,
     rtvi_cv_base_url: str = "",
+    elasticsearch_url: str = "",
+    rtvi_embed_es_index: str = "mdx-embed-filtered-2025-01-01",
     rtvi_embed_model: str = "cosmos-embed1-448p",
     rtvi_embed_chunk_duration: int = 5,
     disable_audio: bool = True,
@@ -477,6 +588,20 @@ async def _run_post_upload_processing(
             readable response message.
     """
     start_timestamp = "2025-01-01T00:00:00.000Z"
+
+    # Resolve the name from VST's allocated sensor identity rather than trusting
+    # the caller-forwarded filename. Behavior/raw indices are keyed by this
+    # name, so compensating cleanup must never use an unproved caller scope.
+    try:
+        authoritative_camera_name = await get_sensor_id_from_stream_id(sensor_id, vst_url)
+    except Exception as exc:
+        logger.error("Could not resolve VST sensor name for %s: %s", sensor_id, exc)
+        raise HTTPException(status_code=502, detail="VST sensor lookup failed") from exc
+    if not authoritative_camera_name:
+        raise HTTPException(status_code=502, detail="VST sensor lookup failed: empty sensor name")
+    if authoritative_camera_name != camera_name:
+        logger.info("Using VST-authoritative camera name for sensor %s", sensor_id)
+    camera_name = authoritative_camera_name
 
     # Get timeline
     try:
@@ -508,88 +633,154 @@ async def _run_post_upload_processing(
     }
     logger.info(f"Calling Storage API: GET {storage_url}")
 
-    async with httpx.AsyncClient(timeout=vst_storage_timeout_seconds) as client:
-        with TimeMeasure("video_ingest: get storage URL from VST"):
-            storage_response = await client.get(storage_url, params=storage_params)
+    try:
+        async with httpx.AsyncClient(timeout=vst_storage_timeout_seconds) as client:
+            with TimeMeasure("video_ingest: get storage URL from VST"):
+                storage_response = await client.get(storage_url, params=storage_params)
 
-        if storage_response.status_code != 200:
-            error_msg = f"Storage API failed with status {storage_response.status_code}: {storage_response.text}"
-            logger.error(error_msg)
-            raise HTTPException(status_code=502, detail=f"Storage API failed: {error_msg}")
+            if storage_response.status_code != 200:
+                error_msg = f"Storage API failed with status {storage_response.status_code}: {storage_response.text}"
+                logger.error(error_msg)
+                raise HTTPException(status_code=502, detail=f"Storage API failed: {error_msg}")
 
-        storage_result = storage_response.json()
-        vst_file_path = storage_result.get("videoUrl")
-        if not vst_file_path:
-            error_msg = f"Storage API response missing 'videoUrl' field: {storage_result}"
-            logger.error(error_msg)
-            raise HTTPException(status_code=502, detail=f"Storage API response invalid: {error_msg}")
+            try:
+                storage_result = storage_response.json()
+            except (TypeError, ValueError) as exc:
+                raise HTTPException(status_code=502, detail="Storage API response invalid: malformed JSON") from exc
+            vst_file_path = storage_result.get("videoUrl") if isinstance(storage_result, dict) else None
+            if not vst_file_path:
+                error_msg = f"Storage API response missing 'videoUrl' field: {storage_result}"
+                logger.error(error_msg)
+                raise HTTPException(status_code=502, detail=f"Storage API response invalid: {error_msg}")
 
-        logger.info(f"VST video URL obtained: {vst_file_path}")
+            logger.info(f"VST video URL obtained: {vst_file_path}")
+    except httpx.RequestError as exc:
+        logger.error("VST storage request failed for %s: %s", sensor_id, exc)
+        raise HTTPException(status_code=502, detail="Storage API request failed") from exc
 
-    # Register with RTVI-CV and trigger embedding generation concurrently.
-    # The two services are independent — they both consume the VST storage URL
-    # but write to disjoint backends — so running them in parallel cuts the
-    # post-upload wall time roughly down to max(cv_time, embed_time) instead
-    # of cv_time + embed_time. The embed call is the long pole (it blocks
-    # until generation completes, up to 600s), so the savings are real.
+    # Apply downstream writes in dependency order. If CV registration succeeds
+    # but embedding fails, attempt to remove that registration and the
+    # sensor-scoped documents already visible at rollback time before surfacing
+    # the failure. Delayed pipeline writes still require the bounded
+    # post-rollback absence check in the exact runtime qualification.
     parsed_cv = _parse_optional_http_url(rtvi_cv_base_url)
     parsed_embed = _parse_optional_http_url(rtvi_embed_base_url)
-
-    rtvi_tasks: list[tuple[str, Any]] = []
-
+    if rtvi_cv_base_url and parsed_cv is None:
+        raise HTTPException(status_code=502, detail="RTVI-CV configuration is invalid")
+    if rtvi_embed_base_url and parsed_embed is None:
+        raise HTTPException(status_code=502, detail="RTVI Embed configuration is invalid")
+    cv_registered = False
     if parsed_cv is not None:
-        rtvi_tasks.append(
-            (
-                "rtvi-cv",
-                _register_with_rtvi_cv(
-                    rtvi_cv_base_url=rtvi_cv_base_url,
-                    sensor_id=sensor_id,
-                    camera_name=camera_name,
-                    vst_file_path=vst_file_path,
-                    start_timestamp=start_timestamp,
-                    timeout_seconds=rtvi_cv_timeout_seconds,
-                ),
+        try:
+            await _register_with_rtvi_cv(
+                rtvi_cv_base_url=rtvi_cv_base_url,
+                sensor_id=sensor_id,
+                camera_name=camera_name,
+                vst_file_path=vst_file_path,
+                start_timestamp=start_timestamp,
+                timeout_seconds=rtvi_cv_timeout_seconds,
             )
-        )
+        except asyncio.CancelledError:
+            rollback_failures = await _rollback_after_cancellation(
+                sensor_id=sensor_id,
+                camera_name=camera_name,
+                rtvi_cv_base_url=rtvi_cv_base_url,
+                cv_may_be_registered=True,
+                embedding_may_have_written=False,
+                elasticsearch_url=elasticsearch_url,
+                rtvi_embed_es_index=rtvi_embed_es_index,
+                rtvi_cv_timeout_seconds=rtvi_cv_timeout_seconds,
+            )
+            if rollback_failures:
+                logger.error(
+                    "RTVI-CV cancellation rollback incomplete for %s: %s",
+                    sensor_id,
+                    ", ".join(rollback_failures),
+                )
+            raise
+        except Exception as exc:
+            rollback_failures = await _rollback_search_post_processing(
+                sensor_id=sensor_id,
+                camera_name=camera_name,
+                rtvi_cv_base_url=rtvi_cv_base_url,
+                cv_may_be_registered=True,
+                embedding_may_have_written=False,
+                elasticsearch_url=elasticsearch_url,
+                rtvi_embed_es_index=rtvi_embed_es_index,
+                rtvi_cv_timeout_seconds=rtvi_cv_timeout_seconds,
+            )
+            if rollback_failures:
+                raise HTTPException(
+                    status_code=502,
+                    detail=(
+                        "RTVI-CV add failed and downstream rollback was incomplete: " + ", ".join(rollback_failures)
+                    ),
+                ) from exc
+            if isinstance(exc, HTTPException):
+                raise
+            raise HTTPException(status_code=502, detail="RTVI-CV add failed: request error") from exc
+        cv_registered = True
     else:
         logger.info("RTVI-CV not configured, skipping")
 
     chunks_processed = 0
     if parsed_embed is not None:
-        rtvi_tasks.append(
-            (
-                "rtvi-embed",
-                _run_rtvi_embedding(
-                    rtvi_embed_base_url=rtvi_embed_base_url,
-                    sensor_id=sensor_id,
-                    vst_url=vst_url,
-                    vst_file_path=vst_file_path,
-                    rtvi_embed_model=rtvi_embed_model,
-                    rtvi_embed_chunk_duration=rtvi_embed_chunk_duration,
-                    start_timestamp=start_timestamp,
-                    timeout_seconds=rtvi_embed_timeout_seconds,
-                ),
+        try:
+            chunks_processed = await _run_rtvi_embedding(
+                rtvi_embed_base_url=rtvi_embed_base_url,
+                sensor_id=sensor_id,
+                vst_url=vst_url,
+                vst_file_path=vst_file_path,
+                rtvi_embed_model=rtvi_embed_model,
+                rtvi_embed_chunk_duration=rtvi_embed_chunk_duration,
+                start_timestamp=start_timestamp,
+                timeout_seconds=rtvi_embed_timeout_seconds,
             )
-        )
+        except asyncio.CancelledError:
+            rollback_failures = await _rollback_after_cancellation(
+                sensor_id=sensor_id,
+                camera_name=camera_name,
+                rtvi_cv_base_url=rtvi_cv_base_url,
+                cv_may_be_registered=cv_registered,
+                embedding_may_have_written=True,
+                elasticsearch_url=elasticsearch_url,
+                rtvi_embed_es_index=rtvi_embed_es_index,
+                rtvi_cv_timeout_seconds=rtvi_cv_timeout_seconds,
+            )
+            if rollback_failures:
+                logger.error(
+                    "Embedding cancellation rollback incomplete for %s: %s",
+                    sensor_id,
+                    ", ".join(rollback_failures),
+                )
+            raise
+        except Exception as exc:
+            rollback_failures = await _rollback_search_post_processing(
+                sensor_id=sensor_id,
+                camera_name=camera_name,
+                rtvi_cv_base_url=rtvi_cv_base_url,
+                cv_may_be_registered=cv_registered,
+                embedding_may_have_written=True,
+                elasticsearch_url=elasticsearch_url,
+                rtvi_embed_es_index=rtvi_embed_es_index,
+                rtvi_cv_timeout_seconds=rtvi_cv_timeout_seconds,
+            )
+            if rollback_failures:
+                raise HTTPException(
+                    status_code=502,
+                    detail=(
+                        "Embedding generation failed and downstream rollback was incomplete: "
+                        + ", ".join(rollback_failures)
+                    ),
+                ) from exc
+            if isinstance(exc, HTTPException):
+                raise
+            raise HTTPException(
+                status_code=502,
+                detail="Embedding generation failed: request error",
+            ) from exc
     else:
         logger.info("RTVI Embed not configured, skipping embedding generation")
-
-    if rtvi_tasks:
-        with TimeMeasure("video_ingest: RTVI-CV register + embedding generation (parallel)"):
-            results = await asyncio.gather(
-                *(coro for _, coro in rtvi_tasks),
-                return_exceptions=True,
-            )
-        # Re-raise in task-declaration order so the caller sees the same
-        # priority the old sequential code did (CV first, then embed).
-        # ``strict=True``: ``asyncio.gather`` always returns one result per
-        # awaitable, so a length mismatch would indicate a bug.
-        for (label, _), result in zip(rtvi_tasks, results, strict=True):
-            if isinstance(result, BaseException):
-                logger.error("%s task failed: %s", label, result)
-                raise result
-            if label == "rtvi-embed":
-                chunks_processed = result or 0
 
     message = (
         f"Video {filename} successfully uploaded to VST and embeddings generated"
@@ -641,6 +832,8 @@ def create_video_upload_complete_router(
     vst_internal_url: str,
     rtvi_embed_base_url: str = "",
     rtvi_cv_base_url: str = "",
+    elasticsearch_url: str = "",
+    rtvi_embed_es_index: str = "mdx-embed-filtered-2025-01-01",
     rtvi_embed_model: str = "cosmos-embed1-448p",
     rtvi_embed_chunk_duration: int = 5,
     disable_audio: bool = True,
@@ -687,6 +880,8 @@ def create_video_upload_complete_router(
                 vst_url=vst_internal_url,
                 rtvi_embed_base_url=rtvi_embed_base_url,
                 rtvi_cv_base_url=rtvi_cv_base_url,
+                elasticsearch_url=elasticsearch_url,
+                rtvi_embed_es_index=rtvi_embed_es_index,
                 rtvi_embed_model=rtvi_embed_model,
                 rtvi_embed_chunk_duration=rtvi_embed_chunk_duration,
                 disable_audio=disable_audio,
@@ -741,6 +936,8 @@ def register_video_upload_complete(app: "FastAPI", config: "Any") -> None:
                 vst_internal_url=cfg.vst_internal_url,
                 rtvi_embed_base_url=cfg.rtvi_embed_base_url,
                 rtvi_cv_base_url=cfg.rtvi_cv_base_url,
+                elasticsearch_url=cfg.elasticsearch_url,
+                rtvi_embed_es_index=cfg.rtvi_embed_es_index,
                 rtvi_embed_model=cfg.rtvi_embed_model,
                 rtvi_embed_chunk_duration=cfg.rtvi_embed_chunk_duration,
                 disable_audio=cfg.disable_audio,

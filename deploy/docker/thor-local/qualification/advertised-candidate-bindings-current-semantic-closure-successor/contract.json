@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "package_id": "advertised-candidate-bindings-current-semantic-closure-successor",
+  "mode": "additive-static-current-semantic-candidate-crosswalk",
+  "default_execution_enabled": false,
+  "warehouse_sample_bundle": "excluded",
+  "canonical_mapping_mutated": false,
+  "runtime_evidence_inputs": [],
+  "admission_inputs": [],
+  "mapping_source": {
+    "path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-rebase-successor-v2/mapping.json",
+    "sha256": "cb9bea95b4cfeab7c44441854e331a7093667d6b379fe0555692e5105ce4507f"
+  },
+  "advertised_source": {
+    "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json",
+    "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"
+  },
+  "bindings": [
+    {
+      "capability_id": "manifest-entry.base-agent-workflow.01-visual-question-answering",
+      "implementation_state": "concrete",
+      "relationship_kind": "concrete_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "base-semantic-owned-fixture-successor",
+          "path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/executor.py",
+          "role": "semantic-executor",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The exact reviewed Agent media IDs are request-bound, but the running Agent/VST API does not return a stored-media digest for readback.",
+        "No live Thor receipt, model-identity proof, admission, or canonical-bound review exists."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.base-agent-workflow.02-vlm-report-generation",
+      "implementation_state": "concrete",
+      "relationship_kind": "concrete_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "base-semantic-owned-fixture-successor",
+          "path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/executor.py",
+          "role": "semantic-executor",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The report executor verifies required sections, beginning/ending events, absent-event exclusion, pre-absence, exact cleanup, and negative quiescence, but the running Agent media digest is not readable through the public API.",
+        "No live Thor receipt, model-identity proof, admission, or canonical-bound review exists."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.video-summarization-file.02-multi-video-report",
+      "implementation_state": "partial",
+      "relationship_kind": "partial_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+          "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py",
+          "role": "semantic-executor",
+          "authorization_gated": true,
+          "executor_ready": false
+        },
+        {
+          "package_id": "thor-vss-lvs-semantic-runtime-closure-successor-v1",
+          "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/executor.py",
+          "role": "identity-and-live-caption-supplement",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "Both source identities and stored bytes can be checked, but the advertised disjoint planted events are not attributed independently to their correct source files.",
+        "No live Thor receipt exists; CA-RAG semantic correlation, report-object pre-absence, and complete unrelated Agent-state fingerprinting remain externally unavailable."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+      "implementation_state": "partial",
+      "relationship_kind": "partial_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+          "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py",
+          "role": "semantic-executor",
+          "authorization_gated": true,
+          "executor_ready": false
+        },
+        {
+          "package_id": "thor-vss-lvs-semantic-runtime-closure-successor-v1",
+          "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/executor.py",
+          "role": "identity-and-live-caption-supplement",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "Ordered HITL state is checked, but object, event, scenario, combined relationship, irrelevant-object/event, and absent-focus semantics are not all proven over one caption set.",
+        "A nonempty CA-RAG answer does not prove event/object/scenario correlation; no live Thor receipt exists and the predecessor plus supplement exceed the frozen canonical action bound."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.00-natural-language-action-event-search",
+      "implementation_state": "partial",
+      "relationship_kind": "partial_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "search-semantic-exact-fixture-provisioner-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py",
+          "role": "exact-fixture-lifecycle",
+          "authorization_gated": true,
+          "executor_ready": false
+        },
+        {
+          "package_id": "search-semantic-runtime-evidence-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py",
+          "role": "semantic-executor-requiring-adapter",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The exact functional fixture lifecycle and semantic executor are separately concrete, but no reviewed adapter translates the dynamic one-video handoff into the semantic executor's six-document/two-camera operation manifest.",
+        "The provisioned custom clip has not yet been proven to carry the target plus absent-action distractor needed by this exact oracle, and no live receipt exists.",
+        "Failed-ingest rollback has no proven drain/remediation for delayed CV/behavior/raw writes; the exact lifecycle detects delayed reappearance, but a detected failure can still require operator remediation."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.01-cv-attribute-search",
+      "implementation_state": "partial",
+      "relationship_kind": "partial_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "search-semantic-exact-fixture-provisioner-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py",
+          "role": "exact-fixture-lifecycle",
+          "authorization_gated": true,
+          "executor_ready": false
+        },
+        {
+          "package_id": "search-semantic-runtime-evidence-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py",
+          "role": "semantic-executor-requiring-adapter",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The new lifecycle reconciles one model-generated tracked object across behavior/raw indices, but no adapter supplies a two-track split-attribute negative to the semantic executor.",
+        "The exact same-object attribute conjunction and minimum one-second clip result have no live Thor receipt.",
+        "Failed-ingest rollback has no proven drain/remediation for delayed CV/behavior/raw writes; the exact lifecycle detects delayed reappearance, but a detected failure can still require operator remediation."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.02-multi-embedding-fusion",
+      "implementation_state": "partial",
+      "relationship_kind": "partial_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "search-semantic-exact-fixture-provisioner-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py",
+          "role": "exact-fixture-lifecycle",
+          "authorization_gated": true,
+          "executor_ready": false
+        },
+        {
+          "package_id": "search-semantic-runtime-evidence-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py",
+          "role": "semantic-executor-requiring-adapter",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The fixed deployed indices and dynamic model-generated document set are now discoverable, but there is no adapter that builds the deterministic target/distractor fusion manifest while the owned lifecycle is active.",
+        "Internal embedding-before-rerank branch identity is not exposed by the response and no live Thor receipt exists.",
+        "Failed-ingest rollback has no proven drain/remediation for delayed CV/behavior/raw writes; the exact lifecycle detects delayed reappearance, but a detected failure can still require operator remediation."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.03-search-by-image",
+      "implementation_state": "partial",
+      "relationship_kind": "partial_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "search-semantic-exact-fixture-provisioner-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py",
+          "role": "exact-fixture-lifecycle",
+          "authorization_gated": true,
+          "executor_ready": false
+        },
+        {
+          "package_id": "search-semantic-runtime-evidence-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py",
+          "role": "semantic-executor-requiring-adapter",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The lifecycle discovers a valid bbox for a model-generated object, but no adapter maps that dynamic handoff to the semantic executor's separately pinned selected-object fixture.",
+        "The shipped request omits raw image/bbox fields and no live Thor receipt proves object-above-background ranking.",
+        "Failed-ingest rollback has no proven drain/remediation for delayed CV/behavior/raw writes; the exact lifecycle detects delayed reappearance, but a detected failure can still require operator remediation."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.semantic-search.07-file-and-rtsp-archive-management",
+      "implementation_state": "partial",
+      "relationship_kind": "partial_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "search-semantic-exact-fixture-provisioner-successor",
+          "path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py",
+          "role": "exact-fixture-lifecycle",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The file archive path now has VST-allocated stable identity, fail-closed completion, exact cross-system cleanup, and delayed no-reappearance checks.",
+        "RTSP add/readiness/delete is not implemented by this Search lifecycle and no live Thor receipt exists.",
+        "Failed-ingest rollback has no proven drain/remediation for delayed CV/behavior/raw writes; the exact lifecycle detects delayed reappearance, but a detected failure can still require operator remediation."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    },
+    {
+      "capability_id": "manifest-entry.main-ui.05-chunked-upload-and-rtsp-management",
+      "implementation_state": "concrete",
+      "relationship_kind": "concrete_executor_candidate",
+      "executor_ready": false,
+      "executor_references": [
+        {
+          "package_id": "thor-ui-video-management-playwright-successor-v1",
+          "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py",
+          "role": "rendered-semantic-executor",
+          "authorization_gated": true,
+          "executor_ready": false
+        }
+      ],
+      "coverage_status": "incomplete_no_live_receipt",
+      "retained_gaps": [
+        "The browser candidate reconstructs and hashes two ordered chunks per fixture and exercises distinct RTSP lifecycle plus cleanup, but no rendered live Thor receipt exists.",
+        "The honest 40-browser-action/32-API-exchange envelope has not been reconciled with the frozen 11/11 canonical bound."
+      ],
+      "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
+    }
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-rebase-successor-v2/mapping.json", "sha256": "cb9bea95b4cfeab7c44441854e331a7093667d6b379fe0555692e5105ce4507f"},
+    {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.json", "sha256": "d3026a85a7392d0f20521ab980da669720759a1f19f81cd158b70e11bc3ff204"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.schema.json", "sha256": "013c90984595035f6b08fdd50fafc4a252aafdc8911172dbb8c7a5ab21cee3fd"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/executor.py", "sha256": "e5a4dc8e97b27d5fea701706c8c0498a02fb6d56c2a552531a6bc9f95e63572b"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/request-manifest.schema.json", "sha256": "5bc6a9f678df4202dff87a5d2518dfee0c21e47720d7871357676e97329fa70a"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/receipt.schema.json", "sha256": "0706fdeb365414e0d0c9159e76374a0faaa06b89abf5f1465094ac4830c41950"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/contract.json", "sha256": "4fc9e5519b90968b8e639ba70b5783a2dbdd17b35c6f726844d74d62ba7c91d4"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/executor.py", "sha256": "ae6192f4fbdba4cedb6baa610f88262dc5eaf570c8304bc85e1ddd0301a739c4"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/manifest.schema.json", "sha256": "5100bfe1f777a06bd59fdf8ff8f68b017860e521787a57183775ba233c3d8019"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-closure-successor/receipt.schema.json", "sha256": "afdf507f1fe4da28ce7e3d43ab120e0fa5f21476f985db6490f6962417486032"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "d0b5840a565407989b5db9e72038f0f565c262f7f99df7975ad8e98177459dcd"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/manifest.schema.json", "sha256": "cefe7a9a02de26a8e6f41b963734ed4711b789443e576ad93669eeb895ac8397"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/receipt.schema.json", "sha256": "03247b5b625b6d10d779333de20caea8ad02b53f4d88e85c62595977d6bc9b30"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/contract.json", "sha256": "cb14f1dfcf4d38315dae6b8076e12747fa0d955ae1ca4b45782baa4f9e41418b"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py", "sha256": "b3ca10e9f982c13b6490bdbea45861369075dc04e3c515d3bbfebf2f72e2db80"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-exact-fixture-provisioner-successor/receipt.schema.json", "sha256": "3c968a8864b76d652745196105c025a11d344b961b55f80d7eeb2126d20cbb69"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "sha256": "2a2c739600fb45293811334fbee6bda0cb21f64d117dd8390897de01c2c2b2ff"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.schema.json", "sha256": "068e7ee6d378f26c60963c616bbdae3dbdce594cd0b5ed07c49bbb46b96f6dc3"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py", "sha256": "ae8d669faa819e9a07ef4bd0903f33ada98f0cb0cc1236c8a03f1f12528d1946"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/manifest.schema.json", "sha256": "7f5b0da039ddf5edf0a987e8c58cf5d937a9098ff7e599a8d620229081bea377"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/receipt.schema.json", "sha256": "443d4254ed988123b03a31d261c5179c93e41d4fd380403b6c7c1471cbe08d21"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "93dba40bc1ccaf7dd2d3496af67d4908af878110b3bf75eb50d10f248c6c6592"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py", "sha256": "d193ddc9819d5db5d59b875000c217f45b3ce2b9d3eac0f7e16af57db7686e52"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs", "sha256": "6a8a7ee3dfa7ea55908056274a50d1d3983f4b58e0d85a1acb29b815bdc644aa"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/manifest.schema.json", "sha256": "e67a162b482c81488f2d3fa55df096d262da205dfdfc96ac8ed2b826079d35cb"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/receipt.schema.json", "sha256": "25a4b87cf0b7aa77da38be0ef6e7ba88bcc5508eef4c76ccdc7e10b80d72483f"}
+  ]
+}

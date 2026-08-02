@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "promotion_eligible", "canonical_state_advanced", "case_id", "contract_sha256", "manifest_sha256", "predecessor_receipt_sha256", "fixture", "semantics", "object_store"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "base-semantic-owned-fixture-successor"},
+    "mode": {"const": "bounded-http-owned-fixture-candidate"},
+    "status": {"const": "semantic_closure_candidate_complete_non_promoting"},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "case_id": {"enum": ["tiny-agent-media", "hitl-state-transcript"]},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "manifest_sha256": {"$ref": "#/$defs/sha"},
+    "predecessor_receipt_sha256": {"$ref": "#/$defs/sha"},
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fixture_id", "primary_sha256", "primary_bytes", "secondary_sha256", "secondary_bytes", "primary_local_bytes_verified", "secondary_local_bytes_verified", "agent_media_ids_request_bound", "agent_media_digest_readback_proven"],
+      "properties": {
+        "fixture_id": {"const": "thor-base-avsync-c569a1a3-v1"},
+        "primary_sha256": {"const": "c569a1a381a9b8f1f86cd4cb665285044cc16d05a79c96e992f938ca3a2470ad"},
+        "primary_bytes": {"const": 2617799},
+        "secondary_sha256": {"$ref": "#/$defs/sha"},
+        "secondary_bytes": {"type": "integer", "minimum": 1, "maximum": 33554432},
+        "primary_local_bytes_verified": {"const": true},
+        "secondary_local_bytes_verified": {"const": true},
+        "agent_media_ids_request_bound": {"const": true},
+        "agent_media_digest_readback_proven": {"const": false}
+      }
+    },
+    "semantics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["vqa_steps_verified", "report_sections_verified", "beginning_events_verified", "ending_events_verified", "absent_events_excluded", "negative_steps_no_report_delta", "semantic_values_request_leakage_rejected"],
+      "properties": {
+        "vqa_steps_verified": {"type": "array", "maxItems": 3, "uniqueItems": true, "items": {"enum": ["qa-mp4", "qa-mkv", "followup-qa"]}},
+        "report_sections_verified": {"const": true},
+        "beginning_events_verified": {"const": true},
+        "ending_events_verified": {"const": true},
+        "absent_events_excluded": {"const": true},
+        "negative_steps_no_report_delta": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"enum": ["reject-unsupported-media", "cancel", "empty-submit"]}},
+        "semantic_values_request_leakage_rejected": {"const": true}
+      }
+    },
+    "object_store": {
+      "type": "object", "additionalProperties": false,
+      "required": ["root_sha256", "pre_snapshot_sha256", "post_snapshot_sha256", "pre_report_object_count", "preexisting_report_pair_absence_proven", "exact_pair_only_removed", "post_snapshot_equals_pre_snapshot", "foreign_report_objects_mutated", "snapshot_complete_within_bounds", "negative_quiescence_seconds"],
+      "properties": {
+        "root_sha256": {"$ref": "#/$defs/sha"},
+        "pre_snapshot_sha256": {"$ref": "#/$defs/sha"},
+        "post_snapshot_sha256": {"$ref": "#/$defs/sha"},
+        "pre_report_object_count": {"const": 0},
+        "preexisting_report_pair_absence_proven": {"const": true},
+        "exact_pair_only_removed": {"const": true},
+        "post_snapshot_equals_pre_snapshot": {"const": true},
+        "foreign_report_objects_mutated": {"const": false},
+        "snapshot_complete_within_bounds": {"const": true},
+        "negative_quiescence_seconds": {"const": 2}
+      }
+    }
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

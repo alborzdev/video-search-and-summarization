@@ -11,8 +11,8 @@ This package proves only source-locked, static candidate status.
   the selected 14-action oracle; report-object preexisting absence and complete
   unrelated Agent state restoration are not proven.
 - Search has a blocker proof, not a safe fixture provisioner or runtime adapter.
-- UI has a concrete regular-Playwright candidate, not Browser-plugin evidence,
-  a pinned transitive Playwright graph, or rendered runtime evidence.
+- UI has a concrete regular-Playwright candidate with digest-pinned Playwright
+  package trees, but not Browser-plugin or rendered runtime evidence.
 - The Warehouse sample bundle is excluded.
 
 Compilation and tests perform bounded repository reads only. They do not make

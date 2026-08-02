@@ -60,6 +60,8 @@ class TestRegisterVideoSearchIngestRoutes:
             vst_external_url="http://vst.public:8080",
             rtvi_embed_base_url="http://rtvi-embed:8017",
             rtvi_cv_base_url="",
+            elasticsearch_url="",
+            rtvi_embed_es_index="mdx-embed-filtered-2025-01-01",
             rtvi_embed_model="cosmos-embed1-448p",
             rtvi_embed_chunk_duration=5,
         )

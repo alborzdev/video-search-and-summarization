@@ -261,6 +261,22 @@ class TestGetNameToStreamIdMap:
 
         assert result == {}
 
+    @pytest.mark.asyncio
+    async def test_duplicate_sensor_name_fails_closed(self):
+        duplicate = [
+            {"stream-1": [{"name": "shared-name"}]},
+            {"stream-2": [{"name": "shared-name"}]},
+        ]
+        mock_response = create_mock_response(200, json.dumps(duplicate))
+        mock_session = create_mock_session(mock_response)
+
+        with (
+            patch("vss_agents.tools.vst.utils.aiohttp.ClientSession", return_value=mock_session),
+            patch("vss_agents.tools.vst.utils.create_retry_strategy", side_effect=no_retry_generator),
+            pytest.raises(VSTError, match="duplicate VST sensor name"),
+        ):
+            await get_name_to_stream_id_map("http://localhost:30888")
+
 
 class TestGetTimeline:
     """Test get_timeline function."""

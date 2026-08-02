@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-lvs-semantic-runtime-closure-successor-v1",
+  "mode": "authorization-gated-bounded-numeric-loopback-http-supplement",
+  "default_execution_enabled": false,
+  "predecessor_package": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+  "capability_id": "runtime.agent.lvs-profile",
+  "oracle_id": "oracle.runtime.agent.lvs-profile",
+  "warehouse_sample_bundle": "excluded",
+  "authorization": {
+    "authorization_id": "lvs-semantic-runtime-closure",
+    "acknowledgement": "I_ACK_LVS_CLOSURE_RUNTIME_AND_LIVE_CAPTION_GENERATION"
+  },
+  "transport": {
+    "numeric_loopback_only": true,
+    "scheme": "http",
+    "proxies": false,
+    "follow_redirects": false,
+    "max_response_bytes": 67108864,
+    "short_timeout_seconds": 15,
+    "caption_timeout_seconds": 300,
+    "poll_attempts": 5,
+    "poll_delay_seconds": 2,
+    "cleanup_quiescence_seconds": 2,
+    "cleanup_reserve_seconds": 300
+  },
+  "execution_bounds": {
+    "max_requests": 24,
+    "max_actions": 24,
+    "max_duration_seconds": 1800,
+    "owned_fixture_count": 2,
+    "owned_stream_count": 1
+  },
+  "ownership": {
+    "live_stream_uuid_derivation": "uuid5:51f4f906-4bf4-5df5-ae4e-7f814ab47a41:<run_id>",
+    "exclusive_collection_attestation_required": true,
+    "preexisting_collection_must_be_empty": true
+  },
+  "workflow": [
+    {"order": 1, "id": "discover-five-agent-tools", "method": "GET", "surface": "agent", "path": "/api/v1/runtime-tools/lvs", "max_cost": 1},
+    {"order": 2, "id": "verify-lvs-ready", "method": "GET", "surface": "lvs", "path": "/v1/ready", "max_cost": 1},
+    {"order": 3, "id": "verify-lvs-build", "method": "GET", "surface": "lvs", "path": "/v1/metadata", "max_cost": 1},
+    {"order": 4, "id": "verify-lvs-model", "method": "GET", "surface": "lvs", "path": "/models", "max_cost": 1},
+    {"order": 5, "id": "capture-complete-vst-timeline", "method": "GET", "surface": "vst", "path": "/vst/api/v1/storage/timelines", "max_cost": 1},
+    {"order": 6, "id": "resolve-first-owned-vst-object", "method": "GET", "surface": "vst", "path": "/vst/api/v1/storage/file/{sensor_id}/url", "max_cost": 1},
+    {"order": 7, "id": "hash-first-owned-vst-object", "method": "GET", "surface": "media", "path": "response-derived-exact-video-url", "max_cost": 1},
+    {"order": 8, "id": "resolve-second-owned-vst-object", "method": "GET", "surface": "vst", "path": "/vst/api/v1/storage/file/{sensor_id}/url", "max_cost": 1},
+    {"order": 9, "id": "hash-second-owned-vst-object", "method": "GET", "surface": "media", "path": "response-derived-exact-video-url", "max_cost": 1},
+    {"order": 10, "id": "prove-live-caption-collection-preexisting-empty", "method": "POST", "surface": "elasticsearch", "path": "/default_{stream_id}/_search", "max_cost": 1},
+    {"order": 11, "id": "start-live-caption", "method": "POST", "surface": "lvs", "path": "/v1/generate_captions", "max_cost": 1},
+    {"order": 12, "id": "observe-live-caption-logstash-delivery", "method": "POST", "surface": "elasticsearch", "path": "/default_{stream_id}/_search", "max_cost": 5},
+    {"order": 13, "id": "retrieve-live-caption-from-ca-rag", "method": "POST", "surface": "lvs", "path": "/v1/stream_summarize", "max_cost": 1},
+    {"order": 14, "id": "verify-complete-vst-timeline-preserved", "method": "GET", "surface": "vst", "path": "/vst/api/v1/storage/timelines", "max_cost": 1},
+    {"order": 15, "id": "stop-exact-live-caption-stream", "method": "DELETE", "surface": "rtvi-vlm", "path": "/v1/generate_captions/{stream_id}", "max_cost": 1},
+    {"order": 16, "id": "prove-stopped-delivery-quiescence", "method": "POST", "surface": "elasticsearch", "path": "/default_{stream_id}/_search", "max_cost": 2},
+    {"order": 17, "id": "delete-exact-owned-caption-collection", "method": "POST", "surface": "elasticsearch", "path": "/default_{stream_id}/_delete_by_query", "max_cost": 1},
+    {"order": 18, "id": "prove-owned-caption-collection-absent", "method": "POST", "surface": "elasticsearch", "path": "/default_{stream_id}/_search", "max_cost": 2}
+  ],
+  "semantic_coverage": {
+    "closed_by_this_successor": [
+      "discover-five-tools-at-runtime",
+      "fixture-byte-identity-readback",
+      "fixture-duration-identity-readback",
+      "verify-lvs-build-model-and-rtvi-readiness",
+      "prove-live-caption-collection-preexisting-empty",
+      "start-live-caption",
+      "observe-live-caption-logstash-delivery",
+      "retrieve-live-caption-through-ca-rag",
+      "preserve-complete-vst-timeline-state",
+      "stop-live-caption-and-wait-for-pipeline-drain",
+      "delete-only-the-preempty-owned-caption-collection",
+      "prove-delayed-owned-caption-collection-absence"
+    ],
+    "closed_by_predecessor": [
+      "single-video-report",
+      "multi-video-report",
+      "write-shared-prompt-first",
+      "overwrite-shared-prompt-latest",
+      "reject-cross-agent-prompt-visibility",
+      "exact-response-derived-report-cleanup"
+    ],
+    "still_unavoidable": {
+      "ca-rag-answer-semantic-correlation": "the exact stream and model return a nonempty CA-RAG answer after the owned collection becomes populated, but the public response and count-only Elasticsearch observation do not prove that answer content is grounded in the delivered event, object, or scenario rather than prompt echo",
+      "disconnect-cancel-quiescence-live-receipt": "the implementation cancels, waits for quiescence, and cleans the exact request, but the public API intentionally removes that request before a separate observer can retrieve a terminal cancellation receipt",
+      "report-object-preexisting-absence": "report keys contain a server-generated completion timestamp and the Agent static-object API has no namespace listing operation, so the exact future keys cannot be queried before creation",
+      "complete-unrelated-agent-state-fingerprint": "NAT conversation checkpoints and the two LVS in-process state stores expose no read-only complete-state digest; behavioral isolation is proven, but complete byte-equivalent Agent state is not externally enumerable",
+      "exact-kafka-logstash-process-identity": "a pre-empty exact Elasticsearch collection becoming populated and retrievable in CA-RAG proves the running delivery chain, but public LVS APIs do not return Kafka and Logstash image or process digests",
+      "canonical-fourteen-request-bound": "the frozen canonical 14-action envelope cannot contain the predecessor's 34 Agent actions plus these independent identity and live-caption observations"
+    }
+  },
+  "evidence": {
+    "records_raw_payloads": false,
+    "records_raw_urls": false,
+    "records_raw_resource_ids": false,
+    "records_response_size_and_sha256": true,
+    "promotion_eligible": false,
+    "executor_ready": false,
+    "canonical_state_advanced": false
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebase-successor/post-state-capability-oracles.json", "sha256": "911c38e2db0f92bdcc46938c90bac67626ef1009a4e131f1feee5538dcbee021"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "d0b5840a565407989b5db9e72038f0f565c262f7f99df7975ad8e98177459dcd"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
+    {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "b9b5354f32dd32c89e798559c7080b045d55cee8df41ca4822bdabab48f88075"},
+    {"path": "services/video-summarization/src/via_server.py", "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},
+    {"path": "services/video-summarization/src/vss_api_models.py", "sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"}
+  ]
+}

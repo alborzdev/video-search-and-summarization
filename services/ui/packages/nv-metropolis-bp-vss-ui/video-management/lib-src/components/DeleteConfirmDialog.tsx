@@ -125,6 +125,12 @@ export const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
           <p className="text-sm text-gray-700 dark:text-gray-300">
             Are you sure you want to delete the following?
           </p>
+          <p
+            data-testid="delete-irreversible-warning"
+            className="text-sm font-medium text-red-700 dark:text-red-300"
+          >
+            This deletion is irreversible and cannot be undone.
+          </p>
 
           {previewNames.length > 0 && (
             <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-neutral-900 max-h-40 overflow-auto">

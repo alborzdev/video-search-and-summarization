@@ -12,6 +12,33 @@ const MAX_INPUT = 256 * 1024;
 const MAX_ACTIONS = 40;
 const MAX_API = 32;
 const CLEANUP_ACTION_RESERVE = 3;
+const MAX_AGENT_DELETE_RESPONSE_BYTES = 64 * 1024;
+const WORKFLOW_DEADLINE_MS = 175 * 1000;
+const CLEANUP_RESERVE_MS = 45 * 1000;
+const ACTION_TIMEOUT_MS = 15 * 1000;
+const LONG_WAIT_TIMEOUT_MS = 90 * 1000;
+const CLEANUP_HTTP_TIMEOUT_MS = 7 * 1000;
+
+function remainingTimeout(deadline, maximum) {
+  const remaining = deadline - Date.now();
+  if (remaining <= 0) throw new Error("deadline");
+  return Math.max(1, Math.min(maximum, remaining));
+}
+
+async function withinDeadline(operation, deadline, maximum) {
+  const timeout = remainingTimeout(deadline, maximum);
+  let timer;
+  try {
+    return await Promise.race([
+      Promise.resolve().then(() => operation(timeout)),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error("deadline")), timeout);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function fail(code) {
   fsSync.writeSync(1, JSON.stringify({ status: "error", code }));
@@ -31,6 +58,24 @@ function stable(value) {
     );
   }
   return value;
+}
+
+function mediaPart(body, contentType, expectedFileName) {
+  const boundaryMatch = /boundary=(?:"([^"]+)"|([^;\s]+))/i.exec(contentType);
+  if (!boundaryMatch) throw new Error("multipart-boundary");
+  const boundary = boundaryMatch[1] ?? boundaryMatch[2];
+  const disposition = Buffer.from(
+    `name="mediaFile"; filename="${expectedFileName}"`,
+  );
+  const dispositionAt = body.indexOf(disposition);
+  if (dispositionAt < 0 || body.indexOf(disposition, dispositionAt + 1) >= 0) {
+    throw new Error("multipart-media-part");
+  }
+  const payloadAt = body.indexOf(Buffer.from("\r\n\r\n"), dispositionAt);
+  const terminator = Buffer.from(`\r\n--${boundary}`);
+  const payloadEnd = payloadAt < 0 ? -1 : body.indexOf(terminator, payloadAt + 4);
+  if (payloadAt < 0 || payloadEnd < 0) throw new Error("multipart-media-part");
+  return body.subarray(payloadAt + 4, payloadEnd);
 }
 
 function numericLoopbackOrigin(text) {
@@ -73,17 +118,25 @@ async function stdinJson() {
 function flattenStreams(value) {
   if (!Array.isArray(value)) throw new Error("streams");
   const rows = [];
+  const seenSensorIds = new Set();
   for (const sensor of value) {
     if (!sensor || typeof sensor !== "object" || Array.isArray(sensor)) {
       throw new Error("streams");
     }
     for (const [sensorId, streams] of Object.entries(sensor)) {
-      if (!Array.isArray(streams)) throw new Error("streams");
+      if (!sensorId || seenSensorIds.has(sensorId) || !Array.isArray(streams)) {
+        throw new Error("streams");
+      }
+      seenSensorIds.add(sensorId);
+      if (streams.length === 0) {
+        rows.push({ sensorId, streamId: "", name: "", emptySensor: true });
+        continue;
+      }
       for (const stream of streams) {
         if (!stream || typeof stream !== "object" || Array.isArray(stream)) {
           throw new Error("streams");
         }
-        rows.push({ sensorId, ...stream });
+        rows.push({ ...stream, sensorId, emptySensor: false });
       }
     }
   }
@@ -94,13 +147,16 @@ function flattenStreams(value) {
 
 async function main() {
   const input = await stdinJson();
+  const workflowDeadline = Date.now() + WORKFLOW_DEADLINE_MS;
+  const cleanupDeadline = workflowDeadline + CLEANUP_RESERVE_MS;
   const uiOrigin = numericLoopbackOrigin(input.ui_origin);
   const cdpOrigin = numericLoopbackOrigin(input.cdp_origin);
   const vstOrigin = numericLoopbackOrigin(input.vst_origin);
   const agentOrigin = numericLoopbackOrigin(input.agent_origin);
-  if (new Set([uiOrigin, cdpOrigin, vstOrigin, agentOrigin]).size !== 4) {
+  if ([uiOrigin, vstOrigin, agentOrigin].includes(cdpOrigin)) {
     throw new Error("origin");
   }
+  const vstApiBase = `${vstOrigin}/vst/api`;
 
   const moduleUrl = pathToFileURL(input.playwright_module).href;
   const imported = await import(moduleUrl);
@@ -109,35 +165,55 @@ async function main() {
     throw new Error("playwright");
   }
 
-  const browser = await chromium.connectOverCDP(cdpOrigin, { timeout: 10000 });
+  const browser = await chromium.connectOverCDP(cdpOrigin, {
+    timeout: remainingTimeout(workflowDeadline, 10000),
+  });
   const contexts = browser.contexts();
   if (contexts.length !== 1) throw new Error("browser-context");
-  const page = await contexts[0].newPage();
+  const page = await withinDeadline(
+    () => contexts[0].newPage(),
+    workflowDeadline,
+    ACTION_TIMEOUT_MS,
+  );
+  page.setDefaultTimeout(ACTION_TIMEOUT_MS);
+  page.setDefaultNavigationTimeout(ACTION_TIMEOUT_MS);
   let actions = 1;
   let apiExchanges = 0;
   const consoleErrors = [];
   const redirectStatuses = [];
-  const apiOrigins = new Set([vstOrigin, agentOrigin]);
+  const uploadCaptures = [];
 
   const workflowAct = async (operation) => {
     if (actions >= MAX_ACTIONS - CLEANUP_ACTION_RESERVE) {
       throw new Error("browser-budget");
     }
     actions += 1;
-    return operation();
+    return withinDeadline((timeout) => {
+      page.setDefaultTimeout(timeout);
+      page.setDefaultNavigationTimeout(timeout);
+      return operation(timeout);
+    }, workflowDeadline, ACTION_TIMEOUT_MS);
   };
   const cleanupAct = async (operation) => {
     if (actions >= MAX_ACTIONS) throw new Error("browser-budget");
     actions += 1;
-    return operation();
+    return withinDeadline((timeout) => operation(timeout), cleanupDeadline, CLEANUP_HTTP_TIMEOUT_MS);
   };
+  const workflowWait = async (operation, maximum = ACTION_TIMEOUT_MS) =>
+    withinDeadline((timeout) => {
+      page.setDefaultTimeout(timeout);
+      return operation(timeout);
+    }, workflowDeadline, maximum);
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(sha(message.text()));
   });
   page.on("pageerror", (error) => consoleErrors.push(sha(error.message)));
   page.on("response", (response) => {
     const url = new URL(response.url());
-    if (apiOrigins.has(url.origin)) {
+    if (
+      (url.origin === vstOrigin && url.pathname.startsWith("/vst/api/")) ||
+      (url.origin === agentOrigin && url.pathname.startsWith("/api/"))
+    ) {
       apiExchanges += 1;
       if (apiExchanges > MAX_API) consoleErrors.push(sha("api-budget"));
       if (response.status() >= 300 && response.status() < 400) {
@@ -145,52 +221,99 @@ async function main() {
       }
     }
   });
+  page.on("request", (request) => {
+    if (
+      request.method() === "POST" &&
+      request.url() === `${vstApiBase}/v1/storage/file`
+    ) {
+      uploadCaptures.push(
+        (async () => {
+          const headers = await request.allHeaders();
+          const body = request.postDataBuffer();
+          if (!body) throw new Error("upload-body");
+          const fileName = headers["nvstreamer-file-name"];
+          if (!fixtureNames.includes(fileName)) throw new Error("upload-filename");
+          return {
+            fileName,
+            identifier: headers["nvstreamer-identifier"],
+            chunkNumber: Number(headers["nvstreamer-chunk-number"]),
+            totalChunks: Number(headers["nvstreamer-total-chunks"]),
+            isLastChunk: headers["nvstreamer-is-last-chunk"],
+            payload: mediaPart(body, headers["content-type"] ?? "", fileName),
+          };
+        })(),
+      );
+    }
+  });
 
-  const ownedIds = new Set(input.owned_sensor_ids);
+  const ownedIds = new Set();
   const fixtureNames = input.fixtures.map((row) => row.path.split("/").at(-1));
-  const rtspName = input.owned_sensor_ids[2];
+  const streamNames = fixtureNames.map((name) => name.replace(/\.[^.]+$/, ""));
+  if (new Set(streamNames).size !== streamNames.length) {
+    throw new Error("owned-name-collision");
+  }
+  const rtspName = input.owned_rtsp_name;
+  const ownedNames = new Set([...streamNames, rtspName]);
   const registered = new Map();
   let preStateCaptured = false;
   let beforeDigest = null;
   let cleanupVerified = false;
 
-  const readStreams = async () => {
-    const value = await page.evaluate(async (url) => {
-      const response = await fetch(url, { redirect: "error" });
+  const readStreams = async (
+    deadline = workflowDeadline,
+    maximum = ACTION_TIMEOUT_MS,
+  ) => {
+    const timeout = remainingTimeout(deadline, maximum);
+    const value = await withinDeadline(() => page.evaluate(async (request) => {
+      const response = await fetch(request.url, {
+        redirect: "error",
+        signal: AbortSignal.timeout(request.timeout),
+      });
       if (!response.ok) throw new Error("stream list failed");
       return response.json();
-    }, `${vstOrigin}/v1/replay/streams`);
+    }, {
+      url: `${vstApiBase}/v1/replay/streams`,
+      timeout,
+    }), deadline, maximum);
     return flattenStreams(value);
   };
 
   const unrelated = (rows) =>
     rows.filter((row) => !ownedIds.has(String(row.sensorId)));
 
+  const uniqueNamedRow = (rows, name) => {
+    const matches = rows.filter((row) => String(row.name) === name);
+    if (matches.length !== 1 || !String(matches[0].sensorId)) {
+      throw new Error("owned-name-reconciliation");
+    }
+    return matches[0];
+  };
+
   const reconcileAndCleanup = async () => {
     if (!preStateCaptured || beforeDigest === null) return;
-    const observed = await readStreams();
+    const observed = await readStreams(cleanupDeadline, CLEANUP_HTTP_TIMEOUT_MS);
     for (let index = 0; index < 2; index += 1) {
-      if (
-        observed.some(
-          (row) =>
-            String(row.sensorId) === input.owned_sensor_ids[index] &&
-            String(row.name) === fixtureNames[index],
-        )
-      ) {
-        registered.set(input.owned_sensor_ids[index], {
+      const matches = observed.filter(
+        (row) => String(row.name) === streamNames[index],
+      );
+      if (matches.length > 1) throw new Error("owned-name-reconciliation");
+      if (matches.length === 1) {
+        const sensorId = String(matches[0].sensorId);
+        if (!sensorId) throw new Error("owned-name-reconciliation");
+        ownedIds.add(sensorId);
+        registered.set(sensorId, {
           kind: "video",
-          name: fixtureNames[index],
+          name: streamNames[index],
         });
       }
     }
-    if (
-      observed.some(
-        (row) =>
-          String(row.sensorId) === input.owned_sensor_ids[2] &&
-          String(row.name) === rtspName,
-      )
-    ) {
-      registered.set(input.owned_sensor_ids[2], { kind: "rtsp", name: rtspName });
+    const rtspMatches = observed.filter((row) => String(row.name) === rtspName);
+    if (rtspMatches.length > 1) throw new Error("owned-name-reconciliation");
+    if (rtspMatches.length === 1) {
+      const sensorId = String(rtspMatches[0].sensorId);
+      if (!sensorId) throw new Error("owned-name-reconciliation");
+      ownedIds.add(sensorId);
+      registered.set(sensorId, { kind: "rtsp", name: rtspName });
     }
 
     let deletionFailed = false;
@@ -200,23 +323,69 @@ async function main() {
           ? `/rtsp-streams/delete/${encodeURIComponent(resource.name)}`
           : `/videos/${encodeURIComponent(sensorId)}`;
       try {
-        const status = await cleanupAct(() =>
-          page.evaluate(async (url) => {
-            const response = await fetch(url, { method: "DELETE", redirect: "error" });
-            return response.status;
-          }, `${agentOrigin}${path}`),
+        await cleanupAct((timeout) =>
+          page.evaluate(async (request) => {
+            const response = await fetch(request.url, {
+              method: "DELETE",
+              redirect: "error",
+              signal: AbortSignal.timeout(request.timeout),
+            });
+            const declaredLength = response.headers.get("content-length");
+            if (
+              declaredLength !== null &&
+              (!/^\d+$/.test(declaredLength) ||
+                Number(declaredLength) > request.maxResponseBytes)
+            ) {
+              throw new Error("agent-delete-response");
+            }
+            const text = await response.text();
+            if (
+              new TextEncoder().encode(text).byteLength > request.maxResponseBytes
+            ) {
+              throw new Error("agent-delete-response");
+            }
+            let value;
+            try {
+              value = JSON.parse(text);
+            } catch (_error) {
+              throw new Error("agent-delete-response");
+            }
+            if (
+              !response.ok ||
+              !value ||
+              typeof value !== "object" ||
+              Array.isArray(value) ||
+              value.status !== "success"
+            ) {
+              throw new Error("agent-delete-response");
+            }
+            if (
+              (request.kind === "video" &&
+                value.video_id !== request.expectedIdentity) ||
+              (request.kind === "rtsp" && value.name !== request.expectedName)
+            ) {
+              throw new Error("agent-delete-identity");
+            }
+          }, {
+            url: `${agentOrigin}/api/v1${path}`,
+            kind: resource.kind,
+            expectedIdentity: sensorId,
+            expectedName: resource.name,
+            maxResponseBytes: MAX_AGENT_DELETE_RESPONSE_BYTES,
+            timeout,
+          }),
         );
-        if ((status < 200 || status >= 300) && status !== 404) {
-          deletionFailed = true;
-        }
       } catch (_error) {
         deletionFailed = true;
       }
     }
-    const finalRows = await readStreams();
+    const finalRows = await readStreams(cleanupDeadline, CLEANUP_HTTP_TIMEOUT_MS);
     if (
       deletionFailed ||
-      finalRows.some((row) => ownedIds.has(String(row.sensorId)))
+      finalRows.some(
+        (row) =>
+          ownedIds.has(String(row.sensorId)) || ownedNames.has(String(row.name)),
+      )
     ) {
       throw new Error("cleanup-owned-remains");
     }
@@ -228,39 +397,55 @@ async function main() {
 
   try {
     await workflowAct(() => page.setViewportSize({ width: 1440, height: 900 }));
-    await workflowAct(() => page.goto(`${uiOrigin}/`, { waitUntil: "domcontentloaded", timeout: 30000 }));
+    await workflowAct((timeout) =>
+      page.goto(`${uiOrigin}/`, { waitUntil: "domcontentloaded", timeout }),
+    );
     await workflowAct(() => page.getByTestId("sidebar-tab-video-management").click());
-    await page.getByText("Video Management", { exact: true }).first().waitFor();
+    await workflowWait((timeout) =>
+      page.getByText("Video Management", { exact: true }).first().waitFor({ timeout }),
+    );
 
-    const title = await page.title();
-    const bodyText = (await page.locator("body").innerText()).trim();
     const overlay = page.locator(
       "nextjs-portal, [data-nextjs-dialog-overlay], #webpack-dev-server-client-overlay",
     );
+    const [title, rawBodyText, overlayCount] = await workflowWait(() =>
+      Promise.all([
+        page.title(),
+        page.locator("body").innerText(),
+        overlay.count(),
+      ]),
+    );
+    const bodyText = rawBodyText.trim();
     if (
       page.url() !== `${uiOrigin}/` ||
       !title.trim() ||
       bodyText.length < 20 ||
-      (await overlay.count()) !== 0
+      overlayCount !== 0
     ) {
       throw new Error("page-identity");
     }
 
     await workflowAct(() => page.setViewportSize({ width: 390, height: 844 }));
-    const mobileOverflow = await page.evaluate(
-      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    const mobileOverflow = await workflowWait(() =>
+      page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      ),
     );
     if (mobileOverflow) throw new Error("mobile-overflow");
-    const mobileShot = await page.screenshot({ type: "png" });
+    const mobileShot = await workflowWait((timeout) =>
+      page.screenshot({ type: "png", timeout }),
+    );
     await workflowAct(() => page.setViewportSize({ width: 1440, height: 900 }));
-    const desktopShot = await page.screenshot({ type: "png" });
+    const desktopShot = await workflowWait((timeout) =>
+      page.screenshot({ type: "png", timeout }),
+    );
 
     const before = await readStreams();
     if (
       before.some(
         (row) =>
           ownedIds.has(String(row.sensorId)) ||
-          fixtureNames.includes(String(row.name)) ||
+          streamNames.includes(String(row.name)) ||
           String(row.name) === rtspName,
       )
     ) {
@@ -271,66 +456,106 @@ async function main() {
 
     const fileInput = page.locator('input[type="file"][accept=".mp4,.mkv"]').first();
     await workflowAct(() => fileInput.setInputFiles(input.fixtures.map((row) => row.path)));
-    await page.getByText("Upload Files", { exact: true }).waitFor();
+    await workflowWait((timeout) =>
+      page.getByText("Upload Files", { exact: true }).waitFor({ timeout }),
+    );
     for (const name of fixtureNames) {
-      await page.getByText(name, { exact: true }).waitFor();
+      await workflowWait((timeout) =>
+        page.getByText(name, { exact: true }).waitFor({ timeout }),
+      );
     }
 
     await workflowAct(() => page.getByText(fixtureNames[0], { exact: true }).click());
-    await page.getByText(input.template_field_name, { exact: true }).waitFor();
+    await workflowWait((timeout) =>
+      page.getByText(input.template_field_name, { exact: true }).waitFor({ timeout }),
+    );
     await workflowAct(() => page.getByRole("button", { name: /^Upload \(2\)$/ }).click());
     const progressPanel = page.getByTestId("upload-progress-panel");
-    await progressPanel.waitFor();
-    await page
-      .getByTestId("upload-progress-panel-summary")
-      .getByText(/2 succeeded/)
-      .waitFor({ timeout: 120000 });
+    await workflowWait((timeout) => progressPanel.waitFor({ timeout }));
+    await workflowWait(
+      (timeout) =>
+        page
+          .getByTestId("upload-progress-panel-summary")
+          .getByText(/2 succeeded/)
+          .waitFor({ timeout }),
+      LONG_WAIT_TIMEOUT_MS,
+    );
     await workflowAct(() => progressPanel.locator("button").last().click());
-    await progressPanel.waitFor({ state: "detached" });
+    await workflowWait((timeout) =>
+      progressPanel.waitFor({ state: "detached", timeout }),
+    );
+
+    const capturedChunks = await workflowWait(
+      () => Promise.all(uploadCaptures),
+      LONG_WAIT_TIMEOUT_MS,
+    );
+    if (capturedChunks.length !== 4) throw new Error("chunk-count");
+    const identifiers = new Set();
+    for (let index = 0; index < fixtureNames.length; index += 1) {
+      const fileName = fixtureNames[index];
+      const chunks = capturedChunks
+        .filter((row) => row.fileName === fileName)
+        .sort((left, right) => left.chunkNumber - right.chunkNumber);
+      if (
+        chunks.length !== 2 ||
+        chunks.some((row) => row.totalChunks !== 2) ||
+        chunks[0].chunkNumber !== 1 ||
+        chunks[0].isLastChunk !== "false" ||
+        chunks[1].chunkNumber !== 2 ||
+        chunks[1].isLastChunk !== "true" ||
+        !chunks[0].identifier ||
+        chunks[0].identifier !== chunks[1].identifier
+      ) {
+        throw new Error("chunk-protocol");
+      }
+      identifiers.add(chunks[0].identifier);
+      if (sha(Buffer.concat(chunks.map((row) => row.payload))) !== input.fixtures[index].sha256) {
+        throw new Error("chunk-payload-digest");
+      }
+    }
+    if (identifiers.size !== 2) throw new Error("chunk-identifier");
 
     const afterUpload = await readStreams();
     for (let index = 0; index < 2; index += 1) {
-      if (
-        !afterUpload.some(
-          (row) =>
-            String(row.sensorId) === input.owned_sensor_ids[index] &&
-            String(row.name) === fixtureNames[index],
-        )
-      ) {
-        throw new Error("upload-readback");
-      }
-      registered.set(input.owned_sensor_ids[index], {
+      const row = uniqueNamedRow(afterUpload, streamNames[index]);
+      const sensorId = String(row.sensorId);
+      ownedIds.add(sensorId);
+      registered.set(sensorId, {
         kind: "video",
-        name: fixtureNames[index],
+        name: streamNames[index],
       });
-      await page.getByText(fixtureNames[index], { exact: true }).waitFor();
+      await workflowWait((timeout) =>
+        page.getByText(streamNames[index], { exact: true }).waitFor({ timeout }),
+      );
     }
 
     await workflowAct(() => page.getByRole("button", { name: "+ Add RTSP" }).click());
     await workflowAct(() => page.locator("#add-rtsp-url").fill("http://127.0.0.1/not-rtsp"));
     await workflowAct(() => page.locator("#add-rtsp-sensor-name").fill(rtspName));
     await workflowAct(() => page.getByRole("button", { name: "Add RTSP", exact: true }).click());
-    await page.getByText('RTSP URL must start with "rtsp://".', { exact: true }).waitFor();
+    await workflowWait((timeout) =>
+      page
+        .getByText('RTSP URL must start with "rtsp://".', { exact: true })
+        .waitFor({ timeout }),
+    );
     await workflowAct(() =>
       page.locator("#add-rtsp-url").fill(`rtsp://127.0.0.1:18554/${rtspName}`),
     );
     await workflowAct(() => page.getByRole("button", { name: "Add RTSP", exact: true }).click());
-    await page.getByTestId("add-rtsp-dialog").waitFor({ state: "detached" });
-    await page.getByText(rtspName, { exact: true }).waitFor();
+    await workflowWait((timeout) =>
+      page.getByTestId("add-rtsp-dialog").waitFor({ state: "detached", timeout }),
+    );
+    await workflowWait((timeout) =>
+      page.getByText(rtspName, { exact: true }).waitFor({ timeout }),
+    );
 
     const afterRtsp = await readStreams();
-    if (
-      !afterRtsp.some(
-        (row) =>
-          String(row.sensorId) === input.owned_sensor_ids[2] &&
-          String(row.name) === rtspName,
-      )
-    ) {
-      throw new Error("rtsp-readback");
-    }
-    registered.set(input.owned_sensor_ids[2], { kind: "rtsp", name: rtspName });
+    const rtspRow = uniqueNamedRow(afterRtsp, rtspName);
+    const rtspSensorId = String(rtspRow.sensorId);
+    ownedIds.add(rtspSensorId);
+    registered.set(rtspSensorId, { kind: "rtsp", name: rtspName });
 
-    for (const name of [...fixtureNames, rtspName]) {
+    for (const name of [...streamNames, rtspName]) {
       const card = page
         .getByText(name, { exact: true })
         .locator("xpath=ancestor::div[contains(@class,'rounded-lg')][1]");
@@ -338,23 +563,49 @@ async function main() {
     }
     await workflowAct(() => page.getByRole("button", { name: "Delete Selected", exact: true }).click());
     const confirm = page.getByTestId("delete-confirm-dialog");
-    await confirm.waitFor();
-    for (const name of [...fixtureNames, rtspName]) {
-      await confirm.getByText(name, { exact: true }).waitFor();
+    await workflowWait((timeout) => confirm.waitFor({ timeout }));
+    await workflowWait((timeout) =>
+      confirm
+        .getByText("This deletion is irreversible and cannot be undone.", {
+          exact: true,
+        })
+        .waitFor({ timeout }),
+    );
+    for (const name of [...streamNames, rtspName]) {
+      await workflowWait((timeout) =>
+        confirm.getByText(name, { exact: true }).waitFor({ timeout }),
+      );
     }
     await workflowAct(() => confirm.getByRole("button", { name: "Cancel", exact: true }).click());
-    await confirm.waitFor({ state: "detached" });
-    for (const name of [...fixtureNames, rtspName]) {
-      await page.getByText(name, { exact: true }).waitFor();
+    await workflowWait((timeout) => confirm.waitFor({ state: "detached", timeout }));
+    for (const name of [...streamNames, rtspName]) {
+      await workflowWait((timeout) =>
+        page.getByText(name, { exact: true }).waitFor({ timeout }),
+      );
     }
 
     await workflowAct(() => page.getByRole("button", { name: "Delete Selected", exact: true }).click());
-    await confirm.waitFor();
+    await workflowWait((timeout) => confirm.waitFor({ timeout }));
+    await workflowWait((timeout) =>
+      confirm
+        .getByText("This deletion is irreversible and cannot be undone.", {
+          exact: true,
+        })
+        .waitFor({ timeout }),
+    );
     await workflowAct(() => page.getByTestId("delete-confirm-button").click());
-    await confirm.waitFor({ state: "detached", timeout: 120000 });
+    await workflowWait(
+      (timeout) => confirm.waitFor({ state: "detached", timeout }),
+      LONG_WAIT_TIMEOUT_MS,
+    );
 
     const finalRows = await readStreams();
-    if (finalRows.some((row) => ownedIds.has(String(row.sensorId)))) {
+    if (
+      finalRows.some(
+        (row) =>
+          ownedIds.has(String(row.sensorId)) || ownedNames.has(String(row.name)),
+      )
+    ) {
       throw new Error("owned-remains");
     }
     const afterDigest = sha(JSON.stringify(stable(unrelated(finalRows))));
@@ -387,6 +638,8 @@ async function main() {
         template_environment: true,
         bulk_delete_confirm: true,
         bulk_delete_cancel: true,
+        ordered_multichunk_protocol: true,
+        upload_payload_digest_integrity: true,
       },
       cleanup: {
         registered_owned_resources: 3,
@@ -404,7 +657,7 @@ async function main() {
         cleanupError = error;
       }
     }
-    await page.close().catch(() => {});
+    await withinDeadline(() => page.close(), cleanupDeadline, 2000).catch(() => {});
     if (cleanupError) throw cleanupError;
   }
 }

@@ -223,7 +223,7 @@
         "transport_kind": "preexisting_cdp_playwright_and_numeric_loopback_http",
         "unbound_reasons": [
           "Codex Browser plugin is absent; the candidate uses regular Playwright over preexisting CDP",
-          "Playwright entry files are pinned but the transitive module graph is not",
+          "Playwright entry files and complete package trees are digest-pinned",
           "40 browser actions and 32 API exchanges exceed the frozen selected 11/11 bounds",
           "no rendered live runtime receipt has been collected or admitted"
         ]

@@ -298,8 +298,8 @@
         "RTSP add and delete expose a stable stream identity and remain distinct from file-upload lifecycle."
       ],
       "retained_gaps": [
-        "Tiny files and mock APIs do not prove multiple ordered chunks or byte digest integrity.",
-        "RTSP archive readiness, the Playwright transitive graph, and a rendered live receipt are absent."
+        "The candidate can verify multiple ordered chunks and byte digest integrity, but no live receipt exists.",
+        "RTSP archive readiness and a rendered live receipt are absent."
       ],
       "source_package_id": "thor-ui-video-management-playwright-successor-v1"
     }

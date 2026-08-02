@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "package_id": "base-semantic-owned-fixture-successor",
+  "mode": "authorization_gated_local_runtime_candidate",
+  "predecessor": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor",
+  "authorization": {
+    "authorization_id": "base-semantic-owned-fixture",
+    "acknowledgement": "I_ACK_BASE_OWNED_FIXTURE_LOCAL_RUNTIME"
+  },
+  "fixture": {
+    "fixture_id": "thor-base-avsync-c569a1a3-v1",
+    "primary_media_path": "services/vios/test/bdd_tests/data/test_video.mp4",
+    "primary_media_sha256": "c569a1a381a9b8f1f86cd4cb665285044cc16d05a79c96e992f938ca3a2470ad",
+    "primary_media_bytes": 2617799,
+    "primary_agent_media_id": "thor-base-avsync-c569a1a3.mp4",
+    "secondary_agent_media_id": "thor-base-avsync-c569a1a3.mkv",
+    "secondary_binding": "reviewed_manifest_digest_and_local_regular_file",
+    "pixel_facts": {
+      "qa-mp4": {
+        "required": ["predominantly green", "white sector"],
+        "forbidden": ["blue square appears"],
+        "forbidden_all": [["blue", "square"]]
+      },
+      "qa-mkv": {
+        "required": ["does not appear"],
+        "forbidden": ["blue square appears"],
+        "forbidden_all": [["blue", "square"]]
+      },
+      "followup-qa": {
+        "required": ["small white circle", "to the right"],
+        "forbidden": ["blue square appears"],
+        "forbidden_all": [["blue", "square"]]
+      }
+    },
+    "report_semantics": {
+      "required_sections": ["## Summary", "## Visual Timeline", "## Findings"],
+      "beginning_events": [
+        ["beginning", "initial", "first"],
+        ["large disk", "large circle"],
+        ["green"],
+        ["white sector", "white wedge", "white segment"]
+      ],
+      "ending_events": [
+        ["end", "final"],
+        ["red disk", "red circle"],
+        ["alternat", "puls", "flash"]
+      ],
+      "absent_events": [["blue", "square"]]
+    }
+  },
+  "object_store": {
+    "host_root": "deploy/docker/data-dir/agent-reports",
+    "container_root": "/vss-agent/agent_reports",
+    "max_report_objects": 512,
+    "max_report_object_bytes": 33554432,
+    "max_metadata_bytes": 65536,
+    "max_total_snapshot_bytes": 134217728,
+    "snapshot_depth": 1,
+    "require_empty_report_object_prestate": true,
+    "negative_quiescence_seconds": 2
+  },
+  "cases": [
+    {
+      "case_id": "tiny-agent-media",
+      "negative_steps": ["reject-unsupported-media"],
+      "report_step_id": "generate-report",
+      "vqa_steps": ["qa-mp4", "qa-mkv", "followup-qa"]
+    },
+    {
+      "case_id": "hitl-state-transcript",
+      "negative_steps": ["cancel", "empty-submit"],
+      "report_step_id": "restart-and-check-persistence",
+      "vqa_steps": []
+    }
+  ],
+  "canonical_binding": false,
+  "promotion_eligible": false,
+  "warehouse_sample_bundle": "excluded",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "0f4c7c30d355aeedd668393e735b5b2afbdf649838a5882384dcf3bcee8b44b8"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py", "sha256": "93d197d0242cd09fd5853551aac6a1fa061dd8de8a462d911cc356f2f00cfaf8"},
+    {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"},
+    {"path": "deploy/docker/thor-local/compose.yml", "sha256": "b3f8b8d94f05e0edfbe0e1652457c80bd821d0dc93271fb75e2bc40b188c12ce"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
+    {"path": "services/agent/src/vss_agents/tools/video_understanding.py", "sha256": "59511bb172a030e0945a9c9a0ccb432e5b299ae1697e9ba023f4246d61c7c095"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"},
+    {"path": "services/vios/test/bdd_tests/data/test_video.mp4", "sha256": "c569a1a381a9b8f1f86cd4cb665285044cc16d05a79c96e992f938ca3a2470ad"}
+  ]
+}

@@ -246,12 +246,23 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/base-semantic-full-envelope-successor/tests"
 
+# The owned-fixture Base successor adds an exact tracked pixel fixture,
+# collision-safe report-store snapshots, response-derived pair preabsence,
+# negative-path no-delta checks, and final store restoration. The static tier
+# runs only its inert plan and injected transport/store tests.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/base-semantic-owned-fixture-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/base-semantic-owned-fixture-successor/tests"
+
 # Video Management now has a concrete regular-Playwright candidate for an
-# operator-preexisting numeric-loopback CDP browser and mock APIs. Static
+# operator-preexisting numeric-loopback CDP browser and deployed APIs. Static
 # qualification syntax-checks the client and runs only inert/mock validation;
 # it never launches or connects to a browser, opens a socket, uploads media,
-# or mutates a resource. Browser-plugin, transitive-tool, live-receipt, and
-# canonical-envelope gaps remain explicit.
+# or mutates a resource. Complete Playwright package trees are digest-pinned;
+# Browser-plugin, live-receipt, RTSP-readiness, and canonical-envelope gaps
+# remain explicit.
 node --check \
   "${thor_local_root}/qualification/ui-video-management-playwright-successor/harness.mjs"
 PYTHONDONTWRITEBYTECODE=1 python3 \
@@ -287,7 +298,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/lvs-semantic-runtime-agent-session-successor/tests"
 
-# Search now has a concrete, authorization-gated, exact-14 numeric-loopback
+# The LVS closure successor adds live five-tool discovery plus exact VST
+# stored-byte/duration checks, ES caption-range provenance, event/object-
+# correlated CA-RAG retrieval,
+# and full timeline preservation. Its plan and fake transport tests are inert.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-closure-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-closure-successor/tests"
+
+# Search now has a concrete, authorization-gated numeric-loopback
 # candidate executor with exact owned-document cleanup. Static qualification
 # runs only its source-locked plan and fake openers; it provisions no fixture,
 # opens no socket, and creates no runtime evidence or promotion.
@@ -297,15 +318,15 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/search-semantic-runtime-evidence-successor/tests"
 
-# The Search provisioning successor is an inert, source-locked blocker audit.
-# It proves why current public VST/CV/Search/deletion APIs cannot safely create
-# and roll back the predecessor's exact functional fixture; it implements no
-# runtime transport and leaves the operator-preprovisioned fixture gap open.
+# The prior Search provisioning blocker is now a frozen pre-remediation source
+# snapshot and is not replayed. The exact provisioner supersedes it with a bounded,
+# authorization-gated VST/RTVI/ES lifecycle and exact double-absence cleanup.
+# Static qualification runs only its plan and fake transport tests.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/search-semantic-fixture-provisioning-blocker-successor/compiler.py" \
+  "${thor_local_root}/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py" \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/search-semantic-fixture-provisioning-blocker-successor/tests"
+  "${thor_local_root}/qualification/search-semantic-exact-fixture-provisioner-successor/tests"
 
 # This selected-row registry reports the current semantic transport boundary
 # without binding or promoting any of the five canonical Metadata-500 rows.
@@ -337,6 +358,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-candidate-bindings-wave3-successor/tests"
+
+# The current semantic closure successor rebinds the same exact advertised
+# rows to the hardened Base/LVS/Search/UI packages. It records three concrete
+# and seven partial candidate implementations while preserving zero readiness,
+# admission, execution evidence, promotion, cloud requirements, and Warehouse
+# dependencies.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-candidate-bindings-current-semantic-closure-successor/compiler.py" \
+  check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/advertised-candidate-bindings-current-semantic-closure-successor/tests"
 
 # The first candidate-alerts runtime-evidence package is an immutable old-
 # oracle snapshot. Its source lock is historical and is not replayed here.
@@ -406,7 +438,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-74-drift-observation-successor/tests"
 
 # The current-source 71-row rebase preserves the immutable historical receipt
-# while resolving all 182 row/source references through an exact nine-path
+# while resolving all 182 row/source references through an exact twelve-path
 # overlay. It independently checks cancellation-aware Kafka publication and
 # the 56-operation NAT inventory; evidence and promotion remain empty.
 PYTHONDONTWRITEBYTECODE=1 python3 \
@@ -414,6 +446,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   --check --json >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-71-current-source-rebase-successor/tests"
+
+# The current Metadata-500 overlay audit independently proves that all 500
+# immutable selected rows remain selector-identical while the exact current
+# production, semantic-candidate, binding, and 71-row rebase locks advance.
+# It creates no runtime evidence or promotion and excludes Warehouse.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/metadata-500-current-overlay-audit-successor/validator.py" \
+  --check --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/metadata-500-current-overlay-audit-successor/tests"
 
 # Advertised-entry Waves 1-7 remain immutable 87-gap candidate snapshots. Their
 # exact trees, inventories, predecessor chains, 125 source locks, and 83-way

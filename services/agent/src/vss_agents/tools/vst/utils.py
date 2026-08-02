@@ -86,6 +86,9 @@ async def get_name_to_stream_id_map(vst_internal_url: str | None = None) -> dict
                             stream_id = next(iter(file))
                             if isinstance(file[stream_id], list) and len(file[stream_id]) > 0:
                                 name = file[stream_id][0]["name"]
+                                existing_stream_id = mapping.get(name)
+                                if existing_stream_id is not None and existing_stream_id != stream_id:
+                                    raise VSTError(f"duplicate VST sensor name '{name}' maps to multiple stream IDs")
                                 mapping[name] = stream_id
                             else:
                                 logger.warning(f"Stream ID {stream_id} is empty, skipping")
