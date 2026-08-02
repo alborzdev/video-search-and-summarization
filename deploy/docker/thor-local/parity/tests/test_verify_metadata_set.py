@@ -66,7 +66,7 @@ def _oracle_counts() -> dict[str, int]:
 
 def test_default_selected_500_set_is_authoritatively_validated() -> None:
     report = verifier.verify_metadata_set()
-    assert report["set_id"] == "thor-vss-3.2.1-current-cancellation-search-500"
+    assert report["set_id"] == "thor-vss-3.2.1-current-synthetic-data-500"
     assert report["oracle_schema_version"] == 2
     assert report["oracle_validator"] == "capability_oracles_v2"
     assert report["counts"] == {
@@ -78,8 +78,8 @@ def test_default_selected_500_set_is_authoritatively_validated() -> None:
 
 
 def test_explicit_current_289_set_is_authoritatively_validated() -> None:
-    report = verifier.verify_metadata_set("thor-vss-3.2.1-current-289")
-    assert report["set_id"] == "thor-vss-3.2.1-current-289"
+    report = verifier.verify_metadata_set("thor-vss-3.2.1-current-synthetic-data-289")
+    assert report["set_id"] == "thor-vss-3.2.1-current-synthetic-data-289"
     assert report["oracle_schema_version"] == 1
     assert report["oracle_validator"] == "capability_oracles.v1"
     assert report["counts"] == {
@@ -114,6 +114,13 @@ def test_v1_dispatch_uses_only_resolved_snapshot(
     assert (
         observed["official"]["acceptance"]
         == snapshot._documents["acceptance_inventory"]
+    )
+    assert (
+        observed["official"]["oracle_plan"] == snapshot._documents["capability_oracles"]
+    )
+    assert (
+        observed["official"]["oracle_schema"]
+        == snapshot._schemas["capability_oracles_schema"]
     )
     assert observed["oracle"]["plan"] == snapshot._documents["capability_oracles"]
     assert observed["oracle"]["ledger"] == snapshot._documents["official_capabilities"]

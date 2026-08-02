@@ -24,15 +24,19 @@ class CapabilityOracleTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.plan = json.loads(verifier.ORACLES.read_text(encoding="utf-8"))
         cls.ledger = json.loads(verifier.LEDGER.read_text(encoding="utf-8"))
-        cls.protocol_cases = json.loads(verifier.PROTOCOL_CASES.read_text(encoding="utf-8"))
+        cls.protocol_cases = json.loads(
+            verifier.PROTOCOL_CASES.read_text(encoding="utf-8")
+        )
 
     def _copy_offline_mv3dt_inputs(self, root: Path) -> list[str]:
         contract = json.loads(
-            (verifier.REPO_ROOT / verifier.OFFLINE_MV3DT_FILES["contract"]["path"]).read_text(encoding="utf-8")
+            (
+                verifier.REPO_ROOT / verifier.OFFLINE_MV3DT_FILES["contract"]["path"]
+            ).read_text(encoding="utf-8")
         )
-        paths = {
-            lock["path"] for lock in verifier.OFFLINE_MV3DT_FILES.values()
-        } | {lock["path"] for lock in contract["source_locks"]}
+        paths = {lock["path"] for lock in verifier.OFFLINE_MV3DT_FILES.values()} | {
+            lock["path"] for lock in contract["source_locks"]
+        }
         for relative in paths:
             destination = root / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
@@ -50,15 +54,63 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertEqual(counts["oracles"], capability_count)
         self.assertEqual(counts["open_runtime"], capability_count - external_count)
         self.assertEqual(counts["external_boundaries"], external_count)
-        self.assertEqual(counts["planning_index_only"], capability_count)
-        self.assertEqual(counts["executor_ready"], 0)
+        self.assertEqual(counts["planning_index_only"], capability_count - 4)
+        self.assertEqual(counts["executor_ready"], 4)
         self.assertEqual(counts["planning_executor_bindings"], 27)
         self.assertEqual(counts["offline_tool_observation_bindings"], 2)
         self.assertEqual(counts["static_subset_oracle_bindings"], 29)
         self.assertGreater(counts["profiles"], 0)
 
+    def test_synthetic_data_oracles_are_exact_executor_ready_rows(self) -> None:
+        by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
+        self.assertEqual(
+            set(verifier.SYNTHETIC_RUNTIME_FIXTURES),
+            {
+                f"manifest-entry.synthetic-data-tools.{index:02d}-{suffix}"
+                for index, suffix in enumerate(
+                    (
+                        "semantic-label-helpers",
+                        "dataset-checks",
+                        "rgb-depth-video-conversion",
+                        "ground-truth-conversion",
+                    )
+                )
+            },
+        )
+        for capability_id, (
+            fixture_path,
+            fixture_sha256,
+        ) in verifier.SYNTHETIC_RUNTIME_FIXTURES.items():
+            oracle = by_id[capability_id]
+            self.assertEqual(
+                oracle["fixture"]["materialization"],
+                {
+                    "path": fixture_path,
+                    "generator": verifier.SYNTHETIC_RUNTIME_EXECUTOR,
+                    "sha256": fixture_sha256,
+                },
+            )
+            self.assertEqual(
+                oracle["acceptance_readiness"],
+                {"classification": "executor_ready", "blockers": []},
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["executor"],
+                verifier.SYNTHETIC_RUNTIME_EXECUTOR,
+            )
+            self.assertEqual(
+                oracle["cleanup"]["executor"],
+                verifier.SYNTHETIC_RUNTIME_EXECUTOR,
+            )
+            self.assertEqual(oracle["current_state"], "open_unexecuted")
+            self.assertEqual(oracle["evidence"], [])
+
     def test_static_planning_bindings_do_not_promote_full_oracles(self) -> None:
-        bound = [item for item in self.plan["oracles"] if item.get("planning_executor_bindings")]
+        bound = [
+            item
+            for item in self.plan["oracles"]
+            if item.get("planning_executor_bindings")
+        ]
         self.assertEqual(len(bound), 27)
         self.assertEqual(
             sum(len(item["planning_executor_bindings"]) for item in bound), 27
@@ -89,18 +141,24 @@ class CapabilityOracleTests(unittest.TestCase):
         for capability_id, item in bound.items():
             self.assertEqual(len(item["offline_tool_observation_bindings"]), 1)
             binding = item["offline_tool_observation_bindings"][0]
-            self.assertEqual(binding["scope"], "bounded_static_tool_observation_subset_only")
+            self.assertEqual(
+                binding["scope"], "bounded_static_tool_observation_subset_only"
+            )
             self.assertIs(binding["can_advance_capability"], False)
             self.assertIs(binding["can_mark_passed_current"], False)
             self.assertEqual(binding["runtime_evidence"], [])
-            self.assertEqual(binding["result"]["official_capability_effect"], "none_candidate_only")
+            self.assertEqual(
+                binding["result"]["official_capability_effect"], "none_candidate_only"
+            )
             coverage = binding["oracle_coverage"]
             self.assertEqual(
-                set(coverage["covered_observation_ids"]) | set(coverage["uncovered_observation_ids"]),
+                set(coverage["covered_observation_ids"])
+                | set(coverage["uncovered_observation_ids"]),
                 {row["id"] for row in item["expected_observations"]},
             )
             self.assertEqual(
-                set(coverage["covered_assertion_ids"]) | set(coverage["uncovered_assertion_ids"]),
+                set(coverage["covered_assertion_ids"])
+                | set(coverage["uncovered_assertion_ids"]),
                 {row["id"] for row in item["assertions"]},
             )
             self.assertEqual(
@@ -109,8 +167,13 @@ class CapabilityOracleTests(unittest.TestCase):
                 capability_id,
             )
 
-    def test_offline_mv3dt_binding_is_derived_from_strict_execution_receipt(self) -> None:
-        receipt_path = verifier.REPO_ROOT / verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["path"]
+    def test_offline_mv3dt_binding_is_derived_from_strict_execution_receipt(
+        self,
+    ) -> None:
+        receipt_path = (
+            verifier.REPO_ROOT
+            / verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["path"]
+        )
         receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
         self.assertEqual(
             hashlib.sha256(receipt_path.read_bytes()).hexdigest(),
@@ -122,14 +185,29 @@ class CapabilityOracleTests(unittest.TestCase):
             binding = rows[0]
             self.assertEqual(binding["result"]["observation"], receipt["observation"])
             self.assertEqual(binding["result"]["run_count"], receipt["run_count"])
-            self.assertEqual(binding["execution_receipt"]["raw_sha256"], hashlib.sha256(receipt_path.read_bytes()).hexdigest())
+            self.assertEqual(
+                binding["execution_receipt"]["raw_sha256"],
+                hashlib.sha256(receipt_path.read_bytes()).hexdigest(),
+            )
             dependency = binding["dependency_observation"]
-            self.assertEqual(dependency["observed_versions_sha256"], "f8b538e36776da71af95af5a667426dbd5cbb3e3fa482c2c5850ba9306888e80")
-            self.assertIs(dependency["declared_versions_match_observed_distributions"], False)
+            self.assertEqual(
+                dependency["observed_versions_sha256"],
+                "f8b538e36776da71af95af5a667426dbd5cbb3e3fa482c2c5850ba9306888e80",
+            )
+            self.assertIs(
+                dependency["declared_versions_match_observed_distributions"], False
+            )
             self.assertIs(dependency["normative_for_declared_requirements"], False)
             self.assertEqual(len(dependency["mismatches"]), 4)
-            selected_key = "cam_info" if capability_id.endswith("cam-info-generator") else "pub_sub"
-            self.assertEqual(binding["selected_semantic"], {selected_key: first_run["semantic"][selected_key]})
+            selected_key = (
+                "cam_info"
+                if capability_id.endswith("cam-info-generator")
+                else "pub_sub"
+            )
+            self.assertEqual(
+                binding["selected_semantic"],
+                {selected_key: first_run["semantic"][selected_key]},
+            )
 
     def test_offline_mv3dt_every_contract_source_lock_is_rehashed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -147,18 +225,20 @@ class CapabilityOracleTests(unittest.TestCase):
                     path = root / relative
                     original = path.read_bytes()
                     path.write_bytes(original + b"\nsource-lock-tamper")
-                    with self.assertRaisesRegex(verifier.OracleContractError, "source lock differs"):
+                    with self.assertRaisesRegex(
+                        verifier.OracleContractError, "source lock differs"
+                    ):
                         verifier._offline_mv3dt_tool_bindings(root)
                     path.write_bytes(original)
 
     def test_offline_mv3dt_historical_manifest_lock_is_preserved(self) -> None:
         bindings = verifier._offline_mv3dt_tool_bindings()
-        expected = (
-            "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
-        )
+        expected = "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127"
         self.assertNotEqual(
             hashlib.sha256(
-                (verifier.REPO_ROOT / "deploy/docker/thor-local/parity/manifest.json").read_bytes()
+                (
+                    verifier.REPO_ROOT / "deploy/docker/thor-local/parity/manifest.json"
+                ).read_bytes()
             ).hexdigest(),
             expected,
         )
@@ -174,19 +254,33 @@ class CapabilityOracleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             self._copy_offline_mv3dt_inputs(root)
-            receipt_path = root / verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["path"]
+            receipt_path = (
+                root / verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["path"]
+            )
             receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
             receipt["run_count"] = 3
-            receipt_path.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
-            with self.assertRaisesRegex(verifier.OracleContractError, "execution_receipt raw digest differs"):
+            receipt_path.write_text(
+                json.dumps(receipt, indent=2) + "\n", encoding="utf-8"
+            )
+            with self.assertRaisesRegex(
+                verifier.OracleContractError, "execution_receipt raw digest differs"
+            ):
                 verifier._offline_mv3dt_tool_bindings(root)
-            original_lock = verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"]
-            verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"] = hashlib.sha256(receipt_path.read_bytes()).hexdigest()
+            original_lock = verifier.OFFLINE_MV3DT_FILES["execution_receipt"][
+                "raw_sha256"
+            ]
+            verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"] = (
+                hashlib.sha256(receipt_path.read_bytes()).hexdigest()
+            )
             try:
-                with self.assertRaisesRegex(verifier.OracleContractError, "execution receipt schema failed"):
+                with self.assertRaisesRegex(
+                    verifier.OracleContractError, "execution receipt schema failed"
+                ):
                     verifier._offline_mv3dt_tool_bindings(root)
             finally:
-                verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"] = original_lock
+                verifier.OFFLINE_MV3DT_FILES["execution_receipt"]["raw_sha256"] = (
+                    original_lock
+                )
 
     def test_every_execution_mode_is_covered(self) -> None:
         self.assertEqual(
@@ -203,7 +297,9 @@ class CapabilityOracleTests(unittest.TestCase):
     def test_contract_assertion_drift_fails_closed(self) -> None:
         plan = copy.deepcopy(self.plan)
         plan["oracles"][0]["assertions"][0]["expected"] = "wrong-model"
-        with self.assertRaisesRegex(verifier.OracleContractError, "oracle contract drift"):
+        with self.assertRaisesRegex(
+            verifier.OracleContractError, "oracle contract drift"
+        ):
             verifier.validate(plan, copy.deepcopy(self.ledger))
 
     def test_generic_action_reuse_fails_closed(self) -> None:
@@ -212,11 +308,16 @@ class CapabilityOracleTests(unittest.TestCase):
         second["fixture"] = copy.deepcopy(first["fixture"])
         second["expected_observations"] = copy.deepcopy(first["expected_observations"])
         second["assertions"] = copy.deepcopy(first["assertions"])
-        with self.assertRaisesRegex(verifier.OracleContractError, "oracle contract drift"):
+        with self.assertRaisesRegex(
+            verifier.OracleContractError, "oracle contract drift"
+        ):
             verifier.validate(plan, copy.deepcopy(self.ledger))
 
     def test_fabricated_pass_or_evidence_fails_closed(self) -> None:
-        for field, value in (("current_state", "passed_current"), ("evidence", [{"result": "pass"}])):
+        for field, value in (
+            ("current_state", "passed_current"),
+            ("evidence", [{"result": "pass"}]),
+        ):
             with self.subTest(field=field):
                 plan = copy.deepcopy(self.plan)
                 plan["oracles"][0][field] = value
@@ -237,11 +338,22 @@ class CapabilityOracleTests(unittest.TestCase):
             capability_id = item["capability_id"]
             self.assertEqual(item["oracle_id"], f"oracle.{capability_id}")
             self.assertEqual(item["fixture"]["input"]["capability_id"], capability_id)
-            self.assertEqual(item["reviewed_scenario_ids"][-1], f"oracle.{capability_id}")
+            self.assertEqual(
+                item["reviewed_scenario_ids"][-1], f"oracle.{capability_id}"
+            )
 
     def test_warehouse_sample_is_excluded_but_custom_fixtures_remain(self) -> None:
-        self.assertTrue(all(not item["fixture"]["warehouse_sample_bundle"] for item in self.plan["oracles"]))
-        calibration = [item for item in self.plan["oracles"] if item["capability_id"].startswith("calibration.")]
+        self.assertTrue(
+            all(
+                not item["fixture"]["warehouse_sample_bundle"]
+                for item in self.plan["oracles"]
+            )
+        )
+        calibration = [
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"].startswith("calibration.")
+        ]
         self.assertTrue(calibration)
         expected = {
             item["capability_id"]: (
@@ -257,10 +369,17 @@ class CapabilityOracleTests(unittest.TestCase):
         )
 
     def test_cleanup_intent_is_namespaced_and_planning_only(self) -> None:
-        local = [item for item in self.plan["oracles"] if item["current_state"] == "open_unexecuted"]
+        local = [
+            item
+            for item in self.plan["oracles"]
+            if item["current_state"] == "open_unexecuted"
+        ]
         for item in local:
             cleanup = item["cleanup"]
-            self.assertIn(cleanup["mutation"], {"read_only", "temporary_files_only", "namespaced_and_reversible"})
+            self.assertIn(
+                cleanup["mutation"],
+                {"read_only", "temporary_files_only", "namespaced_and_reversible"},
+            )
             if cleanup["mutation"] == "read_only":
                 self.assertEqual(cleanup["targets"], [])
             else:
@@ -270,7 +389,11 @@ class CapabilityOracleTests(unittest.TestCase):
             self.assertTrue(cleanup["postconditions"])
 
     def test_external_boundaries_require_operator_opt_in(self) -> None:
-        external = [item for item in self.plan["oracles"] if item["current_state"] == "external_boundary_unexecuted"]
+        external = [
+            item
+            for item in self.plan["oracles"]
+            if item["current_state"] == "external_boundary_unexecuted"
+        ]
         expected = sum(
             item["acceptance_class"] == "external_optional"
             for item in self.ledger["capabilities"]
@@ -284,12 +407,16 @@ class CapabilityOracleTests(unittest.TestCase):
     def test_ledger_contract_change_requires_oracle_regeneration(self) -> None:
         ledger = copy.deepcopy(self.ledger)
         ledger["capabilities"][0]["contract"]["new_contract_field"] = "new-value"
-        with self.assertRaisesRegex(verifier.OracleContractError, "oracle contract drift"):
+        with self.assertRaisesRegex(
+            verifier.OracleContractError, "oracle contract drift"
+        ):
             verifier.validate(copy.deepcopy(self.plan), ledger)
 
     def test_relevant_ledger_semantics_require_oracle_regeneration(self) -> None:
         mutations = {
-            "source locator": lambda item: item["source_claims"][0].update(locator="different locator"),
+            "source locator": lambda item: item["source_claims"][0].update(
+                locator="different locator"
+            ),
             "gap": lambda item: item.update(gap="different reviewed gap"),
             "thor state": lambda item: item.update(thor_state="wired"),
             "runtime state": lambda item: item.update(runtime_state="static_only"),
@@ -298,7 +425,9 @@ class CapabilityOracleTests(unittest.TestCase):
             with self.subTest(label=label):
                 ledger = copy.deepcopy(self.ledger)
                 mutate(ledger["capabilities"][0])
-                with self.assertRaisesRegex(verifier.OracleContractError, "oracle contract drift"):
+                with self.assertRaisesRegex(
+                    verifier.OracleContractError, "oracle contract drift"
+                ):
                     verifier.validate(copy.deepcopy(self.plan), ledger)
 
     def test_media_requiring_capabilities_use_custom_media_fixtures(self) -> None:
@@ -312,7 +441,9 @@ class CapabilityOracleTests(unittest.TestCase):
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
         self.assertTrue(required <= set(by_id))
         for capability_id in required:
-            self.assertEqual(by_id[capability_id]["fixture"]["kind"], "generated_custom_media")
+            self.assertEqual(
+                by_id[capability_id]["fixture"]["kind"], "generated_custom_media"
+            )
 
     def test_cpu_multimedia_oracle_requires_hardware_cpu_discrimination(self) -> None:
         oracle = next(
@@ -361,58 +492,121 @@ class CapabilityOracleTests(unittest.TestCase):
         for item in self.plan["oracles"]:
             bounds = item["execution_bounds"]
             workload = bounds["workload"]
-            expected = workload["units"] * workload["requests_per_unit"] + workload["overhead_requests"]
+            expected = (
+                workload["units"] * workload["requests_per_unit"]
+                + workload["overhead_requests"]
+            )
             self.assertEqual(workload["calculated_max_requests"], expected)
             self.assertEqual(bounds["max_requests"], expected)
-            override = verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(item["capability_id"])
-            self.assertEqual(bounds["max_actions"], override[2] if override is not None else expected)
+            override = verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(
+                item["capability_id"]
+            )
+            self.assertEqual(
+                bounds["max_actions"], override[2] if override is not None else expected
+            )
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
-        self.assertEqual(by_id["behavior.rt-embed.kafka-queue-bound"]["execution_bounds"]["max_requests"], 1025)
-        self.assertEqual(by_id["api.core.video-analytics-56"]["execution_bounds"]["max_requests"], 225)
         self.assertEqual(
-            by_id["api.core.video-analytics-56"]["execution_bounds"]["workload"]["phases"],
+            by_id["behavior.rt-embed.kafka-queue-bound"]["execution_bounds"][
+                "max_requests"
+            ],
+            1025,
+        )
+        self.assertEqual(
+            by_id["api.core.video-analytics-56"]["execution_bounds"]["max_requests"],
+            225,
+        )
+        self.assertEqual(
+            by_id["api.core.video-analytics-56"]["execution_bounds"]["workload"][
+                "phases"
+            ],
             ["positive", "adjacent_negative", "readback", "cleanup"],
         )
 
-    def test_exact_20_local_runtime_workload_overrides_are_capability_bound(self) -> None:
+    def test_exact_20_local_runtime_workload_overrides_are_capability_bound(
+        self,
+    ) -> None:
         self.assertEqual(len(verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES), 20)
-        self.assertEqual(sum(row[1] for row in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()), 202)
-        self.assertEqual(sum(row[2] for row in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()), 207)
+        self.assertEqual(
+            sum(row[1] for row in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()),
+            202,
+        )
+        self.assertEqual(
+            sum(row[2] for row in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()),
+            207,
+        )
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
-        for capability_id, (planning_id, requests, actions) in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.items():
+        for capability_id, (
+            planning_id,
+            requests,
+            actions,
+        ) in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.items():
             oracle = by_id[capability_id]
             self.assertEqual(oracle["execution_bounds"]["max_requests"], requests)
             self.assertEqual(oracle["execution_bounds"]["max_actions"], actions)
-            self.assertEqual(oracle["execution_bounds"]["workload"]["phases"], verifier.LOCAL_RUNTIME_WORKLOAD_PHASES)
-            self.assertEqual(oracle["fixture"]["input"]["contract"]["wave3_acceptance"]["planning_requirement_ids"], [planning_id])
+            self.assertEqual(
+                oracle["execution_bounds"]["workload"]["phases"],
+                verifier.LOCAL_RUNTIME_WORKLOAD_PHASES,
+            )
+            self.assertEqual(
+                oracle["fixture"]["input"]["contract"]["wave3_acceptance"][
+                    "planning_requirement_ids"
+                ],
+                [planning_id],
+            )
             self.assertEqual(oracle["current_state"], "open_unexecuted")
             self.assertEqual(oracle["evidence"], [])
             self.assertIs(oracle["fixture"]["warehouse_sample_bundle"], False)
 
     def test_models_stage_before_runtime_not_inside_it(self) -> None:
-        models = [item for item in self.plan["oracles"] if item["ledger_binding"]["kind"] == "model"]
+        models = [
+            item
+            for item in self.plan["oracles"]
+            if item["ledger_binding"]["kind"] == "model"
+        ]
         self.assertTrue(models)
         for item in models:
-            self.assertEqual(item["execution_bounds"]["model_staging"], "prerequisite_only")
-            self.assertIn("model-artifact-staged", {gate["id"] for gate in item["admission_prerequisites"]})
+            self.assertEqual(
+                item["execution_bounds"]["model_staging"], "prerequisite_only"
+            )
+            self.assertIn(
+                "model-artifact-staged",
+                {gate["id"] for gate in item["admission_prerequisites"]},
+            )
 
     def test_custom_thor_lane_is_bounded_per_profile_runtime(self) -> None:
-        oracle = next(item for item in self.plan["oracles"] if item["capability_id"] == "boundary.thor.custom-all-local-extension")
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == "boundary.thor.custom-all-local-extension"
+        )
         profiles = oracle["ledger_binding"]["contract"]["profiles"]
         self.assertEqual(oracle["mode"], "runtime")
         self.assertEqual(oracle["execution_bounds"]["workload"]["units"], len(profiles))
         observation_ids = {item["id"] for item in oracle["expected_observations"]}
-        self.assertTrue({f"profile_{item.replace('-', '_')}" for item in profiles} <= observation_ids)
+        self.assertTrue(
+            {f"profile_{item.replace('-', '_')}" for item in profiles}
+            <= observation_ids
+        )
         self.assertIn("sample_exclusion", observation_ids)
 
     def test_orchestrator_separates_discovery_from_approved_lifecycle(self) -> None:
-        oracle = next(item for item in self.plan["oracles"] if item["capability_id"] == "api.orchestrator-mcp.tools-9")
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == "api.orchestrator-mcp.tools-9"
+        )
         self.assertEqual(oracle["mode"], "runtime")
-        self.assertIn("orchestrator-lifecycle-approval", {gate["id"] for gate in oracle["admission_prerequisites"]})
+        self.assertIn(
+            "orchestrator-lifecycle-approval",
+            {gate["id"] for gate in oracle["admission_prerequisites"]},
+        )
         observation_ids = [item["id"] for item in oracle["expected_observations"]]
         self.assertIn("discovery_phase", observation_ids)
         self.assertIn("approved_lifecycle_phase", observation_ids)
-        self.assertIn("only after explicit lifecycle approval", oracle["fixture"]["input"]["action"])
+        self.assertIn(
+            "only after explicit lifecycle approval",
+            oracle["fixture"]["input"]["action"],
+        )
         self.assertEqual(
             oracle["execution_bounds"]["workload"]["phases"],
             ["schema_discovery", "approved_lifecycle", "state_readback", "cleanup"],
@@ -425,19 +619,24 @@ class CapabilityOracleTests(unittest.TestCase):
             if item["ledger_binding"]["kind"] == "protocol"
         ]
         self.assertEqual(len(protocol_oracles), 7)
-        cases = {
-            item["capability_id"]: item
-            for item in self.protocol_cases["cases"]
-        }
+        cases = {item["capability_id"]: item for item in self.protocol_cases["cases"]}
         for oracle in protocol_oracles:
             case = cases[oracle["capability_id"]]
             binding = oracle["protocol_case_binding"]
             self.assertEqual(binding["path"], verifier.PROTOCOL_CASES_PATH)
-            self.assertEqual(binding["file_sha256"], verifier.PROTOCOL_CASES_FILE_SHA256)
-            self.assertEqual(binding["contract_set_sha256"], verifier.PROTOCOL_CASES_SET_SHA256)
-            self.assertEqual(binding["target_commit"], self.protocol_cases["target_commit"])
+            self.assertEqual(
+                binding["file_sha256"], verifier.PROTOCOL_CASES_FILE_SHA256
+            )
+            self.assertEqual(
+                binding["contract_set_sha256"], verifier.PROTOCOL_CASES_SET_SHA256
+            )
+            self.assertEqual(
+                binding["target_commit"], self.protocol_cases["target_commit"]
+            )
             self.assertEqual(binding["case_id"], case["case_id"])
-            self.assertEqual(binding["positive_vector_id"], case["positive_vector"]["id"])
+            self.assertEqual(
+                binding["positive_vector_id"], case["positive_vector"]["id"]
+            )
             self.assertEqual(
                 binding["negative_vector_ids"],
                 [item["id"] for item in case["adjacent_negative_vectors"]],
@@ -459,7 +658,9 @@ class CapabilityOracleTests(unittest.TestCase):
             "whole hash": lambda binding: binding.update(file_sha256="0" * 64),
             "set hash": lambda binding: binding.update(contract_set_sha256="0" * 64),
             "case id": lambda binding: binding.update(case_id="wrong-case"),
-            "source hash": lambda binding: binding["source_hashes"][0].update(content_sha256="0" * 64),
+            "source hash": lambda binding: binding["source_hashes"][0].update(
+                content_sha256="0" * 64
+            ),
         }.items():
             with self.subTest(label=label):
                 plan = copy.deepcopy(self.plan)
@@ -478,7 +679,9 @@ class CapabilityOracleTests(unittest.TestCase):
         with self.assertRaisesRegex(verifier.OracleContractError, "no oracle profile"):
             verifier.compile_plan(ledger)
 
-    def test_new_reviewed_claim_is_compiled_without_count_or_source_assumptions(self) -> None:
+    def test_new_reviewed_claim_is_compiled_without_count_or_source_assumptions(
+        self,
+    ) -> None:
         ledger = copy.deepcopy(self.ledger)
         capability = copy.deepcopy(
             next(item for item in ledger["capabilities"] if item["kind"] == "api")
@@ -499,7 +702,9 @@ class CapabilityOracleTests(unittest.TestCase):
     def test_new_required_local_deployment_is_not_misclassified_external(self) -> None:
         ledger = copy.deepcopy(self.ledger)
         capability = copy.deepcopy(
-            next(item for item in ledger["capabilities"] if item["kind"] == "deployment")
+            next(
+                item for item in ledger["capabilities"] if item["kind"] == "deployment"
+            )
         )
         capability.update(
             id="deployment.future.local-profile",
@@ -513,15 +718,21 @@ class CapabilityOracleTests(unittest.TestCase):
         oracle = verifier.compile_plan(ledger)["oracles"][-1]
         self.assertTrue(oracle["profile"].startswith("local-deployment-"))
         self.assertEqual(oracle["current_state"], "open_unexecuted")
-        self.assertEqual(oracle["execution_bounds"]["network_scope"], "loopback-or-compose-internal")
+        self.assertEqual(
+            oracle["execution_bounds"]["network_scope"], "loopback-or-compose-internal"
+        )
         self.assertIn("local namespace", oracle["fixture"]["input"]["action"])
         self.assertEqual(oracle["expected_observations"][-1]["id"], "local_admission")
 
     def test_duplicate_json_keys_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             path = Path(temporary_directory) / "duplicate.json"
-            path.write_text('{"schema_version": 1, "schema_version": 1}', encoding="utf-8")
-            with self.assertRaisesRegex(verifier.OracleContractError, "duplicate JSON key"):
+            path.write_text(
+                '{"schema_version": 1, "schema_version": 1}', encoding="utf-8"
+            )
+            with self.assertRaisesRegex(
+                verifier.OracleContractError, "duplicate JSON key"
+            ):
                 verifier._load(path)
 
 

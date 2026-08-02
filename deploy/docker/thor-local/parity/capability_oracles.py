@@ -29,18 +29,70 @@ REPO_ROOT = SCRIPT_DIR.parents[3]
 LEDGER = SCRIPT_DIR / "official-capabilities.json"
 ORACLES = SCRIPT_DIR / "capability-oracles.json"
 SCHEMA = SCRIPT_DIR / "capability-oracles.schema.json"
-ACCEPTANCE = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
-PROTOCOL_CASES_PATH = "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json"
+ACCEPTANCE = (
+    REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
+)
+PROTOCOL_CASES_PATH = (
+    "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json"
+)
 PROTOCOL_CASES = REPO_ROOT / PROTOCOL_CASES_PATH
-PROTOCOL_CASES_FILE_SHA256 = "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
-PROTOCOL_CASES_SET_SHA256 = "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21"
+PROTOCOL_CASES_FILE_SHA256 = (
+    "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
+)
+PROTOCOL_CASES_SET_SHA256 = (
+    "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21"
+)
 OFFLINE_MV3DT_ROOT = "deploy/docker/thor-local/qualification/offline-mv3dt-tools"
 OFFLINE_MV3DT_FILES = {
-    "contract": {"path": f"{OFFLINE_MV3DT_ROOT}/contract.json", "raw_sha256": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984"},
-    "executor": {"path": f"{OFFLINE_MV3DT_ROOT}/executor.py", "raw_sha256": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273"},
-    "result_schema": {"path": f"{OFFLINE_MV3DT_ROOT}/result.schema.json", "raw_sha256": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887"},
-    "fixture": {"path": f"{OFFLINE_MV3DT_ROOT}/fixtures/two-camera-calibration.json", "raw_sha256": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33"},
-    "execution_receipt": {"path": f"{OFFLINE_MV3DT_ROOT}/execution-receipt.json", "raw_sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063"},
+    "contract": {
+        "path": f"{OFFLINE_MV3DT_ROOT}/contract.json",
+        "raw_sha256": "070d8d89c0d38e2127da53478a5f093a460cc65b6a7ec4de1a45b79c36949984",
+    },
+    "executor": {
+        "path": f"{OFFLINE_MV3DT_ROOT}/executor.py",
+        "raw_sha256": "2055cf4ee3551a4cf680f1ad760eeef11c014ddb9fb952d78ec970864c9b0273",
+    },
+    "result_schema": {
+        "path": f"{OFFLINE_MV3DT_ROOT}/result.schema.json",
+        "raw_sha256": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887",
+    },
+    "fixture": {
+        "path": f"{OFFLINE_MV3DT_ROOT}/fixtures/two-camera-calibration.json",
+        "raw_sha256": "3b31aa74c5fa132437a35f2d2241f55fb204db58dedbe104cd8632fdef91cb33",
+    },
+    "execution_receipt": {
+        "path": f"{OFFLINE_MV3DT_ROOT}/execution-receipt.json",
+        "raw_sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063",
+    },
+}
+SYNTHETIC_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "synthetic-data-runtime-evidence-successor/executor.py"
+)
+SYNTHETIC_RUNTIME_FIXTURES = {
+    "manifest-entry.synthetic-data-tools.00-semantic-label-helpers": (
+        "deploy/docker/thor-local/qualification/"
+        "metadata-500-current-synthetic-data-successor/fixtures/"
+        "00-semantic-label-helpers.json",
+        "0a079066c4ad506e8589206c8b51e21a0ecacdecb16fc9785c52033b0d279d27",
+    ),
+    "manifest-entry.synthetic-data-tools.01-dataset-checks": (
+        "deploy/docker/thor-local/qualification/"
+        "metadata-500-current-synthetic-data-successor/fixtures/01-dataset-checks.json",
+        "0cc773dd0ec64aa4a45c379b298dc7580eddf89ab7702172fe101807d52c1ff2",
+    ),
+    "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion": (
+        "deploy/docker/thor-local/qualification/"
+        "metadata-500-current-synthetic-data-successor/fixtures/"
+        "02-rgb-depth-video-conversion.json",
+        "171aef78bdd4738fa78f7114b27b9ca9cd0ec528ed52ae2f8be051c5b14dfd25",
+    ),
+    "manifest-entry.synthetic-data-tools.03-ground-truth-conversion": (
+        "deploy/docker/thor-local/qualification/"
+        "metadata-500-current-synthetic-data-successor/fixtures/"
+        "03-ground-truth-conversion.json",
+        "0a1f7d857d582aa47cd54aa1a956175a67976719443c8a9ed946962d8ef77939",
+    ),
 }
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 CPU_MULTIMEDIA_CAPABILITY_ID = (
@@ -62,7 +114,11 @@ LOCAL_RUNTIME_WORKLOAD_OVERRIDES = {
     "runtime.ui.search-tab": ("ui-search-api", 13, 13),
     "runtime.ui.video-management-tab": ("ui-tiny-media", 11, 11),
     "deployment.nemoclaw.same-host-operating-path": ("nemoclaw-lifecycle-mocks", 7, 9),
-    "security.nemoclaw.policy-provider-network-boundary": ("nemoclaw-policy-network", 9, 9),
+    "security.nemoclaw.policy-provider-network-boundary": (
+        "nemoclaw-policy-network",
+        9,
+        9,
+    ),
     "runtime.smart-city.chat-alert-dashboard": ("smartcity-ui-incidents", 8, 8),
     "runtime.smart-city.traffic-analytics": ("smartcity-synthetic-tracks", 14, 14),
     "runtime.smart-city.agent-workflow": ("smartcity-agent-pages", 12, 12),
@@ -71,9 +127,19 @@ LOCAL_RUNTIME_WORKLOAD_OVERRIDES = {
     "performance.alerts.worker-scaling": ("systems-alert-worker-scaling", 8, 8),
     "deployment.vios.horizontal-scaling": ("systems-vios-scaling", 7, 9),
     "behavior.elk.disk-watermark-recovery": ("systems-elk-recovery", 13, 13),
-    "behavior.vios.upload-playback-remediation": ("systems-vios-playback-remediation", 8, 9),
+    "behavior.vios.upload-playback-remediation": (
+        "systems-vios-playback-remediation",
+        8,
+        9,
+    ),
 }
-LOCAL_RUNTIME_WORKLOAD_PHASES = ["pre_state", "positive", "adjacent_negative", "restore", "postcondition"]
+LOCAL_RUNTIME_WORKLOAD_PHASES = [
+    "pre_state",
+    "positive",
+    "adjacent_negative",
+    "restore",
+    "postcondition",
+]
 
 
 class OracleContractError(ValueError):
@@ -103,7 +169,11 @@ def _resolve_reviewed_file(repo_root: Path, value: Any, label: str) -> Path:
     if not isinstance(value, str):
         raise OracleContractError(f"{label}: path must be a string")
     path = Path(value)
-    if path.is_absolute() or ".." in path.parts or not value.startswith("deploy/docker/thor-local/"):
+    if (
+        path.is_absolute()
+        or ".." in path.parts
+        or not value.startswith("deploy/docker/thor-local/")
+    ):
         raise OracleContractError(f"{label}: unsafe repository path")
     try:
         root = repo_root.resolve(strict=True)
@@ -167,7 +237,10 @@ def _profile(capability: dict[str, Any]) -> tuple[str, str]:
     if kind == "model_customization":
         return f"customization-{capability_id.split('.')[1]}", "runtime"
     if kind == "calibration":
-        return f"calibration-{capability_id.removeprefix('calibration.').replace('.', '-')}", "runtime"
+        return (
+            f"calibration-{capability_id.removeprefix('calibration.').replace('.', '-')}",
+            "runtime",
+        )
     if kind == "deployment":
         if capability_id.startswith("prereq.platform."):
             return f"host-prerequisite-{capability_id.rsplit('.', 1)[-1]}", "static"
@@ -175,13 +248,24 @@ def _profile(capability: dict[str, Any]) -> tuple[str, str]:
             if capability_id == "boundary.thor.custom-all-local-extension":
                 return "thor-custom-local-runtime-profiles", "runtime"
             return f"thor-support-boundary-{capability_id.rsplit('.', 1)[-1]}", "static"
-        boundary = "external" if capability["acceptance_class"] == "external_optional" else "local"
+        boundary = (
+            "external"
+            if capability["acceptance_class"] == "external_optional"
+            else "local"
+        )
         return f"{boundary}-deployment-{capability_id.split('.')[1]}", "deploy"
     if kind == "security":
-        boundary = "external" if capability["acceptance_class"] == "external_optional" else "local"
+        boundary = (
+            "external"
+            if capability["acceptance_class"] == "external_optional"
+            else "local"
+        )
         if boundary == "external":
             return "external-security-boundary", "deploy"
-        if capability_id in {"behavior.rt-embed.ngc-scheme-key", "prereq.platform.credentials"}:
+        if capability_id in {
+            "behavior.rt-embed.ngc-scheme-key",
+            "prereq.platform.credentials",
+        }:
             return f"local-security-{capability_id.rsplit('.', 1)[-1]}", "config"
         return f"local-security-{capability_id.rsplit('.', 1)[-1]}", "runtime"
     if kind == "performance":
@@ -193,9 +277,15 @@ def _profile(capability: dict[str, Any]) -> tuple[str, str]:
             return "orchestrator-mcp-approved-lifecycle", "runtime"
         return f"api-{capability_id.removeprefix('api.').replace('.', '-')}", "api"
     if kind == "protocol":
-        return f"protocol-{capability_id.removeprefix('protocol.').replace('.', '-')}", "protocol"
+        return (
+            f"protocol-{capability_id.removeprefix('protocol.').replace('.', '-')}",
+            "protocol",
+        )
     if kind == "runtime_behavior":
-        return f"behavior-{capability_id.removeprefix('behavior.').replace('.', '-')}", "runtime"
+        return (
+            f"behavior-{capability_id.removeprefix('behavior.').replace('.', '-')}",
+            "runtime",
+        )
     raise OracleContractError(f"{capability_id}: no oracle profile for kind {kind!r}")
 
 
@@ -374,12 +464,20 @@ def _fixture(capability: dict[str, Any], profile: str) -> dict[str, Any]:
     capability_id = capability["id"]
     external = capability["acceptance_class"] == "external_optional"
     media = _requires_media(capability)
-    kind = "operator_external_contract" if external else "generated_custom_media" if media else "generated_minimal_contract"
+    kind = (
+        "operator_external_contract"
+        if external
+        else "generated_custom_media"
+        if media
+        else "generated_minimal_contract"
+    )
     return {
         "id": f"fixture.{capability_id}",
         "kind": kind,
         "availability": "operator_required" if external else "not_staged",
-        "source": "operator-provided opt-in boundary" if external else "bounded locally generated fixture",
+        "source": "operator-provided opt-in boundary"
+        if external
+        else "bounded locally generated fixture",
         "warehouse_sample_bundle": False,
         "materialization": {
             "path": None,
@@ -427,39 +525,110 @@ def _observations(capability: dict[str, Any], profile: str) -> list[dict[str, An
             }
             for profile_id in contract["profiles"]
         )
-        observations.append({"id": "sample_exclusion", "description": "No fixture, mount, command, or evidence references the excluded NVIDIA warehouse sample bundle."})
+        observations.append(
+            {
+                "id": "sample_exclusion",
+                "description": "No fixture, mount, command, or evidence references the excluded NVIDIA warehouse sample bundle.",
+            }
+        )
     elif capability_id == "api.orchestrator-mcp.tools-9":
         observations.extend(
             [
-                {"id": "discovery_phase", "description": "The static phase discovers exactly nine tools and validates every input schema without invoking lifecycle tools."},
-                {"id": "approved_lifecycle_phase", "description": "After explicit approval, generate/read/up/status/list/logs/down execute only against the owned Compose project and all cleanup postconditions pass."},
+                {
+                    "id": "discovery_phase",
+                    "description": "The static phase discovers exactly nine tools and validates every input schema without invoking lifecycle tools.",
+                },
+                {
+                    "id": "approved_lifecycle_phase",
+                    "description": "After explicit approval, generate/read/up/status/list/logs/down execute only against the owned Compose project and all cleanup postconditions pass.",
+                },
             ]
         )
     elif capability["kind"] == "model":
-        observations.append({"id": "model_response", "description": "The exact model ID is reported by the backend and a bounded request completes without fallback."})
+        observations.append(
+            {
+                "id": "model_response",
+                "description": "The exact model ID is reported by the backend and a bounded request completes without fallback.",
+            }
+        )
     elif capability["kind"] == "configuration":
-        observations.append({"id": "round_trip", "description": "Rendered state validates, reads back without semantic drift, and restores the pre-test state."})
+        observations.append(
+            {
+                "id": "round_trip",
+                "description": "Rendered state validates, reads back without semantic drift, and restores the pre-test state.",
+            }
+        )
     elif capability["kind"] == "evaluation":
-        observations.append({"id": "score_record", "description": "Per-row scores, aggregate scores, evaluator identity, and dataset digest are emitted."})
+        observations.append(
+            {
+                "id": "score_record",
+                "description": "Per-row scores, aggregate scores, evaluator identity, and dataset digest are emitted.",
+            }
+        )
     elif capability["kind"] == "model_customization":
-        observations.append({"id": "custom_artifact_selected", "description": "Runtime provenance identifies the locked custom artifact and the capability-specific output oracle passes."})
+        observations.append(
+            {
+                "id": "custom_artifact_selected",
+                "description": "Runtime provenance identifies the locked custom artifact and the capability-specific output oracle passes.",
+            }
+        )
     elif capability["kind"] == "calibration":
-        observations.append({"id": "calibration_export", "description": "Export is finite, schema-valid, bound to the custom inputs, and passes reprojection/geometry validation."})
+        observations.append(
+            {
+                "id": "calibration_export",
+                "description": "Export is finite, schema-valid, bound to the custom inputs, and passes reprojection/geometry validation.",
+            }
+        )
     elif capability["kind"] in {"deployment", "security"}:
         if capability["acceptance_class"] == "external_optional":
-            observations.append({"id": "boundary_admission", "description": "Only operator-opted external infrastructure is referenced; no local-complete claim is made."})
+            observations.append(
+                {
+                    "id": "boundary_admission",
+                    "description": "Only operator-opted external infrastructure is referenced; no local-complete claim is made.",
+                }
+            )
         else:
-            observations.append({"id": "local_admission", "description": "The exact local contract reaches ready, satisfies its positive and negative probes, and returns to captured pre-test state."})
+            observations.append(
+                {
+                    "id": "local_admission",
+                    "description": "The exact local contract reaches ready, satisfies its positive and negative probes, and returns to captured pre-test state.",
+                }
+            )
     elif capability["kind"] == "performance":
-        observations.append({"id": "thor_measurement", "description": "Raw samples, warmup, concurrency, duration, p50, p95, throughput, errors, and Thor hardware metadata are recorded."})
+        observations.append(
+            {
+                "id": "thor_measurement",
+                "description": "Raw samples, warmup, concurrency, duration, p50, p95, throughput, errors, and Thor hardware metadata are recorded.",
+            }
+        )
     elif capability["kind"] == "tooling":
-        observations.append({"id": "deterministic_output", "description": "Two clean runs produce schema-valid, byte-identical output in the exact declared output path."})
+        observations.append(
+            {
+                "id": "deterministic_output",
+                "description": "Two clean runs produce schema-valid, byte-identical output in the exact declared output path.",
+            }
+        )
     elif capability["kind"] == "api":
-        observations.append({"id": "api_contract", "description": "Exact operation discovery, success response, negative response, persistence/readback, and owned cleanup are observed."})
+        observations.append(
+            {
+                "id": "api_contract",
+                "description": "Exact operation discovery, success response, negative response, persistence/readback, and owned cleanup are observed.",
+            }
+        )
     elif capability["kind"] == "protocol":
-        observations.append({"id": "wire_contract", "description": "Handshake, framing/schema, ordering, terminal/ack behavior, and disconnect cleanup match the declared protocol."})
+        observations.append(
+            {
+                "id": "wire_contract",
+                "description": "Handshake, framing/schema, ordering, terminal/ack behavior, and disconnect cleanup match the declared protocol.",
+            }
+        )
     elif capability["kind"] == "runtime_behavior":
-        observations.append({"id": "boundary_pair", "description": "A passing boundary case and a failing/limited adjacent case distinguish the advertised behavior."})
+        observations.append(
+            {
+                "id": "boundary_pair",
+                "description": "A passing boundary case and a failing/limited adjacent case distinguish the advertised behavior.",
+            }
+        )
     else:
         raise OracleContractError(f"{capability_id}: observations are not defined")
     if not contract:
@@ -493,7 +662,9 @@ def _contract_assertions(capability: dict[str, Any]) -> list[dict[str, Any]]:
             "operator": "recorded_pass",
             "expected": True,
         }
-        for index, observation in enumerate(_observations(capability, _profile(capability)[0]), 1)
+        for index, observation in enumerate(
+            _observations(capability, _profile(capability)[0]), 1
+        )
         if observation["id"] != "contract_identity"
     )
     return assertions
@@ -502,18 +673,54 @@ def _contract_assertions(capability: dict[str, Any]) -> list[dict[str, Any]]:
 def _admission(capability: dict[str, Any], mode: str) -> list[dict[str, Any]]:
     capability_id = capability["id"]
     gates = [
-        {"id": "operator-approval", "condition": "explicit approval exists for any service lifecycle or external access", "bounded": True},
-        {"id": "target-bound", "condition": f"execution is pinned to capability {capability_id} and target commit", "bounded": True},
-        {"id": "fixture-bound", "condition": "fixture digest, namespace, duration, and request count are recorded before execution", "bounded": True},
+        {
+            "id": "operator-approval",
+            "condition": "explicit approval exists for any service lifecycle or external access",
+            "bounded": True,
+        },
+        {
+            "id": "target-bound",
+            "condition": f"execution is pinned to capability {capability_id} and target commit",
+            "bounded": True,
+        },
+        {
+            "id": "fixture-bound",
+            "condition": "fixture digest, namespace, duration, and request count are recorded before execution",
+            "bounded": True,
+        },
     ]
     if mode in {"model", "runtime", "api", "protocol"}:
-        gates.append({"id": "runtime-capacity", "condition": "Thor cgroup, memory, disk, GPU, port, and exact artifact/image gates pass", "bounded": True})
+        gates.append(
+            {
+                "id": "runtime-capacity",
+                "condition": "Thor cgroup, memory, disk, GPU, port, and exact artifact/image gates pass",
+                "bounded": True,
+            }
+        )
     if capability["kind"] == "model":
-        gates.append({"id": "model-artifact-staged", "condition": "the exact immutable model artifact and backend lock are staged and verified before the timed runtime oracle begins", "bounded": True})
+        gates.append(
+            {
+                "id": "model-artifact-staged",
+                "condition": "the exact immutable model artifact and backend lock are staged and verified before the timed runtime oracle begins",
+                "bounded": True,
+            }
+        )
     if capability["id"] == "api.orchestrator-mcp.tools-9":
-        gates.append({"id": "orchestrator-lifecycle-approval", "condition": "explicit approval names the disposable Compose project before any lifecycle tool beyond discovery is invoked", "bounded": True})
+        gates.append(
+            {
+                "id": "orchestrator-lifecycle-approval",
+                "condition": "explicit approval names the disposable Compose project before any lifecycle tool beyond discovery is invoked",
+                "bounded": True,
+            }
+        )
     if capability["acceptance_class"] == "external_optional":
-        gates.append({"id": "external-opt-in", "condition": "operator supplies the external environment and credentials; absence remains not_applicable", "bounded": True})
+        gates.append(
+            {
+                "id": "external-opt-in",
+                "condition": "operator supplies the external environment and credentials; absence remains not_applicable",
+                "bounded": True,
+            }
+        )
     return gates
 
 
@@ -521,12 +728,48 @@ def _cleanup(capability: dict[str, Any], mode: str) -> dict[str, Any]:
     capability_id = capability["id"]
     external_boundary = capability["acceptance_class"] == "external_optional"
     if external_boundary:
-        return {"mutation": "none_by_default", "targets": [], "allowlist": [], "pre_state": "not_materialized", "restore": "revoke only test-scoped credentials/resources if the operator opts in", "executor": None, "postcondition_collectors": [], "postconditions": ["operator records removal or revocation of every test-scoped external resource"]}
-    if capability["id"].startswith("prereq.platform.") or capability["id"] == "boundary.thor.fully-local-future":
-        return {"mutation": "read_only", "targets": [], "allowlist": [], "pre_state": "read_only_snapshot_required", "restore": "no cleanup; the oracle records host or documentation state without applying remediation", "executor": None, "postcondition_collectors": [], "postconditions": ["a second read confirms the observed host or documentation state was not changed"]}
+        return {
+            "mutation": "none_by_default",
+            "targets": [],
+            "allowlist": [],
+            "pre_state": "not_materialized",
+            "restore": "revoke only test-scoped credentials/resources if the operator opts in",
+            "executor": None,
+            "postcondition_collectors": [],
+            "postconditions": [
+                "operator records removal or revocation of every test-scoped external resource"
+            ],
+        }
+    if (
+        capability["id"].startswith("prereq.platform.")
+        or capability["id"] == "boundary.thor.fully-local-future"
+    ):
+        return {
+            "mutation": "read_only",
+            "targets": [],
+            "allowlist": [],
+            "pre_state": "read_only_snapshot_required",
+            "restore": "no cleanup; the oracle records host or documentation state without applying remediation",
+            "executor": None,
+            "postcondition_collectors": [],
+            "postconditions": [
+                "a second read confirms the observed host or documentation state was not changed"
+            ],
+        }
     if mode == "static":
         target = f"vss-oracle-{capability_id.replace('.', '-')}"
-        return {"mutation": "temporary_files_only", "targets": [target], "allowlist": [target], "pre_state": "exact target absence or digest must be captured", "restore": "delete the exact temporary directory after digest capture", "executor": None, "postcondition_collectors": [], "postconditions": ["the exact temporary target is absent and no sibling path changed"]}
+        return {
+            "mutation": "temporary_files_only",
+            "targets": [target],
+            "allowlist": [target],
+            "pre_state": "exact target absence or digest must be captured",
+            "restore": "delete the exact temporary directory after digest capture",
+            "executor": None,
+            "postcondition_collectors": [],
+            "postconditions": [
+                "the exact temporary target is absent and no sibling path changed"
+            ],
+        }
     target = f"vss-oracle-{capability_id.replace('.', '-')}"
     return {
         "mutation": "namespaced_and_reversible",
@@ -536,11 +779,16 @@ def _cleanup(capability: dict[str, Any], mode: str) -> dict[str, Any]:
         "restore": "remove only recorded oracle-owned resources and restore the captured pre-test service/config state",
         "executor": None,
         "postcondition_collectors": [],
-        "postconditions": ["every allowlisted oracle-owned resource is absent", "captured service/config state and non-owned resource digests match pre-state"],
+        "postconditions": [
+            "every allowlisted oracle-owned resource is absent",
+            "captured service/config state and non-owned resource digests match pre-state",
+        ],
     }
 
 
-def _workload(capability: dict[str, Any], live_integration: bool = True) -> dict[str, Any]:
+def _workload(
+    capability: dict[str, Any], live_integration: bool = True
+) -> dict[str, Any]:
     capability_id = capability["id"]
     contract = capability["contract"]
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
@@ -555,11 +803,19 @@ def _workload(capability: dict[str, Any], live_integration: bool = True) -> dict
         per_unit = len(phases)
         overhead = 1
     elif capability["kind"] == "api":
-        units = contract.get("operation_count") or contract.get("repository_tool_count") or contract.get("tool_count") or contract.get("operation_count", 1)
+        units = (
+            contract.get("operation_count")
+            or contract.get("repository_tool_count")
+            or contract.get("tool_count")
+            or contract.get("operation_count", 1)
+        )
         phases = ["positive", "adjacent_negative", "readback", "cleanup"]
         per_unit = len(phases)
         overhead = 1
-    elif capability_id in {"behavior.rt-vlm.kafka-queue-bound", "behavior.rt-embed.kafka-queue-bound"}:
+    elif capability_id in {
+        "behavior.rt-vlm.kafka-queue-bound",
+        "behavior.rt-embed.kafka-queue-bound",
+    }:
         units = int(contract["default"]) + 1
         phases = ["bounded_send"]
         per_unit = 1
@@ -601,7 +857,10 @@ def canonical_oracle_sha256(oracle: dict[str, Any]) -> str:
 
 
 def _protocol_case_bindings(document: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    if hashlib.sha256(PROTOCOL_CASES.read_bytes()).hexdigest() != PROTOCOL_CASES_FILE_SHA256:
+    if (
+        hashlib.sha256(PROTOCOL_CASES.read_bytes()).hexdigest()
+        != PROTOCOL_CASES_FILE_SHA256
+    ):
         raise OracleContractError("protocol case whole-file SHA-256 differs")
     if document.get("contract_set_sha256") != PROTOCOL_CASES_SET_SHA256:
         raise OracleContractError("protocol case internal set SHA-256 differs")
@@ -619,7 +878,11 @@ def _protocol_case_bindings(document: dict[str, Any]) -> dict[str, dict[str, Any
         sources = case.get("sources")
         negatives = case.get("adjacent_negative_vectors")
         positive = case.get("positive_vector")
-        if not isinstance(sources, list) or not isinstance(negatives, list) or not isinstance(positive, dict):
+        if (
+            not isinstance(sources, list)
+            or not isinstance(negatives, list)
+            or not isinstance(positive, dict)
+        ):
             raise OracleContractError(f"{capability_id}: incomplete protocol case")
         bindings[capability_id] = {
             "path": PROTOCOL_CASES_PATH,
@@ -669,27 +932,35 @@ def _planning_executor_bindings(
         binding = requirement.get("static_executor_binding")
         if materialized is False and executor_ready is False and binding is None:
             continue
-        if materialized is not True or executor_ready is not True or not isinstance(
-            binding, dict
+        if (
+            materialized is not True
+            or executor_ready is not True
+            or not isinstance(binding, dict)
         ):
             raise OracleContractError("partial live planning-executor integration")
         if requirement.get("runtime_evidence") != []:
-            raise OracleContractError("planning executor must not contain runtime evidence")
+            raise OracleContractError(
+                "planning executor must not contain runtime evidence"
+            )
         owner_type = requirement.get("owner_type")
         owner_id = requirement.get("owner_id")
         case = binding.get("case")
         if not isinstance(case, dict):
             raise OracleContractError("planning executor case is malformed")
-        if (
-            case.get("planning_requirement_id") != requirement.get("id")
-            or case.get("planning_payload_sha256") != requirement.get("payload_canonical_sha256")
-        ):
+        if case.get("planning_requirement_id") != requirement.get("id") or case.get(
+            "planning_payload_sha256"
+        ) != requirement.get("payload_canonical_sha256"):
             raise OracleContractError("planning executor case ownership differs")
         case_capability_id = case.get("capability_id")
         if owner_type in {"capability", "performance_enrichment_target"}:
             capability_id = owner_id
-            if not isinstance(capability_id, str) or case_capability_id != capability_id:
-                raise OracleContractError("planning executor lacks its exact capability owner")
+            if (
+                not isinstance(capability_id, str)
+                or case_capability_id != capability_id
+            ):
+                raise OracleContractError(
+                    "planning executor lacks its exact capability owner"
+                )
         elif owner_type == "global_acceptance_vector":
             applicable = requirement.get("applicable_record_ids")
             capability_id = case_capability_id
@@ -704,7 +975,9 @@ def _planning_executor_bindings(
                 or case.get("uncovered_applicable_record_ids")
                 != [record_id for record_id in applicable if record_id != capability_id]
             ):
-                raise OracleContractError("global planning executor target or uncovered partition differs")
+                raise OracleContractError(
+                    "global planning executor target or uncovered partition differs"
+                )
         else:
             raise OracleContractError("planning executor owner type is unsupported")
         result.setdefault(capability_id, []).append(
@@ -723,7 +996,9 @@ def _planning_executor_bindings(
     return result
 
 
-def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[dict[str, Any]]]:
+def _offline_mv3dt_tool_bindings(
+    repo_root: Path = REPO_ROOT,
+) -> dict[str, list[dict[str, Any]]]:
     """Bind the reviewed candidate result to only its supported oracle subset."""
     loaded: dict[str, dict[str, Any]] = {}
     for role, lock in OFFLINE_MV3DT_FILES.items():
@@ -759,7 +1034,13 @@ def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[
         != {"tool.mv3dt.cam-info-generator", "tool.mv3dt.pub-sub-generator"}
     ):
         raise OracleContractError("offline MV3DT candidate boundary differs")
-    semantic = result_schema.get("$defs", {}).get("run", {}).get("properties", {}).get("semantic", {}).get("const")
+    semantic = (
+        result_schema.get("$defs", {})
+        .get("run", {})
+        .get("properties", {})
+        .get("semantic", {})
+        .get("const")
+    )
     if not isinstance(semantic, dict) or set(semantic) != {"cam_info", "pub_sub"}:
         raise OracleContractError("offline MV3DT semantic result lock differs")
     source_locks = contract.get("source_locks")
@@ -771,7 +1052,9 @@ def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[
         "tools/rtvi-cv-mv3dt-utils/requirements.txt",
         "deploy/docker/thor-local/parity/manifest.json",
     }
-    if {item.get("path") for item in source_locks if isinstance(item, dict)} != expected_source_paths:
+    if {
+        item.get("path") for item in source_locks if isinstance(item, dict)
+    } != expected_source_paths:
         raise OracleContractError("offline MV3DT source-lock path set differs")
     verified_source_locks: dict[str, str] = {}
     for source_lock in source_locks:
@@ -790,7 +1073,9 @@ def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[
                 )
             verified_source_locks[relative] = source_lock["sha256"]
             continue
-        path = _resolve_repo_regular_file(repo_root, relative, f"offline_mv3dt.source_lock.{relative}")
+        path = _resolve_repo_regular_file(
+            repo_root, relative, f"offline_mv3dt.source_lock.{relative}"
+        )
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
         if actual != source_lock.get("sha256"):
             raise OracleContractError(f"offline MV3DT source lock differs: {relative}")
@@ -801,25 +1086,35 @@ def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[
     )
     if receipt_errors:
         first = receipt_errors[0]
-        raise OracleContractError(f"offline MV3DT execution receipt schema failed: {first.message}")
+        raise OracleContractError(
+            f"offline MV3DT execution receipt schema failed: {first.message}"
+        )
     fixture_lock = OFFLINE_MV3DT_FILES["fixture"]
     expected_receipt_sources = {
         **verified_source_locks,
         fixture_lock["path"]: fixture_lock["raw_sha256"],
     }
     if receipt.get("source_and_fixture_sha256") != expected_receipt_sources:
-        raise OracleContractError("offline MV3DT receipt source/fixture bindings differ")
+        raise OracleContractError(
+            "offline MV3DT receipt source/fixture bindings differ"
+        )
     runs = receipt.get("deterministic_runs")
     if not isinstance(runs, list) or len(runs) != 2 or runs[0] != runs[1]:
-        raise OracleContractError("offline MV3DT receipt does not contain two identical runs")
+        raise OracleContractError(
+            "offline MV3DT receipt does not contain two identical runs"
+        )
     observed_dependency = receipt.get("dependency_lock")
     if not isinstance(observed_dependency, dict):
-        raise OracleContractError("offline MV3DT receipt dependency observation is absent")
+        raise OracleContractError(
+            "offline MV3DT receipt dependency observation is absent"
+        )
     declared = observed_dependency.get("declared_requirements")
     observed_distributions = observed_dependency.get("observed_distribution_versions")
     expected_declared = contract.get("dependency_lock", {}).get("declared_requirements")
     if declared != expected_declared or not isinstance(observed_distributions, dict):
-        raise OracleContractError("offline MV3DT receipt dependency declaration differs")
+        raise OracleContractError(
+            "offline MV3DT receipt dependency declaration differs"
+        )
     declared_by_distribution = {
         "numpy": "numpy==2.2.6",
         "opencv-python": "opencv-python~=4.12.0",
@@ -836,16 +1131,17 @@ def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[
         }
         for distribution, requirement in declared_by_distribution.items()
     ]
-    if any(
-        item["observed"] in item["declared"] for item in mismatches
-    ):
+    if any(item["observed"] in item["declared"] for item in mismatches):
         raise OracleContractError("offline MV3DT dependency mismatch boundary differs")
     receipt_run = runs[0]
     common = {
         "scope": "bounded_static_tool_observation_subset_only",
         "qualification_package": OFFLINE_MV3DT_ROOT,
         "contract": copy.deepcopy(OFFLINE_MV3DT_FILES["contract"]),
-        "executor": {**OFFLINE_MV3DT_FILES["executor"], "invocation": ["python3", f"{OFFLINE_MV3DT_ROOT}/executor.py", "--check"]},
+        "executor": {
+            **OFFLINE_MV3DT_FILES["executor"],
+            "invocation": ["python3", f"{OFFLINE_MV3DT_ROOT}/executor.py", "--check"],
+        },
         "result_schema": copy.deepcopy(OFFLINE_MV3DT_FILES["result_schema"]),
         "fixture": copy.deepcopy(OFFLINE_MV3DT_FILES["fixture"]),
         "execution_receipt": copy.deepcopy(OFFLINE_MV3DT_FILES["execution_receipt"]),
@@ -876,14 +1172,48 @@ def _offline_mv3dt_tool_bindings(repo_root: Path = REPO_ROOT) -> dict[str, list[
     coverage = {
         "covered_observation_ids": ["semantic_result", "deterministic_output"],
         "uncovered_observation_ids": ["contract_identity"],
-        "covered_assertion_ids": ["contract-01", "contract-02", "contract-03", "contract-04", "observation-02", "observation-03"],
-        "uncovered_assertion_ids": ["contract-05", "contract-06", "contract-07", "contract-08"],
+        "covered_assertion_ids": [
+            "contract-01",
+            "contract-02",
+            "contract-03",
+            "contract-04",
+            "observation-02",
+            "observation-03",
+        ],
+        "uncovered_assertion_ids": [
+            "contract-05",
+            "contract-06",
+            "contract-07",
+            "contract-08",
+        ],
     }
     outputs = receipt_run["output_locks"]
     observed_semantic = receipt_run["semantic"]
     return {
-        "tool.mv3dt.cam-info-generator": [{**copy.deepcopy(common), "selected_output_locks": {"cam_info_tree_sha256": outputs["cam_info_tree_sha256"]}, "selected_semantic": {"cam_info": copy.deepcopy(observed_semantic["cam_info"])}, "oracle_coverage": copy.deepcopy(coverage)}],
-        "tool.mv3dt.pub-sub-generator": [{**copy.deepcopy(common), "selected_output_locks": {"pub_sub_file_sha256": outputs["pub_sub_file_sha256"]}, "selected_semantic": {"pub_sub": copy.deepcopy(observed_semantic["pub_sub"])}, "oracle_coverage": copy.deepcopy(coverage)}],
+        "tool.mv3dt.cam-info-generator": [
+            {
+                **copy.deepcopy(common),
+                "selected_output_locks": {
+                    "cam_info_tree_sha256": outputs["cam_info_tree_sha256"]
+                },
+                "selected_semantic": {
+                    "cam_info": copy.deepcopy(observed_semantic["cam_info"])
+                },
+                "oracle_coverage": copy.deepcopy(coverage),
+            }
+        ],
+        "tool.mv3dt.pub-sub-generator": [
+            {
+                **copy.deepcopy(common),
+                "selected_output_locks": {
+                    "pub_sub_file_sha256": outputs["pub_sub_file_sha256"]
+                },
+                "selected_semantic": {
+                    "pub_sub": copy.deepcopy(observed_semantic["pub_sub"])
+                },
+                "oracle_coverage": copy.deepcopy(coverage),
+            }
+        ],
     }
 
 
@@ -899,22 +1229,34 @@ def compile_plan(
         raise OracleContractError("official capability ledger is malformed")
     live_integration = include_local_runtime_bounds
     if live_integration:
-        capability_ids = {item.get("id") for item in capabilities if isinstance(item, dict)}
+        capability_ids = {
+            item.get("id") for item in capabilities if isinstance(item, dict)
+        }
         planning_ids = [row[0] for row in LOCAL_RUNTIME_WORKLOAD_OVERRIDES.values()]
         if (
             len(LOCAL_RUNTIME_WORKLOAD_OVERRIDES) != 20
             or not set(LOCAL_RUNTIME_WORKLOAD_OVERRIDES).issubset(capability_ids)
             or len(planning_ids) != len(set(planning_ids))
         ):
-            raise OracleContractError("exact local-runtime workload override denominator drift")
-    protocol_document = _load(PROTOCOL_CASES) if protocol_document is None else protocol_document
+            raise OracleContractError(
+                "exact local-runtime workload override denominator drift"
+            )
+    protocol_document = (
+        _load(PROTOCOL_CASES) if protocol_document is None else protocol_document
+    )
     protocol_bindings = _protocol_case_bindings(protocol_document)
     planning_bindings = _planning_executor_bindings(acceptance_document)
-    offline_tool_bindings = {} if acceptance_document is None else _offline_mv3dt_tool_bindings()
+    offline_tool_bindings = (
+        {} if acceptance_document is None else _offline_mv3dt_tool_bindings()
+    )
     oracles = []
     for capability in capabilities:
-        if not isinstance(capability, dict) or not isinstance(capability.get("id"), str):
-            raise OracleContractError("official capability ledger contains an invalid capability")
+        if not isinstance(capability, dict) or not isinstance(
+            capability.get("id"), str
+        ):
+            raise OracleContractError(
+                "official capability ledger contains an invalid capability"
+            )
         capability_id = capability["id"]
         profile, mode = _profile(capability)
         external_boundary = capability["acceptance_class"] == "external_optional"
@@ -922,7 +1264,9 @@ def compile_plan(
         execution_bounds = {
             "executor": None,
             "collectors": [],
-            "network_scope": "operator-approved external endpoint" if external_boundary else "loopback-or-compose-internal",
+            "network_scope": "operator-approved external endpoint"
+            if external_boundary
+            else "loopback-or-compose-internal",
             "max_duration_seconds": 900,
             "max_requests": workload["calculated_max_requests"],
             "workload": workload,
@@ -932,46 +1276,50 @@ def compile_plan(
         if live_integration:
             execution_bounds["max_actions"] = _max_actions(capability, workload)
         oracle = {
-                "capability_id": capability_id,
-                "oracle_id": f"oracle.{capability_id}",
-                "profile": profile,
-                "mode": mode,
-                "ledger_binding": {
-                    "feature_id": capability["feature_id"],
-                    "kind": capability["kind"],
-                    "title": capability["title"],
-                    "source_claims": copy.deepcopy(capability["source_claims"]),
-                    "acceptance_class": capability["acceptance_class"],
-                    "thor_state": capability["thor_state"],
-                    "runtime_state": capability["runtime_state"],
-                    "contract": copy.deepcopy(capability["contract"]),
-                    "gap": capability["gap"],
-                },
-                "reviewed_scenario_ids": [
-                    *capability["scenario_ids"],
-                    f"oracle.{capability_id}",
+            "capability_id": capability_id,
+            "oracle_id": f"oracle.{capability_id}",
+            "profile": profile,
+            "mode": mode,
+            "ledger_binding": {
+                "feature_id": capability["feature_id"],
+                "kind": capability["kind"],
+                "title": capability["title"],
+                "source_claims": copy.deepcopy(capability["source_claims"]),
+                "acceptance_class": capability["acceptance_class"],
+                "thor_state": capability["thor_state"],
+                "runtime_state": capability["runtime_state"],
+                "contract": copy.deepcopy(capability["contract"]),
+                "gap": capability["gap"],
+            },
+            "reviewed_scenario_ids": [
+                *capability["scenario_ids"],
+                f"oracle.{capability_id}",
+            ],
+            "fixture": _fixture(capability, profile),
+            "expected_observations": _observations(capability, profile),
+            "assertions": _contract_assertions(capability),
+            "admission_prerequisites": _admission(capability, mode),
+            "execution_bounds": execution_bounds,
+            "cleanup": _cleanup(capability, mode),
+            "acceptance_readiness": {
+                "classification": "planning_index_only",
+                "blockers": [
+                    "fixture path, generator, and digest are not materialized",
+                    "request/command executor and collectors are not implemented",
+                    "cleanup allowlist has no machine executor or postcondition collector",
                 ],
-                "fixture": _fixture(capability, profile),
-                "expected_observations": _observations(capability, profile),
-                "assertions": _contract_assertions(capability),
-                "admission_prerequisites": _admission(capability, mode),
-                "execution_bounds": execution_bounds,
-                "cleanup": _cleanup(capability, mode),
-                "acceptance_readiness": {
-                    "classification": "planning_index_only",
-                    "blockers": [
-                        "fixture path, generator, and digest are not materialized",
-                        "request/command executor and collectors are not implemented",
-                        "cleanup allowlist has no machine executor or postcondition collector",
-                    ],
-                },
-                "current_state": "external_boundary_unexecuted" if external_boundary else "open_unexecuted",
-                "evidence": [],
-            }
+            },
+            "current_state": "external_boundary_unexecuted"
+            if external_boundary
+            else "open_unexecuted",
+            "evidence": [],
+        }
         if capability["kind"] == "protocol":
             binding = protocol_bindings.get(capability_id)
             if binding is None:
-                raise OracleContractError(f"{capability_id}: exact protocol case is missing")
+                raise OracleContractError(
+                    f"{capability_id}: exact protocol case is missing"
+                )
             oracle["protocol_case_binding"] = binding
         if capability_id in planning_bindings:
             oracle["planning_executor_bindings"] = planning_bindings[capability_id]
@@ -981,7 +1329,24 @@ def compile_plan(
                 "the full capability cleanup allowlist has no machine executor or postcondition collector",
             ]
         if capability_id in offline_tool_bindings:
-            oracle["offline_tool_observation_bindings"] = offline_tool_bindings[capability_id]
+            oracle["offline_tool_observation_bindings"] = offline_tool_bindings[
+                capability_id
+            ]
+        if capability_id in SYNTHETIC_RUNTIME_FIXTURES:
+            fixture_path, fixture_sha256 = SYNTHETIC_RUNTIME_FIXTURES[capability_id]
+            oracle["fixture"]["materialization"] = {
+                "path": fixture_path,
+                "generator": SYNTHETIC_RUNTIME_EXECUTOR,
+                "sha256": fixture_sha256,
+            }
+            oracle["execution_bounds"]["executor"] = SYNTHETIC_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [SYNTHETIC_RUNTIME_EXECUTOR]
+            oracle["cleanup"]["executor"] = SYNTHETIC_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [SYNTHETIC_RUNTIME_EXECUTOR]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         oracles.append(oracle)
     return {
         "schema_version": 1,
@@ -1011,7 +1376,9 @@ def validate(
     try:
         Draft202012Validator.check_schema(schema)
     except SchemaError as exc:
-        raise OracleContractError(f"invalid capability-oracle schema: {exc.message}") from exc
+        raise OracleContractError(
+            f"invalid capability-oracle schema: {exc.message}"
+        ) from exc
     errors = sorted(
         Draft202012Validator(schema).iter_errors(plan),
         key=lambda error: tuple(str(item) for item in error.absolute_path),
@@ -1027,19 +1394,37 @@ def validate(
     )
     if plan != expected:
         expected_by_id = {item["capability_id"]: item for item in expected["oracles"]}
-        actual_by_id = {item.get("capability_id"): item for item in plan.get("oracles", []) if isinstance(item, dict)}
+        actual_by_id = {
+            item.get("capability_id"): item
+            for item in plan.get("oracles", [])
+            if isinstance(item, dict)
+        }
         if set(actual_by_id) != set(expected_by_id):
             missing = sorted(set(expected_by_id) - set(actual_by_id))
             extra = sorted(set(actual_by_id) - set(expected_by_id), key=str)
-            raise OracleContractError(f"oracle coverage drift: missing={missing}, extra={extra}")
-        changed = next(key for key in expected_by_id if actual_by_id[key] != expected_by_id[key])
-        raise OracleContractError(f"{changed}: oracle contract drift; regenerate and review")
+            raise OracleContractError(
+                f"oracle coverage drift: missing={missing}, extra={extra}"
+            )
+        changed = next(
+            key for key in expected_by_id if actual_by_id[key] != expected_by_id[key]
+        )
+        raise OracleContractError(
+            f"{changed}: oracle contract drift; regenerate and review"
+        )
     oracle_ids = [item["oracle_id"] for item in plan["oracles"]]
     fixture_ids = [item["fixture"]["id"] for item in plan["oracles"]]
     unique_scenarios = [item["reviewed_scenario_ids"][-1] for item in plan["oracles"]]
-    for label, values in (("oracle", oracle_ids), ("fixture", fixture_ids), ("scenario", unique_scenarios)):
-        if len(values) != len(set(values)) or any(PLAIN_ID.fullmatch(value) is None for value in values):
-            raise OracleContractError(f"capability-specific {label} identities must be unique plain IDs")
+    for label, values in (
+        ("oracle", oracle_ids),
+        ("fixture", fixture_ids),
+        ("scenario", unique_scenarios),
+    ):
+        if len(values) != len(set(values)) or any(
+            PLAIN_ID.fullmatch(value) is None for value in values
+        ):
+            raise OracleContractError(
+                f"capability-specific {label} identities must be unique plain IDs"
+            )
     signatures = {
         json.dumps(
             {
@@ -1053,9 +1438,17 @@ def validate(
         for item in plan["oracles"]
     }
     if len(signatures) != len(plan["oracles"]):
-        raise OracleContractError("a generic oracle signature is reused across capabilities")
-    if any(item["current_state"] not in {"open_unexecuted", "external_boundary_unexecuted"} or item["evidence"] for item in plan["oracles"]):
-        raise OracleContractError("unexecuted oracle plans must not contain passed state or evidence")
+        raise OracleContractError(
+            "a generic oracle signature is reused across capabilities"
+        )
+    if any(
+        item["current_state"] not in {"open_unexecuted", "external_boundary_unexecuted"}
+        or item["evidence"]
+        for item in plan["oracles"]
+    ):
+        raise OracleContractError(
+            "unexecuted oracle plans must not contain passed state or evidence"
+        )
     for item in plan["oracles"]:
         for binding in item.get("planning_executor_bindings", []):
             if (
@@ -1073,11 +1466,16 @@ def validate(
                 or binding["can_mark_passed_current"] is not False
                 or binding["runtime_evidence"] != []
                 or binding["scope"] != "bounded_static_tool_observation_subset_only"
-                or binding["result"]["official_capability_effect"] != "none_candidate_only"
+                or binding["result"]["official_capability_effect"]
+                != "none_candidate_only"
             ):
-                raise OracleContractError(f"{item['capability_id']}: offline tool binding implies capability advancement")
+                raise OracleContractError(
+                    f"{item['capability_id']}: offline tool binding implies capability advancement"
+                )
             coverage = binding["oracle_coverage"]
-            expected_observations = {observation["id"] for observation in item["expected_observations"]}
+            expected_observations = {
+                observation["id"] for observation in item["expected_observations"]
+            }
             covered_observations = set(coverage["covered_observation_ids"])
             uncovered_observations = set(coverage["uncovered_observation_ids"])
             expected_assertions = {assertion["id"] for assertion in item["assertions"]}
@@ -1085,28 +1483,48 @@ def validate(
             uncovered_assertions = set(coverage["uncovered_assertion_ids"])
             if (
                 covered_observations & uncovered_observations
-                or covered_observations | uncovered_observations != expected_observations
+                or covered_observations | uncovered_observations
+                != expected_observations
                 or covered_assertions & uncovered_assertions
                 or covered_assertions | uncovered_assertions != expected_assertions
                 or not uncovered_observations
                 or not uncovered_assertions
             ):
-                raise OracleContractError(f"{item['capability_id']}: offline tool oracle coverage is not an exact non-advancing partition")
+                raise OracleContractError(
+                    f"{item['capability_id']}: offline tool oracle coverage is not an exact non-advancing partition"
+                )
         workload = item["execution_bounds"]["workload"]
         calculated = (
             workload["units"] * workload["requests_per_unit"]
             + workload["overhead_requests"]
         )
-        if workload["calculated_max_requests"] != calculated or item["execution_bounds"]["max_requests"] != calculated:
-            raise OracleContractError(f"{item['capability_id']}: execution-bound arithmetic differs")
+        if (
+            workload["calculated_max_requests"] != calculated
+            or item["execution_bounds"]["max_requests"] != calculated
+        ):
+            raise OracleContractError(
+                f"{item['capability_id']}: execution-bound arithmetic differs"
+            )
         override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(item["capability_id"])
         expected_actions = override[2] if override is not None else calculated
         if item["execution_bounds"]["max_actions"] != expected_actions:
-            raise OracleContractError(f"{item['capability_id']}: execution action bound differs")
+            raise OracleContractError(
+                f"{item['capability_id']}: execution action bound differs"
+            )
         if override is not None:
-            planning_ids = item["fixture"]["input"]["contract"].get("wave3_acceptance", {}).get("planning_requirement_ids")
-            if planning_ids != [override[0]] or calculated != override[1] or workload["phases"] != LOCAL_RUNTIME_WORKLOAD_PHASES:
-                raise OracleContractError(f"{item['capability_id']}: exact local-runtime workload override differs")
+            planning_ids = (
+                item["fixture"]["input"]["contract"]
+                .get("wave3_acceptance", {})
+                .get("planning_requirement_ids")
+            )
+            if (
+                planning_ids != [override[0]]
+                or calculated != override[1]
+                or workload["phases"] != LOCAL_RUNTIME_WORKLOAD_PHASES
+            ):
+                raise OracleContractError(
+                    f"{item['capability_id']}: exact local-runtime workload override differs"
+                )
         if item["acceptance_readiness"]["classification"] == "planning_index_only":
             materialization = item["fixture"]["materialization"]
             if (
@@ -1117,7 +1535,9 @@ def validate(
                 or item["cleanup"]["executor"] is not None
                 or item["cleanup"]["postcondition_collectors"]
             ):
-                raise OracleContractError(f"{item['capability_id']}: planning-only oracle must not imply executable materialization")
+                raise OracleContractError(
+                    f"{item['capability_id']}: planning-only oracle must not imply executable materialization"
+                )
         elif (
             item["acceptance_readiness"]["blockers"]
             or not all(item["fixture"]["materialization"].values())
@@ -1126,32 +1546,71 @@ def validate(
             or not item["cleanup"]["executor"]
             or not item["cleanup"]["postcondition_collectors"]
         ):
-            raise OracleContractError(f"{item['capability_id']}: executor-ready oracle is incomplete")
+            raise OracleContractError(
+                f"{item['capability_id']}: executor-ready oracle is incomplete"
+            )
         else:
             capability_id = item["capability_id"]
             materialization = item["fixture"]["materialization"]
-            fixture_path = _resolve_reviewed_file(repo_root, materialization["path"], f"{capability_id}.fixture")
-            if hashlib.sha256(fixture_path.read_bytes()).hexdigest() != materialization["sha256"]:
+            fixture_path = _resolve_reviewed_file(
+                repo_root, materialization["path"], f"{capability_id}.fixture"
+            )
+            if (
+                hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+                != materialization["sha256"]
+            ):
                 raise OracleContractError(f"{capability_id}: fixture digest differs")
-            _resolve_reviewed_file(repo_root, materialization["generator"], f"{capability_id}.fixture_generator")
-            _resolve_reviewed_file(repo_root, item["execution_bounds"]["executor"], f"{capability_id}.executor")
+            _resolve_reviewed_file(
+                repo_root,
+                materialization["generator"],
+                f"{capability_id}.fixture_generator",
+            )
+            _resolve_reviewed_file(
+                repo_root,
+                item["execution_bounds"]["executor"],
+                f"{capability_id}.executor",
+            )
             for index, collector in enumerate(item["execution_bounds"]["collectors"]):
-                _resolve_reviewed_file(repo_root, collector, f"{capability_id}.collector[{index}]")
-            _resolve_reviewed_file(repo_root, item["cleanup"]["executor"], f"{capability_id}.cleanup_executor")
-            for index, collector in enumerate(item["cleanup"]["postcondition_collectors"]):
-                _resolve_reviewed_file(repo_root, collector, f"{capability_id}.cleanup_collector[{index}]")
+                _resolve_reviewed_file(
+                    repo_root, collector, f"{capability_id}.collector[{index}]"
+                )
+            _resolve_reviewed_file(
+                repo_root,
+                item["cleanup"]["executor"],
+                f"{capability_id}.cleanup_executor",
+            )
+            for index, collector in enumerate(
+                item["cleanup"]["postcondition_collectors"]
+            ):
+                _resolve_reviewed_file(
+                    repo_root, collector, f"{capability_id}.cleanup_collector[{index}]"
+                )
     return {
         "capabilities": len(ledger["capabilities"]),
         "oracles": len(plan["oracles"]),
-        "open_runtime": sum(item["current_state"] == "open_unexecuted" for item in plan["oracles"]),
-        "external_boundaries": sum(item["current_state"] == "external_boundary_unexecuted" for item in plan["oracles"]),
+        "open_runtime": sum(
+            item["current_state"] == "open_unexecuted" for item in plan["oracles"]
+        ),
+        "external_boundaries": sum(
+            item["current_state"] == "external_boundary_unexecuted"
+            for item in plan["oracles"]
+        ),
         "profiles": len({item["profile"] for item in plan["oracles"]}),
-        "planning_index_only": sum(item["acceptance_readiness"]["classification"] == "planning_index_only" for item in plan["oracles"]),
-        "executor_ready": sum(item["acceptance_readiness"]["classification"] == "executor_ready" for item in plan["oracles"]),
+        "planning_index_only": sum(
+            item["acceptance_readiness"]["classification"] == "planning_index_only"
+            for item in plan["oracles"]
+        ),
+        "executor_ready": sum(
+            item["acceptance_readiness"]["classification"] == "executor_ready"
+            for item in plan["oracles"]
+        ),
         "planning_executor_bindings": sum(
             len(item.get("planning_executor_bindings", [])) for item in plan["oracles"]
         ),
-        "offline_tool_observation_bindings": sum(len(item.get("offline_tool_observation_bindings", [])) for item in plan["oracles"]),
+        "offline_tool_observation_bindings": sum(
+            len(item.get("offline_tool_observation_bindings", []))
+            for item in plan["oracles"]
+        ),
         "static_subset_oracle_bindings": sum(
             len(item.get("planning_executor_bindings", []))
             + len(item.get("offline_tool_observation_bindings", []))
@@ -1162,8 +1621,12 @@ def validate(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--compile", action="store_true", help="print the canonical expanded plan")
-    parser.add_argument("--write", action="store_true", help="write the canonical expanded plan")
+    parser.add_argument(
+        "--compile", action="store_true", help="print the canonical expanded plan"
+    )
+    parser.add_argument(
+        "--write", action="store_true", help="write the canonical expanded plan"
+    )
     parser.add_argument("--report", action="store_true", help="print validation counts")
     args = parser.parse_args()
     try:
@@ -1193,7 +1656,9 @@ def main() -> int:
     if args.report:
         print(json.dumps(counts, indent=2, sort_keys=True))
     else:
-        print(f"PASS: {counts['oracles']} capability-specific planning-index records validated")
+        print(
+            f"PASS: {counts['oracles']} capability-specific planning-index records validated"
+        )
     return 0
 
 

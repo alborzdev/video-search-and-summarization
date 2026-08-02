@@ -1,0 +1,1052 @@
+{
+  "bindings": {
+    "checkout_clean": true,
+    "checkout_head": "53998f19f11451f63ef582e1f9d06602229461eb",
+    "checkout_tree": "eec19dd141cfa1278ef05754f1be85e51aa4972f",
+    "contract_sha256": "a985966163e9bc726abcadf4564b9274657d426ebcd6629e2c8387b79c3ab99c",
+    "execution_oracle_assertion_ids": {
+      "manifest-entry.synthetic-data-tools.00-semantic-label-helpers": [
+        "contract-01",
+        "contract-02",
+        "contract-03",
+        "contract-04",
+        "contract-05",
+        "observation-02",
+        "observation-03"
+      ],
+      "manifest-entry.synthetic-data-tools.01-dataset-checks": [
+        "contract-01",
+        "contract-02",
+        "contract-03",
+        "contract-04",
+        "observation-02",
+        "observation-03"
+      ],
+      "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion": [
+        "contract-01",
+        "contract-02",
+        "contract-03",
+        "contract-04",
+        "observation-02",
+        "observation-03"
+      ],
+      "manifest-entry.synthetic-data-tools.03-ground-truth-conversion": [
+        "contract-01",
+        "contract-02",
+        "contract-03",
+        "contract-04",
+        "contract-05",
+        "contract-06",
+        "contract-07",
+        "contract-08",
+        "contract-09",
+        "contract-10",
+        "contract-11",
+        "observation-02",
+        "observation-03"
+      ]
+    },
+    "execution_oracle_document_path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/post-state-capability-oracles.json",
+    "execution_oracle_document_sha256": "c50c762e94ceb68e05c0e4a49c8d8f5405f462bd030f81bf982cd2593cf5d5b6",
+    "execution_oracle_fixture_sha256": {
+      "manifest-entry.synthetic-data-tools.00-semantic-label-helpers": "0a079066c4ad506e8589206c8b51e21a0ecacdecb16fc9785c52033b0d279d27",
+      "manifest-entry.synthetic-data-tools.01-dataset-checks": "0cc773dd0ec64aa4a45c379b298dc7580eddf89ab7702172fe101807d52c1ff2",
+      "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion": "171aef78bdd4738fa78f7114b27b9ca9cd0ec528ed52ae2f8be051c5b14dfd25",
+      "manifest-entry.synthetic-data-tools.03-ground-truth-conversion": "0a1f7d857d582aa47cd54aa1a956175a67976719443c8a9ed946962d8ef77939"
+    },
+    "execution_oracle_observation_ids": {
+      "manifest-entry.synthetic-data-tools.00-semantic-label-helpers": [
+        "contract_identity",
+        "semantic_result",
+        "deterministic_output"
+      ],
+      "manifest-entry.synthetic-data-tools.01-dataset-checks": [
+        "contract_identity",
+        "semantic_result",
+        "deterministic_output"
+      ],
+      "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion": [
+        "contract_identity",
+        "semantic_result",
+        "deterministic_output"
+      ],
+      "manifest-entry.synthetic-data-tools.03-ground-truth-conversion": [
+        "contract_identity",
+        "semantic_result",
+        "deterministic_output"
+      ]
+    },
+    "execution_oracle_row_sha256": {
+      "manifest-entry.synthetic-data-tools.00-semantic-label-helpers": "27e103b509c6c5c3e22d48d5cd76b68076c52807245751d7726ca9960224cf97",
+      "manifest-entry.synthetic-data-tools.01-dataset-checks": "a6d1e3f855d8d789590e73d2b90e09f01afc2c9f03e2d9a12f4a0298ec66002f",
+      "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion": "08ed7148d3fb359fe6f26dc691a6c0bf15e9f6d09ccc7c65a31780e6f31ac6c9",
+      "manifest-entry.synthetic-data-tools.03-ground-truth-conversion": "728436beecbf6bc3d782cdceb340ddc3a4f2a68d9a66317b815e2849ac4f95ad"
+    },
+    "execution_oracles_executor_ready": true,
+    "executor_sha256": "74b8ad607621a4a796899d7837e65c3f88c8f2b56e404e1942b529e8ddba140b",
+    "product_version": "3.2.1",
+    "selected_metadata_set": "thor-vss-3.2.1-current-cancellation-search-500",
+    "selected_oracle_document_sha256": "355679322116451972cb2366a61bfba23a72762863796aea84c93a7bb412db14",
+    "upstream_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "capability_results": [
+    {
+      "adjacent_negatives": [
+        {
+          "artifact_absent": true,
+          "case": "missing_stage",
+          "rejected": true,
+          "tool": "box_check"
+        }
+      ],
+      "assertion_results": [
+        {
+          "assertion_id": "contract-01",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-03",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-04",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-05",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-03",
+          "passed": true
+        }
+      ],
+      "capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "cleanup": {
+        "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-00-semantic-label-helpers",
+        "temporary_files_only": true
+      },
+      "deterministic_output": true,
+      "expected_observation_results": [
+        {
+          "observation_id": "contract_identity",
+          "passed": true
+        },
+        {
+          "observation_id": "semantic_result",
+          "passed": true
+        },
+        {
+          "observation_id": "deterministic_output",
+          "passed": true
+        }
+      ],
+      "fixture_sha256": "0a079066c4ad506e8589206c8b51e21a0ecacdecb16fc9785c52033b0d279d27",
+      "generated_input_sha256": "ddca66c7b6a6ee671f995d1f2e8d2652ff21d97f12223556fff756b1e5bda183",
+      "independent_runs": 2,
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "positive_observations": {
+        "artifacts": {
+          "boxes.txt": "51169526daf67d0c9b43da07913efd7b498d5d5f420a6924385ed6e578685033",
+          "xforms.json": "8fd035c57021410cc5a9cf75f6fd8e4d71a3189a532a02ba1a6a8ead34c126da"
+        },
+        "hidden_reported": true,
+        "labels": [
+          "flatbox"
+        ],
+        "labels_removed": true,
+        "xform": {
+          "rotate": [
+            10.0,
+            20.0,
+            30.0
+          ],
+          "xform_path": "/World"
+        }
+      },
+      "run_output_sha256": [
+        "3c3e4cbe39a450d7df6222cb6eed9366d2297943e7b6c2c9bd129cd288e1addd",
+        "3c3e4cbe39a450d7df6222cb6eed9366d2297943e7b6c2c9bd129cd288e1addd"
+      ],
+      "status": "pass"
+    },
+    {
+      "adjacent_negatives": [
+        {
+          "case": "missing_frame_detected",
+          "rejected": true,
+          "tool": "rgb"
+        },
+        {
+          "case": "missing_frame_detected",
+          "rejected": true,
+          "tool": "npy_depth"
+        },
+        {
+          "case": "missing_frame_detected",
+          "rejected": true,
+          "tool": "png_depth"
+        },
+        {
+          "case": "missing_frame_detected",
+          "rejected": true,
+          "tool": "object_detection_json"
+        },
+        {
+          "case": "missing_frame_detected",
+          "rejected": true,
+          "tool": "instance_id_json"
+        },
+        {
+          "case": "missing_frame_detected",
+          "rejected": true,
+          "tool": "instance_id_png"
+        },
+        {
+          "case": "zero_step_rejected",
+          "rejected": true,
+          "tool": "velocity"
+        },
+        {
+          "case": "empty_sensor_set_yields_no_artifacts",
+          "rejected": true,
+          "tool": "calibration"
+        },
+        {
+          "case": "camera_calibration_mismatch_rejected",
+          "rejected": true,
+          "tool": "bbox_direction"
+        },
+        {
+          "case": "b_frames_detected",
+          "rejected": true,
+          "tool": "video_b_frames"
+        }
+      ],
+      "assertion_results": [
+        {
+          "assertion_id": "contract-01",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-03",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-04",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-03",
+          "passed": true
+        }
+      ],
+      "capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "cleanup": {
+        "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-01-dataset-checks",
+        "temporary_files_only": true
+      },
+      "deterministic_output": true,
+      "expected_observation_results": [
+        {
+          "observation_id": "contract_identity",
+          "passed": true
+        },
+        {
+          "observation_id": "semantic_result",
+          "passed": true
+        },
+        {
+          "observation_id": "deterministic_output",
+          "passed": true
+        }
+      ],
+      "fixture_sha256": "0cc773dd0ec64aa4a45c379b298dc7580eddf89ab7702172fe101807d52c1ff2",
+      "generated_input_sha256": "ec3984e184710eaee97e2b2fb3dc1fe418e46888aaf561e956008841f699dad3",
+      "independent_runs": 2,
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "positive_observations": {
+        "checker_count": 10,
+        "checks": [
+          {
+            "adjacent_negative": "missing_frame_detected",
+            "positive": true,
+            "positive_log_sha256": "3fbbfa2fff1e5ea7a58446c613abdac6a2be0e699254fc42e4993fcc4777c552",
+            "tool": "rgb"
+          },
+          {
+            "adjacent_negative": "missing_frame_detected",
+            "positive": true,
+            "positive_log_sha256": "d98d62b6e5f7ac26043c587173d3f966303c8427a3d5416d29d9e42a48fe557c",
+            "tool": "npy_depth"
+          },
+          {
+            "adjacent_negative": "missing_frame_detected",
+            "positive": true,
+            "positive_log_sha256": "3fbbfa2fff1e5ea7a58446c613abdac6a2be0e699254fc42e4993fcc4777c552",
+            "tool": "png_depth"
+          },
+          {
+            "adjacent_negative": "missing_frame_detected",
+            "positive": true,
+            "positive_log_sha256": "9dfc5a7183d971ccff3926130ba0d619fb981bbc392ed7bd88eab8b35873d78e",
+            "tool": "object_detection_json"
+          },
+          {
+            "adjacent_negative": "missing_frame_detected",
+            "positive": true,
+            "positive_log_sha256": "b14257200d147db92c8fb76bdc91fa59170b9c1827361bdff6b47e9f4d78cab9",
+            "tool": "instance_id_json"
+          },
+          {
+            "adjacent_negative": "missing_frame_detected",
+            "positive": true,
+            "positive_log_sha256": "1f0efdd4855fae708334c8d8a77e8443d16119c2450cc1531ebcd688006fb540",
+            "tool": "instance_id_png"
+          },
+          {
+            "adjacent_negative": "zero_step_rejected",
+            "negative_returncode": 1,
+            "positive": {
+              "Frame 0 -> Frame 2": {
+                "obj": [
+                  30.0,
+                  15.0
+                ]
+              }
+            },
+            "tool": "velocity"
+          },
+          {
+            "adjacent_negative": "empty_sensor_set_yields_no_artifacts",
+            "negative_returncode": 0,
+            "positive_outputs": {
+              "Camera_cam_mat.png": "4e178c24156d77aa34baad2f01b7b97f7ce64ce2ff64820683b3eed4cadae4ca",
+              "Camera_cam_params.png": "9a3175d1d4d9431fdd53add3f937f6063be3d26f474c6a87987383643f5266cd",
+              "Camera_homo.png": "81f1f3f6f2139b5ae3285cd518bcaddf63830c117b378b2334536a4de7fb0405",
+              "Camera_homo_from_pp.png": "f8febb21cdbe9ac25fd4af6a23827b1c60cbacda95f7b9efafafca60bc24dd2b",
+              "Camera_intr_extr.png": "4e178c24156d77aa34baad2f01b7b97f7ce64ce2ff64820683b3eed4cadae4ca",
+              "Camera_pair_points.png": "ddc6616aed9290d44eb1859075e1d026ed3c70cf1675f110d31df18b4e3e945d",
+              "Camera_vis.png": "648bbe4b1cd0e20a4f32a1aab541384dcd15d647fdac168951e31eaa53a72b16"
+            },
+            "tool": "calibration"
+          },
+          {
+            "adjacent_negative": "camera_calibration_mismatch_rejected",
+            "negative_returncode": 1,
+            "positive_outputs": {
+              "bbox_3d_corners_comparison.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "bbox_3d_direction_rotation.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "bbox_3d_nan.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+            },
+            "tool": "bbox_direction"
+          },
+          {
+            "adjacent_negative": "b_frames_detected",
+            "positive": "zero_b_frames",
+            "positive_log_sha256": "0d31a1cc57480badd288e4da32860d2e8d8292c3c80fde757b104fd08bac95d7",
+            "tool": "video_b_frames"
+          }
+        ],
+        "overflow_detected": true
+      },
+      "run_output_sha256": [
+        "b58ae7c07ac0c39d95081724c9172495fe05286bbf8c32141d5b3153568baeb1",
+        "b58ae7c07ac0c39d95081724c9172495fe05286bbf8c32141d5b3153568baeb1"
+      ],
+      "status": "pass"
+    },
+    {
+      "adjacent_negatives": [
+        {
+          "case": "missing_base_yields_no_artifact",
+          "rejected": true,
+          "tool": "depth_to_png"
+        },
+        {
+          "case": "missing_subdirectories",
+          "rejected": true,
+          "tool": "rgb_depth_to_hdf5"
+        },
+        {
+          "case": "missing_base",
+          "rejected": true,
+          "tool": "images_to_video"
+        }
+      ],
+      "assertion_results": [
+        {
+          "assertion_id": "contract-01",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-03",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-04",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-03",
+          "passed": true
+        }
+      ],
+      "capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "cleanup": {
+        "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-02-rgb-depth-video-conversion",
+        "temporary_files_only": true
+      },
+      "deterministic_output": true,
+      "expected_observation_results": [
+        {
+          "observation_id": "contract_identity",
+          "passed": true
+        },
+        {
+          "observation_id": "semantic_result",
+          "passed": true
+        },
+        {
+          "observation_id": "deterministic_output",
+          "passed": true
+        }
+      ],
+      "fixture_sha256": "171aef78bdd4738fa78f7114b27b9ca9cd0ec528ed52ae2f8be051c5b14dfd25",
+      "generated_input_sha256": "03aee407f21573d70baef0756f3d34fb7e5aae1fa2f5038dcf1cb19332ca17ba",
+      "independent_runs": 2,
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "positive_observations": {
+        "artifacts": {
+          "_World_Cameras_Camera.h5": "b931d958b8d6db3465866e9e770d28c6ab33f157eefa6edbdcebd534e97efe04",
+          "distance_to_image_plane_00000.png": "e6dc8bb6ff1df64ad2260a1ff7b0c243bfcdadd1bcb697ed4116b087b20cd953",
+          "video.mp4": "64744e15a43dd08cfb13201515ab87287466574a7bb411445a7e81756013eb84"
+        },
+        "depth": {
+          "dtype": "uint16",
+          "millimetres": 1250
+        },
+        "hdf5": {
+          "depth_compression": "gzip",
+          "depth_dtype": "uint16",
+          "groups": [
+            "distance_to_image_plane_png",
+            "rgb"
+          ],
+          "rgb_compression": "gzip",
+          "rgb_dtype": "uint8"
+        },
+        "video": {
+          "codec_name": "h264",
+          "has_b_frames": 0
+        }
+      },
+      "run_output_sha256": [
+        "60f81855f788dd616a1a87c4ff0f0ea157413a30a5a14c44c042063b90b292e4",
+        "60f81855f788dd616a1a87c4ff0f0ea157413a30a5a14c44c042063b90b292e4"
+      ],
+      "status": "pass"
+    },
+    {
+      "adjacent_negatives": [
+        {
+          "artifact_absent": true,
+          "case": "visualization_without_calibration",
+          "rejected": true,
+          "tool": "convert_ground_truth"
+        }
+      ],
+      "assertion_results": [
+        {
+          "assertion_id": "contract-01",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-03",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-04",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-05",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-06",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-07",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-08",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-09",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-10",
+          "passed": true
+        },
+        {
+          "assertion_id": "contract-11",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-02",
+          "passed": true
+        },
+        {
+          "assertion_id": "observation-03",
+          "passed": true
+        }
+      ],
+      "capability_id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+      "cleanup": {
+        "namespace": "vss-oracle-manifest-entry-synthetic-data-tools-03-ground-truth-conversion",
+        "temporary_files_only": true
+      },
+      "deterministic_output": true,
+      "expected_observation_results": [
+        {
+          "observation_id": "contract_identity",
+          "passed": true
+        },
+        {
+          "observation_id": "semantic_result",
+          "passed": true
+        },
+        {
+          "observation_id": "deterministic_output",
+          "passed": true
+        }
+      ],
+      "fixture_sha256": "0a1f7d857d582aa47cd54aa1a956175a67976719443c8a9ed946962d8ef77939",
+      "generated_input_sha256": "a5b890f6653f631e9d70753e1067cb57fefea338103cb27491d84c154dbed6a9",
+      "independent_runs": 2,
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+      "positive_observations": {
+        "artifacts": {
+          "absent": {
+            "bounding_boxes.json": "743899386cebe5645ac0bab5181167a6a78f1ed30c9679f72e4e0ea16f776d7b",
+            "corners_comparison_dict.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "ground_truth.json": "aa09b308657979b8c5303af7b98a23b6f64bbc96a07b8bfe35cf07f8af5f0a1d",
+            "rotation_keys_with_rot.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "non_null": {
+            "bounding_boxes.json": "743899386cebe5645ac0bab5181167a6a78f1ed30c9679f72e4e0ea16f776d7b",
+            "corners_comparison_dict.json": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "ground_truth.json": "e178edae7c9d44554555504e5cd400db82264b8cc1ca9b8a512cf04d7e17f5e8",
+            "rotation_keys_with_rot.json": "34237c09c8a1b43a48074e67dfb3f845edd6193b36952810e08ceca530d811ec"
+          }
+        },
+        "input_tree_unchanged": true,
+        "modes": {
+          "absent": {
+            "location": [
+              0.0,
+              0.0,
+              6.0
+            ],
+            "object_name": "/World/CustomBox",
+            "scale": [
+              2.0,
+              2.0,
+              2.0
+            ]
+          },
+          "non_null": {
+            "location": [
+              0.0,
+              0.0,
+              6.0
+            ],
+            "object_name": "/World/CustomBox",
+            "scale": [
+              2.0,
+              1.9999999999999998,
+              2.0
+            ]
+          }
+        }
+      },
+      "run_output_sha256": [
+        "937e66930e9e969edc22cb41889c82c4fb9d4e1cc6babac7024bf9df13e8997e",
+        "937e66930e9e969edc22cb41889c82c4fb9d4e1cc6babac7024bf9df13e8997e"
+      ],
+      "status": "pass"
+    }
+  ],
+  "captured_at_utc": "2026-08-02T22:15:19.334033Z",
+  "cleanup": {
+    "repository_mutations": 0,
+    "root_removed": true,
+    "sibling_names_unchanged": true
+  },
+  "confinement": {
+    "command_count": 75,
+    "command_trace": [
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 6,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 3,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 1
+      },
+      {
+        "argument_count": 6,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 3,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 1
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 1
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 1
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 14,
+        "program": "ffmpeg",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 1
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 1
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 14,
+        "program": "ffmpeg",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 3,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 9,
+        "program": "ffprobe",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 3,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 1
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 3,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 0
+      },
+      {
+        "argument_count": 9,
+        "program": "ffprobe",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 3,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 2,
+        "program": "bash",
+        "returncode": 1
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 4,
+        "program": "python",
+        "returncode": 2
+      },
+      {
+        "argument_count": 5,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 7,
+        "program": "python",
+        "returncode": 0
+      },
+      {
+        "argument_count": 4,
+        "program": "python",
+        "returncode": 2
+      }
+    ],
+    "docker_calls": 0,
+    "downloads": 0,
+    "model_accesses": 0,
+    "network_boundary": "proxy-free digest-locked local command allowlist; tools contain no network operation",
+    "network_calls": 0,
+    "service_lifecycle_calls": 0,
+    "warehouse_sample_accesses": 0
+  },
+  "environment": {
+    "distributions": {
+      "annotated-types": "0.7.0",
+      "contourpy": "1.3.2",
+      "cycler": "0.12.1",
+      "fonttools": "4.63.0",
+      "h5py": "3.16.0",
+      "kiwisolver": "1.5.0",
+      "matplotlib": "3.10.9",
+      "numpy": "2.2.6",
+      "opencv-python-headless": "4.13.0.92",
+      "packaging": "26.2",
+      "pillow": "12.2.0",
+      "pydantic": "2.13.4",
+      "pydantic-core": "2.46.4",
+      "pyparsing": "3.3.2",
+      "pyquaternion": "0.9.9",
+      "python-dateutil": "2.9.0.post0",
+      "scipy": "1.15.3",
+      "six": "1.17.0",
+      "tqdm": "4.67.3",
+      "typing-extensions": "4.15.0",
+      "typing-inspection": "0.4.2"
+    },
+    "machine": "aarch64",
+    "offline_cache_verified": true,
+    "openusd": "26.5",
+    "python": "3.10.20"
+  },
+  "mode": "target_bound_offline_runtime_evidence",
+  "package_id": "thor-synthetic-data-runtime-evidence-successor-v1",
+  "promotion": {
+    "development_smoke_only": false,
+    "eligible_capability_ids": [
+      "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "manifest-entry.synthetic-data-tools.03-ground-truth-conversion"
+    ],
+    "family_id": "synthetic-data-tools",
+    "ledger_mutation_performed": false,
+    "receipt_is_runtime_evidence": true,
+    "requires_separate_reviewed_metadata_integration": true
+  },
+  "schema_version": 1,
+  "status": "pass"
+}

@@ -68035,7 +68035,7 @@
         ],
         "acceptance_class": "alternate_local_lane",
         "thor_state": "wired",
-        "runtime_state": "not_qualified",
+        "runtime_state": "passed_current",
         "contract": {
           "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
           "source_controls": [
@@ -68065,7 +68065,7 @@
           ],
           "warehouse_sample_bundle": "excluded"
         },
-        "gap": "The file-backed semantic label helpers are wired and source-locked; execute a current real OpenUSD add/export/remove round trip twice with capability-specific output evidence before qualification."
+        "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
       },
       "reviewed_scenario_ids": [
         "offline-tool-workflows",
@@ -68078,9 +68078,9 @@
         "source": "bounded locally generated fixture",
         "warehouse_sample_bundle": false,
         "materialization": {
-          "path": null,
-          "generator": null,
-          "sha256": null
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/00-semantic-label-helpers.json",
+          "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+          "sha256": "0a079066c4ad506e8589206c8b51e21a0ecacdecb16fc9785c52033b0d279d27"
         },
         "input": {
           "capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
@@ -68215,8 +68215,10 @@
         }
       ],
       "execution_bounds": {
-        "executor": null,
-        "collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
         "max_requests": 2,
@@ -68244,19 +68246,17 @@
         ],
         "pre_state": "exact target absence or digest must be captured",
         "restore": "delete the exact temporary directory after digest capture",
-        "executor": null,
-        "postcondition_collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "postcondition_collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "postconditions": [
           "the exact temporary target is absent and no sibling path changed"
         ]
       },
       "acceptance_readiness": {
-        "classification": "planning_index_only",
-        "blockers": [
-          "fixture path, generator, and digest are not materialized",
-          "request/command executor and collectors are not implemented",
-          "cleanup allowlist has no machine executor or postcondition collector"
-        ]
+        "classification": "executor_ready",
+        "blockers": []
       },
       "current_state": "open_unexecuted",
       "evidence": []
@@ -68278,7 +68278,7 @@
         ],
         "acceptance_class": "alternate_local_lane",
         "thor_state": "wired",
-        "runtime_state": "not_qualified",
+        "runtime_state": "passed_current",
         "contract": {
           "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
           "checkers": [
@@ -68337,7 +68337,7 @@
           ],
           "warehouse_sample_bundle": "excluded"
         },
-        "gap": "All documented dataset checker entry points are wired and source-locked; run every checker on passing and adjacent-negative tiny fixtures with exact result digests before entry-level qualification."
+        "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
       },
       "reviewed_scenario_ids": [
         "offline-tool-workflows",
@@ -68350,9 +68350,9 @@
         "source": "bounded locally generated fixture",
         "warehouse_sample_bundle": false,
         "materialization": {
-          "path": null,
-          "generator": null,
-          "sha256": null
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/01-dataset-checks.json",
+          "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+          "sha256": "0cc773dd0ec64aa4a45c379b298dc7580eddf89ab7702172fe101807d52c1ff2"
         },
         "input": {
           "capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
@@ -68540,8 +68540,10 @@
         }
       ],
       "execution_bounds": {
-        "executor": null,
-        "collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
         "max_requests": 2,
@@ -68569,19 +68571,17 @@
         ],
         "pre_state": "exact target absence or digest must be captured",
         "restore": "delete the exact temporary directory after digest capture",
-        "executor": null,
-        "postcondition_collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "postcondition_collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "postconditions": [
           "the exact temporary target is absent and no sibling path changed"
         ]
       },
       "acceptance_readiness": {
-        "classification": "planning_index_only",
-        "blockers": [
-          "fixture path, generator, and digest are not materialized",
-          "request/command executor and collectors are not implemented",
-          "cleanup allowlist has no machine executor or postcondition collector"
-        ]
+        "classification": "executor_ready",
+        "blockers": []
       },
       "current_state": "open_unexecuted",
       "evidence": []
@@ -68603,7 +68603,7 @@
         ],
         "acceptance_class": "alternate_local_lane",
         "thor_state": "wired",
-        "runtime_state": "not_qualified",
+        "runtime_state": "passed_current",
         "contract": {
           "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
           "source_controls": [
@@ -68628,7 +68628,7 @@
           ],
           "warehouse_sample_bundle": "excluded"
         },
-        "gap": "The RGB, depth, HDF5, and zero-B-frame video conversion paths are wired and source-locked; re-execute each native conversion twice on tiny generated inputs with capability-specific digests before qualification."
+        "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
       },
       "reviewed_scenario_ids": [
         "offline-tool-workflows",
@@ -68641,9 +68641,9 @@
         "source": "bounded locally generated fixture",
         "warehouse_sample_bundle": false,
         "materialization": {
-          "path": null,
-          "generator": null,
-          "sha256": null
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/02-rgb-depth-video-conversion.json",
+          "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+          "sha256": "171aef78bdd4738fa78f7114b27b9ca9cd0ec528ed52ae2f8be051c5b14dfd25"
         },
         "input": {
           "capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
@@ -68763,8 +68763,10 @@
         }
       ],
       "execution_bounds": {
-        "executor": null,
-        "collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
         "max_requests": 2,
@@ -68792,19 +68794,17 @@
         ],
         "pre_state": "exact target absence or digest must be captured",
         "restore": "delete the exact temporary directory after digest capture",
-        "executor": null,
-        "postcondition_collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "postcondition_collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "postconditions": [
           "the exact temporary target is absent and no sibling path changed"
         ]
       },
       "acceptance_readiness": {
-        "classification": "planning_index_only",
-        "blockers": [
-          "fixture path, generator, and digest are not materialized",
-          "request/command executor and collectors are not implemented",
-          "cleanup allowlist has no machine executor or postcondition collector"
-        ]
+        "classification": "executor_ready",
+        "blockers": []
       },
       "current_state": "open_unexecuted",
       "evidence": []
@@ -68826,7 +68826,7 @@
         ],
         "acceptance_class": "alternate_local_lane",
         "thor_state": "wired",
-        "runtime_state": "not_qualified",
+        "runtime_state": "passed_current",
         "contract": {
           "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
           "source_controls": [
@@ -68859,7 +68859,7 @@
           ],
           "warehouse_sample_bundle": "excluded"
         },
-        "gap": "A bounded deterministic conversion-only CLI and tiny custom regression fixture now exist and are source-locked; produce a formal target-bound entry receipt in the pinned OpenUSD environment before qualification."
+        "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
       },
       "reviewed_scenario_ids": [
         "offline-tool-workflows",
@@ -68872,9 +68872,9 @@
         "source": "bounded locally generated fixture",
         "warehouse_sample_bundle": false,
         "materialization": {
-          "path": null,
-          "generator": null,
-          "sha256": null
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/03-ground-truth-conversion.json",
+          "generator": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+          "sha256": "0a1f7d857d582aa47cd54aa1a956175a67976719443c8a9ed946962d8ef77939"
         },
         "input": {
           "capability_id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
@@ -69043,8 +69043,10 @@
         }
       ],
       "execution_bounds": {
-        "executor": null,
-        "collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
         "max_requests": 2,
@@ -69072,19 +69074,17 @@
         ],
         "pre_state": "exact target absence or digest must be captured",
         "restore": "delete the exact temporary directory after digest capture",
-        "executor": null,
-        "postcondition_collectors": [],
+        "executor": "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py",
+        "postcondition_collectors": [
+          "deploy/docker/thor-local/qualification/synthetic-data-runtime-evidence-successor/executor.py"
+        ],
         "postconditions": [
           "the exact temporary target is absent and no sibling path changed"
         ]
       },
       "acceptance_readiness": {
-        "classification": "planning_index_only",
-        "blockers": [
-          "fixture path, generator, and digest are not materialized",
-          "request/command executor and collectors are not implemented",
-          "cleanup allowlist has no machine executor or postcondition collector"
-        ]
+        "classification": "executor_ready",
+        "blockers": []
       },
       "current_state": "open_unexecuted",
       "evidence": []

@@ -15,6 +15,10 @@ REPO_ROOT = PARITY.parents[3]
 MIGRATION = (
     REPO_ROOT / "deploy/docker/thor-local/qualification/live-metadata-500-migration"
 )
+CURRENT = (
+    REPO_ROOT
+    / "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor"
+)
 sys.path.insert(0, str(PARITY))
 
 import capability_oracles_v2 as v2  # noqa: E402
@@ -23,13 +27,18 @@ import capability_oracles_v2 as v2  # noqa: E402
 @pytest.fixture(scope="module")
 def staged() -> dict[str, dict[str, Any]]:
     return {
-        name: json.loads((MIGRATION / filename).read_text())
-        for name, filename in {
-            "plan": "post-state-capability-oracles.json",
-            "ledger": "post-state-official-capabilities.json",
-            "acceptance": "post-state-acceptance-inventory.json",
-            "schema": "post-state-capability-oracles.schema.json",
-        }.items()
+        "plan": json.loads(
+            (CURRENT / "post-state-capability-oracles.json").read_text()
+        ),
+        "ledger": json.loads(
+            (CURRENT / "post-state-official-capabilities.json").read_text()
+        ),
+        "acceptance": json.loads(
+            (MIGRATION / "post-state-acceptance-inventory.json").read_text()
+        ),
+        "schema": json.loads(
+            (MIGRATION / "post-state-capability-oracles.schema.json").read_text()
+        ),
     }
 
 

@@ -1,0 +1,177 @@
+{
+  "assertions": [
+    {
+      "expected": [
+        "box_check.py --stage --output --apply",
+        "export_xform_semantics.py --stage --output",
+        "remove_label.py --stage"
+      ],
+      "id": "contract-01",
+      "observation": "contract_identity/contract/commands",
+      "observed": [
+        "box_check.py --stage --output --apply",
+        "export_xform_semantics.py --stage --output",
+        "remove_label.py --stage"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "UsdSemantics.LabelsAPI",
+        "report_categorization",
+        "parent_xform_export",
+        "label_removal"
+      ],
+      "id": "contract-02",
+      "observation": "contract_identity/contract/required_semantics",
+      "observed": [
+        "UsdSemantics.LabelsAPI",
+        "report_categorization",
+        "parent_xform_export",
+        "label_removal"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "path": "tools/sdg-postprocessing/semantic_labeling/box_check.py",
+          "sha256": "0f92e5a7bbce77d0f44622c9abe68f1dec59d1aab0268c8776094a9f0fb1d634"
+        },
+        {
+          "path": "tools/sdg-postprocessing/utils/export_xform_semantics.py",
+          "sha256": "38a0f79876626754563ed306fdd9a41a4fe505d36b16e883c49a24d2ab8663c3"
+        },
+        {
+          "path": "tools/sdg-postprocessing/semantic_labeling/remove_label.py",
+          "sha256": "f8a484079f9a341059c8560ed1aa945f64fd7a04da6b09ef196f22d4997730eb"
+        }
+      ],
+      "id": "contract-03",
+      "observation": "contract_identity/contract/source_controls",
+      "observed": [
+        {
+          "path": "tools/sdg-postprocessing/semantic_labeling/box_check.py",
+          "sha256": "0f92e5a7bbce77d0f44622c9abe68f1dec59d1aab0268c8776094a9f0fb1d634"
+        },
+        {
+          "path": "tools/sdg-postprocessing/utils/export_xform_semantics.py",
+          "sha256": "38a0f79876626754563ed306fdd9a41a4fe505d36b16e883c49a24d2ab8663c3"
+        },
+        {
+          "path": "tools/sdg-postprocessing/semantic_labeling/remove_label.py",
+          "sha256": "f8a484079f9a341059c8560ed1aa945f64fd7a04da6b09ef196f22d4997730eb"
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/static_contract_package",
+      "observed": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "excluded",
+      "id": "contract-05",
+      "observation": "contract_identity/contract/warehouse_sample_bundle",
+      "observed": "excluded",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "deterministic_output",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-manifest-entry-synthetic-data-tools-00-semantic-label-helpers"
+    ],
+    "mutation": "temporary_files_only",
+    "postconditions": [
+      {
+        "description": "the exact temporary target is absent and no sibling path changed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-manifest-entry-synthetic-data-tools-00-semantic-label-helpers"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/00-semantic-label-helpers.json",
+    "sha256": "0a079066c4ad506e8589206c8b51e21a0ecacdecb16fc9785c52033b0d279d27"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "3ed5ef02eff7c249d99063f5828dcf5ff4ad0f3ac7c36968820c926b07fd4f35",
+        "checkout_head": "53998f19f11451f63ef582e1f9d06602229461eb",
+        "contract_sha256": "a985966163e9bc726abcadf4564b9274657d426ebcd6629e2c8387b79c3ab99c",
+        "oracle_row_sha256": "27e103b509c6c5c3e22d48d5cd76b68076c52807245751d7726ca9960224cf97"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "adjacent_negatives_sha256": "53256ece82c87a7a945070caf8a81a99ee856fd34990606b4e20e73bcc00e5a2",
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "3ed5ef02eff7c249d99063f5828dcf5ff4ad0f3ac7c36968820c926b07fd4f35",
+        "positive_observations_sha256": "c58ddb82ed5f10d2969797698599b207d8e718f012ae762b7e65ebbfc24064f3"
+      }
+    },
+    {
+      "id": "deterministic_output",
+      "result": "pass",
+      "value": {
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "3ed5ef02eff7c249d99063f5828dcf5ff4ad0f3ac7c36968820c926b07fd4f35",
+        "independent_runs": 2,
+        "run_output_sha256": [
+          "3c3e4cbe39a450d7df6222cb6eed9366d2297943e7b6c2c9bd129cd288e1addd",
+          "3c3e4cbe39a450d7df6222cb6eed9366d2297943e7b6c2c9bd129cd288e1addd"
+        ]
+      }
+    }
+  ],
+  "oracle_id": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+  "oracle_sha256": "27e103b509c6c5c3e22d48d5cd76b68076c52807245751d7726ca9960224cf97",
+  "result": "passed_current",
+  "scenario_ids": [
+    "offline-tool-workflows",
+    "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

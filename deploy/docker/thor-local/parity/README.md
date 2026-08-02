@@ -147,29 +147,25 @@ cases; and `remaining-entry-workloads/` defines exact bounded workloads for the
 claims Thor runtime qualification.
 
 A first current-ledger successor added the exact CPU multimedia advertised entry
-as capability 277. The tooling-entry successor then adds the eight exact Spatial
-AI utility entries and four exact synthetic-data tool entries as capabilities
-278 through 289 while retaining the 47 existing discrepancies. These additions
-do not rewrite the immutable Wave 3 merge receipt or qualify any runtime path.
-The AWS/GCS validation entry is an explicit external-optional boundary; the
-other eleven tooling entries are local lanes with static source contracts only.
+as capability 277. The tooling-entry successor then added eight exact Spatial
+AI utility entries and four exact Synthetic Data tool entries as capabilities
+278 through 289. The four Synthetic Data entries are now qualified by exact
+current target-bound offline receipts, while the Spatial AI utilities remain
+unqualified or external-optional. The Warehouse sample bundle remains excluded.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and
 operation/tool count. This prevents a documentation URL or a stale aggregate
 count from being treated as operation-level coverage.
 
-`capability-oracles.json` is a capability-specific planning index, not an
-executable acceptance suite. It expands every reviewed capability into a unique
-record with the exact ledger semantics, scenario and prospective fixture
-identity, required observations/assertions, arithmetic work bounds, admission
-gates, and intended mutation ownership. These prose-derived requirements are
-useful for implementation review but do not provide fixture files/generators,
-commands/requests, collectors, or executable cleanup for the complete contract.
-All 289 entries are therefore explicitly `planning_index_only`; the full-oracle
-executor-ready count is zero. Twenty-seven live planning bindings cover bounded
-file-only subsets, and the two MV3DT generator oracles additionally bind their
-deterministic custom-data tool observations from
+`capability-oracles.json` expands every reviewed capability into a unique
+record with exact ledger semantics, scenario identity, fixture identity,
+observations, assertions, work bounds, admission gates, and mutation ownership.
+Four Synthetic Data oracles now bind materialized tiny fixtures and the exact
+offline executor/collector/cleanup path, so they are `executor_ready`; the
+other 285 entries remain `planning_index_only`. Twenty-seven live planning
+bindings cover bounded file-only subsets, and the two MV3DT generator oracles
+additionally bind their deterministic custom-data tool observations from
 `../qualification/offline-mv3dt-tools/`. All 29 subset bindings are explicitly
 non-advancing: they cannot promote the full oracle, create runtime evidence, or
 change capability state. The seven planned modes are static, config, runtime,

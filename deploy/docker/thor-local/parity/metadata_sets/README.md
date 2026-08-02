@@ -1,18 +1,17 @@
 # Thor metadata-set selector
 
-This directory adds a static, backward-compatible selection layer without
-changing the current parity files or their validators. `selector.json` chooses
-one registered immutable descriptor. The checked descriptor binds the complete
-current metadata plane: manifest, official ledger and schema, capability-oracle
-registry and schema, and acceptance inventory. The selected set remains the
-reviewed 500-capability metadata plane.
+This directory provides the static, fail-closed metadata selector.
+`selector.json` chooses one registered immutable descriptor. Each descriptor
+binds a complete metadata plane: manifest, official ledger and schema,
+capability-oracle registry and schema, and acceptance inventory.
 
-The registered ID `thor-vss-3.2.1-metadata-500-staged` is retained for stable
-identity, but its descriptor is now `live_ready` and selected by default. The
-activation receipt binds that lifecycle-only descriptor change and the exact
-selector hash change. The historical `thor-vss-3.2.1-live-289` set remains
-available explicitly. Here `live_ready` means eligible as the default static
-metadata snapshot; it does not mean runtime-qualified.
+The selected `thor-vss-3.2.1-current-synthetic-data-500` set contains the exact
+current 289-row Thor prefix plus the unchanged 211-row candidate suffix. Four
+Synthetic Data rows carry current runtime qualification; all candidate rows
+remain evidence-empty and non-promoting. The registered
+`thor-vss-3.2.1-current-synthetic-data-289` set exposes the same canonical
+current prefix explicitly. Older descriptors remain checked in as immutable
+historical provenance but are deliberately not registered as current.
 
 `resolver.py` validates the selector, descriptor, and every member before it
 returns any document. Reads are bounded and file-descriptor-relative with
@@ -38,7 +37,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-live-289 --json
+  --set thor-vss-3.2.1-current-synthetic-data-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

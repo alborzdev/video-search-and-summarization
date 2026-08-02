@@ -546,21 +546,47 @@ def validate(
     ledger: dict[str, Any] | None = None,
     manifest: dict[str, Any] | None = None,
     acceptance: dict[str, Any] | None = None,
+    oracle_plan: dict[str, Any] | None = None,
+    oracle_schema: dict[str, Any] | None = None,
     repo_root: Path = REPO_ROOT,
 ) -> dict[str, int]:
     ledger = _load(LEDGER) if ledger is None else ledger
     manifest = _load(MANIFEST) if manifest is None else manifest
     acceptance = _load(ACCEPTANCE) if acceptance is None else acceptance
-    oracle_plan = _load(ORACLES)
-    try:
-        # Validate the checked oracle artifact against the checked ledger. Tests
-        # may inject a prospective ledger transition, but cannot bypass the
-        # integrity of the repository's current oracle plan.
-        oracle_contract.validate(oracle_plan, oracle_contract._load(LEDGER))
-    except oracle_contract.OracleContractError as exc:
-        raise CapabilityContractError(
-            f"capability oracle contract invalid: {exc}"
-        ) from exc
+    injected_oracle_plan = oracle_plan is not None
+    if oracle_plan is None:
+        oracle_plan = _load(ORACLES)
+        try:
+            # Validate the checked oracle artifact against the checked ledger.
+            # Tests may inject a prospective ledger transition, but cannot
+            # bypass the integrity of the repository's current oracle plan.
+            oracle_contract.validate(oracle_plan, oracle_contract._load(LEDGER))
+        except oracle_contract.OracleContractError as exc:
+            raise CapabilityContractError(
+                f"capability oracle contract invalid: {exc}"
+            ) from exc
+    else:
+        if oracle_schema is None:
+            raise CapabilityContractError(
+                "an injected capability oracle plan requires its exact schema"
+            )
+        try:
+            Draft202012Validator.check_schema(oracle_schema)
+        except SchemaError as exc:
+            raise CapabilityContractError(
+                f"invalid injected capability oracle schema: {exc.message}"
+            ) from exc
+        oracle_errors = sorted(
+            Draft202012Validator(oracle_schema).iter_errors(oracle_plan),
+            key=lambda error: tuple(str(item) for item in error.absolute_path),
+        )
+        if oracle_errors:
+            error = oracle_errors[0]
+            path = ".".join(str(item) for item in error.absolute_path) or "<root>"
+            raise CapabilityContractError(
+                f"injected capability oracle schema violation at {path}: "
+                f"{error.message}"
+            )
     oracle_by_capability = {
         item.get("capability_id"): item
         for item in oracle_plan.get("oracles", [])
@@ -655,6 +681,45 @@ def validate(
     )
     if len(capability_ids) != len(capabilities):
         raise CapabilityContractError("every capability must be an object with an id")
+    if injected_oracle_plan:
+        oracle_rows = oracle_plan.get("oracles")
+        if not isinstance(oracle_rows, list) or not all(
+            isinstance(item, dict) for item in oracle_rows
+        ):
+            raise CapabilityContractError(
+                "injected capability oracle plan has no exact oracle collection"
+            )
+        if [item.get("capability_id") for item in oracle_rows] != capability_ids:
+            raise CapabilityContractError(
+                "injected capability oracle order differs from the ledger"
+            )
+        oracle_target = oracle_plan.get("target")
+        if not isinstance(oracle_target, dict) or any(
+            oracle_target.get(key) != target[key]
+            for key in ("product_version", "main_commit", "captured_on")
+        ):
+            raise CapabilityContractError(
+                "injected capability oracle target differs from the ledger"
+            )
+        for capability, oracle in zip(capabilities, oracle_rows, strict=True):
+            expected_binding = {
+                key: capability[key]
+                for key in (
+                    "feature_id",
+                    "kind",
+                    "title",
+                    "source_claims",
+                    "acceptance_class",
+                    "thor_state",
+                    "runtime_state",
+                    "contract",
+                    "gap",
+                )
+            }
+            if oracle.get("ledger_binding") != expected_binding:
+                raise CapabilityContractError(
+                    f"{capability['id']}: injected capability oracle binding differs"
+                )
     allowed_classes = set(manifest["status_contract"]["acceptance_class"])
     allowed_thor = set(manifest["status_contract"]["thor_state"])
     allowed_runtime = set(manifest["status_contract"]["runtime_state"])

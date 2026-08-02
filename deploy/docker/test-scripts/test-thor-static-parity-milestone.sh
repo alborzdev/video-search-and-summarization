@@ -61,19 +61,15 @@ python3 -m unittest discover \
 # replay it against current live bytes. The activation rebase later preserves
 # the historical live-289 descriptor/selector identity and rollback lineage.
 
-# These two entry-level contracts bind the exact checked-in implementation and
-# CLI surfaces for the twelve newly canonical tooling entries. They are
-# deterministic source-wiring checks only and create no runtime evidence.
+# The Spatial AI entry-level contract still binds its exact checked-in
+# implementation and CLI surfaces. The original Synthetic Data static contract
+# is an immutable pre-promotion snapshot; the terminal current successor below
+# replaces its live replay with exact runtime receipts and source controls.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/spatial-ai-entry-static-contract/executor.py" \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/spatial-ai-entry-static-contract/tests"
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/synthetic-data-entry-static-contract/executor.py" \
-  --check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/synthetic-data-entry-static-contract/tests"
 
 # This first static qualification tranche is isolated and non-advancing. It
 # validates 24 bounded candidate cases but cannot create runtime evidence or
@@ -224,15 +220,11 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/runtime-evidence-common/test_common.py"
 
-# Base/HITL/UI and LVS now have authorization-gated semantic executor
-# packages. The static milestone runs only their inert plans and fake/injected
-# transport tests: no localhost request, browser, Docker action, model call,
+# Base/HITL/UI and LVS have authorization-gated semantic executor packages.
+# The original Base package is a frozen pre-cleanup/pre-promotion snapshot and
+# is identity-locked by the exact-cleanup successor, so its stale live plan is
+# not replayed. No localhost request, browser, Docker action, model call,
 # fixture write, cleanup, receipt promotion, or Warehouse input is permitted.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/base-semantic-runtime-evidence/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/base-semantic-runtime-evidence/tests"
 # The additive Base successor replaces the predecessor's false namespace
 # cleanup assumption with exact response-derived Markdown/PDF read, delete,
 # and individual 404 checks. Its plan and fake transport tests remain inert;
@@ -335,15 +327,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/lvs-focus-semantic-matrix-successor/tests"
 
-# Search now has a concrete, authorization-gated numeric-loopback
-# candidate executor with exact owned-document cleanup. Static qualification
-# runs only its source-locked plan and fake openers; it provisions no fixture,
-# opens no socket, and creates no runtime evidence or promotion.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/search-semantic-runtime-evidence-successor/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/search-semantic-runtime-evidence-successor/tests"
+# The original Search semantic executor is now an immutable pre-readiness
+# snapshot. Its exact source and contract identities are checked by the current
+# Search readiness successor near the start of this wrapper, so the stale live
+# plan is not replayed against the promoted metadata plane.
 
 # The prior Search provisioning blocker is now a frozen pre-remediation source
 # snapshot and is not replayed. The exact provisioner supersedes it with a
@@ -495,15 +482,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-71-current-source-rebase-successor/tests"
 
-# The current Metadata-500 overlay audit independently proves that all 500
-# immutable selected rows remain selector-identical while the exact current
-# production, semantic-candidate, binding, and 71-row rebase locks advance.
-# It creates no runtime evidence or promotion and excludes Warehouse.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/metadata-500-current-overlay-audit-successor/validator.py" \
-  --check --json >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/metadata-500-current-overlay-audit-successor/tests"
+# The former Metadata-500 overlay audit is an immutable pre-Synthetic-Data
+# selector snapshot. Its locked artifacts remain checked in for provenance but
+# are not replayed as the current selector authority.
 
 # Advertised-entry Waves 1-7 remain immutable 87-gap candidate snapshots. Their
 # exact trees, inventories, predecessor chains, 125 source locks, and 83-way
@@ -576,22 +557,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 
 # The four MV3DT advertised semantics have an exact-four custom-data admission
 # plan and a strict future candidate-receipt validator. Static qualification
-# executes only the inert plan and adversarial tests; no model, Docker, broker,
-# service lifecycle, external receipt, or official state is touched.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/mv3dt-entry-oracles/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/mv3dt-entry-oracles/tests"
-
-# The two Sparse4D advertised semantics similarly reuse the existing custom
-# four-camera lane through an inert plan and strict candidate-receipt contract.
-# The static tier runs no preflight, model, process, service, or lifecycle path.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/sparse4d-entry-oracles/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/sparse4d-entry-oracles/tests"
+# The MV3DT and Sparse4D entry-oracle packages are immutable pre-promotion
+# manifest snapshots. MV3DT's exact historical receipt/source locks are
+# revalidated by the canonical capability-oracle suite above; Sparse4D's exact
+# repair lineage is preserved downstream. Neither stale live plan is replayed.
 
 # The known-speech H.264/AAC fixture tool defaults to a write-free plan. Its
 # static suite mocks the only two allowed local subprocesses and keeps the real
@@ -749,13 +718,14 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/official-edge-readiness/tests" -v
 
 # Terminal metadata routing: reconstruct and byte-verify the exact current
-# 289+211 post-cancellation/post-Search projection, then resolve and run both
+# Synthetic Data promotion, including four bound receipts, the 289-row current
+# prefix, and the unchanged 211-row candidate suffix. Then resolve and run both
 # authoritative validator generations through the atomically selected set.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/metadata-500-current-cancellation-search-successor/compiler.py" \
-  --check >/dev/null
+  "${thor_local_root}/qualification/metadata-500-current-synthetic-data-successor/compiler.py" \
+  >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/metadata-500-current-cancellation-search-successor/tests" \
+  "${thor_local_root}/qualification/metadata-500-current-synthetic-data-successor/tests" \
   "${thor_local_root}/parity/metadata_sets/tests" \
   "${thor_local_root}/parity/tests/test_verify_metadata_set.py"
 PYTHONDONTWRITEBYTECODE=1 python3 \

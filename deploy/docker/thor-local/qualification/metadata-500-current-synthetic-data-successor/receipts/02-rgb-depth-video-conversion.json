@@ -1,0 +1,161 @@
+{
+  "assertions": [
+    {
+      "expected": [
+        "uint16 PNG depth",
+        "gzip HDF5 RGB/depth",
+        "H.264 MP4",
+        "ffprobe zero-B-frame validation"
+      ],
+      "id": "contract-01",
+      "observation": "contract_identity/contract/required_outputs",
+      "observed": [
+        "uint16 PNG depth",
+        "gzip HDF5 RGB/depth",
+        "H.264 MP4",
+        "ffprobe zero-B-frame validation"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py",
+          "sha256": "c149099e5055143aa536df717c61f339d76c1b02cbd6645458d3f854f7f0a811"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py",
+          "sha256": "f2191dde3b7ea03387871c0ddad53f1d0d76e04634dc09cecad676a11b579b45"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_images_to_videos_no_bframes.sh",
+          "sha256": "6eed454a82c4fe2f95648a0664e9af023136768d49a8d6704938ca7ba3a74f7b"
+        }
+      ],
+      "id": "contract-02",
+      "observation": "contract_identity/contract/source_controls",
+      "observed": [
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py",
+          "sha256": "c149099e5055143aa536df717c61f339d76c1b02cbd6645458d3f854f7f0a811"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py",
+          "sha256": "f2191dde3b7ea03387871c0ddad53f1d0d76e04634dc09cecad676a11b579b45"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_conversion/convert_images_to_videos_no_bframes.sh",
+          "sha256": "6eed454a82c4fe2f95648a0664e9af023136768d49a8d6704938ca7ba3a74f7b"
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/static_contract_package",
+      "observed": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "excluded",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/warehouse_sample_bundle",
+      "observed": "excluded",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "deterministic_output",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-manifest-entry-synthetic-data-tools-02-rgb-depth-video-conversion"
+    ],
+    "mutation": "temporary_files_only",
+    "postconditions": [
+      {
+        "description": "the exact temporary target is absent and no sibling path changed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-manifest-entry-synthetic-data-tools-02-rgb-depth-video-conversion"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/02-rgb-depth-video-conversion.json",
+    "sha256": "171aef78bdd4738fa78f7114b27b9ca9cd0ec528ed52ae2f8be051c5b14dfd25"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "f3c54640026e5c17a07e79c15aa40d991685052a3c6f659fed3bf2502d28035d",
+        "checkout_head": "53998f19f11451f63ef582e1f9d06602229461eb",
+        "contract_sha256": "a985966163e9bc726abcadf4564b9274657d426ebcd6629e2c8387b79c3ab99c",
+        "oracle_row_sha256": "08ed7148d3fb359fe6f26dc691a6c0bf15e9f6d09ccc7c65a31780e6f31ac6c9"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "adjacent_negatives_sha256": "41eb02015ee5c10bf8fe7ef6bf147dd76307b717808f384f4542c390fad233f2",
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "f3c54640026e5c17a07e79c15aa40d991685052a3c6f659fed3bf2502d28035d",
+        "positive_observations_sha256": "2b290266ed0cef37443fa56f8ffd6761d23abed7616f3fe2144fcc21c206291b"
+      }
+    },
+    {
+      "id": "deterministic_output",
+      "result": "pass",
+      "value": {
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "f3c54640026e5c17a07e79c15aa40d991685052a3c6f659fed3bf2502d28035d",
+        "independent_runs": 2,
+        "run_output_sha256": [
+          "60f81855f788dd616a1a87c4ff0f0ea157413a30a5a14c44c042063b90b292e4",
+          "60f81855f788dd616a1a87c4ff0f0ea157413a30a5a14c44c042063b90b292e4"
+        ]
+      }
+    }
+  ],
+  "oracle_id": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+  "oracle_sha256": "08ed7148d3fb359fe6f26dc691a6c0bf15e9f6d09ccc7c65a31780e6f31ac6c9",
+  "result": "passed_current",
+  "scenario_ids": [
+    "offline-tool-workflows",
+    "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

@@ -482,12 +482,17 @@ in this directory:
   or complete applied state and rejects partial activation. This historical
   activation is superseded by the current successor below and does not qualify
   any runtime capability;
-- `metadata-500-current-cancellation-search-successor/` repairs the selected
+- `metadata-500-current-cancellation-search-successor/` is the immutable
+  predecessor that repaired the selected
   atomic set after cancellation and Search evolution by combining the exact
   current 289-row prefix with the unchanged 211-row candidate suffix. The
-  authoritative 289/500 resolvers now pass, all 500 rows remain unexecuted and
-  evidence-empty, and five historical selector-bound approval/admission
-  artifacts are exact-lock checked without replay or relabelling;
+  historical 500 rows remain unexecuted and evidence-empty;
+- `metadata-500-current-synthetic-data-successor/` validates the clean,
+  target-bound offline Synthetic Data aggregate receipt, derives four exact
+  official receipts, promotes only those four ledger rows and their family,
+  preserves the current 289-row prefix and selected 211-row candidate suffix,
+  and supplies the current 289/500 selector descriptors. It performs no
+  network, Docker, service, model, download, or Warehouse action;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact

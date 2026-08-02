@@ -104,6 +104,8 @@ def verify_metadata_set(set_id: str | None = None) -> dict[str, Any]:
             ledger=ledger,
             manifest=manifest,
             acceptance=acceptance,
+            oracle_plan=oracle_plan,
+            oracle_schema=oracle_schema,
             repo_root=verify_official_capabilities.REPO_ROOT,
         ),
         "official capability validator",

@@ -12166,7 +12166,13 @@
       ],
       "acceptance_class": "alternate_local_lane",
       "thor_state": "wired",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_current",
+      "runtime_evidence": [
+        {
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/receipts/00-semantic-label-helpers.json",
+          "sha256": "91afcd30bf85fdfe6cbc29ac0792707ee459912c900f2e2e6c6ade9dd66d9324"
+        }
+      ],
       "contract": {
         "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
         "source_controls": [
@@ -12179,7 +12185,7 @@
         "warehouse_sample_bundle": "excluded"
       },
       "scenario_ids": ["offline-tool-workflows"],
-      "gap": "The file-backed semantic label helpers are wired and source-locked; execute a current real OpenUSD add/export/remove round trip twice with capability-specific output evidence before qualification."
+      "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
     },
     {
       "id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
@@ -12194,7 +12200,13 @@
       ],
       "acceptance_class": "alternate_local_lane",
       "thor_state": "wired",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_current",
+      "runtime_evidence": [
+        {
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/receipts/01-dataset-checks.json",
+          "sha256": "dbf1a3a21ae063b4b4eeb19553482cf245e98cdcbb32b5c3221f46deb8cc5a20"
+        }
+      ],
       "contract": {
         "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
         "checkers": ["RGB", "NPY depth", "PNG depth", "object-detection JSON and overflow", "instance-ID JSON", "instance-ID PNG", "calibration", "bbox direction", "velocity", "video B-frames"],
@@ -12213,7 +12225,7 @@
         "warehouse_sample_bundle": "excluded"
       },
       "scenario_ids": ["offline-tool-workflows"],
-      "gap": "All documented dataset checker entry points are wired and source-locked; run every checker on passing and adjacent-negative tiny fixtures with exact result digests before entry-level qualification."
+      "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
     },
     {
       "id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
@@ -12228,7 +12240,13 @@
       ],
       "acceptance_class": "alternate_local_lane",
       "thor_state": "wired",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_current",
+      "runtime_evidence": [
+        {
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/receipts/02-rgb-depth-video-conversion.json",
+          "sha256": "dac14785935ed85305b77d73cdd13f6ea953709bec8da83f07f272cd4d0e411b"
+        }
+      ],
       "contract": {
         "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
         "source_controls": [
@@ -12240,7 +12258,7 @@
         "warehouse_sample_bundle": "excluded"
       },
       "scenario_ids": ["offline-tool-workflows"],
-      "gap": "The RGB, depth, HDF5, and zero-B-frame video conversion paths are wired and source-locked; re-execute each native conversion twice on tiny generated inputs with capability-specific digests before qualification."
+      "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
     },
     {
       "id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
@@ -12255,7 +12273,13 @@
       ],
       "acceptance_class": "alternate_local_lane",
       "thor_state": "wired",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_current",
+      "runtime_evidence": [
+        {
+          "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/receipts/03-ground-truth-conversion.json",
+          "sha256": "2611b2a01ac98e5c95a33980c3164811a1ded0c13e5ed0de94e0fa94e7141e7f"
+        }
+      ],
       "contract": {
         "static_contract_package": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
         "source_controls": [
@@ -12268,7 +12292,7 @@
         "warehouse_sample_bundle": "excluded"
       },
       "scenario_ids": ["offline-tool-workflows"],
-      "gap": "A bounded deterministic conversion-only CLI and tiny custom regression fixture now exist and are source-locked; produce a formal target-bound entry receipt in the pinned OpenUSD environment before qualification."
+      "gap": "No known gap: the current target-bound offline runtime receipt covers the exact positive semantics, adjacent-negative behavior, determinism, and cleanup contract without the Warehouse sample bundle."
     },
     {
       "id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",

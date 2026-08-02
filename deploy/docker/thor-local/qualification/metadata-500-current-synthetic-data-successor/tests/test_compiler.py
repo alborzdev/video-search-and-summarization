@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import sys
 import unittest
 
 
@@ -15,6 +16,15 @@ SPEC = importlib.util.spec_from_file_location(
 assert SPEC is not None and SPEC.loader is not None
 compiler = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(compiler)
+
+PARITY = compiler.REPO_ROOT / "deploy/docker/thor-local/parity"
+sys.path.insert(0, str(PARITY))
+VERIFIER_SPEC = importlib.util.spec_from_file_location(
+    "synthetic_data_official_verifier", PARITY / "verify_official_capabilities.py"
+)
+assert VERIFIER_SPEC is not None and VERIFIER_SPEC.loader is not None
+verifier = importlib.util.module_from_spec(VERIFIER_SPEC)
+VERIFIER_SPEC.loader.exec_module(verifier)
 
 
 class SyntheticDataOracleSuccessorTests(unittest.TestCase):
@@ -27,7 +37,7 @@ class SyntheticDataOracleSuccessorTests(unittest.TestCase):
             hashlib.sha256(checked).hexdigest(), compiler.EXPECTED_OUTPUT_SHA256
         )
 
-    def test_only_four_declared_rows_change(self) -> None:
+    def test_promoted_root_oracle_prefix_requires_no_additional_change(self) -> None:
         source, derived, _ = compiler.derive()
         targets = {row[0] for row in compiler.TARGETS}
         source_rows = {row["capability_id"]: row for row in source["oracles"]}
@@ -38,7 +48,7 @@ class SyntheticDataOracleSuccessorTests(unittest.TestCase):
             if compiler.canonical_bytes(source_rows[capability_id])
             != compiler.canonical_bytes(derived_rows[capability_id])
         }
-        self.assertEqual(changed, targets)
+        self.assertEqual(changed, set())
         for capability_id in targets:
             row = derived_rows[capability_id]
             self.assertEqual(row["current_state"], "open_unexecuted")
@@ -90,6 +100,90 @@ class SyntheticDataOracleSuccessorTests(unittest.TestCase):
         schema = compiler.load_locked(compiler.ORACLE_SCHEMA)
         with self.assertRaisesRegex(compiler.SuccessorError, "undeclared change"):
             compiler.validate(source, mutated, schema, fixtures)
+
+    def test_checked_promotion_outputs_are_exact_derivation(self) -> None:
+        ledger, manifest, receipts, oracles = compiler.derive_promotion()
+        checked = {
+            compiler.LEDGER_OUTPUT: (
+                compiler.encoded(ledger),
+                compiler.EXPECTED_LEDGER_SHA256,
+            ),
+            compiler.MANIFEST_OUTPUT: (
+                compiler.encoded(manifest),
+                compiler.EXPECTED_MANIFEST_SHA256,
+            ),
+        }
+        for path, (payload, expected_sha) in checked.items():
+            self.assertEqual(path.read_bytes(), payload)
+            self.assertEqual(hashlib.sha256(payload).hexdigest(), expected_sha)
+        ledger_rows = {row["id"]: row for row in ledger["capabilities"]}
+        oracle_rows = {row["capability_id"]: row for row in oracles["oracles"]}
+        for capability_id, receipt in receipts.items():
+            path = compiler.REPO_ROOT / compiler.receipt_relative(capability_id)
+            payload = compiler.encoded(receipt)
+            self.assertEqual(path.read_bytes(), payload)
+            self.assertEqual(
+                hashlib.sha256(payload).hexdigest(),
+                compiler.EXPECTED_RECEIPT_SHA256[capability_id],
+            )
+            verifier._validate_bound_runtime_evidence(
+                ledger_rows[capability_id],
+                oracle_rows[capability_id],
+                receipt,
+                ledger["target"],
+            )
+
+    def test_aggregate_cleanup_and_confinement_fail_closed(self) -> None:
+        _, oracles, fixtures = compiler.derive()
+        oracle_rows = {row["capability_id"]: row for row in oracles["oracles"]}
+        contract = compiler.load_locked(compiler.RUNTIME_CONTRACT)
+        schema = compiler.load_locked(compiler.RUNTIME_RESULT_SCHEMA)
+        aggregate = compiler.load_locked(compiler.AGGREGATE_RECEIPT)
+        aggregate["cleanup"]["root_removed"] = False
+        with self.assertRaisesRegex(compiler.SuccessorError, "cleanup envelope"):
+            compiler.validate_aggregate(
+                aggregate, schema, contract, oracle_rows, fixtures
+            )
+        aggregate = compiler.load_locked(compiler.AGGREGATE_RECEIPT)
+        aggregate["confinement"]["network_calls"] = 1
+        with self.assertRaisesRegex(compiler.SuccessorError, "zero-confinement"):
+            compiler.validate_aggregate(
+                aggregate, schema, contract, oracle_rows, fixtures
+            )
+
+    def test_receipt_observations_bind_aggregate_and_result(self) -> None:
+        _, _, receipts, _ = compiler.derive_promotion()
+        aggregate = compiler.load_locked(compiler.AGGREGATE_RECEIPT)
+        results = {row["capability_id"]: row for row in aggregate["capability_results"]}
+        for capability_id, receipt in receipts.items():
+            expected_result_sha = compiler.sha256(
+                compiler.canonical_bytes(results[capability_id])
+            )
+            for observation in receipt["observations"]:
+                self.assertEqual(
+                    observation["value"]["aggregate_receipt_sha256"],
+                    compiler.AGGREGATE_SHA256,
+                )
+                self.assertEqual(
+                    observation["value"]["capability_result_sha256"],
+                    expected_result_sha,
+                )
+
+    def test_only_synthetic_ledger_rows_and_manifest_family_change(self) -> None:
+        ledger, manifest, receipts, oracles = compiler.derive_promotion()
+        counts = compiler.validate_promotion(
+            compiler._ledger_baseline(),
+            ledger,
+            compiler.load_locked(compiler.SELECTED_MANIFEST),
+            manifest,
+            receipts,
+            oracles,
+            compiler.load_locked(compiler.OFFICIAL_SCHEMA),
+        )
+        self.assertEqual(counts["preserved_ledger_rows"], 496)
+        self.assertEqual(counts["preserved_manifest_features"], 54)
+        self.assertEqual(counts["selected_suffix"], 211)
+        self.assertEqual(counts["official_receipts"], 4)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,229 @@
+{
+  "assertions": [
+    {
+      "expected": [
+        "RGB",
+        "NPY depth",
+        "PNG depth",
+        "object-detection JSON and overflow",
+        "instance-ID JSON",
+        "instance-ID PNG",
+        "calibration",
+        "bbox direction",
+        "velocity",
+        "video B-frames"
+      ],
+      "id": "contract-01",
+      "observation": "contract_identity/contract/checkers",
+      "observed": [
+        "RGB",
+        "NPY depth",
+        "PNG depth",
+        "object-detection JSON and overflow",
+        "instance-ID JSON",
+        "instance-ID PNG",
+        "calibration",
+        "bbox direction",
+        "velocity",
+        "video B-frames"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_rgb.py",
+          "sha256": "1da31b208b1e772de48779aee8c08621abe0a75f7b7129ee0607e980126cf656"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_npy.py",
+          "sha256": "59307b80214542c9ed02d01f27f3e9042cc501bf3edafee26be09310b35646ab"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_png.py",
+          "sha256": "426e34a8b7584d12e5af16e93f08d9f154322ec30c475ac58d05a84be1bfbce3"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_json.py",
+          "sha256": "08fc48050364fcf1332f04fa09cbc41054c1ab4dc4250530ee906664e0988799"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_json.py",
+          "sha256": "9c7471af6fda24ba118fe2128a50ee218954ff2f9cb8ddc4dfa0e548655e93d7"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_png.py",
+          "sha256": "f7020591340e45b306eeabf329a17f1b3b3312a2820ddd875e1f94ef91c772da"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_calibration.py",
+          "sha256": "609cfa1317245064fc29429590ef11bfa5d27614dc514d6a687407288270a44f"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_bbox_direction.py",
+          "sha256": "26ae55353ef1a11a914b3f6055c160dd9f5070e72f84ecfee497b0c7eeaf478a"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_velocity.py",
+          "sha256": "e3d1acbe6cb3fc135b4be648ca048308e1db1e2ecdd525fbde7ca9573ecd5fb0"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_videos.sh",
+          "sha256": "2b18d0b9b5e827d69210699d14c9ce039fda0191da96dfb41de4dbfdc0eecc39"
+        }
+      ],
+      "id": "contract-02",
+      "observation": "contract_identity/contract/source_controls",
+      "observed": [
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_rgb.py",
+          "sha256": "1da31b208b1e772de48779aee8c08621abe0a75f7b7129ee0607e980126cf656"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_npy.py",
+          "sha256": "59307b80214542c9ed02d01f27f3e9042cc501bf3edafee26be09310b35646ab"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_png.py",
+          "sha256": "426e34a8b7584d12e5af16e93f08d9f154322ec30c475ac58d05a84be1bfbce3"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_json.py",
+          "sha256": "08fc48050364fcf1332f04fa09cbc41054c1ab4dc4250530ee906664e0988799"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_json.py",
+          "sha256": "9c7471af6fda24ba118fe2128a50ee218954ff2f9cb8ddc4dfa0e548655e93d7"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_png.py",
+          "sha256": "f7020591340e45b306eeabf329a17f1b3b3312a2820ddd875e1f94ef91c772da"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_calibration.py",
+          "sha256": "609cfa1317245064fc29429590ef11bfa5d27614dc514d6a687407288270a44f"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_bbox_direction.py",
+          "sha256": "26ae55353ef1a11a914b3f6055c160dd9f5070e72f84ecfee497b0c7eeaf478a"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_velocity.py",
+          "sha256": "e3d1acbe6cb3fc135b4be648ca048308e1db1e2ecdd525fbde7ca9573ecd5fb0"
+        },
+        {
+          "path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_videos.sh",
+          "sha256": "2b18d0b9b5e827d69210699d14c9ce039fda0191da96dfb41de4dbfdc0eecc39"
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/static_contract_package",
+      "observed": "deploy/docker/thor-local/qualification/synthetic-data-entry-static-contract",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "excluded",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/warehouse_sample_bundle",
+      "observed": "excluded",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "deterministic_output",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-manifest-entry-synthetic-data-tools-01-dataset-checks"
+    ],
+    "mutation": "temporary_files_only",
+    "postconditions": [
+      {
+        "description": "the exact temporary target is absent and no sibling path changed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-manifest-entry-synthetic-data-tools-01-dataset-checks"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.manifest-entry.synthetic-data-tools.01-dataset-checks",
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-synthetic-data-successor/fixtures/01-dataset-checks.json",
+    "sha256": "0cc773dd0ec64aa4a45c379b298dc7580eddf89ab7702172fe101807d52c1ff2"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "7b9e16cf79b123e1c2f3b50afe83aefe8b76302044160199e3b1613123500ea1",
+        "checkout_head": "53998f19f11451f63ef582e1f9d06602229461eb",
+        "contract_sha256": "a985966163e9bc726abcadf4564b9274657d426ebcd6629e2c8387b79c3ab99c",
+        "oracle_row_sha256": "a6d1e3f855d8d789590e73d2b90e09f01afc2c9f03e2d9a12f4a0298ec66002f"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "adjacent_negatives_sha256": "5001a27ed714366ea4350909a9113335d98d62d6e1ad834459aa61e03b346486",
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "7b9e16cf79b123e1c2f3b50afe83aefe8b76302044160199e3b1613123500ea1",
+        "positive_observations_sha256": "de0598ba8e240884927e0c6af07d37fcfeae5fb99f1ae57328d78c748901b0aa"
+      }
+    },
+    {
+      "id": "deterministic_output",
+      "result": "pass",
+      "value": {
+        "aggregate_receipt_sha256": "1e207198c907fde4f7370c3de814b88ebcd171e616be5f833e50509fb4b85362",
+        "capability_result_sha256": "7b9e16cf79b123e1c2f3b50afe83aefe8b76302044160199e3b1613123500ea1",
+        "independent_runs": 2,
+        "run_output_sha256": [
+          "b58ae7c07ac0c39d95081724c9172495fe05286bbf8c32141d5b3153568baeb1",
+          "b58ae7c07ac0c39d95081724c9172495fe05286bbf8c32141d5b3153568baeb1"
+        ]
+      }
+    }
+  ],
+  "oracle_id": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+  "oracle_sha256": "a6d1e3f855d8d789590e73d2b90e09f01afc2c9f03e2d9a12f4a0298ec66002f",
+  "result": "passed_current",
+  "scenario_ids": [
+    "offline-tool-workflows",
+    "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

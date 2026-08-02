@@ -66,7 +66,10 @@ class OfficialCapabilityTests(unittest.TestCase):
                 destination = root / manifest_path
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 destination.write_bytes(source.read_bytes())
-            digest = reference_digest or hashlib.sha256(evidence_path.read_bytes()).hexdigest()
+            digest = (
+                reference_digest
+                or hashlib.sha256(evidence_path.read_bytes()).hexdigest()
+            )
             capability["runtime_evidence"] = [
                 {"path": reference_path, "sha256": digest}
             ]
@@ -99,17 +102,24 @@ class OfficialCapabilityTests(unittest.TestCase):
             )
         )
         oracle["ledger_binding"]["runtime_state"] = "passed_current"
-        oracle["acceptance_readiness"] = {"classification": "executor_ready", "blockers": []}
+        oracle["acceptance_readiness"] = {
+            "classification": "executor_ready",
+            "blockers": [],
+        }
         oracle["fixture"]["materialization"] = {
             "path": "deploy/docker/thor-local/qualification/fixtures/oracle.json",
             "generator": "deploy/docker/thor-local/qualification/generate-oracle-fixture.py",
             "sha256": "1" * 64,
         }
-        oracle["execution_bounds"]["executor"] = "deploy/docker/thor-local/qualification/run-oracle.py"
+        oracle["execution_bounds"]["executor"] = (
+            "deploy/docker/thor-local/qualification/run-oracle.py"
+        )
         oracle["execution_bounds"]["collectors"] = [
             "deploy/docker/thor-local/qualification/collect-oracle.py"
         ]
-        oracle["cleanup"]["executor"] = "deploy/docker/thor-local/qualification/cleanup-oracle.py"
+        oracle["cleanup"]["executor"] = (
+            "deploy/docker/thor-local/qualification/cleanup-oracle.py"
+        )
         oracle["cleanup"]["postcondition_collectors"] = [
             "deploy/docker/thor-local/qualification/collect-cleanup.py"
         ]
@@ -184,6 +194,57 @@ class OfficialCapabilityTests(unittest.TestCase):
         self.assertEqual(counts["capabilities"], 289)
         self.assertEqual(counts["feature_families"], 42)
         self.assertEqual(counts["discrepancies"], 47)
+
+    def test_injected_oracle_plan_is_schema_order_and_binding_checked(self) -> None:
+        oracle_schema = json.loads(
+            verifier.oracle_contract.SCHEMA.read_text(encoding="utf-8")
+        )
+        counts = verifier.validate(
+            copy.deepcopy(self.ledger),
+            copy.deepcopy(self.manifest),
+            copy.deepcopy(self.acceptance),
+            oracle_plan=copy.deepcopy(self.oracles),
+            oracle_schema=oracle_schema,
+        )
+        self.assertEqual(counts["capabilities"], 289)
+
+        swapped = copy.deepcopy(self.oracles)
+        swapped["oracles"][0], swapped["oracles"][1] = (
+            swapped["oracles"][1],
+            swapped["oracles"][0],
+        )
+        with self.assertRaisesRegex(verifier.CapabilityContractError, "order differs"):
+            verifier.validate(
+                copy.deepcopy(self.ledger),
+                copy.deepcopy(self.manifest),
+                copy.deepcopy(self.acceptance),
+                oracle_plan=swapped,
+                oracle_schema=oracle_schema,
+            )
+
+        rebound = copy.deepcopy(self.oracles)
+        rebound["oracles"][0]["ledger_binding"]["gap"] += " drift"
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "binding differs"
+        ):
+            verifier.validate(
+                copy.deepcopy(self.ledger),
+                copy.deepcopy(self.manifest),
+                copy.deepcopy(self.acceptance),
+                oracle_plan=rebound,
+                oracle_schema=oracle_schema,
+            )
+
+    def test_injected_oracle_plan_requires_exact_schema(self) -> None:
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "requires its exact schema"
+        ):
+            verifier.validate(
+                copy.deepcopy(self.ledger),
+                copy.deepcopy(self.manifest),
+                copy.deepcopy(self.acceptance),
+                oracle_plan=copy.deepcopy(self.oracles),
+            )
 
     def test_family_status_reducer_preserves_external_boundary(self) -> None:
         capabilities = [
@@ -279,17 +340,25 @@ class OfficialCapabilityTests(unittest.TestCase):
         ):
             verifier._aggregate_family_status([])
 
-    def test_twelve_tooling_entries_are_canonical_but_not_runtime_promoted(self) -> None:
+    def test_twelve_tooling_entries_have_exact_current_runtime_states(
+        self,
+    ) -> None:
         expected = {
             **{
                 f"manifest-entry.spatial-ai-utils.{index:02d}-{suffix}": title
                 for index, (suffix, title) in enumerate(
                     [
-                        ("calibration-and-camera-grouping", "calibration and camera grouping"),
+                        (
+                            "calibration-and-camera-grouping",
+                            "calibration and camera grouping",
+                        ),
                         ("3d-2d-geometry", "3D/2D geometry"),
                         ("multiview-visualization", "multiview visualization"),
                         ("detection-map", "detection mAP"),
-                        ("tracking-hota-clear-identity-count", "tracking HOTA/CLEAR/identity/count"),
+                        (
+                            "tracking-hota-clear-identity-count",
+                            "tracking HOTA/CLEAR/identity/count",
+                        ),
                         ("nvschema-conversion", "NVSchema conversion"),
                         ("video-frame-tools", "video/frame tools"),
                         ("aws-gcs-validation", "AWS/GCS validation"),
@@ -313,20 +382,57 @@ class OfficialCapabilityTests(unittest.TestCase):
             for item in self.ledger["capabilities"]
             if item["id"] in expected
         }
+        synthetic_receipts = {
+            "manifest-entry.synthetic-data-tools.00-semantic-label-helpers": (
+                "00-semantic-label-helpers.json",
+                "91afcd30bf85fdfe6cbc29ac0792707ee459912c900f2e2e6c6ade9dd66d9324",
+            ),
+            "manifest-entry.synthetic-data-tools.01-dataset-checks": (
+                "01-dataset-checks.json",
+                "dbf1a3a21ae063b4b4eeb19553482cf245e98cdcbb32b5c3221f46deb8cc5a20",
+            ),
+            "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion": (
+                "02-rgb-depth-video-conversion.json",
+                "dac14785935ed85305b77d73cdd13f6ea953709bec8da83f07f272cd4d0e411b",
+            ),
+            "manifest-entry.synthetic-data-tools.03-ground-truth-conversion": (
+                "03-ground-truth-conversion.json",
+                "2611b2a01ac98e5c95a33980c3164811a1ded0c13e5ed0de94e0fa94e7141e7f",
+            ),
+        }
         self.assertEqual(set(capabilities), set(expected))
         for capability_id, title in expected.items():
             with self.subTest(capability_id=capability_id):
                 capability = capabilities[capability_id]
                 self.assertEqual(capability["title"], title)
-                self.assertNotIn("runtime_evidence", capability)
                 self.assertEqual(
                     capability["contract"]["warehouse_sample_bundle"], "excluded"
                 )
-                if capability_id.endswith("aws-gcs-validation"):
-                    self.assertEqual(capability["acceptance_class"], "external_optional")
+                if capability_id in synthetic_receipts:
+                    filename, digest = synthetic_receipts[capability_id]
+                    self.assertEqual(capability["runtime_state"], "passed_current")
+                    self.assertEqual(
+                        capability["runtime_evidence"],
+                        [
+                            {
+                                "path": (
+                                    "deploy/docker/thor-local/qualification/"
+                                    "metadata-500-current-synthetic-data-successor/"
+                                    f"receipts/{filename}"
+                                ),
+                                "sha256": digest,
+                            }
+                        ],
+                    )
+                elif capability_id.endswith("aws-gcs-validation"):
+                    self.assertNotIn("runtime_evidence", capability)
+                    self.assertEqual(
+                        capability["acceptance_class"], "external_optional"
+                    )
                     self.assertEqual(capability["thor_state"], "external_optional")
                     self.assertEqual(capability["runtime_state"], "not_applicable")
                 else:
+                    self.assertNotIn("runtime_evidence", capability)
                     self.assertEqual(
                         capability["acceptance_class"], "alternate_local_lane"
                     )
@@ -444,8 +550,7 @@ class OfficialCapabilityTests(unittest.TestCase):
         proto = next(
             item
             for item in ledger["source_discrepancies"]
-            if item["id"]
-            == "systems.nvschema-incident-field-name-doc-repository-drift"
+            if item["id"] == "systems.nvschema-incident-field-name-doc-repository-drift"
         )
         proto["record_semantics"] = "cross_source_discrepancy"
         proto["candidate_observations"] = []
@@ -572,22 +677,38 @@ class OfficialCapabilityTests(unittest.TestCase):
 
     def test_unmapped_capability_fails_closed(self) -> None:
         manifest = copy.deepcopy(self.manifest)
-        feature = next(item for item in manifest["features"] if item.get("official_capability_ids"))
+        feature = next(
+            item for item in manifest["features"] if item.get("official_capability_ids")
+        )
         feature["official_capability_ids"].pop()
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "cross-link drift"):
-            verifier.validate(copy.deepcopy(self.ledger), manifest, copy.deepcopy(self.acceptance))
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "cross-link drift"
+        ):
+            verifier.validate(
+                copy.deepcopy(self.ledger), manifest, copy.deepcopy(self.acceptance)
+            )
 
     def test_missing_acceptance_scenario_fails_closed(self) -> None:
         acceptance = copy.deepcopy(self.acceptance)
-        acceptance["scenarios"] = [item for item in acceptance["scenarios"] if item["id"] != "official-capability-contracts"]
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "unknown acceptance scenario"):
-            verifier.validate(copy.deepcopy(self.ledger), copy.deepcopy(self.manifest), acceptance)
+        acceptance["scenarios"] = [
+            item
+            for item in acceptance["scenarios"]
+            if item["id"] != "official-capability-contracts"
+        ]
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "unknown acceptance scenario"
+        ):
+            verifier.validate(
+                copy.deepcopy(self.ledger), copy.deepcopy(self.manifest), acceptance
+            )
 
     def test_passed_current_without_evidence_is_rejected(self) -> None:
         ledger = copy.deepcopy(self.ledger)
         ledger["capabilities"][0]["runtime_state"] = "passed_current"
         with self.assertRaises(verifier.CapabilityContractError):
-            verifier.validate(ledger, copy.deepcopy(self.manifest), copy.deepcopy(self.acceptance))
+            verifier.validate(
+                ledger, copy.deepcopy(self.manifest), copy.deepcopy(self.acceptance)
+            )
 
     def test_arbitrary_generic_pass_check_cannot_advance(self) -> None:
         with self.assertRaisesRegex(
@@ -601,17 +722,31 @@ class OfficialCapabilityTests(unittest.TestCase):
             capability, oracle, evidence, self.ledger["target"]
         )
 
-    def test_executor_evidence_oracle_hash_fixture_assertions_and_cleanup_fail_closed(self) -> None:
+    def test_executor_evidence_oracle_hash_fixture_assertions_and_cleanup_fail_closed(
+        self,
+    ) -> None:
         mutations = {
             "oracle hash": lambda evidence: evidence.update(oracle_sha256="0" * 64),
-            "fixture digest": lambda evidence: evidence["fixture"].update(sha256="0" * 64),
+            "fixture digest": lambda evidence: evidence["fixture"].update(
+                sha256="0" * 64
+            ),
             "missing assertion": lambda evidence: evidence["assertions"].pop(),
-            "changed expected value": lambda evidence: evidence["assertions"][0].update(expected="generic-pass"),
-            "wrong observed value": lambda evidence: evidence["assertions"][0].update(observed="generic-pass"),
+            "changed expected value": lambda evidence: evidence["assertions"][0].update(
+                expected="generic-pass"
+            ),
+            "wrong observed value": lambda evidence: evidence["assertions"][0].update(
+                observed="generic-pass"
+            ),
             "missing observation": lambda evidence: evidence["observations"].pop(),
-            "cleanup failure": lambda evidence: evidence["cleanup"].update(result="fail"),
-            "wrong release commit": lambda evidence: evidence["target"].update(ga_commit="0" * 40),
-            "wrong oracle scenario": lambda evidence: evidence.update(scenario_ids=self.ledger["capabilities"][0]["scenario_ids"]),
+            "cleanup failure": lambda evidence: evidence["cleanup"].update(
+                result="fail"
+            ),
+            "wrong release commit": lambda evidence: evidence["target"].update(
+                ga_commit="0" * 40
+            ),
+            "wrong oracle scenario": lambda evidence: evidence.update(
+                scenario_ids=self.ledger["capabilities"][0]["scenario_ids"]
+            ),
         }
         for label, mutate in mutations.items():
             with self.subTest(label=label):
@@ -622,7 +757,9 @@ class OfficialCapabilityTests(unittest.TestCase):
                         capability, oracle, evidence, self.ledger["target"]
                     )
 
-    def test_protocol_executor_evidence_binds_case_hashes_vectors_sources_and_cleanup(self) -> None:
+    def test_protocol_executor_evidence_binds_case_hashes_vectors_sources_and_cleanup(
+        self,
+    ) -> None:
         capability_id = "protocol.agent.websocket"
         capability, oracle, evidence = self._executor_ready_binding(capability_id)
         verifier._validate_bound_runtime_evidence(
@@ -630,17 +767,33 @@ class OfficialCapabilityTests(unittest.TestCase):
         )
         mutations = {
             "case id": lambda item: item["protocol_case"].update(case_id="wrong-case"),
-            "whole file hash": lambda item: item["protocol_case"].update(file_sha256="0" * 64),
-            "set hash": lambda item: item["protocol_case"].update(contract_set_sha256="0" * 64),
-            "case hash": lambda item: item["protocol_case"].update(case_sha256="0" * 64),
-            "positive vector": lambda item: item["protocol_case"].update(positive_vector_id="wrong-vector"),
-            "negative vectors": lambda item: item["protocol_case"].update(negative_vector_ids=["wrong-vector"]),
-            "source hashes": lambda item: item["protocol_case"]["source_hashes"][0].update(content_sha256="0" * 64),
-            "cleanup result": lambda item: item["protocol_case"].update(cleanup_result="fail"),
+            "whole file hash": lambda item: item["protocol_case"].update(
+                file_sha256="0" * 64
+            ),
+            "set hash": lambda item: item["protocol_case"].update(
+                contract_set_sha256="0" * 64
+            ),
+            "case hash": lambda item: item["protocol_case"].update(
+                case_sha256="0" * 64
+            ),
+            "positive vector": lambda item: item["protocol_case"].update(
+                positive_vector_id="wrong-vector"
+            ),
+            "negative vectors": lambda item: item["protocol_case"].update(
+                negative_vector_ids=["wrong-vector"]
+            ),
+            "source hashes": lambda item: item["protocol_case"]["source_hashes"][
+                0
+            ].update(content_sha256="0" * 64),
+            "cleanup result": lambda item: item["protocol_case"].update(
+                cleanup_result="fail"
+            ),
         }
         for label, mutate in mutations.items():
             with self.subTest(label=label):
-                capability, oracle, evidence = self._executor_ready_binding(capability_id)
+                capability, oracle, evidence = self._executor_ready_binding(
+                    capability_id
+                )
                 mutate(evidence)
                 with self.assertRaisesRegex(
                     verifier.CapabilityContractError, "protocol case evidence"
@@ -650,7 +803,9 @@ class OfficialCapabilityTests(unittest.TestCase):
                     )
 
     def test_runtime_evidence_path_traversal_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "unsafe runtime evidence path"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "unsafe runtime evidence path"
+        ):
             self._validate_runtime_evidence(
                 reference_path="deploy/docker/thor-local/../../outside.json"
             )
@@ -683,7 +838,9 @@ class OfficialCapabilityTests(unittest.TestCase):
                     "sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
                 }
             ]
-            with self.assertRaisesRegex(verifier.CapabilityContractError, "contains a symlink"):
+            with self.assertRaisesRegex(
+                verifier.CapabilityContractError, "contains a symlink"
+            ):
                 verifier.validate(
                     ledger,
                     copy.deepcopy(self.manifest),
@@ -692,25 +849,35 @@ class OfficialCapabilityTests(unittest.TestCase):
                 )
 
     def test_runtime_evidence_wrong_capability_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
                 lambda evidence: evidence.update(capability_id="different.capability")
             )
 
     def test_runtime_evidence_wrong_scenario_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
                 lambda evidence: evidence.update(scenario_ids=["different-scenario"])
             )
 
     def test_runtime_evidence_malformed_scenarios_are_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
-                lambda evidence: evidence.update(scenario_ids="official-capability-contracts")
+                lambda evidence: evidence.update(
+                    scenario_ids="official-capability-contracts"
+                )
             )
 
     def test_runtime_evidence_wrong_commit_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
                 lambda evidence: evidence.update(target_commit="0" * 40)
             )
@@ -721,11 +888,15 @@ class OfficialCapabilityTests(unittest.TestCase):
             '"result":"passed_current","target_commit":"duplicate","captured_on":"2026-07-31",'
             '"scenario_ids":["duplicate"],"checks":[{"id":"duplicate","result":"pass"}]}'
         )
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "duplicate JSON key"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "duplicate JSON key"
+        ):
             self._validate_runtime_evidence(raw_evidence=duplicate)
 
     def test_runtime_evidence_failed_check_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
                 lambda evidence: evidence.update(
                     checks=[{"id": "semantic-oracle", "result": "fail"}]
@@ -733,7 +904,9 @@ class OfficialCapabilityTests(unittest.TestCase):
             )
 
     def test_runtime_evidence_check_without_id_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
                 lambda evidence: evidence.update(checks=[{"result": "pass"}])
             )
@@ -743,13 +916,17 @@ class OfficialCapabilityTests(unittest.TestCase):
             self._validate_runtime_evidence(reference_digest="0" * 64)
 
     def test_runtime_evidence_stale_date_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
                 lambda evidence: evidence.update(captured_on="2026-07-30")
             )
 
     def test_runtime_evidence_boolean_schema_version_is_rejected(self) -> None:
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "planning_index_only"):
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "planning_index_only"
+        ):
             self._validate_runtime_evidence(
                 lambda evidence: evidence.update(schema_version=True)
             )
@@ -766,25 +943,39 @@ class OfficialCapabilityTests(unittest.TestCase):
             if item["feature_id"] == "official-agent-models"
         ]
         self.assertEqual(feature["acceptance_class"], "required_local")
-        self.assertIn("required_local", {item["acceptance_class"] for item in capabilities})
+        self.assertIn(
+            "required_local", {item["acceptance_class"] for item in capabilities}
+        )
 
     def test_source_claim_snapshot_drift_fails_closed(self) -> None:
         ledger = copy.deepcopy(self.ledger)
         ledger["capabilities"][0]["contract"]["unexpected"] = True
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "claim set drift"):
-            verifier.validate(ledger, copy.deepcopy(self.manifest), copy.deepcopy(self.acceptance))
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "claim set drift"
+        ):
+            verifier.validate(
+                ledger, copy.deepcopy(self.manifest), copy.deepcopy(self.acceptance)
+            )
 
     def test_schema_violation_fails_closed(self) -> None:
         ledger = copy.deepcopy(self.ledger)
         ledger["unexpected"] = True
-        with self.assertRaisesRegex(verifier.CapabilityContractError, "ledger schema violation"):
-            verifier.validate(ledger, copy.deepcopy(self.manifest), copy.deepcopy(self.acceptance))
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "ledger schema violation"
+        ):
+            verifier.validate(
+                ledger, copy.deepcopy(self.manifest), copy.deepcopy(self.acceptance)
+            )
 
     def test_duplicate_json_keys_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             duplicate_json = Path(temporary_directory) / "duplicate.json"
-            duplicate_json.write_text('{"schema_version": 1, "schema_version": 1}', encoding="utf-8")
-            with self.assertRaisesRegex(verifier.CapabilityContractError, "duplicate JSON key"):
+            duplicate_json.write_text(
+                '{"schema_version": 1, "schema_version": 1}', encoding="utf-8"
+            )
+            with self.assertRaisesRegex(
+                verifier.CapabilityContractError, "duplicate JSON key"
+            ):
                 verifier._load(duplicate_json)
 
 
