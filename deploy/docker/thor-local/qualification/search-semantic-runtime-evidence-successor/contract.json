@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "package_id": "search-semantic-runtime-evidence-successor",
+  "mode": "authorization-gated-bounded-numeric-loopback-http",
+  "default_execution_enabled": false,
+  "predecessor_package": "search-semantic-runtime-readiness-successor",
+  "planning_requirement_id": "search-documents-and-bboxes",
+  "capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.agent.search-profile",
+  "warehouse_sample_bundle": "excluded",
+  "authorization": {
+    "authorization_id": "search-semantic-runtime",
+    "acknowledgement": "I_ACK_SEARCH_SEMANTIC_RUNTIME_AND_EXACT_OWNED_CLEANUP",
+    "ownership_attestation": "I_ATTEST_THIS_EXACT_RUN_NAMESPACE_IS_PREPROVISIONED_FOR_THIS_RUN_AND_MAY_BE_DELETED"
+  },
+  "transport": {
+    "numeric_loopback_only": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "max_request_bytes": 65536,
+    "max_response_bytes": 1048576,
+    "timeout_seconds": 10
+  },
+  "execution_bounds": {
+    "max_requests": 14,
+    "max_actions": 14,
+    "max_duration_seconds": 900,
+    "owned_document_count": 6,
+    "minimum_reappearance_delay_seconds": 2,
+    "maximum_reappearance_delay_seconds": 30
+  },
+  "workflow": [
+    {"order": 1, "id": "capture-pre-state", "target": "elasticsearch", "method": "POST", "path": "/_mget"},
+    {"order": 2, "id": "search-route", "target": "search", "method": "POST", "path": "/api/v1/search"},
+    {"order": 3, "id": "attribute-route", "target": "search", "method": "POST", "path": "/api/v1/search/attribute"},
+    {"order": 4, "id": "fusion-route", "target": "search", "method": "POST", "path": "/api/v1/search/fusion"},
+    {"order": 5, "id": "image-route", "target": "search", "method": "POST", "path": "/api/v1/search/image"},
+    {"order": 6, "id": "same-object-merge", "target": "search", "method": "POST", "path": "/api/v1/search"},
+    {"order": 7, "id": "append-multiple-attributes", "target": "search", "method": "POST", "path": "/api/v1/search/attribute"},
+    {"order": 8, "id": "rerank-or-fallback", "target": "search", "method": "POST", "path": "/api/v1/search/fusion"},
+    {"order": 9, "id": "fuse-multiple-attributes", "target": "search", "method": "POST", "path": "/api/v1/search/attribute"},
+    {"order": 10, "id": "same-video-top-k", "target": "search", "method": "POST", "path": "/api/v1/search"},
+    {"order": 11, "id": "selected-bbox-knn", "target": "search", "method": "POST", "path": "/api/v1/search/image"},
+    {"order": 12, "id": "reject-invalid-index-family", "target": "search", "method": "POST", "path": "/api/v1/search"},
+    {"order": 13, "id": "restore-owned-state", "target": "elasticsearch", "method": "POST", "path": "/_bulk"},
+    {"order": 14, "id": "verify-postconditions", "target": "elasticsearch", "method": "POST", "path": "/_mget"}
+  ],
+  "required_exact_routes": [
+    "/api/v1/search",
+    "/api/v1/search/attribute",
+    "/api/v1/search/fusion",
+    "/api/v1/search/image"
+  ],
+  "forbidden_route_aliases": ["/api/v1/attribute_search", "/api/v1/embed_search"],
+  "ownership": {
+    "namespace_template": "vss-oracle-runtime-agent-search-profile-{run_id}",
+    "index_templates": [
+      "mdx-embed-filtered-{namespace}",
+      "mdx-behavior-{namespace}",
+      "mdx-raw-{namespace}"
+    ],
+    "document_suffixes": ["doc-camera-01-0001", "doc-camera-02-0001"],
+    "registration_gate": "operator run-ownership attestation plus exact _mget readback of six index/document/source-digest tuples",
+    "ambiguous_or_mismatched_readback_policy": "fail closed without registration or deletion",
+    "cleanup": "one exact _bulk delete containing only the six registered tuples; never delete an index",
+    "postcondition": "after a bounded delay, exact _mget proves all six absent, the sentinel unchanged, and no late reappearance"
+  },
+  "evidence": {
+    "records_raw_payloads": false,
+    "records_raw_urls": false,
+    "records_raw_document_ids": false,
+    "records_raw_elasticsearch_sources": false,
+    "records_response_size_and_sha256": true,
+    "promotion_eligible": false,
+    "canonical_state_advanced": false,
+    "reason": "an operator-attested pre-provisioned fixture is not proof that this executor created the fixture; the sanitized receipt is candidate runtime evidence only"
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/contract.json", "sha256": "553c56749acc592176994567247ec1fb8601ad913e42d6db3056e0410f3c0ac4"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/executor.py", "sha256": "57871bae9a230bd7f6170db94e085be928e9fdcc54a1eee22cef0f45fe5b8a65"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/result.schema.json", "sha256": "1e47a4abcadf5957059e46868b399f6d182cb1d71770bab51d2d4e29f70012e6"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/selected-bbox-fixture.json", "sha256": "3e5edfcabd4b69973c4b0700c1a257b16384d5e84c7c31488b483ca0e976f8ee"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py", "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/evidence.schema.json", "sha256": "6a80f5465aaf12fc5ab7762f6162b58932e1a59fc88ba4bf818a33640cabef07"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "09701f84f6f7786a053eb05201c0679a5606591721d9307735e1be6a40fbcaa4"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
+    {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
+    {"path": "services/agent/src/vss_agents/tools/fusion.py", "sha256": "cc79953fdf75550dcbde841680120fe9e71fb4b3fba3cf680e6c9b04547c8a28"},
+    {"path": "services/agent/src/vss_agents/tools/embed_search.py", "sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"}
+  ]
+}

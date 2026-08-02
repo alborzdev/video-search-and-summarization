@@ -49,6 +49,85 @@ There is deliberately no "capture and trust" command here. Creating an exact
 lock is a review operation, not a way to bless whatever happens to be in a
 cache.
 
+## Connected staging planner
+
+`stage_artifacts.py` is the fail-closed connected staging boundary for the
+three missing exact inputs. With no arguments (or with `plan`) it renders a
+constant plan and performs no filesystem/environment reads, network access,
+writes, subprocesses, credential access, or Docker operations:
+
+```bash
+python3 deploy/docker/thor-local/official-edge/stage_artifacts.py
+```
+
+The separately acknowledged `execute` mode requires all of the following as
+literal inputs before it performs any host inspection:
+
+- the exact Nemotron repository and immutable 40-hex revision;
+- the exact Cosmos3 Nano BF16 NGC artifact;
+- the digest-bound vLLM image (the documented mutable tag is rejected);
+- an explicit absolute staging root and explicit absolute paths for `hf`,
+  `ngc`, and `docker`;
+- symbolic credential sources (`env:HF_TOKEN` and either
+  `env:NGC_CLI_API_KEY` or `env:NGC_API_KEY`), whose values are passed only in
+  child environments and are never placed in commands, receipts, or output;
+- the reviewed 49,871,036,871-byte known planning floor, an operator-selected
+  positive allowance for the still-unknown unpacked vLLM size, and a positive
+  free-space reserve that must remain after staging.
+
+An existing staging root is admitted only when it is a real directory owned by
+the effective user with exact mode `0700`. Existing cache-directory components
+must also be real directories: directory symlinks are rejected so a cache
+cannot redirect writes outside the reviewed root. This does not prohibit the
+standard Hugging Face snapshot's internal file symlinks; the candidate verifier
+checks those separately and permits only canonical targets in the sibling blob
+store.
+
+An execution is shaped as follows. The two byte values are intentionally not
+defaulted: the operator must select them after reviewing current capacity.
+
+```bash
+python3 deploy/docker/thor-local/official-edge/stage_artifacts.py execute \
+  --acknowledgement I_ACCEPT_CONNECTED_STAGING_EXACT_THOR_OFFICIAL_EDGE_ARTIFACTS_ONLY \
+  --staging-root /absolute/operator/reviewed/vss-official-edge \
+  --hf-executable /absolute/path/to/hf \
+  --ngc-executable /absolute/path/to/ngc \
+  --docker-executable /absolute/path/to/docker \
+  --hf-credential-source env:HF_TOKEN \
+  --ngc-credential-source env:NGC_CLI_API_KEY \
+  --edge-repository nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8 \
+  --edge-revision 3fe6dab75665a93884214ad4b1b95cf02717d081 \
+  --cosmos-artifact ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final \
+  --vllm-image ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8 \
+  --additional-headroom-bytes <operator-reviewed-positive-bytes> \
+  --minimum-free-after-bytes <operator-required-positive-reserve-bytes>
+```
+
+Resume behavior is deliberately artifact-specific. Docker layers can resume,
+but the image is skipped only after its exact repository digest, config digest,
+and platform pass inspection. An NGC partial directory is retained for the
+exact `download-version` command to retry; it is never mistaken for success,
+and that command must return successfully before the result is atomically
+admitted to the canonical cache path.
+
+Hugging Face completion does **not** generically provider-resume from an
+exact-named snapshot. Such a snapshot can be skipped only when a prior review
+candidate's complete snapshot and blob trees still match its current bytes. An
+interrupted or otherwise unreviewed pre-existing snapshot fails closed and
+requires explicit operator recovery or a new staging root. Artifact names,
+non-empty state, and the staging journal are never identity evidence. The tool
+retains partial bytes and never deletes caches or images.
+
+Successful staging writes
+`official-edge-review-candidate-v1.json` below the explicit staging root. The
+candidate contains artifact trees from `lock_candidate.py`, the exact local
+image/config identity, selected tool hashes and versions, redacted command
+receipts, and symbolic credential-source names. It remains
+`review_candidate_only_not_promoted`: neither the stager nor the candidate
+generator can edit `artifacts.lock.json` or create reviewed provenance below
+this source directory. Independent source/hash review and explicit lock
+promotion remain separate operator actions.
+
 An inert-by-default helper can prepare a review candidate without changing the
 checked-in lock, the artifacts, Docker, credentials, or the network:
 

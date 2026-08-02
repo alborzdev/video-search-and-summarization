@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "ownership_attestation", "namespace", "documents", "sentinel", "selected_object", "reappearance_delay_seconds", "operations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"},
+    "ownership_attestation": {"const": "I_ATTEST_THIS_EXACT_RUN_NAMESPACE_IS_PREPROVISIONED_FOR_THIS_RUN_AND_MAY_BE_DELETED"},
+    "namespace": {"type": "string", "pattern": "^vss-oracle-runtime-agent-search-profile-[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$"},
+    "documents": {
+      "type": "array", "minItems": 6, "maxItems": 6,
+      "items": {"$ref": "#/$defs/document"}
+    },
+    "sentinel": {"$ref": "#/$defs/document"},
+    "selected_object": {
+      "type": "object", "additionalProperties": false,
+      "required": ["object_id", "sensor_name", "sensor_id", "timestamp"],
+      "properties": {
+        "object_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "sensor_name": {"type": "string", "minLength": 1, "maxLength": 256},
+        "sensor_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "timestamp": {"type": "string", "format": "date-time"}
+      }
+    },
+    "reappearance_delay_seconds": {"type": "number", "minimum": 2, "maximum": 30},
+    "operations": {
+      "type": "array", "minItems": 11, "maxItems": 11,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["step_id", "method", "path", "body", "allowed_statuses", "assertion"],
+        "properties": {
+          "step_id": {"type": "string"},
+          "method": {"const": "POST"},
+          "path": {"type": "string"},
+          "body": {"type": "object"},
+          "allowed_statuses": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"type": "integer", "minimum": 100, "maximum": 599}},
+          "assertion": {
+            "type": "object", "additionalProperties": false,
+            "required": ["response_shape", "minimum_results", "maximum_results", "expected_sensor_ids", "expected_object_ids", "expected_ordered_sensor_ids", "top_sensor_id", "top_video_name", "minimum_span_seconds"],
+            "properties": {
+              "response_shape": {"enum": ["search", "attribute", "validation_error"]},
+              "minimum_results": {"type": "integer", "minimum": 0, "maximum": 1000},
+              "maximum_results": {"type": "integer", "minimum": 0, "maximum": 1000},
+              "expected_sensor_ids": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+              "expected_object_ids": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 128}},
+              "expected_ordered_sensor_ids": {"type": "array", "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+              "top_sensor_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+              "top_video_name": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+              "minimum_span_seconds": {"type": "number", "minimum": 0, "maximum": 86400}
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "document": {
+      "type": "object", "additionalProperties": false,
+      "required": ["index", "document_id", "source_sha256"],
+      "properties": {
+        "index": {"type": "string", "minLength": 1, "maxLength": 255},
+        "document_id": {"type": "string", "minLength": 1, "maxLength": 512},
+        "source_sha256": {"$ref": "#/$defs/sha"}
+      }
+    }
+  }
+}

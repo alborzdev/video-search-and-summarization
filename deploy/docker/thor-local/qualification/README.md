@@ -233,11 +233,23 @@ in this directory:
   manual-browser receipt for video management. Its 8/11/11 envelopes enforce
   exact-run ownership and sanitized evidence; receipts remain non-promoting
   until deployed execution and exhaustive generated-child cleanup are proven;
+- `base-semantic-exact-cleanup-successor/` source-locks the deployed exact-file
+  static API and actual timestamped report layout, then supplies a bounded
+  response-derived Markdown/PDF read/delete/404 collector. It makes no
+  namespace or recursive-delete claim and explicitly remains outside the
+  frozen canonical 8/11 Base envelopes pending a reviewed envelope successor;
 - `lvs-semantic-runtime-evidence/` supplies the corresponding exact 14-action
   LVS envelope for five tools, single/multi reports, live captions, prompt
   overwrite/isolation, disconnect cancellation, quiescence, CA-RAG absence,
   sibling preservation, and exact-owned cleanup. Static tests use only an
   injected adapter and create no runtime evidence;
+- `lvs-semantic-runtime-http-successor/` supplies an authorization-gated,
+  numeric-loopback 14-request implementation of the directly observable LVS
+  HTTP subset: file pre-state, readiness/model advertisement, two digest-bound
+  uploads and readbacks, one-file backend summarization, exact reverse-order
+  deletion, unrelated-state restoration, and final readiness. It classifies
+  only fixture setup as a complete predecessor action, keeps five actions
+  partial and eight adapter-required, and remains non-promoting;
 - `candidate-alerts-runtime-evidence/` is the first bounded consumer of those
   primitives: an inert plan and fake-only tests bind one alert workflow to an
   exact eight-request/eight-action future collector. Even an authorized run is
@@ -260,6 +272,21 @@ in this directory:
   342/341 aggregate REST totals, exact NAT input-model checks, and a
   digest-bound selected-object image fixture. It is static and non-promoting;
   live Search/Elasticsearch semantics and exact-owned cleanup remain open;
+- `search-semantic-runtime-evidence-successor/` adds an authorization-gated,
+  exact-14 numeric-loopback candidate for the canonical search, attribute,
+  fusion, and selected-object image routes plus run-owned Elasticsearch
+  fixture verification, exact bulk cleanup, delayed absence, and sentinel
+  preservation. Fixture provisioning remains an explicit operator attestation,
+  so the selected Search row stays unbound and non-promoting;
+- `semantic-executor-bindings-current/` source-locks the selected schema-v2
+  500-row metadata and the current Base, LVS, Search, and UI candidate
+  artifacts, then classifies exactly five semantic-executor rows without
+  binding any of them. Canonical executor-ready, fully integrated, runtime
+  evidence, and promotion counts remain zero; useful concrete, partial,
+  injected-adapter, and manual-receipt candidate counts are reported
+  separately. The reviewed LVS HTTP successor is source-locked and classified
+  as a concrete bounded partial candidate without treating its incomplete
+  Agent/session/stream coverage as a full canonical binding;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle

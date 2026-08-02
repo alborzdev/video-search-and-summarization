@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "valid", "promotion_eligible", "runtime_activity_performed", "canonical_state_mutated", "selected_metadata", "source_locks_verified", "rows", "summary"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "semantic-executor-bindings-current"},
+    "status": {"const": "selected_500_execution_status_verified_non_promoting"},
+    "valid": {"const": true},
+    "promotion_eligible": {"const": false},
+    "runtime_activity_performed": {"const": false},
+    "canonical_state_mutated": {"const": false},
+    "selected_metadata": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "schema_version", "row_count", "product_version", "main_commit"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json"},
+        "sha256": {"$ref": "#/$defs/sha"}, "schema_version": {"const": 2}, "row_count": {"const": 500},
+        "product_version": {"const": "3.2.1"}, "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"}
+      }
+    },
+    "source_locks_verified": {"const": 20},
+    "rows": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"$ref": "#/$defs/row"}
+    },
+    "summary": {"$ref": "#/$defs/summary"}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "canonical": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selected_row_sha256", "current_state", "acceptance_classification", "max_requests", "max_actions", "executor", "collectors", "cleanup_executor", "postcondition_collectors", "fixture_materialized", "runtime_evidence_count", "executor_ready", "fully_integrated", "promoted"],
+      "properties": {
+        "selected_row_sha256": {"$ref": "#/$defs/sha"}, "current_state": {"const": "open_unexecuted"},
+        "acceptance_classification": {"const": "planning_index_only"},
+        "max_requests": {"enum": [8, 11, 14]}, "max_actions": {"enum": [8, 11, 14]},
+        "executor": {"type": "null"}, "collectors": {"const": []}, "cleanup_executor": {"type": "null"},
+        "postcondition_collectors": {"const": []}, "fixture_materialized": {"const": false},
+        "runtime_evidence_count": {"const": 0}, "executor_ready": {"const": false},
+        "fully_integrated": {"const": false}, "promoted": {"const": false}
+      }
+    },
+    "layer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["package_id", "classification", "transport_kind", "scope", "concrete_transport", "exact_cleanup", "declared_request_bound", "corrected_full_envelope_requests", "canonical_bound", "integrated", "runtime_receipts", "promotion_eligible", "note"],
+      "properties": {
+        "package_id": {"type": "string", "minLength": 1}, "classification": {"type": "string", "minLength": 1},
+        "transport_kind": {"enum": ["numeric_loopback_http", "injected_semantic_adapter", "manual_receipt", "receipt_validator_only"]},
+        "scope": {"enum": ["full_workflow", "partial_exact_cleanup_slice", "partial_http_action_slice", "abstract_envelope", "manual_ui_evidence"]},
+        "concrete_transport": {"type": "boolean"}, "exact_cleanup": {"type": "boolean"},
+        "declared_request_bound": {"type": ["integer", "null"], "minimum": 1, "maximum": 64},
+        "corrected_full_envelope_requests": {"type": ["integer", "null"], "minimum": 1, "maximum": 64},
+        "canonical_bound": {"const": false}, "integrated": {"const": false}, "runtime_receipts": {"const": 0},
+        "promotion_eligible": {"const": false}, "note": {"type": "string", "minLength": 1}
+      }
+    },
+    "candidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["primary_classification", "any_concrete_http_transport", "invalid_full_workflow_cleanup", "partial_exact_cleanup_transport", "exact_full_envelope_transport", "operator_preprovisioned_fixture", "injected_adapter_only", "injected_adapter_core", "concrete_partial_lvs_http_transport", "manual_receipt_only", "browser_executor", "canonical_bound", "fully_integrated", "runtime_receipts", "promotion_eligible", "layers"],
+      "properties": {
+        "primary_classification": {"type": "string", "minLength": 1},
+        "any_concrete_http_transport": {"type": "boolean"}, "invalid_full_workflow_cleanup": {"type": "boolean"},
+        "partial_exact_cleanup_transport": {"type": "boolean"}, "exact_full_envelope_transport": {"type": "boolean"},
+        "operator_preprovisioned_fixture": {"type": "boolean"}, "injected_adapter_only": {"type": "boolean"},
+        "injected_adapter_core": {"type": "boolean"}, "concrete_partial_lvs_http_transport": {"type": "boolean"},
+        "manual_receipt_only": {"type": "boolean"}, "browser_executor": {"const": false},
+        "canonical_bound": {"const": false}, "fully_integrated": {"const": false}, "runtime_receipts": {"const": 0},
+        "promotion_eligible": {"const": false}, "layers": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"$ref": "#/$defs/layer"}}
+      }
+    },
+    "row": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "capability_id", "oracle_id", "canonical", "candidate", "remaining_boundary"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 5}, "capability_id": {"type": "string"}, "oracle_id": {"type": "string"},
+        "canonical": {"$ref": "#/$defs/canonical"}, "candidate": {"$ref": "#/$defs/candidate"},
+        "remaining_boundary": {"type": "string", "minLength": 1}
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["canonical_row_count", "canonical_executor_ready_count", "canonical_fully_integrated_count", "canonical_runtime_evidence_count", "canonical_promotion_count", "candidate_rows_with_any_concrete_http_transport", "candidate_rows_with_invalid_full_workflow_cleanup", "candidate_rows_with_partial_exact_cleanup_transport", "candidate_rows_with_exact_full_envelope_transport", "candidate_rows_with_operator_preprovisioned_fixture", "candidate_rows_with_injected_adapter_only", "candidate_rows_with_injected_adapter_core", "candidate_rows_with_concrete_partial_lvs_http_transport", "candidate_rows_with_manual_receipt_only", "candidate_rows_with_browser_executor", "candidate_runtime_receipt_count", "candidate_promotion_count", "concrete_http_executor_package_count"],
+      "properties": {
+        "canonical_row_count": {"const": 5}, "canonical_executor_ready_count": {"const": 0}, "canonical_fully_integrated_count": {"const": 0}, "canonical_runtime_evidence_count": {"const": 0}, "canonical_promotion_count": {"const": 0},
+        "candidate_rows_with_any_concrete_http_transport": {"const": 4}, "candidate_rows_with_invalid_full_workflow_cleanup": {"const": 2},
+        "candidate_rows_with_partial_exact_cleanup_transport": {"const": 3}, "candidate_rows_with_exact_full_envelope_transport": {"const": 1},
+        "candidate_rows_with_operator_preprovisioned_fixture": {"const": 1}, "candidate_rows_with_injected_adapter_only": {"const": 0},
+        "candidate_rows_with_injected_adapter_core": {"const": 1}, "candidate_rows_with_concrete_partial_lvs_http_transport": {"const": 1},
+        "candidate_rows_with_manual_receipt_only": {"const": 1}, "candidate_rows_with_browser_executor": {"const": 0},
+        "candidate_runtime_receipt_count": {"const": 0}, "candidate_promotion_count": {"const": 0},
+        "concrete_http_executor_package_count": {"const": 4}
+      }
+    }
+  }
+}

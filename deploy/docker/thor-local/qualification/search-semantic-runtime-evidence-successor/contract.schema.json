@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "package_id", "mode", "default_execution_enabled", "predecessor_package", "planning_requirement_id", "capability_id", "oracle_id", "warehouse_sample_bundle", "authorization", "transport", "execution_bounds", "workflow", "required_exact_routes", "forbidden_route_aliases", "ownership", "evidence", "source_locks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "search-semantic-runtime-evidence-successor"},
+    "mode": {"const": "authorization-gated-bounded-numeric-loopback-http"},
+    "default_execution_enabled": {"const": false},
+    "predecessor_package": {"const": "search-semantic-runtime-readiness-successor"},
+    "planning_requirement_id": {"const": "search-documents-and-bboxes"},
+    "capability_id": {"const": "runtime.agent.search-profile"},
+    "oracle_id": {"const": "oracle.runtime.agent.search-profile"},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "authorization": {"type": "object"},
+    "transport": {"type": "object"},
+    "execution_bounds": {"type": "object"},
+    "workflow": {"type": "array", "minItems": 14, "maxItems": 14},
+    "required_exact_routes": {"type": "array", "minItems": 4, "maxItems": 4},
+    "forbidden_route_aliases": {"type": "array", "minItems": 2, "maxItems": 2},
+    "ownership": {"type": "object"},
+    "evidence": {"type": "object"},
+    "source_locks": {"type": "array", "minItems": 13, "maxItems": 13}
+  }
+}

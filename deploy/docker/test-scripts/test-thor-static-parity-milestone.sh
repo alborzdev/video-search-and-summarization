@@ -225,11 +225,50 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/base-semantic-runtime-evidence/tests"
+# The additive Base successor replaces the predecessor's false namespace
+# cleanup assumption with exact response-derived Markdown/PDF read, delete,
+# and individual 404 checks. Its plan and fake transport tests remain inert;
+# the corrected 11/12 full-lane envelopes are explicitly non-promoting.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/base-semantic-exact-cleanup-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/base-semantic-exact-cleanup-successor/tests"
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/lvs-semantic-runtime-evidence/executor.py" \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/lvs-semantic-runtime-evidence/tests"
+
+# The additive LVS HTTP successor concretely exercises the bounded file,
+# model, one-file summary, and exact cleanup subset. Only its inert plan and
+# mock transport tests run here; Agent sessions, streams, dependencies,
+# cancellation, runtime evidence, and promotion all remain open.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-http-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-http-successor/tests"
+
+# Search now has a concrete, authorization-gated, exact-14 numeric-loopback
+# candidate executor with exact owned-document cleanup. Static qualification
+# runs only its source-locked plan and fake openers; it provisions no fixture,
+# opens no socket, and creates no runtime evidence or promotion.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/search-semantic-runtime-evidence-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/search-semantic-runtime-evidence-successor/tests"
+
+# This selected-row registry reports the current semantic transport boundary
+# without binding or promoting any of the five canonical Metadata-500 rows.
+# Its compiler and tests are static and source-locked; live receipts remain
+# zero and the Warehouse sample remains excluded.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/semantic-executor-bindings-current/compiler.py" \
+  check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/semantic-executor-bindings-current/tests"
 
 # The first candidate-alerts runtime-evidence package is an immutable old-
 # oracle snapshot. Its source lock is historical and is not replayed here.
@@ -547,6 +586,10 @@ python3 -m unittest discover \
 # Deliberately use only the static Edge contract gate. The audit,
 # render-command, and readiness modes concern staged or running artifacts.
 python3 "${thor_local_root}/official-edge/official_edge.py" static
+# Connected exact-artifact staging is also inert by default. The execute path
+# requires a separate exact acknowledgement and is covered only by mocked
+# tests in this wrapper.
+python3 "${thor_local_root}/official-edge/stage_artifacts.py" plan >/dev/null
 python3 -m unittest discover \
   -s "${thor_local_root}/official-edge/tests" -v
 

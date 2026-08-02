@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "package_id": "base-semantic-exact-cleanup-successor",
+  "mode": "additive_runtime_candidate",
+  "predecessor": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence",
+  "authorization": {
+    "authorization_id": "base-semantic-exact-cleanup",
+    "acknowledgement": "I_ACK_BASE_EXACT_REPORT_CLEANUP"
+  },
+  "transport": {
+    "timeout_seconds": 10,
+    "max_request_bytes": 1048576,
+    "max_response_bytes": 1048576,
+    "max_requests": 7,
+    "max_actions": 7
+  },
+  "generation": {
+    "method": "POST",
+    "path": "/generate/stream",
+    "expected_artifact_count": 2,
+    "expected_extensions": ["md", "pdf"],
+    "report_basename_patterns": [
+      "agent_report_YYYYMMDD_HHMMSS",
+      "vss_report_SAFE_SENSOR_YYYYMMDD_HHMMSS"
+    ]
+  },
+  "cleanup": {
+    "api_path": "/static/{file_path:path}",
+    "semantics": "exact_object_key",
+    "algorithm": ["generate", "capture_exact_pair", "read_each", "delete_each", "get_404_each"],
+    "namespace_delete_supported": false,
+    "recursive_delete_claimed": false
+  },
+  "full_workflow_envelope_analysis": {
+    "frozen": {"tiny-agent-media": 8, "hitl-state-transcript": 11},
+    "required_exact_cleanup_success": {"tiny-agent-media": 11, "hitl-state-transcript": 12},
+    "tiny_derivation": "five semantic requests plus two exact reads plus two exact deletes plus two exact 404 postconditions",
+    "hitl_derivation": "six non-render semantic requests plus two exact render reads plus two exact deletes plus two exact 404 postconditions",
+    "precreation_namespace_probe_removed_as_non_proof": true,
+    "canonical_update_reviewed": false
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/contract.json", "sha256": "96f7a55e34b8741f41f20a7f67c245ae323f70d0b4058b36d09deb019f5e01ab"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/executor.py", "sha256": "40cedd6bc2ffa0e2c954528a9038070a177f62b666bc967dd834bf0b3d770318"},
+    {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"},
+    {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
+    {"path": "services/agent/src/vss_agents/tools/report_gen.py", "sha256": "d6d0f3fd2540dfd7e9bf284c9922c0f27766c5fd03399007b0e5f6f0ebaf5e6f"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/tools/template_report_gen.py", "sha256": "61f9f88a540e8d725946ae95ded3241569051934ebb103da8a9532b897561ec5"},
+    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"}
+  ],
+  "warehouse_sample_bundle": "excluded",
+  "promotion_eligible": false
+}

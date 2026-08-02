@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "promotion_eligible", "canonical_state_advanced", "planning_requirement_id", "capability_id", "oracle_id", "contract_sha256", "manifest_sha256", "search_origin_sha256", "elasticsearch_origin_sha256", "identity", "budget", "observations", "route_identity", "semantic_observations", "ownership", "cleanup"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "search-semantic-runtime-evidence-successor"},
+    "mode": {"const": "bounded-numeric-loopback-http-candidate"},
+    "status": {"const": "candidate_runtime_receipt_complete_non_promoting"},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "planning_requirement_id": {"const": "search-documents-and-bboxes"},
+    "capability_id": {"const": "runtime.agent.search-profile"},
+    "oracle_id": {"const": "oracle.runtime.agent.search-profile"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "manifest_sha256": {"$ref": "#/$defs/sha"},
+    "search_origin_sha256": {"$ref": "#/$defs/sha"},
+    "elasticsearch_origin_sha256": {"$ref": "#/$defs/sha"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "authorization_id", "authorization_token_sha256"],
+      "properties": {
+        "run_id": {"type": "string"},
+        "authorization_id": {"const": "search-semantic-runtime"},
+        "authorization_token_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requests", "max_requests", "actions", "max_actions"],
+      "properties": {"requests": {"const": 14}, "max_requests": {"const": 14}, "actions": {"const": 14}, "max_actions": {"const": 14}}
+    },
+    "observations": {
+      "type": "array", "minItems": 14, "maxItems": 14,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["sequence", "step_id", "target", "status", "result_code", "response_status", "response_bytes", "response_sha256", "oracle_sha256"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1, "maximum": 14},
+          "step_id": {"type": "string"}, "target": {"enum": ["search", "elasticsearch"]},
+          "status": {"const": "pass"}, "result_code": {"type": "string"},
+          "response_status": {"type": "integer", "minimum": 100, "maximum": 599},
+          "response_bytes": {"type": "integer", "minimum": 0, "maximum": 1048576},
+          "response_sha256": {"$ref": "#/$defs/sha"}, "oracle_sha256": {"$ref": "#/$defs/sha"}
+        }
+      }
+    },
+    "route_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exact_routes_observed", "forbidden_alias_used", "redirects_followed"],
+      "properties": {
+        "exact_routes_observed": {"const": ["/api/v1/search", "/api/v1/search/attribute", "/api/v1/search/fusion", "/api/v1/search/image"]},
+        "forbidden_alias_used": {"const": false}, "redirects_followed": {"const": false}
+      }
+    },
+    "semantic_observations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["search_route", "attribute_route", "fusion_route", "image_route", "same_object_merge", "append_multiple_attributes", "rerank_or_fallback_outcome", "fuse_multiple_attributes", "same_video_top_k", "selected_object_knn", "invalid_index_family_rejected_before_handler"],
+      "properties": {
+        "search_route": {"const": true}, "attribute_route": {"const": true}, "fusion_route": {"const": true}, "image_route": {"const": true},
+        "same_object_merge": {"const": true}, "append_multiple_attributes": {"const": true}, "rerank_or_fallback_outcome": {"const": true},
+        "fuse_multiple_attributes": {"const": true}, "same_video_top_k": {"const": true}, "selected_object_knn": {"const": true},
+        "invalid_index_family_rejected_before_handler": {"const": true}
+      }
+    },
+    "ownership": {
+      "type": "object", "additionalProperties": false,
+      "required": ["namespace_sha256", "operator_preprovisioned_attestation", "exact_readback_verified", "registered_document_count", "raw_document_ids_recorded"],
+      "properties": {"namespace_sha256": {"$ref": "#/$defs/sha"}, "operator_preprovisioned_attestation": {"const": true}, "exact_readback_verified": {"const": true}, "registered_document_count": {"const": 6}, "raw_document_ids_recorded": {"const": false}}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exact_bulk_deleted_document_count", "index_delete_attempted", "ambiguous_or_foreign_delete_attempted", "delayed_absence_verified", "late_reappearance_observed", "delay_milliseconds", "sentinel_unchanged", "foreign_resources_mutated"],
+      "properties": {
+        "exact_bulk_deleted_document_count": {"const": 6}, "index_delete_attempted": {"const": false},
+        "ambiguous_or_foreign_delete_attempted": {"const": false}, "delayed_absence_verified": {"const": true},
+        "late_reappearance_observed": {"const": false}, "delay_milliseconds": {"type": "integer", "minimum": 2000, "maximum": 30000},
+        "sentinel_unchanged": {"const": true}, "foreign_resources_mutated": {"const": false}
+      }
+    }
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

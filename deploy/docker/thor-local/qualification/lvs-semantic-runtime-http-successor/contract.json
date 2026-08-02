@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-lvs-semantic-runtime-http-successor-v1",
+  "mode": "authorization-gated-bounded-numeric-loopback-http-candidate",
+  "default_execution_enabled": false,
+  "predecessor_package": "thor-vss-lvs-semantic-runtime-evidence-v1",
+  "capability_id": "runtime.agent.lvs-profile",
+  "oracle_id": "oracle.runtime.agent.lvs-profile",
+  "planning_requirement_id": "lvs-multi-file",
+  "warehouse_sample_bundle": "excluded",
+  "authorization": {
+    "authorization_id": "lvs-semantic-http-runtime",
+    "acknowledgement": "I_ACK_LVS_HTTP_RUNTIME_AND_EXACT_TWO_FILE_CLEANUP"
+  },
+  "transport": {
+    "numeric_loopback_only": true,
+    "scheme": "http",
+    "proxies": false,
+    "follow_redirects": false,
+    "max_fixture_bytes_each": 33554432,
+    "max_request_bytes": 68157440,
+    "max_response_bytes": 4194304,
+    "short_timeout_seconds": 10,
+    "summarize_timeout_seconds": 300
+  },
+  "execution_bounds": {
+    "max_requests": 14,
+    "max_actions": 14,
+    "max_duration_seconds": 900,
+    "owned_file_count": 2
+  },
+  "http_workflow": [
+    {"order": 1, "id": "capture-pre-state", "method": "GET", "path": "/files"},
+    {"order": 2, "id": "verify-lvs-ready", "method": "GET", "path": "/v1/ready"},
+    {"order": 3, "id": "verify-model-advertised", "method": "GET", "path": "/models"},
+    {"order": 4, "id": "upload-first-owned-file", "method": "POST", "path": "/files"},
+    {"order": 5, "id": "verify-first-owned-file", "method": "GET", "path": "/files/{owned_file_id}"},
+    {"order": 6, "id": "upload-second-owned-file", "method": "POST", "path": "/files"},
+    {"order": 7, "id": "verify-second-owned-file", "method": "GET", "path": "/files/{owned_file_id}"},
+    {"order": 8, "id": "single-video-report", "method": "POST", "path": "/v1/summarize"},
+    {"order": 9, "id": "cleanup-second-owned-file", "method": "DELETE", "path": "/files/{owned_file_id}"},
+    {"order": 10, "id": "verify-second-owned-absence", "method": "GET", "path": "/files"},
+    {"order": 11, "id": "cleanup-first-owned-file", "method": "DELETE", "path": "/files/{owned_file_id}"},
+    {"order": 12, "id": "verify-first-owned-absence", "method": "GET", "path": "/files"},
+    {"order": 13, "id": "verify-unrelated-state-restored", "method": "GET", "path": "/files"},
+    {"order": 14, "id": "verify-lvs-ready-after-cleanup", "method": "GET", "path": "/v1/ready"}
+  ],
+  "predecessor_action_coverage": {
+    "concrete_complete": [
+      "setup-owned-fixtures"
+    ],
+    "concrete_partial": {
+      "capture-pre-state": "the complete LVS file list is captured, but Agent report, stream, shared-prompt, and artifact identity state are outside this HTTP surface",
+      "verify-local-dependencies": "HTTP readiness and the advertised local model are observed; Elasticsearch, Kafka, and Logstash each lack an exact public readiness proof in this lane",
+      "single-video-report": "a correlated non-empty LVS summary is observed, but this is not an Agent video_report_gen report artifact",
+      "cleanup-exact-owned": "DELETE proves exact file and dependent Elasticsearch collection cleanup; disconnect, cancellation, quiescence, and Agent report cleanup remain outside this surface",
+      "verify-owned-absence-and-restore": "the two file UUIDs are absent and unrelated file state is restored; Agent reports, stream state, prompts, and artifact identity are not observed"
+    },
+    "residual_adapter_required": {
+      "discover-five-tools": "the selected catalog is source-locked, but deployed discovery requires the NAT Agent transport",
+      "multi-video-report": "the current /v1/summarize handler selects id_list[0]; the Agent video_report_gen orchestration is required to prove a two-source report",
+      "start-live-caption": "requires an independently owned RTVI live-stream id and Kafka/Logstash delivery observations, not uploaded file ids",
+      "retrieve-live-caption": "requires an owned live stream and a CA-RAG caption collector",
+      "write-shared-prompt-first": "shared prompt is NAT Agent session state, not an LVS HTTP resource",
+      "overwrite-shared-prompt-latest": "shared prompt overwrite must be exercised through the interactive Agent transport",
+      "reject-cross-agent-prompt-visibility": "requires two isolated Agent sessions",
+      "probe-disconnect-cancel-quiescence": "the public LVS file API has no request-status endpoint that can prove exact server-side cancellation and quiescence"
+    }
+  },
+  "ownership": {
+    "registration_gate": "the multipart response exactly matches its client-selected UUID, basename, byte count, purpose, media type, and fixture digest; a subsequent GET must confirm every response field that the FileInfo readback schema exposes",
+    "cleanup_order": "reverse-upload-order",
+    "exact_owned_only": true,
+    "preserve_unrelated_state": true,
+    "postcondition": "each registered UUID is absent from the complete file list and the unrelated pre/post file-list projection is digest-equal"
+  },
+  "evidence": {
+    "records_raw_payloads": false,
+    "records_raw_urls": false,
+    "records_raw_resource_ids": false,
+    "records_raw_paths": false,
+    "records_response_size_and_sha256": true,
+    "promotion_eligible": false,
+    "executor_ready": false,
+    "reason": "eight predecessor semantic actions still require Agent-session, live-stream, Kafka/Logstash, CA-RAG, or cancellation adapters; five more are only partially observable over LVS HTTP"
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/contract.json", "sha256": "37c260cfa6458e02b9975562d38b95324644e975b8f4564866dfa6f99c5dcfde"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/executor.py", "sha256": "3ddc4e08f2013e1f512254dc1309020ef63d88b8fce203f6c2a34537f1d57df4"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/receipt.schema.json", "sha256": "6f6f24ac6bdb26ac54d7130415055726d2736b41193f6f89b18a0bf2340c94db"},
+    {"path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py", "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"},
+    {"path": "services/video-summarization/api_spec/openapi.json", "sha256": "2ce997975112a3e6e43c511612d7df682de0dc4283b7c96fb38e078aad2150e8"},
+    {"path": "services/video-summarization/src/via_server.py", "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},
+    {"path": "services/video-summarization/src/vss_api_models.py", "sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"},
+    {"path": "services/agent/src/vss_agents/tools/lvs_video_understanding.py", "sha256": "e58fcd165177c126f242abc53445d4d3e7b465c738bed6a5843a9d7590c4f508"},
+    {"path": "services/agent/src/vss_agents/tools/lvs_config_media.py", "sha256": "a3854f056dd88f43a62fb3d6d19d2613776a74a875558b112e67ee0c4ced97ea"},
+    {"path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py", "sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "deploy/docker/thor-local/generated.env", "sha256": "3eb2c3a49c651083437e17b7bc75d1e44e5e21bd13d372ee62a8498206b97a3a"}
+  ]
+}
