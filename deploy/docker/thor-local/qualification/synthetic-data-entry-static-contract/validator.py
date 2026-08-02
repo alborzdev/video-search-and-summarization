@@ -27,7 +27,7 @@ CAPABILITIES_PATH = "deploy/docker/thor-local/parity/official-capabilities.json"
 ORACLES_PATH = "deploy/docker/thor-local/parity/capability-oracles.json"
 MAX_JSON_BYTES = 16 * 1024 * 1024
 EXPECTED_CONTRACT_SHA256 = (
-    "42eeddab5b20bdc5cd215f7ffd44f33df1f2c2cd738e22ff3bae4fad6731c14f"
+    "bf69e3e481b872e2de0874f944dd8d024e0cf6aa36437ea55fb5227f1bcfa1c8"
 )
 
 EXPECTED_ENTRIES = [

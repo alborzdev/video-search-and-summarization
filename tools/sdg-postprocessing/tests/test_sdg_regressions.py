@@ -46,8 +46,7 @@ def load_ground_truth_converter(monkeypatch: pytest.MonkeyPatch):
         def __mul__(self, other):
             result = FakeMatrix4d()
             result.translation = tuple(
-                left + right
-                for left, right in zip(self.translation, other.translation)
+                left + right for left, right in zip(self.translation, other.translation)
             )
             return result
 
@@ -209,11 +208,7 @@ def test_ground_truth_conversion_only_cli_is_tiny_deterministic_and_sample_free(
     assert ground_truth["0"][0]["3d location"] == [0.0, 0.0, 1.0]
     assert ground_truth["0"][0]["3d bounding box scale"] == [2.0, 4.0, 2.0]
     assert (
-        len(
-            json.loads(without_xform_a["bounding_boxes.json"])["0"][
-                "/World/CustomBox"
-            ]
-        )
+        len(json.loads(without_xform_a["bounding_boxes.json"])["0"]["/World/CustomBox"])
         == 1
     )
 
@@ -253,8 +248,8 @@ def test_ground_truth_default_cli_preserves_image_and_video_generation(
     monkeypatch.setattr(
         converter.utils_for_vis,
         "process_video_across_cameras",
-        lambda _self, scene, calibration_path, destination, max_frames=None: calls.append(
-            ("video", scene, calibration_path, destination, max_frames)
+        lambda _self, scene, calibration_path, destination, max_frames=None: (
+            calls.append(("video", scene, calibration_path, destination, max_frames))
         ),
     )
 
@@ -285,10 +280,7 @@ def test_hdf5_wrapper_resolves_helper_relative_to_script(tmp_path: Path) -> None
     fake_bin.mkdir()
     invocation_log = tmp_path / "python-args.txt"
     fake_python = fake_bin / "python"
-    fake_python.write_text(
-        "#!/bin/sh\n"
-        "printf '%s\\n' \"$@\" > \"$FAKE_PYTHON_LOG\"\n"
-    )
+    fake_python.write_text('#!/bin/sh\nprintf \'%s\\n\' "$@" > "$FAKE_PYTHON_LOG"\n')
     fake_python.chmod(0o755)
 
     env = os.environ.copy()
@@ -323,8 +315,15 @@ def test_hdf5_converter_imports_and_uses_concurrency_helpers(
         def __init__(self, name: str) -> None:
             self.name = name
 
-        def create_dataset(self, name, *, data, dtype, compression) -> None:
-            written_datasets[(self.name, name)] = (data.copy(), dtype, compression)
+        def create_dataset(
+            self, name, *, data, dtype, compression, track_times
+        ) -> None:
+            written_datasets[(self.name, name)] = (
+                data.copy(),
+                dtype,
+                compression,
+                track_times,
+            )
 
     class FakeFile:
         def __init__(self, path, mode) -> None:
@@ -370,6 +369,7 @@ def test_hdf5_converter_imports_and_uses_concurrency_helpers(
         ("distance_to_image_plane_png", "depth_00000.png"),
     }
     assert all(value[2] == "gzip" for value in written_datasets.values())
+    assert all(value[3] is False for value in written_datasets.values())
 
 
 def test_velocity_step_uses_frame_argument_and_requested_interval() -> None:
@@ -428,10 +428,7 @@ def test_video_check_accepts_canonical_and_legacy_camera_names(tmp_path: Path) -
     fake_bin.mkdir()
     ffprobe_log = tmp_path / "ffprobe-calls.txt"
     fake_ffprobe = fake_bin / "ffprobe"
-    fake_ffprobe.write_text(
-        "#!/bin/sh\n"
-        "printf '%s\\n' \"$*\" >> \"$FFPROBE_LOG\"\n"
-    )
+    fake_ffprobe.write_text('#!/bin/sh\nprintf \'%s\\n\' "$*" >> "$FFPROBE_LOG"\n')
     fake_ffprobe.chmod(0o755)
     env = os.environ.copy()
     env["PATH"] = f"{fake_bin}:{env['PATH']}"
@@ -449,7 +446,10 @@ def test_video_check_accepts_canonical_and_legacy_camera_names(tmp_path: Path) -
 
     assert result.returncode == 0, result.stderr
     report = (dataset / "bframes_check_results.txt").read_text()
-    assert f"No B-frames found in: {dataset / '_World_Cameras_Camera' / 'video.mp4'}" in report
+    assert (
+        f"No B-frames found in: {dataset / '_World_Cameras_Camera' / 'video.mp4'}"
+        in report
+    )
     assert f"No B-frames found in: {dataset / 'Camera01' / 'video.mp4'}" in report
     assert len(ffprobe_log.read_text().splitlines()) == 2
 
@@ -476,9 +476,9 @@ def test_headless_openusd_semantic_label_roundtrip(tmp_path: Path) -> None:
 
     assert categorized == {"flatbox": ["/World/FlatBox_body"]}
     assert hidden == ["/World/Hidden/CardBox"]
-    assert list(
-        UsdSemantics.LabelsAPI.Get(visible, "class").GetLabelsAttr().Get()
-    ) == ["flatbox"]
+    assert list(UsdSemantics.LabelsAPI.Get(visible, "class").GetLabelsAttr().Get()) == [
+        "flatbox"
+    ]
     exported = exporter.collect_semantics(stage)
     assert exported["/World/FlatBox_body"] == {
         "xform_path": "/World",
@@ -498,9 +498,7 @@ def test_thor_local_conda_lock_preserves_literal_epoch_filename(tmp_path: Path) 
     source.write_text(
         "@EXPLICIT\n"
         "https://conda.example/linux-aarch64/"
-        "x264-1%21164.3095-h4e544f5_2.tar.bz2#"
-        + "a" * 64
-        + "\n"
+        "x264-1%21164.3095-h4e544f5_2.tar.bz2#" + "a" * 64 + "\n"
     )
     output = tmp_path / "local.lock"
 

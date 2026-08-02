@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-synthetic-data-runtime-evidence-successor-v1",
+  "mode": "target_bound_offline_runtime_evidence",
+  "target": {
+    "upstream_repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "upstream_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1",
+    "selected_metadata_set": "thor-vss-3.2.1-current-cancellation-search-500",
+    "selected_oracle_document": {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-cancellation-search-successor/post-state-capability-oracles.json",
+      "sha256": "355679322116451972cb2366a61bfba23a72762863796aea84c93a7bb412db14"
+    },
+    "selected_manifest_document": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebase-successor/post-state-manifest.json",
+      "sha256": "f0efb35c49b2f6b5e23692203aa0e5e6588046927f35ab2725250e27a0d1faad",
+      "feature_id": "synthetic-data-tools",
+      "feature_sha256": "ee9904f1665527e8ef07b3753601ca8e6b997dc893cec242245501f9deb2fcb7"
+    }
+  },
+  "policy": {
+    "network_allowed": false,
+    "docker_allowed": false,
+    "service_lifecycle_allowed": false,
+    "model_access_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "fixture_origin": "executor-generated tiny custom data",
+    "filesystem_mutation": "one executor-owned temporary directory only",
+    "independent_positive_runs": 2,
+    "adjacent_negative_required_per_tool": true,
+    "checked_receipt_requires_clean_committed_checkout": true
+  },
+  "environment": {
+    "platform": "linux-aarch64",
+    "python": "3.10.20",
+    "openusd": "26.05",
+    "environment_path": "tools/sdg-postprocessing/thor/.thor-env",
+    "cache_path": "tools/sdg-postprocessing/thor/offline-cache",
+    "conda_lock": {
+      "path": "tools/sdg-postprocessing/thor/conda-linux-aarch64.lock",
+      "sha256": "9905f3f0f1ac6b82d8920429a2a6f7101d51a9df0e54dba8671d44f9f8158b6f",
+      "artifact_count": 178
+    },
+    "pip_requirements": {
+      "path": "tools/sdg-postprocessing/thor/requirements-pip.txt",
+      "sha256": "95cdadc9544667440effbe18c2b4b612ec367c6f249a5d348488b00e4a27520e",
+      "requirement_count": 21
+    },
+    "wheel_lock": {
+      "path": "tools/sdg-postprocessing/thor/wheels-linux-aarch64.sha256",
+      "sha256": "7a6140f5c16e7c75a09677e0c7d16be212c0ad0c707163f1e20a1f29e78532fa",
+      "artifact_count": 21
+    },
+    "expected_distributions": {
+      "annotated-types": "0.7.0",
+      "contourpy": "1.3.2",
+      "cycler": "0.12.1",
+      "fonttools": "4.63.0",
+      "h5py": "3.16.0",
+      "kiwisolver": "1.5.0",
+      "matplotlib": "3.10.9",
+      "numpy": "2.2.6",
+      "opencv-python-headless": "4.13.0.92",
+      "packaging": "26.2",
+      "pillow": "12.2.0",
+      "pydantic": "2.13.4",
+      "pydantic-core": "2.46.4",
+      "pyparsing": "3.3.2",
+      "pyquaternion": "0.9.9",
+      "python-dateutil": "2.9.0.post0",
+      "scipy": "1.15.3",
+      "six": "1.17.0",
+      "tqdm": "4.67.3",
+      "typing-extensions": "4.15.0",
+      "typing-inspection": "0.4.2"
+    }
+  },
+  "capabilities": [
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.00-semantic-label-helpers",
+      "selected_oracle_sha256": "e5c6de59a8254f0482750a275a4568676e1f1334005535687ab245e98f4a7881",
+      "adapter": "semantic_label_helpers",
+      "fixture_sha256": "ddca66c7b6a6ee671f995d1f2e8d2652ff21d97f12223556fff756b1e5bda183",
+      "source_controls": [
+        {"path": "tools/sdg-postprocessing/semantic_labeling/box_check.py", "sha256": "0f92e5a7bbce77d0f44622c9abe68f1dec59d1aab0268c8776094a9f0fb1d634"},
+        {"path": "tools/sdg-postprocessing/utils/export_xform_semantics.py", "sha256": "38a0f79876626754563ed306fdd9a41a4fe505d36b16e883c49a24d2ab8663c3"},
+        {"path": "tools/sdg-postprocessing/semantic_labeling/remove_label.py", "sha256": "f8a484079f9a341059c8560ed1aa945f64fd7a04da6b09ef196f22d4997730eb"}
+      ],
+      "positive_semantics": ["UsdSemantics.LabelsAPI authoring", "visible/hidden categorization", "parent Xform export", "label removal"],
+      "adjacent_negative": "missing USD stage is rejected"
+    },
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.01-dataset-checks",
+      "selected_oracle_sha256": "bf986ed0795471831ea9ea9b02ba7288dfad48a4835bc756de731a47f87714db",
+      "adapter": "dataset_checks",
+      "fixture_sha256": "ec3984e184710eaee97e2b2fb3dc1fe418e46888aaf561e956008841f699dad3",
+      "source_controls": [
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_rgb.py", "sha256": "1da31b208b1e772de48779aee8c08621abe0a75f7b7129ee0607e980126cf656"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_npy.py", "sha256": "59307b80214542c9ed02d01f27f3e9042cc501bf3edafee26be09310b35646ab"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_png.py", "sha256": "426e34a8b7584d12e5af16e93f08d9f154322ec30c475ac58d05a84be1bfbce3"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_json.py", "sha256": "08fc48050364fcf1332f04fa09cbc41054c1ab4dc4250530ee906664e0988799"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_json.py", "sha256": "9c7471af6fda24ba118fe2128a50ee218954ff2f9cb8ddc4dfa0e548655e93d7"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_instance_id_png.py", "sha256": "f7020591340e45b306eeabf329a17f1b3b3312a2820ddd875e1f94ef91c772da"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_calibration.py", "sha256": "609cfa1317245064fc29429590ef11bfa5d27614dc514d6a687407288270a44f"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_bbox_direction.py", "sha256": "26ae55353ef1a11a914b3f6055c160dd9f5070e72f84ecfee497b0c7eeaf478a"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_velocity.py", "sha256": "e3d1acbe6cb3fc135b4be648ca048308e1db1e2ecdd525fbde7ca9573ecd5fb0"},
+        {"path": "tools/sdg-postprocessing/data_sanity_check/dataset_sanity_check_videos.sh", "sha256": "2b18d0b9b5e827d69210699d14c9ce039fda0191da96dfb41de4dbfdc0eecc39"}
+      ],
+      "positive_semantics": ["all ten documented checkers execute on valid tiny inputs"],
+      "adjacent_negative": "each checker detects or rejects its nearest malformed/missing input"
+    },
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.02-rgb-depth-video-conversion",
+      "selected_oracle_sha256": "fb330ce02d73c4bfd304fcbd51e0a2a16f7647de1c595a7c5d5f94aa37b3f4de",
+      "adapter": "rgb_depth_video_conversion",
+      "fixture_sha256": "03aee407f21573d70baef0756f3d34fb7e5aae1fa2f5038dcf1cb19332ca17ba",
+      "source_controls": [
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_npy_to_png_depthmap.py", "sha256": "c149099e5055143aa536df717c61f339d76c1b02cbd6645458d3f854f7f0a811"},
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_single_camera_rgb_depth_to_h5.py", "sha256": "f2191dde3b7ea03387871c0ddad53f1d0d76e04634dc09cecad676a11b579b45"},
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_images_to_videos_no_bframes.sh", "sha256": "6eed454a82c4fe2f95648a0664e9af023136768d49a8d6704938ca7ba3a74f7b"}
+      ],
+      "positive_semantics": ["uint16 millimetre PNG", "gzip HDF5 RGB/depth", "H.264 MP4", "zero B-frames"],
+      "adjacent_negative": "missing/malformed conversion inputs are rejected or yield no artifact"
+    },
+    {
+      "capability_id": "manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+      "oracle_id": "oracle.manifest-entry.synthetic-data-tools.03-ground-truth-conversion",
+      "selected_oracle_sha256": "ecb4eb12e4408cbf199e60f2f30f15b63b851103dc4be1515dfa6778bdbc9003",
+      "adapter": "ground_truth_conversion",
+      "fixture_sha256": "a5b890f6653f631e9d70753e1067cb57fefea338103cb27491d84c154dbed6a9",
+      "source_controls": [
+        {"path": "tools/sdg-postprocessing/data_conversion/convert_ground_truth.py", "sha256": "4d81551c3a143f52f3fa4bfdc52f1af6aa01fac864d250a9a3f2547dfdaeef9f"},
+        {"path": "tools/sdg-postprocessing/tests/test_sdg_regressions.py", "sha256": "f8ab44235f52f60414bdbabb96e5fbc49082c0560faea980073b14edd3c06230"}
+      ],
+      "positive_semantics": ["four deterministic JSON outputs", "xform_info absent", "xform_info non-null", "input tree unchanged", "temporary alias cleanup"],
+      "adjacent_negative": "visualization mode without calibration is rejected"
+    }
+  ]
+}

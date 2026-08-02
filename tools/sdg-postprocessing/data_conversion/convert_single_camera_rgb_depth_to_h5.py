@@ -22,6 +22,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 from typing import Tuple
 
+
 def read_image(filepath: str) -> Tuple[str, np.ndarray]:
     """
     Read an image file using OpenCV.
@@ -37,12 +38,36 @@ def read_image(filepath: str) -> Tuple[str, np.ndarray]:
     img = cv2.imread(filepath, -1)
     return os.path.basename(filepath), img
 
+
+def read_images_in_parallel(
+    folder: str, filenames: list[str]
+) -> list[Tuple[str, np.ndarray]]:
+    """Read images concurrently while returning them in a stable name order.
+
+    ``as_completed`` deliberately exposes scheduler completion order.  Writing
+    HDF5 objects in that order makes otherwise identical conversions allocate
+    object headers differently, so the resulting file bytes vary from run to
+    run.  Keep parallel reads, but sort the completed results before creating
+    any HDF5 datasets.
+    """
+    with ThreadPoolExecutor(max_workers=30) as executor:
+        futures = {
+            executor.submit(read_image, os.path.join(folder, filename)): filename
+            for filename in filenames
+        }
+        completed = [
+            future.result()
+            for future in tqdm(as_completed(futures), total=len(futures), desc="Images")
+        ]
+    return sorted(completed, key=lambda item: item[0])
+
+
 def convert_camera_to_h5(input_folder: str) -> None:
     """
     Convert RGB and depth images from a camera folder to an HDF5 file.
 
     Args:
-        input_folder (str): Path to the camera folder containing 'rgb' and 
+        input_folder (str): Path to the camera folder containing 'rgb' and
                           'distance_to_image_plane_png' subdirectories
 
     The function:
@@ -65,7 +90,7 @@ def convert_camera_to_h5(input_folder: str) -> None:
     camera_name = os.path.basename(input_folder)
     base_name = os.path.dirname(input_folder)
     output_path = os.path.join(base_name, f"{camera_name}.h5")
-    
+
     print(f"📦 Converting {camera_name} to {output_path}")
     rgb_folder = os.path.join(input_folder, "rgb")
     depth_folder = os.path.join(input_folder, "distance_to_image_plane_png")
@@ -87,32 +112,39 @@ def convert_camera_to_h5(input_folder: str) -> None:
 
         # Depth images
         print(f"📦 Reading depth maps from {camera_name}...")
-        with ThreadPoolExecutor(max_workers=30) as executor:
-            futures = {
-                executor.submit(read_image, os.path.join(depth_folder, f)): f
-                for f in depth_files
-            }
-            for future in tqdm(as_completed(futures), total=len(futures), desc="Depth"):
-                fname, img = future.result()
-                if img is not None:
-                    depth_group.create_dataset(fname, data=img, dtype=np.uint16, compression="gzip")
+        for fname, img in read_images_in_parallel(depth_folder, depth_files):
+            if img is not None:
+                depth_group.create_dataset(
+                    fname,
+                    data=img,
+                    dtype=np.uint16,
+                    compression="gzip",
+                    track_times=False,
+                )
 
         # RGB images
         print(f"📦 Reading RGB images from {camera_name}...")
-        with ThreadPoolExecutor(max_workers=30) as executor:
-            futures = {
-                executor.submit(read_image, os.path.join(rgb_folder, f)): f
-                for f in rgb_files
-            }
-            for future in tqdm(as_completed(futures), total=len(futures), desc="RGB"):
-                fname, img = future.result()
-                if img is not None:
-                    rgb_group.create_dataset(fname, data=img, dtype=np.uint8, compression="gzip")
+        for fname, img in read_images_in_parallel(rgb_folder, rgb_files):
+            if img is not None:
+                rgb_group.create_dataset(
+                    fname,
+                    data=img,
+                    dtype=np.uint8,
+                    compression="gzip",
+                    track_times=False,
+                )
 
     print(f"✅ Saved HDF5 to {output_path}")
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert RGB and depth maps to HDF5 with original filenames")
-    parser.add_argument("--input", required=True, help="Path to camera folder containing rgb and depth subfolders")
+    parser = argparse.ArgumentParser(
+        description="Convert RGB and depth maps to HDF5 with original filenames"
+    )
+    parser.add_argument(
+        "--input",
+        required=True,
+        help="Path to camera folder containing rgb and depth subfolders",
+    )
     args = parser.parse_args()
     convert_camera_to_h5(args.input)
