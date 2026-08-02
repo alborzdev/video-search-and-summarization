@@ -324,6 +324,14 @@ inspection, remediation, downloads, profile lifecycle, progressive and
 100-stream Search runs, custom-data runs, the two audio lanes, Edge staging,
 and external attestations remain separately gated.
 
+The inert
+[`qualification/candidate-approval-mapping-successor/`](qualification/candidate-approval-mapping-successor/README.md)
+compiler maps that vocabulary onto all 211 Metadata-500 candidate rows:
+206 mapped, three static and non-activating, one contract conflict, and one
+approval-scope gap. It contains no receipt consumer and grants zero approvals,
+so no candidate becomes admitted or executable; the Warehouse sample remains
+excluded.
+
 This is an application-envelope measurement, not a universal camera-count
 claim. Both inputs were copies of one local H.264 sample, so the result does
 not cover adverse RTSP networks, higher resolutions, different codecs,

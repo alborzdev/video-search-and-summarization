@@ -1,5 +1,5 @@
 {
-  "migration_payload_sha256": "03a0a1f9de551f6b9633f62cfb528bb38d9aa828b6c0a904dfd951817902f064",
+  "migration_payload_sha256": "25644a4b0f0f3369d398f88285206df7da60428c99ef8e1f58260d6bdc251dbd",
   "migrations": [
     {
       "former_gap_entry_id": "manifest-gap.spatial-ai-utils.00-calibration-and-camera-grouping",
@@ -205,7 +205,7 @@
     "warehouse_sample_bundle": "excluded"
   },
   "schema_version": 1,
-  "source_inventory_payload_sha256": "2498e6656422323f25beed22b99bb2a4f7363af5c45466e7a20b34351ba69fae",
+  "source_inventory_payload_sha256": "663dbb0444d852dd866219bd5e1368fcf139bda07cc35558a210cfaea858d7c0",
   "summary": {
     "external_boundary": 1,
     "former_gap_entries": 13,

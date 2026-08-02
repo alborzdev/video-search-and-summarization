@@ -11,7 +11,7 @@
   ],
   "properties": {
     "schema_version": {"const": 1},
-    "mode": {"const": "advertised_entry_executor_74_successor_phase1"},
+    "mode": {"const": "advertised_entry_executor_74_successor_phase2"},
     "source_plan": {"$ref": "#/$defs/planLock"},
     "source_manifest": {"$ref": "#/$defs/rawLock"},
     "source_official_capabilities": {"$ref": "#/$defs/rawLock"},
@@ -32,7 +32,7 @@
       "properties": {
         "planning_only": {"const": true},
         "candidate_only": {"const": true},
-        "dispatch_implemented": {"const": false},
+        "dispatch_implemented": {"const": true},
         "can_mark_passed_current": {"const": false},
         "runtime_evidence": {"type": "array", "maxItems": 0},
         "network_allowed": {"const": false},
@@ -48,7 +48,7 @@
     "summary": {
       "type": "object", "additionalProperties": false,
       "required": [
-        "historical_gap_entries", "current_gap_entries", "candidate_entries",
+        "historical_gap_entries", "current_gap_entries", "candidate_entries", "dispatchable_candidates",
         "external_blockers", "migrated_entries", "source_lock_references",
         "unique_source_paths", "unique_adapter_ids", "per_wave_candidate_counts"
       ],
@@ -56,6 +56,7 @@
         "historical_gap_entries": {"const": 87},
         "current_gap_entries": {"const": 74},
         "candidate_entries": {"const": 71},
+        "dispatchable_candidates": {"const": 71},
         "external_blockers": {"const": 3},
         "migrated_entries": {"const": 13},
         "source_lock_references": {"const": 182},
@@ -133,7 +134,7 @@
         "legacy_wave": {"type": "integer", "minimum": 1, "maximum": 7},
         "legacy_inventory_path": {"$ref": "#/$defs/path"},
         "legacy_row_canonical_sha256": {"$ref": "#/$defs/sha"},
-        "executor": {"type": "null"},
+        "executor": {"type": ["string", "null"]},
         "runtime_evidence": {"type": "array", "maxItems": 0},
         "can_mark_passed_current": {"const": false}
       }
@@ -155,12 +156,12 @@
             "advertised": true, "advertised_utf8_sha256": true,
             "advertised_canonical_sha256": true, "legacy_wave": true,
             "legacy_inventory_path": true, "legacy_row_canonical_sha256": true,
-            "executor": {"type": "null"}, "runtime_evidence": true,
+            "executor": {"const": "direct_historical_adapter"}, "runtime_evidence": true,
             "can_mark_passed_current": true,
             "disposition": {"const": "candidate"},
             "adapter_id": {"type": "string", "minLength": 1},
             "source_lock_count": {"type": "integer", "minimum": 1},
-            "dispatch_status": {"const": "pending_phase_2"}
+            "dispatch_status": {"const": "implemented_phase_2"}
           }
         }
       ]

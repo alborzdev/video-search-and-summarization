@@ -190,14 +190,16 @@ class AdvertisedEntry74SuccessorTest(unittest.TestCase):
         self.assertEqual(rows[target]["disposition"], "candidate")
         self.assertEqual(rows[target]["legacy_wave"], 3)
 
-    def test_all_candidates_explicitly_have_dispatch_pending(self) -> None:
+    def test_all_candidates_have_phase_2_direct_dispatch(self) -> None:
         for row in self.inventory["rows"]:
-            self.assertIsNone(row["executor"])
             self.assertFalse(row["can_mark_passed_current"])
             self.assertEqual(row["runtime_evidence"], [])
             if row["disposition"] == "candidate":
-                self.assertEqual(row["dispatch_status"], "pending_phase_2")
-        self.assertFalse(self.inventory["policy"]["dispatch_implemented"])
+                self.assertEqual(row["executor"], "direct_historical_adapter")
+                self.assertEqual(row["dispatch_status"], "implemented_phase_2")
+            else:
+                self.assertIsNone(row["executor"])
+        self.assertTrue(self.inventory["policy"]["dispatch_implemented"])
 
     def test_migrations_bind_exact_live_predecessor_identities(self) -> None:
         official = {row["id"]: row for row in self.official["capabilities"]}
@@ -238,7 +240,6 @@ class AdvertisedEntry74SuccessorTest(unittest.TestCase):
         policy = self.inventory["policy"]
         for key in (
             "can_mark_passed_current",
-            "dispatch_implemented",
             "network_allowed",
             "docker_allowed",
             "subprocess_allowed",
@@ -248,6 +249,7 @@ class AdvertisedEntry74SuccessorTest(unittest.TestCase):
             "host_inspection_allowed",
         ):
             self.assertFalse(policy[key])
+        self.assertTrue(policy["dispatch_implemented"])
         self.assertEqual(policy["runtime_evidence"], [])
         self.assertEqual(policy["warehouse_sample_bundle"], "excluded")
 

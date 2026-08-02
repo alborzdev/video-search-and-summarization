@@ -5,8 +5,8 @@ Thor-local VSS profile. The core API inventory is intentionally incomplete
 until every official auxiliary surface has an authoritative server contract;
 supplemental packages below preserve those boundaries explicitly. The default
 qualification is deliberately safe to run on an offline operator host: it
-reads only checked-in files, does not inspect secrets, does not open sockets,
-and never starts, stops, or mutates containers or VSS resources.
+reads only checked-in files, does not inspect secrets, does not open network
+sockets, and never starts, stops, or mutates containers or VSS resources.
 
 The broader parity program also keeps planning and admission boundaries
 in this directory:
@@ -289,6 +289,13 @@ in this directory:
   external attestations remain independently gated. The compiler is inert,
   grants no approval, and performs no host, Docker, network, credential,
   download, or lifecycle action;
+- `candidate-approval-mapping-successor/` classifies every one of the 211
+  Metadata-500 candidate rows against that existing approval vocabulary:
+  exactly 206 mapped, three static and non-activating, one explicit contract
+  conflict, and one explicit approval-scope gap. It has no receipt consumer,
+  grants zero approvals, admits and executes zero candidates, invents no
+  command, role, profile, Compose path, or action flags, and excludes the
+  Warehouse sample bundle;
 - `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
   13 families with no capability rows plus the partial VIOS family its own
   still-open semantic oracle plan. Its 74-entry scope is not the global missing
@@ -352,12 +359,14 @@ in this directory:
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact
-  map for all 13 IDs migrated into the fixed live predecessor. Phase 1 binds
-  182 source-lock references over 88 unique paths but deliberately leaves
-  every executor null and dispatch pending; it is inventory evidence, not
-  execution or runtime qualification;
-- `successor-500-executable-subsets-wave1/` binds the two currently executable
-  Wave 8 LVS/MCP production-code subsets to their exact selected Metadata-500
+  map for all 13 IDs migrated into the fixed live predecessor. All 71 retained
+  rows dispatch through guarded, deterministic direct historical adapter
+  functions with exact per-wave counts of 1/18/23/5/5/8/11; historical
+  `execute()` and `main()` paths are never invoked. The checked receipt remains
+  candidate-only, evidence-empty, and non-promoting, so this is bounded adapter
+  evidence rather than runtime qualification;
+- `successor-500-executable-subsets-wave1/` binds the two Wave 8 LVS/MCP
+  production-code executable subsets to their exact selected Metadata-500
   oracle rows. It leaves the v2 oracle document byte-identical and records the
   subset observations in a separate hash-bound annotation index. Both rows
   remain `not_qualified`, executor-not-ready, approval-gated, and free of

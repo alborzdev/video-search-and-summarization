@@ -361,11 +361,15 @@ python3 -m unittest discover \
 
 # Rebase the immutable Waves 1-7 denominator onto the current 74-entry plan:
 # exactly 71 retained candidates, three external blockers, and a separate
-# 13-entry live-predecessor migration map. Phase 1 validates identities and
-# source locks only; consolidated adapter dispatch remains explicitly pending.
+# 13-entry live-predecessor migration map. Guarded direct adapter dispatch is
+# deterministic at 1/18/23/5/5/8/11 cases per wave and produces bounded static
+# subset evidence only: runtime evidence and official promotion remain empty.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/advertised-entry-executors-74-successor/compiler.py" \
   --check
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/advertised-entry-executors-74-successor/executor.py" \
+  --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-74-successor/tests"
 
@@ -596,6 +600,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/runtime-approval-bundles/tests"
+
+# Classify all 211 Metadata-500 candidates against the 14 approval scopes.
+# The exact split is 206 mapped, three static/non-activating, one contract
+# conflict, and one scope gap. This package has no receipt consumer: it grants
+# no approval, admits or executes no candidate, and excludes Warehouse.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-approval-mapping-successor/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-approval-mapping-successor/tests"
 
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact

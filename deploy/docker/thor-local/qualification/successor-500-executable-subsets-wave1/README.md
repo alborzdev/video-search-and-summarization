@@ -1,7 +1,7 @@
 # Metadata-500 executable-subset successor: Wave 1
 
-This package binds the only currently runnable advertised-entry execution wave
-to exactly two planning-only rows in the selected Metadata-500 oracle set:
+This package binds the Wave 8 production-code executable subsets to exactly two
+planning-only rows in the selected Metadata-500 oracle set:
 
 - `manifest-entry.video-summarization-live.05-sse-mcp-server`;
 - `manifest-entry.agent-and-mcp-apis.06-lvs-mcp`.

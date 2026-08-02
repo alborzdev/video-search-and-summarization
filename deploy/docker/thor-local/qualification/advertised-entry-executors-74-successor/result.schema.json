@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Guarded direct advertised-entry successor result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "candidate_only", "can_mark_passed_current",
+    "official_capability_effect", "inventory_payload_sha256", "selection",
+    "denominator", "guard_policy", "effect_trace", "nested_ast_sha256",
+    "runtime_evidence", "results",
+    "execution_payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"const": "guarded_direct_advertised_entry_executor_74_successor"},
+    "candidate_only": {"const": true},
+    "can_mark_passed_current": {"const": false},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "inventory_payload_sha256": {"$ref": "#/$defs/sha"},
+    "selection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["default_all_candidates", "requested_ids", "executed_count", "per_wave_counts"],
+      "properties": {
+        "default_all_candidates": {"type": "boolean"},
+        "requested_ids": {
+          "type": "array", "minItems": 1, "maxItems": 71, "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^manifest-gap\\."}
+        },
+        "executed_count": {"type": "integer", "minimum": 1, "maximum": 71},
+        "per_wave_counts": {
+          "type": "object", "additionalProperties": false,
+          "required": ["1", "2", "3", "4", "5", "6", "7"],
+          "properties": {
+            "1": {"type": "integer", "minimum": 0, "maximum": 1},
+            "2": {"type": "integer", "minimum": 0, "maximum": 18},
+            "3": {"type": "integer", "minimum": 0, "maximum": 23},
+            "4": {"type": "integer", "minimum": 0, "maximum": 5},
+            "5": {"type": "integer", "minimum": 0, "maximum": 5},
+            "6": {"type": "integer", "minimum": 0, "maximum": 8},
+            "7": {"type": "integer", "minimum": 0, "maximum": 11}
+          }
+        }
+      }
+    },
+    "denominator": {
+      "const": {
+        "current_gap_entries": 74,
+        "dispatchable_candidates": 71,
+        "external_blockers": 3,
+        "migrated_predecessors": 13
+      }
+    },
+    "guard_policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["boundary", "repository_reads", "historical_module_execution", "nested_execution", "asyncio_socketpair_exception", "denied_effect_classes"],
+      "properties": {
+        "boundary": {"const": "in_process_integrity_guard_not_os_sandbox"},
+        "repository_reads": {"const": "fd_anchored_exact_digest_selected_capability_only"},
+        "historical_module_execution": {"const": "restricted_builtins_preloaded_import_allowlist"},
+        "nested_execution": {"const": "registered_exact_source_ast_only"},
+        "asyncio_socketpair_exception": {"const": "AF_UNIX_SOCK_STREAM_proto0_event_loop_bootstrap_only"},
+        "denied_effect_classes": {
+          "const": [
+            "network_and_non_asyncio_sockets",
+            "subprocess_fork_exec_spawn_and_threads",
+            "general_file_open_and_filesystem_mutation",
+            "temporary_files"
+          ]
+        }
+      }
+    },
+    "effect_trace": {"$ref": "#/$defs/effect_trace"},
+    "nested_ast_sha256": {
+      "type": "object",
+      "propertyNames": {"type": "string", "minLength": 1},
+      "additionalProperties": {
+        "type": "array", "minItems": 1, "uniqueItems": true,
+        "items": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "results": {
+      "type": "array", "minItems": 1, "maxItems": 71,
+      "items": {"$ref": "#/$defs/result"}
+    },
+    "execution_payload_sha256": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "entry_id", "manifest_pointer", "proposed_capability_id", "legacy_wave",
+        "adapter_id", "observation", "dispatch", "historical_execute_or_main_called",
+        "source_sha256", "source_tree_sha256", "run_count", "run_output_sha256",
+        "semantic_output", "effect_trace", "runtime_evidence", "official_capability_effect",
+        "can_mark_passed_current"
+      ],
+      "properties": {
+        "entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "proposed_capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "legacy_wave": {"type": "integer", "minimum": 1, "maximum": 7},
+        "adapter_id": {"type": "string", "minLength": 1},
+        "observation": {"const": "observed_deterministic_candidate_match"},
+        "dispatch": {"const": "direct_historical_adapter"},
+        "historical_execute_or_main_called": {"const": false},
+        "source_sha256": {
+          "type": "object", "minProperties": 1,
+          "propertyNames": {"type": "string", "minLength": 1},
+          "additionalProperties": {"$ref": "#/$defs/sha"}
+        },
+        "source_tree_sha256": {"$ref": "#/$defs/sha"},
+        "run_count": {"const": 2},
+        "run_output_sha256": {
+          "type": "array", "minItems": 2, "maxItems": 2,
+          "items": {"$ref": "#/$defs/sha"}
+        },
+        "semantic_output": true,
+        "effect_trace": {"$ref": "#/$defs/effect_trace"},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "official_capability_effect": {"const": "none_candidate_only"},
+        "can_mark_passed_current": {"const": false}
+      }
+    },
+    "effect_trace": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asyncio_socketpair_bootstraps", "forbidden_effect_attempts"],
+      "properties": {
+        "asyncio_socketpair_bootstraps": {"type": "integer", "minimum": 0},
+        "forbidden_effect_attempts": {"const": 0}
+      }
+    }
+  }
+}

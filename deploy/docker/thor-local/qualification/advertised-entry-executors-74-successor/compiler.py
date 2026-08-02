@@ -132,13 +132,13 @@ EXPECTED_MIGRATED_IDS = {
     "manifest-gap.vios-codecs-audio.05-cpu-multimedia-support",
 }
 EXPECTED_INVENTORY_RAW_SHA256 = (
-    "d4e349b41594140b109bc548c566193d22dd7a29c317698a3b9efb588f6de6b2"
+    "a9774af207f612e6c07936637d1141f5bc8e77df607363cfbac33aa447e19cb7"
 )
 EXPECTED_MIGRATION_RAW_SHA256 = (
-    "b1491eb3ccad2087a5fe0faebcc12aa49a94726011b4aa408dbe65b196003f65"
+    "d2107c0cad790472896d194d4b9e704ecc9724678485788d3b94f6799bd4dc50"
 )
 EXPECTED_INVENTORY_SCHEMA_RAW_SHA256 = (
-    "0de8e7a75907761f943da0a435399dab30ad486e42aed36169a14f0572d38318"
+    "e0bad7baa44b288b49bc46118dc1aef92a7d809278b68e88f46e95234c6a8422"
 )
 EXPECTED_MIGRATION_SCHEMA_RAW_SHA256 = (
     "41d3cca41b0fead24b292c06827a3b0ac02267af1449a777be33619fb0c2b902"
@@ -426,8 +426,8 @@ def compile_artifacts() -> tuple[dict[str, Any], dict[str, Any]]:
                 "legacy_row_canonical_sha256": _sha_json(historical),
                 "adapter_id": historical["adapter_id"],
                 "source_lock_count": len(locks),
-                "executor": None,
-                "dispatch_status": "pending_phase_2",
+                "executor": "direct_historical_adapter",
+                "dispatch_status": "implemented_phase_2",
                 "runtime_evidence": [],
                 "can_mark_passed_current": False,
             }
@@ -561,7 +561,7 @@ def compile_artifacts() -> tuple[dict[str, Any], dict[str, Any]]:
 
     inventory: dict[str, Any] = {
         "schema_version": 1,
-        "mode": "advertised_entry_executor_74_successor_phase1",
+        "mode": "advertised_entry_executor_74_successor_phase2",
         "source_plan": SOURCE_PLAN,
         "source_manifest": SOURCE_MANIFEST,
         "source_official_capabilities": SOURCE_OFFICIAL,
@@ -570,7 +570,7 @@ def compile_artifacts() -> tuple[dict[str, Any], dict[str, Any]]:
         "policy": {
             "planning_only": True,
             "candidate_only": True,
-            "dispatch_implemented": False,
+            "dispatch_implemented": True,
             "can_mark_passed_current": False,
             "runtime_evidence": [],
             "network_allowed": False,
@@ -586,6 +586,7 @@ def compile_artifacts() -> tuple[dict[str, Any], dict[str, Any]]:
             "historical_gap_entries": 87,
             "current_gap_entries": 74,
             "candidate_entries": 71,
+            "dispatchable_candidates": 71,
             "external_blockers": 3,
             "migrated_entries": 13,
             "source_lock_references": source_lock_references,
