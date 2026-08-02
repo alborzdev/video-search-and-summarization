@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "package_id": "search-semantic-fixture-provisioning-blocker-successor",
+  "kind": "source-locked-blocker-and-adapter-contract",
+  "default_execution_enabled": false,
+  "runtime_transport_implemented": false,
+  "predecessor_package": "search-semantic-runtime-evidence-successor",
+  "planning_requirement_id": "search-documents-and-bboxes",
+  "capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.agent.search-profile",
+  "warehouse_sample_bundle": "excluded",
+  "decision": {
+    "safe_exact_full_fixture_creation_proven": false,
+    "operator_preprovisioned_fixture_gap_closed": false,
+    "predecessor_executor_binding_permitted": false,
+    "promotion_eligible": false,
+    "canonical_state_advanced": false,
+    "reason": "The public upload path can create a run-owned VST source and synchronously request video embeddings, but it cannot request the predecessor's digest-pinned sensor/object identity, RTVI-CV registration is best-effort on connection failures, attribute results require successful VST identity resolution, the shipped profile fixes behavior/raw index names while the predecessor derives per-run index names, and video deletion is a best-effort multi-system operation without an exact rollback receipt. Direct Elasticsearch document creation alone is therefore not a functional or exactly cleanable full Search fixture."
+  },
+  "selected_oracle_contract": {
+    "selected_row_count": 500,
+    "current_state": "open_unexecuted",
+    "evidence_count": 0,
+    "max_requests": 14,
+    "max_actions": 14,
+    "executor": null,
+    "collectors": []
+  },
+  "maximal_public_api_adapter": {
+    "status": "design_only_blocked_before_runtime_binding",
+    "planned_action_count": 9,
+    "actions": [
+      {"order": 1, "id": "validate-local-media", "surface": "local", "status": "implementable", "postcondition": "regular non-symlink file, stable size, reviewed SHA-256"},
+      {"order": 2, "id": "capture-vst-and-es-prestate", "surface": "VIOS+Elasticsearch", "status": "implementable", "postcondition": "run-derived filename absent and exact document tuples absent; foreign sentinel unchanged"},
+      {"order": 3, "id": "request-upload-url", "surface": "POST /api/v1/videos", "status": "implementable", "postcondition": "exact VST upload path returned on an admitted numeric-loopback origin"},
+      {"order": 4, "id": "upload-one-owned-file", "surface": "POST /vst/api/v1/storage/file", "status": "partial", "postcondition": "VST allocates and returns a sensorId; the caller cannot request the predecessor's fixed sensorId"},
+      {"order": 5, "id": "complete-search-ingest", "surface": "POST /api/v1/videos/{sensor_id}/complete", "status": "partial", "postcondition": "positive chunks_processed proves synchronous RT-Embed completion; RTVI-CV connection failures may still be silently skipped"},
+      {"order": 6, "id": "reconcile-runtime-identities", "surface": "VIOS+Elasticsearch", "status": "partial", "postcondition": "allocated VST and generated ES identities can be observed, but cannot be reconciled to the predecessor's fixed selected-object identity without changing that predecessor"},
+      {"order": 7, "id": "run-search-semantic-candidate", "surface": "four canonical Search routes", "status": "blocked", "postcondition": "requires one functional fixture spanning VST, RT-Embed, RTVI-CV and all three configured ES index families"},
+      {"order": 8, "id": "delete-owned-video", "surface": "DELETE /api/v1/videos/{video_id}", "status": "partial", "postcondition": "backend reports success only when all attempted best-effort steps succeeded; this is not exact tuple-level rollback evidence"},
+      {"order": 9, "id": "verify-cross-system-postconditions", "surface": "VIOS+RTVI-CV+Elasticsearch", "status": "blocked", "postcondition": "exact delayed absence, no reappearance, sentinel preservation and no foreign mutation require receipts not exposed by the current public APIs"}
+    ]
+  },
+  "implementable_exact_subset": {
+    "scope": "Elasticsearch document lifecycle only",
+    "steps": ["preflight exact _mget absence", "bulk create with op_type=create", "exact source-digest readback", "reverse-order exact document delete", "delayed exact absence and sentinel check"],
+    "sufficient_for_full_search_fixture": false,
+    "reason": "Search processing also resolves VST sources and uses model-generated embeddings; raw ES tuples alone cannot prove the selected-object, attribute, fusion and playback semantics."
+  },
+  "blocking_findings": [
+    {"id": "sensor-identity-not-requestable", "source": "services/agent/src/vss_agents/api/video_ingest.py", "fact": "The upload contract states that VST returns its own sensorId; the caller supplies a chunk-transfer identifier, not the resulting sensor identity."},
+    {"id": "selected-object-identity-fixed", "source": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py", "fact": "The predecessor requires one digest-pinned object_id, sensor_name, sensor_id and timestamp tuple."},
+    {"id": "rtvi-cv-registration-best-effort", "source": "services/agent/src/vss_agents/api/video_ingest.py", "fact": "RTVI-CV connect and timeout failures are caught and treated as a skip, so a successful completion response does not prove CV fixture creation."},
+    {"id": "attribute-vst-enrichment-required", "source": "services/agent/src/vss_agents/tools/attribute_search.py", "fact": "Attribute append results are skipped when VST stream resolution or screenshot enrichment fails."},
+    {"id": "model-vectors-not-in-search-input", "source": "services/agent/src/vss_agents/tools/search.py", "fact": "The public SearchInput forbids extra fields and has no explicit query-embedding field; query vectors are generated by the configured embedding services."},
+    {"id": "profile-index-binding-mismatch", "source": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "fact": "The shipped profile binds behavior and raw Search to fixed 2025-01-01 indices while the predecessor fixture derives per-run index names."},
+    {"id": "delete-is-best-effort", "source": "services/agent/src/vss_agents/api/video_delete.py", "fact": "Video deletion continues after individual failures and can report partial or failure; ES removal uses field-based delete_by_query rather than the predecessor's exact six tuples."},
+    {"id": "fixed-envelope-has-no-setup", "source": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "fact": "The exact 14-action predecessor begins with readback of an already-present fixture and contains no setup actions."}
+  ],
+  "future_binding_requirements": [
+    "Replace the fixed selected-object fixture with a runtime-allocated identity contract, or expose a production API that creates the exact requested sensor/object identity.",
+    "Make RTVI-CV registration fail closed and return a verifiable registration identity.",
+    "Expose exact model/index identity and positive per-query embedding readiness in a bounded receipt.",
+    "Bind all Search tools to the exact indices populated by the fixture without per-run unreviewed configuration edits.",
+    "Expose exact idempotent cross-system deletion plus delayed absence/no-reappearance evidence for VST, RTVI-CV and Elasticsearch.",
+    "Publish an additive execution-envelope successor that accounts for setup, reconciliation, failure cleanup and the existing 14 semantic actions."
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "sha256": "2a2c739600fb45293811334fbee6bda0cb21f64d117dd8390897de01c2c2b2ff"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py", "sha256": "ae8d669faa819e9a07ef4bd0903f33ada98f0cb0cc1236c8a03f1f12528d1946"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/manifest.schema.json", "sha256": "7f5b0da039ddf5edf0a987e8c58cf5d937a9098ff7e599a8d620229081bea377"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/receipt.schema.json", "sha256": "443d4254ed988123b03a31d261c5179c93e41d4fd380403b6c7c1471cbe08d21"},
+    {"path": "services/agent/src/vss_agents/api/video_ingest.py", "sha256": "39416707048715db5957951efaf2e6b0b2898a1199eac0f1f9b2508b6e467af5"},
+    {"path": "services/agent/src/vss_agents/api/video_search_ingest.py", "sha256": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77"},
+    {"path": "services/agent/src/vss_agents/api/video_delete.py", "sha256": "d95d55aad6cd776431ea2c270a9e5796248755390b425879cc72ee8d14ae1657"},
+    {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
+    {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
+    {"path": "services/agent/src/vss_agents/tools/embed_search.py", "sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"},
+    {"path": "services/ui/packages/common/lib-src/utils/videoUpload.ts", "sha256": "9d893263bcf7d6742ac876778781bdc2ba902c55f4ea425af6ccea175b503d62"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "09701f84f6f7786a053eb05201c0679a5606591721d9307735e1be6a40fbcaa4"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "deploy/docker/services/infra/elk/elasticsearch/init-scripts/elasticsearch-template-creation.sh", "sha256": "2c39327a17bea91d88fc210d3ffb15b6b388443ca5635edce1229d608e28bbcd"},
+    {"path": "deploy/docker/services/infra/Dockerfiles/elasticsearch.Dockerfile", "sha256": "495053e318a4591510e6d18b47692e78d628a0e2becfe74fce98cc8f178b646c"},
+    {"path": "deploy/docker/services/infra/compose.yml", "sha256": "a1b38492963006e9cf0b55bb0a57a14de8e898abae5833babb9d20c1931b369c"},
+    {"path": "skills/vss-search-archive/SKILL.md", "sha256": "337ae027bfa4de55716a0ee0c7ba4f22d2c965aa863191d0337ec1eb957f331b"}
+  ]
+}

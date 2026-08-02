@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "package_id": "base-semantic-full-envelope-successor",
+  "mode": "authorization_gated_local_runtime_candidate",
+  "predecessors": [
+    "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence",
+    "deploy/docker/thor-local/qualification/base-semantic-exact-cleanup-successor"
+  ],
+  "authorization": {
+    "authorization_id": "base-semantic-full-envelope",
+    "acknowledgement": "I_ACK_BASE_FULL_ENVELOPE_LOCAL_RUNTIME"
+  },
+  "transport": {
+    "numeric_loopback_only": true,
+    "explicit_port_required": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "timeout_seconds": 10,
+    "max_request_bytes": 1048576,
+    "max_response_bytes": 33554432
+  },
+  "cases": [
+    {
+      "case_id": "tiny-agent-media",
+      "capability_id": "runtime.workflow.base-chat-report",
+      "oracle_id": "oracle.runtime.workflow.base-chat-report",
+      "canonical_predecessor_max_requests": 8,
+      "max_requests": 11,
+      "max_actions": 11,
+      "report_step_id": "generate-report",
+      "semantic_steps": [
+        {"id": "qa-mp4", "method": "POST", "path": "/chat/stream"},
+        {"id": "qa-mkv", "method": "POST", "path": "/chat/stream"},
+        {"id": "followup-qa", "method": "POST", "path": "/chat/stream"},
+        {"id": "generate-report", "method": "POST", "path": "/generate/stream"},
+        {"id": "reject-unsupported-media", "method": "POST", "path": "/chat/stream"}
+      ]
+    },
+    {
+      "case_id": "hitl-state-transcript",
+      "capability_id": "runtime.agent.base-hitl",
+      "oracle_id": "oracle.runtime.agent.base-hitl",
+      "canonical_predecessor_max_requests": 11,
+      "max_requests": 12,
+      "max_actions": 12,
+      "report_step_id": "restart-and-check-persistence",
+      "semantic_steps": [
+        {"id": "new-prompt", "method": "POST", "path": "/generate/stream"},
+        {"id": "generate", "method": "POST", "path": "/executions/{execution_id}/interactions/{interaction_id}/response"},
+        {"id": "refine", "method": "POST", "path": "/executions/{execution_id}/interactions/{interaction_id}/response"},
+        {"id": "cancel", "method": "POST", "path": "/executions/{execution_id}/interactions/{interaction_id}/response"},
+        {"id": "restart-and-check-persistence", "method": "POST", "path": "/generate/stream"},
+        {"id": "empty-submit", "method": "POST", "path": "/executions/{execution_id}/interactions/{interaction_id}/response"}
+      ]
+    }
+  ],
+  "artifact_workflow": [
+    "render-markdown",
+    "render-pdf",
+    "delete-markdown",
+    "delete-pdf",
+    "verify-markdown-absent",
+    "verify-pdf-absent"
+  ],
+  "ownership": {
+    "registration_gate": "one exact same-stem Markdown/PDF pair parsed only from the case's source-locked report step response",
+    "delete_only_report_step_response_derived_exact_keys": true,
+    "namespace_delete_attempted": false,
+    "recursive_delete_claimed": false,
+    "cleanup_order": "markdown_then_pdf_then_individual_404_postconditions",
+    "preexisting_absence_proven": false,
+    "foreign_resource_policy": "never mutate"
+  },
+  "canonical_binding": false,
+  "promotion_eligible": false,
+  "warehouse_sample_bundle": "excluded",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/contract.json", "sha256": "96f7a55e34b8741f41f20a7f67c245ae323f70d0b4058b36d09deb019f5e01ab"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/executor.py", "sha256": "40cedd6bc2ffa0e2c954528a9038070a177f62b666bc967dd834bf0b3d770318"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-exact-cleanup-successor/contract.json", "sha256": "4c818b4ea1354bdc498333b069de76ca8950101ea013d0ef9a51533a151dcc8f"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-exact-cleanup-successor/executor.py", "sha256": "3b7ed730067804b468adc81000707927a31eaca0d449a03daf5607d317ab89e8"},
+    {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"},
+    {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
+    {"path": "services/agent/src/vss_agents/tools/report_gen.py", "sha256": "d6d0f3fd2540dfd7e9bf284c9922c0f27766c5fd03399007b0e5f6f0ebaf5e6f"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/tools/template_report_gen.py", "sha256": "61f9f88a540e8d725946ae95ded3241569051934ebb103da8a9532b897561ec5"},
+    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"}
+  ]
+}

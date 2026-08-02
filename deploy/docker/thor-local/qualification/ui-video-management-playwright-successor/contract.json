@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-video-management-playwright-successor-v1",
+  "mode": "authorization-gated-preexisting-cdp-playwright-candidate",
+  "default_execution_enabled": false,
+  "predecessors": [
+    "thor-ui-runtime-contracts-v1",
+    "base-semantic-runtime-evidence"
+  ],
+  "planning_requirement_id": "ui-tiny-media",
+  "capability_id": "runtime.ui.video-management-tab",
+  "oracle_id": "oracle.runtime.ui.video-management-tab",
+  "warehouse_sample_bundle": "excluded",
+  "browser_availability": {
+    "codex_browser_plugin": "absent",
+    "fallback": "regular Playwright connectOverCDP to an operator-preexisting numeric-loopback browser",
+    "browser_launch_allowed": false,
+    "browser_install_allowed": false
+  },
+  "authorization": {
+    "acknowledgement": "I_ACK_UI_VIDEO_MANAGEMENT_PLAYWRIGHT_RUNTIME"
+  },
+  "bounds": {
+    "max_duration_seconds": 240,
+    "max_browser_actions": 40,
+    "max_api_exchanges": 32,
+    "semantic_checkpoints": 11,
+    "max_tool_stdout_bytes": 4194304,
+    "max_tool_stderr_bytes": 1048576,
+    "max_fixture_bytes_each": 10485760
+  },
+  "semantic_workflow": [
+    "capture-pre-state",
+    "upload-mp4",
+    "upload-mkv",
+    "multi-upload",
+    "manage-rtsp",
+    "observe-upload-progress",
+    "load-template-environment",
+    "confirm-bulk-delete",
+    "cancel-bulk-delete",
+    "restore-owned-state",
+    "verify-postconditions"
+  ],
+  "runtime_boundary": {
+    "numeric_loopback_only": true,
+    "ambient_proxies_allowed": false,
+    "redirects_allowed": false,
+    "preexisting_ui_required": true,
+    "preexisting_browser_required": true,
+    "preexisting_browser_preserved": true,
+    "preexisting_mock_apis_required": true,
+    "starts_or_stops_processes_other_than_selected_node_client": false,
+    "writes_evidence_files": false,
+    "raw_screenshots_recorded": false,
+    "raw_urls_recorded": false,
+    "raw_resource_ids_recorded": false
+  },
+  "ownership": {
+    "fixture_names_are_run_bound": true,
+    "preexisting_collision_allowed": false,
+    "registration_requires_correlated_api_response_and_grid_readback": true,
+    "delete_only_registered_owned_resources": true,
+    "unrelated_stream_projection_must_be_digest_equal": true
+  },
+  "canonical_boundary": {
+    "selected_request_bound": 11,
+    "selected_action_bound": 11,
+    "candidate_browser_action_bound": 40,
+    "candidate_api_exchange_bound": 32,
+    "playwright_entry_files_pinned": true,
+    "playwright_transitive_graph_pinned": false,
+    "canonical_bound": false,
+    "executor_ready": false,
+    "promotion_eligible": false,
+    "reason": "the source-locked predecessor defines 11 semantic units, while rendered interaction and API fan-out require separate 40-browser-action and 32-API-exchange bounds; only the selected Node and Playwright entry files, not Playwright's transitive module graph, are digest-pinned; live evidence and canonical bound review remain absent"
+  },
+  "implementation_locks": [
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py", "sha256": "1c80c2b12e9baa1963efdaa0ead130ef45c77160816ee81bc0c4f42448cd5e67"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs", "sha256": "0f2a47ec4e62dfabb22676777743d3998490ae0b863edf1d0edb76f03a835c69"}
+  ],
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+    {"path": "deploy/docker/thor-local/qualification/ui-runtime-contracts/contract.json", "sha256": "33f78699ba1263f5d2fe33149c50f3070b01ede7757a0e10752a2278249a7d4c"},
+    {"path": "deploy/docker/thor-local/qualification/ui-runtime-contracts/validator.py", "sha256": "291f8a0bd027eccdf1ac874a308961cbf1cec4a1843a56262b88ce3270d9eb8c"},
+    {"path": "deploy/docker/thor-local/qualification/ui-runtime-contracts/evidence.schema.json", "sha256": "86a1feb196e2583d2a0a4a9ed42fafe766afd6960bba1911f13457686d71ea5b"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-runtime-evidence/contract.json", "sha256": "96f7a55e34b8741f41f20a7f67c245ae323f70d0b4058b36d09deb019f5e01ab"},
+    {"path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx", "sha256": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/VideoManagementComponent.tsx", "sha256": "17a91535187dc35fb74e971f705b8a04a6778dce13276ce8bd0273698f379e5a"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/AgentUploadDialog.tsx", "sha256": "f6c0dbfd3c1763d9fef0e2e187fd1ef29a48a469943f7235f7064b3e38714559"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/UploadProgressPanel.tsx", "sha256": "ffcc183f411c08d6b33f3ebebd7ebe9ad8b8562bc8fed463b333efa477242cac"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/AddRtspDialog.tsx", "sha256": "50344eaeec662e43668cdee25b87c229bca3b5b6afa187e3cc4f45e242528b98"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/DeleteConfirmDialog.tsx", "sha256": "e13e1c71f8a44eb77e6476ed7a4c73c102c6492e3a0545e828ec55b1facc7f88"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/Toolbar.tsx", "sha256": "e367ad03493f08241ef878d894025b08dd30f8c36734711b8cab05be3ed0adc4"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/StreamsGrid.tsx", "sha256": "7cb3555ea7e3178fda1bbcd4144ce39eb24b2e05a5d476ae5bce3f3e4da7d491"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/StreamCard.tsx", "sha256": "90e2c53cae08bc0828f0cd447bd69e744a47ee45998b08280a93f786513308a6"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/chunkedUpload.ts", "sha256": "a0b142953c896874c6db4ee639d64783cf1ccb1657ad9a37cfadeefbddbac7be"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/rtspStream.ts", "sha256": "93658f792ecc86d42645f24f5c234dd43c7b13dc598a6aa5ccaf77a2331f2634"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/videoDelete.ts", "sha256": "b751342425e122ac9a3a0edab860a3c9387825ae16acf22f96d36674cbc0cabc"},
+    {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/api.ts", "sha256": "fa53d36ab0160d4509e78170020a69105a86a81498f117f1c423a595356ef686"}
+  ]
+}

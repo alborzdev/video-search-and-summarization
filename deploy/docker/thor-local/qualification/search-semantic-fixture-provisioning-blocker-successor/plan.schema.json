@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "default_execution_enabled", "runtime_transport_implemented", "runtime_requests", "runtime_actions", "selected_metadata_rows", "selected_search_state", "predecessor_preserved", "safe_exact_full_fixture_creation_proven", "operator_preprovisioned_fixture_gap_closed", "predecessor_executor_binding_permitted", "maximal_adapter_planned_action_count", "implementable_exact_subset", "blocking_finding_ids", "promotion_eligible", "canonical_state_advanced", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "search-semantic-fixture-provisioning-blocker-successor"},
+    "status": {"const": "inert_source_locked_blocker_valid"},
+    "default_execution_enabled": {"const": false},
+    "runtime_transport_implemented": {"const": false},
+    "runtime_requests": {"const": 0},
+    "runtime_actions": {"const": 0},
+    "selected_metadata_rows": {"const": 500},
+    "selected_search_state": {"const": "open_unexecuted_null_bound"},
+    "predecessor_preserved": {"const": true},
+    "safe_exact_full_fixture_creation_proven": {"const": false},
+    "operator_preprovisioned_fixture_gap_closed": {"const": false},
+    "predecessor_executor_binding_permitted": {"const": false},
+    "maximal_adapter_planned_action_count": {"const": 9},
+    "implementable_exact_subset": {"const": "elasticsearch_document_lifecycle_only_not_a_functional_search_fixture"},
+    "blocking_finding_ids": {"const": ["sensor-identity-not-requestable", "selected-object-identity-fixed", "rtvi-cv-registration-best-effort", "attribute-vst-enrichment-required", "model-vectors-not-in-search-input", "profile-index-binding-mismatch", "delete-is-best-effort", "fixed-envelope-has-no-setup"]},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"}
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "status", "contract_sha256",
+    "manifest_sha256", "run_id_sha256", "origin_sha256", "tool_entry_file_sha256",
+    "fixture_sha256", "budget", "checks", "cleanup", "browser_plugin",
+    "playwright_entry_files_pinned", "playwright_transitive_graph_pinned",
+    "canonical_bound", "executor_ready", "promotion_eligible",
+    "warehouse_sample_bundle"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-ui-video-management-playwright-successor-v1"},
+    "status": {"const": "candidate_pass"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "manifest_sha256": {"$ref": "#/$defs/sha256"},
+    "run_id_sha256": {"$ref": "#/$defs/sha256"},
+    "origin_sha256": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+    "tool_entry_file_sha256": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+    "fixture_sha256": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["semantic_checkpoints", "browser_actions", "api_exchanges", "max_browser_actions", "max_api_exchanges", "max_duration_seconds"],
+      "properties": {
+        "semantic_checkpoints": {"const": 11},
+        "browser_actions": {"type": "integer", "minimum": 11, "maximum": 40},
+        "api_exchanges": {"type": "integer", "minimum": 1, "maximum": 32},
+        "max_browser_actions": {"const": 40},
+        "max_api_exchanges": {"const": 32},
+        "max_duration_seconds": {"const": 240}
+      }
+    },
+    "checks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["page_identity", "not_blank", "no_framework_overlay", "console_health", "desktop_screenshot", "mobile_screenshot", "interaction_proof", "mp4", "mkv", "multi_upload", "rtsp_positive", "rtsp_adjacent_negative", "upload_progress", "template_environment", "bulk_delete_confirm", "bulk_delete_cancel"],
+      "properties": {
+        "page_identity": {"const": true}, "not_blank": {"const": true},
+        "no_framework_overlay": {"const": true}, "console_health": {"const": true},
+        "desktop_screenshot": {"$ref": "#/$defs/sha256"}, "mobile_screenshot": {"$ref": "#/$defs/sha256"},
+        "interaction_proof": {"const": true}, "mp4": {"const": true}, "mkv": {"const": true},
+        "multi_upload": {"const": true}, "rtsp_positive": {"const": true},
+        "rtsp_adjacent_negative": {"const": true}, "upload_progress": {"const": true},
+        "template_environment": {"const": true}, "bulk_delete_confirm": {"const": true},
+        "bulk_delete_cancel": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["registered_owned_resources", "deleted_owned_resources", "owned_absent", "unrelated_state_restored"],
+      "properties": {
+        "registered_owned_resources": {"const": 3},
+        "deleted_owned_resources": {"const": 3},
+        "owned_absent": {"const": true},
+        "unrelated_state_restored": {"const": true}
+      }
+    },
+    "browser_plugin": {"const": "absent_regular_playwright_fallback"},
+    "playwright_entry_files_pinned": {"const": true},
+    "playwright_transitive_graph_pinned": {"const": false},
+    "canonical_bound": {"const": false},
+    "executor_ready": {"const": false},
+    "promotion_eligible": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

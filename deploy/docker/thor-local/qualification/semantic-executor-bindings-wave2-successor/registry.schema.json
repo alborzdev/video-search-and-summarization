@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "status",
+    "valid",
+    "promotion_eligible",
+    "runtime_activity_performed",
+    "canonical_state_mutated",
+    "warehouse_sample_bundle",
+    "published_registry",
+    "source_locks_verified",
+    "rows",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "semantic-executor-bindings-wave2-successor"},
+    "status": {"const": "wave2_candidate_status_verified_non_promoting"},
+    "valid": {"const": true},
+    "promotion_eligible": {"const": false},
+    "runtime_activity_performed": {"const": false},
+    "canonical_state_mutated": {"const": false},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "published_registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_id", "path", "sha256"],
+      "properties": {
+        "package_id": {"const": "semantic-executor-bindings-current"},
+        "path": {"const": "deploy/docker/thor-local/qualification/semantic-executor-bindings-current/execution-status-registry.json"},
+        "sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "source_locks_verified": {"const": 22},
+    "rows": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {"$ref": "#/$defs/row"}
+    },
+    "summary": {"$ref": "#/$defs/summary"}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "canonical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selected_row_sha256",
+        "current_state",
+        "acceptance_classification",
+        "max_requests",
+        "max_actions",
+        "executor",
+        "collectors",
+        "cleanup_executor",
+        "postcondition_collectors",
+        "fixture_materialized",
+        "runtime_evidence_count",
+        "executor_ready",
+        "fully_integrated",
+        "promoted"
+      ],
+      "properties": {
+        "selected_row_sha256": {"$ref": "#/$defs/sha"},
+        "current_state": {"const": "open_unexecuted"},
+        "acceptance_classification": {"const": "planning_index_only"},
+        "max_requests": {"enum": [8, 11, 14]},
+        "max_actions": {"enum": [8, 11, 14]},
+        "executor": {"type": "null"},
+        "collectors": {"const": []},
+        "cleanup_executor": {"type": "null"},
+        "postcondition_collectors": {"const": []},
+        "fixture_materialized": {"const": false},
+        "runtime_evidence_count": {"const": 0},
+        "executor_ready": {"const": false},
+        "fully_integrated": {"const": false},
+        "promoted": {"const": false}
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package_id",
+        "classification",
+        "transport_kind",
+        "concrete_executor",
+        "exact_full_envelope_candidate",
+        "partial_transport",
+        "browser_executor",
+        "static_blocker_only",
+        "exact_owned_cleanup",
+        "candidate_max_requests",
+        "candidate_max_actions",
+        "canonical_bound",
+        "executor_ready",
+        "runtime_receipts",
+        "promotion_eligible",
+        "unbound_reasons"
+      ],
+      "properties": {
+        "package_id": {
+          "enum": [
+            "base-semantic-full-envelope-successor",
+            "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+            "search-semantic-fixture-provisioning-blocker-successor",
+            "thor-ui-video-management-playwright-successor-v1"
+          ]
+        },
+        "classification": {
+          "enum": [
+            "concrete_exact_full_envelope_candidate_unbound",
+            "concrete_agent_session_partial_successor_unbound",
+            "static_exact_fixture_provisioning_blocker",
+            "concrete_preexisting_cdp_browser_candidate_unbound"
+          ]
+        },
+        "transport_kind": {
+          "enum": [
+            "numeric_loopback_http",
+            "numeric_loopback_nat_websocket_and_http",
+            "none",
+            "preexisting_cdp_playwright_and_numeric_loopback_http"
+          ]
+        },
+        "concrete_executor": {"type": "boolean"},
+        "exact_full_envelope_candidate": {"type": "boolean"},
+        "partial_transport": {"type": "boolean"},
+        "browser_executor": {"type": "boolean"},
+        "static_blocker_only": {"type": "boolean"},
+        "exact_owned_cleanup": {"type": "boolean"},
+        "candidate_max_requests": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 64
+        },
+        "candidate_max_actions": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 64
+        },
+        "canonical_bound": {"const": false},
+        "executor_ready": {"const": false},
+        "runtime_receipts": {"const": 0},
+        "promotion_eligible": {"const": false},
+        "unbound_reasons": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordinal",
+        "capability_id",
+        "oracle_id",
+        "canonical",
+        "wave2_candidate"
+      ],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 5},
+        "capability_id": {"type": "string", "minLength": 1},
+        "oracle_id": {"type": "string", "minLength": 1},
+        "canonical": {"$ref": "#/$defs/canonical"},
+        "wave2_candidate": {"$ref": "#/$defs/candidate"}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_row_count",
+        "canonical_executor_ready_count",
+        "canonical_fully_integrated_count",
+        "canonical_runtime_evidence_count",
+        "canonical_promotion_count",
+        "wave2_distinct_package_count",
+        "wave2_concrete_executor_package_count",
+        "wave2_rows_with_concrete_executor",
+        "wave2_rows_with_exact_full_envelope_candidate",
+        "wave2_rows_with_partial_transport",
+        "wave2_rows_with_browser_executor",
+        "wave2_rows_with_static_blocker_only",
+        "wave2_runtime_receipt_count",
+        "wave2_canonical_binding_count",
+        "wave2_promotion_count"
+      ],
+      "properties": {
+        "canonical_row_count": {"const": 5},
+        "canonical_executor_ready_count": {"const": 0},
+        "canonical_fully_integrated_count": {"const": 0},
+        "canonical_runtime_evidence_count": {"const": 0},
+        "canonical_promotion_count": {"const": 0},
+        "wave2_distinct_package_count": {"const": 4},
+        "wave2_concrete_executor_package_count": {"const": 3},
+        "wave2_rows_with_concrete_executor": {"const": 4},
+        "wave2_rows_with_exact_full_envelope_candidate": {"const": 2},
+        "wave2_rows_with_partial_transport": {"const": 1},
+        "wave2_rows_with_browser_executor": {"const": 1},
+        "wave2_rows_with_static_blocker_only": {"const": 1},
+        "wave2_runtime_receipt_count": {"const": 0},
+        "wave2_canonical_binding_count": {"const": 0},
+        "wave2_promotion_count": {"const": 0}
+      }
+    }
+  }
+}

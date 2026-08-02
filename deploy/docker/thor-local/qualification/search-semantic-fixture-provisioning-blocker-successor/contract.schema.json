@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "kind", "default_execution_enabled", "runtime_transport_implemented", "predecessor_package", "planning_requirement_id", "capability_id", "oracle_id", "warehouse_sample_bundle", "decision", "selected_oracle_contract", "maximal_public_api_adapter", "implementable_exact_subset", "blocking_findings", "future_binding_requirements", "source_locks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "search-semantic-fixture-provisioning-blocker-successor"},
+    "kind": {"const": "source-locked-blocker-and-adapter-contract"},
+    "default_execution_enabled": {"const": false},
+    "runtime_transport_implemented": {"const": false},
+    "predecessor_package": {"const": "search-semantic-runtime-evidence-successor"},
+    "planning_requirement_id": {"const": "search-documents-and-bboxes"},
+    "capability_id": {"const": "runtime.agent.search-profile"},
+    "oracle_id": {"const": "oracle.runtime.agent.search-profile"},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["safe_exact_full_fixture_creation_proven", "operator_preprovisioned_fixture_gap_closed", "predecessor_executor_binding_permitted", "promotion_eligible", "canonical_state_advanced", "reason"],
+      "properties": {
+        "safe_exact_full_fixture_creation_proven": {"const": false},
+        "operator_preprovisioned_fixture_gap_closed": {"const": false},
+        "predecessor_executor_binding_permitted": {"const": false},
+        "promotion_eligible": {"const": false},
+        "canonical_state_advanced": {"const": false},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "selected_oracle_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["selected_row_count", "current_state", "evidence_count", "max_requests", "max_actions", "executor", "collectors"],
+      "properties": {
+        "selected_row_count": {"const": 500},
+        "current_state": {"const": "open_unexecuted"},
+        "evidence_count": {"const": 0},
+        "max_requests": {"const": 14},
+        "max_actions": {"const": 14},
+        "executor": {"type": "null"},
+        "collectors": {"const": []}
+      }
+    },
+    "maximal_public_api_adapter": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "planned_action_count", "actions"],
+      "properties": {
+        "status": {"const": "design_only_blocked_before_runtime_binding"},
+        "planned_action_count": {"const": 9},
+        "actions": {
+          "type": "array", "minItems": 9, "maxItems": 9,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["order", "id", "surface", "status", "postcondition"],
+            "properties": {
+              "order": {"type": "integer", "minimum": 1, "maximum": 9},
+              "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]+$"},
+              "surface": {"type": "string", "minLength": 1},
+              "status": {"enum": ["implementable", "partial", "blocked"]},
+              "postcondition": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "implementable_exact_subset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scope", "steps", "sufficient_for_full_search_fixture", "reason"],
+      "properties": {
+        "scope": {"const": "Elasticsearch document lifecycle only"},
+        "steps": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"type": "string", "minLength": 1}},
+        "sufficient_for_full_search_fixture": {"const": false},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "blocking_findings": {
+      "type": "array", "minItems": 8, "maxItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "source", "fact"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]+$"},
+          "source": {"type": "string", "minLength": 1},
+          "fact": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "future_binding_requirements": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"type": "string", "minLength": 1}},
+    "source_locks": {
+      "type": "array", "minItems": 18, "maxItems": 18,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}

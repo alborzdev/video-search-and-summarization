@@ -238,6 +238,12 @@ in this directory:
   response-derived Markdown/PDF read/delete/404 collector. It makes no
   namespace or recursive-delete claim and explicitly remains outside the
   frozen canonical 8/11 Base envelopes pending a reviewed envelope successor;
+- `base-semantic-full-envelope-successor/` integrates the frozen Base
+  chat/report and HITL semantic sequences with case-pinned report-response
+  exact-pair reads, deletes, and per-key 404 checks under corrected 11/12
+  request/action bounds. It provides an authorization-gated numeric-loopback
+  executor and sanitized candidate receipts while leaving selected
+  Metadata-500 null-bound, unexecuted, canonically unchanged, and non-promoting;
 - `lvs-semantic-runtime-evidence/` supplies the corresponding exact 14-action
   LVS envelope for five tools, single/multi reports, live captions, prompt
   overwrite/isolation, disconnect cancellation, quiescence, CA-RAG absence,
@@ -250,6 +256,15 @@ in this directory:
   deletion, unrelated-state restoration, and final readiness. It classifies
   only fixture setup as a complete predecessor action, keeps five actions
   partial and eight adapter-required, and remains non-promoting;
+- `lvs-semantic-runtime-agent-session-successor/` adds the concrete NAT Agent
+  WebSocket/session subset: one- and two-video report generation, ordered LVS
+  scenario/events/objects HITL, first-to-latest prompt replacement, a persisted
+  latest-state probe, and isolation through a second session/conversation. Its
+  34-request successor envelope reads/deletes/404-verifies exactly six
+  response-derived report objects. Five-tool declaration is source-locked but
+  not mislabeled as runtime discovery because NAT exposes no catalog-list
+  operation; dependency identity, fixture digest readback, live captions, and
+  disconnect quiescence remain residual, so receipts are nonpromoting;
 - `candidate-alerts-runtime-evidence/` is the first bounded consumer of those
   primitives: an inert plan and fake-only tests bind one alert workflow to an
   exact eight-request/eight-action future collector. Even an authorized run is
@@ -278,6 +293,28 @@ in this directory:
   fixture verification, exact bulk cleanup, delayed absence, and sentinel
   preservation. Fixture provisioning remains an explicit operator attestation,
   so the selected Search row stays unbound and non-promoting;
+- `search-semantic-fixture-provisioning-blocker-successor/` source-locks the
+  production upload, VST identity, RT-Embed, RTVI-CV, Elasticsearch mapping,
+  Search input/index, attribute-enrichment, and deletion behavior to test
+  whether that attestation can be replaced safely. It records an exact
+  Elasticsearch tuple lifecycle as the maximal implementable subset, but
+  proves that this alone is not a functional cross-system Search fixture:
+  VST allocates the sensor identity, CV registration is best-effort, selected
+  object identity is fixed, profile index bindings disagree with the run
+  namespace, and deletion lacks exact cross-system rollback evidence. Its only
+  command is inert, so the preprovisioned gap and selected Search row remain
+  explicitly open;
+- `ui-video-management-playwright-successor/` replaces the Video Management
+  manual-receipt adapter with an authorization-gated regular-Playwright
+  candidate that connects only to an operator-preexisting numeric-loopback
+  CDP browser. It exercises distinct tiny MP4/MKV multi-upload, progress and
+  template state, adjacent invalid plus valid RTSP, and cancel/confirm bulk
+  deletion with exact run-owned cleanup and unrelated-state preservation. The
+  Codex Browser plugin is absent, the UI/browser/mock APIs were not run, and
+  only the selected Node and Playwright entry files—not Playwright's transitive
+  module graph—are digest-pinned. The selected 11/11 row therefore remains
+  null-bound while its honest 240-second, 40-browser-action, 32-API-exchange
+  candidate envelope stays non-promoting;
 - `semantic-executor-bindings-current/` source-locks the selected schema-v2
   500-row metadata and the current Base, LVS, Search, and UI candidate
   artifacts, then classifies exactly five semantic-executor rows without
@@ -287,6 +324,13 @@ in this directory:
   separately. The reviewed LVS HTTP successor is source-locked and classified
   as a concrete bounded partial candidate without treating its incomplete
   Agent/session/stream coverage as a full canonical binding;
+- `semantic-executor-bindings-wave2-successor/` is an additive checked status
+  registry for the Base full-envelope, LVS Agent/session, Search provisioning
+  blocker, and UI Playwright packages above. It reports concrete candidates
+  separately from the immutable published registry, retains all five selected
+  rows at null bindings and zero live receipts, and records the remaining
+  ownership, fixture, Browser/tool-provenance, dependency, caption, quiescence,
+  bound-review, and rendered-runtime gaps without promotion;
 - `service-binding-resolution/` proves why four capability contracts do not
   yet select unique runtime participant sets and forbids guessed lane updates;
 - `runtime-lanes/` binds every manifest-advertised entry and capability oracle

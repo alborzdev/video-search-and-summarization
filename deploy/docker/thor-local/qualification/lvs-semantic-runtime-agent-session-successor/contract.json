@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-vss-lvs-semantic-runtime-agent-session-successor-v1",
+  "mode": "authorization-gated-bounded-numeric-loopback-nat-websocket-candidate",
+  "default_execution_enabled": false,
+  "predecessors": [
+    "thor-vss-lvs-semantic-runtime-evidence-v1",
+    "thor-vss-lvs-semantic-runtime-http-successor-v1"
+  ],
+  "capability_id": "runtime.agent.lvs-profile",
+  "oracle_id": "oracle.runtime.agent.lvs-profile",
+  "planning_requirement_id": "lvs-multi-file",
+  "warehouse_sample_bundle": "excluded",
+  "authorization": {
+    "authorization_id": "lvs-semantic-agent-session-runtime",
+    "acknowledgement": "I_ACK_LVS_AGENT_SESSION_RUNTIME_AND_EXACT_REPORT_CLEANUP"
+  },
+  "transport": {
+    "agent_scheme": "http",
+    "websocket_path": "/websocket",
+    "static_prefix": "/static/",
+    "numeric_loopback_only": true,
+    "proxies": false,
+    "follow_redirects": false,
+    "max_websocket_message_bytes": 4194304,
+    "max_websocket_messages_per_wait": 256,
+    "max_http_response_bytes": 8388608,
+    "connect_timeout_seconds": 10,
+    "turn_timeout_seconds": 600,
+    "artifact_timeout_seconds": 15
+  },
+  "execution_bounds": {
+    "max_requests": 34,
+    "max_actions": 34,
+    "websocket_upgrade_requests": 2,
+    "websocket_outbound_messages": 14,
+    "artifact_http_requests": 18,
+    "expected_report_artifacts": 6,
+    "max_duration_seconds": 1800
+  },
+  "workflow": [
+    {"order": 1, "id": "connect-agent-a", "transport": "websocket-upgrade", "request_cost": 1},
+    {"order": 2, "id": "single-report-turn", "transport": "websocket-message", "request_cost": 1},
+    {"order": 3, "id": "single-scenario-first", "transport": "websocket-message", "request_cost": 1},
+    {"order": 4, "id": "single-events-first", "transport": "websocket-message", "request_cost": 1},
+    {"order": 5, "id": "single-objects-first", "transport": "websocket-message", "request_cost": 1},
+    {"order": 6, "id": "single-confirm-first", "transport": "websocket-message", "request_cost": 1},
+    {"order": 7, "id": "multi-report-turn", "transport": "websocket-message", "request_cost": 1},
+    {"order": 8, "id": "multi-scenario-latest", "transport": "websocket-message", "request_cost": 1},
+    {"order": 9, "id": "multi-events-latest", "transport": "websocket-message", "request_cost": 1},
+    {"order": 10, "id": "multi-objects-latest", "transport": "websocket-message", "request_cost": 1},
+    {"order": 11, "id": "multi-confirm-latest", "transport": "websocket-message", "request_cost": 1},
+    {"order": 12, "id": "agent-a-latest-state-probe", "transport": "websocket-message", "request_cost": 1},
+    {"order": 13, "id": "agent-a-cancel-state-probe", "transport": "websocket-message", "request_cost": 1},
+    {"order": 14, "id": "connect-agent-b", "transport": "websocket-upgrade", "request_cost": 1},
+    {"order": 15, "id": "agent-b-isolation-probe", "transport": "websocket-message", "request_cost": 1},
+    {"order": 16, "id": "agent-b-cancel-isolation-probe", "transport": "websocket-message", "request_cost": 1},
+    {"order": 17, "id": "read-six-exact-report-artifacts", "transport": "http", "request_cost": 6},
+    {"order": 18, "id": "delete-six-exact-report-artifacts", "transport": "http", "request_cost": 6},
+    {"order": 19, "id": "verify-six-exact-report-artifacts-404", "transport": "http", "request_cost": 6}
+  ],
+  "semantic_coverage": {
+    "concrete_complete": [
+      "single-video-report",
+      "multi-video-report",
+      "write-shared-prompt-first",
+      "overwrite-shared-prompt-latest",
+      "reject-cross-agent-prompt-visibility"
+    ],
+    "concrete_partial": {
+      "capture-pre-state": "the two session identities and generated artifact set are captured, but the Agent has no complete report/prompt namespace listing",
+      "discover-five-tools": "the exact five-tool declaration and report-agent binding are source-locked; NAT WebSocket has no deployed catalog-list operation, so runtime discovery remains absent",
+      "setup-owned-fixtures": "the manifest binds two distinct operator-preprovisioned VST sensors to digests and ownership attestations; this package does not provision or independently digest-read back VST media",
+      "cleanup-exact-owned": "all six response-derived report objects are read, deleted by exact key, and observed 404; fixture, live-stream, cancellation, and CA-RAG cleanup are outside this successor",
+      "verify-owned-absence-and-restore": "all generated report objects are absent; complete unrelated Agent state cannot be enumerated by the deployed API"
+    },
+    "residual_adapter_required": {
+      "verify-local-dependencies": "exact LVS, RT-VLM, Elasticsearch, Kafka, Logstash, model, image, and artifact identities remain separate deployment/runtime gates",
+      "start-live-caption": "requires an independently owned RTSP stream plus Kafka and Logstash observations",
+      "retrieve-live-caption": "requires an owned live stream and CA-RAG caption collector",
+      "probe-disconnect-cancel-quiescence": "the public NAT transport has no exact request-status/quiescence collector, and UI stop only ignores later client messages"
+    }
+  },
+  "ownership": {
+    "fixture_gate": "two distinct safe VST sensor names, two distinct SHA-256 media identities, durations strictly above the source-locked 60-second LVS threshold, and explicit operator ownership/registration/duration attestations are required before connection; sensor-to-byte digest and duration readback remain unproven",
+    "artifact_registration_gate": "the completed single and multi Agent turns must return exactly three same-stem Markdown/PDF pairs under /static, with exactly one pair correlated to the single sensor and two pairs correlated to the two distinct multi sensors",
+    "cleanup_order": "reverse-response-order",
+    "exact_owned_only": true,
+    "preserve_unrelated_state": true,
+    "postcondition": "every registered exact /static object key returns HTTP 404 after exact deletion"
+  },
+  "evidence": {
+    "records_raw_payloads": false,
+    "records_raw_urls": false,
+    "records_raw_resource_ids": false,
+    "records_raw_sensor_names": false,
+    "records_raw_prompts": false,
+    "records_payload_size_and_sha256": true,
+    "promotion_eligible": false,
+    "executor_ready": false,
+    "canonical_state_advanced": false,
+    "reason": "five-tool runtime discovery, dependency identity, fixture digest readback, live caption delivery/retrieval, disconnect cancellation/quiescence, and full unrelated-state restoration remain unproven"
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/contract.json", "sha256": "37c260cfa6458e02b9975562d38b95324644e975b8f4564866dfa6f99c5dcfde"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/executor.py", "sha256": "3ddc4e08f2013e1f512254dc1309020ef63d88b8fce203f6c2a34537f1d57df4"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "9ec9997c03c7f5546d1c42cd6f935bf4630078b0ce9bbe16ea6547267887d3df"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/executor.py", "sha256": "42bfdeeef88d947fdb6e5138b86d0c248620f4b65754a71b70b936c71d064ca7"},
+    {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350"},
+    {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"},
+    {"path": "services/agent/src/vss_agents/agents/top_agent.py", "sha256": "a4aa4a051b589858078a7941cf32de8128d7c22f574bdf718974a70cb0c140c4"},
+    {"path": "services/agent/src/vss_agents/agents/report_agent.py", "sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"},
+    {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"},
+    {"path": "services/agent/src/vss_agents/tools/lvs_video_understanding.py", "sha256": "e58fcd165177c126f242abc53445d4d3e7b465c738bed6a5843a9d7590c4f508"},
+    {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/Chat.tsx", "sha256": "91ae0fde8223e998f3bd4f32a2006e8a968a79ffb77518b33388dc276a68d945"},
+    {"path": "services/ui/packages/nemo-agent-toolkit-ui/types/websocket.ts", "sha256": "58025ab9a569324457be3517108aeea039352004c36b6f1e861fc2a414cc3cb1"},
+    {"path": "services/ui/packages/nemo-agent-toolkit-ui/utils/app/const.ts", "sha256": "66a72fd8d1acf691bd247e79041698425de0fe74c8d3249e67c7fc1d593d8024"}
+  ]
+}

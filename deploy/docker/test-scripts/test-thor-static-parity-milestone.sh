@@ -234,6 +234,31 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   plan >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/base-semantic-exact-cleanup-successor/tests"
+
+# The corrected Base successor integrates each exact five/six-step semantic
+# case with its report-object read/delete/404 workflow under honest 11/12
+# bounds. Only its inert plan and fake transport tests run here; report-key
+# preexisting absence, deployed receipts, canonical binding, and promotion
+# remain explicitly unproven.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/base-semantic-full-envelope-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/base-semantic-full-envelope-successor/tests"
+
+# Video Management now has a concrete regular-Playwright candidate for an
+# operator-preexisting numeric-loopback CDP browser and mock APIs. Static
+# qualification syntax-checks the client and runs only inert/mock validation;
+# it never launches or connects to a browser, opens a socket, uploads media,
+# or mutates a resource. Browser-plugin, transitive-tool, live-receipt, and
+# canonical-envelope gaps remain explicit.
+node --check \
+  "${thor_local_root}/qualification/ui-video-management-playwright-successor/harness.mjs"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/ui-video-management-playwright-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/ui-video-management-playwright-successor/tests"
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/lvs-semantic-runtime-evidence/executor.py" \
   plan >/dev/null
@@ -250,6 +275,18 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/lvs-semantic-runtime-http-successor/tests"
 
+# The Agent/session successor supplies a direct numeric-loopback NAT WebSocket
+# candidate for single/multi reports, ordered HITL state, persistence, and
+# isolation plus exact six-object cleanup. Its static tier performs no upgrade,
+# HTTP request, fixture access, or report generation; five-tool discovery,
+# dependency/media identity, captions, quiescence, and complete unrelated-state
+# proof remain open.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-agent-session-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/lvs-semantic-runtime-agent-session-successor/tests"
+
 # Search now has a concrete, authorization-gated, exact-14 numeric-loopback
 # candidate executor with exact owned-document cleanup. Static qualification
 # runs only its source-locked plan and fake openers; it provisions no fixture,
@@ -260,6 +297,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/search-semantic-runtime-evidence-successor/tests"
 
+# The Search provisioning successor is an inert, source-locked blocker audit.
+# It proves why current public VST/CV/Search/deletion APIs cannot safely create
+# and roll back the predecessor's exact functional fixture; it implements no
+# runtime transport and leaves the operator-preprovisioned fixture gap open.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/search-semantic-fixture-provisioning-blocker-successor/compiler.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/search-semantic-fixture-provisioning-blocker-successor/tests"
+
 # This selected-row registry reports the current semantic transport boundary
 # without binding or promoting any of the five canonical Metadata-500 rows.
 # Its compiler and tests are static and source-locked; live receipts remain
@@ -269,6 +316,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/semantic-executor-bindings-current/tests"
+
+# The additive wave-2 registry inventories the four new candidate packages
+# without modifying the published registry or binding any selected row. Its
+# checked artifact must preserve five canonical null bindings, zero receipts,
+# zero promotions, Browser/tool provenance gaps, the Search fixture blocker,
+# and Warehouse exclusion.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/semantic-executor-bindings-wave2-successor/compiler.py" \
+  check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/semantic-executor-bindings-wave2-successor/tests"
 
 # The first candidate-alerts runtime-evidence package is an immutable old-
 # oracle snapshot. Its source lock is historical and is not replayed here.

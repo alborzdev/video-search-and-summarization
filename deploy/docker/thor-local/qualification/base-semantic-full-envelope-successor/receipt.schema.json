@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "promotion_eligible", "canonical_state_advanced", "case_id", "capability_id", "oracle_id", "contract_sha256", "manifest_sha256", "target_origin_sha256", "identity", "budget", "observations", "artifacts", "cleanup"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "base-semantic-full-envelope-successor"},
+    "mode": {"const": "bounded-http-full-envelope-candidate"},
+    "status": {"const": "full_envelope_candidate_evidence_complete_non_promoting"},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "case_id": {"enum": ["tiny-agent-media", "hitl-state-transcript"]},
+    "capability_id": {"type": "string"},
+    "oracle_id": {"type": "string"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "manifest_sha256": {"$ref": "#/$defs/sha"},
+    "target_origin_sha256": {"$ref": "#/$defs/sha"},
+    "identity": {"type": "object", "additionalProperties": false, "required": ["run_id", "authorization_id", "authorization_token_sha256"], "properties": {"run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"}, "authorization_id": {"const": "base-semantic-full-envelope"}, "authorization_token_sha256": {"$ref": "#/$defs/sha"}}},
+    "budget": {"type": "object", "additionalProperties": false, "required": ["actions", "max_actions", "requests", "max_requests"], "properties": {"actions": {"enum": [11, 12]}, "max_actions": {"enum": [11, 12]}, "requests": {"enum": [11, 12]}, "max_requests": {"enum": [11, 12]}}},
+    "observations": {"type": "array", "minItems": 11, "maxItems": 12, "items": {"type": "object", "additionalProperties": false, "required": ["sequence", "step_id", "status", "result_code", "response_status", "response_bytes", "response_sha256", "oracle_sha256", "report_pair_observed"], "properties": {"sequence": {"type": "integer", "minimum": 1, "maximum": 12}, "step_id": {"type": "string"}, "status": {"const": "pass"}, "result_code": {"type": "string"}, "response_status": {"type": "integer", "minimum": 100, "maximum": 599}, "response_bytes": {"type": "integer", "minimum": 0, "maximum": 33554432}, "response_sha256": {"$ref": "#/$defs/sha"}, "oracle_sha256": {"$ref": "#/$defs/sha"}, "report_pair_observed": {"type": "boolean"}}}},
+    "artifacts": {"type": "array", "minItems": 2, "maxItems": 2, "prefixItems": [{"$ref": "#/$defs/mdArtifact"}, {"$ref": "#/$defs/pdfArtifact"}], "items": false},
+    "cleanup": {"type": "object", "additionalProperties": false, "required": ["semantics", "artifact_count", "artifact_set_sha256", "pair_stem_sha256", "all_paths_from_report_step_response", "delete_each_exact_key", "postcondition_each_404", "namespace_delete_attempted", "recursive_delete_claimed", "foreign_resources_mutated", "preexisting_absence_proven"], "properties": {"semantics": {"const": "source_locked_report_step_exact_object_keys"}, "artifact_count": {"const": 2}, "artifact_set_sha256": {"$ref": "#/$defs/sha"}, "pair_stem_sha256": {"$ref": "#/$defs/sha"}, "all_paths_from_report_step_response": {"const": true}, "delete_each_exact_key": {"const": true}, "postcondition_each_404": {"const": true}, "namespace_delete_attempted": {"const": false}, "recursive_delete_claimed": {"const": false}, "foreign_resources_mutated": {"const": false}, "preexisting_absence_proven": {"const": false}}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact": {"type": "object", "additionalProperties": false, "required": ["extension", "path_sha256", "stem_sha256", "read_status", "read_bytes", "read_sha256", "delete_status", "post_status"], "properties": {"extension": {"enum": ["md", "pdf"]}, "path_sha256": {"$ref": "#/$defs/sha"}, "stem_sha256": {"$ref": "#/$defs/sha"}, "read_status": {"type": "integer", "minimum": 200, "maximum": 299}, "read_bytes": {"type": "integer", "minimum": 1, "maximum": 33554432}, "read_sha256": {"$ref": "#/$defs/sha"}, "delete_status": {"enum": [200, 204]}, "post_status": {"const": 404}}},
+    "mdArtifact": {"allOf": [{"$ref": "#/$defs/artifact"}, {"properties": {"extension": {"const": "md"}}}]},
+    "pdfArtifact": {"allOf": [{"$ref": "#/$defs/artifact"}, {"properties": {"extension": {"const": "pdf"}}}]}
+  }
+}
