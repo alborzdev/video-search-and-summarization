@@ -16,6 +16,7 @@ import json
 from pathlib import Path, PurePosixPath
 import stat
 import sys
+import tempfile
 from typing import Any
 
 from jsonschema import Draft202012Validator
@@ -37,6 +38,24 @@ EXPECTED_CAPABILITY_IDS = (
     "manifest-entry.video-summarization-live.05-sse-mcp-server",
     "manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
 )
+SET_ID = "thor-vss-3.2.1-metadata-500-staged"
+SELECTOR_PATH = (
+    "deploy/docker/thor-local/qualification/"
+    "live-metadata-500-activation-rebase-successor/projected-selector.json"
+)
+DESCRIPTOR_PATH = (
+    "deploy/docker/thor-local/qualification/"
+    "live-metadata-500-activation-rebase-successor/"
+    "projected-live-ready-descriptor.json"
+)
+SELECTOR_SCHEMA_PATH = (
+    "deploy/docker/thor-local/parity/metadata_sets/selector.schema.json"
+)
+SET_SCHEMA_PATH = (
+    "deploy/docker/thor-local/parity/metadata_sets/metadata-set.schema.json"
+)
+LIVE_OFFICIAL_PATH = "deploy/docker/thor-local/parity/official-capabilities.json"
+LIVE_ORACLES_PATH = "deploy/docker/thor-local/parity/capability-oracles.json"
 PRESERVED_FIELDS = (
     "current_state",
     "runtime_state",
@@ -182,15 +201,80 @@ def load_module(path: Path, module_name: str) -> Any:
     return module
 
 
+def _write_overlay(root: Path, relative: str, payload: bytes) -> None:
+    pure = PurePosixPath(relative)
+    if (
+        pure.is_absolute()
+        or not pure.parts
+        or any(part in {"", ".", ".."} for part in pure.parts)
+        or pure.as_posix() != relative
+    ):
+        raise CompilationError(f"unsafe temporary overlay path: {relative}")
+    target = root.joinpath(*pure.parts)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(payload)
+
+
 def load_selected_oracles(contract: dict[str, Any]) -> tuple[Any, dict[str, Any]]:
-    resolver_path = repo_path(
-        "deploy/docker/thor-local/parity/metadata_sets/resolver.py"
-    )
+    resolver_relative = "deploy/docker/thor-local/parity/metadata_sets/resolver.py"
+    resolver_path = repo_path(resolver_relative)
     resolver = load_module(resolver_path, "vss_metadata_set_resolver_wave1")
+    selector = strict_json_bytes(
+        read_regular(repo_path(SELECTOR_PATH), SELECTOR_PATH), SELECTOR_PATH
+    )
+    descriptor = strict_json_bytes(
+        read_regular(repo_path(DESCRIPTOR_PATH), DESCRIPTOR_PATH), DESCRIPTOR_PATH
+    )
+    selected_rows = [
+        row
+        for row in selector.get("available_sets", [])
+        if row.get("set_id") == SET_ID
+    ]
+    if (
+        selector.get("selected_set") != SET_ID
+        or len(selected_rows) != 1
+        or selected_rows[0].get("descriptor_raw_sha256")
+        != contract["selected_metadata_set"]["descriptor_raw_sha256"]
+    ):
+        raise CompilationError("activation-rebase selector or descriptor identity drift")
+    descriptor_raw = read_regular(repo_path(DESCRIPTOR_PATH), DESCRIPTOR_PATH)
+    if sha256(descriptor_raw) != selected_rows[0].get("descriptor_raw_sha256"):
+        raise CompilationError("activation-rebase descriptor raw identity drift")
+
     try:
-        snapshot = resolver.resolve_metadata_set()
+        with tempfile.TemporaryDirectory(
+            prefix="vss-successor-500-wave1-rebase-"
+        ) as name:
+            root = Path(name)
+            _write_overlay(
+                root,
+                resolver.SELECTOR_SCHEMA_PATH,
+                read_regular(repo_path(SELECTOR_SCHEMA_PATH), SELECTOR_SCHEMA_PATH),
+            )
+            _write_overlay(
+                root,
+                resolver.SET_SCHEMA_PATH,
+                read_regular(repo_path(SET_SCHEMA_PATH), SET_SCHEMA_PATH),
+            )
+            _write_overlay(
+                root,
+                resolver.SELECTOR_PATH,
+                read_regular(repo_path(SELECTOR_PATH), SELECTOR_PATH),
+            )
+            _write_overlay(root, selected_rows[0]["descriptor_path"], descriptor_raw)
+            for group in ("documents", "schemas"):
+                for member in descriptor[group].values():
+                    payload = read_regular(repo_path(member["path"]), member["path"])
+                    if sha256(payload) != member["raw_sha256"]:
+                        raise CompilationError(
+                            f"activation descriptor member drift: {member['path']}"
+                        )
+                    _write_overlay(root, member["path"], payload)
+            snapshot = resolver.resolve_metadata_set(repo_root=root)
     except Exception as exc:
-        raise CompilationError(f"selected metadata set did not resolve: {exc}") from exc
+        raise CompilationError(
+            f"activation-rebase metadata set did not resolve: {exc}"
+        ) from exc
     expected = contract["selected_metadata_set"]
     if (
         snapshot.set_id != expected["set_id"]

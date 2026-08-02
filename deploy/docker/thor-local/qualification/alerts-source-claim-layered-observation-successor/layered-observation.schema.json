@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "layer_rows_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "layers": {
+      "items": {"$ref": "#/$defs/layer"},
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "mode": {"const": "read_only_layered_transition_observation_no_writes"},
+    "observation_id": {"const": "thor-vss-3.2.1-alerts-source-claim-layered-observation"},
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "docker_allowed": {"const": false},
+        "network_allowed": {"const": false},
+        "passed_current_promotions": {"const": 0},
+        "runtime_evidence_added": {"const": false},
+        "services_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "writes_performed": {"const": false}
+      },
+      "required": ["docker_allowed", "network_allowed", "passed_current_promotions", "runtime_evidence_added", "services_allowed", "warehouse_sample_bundle", "writes_performed"],
+      "type": "object"
+    },
+    "schema_version": {"const": 1},
+    "source_locks": {
+      "items": {"$ref": "#/$defs/source_lock"},
+      "maxItems": 11,
+      "minItems": 11,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "alerts_post_official_raw_sha256": {"const": "fb1638a82e8bf04b0b07482fc016184c3abc6bc692ca8a11fa94681837953055"},
+        "alerts_predecessor_official_raw_sha256": {"const": "d1a047345a309d675f692756fc2d9b56159c53840b6328264bb3cefb07f0cce6"},
+        "current_official_raw_sha256": {"const": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"},
+        "layer_count": {"const": 3},
+        "promotions": {"const": 0},
+        "runtime_evidence_records": {"const": 0},
+        "semantic_leaf_count": {"const": 18}
+      },
+      "required": ["alerts_post_official_raw_sha256", "alerts_predecessor_official_raw_sha256", "current_official_raw_sha256", "layer_count", "promotions", "runtime_evidence_records", "semantic_leaf_count"],
+      "type": "object"
+    }
+  },
+  "required": ["layer_rows_canonical_sha256", "layers", "mode", "observation_id", "policy", "schema_version", "source_locks", "summary"],
+  "type": "object",
+  "$defs": {
+    "sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "source_lock": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {"minLength": 1, "type": "string"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["path", "raw_sha256"],
+      "type": "object"
+    },
+    "layer": {
+      "additionalProperties": false,
+      "properties": {
+        "input_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "layer_id": {"enum": ["source-claim-hash-repair", "alerts-current-contract-official", "alerts-current-contract-oracles"]},
+        "receipt_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "rollback_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "semantic_leaf_count": {"enum": [2, 6, 10]},
+        "semantic_pointers": {
+          "items": {"pattern": "^/", "type": "string"},
+          "maxItems": 10,
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": ["input_raw_sha256", "layer_id", "receipt_raw_sha256", "rollback_raw_sha256", "semantic_leaf_count", "semantic_pointers"],
+      "type": "object"
+    }
+  }
+}

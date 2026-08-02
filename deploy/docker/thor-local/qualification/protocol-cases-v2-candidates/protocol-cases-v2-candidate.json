@@ -265,7 +265,7 @@
     },
     {
       "activation_supported": false,
-      "binding_sha256": "c82e6c0154b52fcca8a1c36e97a06d27dae0ca6677cec6f9277d138aa1a01549",
+      "binding_sha256": "1aec34fdbcc5eb3d23c4b0d558bcc086cd54f508df57df5ad5c8f141b1165c40",
       "boundary": "local",
       "capability_id": "manifest-entry.video-summarization-file.03-structured-output",
       "case_id": "protocol-v2-case.manifest-entry.video-summarization-file.03-structured-output",
@@ -274,7 +274,7 @@
       "source_hashes": [
         {
           "path": "services/video-summarization/src/via_stream_handler.py",
-          "raw_sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+          "raw_sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"
         },
         {
           "path": "services/video-summarization/src/vss_api_models.py",
@@ -304,7 +304,7 @@
     },
     {
       "activation_supported": false,
-      "binding_sha256": "8078ca6eec51f57d3c3bb91abd75c8d54916a31ac232a6bf6f63e907db24ac22",
+      "binding_sha256": "c42bd0c08f7b42222b46e49d5aeba6bb3a441999b9ad509e8091a1d5e8b0fef6",
       "boundary": "local",
       "capability_id": "manifest-entry.video-summarization-live.05-sse-mcp-server",
       "case_id": "protocol-v2-case.manifest-entry.video-summarization-live.05-sse-mcp-server",
@@ -312,8 +312,16 @@
       "readiness": "planning_only",
       "source_hashes": [
         {
+          "path": "deploy/docker/thor-local/Dockerfile.video-summarization",
+          "raw_sha256": "572e480c4ff4525bb539621668b4bddd1a080bc31a6ec15f49ef3dd8c53b22f4"
+        },
+        {
           "path": "services/video-summarization/src/lvs_mcp.py",
-          "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+          "raw_sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+        },
+        {
+          "path": "services/video-summarization/src/lvs_mcp_sse.py",
+          "raw_sha256": "94306d18703a598982fbfe3515dcb3ed7cad31dfb106cb0d5b5c4ef92e6806f8"
         }
       ],
       "transport_components": [
@@ -1323,7 +1331,7 @@
     }
   ],
   "candidate_id": "vss-thor-protocol-cases-v2-23-candidate-extension",
-  "candidate_payload_sha256": "65715e2ebfbe164ae38a6b20ca7dc23b6f3a65aaa9dd1632bdda746c4c929f24",
+  "candidate_payload_sha256": "6667309aefc03eb410651bd11769301be77cc5d9baf40688fa0f75f5752a58d6",
   "cases": [
     {
       "activation": {

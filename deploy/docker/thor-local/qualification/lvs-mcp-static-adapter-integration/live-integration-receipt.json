@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "integration_id": "lvs-mcp-static-adapter-2026-08-01",
+  "integration_id": "lvs-mcp-current-contract-2026-08-02",
   "predecessor": {
     "integrator_path": "deploy/docker/thor-local/qualification/source-contract-integration/integrate_live.py",
     "integrator_raw_sha256": "dcb2f8119da1c2b719c4398549861c0929af9bfdf53b933301b6d4677e4318f7",
@@ -16,18 +16,24 @@
       "capability-oracles.schema.json": "d3f86870fcca6bdb80eacb92bd402a88f34bacd68c42e52ac3408d05e0437498"
     }
   },
+  "live_current_predecessor": {
+    "official-capabilities.json": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+    "manifest.json": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce",
+    "acceptance_inventory.json": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
+    "capability-oracles.json": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
+  },
   "static_inputs": [
     {
       "path": "deploy/docker/services/video-summarization/compose.yml",
-      "raw_sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
+      "raw_sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
     },
     {
       "path": "deploy/docker/thor-local/Dockerfile.video-summarization",
-      "raw_sha256": "50b77993332df61de4fc0a42dcdb1856ba3307b392b922d10de70eb08d591663"
+      "raw_sha256": "572e480c4ff4525bb539621668b4bddd1a080bc31a6ec15f49ef3dd8c53b22f4"
     },
     {
       "path": "deploy/docker/thor-local/compose.yml",
-      "raw_sha256": "1943cc40645c6b41d61f28dc9262aa3793149cc3f4c6aac8a91ee47fd2842352"
+      "raw_sha256": "b3f8b8d94f05e0edfbe0e1652457c80bd821d0dc93271fb75e2bc40b188c12ce"
     },
     {
       "path": "deploy/docker/thor-local/patches/patch_lvs_file_management.py",
@@ -35,15 +41,15 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/api_inventory.json",
-      "raw_sha256": "5d7f5e9303eedebdaabaec25dd77677540475d968850b8481ab4422c2d6b525b"
+      "raw_sha256": "17d3f26a950b142c72e5d5003ac0429ac56f552247ca24458b05c964bf0edb6d"
     },
     {
       "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-      "raw_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
+      "raw_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
     },
     {
       "path": "deploy/docker/thor-local/qualification/expected/lvs.json",
-      "raw_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
+      "raw_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17"
     },
     {
       "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/contract.json",
@@ -66,8 +72,20 @@
       "raw_sha256": "e39cdaa74d3359f84be8cf16c2ace8dbf774c98de26ff89c01ff64d244d94887"
     },
     {
+      "path": "deploy/docker/thor-local/vios-mcp/wheels-linux-aarch64.lock.json",
+      "raw_sha256": "a65a8aa75b331209c996f99c05058e9301f50ddc7a5278da2c416ade06d6d70d"
+    },
+    {
+      "path": "services/video-summarization/docker/package_file_list.txt",
+      "raw_sha256": "2320f99c469ec0bca82022d7a60ab16098ad4fa18a36d7fdae284a1af23c96c2"
+    },
+    {
       "path": "services/video-summarization/src/lvs_mcp.py",
-      "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+      "raw_sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp_sse.py",
+      "raw_sha256": "94306d18703a598982fbfe3515dcb3ed7cad31dfb106cb0d5b5c4ef92e6806f8"
     },
     {
       "path": "services/video-summarization/src/rtvi_vlm_client.py",
@@ -75,7 +93,23 @@
     },
     {
       "path": "services/video-summarization/src/via_server.py",
-      "raw_sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+      "raw_sha256": "2f95a82460a932cc3aac0161ed227eac12f2ac080dc7e44ef1641841730d5e6d"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "raw_sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"
+    },
+    {
+      "path": "services/video-summarization/tests/test_lvs_delete_cleanup.py",
+      "raw_sha256": "4b57befb075fac25548617a1fbed857779fe2793b11fe4678ef36d472a1c4120"
+    },
+    {
+      "path": "services/video-summarization/tests/test_lvs_mcp.py",
+      "raw_sha256": "01129bed02201c964cc4e62b16c0380bf8f636b44f78ab11944160f21813bc2e"
+    },
+    {
+      "path": "services/video-summarization/tests/test_lvs_mcp_sse.py",
+      "raw_sha256": "1d37ff696c4ce0d892fd92b9f52f76dff5fc72366027d0ecca5f34a58b7f489e"
     }
   ],
   "delta": {
@@ -108,10 +142,10 @@
     "offline_tool_qualification_package": "deploy/docker/thor-local/qualification/offline-mv3dt-tools"
   },
   "expected_counts": {
-    "capabilities": 276,
-    "oracles": 276,
-    "planning_index_only_oracles": 276,
-    "static_subset_oracle_bindings": 28,
+    "capabilities": 289,
+    "oracles": 289,
+    "planning_index_only_oracles": 289,
+    "static_subset_oracle_bindings": 29,
     "offline_tool_observation_bindings": 2,
     "runtime_evidence_records": 0,
     "passed_current_promotions": 0,
@@ -129,12 +163,12 @@
     "docker": "forbidden",
     "subprocess": "forbidden"
   },
-  "contract_sha256": "8015432ecaa593d58bc21c7ac3d6d91dddc8773c19fb8bbeb533fd0671cebc12",
+  "contract_sha256": "e661b64973c6208b1cbb5ed5a45b0b3a09844fe1af22f37ccb30700be470cf11",
   "outputs": {
-    "official-capabilities.json": "53670839f97b50238580741e71ae54a28ef50a7259ee1a847ebc66fc7a26c47d",
-    "manifest.json": "6b041fbd169649b6dac5e68908e4a6dd219da9160cf72594219058885a9b9127",
-    "acceptance_inventory.json": "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f",
-    "capability-oracles.json": "c85729f691377f6f3d7e4080458789a9df3d9c394762c5ab20ee81b72a3451c3"
+    "official-capabilities.json": "d1a047345a309d675f692756fc2d9b56159c53840b6328264bb3cefb07f0cce6",
+    "manifest.json": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce",
+    "acceptance_inventory.json": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
+    "capability-oracles.json": "4625c8efb38df757ed90483826df9064717cf131f52d7500ef8eec39510e0804"
   },
-  "lifecycle": "third_static_adapter_successor_integrated"
+  "lifecycle": "current_lvs_mcp_contract_successor_integrated"
 }

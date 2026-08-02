@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/sparse4d-candidate-dependency-repair-rebase-successor.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repair_id",
+    "mode",
+    "target",
+    "selected_metadata_set",
+    "historical_predecessor",
+    "rebase_provenance",
+    "repair",
+    "semantic_proof",
+    "approval_classification",
+    "preservation",
+    "policy",
+    "source_locks",
+    "repair_payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "repair_id": {"const": "thor-vss-3.2.1-sparse4d-candidate-dependency-repair-rebase-successor"},
+    "mode": {"const": "inert_additive_planning_rebase_successor"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "main_commit", "hardware"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "hardware": {"const": "NVIDIA Jetson Thor"}
+      }
+    },
+    "selected_metadata_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["set_id", "selector_raw_sha256", "descriptor_raw_sha256", "candidate_oracle_index"],
+      "properties": {
+        "set_id": {"const": "thor-vss-3.2.1-metadata-500-staged"},
+        "selector_raw_sha256": {"const": "d44bb521d56f87e32396b619b70ee0b2c645e79bc6d78ebd8c6a380575f25112"},
+        "descriptor_raw_sha256": {"const": "4c343433c56daa87e418752de37e51d733037183d8296e1d7692a3dcaccd82ca"},
+        "candidate_oracle_index": {"const": 457}
+      }
+    },
+    "historical_predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_path", "repair_raw_sha256", "repair_payload_sha256", "repair_git_blob_oid", "semantic_record_hashes_preserved", "immutable_locks"],
+      "properties": {
+        "package_path": {"const": "deploy/docker/thor-local/qualification/sparse4d-candidate-dependency-repair"},
+        "repair_raw_sha256": {"const": "2ed1a2bb1afc7b3e79d4a1a688d770780639f307f06f29d222e13f3d23683ffd"},
+        "repair_payload_sha256": {"const": "ef308921bd58ce44243692a46438d365cc4998cb733b877684d6bf1944deb84b"},
+        "repair_git_blob_oid": {"const": "388d4059c74d6eace59e63151e5c08a89a6ff7c2"},
+        "semantic_record_hashes_preserved": {"const": true},
+        "immutable_locks": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/source_lock"}}
+      }
+    },
+    "rebase_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mapping_raw_sha256", "mapping_schema_raw_sha256", "activation_receipt_raw_sha256", "migration_receipt_raw_sha256", "protocol_raw_sha256", "protocol_schema_raw_sha256"],
+      "properties": {
+        "mapping_raw_sha256": {"const": "dd5be5e9a73245c3599309497b8b3d9e68c750656984fb0f166423730956722a"},
+        "mapping_schema_raw_sha256": {"const": "41271a9716e1462d789e9e26a98f9d4a49a830157be4d9c0105ea9824bebc3d5"},
+        "activation_receipt_raw_sha256": {"const": "93baf20b5bdb0e46d61595613dac778ffe8a3eb4e1a76a31dc943d2b46e4037e"},
+        "migration_receipt_raw_sha256": {"const": "771336f0f843686ee380467a2772a0e6ad4bef9155fe9d511ce738f9e822189c"},
+        "protocol_raw_sha256": {"const": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"},
+        "protocol_schema_raw_sha256": {"const": "399471d0efd73614e507426095390a4a2e731aa4970b916199344b89b0304fbb"}
+      }
+    },
+    "repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "oracle_id",
+        "manifest_pointer",
+        "advertised_literal",
+        "field",
+        "before",
+        "after",
+        "change_count",
+        "disposition",
+        "candidate_capability_before_canonical_sha256",
+        "candidate_capability_after_canonical_sha256",
+        "candidate_oracle_record_canonical_sha256"
+      ],
+      "properties": {
+        "capability_id": {"const": "manifest-entry.warehouse-3d-and-mv3dt.00-sparse4d-3d-warehouse"},
+        "oracle_id": {"const": "oracle.manifest-entry.warehouse-3d-and-mv3dt.00-sparse4d-3d-warehouse"},
+        "manifest_pointer": {"const": "/features/26/advertised/0"},
+        "advertised_literal": {"const": "Sparse4D 3D warehouse"},
+        "field": {"const": "ledger_binding.contract.dependency_capability_ids"},
+        "before": {"const": ["runtime.warehouse.profile-mv3dt-pipeline"]},
+        "after": {"const": ["runtime.warehouse.profile-3d-sparse4d-pipeline"]},
+        "change_count": {"const": 1},
+        "disposition": {"const": "replace_objectively_wrong_mv3dt_dependency_for_planning_classification"},
+        "candidate_capability_before_canonical_sha256": {"const": "8e20dee77f1cc2049ef892a05d086a8a4581c9b04b3d3996eca1d768ac04d7cf"},
+        "candidate_capability_after_canonical_sha256": {"const": "086e0cadd433638f890d86d9c1bf95ec0ecab037fb3c4c52323f7b0ff12afd90"},
+        "candidate_oracle_record_canonical_sha256": {"const": "45ef0ea3e789ce812c8d6345b43e9637caca3e17bee7ba50a90fcada811d0a19"}
+      }
+    },
+    "semantic_proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wrong_dependency", "correct_dependency", "static_service_identity"],
+      "properties": {
+        "wrong_dependency": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["capability_id", "title", "ledger_index", "capability_record_canonical_sha256", "oracle_record_canonical_sha256", "detector", "tracker", "inter_camera_broker", "objective_mismatch"],
+          "properties": {
+            "capability_id": {"const": "runtime.warehouse.profile-mv3dt-pipeline"},
+            "title": {"const": "Warehouse RT-DETR plus MV3DT pipeline"},
+            "ledger_index": {"const": 268},
+            "capability_record_canonical_sha256": {"const": "6f4c15a07410953a524ba5ed92974f66e68ca72a89caf9bd412a1719dee22679"},
+            "oracle_record_canonical_sha256": {"const": "cfb536bf724b54a16c12a164df8f6e92975b7e46d68eca2ac149b790481191c6"},
+            "detector": {"const": "RT-DETR"},
+            "tracker": {"const": "MV3DT"},
+            "inter_camera_broker": {"const": "MQTT"},
+            "objective_mismatch": {"type": "string", "minLength": 80}
+          }
+        },
+        "correct_dependency": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["capability_id", "title", "ledger_index", "capability_record_canonical_sha256", "oracle_record_canonical_sha256", "perception", "source_topic", "synchronized_camera_timestamps"],
+          "properties": {
+            "capability_id": {"const": "runtime.warehouse.profile-3d-sparse4d-pipeline"},
+            "title": {"const": "Warehouse Sparse4D 3D pipeline"},
+            "ledger_index": {"const": 267},
+            "capability_record_canonical_sha256": {"const": "da47b32625aa4c75378a3e1afa8f8c95b276a78da6bf45caab0f57b965451939"},
+            "oracle_record_canonical_sha256": {"const": "9881c395728e8540f49c94157b8d2313ba6895c160da38319e6dafaf77c289ce"},
+            "perception": {"const": "Sparse4D"},
+            "source_topic": {"const": "mdx-bev"},
+            "synchronized_camera_timestamps": {"const": true}
+          }
+        },
+        "static_service_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["binding_state", "source_compose_path", "source_compose_service", "extends_service", "container_name", "source_profiles", "thor_overlay_path", "thor_launcher_path", "thor_compose_project", "thor_profile", "mode", "model_family", "sparse4d_model", "anchor", "anchor_shape", "camera_count"],
+          "properties": {
+            "binding_state": {"const": "reviewed_static_identity_not_executable_service_binding"},
+            "source_compose_path": {"const": "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app/warehouse-3d-app.yml"},
+            "source_compose_service": {"const": "perception-3d"},
+            "extends_service": {"const": "perception"},
+            "container_name": {"const": "vss-rtvi-cv"},
+            "source_profiles": {"const": ["bp_wh_kafka_3d", "bp_wh_redis_3d"]},
+            "thor_overlay_path": {"const": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml"},
+            "thor_launcher_path": {"const": "deploy/docker/scripts/thor-warehouse-sparse4d.sh"},
+            "thor_compose_project": {"const": "thor-wh-sparse4d"},
+            "thor_profile": {"const": "bp_wh_redis_3d"},
+            "mode": {"const": "3d"},
+            "model_family": {"const": "sparse4d-warehouse"},
+            "sparse4d_model": {"const": "sparse4d_warehouse_v2.2.onnx"},
+            "anchor": {"const": "_ov_kmeans900_v2.2.npy"},
+            "anchor_shape": {"const": [900, 11]},
+            "camera_count": {"const": 4}
+          }
+        }
+      }
+    },
+    "approval_classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["predecessor_state", "predecessor_mapping_raw_sha256", "leaf_bundle_id", "leaf_bundle_record_canonical_sha256", "classification_state", "approval_state", "dependency_disposition"],
+      "properties": {
+        "predecessor_state": {"const": "unmapped_contract_conflict"},
+        "predecessor_mapping_raw_sha256": {"const": "dd5be5e9a73245c3599309497b8b3d9e68c750656984fb0f166423730956722a"},
+        "leaf_bundle_id": {"const": "sparse4d-custom-data-models"},
+        "leaf_bundle_record_canonical_sha256": {"const": "163a8dfacbd0e6acace5bca1838f1f0f7bb5358c6a5fa6f3eb3b32bc5226b6ce"},
+        "classification_state": {"const": "suggested_scope_only_not_approved"},
+        "approval_state": {"const": "no_receipt_not_admitted_not_executable"},
+        "dependency_disposition": {"const": "unresolved_until_separate_exact_receipts"}
+      }
+    },
+    "preservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selected_metadata_files_modified", "historical_package_files_modified", "canonical_metadata_files_modified", "candidate_runtime_state_before", "candidate_runtime_state_after", "candidate_evidence_records_before", "candidate_evidence_records_after", "candidate_executor_ready_before", "candidate_executor_ready_after", "operator_approval_gate_before", "operator_approval_gate_after", "runtime_receipts", "runtime_qualification_claims"],
+      "properties": {
+        "selected_metadata_files_modified": {"const": 0},
+        "historical_package_files_modified": {"const": 0},
+        "canonical_metadata_files_modified": {"const": 0},
+        "candidate_runtime_state_before": {"const": "not_qualified"},
+        "candidate_runtime_state_after": {"const": "not_qualified"},
+        "candidate_evidence_records_before": {"const": 0},
+        "candidate_evidence_records_after": {"const": 0},
+        "candidate_executor_ready_before": {"const": false},
+        "candidate_executor_ready_after": {"const": false},
+        "operator_approval_gate_before": {"const": "unmet"},
+        "operator_approval_gate_after": {"const": "unmet"},
+        "runtime_receipts": {"const": 0},
+        "runtime_qualification_claims": {"const": 0}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repair_scope", "canonical_metadata_mutation", "runtime_state_promotion", "runtime_evidence_created", "receipt_consumer_present", "approval_granted", "executor_present", "runtime_actions", "network_access", "docker_access", "host_inspection", "model_access", "downloads", "warehouse_sample_bundle", "required_cloud_inference", "writer_scope"],
+      "properties": {
+        "repair_scope": {"const": "one_exact_candidate_dependency_for_planning_classification_only"},
+        "canonical_metadata_mutation": {"const": false},
+        "runtime_state_promotion": {"const": false},
+        "runtime_evidence_created": {"const": 0},
+        "receipt_consumer_present": {"const": false},
+        "approval_granted": {"const": false},
+        "executor_present": {"const": false},
+        "runtime_actions": {"const": false},
+        "network_access": {"const": false},
+        "docker_access": {"const": false},
+        "host_inspection": {"const": false},
+        "model_access": {"const": false},
+        "downloads": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "required_cloud_inference": {"const": false},
+        "writer_scope": {"const": "package_repair_artifact_only"}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "items": {"$ref": "#/$defs/source_lock"}
+    },
+    "repair_payload_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

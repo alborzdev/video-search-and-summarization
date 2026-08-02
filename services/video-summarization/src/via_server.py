@@ -33,9 +33,11 @@ from uuid import UUID
 
 import requests.exceptions
 import uvicorn
+from chunk_info import RequestSource
 from fastapi import FastAPI, File, Form, Path, Query, Request, Response, UploadFile
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.responses import JSONResponse
+from lvs_errors import classify_es_error
 from prometheus_client import (
     GC_COLLECTOR,
     PLATFORM_COLLECTOR,
@@ -43,10 +45,8 @@ from prometheus_client import (
     REGISTRY,
     generate_latest,
 )
-from sse_starlette.sse import EventSourceResponse
-
-from chunk_info import RequestSource
 from rtvi_vlm_client import RtviError
+from sse_starlette.sse import EventSourceResponse
 from via_exception import ViaException
 from via_logger import LOG_PERF_LEVEL, TimeMeasure, logger, patch_logger_handlers
 from via_stream_handler import RequestInfo
@@ -180,6 +180,74 @@ def _file_api_request_allowed(path: str, client_host: str, loopback_only: bool) 
     files_root = f"{API_PREFIX}/files"
     is_file_api = path == files_root or path.startswith(f"{files_root}/")
     return not loopback_only or not is_file_api or _is_numeric_loopback(client_host)
+
+
+def _is_rtvi_file_absent(error: Exception, file_id: str) -> bool:
+    """Recognize only RTVI's source-defined absent-file responses.
+
+    RTVI uses a different ``No such file`` response when the UUID belongs to
+    a live stream. That response is deliberately excluded so file DELETE
+    cannot remove a live stream's Elasticsearch data.
+    """
+    if not isinstance(error, RtviError):
+        return False
+    if error.status_code != 400 or error.code != "BadParameter":
+        return False
+    return error.message in {
+        f"No such resource {file_id}",
+        f"{file_id} already deleted because of age out policy",
+    }
+
+
+def _require_rtvi_file_delete_success(file_id: str, result: object) -> None:
+    """Require RTVI's exact source-defined successful deletion shape."""
+    if (
+        not isinstance(result, dict)
+        or str(result.get("id")) != file_id
+        or result.get("object") != "file"
+        or result.get("deleted") is not True
+    ):
+        raise ViaException(
+            "RTVI-VLM returned an invalid file deletion confirmation",
+            "InternalServerError",
+            500,
+        )
+
+
+def _require_collection_drop_success(file_id: str, result: object) -> None:
+    """Reject ambiguous or failed Elasticsearch cleanup results.
+
+    ``ContextManager.drop_collection`` returns ``{"acknowledged": True}``
+    when Elasticsearch accepts the deletion.  The stream handler also has
+    two deliberate no-op paths, represented by ``{"skipped": True, ...}``,
+    for configurations where it does not own an Elasticsearch collection.
+    Every other result is insufficient proof that cleanup completed.
+    """
+    if not isinstance(result, dict):
+        detail = f"invalid result type {type(result).__name__}"
+    elif result in (
+        {"skipped": True, "reason": "KAFKA_ENABLED=false"},
+        {"skipped": True, "reason": "ca-rag disabled"},
+    ):
+        return
+    elif result == {"acknowledged": True}:
+        return
+    else:
+        detail = result.get("error") if isinstance(result, dict) else None
+        if not detail:
+            detail = "collection deletion was not acknowledged"
+
+    logger.error(
+        "Elasticsearch collection deletion was not acknowledged for file %s: %s",
+        file_id,
+        detail,
+    )
+    raise ViaException(
+        "Service temporarily unavailable: Elasticsearch collection deletion "
+        "was not acknowledged. See server logs for details.",
+        "DependencyError",
+        503,
+    )
 
 
 class ViaServer:
@@ -528,10 +596,17 @@ class ViaServer:
         @self._app.delete(
             f"{API_PREFIX}/files/{{file_id}}",
             summary="Delete a file (proxied to RTVI-VLM)",
-            description="Deletes a file from the RTVI-VLM backend.",
+            description=(
+                "Deletes the file from the RTVI-VLM backend, then deletes its associated "
+                "Elasticsearch collection."
+            ),
             responses={
                 200: {"description": "Successful Response."},
                 **add_common_error_responses(),
+                503: {
+                    "model": LvsError,
+                    "description": "Elasticsearch collection cleanup is unavailable.",
+                },
             },
             tags=["Files"],
         )
@@ -541,22 +616,49 @@ class ViaServer:
             file_id = str(file_id)
             logger.info("Received delete file request (RTVI proxy) for %s", file_id)
             try:
-                self._stream_handler._vlm_pipeline.delete_file(file_id)
+                delete_result = self._stream_handler._vlm_pipeline.delete_file(file_id)
+                _require_rtvi_file_delete_success(file_id, delete_result)
+            except RtviError as e:
+                if not _is_rtvi_file_absent(e, file_id):
+                    logger.error("RTVI-VLM delete failed for %s: %s", file_id, e)
+                    raise ViaException(
+                        f"Failed to delete file from RTVI-VLM: {e}",
+                        e.code,
+                        e.status_code,
+                    ) from e
+                # A previous attempt may have deleted the primary asset but
+                # failed to clean its collection. Continue only for RTVI's
+                # exact absent-resource responses so DELETE is retryable
+                # without mistaking a live stream or busy file for absent.
+                logger.info("RTVI-VLM file %s is already absent; continuing cleanup", file_id)
+            except ViaException:
+                raise
             except Exception as e:
                 logger.error("RTVI-VLM delete failed for %s: %s", file_id, e)
                 raise ViaException(
                     f"Failed to delete file from RTVI-VLM: {e}",
                     getattr(e, "code", "InternalServerError"),
                     getattr(e, "status_code", 500),
-                )
-            # Streaming Kafka path: also drop the Elasticsearch index that
-            # Logstash populated for this asset. Idempotent on missing
-            # index. No-op when KAFKA_ENABLED=false.
+                ) from e
+
+            # Delete the dependent collection only after RTVI confirms that
+            # the primary file is deleted or already absent. If collection
+            # cleanup fails, a retry follows the exact absent-file path above
+            # before retrying this idempotent drop.
             try:
                 drop_result = self._stream_handler.drop_collection_for_asset(file_id)
+                _require_collection_drop_success(file_id, drop_result)
                 logger.debug("drop_collection result for %s: %s", file_id, drop_result)
+            except ViaException:
+                raise
             except Exception as e:
-                logger.warning("drop_collection_for_asset failed for %s: %s", file_id, e)
+                logger.error("Elasticsearch cleanup failed for file %s: %s", file_id, e)
+                http_status, user_message = classify_es_error(e)
+                raise ViaException(
+                    user_message,
+                    "DependencyError",
+                    http_status,
+                ) from e
             return {"id": file_id, "object": "file", "deleted": True}
 
         @self._app.get(

@@ -353,7 +353,7 @@
       "projected_skills_canonical_sha256": "1cd69578ba1a8a9712665cea7b707e46b737973739add9f0dfe1450781defbb6"
     },
     "projection_id": "vss-3.2.1-thor-manifest-500-aggregate-successor",
-    "projection_payload_sha256": "d2f5a88ad2351bcd23ecba6916283e249460c6fe2e9bffc867e52a9aded35814",
+    "projection_payload_sha256": "0a1a6db835adf397b4036e22e14d6d9d4afeb67b0ab1d790ffcef4a8a9383d23",
     "remaining_merge_readiness": {
       "acceptance_scenario_coverage_gaps": [
         {
@@ -523,7 +523,7 @@
       },
       "ledger_500_capabilities": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
-        "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6"
+        "raw_sha256": "8a6e14b35ce73362bc8c3dccc84788ab48a2e3f88284b41f1b4a6efc30cd7d13"
       },
       "ledger_500_manifest": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-manifest.json",
@@ -535,11 +535,11 @@
       },
       "ledger_500_projection": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.json",
-        "raw_sha256": "4e206240795e2cf739f595811920ae66a7868ebe92031feb73b7fcbbe5a971d0"
+        "raw_sha256": "135e39a9f557f175536282329a3f9a6a8003c634ef2f9f5905b78d0607fe646d"
       },
       "ledger_500_projection_schema": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.schema.json",
-        "raw_sha256": "8f74b849581029c303a1e7a927f1f31b7458ed87e529d14e25134e52396f4ec9"
+        "raw_sha256": "9ed414c6e1c40d8afc27e8e0bd635d826536994375037efc947098dc089f98b2"
       },
       "live_capability_verifier": {
         "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",

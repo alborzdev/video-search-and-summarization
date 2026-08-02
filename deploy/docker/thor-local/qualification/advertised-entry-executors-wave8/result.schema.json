@@ -20,8 +20,8 @@
             {"$ref": "#/$defs/entry"},
             {"properties": {
               "entry_id": {"const": "manifest-gap.video-summarization-live.05-sse-mcp-server"},
-              "retained_blockers": {"const": ["live_sse_connection_not_executed", "mcp_transport_and_handshake_not_executed", "deployed_lvs_not_observed", "thor_runtime_readiness_not_observed"]},
-              "matched_assertions": {"const": ["production_lvs_mcp_module_imported", "exact_13_tool_registration_executed", "in_process_asgi_health_dispatch_executed", "external_execution_guards_active", "shared_server_dispatch_subset_executed"]}
+              "retained_blockers": {"const": ["live_sse_connection_not_executed", "mcp_transport_and_handshake_not_executed", "live_transport_session_cleanup_not_observed", "deployed_lvs_not_observed", "thor_runtime_readiness_not_observed"]},
+              "matched_assertions": {"const": ["production_lvs_mcp_module_imported", "exact_13_tool_registration_executed", "in_process_asgi_health_dispatch_executed", "external_execution_guards_active", "thor_sse_packaging_and_limits_source_locked", "shared_server_dispatch_subset_executed", "session_cleanup_implementation_and_tests_source_locked"]}
             }}
           ]
         },
@@ -30,8 +30,8 @@
             {"$ref": "#/$defs/entry"},
             {"properties": {
               "entry_id": {"const": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"},
-              "retained_blockers": {"const": ["mcp_transport_and_handshake_not_executed", "live_lvs_service_not_executed", "vlm_inference_not_executed", "thor_runtime_readiness_not_observed"]},
-              "matched_assertions": {"const": ["production_lvs_mcp_module_imported", "exact_13_tool_registration_executed", "in_process_asgi_health_dispatch_executed", "external_execution_guards_active", "bounded_file_add_list_info_delete_executed", "path_size_symlink_uuid_rejections_executed", "invalid_metadata_rollback_executed", "file_error_sanitization_executed"]}
+              "retained_blockers": {"const": ["mcp_transport_and_handshake_not_executed", "deployed_delete_cleanup_not_observed", "live_lvs_service_not_executed", "vlm_inference_not_executed", "thor_runtime_readiness_not_observed"]},
+              "matched_assertions": {"const": ["production_lvs_mcp_module_imported", "exact_13_tool_registration_executed", "in_process_asgi_health_dispatch_executed", "external_execution_guards_active", "thor_sse_packaging_and_limits_source_locked", "bounded_file_add_list_info_delete_executed", "path_size_symlink_uuid_rejections_executed", "invalid_metadata_rollback_executed", "file_error_sanitization_executed", "delete_cleanup_implementation_and_tests_source_locked"]}
             }}
           ]
         }
@@ -81,20 +81,27 @@
       }
     },
     "source_digests": {
-      "type": "object", "minProperties": 11, "maxProperties": 11,
+      "type": "object", "minProperties": 18, "maxProperties": 18,
       "propertyNames": {
         "enum": [
           "deploy/docker/services/video-summarization/compose.yml",
+          "deploy/docker/thor-local/Dockerfile.video-summarization",
+          "deploy/docker/thor-local/compose.yml",
           "deploy/docker/thor-local/parity/capability-oracles.json",
           "deploy/docker/thor-local/parity/manifest.json",
           "deploy/docker/thor-local/parity/official-capabilities.json",
           "deploy/docker/thor-local/qualification/advertised-entry-executors-wave3/inventory.json",
           "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json",
           "deploy/docker/thor-local/qualification/advertised-entry-gaps/plan.json",
+          "services/video-summarization/docker/package_file_list.txt",
           "services/video-summarization/src/lvs_mcp.py",
+          "services/video-summarization/src/lvs_mcp_sse.py",
           "services/video-summarization/src/rtvi_vlm_client.py",
+          "services/video-summarization/src/via_stream_handler.py",
           "services/video-summarization/src/via_server.py",
-          "services/video-summarization/tests/test_lvs_mcp.py"
+          "services/video-summarization/tests/test_lvs_delete_cleanup.py",
+          "services/video-summarization/tests/test_lvs_mcp.py",
+          "services/video-summarization/tests/test_lvs_mcp_sse.py"
         ]
       },
       "additionalProperties": {"$ref": "#/$defs/sha"}

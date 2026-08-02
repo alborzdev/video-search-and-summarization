@@ -1,0 +1,17 @@
+{
+  "accepted_receipt_count": 0,
+  "accepted_receipt_ids": [],
+  "admission_index_raw_sha256": "74398a4239cfd13f753924aaf65b5ce16e6f96b44dc9eae8067eddb8a03456ff",
+  "authority_registry_raw_sha256": "954aa42541f715bdbb25148a322e2e3b3380f27fc4f958e8ba0e7378945acdd4",
+  "authorization_envelope_count": 0,
+  "authorization_envelopes": [],
+  "binding_registry_raw_sha256": "af3927c15f9e5c1efb67690ee7ca3f3e6ee9fb77e720767db2264d68a935b6b5",
+  "completion_receipt_envelope_count": 0,
+  "completion_receipt_envelopes": [],
+  "consumed_receipt_count": 0,
+  "consumed_receipt_ids": [],
+  "receipt_set_id": "thor-vss-3.2.1-candidate-rebase-signed-receipts-empty-v1",
+  "schema_version": 1,
+  "signed_receipt_envelope_schema_raw_sha256": "3df35e5c82b36a029512f564f99753a05a63f7ba280c98c7a79672dd9d5f94d7",
+  "warehouse_sample_bundle": "excluded"
+}

@@ -29,11 +29,11 @@ MANIFEST_SCHEMA = PACKAGE / "projected-manifest.schema.json"
 INPUTS = {
     "ledger_500_projection": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.json",
-        "raw_sha256": "4e206240795e2cf739f595811920ae66a7868ebe92031feb73b7fcbbe5a971d0",
+        "raw_sha256": "135e39a9f557f175536282329a3f9a6a8003c634ef2f9f5905b78d0607fe646d",
     },
     "ledger_500_projection_schema": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.schema.json",
-        "raw_sha256": "8f74b849581029c303a1e7a927f1f31b7458ed87e529d14e25134e52396f4ec9",
+        "raw_sha256": "9ed414c6e1c40d8afc27e8e0bd635d826536994375037efc947098dc089f98b2",
     },
     "ledger_500_manifest": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-manifest.json",
@@ -45,7 +45,7 @@ INPUTS = {
     },
     "ledger_500_capabilities": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
-        "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6",
+        "raw_sha256": "8a6e14b35ce73362bc8c3dccc84788ab48a2e3f88284b41f1b4a6efc30cd7d13",
     },
     "official_capabilities_schema": {
         "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
@@ -72,16 +72,16 @@ INPUTS = {
 }
 
 PROOF_SCHEMA_RAW_SHA256 = (
-    "b1794e3ebeada0dfede9f96195b47c4eecda4fad6676f0080ced0036090da2cf"
+    "1e579c84754c3ce674c32a8d1264a8c537143c8f5f89faf2506ab03d1debb72e"
 )
 MANIFEST_SCHEMA_RAW_SHA256 = (
     "95d981d86879a2ac6e5a69c2f0a2c154d826f54ce15d87f773c0048f39c7ed48"
 )
 EXPECTED_PROOF_PAYLOAD_SHA256 = (
-    "d2f5a88ad2351bcd23ecba6916283e249460c6fe2e9bffc867e52a9aded35814"
+    "0a1a6db835adf397b4036e22e14d6d9d4afeb67b0ab1d790ffcef4a8a9383d23"
 )
 EXPECTED_PROOF_RAW_SHA256 = (
-    "65583c243381ab36f9804d66fa58299bf0cb3d1a3685d76d8af70c2fd5b029a3"
+    "809f03f5bdfdcb949e584c7bb40419e4069e3520fb073dd852c640ec11758154"
 )
 EXPECTED_MANIFEST_RAW_SHA256 = (
     "c71f75246fc1e4cbc388f93849d27c3b7dc7edf2d0a516fb3fa13f6d412a4a93"
@@ -400,7 +400,7 @@ def compile_projection() -> tuple[dict[str, Any], dict[str, Any]]:
     _assert_payload(ledger_proof, "projection_payload_sha256", "ledger-500 proof")
     if (
         ledger_proof["projection_payload_sha256"]
-        != "2c62052d9059cad422e2a1acf336a61bc6a14e6d1127d26d570b2c2df7ceb0ed"
+        != "a6142381bbec4c81fd14780dac46ffa018e4a5e077bd85d0d69572d5ec4ba7e4"
     ):
         raise ProjectionError("ledger-500 proof payload lock drift")
     if ledger_proof["artifacts"]["projected_manifest"] != {

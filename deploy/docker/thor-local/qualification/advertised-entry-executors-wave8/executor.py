@@ -269,11 +269,18 @@ def _load_inventory() -> tuple[dict[str, Any], dict[str, str]]:
             )
 
     expected_source_paths = {
+        "deploy/docker/services/video-summarization/compose.yml",
+        "deploy/docker/thor-local/Dockerfile.video-summarization",
+        "deploy/docker/thor-local/compose.yml",
+        "services/video-summarization/docker/package_file_list.txt",
         "services/video-summarization/src/lvs_mcp.py",
+        "services/video-summarization/src/lvs_mcp_sse.py",
+        "services/video-summarization/src/via_stream_handler.py",
         "services/video-summarization/src/via_server.py",
         "services/video-summarization/src/rtvi_vlm_client.py",
+        "services/video-summarization/tests/test_lvs_delete_cleanup.py",
         "services/video-summarization/tests/test_lvs_mcp.py",
-        "deploy/docker/services/video-summarization/compose.yml",
+        "services/video-summarization/tests/test_lvs_mcp_sse.py",
     }
     if {item["path"] for item in inventory["source_locks"]} != expected_source_paths:
         raise QualificationError("source-lock path set drift")
@@ -283,6 +290,8 @@ def _load_inventory() -> tuple[dict[str, Any], dict[str, str]]:
         if actual != lock["sha256"]:
             raise QualificationError(f"source lock mismatch: {lock['path']}")
         digests[lock["path"]] = actual
+
+    _validate_static_wiring()
 
     fixture = inventory["fixture"]
     fixture_bytes = fixture["content_utf8"].encode("utf-8")
@@ -334,6 +343,63 @@ class _ForbiddenTransport:
         raise QualificationError("MCP transport construction is prohibited")
 
 
+def _require_exact_fragments(relative: str, fragments: tuple[str, ...]) -> None:
+    try:
+        source = _read_repo_bytes(relative).decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise QualificationError(
+            f"static wiring source is not UTF-8: {relative}"
+        ) from exc
+    for fragment in fragments:
+        if source.count(fragment) != 1:
+            raise QualificationError(
+                f"static wiring fragment count drift: {relative}: {fragment!r}"
+            )
+
+
+def _validate_static_wiring() -> None:
+    """Bind the source/package wiring without claiming a built or live transport."""
+
+    _require_exact_fragments(
+        "services/video-summarization/src/lvs_mcp.py",
+        (
+            "from lvs_mcp_sse import SessionCleaningSseServerTransport",
+            'sse = SessionCleaningSseServerTransport("/messages")',
+        ),
+    )
+    _require_exact_fragments(
+        "services/video-summarization/docker/package_file_list.txt",
+        ("lvs_mcp_sse.py",),
+    )
+    _require_exact_fragments(
+        "deploy/docker/thor-local/Dockerfile.video-summarization",
+        (
+            "COPY services/video-summarization/src/lvs_mcp_sse.py /opt/nvidia/via/via-engine/lvs_mcp_sse.py",
+            "COPY deploy/docker/thor-local/vios-mcp/wheelhouse/mcp-1.23.0-py3-none-any.whl /tmp/mcp-1.23.0-py3-none-any.whl",
+            "5a645cf111ed329f4619f2629a3f15d9aabd7adc2ea09d600d31467b51ecb64f",
+            "UV_OFFLINE=1 /usr/local/bin/uv pip install --system --no-index --no-deps --reinstall",
+            'version("mcp") == "1.23.0"',
+            "CallToolResult(content=[], isError=True).isError is True",
+        ),
+    )
+    _require_exact_fragments(
+        "deploy/docker/services/video-summarization/compose.yml",
+        (
+            "- LVS_MCP_MAX_SSE_BYTES=${LVS_MCP_MAX_SSE_BYTES:-4194304}",
+            "- LVS_MCP_MAX_SSE_EVENTS=${LVS_MCP_MAX_SSE_EVENTS:-1024}",
+            "- LVS_MCP_SSE_TIMEOUT_SECONDS=${LVS_MCP_SSE_TIMEOUT_SECONDS:-600}",
+        ),
+    )
+    _require_exact_fragments(
+        "deploy/docker/thor-local/compose.yml",
+        (
+            "LVS_MCP_MAX_SSE_BYTES: ${LVS_MCP_MAX_SSE_BYTES:-4194304}",
+            "LVS_MCP_MAX_SSE_EVENTS: ${LVS_MCP_MAX_SSE_EVENTS:-1024}",
+            "LVS_MCP_SSE_TIMEOUT_SECONDS: ${LVS_MCP_SSE_TIMEOUT_SECONDS:-600}",
+        ),
+    )
+
+
 @contextmanager
 def _registration_import_stubs() -> Iterator[None]:
     names = (
@@ -342,6 +408,7 @@ def _registration_import_stubs() -> Iterator[None]:
         "mcp.server.sse",
         "mcp.server.stdio",
         "mcp.types",
+        "lvs_mcp_sse",
         "via_logger",
     )
     prior = {name: sys.modules.get(name) for name in names}
@@ -358,6 +425,7 @@ def _registration_import_stubs() -> Iterator[None]:
         raise QualificationError("MCP stdio transport is prohibited")
 
     stdio.stdio_server = forbidden_stdio
+    mcp_types.CallToolResult = _Record
     mcp_types.TextContent = _Record
     mcp_types.Tool = _Record
     quiet_logger = logging.getLogger("wave8-lvs-mcp")
@@ -377,6 +445,15 @@ def _registration_import_stubs() -> Iterator[None]:
         }
     )
     try:
+        helper_source = _repo_file("services/video-summarization/src/lvs_mcp_sse.py")
+        helper_spec = importlib.util.spec_from_file_location(
+            "lvs_mcp_sse", helper_source
+        )
+        if helper_spec is None or helper_spec.loader is None:
+            raise QualificationError("could not create SSE cleanup import spec")
+        helper_module = importlib.util.module_from_spec(helper_spec)
+        sys.modules["lvs_mcp_sse"] = helper_module
+        helper_spec.loader.exec_module(helper_module)
         yield
     finally:
         for name, module in prior.items():
@@ -672,11 +749,33 @@ def _run_semantic_probe(inventory: dict[str, Any]) -> dict[str, Any]:
                     "get_file_info", {"file_id": "/sensitive/operator/path"}
                 )
             )
-            sanitized_payload = json.loads(sanitized[0].text)
+            if getattr(sanitized, "isError", None) is not True:
+                raise QualificationError("file-tool failure was not an MCP tool error")
+            sanitized_content = getattr(sanitized, "content", None)
+            if (
+                not isinstance(sanitized_content, list)
+                or len(sanitized_content) != 1
+                or getattr(sanitized_content[0], "type", None) != "text"
+                or not isinstance(getattr(sanitized_content[0], "text", None), str)
+            ):
+                raise QualificationError("file-tool error content shape mismatch")
+            sanitized_payload = _strict_json_bytes(
+                sanitized_content[0].text.encode("utf-8"),
+                "file-tool CallToolResult",
+            )
             if sanitized_payload != {
                 "error": "get_file_info failed; see the LVS service log for details"
             }:
                 raise QualificationError("file-tool error sanitization mismatch")
+            if any(
+                fragment in sanitized_content[0].text
+                for fragment in (
+                    "/sensitive/operator/path",
+                    "ValueError",
+                    "Traceback",
+                )
+            ):
+                raise QualificationError("file-tool error leaked diagnostics")
 
             backend.invalid_upload_identity = True
             deletes_before = len(backend.delete_calls)
@@ -713,6 +812,7 @@ def build_result(selected: str | None = None) -> dict[str, Any]:
             "exact_13_tool_registration_executed",
             "in_process_asgi_health_dispatch_executed",
             "external_execution_guards_active",
+            "thor_sse_packaging_and_limits_source_locked",
         ]
         if case["adapter_id"] == "lvs_tool_dispatch_and_file_lifecycle":
             shared.extend(
@@ -721,10 +821,16 @@ def build_result(selected: str | None = None) -> dict[str, Any]:
                     "path_size_symlink_uuid_rejections_executed",
                     "invalid_metadata_rollback_executed",
                     "file_error_sanitization_executed",
+                    "delete_cleanup_implementation_and_tests_source_locked",
                 ]
             )
         else:
-            shared.append("shared_server_dispatch_subset_executed")
+            shared.extend(
+                [
+                    "shared_server_dispatch_subset_executed",
+                    "session_cleanup_implementation_and_tests_source_locked",
+                ]
+            )
         entries.append(
             {
                 "entry_id": case["entry_id"],

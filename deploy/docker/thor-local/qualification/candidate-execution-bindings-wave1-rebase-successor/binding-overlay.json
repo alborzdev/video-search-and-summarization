@@ -1,0 +1,550 @@
+{
+  "binding_rows_canonical_sha256": "f088de43966cb2f1e7a5451f6912be3d6736690eb2c4dc413e38a78e63acba1a",
+  "bindings": [
+    {
+      "action_contract": {
+        "action_contract_sha256": null,
+        "action_kind": null,
+        "argv": null,
+        "executor": null,
+        "status": "unresolved_fail_closed"
+      },
+      "admission_grade": false,
+      "authorization_consumed": false,
+      "candidate_id": "manifest-entry.video-summarization-live.05-sse-mcp-server",
+      "candidate_record_canonical_sha256": "b523becd0b511f975d38eb3947504e8185c8fe38b12b323838d32b514d664c07",
+      "cleanup_contract": {
+        "cleanup_executor": null,
+        "cleanup_rollback_contract_sha256": null,
+        "cleanup_targets": [],
+        "status": "unresolved_fail_closed"
+      },
+      "completion_receipt_consumed": false,
+      "deployed_observed": false,
+      "evidence_contract": {
+        "evidence_destination": null,
+        "evidence_records": [],
+        "observer_receipt_id": "successor-500-executable-subsets-wave1-receipt-2026-08-01",
+        "observer_receipt_is_runtime_evidence": false,
+        "status": "unresolved_fail_closed"
+      },
+      "input_contract": {
+        "fixture": null,
+        "model": null,
+        "runtime_request": null,
+        "status": "unresolved_fail_closed"
+      },
+      "oracle_id": "oracle.manifest-entry.video-summarization-live.05-sse-mcp-server",
+      "oracle_index": 310,
+      "overlay_state": "partial_source_proven_non_admission",
+      "postcondition_contract": {
+        "collectors": [],
+        "contract": null,
+        "status": "unresolved_fail_closed"
+      },
+      "retained_blockers": [
+        "A reviewed bounded MCP initialize/list-tools client and exact transport-session cleanup contract do not exist.",
+        "Candidate authorization must not imply profile lifecycle authority; a future action must consume an already-running separately authorized profile and preserve its pre-state.",
+        "Effective resolved endpoints, profile selection, image digest, and media-root path require a future runtime receipt.",
+        "The bounded summarize_video SSE adapter is source-locked but has not been observed through a live MCP transport/session.",
+        "The whole-stack thor-local.sh restart command is prohibited as a candidate executor.",
+        "Unknown-tool handling remains an in-process TextContent observation; live JSON-RPC transport behavior and no-route telemetry are not observed.",
+        "delete_file cleanup is source-level fail-closed, but deployed default_<file_id> Elasticsearch absence has not been observed.",
+        "deployed_lvs_not_observed",
+        "live_sse_connection_not_executed",
+        "live_transport_session_cleanup_not_observed",
+        "mcp_transport_and_handshake_not_executed",
+        "thor_runtime_readiness_not_observed"
+      ],
+      "runtime_evidence": [],
+      "runtime_ready": false,
+      "runtime_surface": {
+        "container_name": "vss-lvs",
+        "effective_profile_id": null,
+        "effective_resolved_endpoints": null,
+        "network_mode": "host",
+        "profile_id_source_default": "bp_developer_thor_full_2d",
+        "profile_paths": [
+          "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+          "deploy/docker/developer-profiles/dev-profile-thor-full/.env"
+        ],
+        "service_definition_include_chain": [
+          "deploy/docker/compose.yml",
+          "deploy/docker/services/compose.yml",
+          "deploy/docker/services/video-summarization/compose.yml"
+        ],
+        "service_role": "lvs-server",
+        "source_declared_interface": {
+          "default_health_endpoint": "http://127.0.0.1:38111/v1/ready",
+          "default_maximum_media_bytes": 8589934592,
+          "default_mcp_get_endpoint": "http://127.0.0.1:38112/sse",
+          "default_mcp_post_endpoint": "http://127.0.0.1:38112/messages",
+          "health_endpoint_is_mcp_readiness_proof": false,
+          "media_root_container_path": "/opt/nvidia/via/mcp-media",
+          "media_root_host_bind_expression": "${VSS_DATA_DIR}/videos",
+          "media_root_read_only": true,
+          "tool_names": [
+            "health_ready",
+            "health_live",
+            "list_models",
+            "add_file",
+            "list_files",
+            "get_file_info",
+            "delete_file",
+            "summarize_video",
+            "generate_vlm_captions",
+            "generate_captions",
+            "stream_summarize",
+            "get_recommended_config",
+            "get_metrics"
+          ]
+        },
+        "source_locks": [
+          {
+            "path": "deploy/docker/compose.yml",
+            "raw_sha256": "aed3eb17a594eb278f8a3ec8c4e3a3590a1314504c28be646d28231d07a1f77e"
+          },
+          {
+            "path": "deploy/docker/services/compose.yml",
+            "raw_sha256": "6e901bde4e67d19d0a0a78b6dffbcb1bb05b60253d2c945025f7d3adc444822c"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/compose.yml",
+            "raw_sha256": "7e419ba68db50aae4cd581bd0d789169c0bcff3f07f40b2ca2c9813b347dfdb2"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+            "raw_sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+          },
+          {
+            "path": "deploy/docker/services/video-summarization/compose.yml",
+            "raw_sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
+          },
+          {
+            "path": "deploy/docker/thor-local/compose.yml",
+            "raw_sha256": "b3f8b8d94f05e0edfbe0e1652457c80bd821d0dc93271fb75e2bc40b188c12ce"
+          },
+          {
+            "path": "deploy/docker/scripts/thor-local.sh",
+            "raw_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+            "raw_sha256": "a80aa33ed97ea2947caff05402e6a049d2aeec81b4152857063d178163cff718"
+          },
+          {
+            "path": "services/video-summarization/src/lvs_mcp.py",
+            "raw_sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+          },
+          {
+            "path": "services/video-summarization/src/via_server.py",
+            "raw_sha256": "2f95a82460a932cc3aac0161ed227eac12f2ac080dc7e44ef1641841730d5e6d"
+          },
+          {
+            "path": "services/video-summarization/src/via_stream_handler.py",
+            "raw_sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"
+          },
+          {
+            "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+            "raw_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
+          },
+          {
+            "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
+            "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"
+          },
+          {
+            "path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workloads.json",
+            "raw_sha256": "ca4170118a94a659acca600d9ab00dca6504544f062edabd5cef0ed3311e8312"
+          }
+        ],
+        "status": "source_proven_static_wiring_not_deployed",
+        "top_level_compose_inputs": [
+          "deploy/docker/compose.yml",
+          "deploy/docker/thor-local/compose.yml"
+        ]
+      },
+      "transport_observed": false,
+      "unresolved_fields": [
+        "action_contract.action_contract_sha256",
+        "action_contract.argv",
+        "action_contract.executor",
+        "cleanup_contract.cleanup_executor",
+        "cleanup_contract.cleanup_rollback_contract_sha256",
+        "evidence_contract.evidence_destination",
+        "evidence_contract.evidence_records",
+        "input_contract.fixture",
+        "input_contract.model",
+        "input_contract.runtime_request",
+        "postcondition_contract.contract",
+        "postcondition_contract.collectors",
+        "runtime_surface.effective_profile_id",
+        "runtime_surface.effective_resolved_endpoints",
+        "runtime_evidence"
+      ],
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "action_contract": {
+        "action_contract_sha256": null,
+        "action_kind": null,
+        "argv": null,
+        "executor": null,
+        "status": "unresolved_fail_closed"
+      },
+      "admission_grade": false,
+      "authorization_consumed": false,
+      "candidate_id": "manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
+      "candidate_record_canonical_sha256": "e06850f09ddaadfb6ab40324816f2bff0b19eae5341ec3b7df4e1955f431bc3d",
+      "cleanup_contract": {
+        "cleanup_executor": null,
+        "cleanup_rollback_contract_sha256": null,
+        "cleanup_targets": [],
+        "status": "unresolved_fail_closed"
+      },
+      "completion_receipt_consumed": false,
+      "deployed_observed": false,
+      "evidence_contract": {
+        "evidence_destination": null,
+        "evidence_records": [],
+        "observer_receipt_id": "successor-500-executable-subsets-wave1-receipt-2026-08-01",
+        "observer_receipt_is_runtime_evidence": false,
+        "status": "unresolved_fail_closed"
+      },
+      "input_contract": {
+        "fixture": null,
+        "model": null,
+        "runtime_request": null,
+        "status": "unresolved_fail_closed"
+      },
+      "oracle_id": "oracle.manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
+      "oracle_index": 468,
+      "overlay_state": "partial_source_proven_non_admission",
+      "postcondition_contract": {
+        "collectors": [],
+        "contract": null,
+        "status": "unresolved_fail_closed"
+      },
+      "retained_blockers": [
+        "Candidate authorization must not imply profile lifecycle authority; a future action must consume an already-running separately authorized profile and preserve its pre-state.",
+        "Effective resolved endpoints, profile selection, image digest, and media-root path require a future runtime receipt.",
+        "No candidate-specific tool request, expected result, bounded client, cleanup contract, or evidence collector has been reviewed; planned get_lvs_hitl_state has no production MCP tool or completion field and requires oracle/workload repair.",
+        "The bounded summarize_video SSE adapter is source-locked but has not been observed through a live MCP transport/session.",
+        "The whole-stack thor-local.sh restart command is prohibited as a candidate executor.",
+        "Unknown-tool handling remains an in-process TextContent observation; live JSON-RPC transport behavior and no-route telemetry are not observed.",
+        "delete_file cleanup is source-level fail-closed, but deployed default_<file_id> Elasticsearch absence has not been observed.",
+        "deployed_delete_cleanup_not_observed",
+        "live_lvs_service_not_executed",
+        "mcp_transport_and_handshake_not_executed",
+        "thor_runtime_readiness_not_observed",
+        "vlm_inference_not_executed"
+      ],
+      "runtime_evidence": [],
+      "runtime_ready": false,
+      "runtime_surface": {
+        "container_name": "vss-lvs",
+        "effective_profile_id": null,
+        "effective_resolved_endpoints": null,
+        "network_mode": "host",
+        "profile_id_source_default": "bp_developer_thor_full_2d",
+        "profile_paths": [
+          "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+          "deploy/docker/developer-profiles/dev-profile-thor-full/.env"
+        ],
+        "service_definition_include_chain": [
+          "deploy/docker/compose.yml",
+          "deploy/docker/services/compose.yml",
+          "deploy/docker/services/video-summarization/compose.yml"
+        ],
+        "service_role": "lvs-server",
+        "source_declared_interface": {
+          "default_health_endpoint": "http://127.0.0.1:38111/v1/ready",
+          "default_maximum_media_bytes": 8589934592,
+          "default_mcp_get_endpoint": "http://127.0.0.1:38112/sse",
+          "default_mcp_post_endpoint": "http://127.0.0.1:38112/messages",
+          "health_endpoint_is_mcp_readiness_proof": false,
+          "media_root_container_path": "/opt/nvidia/via/mcp-media",
+          "media_root_host_bind_expression": "${VSS_DATA_DIR}/videos",
+          "media_root_read_only": true,
+          "tool_names": [
+            "health_ready",
+            "health_live",
+            "list_models",
+            "add_file",
+            "list_files",
+            "get_file_info",
+            "delete_file",
+            "summarize_video",
+            "generate_vlm_captions",
+            "generate_captions",
+            "stream_summarize",
+            "get_recommended_config",
+            "get_metrics"
+          ]
+        },
+        "source_locks": [
+          {
+            "path": "deploy/docker/compose.yml",
+            "raw_sha256": "aed3eb17a594eb278f8a3ec8c4e3a3590a1314504c28be646d28231d07a1f77e"
+          },
+          {
+            "path": "deploy/docker/services/compose.yml",
+            "raw_sha256": "6e901bde4e67d19d0a0a78b6dffbcb1bb05b60253d2c945025f7d3adc444822c"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/compose.yml",
+            "raw_sha256": "7e419ba68db50aae4cd581bd0d789169c0bcff3f07f40b2ca2c9813b347dfdb2"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+            "raw_sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+          },
+          {
+            "path": "deploy/docker/services/video-summarization/compose.yml",
+            "raw_sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
+          },
+          {
+            "path": "deploy/docker/thor-local/compose.yml",
+            "raw_sha256": "b3f8b8d94f05e0edfbe0e1652457c80bd821d0dc93271fb75e2bc40b188c12ce"
+          },
+          {
+            "path": "deploy/docker/scripts/thor-local.sh",
+            "raw_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+            "raw_sha256": "a80aa33ed97ea2947caff05402e6a049d2aeec81b4152857063d178163cff718"
+          },
+          {
+            "path": "services/video-summarization/src/lvs_mcp.py",
+            "raw_sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+          },
+          {
+            "path": "services/video-summarization/src/via_server.py",
+            "raw_sha256": "2f95a82460a932cc3aac0161ed227eac12f2ac080dc7e44ef1641841730d5e6d"
+          },
+          {
+            "path": "services/video-summarization/src/via_stream_handler.py",
+            "raw_sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"
+          },
+          {
+            "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+            "raw_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
+          },
+          {
+            "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
+            "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"
+          },
+          {
+            "path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workloads.json",
+            "raw_sha256": "ca4170118a94a659acca600d9ab00dca6504544f062edabd5cef0ed3311e8312"
+          }
+        ],
+        "status": "source_proven_static_wiring_not_deployed",
+        "top_level_compose_inputs": [
+          "deploy/docker/compose.yml",
+          "deploy/docker/thor-local/compose.yml"
+        ]
+      },
+      "transport_observed": false,
+      "unresolved_fields": [
+        "action_contract.action_contract_sha256",
+        "action_contract.argv",
+        "action_contract.executor",
+        "cleanup_contract.cleanup_executor",
+        "cleanup_contract.cleanup_rollback_contract_sha256",
+        "evidence_contract.evidence_destination",
+        "evidence_contract.evidence_records",
+        "input_contract.fixture",
+        "input_contract.model",
+        "input_contract.runtime_request",
+        "postcondition_contract.contract",
+        "postcondition_contract.collectors",
+        "runtime_surface.effective_profile_id",
+        "runtime_surface.effective_resolved_endpoints",
+        "runtime_evidence"
+      ],
+      "warehouse_sample_bundle": "excluded"
+    }
+  ],
+  "mode": "inert_read_only_source_proven_partial_binding_overlay",
+  "overlay_id": "thor-vss-3.2.1-candidate-execution-bindings-wave1-rebase-successor",
+  "policy": {
+    "admission_effect": "none",
+    "authorization_consumed": false,
+    "cloud_inference_required": false,
+    "compiler_can_execute": false,
+    "completion_receipt_consumed": false,
+    "deployed_observed": false,
+    "observer_evidence_is_runtime_evidence": false,
+    "service_lifecycle_mutation": false,
+    "transport_observed": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "schema_version": 1,
+  "source_identities": {
+    "authority_registry_raw_sha256": "954aa42541f715bdbb25148a322e2e3b3380f27fc4f958e8ba0e7378945acdd4",
+    "authority_registry_schema_raw_sha256": "46593bea289de96c0b9fe799f8a6c6c4087b730977dde6bcd26c016bd58dd297",
+    "historical_overlay_raw_sha256": "aeb8eec139138f45a12a7673abe6f65cca455dbc1717e145e626fc58e70add24",
+    "registry_binding_rows_canonical_sha256": "0d8b334e25330d8f5142a6fff91cc13fc3ebf0c013a371e1f6b41334530c0924",
+    "registry_id": "thor-vss-3.2.1-candidate-execution-binding-registry-rebase-successor",
+    "registry_raw_sha256": "af3927c15f9e5c1efb67690ee7ca3f3e6ee9fb77e720767db2264d68a935b6b5",
+    "signed_receipt_set_raw_sha256": "84ce0c682a49dc930f33fa2bb698e9a7f66a14902cf123e0cba060a8c0f8ed24",
+    "signed_receipt_set_schema_raw_sha256": "05bb7d89d5e0d3648f1ca17a7211540e9083ce0d73ffd073e2a1d5ff0202d27a",
+    "wave1_contract_id": "successor-500-executable-subsets-wave1-2026-08-01",
+    "wave1_receipt_id": "successor-500-executable-subsets-wave1-receipt-2026-08-01"
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/registry.json",
+      "raw_sha256": "af3927c15f9e5c1efb67690ee7ca3f3e6ee9fb77e720767db2264d68a935b6b5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/registry.schema.json",
+      "raw_sha256": "8c2f7fa335340ceaf6870236e11fa2f4d290ba0ee3029f101495b6f66dda1f61"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/locator-locks.json",
+      "raw_sha256": "d1882d4811bd661fd011f8cf91894951cc8af806c56968218ef0100b500b69a0"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-rebase-successor/locator-locks.schema.json",
+      "raw_sha256": "3cad143f04ebb9a80b11e180aed9a6ccb573d247d52b617ea8caeb9805075cb2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-rebase-successor/admission-index.json",
+      "raw_sha256": "74398a4239cfd13f753924aaf65b5ce16e6f96b44dc9eae8067eddb8a03456ff"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-rebase-successor/admission-index.schema.json",
+      "raw_sha256": "54cef2f2dc7879f817ff21c2b2472b19629d23c028fc25c3cee04fe9f09926d7"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-rebase-successor/receipt-set.json",
+      "raw_sha256": "e3d3d918bb392d903c00d82687efbf24d7c834019761929304019bbd4930132f"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-rebase-successor/receipt-set.schema.json",
+      "raw_sha256": "63dfd032bb3625fd1d5002f19a10e25f72f1c775c9f2c5ce6ee1121531449c10"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/successor-500-executable-subsets-wave1/contract.json",
+      "raw_sha256": "fae464894d7d565a1078f852776bb005e0426c4280473d551bbec3e727e2d53c"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/successor-500-executable-subsets-wave1/contract.schema.json",
+      "raw_sha256": "aeac007e154451fd33bf17f126b561518d7a2a4ff752b2aa683d56896b9bf84b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/successor-500-executable-subsets-wave1/successor-capability-oracles.json",
+      "raw_sha256": "1a066029a04bc67bcefd4571f24fce1cda1df275ab48aed48f99ea7e274f10b5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/successor-500-executable-subsets-wave1/successor-capability-oracles.schema.json",
+      "raw_sha256": "ee7391aeb8cb9c433df77df378adcd7cfb0a91c070a1940132e9ab77cdeadbca"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/successor-500-executable-subsets-wave1/execution-receipt.json",
+      "raw_sha256": "ab07eac3e5c240f55d2480fe34aa5128be0cd62b3a64027e3ae689cb27bd0396"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/successor-500-executable-subsets-wave1/execution-receipt.schema.json",
+      "raw_sha256": "f4071b29a45a5d487a241914ef7023fed39f52bc3103704f27ad76a86b3b4618"
+    },
+    {
+      "path": "deploy/docker/compose.yml",
+      "raw_sha256": "aed3eb17a594eb278f8a3ec8c4e3a3590a1314504c28be646d28231d07a1f77e"
+    },
+    {
+      "path": "deploy/docker/services/compose.yml",
+      "raw_sha256": "6e901bde4e67d19d0a0a78b6dffbcb1bb05b60253d2c945025f7d3adc444822c"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/compose.yml",
+      "raw_sha256": "7e419ba68db50aae4cd581bd0d789169c0bcff3f07f40b2ca2c9813b347dfdb2"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+      "raw_sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+    },
+    {
+      "path": "deploy/docker/services/video-summarization/compose.yml",
+      "raw_sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "raw_sha256": "b3f8b8d94f05e0edfbe0e1652457c80bd821d0dc93271fb75e2bc40b188c12ce"
+    },
+    {
+      "path": "deploy/docker/scripts/thor-local.sh",
+      "raw_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
+      "raw_sha256": "a80aa33ed97ea2947caff05402e6a049d2aeec81b4152857063d178163cff718"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "raw_sha256": "2f95a82460a932cc3aac0161ed227eac12f2ac080dc7e44ef1641841730d5e6d"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "raw_sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "raw_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
+      "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workloads.json",
+      "raw_sha256": "ca4170118a94a659acca600d9ab00dca6504544f062edabd5cef0ed3311e8312"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-authority-registry-rebase-successor/authority-registry.json",
+      "raw_sha256": "954aa42541f715bdbb25148a322e2e3b3380f27fc4f958e8ba0e7378945acdd4"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-authority-registry-rebase-successor/authority-registry.schema.json",
+      "raw_sha256": "46593bea289de96c0b9fe799f8a6c6c4087b730977dde6bcd26c016bd58dd297"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-authority-registry-rebase-successor/signed-receipt-set.json",
+      "raw_sha256": "84ce0c682a49dc930f33fa2bb698e9a7f66a14902cf123e0cba060a8c0f8ed24"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-authority-registry-rebase-successor/signed-receipt-set.schema.json",
+      "raw_sha256": "05bb7d89d5e0d3648f1ca17a7211540e9083ce0d73ffd073e2a1d5ff0202d27a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-authority-registry-rebase-successor/compiler.py",
+      "raw_sha256": "e18fde2f2cad8a5fb74c10688e8f0ef57d15891d3ae175be44dbfe243019e2a3"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-authority-registry-rebase-successor/tests/test_compiler.py",
+      "raw_sha256": "c9dd77bdad91177e0e5e1e1c4a1d00d7fdcfb50340de3392725a01f23bd191b5"
+    }
+  ],
+  "summary": {
+    "action_contracts": 0,
+    "admission_grade_bindings": 0,
+    "binding_count": 2,
+    "cleanup_contracts": 0,
+    "evidence_contracts": 0,
+    "partial_bindings": 2,
+    "partial_service_profile_bindings": 2,
+    "postcondition_collectors": 0,
+    "runtime_evidence_records": 0
+  },
+  "target": {
+    "hardware": "NVIDIA Jetson Thor",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

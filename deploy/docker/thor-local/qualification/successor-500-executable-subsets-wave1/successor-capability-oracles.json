@@ -23,19 +23,22 @@
         "exact_13_tool_registration_executed",
         "in_process_asgi_health_dispatch_executed",
         "external_execution_guards_active",
-        "shared_server_dispatch_subset_executed"
+        "thor_sse_packaging_and_limits_source_locked",
+        "shared_server_dispatch_subset_executed",
+        "session_cleanup_implementation_and_tests_source_locked"
       ],
       "oracle_index": 310,
-      "oracle_row_canonical_sha256": "daf6d4a628c8e972d2eb996b3d56f2d6f814d584a378be06f80a3e7a50cc0974",
+      "oracle_row_canonical_sha256": "b523becd0b511f975d38eb3947504e8185c8fe38b12b323838d32b514d664c07",
       "receipt_id": "successor-500-executable-subsets-wave1-receipt-2026-08-01",
       "retained_blockers": [
         "live_sse_connection_not_executed",
         "mcp_transport_and_handshake_not_executed",
+        "live_transport_session_cleanup_not_observed",
         "deployed_lvs_not_observed",
         "thor_runtime_readiness_not_observed"
       ],
       "runtime_evidence": [],
-      "wave8_result_canonical_sha256": "a000f8db5b3bcec6f0da50828dcf9e31126655fe0962f964491317c29218c823"
+      "wave8_result_canonical_sha256": "fa3f9188eb30d9f952053c2af626ee73cbb49840fd4843382d111877f47c9a3e"
     },
     {
       "admission_effect": {
@@ -60,22 +63,25 @@
         "exact_13_tool_registration_executed",
         "in_process_asgi_health_dispatch_executed",
         "external_execution_guards_active",
+        "thor_sse_packaging_and_limits_source_locked",
         "bounded_file_add_list_info_delete_executed",
         "path_size_symlink_uuid_rejections_executed",
         "invalid_metadata_rollback_executed",
-        "file_error_sanitization_executed"
+        "file_error_sanitization_executed",
+        "delete_cleanup_implementation_and_tests_source_locked"
       ],
       "oracle_index": 468,
       "oracle_row_canonical_sha256": "e06850f09ddaadfb6ab40324816f2bff0b19eae5341ec3b7df4e1955f431bc3d",
       "receipt_id": "successor-500-executable-subsets-wave1-receipt-2026-08-01",
       "retained_blockers": [
         "mcp_transport_and_handshake_not_executed",
+        "deployed_delete_cleanup_not_observed",
         "live_lvs_service_not_executed",
         "vlm_inference_not_executed",
         "thor_runtime_readiness_not_observed"
       ],
       "runtime_evidence": [],
-      "wave8_result_canonical_sha256": "a000f8db5b3bcec6f0da50828dcf9e31126655fe0962f964491317c29218c823"
+      "wave8_result_canonical_sha256": "fa3f9188eb30d9f952053c2af626ee73cbb49840fd4843382d111877f47c9a3e"
     }
   ],
   "artifact_id": "successor-500-executable-subsets-wave1",
@@ -99,18 +105,18 @@
   "mode": "byte_identical_v2_oracles_plus_non_promoting_annotation_index",
   "oracle_document": {
     "byte_identical_to_selected_metadata_set": true,
-    "canonical_sha256": "1c2dae973a8ad69b02730f21d1d504fb9f80e3a6200bc98e1f435fad195ef286",
-    "descriptor_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9",
-    "ordered_rows_canonical_sha256": "8aa755010f7e40dd045380a652f0f5a7c56b31b86db71c9d6c8baee35ce0157d",
-    "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json",
-    "raw_sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271",
+    "canonical_sha256": "540242022bd50ef2d52d5ee610b4b2ae2ada041da4a6603b174c61e80154c2eb",
+    "descriptor_raw_sha256": "4c343433c56daa87e418752de37e51d733037183d8296e1d7692a3dcaccd82ca",
+    "ordered_rows_canonical_sha256": "a894d73f92b6df3b495c8117a6344e844a071f119ecbc9e61aeb28089a1be34a",
+    "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebase-successor/post-state-capability-oracles.json",
+    "raw_sha256": "911c38e2db0f92bdcc46938c90bac67626ef1009a4e131f1feee5538dcbee021",
     "set_id": "thor-vss-3.2.1-metadata-500-staged"
   },
-  "projection_canonical_sha256": "de1407e43bb86a8cd558fafc11a266065411a9405997acec3c5cdf3589dd7b4c",
+  "projection_canonical_sha256": "9204a2d6cf66ac9545b0f6caeeff41e817631931a7f6abd22d8c3c75e4d78822",
   "schema_version": 1,
   "unannotated_partition": {
     "all_rows_byte_identical": true,
     "count": 498,
-    "ordered_row_identity_canonical_sha256": "133610f03b53bdcc447bd5440b955ee8ad159f3fed3b5263daa9bc881b52a84b"
+    "ordered_row_identity_canonical_sha256": "2ff618019fade2f4bd7ffc5451348ce7087d4e229e9540b40b3c35dec482443c"
   }
 }

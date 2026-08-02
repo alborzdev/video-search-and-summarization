@@ -1,14 +1,14 @@
 {
-  "component_schema_hash": "c1fd1c96967c6c0ac16b5f0b9f991485c5abcbfe94a678cc070420ad6fc3b9f3",
-  "declared_operation_count": 19,
+  "component_schema_hash": "e74f4ec3bca63c1b745761a4aa29011fc97fd172cce4a0a6cdad17d17f79ad44",
+  "declared_operation_count": 21,
   "kind": "rest",
   "method_counts": {
-    "DELETE": 2,
-    "GET": 9,
+    "DELETE": 3,
+    "GET": 10,
     "POST": 7,
     "PUT": 1
   },
-  "normalized_unique_operation_count": 19,
+  "normalized_unique_operation_count": 21,
   "operations": [
     {
       "method": "POST",
@@ -104,7 +104,19 @@
       "method": "POST",
       "operation_id": "verify_ondemand_api_v1_verification_ondemand_post",
       "path": "/api/v1/verification/ondemand",
-      "schema_hash": "088d0aba63dbb357247e261b8b8e55bc472b4cfe182102e1363a4252f9b2d5cf"
+      "schema_hash": "8cf17c3fcac7869992a830d9c52c2c99bb0778093d2cec63d80ad238b16a70ae"
+    },
+    {
+      "method": "DELETE",
+      "operation_id": "cancel_ondemand_api_v1_verification_ondemand__correlation_id__delete",
+      "path": "/api/v1/verification/ondemand/{correlation_id}",
+      "schema_hash": "a94038f0fc98f59c9f57d3c621f12d1d4fecd057feb59268d6c68a94e3d27c8f"
+    },
+    {
+      "method": "GET",
+      "operation_id": "get_ondemand_status_api_v1_verification_ondemand__correlation_id__get",
+      "path": "/api/v1/verification/ondemand/{correlation_id}",
+      "schema_hash": "1eef59862b85a8902f582d6b7ab2d156b9afee9e476cf82978ebae5b53cc6614"
     },
     {
       "method": "GET",
@@ -129,7 +141,7 @@
   "source_files": [
     {
       "path": "services/alert/openapi.json",
-      "sha256": "e754ab3efedddb90199c77c0fa8d33b7e6d44663d84b51d34c5f4e8dcc39194d"
+      "sha256": "d7336051ddbbb368d6376bbe0a0d71414b2738a7e1899321eddb4d24dcd95881"
     }
   ],
   "surface": "alerts"

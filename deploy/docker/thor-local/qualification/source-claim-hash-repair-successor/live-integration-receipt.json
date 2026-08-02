@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "integration_id": "source-claim-hash-repair-successor-2026-08-02",
+  "target": {
+    "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+    "predecessor_raw_sha256": "fb1638a82e8bf04b0b07482fc016184c3abc6bc692ca8a11fa94681837953055",
+    "successor_raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
+  },
+  "changes": [
+    {
+      "source_index": 0,
+      "source_id": "release-notes-3.2.1",
+      "old_claim_set_sha256": "19081de42ba87a582281ea68046a08e98602a14b33579da5d970b9fd2e59bd22",
+      "new_claim_set_sha256": "4dd56cbf6453067e5d6515977fd681fdd51a1067823fd91710e777f778ec9de5",
+      "semantic_pointer": "/sources/0/claim_set_sha256"
+    },
+    {
+      "source_index": 17,
+      "source_id": "lvs-api-doc-3.2.1",
+      "old_claim_set_sha256": "eef97a91cba69f24c4d9f04457dbc7652df07247bc0cdcbd9d7159b2d9a97c8f",
+      "new_claim_set_sha256": "03c398b054ce2acf6fcf74fb0f93cb2b61a5d7a946137743696b58943606e065",
+      "semantic_pointer": "/sources/17/claim_set_sha256"
+    },
+    {
+      "source_index": 18,
+      "source_id": "lvs-doc-3.2.1",
+      "old_claim_set_sha256": "17a2fe3fd627f9d06edc0585e02df7f8244694dab3b5d209c9bc701a3deec99a",
+      "new_claim_set_sha256": "dd5748aa7a58bc774ed46f8553709dcfbffddcff8907d265898bf63060b36145",
+      "semantic_pointer": "/sources/18/claim_set_sha256"
+    },
+    {
+      "source_index": 19,
+      "source_id": "alerts-api-doc-3.2.1",
+      "old_claim_set_sha256": "4a22b631724480354490fbca61aa8e6de63eaeb0cb96cbb59ab689e033c114ec",
+      "new_claim_set_sha256": "ab5df280aec7dc38ae64c6873a5378e2104888f1fdbcc0f57bb7649dfeb8c83e",
+      "semantic_pointer": "/sources/19/claim_set_sha256"
+    },
+    {
+      "source_index": 32,
+      "source_id": "main-repository-7732edf8",
+      "old_claim_set_sha256": "fc36e720d9ab4a684b328a2b234456959932163de93e5d8dd54d162b2fe97089",
+      "new_claim_set_sha256": "d0b3c9f0811df7a07f1bf5255d0c86b9ff3e4b530b45424009628ebcc821d65c",
+      "semantic_pointer": "/sources/32/claim_set_sha256"
+    },
+    {
+      "source_index": 77,
+      "source_id": "doc.alerts",
+      "old_claim_set_sha256": "26c179a55ce9f6e372ea3299ad422b11bdaf94cf87d453014d9cbe634662958e",
+      "new_claim_set_sha256": "ffdabea5ad022b1ef87301860138ffe0c3e9532ef1304dfb9ab1bdca4ced4754",
+      "semantic_pointer": "/sources/77/claim_set_sha256"
+    }
+  ],
+  "preserved_aggregates": [
+    {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+    }
+  ],
+  "boundaries": {
+    "semantic_leaf_change_count": 6,
+    "capabilities_changed": false,
+    "oracles_written": false,
+    "manifest_written": false,
+    "acceptance_written": false,
+    "runtime_evidence_added": false,
+    "passed_current_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "network": "forbidden",
+    "docker": "forbidden",
+    "services": "forbidden"
+  },
+  "rollback": {
+    "command": "integrate_live.py rollback",
+    "restores_exact_predecessor_digest": true,
+    "semantic_leaf_change_count": 6
+  },
+  "contract_sha256": "2efd4f7ccf6a16348010a399f81a3ea4226c0b943b550d79e2b1599f6aec9dc6",
+  "lifecycle": "source_claim_hash_repair_successor_integrated"
+}

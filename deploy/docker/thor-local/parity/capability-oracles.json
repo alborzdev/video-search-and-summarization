@@ -23303,7 +23303,7 @@
           "auth": "bearer",
           "operation_count": 18,
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-          "expected_manifest_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
+          "expected_manifest_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17"
         },
         "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval."
       },
@@ -23331,7 +23331,7 @@
             "auth": "bearer",
             "operation_count": 18,
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-            "expected_manifest_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
+            "expected_manifest_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17"
           },
           "namespace": "vss-oracle-api-core-lvs-17",
           "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -23374,7 +23374,7 @@
           "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
-          "expected": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf"
+          "expected": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17"
         },
         {
           "id": "contract-05",
@@ -23509,9 +23509,9 @@
           "prefix": "/api/v1",
           "direct_auth": "none",
           "gateway_auth": "optional",
-          "operation_count": 19,
+          "operation_count": 21,
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
-          "expected_manifest_sha256": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b",
+          "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
           "semantic_surface": [
             "alerts",
             "incidents"
@@ -23556,9 +23556,9 @@
             "prefix": "/api/v1",
             "direct_auth": "none",
             "gateway_auth": "optional",
-            "operation_count": 19,
+            "operation_count": 21,
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
-            "expected_manifest_sha256": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b",
+            "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
             "semantic_surface": [
               "alerts",
               "incidents"
@@ -23615,7 +23615,7 @@
           "id": "contract-03",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
-          "expected": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b"
+          "expected": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1"
         },
         {
           "id": "contract-04",
@@ -23627,7 +23627,7 @@
           "id": "contract-05",
           "observation": "contract_identity/contract/operation_count",
           "operator": "equals",
-          "expected": 19
+          "expected": 21
         },
         {
           "id": "contract-06",
@@ -23718,12 +23718,12 @@
         "collectors": [],
         "network_scope": "loopback-or-compose-internal",
         "max_duration_seconds": 900,
-        "max_requests": 77,
+        "max_requests": 85,
         "workload": {
-          "units": 19,
+          "units": 21,
           "requests_per_unit": 4,
           "overhead_requests": 1,
-          "calculated_max_requests": 77,
+          "calculated_max_requests": 85,
           "phases": [
             "positive",
             "adjacent_negative",
@@ -23733,7 +23733,7 @@
         },
         "model_staging": "prerequisite_only",
         "warehouse_sample_bundle": "excluded",
-        "max_actions": 77
+        "max_actions": 85
       },
       "cleanup": {
         "mutation": "namespaced_and_reversible",
@@ -25940,7 +25940,7 @@
             "delete_file"
           ],
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-          "expected_manifest_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
+          "expected_manifest_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
         },
         "gap": "A Thor-local static adapter now supplies the four file-management MCP tools missing from the pinned upstream repositories. The exact 13-tool source contract is wired, but discovery and a disposable add/list/info/delete lifecycle still require runtime qualification."
       },
@@ -26004,7 +26004,7 @@
               "delete_file"
             ],
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-            "expected_manifest_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
+            "expected_manifest_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
           },
           "namespace": "vss-oracle-api-core-lvs-mcp-doc-13-repo-9",
           "action": "verify the expected manifest file digest and exact live operation/tool set, then run a reviewed method-specific positive, adjacent-negative, readback, and exact-cleanup oracle for every inventoried operation"
@@ -26041,7 +26041,7 @@
           "id": "contract-03",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals",
-          "expected": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e"
+          "expected": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c"
         },
         {
           "id": "contract-04",

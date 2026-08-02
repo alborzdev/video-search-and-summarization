@@ -18,7 +18,7 @@
     "historical_live_oracle_migration_pending": true
   },
   "composition_id": "vss-3.2.1-thor-metadata-500-successor",
-  "composition_payload_sha256": "37f8b32b77e849d4328d8dfdc24428fc97f998f0eb70f473e87cc3ffeace3570",
+  "composition_payload_sha256": "1b54a82b054322dafba930ca8f5160cd136ddff0c2156d14fa9536d2cb5682f1",
   "identity_order": {
     "orders_equal": true,
     "projected_capability_count": 500,
@@ -72,11 +72,11 @@
     },
     "acceptance_proof": {
       "path": "deploy/docker/thor-local/qualification/acceptance-500-successor/projection.json",
-      "raw_sha256": "dd65544dc587e01f0bb1ffd50442c9903a6d6200b0722d83a709902ec99d598c"
+      "raw_sha256": "23626164bb1951f68770b42deb88bae12a710f4e426cbf462105bc5cacc10d48"
     },
     "acceptance_proof_schema": {
       "path": "deploy/docker/thor-local/qualification/acceptance-500-successor/projection.schema.json",
-      "raw_sha256": "4c744244333382200fc2d551e9c02ff2d01c3d5dd2d839353c4ffa0ca793ea0c"
+      "raw_sha256": "43cfc1c6ef6c82b184aa4620942bd9d130625547f191a7178697f8efee7ee234"
     },
     "acceptance_schema": {
       "path": "deploy/docker/thor-local/qualification/acceptance-500-successor/projected-acceptance-inventory.schema.json",
@@ -92,15 +92,15 @@
     },
     "aggregate_proof": {
       "path": "deploy/docker/thor-local/qualification/manifest-500-aggregate-successor/projection.json",
-      "raw_sha256": "65583c243381ab36f9804d66fa58299bf0cb3d1a3685d76d8af70c2fd5b029a3"
+      "raw_sha256": "809f03f5bdfdcb949e584c7bb40419e4069e3520fb073dd852c640ec11758154"
     },
     "aggregate_proof_schema": {
       "path": "deploy/docker/thor-local/qualification/manifest-500-aggregate-successor/projection.schema.json",
-      "raw_sha256": "b1794e3ebeada0dfede9f96195b47c4eecda4fad6676f0080ced0036090da2cf"
+      "raw_sha256": "1e579c84754c3ce674c32a8d1264a8c537143c8f5f89faf2506ab03d1debb72e"
     },
     "ledger": {
       "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
-      "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6"
+      "raw_sha256": "8a6e14b35ce73362bc8c3dccc84788ab48a2e3f88284b41f1b4a6efc30cd7d13"
     },
     "ledger_manifest": {
       "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-manifest.json",
@@ -108,11 +108,11 @@
     },
     "ledger_proof": {
       "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.json",
-      "raw_sha256": "4e206240795e2cf739f595811920ae66a7868ebe92031feb73b7fcbbe5a971d0"
+      "raw_sha256": "135e39a9f557f175536282329a3f9a6a8003c634ef2f9f5905b78d0607fe646d"
     },
     "ledger_proof_schema": {
       "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.schema.json",
-      "raw_sha256": "8f74b849581029c303a1e7a927f1f31b7458ed87e529d14e25134e52396f4ec9"
+      "raw_sha256": "9ed414c6e1c40d8afc27e8e0bd635d826536994375037efc947098dc089f98b2"
     },
     "live_acceptance": {
       "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
@@ -120,7 +120,7 @@
     },
     "live_ledger": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
+      "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
     },
     "live_manifest": {
       "path": "deploy/docker/thor-local/parity/manifest.json",
@@ -128,7 +128,7 @@
     },
     "live_oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
+      "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
     },
     "official_schema": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
@@ -140,11 +140,11 @@
     },
     "oracle_proof": {
       "path": "deploy/docker/thor-local/qualification/oracle-500-successor/capability-oracles-500.json",
-      "raw_sha256": "75a7c6b6ecc5bcfee0eece99a10ca29c0258717887c59847252629ac4d21e364"
+      "raw_sha256": "e682282735476830659582bd551fddc3e140580324e856ceaea4507ca5e706c2"
     },
     "oracle_schema": {
       "path": "deploy/docker/thor-local/qualification/oracle-500-successor/capability-oracles-500.schema.json",
-      "raw_sha256": "fcbe27337accc57c5a57a3ce7bf26d1e532c9001f7841134ec22db8663d41024"
+      "raw_sha256": "759c36ade481c6024815df95738a7fca13e92c66ae70649154bb7cb85b439057"
     }
   },
   "summary": {

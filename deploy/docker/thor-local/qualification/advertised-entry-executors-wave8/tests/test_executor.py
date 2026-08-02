@@ -51,6 +51,7 @@ def test_sse_entry_retains_every_transport_and_runtime_blocker(result):
     assert set(entry["retained_blockers"]) == {
         "live_sse_connection_not_executed",
         "mcp_transport_and_handshake_not_executed",
+        "live_transport_session_cleanup_not_observed",
         "deployed_lvs_not_observed",
         "thor_runtime_readiness_not_observed",
     }
@@ -143,6 +144,59 @@ def test_inventory_and_both_schemas_are_meta_schema_valid():
         executor.Draft202012Validator.check_schema(schema)
 
 
+def test_live_source_lock_denominator_covers_transport_cleanup_and_thor_packaging():
+    inventory = json.loads(executor.INVENTORY_PATH.read_text(encoding="utf-8"))
+    assert {item["path"] for item in inventory["source_locks"]} == {
+        "deploy/docker/services/video-summarization/compose.yml",
+        "deploy/docker/thor-local/Dockerfile.video-summarization",
+        "deploy/docker/thor-local/compose.yml",
+        "services/video-summarization/docker/package_file_list.txt",
+        "services/video-summarization/src/lvs_mcp.py",
+        "services/video-summarization/src/lvs_mcp_sse.py",
+        "services/video-summarization/src/rtvi_vlm_client.py",
+        "services/video-summarization/src/via_server.py",
+        "services/video-summarization/src/via_stream_handler.py",
+        "services/video-summarization/tests/test_lvs_delete_cleanup.py",
+        "services/video-summarization/tests/test_lvs_mcp.py",
+        "services/video-summarization/tests/test_lvs_mcp_sse.py",
+    }
+
+
+def test_live_ledger_locks_are_current_without_advancing_candidates(result):
+    assert (
+        result["source_digests"][
+            "deploy/docker/thor-local/parity/official-capabilities.json"
+        ]
+        == "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
+    )
+    assert (
+        result["source_digests"][
+            "deploy/docker/thor-local/parity/capability-oracles.json"
+        ]
+        == "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
+    )
+    assert result["runtime_evidence"] == []
+    assert result["official_capability_effect"] == "none_candidate_only"
+
+
+def test_static_wiring_is_bound_without_claiming_live_cleanup(result):
+    executor._validate_static_wiring()
+    sse, tools = result["entries"]
+    assert (
+        "session_cleanup_implementation_and_tests_source_locked"
+        in sse["matched_assertions"]
+    )
+    assert "live_transport_session_cleanup_not_observed" in sse["retained_blockers"]
+    assert (
+        "delete_cleanup_implementation_and_tests_source_locked"
+        in tools["matched_assertions"]
+    )
+    assert "deployed_delete_cleanup_not_observed" in tools["retained_blockers"]
+    assert result["safety"]["live_sse_connection"] is False
+    assert result["safety"]["mcp_transport_handshake"] is False
+    assert result["safety"]["deployed_lvs"] is False
+
+
 def test_inventory_schema_rejects_callback_or_transport_permission():
     inventory = json.loads(executor.INVENTORY_PATH.read_text(encoding="utf-8"))
     for field in ("caller_supplied_callbacks_allowed", "network_allowed"):
@@ -198,6 +252,30 @@ def test_transport_stubs_make_sse_and_stdio_execution_impossible():
         asyncio.run(server.run(port=38112))
     with pytest.raises(executor.QualificationError, match="stdio transport"):
         asyncio.run(server.run())
+
+
+def test_registered_handler_uses_native_call_tool_results_without_error_leakage():
+    module = executor._load_production_module()
+    backend = executor._FakeLvsBackend()
+    server = module.LvsMCPServer(backend)
+
+    with executor._deny_external_execution():
+        success = asyncio.run(server._server.call_handler("health_live", {}))
+        error = asyncio.run(
+            server._server.call_handler(
+                "get_file_info", {"file_id": "/sensitive/operator/path"}
+            )
+        )
+
+    assert server._server.call_handler is server._call_tool_handler
+    assert success.isError is False
+    assert json.loads(success.content[0].text) == {"status": "alive", "code": 200}
+    assert error.isError is True
+    assert json.loads(error.content[0].text) == {
+        "error": "get_file_info failed; see the LVS service log for details"
+    }
+    for fragment in ("/sensitive/operator/path", "ValueError", "Traceback"):
+        assert fragment not in error.content[0].text
 
 
 def test_selected_case_is_still_non_advancing():

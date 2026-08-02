@@ -1,6 +1,6 @@
 {
   "adapter_id": "vss-3.2.1-thor-candidate-oracle-adapter-211",
-  "adapter_payload_sha256": "e7b67f4e4c3f25641eeb95fd665b2dc0b0d9224c1fec81007b4b7cdc4a40b541",
+  "adapter_payload_sha256": "f9dd22d3ea74a08cdcb3c0f7cc532fdcca81bc054a241b643d25fc40bd4aefde",
   "candidate_adapters_by_capability_id": {
     "manifest-entry.agent-and-mcp-apis.00-nat-generate-chat": {
       "acceptance_class": "required_local",
@@ -46540,8 +46540,8 @@
         "state_evidence_sha256": "b0a5b2eb0a6eaa2b47b16337fdcca5a6af896173f46597765c840b5c6edc9e60"
       }
     },
-    "ledger_records_canonical_sha256": "afca818d0d73eecd692869f998e949e5e2df7c1b7fabf91d8a55afb1486eb96c",
-    "oracle_records_canonical_sha256": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2",
+    "ledger_records_canonical_sha256": "9d6a0b36ec5fecf97c29e9365eaded7e8cf8c17c86f6060c0a8f962e4b9a2a09",
+    "oracle_records_canonical_sha256": "dd64697f03a208991e1408f447253b4294d75c557a18b8773f8231cf72f9b983",
     "state_evidence_projection_sha256": "82a748a7fa0065283df1f7e80ea3d479e073276b3a2881d8d13ffadf9de11abb"
   },
   "mode": "candidate_only_planning_index",
@@ -46565,7 +46565,7 @@
     },
     "capability_oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
+      "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
     },
     "capability_oracles_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
@@ -46573,7 +46573,7 @@
     },
     "official_capabilities": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
+      "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
     },
     "official_capabilities_schema": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",

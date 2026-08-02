@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "selected_set": "thor-vss-3.2.1-metadata-500-staged",
+  "available_sets": [
+    {
+      "set_id": "thor-vss-3.2.1-live-289",
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-live-289.json",
+      "descriptor_raw_sha256": "dcae065b6a4ed93a51c92f7a1403f454738bd61c75536d6653ab14e563d59059"
+    },
+    {
+      "set_id": "thor-vss-3.2.1-metadata-500-staged",
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-metadata-500-staged-rebase-771336f0f843686ee380467a2772a0e6ad4bef9155fe9d511ce738f9e822189c.json",
+      "descriptor_raw_sha256": "4c343433c56daa87e418752de37e51d733037183d8296e1d7692a3dcaccd82ca"
+    }
+  ]
+}

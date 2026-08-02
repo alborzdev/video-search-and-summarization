@@ -41,9 +41,9 @@
       "properties": {
         "candidate": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "raw_sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"}},
         "candidate_schema": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.schema.json", "raw_sha256": "e3f09d7c86c46e236b9786f5eb3aa60868e67363224922ce04cfab3d60cd12a8"}},
-        "official_capabilities": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"}},
+        "official_capabilities": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"}},
         "official_capabilities_schema": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.schema.json", "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896"}},
-        "capability_oracles": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"}},
+        "capability_oracles": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"}},
         "capability_oracles_schema": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.schema.json", "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"}}
       }
     },
@@ -117,8 +117,8 @@
         "by_capability_id"
       ],
       "properties": {
-        "ledger_records_canonical_sha256": {"const": "afca818d0d73eecd692869f998e949e5e2df7c1b7fabf91d8a55afb1486eb96c"},
-        "oracle_records_canonical_sha256": {"const": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2"},
+        "ledger_records_canonical_sha256": {"const": "9d6a0b36ec5fecf97c29e9365eaded7e8cf8c17c86f6060c0a8f962e4b9a2a09"},
+        "oracle_records_canonical_sha256": {"const": "dd64697f03a208991e1408f447253b4294d75c557a18b8773f8231cf72f9b983"},
         "state_evidence_projection_sha256": {"const": "82a748a7fa0065283df1f7e80ea3d479e073276b3a2881d8d13ffadf9de11abb"},
         "by_capability_id": {
           "type": "object",

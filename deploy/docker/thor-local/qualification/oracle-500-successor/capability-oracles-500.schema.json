@@ -48,16 +48,16 @@
         "workloads_schema"
       ],
       "properties": {
-        "candidate_adapter": {"const": {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "raw_sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235"}},
-        "candidate_adapter_schema": {"const": {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json", "raw_sha256": "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb"}},
+        "candidate_adapter": {"const": {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "raw_sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"}},
+        "candidate_adapter_schema": {"const": {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json", "raw_sha256": "d25c9636b4df221f2be8dd689e2f71c1a6fa9a10025a0ec14217631d922d1552"}},
         "candidate_source": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "raw_sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"}},
         "candidate_source_schema": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.schema.json", "raw_sha256": "e3f09d7c86c46e236b9786f5eb3aa60868e67363224922ce04cfab3d60cd12a8"}},
-        "official_capabilities": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"}},
+        "official_capabilities": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"}},
         "official_capabilities_schema": {"const": {"path": "deploy/docker/thor-local/parity/official-capabilities.schema.json", "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896"}},
-        "live_oracles": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"}},
+        "live_oracles": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"}},
         "live_oracles_schema": {"const": {"path": "deploy/docker/thor-local/parity/capability-oracles.schema.json", "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"}},
-        "protocol_v2": {"const": {"path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json", "raw_sha256": "886151fee9ce27b24601499011151e827c4742b32d400c609c8c0b149851db62"}},
-        "protocol_v2_schema": {"const": {"path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.schema.json", "raw_sha256": "831d982f6912358b8dfae049cd10ed709af299d91cb7196031d28b29a092877d"}},
+        "protocol_v2": {"const": {"path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json", "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"}},
+        "protocol_v2_schema": {"const": {"path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.schema.json", "raw_sha256": "399471d0efd73614e507426095390a4a2e731aa4970b916199344b89b0304fbb"}},
         "workloads": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workloads.json", "raw_sha256": "ca4170118a94a659acca600d9ab00dca6504544f062edabd5cef0ed3311e8312"}},
         "workloads_schema": {"const": {"path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workload.schema.json", "raw_sha256": "736f9295e4f89afbb1aaed7c086155e30a09b6dc2c583433b9cb98ad2c005c14"}}
       }
@@ -124,9 +124,9 @@
         "live_record_hashes_by_capability_id"
       ],
       "properties": {
-        "live_document_raw_sha256": {"const": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"},
-        "live_oracle_records_canonical_sha256": {"const": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2"},
-        "projected_live_prefix_canonical_sha256": {"const": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2"},
+        "live_document_raw_sha256": {"const": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"},
+        "live_oracle_records_canonical_sha256": {"const": "dd64697f03a208991e1408f447253b4294d75c557a18b8773f8231cf72f9b983"},
+        "projected_live_prefix_canonical_sha256": {"const": "dd64697f03a208991e1408f447253b4294d75c557a18b8773f8231cf72f9b983"},
         "live_record_hashes_by_capability_id": {
           "type": "object",
           "minProperties": 289,
@@ -146,8 +146,8 @@
         "candidate_record_hashes_by_capability_id"
       ],
       "properties": {
-        "adapter_payload_sha256": {"const": "e7b67f4e4c3f25641eeb95fd665b2dc0b0d9224c1fec81007b4b7cdc4a40b541"},
-        "protocol_v2_payload_sha256": {"const": "65715e2ebfbe164ae38a6b20ca7dc23b6f3a65aaa9dd1632bdda746c4c929f24"},
+        "adapter_payload_sha256": {"const": "f9dd22d3ea74a08cdcb3c0f7cc532fdcca81bc054a241b643d25fc40bd4aefde"},
+        "protocol_v2_payload_sha256": {"const": "6667309aefc03eb410651bd11769301be77cc5d9baf40688fa0f75f5752a58d6"},
         "workloads_payload_sha256": {"const": "0e8512e64399af7d8acc0c7136efbd52da4ebf9119ad0826859e6fce6906d847"},
         "candidate_record_hashes_by_capability_id": {
           "type": "object",

@@ -6,7 +6,11 @@
   "source_files": [
     {
       "path": "services/video-summarization/src/lvs_mcp.py",
-      "sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+      "sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp_sse.py",
+      "sha256": "94306d18703a598982fbfe3515dcb3ed7cad31dfb106cb0d5b5c4ef92e6806f8"
     }
   ],
   "surface": "lvs-mcp",

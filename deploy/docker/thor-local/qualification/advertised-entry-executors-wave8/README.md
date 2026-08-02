@@ -7,7 +7,8 @@ an executable, offline subset:
 - `manifest-gap.agent-and-mcp-apis.06-lvs-mcp` — `LVS MCP`
 
 The executor imports the digest-locked production `LvsMCPServer` from
-`services/video-summarization/src/lvs_mcp.py`. Because the checkout does not
+`services/video-summarization/src/lvs_mcp.py` together with its digest-locked
+`lvs_mcp_sse.py` session-cleanup dependency. Because the checkout does not
 contain the MCP Python package, it supplies only the registration record types
 needed during import. The actual production tool catalog, validation, file
 opening, rollback, error sanitization, and in-process `httpx.ASGITransport`
@@ -24,6 +25,13 @@ is removed before a successful receipt is emitted. The probe covers:
   unknown-argument, nil-UUID, and mismatched-delete-confirmation rejection;
 - rollback after invalid upload metadata; and
 - sanitized public errors for file tools.
+
+The live denominator also source-locks the focused SSE ownership-cleanup and
+delete/collection-cleanup regressions, `via_stream_handler.py`, both relevant
+Compose overlays, the Thor derivative Dockerfile, and the service package list.
+Static checks require the exact offline `mcp==1.23.0` wheel verification and
+wrapper-copy wiring. This does not claim that an image was built or a deployed
+SSE/delete-cleanup transaction was observed.
 
 ## Commands
 
@@ -53,7 +61,8 @@ The `SSE MCP server` entry receives only shared production server construction,
 tool-registration, and tool-dispatch subset evidence. No live SSE connection,
 MCP transport, MCP session or handshake is executed. Neither entry proves a
 deployed LVS service, summarization, VLM inference, service lifecycle, or Thor
-readiness.
+readiness. Live transport-session cleanup and deployed RT-VLM/Elasticsearch
+delete cleanup remain explicit blockers.
 
 The executor has no socket-connect/bind/listen path, subprocess, Docker,
 download, credential, caller-supplied callback, Warehouse sample, or retained

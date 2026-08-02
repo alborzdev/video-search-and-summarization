@@ -1120,6 +1120,9 @@ if grep -q -- '- VIA_DEV_API=${VIA_DEV_API:-false}' "${_lvs_compose}" &&
    grep -Fq -- '- LVS_MCP_HOST=${LVS_MCP_HOST:-127.0.0.1}' "${_lvs_compose}" &&
    grep -Fq -- '- LVS_MCP_MEDIA_ROOT=${LVS_MCP_MEDIA_ROOT:-}' "${_lvs_compose}" &&
    grep -Fq -- '- LVS_MCP_MAX_FILE_BYTES=${LVS_MCP_MAX_FILE_BYTES:-8589934592}' "${_lvs_compose}" &&
+   grep -Fq -- '- LVS_MCP_MAX_SSE_BYTES=${LVS_MCP_MAX_SSE_BYTES:-4194304}' "${_lvs_compose}" &&
+   grep -Fq -- '- LVS_MCP_MAX_SSE_EVENTS=${LVS_MCP_MAX_SSE_EVENTS:-1024}' "${_lvs_compose}" &&
+   grep -Fq -- '- LVS_MCP_SSE_TIMEOUT_SECONDS=${LVS_MCP_SSE_TIMEOUT_SECONDS:-600}' "${_lvs_compose}" &&
    grep -Fq -- '- VIA_FILE_API_LOOPBACK_ONLY=${VIA_FILE_API_LOOPBACK_ONLY:-false}' "${_lvs_compose}" &&
    grep -Fq -- '- VIA_FILE_API_ALLOW_FILENAME=${VIA_FILE_API_ALLOW_FILENAME:-true}' "${_lvs_compose}" &&
    grep -q '^VIA_DEV_API=true$' \
@@ -1135,17 +1138,28 @@ if grep -q -- '- VIA_DEV_API=${VIA_DEV_API:-false}' "${_lvs_compose}" &&
    grep -Fq 'LVS_MCP_HOST: 127.0.0.1' <<<"${_thor_lvs_block}" &&
    grep -Fq 'LVS_MCP_MEDIA_ROOT: /opt/nvidia/via/mcp-media' <<<"${_thor_lvs_block}" &&
    grep -Fq 'LVS_MCP_MAX_FILE_BYTES: ${LVS_MCP_MAX_FILE_BYTES:-8589934592}' <<<"${_thor_lvs_block}" &&
+   grep -Fq 'LVS_MCP_MAX_SSE_BYTES: ${LVS_MCP_MAX_SSE_BYTES:-4194304}' <<<"${_thor_lvs_block}" &&
+   grep -Fq 'LVS_MCP_MAX_SSE_EVENTS: ${LVS_MCP_MAX_SSE_EVENTS:-1024}' <<<"${_thor_lvs_block}" &&
+   grep -Fq 'LVS_MCP_SSE_TIMEOUT_SECONDS: ${LVS_MCP_SSE_TIMEOUT_SECONDS:-600}' <<<"${_thor_lvs_block}" &&
    grep -Fq 'VIA_FILE_API_LOOPBACK_ONLY: "true"' <<<"${_thor_lvs_block}" &&
    grep -Fq 'VIA_FILE_API_ALLOW_FILENAME: "false"' <<<"${_thor_lvs_block}" &&
    grep -Fq -- '- ${VSS_DATA_DIR}/videos:/opt/nvidia/via/mcp-media:ro' <<<"${_thor_lvs_block}" &&
    grep -q 'COPY services/video-summarization/src/lvs_mcp.py' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
+   grep -q 'COPY services/video-summarization/src/lvs_mcp_sse.py' \
+     "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
+   grep -q '5a645cf111ed329f4619f2629a3f15d9aabd7adc2ea09d600d31467b51ecb64f' \
+     "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
+   grep -q 'UV_OFFLINE=1 /usr/local/bin/uv pip install --system --no-index --no-deps --reinstall' \
+     "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
+   grep -Fxq 'lvs_mcp_sse.py' \
+     "${REPO_ROOT}/services/video-summarization/docker/package_file_list.txt" &&
    grep -q 'patch_lvs_file_management.py' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization"; then
-  echo "PASS: Thor confines LVS file APIs to loopback multipart and packages a bounded read-only MCP media root"
+  echo "PASS: Thor confines LVS file APIs and packages bounded MCP media and SSE handling"
   ((TESTS_PASSED++)) || true
 else
-  echo "FAIL: Thor LVS file APIs must be loopback-only, multipart-only, bounded, read-only, and packaged"
+  echo "FAIL: Thor LVS file and SSE APIs must remain loopback-only, bounded, read-only, and packaged"
   ((TESTS_FAILED++)) || true
 fi
 

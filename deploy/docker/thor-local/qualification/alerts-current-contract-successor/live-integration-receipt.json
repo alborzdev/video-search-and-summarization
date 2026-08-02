@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "integration_id": "alerts-current-contract-successor-2026-08-02",
+  "static_inputs": [
+    {
+      "path": "deploy/docker/thor-local/qualification/api_inventory.json",
+      "raw_sha256": "17d3f26a950b142c72e5d5003ac0429ac56f552247ca24458b05c964bf0edb6d"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/alerts.json",
+      "raw_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1"
+    },
+    {
+      "path": "services/alert/openapi.json",
+      "raw_sha256": "d7336051ddbbb368d6376bbe0a0d71414b2738a7e1899321eddb4d24dcd95881"
+    }
+  ],
+  "unchanged_live_aggregates": [
+    {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+    }
+  ],
+  "delta": {
+    "capability_id": "api.core.alerts-19",
+    "old_expected_manifest_sha256": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b",
+    "new_expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
+    "targets": [
+      {
+        "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+        "predecessor_raw_sha256": "d1a047345a309d675f692756fc2d9b56159c53840b6328264bb3cefb07f0cce6",
+        "successor_raw_sha256": "fb1638a82e8bf04b0b07482fc016184c3abc6bc692ca8a11fa94681837953055",
+        "replacement_count": 2,
+        "semantic_pointers": [
+          "/capabilities/118/contract/expected_manifest_sha256",
+          "/capabilities/118/contract/operation_count"
+        ]
+      },
+      {
+        "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+        "predecessor_raw_sha256": "4625c8efb38df757ed90483826df9064717cf131f52d7500ef8eec39510e0804",
+        "successor_raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e",
+        "replacement_count": 10,
+        "semantic_pointers": [
+          "/oracles/118/assertions/2/expected",
+          "/oracles/118/assertions/4/expected",
+          "/oracles/118/execution_bounds/max_actions",
+          "/oracles/118/execution_bounds/max_requests",
+          "/oracles/118/execution_bounds/workload/calculated_max_requests",
+          "/oracles/118/execution_bounds/workload/units",
+          "/oracles/118/fixture/input/contract/expected_manifest_sha256",
+          "/oracles/118/fixture/input/contract/operation_count",
+          "/oracles/118/ledger_binding/contract/expected_manifest_sha256",
+          "/oracles/118/ledger_binding/contract/operation_count"
+        ]
+      }
+    ],
+    "semantic_leaf_change_count": 12
+  },
+  "boundaries": {
+    "runtime_evidence_added": false,
+    "passed_current_allowed": false,
+    "manifest_written": false,
+    "acceptance_written": false,
+    "network": "forbidden",
+    "docker": "forbidden",
+    "services": "forbidden"
+  },
+  "rollback": {
+    "command": "integrate_live.py rollback",
+    "restores_exact_predecessor_digests": true,
+    "target_count": 2,
+    "semantic_leaf_change_count": 12
+  },
+  "contract_sha256": "cc130cd43fea054c0ed4099aba2f7afd4af7716ade033073d05370c1d53e94ca",
+  "outputs": {
+    "deploy/docker/thor-local/parity/official-capabilities.json": "fb1638a82e8bf04b0b07482fc016184c3abc6bc692ca8a11fa94681837953055",
+    "deploy/docker/thor-local/parity/capability-oracles.json": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
+  },
+  "lifecycle": "alerts_current_contract_successor_integrated"
+}

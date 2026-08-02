@@ -47,14 +47,14 @@
   ],
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/acceptance_inventory.json", "sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"},
-    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"},
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "d1a047345a309d675f692756fc2d9b56159c53840b6328264bb3cefb07f0cce6"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "4625c8efb38df757ed90483826df9064717cf131f52d7500ef8eec39510e0804"},
     {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json", "sha256": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11/inventory.json", "sha256": "734609e5b1aab27a4d65a2570d3e6a3c366ae9ecf896dd7f0d5e62785e219cdd"},
     {"path": "services/agent/src/vss_agents/api/video_search_ingest.py", "sha256": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77"},
     {"path": "services/agent/tests/unit_test/api/test_video_search_ingest.py", "sha256": "1ade3f881b57fd8357047c951f500c660cbfc1d67b65fe268c150437f320030e"},
-    {"path": "services/video-summarization/src/via_stream_handler.py", "sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"},
+    {"path": "services/video-summarization/src/via_stream_handler.py", "sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"},
     {"path": "services/agent/README.md", "sha256": "f8bb48cbee282b8f6048ab9220258adcb648e3de761d81b98c34baa747d1740e"},
     {"path": "services/ui/packages/common/lib-src/components/UploadFilesDialog.tsx", "sha256": "90487a061cdd8750f24ce17446010b09995c7d0152f1394cbb05201c6e82d2dd"},
     {"path": "services/ui/packages/common/__tests__/components/UploadFilesDialog.test.tsx", "sha256": "71da8185445f1ffa3b3d0c5d590f7c5f306038b43eec2529ecdcb0283c506456"}

@@ -1,0 +1,12 @@
+{
+  "admission_index_raw_sha256": "74398a4239cfd13f753924aaf65b5ce16e6f96b44dc9eae8067eddb8a03456ff",
+  "admitted_candidate_count": 0,
+  "executable_candidate_count": 0,
+  "receipt_count": 0,
+  "receipt_envelope_schema_raw_sha256": "63dfd032bb3625fd1d5002f19a10e25f72f1c775c9f2c5ce6ee1121531449c10",
+  "receipt_set_id": "thor-vss-3.2.1-candidate-admission-rebase-empty-receipt-set",
+  "receipts": [],
+  "schema_version": 1,
+  "trusted_review_authority_binding_sha256": [],
+  "warehouse_sample_bundle": "excluded"
+}

@@ -235,6 +235,26 @@
     "binding": {
       "type": "object",
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "capability_id": {"const": "manifest-entry.video-summarization-live.05-sse-mcp-server"}
+            },
+            "required": ["capability_id"]
+          },
+          "then": {
+            "properties": {
+              "source_hashes": {
+                "allOf": [
+                  {"contains": {"type": "object", "properties": {"path": {"const": "deploy/docker/thor-local/Dockerfile.video-summarization"}}, "required": ["path"]}},
+                  {"contains": {"type": "object", "properties": {"path": {"const": "services/video-summarization/src/lvs_mcp_sse.py"}}, "required": ["path"]}}
+                ]
+              }
+            }
+          }
+        }
+      ],
       "required": ["capability_id", "case_id", "case_payload_sha256", "binding_sha256", "transport_components", "boundary", "readiness", "activation_supported", "vector_projection", "source_hashes"],
       "properties": {
         "capability_id": {"type": "string", "minLength": 3},

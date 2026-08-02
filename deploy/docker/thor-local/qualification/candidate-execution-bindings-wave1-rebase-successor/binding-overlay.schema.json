@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "source_lock": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "required": [
+        "path",
+        "raw_sha256"
+      ],
+      "type": "object"
+    },
+    "binding": {
+      "additionalProperties": false,
+      "properties": {
+        "action_contract": {
+          "additionalProperties": false,
+          "properties": {
+            "action_contract_sha256": {"type": "null"},
+            "action_kind": {"type": "null"},
+            "argv": {"type": "null"},
+            "executor": {"type": "null"},
+            "status": {"const": "unresolved_fail_closed"}
+          },
+          "required": ["action_contract_sha256", "action_kind", "argv", "executor", "status"],
+          "type": "object"
+        },
+        "admission_grade": {"const": false},
+        "authorization_consumed": {"const": false},
+        "candidate_id": {
+          "enum": [
+            "manifest-entry.video-summarization-live.05-sse-mcp-server",
+            "manifest-entry.agent-and-mcp-apis.06-lvs-mcp"
+          ]
+        },
+        "candidate_record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "completion_receipt_consumed": {"const": false},
+        "cleanup_contract": {
+          "additionalProperties": false,
+          "properties": {
+            "cleanup_executor": {"type": "null"},
+            "cleanup_rollback_contract_sha256": {"type": "null"},
+            "cleanup_targets": {"maxItems": 0, "type": "array"},
+            "status": {"const": "unresolved_fail_closed"}
+          },
+          "required": ["cleanup_executor", "cleanup_rollback_contract_sha256", "cleanup_targets", "status"],
+          "type": "object"
+        },
+        "evidence_contract": {
+          "additionalProperties": false,
+          "properties": {
+            "evidence_destination": {"type": "null"},
+            "evidence_records": {"maxItems": 0, "type": "array"},
+            "observer_receipt_id": {"const": "successor-500-executable-subsets-wave1-receipt-2026-08-01"},
+            "observer_receipt_is_runtime_evidence": {"const": false},
+            "status": {"const": "unresolved_fail_closed"}
+          },
+          "required": ["evidence_destination", "evidence_records", "observer_receipt_id", "observer_receipt_is_runtime_evidence", "status"],
+          "type": "object"
+        },
+        "input_contract": {
+          "additionalProperties": false,
+          "properties": {
+            "fixture": {"type": "null"},
+            "model": {"type": "null"},
+            "runtime_request": {"type": "null"},
+            "status": {"const": "unresolved_fail_closed"}
+          },
+          "required": ["fixture", "model", "runtime_request", "status"],
+          "type": "object"
+        },
+        "oracle_id": {"minLength": 1, "type": "string"},
+        "oracle_index": {"enum": [310, 468]},
+        "overlay_state": {"const": "partial_source_proven_non_admission"},
+        "deployed_observed": {"const": false},
+        "postcondition_contract": {
+          "additionalProperties": false,
+          "properties": {
+            "collectors": {"maxItems": 0, "type": "array"},
+            "contract": {"type": "null"},
+            "status": {"const": "unresolved_fail_closed"}
+          },
+          "required": ["collectors", "contract", "status"],
+          "type": "object"
+        },
+        "retained_blockers": {
+          "items": {"minLength": 1, "type": "string"},
+          "minItems": 4,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "runtime_evidence": {"maxItems": 0, "type": "array"},
+        "runtime_ready": {"const": false},
+        "runtime_surface": {
+          "additionalProperties": false,
+          "properties": {
+            "container_name": {"const": "vss-lvs"},
+            "effective_profile_id": {"type": "null"},
+            "effective_resolved_endpoints": {"type": "null"},
+            "network_mode": {"const": "host"},
+            "profile_id_source_default": {"const": "bp_developer_thor_full_2d"},
+            "profile_paths": {
+              "const": [
+                "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+                "deploy/docker/developer-profiles/dev-profile-thor-full/.env"
+              ]
+            },
+            "service_role": {"const": "lvs-server"},
+            "source_declared_interface": {
+              "additionalProperties": false,
+              "properties": {
+                "default_health_endpoint": {"const": "http://127.0.0.1:38111/v1/ready"},
+                "default_maximum_media_bytes": {"const": 8589934592},
+                "default_mcp_get_endpoint": {"const": "http://127.0.0.1:38112/sse"},
+                "default_mcp_post_endpoint": {"const": "http://127.0.0.1:38112/messages"},
+                "health_endpoint_is_mcp_readiness_proof": {"const": false},
+                "media_root_container_path": {"const": "/opt/nvidia/via/mcp-media"},
+                "media_root_host_bind_expression": {"const": "${VSS_DATA_DIR}/videos"},
+                "media_root_read_only": {"const": true},
+                "tool_names": {
+                  "items": {"minLength": 1, "type": "string"},
+                  "maxItems": 13,
+                  "minItems": 13,
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "required": ["default_health_endpoint", "default_maximum_media_bytes", "default_mcp_get_endpoint", "default_mcp_post_endpoint", "health_endpoint_is_mcp_readiness_proof", "media_root_container_path", "media_root_host_bind_expression", "media_root_read_only", "tool_names"],
+              "type": "object"
+            },
+            "service_definition_include_chain": {
+              "const": [
+                "deploy/docker/compose.yml",
+                "deploy/docker/services/compose.yml",
+                "deploy/docker/services/video-summarization/compose.yml"
+              ]
+            },
+            "source_locks": {
+              "items": {"$ref": "#/$defs/source_lock"},
+              "minItems": 14,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "status": {"const": "source_proven_static_wiring_not_deployed"},
+            "top_level_compose_inputs": {
+              "const": ["deploy/docker/compose.yml", "deploy/docker/thor-local/compose.yml"]
+            }
+          },
+          "required": ["container_name", "effective_profile_id", "effective_resolved_endpoints", "network_mode", "profile_id_source_default", "profile_paths", "service_definition_include_chain", "service_role", "source_declared_interface", "source_locks", "status", "top_level_compose_inputs"],
+          "type": "object"
+        },
+        "unresolved_fields": {
+          "items": {"minLength": 1, "type": "string"},
+          "minItems": 10,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "transport_observed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["action_contract", "admission_grade", "authorization_consumed", "candidate_id", "candidate_record_canonical_sha256", "cleanup_contract", "completion_receipt_consumed", "deployed_observed", "evidence_contract", "input_contract", "oracle_id", "oracle_index", "overlay_state", "postcondition_contract", "retained_blockers", "runtime_evidence", "runtime_ready", "runtime_surface", "transport_observed", "unresolved_fields", "warehouse_sample_bundle"],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "binding_rows_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "bindings": {
+      "items": {"$ref": "#/$defs/binding"},
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "mode": {"const": "inert_read_only_source_proven_partial_binding_overlay"},
+    "overlay_id": {"const": "thor-vss-3.2.1-candidate-execution-bindings-wave1-rebase-successor"},
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "admission_effect": {"const": "none"},
+        "authorization_consumed": {"const": false},
+        "cloud_inference_required": {"const": false},
+        "completion_receipt_consumed": {"const": false},
+        "compiler_can_execute": {"const": false},
+        "deployed_observed": {"const": false},
+        "observer_evidence_is_runtime_evidence": {"const": false},
+        "service_lifecycle_mutation": {"const": false},
+        "transport_observed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["admission_effect", "authorization_consumed", "cloud_inference_required", "completion_receipt_consumed", "compiler_can_execute", "deployed_observed", "observer_evidence_is_runtime_evidence", "service_lifecycle_mutation", "transport_observed", "warehouse_sample_bundle"],
+      "type": "object"
+    },
+    "schema_version": {"const": 1},
+    "source_identities": {
+      "additionalProperties": false,
+      "properties": {
+        "registry_binding_rows_canonical_sha256": {"const": "0d8b334e25330d8f5142a6fff91cc13fc3ebf0c013a371e1f6b41334530c0924"},
+        "registry_id": {"const": "thor-vss-3.2.1-candidate-execution-binding-registry-rebase-successor"},
+        "registry_raw_sha256": {"const": "af3927c15f9e5c1efb67690ee7ca3f3e6ee9fb77e720767db2264d68a935b6b5"},
+        "historical_overlay_raw_sha256": {"const": "aeb8eec139138f45a12a7673abe6f65cca455dbc1717e145e626fc58e70add24"},
+        "authority_registry_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "authority_registry_schema_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "signed_receipt_set_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "signed_receipt_set_schema_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "wave1_contract_id": {"const": "successor-500-executable-subsets-wave1-2026-08-01"},
+        "wave1_receipt_id": {"const": "successor-500-executable-subsets-wave1-receipt-2026-08-01"}
+      },
+      "required": ["authority_registry_raw_sha256", "authority_registry_schema_raw_sha256", "historical_overlay_raw_sha256", "registry_binding_rows_canonical_sha256", "registry_id", "registry_raw_sha256", "signed_receipt_set_raw_sha256", "signed_receipt_set_schema_raw_sha256", "wave1_contract_id", "wave1_receipt_id"],
+      "type": "object"
+    },
+    "source_locks": {
+      "items": {"$ref": "#/$defs/source_lock"},
+      "maxItems": 34,
+      "minItems": 34,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "action_contracts": {"const": 0},
+        "admission_grade_bindings": {"const": 0},
+        "binding_count": {"const": 2},
+        "cleanup_contracts": {"const": 0},
+        "evidence_contracts": {"const": 0},
+        "partial_bindings": {"const": 2},
+        "postcondition_collectors": {"const": 0},
+        "partial_service_profile_bindings": {"const": 2},
+        "runtime_evidence_records": {"const": 0}
+      },
+      "required": ["action_contracts", "admission_grade_bindings", "binding_count", "cleanup_contracts", "evidence_contracts", "partial_bindings", "partial_service_profile_bindings", "postcondition_collectors", "runtime_evidence_records"],
+      "type": "object"
+    },
+    "target": {
+      "additionalProperties": false,
+      "properties": {
+        "hardware": {"const": "NVIDIA Jetson Thor"},
+        "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "product_version": {"const": "3.2.1"}
+      },
+      "required": ["hardware", "main_commit", "product_version"],
+      "type": "object"
+    }
+  },
+  "required": ["binding_rows_canonical_sha256", "bindings", "mode", "overlay_id", "policy", "schema_version", "source_identities", "source_locks", "summary", "target"],
+  "title": "Thor VSS Wave 1 candidate execution-binding rebase overlay",
+  "type": "object"
+}

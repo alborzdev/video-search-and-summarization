@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "admission_index_id": {"const": "thor-vss-3.2.1-candidate-admission-receipts-rebase-successor"},
+    "admission_rows_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "admissions": {
+      "items": {"$ref": "#/$defs/admission"},
+      "maxItems": 211,
+      "minItems": 211,
+      "type": "array"
+    },
+    "bundle_contract_identity": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_count": {"const": 16},
+        "contract_id": {"minLength": 1, "type": "string"},
+        "contract_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "ordered_bundle_ids": {
+          "items": {"minLength": 1, "type": "string"},
+          "maxItems": 16,
+          "minItems": 16,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": ["bundle_count", "contract_id", "contract_raw_sha256", "ordered_bundle_ids"],
+      "type": "object"
+    },
+    "mapping_identity": {
+      "additionalProperties": false,
+      "properties": {
+        "mapping_id": {"minLength": 1, "type": "string"},
+        "mapping_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "mapping_records_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["mapping_id", "mapping_raw_sha256", "mapping_records_canonical_sha256"],
+      "type": "object"
+    },
+    "mode": {"const": "read_only_validation_no_execute_no_write_no_action"},
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_inheritance": {"const": false},
+        "canonical_hash_is_integrity_not_authenticity": {"const": true},
+        "compiler_can_accept_receipts": {"const": false},
+        "compiler_can_execute": {"const": false},
+        "compiler_can_write": {"const": false},
+        "external_receipts_cannot_qualify_local": {"const": true},
+        "native_audio_receipts_cannot_satisfy_asr": {"const": true},
+        "nonempty_receipt_sets_supported": {"const": false},
+        "reviewed_not_required_edges_supported": {"const": 0},
+        "receipt_reuse_across_candidates": {"const": false},
+        "structurally_valid_receipt_is_never_sufficient": {"const": true},
+        "trusted_authority_roots": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["approval_inheritance", "canonical_hash_is_integrity_not_authenticity", "compiler_can_accept_receipts", "compiler_can_execute", "compiler_can_write", "external_receipts_cannot_qualify_local", "native_audio_receipts_cannot_satisfy_asr", "nonempty_receipt_sets_supported", "reviewed_not_required_edges_supported", "receipt_reuse_across_candidates", "structurally_valid_receipt_is_never_sufficient", "trusted_authority_roots", "warehouse_sample_bundle"],
+      "type": "object"
+    },
+    "schema_version": {"const": 1},
+    "selected_metadata_identity": {"$ref": "#/$defs/metadata"},
+    "selected_metadata_identity_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "source_locks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {"minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$", "type": "string"},
+          "raw_sha256": {"$ref": "#/$defs/sha256"}
+        },
+        "required": ["path", "raw_sha256"],
+        "type": "object"
+      },
+      "maxItems": 18,
+      "minItems": 18,
+      "type": "array"
+    },
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "admitted_candidates": {"const": 0},
+        "boundary_counts": {
+          "additionalProperties": false,
+          "properties": {"alternate_local": {"const": 46}, "external": {"const": 6}, "local": {"const": 159}},
+          "required": ["alternate_local", "external", "local"],
+          "type": "object"
+        },
+        "blocked_candidates": {"const": 208},
+        "candidate_count": {"const": 211},
+        "executable_candidates": {"const": 0},
+        "receipt_count": {"const": 0},
+        "mapped_boundary_counts": {
+          "additionalProperties": false,
+          "properties": {"alternate_local": {"const": 45}, "external": {"const": 4}, "local": {"const": 159}},
+          "required": ["alternate_local", "external", "local"],
+          "type": "object"
+        },
+        "state_counts": {
+          "additionalProperties": false,
+          "properties": {
+            "external_attestation_only_not_local_admissible": {"const": 4},
+            "receipt_and_execution_bindings_missing_not_admitted": {"const": 204},
+            "static_nonactivating_not_applicable": {"const": 3}
+          },
+          "required": ["external_attestation_only_not_local_admissible", "receipt_and_execution_bindings_missing_not_admitted", "static_nonactivating_not_applicable"],
+          "type": "object"
+        },
+        "static_nonactivating_candidates": {"const": 3}
+      },
+      "required": ["admitted_candidates", "boundary_counts", "blocked_candidates", "candidate_count", "executable_candidates", "mapped_boundary_counts", "receipt_count", "state_counts", "static_nonactivating_candidates"],
+      "type": "object"
+    },
+    "target": {
+      "additionalProperties": false,
+      "properties": {
+        "hardware": {"const": "NVIDIA Jetson Thor"},
+        "main_commit": {"pattern": "^[0-9a-f]{40}$", "type": "string"},
+        "product_version": {"const": "3.2.1"}
+      },
+      "required": ["hardware", "main_commit", "product_version"],
+      "type": "object"
+    }
+  },
+  "required": ["admission_index_id", "schema_version", "mode", "target", "source_locks", "selected_metadata_identity", "selected_metadata_identity_canonical_sha256", "mapping_identity", "bundle_contract_identity", "policy", "admissions", "admission_rows_canonical_sha256", "summary"],
+  "type": "object",
+  "$defs": {
+    "sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_count": {"const": 211},
+        "candidate_start_index": {"const": 289},
+        "descriptor_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "oracle_count": {"const": 500},
+        "oracle_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "selector_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "set_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["candidate_count", "candidate_start_index", "descriptor_raw_sha256", "oracle_count", "oracle_raw_sha256", "selector_raw_sha256", "set_id"],
+      "type": "object"
+    },
+    "admission": {
+      "additionalProperties": false,
+      "properties": {
+        "admission_state": {"enum": ["external_attestation_only_not_local_admissible", "receipt_and_execution_bindings_missing_not_admitted", "static_nonactivating_not_applicable"]},
+        "binding_kind": {"enum": ["none", "protocol", "workload"]},
+        "blocking_requirements": {
+          "items": {"enum": ["missing_exact_action_contract_binding", "missing_exact_service_role_or_profile_binding", "missing_exact_cleanup_and_rollback_contract_binding", "missing_leaf_and_dependency_receipts_or_reviewed_not_required_determinations"]},
+          "maxItems": 4,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "bundle_contract_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "candidate_id": {"pattern": "^manifest-entry\\.", "type": "string"},
+        "candidate_order_position": {"maximum": 210, "minimum": 0, "type": "integer"},
+        "candidate_record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "complete_dependency_closure": {"items": {"minLength": 1, "type": "string"}, "maxItems": 16, "type": "array", "uniqueItems": true},
+        "execution_boundary": {"enum": ["alternate_local", "external", "local"]},
+        "leaf_bundle_id": {"oneOf": [{"minLength": 1, "type": "string"}, {"type": "null"}]},
+        "mapping_artifact_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "mapping_row_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "metadata_binding_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "oracle_id": {"pattern": "^oracle\\.manifest-entry\\.", "type": "string"},
+        "oracle_index": {"maximum": 499, "minimum": 289, "type": "integer"},
+        "oracle_record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "receipt_ids": {"maxItems": 0, "type": "array"},
+        "runtime_admission_applicable": {"type": "boolean"},
+        "runtime_admitted": {"const": false},
+        "runtime_executable": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["admission_state", "binding_kind", "blocking_requirements", "bundle_contract_raw_sha256", "candidate_id", "candidate_order_position", "candidate_record_canonical_sha256", "complete_dependency_closure", "execution_boundary", "leaf_bundle_id", "mapping_artifact_raw_sha256", "mapping_row_canonical_sha256", "metadata_binding_canonical_sha256", "oracle_id", "oracle_index", "oracle_record_canonical_sha256", "receipt_ids", "runtime_admission_applicable", "runtime_admitted", "runtime_executable", "warehouse_sample_bundle"],
+      "type": "object"
+    }
+  }
+}

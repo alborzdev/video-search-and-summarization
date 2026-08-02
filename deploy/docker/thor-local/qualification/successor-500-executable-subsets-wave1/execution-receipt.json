@@ -10,11 +10,14 @@
         "exact_13_tool_registration_executed",
         "in_process_asgi_health_dispatch_executed",
         "external_execution_guards_active",
-        "shared_server_dispatch_subset_executed"
+        "thor_sse_packaging_and_limits_source_locked",
+        "shared_server_dispatch_subset_executed",
+        "session_cleanup_implementation_and_tests_source_locked"
       ],
       "retained_blockers": [
         "live_sse_connection_not_executed",
         "mcp_transport_and_handshake_not_executed",
+        "live_transport_session_cleanup_not_observed",
         "deployed_lvs_not_observed",
         "thor_runtime_readiness_not_observed"
       ]
@@ -29,13 +32,16 @@
         "exact_13_tool_registration_executed",
         "in_process_asgi_health_dispatch_executed",
         "external_execution_guards_active",
+        "thor_sse_packaging_and_limits_source_locked",
         "bounded_file_add_list_info_delete_executed",
         "path_size_symlink_uuid_rejections_executed",
         "invalid_metadata_rollback_executed",
-        "file_error_sanitization_executed"
+        "file_error_sanitization_executed",
+        "delete_cleanup_implementation_and_tests_source_locked"
       ],
       "retained_blockers": [
         "mcp_transport_and_handshake_not_executed",
+        "deployed_delete_cleanup_not_observed",
         "live_lvs_service_not_executed",
         "vlm_inference_not_executed",
         "thor_runtime_readiness_not_observed"
@@ -98,7 +104,7 @@
     "warehouse_sample_used": false
   },
   "schema_version": 1,
-  "selected_descriptor_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9",
+  "selected_descriptor_raw_sha256": "4c343433c56daa87e418752de37e51d733037183d8296e1d7692a3dcaccd82ca",
   "selected_set_id": "thor-vss-3.2.1-metadata-500-staged",
-  "wave8_result_canonical_sha256": "a000f8db5b3bcec6f0da50828dcf9e31126655fe0962f964491317c29218c823"
+  "wave8_result_canonical_sha256": "fa3f9188eb30d9f952053c2af626ee73cbb49840fd4843382d111877f47c9a3e"
 }

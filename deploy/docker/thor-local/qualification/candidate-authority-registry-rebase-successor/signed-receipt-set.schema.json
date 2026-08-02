@@ -1,0 +1,24 @@
+{
+  "$defs": {"sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}},
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_receipt_count": {"const": 0},
+    "accepted_receipt_ids": {"items": {"minLength": 1, "type": "string"}, "maxItems": 0, "type": "array"},
+    "admission_index_raw_sha256": {"$ref": "#/$defs/sha256"},
+    "authority_registry_raw_sha256": {"$ref": "#/$defs/sha256"},
+    "authorization_envelope_count": {"const": 0},
+    "authorization_envelopes": {"items": {"type": "object"}, "maxItems": 0, "type": "array"},
+    "binding_registry_raw_sha256": {"const": "af3927c15f9e5c1efb67690ee7ca3f3e6ee9fb77e720767db2264d68a935b6b5"},
+    "completion_receipt_envelope_count": {"const": 0},
+    "completion_receipt_envelopes": {"items": {"type": "object"}, "maxItems": 0, "type": "array"},
+    "consumed_receipt_count": {"const": 0},
+    "consumed_receipt_ids": {"items": {"minLength": 1, "type": "string"}, "maxItems": 0, "type": "array"},
+    "receipt_set_id": {"const": "thor-vss-3.2.1-candidate-rebase-signed-receipts-empty-v1"},
+    "schema_version": {"const": 1},
+    "signed_receipt_envelope_schema_raw_sha256": {"$ref": "#/$defs/sha256"},
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "required": ["receipt_set_id", "schema_version", "authority_registry_raw_sha256", "binding_registry_raw_sha256", "admission_index_raw_sha256", "signed_receipt_envelope_schema_raw_sha256", "authorization_envelope_count", "authorization_envelopes", "completion_receipt_envelope_count", "completion_receipt_envelopes", "accepted_receipt_count", "accepted_receipt_ids", "consumed_receipt_count", "consumed_receipt_ids", "warehouse_sample_bundle"],
+  "type": "object"
+}

@@ -37,7 +37,7 @@ INPUTS = {
     },
     "official_capabilities": {
         "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-        "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+        "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098",
     },
     "official_capabilities_schema": {
         "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
@@ -53,11 +53,11 @@ INPUTS = {
     },
     "candidate_oracle_adapter": {
         "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json",
-        "raw_sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235",
+        "raw_sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0",
     },
     "candidate_oracle_adapter_schema": {
         "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json",
-        "raw_sha256": "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb",
+        "raw_sha256": "d25c9636b4df221f2be8dd689e2f71c1a6fa9a10025a0ec14217631d922d1552",
     },
     "acceptance_inventory": {
         "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
@@ -65,7 +65,7 @@ INPUTS = {
     },
     "capability_oracles": {
         "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-        "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
+        "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e",
     },
     "capability_oracles_schema": {
         "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
@@ -73,31 +73,31 @@ INPUTS = {
     },
     "oracle_500_successor": {
         "path": "deploy/docker/thor-local/qualification/oracle-500-successor/capability-oracles-500.json",
-        "raw_sha256": "75a7c6b6ecc5bcfee0eece99a10ca29c0258717887c59847252629ac4d21e364",
+        "raw_sha256": "e682282735476830659582bd551fddc3e140580324e856ceaea4507ca5e706c2",
     },
     "oracle_500_successor_schema": {
         "path": "deploy/docker/thor-local/qualification/oracle-500-successor/capability-oracles-500.schema.json",
-        "raw_sha256": "fcbe27337accc57c5a57a3ce7bf26d1e532c9001f7841134ec22db8663d41024",
+        "raw_sha256": "759c36ade481c6024815df95738a7fca13e92c66ae70649154bb7cb85b439057",
     },
 }
 
 PROOF_SCHEMA_RAW_SHA256 = (
-    "8f74b849581029c303a1e7a927f1f31b7458ed87e529d14e25134e52396f4ec9"
+    "9ed414c6e1c40d8afc27e8e0bd635d826536994375037efc947098dc089f98b2"
 )
 MANIFEST_SCHEMA_RAW_SHA256 = (
     "90b0452d8e19f7770b1ed13d6a5a7f1040612cc6e99edf8f4cd2d32ed86582c5"
 )
 EXPECTED_PROOF_PAYLOAD_SHA256 = (
-    "2c62052d9059cad422e2a1acf336a61bc6a14e6d1127d26d570b2c2df7ceb0ed"
+    "a6142381bbec4c81fd14780dac46ffa018e4a5e077bd85d0d69572d5ec4ba7e4"
 )
 EXPECTED_PROOF_RAW_SHA256 = (
-    "4e206240795e2cf739f595811920ae66a7868ebe92031feb73b7fcbbe5a971d0"
+    "135e39a9f557f175536282329a3f9a6a8003c634ef2f9f5905b78d0607fe646d"
 )
 EXPECTED_MANIFEST_RAW_SHA256 = (
     "075a859219dfee4982338ca04244b6d444e0c23c9666c88e58e8f5fe58c366e8"
 )
 EXPECTED_LEDGER_RAW_SHA256 = (
-    "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6"
+    "8a6e14b35ce73362bc8c3dccc84788ab48a2e3f88284b41f1b4a6efc30cd7d13"
 )
 MAX_JSON_BYTES = 48_000_000
 POINTER = re.compile(r"^/features/([0-9]+)/advertised/([0-9]+)$")

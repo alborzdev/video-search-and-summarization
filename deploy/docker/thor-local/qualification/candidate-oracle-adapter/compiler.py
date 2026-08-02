@@ -37,7 +37,7 @@ INPUTS = {
     },
     "official_capabilities": {
         "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-        "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+        "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098",
     },
     "official_capabilities_schema": {
         "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
@@ -45,19 +45,19 @@ INPUTS = {
     },
     "capability_oracles": {
         "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-        "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
+        "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e",
     },
     "capability_oracles_schema": {
         "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
         "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1",
     },
 }
-SCHEMA_RAW_SHA256 = "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb"
+SCHEMA_RAW_SHA256 = "d25c9636b4df221f2be8dd689e2f71c1a6fa9a10025a0ec14217631d922d1552"
 EXPECTED_OUTPUT_PAYLOAD_SHA256 = (
-    "e7b67f4e4c3f25641eeb95fd665b2dc0b0d9224c1fec81007b4b7cdc4a40b541"
+    "f9dd22d3ea74a08cdcb3c0f7cc532fdcca81bc054a241b643d25fc40bd4aefde"
 )
 EXPECTED_OUTPUT_RAW_SHA256 = (
-    "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235"
+    "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"
 )
 MAX_JSON_BYTES = 32_000_000
 

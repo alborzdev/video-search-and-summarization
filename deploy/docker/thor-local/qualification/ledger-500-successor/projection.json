@@ -6,9 +6,9 @@
       "raw_sha256": "075a859219dfee4982338ca04244b6d444e0c23c9666c88e58e8f5fe58c366e8"
     },
     "projected_official_capabilities": {
-      "canonical_sha256": "d9b78ab55c60df360b7f9afa1d57b5047644682ac85fd0749758cc0d2db48800",
+      "canonical_sha256": "6797f35ca355f69020bcb3bae26ec9049ebc35ff1914b39eb745fa2445d9562c",
       "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
-      "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6"
+      "raw_sha256": "8a6e14b35ce73362bc8c3dccc84788ab48a2e3f88284b41f1b4a6efc30cd7d13"
     }
   },
   "candidate_append_order": [
@@ -2165,27 +2165,27 @@
   "preservation": {
     "candidate_append_order_sha256": "b341b268fe9d363a1097f1efbdf137796b8a11ff9daaf1c3a9949ea5033d1724",
     "candidate_capability_records_ordered_sha256": "658f7972440b80eb6302c9ca6a64eb231ebaa41fc4d5ce7b633df020a55d69d9",
-    "current_capability_records_ordered_sha256": "afca818d0d73eecd692869f998e949e5e2df7c1b7fabf91d8a55afb1486eb96c",
+    "current_capability_records_ordered_sha256": "9d6a0b36ec5fecf97c29e9365eaded7e8cf8c17c86f6060c0a8f962e4b9a2a09",
     "current_feature_capability_id_order_sha256": "3d3351479bc835785723fff9ecd707a4218a938c37ef41dd9010f0e2b7a07a31",
-    "current_ledger_root_without_capabilities_sha256": "a4a86f0230bf4618545ebdbc692f6c98d83af8bf1ad9beee09b4782189e00898",
+    "current_ledger_root_without_capabilities_sha256": "6b2aa7a6a25ddf93fae4e83cd11c9018ce5a722b3d6bec0d5c12e68d3eb77dc3",
     "current_manifest_canonical_sha256": "cbf65ddc55b3518763bf8ee57f58f24619956473035aeca98a274a7b1bc959f2",
     "current_manifest_evidence_field_count": 110,
     "current_manifest_evidence_fields_sha256": "b4738888a1fa2b67ef924f04673b2a6ae17e5979bbc22af600761d1459846f9d",
     "current_manifest_non_id_feature_fields_sha256": "c39e4e5863f1f52241a3f7b6d20a335609d2b52c2ea20337f65704d4dee67a34",
     "current_oracle_count": 289,
     "current_oracle_evidence_record_count": 0,
-    "current_oracle_records_canonical_sha256": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2",
+    "current_oracle_records_canonical_sha256": "dd64697f03a208991e1408f447253b4294d75c557a18b8773f8231cf72f9b983",
     "current_oracle_state_evidence_projection_sha256": "82a748a7fa0065283df1f7e80ea3d479e073276b3a2881d8d13ffadf9de11abb",
     "current_runtime_state_projection_sha256": "8641982b7834b1442c4c090c96bb6fa9d829aba60fb45e3142a30d4f2594506b",
     "current_source_discrepancies_ordered_sha256": "b97cf465bd5665c4192a24f8090b886792f292fac537c72179cac8a1b6f4b292",
     "explicit_authoritative_gap_binding_count": 74,
     "family_only_without_gap_binding_count": 137,
-    "projected_capability_records_ordered_sha256": "c83b16277c67fc74b61b9ef8cd659141faaeca88bf4a7701153bf8cde8b3a301",
+    "projected_capability_records_ordered_sha256": "88d780a76d97f3744cb0abbb46cd8353244434bc1309a9712295a81b1d0f74da",
     "projected_oracle_capability_order_sha256": "31ad7e72b405a52c6cb9e7f6f77a7f9a61b73c05a87c87678f089c265c306555",
-    "projected_oracle_records_canonical_sha256": "649458c5d354b7012bd5c719bc9e4711d263b0ba9951e244a2bc1cb5331273b5"
+    "projected_oracle_records_canonical_sha256": "d6b770012e0c36672814c12b40efa0f2bc6a9254708d075dee02394fb08e1442"
   },
   "projection_id": "vss-3.2.1-thor-ledger-500-candidate-successor",
-  "projection_payload_sha256": "2c62052d9059cad422e2a1acf336a61bc6a14e6d1127d26d570b2c2df7ceb0ed",
+  "projection_payload_sha256": "a6142381bbec4c81fd14780dac46ffa018e4a5e077bd85d0d69572d5ec4ba7e4",
   "schema_version": 1,
   "source_claim_hash_projection": {
     "algorithm": "verify_official_capabilities_claim_set_v1",
@@ -2208,12 +2208,12 @@
       "warehouse-mv3dt-config-doc-3.2.1",
       "warehouse-sparse4d-config-doc-3.2.1"
     ],
-    "transition_rows_sha256": "146ac19f6bb32fa89c1630a735f5d8edd8fd1579828bba8e77280083e39d1a68",
+    "transition_rows_sha256": "968d015762eb039f72a762902da14cf24ecf89386dd44f190499a75b5f8b2bb3",
     "transitions": [
       {
         "changed": false,
-        "current_claim_set_sha256": "19081de42ba87a582281ea68046a08e98602a14b33579da5d970b9fd2e59bd22",
-        "projected_claim_set_sha256": "19081de42ba87a582281ea68046a08e98602a14b33579da5d970b9fd2e59bd22",
+        "current_claim_set_sha256": "4dd56cbf6453067e5d6515977fd681fdd51a1067823fd91710e777f778ec9de5",
+        "projected_claim_set_sha256": "4dd56cbf6453067e5d6515977fd681fdd51a1067823fd91710e777f778ec9de5",
         "source_id": "release-notes-3.2.1"
       },
       {
@@ -2314,20 +2314,20 @@
       },
       {
         "changed": false,
-        "current_claim_set_sha256": "eef97a91cba69f24c4d9f04457dbc7652df07247bc0cdcbd9d7159b2d9a97c8f",
-        "projected_claim_set_sha256": "eef97a91cba69f24c4d9f04457dbc7652df07247bc0cdcbd9d7159b2d9a97c8f",
+        "current_claim_set_sha256": "03c398b054ce2acf6fcf74fb0f93cb2b61a5d7a946137743696b58943606e065",
+        "projected_claim_set_sha256": "03c398b054ce2acf6fcf74fb0f93cb2b61a5d7a946137743696b58943606e065",
         "source_id": "lvs-api-doc-3.2.1"
       },
       {
         "changed": true,
-        "current_claim_set_sha256": "17a2fe3fd627f9d06edc0585e02df7f8244694dab3b5d209c9bc701a3deec99a",
-        "projected_claim_set_sha256": "2a141c5b69b3c85781e2cd384bbc978c7a56a4211f05dd78179d141ce8ad96fc",
+        "current_claim_set_sha256": "dd5748aa7a58bc774ed46f8553709dcfbffddcff8907d265898bf63060b36145",
+        "projected_claim_set_sha256": "f91d9552dfda8b3e465deee905ad5bd2c1a14ff0d779e24e6e589c1050706df8",
         "source_id": "lvs-doc-3.2.1"
       },
       {
         "changed": false,
-        "current_claim_set_sha256": "4a22b631724480354490fbca61aa8e6de63eaeb0cb96cbb59ab689e033c114ec",
-        "projected_claim_set_sha256": "4a22b631724480354490fbca61aa8e6de63eaeb0cb96cbb59ab689e033c114ec",
+        "current_claim_set_sha256": "ab5df280aec7dc38ae64c6873a5378e2104888f1fdbcc0f57bb7649dfeb8c83e",
+        "projected_claim_set_sha256": "ab5df280aec7dc38ae64c6873a5378e2104888f1fdbcc0f57bb7649dfeb8c83e",
         "source_id": "alerts-api-doc-3.2.1"
       },
       {
@@ -2404,8 +2404,8 @@
       },
       {
         "changed": false,
-        "current_claim_set_sha256": "fc36e720d9ab4a684b328a2b234456959932163de93e5d8dd54d162b2fe97089",
-        "projected_claim_set_sha256": "fc36e720d9ab4a684b328a2b234456959932163de93e5d8dd54d162b2fe97089",
+        "current_claim_set_sha256": "d0b3c9f0811df7a07f1bf5255d0c86b9ff3e4b530b45424009628ebcc821d65c",
+        "projected_claim_set_sha256": "d0b3c9f0811df7a07f1bf5255d0c86b9ff3e4b530b45424009628ebcc821d65c",
         "source_id": "main-repository-7732edf8"
       },
       {
@@ -2674,8 +2674,8 @@
       },
       {
         "changed": false,
-        "current_claim_set_sha256": "26c179a55ce9f6e372ea3299ad422b11bdaf94cf87d453014d9cbe634662958e",
-        "projected_claim_set_sha256": "26c179a55ce9f6e372ea3299ad422b11bdaf94cf87d453014d9cbe634662958e",
+        "current_claim_set_sha256": "ffdabea5ad022b1ef87301860138ffe0c3e9532ef1304dfb9ab1bdca4ced4754",
+        "projected_claim_set_sha256": "ffdabea5ad022b1ef87301860138ffe0c3e9532ef1304dfb9ab1bdca4ced4754",
         "source_id": "doc.alerts"
       },
       {
@@ -3090,11 +3090,11 @@
     },
     "candidate_oracle_adapter": {
       "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json",
-      "raw_sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235"
+      "raw_sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"
     },
     "candidate_oracle_adapter_schema": {
       "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json",
-      "raw_sha256": "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb"
+      "raw_sha256": "d25c9636b4df221f2be8dd689e2f71c1a6fa9a10025a0ec14217631d922d1552"
     },
     "candidate_schema": {
       "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.schema.json",
@@ -3102,7 +3102,7 @@
     },
     "capability_oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
+      "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
     },
     "capability_oracles_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
@@ -3114,7 +3114,7 @@
     },
     "official_capabilities": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
+      "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
     },
     "official_capabilities_schema": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
@@ -3122,11 +3122,11 @@
     },
     "oracle_500_successor": {
       "path": "deploy/docker/thor-local/qualification/oracle-500-successor/capability-oracles-500.json",
-      "raw_sha256": "75a7c6b6ecc5bcfee0eece99a10ca29c0258717887c59847252629ac4d21e364"
+      "raw_sha256": "e682282735476830659582bd551fddc3e140580324e856ceaea4507ca5e706c2"
     },
     "oracle_500_successor_schema": {
       "path": "deploy/docker/thor-local/qualification/oracle-500-successor/capability-oracles-500.schema.json",
-      "raw_sha256": "fcbe27337accc57c5a57a3ce7bf26d1e532c9001f7841134ec22db8663d41024"
+      "raw_sha256": "759c36ade481c6024815df95738a7fca13e92c66ae70649154bb7cb85b439057"
     }
   },
   "summary": {

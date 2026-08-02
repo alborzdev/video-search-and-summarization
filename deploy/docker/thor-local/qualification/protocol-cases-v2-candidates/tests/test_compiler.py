@@ -178,6 +178,14 @@ def test_binding_projection_is_complete_stable_and_source_hashed(
                 == case["candidate_contract"]["oracle_plan"]
             )
 
+    sse_binding = next(
+        binding
+        for binding in checked["bindings"]
+        if binding["capability_id"] == compiler.SSE_MCP_CAPABILITY_ID
+    )
+    sse_sources = {source["path"] for source in sse_binding["source_hashes"]}
+    assert set(compiler.SSE_MCP_DEPLOYMENT_SURFACES) <= sse_sources
+
 
 def test_all_source_locks_match_regular_checked_files(checked: dict) -> None:
     assert len(checked["source_locks"]) == 8

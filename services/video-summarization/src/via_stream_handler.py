@@ -33,8 +33,6 @@ from threading import Event, RLock, Thread
 import json_repair
 import prometheus_client as prom
 import requests.exceptions
-from pyaml_env import parse_config
-
 from chunk_info import ChunkInfo, RequestSource, get_timestamp_str
 from lvs_errors import classify_es_error
 from otel_helper import (
@@ -43,6 +41,7 @@ from otel_helper import (
     is_tracing_enabled,
     trace_operation,
 )
+from pyaml_env import parse_config
 from rag_adapter import RagAdapter
 from rtvi_vlm_client import RtviVlmClient
 from via_exception import ViaException
@@ -686,6 +685,12 @@ class ViaStreamHandler:
                 self._update_completion_metrics(req_info, chunk_responses)
         else:
             if req_info.status == RequestInfo.Status.FAILED:
+                # A failed file request is terminal too. The HTTP streaming
+                # path gates context-manager return and request-map removal on
+                # progress == 100, so signal the same terminal invariants as a
+                # successful request before setting status_event below.
+                req_info.progress = 100
+                req_info.end_time = time.time()
                 logger.info(
                     "Summary generation failed for video file request %s", req_info.request_id
                 )
@@ -2407,8 +2412,9 @@ class ViaStreamHandler:
         Other callers (DELETE /files, live-stream teardown) keep their
         existing semantics by leaving the flag at its default.
 
-        Returns the context-manager subprocess response dict; idempotent on
-        a missing index.
+        Returns the acknowledged context-manager subprocess response dict;
+        idempotent on a missing index. Raises when the context manager is
+        unavailable, throws, or does not acknowledge the deletion.
         """
         if not self._kafka_enabled and not force_legacy:
             return {"skipped": True, "reason": "KAFKA_ENABLED=false"}
@@ -2421,18 +2427,38 @@ class ViaStreamHandler:
             with self._lock:
                 self._create_ctx_mgr_pool(self._ca_rag_config)
                 if not self._ctx_mgr_pool:
-                    return {"error": "no context manager available in pool"}
+                    raise ViaException(
+                        "No context manager available to delete the asset collection",
+                        "DependencyUnavailable",
+                        503,
+                    )
                 ctx_mgr = self._ctx_mgr_pool.pop()
 
             config = deepcopy(self._ca_rag_config)
             config["context_manager"]["uuid"] = asset_id
             ctx_mgr.configure(config=config)
             result = ctx_mgr.drop_collection()
+            if result != {"acknowledged": True}:
+                detail = result.get("error") if isinstance(result, dict) else None
+                if not detail:
+                    detail = "collection deletion was not acknowledged"
+                raise ViaException(
+                    f"Failed to delete collection for asset {asset_id}: {detail}",
+                    "DependencyError",
+                    503,
+                )
             logger.info("drop_collection for asset_id=%s -> %s", asset_id, result)
             return result
+        except ViaException as ex:
+            logger.warning("drop_collection_for_asset failed for %s: %s", asset_id, ex)
+            if ex.code in {"DependencyError", "DependencyUnavailable"}:
+                raise
+            http_status, user_message = classify_es_error(ex)
+            raise ViaException(user_message, "DependencyError", http_status) from ex
         except Exception as ex:
             logger.warning("drop_collection_for_asset failed for %s: %s", asset_id, ex)
-            return {"error": str(ex)}
+            http_status, user_message = classify_es_error(ex)
+            raise ViaException(user_message, "DependencyError", http_status) from ex
         finally:
             if ctx_mgr is not None:
                 with self._lock:

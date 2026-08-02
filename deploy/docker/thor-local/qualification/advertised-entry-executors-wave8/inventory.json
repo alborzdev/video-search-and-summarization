@@ -12,11 +12,11 @@
   },
   "live_official_capabilities": {
     "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-    "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
+    "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
   },
   "live_capability_oracles": {
     "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-    "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
+    "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
   },
   "predecessors": [
     {
@@ -65,24 +65,52 @@
   },
   "source_locks": [
     {
+      "path": "deploy/docker/services/video-summarization/compose.yml",
+      "sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.video-summarization",
+      "sha256": "572e480c4ff4525bb539621668b4bddd1a080bc31a6ec15f49ef3dd8c53b22f4"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "b3f8b8d94f05e0edfbe0e1652457c80bd821d0dc93271fb75e2bc40b188c12ce"
+    },
+    {
+      "path": "services/video-summarization/docker/package_file_list.txt",
+      "sha256": "2320f99c469ec0bca82022d7a60ab16098ad4fa18a36d7fdae284a1af23c96c2"
+    },
+    {
       "path": "services/video-summarization/src/lvs_mcp.py",
-      "sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+      "sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp_sse.py",
+      "sha256": "94306d18703a598982fbfe3515dcb3ed7cad31dfb106cb0d5b5c4ef92e6806f8"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"
     },
     {
       "path": "services/video-summarization/src/via_server.py",
-      "sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+      "sha256": "2f95a82460a932cc3aac0161ed227eac12f2ac080dc7e44ef1641841730d5e6d"
     },
     {
       "path": "services/video-summarization/src/rtvi_vlm_client.py",
       "sha256": "46cdf3abc75146497dd94b5fe0a41895ff900fc08f9ff278dc56de9858944383"
     },
     {
-      "path": "services/video-summarization/tests/test_lvs_mcp.py",
-      "sha256": "c8305b1ea3469c7ac59a16840053455a4e38693d280b1bf74468b585c5b1e3ec"
+      "path": "services/video-summarization/tests/test_lvs_delete_cleanup.py",
+      "sha256": "4b57befb075fac25548617a1fbed857779fe2793b11fe4678ef36d472a1c4120"
     },
     {
-      "path": "deploy/docker/services/video-summarization/compose.yml",
-      "sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
+      "path": "services/video-summarization/tests/test_lvs_mcp.py",
+      "sha256": "01129bed02201c964cc4e62b16c0380bf8f636b44f78ab11944160f21813bc2e"
+    },
+    {
+      "path": "services/video-summarization/tests/test_lvs_mcp_sse.py",
+      "sha256": "1d37ff696c4ce0d892fd92b9f52f76dff5fc72366027d0ecca5f34a58b7f489e"
     }
   ],
   "cases": [
@@ -100,6 +128,7 @@
       "retained_blockers": [
         "live_sse_connection_not_executed",
         "mcp_transport_and_handshake_not_executed",
+        "live_transport_session_cleanup_not_observed",
         "deployed_lvs_not_observed",
         "thor_runtime_readiness_not_observed"
       ]
@@ -117,6 +146,7 @@
       "evidence_scope": "subset: production 13-tool registration plus in-process health and bounded file add/list/info/delete semantics with rejection, rollback, and sanitized-error checks; no MCP transport/session/handshake, live service, model, summarization, or Thor readiness",
       "retained_blockers": [
         "mcp_transport_and_handshake_not_executed",
+        "deployed_delete_cleanup_not_observed",
         "live_lvs_service_not_executed",
         "vlm_inference_not_executed",
         "thor_runtime_readiness_not_observed"

@@ -16,7 +16,7 @@ from unittest import mock
 from uuid import UUID
 
 from fastapi import Body, FastAPI, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 # The source distribution intentionally has no runtime dependency list; the
 # released LVS image supplies MCP. Keep these dispatch tests runnable from a
@@ -52,6 +52,7 @@ except ModuleNotFoundError:
     mcp_sse_module.SseServerTransport = StubRecord
     mcp_stdio_module.stdio_server = StubRecord
     mcp_types_module.TextContent = StubRecord
+    mcp_types_module.CallToolResult = StubRecord
     mcp_types_module.Tool = StubRecord
     mcp_module.server = mcp_server_module
     sys.modules.update(
@@ -68,13 +69,18 @@ via_logger_module = types.ModuleType("via_logger")
 via_logger_module.logger = logging.getLogger("lvs-mcp-test")
 sys.modules["via_logger"] = via_logger_module
 
-from lvs_mcp import LvsMCPServer  # noqa: E402
-from lvs_mcp import _BoundedMediaReader  # noqa: E402
-from lvs_mcp import _mcp_bind_host  # noqa: E402
-from lvs_mcp import run_mcp_server  # noqa: E402
-from rtvi_vlm_client import RTVI_HEALTH_TIMEOUT  # noqa: E402
-from rtvi_vlm_client import RtviError  # noqa: E402
-from rtvi_vlm_client import RtviVlmClient  # noqa: E402
+from lvs_mcp import (  # noqa: E402
+    API_PREFIX,
+    LvsMCPServer,
+    _BoundedMediaReader,  # noqa: E402
+    _mcp_bind_host,  # noqa: E402
+    run_mcp_server,  # noqa: E402
+)
+from rtvi_vlm_client import (  # noqa: E402
+    RTVI_HEALTH_TIMEOUT,
+    RtviError,
+    RtviVlmClient,
+)
 
 
 class FakeLvsServer:
@@ -143,6 +149,514 @@ class TestLvsMcpHealth(unittest.TestCase):
         )
 
         self.assertEqual(result, {"accepted": True, "prompt": "Describe it"})
+
+
+class TestLvsMcpStreamingSummarization(unittest.TestCase):
+    REQUEST_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+    VIDEO_ID = "12345678-1234-4678-9234-567812345678"
+    MODEL = "local-vlm"
+    CREATED = 1_800_000_000
+
+    @classmethod
+    def _progress(cls, content="final summary", *, start=0, end=10):
+        return {
+            "id": cls.REQUEST_ID,
+            "video_id": cls.VIDEO_ID,
+            "model": cls.MODEL,
+            "created": cls.CREATED,
+            "object": "summarization.progressing",
+            "media_info": {
+                "type": "offset",
+                "start_offset": start,
+                "end_offset": end,
+            },
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "message": {"content": content, "role": "assistant"},
+                }
+            ],
+            "usage": None,
+        }
+
+    @classmethod
+    def _completion(cls):
+        return {
+            "id": cls.REQUEST_ID,
+            "video_id": cls.VIDEO_ID,
+            "model": cls.MODEL,
+            "created": cls.CREATED,
+            "object": "summarization.completion",
+            "media_info": None,
+            "choices": [],
+            "usage": {
+                "total_chunks_processed": 2,
+                "query_processing_time": 4,
+            },
+        }
+
+    @classmethod
+    def _arguments(cls, **updates):
+        arguments = {
+            "id": cls.VIDEO_ID,
+            "model": cls.MODEL,
+            "scenario": "warehouse monitoring",
+            "events": ["notable activity"],
+            "stream": True,
+        }
+        arguments.update(updates)
+        return arguments
+
+    @staticmethod
+    def _frame(payload, *, newline="\r\n"):
+        if not isinstance(payload, str):
+            payload = json.dumps(payload, separators=(",", ":"))
+        return f"data: {payload}{newline}{newline}".encode()
+
+    def _call_stream(self, parts, *, media_type="text/event-stream", arguments=None):
+        lvs = FakeLvsServer()
+
+        @lvs._app.post(f"{API_PREFIX}/summarize")
+        async def summarize(request: Request):
+            self.assertEqual(await request.json(), arguments or self._arguments())
+
+            async def generate():
+                for part in parts:
+                    yield part
+
+            return StreamingResponse(generate(), media_type=media_type)
+
+        mcp = LvsMCPServer(lvs)
+        with mock.patch.object(
+            socket,
+            "create_connection",
+            side_effect=AssertionError("network used"),
+        ):
+            return asyncio.run(
+                mcp._handle_tool_call(
+                    "summarize_video", arguments or self._arguments()
+                )
+            )
+
+    def test_streaming_preserves_every_source_event_and_terminal_completion(self):
+        first = self._progress("first summary", start=0, end=5)
+        final = self._progress("final summary", start=5, end=10)
+        completion = self._completion()
+        body = b"".join(
+            (
+                b"\r\n: ping\r\n\r\n",
+                self._frame(first),
+                b": interleaved-comment\r\n" + self._frame(final),
+                self._frame(completion),
+                self._frame("[DONE]"),
+                b"\r\n",
+            )
+        )
+
+        result = self._call_stream([body[:17], body[17:113], body[113:]])
+
+        self.assertEqual(
+            result,
+            {
+                "stream_events": [first, final],
+                "completion_event": completion,
+                "terminal": "[DONE]",
+            },
+        )
+
+    def test_streaming_without_usage_returns_exact_progress_and_done(self):
+        progress = self._progress()
+        result = self._call_stream(
+            [self._frame(progress, newline="\n"), self._frame("[DONE]", newline="\n")]
+        )
+        self.assertEqual(result["stream_events"], [progress])
+        self.assertIsNone(result["completion_event"])
+        self.assertEqual(result["terminal"], "[DONE]")
+
+    def test_nonstreaming_json_behavior_is_unchanged(self):
+        lvs = FakeLvsServer()
+        expected = {"object": "summarization.completion", "choices": []}
+
+        @lvs._app.post(f"{API_PREFIX}/summarize")
+        async def summarize(payload: dict = Body()):
+            self.assertIs(payload["stream"], False)
+            return expected
+
+        mcp = LvsMCPServer(lvs)
+        mcp._call_sse_api = mock.AsyncMock(side_effect=AssertionError("SSE path used"))
+        result = asyncio.run(
+            mcp._handle_tool_call(
+                "summarize_video", self._arguments(stream=False)
+            )
+        )
+        self.assertEqual(result, expected)
+        mcp._call_sse_api.assert_not_awaited()
+
+    def test_streaming_failure_payload_is_not_returned_as_a_summary(self):
+        failure = self._progress("Summarization failed. Elasticsearch unavailable")
+        with self.assertRaisesRegex(ValueError, "Summarization failed"):
+            self._call_stream([self._frame(failure), self._frame("[DONE]")])
+
+    def test_streaming_http_error_is_classified_before_sse_parsing(self):
+        lvs = FakeLvsServer()
+
+        @lvs._app.post(f"{API_PREFIX}/summarize")
+        async def summarize_error(_request: Request):
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "code": "DependencyError",
+                    "message": "Elasticsearch unavailable",
+                },
+            )
+
+        mcp = LvsMCPServer(lvs)
+        with (
+            mock.patch.object(
+                socket,
+                "create_connection",
+                side_effect=AssertionError("network used"),
+            ),
+            self.assertRaisesRegex(
+                ValueError, "DependencyError: Elasticsearch unavailable"
+            ),
+        ):
+            asyncio.run(mcp._handle_tool_call("summarize_video", self._arguments()))
+
+    def test_malformed_truncated_and_unexpected_streams_fail_closed(self):
+        progress = self._progress()
+        drift = self._progress("drift")
+        drift["id"] = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+        duplicate_key = self._frame(
+            '{"id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","id":"duplicate"}'
+        )
+        scenarios = (
+            ("missing done", [self._frame(progress)], "terminal"),
+            ("truncated", [self._frame(progress)[:-2]], "truncated"),
+            (
+                "malformed json",
+                [self._frame("{not-json}"), self._frame("[DONE]")],
+                "malformed JSON",
+            ),
+            (
+                "duplicate json key",
+                [duplicate_key, self._frame("[DONE]")],
+                "duplicate JSON keys",
+            ),
+            (
+                "unexpected field",
+                [b"event: summary\r\ndata: {}\r\n\r\n", self._frame("[DONE]")],
+                "unexpected field",
+            ),
+            (
+                "identity drift",
+                [self._frame(progress), self._frame(drift), self._frame("[DONE]")],
+                "identity changed",
+            ),
+            ("done only", [self._frame("[DONE]")], "no summary events"),
+            (
+                "data after done",
+                [self._frame(progress), self._frame("[DONE]"), self._frame(progress)],
+                "terminal",
+            ),
+            (
+                "completion before progress",
+                [self._frame(self._completion()), self._frame("[DONE]")],
+                "no summary events",
+            ),
+            (
+                "duplicate completion",
+                [
+                    self._frame(progress),
+                    self._frame(self._completion()),
+                    self._frame(self._completion()),
+                    self._frame("[DONE]"),
+                ],
+                "duplicate completion",
+            ),
+        )
+        for name, parts, message in scenarios:
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, message):
+                self._call_stream(parts)
+
+    def test_stream_bounds_are_configurable_and_enforced_during_consumption(self):
+        progress = self._progress()
+        valid = [self._frame(progress), self._frame("[DONE]")]
+        with (
+            mock.patch.dict(os.environ, {"LVS_MCP_MAX_SSE_BYTES": "32"}),
+            self.assertRaisesRegex(ValueError, "byte limit"),
+        ):
+            self._call_stream(valid)
+        with (
+            mock.patch.dict(os.environ, {"LVS_MCP_MAX_SSE_EVENTS": "1"}),
+            self.assertRaisesRegex(ValueError, "event limit"),
+        ):
+            self._call_stream(valid)
+
+        for name, value in (
+            ("LVS_MCP_MAX_SSE_BYTES", "0"),
+            ("LVS_MCP_MAX_SSE_EVENTS", "100001"),
+            ("LVS_MCP_SSE_TIMEOUT_SECONDS", "not-an-integer"),
+        ):
+            with (
+                self.subTest(name=name),
+                mock.patch.dict(os.environ, {name: value}),
+                self.assertRaisesRegex(ValueError, name),
+            ):
+                self._call_stream(valid)
+
+    def test_stream_timeout_and_unexpected_content_type_fail_closed(self):
+        lvs = FakeLvsServer()
+
+        @lvs._app.post(f"{API_PREFIX}/summarize")
+        async def summarize_timeout(_request: Request):
+            async def generate():
+                yield self._frame(self._progress())
+                await asyncio.Event().wait()
+
+            return StreamingResponse(generate(), media_type="text/event-stream")
+
+        mcp = LvsMCPServer(lvs)
+        with (
+            mock.patch.dict(os.environ, {"LVS_MCP_SSE_TIMEOUT_SECONDS": "1"}),
+            self.assertRaisesRegex(ValueError, "time limit"),
+        ):
+            asyncio.run(mcp._handle_tool_call("summarize_video", self._arguments()))
+
+        with self.assertRaisesRegex(ValueError, "content type"):
+            self._call_stream(
+                [self._frame(self._progress()), self._frame("[DONE]")],
+                media_type="application/json",
+            )
+
+    def test_limit_error_drains_through_terminal_body_and_app_cleanup(self):
+        async def scenario(limit_name, limit_value, body):
+            lvs = FakeLvsServer()
+            terminal_sent = asyncio.Event()
+            cleanup_reached = asyncio.Event()
+
+            async def app(_scope, receive, send):
+                await receive()
+                try:
+                    await send(
+                        {
+                            "type": "http.response.start",
+                            "status": 200,
+                            "headers": [(b"content-type", b"text/event-stream")],
+                        }
+                    )
+                    await send(
+                        {"type": "http.response.body", "body": body, "more_body": True}
+                    )
+                    await send(
+                        {"type": "http.response.body", "body": b"", "more_body": False}
+                    )
+                    terminal_sent.set()
+                finally:
+                    cleanup_reached.set()
+
+            lvs._app = app
+            mcp = LvsMCPServer(lvs)
+            with (
+                mock.patch.dict(os.environ, {limit_name: limit_value}),
+                self.assertRaisesRegex(ValueError, "limit"),
+            ):
+                await mcp._call_sse_api(
+                    "POST", f"{API_PREFIX}/summarize", request_arguments=self._arguments()
+                )
+            self.assertTrue(terminal_sent.is_set())
+            self.assertTrue(cleanup_reached.is_set())
+            self.assertEqual(mcp._sse_stream_count, 0)
+
+        asyncio.run(
+            scenario(
+                "LVS_MCP_MAX_SSE_BYTES",
+                "8",
+                self._frame(self._progress()),
+            )
+        )
+        asyncio.run(
+            scenario(
+                "LVS_MCP_MAX_SSE_EVENTS",
+                "1",
+                self._frame(self._progress()) + self._frame("[DONE]"),
+            )
+        )
+
+    def test_caller_cancellation_keeps_strong_task_and_drains_without_disconnect(self):
+        async def scenario():
+            lvs = FakeLvsServer()
+            started = asyncio.Event()
+            release = asyncio.Event()
+            terminal_sent = asyncio.Event()
+            cleanup_reached = asyncio.Event()
+            synthetic_disconnect = []
+
+            async def app(_scope, receive, send):
+                await receive()
+                probe = None
+                try:
+                    await send(
+                        {
+                            "type": "http.response.start",
+                            "status": 200,
+                            "headers": [(b"content-type", b"text/event-stream")],
+                        }
+                    )
+                    await send(
+                        {
+                            "type": "http.response.body",
+                            "body": self._frame(self._progress()),
+                            "more_body": True,
+                        }
+                    )
+                    probe = asyncio.create_task(receive())
+                    probe.add_done_callback(
+                        lambda done: synthetic_disconnect.append(done.result())
+                        if not done.cancelled() and done.exception() is None
+                        else None
+                    )
+                    started.set()
+                    await release.wait()
+                    self.assertFalse(probe.done())
+                    await send(
+                        {
+                            "type": "http.response.body",
+                            "body": self._frame("[DONE]"),
+                            "more_body": False,
+                        }
+                    )
+                    terminal_sent.set()
+                finally:
+                    if probe is not None and not probe.done():
+                        probe.cancel()
+                        try:
+                            await probe
+                        except asyncio.CancelledError:
+                            pass
+                    cleanup_reached.set()
+
+            lvs._app = app
+            mcp = LvsMCPServer(lvs)
+            caller = asyncio.create_task(
+                mcp._call_sse_api(
+                    "POST", f"{API_PREFIX}/summarize", request_arguments=self._arguments()
+                )
+            )
+            await asyncio.wait_for(started.wait(), timeout=1)
+            caller.cancel()
+            with self.assertRaises(asyncio.CancelledError):
+                await caller
+            self.assertEqual(mcp._sse_stream_count, 1)
+            self.assertEqual(len(mcp._sse_stream_tasks), 1)
+            self.assertFalse(cleanup_reached.is_set())
+
+            release.set()
+            await asyncio.wait_for(cleanup_reached.wait(), timeout=1)
+            await asyncio.sleep(0)
+            self.assertTrue(terminal_sent.is_set())
+            self.assertEqual(synthetic_disconnect, [])
+            self.assertEqual(mcp._sse_stream_count, 0)
+            self.assertEqual(mcp._sse_stream_tasks, set())
+
+        asyncio.run(scenario())
+
+    def test_four_timed_out_unfinished_streams_hold_capacity_and_fifth_never_invokes_app(self):
+        async def scenario():
+            lvs = FakeLvsServer()
+            all_started = asyncio.Event()
+            release = asyncio.Event()
+            invocations = 0
+
+            async def app(_scope, receive, send):
+                nonlocal invocations
+                invocations += 1
+                await receive()
+                await send(
+                    {
+                        "type": "http.response.start",
+                        "status": 200,
+                        "headers": [(b"content-type", b"text/event-stream")],
+                    }
+                )
+                await send(
+                    {
+                        "type": "http.response.body",
+                        "body": self._frame(self._progress()),
+                        "more_body": True,
+                    }
+                )
+                if invocations == 4:
+                    all_started.set()
+                await release.wait()
+                await send(
+                    {
+                        "type": "http.response.body",
+                        "body": self._frame("[DONE]"),
+                        "more_body": False,
+                    }
+                )
+
+            lvs._app = app
+            mcp = LvsMCPServer(lvs)
+            # Exercise detached, retained tasks without spending a full second
+            # per timeout; policy parsing itself is covered separately.
+            mcp._sse_limits = lambda: (4 * 1024 * 1024, 1024, 0.01)
+            callers = [
+                asyncio.create_task(
+                    mcp._call_sse_api(
+                        "POST",
+                        f"{API_PREFIX}/summarize",
+                        request_arguments=self._arguments(),
+                    )
+                )
+                for _ in range(4)
+            ]
+            await asyncio.wait_for(all_started.wait(), timeout=1)
+            timed_out = await asyncio.gather(*callers, return_exceptions=True)
+            self.assertTrue(
+                all("time limit" in str(error) for error in timed_out), timed_out
+            )
+            self.assertEqual(mcp._sse_stream_count, 4)
+            self.assertEqual(len(mcp._sse_stream_tasks), 4)
+            with self.assertRaisesRegex(ValueError, "capacity"):
+                await mcp._call_sse_api(
+                    "POST", f"{API_PREFIX}/summarize", request_arguments=self._arguments()
+                )
+            self.assertEqual(invocations, 4)
+            self.assertEqual(mcp._sse_stream_count, 4)
+
+            release.set()
+            for _ in range(10):
+                if mcp._sse_stream_count == 0:
+                    break
+                await asyncio.sleep(0)
+            self.assertEqual(mcp._sse_stream_count, 0)
+
+        asyncio.run(scenario())
+
+    def test_abnormal_app_releases_capacity_without_claiming_cleanup(self):
+        async def scenario():
+            lvs = FakeLvsServer()
+
+            async def app(_scope, _receive, _send):
+                raise RuntimeError("backend exploded")
+
+            lvs._app = app
+            mcp = LvsMCPServer(lvs)
+            with (
+                mock.patch("lvs_mcp.logger.error") as error_log,
+                self.assertRaisesRegex(ValueError, "terminated unexpectedly"),
+            ):
+                await mcp._call_sse_api(
+                    "POST", f"{API_PREFIX}/summarize", request_arguments=self._arguments()
+                )
+            self.assertEqual(mcp._sse_stream_count, 0)
+            self.assertEqual(mcp._sse_stream_tasks, set())
+            self.assertIn("cleanup is not guaranteed", error_log.call_args.args[0])
+
+        asyncio.run(scenario())
 
 
 class TestLvsMcpFileManagement(unittest.TestCase):
@@ -720,7 +1234,7 @@ class TestLvsMcpFileManagement(unittest.TestCase):
                 )
                 self.assertEqual(warning.called, cleanup_error is not None)
 
-    def test_original_tool_errors_retain_type_while_file_errors_are_sanitized(self):
+    def test_tool_errors_set_sdk_error_flag_while_file_errors_are_sanitized(self):
         mcp = LvsMCPServer(FakeLvsServer())
         original_tools = {
             "health_ready",
@@ -740,25 +1254,64 @@ class TestLvsMcpFileManagement(unittest.TestCase):
         with mock.patch("lvs_mcp.logger.error"):
             for name in original_tools:
                 with self.subTest(name=name):
-                    content = asyncio.run(mcp._invoke_call_tool(name, {}))
+                    result = asyncio.run(mcp._invoke_call_tool(name, {}))
+                    self.assertIs(result.isError, True)
                     self.assertEqual(
-                        json.loads(content[0].text),
+                        json.loads(result.content[0].text),
                         {"error": secret, "type": "ValueError"},
                     )
             for name in file_tools:
                 with self.subTest(name=name):
-                    content = asyncio.run(mcp._invoke_call_tool(name, {}))
-                    payload = json.loads(content[0].text)
+                    result = asyncio.run(mcp._invoke_call_tool(name, {}))
+                    self.assertIs(result.isError, True)
+                    payload = json.loads(result.content[0].text)
                     self.assertEqual(
                         payload,
                         {"error": f"{name} failed; see the LVS service log for details"},
                     )
-                    self.assertNotIn(secret, content[0].text)
-                    self.assertNotIn("ValueError", content[0].text)
+                    self.assertNotIn(secret, result.content[0].text)
+                    self.assertNotIn("ValueError", result.content[0].text)
+                    self.assertNotIn("Traceback", result.content[0].text)
 
         self.assertEqual(
             mcp._handle_tool_call.await_count,
             len(original_tools) + len(file_tools),
+        )
+
+    def test_registered_handler_returns_native_success_and_tool_errors(self):
+        mcp = LvsMCPServer(FakeLvsServer())
+        mcp._handle_tool_call = mock.AsyncMock(return_value={"status": "ready"})
+
+        success = asyncio.run(mcp._call_tool_handler("health_ready", {}))
+
+        self.assertIs(success.isError, False)
+        self.assertEqual(json.loads(success.content[0].text), {"status": "ready"})
+
+        mcp._handle_tool_call.side_effect = ValueError("bad input")
+        with mock.patch("lvs_mcp.logger.error"):
+            invalid = asyncio.run(mcp._call_tool_handler("health_ready", []))
+            unknown = asyncio.run(mcp._call_tool_handler("not_a_tool", {}))
+
+        for result in (invalid, unknown):
+            self.assertIs(result.isError, True)
+            self.assertEqual(json.loads(result.content[0].text)["type"], "ValueError")
+
+    def test_invalid_arguments_and_unknown_tools_are_direct_tool_errors(self):
+        mcp = LvsMCPServer(FakeLvsServer())
+
+        with mock.patch("lvs_mcp.logger.error"):
+            invalid = asyncio.run(mcp._invoke_call_tool("health_ready", []))
+            unknown = asyncio.run(mcp._invoke_call_tool("not_a_tool", {}))
+
+        self.assertIs(invalid.isError, True)
+        self.assertEqual(
+            json.loads(invalid.content[0].text),
+            {"error": "tool arguments must be an object", "type": "ValueError"},
+        )
+        self.assertIs(unknown.isError, True)
+        self.assertEqual(
+            json.loads(unknown.content[0].text),
+            {"error": "Unknown tool: not_a_tool", "type": "ValueError"},
         )
 
     def test_sse_bind_and_port_configuration_fail_closed(self):

@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nvidia:vss:thor:source-claim-hash-repair-receipt:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "integration_id",
+    "target",
+    "changes",
+    "preserved_aggregates",
+    "boundaries",
+    "rollback",
+    "contract_sha256",
+    "lifecycle"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "integration_id": {"const": "source-claim-hash-repair-successor-2026-08-02"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "predecessor_raw_sha256", "successor_raw_sha256"],
+      "properties": {
+        "path": {"const": "deploy/docker/thor-local/parity/official-capabilities.json"},
+        "predecessor_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "successor_raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "changes": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_index",
+          "source_id",
+          "old_claim_set_sha256",
+          "new_claim_set_sha256",
+          "semantic_pointer"
+        ],
+        "properties": {
+          "source_index": {"type": "integer", "minimum": 0},
+          "source_id": {"type": "string", "minLength": 1},
+          "old_claim_set_sha256": {"$ref": "#/$defs/sha256"},
+          "new_claim_set_sha256": {"$ref": "#/$defs/sha256"},
+          "semantic_pointer": {"type": "string", "pattern": "^/sources/[0-9]+/claim_set_sha256$"}
+        }
+      }
+    },
+    "preserved_aggregates": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "raw_sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "raw_sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semantic_leaf_change_count",
+        "capabilities_changed",
+        "oracles_written",
+        "manifest_written",
+        "acceptance_written",
+        "runtime_evidence_added",
+        "passed_current_allowed",
+        "warehouse_sample_bundle",
+        "network",
+        "docker",
+        "services"
+      ],
+      "properties": {
+        "semantic_leaf_change_count": {"const": 6},
+        "capabilities_changed": {"const": false},
+        "oracles_written": {"const": false},
+        "manifest_written": {"const": false},
+        "acceptance_written": {"const": false},
+        "runtime_evidence_added": {"const": false},
+        "passed_current_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "network": {"const": "forbidden"},
+        "docker": {"const": "forbidden"},
+        "services": {"const": "forbidden"}
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "restores_exact_predecessor_digest", "semantic_leaf_change_count"],
+      "properties": {
+        "command": {"const": "integrate_live.py rollback"},
+        "restores_exact_predecessor_digest": {"const": true},
+        "semantic_leaf_change_count": {"const": 6}
+      }
+    },
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "lifecycle": {"const": "source_claim_hash_repair_successor_integrated"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

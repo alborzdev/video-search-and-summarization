@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/lvs-mcp-candidate-workload-repair-successor-v1.schema.json",
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["json_pointer", "canonical_sha256"],
+      "properties": {
+        "json_pointer": {"type": "string", "pattern": "^/"},
+        "canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "operation_base": {
+      "type": "object",
+      "required": ["unit_id", "max_requests", "max_actions", "mutation", "required_observations"],
+      "properties": {
+        "unit_id": {"type": "string", "minLength": 1},
+        "max_requests": {"type": "integer", "minimum": 1, "maximum": 2},
+        "max_actions": {"type": "integer", "minimum": 1, "maximum": 3},
+        "mutation": {"type": "boolean"},
+        "required_observations": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 2,
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repair_id",
+    "mode",
+    "candidate",
+    "selected_metadata",
+    "source_locks",
+    "source_identities",
+    "expected_tool_catalog",
+    "predecessor_rejection",
+    "repaired_workload",
+    "hitl_boundary",
+    "production_source_lock",
+    "scope",
+    "qualification_state"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "repair_id": {"const": "lvs-mcp-candidate-workload-repair-successor-v1"},
+    "mode": {"const": "static_inert_additive_non_promoting_plan"},
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "oracle_id", "manifest_pointer", "acceptance_class", "execution_boundary", "required_cloud_inference", "warehouse_sample_bundle"],
+      "properties": {
+        "candidate_id": {"const": "manifest-entry.agent-and-mcp-apis.06-lvs-mcp"},
+        "oracle_id": {"const": "oracle.manifest-entry.agent-and-mcp-apis.06-lvs-mcp"},
+        "manifest_pointer": {"const": "/features/27/advertised/6"},
+        "acceptance_class": {"const": "required_local"},
+        "execution_boundary": {"const": "local"},
+        "required_cloud_inference": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "selected_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["set_id", "capability_count", "oracle_count", "feature_family_count", "source_bytes_preserved", "mutated_source_paths"],
+      "properties": {
+        "set_id": {"const": "thor-vss-3.2.1-metadata-500-staged"},
+        "capability_count": {"const": 500},
+        "oracle_count": {"const": 500},
+        "feature_family_count": {"const": 55},
+        "source_bytes_preserved": {"const": true},
+        "mutated_source_paths": {"type": "array", "maxItems": 0}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/source_lock"},
+      "minItems": 27,
+      "maxItems": 27,
+      "uniqueItems": true
+    },
+    "source_identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate", "candidate_oracle", "predecessor_workload", "wave1_binding", "mapping_v2", "official_3_2_1_lvs_doc", "official_13_tool_capability"],
+      "properties": {
+        "candidate": {"$ref": "#/$defs/identity"},
+        "candidate_oracle": {"$ref": "#/$defs/identity"},
+        "predecessor_workload": {"$ref": "#/$defs/identity"},
+        "wave1_binding": {"$ref": "#/$defs/identity"},
+        "mapping_v2": {"$ref": "#/$defs/identity"},
+        "official_13_tool_capability": {"$ref": "#/$defs/identity"},
+        "official_3_2_1_lvs_doc": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["json_pointer", "canonical_sha256", "url", "body_raw_sha256"],
+          "properties": {
+            "json_pointer": {"type": "string", "pattern": "^/"},
+            "canonical_sha256": {"$ref": "#/$defs/sha256"},
+            "url": {"const": "https://docs.nvidia.com/vss/3.2.1/long-video-summarization.html"},
+            "body_raw_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        }
+      }
+    },
+    "expected_tool_catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool_count", "tool_names", "tool_names_canonical_sha256", "tools_canonical_sha256", "schema_map", "schema_map_canonical_sha256", "expected_manifest_raw_sha256", "expected_manifest_canonical_sha256", "comparison_policy", "positive_tool_count", "positive_tool_names", "catalog_only_tool_count", "catalog_only_tool_names"],
+      "properties": {
+        "tool_count": {"const": 13},
+        "tool_names": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 13,
+          "maxItems": 13,
+          "uniqueItems": true
+        },
+        "tool_names_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "tools_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "schema_map": {
+          "type": "object",
+          "minProperties": 13,
+          "maxProperties": 13,
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        },
+        "schema_map_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "expected_manifest_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "expected_manifest_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "comparison_policy": {"const": "exact_name_set_and_per_name_canonical_input_schema_hash"}
+        ,"positive_tool_count": {"const": 2}
+        ,"positive_tool_names": {"const": ["health_ready", "summarize_video"]}
+        ,"catalog_only_tool_count": {"const": 11}
+        ,"catalog_only_tool_names": {"const": ["add_file", "delete_file", "generate_captions", "generate_vlm_captions", "get_file_info", "get_metrics", "get_recommended_config", "health_live", "list_files", "list_models", "stream_summarize"]}
+      }
+    },
+    "predecessor_rejection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rejected_literal_facets", "reason", "predecessor_source_bytes_preserved"],
+      "properties": {
+        "rejected_literal_facets": {
+          "const": ["list_lvs_mcp_tools", "get_lvs_readiness", "call_lvs_summarize", "get_lvs_hitl_state"]
+        },
+        "reason": {"type": "string", "minLength": 1},
+        "predecessor_source_bytes_preserved": {"const": true}
+      }
+    },
+    "repaired_workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workload_id", "workload_type", "activation", "phases", "max_requests", "max_actions", "network_scope", "fixture", "fixture_contract_canonical_sha256", "operation_units", "cleanup_boundary"],
+      "properties": {
+        "workload_id": {"const": "workload.lvs-mcp.exact-protocol-and-tools-v1"},
+        "workload_type": {"const": "mcp_protocol_and_tool_calls"},
+        "activation": {"const": "future_separately_authorized_local_executor_only"},
+        "phases": {
+          "const": ["pre_state", "fixture_setup", "mcp_session", "positive_calls", "negative_calls", "owned_cleanup", "postcondition"]
+        },
+        "max_requests": {"const": 6},
+        "max_actions": {"const": 7},
+        "network_scope": {"const": "loopback_only"},
+        "fixture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "raw_sha256", "byte_count", "media_type", "loopback_url"],
+          "properties": {
+            "path": {"const": "services/alert/warmup/test.mp4"},
+            "raw_sha256": {"$ref": "#/$defs/sha256"},
+            "byte_count": {"const": 2575454},
+            "media_type": {"const": "video/mp4"},
+            "loopback_url": {"type": "string", "pattern": "^http://127\\.0\\.0\\.1:38113/"}
+          }
+        },
+        "fixture_contract_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "operation_units": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            {
+              "allOf": [
+                {"$ref": "#/$defs/operation_base"},
+                {
+                  "additionalProperties": false,
+                  "required": ["unit_id", "max_requests", "max_actions", "mutation", "steps", "required_observations"],
+                  "properties": {
+                    "unit_id": {"const": "mcp_initialize_and_tools_list"},
+                    "max_requests": {"const": 2},
+                    "max_actions": {"const": 3},
+                    "mutation": {"const": false},
+                    "steps": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string"}},
+                    "required_observations": {"type": "array", "minItems": 3, "items": {"type": "string"}}
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {"$ref": "#/$defs/operation_base"},
+                {
+                  "additionalProperties": false,
+                  "required": ["unit_id", "max_requests", "max_actions", "mutation", "tool_call", "tool_call_canonical_sha256", "required_observations"],
+                  "properties": {
+                    "unit_id": {"const": "health_ready"},
+                    "max_requests": {"const": 1},
+                    "max_actions": {"const": 1},
+                    "mutation": {"const": false},
+                    "tool_call": {"const": {"name": "health_ready", "arguments": {}}},
+                    "tool_call_canonical_sha256": {"$ref": "#/$defs/sha256"},
+                    "required_observations": {"type": "array", "minItems": 2, "items": {"type": "string"}}
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {"$ref": "#/$defs/operation_base"},
+                {
+                  "additionalProperties": false,
+                  "required": ["unit_id", "max_requests", "max_actions", "mutation", "created_state", "request_template", "request_template_canonical_sha256", "runtime_substitution", "required_observations"],
+                  "properties": {
+                    "unit_id": {"const": "summarize_video_nonstream"},
+                    "max_requests": {"const": 1},
+                    "max_actions": {"const": 1},
+                    "mutation": {"const": true},
+                    "created_state": {"type": "array", "minItems": 3, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+                    "request_template": {"type": "object", "minProperties": 12},
+                    "request_template_canonical_sha256": {"$ref": "#/$defs/sha256"},
+                    "runtime_substitution": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["placeholder", "source", "must_be_nonempty"],
+                      "properties": {
+                        "placeholder": {"const": "${admitted_local_model_id}"},
+                        "source": {"type": "string", "minLength": 1},
+                        "must_be_nonempty": {"const": true}
+                      }
+                    },
+                    "required_observations": {"type": "array", "minItems": 3, "items": {"type": "string"}}
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {"$ref": "#/$defs/operation_base"},
+                {
+                  "additionalProperties": false,
+                  "required": ["unit_id", "max_requests", "max_actions", "mutation", "tool_calls", "required_observations"],
+                  "properties": {
+                    "unit_id": {"const": "rejected_unknown_tool_and_invalid_input"},
+                    "max_requests": {"const": 2},
+                    "max_actions": {"const": 2},
+                    "mutation": {"const": false},
+                    "tool_calls": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object"}},
+                    "required_observations": {"type": "array", "minItems": 3, "items": {"type": "string"}}
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "cleanup_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "cleanup_executor", "owned_targets", "must_preserve", "postconditions", "blocker"],
+          "properties": {
+            "status": {"const": "unresolved_fail_closed"},
+            "cleanup_executor": {"type": "null"},
+            "owned_targets": {"type": "array", "minItems": 5, "items": {"type": "string"}},
+            "must_preserve": {"type": "array", "minItems": 3, "items": {"type": "string"}},
+            "postconditions": {"type": "array", "minItems": 4, "items": {"type": "string"}},
+            "blocker": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "hitl_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "json_pointer", "canonical_sha256", "relationship", "claimed_by_this_repair", "lvs_hitl_observations"],
+      "properties": {
+        "capability_id": {"const": "runtime.agent.base-hitl"},
+        "json_pointer": {"const": "/capabilities/163"},
+        "canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "relationship": {"const": "separate_agent_level_capability_not_an_lvs_mcp_tool"},
+        "claimed_by_this_repair": {"const": false},
+        "lvs_hitl_observations": {"type": "array", "maxItems": 0}
+      }
+    },
+    "production_source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "source_files", "source_files_canonical_sha256"],
+      "properties": {
+        "status": {"const": "finalized_direct_and_helper_sources_locked"},
+        "source_files": {
+          "const": [
+            {"path": "services/video-summarization/src/lvs_mcp.py", "sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"},
+            {"path": "services/video-summarization/src/lvs_mcp_sse.py", "sha256": "94306d18703a598982fbfe3515dcb3ed7cad31dfb106cb0d5b5c4ef92e6806f8"}
+          ]
+        },
+        "source_files_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["additive_overlay_only", "sse_candidate_changed", "related_candidate_ids_changed", "docker_or_service_lifecycle_performed", "network_activity_performed", "runtime_activity_performed"],
+      "properties": {
+        "additive_overlay_only": {"const": true},
+        "sse_candidate_changed": {"const": false},
+        "related_candidate_ids_changed": {"type": "array", "maxItems": 0},
+        "docker_or_service_lifecycle_performed": {"const": false},
+        "network_activity_performed": {"const": false},
+        "runtime_activity_performed": {"const": false}
+      }
+    },
+    "qualification_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime_evidence_count", "authorization_receipt_count", "completion_receipt_count", "admitted_candidate_count", "executable_candidate_count", "runtime_ready", "admission_grade", "can_promote_runtime_state"],
+      "properties": {
+        "runtime_evidence_count": {"const": 0},
+        "authorization_receipt_count": {"const": 0},
+        "completion_receipt_count": {"const": 0},
+        "admitted_candidate_count": {"const": 0},
+        "executable_candidate_count": {"const": 0},
+        "runtime_ready": {"const": false},
+        "admission_grade": {"const": false},
+        "can_promote_runtime_state": {"const": false}
+      }
+    }
+  }
+}

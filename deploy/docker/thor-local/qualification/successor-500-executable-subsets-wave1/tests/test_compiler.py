@@ -149,6 +149,100 @@ def test_annotations_are_explicitly_non_promoting(outputs):
     )
 
 
+def test_cleanup_and_packaging_are_static_only_with_live_blockers_retained(outputs):
+    receipt, successor = outputs
+    receipt_by_id = {item["legacy_entry_id"]: item for item in receipt["entries"]}
+    annotations_by_id = {
+        item["legacy_entry_id"]: item for item in successor["annotations"]
+    }
+    sse_id = "manifest-gap.video-summarization-live.05-sse-mcp-server"
+    tools_id = "manifest-gap.agent-and-mcp-apis.06-lvs-mcp"
+    for by_id in (receipt_by_id, annotations_by_id):
+        assert (
+            "thor_sse_packaging_and_limits_source_locked"
+            in by_id[sse_id]["matched_assertions"]
+        )
+        assert (
+            "session_cleanup_implementation_and_tests_source_locked"
+            in by_id[sse_id]["matched_assertions"]
+        )
+        assert (
+            "live_transport_session_cleanup_not_observed"
+            in by_id[sse_id]["retained_blockers"]
+        )
+        assert (
+            "delete_cleanup_implementation_and_tests_source_locked"
+            in by_id[tools_id]["matched_assertions"]
+        )
+        assert (
+            "deployed_delete_cleanup_not_observed"
+            in by_id[tools_id]["retained_blockers"]
+        )
+    assert receipt["safety"]["live_sse_connection"] is False
+    assert receipt["safety"]["mcp_transport_handshake"] is False
+    assert receipt["safety"]["deployed_lvs"] is False
+
+
+def test_current_wave8_identity_propagates_without_metadata_mutation(
+    source_inputs, outputs
+):
+    contract, _, document, wave8 = source_inputs
+    receipt, successor = outputs
+    expected = "fa3f9188eb30d9f952053c2af626ee73cbb49840fd4843382d111877f47c9a3e"
+    assert contract["wave8"]["result_canonical_sha256"] == expected
+    assert compiler.sha256(compiler.canonical_bytes(wave8)) == expected
+    assert receipt["wave8_result_canonical_sha256"] == expected
+    assert all(
+        item["wave8_result_canonical_sha256"] == expected
+        for item in successor["annotations"]
+    )
+    assert (
+        successor["oracle_document"]["raw_sha256"]
+        == contract["base_oracle_document"]["raw_sha256"]
+    )
+    assert successor["oracle_document"]["canonical_sha256"] == compiler.sha256(
+        compiler.canonical_bytes(document)
+    )
+    assert successor["global_invariants"]["canonical_metadata_mutated"] is False
+    assert wave8["source_digests"][compiler.LIVE_OFFICIAL_PATH] == (
+        "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
+    )
+    assert wave8["source_digests"][compiler.LIVE_ORACLES_PATH] == (
+        "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
+    )
+
+
+def test_activation_rebase_and_protocol_identities_are_exact(source_inputs):
+    contract, snapshot, document, _ = source_inputs
+    locks = {item["path"]: item["raw_sha256"] for item in contract["source_locks"]}
+    assert snapshot.descriptor_raw_sha256 == (
+        "4c343433c56daa87e418752de37e51d733037183d8296e1d7692a3dcaccd82ca"
+    )
+    assert locks[compiler.SELECTOR_PATH] == (
+        "d44bb521d56f87e32396b619b70ee0b2c645e79bc6d78ebd8c6a380575f25112"
+    )
+    assert locks[compiler.DESCRIPTOR_PATH] == snapshot.descriptor_raw_sha256
+    protocol_path = (
+        "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/"
+        "protocol-cases-v2-candidate.json"
+    )
+    protocol_schema_path = f"{protocol_path.removesuffix('.json')}.schema.json"
+    assert locks[protocol_path] == (
+        "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"
+    )
+    assert locks[protocol_schema_path] == (
+        "399471d0efd73614e507426095390a4a2e731aa4970b916199344b89b0304fbb"
+    )
+    sse = document["oracles"][310]
+    assert sse["protocol_v2_binding"]["binding_sha256"] == (
+        "c42bd0c08f7b42222b46e49d5aeba6bb3a441999b9ad509e8091a1d5e8b0fef6"
+    )
+    assert {item["path"] for item in sse["protocol_v2_binding"]["source_hashes"]} >= {
+        "deploy/docker/thor-local/Dockerfile.video-summarization",
+        "services/video-summarization/src/lvs_mcp_sse.py",
+    }
+
+
 def test_execution_receipt_forbids_every_external_action(outputs):
     receipt, _ = outputs
     assert receipt["safety"]["temporary_files_cleaned"] is True

@@ -1,6 +1,6 @@
 {
   "candidate_integrity": {
-    "adapter_payload_sha256": "e7b67f4e4c3f25641eeb95fd665b2dc0b0d9224c1fec81007b4b7cdc4a40b541",
+    "adapter_payload_sha256": "f9dd22d3ea74a08cdcb3c0f7cc532fdcca81bc054a241b643d25fc40bd4aefde",
     "candidate_record_hashes_by_capability_id": {
       "manifest-entry.agent-and-mcp-apis.00-nat-generate-chat": "f3ca3482913263ad05d9094f8f168339552ffa3f35ea8cd70a4f58c1ea3b18e6",
       "manifest-entry.agent-and-mcp-apis.01-health": "49bfa22918443fc6dc273176ef53653ca0e5a9bfa857888cbc4fe8fac0f06c40",
@@ -169,7 +169,7 @@
       "manifest-entry.video-summarization-file.00-chunked-dense-captions": "a36ed9c745320c764a77508acc16763ca30ef3a0dc1b405609c4c6f50621ac55",
       "manifest-entry.video-summarization-file.01-file-summarization": "070d52d9317e4168f10af10ac97c4f5b38f77baead0f3946c00690e6693a02c1",
       "manifest-entry.video-summarization-file.02-multi-video-report": "b38243b043a45f7da2f6eedbd12468fba3809f7ffe1135da00a14d2735cd8b11",
-      "manifest-entry.video-summarization-file.03-structured-output": "af6b5d9064ca592b3f34a084bbd69b486329f60db140abbaedad5e98207092cb",
+      "manifest-entry.video-summarization-file.03-structured-output": "29bfedbf54be9f36ed77b7574cec622dcc658957874e20a529576bc83bd3b46c",
       "manifest-entry.video-summarization-file.04-object-event-scenario-focus": "3ff571a193ccc7c025485de2190819e7eef1667a598c9f234f51ed95e585b9c4",
       "manifest-entry.video-summarization-file.05-reasoning": "2d951f1cdea15a82b66f3763bc9987ebdd9282f352d71d9ca222b4959eb3f19e",
       "manifest-entry.video-summarization-file.06-partial-video-offsets": "2bab0d0e74eb7deee19d66d14ea6d9f0a8cbd6b4b5672d592147a92872d8aa75",
@@ -180,7 +180,7 @@
       "manifest-entry.video-summarization-live.02-stream-reports": "759958c44aa65fdb443b4598620849fbe87c0f97bc71bcd932ee814c5f83f161",
       "manifest-entry.video-summarization-live.03-caption-backed-q-a": "fc44ac931e576333175c175b230826635fc7381eec4d32d78c0e84f4d20d897e",
       "manifest-entry.video-summarization-live.04-elasticsearch-caption-storage": "0d7285feb29055a0e65af0009fdf9e1733692917e6ca66d9d2227ab966fd36b1",
-      "manifest-entry.video-summarization-live.05-sse-mcp-server": "daf6d4a628c8e972d2eb996b3d56f2d6f814d584a378be06f80a3e7a50cc0974",
+      "manifest-entry.video-summarization-live.05-sse-mcp-server": "b523becd0b511f975d38eb3947504e8185c8fe38b12b323838d32b514d664c07",
       "manifest-entry.vios-codecs-audio.00-b-frame-handling": "db39aaa3c758771672abe2e5a0baecc19894f6f5a9c4da70fa4a874c0be1fb81",
       "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798": "c7824cb9e49449ba525f886aeebb703862c8db0e5271f325b67b2a2e3248686c",
       "manifest-entry.vios-codecs-audio.02-h-264-h-265": "5c99042df9e0b26cb67fd3af35eb5fa0f89b3a672f721c29e2a990f61b3b6e53",
@@ -214,17 +214,17 @@
       "manifest-entry.warehouse-3d-and-mv3dt.03-auto-calibration-variants": "b51e93439857bd047a38bd350e84ee596a236091d0eb62d328fa201ac4690983",
       "manifest-entry.warehouse-3d-and-mv3dt.04-top-view-visualization": "f4816301d752a33e963a0f2e92a89ee8dbc94b1ebe144fc0677d4665e03db981"
     },
-    "protocol_v2_payload_sha256": "65715e2ebfbe164ae38a6b20ca7dc23b6f3a65aaa9dd1632bdda746c4c929f24",
+    "protocol_v2_payload_sha256": "6667309aefc03eb410651bd11769301be77cc5d9baf40688fa0f75f5752a58d6",
     "workloads_payload_sha256": "0e8512e64399af7d8acc0c7136efbd52da4ebf9119ad0826859e6fce6906d847"
   },
   "live_preservation": {
-    "live_document_raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
-    "live_oracle_records_canonical_sha256": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2",
+    "live_document_raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e",
+    "live_oracle_records_canonical_sha256": "dd64697f03a208991e1408f447253b4294d75c557a18b8773f8231cf72f9b983",
     "live_record_hashes_by_capability_id": {
       "api.auto-calibration.operations": "ccf28238114927c27f2ae35b4c7228d15f0c8b66f4aef9d294c0d543a0fe8845",
-      "api.core.alerts-19": "0b4406a4673f462c8c8805b512e136ef0ade63805e06ca8772133431eb1d8bfc",
-      "api.core.lvs-17": "9b9eee1b78ae89ed6446918736f5c2793a3227ba7e623ce43e8b0bc7ece02766",
-      "api.core.lvs-mcp-doc-13-repo-9": "c2bf160eeb718755c173ef18b14667ff0bd3ad61ed4a3d3d95392ff88c729ab1",
+      "api.core.alerts-19": "aa581f1a1e55da8f670789141050e245fb029607878a809e57aae67598009d14",
+      "api.core.lvs-17": "2da6c322fe0db2577ef9a80ab8bb586814b3e1498bdd5e4c3244d8df3ab58870",
+      "api.core.lvs-mcp-doc-13-repo-9": "065589f1c1dc422e7d5bdffd58daeda54f916af4a152728687026b9220ba417b",
       "api.core.rt-cv-9": "39d3dc7267f7aa59f3e518bdec74ee554f2ade147c569546aba5e37e93b3f48b",
       "api.core.rt-embed-24": "8aba682bec6987202436732eae8e8a7cdf83e20fc23942016b5dfe7f38d3e651",
       "api.core.rt-vlm-27": "e8c4e4af096b2123167bb80af3e34b35ea5671815ceca9b454a787f5711b1a0d",
@@ -511,7 +511,7 @@
       "tooling.agent-skills.catalog-16": "0e7c9dc5f4fe8732680f92cb394ea5c0e20316797a5e462ddf44c2237b907c07",
       "tooling.smart-city.synthetic-data-pipeline": "6af50b7c069f0f1f1791316aa74eb589b1d2ee9b4fdf21821384703b88465dfc"
     },
-    "projected_live_prefix_canonical_sha256": "370f93028b6fe5638680b568198ad99c13d2554b5d6ab0c27dc546c15624feb2"
+    "projected_live_prefix_canonical_sha256": "dd64697f03a208991e1408f447253b4294d75c557a18b8773f8231cf72f9b983"
   },
   "mode": "isolated_candidate_only_projection",
   "ordering": {
@@ -531,7 +531,7 @@
     "warehouse_sample_bundle": "excluded",
     "wrapper_modified": false
   },
-  "projected_oracle_records_canonical_sha256": "649458c5d354b7012bd5c719bc9e4711d263b0ba9951e244a2bc1cb5331273b5",
+  "projected_oracle_records_canonical_sha256": "d6b770012e0c36672814c12b40efa0f2bc6a9254708d075dee02394fb08e1442",
   "projected_oracles": [
     {
       "acceptance_readiness": {
@@ -23850,7 +23850,7 @@
           "operator": "equals"
         },
         {
-          "expected": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf",
+          "expected": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17",
           "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals"
@@ -23952,7 +23952,7 @@
             "auth": "bearer",
             "conditional_prefix": "/v1",
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-            "expected_manifest_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf",
+            "expected_manifest_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17",
             "mcp_base": "http://<host>:38112",
             "operation_count": 18,
             "rest_base": "http://<host>:38111"
@@ -23974,7 +23974,7 @@
           "auth": "bearer",
           "conditional_prefix": "/v1",
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-          "expected_manifest_sha256": "40b5dc3aadb33eb6ad05fc40c9a125329e8552d4f0006260eaddc202b9210aaf",
+          "expected_manifest_sha256": "dcc3b500384bdc57868f018e03baad46ff9f2692f690bbb07a308bcb200dad17",
           "mcp_base": "http://<host>:38112",
           "operation_count": 18,
           "rest_base": "http://<host>:38111"
@@ -24045,7 +24045,7 @@
           "operator": "equals"
         },
         {
-          "expected": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b",
+          "expected": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
           "id": "contract-03",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals"
@@ -24057,7 +24057,7 @@
           "operator": "equals"
         },
         {
-          "expected": 19,
+          "expected": 21,
           "id": "contract-05",
           "observation": "contract_identity/contract/operation_count",
           "operator": "equals"
@@ -24147,14 +24147,14 @@
       "execution_bounds": {
         "collectors": [],
         "executor": null,
-        "max_actions": 77,
+        "max_actions": 85,
         "max_duration_seconds": 900,
-        "max_requests": 77,
+        "max_requests": 85,
         "model_staging": "prerequisite_only",
         "network_scope": "loopback-or-compose-internal",
         "warehouse_sample_bundle": "excluded",
         "workload": {
-          "calculated_max_requests": 77,
+          "calculated_max_requests": 85,
           "overhead_requests": 1,
           "phases": [
             "positive",
@@ -24163,7 +24163,7 @@
             "cleanup"
           ],
           "requests_per_unit": 4,
-          "units": 19
+          "units": 21
         }
       },
       "expected_observations": [
@@ -24189,9 +24189,9 @@
           "contract": {
             "direct_auth": "none",
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
-            "expected_manifest_sha256": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b",
+            "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
             "gateway_auth": "optional",
-            "operation_count": 19,
+            "operation_count": 21,
             "prefix": "/api/v1",
             "semantic_surface": [
               "alerts",
@@ -24230,9 +24230,9 @@
         "contract": {
           "direct_auth": "none",
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
-          "expected_manifest_sha256": "0137b325a56258df582529ae8391db4f631a2f9ef7639f698134d31a66b4621b",
+          "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
           "gateway_auth": "optional",
-          "operation_count": 19,
+          "operation_count": 21,
           "prefix": "/api/v1",
           "semantic_surface": [
             "alerts",
@@ -26441,7 +26441,7 @@
           "operator": "equals"
         },
         {
-          "expected": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e",
+          "expected": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c",
           "id": "contract-03",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals"
@@ -26594,7 +26594,7 @@
           "contract": {
             "docs_tool_count": 13,
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-            "expected_manifest_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e",
+            "expected_manifest_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c",
             "repository_tool_count": 13,
             "repository_tools": [
               "add_file",
@@ -26652,7 +26652,7 @@
         "contract": {
           "docs_tool_count": 13,
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
-          "expected_manifest_sha256": "2e4eeb61c98688ed2cb7d5e0662513edd3b5ee8db470c61a90b8e91001ff598e",
+          "expected_manifest_sha256": "6768be993243685b467e185280f9321ea402117a9000df5f8a99d63dc094383c",
           "repository_tool_count": 13,
           "repository_tools": [
             "add_file",
@@ -72388,7 +72388,7 @@
       ],
       "binding_integrity": {
         "adapter_record_canonical_sha256": "06bfb0a39a1689cc2eeb6296aafae6c8d262994240fe4651b2010679eed03e2c",
-        "protocol_v2_binding_canonical_sha256": "c93fac1b4b9ecd139a06b47515a77e131b84c04cda7145bbf797cbf901087cd2",
+        "protocol_v2_binding_canonical_sha256": "1edab6b726b4455ef8e47f6ab170099e86a737f7508873653c2a0c3985330df3",
         "workload_binding_canonical_sha256": null
       },
       "can_promote_runtime_state": false,
@@ -72518,7 +72518,7 @@
       "profile_seed": "candidate-protocol",
       "protocol_v2_binding": {
         "activation_supported": false,
-        "binding_sha256": "c82e6c0154b52fcca8a1c36e97a06d27dae0ca6677cec6f9277d138aa1a01549",
+        "binding_sha256": "1aec34fdbcc5eb3d23c4b0d558bcc086cd54f508df57df5ad5c8f141b1165c40",
         "boundary": "local",
         "capability_id": "manifest-entry.video-summarization-file.03-structured-output",
         "case_id": "protocol-v2-case.manifest-entry.video-summarization-file.03-structured-output",
@@ -72527,7 +72527,7 @@
         "source_hashes": [
           {
             "path": "services/video-summarization/src/via_stream_handler.py",
-            "raw_sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+            "raw_sha256": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60"
           },
           {
             "path": "services/video-summarization/src/vss_api_models.py",
@@ -72578,7 +72578,7 @@
           "source_id": "agent-lvs-workflow-doc-3.2.1"
         }
       ],
-      "successor_row_payload_sha256": "7afdc8139fdfdec31d35da8e252cefda03b84d59dff550ac17250383e4b5d358",
+      "successor_row_payload_sha256": "7709adf1a374a91ebe4338d1d701673149a9050ccf3e238fc6a16c9b72041147",
       "successor_schema_version": 1,
       "workload_binding": null
     },
@@ -75137,7 +75137,7 @@
       ],
       "binding_integrity": {
         "adapter_record_canonical_sha256": "8be78bdfc4b82025f164fd2fd85c8cdffb833a0524cf1427c59dfa9720d511b1",
-        "protocol_v2_binding_canonical_sha256": "ba24ad108cb229d35f00671431b1130813941815f64b72a0daf80c39663b8b9b",
+        "protocol_v2_binding_canonical_sha256": "281643d100c1041041ec411e619d330e75a455e411d12af42841985f10307a8b",
         "workload_binding_canonical_sha256": null
       },
       "can_promote_runtime_state": false,
@@ -75301,7 +75301,7 @@
       "profile_seed": "candidate-protocol",
       "protocol_v2_binding": {
         "activation_supported": false,
-        "binding_sha256": "8078ca6eec51f57d3c3bb91abd75c8d54916a31ac232a6bf6f63e907db24ac22",
+        "binding_sha256": "c42bd0c08f7b42222b46e49d5aeba6bb3a441999b9ad509e8091a1d5e8b0fef6",
         "boundary": "local",
         "capability_id": "manifest-entry.video-summarization-live.05-sse-mcp-server",
         "case_id": "protocol-v2-case.manifest-entry.video-summarization-live.05-sse-mcp-server",
@@ -75309,8 +75309,16 @@
         "readiness": "planning_only",
         "source_hashes": [
           {
+            "path": "deploy/docker/thor-local/Dockerfile.video-summarization",
+            "raw_sha256": "572e480c4ff4525bb539621668b4bddd1a080bc31a6ec15f49ef3dd8c53b22f4"
+          },
+          {
             "path": "services/video-summarization/src/lvs_mcp.py",
-            "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+            "raw_sha256": "32a4cc0913025ed34a5e08f751c7d08b97877a047ff72244185a1a9f7d29c211"
+          },
+          {
+            "path": "services/video-summarization/src/lvs_mcp_sse.py",
+            "raw_sha256": "94306d18703a598982fbfe3515dcb3ed7cad31dfb106cb0d5b5c4ef92e6806f8"
           }
         ],
         "transport_components": [
@@ -75379,7 +75387,7 @@
           "source_id": "lvs-doc-3.2.1"
         }
       ],
-      "successor_row_payload_sha256": "e099e3314012b347338c02c90e39bf21b02f7fb41d770a8687c2035518e9c57b",
+      "successor_row_payload_sha256": "2a235f15e79f22260edaf0d77d9b124ea56ee7c867b50ac007ab52bbd0bb3214",
       "successor_schema_version": 1,
       "workload_binding": null
     },
@@ -123789,11 +123797,11 @@
   "source_locks": {
     "candidate_adapter": {
       "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json",
-      "raw_sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235"
+      "raw_sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"
     },
     "candidate_adapter_schema": {
       "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json",
-      "raw_sha256": "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb"
+      "raw_sha256": "d25c9636b4df221f2be8dd689e2f71c1a6fa9a10025a0ec14217631d922d1552"
     },
     "candidate_source": {
       "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json",
@@ -123805,7 +123813,7 @@
     },
     "live_oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90"
+      "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e"
     },
     "live_oracles_schema": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
@@ -123813,7 +123821,7 @@
     },
     "official_capabilities": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0"
+      "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098"
     },
     "official_capabilities_schema": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
@@ -123821,11 +123829,11 @@
     },
     "protocol_v2": {
       "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
-      "raw_sha256": "886151fee9ce27b24601499011151e827c4742b32d400c609c8c0b149851db62"
+      "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7"
     },
     "protocol_v2_schema": {
       "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.schema.json",
-      "raw_sha256": "831d982f6912358b8dfae049cd10ed709af299d91cb7196031d28b29a092877d"
+      "raw_sha256": "399471d0efd73614e507426095390a4a2e731aa4970b916199344b89b0304fbb"
     },
     "workloads": {
       "path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workloads.json",
@@ -123837,7 +123845,7 @@
     }
   },
   "successor_id": "vss-3.2.1-thor-oracle-500-candidate-successor",
-  "successor_payload_sha256": "4d4875014874bcad3fa9f90024207097a1304090759a90fc1f760beef97d33dc",
+  "successor_payload_sha256": "3ac57bc6b62eb3df5a314e0843128c2b0c66abac2b0e37cc76ca0a160887bdf5",
   "summary": {
     "api_workload_bound_candidates": 41,
     "authoritative_gap_requirements": 74,

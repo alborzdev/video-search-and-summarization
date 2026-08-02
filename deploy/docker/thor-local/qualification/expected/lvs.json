@@ -126,11 +126,11 @@
     },
     {
       "path": "deploy/docker/services/video-summarization/compose.yml",
-      "sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
+      "sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
     },
     {
       "path": "services/video-summarization/src/via_server.py",
-      "sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+      "sha256": "2f95a82460a932cc3aac0161ed227eac12f2ac080dc7e44ef1641841730d5e6d"
     }
   ],
   "surface": "lvs"

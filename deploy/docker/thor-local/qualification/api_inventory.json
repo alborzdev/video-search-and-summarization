@@ -22,8 +22,8 @@
     "secret_inputs": []
   },
   "expected_totals": {
-    "declared_rest_operations": 327,
-    "normalized_unique_rest_operations": 326,
+    "declared_rest_operations": 329,
+    "normalized_unique_rest_operations": 328,
     "mcp_tools": 42,
     "mcp_prompts": 5
   },
@@ -165,7 +165,7 @@
       "kind": "rest",
       "extractor": "openapi_json",
       "expected_manifest": "alerts.json",
-      "expected_operation_count": 19,
+      "expected_operation_count": 21,
       "direct": {
         "port_env": "ALERT_BRIDGE_PORT",
         "default_port": 9080,
@@ -444,7 +444,8 @@
       },
       "public": null,
       "sources": [
-        "services/video-summarization/src/lvs_mcp.py"
+        "services/video-summarization/src/lvs_mcp.py",
+        "services/video-summarization/src/lvs_mcp_sse.py"
       ]
     },
     {

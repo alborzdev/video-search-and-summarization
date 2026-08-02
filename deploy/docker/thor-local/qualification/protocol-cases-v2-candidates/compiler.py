@@ -71,6 +71,11 @@ EXCLUDED_WAREHOUSE_MARKERS = (
     "warehouse-4cams-20mx20m-synthetic",
     "warehouse-loading-dock-3cams-synthetic",
 )
+SSE_MCP_CAPABILITY_ID = "manifest-entry.video-summarization-live.05-sse-mcp-server"
+SSE_MCP_DEPLOYMENT_SURFACES = (
+    "deploy/docker/thor-local/Dockerfile.video-summarization",
+    "services/video-summarization/src/lvs_mcp_sse.py",
+)
 
 
 class CandidateError(RuntimeError):
@@ -194,7 +199,10 @@ def _binding(case: dict[str, Any]) -> dict[str, Any]:
             "kind": "planning_only",
             "contract": copy.deepcopy(payload["oracle_plan"]),
         }
-        source_hashes = _surface_hashes(payload["implementation_surfaces"])
+        surfaces = list(payload["implementation_surfaces"])
+        if case["capability_id"] == SSE_MCP_CAPABILITY_ID:
+            surfaces.extend(SSE_MCP_DEPLOYMENT_SURFACES)
+        source_hashes = _surface_hashes(surfaces)
 
     projection = {
         "capability_id": case["capability_id"],

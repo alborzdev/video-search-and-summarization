@@ -17,22 +17,22 @@
 
 Exposes the same functionality as the REST API through MCP tools."""
 
+import asyncio
 import json
 import os
 import re
 import stat
-import traceback
 from datetime import datetime
 from ipaddress import ip_address
 from pathlib import Path
+from threading import Lock
 from typing import Any, Dict, List, Optional
 from uuid import UUID, uuid4
 
+from lvs_mcp_sse import SessionCleaningSseServerTransport
 from mcp.server import Server
-from mcp.server.sse import SseServerTransport
 from mcp.server.stdio import stdio_server
-from mcp.types import TextContent, Tool
-
+from mcp.types import CallToolResult, TextContent, Tool
 from via_logger import logger
 
 # Get API prefix from environment (same as via_server.py)
@@ -42,11 +42,47 @@ API_PREFIX = (
 
 _DEFAULT_MAX_MEDIA_BYTES = 8 * 1024 * 1024 * 1024
 _MAX_CONFIGURABLE_MEDIA_BYTES = 100 * 1000 * 1000 * 1000
+# Local MCP defaults and hard configuration ceilings for consuming the
+# in-process LVS SSE response. The 600-second default matches the existing RTVI
+# request timeout; operators can raise it for longer videos without removing
+# the required total-call bound.
+_DEFAULT_MAX_SSE_BYTES = 4 * 1024 * 1024
+_MAX_CONFIGURABLE_SSE_BYTES = 64 * 1024 * 1024
+_DEFAULT_MAX_SSE_EVENTS = 1024
+_MAX_CONFIGURABLE_SSE_EVENTS = 100_000
+_DEFAULT_SSE_TIMEOUT_SECONDS = 600
+_MAX_CONFIGURABLE_SSE_TIMEOUT_SECONDS = 24 * 60 * 60
+_MAX_CONCURRENT_SSE_STREAMS = 4
 _RFC3339_MILLISECONDS = re.compile(
     r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.\d{3}Z$"
 )
 _SENSOR_NAME = re.compile(r"^[A-Za-z0-9_. -]{0,256}$")
 _FILE_TOOLS = frozenset({"add_file", "list_files", "get_file_info", "delete_file"})
+
+
+class _SseResponseError(ValueError):
+    """Raised when the in-process LVS SSE response violates its local policy."""
+
+
+def _find_sse_response_error(error: BaseException) -> Optional[_SseResponseError]:
+    """Recover a bounded-stream error wrapped by an ASGI task group."""
+
+    if isinstance(error, _SseResponseError):
+        return error
+    for nested in getattr(error, "exceptions", ()):
+        found = _find_sse_response_error(nested)
+        if found is not None:
+            return found
+    return None
+
+
+def _reject_duplicate_json_keys(pairs: List[tuple[str, Any]]) -> Dict[str, Any]:
+    value: Dict[str, Any] = {}
+    for key, item in pairs:
+        if key in value:
+            raise _SseResponseError("LVS SSE event contains duplicate JSON keys")
+        value[key] = item
+    return value
 
 
 def _mcp_bind_host() -> str:
@@ -98,7 +134,55 @@ class LvsMCPServer:
         """
         self._lvs_server = lvs_server_instance
         self._server = Server("lvs-engine")
+        # A timed-out or caller-cancelled in-process ASGI request keeps draining
+        # in the background. Retain those tasks strongly and count them against
+        # the same per-server limit as requests whose callers are still waiting.
+        self._sse_stream_lock = Lock()
+        self._sse_stream_count = 0
+        self._sse_stream_tasks: set[asyncio.Task[Any]] = set()
         self._setup_handlers()
+
+    def _reserve_sse_stream(self) -> None:
+        """Atomically reserve capacity before invoking the ASGI application."""
+
+        with self._sse_stream_lock:
+            if self._sse_stream_count >= _MAX_CONCURRENT_SSE_STREAMS:
+                raise _SseResponseError(
+                    "LVS SSE stream capacity is exhausted "
+                    f"(maximum {_MAX_CONCURRENT_SSE_STREAMS} active or draining streams)"
+                )
+            self._sse_stream_count += 1
+
+    def _release_unstarted_sse_stream(self) -> None:
+        """Release a reservation only when no ASGI task was successfully started."""
+
+        with self._sse_stream_lock:
+            self._sse_stream_count -= 1
+
+    def _retain_sse_stream_task(self, task: asyncio.Task[Any]) -> None:
+        """Keep an ASGI task alive until its done callback releases capacity."""
+
+        with self._sse_stream_lock:
+            self._sse_stream_tasks.add(task)
+        task.add_done_callback(self._sse_stream_done)
+
+    def _sse_stream_done(self, task: asyncio.Task[Any]) -> None:
+        """Consume every task result; release only its capacity, not claimed cleanup."""
+
+        try:
+            task.result()
+        except BaseException as error:
+            logger.error(
+                "In-process LVS SSE ASGI task ended abnormally; releasing its "
+                "capacity slot, but downstream resource cleanup is not guaranteed: %s",
+                error,
+                exc_info=(type(error), error, error.__traceback__),
+            )
+        finally:
+            with self._sse_stream_lock:
+                if task in self._sse_stream_tasks:
+                    self._sse_stream_tasks.remove(task)
+                    self._sse_stream_count -= 1
 
     def _setup_handlers(self):
         """Set up MCP tool handlers."""
@@ -469,32 +553,50 @@ class LvsMCPServer:
         self._list_tools_handler = list_tools
 
         @self._server.call_tool()
-        async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
+        async def call_tool(name: str, arguments: Dict[str, Any]) -> CallToolResult:
             """Handle tool calls by delegating to _invoke_call_tool."""
             return await self._invoke_call_tool(name, arguments)
 
-    async def _invoke_call_tool(self, name: str, arguments: Dict[str, Any]) -> List[TextContent]:
-        """Execute a tool by name with given arguments. Used by the registered handler and tests."""
+        # Retain the exact registered closure for networkless contract tests.
+        self._call_tool_handler = call_tool
+
+    async def _invoke_call_tool(
+        self, name: str, arguments: Dict[str, Any]
+    ) -> CallToolResult:
+        """Execute a tool and return an MCP-native success or tool-error result."""
         try:
             result = await self._handle_tool_call(name, arguments)
-            return [TextContent(type="text", text=json.dumps(result, indent=2))]
-        except Exception as e:
-            error_msg = f"Error executing tool '{name}': {str(e)}\n{traceback.format_exc()}"
-            logger.error(error_msg)
+            return CallToolResult(
+                content=[TextContent(type="text", text=json.dumps(result, indent=2))],
+                isError=False,
+            )
+        except Exception as error:
+            # Keep diagnostic detail in the service log, never in the MCP file-tool
+            # response. The low-level SDK recognizes CallToolResult and preserves
+            # isError=true instead of normalizing this into an ordinary success.
+            logger.error(
+                "Error executing MCP tool %r: %s",
+                name,
+                error,
+                exc_info=True,
+            )
             payload = (
                 {"error": f"{name} failed; see the LVS service log for details"}
-                if name in _FILE_TOOLS
-                else {"error": str(e), "type": type(e).__name__}
+                if isinstance(name, str) and name in _FILE_TOOLS
+                else {"error": str(error), "type": type(error).__name__}
             )
-            return [
-                TextContent(
-                    type="text",
-                    text=json.dumps(payload),
-                )
-            ]
+            return CallToolResult(
+                content=[TextContent(type="text", text=json.dumps(payload))],
+                isError=True,
+            )
 
     async def _handle_tool_call(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route tool calls to appropriate LvsServer methods."""
+
+        if not isinstance(name, str) or not name:
+            raise ValueError("tool name must be a non-empty string")
+        if not isinstance(arguments, dict):
+            raise ValueError("tool arguments must be an object")
 
         # Health Check
         if name == "health_ready":
@@ -602,6 +704,434 @@ class LvsMCPServer:
                 return {"text": response.text}
 
             return response.json()
+
+    @staticmethod
+    def _sse_limits() -> tuple[int, int, int]:
+        """Read the bounded SSE policy from validated integer environment values."""
+
+        settings = (
+            (
+                "LVS_MCP_MAX_SSE_BYTES",
+                _DEFAULT_MAX_SSE_BYTES,
+                _MAX_CONFIGURABLE_SSE_BYTES,
+            ),
+            (
+                "LVS_MCP_MAX_SSE_EVENTS",
+                _DEFAULT_MAX_SSE_EVENTS,
+                _MAX_CONFIGURABLE_SSE_EVENTS,
+            ),
+            (
+                "LVS_MCP_SSE_TIMEOUT_SECONDS",
+                _DEFAULT_SSE_TIMEOUT_SECONDS,
+                _MAX_CONFIGURABLE_SSE_TIMEOUT_SECONDS,
+            ),
+        )
+        values = []
+        for name, default, maximum in settings:
+            raw = os.environ.get(name, str(default)).strip()
+            if not raw.isdecimal() or not 0 < int(raw) <= maximum:
+                raise ValueError(f"{name} must be an integer from 1 through {maximum}")
+            values.append(int(raw))
+        return values[0], values[1], values[2]
+
+    @staticmethod
+    def _parse_sse_body(body: bytes, *, max_events: int) -> List[str]:
+        """Return strict, data-only SSE payloads from one complete response."""
+
+        try:
+            text = body.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise _SseResponseError("LVS SSE response is not valid UTF-8") from exc
+        text = text.replace("\r\n", "\n")
+        if "\r" in text:
+            raise _SseResponseError("LVS SSE response contains an invalid line ending")
+        if not text.endswith("\n\n"):
+            raise _SseResponseError("LVS SSE response ended with a truncated event")
+
+        payloads: List[str] = []
+        for frame in text[:-2].split("\n\n"):
+            if not frame:
+                continue
+            lines = frame.split("\n")
+            event_lines = [line for line in lines if line and not line.startswith(":")]
+            if not event_lines:
+                continue
+            data_lines = []
+            for line in event_lines:
+                if not line.startswith("data:"):
+                    raise _SseResponseError("LVS SSE response contains an unexpected field")
+                data = line[5:]
+                if data.startswith(" "):
+                    data = data[1:]
+                data_lines.append(data)
+            data = "\n".join(data_lines)
+            if not data:
+                raise _SseResponseError("LVS SSE response contains malformed event data")
+            payloads.append(data)
+            if len(payloads) > max_events:
+                raise _SseResponseError("LVS SSE response exceeded the event limit")
+
+        if not payloads:
+            raise _SseResponseError("LVS SSE response contains no data events")
+        return payloads
+
+    @staticmethod
+    def _validate_sse_media_info(value: Any) -> None:
+        if not isinstance(value, dict):
+            raise _SseResponseError("LVS SSE event has invalid media_info")
+        media_type = value.get("type")
+        if media_type == "offset":
+            if set(value) != {"type", "start_offset", "end_offset"}:
+                raise _SseResponseError("LVS SSE event has invalid offset media_info")
+            start = value["start_offset"]
+            end = value["end_offset"]
+            if (
+                isinstance(start, bool)
+                or not isinstance(start, int)
+                or isinstance(end, bool)
+                or not isinstance(end, int)
+                or not 0 <= start <= end <= 4_000_000_000
+            ):
+                raise _SseResponseError("LVS SSE event has invalid offset media_info")
+            return
+        if media_type == "timestamp":
+            if set(value) != {"type", "start_timestamp", "end_timestamp"}:
+                raise _SseResponseError("LVS SSE event has invalid timestamp media_info")
+            start = value["start_timestamp"]
+            end = value["end_timestamp"]
+            if (
+                not isinstance(start, str)
+                or not isinstance(end, str)
+                or not _RFC3339_MILLISECONDS.fullmatch(start)
+                or not _RFC3339_MILLISECONDS.fullmatch(end)
+            ):
+                raise _SseResponseError("LVS SSE event has invalid timestamp media_info")
+            try:
+                datetime.strptime(start, "%Y-%m-%dT%H:%M:%S.%fZ")
+                datetime.strptime(end, "%Y-%m-%dT%H:%M:%S.%fZ")
+            except ValueError as exc:
+                raise _SseResponseError(
+                    "LVS SSE event has invalid timestamp media_info"
+                ) from exc
+            if start > end:
+                raise _SseResponseError("LVS SSE event has reversed timestamp media_info")
+            return
+        raise _SseResponseError("LVS SSE event has unsupported media_info")
+
+    @staticmethod
+    def _validate_sse_choice(value: Any) -> str:
+        if not isinstance(value, dict) or set(value) != {
+            "finish_reason",
+            "index",
+            "message",
+        }:
+            raise _SseResponseError("LVS SSE event has an invalid summary choice")
+        message = value.get("message")
+        if (
+            value.get("finish_reason") != "stop"
+            or value.get("index") != 0
+            or not isinstance(message, dict)
+            or set(message) != {"content", "role"}
+            or message.get("role") != "assistant"
+        ):
+            raise _SseResponseError("LVS SSE event has an invalid summary choice")
+        content = message.get("content")
+        if not isinstance(content, str) or not content or len(content) > 1_000_000:
+            raise _SseResponseError("LVS SSE event has invalid summary content")
+        return content
+
+    @staticmethod
+    def _validate_sse_usage(value: Any) -> None:
+        if not isinstance(value, dict) or set(value) != {
+            "total_chunks_processed",
+            "query_processing_time",
+        }:
+            raise _SseResponseError("LVS SSE completion has invalid usage")
+        for field in ("total_chunks_processed", "query_processing_time"):
+            item = value[field]
+            if (
+                isinstance(item, bool)
+                or not isinstance(item, int)
+                or not 0 <= item <= 1_000_000
+            ):
+                raise _SseResponseError("LVS SSE completion has invalid usage")
+
+    def _validate_summarize_sse(
+        self, body: bytes, request_arguments: Dict[str, Any], *, max_events: int
+    ) -> Dict[str, Any]:
+        """Validate and retain every source event from a completed summarize stream."""
+
+        payloads = self._parse_sse_body(body, max_events=max_events)
+        if payloads[-1] != "[DONE]" or "[DONE]" in payloads[:-1]:
+            raise _SseResponseError("LVS SSE response is missing one terminal [DONE] event")
+
+        stream_events: List[Dict[str, Any]] = []
+        completion_event: Optional[Dict[str, Any]] = None
+        identity: Optional[tuple[str, str, str, int]] = None
+        expected_model = request_arguments.get("model")
+        expected_video_id = request_arguments.get("id")
+        if not isinstance(expected_model, str):
+            raise _SseResponseError("LVS SSE request model identity is invalid")
+        if expected_video_id is not None and not isinstance(expected_video_id, str):
+            raise _SseResponseError("LVS SSE request video identity is invalid")
+
+        required = {
+            "id",
+            "video_id",
+            "model",
+            "created",
+            "object",
+            "media_info",
+            "choices",
+            "usage",
+        }
+        for raw in payloads[:-1]:
+            try:
+                event = json.loads(raw, object_pairs_hook=_reject_duplicate_json_keys)
+            except _SseResponseError:
+                raise
+            except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+                raise _SseResponseError("LVS SSE event contains malformed JSON") from exc
+            if not isinstance(event, dict) or set(event) != required:
+                raise _SseResponseError("LVS SSE event has an unexpected response shape")
+
+            request_id = self._validated_uuid(event["id"], "LVS SSE request id")
+            video_id = self._validated_uuid(event["video_id"], "LVS SSE video id")
+            model = event["model"]
+            created = event["created"]
+            if (
+                not isinstance(model, str)
+                or not model
+                or len(model) > 1024
+                or isinstance(created, bool)
+                or not isinstance(created, int)
+                or not 0 <= created <= 4_000_000_000
+            ):
+                raise _SseResponseError("LVS SSE event has invalid response identity")
+            current_identity = (request_id, video_id, model, created)
+            if identity is None:
+                identity = current_identity
+            elif identity != current_identity:
+                raise _SseResponseError("LVS SSE response identity changed between events")
+            if model != expected_model or (
+                expected_video_id is not None and video_id != expected_video_id
+            ):
+                raise _SseResponseError("LVS SSE response does not match the request identity")
+
+            if event["object"] == "summarization.progressing":
+                if completion_event is not None:
+                    raise _SseResponseError("LVS SSE progress followed its completion event")
+                if event["usage"] is not None:
+                    raise _SseResponseError("LVS SSE progress event contains unexpected usage")
+                self._validate_sse_media_info(event["media_info"])
+                choices = event["choices"]
+                if not isinstance(choices, list) or len(choices) != 1:
+                    raise _SseResponseError("LVS SSE progress has invalid choices")
+                content = self._validate_sse_choice(choices[0])
+                if content.startswith("Summarization failed. "):
+                    raise _SseResponseError(content)
+                stream_events.append(event)
+                continue
+
+            if event["object"] == "summarization.completion":
+                if completion_event is not None:
+                    raise _SseResponseError("LVS SSE response has duplicate completion events")
+                if not stream_events:
+                    raise _SseResponseError("LVS SSE completion has no summary events")
+                if event["media_info"] is not None or event["choices"] != []:
+                    raise _SseResponseError("LVS SSE completion has an unexpected response shape")
+                self._validate_sse_usage(event["usage"])
+                completion_event = event
+                continue
+
+            raise _SseResponseError("LVS SSE event has an unexpected object type")
+
+        if not stream_events:
+            raise _SseResponseError("LVS SSE response contains no summary events")
+        return {
+            "stream_events": stream_events,
+            "completion_event": completion_event,
+            "terminal": "[DONE]",
+        }
+
+    async def _call_sse_api(
+        self, method: str, path: str, *, request_arguments: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Consume the in-process LVS SSE route without httpx's full-body buffering."""
+
+        max_bytes, max_events, timeout_seconds = self._sse_limits()
+        request_body = json.dumps(
+            request_arguments, ensure_ascii=False, separators=(",", ":")
+        ).encode("utf-8")
+        request_sent = False
+        response_started = False
+        response_complete = False
+        policy_error: Optional[_SseResponseError] = None
+        status_code: Optional[int] = None
+        response_headers: List[tuple[bytes, bytes]] = []
+        response_body = bytearray()
+        event_count = 0
+        frame = bytearray()
+        previous_was_cr = False
+
+        scope = {
+            "type": "http",
+            "asgi": {"version": "3.0"},
+            "http_version": "1.1",
+            "method": method,
+            "headers": [
+                (b"content-type", b"application/json"),
+                (b"accept", b"text/event-stream"),
+                (b"content-length", str(len(request_body)).encode("ascii")),
+            ],
+            "scheme": "http",
+            "path": path,
+            "raw_path": path.encode("ascii"),
+            "query_string": b"",
+            "server": ("test", 80),
+            "client": ("127.0.0.1", 0),
+            "root_path": "",
+        }
+
+        async def receive() -> Dict[str, Any]:
+            nonlocal request_sent
+            if not request_sent:
+                request_sent = True
+                return {"type": "http.request", "body": request_body, "more_body": False}
+            # Caller cancellation and local timeout are not client disconnects.
+            # A retained app task remains pending here until the ASGI app itself
+            # completes or cancels this receive waiter during its own shutdown.
+            await asyncio.Future()
+            raise AssertionError("unreachable")
+
+        def accept_byte(value: int) -> None:
+            nonlocal event_count, policy_error
+            frame.append(value)
+            if frame.endswith(b"\n\n"):
+                candidate = frame[:-2]
+                if any(
+                    line and not line.startswith(b":")
+                    for line in candidate.split(b"\n")
+                ):
+                    event_count += 1
+                    if event_count > max_events and policy_error is None:
+                        policy_error = _SseResponseError(
+                            "LVS SSE response exceeded the event limit"
+                        )
+                frame.clear()
+
+        async def send(message: Dict[str, Any]) -> None:
+            nonlocal response_started, response_complete, status_code, previous_was_cr
+            nonlocal policy_error
+            message_type = message.get("type")
+            if message_type == "http.response.start":
+                if response_started:
+                    raise _SseResponseError("LVS SSE response started more than once")
+                status_code = message.get("status")
+                headers = message.get("headers", [])
+                if not isinstance(status_code, int) or not isinstance(headers, list):
+                    raise _SseResponseError("LVS SSE response has invalid ASGI metadata")
+                response_headers.extend(headers)
+                response_started = True
+                return
+            if message_type != "http.response.body" or not response_started:
+                raise _SseResponseError("LVS SSE response has an invalid ASGI message")
+            if response_complete:
+                raise _SseResponseError("LVS SSE response continued after completion")
+            chunk = message.get("body", b"")
+            if not isinstance(chunk, bytes):
+                raise _SseResponseError("LVS SSE response body is not bytes")
+            if policy_error is None:
+                if len(response_body) + len(chunk) > max_bytes:
+                    policy_error = _SseResponseError(
+                        "LVS SSE response exceeded the byte limit"
+                    )
+                else:
+                    response_body.extend(chunk)
+                    for value in chunk:
+                        if previous_was_cr:
+                            accept_byte(ord("\n"))
+                            previous_was_cr = False
+                            if value == ord("\n"):
+                                continue
+                        if value == ord("\r"):
+                            previous_was_cr = True
+                        else:
+                            accept_byte(value)
+                        if policy_error is not None:
+                            break
+            if not message.get("more_body", False):
+                if previous_was_cr and policy_error is None:
+                    accept_byte(ord("\n"))
+                    previous_was_cr = False
+                response_complete = True
+
+        self._reserve_sse_stream()
+        try:
+            app_task = asyncio.create_task(self._lvs_server._app(scope, receive, send))
+        except BaseException:
+            self._release_unstarted_sse_stream()
+            raise
+        self._retain_sse_stream_task(app_task)
+        try:
+            await asyncio.wait_for(
+                asyncio.shield(app_task),
+                timeout=timeout_seconds,
+            )
+        except asyncio.TimeoutError as exc:
+            raise _SseResponseError(
+                "LVS SSE response exceeded the time limit; its bounded ASGI "
+                "task is still draining and cleanup is not guaranteed"
+            ) from exc
+        except Exception as exc:
+            stream_error = _find_sse_response_error(exc)
+            if stream_error is not None:
+                raise stream_error from exc
+            raise _SseResponseError("LVS SSE response terminated unexpectedly") from exc
+
+        if not response_started or not response_complete or status_code is None:
+            raise _SseResponseError("LVS SSE response ended before ASGI completion")
+        if policy_error is not None:
+            raise policy_error
+        content_types = [
+            value.decode("latin-1")
+            for key, value in response_headers
+            if key.lower() == b"content-type"
+        ]
+        if status_code >= 400:
+            try:
+                error = json.loads(
+                    bytes(response_body), object_pairs_hook=_reject_duplicate_json_keys
+                )
+            except (json.JSONDecodeError, UnicodeDecodeError, _SseResponseError) as exc:
+                raise _SseResponseError(
+                    f"LVS SSE request failed with HTTP {status_code} and malformed JSON"
+                ) from exc
+            if isinstance(error, dict):
+                detail = error.get("detail")
+                if isinstance(detail, dict):
+                    code = error.get("code", detail.get("code", "Error"))
+                    message = error.get("message", detail.get("message", str(detail)))
+                else:
+                    code = error.get("code", "Error")
+                    message = error.get(
+                        "message", str(detail if detail is not None else error)
+                    )
+                raise _SseResponseError(f"{code}: {message}")
+            raise _SseResponseError(f"HTTP {status_code}: {error}")
+        if status_code != 200:
+            raise _SseResponseError(
+                f"LVS SSE request returned unexpected HTTP {status_code}"
+            )
+        if (
+            len(content_types) != 1
+            or content_types[0].split(";", 1)[0].strip().lower()
+            != "text/event-stream"
+        ):
+            raise _SseResponseError("LVS SSE response has an unexpected content type")
+        return self._validate_summarize_sse(
+            bytes(response_body), request_arguments, max_events=max_events
+        )
 
     async def _list_models(self) -> Dict[str, Any]:
         """List available models by calling the HTTP API."""
@@ -940,6 +1470,10 @@ class LvsMCPServer:
 
     async def _summarize_video(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Summarize a video by calling the HTTP API."""
+        if args.get("stream") is True:
+            return await self._call_sse_api(
+                "POST", f"{API_PREFIX}/summarize", request_arguments=args
+            )
         return await self._call_http_api("POST", f"{API_PREFIX}/summarize", json=args)
 
     async def _generate_vlm_captions(self, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -978,7 +1512,7 @@ class LvsMCPServer:
             from starlette.requests import Request
 
             # Create SSE transport - this manages sessions internally
-            sse = SseServerTransport("/messages")
+            sse = SessionCleaningSseServerTransport("/messages")
 
             async def handle_sse(request: Request) -> None:
                 """Handle SSE endpoint - establishes the event stream."""

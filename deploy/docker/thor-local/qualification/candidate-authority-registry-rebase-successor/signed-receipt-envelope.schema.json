@@ -1,0 +1,179 @@
+{
+  "$defs": {
+    "action_binding": {
+      "additionalProperties": false,
+      "properties": {
+        "action_contract_sha256": {"$ref": "#/$defs/sha256"},
+        "cleanup_executor_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "cleanup_rollback_contract_sha256": {"$ref": "#/$defs/sha256"},
+        "cleanup_targets_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "compose_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "evidence_destination_sha256": {"$ref": "#/$defs/sha256"},
+        "evidence_records_contract_sha256": {"$ref": "#/$defs/sha256"},
+        "executor_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "fixture_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "input_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "model_artifact_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "profile_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "postcondition_collectors_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "service_role_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "service_role_profile_binding_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["action_contract_sha256", "executor_binding_sha256", "service_role_binding_sha256", "profile_binding_sha256", "service_role_profile_binding_sha256", "compose_binding_sha256", "cleanup_executor_binding_sha256", "cleanup_targets_canonical_sha256", "cleanup_rollback_contract_sha256", "postcondition_collectors_canonical_sha256", "input_binding_sha256", "model_artifact_binding_sha256", "fixture_binding_sha256", "evidence_destination_sha256", "evidence_records_contract_sha256"],
+      "type": "object"
+    },
+    "authority_registry_binding": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_registry_id": {"minLength": 1, "type": "string"},
+        "authority_registry_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "previous_registry_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "registry_epoch": {"minimum": 1, "type": "integer"},
+        "root_set_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["authority_registry_id", "registry_epoch", "authority_registry_raw_sha256", "previous_registry_raw_sha256", "root_set_canonical_sha256"],
+      "type": "object"
+    },
+    "authority_claim": {
+      "additionalProperties": false,
+      "properties": {
+        "eligible_key_set_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "required_role": {"minLength": 1, "type": "string"},
+        "scope_id": {"minLength": 1, "type": "string"},
+        "threshold_policy_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["scope_id", "required_role", "eligible_key_set_canonical_sha256", "threshold_policy_canonical_sha256"],
+      "type": "object"
+    },
+    "authorization_specific": {
+      "additionalProperties": false,
+      "properties": {
+        "authorized_subject_identity": {"minLength": 1, "type": "string"},
+        "completion_authorization_receipt_id": {"type": "null"},
+        "completion_evidence_binding_sha256": {"type": "null"},
+        "kind": {"const": "authorization"}
+      },
+      "required": ["kind", "authorized_subject_identity", "completion_authorization_receipt_id", "completion_evidence_binding_sha256"],
+      "type": "object"
+    },
+    "bundle_binding": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_contract_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "bundle_row_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "complete_dependency_closure_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "dependency_dag_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "dependency_edge_decisions_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "leaf_bundle_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["bundle_contract_raw_sha256", "leaf_bundle_id", "bundle_row_canonical_sha256", "dependency_dag_canonical_sha256", "complete_dependency_closure_canonical_sha256", "dependency_edge_decisions_canonical_sha256"],
+      "type": "object"
+    },
+    "candidate_binding": {
+      "additionalProperties": false,
+      "properties": {
+        "admission_index_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "binding_registry_id": {"minLength": 1, "type": "string"},
+        "binding_registry_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "binding_registry_row_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "candidate_id": {"pattern": "^manifest-entry\\.", "type": "string"},
+        "candidate_record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "mapping_artifact_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "mapping_row_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "metadata_binding_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "metadata_oracle_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "metadata_set_id": {"minLength": 1, "type": "string"},
+        "oracle_id": {"pattern": "^oracle\\.manifest-entry\\.", "type": "string"},
+        "oracle_record_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["candidate_id", "candidate_record_canonical_sha256", "oracle_id", "oracle_record_canonical_sha256", "metadata_set_id", "metadata_oracle_raw_sha256", "metadata_binding_canonical_sha256", "mapping_artifact_raw_sha256", "mapping_row_canonical_sha256", "binding_registry_id", "binding_registry_raw_sha256", "binding_registry_row_canonical_sha256", "admission_index_raw_sha256"],
+      "type": "object"
+    },
+    "completion_specific": {
+      "additionalProperties": false,
+      "properties": {
+        "authorization_receipt_id": {"minLength": 1, "type": "string"},
+        "completion_evidence_binding_sha256": {"$ref": "#/$defs/sha256"},
+        "kind": {"const": "completion"},
+        "outcome": {"const": "successful"}
+      },
+      "required": ["kind", "authorization_receipt_id", "completion_evidence_binding_sha256", "outcome"],
+      "type": "object"
+    },
+    "dsse_signature": {
+      "additionalProperties": false,
+      "properties": {
+        "keyid": {"minLength": 1, "type": "string"},
+        "sig": {"pattern": "^[A-Za-z0-9+/]{86}==$", "type": "string"}
+      },
+      "required": ["keyid", "sig"],
+      "type": "object"
+    },
+    "identifiers": {
+      "additionalProperties": false,
+      "properties": {
+        "authorization_event_id": {"minLength": 1, "type": "string"},
+        "nonce_id": {"minLength": 1, "type": "string"},
+        "receipt_id": {"minLength": 1, "type": "string"},
+        "replay_domain_sha256": {"$ref": "#/$defs/sha256"},
+        "run_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["receipt_id", "authorization_event_id", "run_id", "nonce_id", "replay_domain_sha256"],
+      "type": "object"
+    },
+    "receipt_payload": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"receipt_type": {"const": "candidate_action_authorization"}}, "required": ["receipt_type"]},
+          "then": {"properties": {"type_specific": {"$ref": "#/$defs/authorization_specific"}}}
+        },
+        {
+          "if": {"properties": {"receipt_type": {"const": "candidate_action_completion"}}, "required": ["receipt_type"]},
+          "then": {"properties": {"type_specific": {"$ref": "#/$defs/completion_specific"}}}
+        }
+      ],
+      "properties": {
+        "action_binding": {"$ref": "#/$defs/action_binding"},
+        "authority_claim": {"$ref": "#/$defs/authority_claim"},
+        "authority_registry_binding": {"$ref": "#/$defs/authority_registry_binding"},
+        "bundle_binding": {"$ref": "#/$defs/bundle_binding"},
+        "candidate_binding": {"$ref": "#/$defs/candidate_binding"},
+        "execution_boundary": {"enum": ["alternate_local", "external", "local"]},
+        "identifiers": {"$ref": "#/$defs/identifiers"},
+        "one_time_status": {"const": "issued_unspent"},
+        "previous_receipt_digest_sha256": {"$ref": "#/$defs/sha256"},
+        "receipt_type": {"enum": ["candidate_action_authorization", "candidate_action_completion"]},
+        "schema_version": {"const": 1},
+        "type_specific": {"oneOf": [{"$ref": "#/$defs/authorization_specific"}, {"$ref": "#/$defs/completion_specific"}]},
+        "validity": {"$ref": "#/$defs/validity"},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["schema_version", "receipt_type", "identifiers", "authority_registry_binding", "authority_claim", "candidate_binding", "bundle_binding", "action_binding", "execution_boundary", "validity", "one_time_status", "previous_receipt_digest_sha256", "type_specific", "warehouse_sample_bundle"],
+      "type": "object"
+    },
+    "sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "timestamp": {"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$", "type": "string"},
+    "validity": {
+      "additionalProperties": false,
+      "properties": {
+        "expires_at": {"$ref": "#/$defs/timestamp"},
+        "issued_at": {"$ref": "#/$defs/timestamp"},
+        "max_ttl_policy_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "not_before": {"$ref": "#/$defs/timestamp"}
+      },
+      "required": ["issued_at", "not_before", "expires_at", "max_ttl_policy_canonical_sha256"],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Design-only DSSE envelope. This package does not decode JCS, construct DSSE PAE, or verify Ed25519 signatures.",
+  "properties": {
+    "payload": {"minLength": 4, "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$", "type": "string"},
+    "payloadType": {"const": "application/vnd.nvidia.vss.candidate-receipt.v1+json"},
+    "signatures": {"items": {"$ref": "#/$defs/dsse_signature"}, "minItems": 1, "type": "array", "uniqueItems": true}
+  },
+  "required": ["payloadType", "payload", "signatures"],
+  "type": "object"
+}

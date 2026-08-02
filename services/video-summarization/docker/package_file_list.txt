@@ -13,6 +13,7 @@ via_exception.py
 via_logger.py
 via_server.py
 lvs_mcp.py
+lvs_mcp_sse.py
 via_stream_handler.py
 vss_api_models.py
 vlm_pipeline/__init__.py

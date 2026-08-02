@@ -30,11 +30,11 @@ MAX_JSON_BYTES = 64_000_000
 INPUTS = {
     "candidate_adapter": {
         "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json",
-        "raw_sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235",
+        "raw_sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0",
     },
     "candidate_adapter_schema": {
         "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json",
-        "raw_sha256": "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb",
+        "raw_sha256": "d25c9636b4df221f2be8dd689e2f71c1a6fa9a10025a0ec14217631d922d1552",
     },
     "candidate_source": {
         "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json",
@@ -46,7 +46,7 @@ INPUTS = {
     },
     "official_capabilities": {
         "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-        "raw_sha256": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+        "raw_sha256": "61c2a4c0bc9d23940d954311f93824dc55c18cfc58caca002162cc1ef6808098",
     },
     "official_capabilities_schema": {
         "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
@@ -54,7 +54,7 @@ INPUTS = {
     },
     "live_oracles": {
         "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-        "raw_sha256": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
+        "raw_sha256": "24214553cbd669eb80efa7b4a602ac52328e00bd43241c839b43b10d05e22e8e",
     },
     "live_oracles_schema": {
         "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
@@ -62,11 +62,11 @@ INPUTS = {
     },
     "protocol_v2": {
         "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.json",
-        "raw_sha256": "886151fee9ce27b24601499011151e827c4742b32d400c609c8c0b149851db62",
+        "raw_sha256": "cea6cf41109654fa040f120c74a17b253c019b38cfb1a1e8229d370c2f10d5f7",
     },
     "protocol_v2_schema": {
         "path": "deploy/docker/thor-local/qualification/protocol-cases-v2-candidates/protocol-cases-v2-candidate.schema.json",
-        "raw_sha256": "831d982f6912358b8dfae049cd10ed709af299d91cb7196031d28b29a092877d",
+        "raw_sha256": "399471d0efd73614e507426095390a4a2e731aa4970b916199344b89b0304fbb",
     },
     "workloads": {
         "path": "deploy/docker/thor-local/qualification/remaining-entry-workloads/workloads.json",
@@ -78,12 +78,12 @@ INPUTS = {
     },
 }
 
-SCHEMA_RAW_SHA256 = "fcbe27337accc57c5a57a3ce7bf26d1e532c9001f7841134ec22db8663d41024"
+SCHEMA_RAW_SHA256 = "759c36ade481c6024815df95738a7fca13e92c66ae70649154bb7cb85b439057"
 EXPECTED_OUTPUT_PAYLOAD_SHA256 = (
-    "4d4875014874bcad3fa9f90024207097a1304090759a90fc1f760beef97d33dc"
+    "3ac57bc6b62eb3df5a314e0843128c2b0c66abac2b0e37cc76ca0a160887bdf5"
 )
 EXPECTED_OUTPUT_RAW_SHA256 = (
-    "75a7c6b6ecc5bcfee0eece99a10ca29c0258717887c59847252629ac4d21e364"
+    "e682282735476830659582bd551fddc3e140580324e856ceaea4507ca5e706c2"
 )
 
 

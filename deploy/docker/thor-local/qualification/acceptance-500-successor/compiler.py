@@ -48,7 +48,7 @@ INPUTS = {
     },
     "projected_ledger": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
-        "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6",
+        "raw_sha256": "8a6e14b35ce73362bc8c3dccc84788ab48a2e3f88284b41f1b4a6efc30cd7d13",
         "json": True,
     },
     "official_capabilities_schema": {
@@ -58,12 +58,12 @@ INPUTS = {
     },
     "ledger_projection_proof": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.json",
-        "raw_sha256": "4e206240795e2cf739f595811920ae66a7868ebe92031feb73b7fcbbe5a971d0",
+        "raw_sha256": "135e39a9f557f175536282329a3f9a6a8003c634ef2f9f5905b78d0607fe646d",
         "json": True,
     },
     "ledger_projection_proof_schema": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.schema.json",
-        "raw_sha256": "8f74b849581029c303a1e7a927f1f31b7458ed87e529d14e25134e52396f4ec9",
+        "raw_sha256": "9ed414c6e1c40d8afc27e8e0bd635d826536994375037efc947098dc089f98b2",
         "json": True,
     },
     "official_capability_verifier": {
@@ -112,13 +112,13 @@ EXPECTED_INVENTORY_SCHEMA_RAW_SHA256 = (
     "848d84b976906c3059b67218cf1d6bf3960b8b91c620c663bba398f5b302278a"
 )
 EXPECTED_PROOF_RAW_SHA256 = (
-    "dd65544dc587e01f0bb1ffd50442c9903a6d6200b0722d83a709902ec99d598c"
+    "23626164bb1951f68770b42deb88bae12a710f4e426cbf462105bc5cacc10d48"
 )
 EXPECTED_PROOF_SCHEMA_RAW_SHA256 = (
-    "4c744244333382200fc2d551e9c02ff2d01c3d5dd2d839353c4ffa0ca793ea0c"
+    "43cfc1c6ef6c82b184aa4620942bd9d130625547f191a7178697f8efee7ee234"
 )
 EXPECTED_PROOF_PAYLOAD_SHA256 = (
-    "01694257922463e1f3fa5a5c45f02301a7713c0c4d0ba34a0bfaeeece8e794a1"
+    "802a0e532325550e2ef875fca30593e7f05899ac921118a8209dc233679ae691"
 )
 
 

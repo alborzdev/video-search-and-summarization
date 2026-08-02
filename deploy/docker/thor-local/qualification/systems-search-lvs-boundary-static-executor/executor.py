@@ -89,14 +89,14 @@ EXPECTED_NEGATIVES = [
 ]
 EXPECTED_LOCKS = {
     "deploy/docker/thor-local/qualification/acceptance_inventory.json": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
-    "deploy/docker/thor-local/parity/official-capabilities.json": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
-    "deploy/docker/thor-local/parity/capability-oracles.json": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
+    "deploy/docker/thor-local/parity/official-capabilities.json": "d1a047345a309d675f692756fc2d9b56159c53840b6328264bb3cefb07f0cce6",
+    "deploy/docker/thor-local/parity/capability-oracles.json": "4625c8efb38df757ed90483826df9064717cf131f52d7500ef8eec39510e0804",
     "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539",
     "deploy/docker/thor-local/qualification/planning-requirement-executors-wave3/inventory.json": "386047abc54476062635913b9a3fc2ccfb73e3263f7d93c6fac8c6769b567232",
     "deploy/docker/thor-local/qualification/planning-requirement-executors-wave11/inventory.json": "734609e5b1aab27a4d65a2570d3e6a3c366ae9ecf896dd7f0d5e62785e219cdd",
     "services/agent/src/vss_agents/api/video_search_ingest.py": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77",
     "services/agent/tests/unit_test/api/test_video_search_ingest.py": "1ade3f881b57fd8357047c951f500c660cbfc1d67b65fe268c150437f320030e",
-    "services/video-summarization/src/via_stream_handler.py": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c",
+    "services/video-summarization/src/via_stream_handler.py": "fa10dadab32da7b6800e0acd84176f955f86adf08c4e018bfa4651c0f33e7f60",
     "services/agent/README.md": "f8bb48cbee282b8f6048ab9220258adcb648e3de761d81b98c34baa747d1740e",
     "services/ui/packages/common/lib-src/components/UploadFilesDialog.tsx": "90487a061cdd8750f24ce17446010b09995c7d0152f1394cbb05201c6e82d2dd",
     "services/ui/packages/common/__tests__/components/UploadFilesDialog.test.tsx": "71da8185445f1ffa3b3d0c5d590f7c5f306038b43eec2529ecdcb0283c506456",
