@@ -1,0 +1,104 @@
+{
+  "entries": [
+    {
+      "candidate_state": "candidate_executable_subset_non_advancing",
+      "capability_id": "manifest-entry.video-summarization-live.05-sse-mcp-server",
+      "evidence_scope": "subset: production LVS MCP server construction, exact tool registration, and in-process shared tool dispatch; no SSE connection, MCP transport/session/handshake, server lifecycle, deployed LVS, VLM inference, or Thor readiness",
+      "legacy_entry_id": "manifest-gap.video-summarization-live.05-sse-mcp-server",
+      "matched_assertions": [
+        "production_lvs_mcp_module_imported",
+        "exact_13_tool_registration_executed",
+        "in_process_asgi_health_dispatch_executed",
+        "external_execution_guards_active",
+        "shared_server_dispatch_subset_executed"
+      ],
+      "retained_blockers": [
+        "live_sse_connection_not_executed",
+        "mcp_transport_and_handshake_not_executed",
+        "deployed_lvs_not_observed",
+        "thor_runtime_readiness_not_observed"
+      ]
+    },
+    {
+      "candidate_state": "candidate_executable_subset_non_advancing",
+      "capability_id": "manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
+      "evidence_scope": "subset: production 13-tool registration plus in-process health and bounded file add/list/info/delete semantics with rejection, rollback, and sanitized-error checks; no MCP transport/session/handshake, live service, model, summarization, or Thor readiness",
+      "legacy_entry_id": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp",
+      "matched_assertions": [
+        "production_lvs_mcp_module_imported",
+        "exact_13_tool_registration_executed",
+        "in_process_asgi_health_dispatch_executed",
+        "external_execution_guards_active",
+        "bounded_file_add_list_info_delete_executed",
+        "path_size_symlink_uuid_rejections_executed",
+        "invalid_metadata_rollback_executed",
+        "file_error_sanitization_executed"
+      ],
+      "retained_blockers": [
+        "mcp_transport_and_handshake_not_executed",
+        "live_lvs_service_not_executed",
+        "vlm_inference_not_executed",
+        "thor_runtime_readiness_not_observed"
+      ]
+    }
+  ],
+  "execution": {
+    "fixture_sha256": "8828ea64e48f0b522ee57e9878f1a1dcd41acd430687f223fd1f393603ad6602",
+    "operations": [
+      "file_add",
+      "file_delete",
+      "file_info",
+      "file_list",
+      "file_rejection_matrix",
+      "health_error_propagation",
+      "health_live",
+      "health_ready",
+      "rollback_after_invalid_metadata",
+      "sanitized_file_error",
+      "tool_registration"
+    ],
+    "production_module_imported": true,
+    "registered_tool_count": 13,
+    "registered_tools": [
+      "add_file",
+      "delete_file",
+      "generate_captions",
+      "generate_vlm_captions",
+      "get_file_info",
+      "get_metrics",
+      "get_recommended_config",
+      "health_live",
+      "health_ready",
+      "list_files",
+      "list_models",
+      "stream_summarize",
+      "summarize_video"
+    ]
+  },
+  "official_capability_effect": "none_candidate_only",
+  "outcome": "observed_match_candidate_only",
+  "receipt_id": "successor-500-executable-subsets-wave1-receipt-2026-08-01",
+  "runtime_evidence": [],
+  "safety": {
+    "caller_supplied_callback_used": false,
+    "credentials_used": false,
+    "deployed_lvs": false,
+    "docker_used": false,
+    "downloads_used": false,
+    "live_sse_connection": false,
+    "mcp_transport_handshake": false,
+    "models_used": false,
+    "network_used": false,
+    "service_lifecycle_used": false,
+    "socket_used": false,
+    "subprocess_used": false,
+    "temporary_files_cleaned": true,
+    "thor_runtime_readiness": false,
+    "vlm_inference": false,
+    "warehouse_sample_used": false
+  },
+  "schema_version": 1,
+  "selected_descriptor_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9",
+  "selected_set_id": "thor-vss-3.2.1-metadata-500-staged",
+  "wave8_result_canonical_sha256": "a000f8db5b3bcec6f0da50828dcf9e31126655fe0962f964491317c29218c823"
+}

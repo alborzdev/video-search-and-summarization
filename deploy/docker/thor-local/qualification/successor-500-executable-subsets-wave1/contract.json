@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "contract_id": "successor-500-executable-subsets-wave1-2026-08-01",
+  "selected_metadata_set": {
+    "set_id": "thor-vss-3.2.1-metadata-500-staged",
+    "descriptor_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9",
+    "capabilities": 500,
+    "oracles": 500
+  },
+  "base_oracle_document": {
+    "raw_sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271",
+    "canonical_sha256": "1c2dae973a8ad69b02730f21d1d504fb9f80e3a6200bc98e1f435fad195ef286"
+  },
+  "wave8": {
+    "executor_path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8/executor.py",
+    "result_canonical_sha256": "a000f8db5b3bcec6f0da50828dcf9e31126655fe0962f964491317c29218c823"
+  },
+  "bindings": [
+    {
+      "legacy_entry_id": "manifest-gap.video-summarization-live.05-sse-mcp-server",
+      "capability_id": "manifest-entry.video-summarization-live.05-sse-mcp-server",
+      "oracle_index": 310,
+      "base_row_canonical_sha256": "daf6d4a628c8e972d2eb996b3d56f2d6f814d584a378be06f80a3e7a50cc0974"
+    },
+    {
+      "legacy_entry_id": "manifest-gap.agent-and-mcp-apis.06-lvs-mcp",
+      "capability_id": "manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
+      "oracle_index": 468,
+      "base_row_canonical_sha256": "e06850f09ddaadfb6ab40324816f2bff0b19eae5341ec3b7df4e1955f431bc3d"
+    }
+  ],
+  "policy": {
+    "evidence_class": "candidate_executable_subset_non_advancing",
+    "official_capability_effect": "none_candidate_only",
+    "runtime_evidence": [],
+    "can_promote": false,
+    "network_allowed": false,
+    "socket_allowed": false,
+    "subprocess_allowed": false,
+    "docker_allowed": false,
+    "service_lifecycle_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "models_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "file_writes": "executor_owned_private_temporary_directory_only"
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/resolver.py",
+      "raw_sha256": "b10564b61c46b2d01894da735c550c5ab315224ba63e1b67df5e9f4b3719a1f3"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
+      "raw_sha256": "8021efc4684b106539a627b3ddfd82937c7ecf1d6111a3c87538fc5ea7360bec"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-metadata-500-staged.json",
+      "raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json",
+      "raw_sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8/inventory.json",
+      "raw_sha256": "03bbe269e93aa19cb69d1fd43ab7237054de2fb2688cb0bfc643b9ea837fed7e"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8/inventory.schema.json",
+      "raw_sha256": "42a27052dfb83749c2cc0ec5f13e9f7441d8b15b238ba318b4f5e32179e2d98a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8/result.schema.json",
+      "raw_sha256": "412bafb920e6d269941759ac538d8d90255db8b473aa10708a8155c32f893321"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8/executor.py",
+      "raw_sha256": "b2b4c14776291d1b82de942819dbae792f067f95dd1532ab61b0cdb0e55c1f06"
+    }
+  ]
+}

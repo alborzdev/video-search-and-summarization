@@ -349,6 +349,13 @@ in this directory:
   and exact rollback. The receipt compiler accepts only the complete pre-state
   or complete applied state and rejects partial activation. This selects the
   complete metadata inventory but does not qualify any runtime capability;
+- `successor-500-executable-subsets-wave1/` binds the two currently executable
+  Wave 8 LVS/MCP production-code subsets to their exact selected Metadata-500
+  oracle rows. It leaves the v2 oracle document byte-identical and records the
+  subset observations in a separate hash-bound annotation index. Both rows
+  remain `not_qualified`, executor-not-ready, approval-gated, and free of
+  runtime evidence; SSE transport, MCP handshake, deployed LVS, inference, and
+  Thor readiness remain explicit blockers;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

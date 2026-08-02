@@ -378,6 +378,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-wave8/tests"
 
+# Bind the two passing Wave 8 production-code subsets to their exact selected
+# Metadata-500 oracle rows. The selected v2 oracle document remains byte-for-
+# byte identical; the separate annotation index retains every runtime blocker,
+# an unmet operator gate, and zero promotion or runtime evidence.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/successor-500-executable-subsets-wave1/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/successor-500-executable-subsets-wave1/tests"
+
 # The old four-entry external-attestation package includes the now-canonical
 # AWS/GCS boundary and is therefore a historical snapshot. Its exact predecessor
 # tree is verified by the tooling successor instead of being relabelled here.

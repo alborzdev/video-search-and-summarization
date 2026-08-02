@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/successor-500-executable-subsets-wave1-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "selected_metadata_set",
+    "base_oracle_document",
+    "wave8",
+    "bindings",
+    "policy",
+    "source_locks"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "contract_id": {"const": "successor-500-executable-subsets-wave1-2026-08-01"},
+    "selected_metadata_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["set_id", "descriptor_raw_sha256", "capabilities", "oracles"],
+      "properties": {
+        "set_id": {"const": "thor-vss-3.2.1-metadata-500-staged"},
+        "descriptor_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "capabilities": {"const": 500},
+        "oracles": {"const": 500}
+      }
+    },
+    "base_oracle_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_sha256", "canonical_sha256"],
+      "properties": {
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "wave8": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executor_path", "result_canonical_sha256"],
+      "properties": {
+        "executor_path": {"$ref": "#/$defs/path"},
+        "result_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "legacy_entry_id",
+          "capability_id",
+          "oracle_index",
+          "base_row_canonical_sha256"
+        ],
+        "properties": {
+          "legacy_entry_id": {"type": "string", "minLength": 1},
+          "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+          "oracle_index": {"type": "integer", "minimum": 0, "maximum": 499},
+          "base_row_canonical_sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_class",
+        "official_capability_effect",
+        "runtime_evidence",
+        "can_promote",
+        "network_allowed",
+        "socket_allowed",
+        "subprocess_allowed",
+        "docker_allowed",
+        "service_lifecycle_allowed",
+        "downloads_allowed",
+        "credentials_allowed",
+        "models_allowed",
+        "warehouse_sample_bundle",
+        "file_writes"
+      ],
+      "properties": {
+        "evidence_class": {"const": "candidate_executable_subset_non_advancing"},
+        "official_capability_effect": {"const": "none_candidate_only"},
+        "runtime_evidence": {"type": "array", "maxItems": 0},
+        "can_promote": {"const": false},
+        "network_allowed": {"const": false},
+        "socket_allowed": {"const": false},
+        "subprocess_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "models_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "file_writes": {"const": "executor_owned_private_temporary_directory_only"}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "raw_sha256"],
+        "properties": {
+          "path": {"$ref": "#/$defs/path"},
+          "raw_sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//).+$"
+    }
+  }
+}

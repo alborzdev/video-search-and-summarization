@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/successor-500-executable-subsets-wave1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_id",
+    "mode",
+    "oracle_document",
+    "counts",
+    "annotations",
+    "unannotated_partition",
+    "projection_canonical_sha256",
+    "global_invariants"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_id": {"const": "successor-500-executable-subsets-wave1"},
+    "mode": {"const": "byte_identical_v2_oracles_plus_non_promoting_annotation_index"},
+    "oracle_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "set_id",
+        "descriptor_raw_sha256",
+        "raw_sha256",
+        "canonical_sha256",
+        "ordered_rows_canonical_sha256",
+        "byte_identical_to_selected_metadata_set"
+      ],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "set_id": {"const": "thor-vss-3.2.1-metadata-500-staged"},
+        "descriptor_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "ordered_rows_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "byte_identical_to_selected_metadata_set": {"const": true}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracles", "annotated_rows", "unannotated_rows", "mutated_oracle_rows", "runtime_promotions"],
+      "properties": {
+        "oracles": {"const": 500},
+        "annotated_rows": {"const": 2},
+        "unannotated_rows": {"const": 498},
+        "mutated_oracle_rows": {"const": 0},
+        "runtime_promotions": {"const": 0}
+      }
+    },
+    "annotations": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {"$ref": "#/$defs/annotation"}
+    },
+    "unannotated_partition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "ordered_row_identity_canonical_sha256", "all_rows_byte_identical"],
+      "properties": {
+        "count": {"const": 498},
+        "ordered_row_identity_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "all_rows_byte_identical": {"const": true}
+      }
+    },
+    "projection_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "global_invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_state_changed",
+        "runtime_state_changed",
+        "runtime_evidence_added",
+        "can_promote_changed",
+        "executor_ready_changed",
+        "operator_gate_changed",
+        "canonical_metadata_mutated",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "current_state_changed": {"const": false},
+        "runtime_state_changed": {"const": false},
+        "runtime_evidence_added": {"const": false},
+        "can_promote_changed": {"const": false},
+        "executor_ready_changed": {"const": false},
+        "operator_gate_changed": {"const": false},
+        "canonical_metadata_mutated": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "oracle_index",
+        "capability_id",
+        "oracle_row_canonical_sha256",
+        "evidence_class",
+        "receipt_id",
+        "wave8_result_canonical_sha256",
+        "legacy_entry_id",
+        "evidence_scope",
+        "matched_assertions",
+        "retained_blockers",
+        "fixture",
+        "admission_effect",
+        "runtime_evidence"
+      ],
+      "properties": {
+        "oracle_index": {"type": "integer", "minimum": 0, "maximum": 499},
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "oracle_row_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "evidence_class": {"const": "candidate_executable_subset_non_advancing"},
+        "receipt_id": {"const": "successor-500-executable-subsets-wave1-receipt-2026-08-01"},
+        "wave8_result_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "legacy_entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+        "evidence_scope": {"type": "string", "minLength": 1},
+        "matched_assertions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "retained_blockers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "fixture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "sha256", "retained", "cleanup_verified"],
+          "properties": {
+            "kind": {"const": "executor_owned_ephemeral"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "retained": {"const": false},
+            "cleanup_verified": {"const": true}
+          }
+        },
+        "admission_effect": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "subset_fixture_materialized",
+            "subset_executor_implemented",
+            "subset_collectors_implemented",
+            "full_oracle_executor_ready",
+            "operator_gate_satisfied"
+          ],
+          "properties": {
+            "subset_fixture_materialized": {"const": true},
+            "subset_executor_implemented": {"const": true},
+            "subset_collectors_implemented": {"const": true},
+            "full_oracle_executor_ready": {"const": false},
+            "operator_gate_satisfied": {"const": false}
+          }
+        },
+        "runtime_evidence": {"type": "array", "maxItems": 0}
+      }
+    }
+  }
+}

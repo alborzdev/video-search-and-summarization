@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/successor-500-executable-subsets-wave1-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "selected_set_id",
+    "selected_descriptor_raw_sha256",
+    "wave8_result_canonical_sha256",
+    "outcome",
+    "official_capability_effect",
+    "runtime_evidence",
+    "entries",
+    "execution",
+    "safety"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "receipt_id": {"const": "successor-500-executable-subsets-wave1-receipt-2026-08-01"},
+    "selected_set_id": {"const": "thor-vss-3.2.1-metadata-500-staged"},
+    "selected_descriptor_raw_sha256": {"$ref": "#/$defs/sha256"},
+    "wave8_result_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "outcome": {"const": "observed_match_candidate_only"},
+    "official_capability_effect": {"const": "none_candidate_only"},
+    "runtime_evidence": {"type": "array", "maxItems": 0},
+    "entries": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "legacy_entry_id",
+          "capability_id",
+          "candidate_state",
+          "evidence_scope",
+          "matched_assertions",
+          "retained_blockers"
+        ],
+        "properties": {
+          "legacy_entry_id": {"type": "string", "pattern": "^manifest-gap\\."},
+          "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+          "candidate_state": {"const": "candidate_executable_subset_non_advancing"},
+          "evidence_scope": {"type": "string", "minLength": 1},
+          "matched_assertions": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "retained_blockers": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "production_module_imported",
+        "registered_tool_count",
+        "registered_tools",
+        "fixture_sha256",
+        "operations"
+      ],
+      "properties": {
+        "production_module_imported": {"const": true},
+        "registered_tool_count": {"const": 13},
+        "registered_tools": {
+          "type": "array",
+          "minItems": 13,
+          "maxItems": 13,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "fixture_sha256": {"$ref": "#/$defs/sha256"},
+        "operations": {
+          "type": "array",
+          "minItems": 11,
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network_used",
+        "socket_used",
+        "subprocess_used",
+        "docker_used",
+        "service_lifecycle_used",
+        "downloads_used",
+        "credentials_used",
+        "caller_supplied_callback_used",
+        "models_used",
+        "warehouse_sample_used",
+        "temporary_files_cleaned",
+        "live_sse_connection",
+        "mcp_transport_handshake",
+        "deployed_lvs",
+        "vlm_inference",
+        "thor_runtime_readiness"
+      ],
+      "properties": {
+        "network_used": {"const": false},
+        "socket_used": {"const": false},
+        "subprocess_used": {"const": false},
+        "docker_used": {"const": false},
+        "service_lifecycle_used": {"const": false},
+        "downloads_used": {"const": false},
+        "credentials_used": {"const": false},
+        "caller_supplied_callback_used": {"const": false},
+        "models_used": {"const": false},
+        "warehouse_sample_used": {"const": false},
+        "temporary_files_cleaned": {"const": true},
+        "live_sse_connection": {"const": false},
+        "mcp_transport_handshake": {"const": false},
+        "deployed_lvs": {"const": false},
+        "vlm_inference": {"const": false},
+        "thor_runtime_readiness": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
