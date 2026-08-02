@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "set_id": "thor-vss-3.2.1-metadata-500-staged",
+  "mode": "immutable_static_metadata_set",
+  "lifecycle": "validation_only",
+  "target": {
+    "product_version": "3.2.1",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "expected_counts": {
+    "capabilities": 500,
+    "oracles": 500,
+    "feature_families": 55
+  },
+  "documents": {
+    "manifest": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-manifest.json",
+      "raw_sha256": "c71f75246fc1e4cbc388f93849d27c3b7dc7edf2d0a516fb3fa13f6d412a4a93",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-official-capabilities.json",
+      "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6",
+      "schema_version": 1,
+      "schema_id": "official_capabilities_schema"
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json",
+      "raw_sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271",
+      "schema_version": 2,
+      "schema_id": "capability_oracles_schema"
+    },
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-acceptance-inventory.json",
+      "raw_sha256": "69dc4aca160ae236880f9afe7b873c0b3b423f8981c5d934e4ed647043cd8cb0",
+      "schema_version": 1
+    }
+  },
+  "schemas": {
+    "official_capabilities_schema": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896",
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json"
+    },
+    "capability_oracles_schema": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.schema.json",
+      "raw_sha256": "b24308d9647ff7a4c7b66cc91881749eaaa84c21ab7423677fc30ab4f9c36233",
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/live-capability-oracles-v2.schema.json"
+    }
+  }
+}

@@ -27,8 +27,13 @@ transition: six policy-valid family fields, three preserved external family
 boundaries, and eight appended acceptance links. The live files remain
 unchanged, and every candidate evidence collection is empty. Their composed
 metadata plane passes the authoritative validator at 500 capabilities and 55
-families with zero aggregate or acceptance gaps; live metadata migration, live
-oracle-registry migration, and candidate runtime evidence remain open.
+families with zero aggregate or acceptance gaps. A versioned, non-applying
+five-file post-state now stages that exact ledger, manifest, acceptance
+inventory, and a strict mixed v2 oracle registry. The fail-closed metadata-set
+resolver validates both generations atomically but continues to select the
+289-row predecessor. The v2 live-validator integration, reviewed lifecycle
+promotion to `live_ready`, selector switch, and candidate runtime evidence
+remain open.
 
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 

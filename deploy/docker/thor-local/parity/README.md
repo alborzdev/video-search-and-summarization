@@ -65,6 +65,15 @@ authoritative validator at 126 sources, 500 capabilities, 55 families, and 47
 discrepancies with zero aggregate or acceptance gaps. The live 289-row files,
 live oracle migration, and candidate runtime qualification remain separate.
 
+`metadata_sets/` now resolves the complete metadata plane as one immutable,
+hash-bound snapshot. The historical 289 set remains selected. A separately
+registered staged 500 set points at the non-applying post-state under
+`qualification/live-metadata-500-migration/`, including a compact strict v2
+oracle schema and exact 289+211 registry. It can be validated explicitly but
+cannot become live until the v2 oracle-validator adapter lands, its descriptor
+is reviewed and promoted from `validation_only` to `live_ready`, and the
+selector is switched in the same transaction.
+
 That direct-index denominator is also not the final documentation graph. A
 recursive same-version follow-up reached a 172-page fixed point (including
 `index.html`) and found 19 additional Warehouse descendant pages outside the 152

@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/metadata-set.schema.json",
+  "title": "Thor-local immutable metadata set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "set_id",
+    "mode",
+    "lifecycle",
+    "target",
+    "expected_counts",
+    "documents",
+    "schemas"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "set_id": {"$ref": "#/$defs/plainId"},
+    "mode": {"const": "immutable_static_metadata_set"},
+    "lifecycle": {"enum": ["live_ready", "validation_only"]},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "main_commit"],
+      "properties": {
+        "product_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "main_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "expected_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capabilities", "oracles", "feature_families"],
+      "properties": {
+        "capabilities": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "oracles": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "feature_families": {"type": "integer", "minimum": 1, "maximum": 10000}
+      }
+    },
+    "documents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest",
+        "official_capabilities",
+        "capability_oracles",
+        "acceptance_inventory"
+      ],
+      "properties": {
+        "manifest": {"$ref": "#/$defs/untypedDocument"},
+        "official_capabilities": {"$ref": "#/$defs/typedDocument"},
+        "capability_oracles": {"$ref": "#/$defs/typedDocument"},
+        "acceptance_inventory": {"$ref": "#/$defs/untypedDocument"}
+      }
+    },
+    "schemas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["official_capabilities_schema", "capability_oracles_schema"],
+      "properties": {
+        "official_capabilities_schema": {"$ref": "#/$defs/schemaDocument"},
+        "capability_oracles_schema": {"$ref": "#/$defs/schemaDocument"}
+      }
+    }
+  },
+  "$defs": {
+    "plainId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"
+    },
+    "repoPath": {
+      "type": "string",
+      "pattern": "^deploy/docker/thor-local/[A-Za-z0-9._/-]+$",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "documentBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256", "schema_version"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repoPath"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "schema_version": {"type": "integer", "minimum": 1, "maximum": 1000}
+      }
+    },
+    "untypedDocument": {"$ref": "#/$defs/documentBase"},
+    "typedDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256", "schema_version", "schema_id"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repoPath"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "schema_version": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "schema_id": {
+          "enum": ["official_capabilities_schema", "capability_oracles_schema"]
+        }
+      }
+    },
+    "schemaDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256", "dialect", "document_id"],
+      "properties": {
+        "path": {"$ref": "#/$defs/repoPath"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "dialect": {"const": "https://json-schema.org/draft/2020-12/schema"},
+        "document_id": {"type": "string", "format": "uri", "maxLength": 512}
+      }
+    }
+  }
+}

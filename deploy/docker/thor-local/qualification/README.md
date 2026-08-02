@@ -336,6 +336,14 @@ in this directory:
   discrepancies with zero aggregate or acceptance gaps, while retaining three
   explicit blockers for live metadata migration, live oracle-registry
   migration, and execution/evidence for the 211 candidate oracles;
+- `live-metadata-500-migration/` materializes the exact five-file post-state
+  without applying it: the settled ledger, manifest, acceptance inventory, and
+  a live-root-shaped strict v2 oracle registry/schema. Its migration journal
+  locks every before/after byte and rollback object while keeping all 211
+  candidates non-executable, evidence-empty, and non-promoting. The staged set
+  is registered with the atomic metadata-set resolver, but the 289 predecessor
+  remains selected until a separately reviewed v2 live-validator adapter lands
+  and the staged descriptor is promoted from `validation_only` to `live_ready`;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite
