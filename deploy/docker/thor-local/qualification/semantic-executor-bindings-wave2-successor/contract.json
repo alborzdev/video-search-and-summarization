@@ -143,7 +143,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json",
-      "sha256": "93dba40bc1ccaf7dd2d3496af67d4908af878110b3bf75eb50d10f248c6c6592"
+      "sha256": "bfb573a0e87245353810d3d07eab874442807710710971c8c028ef2542a2da2e"
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py",

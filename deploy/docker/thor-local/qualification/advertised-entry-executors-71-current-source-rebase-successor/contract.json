@@ -59,6 +59,14 @@
       "sha256": "0074a4165684e207d629d2e56ed47d7abf0cc26b3a39f42bf197bc7bf4566534"
     },
     {
+      "path": "services/agent/src/vss_agents/api/rtsp_ingest.py",
+      "sha256": "b246293be1a0919a3620a35fb9e0fc423955186e31b91b900c2ae45a1302a38e"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/rtsp_delete.py",
+      "sha256": "d90e887b26f518a15a628224a33577e3469c4f3f29b66d84dae0470fe75285cb"
+    },
+    {
       "path": "deploy/docker/services/video-summarization/compose.yml",
       "sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
     },

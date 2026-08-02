@@ -15,7 +15,7 @@
     "mapping_source": {"$ref": "#/$defs/sourceLock"},
     "advertised_source": {"$ref": "#/$defs/sourceLock"},
     "bindings": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"$ref": "#/$defs/binding"}},
-    "source_locks": {"type": "array", "minItems": 28, "maxItems": 28, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceLock"}}
+    "source_locks": {"type": "array", "minItems": 32, "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/sourceLock"}}
   },
   "$defs": {
     "sourceLock": {

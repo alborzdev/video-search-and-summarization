@@ -260,6 +260,12 @@ services:
   # Jetson/Thor requires the NVIDIA runtime itself; a generic GPU device
   # reservation alone causes the Jetson container runtime hook to reject it.
   rtvi-embed:
+    image: ${THOR_LOCAL_RTVI_EMBED_IMAGE:-cti-vss-rt-embed:thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}/services/rtvi/rt-embed
+      dockerfile: docker/Dockerfile
+      args:
+        BASE_IMAGE: ${RTVI_EMBED_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1}
     runtime: nvidia
     # The upstream auto-size selects 64 and allocates roughly 20 GiB of
     # activation memory. This profile has one stream and co-resident local
@@ -267,6 +273,13 @@ services:
     # exhausting Thor's unified memory.
     environment:
       VLM_BATCH_SIZE: "${RTVI_EMBED_BATCH_SIZE:-8}"
+      RTVI_OFFLINE: "true"
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      NGC_CLI_API_KEY: ""
+      NGC_API_KEY: ""
+      NVIDIA_API_KEY: ""
+      HF_TOKEN: ""
 
   # The local OpenAI-compatible Qwen endpoint accepts one sequence at a time.
   # Pin RTVI to the same concurrency contract: the released launcher otherwise

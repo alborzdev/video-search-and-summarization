@@ -19,6 +19,14 @@ python3 -m unittest discover \
   -s "${thor_local_root}/parity/tests" \
   -p 'test_capability_oracles.py' -v
 
+# Thor's RT-Embed derivative must reuse the already verified Cosmos-Embed
+# cache and fail before any git/Hugging Face/NGC downloader on a cache miss.
+# These source/static tests perform no registry, model, Docker, or network I/O.
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/rtvi/rt-embed/src" \
+  python3 -m pytest -q -p no:cacheprovider \
+  "${repo_root}/services/rtvi/rt-embed/tests/rtvi_embed/test_ngc_model_downloader.py" \
+  "${thor_local_root}/models/tests/test_rtvi_embed_offline.py"
+
 # The Search readiness successor preserves the exact preceding LVS/RT-VLM
 # current-contract layer while binding the later additive Search routes and
 # reviewed API totals. The immutable predecessor is identity-checked, not
@@ -328,6 +336,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/search-semantic-exact-fixture-provisioner-successor/tests"
 
+# The companion Search RTSP archive candidate binds one reviewed local source
+# through Agent add, VST/Search readiness, exact identity-preserving delete,
+# unrelated-control preservation, and delayed no-reappearance. Only its inert
+# plan and fake opener tests run here.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/search-rtsp-archive-lifecycle-successor/executor.py" \
+  plan >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/search-rtsp-archive-lifecycle-successor/tests"
+
 # This selected-row registry reports the current semantic transport boundary
 # without binding or promoting any of the five canonical Metadata-500 rows.
 # Its compiler and tests are static and source-locked; live receipts remain
@@ -360,8 +378,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-candidate-bindings-wave3-successor/tests"
 
 # The current semantic closure successor rebinds the same exact advertised
-# rows to the hardened Base/LVS/Search/UI packages. It records three concrete
-# and seven partial candidate implementations while preserving zero readiness,
+# rows to the hardened Base/LVS/Search/UI packages. It records four concrete
+# and six partial candidate implementations while preserving zero readiness,
 # admission, execution evidence, promotion, cloud requirements, and Warehouse
 # dependencies.
 PYTHONDONTWRITEBYTECODE=1 python3 \
@@ -438,7 +456,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-74-drift-observation-successor/tests"
 
 # The current-source 71-row rebase preserves the immutable historical receipt
-# while resolving all 182 row/source references through an exact twelve-path
+# while resolving all 182 row/source references through an exact fourteen-path
 # overlay. It independently checks cancellation-aware Kafka publication and
 # the 56-operation NAT inventory; evidence and promotion remain empty.
 PYTHONDONTWRITEBYTECODE=1 python3 \

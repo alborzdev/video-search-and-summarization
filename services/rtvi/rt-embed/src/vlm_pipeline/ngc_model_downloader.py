@@ -25,6 +25,23 @@ import requests.exceptions
 from common.logger import logger
 
 
+def _offline_mode_enabled() -> bool:
+    """Return whether model acquisition must remain cache-only."""
+    return os.getenv("RTVI_OFFLINE", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _raise_offline_cache_miss(model: str, model_dir: str) -> None:
+    """Fail before constructing any registry client or downloader command."""
+    raise FileNotFoundError(
+        f"RTVI_OFFLINE is enabled and model {model!r} is not cached at {model_dir}"
+    )
+
+
 def download_model(ngc_model: str, download_path_prefix: str, model_type: str = ""):
     """Download a model from NGC
 
@@ -56,6 +73,8 @@ def download_model(ngc_model: str, download_path_prefix: str, model_type: str = 
     if os.path.exists(model_dir):
         logger.info(f"Using model cached at {model_dir}")
         return model_dir
+    if _offline_mode_enabled():
+        _raise_offline_cache_miss(ngc_model, model_dir)
 
     # Create a NGC client and authenticate with NGC
     os.environ["NGC_CLI_API_KEY"] = os.environ["NGC_API_KEY"]
@@ -85,7 +104,9 @@ def download_model(ngc_model: str, download_path_prefix: str, model_type: str = 
                     " Check if NGC_API_KEY and model path is correct."
                 )
             if "could not be found" in ex.args[0]:
-                raise Exception("Could not find the model. Check if model path is correct.")
+                raise Exception(
+                    "Could not find the model. Check if model path is correct."
+                )
             raise ex from None
         os.makedirs(download_path_prefix, exist_ok=True)
         shutil.move(os.path.join(td, f"{model_name}_v{version}"), model_dir)
@@ -113,6 +134,8 @@ def download_model_git(git_url: str, download_path_prefix: str):
     if os.path.exists(model_dir):
         logger.info(f"Using model cached at {model_dir}")
         return model_dir
+    if _offline_mode_enabled():
+        _raise_offline_cache_miss(git_url, model_dir)
 
     logger.info(f"Downloading model {model_name} ...")
 
@@ -126,7 +149,9 @@ def download_model_git(git_url: str, download_path_prefix: str):
                 run_cmd = [
                     "hf",
                     "download",
-                    git_url.replace("https://huggingface.co/", "").replace("https://hf.co/", ""),
+                    git_url.replace("https://huggingface.co/", "").replace(
+                        "https://hf.co/", ""
+                    ),
                     "--local-dir",
                     td,
                 ]
@@ -138,9 +163,13 @@ def download_model_git(git_url: str, download_path_prefix: str):
                 stdin=subprocess.DEVNULL,
                 start_new_session=True,
             )
-            subprocess.run(["rm", "-rf", td + "/.git"], check=True, stdin=subprocess.DEVNULL)
+            subprocess.run(
+                ["rm", "-rf", td + "/.git"], check=True, stdin=subprocess.DEVNULL
+            )
         except Exception:
-            raise Exception(f"Failed to download model {model_name} from {git_url}") from None
+            raise Exception(
+                f"Failed to download model {model_name} from {git_url}"
+            ) from None
         os.makedirs(download_path_prefix, exist_ok=True)
         shutil.move(str(td), str(model_dir))
     logger.info(f"Downloaded model to {model_dir}")

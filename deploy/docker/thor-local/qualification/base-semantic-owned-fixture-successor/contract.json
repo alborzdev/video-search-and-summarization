@@ -80,7 +80,7 @@
     {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "0f4c7c30d355aeedd668393e735b5b2afbdf649838a5882384dcf3bcee8b44b8"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py", "sha256": "93d197d0242cd09fd5853551aac6a1fa061dd8de8a462d911cc356f2f00cfaf8"},
     {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"},
-    {"path": "deploy/docker/thor-local/compose.yml", "sha256": "b3f8b8d94f05e0edfbe0e1652457c80bd821d0dc93271fb75e2bc40b188c12ce"},
+    {"path": "deploy/docker/thor-local/compose.yml", "sha256": "93df3a27908ef6bd28b81c30c1525746a3eb5000e700d3bce4d31be84adafce9"},
     {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
     {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
     {"path": "services/agent/src/vss_agents/tools/video_understanding.py", "sha256": "59511bb172a030e0945a9c9a0ccb432e5b299ae1697e9ba023f4246d61c7c095"},

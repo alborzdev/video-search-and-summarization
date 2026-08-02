@@ -33,8 +33,8 @@ class CurrentSourceRebaseTest(unittest.TestCase):
             set(self.result["rebased_entry_ids"]), VALIDATOR.EXPECTED_REBASED_IDS
         )
 
-    def test_exact_twelve_path_overlay_is_current(self) -> None:
-        self.assertEqual(self.result["current_source_overlay_paths"], 12)
+    def test_exact_fourteen_path_overlay_is_current(self) -> None:
+        self.assertEqual(self.result["current_source_overlay_paths"], 14)
         self.assertEqual(
             set(self.result["overlay_reference_counts"]),
             set(VALIDATOR.EXPECTED_OVERLAY),

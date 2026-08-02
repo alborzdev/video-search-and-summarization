@@ -24,11 +24,8 @@ export interface AddRtspStreamRequest {
 export interface AddRtspStreamResult {
   status: "success";
   message?: string;
-  sensorId?: string;
-  vst_sensor_id?: string;
-  streamId?: string;
-  name?: string;
-  url?: string;
+  sensorId: string;
+  name: string;
   error?: string;
 }
 
@@ -39,6 +36,7 @@ export interface DeleteRtspStreamResult {
   status: "success";
   message: string;
   name: string;
+  sensorId: string;
   error?: string;
 }
 
@@ -84,7 +82,14 @@ export async function addRtspStream(
 
   const result: unknown = await response.json();
 
-  if (!isRecord(result) || result.status !== "success") {
+  if (
+    !isRecord(result) ||
+    result.status !== "success" ||
+    typeof result.sensorId !== "string" ||
+    result.sensorId.length === 0 ||
+    typeof result.name !== "string" ||
+    result.name !== request.name
+  ) {
     throw new Error(
       (isRecord(result) && typeof result.message === "string" && result.message) ||
         (isRecord(result) && typeof result.error === "string" && result.error) ||
@@ -135,7 +140,9 @@ export async function deleteRtspStream(
   if (
     !isRecord(result) ||
     result.status !== "success" ||
-    result.name !== sensorName
+    result.name !== sensorName ||
+    typeof result.sensorId !== "string" ||
+    result.sensorId.length === 0
   ) {
     throw new Error(
       (isRecord(result) && typeof result.message === "string" && result.message) ||

@@ -28,6 +28,7 @@ module just imports what it needs.
 
 import logging
 from typing import Any
+from typing import Literal
 import urllib.parse
 
 from fastapi import APIRouter
@@ -36,6 +37,7 @@ import httpx
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
+from pydantic import model_validator
 
 from vss_agents.tools.vst.utils import add_proxy_stream as vst_add_proxy_stream
 from vss_agents.tools.vst.utils import add_sensor as vst_add_sensor
@@ -138,9 +140,20 @@ class AddStreamRequest(BaseModel):
 class AddStreamResponse(BaseModel):
     """Response model for add stream operation."""
 
-    status: str = Field(..., description="'success' or 'failure'")
+    model_config = ConfigDict(populate_by_name=True)
+
+    status: Literal["success", "failure"] = Field(..., description="'success' or 'failure'")
     message: str = Field(..., description="Human-readable status message")
     error: str | None = Field(None, description="Error details if failed")
+    sensor_id: str | None = Field(None, alias="sensorId", description="Stable VST sensor identity on success")
+    name: str | None = Field(None, description="Exact sensor name on success")
+
+    @model_validator(mode="after")
+    def require_success_identity(self) -> "AddStreamResponse":
+        """A successful lifecycle handoff must identify the exact VST sensor."""
+        if self.status == "success" and (not self.sensor_id or not self.name):
+            raise ValueError("successful RTSP add response requires sensorId and name")
+        return self
 
 
 # ============================================================================
@@ -698,6 +711,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                     status="success",
                     message=f"Stream '{request.name}' added successfully",
                     error=None,
+                    sensor_id=sensor_id,
+                    name=request.name,
                 )
 
             # Step 2: Add to RTVI-CV using RTSP URL from VST streams API
@@ -762,6 +777,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
             status="success",
             message=f"Stream '{request.name}' added successfully",
             error=None,
+            sensor_id=sensor_id,
+            name=request.name,
         )
 
     return router

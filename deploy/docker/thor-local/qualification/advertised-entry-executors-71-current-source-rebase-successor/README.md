@@ -5,10 +5,14 @@ the current checkout without changing or relabeling the immutable
 `advertised-entry-executors-74-successor` inventory or execution receipt.
 
 The exact partition is 40 rows whose complete historical source-lock sets still
-match and 31 rows affected by an exact twelve-path current-source overlay. All 182
+match and 31 rows affected by an exact fourteen-path current-source overlay. All 182
 retained row/source references resolve against either their immutable historical
 digest or the overlay digest. The historical dispatcher is never imported or
 replayed.
+
+The overlay includes the current RTSP add/delete API surfaces so their stable
+VST `sensorId` response contract is provenance-bound without rewriting the
+historical inventory.
 
 The validator additionally proves two semantics that changed with those files:
 

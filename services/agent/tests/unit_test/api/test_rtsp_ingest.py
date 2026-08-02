@@ -191,10 +191,21 @@ class TestAddStreamResponse:
     """Test AddStreamResponse model."""
 
     def test_success_response(self):
-        response = AddStreamResponse(status="success", message="Stream added successfully")
+        response = AddStreamResponse(
+            status="success",
+            message="Stream added successfully",
+            sensorId="sensor-123",
+            name="camera-1",
+        )
         assert response.status == "success"
         assert response.message == "Stream added successfully"
         assert response.error is None
+        assert response.sensor_id == "sensor-123"
+        assert response.name == "camera-1"
+
+    def test_success_response_requires_stable_identity(self):
+        with pytest.raises(ValueError, match="requires sensorId and name"):
+            AddStreamResponse(status="success", message="Stream added successfully")
 
     def test_failure_response(self):
         response = AddStreamResponse(status="failure", message="Failed to add stream", error="VST error")
@@ -987,6 +998,8 @@ class TestAddStreamEndpoint:
 
         assert response.status == "success"
         assert "camera-1" in response.message
+        assert response.sensor_id == "sensor-123"
+        assert response.name == "camera-1"
 
     @pytest.mark.asyncio
     @patch("vss_agents.api.rtsp_ingest.start_embedding_generation")
@@ -1025,6 +1038,8 @@ class TestAddStreamEndpoint:
         response = await endpoint(AddStreamRequest(sensor_url="rtsp://camera/main", name="camera-1"))
 
         assert response.status == "success"
+        assert response.sensor_id == "sensor-123"
+        assert response.name == "camera-1"
         mock_add_rtvi_vlm.assert_awaited_once()
         mock_add_rtvi_cv.assert_awaited_once()
         mock_add_rtvi_embed.assert_awaited_once()
@@ -1050,6 +1065,8 @@ class TestAddStreamEndpoint:
 
         assert response.status == "success"
         assert "camera-1" in response.message
+        assert response.sensor_id == "sensor-123"
+        assert response.name == "camera-1"
 
     @pytest.mark.asyncio
     @patch("vss_agents.api.rtsp_ingest.cleanup_vst_storage")

@@ -65,8 +65,8 @@ def test_concrete_partial_and_readiness_are_distinct() -> None:
     partial = [
         row for row in result["rows"] if row["implementation_state"] == "partial"
     ]
-    assert len(concrete) == 3
-    assert len(partial) == 7
+    assert len(concrete) == 4
+    assert len(partial) == 6
     assert all(
         row["relationship_kind"] == "concrete_executor_candidate" for row in concrete
     )
@@ -86,8 +86,13 @@ def test_search_composition_gap_is_explicit() -> None:
         any("adapter" in gap for gap in row["retained_gaps"]) for row in semantic
     )
     archive = rows[EXPECTED_IDS[8]]
-    assert len(archive["executor_references"]) == 1
-    assert any("RTSP" in gap for gap in archive["retained_gaps"])
+    assert len(archive["executor_references"]) == 2
+    assert archive["implementation_state"] == "concrete"
+    assert any(
+        ref["package_id"] == "search-rtsp-archive-lifecycle-successor"
+        for ref in archive["executor_references"]
+    )
+    assert any("No live Thor receipt" in gap for gap in archive["retained_gaps"])
 
 
 def test_lvs_and_ui_retained_boundaries_are_explicit() -> None:

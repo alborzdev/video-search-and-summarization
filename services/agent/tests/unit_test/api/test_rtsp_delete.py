@@ -36,13 +36,28 @@ class TestDeleteStreamResponse:
     """Test DeleteStreamResponse model."""
 
     def test_response_creation(self):
-        response = DeleteStreamResponse(status="success", message="Stream deleted", name="camera-1")
+        response = DeleteStreamResponse(
+            status="success",
+            message="Stream deleted",
+            name="camera-1",
+            sensorId="sensor-123",
+        )
         assert response.status == "success"
         assert response.name == "camera-1"
+        assert response.sensor_id == "sensor-123"
 
     def test_response_partial_status(self):
-        response = DeleteStreamResponse(status="partial", message="Partially deleted", name="camera-1")
+        response = DeleteStreamResponse(
+            status="partial",
+            message="Partially deleted",
+            name="camera-1",
+            sensorId="sensor-123",
+        )
         assert response.status == "partial"
+
+    def test_non_failure_response_requires_stable_identity(self):
+        with pytest.raises(ValueError, match="requires sensorId"):
+            DeleteStreamResponse(status="success", message="Stream deleted", name="camera-1")
 
 
 class TestCreateRtspDeleteRouter:
@@ -102,6 +117,7 @@ class TestDeleteStreamEndpoint:
 
         assert response.status == "success"
         assert response.name == "camera-1"
+        assert response.sensor_id == "sensor-123"
 
     @pytest.mark.asyncio
     @patch("vss_agents.api.rtsp_delete.cleanup_vst_sensor")
@@ -204,6 +220,7 @@ class TestDeleteStreamEndpoint:
         response = await endpoint(name="camera-1")
 
         assert response.status == "partial"
+        assert response.sensor_id == "sensor-123"
 
 
 class TestRegisterRtspDeleteRoutes:

@@ -10,7 +10,7 @@ Warehouse dependency. It validates the exact candidate classifications and
 executor roles, all direct file digests, all nested package source locks, and
 the checked-in deterministic overlay schema.
 
-The resulting counts are fixed at 3 concrete implementations, 7 partial
+The resulting counts are fixed at 4 concrete implementations, 6 partial
 implementations, and zero executor-ready, canonical/full bindings, canonical
 changes, admissions, executable rows, receipts, or promotions.
 

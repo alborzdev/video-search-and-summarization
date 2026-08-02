@@ -17,8 +17,8 @@
       "required": ["row_count", "concrete_implementation_count", "partial_implementation_count", "executor_ready_count", "required_cloud_inference_count", "warehouse_sample_dependency_count", "concrete_full_binding_count", "canonical_binding_change_count", "admitted_count", "executable_count", "runtime_receipt_count", "promotion_count"],
       "properties": {
         "row_count": {"const": 10},
-        "concrete_implementation_count": {"const": 3},
-        "partial_implementation_count": {"const": 7},
+        "concrete_implementation_count": {"const": 4},
+        "partial_implementation_count": {"const": 6},
         "executor_ready_count": {"const": 0},
         "required_cloud_inference_count": {"const": 0},
         "warehouse_sample_dependency_count": {"const": 0},

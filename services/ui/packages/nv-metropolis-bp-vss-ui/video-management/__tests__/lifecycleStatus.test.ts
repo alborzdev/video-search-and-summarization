@@ -68,14 +68,30 @@ describe('owned lifecycle status validation', () => {
 
   it('accepts RTSP add only for exact success', async () => {
     fetchMock.mockResolvedValue(
-      response({ status: 'success', message: 'created', name: 'owned-stream' })
+      response({ status: 'success', message: 'created', name: 'owned-stream', sensorId: 'sensor-owned' })
     );
     await expect(
       addRtspStream('http://127.0.0.1:8000/api/v1', {
         sensorUrl: 'rtsp://127.0.0.1:8554/test',
         name: 'owned-stream',
       })
-    ).resolves.toMatchObject({ status: 'success' });
+    ).resolves.toMatchObject({ status: 'success', name: 'owned-stream', sensorId: 'sensor-owned' });
+  });
+
+  it('rejects RTSP add success without exact stable identity', async () => {
+    for (const body of [
+      { status: 'success', message: 'created', name: 'owned-stream' },
+      { status: 'success', message: 'created', name: 'foreign-stream', sensorId: 'sensor-owned' },
+      { status: 'success', message: 'created', name: 'owned-stream', sensorId: '' },
+    ]) {
+      fetchMock.mockResolvedValueOnce(response(body));
+      await expect(
+        addRtspStream('http://127.0.0.1:8000/api/v1', {
+          sensorUrl: 'rtsp://127.0.0.1:8554/test',
+          name: 'owned-stream',
+        })
+      ).rejects.toThrow();
+    }
   });
 
   it.each(['partial', 'failure', 'unknown', '', undefined])(
@@ -95,7 +111,7 @@ describe('owned lifecycle status validation', () => {
 
   it('accepts RTSP deletion only for exact success and matching name', async () => {
     fetchMock.mockResolvedValue(
-      response({ status: 'success', message: 'deleted', name: 'owned-stream' })
+      response({ status: 'success', message: 'deleted', name: 'owned-stream', sensorId: 'sensor-owned' })
     );
     await expect(
       deleteRtspStream('http://127.0.0.1:8000/api/v1', 'owned-stream')
@@ -103,10 +119,20 @@ describe('owned lifecycle status validation', () => {
       status: 'success',
       message: 'deleted',
       name: 'owned-stream',
+      sensorId: 'sensor-owned',
     });
 
     fetchMock.mockResolvedValue(
-      response({ status: 'success', message: 'deleted', name: 'foreign-stream' })
+      response({ status: 'success', message: 'deleted', name: 'foreign-stream', sensorId: 'sensor-owned' })
+    );
+    await expect(
+      deleteRtspStream('http://127.0.0.1:8000/api/v1', 'owned-stream')
+    ).rejects.toThrow();
+  });
+
+  it('rejects RTSP deletion success without a stable identity', async () => {
+    fetchMock.mockResolvedValue(
+      response({ status: 'success', message: 'deleted', name: 'owned-stream' })
     );
     await expect(
       deleteRtspStream('http://127.0.0.1:8000/api/v1', 'owned-stream')

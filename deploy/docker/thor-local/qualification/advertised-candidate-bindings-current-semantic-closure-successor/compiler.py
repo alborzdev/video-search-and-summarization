@@ -48,6 +48,9 @@ SEARCH_DIR = (
 SEARCH_EXECUTOR_DIR = (
     "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor"
 )
+SEARCH_RTSP_DIR = (
+    "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor"
+)
 UI_DIR = (
     "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor"
 )
@@ -76,6 +79,10 @@ EXPECTED_LOCK_PATHS = {
     f"{SEARCH_EXECUTOR_DIR}/executor.py",
     f"{SEARCH_EXECUTOR_DIR}/manifest.schema.json",
     f"{SEARCH_EXECUTOR_DIR}/receipt.schema.json",
+    f"{SEARCH_RTSP_DIR}/contract.json",
+    f"{SEARCH_RTSP_DIR}/control.schema.json",
+    f"{SEARCH_RTSP_DIR}/executor.py",
+    f"{SEARCH_RTSP_DIR}/receipt.schema.json",
     f"{UI_DIR}/contract.json",
     f"{UI_DIR}/executor.py",
     f"{UI_DIR}/harness.mjs",
@@ -114,7 +121,14 @@ SEARCH_REFS = (
         "semantic-executor-requiring-adapter",
     ),
 )
-SEARCH_ARCHIVE_REF = (SEARCH_REFS[0],)
+SEARCH_ARCHIVE_REFS = (
+    SEARCH_REFS[0],
+    (
+        "search-rtsp-archive-lifecycle-successor",
+        f"{SEARCH_RTSP_DIR}/executor.py",
+        "exact-rtsp-archive-lifecycle",
+    ),
+)
 UI_REF = (
     (
         "thor-ui-video-management-playwright-successor-v1",
@@ -167,9 +181,9 @@ EXPECTED_BINDINGS = {
         SEARCH_REFS,
     ),
     "manifest-entry.semantic-search.07-file-and-rtsp-archive-management": (
-        "partial",
-        "partial_executor_candidate",
-        SEARCH_ARCHIVE_REF,
+        "concrete",
+        "concrete_executor_candidate",
+        SEARCH_ARCHIVE_REFS,
     ),
     "manifest-entry.main-ui.05-chunked-upload-and-rtsp-management": (
         "concrete",
@@ -334,8 +348,17 @@ def _verify_packages() -> None:
     lvs_predecessor = _json(_path(f"{LVS_PREDECESSOR_DIR}/contract.json"))
     search = _json(_path(f"{SEARCH_DIR}/contract.json"))
     search_executor = _json(_path(f"{SEARCH_EXECUTOR_DIR}/contract.json"))
+    search_rtsp = _json(_path(f"{SEARCH_RTSP_DIR}/contract.json"))
     ui = _json(_path(f"{UI_DIR}/contract.json"))
-    for package in (base, lvs, lvs_predecessor, search, search_executor, ui):
+    for package in (
+        base,
+        lvs,
+        lvs_predecessor,
+        search,
+        search_executor,
+        search_rtsp,
+        ui,
+    ):
         _verify_nested_locks(package)
 
     if (
@@ -390,6 +413,15 @@ def _verify_packages() -> None:
         or search_executor.get("evidence", {}).get("promotion_eligible") is not False
         or search_executor.get("evidence", {}).get("canonical_state_advanced")
         is not False
+        or search_rtsp.get("package_id") != "search-rtsp-archive-lifecycle-successor"
+        or search_rtsp.get("warehouse_sample_bundle") != "excluded"
+        or search_rtsp.get("decision", {}).get(
+            "rtsp_add_readiness_delete_candidate_implemented"
+        )
+        is not True
+        or search_rtsp.get("decision", {}).get("runtime_receipt_present") is not False
+        or search_rtsp.get("decision", {}).get("promotion_eligible") is not False
+        or search_rtsp.get("decision", {}).get("canonical_state_advanced") is not False
     ):
         raise BindingError("Search candidate boundary drift")
     canonical = ui.get("canonical_boundary", {})
@@ -532,7 +564,7 @@ def compile_overlay(contract_path: Path = CONTRACT) -> dict[str, Any]:
 
     concrete = sum(row["implementation_state"] == "concrete" for row in rows)
     partial = sum(row["implementation_state"] == "partial" for row in rows)
-    if concrete != 3 or partial != 7:
+    if concrete != 4 or partial != 6:
         raise BindingError("implementation classification split drift")
     result = {
         "schema_version": 1,
@@ -589,7 +621,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 raise BindingError("checked-in overlay is stale")
             print(
                 "PASS: current semantic candidate links verified "
-                "(3 concrete, 7 partial, 0 ready/admitted/evidenced/promoted)"
+                "(4 concrete, 6 partial, 0 ready/admitted/evidenced/promoted)"
             )
         return 0
     except BindingError as exc:

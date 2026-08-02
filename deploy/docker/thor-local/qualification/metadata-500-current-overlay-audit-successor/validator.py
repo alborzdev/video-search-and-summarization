@@ -93,6 +93,17 @@ EXPECTED_CHANGED_ROWS = {
             "manifest-gap.agent-and-mcp-apis.02-upload-handshake-and-completion"
         },
     },
+    "services/agent/src/vss_agents/api/rtsp_ingest.py": {
+        "metadata": {
+            "manifest-entry.semantic-search.07-file-and-rtsp-archive-management",
+            "manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete",
+        },
+        "rebase": {"manifest-gap.agent-and-mcp-apis.04-rtsp-add-delete"},
+    },
+    "services/agent/src/vss_agents/api/rtsp_delete.py": {
+        "metadata": {"manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete"},
+        "rebase": {"manifest-gap.agent-and-mcp-apis.04-rtsp-add-delete"},
+    },
     "services/agent/src/vss_agents/api/video_search_ingest.py": {
         "metadata": {
             "manifest-entry.semantic-search.07-file-and-rtsp-archive-management"
@@ -132,6 +143,7 @@ EXPECTED_METADATA_INDICES = {
     "manifest-entry.agent-and-mcp-apis.00-nat-generate-chat": 462,
     "manifest-entry.agent-and-mcp-apis.02-upload-handshake-and-completion": 464,
     "manifest-entry.agent-and-mcp-apis.03-video-delete": 465,
+    "manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete": 466,
 }
 EXPECTED_RUNTIME_INDICES = {
     "runtime.workflow.base-chat-report": 162,
@@ -400,7 +412,7 @@ def _validate_changed_sources(
     contract: dict[str, Any], ledger: dict[str, Any], oracles: dict[str, Any]
 ) -> None:
     rows = contract.get("changed_agent_sources")
-    if not isinstance(rows, list) or len(rows) != 5:
+    if not isinstance(rows, list) or len(rows) != 7:
         raise AuditError("changed Agent source denominator drift")
     declared: dict[str, dict[str, set[str]]] = {}
     for row in rows:
@@ -479,7 +491,7 @@ def _validate_current_source_rebase(contract: dict[str, Any]) -> None:
         "retained_candidate_rows": 71,
         "unchanged_rows": 40,
         "rebased_rows": 31,
-        "overlay_paths": 12,
+        "overlay_paths": 14,
         "source_lock_references": 182,
     }
     if contract.get("current_source_rebase") != expected:
@@ -499,7 +511,7 @@ def _validate_current_source_rebase(contract: dict[str, Any]) -> None:
         "retained_candidate_rows": 71,
         "unchanged_rows": 40,
         "rebased_rows": 31,
-        "current_source_overlay_paths": 12,
+        "current_source_overlay_paths": 14,
         "current_source_lock_references": 182,
     } or any(
         (
@@ -658,8 +670,8 @@ def _validate_current_candidate_binding(
         "overlay_schema_path": BINDING_OVERLAY_SCHEMA,
         "artifact_path": BINDING_ARTIFACT,
         "row_count": 10,
-        "concrete_implementation_count": 3,
-        "partial_implementation_count": 7,
+        "concrete_implementation_count": 4,
+        "partial_implementation_count": 6,
         "executor_ready_count": 0,
         "canonical_binding_change_count": 0,
         "runtime_receipt_count": 0,
@@ -676,8 +688,8 @@ def _validate_current_candidate_binding(
     summary = artifact.get("summary")
     if summary != {
         "row_count": 10,
-        "concrete_implementation_count": 3,
-        "partial_implementation_count": 7,
+        "concrete_implementation_count": 4,
+        "partial_implementation_count": 6,
         "executor_ready_count": 0,
         "required_cloud_inference_count": 0,
         "warehouse_sample_dependency_count": 0,
@@ -780,14 +792,14 @@ def validate(contract: dict[str, Any] | None = None) -> dict[str, Any]:
         "capabilities": 500,
         "oracles": 500,
         "candidate_rows": 211,
-        "changed_agent_sources": 5,
-        "changed_source_metadata_rows": 6,
+        "changed_agent_sources": 7,
+        "changed_source_metadata_rows": 7,
         "current_source_rebased_rows": 31,
         "runtime_successor_packages": 4,
         "runtime_successor_canonical_rows": 5,
         "current_candidate_binding_rows": 10,
-        "current_candidate_concrete_implementations": 3,
-        "current_candidate_partial_implementations": 7,
+        "current_candidate_concrete_implementations": 4,
+        "current_candidate_partial_implementations": 6,
         "runtime_evidence": 0,
         "canonical_state_advanced": False,
         "selector_mutated": False,
@@ -813,7 +825,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(report, indent=2, sort_keys=True))
     else:
         print(
-            "PASS: selected Metadata-500 remains exact; three current Agent "
+            "PASS: selected Metadata-500 remains exact; seven current Agent "
             "sources and four runtime successors are overlay-bound; no promotion"
         )
     return 0

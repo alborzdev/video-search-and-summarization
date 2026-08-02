@@ -15,18 +15,18 @@ The audit proves all of the following together:
 - the canonical selector still resolves the exact live-ready 500-row set;
 - the authoritative metadata verifier still reports 500 capabilities, 500
   oracles, 55 families, and the exact 289 + 211 schema-v2 partition;
-- all six Metadata-500 candidate rows reached by the five changed Agent source
+- all seven Metadata-500 candidate rows reached by the seven changed Agent source
   files remain `not_qualified` / `open_unexecuted`, with no executor, evidence,
   or promotion permission; one low-level helper file has no direct selected
   metadata claim and is nevertheless byte-locked by this audit;
-- the historical current-source rebase binds the three changed files its
+- the historical current-source rebase binds the five changed files its
   retained cases actually reference and still validates the exact 71 = 40
   unchanged + 31 rebased partition across 182 lock references; the other two
   files correctly remain outside that historical overlay;
 - the four new runtime successor packages bind five canonical runtime rows but
   remain authorization-gated, receipt-free, and non-promoting; and
-- the current ten-row advertised binding successor resolves to 3 concrete and
-  7 partial implementations while retaining zero ready, canonical/full-bound,
+- the current ten-row advertised binding successor resolves to 4 concrete and
+  6 partial implementations while retaining zero ready, canonical/full-bound,
   admitted, executable, evidenced, or promoted rows; and
 - warehouse sample content remains excluded.
 

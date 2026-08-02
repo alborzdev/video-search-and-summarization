@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "promotion_eligible", "canonical_state_advanced", "identity", "readiness", "control", "cleanup", "budget", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "search-rtsp-archive-lifecycle-successor"},
+    "mode": {"const": "bounded-numeric-local-rtsp-archive-lifecycle"},
+    "status": {"const": "candidate_rtsp_archive_lifecycle_complete_non_promoting"},
+    "promotion_eligible": {"const": false},
+    "canonical_state_advanced": {"const": false},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "name_sha256", "sensor_id_sha256", "rtsp_url_sha256"],
+      "properties": {
+        "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,47}$"},
+        "name_sha256": {"$ref": "#/$defs/sha"},
+        "sensor_id_sha256": {"$ref": "#/$defs/sha"},
+        "rtsp_url_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "readiness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["vst_exact_identity", "embed_documents", "behavior_documents", "raw_documents", "complete_search_accounting"],
+      "properties": {
+        "vst_exact_identity": {"const": true},
+        "embed_documents": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "behavior_documents": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "raw_documents": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "complete_search_accounting": {"const": true}
+      }
+    },
+    "control": {
+      "type": "object", "additionalProperties": false,
+      "required": ["reviewed_projection_sha256", "sensor_id_sha256", "name_sha256", "document_count", "preserved"],
+      "properties": {
+        "reviewed_projection_sha256": {"$ref": "#/$defs/sha"},
+        "sensor_id_sha256": {"$ref": "#/$defs/sha"},
+        "name_sha256": {"$ref": "#/$defs/sha"},
+        "document_count": {"const": 3},
+        "preserved": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_delete_exact_success", "vst_absent", "identity_scoped_documents_absent", "exact_discovered_documents_absent", "delayed_no_reappearance", "foreign_delete_attempted"],
+      "properties": {
+        "agent_delete_exact_success": {"const": true},
+        "vst_absent": {"const": true},
+        "identity_scoped_documents_absent": {"const": true},
+        "exact_discovered_documents_absent": {"const": true},
+        "delayed_no_reappearance": {"const": true},
+        "foreign_delete_attempted": {"const": false}
+      }
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requests", "max_requests", "actions", "max_actions"],
+      "properties": {
+        "requests": {"type": "integer", "minimum": 1, "maximum": 64},
+        "max_requests": {"const": 64},
+        "actions": {"const": 11},
+        "max_actions": {"const": 11}
+      }
+    },
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

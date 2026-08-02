@@ -57,6 +57,8 @@ EXPECTED_OVERLAY = {
     "services/agent/src/vss_agents/api/custom_fastapi_worker.py": "b9b5354f32dd32c89e798559c7080b045d55cee8df41ca4822bdabab48f88075",
     "services/agent/src/vss_agents/api/video_delete.py": "67d2146665f7750c4bdd65513a3061e5b3955c95595f9ae3e4c7a23f7c13851c",
     "services/agent/src/vss_agents/api/video_ingest.py": "0074a4165684e207d629d2e56ed47d7abf0cc26b3a39f42bf197bc7bf4566534",
+    "services/agent/src/vss_agents/api/rtsp_ingest.py": "b246293be1a0919a3620a35fb9e0fc423955186e31b91b900c2ae45a1302a38e",
+    "services/agent/src/vss_agents/api/rtsp_delete.py": "d90e887b26f518a15a628224a33577e3469c4f3f29b66d84dae0470fe75285cb",
     "deploy/docker/services/video-summarization/compose.yml": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74",
     "deploy/docker/thor-local/qualification/expected/agent.json": "9925d69065a74a26323c96c3ac7e696285b3b95ef245ede1667d2deb516da350",
     "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
@@ -436,7 +438,7 @@ def validate() -> dict[str, Any]:
         if isinstance(row, dict)
     }
     if overlay != EXPECTED_OVERLAY or len(overlay_rows) != len(overlay):
-        raise RebaseError("exact twelve-path overlay drift")
+        raise RebaseError("exact fourteen-path overlay drift")
     for path, digest in overlay.items():
         if _sha(_read(path)) != digest:
             raise RebaseError(f"current overlay source drift: {path}")
@@ -540,7 +542,7 @@ def validate() -> dict[str, Any]:
         "retained_candidate_rows": 71,
         "unchanged_rows": 40,
         "rebased_rows": 31,
-        "current_source_overlay_paths": 12,
+        "current_source_overlay_paths": 14,
         "current_source_lock_references": 182,
         "overlay_reference_counts": dict(sorted(overlay_usage.items())),
         "rebased_entry_ids": sorted(rebased),
@@ -579,7 +581,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(
             "PASS: 71 retained rows = 40 unchanged + 31 current-source rebased; "
-            "twelve locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
+            "fourteen locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
         )
     return 0
 

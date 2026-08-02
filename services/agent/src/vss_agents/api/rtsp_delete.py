@@ -25,12 +25,15 @@ of the lifecycle share the same VST / RTVI logic.
 
 import logging
 from typing import Any
+from typing import Literal
 
 from fastapi import APIRouter
 from fastapi import FastAPI
 import httpx
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from pydantic import Field
+from pydantic import model_validator
 
 from vss_agents.api.rtsp_ingest import ServiceConfig
 from vss_agents.api.rtsp_ingest import _resolve_service_config
@@ -49,9 +52,25 @@ logger = logging.getLogger(__name__)
 class DeleteStreamResponse(BaseModel):
     """Response model for delete stream operation."""
 
-    status: str = Field(..., description="'success', 'partial', or 'failure'")
+    model_config = ConfigDict(populate_by_name=True)
+
+    status: Literal["success", "partial", "failure"] = Field(
+        ..., description="'success', 'partial', or 'failure'"
+    )
     message: str = Field(..., description="Human-readable status message")
     name: str = Field(..., description="The sensor name that was deleted")
+    sensor_id: str | None = Field(
+        None,
+        alias="sensorId",
+        description="Stable VST sensor identity resolved before cleanup",
+    )
+
+    @model_validator(mode="after")
+    def require_resolved_identity(self) -> "DeleteStreamResponse":
+        """Success or partial cleanup must remain bound to the resolved sensor."""
+        if self.status in {"success", "partial"} and not self.sensor_id:
+            raise ValueError("successful or partial RTSP delete response requires sensorId")
+        return self
 
 
 def create_rtsp_delete_router(config: ServiceConfig) -> APIRouter:
@@ -154,6 +173,7 @@ def create_rtsp_delete_router(config: ServiceConfig) -> APIRouter:
             status=status,
             message=message,
             name=name,
+            sensor_id=stream_id,
         )
 
     return router

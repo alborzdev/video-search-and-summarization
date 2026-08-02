@@ -232,8 +232,8 @@
     },
     {
       "capability_id": "manifest-entry.semantic-search.07-file-and-rtsp-archive-management",
-      "implementation_state": "partial",
-      "relationship_kind": "partial_executor_candidate",
+      "implementation_state": "concrete",
+      "relationship_kind": "concrete_executor_candidate",
       "executor_ready": false,
       "executor_references": [
         {
@@ -242,13 +242,20 @@
           "role": "exact-fixture-lifecycle",
           "authorization_gated": true,
           "executor_ready": false
+        },
+        {
+          "package_id": "search-rtsp-archive-lifecycle-successor",
+          "path": "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor/executor.py",
+          "role": "exact-rtsp-archive-lifecycle",
+          "authorization_gated": true,
+          "executor_ready": false
         }
       ],
       "coverage_status": "incomplete_no_live_receipt",
       "retained_gaps": [
-        "The file archive path now has VST-allocated stable identity, fail-closed completion, exact cross-system cleanup, and delayed no-reappearance checks.",
-        "RTSP add/readiness/delete is not implemented by this Search lifecycle and no live Thor receipt exists.",
-        "Failed-ingest rollback has no proven drain/remediation for delayed CV/behavior/raw writes; the exact lifecycle detects delayed reappearance, but a detected failure can still require operator remediation."
+        "The file and RTSP archive paths now have VST-allocated stable identities, readiness checks, exact cross-system cleanup, unrelated-control preservation, and delayed no-reappearance checks.",
+        "No live Thor receipt exists for either archive lifecycle.",
+        "A failed ingest or RTSP add without a reconciled stable identity has no proven drain/remediation for delayed CV/behavior/raw writes; the lifecycles fail closed but can still require operator remediation."
       ],
       "canonical_effect": {"admitted": false, "binding_kind_changed": false, "executable": false, "promoted": false, "runtime_evidence": []}
     },
@@ -277,7 +284,7 @@
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-rebase-successor-v2/mapping.json", "sha256": "cb9bea95b4cfeab7c44441854e331a7093667d6b379fe0555692e5105ce4507f"},
     {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"},
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.json", "sha256": "d3026a85a7392d0f20521ab980da669720759a1f19f81cd158b70e11bc3ff204"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.json", "sha256": "0230c25504086d9c16b796248682958f8fedc7ca78fce55c855bda2e4846bc1e"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.schema.json", "sha256": "013c90984595035f6b08fdd50fafc4a252aafdc8911172dbb8c7a5ab21cee3fd"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/executor.py", "sha256": "e5a4dc8e97b27d5fea701706c8c0498a02fb6d56c2a552531a6bc9f95e63572b"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/request-manifest.schema.json", "sha256": "5bc6a9f678df4202dff87a5d2518dfee0c21e47720d7871357676e97329fa70a"},
@@ -298,7 +305,11 @@
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py", "sha256": "ae8d669faa819e9a07ef4bd0903f33ada98f0cb0cc1236c8a03f1f12528d1946"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/manifest.schema.json", "sha256": "7f5b0da039ddf5edf0a987e8c58cf5d937a9098ff7e599a8d620229081bea377"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/receipt.schema.json", "sha256": "443d4254ed988123b03a31d261c5179c93e41d4fd380403b6c7c1471cbe08d21"},
-    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "93dba40bc1ccaf7dd2d3496af67d4908af878110b3bf75eb50d10f248c6c6592"},
+    {"path": "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor/contract.json", "sha256": "b016945d87e147409e93989f79e2793db742170b2f7bfd2fa5e48d326e2c5b23"},
+    {"path": "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor/control.schema.json", "sha256": "d47543e778bf9d7d4d5cff440ce38f98198c0bb6cdeeececc266b30852a33ae1"},
+    {"path": "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor/executor.py", "sha256": "9e0e117d84d229eca0bc9f8d540c4edd4c8f4ea18cccbe922150e6ab2648b5f7"},
+    {"path": "deploy/docker/thor-local/qualification/search-rtsp-archive-lifecycle-successor/receipt.schema.json", "sha256": "c86fc892b9576917cd79c3343ab96f3ffb78be5f9b12e1ed6bfa747b5cded6f5"},
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "bfb573a0e87245353810d3d07eab874442807710710971c8c028ef2542a2da2e"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py", "sha256": "d193ddc9819d5db5d59b875000c217f45b3ce2b9d3eac0f7e16af57db7686e52"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs", "sha256": "6a8a7ee3dfa7ea55908056274a50d1d3983f4b58e0d85a1acb29b815bdc644aa"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/manifest.schema.json", "sha256": "e67a162b482c81488f2d3fa55df096d262da205dfdfc96ac8ed2b826079d35cb"},
