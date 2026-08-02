@@ -467,6 +467,23 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/ledger-500-successor/tests"
 
+# Two isolated metadata successors close the projected merge blockers without
+# touching live parity files. The manifest projection applies six policy-valid
+# aggregate fields and preserves three external_optional family boundaries; the
+# acceptance projection appends exactly eight missing scenario links. Together
+# they leave zero policy-correct aggregate or acceptance-coverage gaps, but do
+# not merge or promote any capability.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/manifest-500-aggregate-successor/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/manifest-500-aggregate-successor/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/acceptance-500-successor/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/acceptance-500-successor/tests"
+
 # The candidate-only offline MV3DT observation and its immutable receipt are
 # verified above at exact predecessor identity by the CPU multimedia successor.
 # They are intentionally not replayed against the evolved current manifest.

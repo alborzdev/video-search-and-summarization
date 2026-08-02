@@ -1,0 +1,579 @@
+{
+  "aggregate_algorithm": {
+    "acceptance_class": "required_local if present; else external_optional only for an all-external family; else alternate_local_lane",
+    "implementation": "verify_official_capabilities_family_aggregate_v1",
+    "runtime_state": "the sole capability state, otherwise not_qualified",
+    "thor_state": "the sole capability state, otherwise partial"
+  },
+  "aggregate_updates": [
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "video-summarization-live",
+      "feature_index": 2
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "rt-vlm-media",
+      "feature_index": 8
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "vios-codecs-audio",
+      "feature_index": 20
+    },
+    {
+      "after": {
+        "acceptance_class": "alternate_local_lane",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "alternate_local_lane",
+        "runtime_state": "blocked",
+        "thor_state": "partial"
+      },
+      "differing_fields": [
+        "runtime_state"
+      ],
+      "feature_id": "audio-understanding",
+      "feature_index": 21
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "vios-ui",
+      "feature_index": 22
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "agent-and-mcp-apis",
+      "feature_index": 27
+    }
+  ],
+  "artifacts": {
+    "projected_manifest": {
+      "canonical_sha256": "68620554a3a5f731d15283787f1e0bb3ff8e4a4e673b726412c94d592caf790c",
+      "path": "deploy/docker/thor-local/qualification/manifest-500-aggregate-successor/projected-manifest.json",
+      "raw_sha256": "c71f75246fc1e4cbc388f93849d27c3b7dc7edf2d0a516fb3fa13f6d412a4a93"
+    }
+  },
+  "external_policy_preservations": [
+    {
+      "after": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "wired"
+      },
+      "before": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "external_optional"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "alert-notifications-slack",
+      "feature_index": 7
+    },
+    {
+      "after": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "external_optional"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "helm",
+      "feature_index": 32
+    },
+    {
+      "after": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "external_optional"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "enterprise-rag",
+      "feature_index": 34
+    }
+  ],
+  "mode": "isolated_static_aggregate_reconciliation",
+  "policy": {
+    "candidate_only": true,
+    "docker_access": false,
+    "host_mutation": false,
+    "model_execution": false,
+    "modifies_live_files": false,
+    "network_access": false,
+    "required_cloud_inference": false,
+    "runtime_actions": [],
+    "warehouse_sample_bundle": "excluded"
+  },
+  "preservation": {
+    "base_capability_id_arrays_sha256": "d0f22b9d863993016b07429bee9c2387f2090435fcb9d505f043423172eb92a4",
+    "base_feature_order_sha256": "01049c6784ab291b080198ae890a856173e4e2ad4045238d8b304ff54f6db247",
+    "base_manifest_canonical_sha256": "1d8d4d470c456c4eca8f6550e890cf2ee469ddd578b7c98c341324608749372b",
+    "base_non_target_fields_sha256": "5b4cf4b9030a5b2de5c76d28240e54cad81e950ac82e660149b90b743808f666",
+    "base_skills_canonical_sha256": "1cd69578ba1a8a9712665cea7b707e46b737973739add9f0dfe1450781defbb6",
+    "live_manifest_canonical_sha256": "cbf65ddc55b3518763bf8ee57f58f24619956473035aeca98a274a7b1bc959f2",
+    "projected_capability_id_arrays_sha256": "d0f22b9d863993016b07429bee9c2387f2090435fcb9d505f043423172eb92a4",
+    "projected_feature_order_sha256": "01049c6784ab291b080198ae890a856173e4e2ad4045238d8b304ff54f6db247",
+    "projected_non_target_fields_sha256": "5b4cf4b9030a5b2de5c76d28240e54cad81e950ac82e660149b90b743808f666",
+    "projected_skills_canonical_sha256": "1cd69578ba1a8a9712665cea7b707e46b737973739add9f0dfe1450781defbb6"
+  },
+  "projection_id": "vss-3.2.1-thor-manifest-500-aggregate-successor",
+  "projection_payload_sha256": "dea5eb7dc4322d3d517b9b0f196ea5f214d5349280176c17792f950e3c0bbb25",
+  "raw_reducer_diagnostic": [
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "video-summarization-live",
+      "feature_index": 2
+    },
+    {
+      "after": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "wired"
+      },
+      "before": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "external_optional"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "alert-notifications-slack",
+      "feature_index": 7
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "rt-vlm-media",
+      "feature_index": 8
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "vios-codecs-audio",
+      "feature_index": 20
+    },
+    {
+      "after": {
+        "acceptance_class": "alternate_local_lane",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "alternate_local_lane",
+        "runtime_state": "blocked",
+        "thor_state": "partial"
+      },
+      "differing_fields": [
+        "runtime_state"
+      ],
+      "feature_id": "audio-understanding",
+      "feature_index": 21
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "vios-ui",
+      "feature_index": 22
+    },
+    {
+      "after": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "required_local",
+        "runtime_state": "not_qualified",
+        "thor_state": "wired"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "agent-and-mcp-apis",
+      "feature_index": 27
+    },
+    {
+      "after": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "external_optional"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "helm",
+      "feature_index": 32
+    },
+    {
+      "after": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "partial"
+      },
+      "before": {
+        "acceptance_class": "external_optional",
+        "runtime_state": "not_applicable",
+        "thor_state": "external_optional"
+      },
+      "differing_fields": [
+        "thor_state"
+      ],
+      "feature_id": "enterprise-rag",
+      "feature_index": 34
+    }
+  ],
+  "remaining_merge_readiness": {
+    "acceptance_scenario_coverage_gaps": [
+      {
+        "feature_id": "rt-cv-2d",
+        "missing_scenario_ids": [
+          "official-capability-contracts"
+        ]
+      },
+      {
+        "feature_id": "video-summarization-live",
+        "missing_scenario_ids": [
+          "mcp-tool-operation-matrix"
+        ]
+      },
+      {
+        "feature_id": "search-scale",
+        "missing_scenario_ids": [
+          "official-capability-contracts"
+        ]
+      },
+      {
+        "feature_id": "alert-notifications-slack",
+        "missing_scenario_ids": [
+          "openclaw-workflows"
+        ]
+      },
+      {
+        "feature_id": "rt-vlm-media",
+        "missing_scenario_ids": [
+          "rest-api-operation-matrix"
+        ]
+      },
+      {
+        "feature_id": "rt-vlm-models",
+        "missing_scenario_ids": [
+          "official-capability-contracts"
+        ]
+      },
+      {
+        "feature_id": "rt-vlm-performance-observability",
+        "missing_scenario_ids": [
+          "official-capability-contracts"
+        ]
+      },
+      {
+        "feature_id": "audio-understanding",
+        "missing_scenario_ids": [
+          "core-agent-workflows"
+        ]
+      }
+    ],
+    "policy_correct_aggregate_drift_after": [],
+    "raw_nine_live_manifest_policy_conflicts": [
+      {
+        "acceptance_class": "external_optional",
+        "feature_id": "alert-notifications-slack",
+        "policy": "verify_manifest_external_optional_state_v1",
+        "raw_projected_thor_state": "wired",
+        "required_thor_state": "external_optional"
+      },
+      {
+        "acceptance_class": "external_optional",
+        "feature_id": "helm",
+        "policy": "verify_manifest_external_optional_state_v1",
+        "raw_projected_thor_state": "partial",
+        "required_thor_state": "external_optional"
+      },
+      {
+        "acceptance_class": "external_optional",
+        "feature_id": "enterprise-rag",
+        "policy": "verify_manifest_external_optional_state_v1",
+        "raw_projected_thor_state": "partial",
+        "required_thor_state": "external_optional"
+      }
+    ],
+    "raw_reducer_residual_after": [
+      {
+        "after": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "wired"
+        },
+        "before": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "external_optional"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "alert-notifications-slack",
+        "feature_index": 7
+      },
+      {
+        "after": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "partial"
+        },
+        "before": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "external_optional"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "helm",
+        "feature_index": 32
+      },
+      {
+        "after": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "partial"
+        },
+        "before": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "external_optional"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "enterprise-rag",
+        "feature_index": 34
+      }
+    ],
+    "reviewed_nonblocking_external_distinctions": [
+      {
+        "candidate_thor_state": "wired",
+        "capability_id": "manifest-entry.alert-notifications-slack.00-slack-notification",
+        "live_external_family_required_thor_state": "external_optional"
+      },
+      {
+        "candidate_thor_state": "partial",
+        "capability_id": "manifest-entry.rt-vlm-models.04-remote-openai-compatible-endpoint",
+        "live_external_family_required_thor_state": "external_optional"
+      },
+      {
+        "candidate_thor_state": "partial",
+        "capability_id": "manifest-entry.helm.00-helm-for-four-developer-workflows",
+        "live_external_family_required_thor_state": "external_optional"
+      },
+      {
+        "candidate_thor_state": "partial",
+        "capability_id": "manifest-entry.helm.01-helm-for-most-standalone-services",
+        "live_external_family_required_thor_state": "external_optional"
+      },
+      {
+        "candidate_thor_state": "partial",
+        "capability_id": "manifest-entry.enterprise-rag.00-rag-report-generation",
+        "live_external_family_required_thor_state": "external_optional"
+      },
+      {
+        "candidate_thor_state": "partial",
+        "capability_id": "manifest-entry.enterprise-rag.01-frag-retrieval-integration",
+        "live_external_family_required_thor_state": "external_optional"
+      }
+    ]
+  },
+  "schema_version": 1,
+  "source_locks": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+    },
+    "ledger_500_capabilities": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
+      "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6"
+    },
+    "ledger_500_manifest": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-manifest.json",
+      "raw_sha256": "075a859219dfee4982338ca04244b6d444e0c23c9666c88e58e8f5fe58c366e8"
+    },
+    "ledger_500_manifest_schema": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-manifest.schema.json",
+      "raw_sha256": "90b0452d8e19f7770b1ed13d6a5a7f1040612cc6e99edf8f4cd2d32ed86582c5"
+    },
+    "ledger_500_projection": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.json",
+      "raw_sha256": "4e206240795e2cf739f595811920ae66a7868ebe92031feb73b7fcbbe5a971d0"
+    },
+    "ledger_500_projection_schema": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.schema.json",
+      "raw_sha256": "8f74b849581029c303a1e7a927f1f31b7458ed87e529d14e25134e52396f4ec9"
+    },
+    "live_capability_verifier": {
+      "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",
+      "raw_sha256": "930ed6caa04eea6dc79984ceb0ee8babe39db6074ac6c74a1e43349dcbc8e8e7"
+    },
+    "live_manifest": {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce"
+    },
+    "live_manifest_verifier": {
+      "path": "deploy/docker/thor-local/parity/verify_manifest.py",
+      "raw_sha256": "5e9e7551853b4606a95131d1ca46da3d15fea7e307b49d1fbf06b25dacb9a5e2"
+    },
+    "official_capabilities_schema": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896"
+    }
+  },
+  "summary": {
+    "acceptance_coverage_gap_count": 8,
+    "acceptance_coverage_remains_open": true,
+    "aggregate_update_count": 6,
+    "capability_count": 500,
+    "changed_field_count": 6,
+    "external_nonblocking_distinction_count": 6,
+    "external_policy_preservation_count": 3,
+    "manifest_feature_count": 55,
+    "policy_correct_aggregate_blocker_count_after": 0,
+    "policy_correct_aggregate_blocker_count_before": 6,
+    "raw_nine_live_manifest_policy_conflict_count": 3,
+    "raw_reducer_diagnostic_count": 9,
+    "raw_reducer_residual_count_after": 3,
+    "remaining_blocker_category_count": 1,
+    "warehouse_sample_bundle_entries": 0
+  },
+  "target": {
+    "base_commit": "642b081eae180cffc6d53b30f31c6b15d514825a",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

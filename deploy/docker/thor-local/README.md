@@ -22,8 +22,10 @@ or live HTTP probe.
 The live parity ledger remains at 289 capabilities. The isolated successor
 projection proves one exact same-family capability and planning-oracle binding
 for each of the 500 advertised literals, but it is not a live merge or runtime
-qualification: nine family aggregates and eight acceptance-coverage records
-remain explicit blockers, and every candidate evidence collection is empty.
+qualification. Two further isolated projections derive the exact metadata
+transition: six policy-valid family fields, three preserved external family
+boundaries, and eight appended acceptance links. The live files remain
+unchanged, and every candidate evidence collection is empty.
 
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 

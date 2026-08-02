@@ -322,6 +322,14 @@ in this directory:
   the 289 existing capability rows, recomputes only 17 derived source claim
   hashes, and records nine family-aggregate plus eight acceptance-coverage
   blockers; it does not change the live parity files;
+- `manifest-500-aggregate-successor/` resolves the nine raw family-reducer
+  differences into six policy-valid scalar updates plus three preserved
+  `external_optional` family boundaries. Its projected manifest has zero
+  policy-correct aggregate drift while leaving the eight acceptance links open;
+- `acceptance-500-successor/` appends exactly those eight scenario links and
+  proves that removing its eight surgical replacements reconstructs the live
+  inventory bytes exactly. Its projected acceptance coverage has zero missing
+  links while the separate live family metadata remains unmodified;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

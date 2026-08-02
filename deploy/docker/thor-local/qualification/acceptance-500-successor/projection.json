@@ -1,0 +1,338 @@
+{
+  "artifacts": {
+    "projected_acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance-500-successor/projected-acceptance-inventory.json",
+      "raw_sha256": "69dc4aca160ae236880f9afe7b873c0b3b423f8981c5d934e4ed647043cd8cb0"
+    },
+    "projected_acceptance_inventory_schema": {
+      "path": "deploy/docker/thor-local/qualification/acceptance-500-successor/projected-acceptance-inventory.schema.json",
+      "raw_sha256": "848d84b976906c3059b67218cf1d6bf3960b8b91c620c663bba398f5b302278a"
+    }
+  },
+  "mode": "isolated_static_acceptance_projection",
+  "policy": {
+    "candidate_only": true,
+    "custom_data_warehouse_capability": "preserved",
+    "modifies_live_files": false,
+    "required_cloud_inference": false,
+    "runtime_evidence_added": false,
+    "runtime_execution": "forbidden",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "preservation": {
+    "current_inventory_canonical_sha256": "a15f9f6fb349b9907fc4934f633c9d9158dd781cd1f9cee50954ad836523dc25",
+    "projected_feature_records_canonical_sha256": "988b137bdfc44447e8c86503d1d7fa8599f35b343b0bd5120670e7b5698c1037",
+    "projected_inventory_canonical_sha256": "b1d926b8ee7a1c7dde90fbc650c7758b3464296db90a002e0835c527af94b4e2",
+    "unchanged_coverage_sections_canonical_sha256": "32c346fa4484b4a2682042c53d3a376419150e59635949ed0f8ac5e9295e86ab",
+    "unchanged_top_level_canonical_sha256": "e98f576d2ced156b9bd540530499856dec3541d200efd28b8238d52f3ca3fa14"
+  },
+  "projection_id": "vss-3.2.1-thor-acceptance-500-successor",
+  "projection_payload_sha256": "71303ac410a83686f348c3327383007d7f93633dae54034e6e3b38e12830cb26",
+  "remaining_blockers": {
+    "acceptance_scenario_coverage_gaps": [],
+    "family_status_aggregate_drift": [
+      {
+        "derived_from_500": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "wired"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "video-summarization-live",
+        "preserved": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "partial"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "wired"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "alert-notifications-slack",
+        "preserved": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "external_optional"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "wired"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "rt-vlm-media",
+        "preserved": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "partial"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "partial"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "vios-codecs-audio",
+        "preserved": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "wired"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "alternate_local_lane",
+          "runtime_state": "not_qualified",
+          "thor_state": "partial"
+        },
+        "differing_fields": [
+          "runtime_state"
+        ],
+        "feature_id": "audio-understanding",
+        "preserved": {
+          "acceptance_class": "alternate_local_lane",
+          "runtime_state": "blocked",
+          "thor_state": "partial"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "partial"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "vios-ui",
+        "preserved": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "wired"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "partial"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "agent-and-mcp-apis",
+        "preserved": {
+          "acceptance_class": "required_local",
+          "runtime_state": "not_qualified",
+          "thor_state": "wired"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "partial"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "helm",
+        "preserved": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "external_optional"
+        }
+      },
+      {
+        "derived_from_500": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "partial"
+        },
+        "differing_fields": [
+          "thor_state"
+        ],
+        "feature_id": "enterprise-rag",
+        "preserved": {
+          "acceptance_class": "external_optional",
+          "runtime_state": "not_applicable",
+          "thor_state": "external_optional"
+        }
+      }
+    ]
+  },
+  "scenario_additions": [
+    {
+      "after_scenario_ids": [
+        "industry-profile-workflows",
+        "rtvi-media-workflows",
+        "official-capability-contracts"
+      ],
+      "before_scenario_ids": [
+        "industry-profile-workflows",
+        "rtvi-media-workflows"
+      ],
+      "feature_id": "rt-cv-2d",
+      "feature_record_index": 13,
+      "json_pointer": "/coverage/features/13/scenario_ids/2",
+      "scenario_id": "official-capability-contracts"
+    },
+    {
+      "after_scenario_ids": [
+        "core-agent-workflows",
+        "mcp-tool-operation-matrix"
+      ],
+      "before_scenario_ids": [
+        "core-agent-workflows"
+      ],
+      "feature_id": "video-summarization-live",
+      "feature_record_index": 2,
+      "json_pointer": "/coverage/features/2/scenario_ids/1",
+      "scenario_id": "mcp-tool-operation-matrix"
+    },
+    {
+      "after_scenario_ids": [
+        "observability-scale-workflows",
+        "official-capability-contracts"
+      ],
+      "before_scenario_ids": [
+        "observability-scale-workflows"
+      ],
+      "feature_id": "search-scale",
+      "feature_record_index": 4,
+      "json_pointer": "/coverage/features/4/scenario_ids/1",
+      "scenario_id": "official-capability-contracts"
+    },
+    {
+      "after_scenario_ids": [
+        "external-integration-boundaries",
+        "openclaw-workflows"
+      ],
+      "before_scenario_ids": [
+        "external-integration-boundaries"
+      ],
+      "feature_id": "alert-notifications-slack",
+      "feature_record_index": 7,
+      "json_pointer": "/coverage/features/7/scenario_ids/1",
+      "scenario_id": "openclaw-workflows"
+    },
+    {
+      "after_scenario_ids": [
+        "rtvi-media-workflows",
+        "rest-api-operation-matrix"
+      ],
+      "before_scenario_ids": [
+        "rtvi-media-workflows"
+      ],
+      "feature_id": "rt-vlm-media",
+      "feature_record_index": 8,
+      "json_pointer": "/coverage/features/8/scenario_ids/1",
+      "scenario_id": "rest-api-operation-matrix"
+    },
+    {
+      "after_scenario_ids": [
+        "model-alternate-workflows",
+        "official-capability-contracts"
+      ],
+      "before_scenario_ids": [
+        "model-alternate-workflows"
+      ],
+      "feature_id": "rt-vlm-models",
+      "feature_record_index": 10,
+      "json_pointer": "/coverage/features/10/scenario_ids/1",
+      "scenario_id": "official-capability-contracts"
+    },
+    {
+      "after_scenario_ids": [
+        "observability-scale-workflows",
+        "rtvi-media-workflows",
+        "official-capability-contracts"
+      ],
+      "before_scenario_ids": [
+        "observability-scale-workflows",
+        "rtvi-media-workflows"
+      ],
+      "feature_id": "rt-vlm-performance-observability",
+      "feature_record_index": 11,
+      "json_pointer": "/coverage/features/11/scenario_ids/2",
+      "scenario_id": "official-capability-contracts"
+    },
+    {
+      "after_scenario_ids": [
+        "model-alternate-workflows",
+        "core-agent-workflows"
+      ],
+      "before_scenario_ids": [
+        "model-alternate-workflows"
+      ],
+      "feature_id": "audio-understanding",
+      "feature_record_index": 21,
+      "json_pointer": "/coverage/features/21/scenario_ids/1",
+      "scenario_id": "core-agent-workflows"
+    }
+  ],
+  "schema_version": 1,
+  "source_locks": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+    },
+    "acceptance_verifier": {
+      "path": "deploy/docker/thor-local/qualification/acceptance.py",
+      "raw_sha256": "673873746cb3f23fb35fd9dac445df4a181566ae320eb7e4090ac7837b7c024f"
+    },
+    "ledger_projection_proof": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.json",
+      "raw_sha256": "4e206240795e2cf739f595811920ae66a7868ebe92031feb73b7fcbbe5a971d0"
+    },
+    "ledger_projection_proof_schema": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projection.schema.json",
+      "raw_sha256": "8f74b849581029c303a1e7a927f1f31b7458ed87e529d14e25134e52396f4ec9"
+    },
+    "official_capabilities_schema": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896"
+    },
+    "official_capability_verifier": {
+      "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",
+      "raw_sha256": "930ed6caa04eea6dc79984ceb0ee8babe39db6074ac6c74a1e43349dcbc8e8e7"
+    },
+    "projected_ledger": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
+      "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6"
+    },
+    "projected_manifest": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-manifest.json",
+      "raw_sha256": "075a859219dfee4982338ca04244b6d444e0c23c9666c88e58e8f5fe58c366e8"
+    },
+    "projected_manifest_schema": {
+      "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-manifest.schema.json",
+      "raw_sha256": "90b0452d8e19f7770b1ed13d6a5a7f1040612cc6e99edf8f4cd2d32ed86582c5"
+    }
+  },
+  "summary": {
+    "acceptance_coverage_blocker_count_after": 0,
+    "acceptance_coverage_blocker_count_before": 8,
+    "family_aggregate_blocker_count": 9,
+    "feature_coverage_record_count": 55,
+    "live_merge_ready": false,
+    "projected_capability_count": 500,
+    "scenario_addition_count": 8
+  }
+}

@@ -56,9 +56,11 @@ successor preserves the 289 live rows exactly and appends 211 planning-only
 candidate contracts in manifest-pointer order. The ledger successor projects
 the same ordered 500 capability IDs and exact same-family advertised-title
 mappings. Both retain zero candidate evidence or promotions and exclude the
-Warehouse sample bundle. The projection is intentionally not live-merge-ready:
-nine feature-family aggregates and eight acceptance-coverage records remain
-machine-recorded blockers.
+Warehouse sample bundle. The ledger projection records nine raw reducer
+differences and eight acceptance-coverage gaps. Separate metadata successors
+resolve those into six policy-valid family updates, three preserved external
+family boundaries, and eight exact acceptance links. These are still isolated
+projections rather than a live merge.
 
 That direct-index denominator is also not the final documentation graph. A
 recursive same-version follow-up reached a 172-page fixed point (including
