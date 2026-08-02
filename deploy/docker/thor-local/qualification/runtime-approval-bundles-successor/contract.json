@@ -1,0 +1,714 @@
+{
+  "approval_policy": {
+    "approval_inheritance": false,
+    "approval_text_rule": "operator_replaces_exact_bundle_placeholder_in_separate_authorized_workflow",
+    "compiler_can_grant_approval": false,
+    "dependency_completion_is_not_approval": true,
+    "dependency_satisfaction": "separate_bundle_receipt_or_reviewed_not_required_determination",
+    "one_bundle_per_acknowledgement": true,
+    "placeholder_is_not_approval": true
+  },
+  "audio_dependency_boundary": {
+    "active_audio_package_relied_on": true,
+    "binding_rule": "native_audio_and_separate_asr_require_distinct_noninheriting_authorizations",
+    "runtime_contract_path": "deploy/docker/thor-local/qualification/audio-entry-oracles/contract.json",
+    "runtime_oracle_path": "deploy/docker/thor-local/qualification/audio-entry-oracles/oracle.py",
+    "stable_fixture_path": "deploy/docker/thor-local/qualification/tiny-audio-fixture/fixture.py",
+    "state": "stable_reviewed_audio_contract",
+    "wave7_identity_path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json"
+  },
+  "authorization_state": {
+    "admitted_bundle_count": 0,
+    "approval_count": 0,
+    "executable_bundle_count": 0,
+    "receipt_count": 0,
+    "runtime_evidence_count": 0
+  },
+  "boundary": "contract_only_no_approval_receipt_admission_execution_or_host_evidence",
+  "bundle_count": 16,
+  "bundles": [
+    {
+      "acknowledgement_token": "I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE",
+      "approval_placeholder": "<APPROVE_ONLY_READ_ONLY_HOST_PREREQUISITE_EVIDENCE_COLLECTION>",
+      "authorized_command": "PYTHONDONTWRITEBYTECODE=1 python3 deploy/docker/thor-local/qualification/host-prerequisite-evidence/collector.py inspect --acknowledgement I_ACCEPT_READ_ONLY_HOST_PREREQUISITE_EVIDENCE",
+      "cleanup": "none; evidence is emitted to standard output and collection must not create resources",
+      "current_blockers": [
+        "no host-prerequisite evidence acknowledgement is represented by this compiler",
+        "current prerequisite, capacity, and operational-admission state is deliberately not observed"
+      ],
+      "depends_on": [],
+      "flags": {
+        "credentials": false,
+        "destructive": false,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": false,
+        "network": false,
+        "subprocess": true,
+        "writes": false
+      },
+      "id": "host-prerequisite-evidence-collection",
+      "required_inputs": [
+        "exact collector acknowledgement token",
+        "maintenance-safe read-only observation window",
+        "raw-locked collector and contract with self-locked result schema"
+      ],
+      "rollback": "none; stop on source drift, invalid acknowledgement, or any attempted mutation",
+      "title": "Acknowledgement-gated host-prerequisite evidence collection"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_READ_ONLY_DOCKER_AND_LOOPBACK_RUNTIME_INSPECTION>",
+      "cleanup": "none; inspection must not create resources",
+      "current_blockers": [
+        "no inspection approval is represented by this compiler",
+        "current host, Docker, port, endpoint, memory, disk, and image state is deliberately not observed"
+      ],
+      "depends_on": [
+        "host-prerequisite-evidence-collection"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": false,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": false,
+        "network": true,
+        "subprocess": true,
+        "writes": false
+      },
+      "id": "read-only-docker-runtime-inspection",
+      "required_inputs": [
+        "separate host-prerequisite evidence receipt",
+        "operator-selected broader inspection scope",
+        "maintenance-safe observation window",
+        "read-only host-preflight and runtime-lane contracts"
+      ],
+      "rollback": "none; abort on any attempted mutation or non-loopback runtime target",
+      "title": "Read-only Docker and runtime inspection"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_DOCKER_CGROUPFS_RESTART_AND_EXACT_WORKLOAD_RESTORATION>",
+      "cleanup": "restore exact pre-transaction container running set and retain durable transaction evidence",
+      "current_blockers": [
+        "the required cgroup driver and transaction eligibility are not established by this compiler",
+        "no interruption/restoration approval is represented"
+      ],
+      "depends_on": [
+        "read-only-docker-runtime-inspection"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": false,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "cgroupfs-remediation",
+      "required_inputs": [
+        "separate cgroup remediation acknowledgement",
+        "root execution by host owner",
+        "eligible read-only inspection",
+        "exclusive Docker maintenance window"
+      ],
+      "rollback": "restore exact daemon bytes, metadata, cgroup driver, and previously running container IDs; recovery needs its own acknowledgement",
+      "title": "Docker cgroupfs remediation and exact workload restoration"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_ONE_TINY_AUDIO_FIXTURE_AT_REVIEWED_OUTSIDE_REPOSITORY_PATHS>",
+      "cleanup": "operator decides whether to retain or later remove the two explicitly named generated files",
+      "current_blockers": [
+        "no output path or fixture-generation approval is represented",
+        "local tool eligibility is checked only by the separately authorized generator"
+      ],
+      "depends_on": [],
+      "flags": {
+        "credentials": false,
+        "destructive": false,
+        "docker": false,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": false,
+        "network": false,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "tiny-audio-fixture-generation",
+      "required_inputs": [
+        "absolute unused MP4 path outside repository",
+        "unused adjacent receipt path",
+        "trusted local ffmpeg and ffprobe"
+      ],
+      "rollback": "generator never overwrites; report partial publication rather than deleting a possibly replaced inode",
+      "title": "Generate one tiny known-speech fixture"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_REVIEWED_EXACT_ARTIFACT_DOWNLOAD_SET_AFTER_SIZE_DISK_AND_CREDENTIAL_REVIEW>",
+      "cleanup": "preserve preexisting caches; identify only partial files created by the authorized download transaction",
+      "current_blockers": [
+        "Cosmos3 exact bytes and access metadata are unknown",
+        "vLLM installed size and several model/image transfer sizes are unknown",
+        "current local presence and free disk are deliberately not observed",
+        "no exact download-set approval is represented"
+      ],
+      "depends_on": [
+        "read-only-docker-runtime-inspection"
+      ],
+      "flags": {
+        "credentials": true,
+        "destructive": false,
+        "docker": true,
+        "downloads": true,
+        "host_inspection": true,
+        "lifecycle": false,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "model-artifact-downloads",
+      "required_inputs": [
+        "exact immutable artifact identities",
+        "exact missing-artifact set",
+        "credential source selected without recording secrets",
+        "exact remote and installed sizes or explicit unknown-size decision",
+        "disk headroom review"
+      ],
+      "rollback": "remove only transaction-owned incomplete artifacts after identity-safe review; never broad-prune images or caches",
+      "title": "Model, image, and artifact downloads"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_NAMED_PROFILE_LIFECYCLE_WITH_EXACT_OWNED_CLEANUP>",
+      "cleanup": "delete only executor-owned profile resources and restore only workloads explicitly stopped by this run",
+      "current_blockers": [
+        "no named profile, lifecycle window, or cleanup namespace is selected",
+        "dependency receipts and current profile readiness are not supplied"
+      ],
+      "depends_on": [
+        "read-only-docker-runtime-inspection",
+        "cgroupfs-remediation",
+        "model-artifact-downloads"
+      ],
+      "flags": {
+        "credentials": true,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "profile-lifecycle",
+      "required_inputs": [
+        "one named profile and hardware profile",
+        "exact local image/model identities",
+        "ports and memory/disk admission",
+        "profile-specific evidence contract",
+        "cleanup namespace"
+      ],
+      "rollback": "bounded down/restore for the named profile; volume removal, orphan removal, and deep-clean require distinct destructive approval",
+      "title": "Profile lifecycle and bounded qualification"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_PROGRESSIVE_SEARCH_SCALE_2_4_8_16_NOT_100_STREAM>",
+      "cleanup": "complete exact-owned cleanup after every phase before progression",
+      "current_blockers": [
+        "no input or progressive-run approval is represented",
+        "runtime capacity/correctness/latency/resource/cleanup evidence is absent",
+        "100 streams remain outside this bundle"
+      ],
+      "depends_on": [
+        "profile-lifecycle"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "search-scale-progressive-2-4-8-16",
+      "required_inputs": [
+        "admitted operator-owned H.264 input",
+        "run-bound unique identities",
+        "2/4/8/16 phase approval",
+        "separate future acknowledgement for 100 streams"
+      ],
+      "rollback": "abort on floor or service failure and remove only phase-owned publishers, streams, sensors, and documents",
+      "title": "Progressive Search scale qualification for 2, 4, 8, and 16 streams"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_SEPARATE_SEARCH_SCALE_100_STREAM_RUN>",
+      "cleanup": "remove exactly all 100 run-owned publishers, streams, sensors, and documents",
+      "current_blockers": [
+        "no 100-stream-specific input, identities, or approval are represented",
+        "100-stream correctness/capacity/latency/resource/cleanup evidence is absent",
+        "progressive approval cannot authorize this bundle"
+      ],
+      "depends_on": [
+        "profile-lifecycle",
+        "search-scale-progressive-2-4-8-16"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "search-scale-100",
+      "required_inputs": [
+        "admitted operator-owned H.264 input",
+        "100 unique run-bound stream identities",
+        "completed progressive 2/4/8/16 dependency receipt",
+        "separate 100-stream authorization"
+      ],
+      "rollback": "abort on floor or service failure and remove only 100-stream-run-owned resources",
+      "title": "Separate 100-stream Search scale qualification"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_MV3DT_EXACT_FOUR_CAMERA_CUSTOM_DATA_RUN>",
+      "cleanup": "remove exactly namespace-owned streams and outputs without touching operator inputs",
+      "current_blockers": [
+        "matching custom media/calibration and authorized runtime receipt are not supplied",
+        "model presence, capacity, ports, and runtime semantics are not observed"
+      ],
+      "depends_on": [
+        "profile-lifecycle"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "mv3dt-custom-data",
+      "required_inputs": [
+        "operator-owned exact-four synchronized media",
+        "matching calibration/camInfo/topology",
+        "admitted RT-DETR and BodyPose3DNet assets",
+        "private runtime root"
+      ],
+      "rollback": "stop only lane-owned services and restore only workloads explicitly displaced by the authorized run",
+      "title": "MV3DT exact-four-camera custom-data qualification"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_SPARSE4D_EXACT_FOUR_CAMERA_CUSTOM_DATA_AND_EXACT_MODELS_RUN>",
+      "cleanup": "remove exactly namespace-owned streams and outputs without touching models or operator inputs",
+      "current_blockers": [
+        "Sparse4D ONNX, anchor, matching custom data, and runtime receipt are not supplied",
+        "existing Sparse4D validator does not independently admit RT-DETR identity",
+        "capacity, images, ports, and GPU-idle state are not observed"
+      ],
+      "depends_on": [
+        "profile-lifecycle",
+        "model-artifact-downloads"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "sparse4d-custom-data-models",
+      "required_inputs": [
+        "operator-owned exact-four synchronized media and calibration",
+        "exact RT-DETR asset",
+        "sparse4d_warehouse_v2.2.onnx",
+        "finite _ov_kmeans900_v2.2.npy with shape (900,11)",
+        "private runtime root"
+      ],
+      "rollback": "stop only lane-owned services and restore only workloads explicitly displaced by the authorized run",
+      "title": "Sparse4D exact-four-camera custom-data and model qualification"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_NATIVE_OMNI_AUDIO_SEMANTICS_RUNTIME>",
+      "cleanup": "delete only native-run-owned media, streams, and services",
+      "current_blockers": [
+        "native model presence, memory, endpoint, and runtime evidence are not observed",
+        "no native-audio authorization is represented",
+        "native Omni ASR-skip cannot prove the transcript entry"
+      ],
+      "depends_on": [
+        "tiny-audio-fixture-generation",
+        "model-artifact-downloads",
+        "profile-lifecycle"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "audio-native-runtime",
+      "required_inputs": [
+        "verified tiny known-speech receipt",
+        "raw-locked audio oracle contract",
+        "exact native Omni model snapshot",
+        "80 GiB plus 65% admission and 20% during/after reserve review",
+        "native-lane authorization distinct from ASR"
+      ],
+      "rollback": "stop native-audio-owned services first and restore only workloads explicitly stopped by this run",
+      "title": "Known-speech native-Omni audio semantics qualification"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_SEPARATE_LOCAL_ASR_TRANSCRIPT_RUNTIME>",
+      "cleanup": "delete only ASR-run-owned media, streams, and services",
+      "current_blockers": [
+        "ASR model/process, bounded resources, endpoint, and runtime evidence are not observed",
+        "no separate ASR transcript authorization is represented",
+        "native-audio authorization cannot authorize this bundle"
+      ],
+      "depends_on": [
+        "tiny-audio-fixture-generation",
+        "model-artifact-downloads",
+        "profile-lifecycle"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": true,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "audio-asr-transcript-runtime",
+      "required_inputs": [
+        "verified tiny known-speech receipt",
+        "raw-locked audio oracle contract",
+        "non-native-audio VLM plus healthy local Riva ASR",
+        "ASR-lane authorization distinct from native Omni"
+      ],
+      "rollback": "stop ASR-run-owned services first and restore only workloads explicitly stopped by this run",
+      "title": "Known-speech local-ASR per-chunk transcript qualification"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_OFFICIAL_EDGE_STAGING_WITH_EXACT_LOCKS_NO_PROFILE_START>",
+      "cleanup": "preserve exact locked artifacts and preexisting caches; record transaction-owned staging paths",
+      "current_blockers": [
+        "exact Cosmos3 metadata/tree and some installed sizes are unknown",
+        "local artifact/image presence is not observed",
+        "official-edge staging approval is not represented"
+      ],
+      "depends_on": [
+        "read-only-docker-runtime-inspection",
+        "model-artifact-downloads"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": false,
+        "docker": true,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": false,
+        "network": false,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "official-edge-staging",
+      "required_inputs": [
+        "fully downloaded immutable Nemotron and Cosmos3 trees",
+        "exact arm64 image identities",
+        "complete tree locks with sizes and SHA-256",
+        "reviewed staging destinations"
+      ],
+      "rollback": "remove only newly staged invalid candidates after inode/identity review; never broad-prune cache or images",
+      "title": "Official Edge exact-artifact staging"
+    },
+    {
+      "approval_placeholder": "<APPROVE_ONLY_NAMED_EXTERNAL_PROVIDER_TEST_AND_SANITIZED_ATTESTATION>",
+      "cleanup": "remove only test objects/messages/documents explicitly created for the named provider test when provider semantics allow",
+      "current_blockers": [
+        "Slack, actual AWS/GCS, Enterprise RAG, and FRAG evidence are not supplied",
+        "no provider access or attestation approval is represented"
+      ],
+      "depends_on": [],
+      "flags": {
+        "credentials": true,
+        "destructive": false,
+        "docker": false,
+        "downloads": false,
+        "host_inspection": false,
+        "lifecycle": false,
+        "network": true,
+        "subprocess": false,
+        "writes": true
+      },
+      "id": "external-attestations",
+      "required_inputs": [
+        "one named provider claim",
+        "provider account and least-privilege credentials",
+        "sanitized evidence destination outside repository",
+        "retention/deletion review"
+      ],
+      "rollback": "revoke or rotate transaction-scoped credentials and delete only named test resources; preserve sanitized receipt for review",
+      "title": "External provider attestations"
+    },
+    {
+      "acknowledgement_token": "I_ACCEPT_READ_ONLY_VSS_PHYSICAL_INTERFACE_FIREWALL_INSPECTION",
+      "approval_placeholder": "<APPROVE_ONLY_READ_ONLY_PHYSICAL_INTERFACE_FIREWALL_INSPECTION>",
+      "cleanup": "no cleanup is authorized because this bundle is read-only",
+      "current_blockers": [
+        "the placeholder and token in this contract grant no approval",
+        "no firewall-specific read-only collector or receipt is implemented here",
+        "no physical-interface firewall host evidence has been collected"
+      ],
+      "depends_on": [],
+      "flags": {
+        "credentials": false,
+        "destructive": false,
+        "docker": false,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": false,
+        "network": false,
+        "subprocess": true,
+        "writes": false
+      },
+      "id": "physical-interface-firewall-read-only-inspection",
+      "required_inputs": [
+        "separately supplied exact read-only inspection acknowledgement token",
+        "reviewed bounded list of named physical interfaces and protected VSS ports",
+        "future read-only collector with a strict evidence receipt schema"
+      ],
+      "rollback": "no rollback is authorized because this bundle cannot mutate state",
+      "title": "Physical-interface firewall read-only inspection"
+    },
+    {
+      "acknowledgement_token": "I_AUTHORIZE_VSS_PHYSICAL_INTERFACE_FIREWALL_APPLY_AND_EXACT_OWNED_ROLLBACK",
+      "approval_placeholder": "<APPROVE_ONLY_EXACT_PHYSICAL_INTERFACE_FIREWALL_TRANSACTION>",
+      "cleanup": "a future executor may remove only transaction-owned state after exact pre-state and ownership verification",
+      "current_blockers": [
+        "the placeholder and both tokens in this contract grant no approval",
+        "the existing script deletes a prior product table before replacement and does not preserve it for lossless rollback",
+        "the existing failure path removes the table rather than restoring exact prior state",
+        "a reviewed bounded transaction executor and strict receipt schema do not exist"
+      ],
+      "depends_on": [
+        "physical-interface-firewall-read-only-inspection"
+      ],
+      "flags": {
+        "credentials": false,
+        "destructive": true,
+        "docker": false,
+        "downloads": false,
+        "host_inspection": true,
+        "lifecycle": true,
+        "network": false,
+        "subprocess": true,
+        "writes": true
+      },
+      "id": "physical-interface-firewall-configuration",
+      "recovery_acknowledgement_token": "I_AUTHORIZE_VSS_PHYSICAL_INTERFACE_FIREWALL_FAILURE_RECOVERY",
+      "required_inputs": [
+        "separately supplied exact configuration acknowledgement token",
+        "separately supplied exact failure-recovery acknowledgement token",
+        "reviewed read-only inspection receipt for the exact target state",
+        "future transaction executor and strict before-action and after-action receipt schema",
+        "exact owned target table identity and lossless prior-state restoration plan"
+      ],
+      "rollback": "a future executor must restore the exact captured prior table state; deletion-only rollback is insufficient",
+      "title": "Physical-interface firewall exact transaction configuration"
+    }
+  ],
+  "candidate_binding": {
+    "candidate_mapping_sha256": "4bb8f3a5fba5e201b72e1f1a0f4218bff4b9a999a836c192fca44ca7e35d9cf9",
+    "candidate_mapping_state": "unmapped_scope_gap",
+    "capability_id": "manifest-entry.offline-security.05-physical-interface-firewall",
+    "implementation_surface": "deploy/docker/scripts/thor-local.sh",
+    "implementation_surface_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5",
+    "mapping_update_required_before_admission": true,
+    "oracle_adapter_sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235",
+    "oracle_state": "open_unexecuted",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "contract_id": "vss-3.2.1-thor-runtime-approval-bundles-successor",
+  "default_policy": {
+    "approvals_granted": false,
+    "credentials": false,
+    "destructive": false,
+    "docker": false,
+    "downloads": false,
+    "host_inspection": false,
+    "lifecycle": false,
+    "network": false,
+    "subprocess": false,
+    "warehouse_sample_bundle": "excluded",
+    "writes": false
+  },
+  "download_review": {
+    "all_installed_or_unpacked_bytes_known": false,
+    "all_missing_download_bytes_known": false,
+    "artifacts": [
+      {
+        "exact_remote_bytes": 5284569483,
+        "id": "official-edge-nemotron-hf-tree",
+        "identity": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8@3fe6dab75665a93884214ad4b1b95cf02717d081",
+        "planning_floor_bytes": 5284569483,
+        "size_state": "exact_known"
+      },
+      {
+        "exact_remote_bytes": 14586467388,
+        "id": "official-edge-vllm-arm64-image",
+        "identity": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+        "planning_floor_bytes": 14586467388,
+        "size_state": "exact_known"
+      },
+      {
+        "exact_remote_bytes": null,
+        "id": "official-edge-cosmos3-bf16-cache",
+        "identity": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+        "planning_floor_bytes": 30000000000,
+        "size_state": "documented_floor_only"
+      },
+      {
+        "exact_remote_bytes": null,
+        "id": "official-edge-vllm-installed-size",
+        "identity": "installed/unpacked vLLM image",
+        "planning_floor_bytes": null,
+        "size_state": "unknown"
+      },
+      {
+        "exact_remote_bytes": null,
+        "id": "official-edge-rt-vlm-image-size",
+        "identity": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "planning_floor_bytes": null,
+        "size_state": "unknown"
+      },
+      {
+        "exact_remote_bytes": null,
+        "id": "mv3dt-required-model-assets",
+        "identity": "RT-DETR and BodyPose3DNet exact assets from MV3DT admission contract",
+        "planning_floor_bytes": null,
+        "size_state": "unknown"
+      },
+      {
+        "exact_remote_bytes": null,
+        "id": "sparse4d-onnx",
+        "identity": "sparse4d_warehouse_v2.2.onnx",
+        "planning_floor_bytes": null,
+        "size_state": "unknown"
+      },
+      {
+        "exact_remote_bytes": null,
+        "id": "sparse4d-anchor",
+        "identity": "_ov_kmeans900_v2.2.npy shape (900,11)",
+        "planning_floor_bytes": null,
+        "size_state": "unknown"
+      },
+      {
+        "exact_remote_bytes": null,
+        "id": "audio-native-model",
+        "identity": "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-FP8",
+        "planning_floor_bytes": null,
+        "size_state": "unknown"
+      }
+    ],
+    "disk_review_required_after_exact_missing_set_is_known": true,
+    "known_exact_remote_bytes": 19871036871,
+    "known_planning_floor_bytes_including_documented_cosmos_floor": 49871036871
+  },
+  "firewall_transaction_boundary": {
+    "authorized_mutation_commands_published": false,
+    "configuration_state": "blocked_pending_future_transaction_executor_and_receipt_schema",
+    "existing_thor_local_apply_remove_authorization_safe": false,
+    "failure_path_restores_exact_prior_state": false,
+    "prior_table_deleted_before_replacement": true,
+    "prior_table_preserved_for_exact_rollback": false,
+    "receipt_schema_implemented": false,
+    "transaction_executor_implemented": false
+  },
+  "mode": "inert_nonexecuting_successor_approval_contract",
+  "predecessor": {
+    "compiler_sha256": "e196d99fbd48b24c98efb01a02869b8ad5635828c180dbf6d1aa9e0d78697aab",
+    "contract_path": "deploy/docker/thor-local/qualification/runtime-approval-bundles/contract.json",
+    "contract_sha256": "8bfa16650574de7ac1906da4eab048a30680f4094dd62cbea0cd5319b9d24e4f",
+    "inherited_bundle_count": 14,
+    "inherited_prefix_canonical_sha256": "6867c7b9f9b15a9cd3377d8e48d592aafc7363c20cd648a5306016713b8f040a",
+    "schema_sha256": "400b3b8720cd9332c069cc2d5d14aa54722680a4493ccfabef8701db5e98d36e"
+  },
+  "schema_version": 1,
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-approval-bundles/contract.json",
+      "sha256": "8bfa16650574de7ac1906da4eab048a30680f4094dd62cbea0cd5319b9d24e4f"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-approval-bundles/contract.schema.json",
+      "sha256": "400b3b8720cd9332c069cc2d5d14aa54722680a4493ccfabef8701db5e98d36e"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-approval-bundles/compiler.py",
+      "sha256": "e196d99fbd48b24c98efb01a02869b8ad5635828c180dbf6d1aa9e0d78697aab"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-successor/mapping.json",
+      "sha256": "4bb8f3a5fba5e201b72e1f1a0f4218bff4b9a999a836c192fca44ca7e35d9cf9"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-successor/mapping.schema.json",
+      "sha256": "09f8610cb7f9cc1d060202f5939b7e451fd78b92f58d80d098939e5ca05b518e"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-successor/compiler.py",
+      "sha256": "7588e8ae49670ad8c0bdf74ad3744d1da510059d07f5b09258e0835474e79fcf"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json",
+      "sha256": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.schema.json",
+      "sha256": "959727de4d57884d67202847cd968e73fd792d1811356755c197a2e34403cbbb"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/compiler.py",
+      "sha256": "f58f82b18b49a527d0098ffd7c3c7313968fe90928137f5e82cd0adce99b505f"
+    },
+    {
+      "path": "deploy/docker/scripts/thor-local.sh",
+      "sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"
+    }
+  ],
+  "successor_policy": {
+    "acknowledgement_token_is_not_approval_until_separately_supplied": true,
+    "approval_inheritance": false,
+    "compiler_can_execute_actions": false,
+    "dependency_receipt_is_not_dependent_approval": true,
+    "mutation_commands_published": false,
+    "placeholder_is_not_approval": true,
+    "recovery_token_is_not_configuration_authorization": true
+  }
+}

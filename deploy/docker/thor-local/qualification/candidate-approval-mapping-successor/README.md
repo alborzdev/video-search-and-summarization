@@ -1,9 +1,10 @@
 # Candidate approval mapping successor
 
-This package is an inert, deterministic classification of the 211 candidate
-oracles in the selected 500-oracle Metadata500 set. It maps candidate plans to
-the existing generic approval-bundle vocabulary without granting approval,
-creating a receipt, admitting a candidate, or making a candidate executable.
+This package is the inert historical v1 classification of the 211 candidate
+oracles in the selected 500-oracle Metadata500 set. The current additive result
+is [`candidate-approval-mapping-successor-v2`](../candidate-approval-mapping-successor-v2/README.md).
+This predecessor grants no approval, creates no receipt, admits no candidate,
+and makes no candidate executable.
 
 The package deliberately contains no runtime executor or receipt consumer. It
 does not invent commands, action/flag vectors, service roles, profile IDs, or
@@ -24,7 +25,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 deploy/docker/thor-local/qualification/candida
 checked `mapping.json`. `--emit` prints the deterministic artifact to standard
 output; the compiler has no artifact write mode.
 
-## Exact result
+## Exact historical result
 
 | Classification | Count |
 | --- | ---: |

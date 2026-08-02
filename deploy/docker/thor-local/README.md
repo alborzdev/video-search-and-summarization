@@ -316,21 +316,29 @@ those workloads. In particular, the 16-stream result is ineligible unless the
 future operator fixture is H.264 at exactly 1920x1080 and every stream has
 correctness, latency, resource, abort, and exact-owned cleanup evidence.
 
-The inert
+The historical
 [`qualification/runtime-approval-bundles/`](qualification/runtime-approval-bundles/README.md)
-compiler lists the 14 remaining material-action scopes and their precedence.
-It grants no approval: the narrow prerequisite collector, broader host/runtime
-inspection, remediation, downloads, profile lifecycle, progressive and
-100-stream Search runs, custom-data runs, the two audio lanes, Edge staging,
-and external attestations remain separately gated.
-
-The inert
+and
 [`qualification/candidate-approval-mapping-successor/`](qualification/candidate-approval-mapping-successor/README.md)
-compiler maps that vocabulary onto all 211 Metadata-500 candidate rows:
-206 mapped, three static and non-activating, one contract conflict, and one
-approval-scope gap. It contains no receipt consumer and grants zero approvals,
-so no candidate becomes admitted or executable; the Warehouse sample remains
-excluded.
+packages preserve the original 14-scope vocabulary and its 206/3/1/1
+classification.
+
+The current inert
+[`qualification/runtime-approval-bundles-successor/`](qualification/runtime-approval-bundles-successor/README.md)
+contains 16 scopes: the exact historical 14-scope prefix plus separate
+physical-interface firewall inspection and configuration scopes. Neither new
+scope publishes an executable host transaction or grants authorization.
+
+The additive
+[`qualification/sparse4d-candidate-dependency-repair/`](qualification/sparse4d-candidate-dependency-repair/README.md)
+corrects one planning dependency without changing the selected Metadata-500
+files. The
+[`qualification/candidate-approval-mapping-successor-v2/`](qualification/candidate-approval-mapping-successor-v2/README.md)
+classifier consequently reports 208 mapped and three static/non-activating
+candidates, with zero contract conflicts and zero scope gaps. This is
+classification closure only: all 211 candidates still have zero receipts,
+approvals, admissions, executable states, and runtime evidence. The Warehouse
+sample remains excluded.
 
 This is an application-envelope measurement, not a universal camera-count
 claim. Both inputs were copies of one local H.264 sample, so the result does

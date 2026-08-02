@@ -1,6 +1,10 @@
 # Thor runtime approval bundles
 
-This isolated package compiles the remaining operator-authorized work into 14 explicit, non-executing approval bundles. It grants no approval and performs no host inspection, subprocess, network request, Docker call, write, download, credential access, lifecycle change, or cleanup.
+This isolated package is the historical 14-bundle predecessor for the current
+[`runtime-approval-bundles-successor`](../runtime-approval-bundles-successor/README.md)
+vocabulary. It grants no approval and performs no host inspection, subprocess,
+network request, Docker call, write, download, credential access, lifecycle
+change, or cleanup.
 
 Run the default inert compiler from the repository root:
 

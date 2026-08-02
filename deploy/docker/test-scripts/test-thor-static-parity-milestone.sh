@@ -591,25 +591,53 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/audio-entry-oracles/tests"
 
-# The remaining material actions are divided into 14 explicit, non-inheriting
-# operator approval scopes. This compiler has no execute mode and the static
-# suite proves it cannot inspect the host, contact a provider, download an
-# artifact, invoke Docker, grant approval, or perform a lifecycle action.
+# Preserve the historical 14 explicit, non-inheriting approval scopes. This
+# predecessor compiler has no execute mode and takes no material action.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/runtime-approval-bundles/compiler.py" \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/runtime-approval-bundles/tests"
 
-# Classify all 211 Metadata-500 candidates against the 14 approval scopes.
-# The exact split is 206 mapped, three static/non-activating, one contract
-# conflict, and one scope gap. This package has no receipt consumer: it grants
-# no approval, admits or executes no candidate, and excludes Warehouse.
+# Preserve the historical v1 classification: 206 mapped, three static/non-
+# activating, one contract conflict, and one scope gap. It grants no approval,
+# admits or executes no candidate, and excludes Warehouse.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/candidate-approval-mapping-successor/compiler.py" \
   --check >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-approval-mapping-successor/tests"
+
+# The current additive approval successor preserves the historical 14-bundle
+# prefix exactly and appends read-only firewall inspection followed by firewall
+# configuration. It is an inert contract compiler: it grants no approval,
+# consumes no receipt, performs no host/firewall action, and excludes Warehouse.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/runtime-approval-bundles-successor/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/runtime-approval-bundles-successor/tests"
+
+# This additive Sparse4D planning repair changes only the one objectively wrong
+# candidate dependency from the MV3DT pipeline to the existing Sparse4D pipeline.
+# It does not alter selected Metadata-500 files, grant approval, create evidence,
+# execute a service, or use the Warehouse sample.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/sparse4d-candidate-dependency-repair/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/sparse4d-candidate-dependency-repair/tests"
+
+# The v2 approval classification preserves 209 historical rows and resolves the
+# two former classification gaps through the checked 16-bundle vocabulary and
+# Sparse4D repair. Its split is 208 mapped, three static/non-activating, and zero
+# contract/scope gaps. All 211 rows remain receipt-free, not admitted, not
+# executable, and runtime-evidence-empty; Warehouse remains excluded.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-approval-mapping-successor-v2/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-approval-mapping-successor-v2/tests"
 
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact

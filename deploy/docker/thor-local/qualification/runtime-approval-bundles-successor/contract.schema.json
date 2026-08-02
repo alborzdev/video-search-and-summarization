@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/runtime-approval-bundles-successor-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_id", "mode", "predecessor", "default_policy", "approval_policy", "audio_dependency_boundary", "download_review", "candidate_binding", "successor_policy", "firewall_transaction_boundary", "authorization_state", "bundle_count", "bundles", "source_locks", "boundary"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "contract_id": {"const": "vss-3.2.1-thor-runtime-approval-bundles-successor"},
+    "mode": {"const": "inert_nonexecuting_successor_approval_contract"},
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_path", "contract_sha256", "schema_sha256", "compiler_sha256", "inherited_bundle_count", "inherited_prefix_canonical_sha256"],
+      "properties": {
+        "contract_path": {"const": "deploy/docker/thor-local/qualification/runtime-approval-bundles/contract.json"},
+        "contract_sha256": {"const": "8bfa16650574de7ac1906da4eab048a30680f4094dd62cbea0cd5319b9d24e4f"},
+        "schema_sha256": {"const": "400b3b8720cd9332c069cc2d5d14aa54722680a4493ccfabef8701db5e98d36e"},
+        "compiler_sha256": {"const": "e196d99fbd48b24c98efb01a02869b8ad5635828c180dbf6d1aa9e0d78697aab"},
+        "inherited_bundle_count": {"const": 14},
+        "inherited_prefix_canonical_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "default_policy": {"$ref": "#/$defs/default_policy"},
+    "approval_policy": {"$ref": "#/$defs/approval_policy"},
+    "audio_dependency_boundary": {"$ref": "#/$defs/audio_boundary"},
+    "download_review": {"$ref": "#/$defs/download_review"},
+    "candidate_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "candidate_mapping_sha256", "candidate_mapping_state", "oracle_adapter_sha256", "oracle_state", "implementation_surface", "implementation_surface_sha256", "mapping_update_required_before_admission", "warehouse_sample_bundle"],
+      "properties": {
+        "capability_id": {"const": "manifest-entry.offline-security.05-physical-interface-firewall"},
+        "candidate_mapping_sha256": {"const": "4bb8f3a5fba5e201b72e1f1a0f4218bff4b9a999a836c192fca44ca7e35d9cf9"},
+        "candidate_mapping_state": {"const": "unmapped_scope_gap"},
+        "oracle_adapter_sha256": {"const": "6e77635625a1f6b4b27dfcdc9aa5a0e695d6656adad041604f2b96fa2ac17235"},
+        "oracle_state": {"const": "open_unexecuted"},
+        "implementation_surface": {"const": "deploy/docker/scripts/thor-local.sh"},
+        "implementation_surface_sha256": {"const": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"},
+        "mapping_update_required_before_admission": {"const": true},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "successor_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_inheritance", "placeholder_is_not_approval", "acknowledgement_token_is_not_approval_until_separately_supplied", "recovery_token_is_not_configuration_authorization", "dependency_receipt_is_not_dependent_approval", "compiler_can_execute_actions", "mutation_commands_published"],
+      "properties": {
+        "approval_inheritance": {"const": false},
+        "placeholder_is_not_approval": {"const": true},
+        "acknowledgement_token_is_not_approval_until_separately_supplied": {"const": true},
+        "recovery_token_is_not_configuration_authorization": {"const": true},
+        "dependency_receipt_is_not_dependent_approval": {"const": true},
+        "compiler_can_execute_actions": {"const": false},
+        "mutation_commands_published": {"const": false}
+      }
+    },
+    "firewall_transaction_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["existing_thor_local_apply_remove_authorization_safe", "prior_table_deleted_before_replacement", "prior_table_preserved_for_exact_rollback", "failure_path_restores_exact_prior_state", "configuration_state", "transaction_executor_implemented", "receipt_schema_implemented", "authorized_mutation_commands_published"],
+      "properties": {
+        "existing_thor_local_apply_remove_authorization_safe": {"const": false},
+        "prior_table_deleted_before_replacement": {"const": true},
+        "prior_table_preserved_for_exact_rollback": {"const": false},
+        "failure_path_restores_exact_prior_state": {"const": false},
+        "configuration_state": {"const": "blocked_pending_future_transaction_executor_and_receipt_schema"},
+        "transaction_executor_implemented": {"const": false},
+        "receipt_schema_implemented": {"const": false},
+        "authorized_mutation_commands_published": {"const": false}
+      }
+    },
+    "authorization_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_count", "receipt_count", "admitted_bundle_count", "executable_bundle_count", "runtime_evidence_count"],
+      "properties": {
+        "approval_count": {"const": 0},
+        "receipt_count": {"const": 0},
+        "admitted_bundle_count": {"const": 0},
+        "executable_bundle_count": {"const": 0},
+        "runtime_evidence_count": {"const": 0}
+      }
+    },
+    "bundle_count": {"const": 16},
+    "bundles": {"type": "array", "minItems": 16, "maxItems": 16, "items": {"$ref": "#/$defs/bundle"}},
+    "source_locks": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"$ref": "#/$defs/source_lock"}},
+    "boundary": {"const": "contract_only_no_approval_receipt_admission_execution_or_host_evidence"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,95}$"},
+    "default_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host_inspection", "subprocess", "network", "docker", "writes", "downloads", "credentials", "lifecycle", "destructive", "approvals_granted", "warehouse_sample_bundle"],
+      "properties": {
+        "host_inspection": {"const": false},
+        "subprocess": {"const": false},
+        "network": {"const": false},
+        "docker": {"const": false},
+        "writes": {"const": false},
+        "downloads": {"const": false},
+        "credentials": {"const": false},
+        "lifecycle": {"const": false},
+        "destructive": {"const": false},
+        "approvals_granted": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "approval_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_inheritance", "one_bundle_per_acknowledgement", "placeholder_is_not_approval", "dependency_completion_is_not_approval", "dependency_satisfaction", "compiler_can_grant_approval", "approval_text_rule"],
+      "properties": {
+        "approval_inheritance": {"const": false},
+        "one_bundle_per_acknowledgement": {"const": true},
+        "placeholder_is_not_approval": {"const": true},
+        "dependency_completion_is_not_approval": {"const": true},
+        "dependency_satisfaction": {"const": "separate_bundle_receipt_or_reviewed_not_required_determination"},
+        "compiler_can_grant_approval": {"const": false},
+        "approval_text_rule": {"const": "operator_replaces_exact_bundle_placeholder_in_separate_authorized_workflow"}
+      }
+    },
+    "audio_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "stable_fixture_path", "wave7_identity_path", "runtime_contract_path", "runtime_oracle_path", "active_audio_package_relied_on", "binding_rule"],
+      "properties": {
+        "state": {"const": "stable_reviewed_audio_contract"},
+        "stable_fixture_path": {"const": "deploy/docker/thor-local/qualification/tiny-audio-fixture/fixture.py"},
+        "wave7_identity_path": {"const": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave7/inventory.json"},
+        "runtime_contract_path": {"const": "deploy/docker/thor-local/qualification/audio-entry-oracles/contract.json"},
+        "runtime_oracle_path": {"const": "deploy/docker/thor-local/qualification/audio-entry-oracles/oracle.py"},
+        "active_audio_package_relied_on": {"const": true},
+        "binding_rule": {"const": "native_audio_and_separate_asr_require_distinct_noninheriting_authorizations"}
+      }
+    },
+    "flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host_inspection", "subprocess", "network", "docker", "writes", "downloads", "credentials", "lifecycle", "destructive"],
+      "properties": {
+        "host_inspection": {"type": "boolean"},
+        "subprocess": {"type": "boolean"},
+        "network": {"type": "boolean"},
+        "docker": {"type": "boolean"},
+        "writes": {"type": "boolean"},
+        "downloads": {"type": "boolean"},
+        "credentials": {"type": "boolean"},
+        "lifecycle": {"type": "boolean"},
+        "destructive": {"type": "boolean"}
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "approval_placeholder", "depends_on", "flags", "required_inputs", "current_blockers", "cleanup", "rollback"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "title": {"type": "string", "minLength": 3},
+        "approval_placeholder": {"type": "string", "pattern": "^<APPROVE_ONLY_[A-Z0-9_]+>$"},
+        "acknowledgement_token": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{15,127}$"},
+        "recovery_acknowledgement_token": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{15,127}$"},
+        "authorized_command": {"type": "string", "minLength": 20, "maxLength": 512},
+        "depends_on": {"type": "array", "maxItems": 10, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "flags": {"$ref": "#/$defs/flags"},
+        "required_inputs": {"type": "array", "minItems": 2, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "minLength": 5}},
+        "current_blockers": {"type": "array", "minItems": 2, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "minLength": 10}},
+        "cleanup": {"type": "string", "minLength": 10},
+        "rollback": {"type": "string", "minLength": 10}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "size_state", "exact_remote_bytes", "planning_floor_bytes", "identity"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "size_state": {"enum": ["exact_known", "documented_floor_only", "unknown"]},
+        "exact_remote_bytes": {"type": ["integer", "null"], "minimum": 1},
+        "planning_floor_bytes": {"type": ["integer", "null"], "minimum": 1},
+        "identity": {"type": "string", "minLength": 3}
+      },
+      "allOf": [
+        {"if": {"properties": {"size_state": {"const": "exact_known"}}}, "then": {"properties": {"exact_remote_bytes": {"type": "integer"}, "planning_floor_bytes": {"type": "integer"}}}},
+        {"if": {"properties": {"size_state": {"const": "documented_floor_only"}}}, "then": {"properties": {"exact_remote_bytes": {"const": null}, "planning_floor_bytes": {"type": "integer"}}}},
+        {"if": {"properties": {"size_state": {"const": "unknown"}}}, "then": {"properties": {"exact_remote_bytes": {"const": null}, "planning_floor_bytes": {"const": null}}}}
+      ]
+    },
+    "download_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["known_exact_remote_bytes", "known_planning_floor_bytes_including_documented_cosmos_floor", "all_missing_download_bytes_known", "all_installed_or_unpacked_bytes_known", "disk_review_required_after_exact_missing_set_is_known", "artifacts"],
+      "properties": {
+        "known_exact_remote_bytes": {"const": 19871036871},
+        "known_planning_floor_bytes_including_documented_cosmos_floor": {"const": 49871036871},
+        "all_missing_download_bytes_known": {"const": false},
+        "all_installed_or_unpacked_bytes_known": {"const": false},
+        "disk_review_required_after_exact_missing_set_is_known": {"const": true},
+        "artifacts": {"type": "array", "minItems": 9, "maxItems": 9, "items": {"$ref": "#/$defs/artifact"}}
+      }
+    },
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 3},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

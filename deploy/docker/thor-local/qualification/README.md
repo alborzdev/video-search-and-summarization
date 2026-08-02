@@ -281,21 +281,24 @@ in this directory:
   enforces model, loopback, phrase/control, timing, memory-reserve, resource,
   artifact, and cleanup gates, and explicitly rejects native-audio ASR-skip as
   transcript proof. Its validator still returns only `not_admitted`;
-- `runtime-approval-bundles/` compiles the remaining operator-authorized work
-  into 14 explicit, non-inheriting approval scopes. The narrow host-prerequisite
-  collector now precedes broader Docker/runtime inspection; progressive Search
-  and its separate 100-stream run, native Omni audio and local-ASR transcript,
-  model downloads, profile lifecycle, custom-data lanes, Edge staging, and
-  external attestations remain independently gated. The compiler is inert,
-  grants no approval, and performs no host, Docker, network, credential,
-  download, or lifecycle action;
-- `candidate-approval-mapping-successor/` classifies every one of the 211
-  Metadata-500 candidate rows against that existing approval vocabulary:
-  exactly 206 mapped, three static and non-activating, one explicit contract
-  conflict, and one explicit approval-scope gap. It has no receipt consumer,
-  grants zero approvals, admits and executes zero candidates, invents no
-  command, role, profile, Compose path, or action flags, and excludes the
-  Warehouse sample bundle;
+- `runtime-approval-bundles/` is the immutable historical 14-scope approval
+  predecessor. Its scopes remain explicit, inert, and non-inheriting;
+- `candidate-approval-mapping-successor/` is the immutable historical v1
+  classification of all 211 Metadata-500 candidates: 206 mapped, three static
+  and non-activating, one contract conflict, and one approval-scope gap;
+- `runtime-approval-bundles-successor/` preserves that exact 14-scope prefix
+  and appends separate physical-interface firewall inspection and configuration
+  scopes. Both are inert and non-inheriting; the current firewall apply/remove
+  path remains blocked pending a lossless transaction executor and receipt;
+- `sparse4d-candidate-dependency-repair/` is an additive one-field planning
+  overlay that replaces the objectively wrong MV3DT dependency with the
+  existing Sparse4D pipeline. It does not modify selected Metadata-500 files,
+  execute the Sparse4D lane, or use the Warehouse sample bundle;
+- `candidate-approval-mapping-successor-v2/` consumes those two successors and
+  preserves 209 historical rows while resolving exactly the Sparse4D and
+  firewall classifications. Its current split is 208 mapped and three static,
+  with zero contract conflicts or scope gaps. All 211 rows remain receipt-free,
+  unapproved, not admitted, non-executable, and runtime-evidence-empty;
 - `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
   13 families with no capability rows plus the partial VIOS family its own
   still-open semantic oracle plan. Its 74-entry scope is not the global missing
