@@ -27,8 +27,9 @@ scenario/blocker assignments and exact advertised-item counts and fingerprints.
 ## Results and boundary
 
 The live inventory has exactly eight coverage gaps against the 500-row ledger.
-The projection has zero. The nine family status aggregate differences recorded
-by the Ledger-500 proof remain separate and unchanged, so `live_merge_ready`
+The projection has zero. The corrected live reducer reports six family status
+aggregate differences; the nine rows recorded by the older Ledger-500 proof are
+preserved separately as legacy regression diagnostics. `live_merge_ready`
 remains false. This artifact removes only the acceptance coverage category; it
 does not claim that any capability passed or that family aggregate fields are
 ready to merge.
@@ -42,7 +43,7 @@ The projected inventory and both schemas are deterministic. The inventory
 schema fixes every unchanged section and all 55 feature records exactly. The
 proof binds all inputs, verifier sources, the final 500-row ledger projection,
 the eight JSON pointers, preservation hashes, zero remaining acceptance gaps,
-and the separate nine-row family blocker list.
+the six current family blockers, and the separate nine-row legacy diagnostic.
 
 ## Check
 

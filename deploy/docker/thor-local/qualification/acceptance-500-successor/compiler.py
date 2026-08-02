@@ -68,7 +68,7 @@ INPUTS = {
     },
     "official_capability_verifier": {
         "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",
-        "raw_sha256": "930ed6caa04eea6dc79984ceb0ee8babe39db6074ac6c74a1e43349dcbc8e8e7",
+        "raw_sha256": "c21fd2910089c6981f0437d41d6c9ef7fff19d55c0153b04b7f7f91b00d79109",
         "json": False,
     },
     "acceptance_verifier": {
@@ -99,6 +99,11 @@ EXPECTED_FAMILY_BLOCKERS = (
     "helm",
     "enterprise-rag",
 )
+EXPECTED_CURRENT_FAMILY_BLOCKERS = tuple(
+    feature_id
+    for feature_id in EXPECTED_FAMILY_BLOCKERS
+    if feature_id not in {"alert-notifications-slack", "helm", "enterprise-rag"}
+)
 
 EXPECTED_INVENTORY_RAW_SHA256 = (
     "69dc4aca160ae236880f9afe7b873c0b3b423f8981c5d934e4ed647043cd8cb0"
@@ -107,13 +112,13 @@ EXPECTED_INVENTORY_SCHEMA_RAW_SHA256 = (
     "848d84b976906c3059b67218cf1d6bf3960b8b91c620c663bba398f5b302278a"
 )
 EXPECTED_PROOF_RAW_SHA256 = (
-    "2cb717b64fe578bbc051a0791908cb708005a488335b3e40116bbf173a79f235"
+    "dd65544dc587e01f0bb1ffd50442c9903a6d6200b0722d83a709902ec99d598c"
 )
 EXPECTED_PROOF_SCHEMA_RAW_SHA256 = (
-    "37466f37c43e35f157c1f0c2d93fd75cfdd38b30a3657a53804e52ec546a5737"
+    "4c744244333382200fc2d551e9c02ff2d01c3d5dd2d839353c4ffa0ca793ea0c"
 )
 EXPECTED_PROOF_PAYLOAD_SHA256 = (
-    "71303ac410a83686f348c3327383007d7f93633dae54034e6e3b38e12830cb26"
+    "01694257922463e1f3fa5a5c45f02301a7713c0c4d0ba34a0bfaeeece8e794a1"
 )
 
 
@@ -340,11 +345,21 @@ def _project_inventory(
     if before_gaps != expected_gaps or proof_gaps != expected_gaps:
         raise ProjectionError("exact eight acceptance gap source drift")
 
-    family_rows = ledger_proof["merge_readiness"]["blockers"][
+    legacy_family_rows = ledger_proof["merge_readiness"]["blockers"][
         "family_status_aggregate_drift"
     ]
-    if tuple(row["feature_id"] for row in family_rows) != EXPECTED_FAMILY_BLOCKERS:
-        raise ProjectionError("family aggregate blocker separation drift")
+    if (
+        tuple(row["feature_id"] for row in legacy_family_rows)
+        != EXPECTED_FAMILY_BLOCKERS
+    ):
+        raise ProjectionError("legacy family aggregate regression separation drift")
+    family_rows = [
+        row
+        for row in legacy_family_rows
+        if row["feature_id"] in EXPECTED_CURRENT_FAMILY_BLOCKERS
+    ]
+    if tuple(row["feature_id"] for row in family_rows) != EXPECTED_CURRENT_FAMILY_BLOCKERS:
+        raise ProjectionError("current family aggregate blocker separation drift")
 
     projected = copy.deepcopy(current)
     records = _by_id(
@@ -601,12 +616,22 @@ def compile_projection() -> tuple[
             "acceptance_coverage_blocker_count_before": 8,
             "acceptance_coverage_blocker_count_after": 0,
             "family_aggregate_blocker_count": len(family_rows),
+            "legacy_family_aggregate_regression_count": len(
+                EXPECTED_FAMILY_BLOCKERS
+            ),
             "live_merge_ready": False,
         },
         "scenario_additions": transitions,
         "remaining_blockers": {
             "acceptance_scenario_coverage_gaps": [],
             "family_status_aggregate_drift": copy.deepcopy(family_rows),
+        },
+        "legacy_diagnostics": {
+            "family_status_aggregate_regression": copy.deepcopy(
+                documents["ledger_projection_proof"]["merge_readiness"]["blockers"][
+                    "family_status_aggregate_drift"
+                ]
+            )
         },
         "preservation": {
             "current_inventory_canonical_sha256": _sha_json(
@@ -728,7 +753,7 @@ def main(argv: list[str] | None = None) -> int:
                 raise ProjectionError(f"checked output differs: {path.name}")
         print(
             "PASS: acceptance-500 successor; additions=8, coverage-blockers=0, "
-            "family-blockers=9, live-merge-ready=false"
+            "family-blockers=6, legacy-family-regressions=9, live-merge-ready=false"
         )
         return 0
     except (

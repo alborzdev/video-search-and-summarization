@@ -1,7 +1,7 @@
 # Acceptance 500 successor evidence boundary
 
 Status: **eight-link static projection complete; acceptance coverage gaps zero;
-family aggregate blockers remain nine**.
+current family aggregate blockers remain six; legacy regression rows remain nine**.
 
 ## Final artifact locks
 
@@ -10,11 +10,11 @@ family aggregate blockers remain nine**.
 - projected inventory schema:
   `848d84b976906c3059b67218cf1d6bf3960b8b91c620c663bba398f5b302278a`;
 - projection proof:
-  `2cb717b64fe578bbc051a0791908cb708005a488335b3e40116bbf173a79f235`;
+  `dd65544dc587e01f0bb1ffd50442c9903a6d6200b0722d83a709902ec99d598c`;
 - projection proof schema:
-  `37466f37c43e35f157c1f0c2d93fd75cfdd38b30a3657a53804e52ec546a5737`;
+  `4c744244333382200fc2d551e9c02ff2d01c3d5dd2d839353c4ffa0ca793ea0c`;
 - projection proof payload:
-  `71303ac410a83686f348c3327383007d7f93633dae54034e6e3b38e12830cb26`.
+  `01694257922463e1f3fa5a5c45f02301a7713c0c4d0ba34a0bfaeeece8e794a1`.
 
 The checked proof establishes:
 
@@ -32,9 +32,10 @@ The checked proof establishes:
 - projected acceptance coverage against the 500-row ledger has zero missing
   feature/scenario links;
 - the locked official verifier accepts all 500 capabilities and the projected
-  inventory when the separately recorded nine family aggregate fields are
+  inventory when the separately recorded six current family aggregate fields are
   normalized in memory, proving the two blocker categories are independent;
-- the separate nine-row family status aggregate blocker list remains exact;
+- the preceding Ledger-500 proof's nine-row family result remains exact as a
+  legacy regression diagnostic;
 - `live_merge_ready` remains false;
 - runtime execution remains disabled and no evidence, promotion, activation,
   network, Docker, host, model, cloud, or Warehouse sample action is added.

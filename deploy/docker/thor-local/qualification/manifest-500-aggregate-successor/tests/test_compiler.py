@@ -119,10 +119,10 @@ def test_exact_manifest_schema_rejects_identity_order_and_scalar_mutations(
     assert list(Draft202012Validator(schema).iter_errors(mutated)), mutation
 
 
-def test_exact_raw_nine_policy_three_and_applied_six(proof: dict) -> None:
+def test_exact_legacy_nine_policy_three_and_current_six(proof: dict) -> None:
     assert [
         (row["feature_index"], row["feature_id"], row["differing_fields"])
-        for row in proof["raw_reducer_diagnostic"]
+        for row in proof["legacy_reducer_regression_diagnostic"]
     ] == [
         (2, "video-summarization-live", ["thor_state"]),
         (7, "alert-notifications-slack", ["thor_state"]),
@@ -148,7 +148,7 @@ def test_exact_raw_nine_policy_three_and_applied_six(proof: dict) -> None:
         "agent-and-mcp-apis",
     ]
     assert (
-        compiler._sha_json(proof["raw_reducer_diagnostic"])
+        compiler._sha_json(proof["legacy_reducer_regression_diagnostic"])
         == "f629a11b2ef6934d2bbf6b4900659fe3e0f10d531c05884b3b8fc2290bea97ce"
     )
 
@@ -171,21 +171,16 @@ def test_only_exact_six_fields_change(base: dict, manifest: dict, proof: dict) -
 def test_reducer_results_and_external_policy_partition(
     base: dict, manifest: dict, ledger: dict, proof: dict
 ) -> None:
-    assert compiler._aggregate_drift(base, ledger) == proof["raw_reducer_diagnostic"]
     assert (
-        compiler._aggregate_drift(base, ledger, preserve_external_family_policy=True)
-        == proof["aggregate_updates"]
+        compiler._aggregate_drift(base, ledger, legacy_reducer=True)
+        == proof["legacy_reducer_regression_diagnostic"]
     )
+    assert compiler._aggregate_drift(base, ledger) == proof["aggregate_updates"]
     assert (
-        compiler._aggregate_drift(manifest, ledger)
+        compiler._aggregate_drift(manifest, ledger, legacy_reducer=True)
         == proof["external_policy_preservations"]
     )
-    assert (
-        compiler._aggregate_drift(
-            manifest, ledger, preserve_external_family_policy=True
-        )
-        == []
-    )
+    assert compiler._aggregate_drift(manifest, ledger) == []
 
 
 @pytest.mark.parametrize(
@@ -201,7 +196,7 @@ def test_reducer_results_and_external_policy_partition(
             ["external_optional", "external_optional"],
             ["wired", "partial"],
             ["not_applicable", "not_applicable"],
-            ("external_optional", "partial", "not_applicable"),
+            ("external_optional", "external_optional", "not_applicable"),
         ),
         (
             ["alternate_local_lane", "alternate_local_lane"],
@@ -225,10 +220,55 @@ def test_live_reducer_semantics(
     assert tuple(result[field] for field in compiler.STATUS_FIELDS) == expected
 
 
-def test_raw_nine_violates_external_rule_but_six_update_manifest_satisfies_it(
+def test_compiler_reducer_matches_locked_live_reducer() -> None:
+    parity = REPO_ROOT / "deploy/docker/thor-local/parity"
+    specification = importlib.util.spec_from_file_location(
+        "aggregate_successor_live_capability_verifier",
+        parity / "verify_official_capabilities.py",
+    )
+    assert specification is not None and specification.loader is not None
+    sys.path.insert(0, str(parity))
+    try:
+        verifier = importlib.util.module_from_spec(specification)
+        specification.loader.exec_module(verifier)
+    finally:
+        sys.path.remove(str(parity))
+    groups = [
+        [
+            {
+                "acceptance_class": "external_optional",
+                "thor_state": "wired",
+                "runtime_state": "not_applicable",
+            },
+            {
+                "acceptance_class": "external_optional",
+                "thor_state": "partial",
+                "runtime_state": "not_applicable",
+            },
+        ],
+        [
+            {
+                "acceptance_class": "required_local",
+                "thor_state": "wired",
+                "runtime_state": "static_only",
+            },
+            {
+                "acceptance_class": "external_optional",
+                "thor_state": "external_optional",
+                "runtime_state": "not_applicable",
+            },
+        ],
+    ]
+    for group in groups:
+        assert compiler._derive_status(group) == verifier._aggregate_family_status(
+            group
+        )
+
+
+def test_legacy_raw_nine_violates_external_rule_but_current_six_satisfies_it(
     base: dict, manifest: dict, proof: dict
 ) -> None:
-    raw_nine = compiler._project(base, proof["raw_reducer_diagnostic"])
+    raw_nine = compiler._project(base, proof["legacy_reducer_regression_diagnostic"])
 
     def conflicts(value: dict) -> list[str]:
         return [
@@ -253,7 +293,7 @@ def test_raw_nine_violates_external_rule_but_six_update_manifest_satisfies_it(
     assert "external_optional must use thor_state=external_optional" in source
 
 
-def test_locked_live_manifest_validator_rejects_raw_nine_and_accepts_policy_six(
+def test_locked_live_manifest_validator_rejects_legacy_nine_and_accepts_current_six(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     base: dict,
@@ -280,7 +320,7 @@ def test_locked_live_manifest_validator_rejects_raw_nine_and_accepts_policy_six(
     candidate = tmp_path / "manifest.json"
     monkeypatch.setattr(verifier, "MANIFEST", candidate)
 
-    raw_nine = compiler._project(base, proof["raw_reducer_diagnostic"])
+    raw_nine = compiler._project(base, proof["legacy_reducer_regression_diagnostic"])
     candidate.write_text(json.dumps(raw_nine), encoding="utf-8")
     with pytest.raises(
         ValueError, match="external_optional must use thor_state=external_optional"
@@ -326,7 +366,7 @@ def test_acceptance_gaps_remain_exact_and_separate(proof: dict) -> None:
             "missing_scenario_ids": ["core-agent-workflows"],
         },
     ]
-    assert proof["summary"]["policy_correct_aggregate_blocker_count_after"] == 0
+    assert proof["summary"]["current_reducer_delta_count_after"] == 0
     assert proof["summary"]["acceptance_coverage_gap_count"] == 8
     assert proof["summary"]["remaining_blocker_category_count"] == 1
 

@@ -60,7 +60,10 @@ Warehouse sample bundle. The ledger projection records nine raw reducer
 differences and eight acceptance-coverage gaps. Separate metadata successors
 resolve those into six policy-valid family updates, three preserved external
 family boundaries, and eight exact acceptance links. These are still isolated
-projections rather than a live merge.
+projections rather than a live merge. Their exact composition passes the
+authoritative validator at 126 sources, 500 capabilities, 55 families, and 47
+discrepancies with zero aggregate or acceptance gaps. The live 289-row files,
+live oracle migration, and candidate runtime qualification remain separate.
 
 That direct-index denominator is also not the final documentation graph. A
 recursive same-version follow-up reached a 172-page fixed point (including

@@ -12,28 +12,8 @@
         "raw_sha256": "848d84b976906c3059b67218cf1d6bf3960b8b91c620c663bba398f5b302278a"
       }
     },
-    "mode": "isolated_static_acceptance_projection",
-    "policy": {
-      "candidate_only": true,
-      "custom_data_warehouse_capability": "preserved",
-      "modifies_live_files": false,
-      "required_cloud_inference": false,
-      "runtime_evidence_added": false,
-      "runtime_execution": "forbidden",
-      "warehouse_sample_bundle": "excluded"
-    },
-    "preservation": {
-      "current_inventory_canonical_sha256": "a15f9f6fb349b9907fc4934f633c9d9158dd781cd1f9cee50954ad836523dc25",
-      "projected_feature_records_canonical_sha256": "988b137bdfc44447e8c86503d1d7fa8599f35b343b0bd5120670e7b5698c1037",
-      "projected_inventory_canonical_sha256": "b1d926b8ee7a1c7dde90fbc650c7758b3464296db90a002e0835c527af94b4e2",
-      "unchanged_coverage_sections_canonical_sha256": "32c346fa4484b4a2682042c53d3a376419150e59635949ed0f8ac5e9295e86ab",
-      "unchanged_top_level_canonical_sha256": "e98f576d2ced156b9bd540530499856dec3541d200efd28b8238d52f3ca3fa14"
-    },
-    "projection_id": "vss-3.2.1-thor-acceptance-500-successor",
-    "projection_payload_sha256": "71303ac410a83686f348c3327383007d7f93633dae54034e6e3b38e12830cb26",
-    "remaining_blockers": {
-      "acceptance_scenario_coverage_gaps": [],
-      "family_status_aggregate_drift": [
+    "legacy_diagnostics": {
+      "family_status_aggregate_regression": [
         {
           "derived_from_500": {
             "acceptance_class": "required_local",
@@ -180,6 +160,126 @@
         }
       ]
     },
+    "mode": "isolated_static_acceptance_projection",
+    "policy": {
+      "candidate_only": true,
+      "custom_data_warehouse_capability": "preserved",
+      "modifies_live_files": false,
+      "required_cloud_inference": false,
+      "runtime_evidence_added": false,
+      "runtime_execution": "forbidden",
+      "warehouse_sample_bundle": "excluded"
+    },
+    "preservation": {
+      "current_inventory_canonical_sha256": "a15f9f6fb349b9907fc4934f633c9d9158dd781cd1f9cee50954ad836523dc25",
+      "projected_feature_records_canonical_sha256": "988b137bdfc44447e8c86503d1d7fa8599f35b343b0bd5120670e7b5698c1037",
+      "projected_inventory_canonical_sha256": "b1d926b8ee7a1c7dde90fbc650c7758b3464296db90a002e0835c527af94b4e2",
+      "unchanged_coverage_sections_canonical_sha256": "32c346fa4484b4a2682042c53d3a376419150e59635949ed0f8ac5e9295e86ab",
+      "unchanged_top_level_canonical_sha256": "e98f576d2ced156b9bd540530499856dec3541d200efd28b8238d52f3ca3fa14"
+    },
+    "projection_id": "vss-3.2.1-thor-acceptance-500-successor",
+    "projection_payload_sha256": "01694257922463e1f3fa5a5c45f02301a7713c0c4d0ba34a0bfaeeece8e794a1",
+    "remaining_blockers": {
+      "acceptance_scenario_coverage_gaps": [],
+      "family_status_aggregate_drift": [
+        {
+          "derived_from_500": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "wired"
+          },
+          "differing_fields": [
+            "thor_state"
+          ],
+          "feature_id": "video-summarization-live",
+          "preserved": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "partial"
+          }
+        },
+        {
+          "derived_from_500": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "wired"
+          },
+          "differing_fields": [
+            "thor_state"
+          ],
+          "feature_id": "rt-vlm-media",
+          "preserved": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "partial"
+          }
+        },
+        {
+          "derived_from_500": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "partial"
+          },
+          "differing_fields": [
+            "thor_state"
+          ],
+          "feature_id": "vios-codecs-audio",
+          "preserved": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "wired"
+          }
+        },
+        {
+          "derived_from_500": {
+            "acceptance_class": "alternate_local_lane",
+            "runtime_state": "not_qualified",
+            "thor_state": "partial"
+          },
+          "differing_fields": [
+            "runtime_state"
+          ],
+          "feature_id": "audio-understanding",
+          "preserved": {
+            "acceptance_class": "alternate_local_lane",
+            "runtime_state": "blocked",
+            "thor_state": "partial"
+          }
+        },
+        {
+          "derived_from_500": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "partial"
+          },
+          "differing_fields": [
+            "thor_state"
+          ],
+          "feature_id": "vios-ui",
+          "preserved": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "wired"
+          }
+        },
+        {
+          "derived_from_500": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "partial"
+          },
+          "differing_fields": [
+            "thor_state"
+          ],
+          "feature_id": "agent-and-mcp-apis",
+          "preserved": {
+            "acceptance_class": "required_local",
+            "runtime_state": "not_qualified",
+            "thor_state": "wired"
+          }
+        }
+      ]
+    },
     "scenario_additions": [
       {
         "after_scenario_ids": [
@@ -314,7 +414,7 @@
       },
       "official_capability_verifier": {
         "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",
-        "raw_sha256": "930ed6caa04eea6dc79984ceb0ee8babe39db6074ac6c74a1e43349dcbc8e8e7"
+        "raw_sha256": "c21fd2910089c6981f0437d41d6c9ef7fff19d55c0153b04b7f7f91b00d79109"
       },
       "projected_ledger": {
         "path": "deploy/docker/thor-local/qualification/ledger-500-successor/projected-official-capabilities.json",
@@ -332,8 +432,9 @@
     "summary": {
       "acceptance_coverage_blocker_count_after": 0,
       "acceptance_coverage_blocker_count_before": 8,
-      "family_aggregate_blocker_count": 9,
+      "family_aggregate_blocker_count": 6,
       "feature_coverage_record_count": 55,
+      "legacy_family_aggregate_regression_count": 9,
       "live_merge_ready": false,
       "projected_capability_count": 500,
       "scenario_addition_count": 8

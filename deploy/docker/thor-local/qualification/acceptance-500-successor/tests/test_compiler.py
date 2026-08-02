@@ -182,9 +182,12 @@ def test_eight_ledger_coverage_gaps_become_zero_and_family_blockers_remain_separ
     assert proof["remaining_blockers"]["acceptance_scenario_coverage_gaps"] == []
     family = proof["remaining_blockers"]["family_status_aggregate_drift"]
     assert tuple(row["feature_id"] for row in family) == (
-        compiler.EXPECTED_FAMILY_BLOCKERS
+        compiler.EXPECTED_CURRENT_FAMILY_BLOCKERS
     )
-    assert proof["summary"]["family_aggregate_blocker_count"] == 9
+    legacy = proof["legacy_diagnostics"]["family_status_aggregate_regression"]
+    assert tuple(row["feature_id"] for row in legacy) == compiler.EXPECTED_FAMILY_BLOCKERS
+    assert proof["summary"]["family_aggregate_blocker_count"] == 6
+    assert proof["summary"]["legacy_family_aggregate_regression_count"] == 9
     assert proof["summary"]["live_merge_ready"] is False
 
 
@@ -223,32 +226,19 @@ def test_locked_official_verifier_accepts_after_separate_family_normalization(
             for capability in ledger["capabilities"]
             if capability["feature_id"] == feature["id"]
         ]
-        classes = {row["acceptance_class"] for row in group}
-        expected_class = (
-            "required_local"
-            if "required_local" in classes
-            else "external_optional"
-            if classes == {"external_optional"}
-            else "alternate_local_lane"
-        )
-        thor_states = {row["thor_state"] for row in group}
-        expected_thor = next(iter(thor_states)) if len(thor_states) == 1 else "partial"
-        runtime_states = {row["runtime_state"] for row in group}
-        expected_runtime = (
-            next(iter(runtime_states)) if len(runtime_states) == 1 else "not_qualified"
-        )
+        expected = verifier._aggregate_family_status(group)
         before = (
             feature["acceptance_class"],
             feature["thor_state"],
             feature["runtime_state"],
         )
-        after = (expected_class, expected_thor, expected_runtime)
+        after = tuple(expected[key] for key in (
+            "acceptance_class", "thor_state", "runtime_state"
+        ))
         if before != after:
             changed.append(feature["id"])
-        feature["acceptance_class"] = expected_class
-        feature["thor_state"] = expected_thor
-        feature["runtime_state"] = expected_runtime
-    assert tuple(changed) == compiler.EXPECTED_FAMILY_BLOCKERS
+        feature.update(expected)
+    assert tuple(changed) == compiler.EXPECTED_CURRENT_FAMILY_BLOCKERS
     assert verifier.validate(
         ledger=ledger,
         manifest=normalized_manifest,

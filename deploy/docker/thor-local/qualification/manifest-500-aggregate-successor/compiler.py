@@ -61,7 +61,7 @@ INPUTS = {
     },
     "live_capability_verifier": {
         "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",
-        "raw_sha256": "930ed6caa04eea6dc79984ceb0ee8babe39db6074ac6c74a1e43349dcbc8e8e7",
+        "raw_sha256": "c21fd2910089c6981f0437d41d6c9ef7fff19d55c0153b04b7f7f91b00d79109",
         "json": False,
     },
     "live_manifest_verifier": {
@@ -72,16 +72,16 @@ INPUTS = {
 }
 
 PROOF_SCHEMA_RAW_SHA256 = (
-    "ec852a87a8cd638523301b1616ee5e72af2a32aedd5feffd8d0afceee99b382b"
+    "b1794e3ebeada0dfede9f96195b47c4eecda4fad6676f0080ced0036090da2cf"
 )
 MANIFEST_SCHEMA_RAW_SHA256 = (
     "95d981d86879a2ac6e5a69c2f0a2c154d826f54ce15d87f773c0048f39c7ed48"
 )
 EXPECTED_PROOF_PAYLOAD_SHA256 = (
-    "dea5eb7dc4322d3d517b9b0f196ea5f214d5349280176c17792f950e3c0bbb25"
+    "d2f5a88ad2351bcd23ecba6916283e249460c6fe2e9bffc867e52a9aded35814"
 )
 EXPECTED_PROOF_RAW_SHA256 = (
-    "1a4c3e75dc449b3c049e37b616f1a6a12b9989b5426912600cf5d99b84d04243"
+    "65583c243381ab36f9804d66fa58299bf0cb3d1a3685d76d8af70c2fd5b029a3"
 )
 EXPECTED_MANIFEST_RAW_SHA256 = (
     "c71f75246fc1e4cbc388f93849d27c3b7dc7edf2d0a516fb3fa13f6d412a4a93"
@@ -224,7 +224,7 @@ def _unique(
     return result
 
 
-def _derive_status(group: list[dict[str, Any]]) -> dict[str, str]:
+def _derive_legacy_status(group: list[dict[str, Any]]) -> dict[str, str]:
     classes = {row["acceptance_class"] for row in group}
     acceptance_class = (
         "required_local"
@@ -248,11 +248,19 @@ def _derive_status(group: list[dict[str, Any]]) -> dict[str, str]:
     }
 
 
+def _derive_status(group: list[dict[str, Any]]) -> dict[str, str]:
+    """Mirror the current live reducer, including its external-family boundary."""
+    derived = _derive_legacy_status(group)
+    if derived["acceptance_class"] == "external_optional":
+        derived["thor_state"] = "external_optional"
+    return derived
+
+
 def _aggregate_drift(
     manifest: dict[str, Any],
     ledger: dict[str, Any],
     *,
-    preserve_external_family_policy: bool = False,
+    legacy_reducer: bool = False,
 ) -> list[dict[str, Any]]:
     by_feature: dict[str, list[dict[str, Any]]] = {}
     for capability in ledger["capabilities"]:
@@ -261,12 +269,8 @@ def _aggregate_drift(
         raise ProjectionError("manifest/ledger feature identity partition drift")
     result = []
     for feature_index, feature in enumerate(manifest["features"]):
-        derived = _derive_status(by_feature[feature["id"]])
-        if (
-            preserve_external_family_policy
-            and derived["acceptance_class"] == "external_optional"
-        ):
-            derived["thor_state"] = "external_optional"
+        reducer = _derive_legacy_status if legacy_reducer else _derive_status
+        derived = reducer(by_feature[feature["id"]])
         differences = [
             field for field in STATUS_FIELDS if feature[field] != derived[field]
         ]
@@ -415,7 +419,7 @@ def compile_projection() -> tuple[dict[str, Any], dict[str, Any]]:
         raise ProjectionError("500-successor denominator drift")
     _verify_base_against_live(live, base)
 
-    raw_drift = _aggregate_drift(base, ledger)
+    legacy_drift = _aggregate_drift(base, ledger, legacy_reducer=True)
     upstream_drift = ledger_proof["merge_readiness"]["blockers"][
         "family_status_aggregate_drift"
     ]
@@ -433,8 +437,8 @@ def compile_projection() -> tuple[dict[str, Any], dict[str, Any]]:
         }
         for row in upstream_drift
     ]
-    if raw_drift != normalized_upstream or len(raw_drift) != 9:
-        raise ProjectionError("exact upstream aggregate-drift projection mismatch")
+    if legacy_drift != normalized_upstream or len(legacy_drift) != 9:
+        raise ProjectionError("exact legacy aggregate regression projection mismatch")
 
     gaps = _coverage_gaps(ledger, acceptance)
     upstream_gaps = ledger_proof["merge_readiness"]["blockers"][
@@ -450,47 +454,44 @@ def compile_projection() -> tuple[dict[str, Any], dict[str, Any]]:
 
     external_ids = {"alert-notifications-slack", "helm", "enterprise-rag"}
     external_policy_preservations = [
-        row for row in raw_drift if row["feature_id"] in external_ids
+        row for row in legacy_drift if row["feature_id"] in external_ids
     ]
-    applied_updates = [
-        row for row in raw_drift if row["feature_id"] not in external_ids
-    ]
+    applied_updates = _aggregate_drift(base, ledger)
     if len(applied_updates) != 6 or len(external_policy_preservations) != 3:
         raise ProjectionError("six-update/external-policy partition drift")
-    corrected_drift_before = _aggregate_drift(
-        base, ledger, preserve_external_family_policy=True
-    )
-    if corrected_drift_before != applied_updates:
-        raise ProjectionError("policy-correct aggregate projection drift")
+    if applied_updates != [
+        row for row in legacy_drift if row["feature_id"] not in external_ids
+    ]:
+        raise ProjectionError("current live reducer six-update projection drift")
 
-    raw_nine_projection = _project(base, raw_drift)
-    raw_nine_policy_conflicts = [
+    legacy_raw_nine_projection = _project(base, legacy_drift)
+    legacy_raw_nine_policy_conflicts = [
         {
             "feature_id": feature["id"],
             "acceptance_class": feature["acceptance_class"],
-            "raw_projected_thor_state": feature["thor_state"],
+            "legacy_projected_thor_state": feature["thor_state"],
             "required_thor_state": "external_optional",
             "policy": "verify_manifest_external_optional_state_v1",
         }
-        for feature in raw_nine_projection["features"]
+        for feature in legacy_raw_nine_projection["features"]
         if feature["acceptance_class"] == "external_optional"
         and feature["thor_state"] != "external_optional"
     ]
-    if [row["feature_id"] for row in raw_nine_policy_conflicts] != [
+    if [row["feature_id"] for row in legacy_raw_nine_policy_conflicts] != [
         "alert-notifications-slack",
         "helm",
         "enterprise-rag",
     ]:
-        raise ProjectionError("raw-nine external-family policy conflict drift")
+        raise ProjectionError("legacy raw-nine external-family policy conflict drift")
     projected = _project(base, applied_updates)
     _assert_only_exact_updates(base, projected, applied_updates)
-    raw_drift_after = _aggregate_drift(projected, ledger)
-    if raw_drift_after != external_policy_preservations:
+    legacy_drift_after = _aggregate_drift(projected, ledger, legacy_reducer=True)
+    if legacy_drift_after != external_policy_preservations:
         raise ProjectionError(
-            "raw reducer residual must be the three external preservations"
+            "legacy reducer residual must be the three external preservations"
         )
-    if _aggregate_drift(projected, ledger, preserve_external_family_policy=True):
-        raise ProjectionError("policy-correct aggregate drift remains after projection")
+    if _aggregate_drift(projected, ledger):
+        raise ProjectionError("current live aggregate drift remains after projection")
     local_manifest_schema = _load_local_schema(
         MANIFEST_SCHEMA, MANIFEST_SCHEMA_RAW_SHA256
     )
@@ -515,26 +516,27 @@ def compile_projection() -> tuple[dict[str, Any], dict[str, Any]]:
         },
         "aggregate_algorithm": {
             "acceptance_class": "required_local if present; else external_optional only for an all-external family; else alternate_local_lane",
-            "thor_state": "the sole capability state, otherwise partial",
+            "thor_state": "external_optional for an external_optional family; otherwise the sole capability state, otherwise partial",
             "runtime_state": "the sole capability state, otherwise not_qualified",
-            "implementation": "verify_official_capabilities_family_aggregate_v1",
+            "implementation": "verify_official_capabilities_family_aggregate_v2_external_boundary",
+            "legacy_regression_diagnostic": "v1 used the sole thor capability state or partial even for external_optional families",
         },
         "summary": {
             "manifest_feature_count": 55,
             "capability_count": 500,
-            "raw_reducer_diagnostic_count": 9,
+            "legacy_reducer_regression_diagnostic_count": 9,
             "external_policy_preservation_count": 3,
             "aggregate_update_count": 6,
             "changed_field_count": sum(
                 len(row["differing_fields"]) for row in applied_updates
             ),
-            "policy_correct_aggregate_blocker_count_before": 6,
-            "policy_correct_aggregate_blocker_count_after": 0,
-            "raw_reducer_residual_count_after": 3,
+            "current_reducer_delta_count_before": 6,
+            "current_reducer_delta_count_after": 0,
+            "legacy_reducer_residual_count_after": 3,
             "acceptance_coverage_gap_count": 8,
             "acceptance_coverage_remains_open": True,
             "external_nonblocking_distinction_count": 6,
-            "raw_nine_live_manifest_policy_conflict_count": 3,
+            "legacy_raw_nine_live_manifest_policy_conflict_count": 3,
             "remaining_blocker_category_count": 1,
             "warehouse_sample_bundle_entries": 0,
         },
@@ -586,14 +588,14 @@ def compile_projection() -> tuple[dict[str, Any], dict[str, Any]]:
                 ]
             ),
         },
-        "raw_reducer_diagnostic": raw_drift,
+        "legacy_reducer_regression_diagnostic": legacy_drift,
         "external_policy_preservations": external_policy_preservations,
         "aggregate_updates": applied_updates,
         "remaining_merge_readiness": {
-            "policy_correct_aggregate_drift_after": [],
-            "raw_reducer_residual_after": raw_drift_after,
+            "current_reducer_drift_after": [],
+            "legacy_reducer_residual_after": legacy_drift_after,
             "acceptance_scenario_coverage_gaps": gaps,
-            "raw_nine_live_manifest_policy_conflicts": raw_nine_policy_conflicts,
+            "legacy_raw_nine_live_manifest_policy_conflicts": legacy_raw_nine_policy_conflicts,
             "reviewed_nonblocking_external_distinctions": distinctions,
         },
         "artifacts": {
@@ -635,8 +637,8 @@ def validate_projection(
             INPUTS["ledger_500_manifest"]["raw_sha256"],
         )[0]
     _assert_only_exact_updates(base, projected, proof["aggregate_updates"])
-    if _aggregate_drift(projected, ledger, preserve_external_family_policy=True):
-        raise ProjectionError("projected manifest has policy-correct aggregate drift")
+    if _aggregate_drift(projected, ledger):
+        raise ProjectionError("projected manifest has current live aggregate drift")
     artifact = proof["artifacts"]["projected_manifest"]
     if artifact["raw_sha256"] != _sha_bytes(_encoded(projected)) or artifact[
         "canonical_sha256"
@@ -695,7 +697,7 @@ def main(argv: list[str] | None = None) -> int:
             if _sha_bytes(payload) != expected[path]:
                 raise ProjectionError(f"checked output raw digest drift: {path}")
         print(
-            "PASS: policy-valid six-update successor is deterministic; corrected aggregate blockers=0; acceptance gaps=8"
+            "PASS: current-live six-update successor is deterministic; current aggregate blockers=0; acceptance gaps=8"
         )
         return 0
     except (

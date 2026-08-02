@@ -484,6 +484,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/acceptance-500-successor/tests"
 
+# The composition proof binds the final ledger, oracle, policy-valid manifest,
+# and acceptance successors. The authoritative validator must accept exactly
+# 500 capabilities / 55 families / 47 discrepancies with zero aggregate or
+# acceptance gaps. Live predecessor files remain at 289, candidate evidence is
+# empty, and live/oracle/runtime migration remains explicitly blocked.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/metadata-500-composition-successor/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/metadata-500-composition-successor/tests"
+
 # The candidate-only offline MV3DT observation and its immutable receipt are
 # verified above at exact predecessor identity by the CPU multimedia successor.
 # They are intentionally not replayed against the evolved current manifest.

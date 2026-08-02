@@ -122,6 +122,37 @@ def _ids(values: Any, label: str) -> list[str]:
     return result
 
 
+def _aggregate_family_status(capabilities: list[dict[str, Any]]) -> dict[str, str]:
+    """Derive manifest family status while preserving external boundaries."""
+    if not capabilities:
+        raise CapabilityContractError("cannot aggregate an empty capability family")
+    classes = {item["acceptance_class"] for item in capabilities}
+    acceptance_class = (
+        "required_local"
+        if "required_local" in classes
+        else (
+            "external_optional"
+            if classes == {"external_optional"}
+            else "alternate_local_lane"
+        )
+    )
+    thor_states = {item["thor_state"] for item in capabilities}
+    thor_state = (
+        "external_optional"
+        if acceptance_class == "external_optional"
+        else next(iter(thor_states)) if len(thor_states) == 1 else "partial"
+    )
+    runtime_states = {item["runtime_state"] for item in capabilities}
+    runtime_state = (
+        next(iter(runtime_states)) if len(runtime_states) == 1 else "not_qualified"
+    )
+    return {
+        "acceptance_class": acceptance_class,
+        "thor_state": thor_state,
+        "runtime_state": runtime_state,
+    }
+
+
 def _validate_cpu_multimedia_contract(
     capability: dict[str, Any], repo_root: Path
 ) -> None:
@@ -733,28 +764,18 @@ def validate(
         if declared_ids != expected:
             raise CapabilityContractError(f"{feature_id}: official capability cross-link drift")
         group = [item for item in capabilities if item["feature_id"] == feature_id]
-        classes = {item["acceptance_class"] for item in group}
-        expected_class = (
-            "required_local"
-            if "required_local" in classes
-            else "external_optional"
-            if classes == {"external_optional"}
-            else "alternate_local_lane"
-        )
+        expected_status = _aggregate_family_status(group)
+        expected_class = expected_status["acceptance_class"]
         if feature.get("acceptance_class") != expected_class:
             raise CapabilityContractError(
                 f"{feature_id}: family acceptance_class does not aggregate capability classes"
             )
-        thor_states = {item["thor_state"] for item in group}
-        expected_thor = next(iter(thor_states)) if len(thor_states) == 1 else "partial"
+        expected_thor = expected_status["thor_state"]
         if feature.get("thor_state") != expected_thor:
             raise CapabilityContractError(
                 f"{feature_id}: family thor_state does not aggregate capability states"
             )
-        runtime_states = {item["runtime_state"] for item in group}
-        expected_runtime = (
-            next(iter(runtime_states)) if len(runtime_states) == 1 else "not_qualified"
-        )
+        expected_runtime = expected_status["runtime_state"]
         if feature.get("runtime_state") != expected_runtime:
             raise CapabilityContractError(
                 f"{feature_id}: family runtime_state does not aggregate capability states"

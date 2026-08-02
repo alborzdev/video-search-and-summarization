@@ -2,7 +2,7 @@
 
 This is an isolated, static candidate package. It reconciles feature-family status fields against the settled 500-capability ledger without editing the live parity manifest, running containers, using the network, loading models, or staging the optional Warehouse sample bundle.
 
-The current capability reducer reports nine family-status differences. Three are not valid manifest changes: `alert-notifications-slack`, `helm`, and `enterprise-rag` are `external_optional` families, and the live manifest policy requires their `thor_state` to remain `external_optional`. The checked artifact therefore applies the six policy-valid changes and preserves those three external boundaries.
+The corrected live capability reducer reports six family-status differences. The preceding reducer reported nine because it did not preserve `external_optional` family boundaries; those legacy results for `alert-notifications-slack`, `helm`, and `enterprise-rag` are retained only as regression diagnostics. The checked artifact applies the six current-live changes and preserves those three external boundaries.
 
 The six applied fields are:
 
@@ -15,8 +15,8 @@ The six applied fields are:
 
 The proof keeps three categories separate:
 
-- policy-correct aggregate drift: six before, zero after;
-- raw-reducer policy discrepancies: exactly the three preserved external families;
+- current live reducer drift: six before, zero after;
+- legacy reducer regression diagnostics: nine before and exactly the three preserved external families after;
 - acceptance coverage: eight gaps remain open and are the sole remaining blocker category.
 
 The projected manifest preserves every root field, feature and skill order, capability-ID array, and every feature field except the exact six scalars above. Both generated schemas are deliberately exact-value schemas: any feature/skill reorder, identity substitution, capability-ID reorder, valid-enum scalar mutation, or reordered, duplicated, omitted, replaced, or mutated proof row is invalid.

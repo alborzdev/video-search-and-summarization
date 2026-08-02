@@ -330,6 +330,12 @@ in this directory:
   proves that removing its eight surgical replacements reconstructs the live
   inventory bytes exactly. Its projected acceptance coverage has zero missing
   links while the separate live family metadata remains unmodified;
+- `metadata-500-composition-successor/` binds all four 500-row metadata
+  successors and runs the authoritative capability validator over their exact
+  composition. It passes at 126 sources, 500 capabilities, 55 families, and 47
+  discrepancies with zero aggregate or acceptance gaps, while retaining three
+  explicit blockers for live metadata migration, live oracle-registry
+  migration, and execution/evidence for the 211 candidate oracles;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

@@ -1,9 +1,10 @@
 {
   "aggregate_algorithm": {
     "acceptance_class": "required_local if present; else external_optional only for an all-external family; else alternate_local_lane",
-    "implementation": "verify_official_capabilities_family_aggregate_v1",
+    "implementation": "verify_official_capabilities_family_aggregate_v2_external_boundary",
+    "legacy_regression_diagnostic": "v1 used the sole thor capability state or partial even for external_optional families",
     "runtime_state": "the sole capability state, otherwise not_qualified",
-    "thor_state": "the sole capability state, otherwise partial"
+    "thor_state": "external_optional for an external_optional family; otherwise the sole capability state, otherwise partial"
   },
   "aggregate_updates": [
     {
@@ -169,33 +170,7 @@
       "feature_index": 34
     }
   ],
-  "mode": "isolated_static_aggregate_reconciliation",
-  "policy": {
-    "candidate_only": true,
-    "docker_access": false,
-    "host_mutation": false,
-    "model_execution": false,
-    "modifies_live_files": false,
-    "network_access": false,
-    "required_cloud_inference": false,
-    "runtime_actions": [],
-    "warehouse_sample_bundle": "excluded"
-  },
-  "preservation": {
-    "base_capability_id_arrays_sha256": "d0f22b9d863993016b07429bee9c2387f2090435fcb9d505f043423172eb92a4",
-    "base_feature_order_sha256": "01049c6784ab291b080198ae890a856173e4e2ad4045238d8b304ff54f6db247",
-    "base_manifest_canonical_sha256": "1d8d4d470c456c4eca8f6550e890cf2ee469ddd578b7c98c341324608749372b",
-    "base_non_target_fields_sha256": "5b4cf4b9030a5b2de5c76d28240e54cad81e950ac82e660149b90b743808f666",
-    "base_skills_canonical_sha256": "1cd69578ba1a8a9712665cea7b707e46b737973739add9f0dfe1450781defbb6",
-    "live_manifest_canonical_sha256": "cbf65ddc55b3518763bf8ee57f58f24619956473035aeca98a274a7b1bc959f2",
-    "projected_capability_id_arrays_sha256": "d0f22b9d863993016b07429bee9c2387f2090435fcb9d505f043423172eb92a4",
-    "projected_feature_order_sha256": "01049c6784ab291b080198ae890a856173e4e2ad4045238d8b304ff54f6db247",
-    "projected_non_target_fields_sha256": "5b4cf4b9030a5b2de5c76d28240e54cad81e950ac82e660149b90b743808f666",
-    "projected_skills_canonical_sha256": "1cd69578ba1a8a9712665cea7b707e46b737973739add9f0dfe1450781defbb6"
-  },
-  "projection_id": "vss-3.2.1-thor-manifest-500-aggregate-successor",
-  "projection_payload_sha256": "dea5eb7dc4322d3d517b9b0f196ea5f214d5349280176c17792f950e3c0bbb25",
-  "raw_reducer_diagnostic": [
+  "legacy_reducer_regression_diagnostic": [
     {
       "after": {
         "acceptance_class": "required_local",
@@ -350,6 +325,32 @@
       "feature_index": 34
     }
   ],
+  "mode": "isolated_static_aggregate_reconciliation",
+  "policy": {
+    "candidate_only": true,
+    "docker_access": false,
+    "host_mutation": false,
+    "model_execution": false,
+    "modifies_live_files": false,
+    "network_access": false,
+    "required_cloud_inference": false,
+    "runtime_actions": [],
+    "warehouse_sample_bundle": "excluded"
+  },
+  "preservation": {
+    "base_capability_id_arrays_sha256": "d0f22b9d863993016b07429bee9c2387f2090435fcb9d505f043423172eb92a4",
+    "base_feature_order_sha256": "01049c6784ab291b080198ae890a856173e4e2ad4045238d8b304ff54f6db247",
+    "base_manifest_canonical_sha256": "1d8d4d470c456c4eca8f6550e890cf2ee469ddd578b7c98c341324608749372b",
+    "base_non_target_fields_sha256": "5b4cf4b9030a5b2de5c76d28240e54cad81e950ac82e660149b90b743808f666",
+    "base_skills_canonical_sha256": "1cd69578ba1a8a9712665cea7b707e46b737973739add9f0dfe1450781defbb6",
+    "live_manifest_canonical_sha256": "cbf65ddc55b3518763bf8ee57f58f24619956473035aeca98a274a7b1bc959f2",
+    "projected_capability_id_arrays_sha256": "d0f22b9d863993016b07429bee9c2387f2090435fcb9d505f043423172eb92a4",
+    "projected_feature_order_sha256": "01049c6784ab291b080198ae890a856173e4e2ad4045238d8b304ff54f6db247",
+    "projected_non_target_fields_sha256": "5b4cf4b9030a5b2de5c76d28240e54cad81e950ac82e660149b90b743808f666",
+    "projected_skills_canonical_sha256": "1cd69578ba1a8a9712665cea7b707e46b737973739add9f0dfe1450781defbb6"
+  },
+  "projection_id": "vss-3.2.1-thor-manifest-500-aggregate-successor",
+  "projection_payload_sha256": "d2f5a88ad2351bcd23ecba6916283e249460c6fe2e9bffc867e52a9aded35814",
   "remaining_merge_readiness": {
     "acceptance_scenario_coverage_gaps": [
       {
@@ -401,31 +402,31 @@
         ]
       }
     ],
-    "policy_correct_aggregate_drift_after": [],
-    "raw_nine_live_manifest_policy_conflicts": [
+    "current_reducer_drift_after": [],
+    "legacy_raw_nine_live_manifest_policy_conflicts": [
       {
         "acceptance_class": "external_optional",
         "feature_id": "alert-notifications-slack",
+        "legacy_projected_thor_state": "wired",
         "policy": "verify_manifest_external_optional_state_v1",
-        "raw_projected_thor_state": "wired",
         "required_thor_state": "external_optional"
       },
       {
         "acceptance_class": "external_optional",
         "feature_id": "helm",
+        "legacy_projected_thor_state": "partial",
         "policy": "verify_manifest_external_optional_state_v1",
-        "raw_projected_thor_state": "partial",
         "required_thor_state": "external_optional"
       },
       {
         "acceptance_class": "external_optional",
         "feature_id": "enterprise-rag",
+        "legacy_projected_thor_state": "partial",
         "policy": "verify_manifest_external_optional_state_v1",
-        "raw_projected_thor_state": "partial",
         "required_thor_state": "external_optional"
       }
     ],
-    "raw_reducer_residual_after": [
+    "legacy_reducer_residual_after": [
       {
         "after": {
           "acceptance_class": "external_optional",
@@ -539,7 +540,7 @@
     },
     "live_capability_verifier": {
       "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",
-      "raw_sha256": "930ed6caa04eea6dc79984ceb0ee8babe39db6074ac6c74a1e43349dcbc8e8e7"
+      "raw_sha256": "c21fd2910089c6981f0437d41d6c9ef7fff19d55c0153b04b7f7f91b00d79109"
     },
     "live_manifest": {
       "path": "deploy/docker/thor-local/parity/manifest.json",
@@ -560,14 +561,14 @@
     "aggregate_update_count": 6,
     "capability_count": 500,
     "changed_field_count": 6,
+    "current_reducer_delta_count_after": 0,
+    "current_reducer_delta_count_before": 6,
     "external_nonblocking_distinction_count": 6,
     "external_policy_preservation_count": 3,
+    "legacy_raw_nine_live_manifest_policy_conflict_count": 3,
+    "legacy_reducer_regression_diagnostic_count": 9,
+    "legacy_reducer_residual_count_after": 3,
     "manifest_feature_count": 55,
-    "policy_correct_aggregate_blocker_count_after": 0,
-    "policy_correct_aggregate_blocker_count_before": 6,
-    "raw_nine_live_manifest_policy_conflict_count": 3,
-    "raw_reducer_diagnostic_count": 9,
-    "raw_reducer_residual_count_after": 3,
     "remaining_blocker_category_count": 1,
     "warehouse_sample_bundle_entries": 0
   },

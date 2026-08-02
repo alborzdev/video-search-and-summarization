@@ -185,6 +185,100 @@ class OfficialCapabilityTests(unittest.TestCase):
         self.assertEqual(counts["feature_families"], 42)
         self.assertEqual(counts["discrepancies"], 47)
 
+    def test_family_status_reducer_preserves_external_boundary(self) -> None:
+        capabilities = [
+            {
+                "acceptance_class": "external_optional",
+                "thor_state": "wired",
+                "runtime_state": "not_applicable",
+            },
+            {
+                "acceptance_class": "external_optional",
+                "thor_state": "partial",
+                "runtime_state": "not_applicable",
+            },
+        ]
+        self.assertEqual(
+            verifier._aggregate_family_status(capabilities),
+            {
+                "acceptance_class": "external_optional",
+                "thor_state": "external_optional",
+                "runtime_state": "not_applicable",
+            },
+        )
+        capabilities[1]["thor_state"] = "wired"
+        self.assertEqual(
+            verifier._aggregate_family_status(capabilities)["thor_state"],
+            "external_optional",
+        )
+
+    def test_family_status_reducer_retains_nonexternal_precedence(self) -> None:
+        cases = [
+            (
+                [
+                    {
+                        "acceptance_class": "required_local",
+                        "thor_state": "wired",
+                        "runtime_state": "static_only",
+                    },
+                    {
+                        "acceptance_class": "external_optional",
+                        "thor_state": "external_optional",
+                        "runtime_state": "not_applicable",
+                    },
+                ],
+                {
+                    "acceptance_class": "required_local",
+                    "thor_state": "partial",
+                    "runtime_state": "not_qualified",
+                },
+            ),
+            (
+                [
+                    {
+                        "acceptance_class": "alternate_local_lane",
+                        "thor_state": "wired",
+                        "runtime_state": "not_qualified",
+                    },
+                    {
+                        "acceptance_class": "external_optional",
+                        "thor_state": "wired",
+                        "runtime_state": "not_qualified",
+                    },
+                ],
+                {
+                    "acceptance_class": "alternate_local_lane",
+                    "thor_state": "wired",
+                    "runtime_state": "not_qualified",
+                },
+            ),
+            (
+                [
+                    {
+                        "acceptance_class": "alternate_local_lane",
+                        "thor_state": "partial",
+                        "runtime_state": "blocked",
+                    }
+                ],
+                {
+                    "acceptance_class": "alternate_local_lane",
+                    "thor_state": "partial",
+                    "runtime_state": "blocked",
+                },
+            ),
+        ]
+        for capabilities, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertEqual(
+                    verifier._aggregate_family_status(capabilities), expected
+                )
+
+    def test_family_status_reducer_rejects_empty_family(self) -> None:
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "empty capability family"
+        ):
+            verifier._aggregate_family_status([])
+
     def test_twelve_tooling_entries_are_canonical_but_not_runtime_promoted(self) -> None:
         expected = {
             **{
