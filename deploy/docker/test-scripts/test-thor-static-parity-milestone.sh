@@ -639,6 +639,19 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-approval-mapping-successor-v2/tests"
 
+# The admission-receipt successor binds all 211 ordered candidates to their
+# exact mapping, oracle, Metadata-500, and 16-bundle identities. It validates
+# only the canonical empty receipt state: 204 local/alternate candidates remain
+# blocked on exact execution bindings and receipts, four external candidates
+# cannot establish local admission, and three static entries are runtime N/A.
+# It has no receipt-consumption, write, action, or execution mode; Warehouse is
+# excluded and receipts/admissions/executable candidates remain zero.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-admission-receipts-successor/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-admission-receipts-successor/tests"
+
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact
 # remote pointers define no authoritative full-diff denominator and make no

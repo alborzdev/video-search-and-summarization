@@ -340,6 +340,16 @@ classification closure only: all 211 candidates still have zero receipts,
 approvals, admissions, executable states, and runtime evidence. The Warehouse
 sample remains excluded.
 
+The additive
+[`qualification/candidate-admission-receipts-successor/`](qualification/candidate-admission-receipts-successor/README.md)
+turns that classification into an exact, source-locked admission index while
+accepting only the canonical empty receipt set. It records 204 local/alternate
+candidates blocked on exact execution bindings and receipts, four external-only
+candidates that cannot qualify Thor-local execution, and three static entries
+for which runtime admission is not applicable. It cannot consume receipts,
+write state, authorize actions, or execute anything; trusted roots, receipts,
+admissions, and executable candidates remain zero.
+
 This is an application-envelope measurement, not a universal camera-count
 claim. Both inputs were copies of one local H.264 sample, so the result does
 not cover adverse RTSP networks, higher resolutions, different codecs,

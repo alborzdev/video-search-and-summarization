@@ -299,6 +299,13 @@ in this directory:
   firewall classifications. Its current split is 208 mapped and three static,
   with zero contract conflicts or scope gaps. All 211 rows remain receipt-free,
   unapproved, not admitted, non-executable, and runtime-evidence-empty;
+- `candidate-admission-receipts-successor/` source-locks those 211 ordered rows
+  into an exact admission index and validates only the canonical empty receipt
+  set. It distinguishes 204 local/alternate binding-blocked candidates, four
+  external-only candidates that cannot establish Thor-local admission, and
+  three static runtime-not-applicable entries. The compiler has no write,
+  receipt-consumption, action, or execution mode; receipts, trusted roots,
+  admissions, and executable candidates are all zero;
 - `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
   13 families with no capability rows plus the partial VIOS family its own
   still-open semantic oracle plan. Its 74-entry scope is not the global missing
