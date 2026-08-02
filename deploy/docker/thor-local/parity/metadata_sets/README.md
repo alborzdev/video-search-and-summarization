@@ -5,16 +5,14 @@ changing the current parity files or their validators. `selector.json` chooses
 one registered immutable descriptor. The checked descriptor binds the complete
 current metadata plane: manifest, official ledger and schema, capability-oracle
 registry and schema, and acceptance inventory. The selected set remains the
-existing 289-capability predecessor.
+reviewed 500-capability metadata plane.
 
-The staged `thor-vss-3.2.1-metadata-500-staged` set is also registered with the
-`validation_only` lifecycle and can be resolved explicitly. It binds the
-isolated 500-capability post-state, but it cannot be the selector's default:
-default resolution accepts only a `live_ready` descriptor. The staged set
-therefore cannot alter live behavior until a reviewed activation receipt,
-descriptor lifecycle change, and selector switch are made. The additive v2
-oracle validator and authoritative bundle dispatcher already validate it
-explicitly without changing that lifecycle.
+The registered ID `thor-vss-3.2.1-metadata-500-staged` is retained for stable
+identity, but its descriptor is now `live_ready` and selected by default. The
+activation receipt binds that lifecycle-only descriptor change and the exact
+selector hash change. The historical `thor-vss-3.2.1-live-289` set remains
+available explicitly. Here `live_ready` means eligible as the default static
+metadata snapshot; it does not mean runtime-qualified.
 
 `resolver.py` validates the selector, descriptor, and every member before it
 returns any document. Reads are bounded and file-descriptor-relative with
@@ -40,7 +38,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-metadata-500-staged --json
+  --set thor-vss-3.2.1-live-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

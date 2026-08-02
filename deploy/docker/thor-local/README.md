@@ -19,22 +19,23 @@ Agent model inventories, and the official Edge contract. It performs no
 deployment, container lifecycle operation, image pull/build, artifact download,
 or live HTTP probe.
 
-The live parity ledger remains at 289 capabilities. The isolated successor
-projection proves one exact same-family capability and planning-oracle binding
-for each of the 500 advertised literals, but it is not a live merge or runtime
-qualification. Two further isolated projections derive the exact metadata
-transition: six policy-valid family fields, three preserved external family
-boundaries, and eight appended acceptance links. The live files remain
-unchanged, and every candidate evidence collection is empty. Their composed
+The legacy fixed-path parity ledger remains at 289 capabilities for historical
+reproducibility. The authoritative metadata-set selector now defaults to the
+reviewed 500-capability plane, with one exact same-family capability and
+planning-oracle binding for every advertised literal. This is metadata
+inventory closure, not runtime qualification. Two further projections derive
+the exact metadata transition: six policy-valid family fields, three preserved
+external family boundaries, and eight appended acceptance links. The four
+fixed legacy metadata files remain unchanged, and every candidate evidence
+collection is empty. Their composed
 metadata plane passes the authoritative validator at 500 capabilities and 55
 families with zero aggregate or acceptance gaps. A versioned, non-applying
-five-file post-state now stages that exact ledger, manifest, acceptance
+five-file post-state contains that exact ledger, manifest, acceptance
 inventory, and a strict mixed v2 oracle registry. The fail-closed metadata-set
-resolver validates both generations atomically but continues to select the
-289-row predecessor. The v2 oracle path is now independently validated,
-including the preserved v1 prefix and strict planning-only suffix. A reviewed
-activation receipt, lifecycle promotion to `live_ready`, selector switch, and
-candidate runtime evidence remain open.
+resolver validates both generations atomically and selects the 500-row set;
+the 289-row predecessor remains explicitly addressable. The applied activation
+receipt binds the lifecycle and selector transaction. Candidate runtime
+evidence for the 211 planning-only rows remains open.
 
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 

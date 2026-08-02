@@ -237,12 +237,12 @@ def metadata_repo(tmp_path: Path) -> Path:
     return tmp_path
 
 
-def test_checked_in_289_set_resolves_as_one_snapshot() -> None:
+def test_checked_in_500_set_resolves_as_selected_snapshot() -> None:
     snapshot = resolver.resolve_metadata_set()
-    assert snapshot.set_id == "thor-vss-3.2.1-live-289"
+    assert snapshot.set_id == "thor-vss-3.2.1-metadata-500-staged"
     assert dict(snapshot.expected_counts) == {
-        "capabilities": 289,
-        "oracles": 289,
+        "capabilities": 500,
+        "oracles": 500,
         "feature_families": 55,
     }
     first = snapshot.document("manifest")
@@ -250,17 +250,17 @@ def test_checked_in_289_set_resolves_as_one_snapshot() -> None:
     assert snapshot.document("manifest")["schema_version"] == 1
 
 
-def test_checked_in_staged_500_set_resolves_without_selecting_it() -> None:
-    snapshot = resolver.resolve_metadata_set("thor-vss-3.2.1-metadata-500-staged")
-    assert snapshot.set_id == "thor-vss-3.2.1-metadata-500-staged"
+def test_checked_in_historical_289_set_remains_explicitly_resolvable() -> None:
+    snapshot = resolver.resolve_metadata_set("thor-vss-3.2.1-live-289")
+    assert snapshot.set_id == "thor-vss-3.2.1-live-289"
     assert dict(snapshot.expected_counts) == {
-        "capabilities": 500,
-        "oracles": 500,
+        "capabilities": 289,
+        "oracles": 289,
         "feature_families": 55,
     }
-    assert snapshot.document("capability_oracles")["schema_version"] == 2
+    assert snapshot.document("capability_oracles")["schema_version"] == 1
     selected = resolver.resolve_metadata_set()
-    assert selected.set_id == "thor-vss-3.2.1-live-289"
+    assert selected.set_id == "thor-vss-3.2.1-metadata-500-staged"
 
 
 def test_unknown_set_and_document_fail_closed(metadata_repo: Path) -> None:

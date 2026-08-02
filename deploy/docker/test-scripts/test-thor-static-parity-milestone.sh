@@ -497,26 +497,31 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 
 # The non-applying migration package materializes the complete five-file 500
 # post-state, including a strict live-root-shaped v2 oracle registry, while
-# preserving zero candidate evidence or promotion. The metadata-set resolver
-# must validate both the selected historical 289 bundle and the explicitly
-# addressable staged 500 bundle without switching the live selector.
+# preserving zero candidate evidence or promotion. The activation receipt
+# binds the selected 500 metadata default, preserves the explicitly addressable
+# historical 289 bundle, and rejects partial selector/descriptor states.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/live-metadata-500-migration/compiler.py" \
   --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/live-metadata-500-migration/tests"
 PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/live-metadata-500-activation/compiler.py" \
+  --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/live-metadata-500-activation/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/parity/metadata_sets/resolver.py" --json >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/parity/metadata_sets/resolver.py" \
-  --set thor-vss-3.2.1-metadata-500-staged --json >/dev/null
+  --set thor-vss-3.2.1-live-289 --json >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/parity/metadata_sets/tests"
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/parity/verify_metadata_set.py" --json >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/parity/verify_metadata_set.py" \
-  --set thor-vss-3.2.1-metadata-500-staged --json >/dev/null
+  --set thor-vss-3.2.1-live-289 --json >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/parity/tests/test_capability_oracles_v2.py" \
   "${thor_local_root}/parity/tests/test_verify_metadata_set.py"

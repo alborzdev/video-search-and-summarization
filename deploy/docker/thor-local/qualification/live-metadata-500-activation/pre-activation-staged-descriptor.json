@@ -2,7 +2,7 @@
   "schema_version": 1,
   "set_id": "thor-vss-3.2.1-metadata-500-staged",
   "mode": "immutable_static_metadata_set",
-  "lifecycle": "live_ready",
+  "lifecycle": "validation_only",
   "target": {
     "product_version": "3.2.1",
     "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"

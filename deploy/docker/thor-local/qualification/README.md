@@ -341,10 +341,14 @@ in this directory:
   a live-root-shaped strict v2 oracle registry/schema. Its migration journal
   locks every before/after byte and rollback object while keeping all 211
   candidates non-executable, evidence-empty, and non-promoting. The staged set
-  is registered with the atomic metadata-set resolver, but the 289 predecessor
-  remains selected. Its additive v2 validator and atomic bundle verifier now
-  pass; a separate activation receipt, promotion from `validation_only` to
-  `live_ready`, and selector switch remain required;
+  is registered with the atomic metadata-set resolver. Its additive v2
+  validator and atomic bundle verifier pass;
+- `live-metadata-500-activation/` binds and validates the exact metadata-default
+  transaction: lifecycle-only promotion to `live_ready`, selector switch to
+  the 500 set, unchanged fixed 289 prerequisites, zero candidate promotion,
+  and exact rollback. The receipt compiler accepts only the complete pre-state
+  or complete applied state and rejects partial activation. This selects the
+  complete metadata inventory but does not qualify any runtime capability;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

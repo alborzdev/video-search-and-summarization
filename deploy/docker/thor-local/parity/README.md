@@ -66,22 +66,20 @@ discrepancies with zero aggregate or acceptance gaps. The live 289-row files,
 live oracle migration, and candidate runtime qualification remain separate.
 
 `metadata_sets/` now resolves the complete metadata plane as one immutable,
-hash-bound snapshot. The historical 289 set remains selected. A separately
-registered staged 500 set points at the non-applying post-state under
+hash-bound snapshot. The selector defaults to the registered 500 set under
 `qualification/live-metadata-500-migration/`, including a compact strict v2
-oracle schema and exact 289+211 registry. It can be validated explicitly but
-cannot become live until an activation receipt is reviewed, its descriptor is
-promoted from `validation_only` to `live_ready`, and the selector is switched
-in the same transaction. The additive v2 validator and atomic bundle verifier
-now pass for both the selected 289 set and the explicit 500 set; they do not
-promote the descriptor or any runtime state.
+oracle schema and exact 289+211 registry. The activation receipt under
+`qualification/live-metadata-500-activation/` binds the descriptor's
+`live_ready` promotion, selector switch, fixed 289 prerequisites, and rollback.
+The historical 289 set remains explicitly resolvable. Neither metadata
+selection nor `live_ready` promotes any capability runtime state.
 
 Validate either atomic set through the authoritative dispatcher:
 
 ```bash
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py --json
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py \
-  --set thor-vss-3.2.1-metadata-500-staged --json
+  --set thor-vss-3.2.1-live-289 --json
 ```
 
 That direct-index denominator is also not the final documentation graph. A

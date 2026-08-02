@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "activation_id": "vss-3.2.1-metadata-500-selector-live-ready-candidate",
+  "mode": "isolated_non_applying_activation_projection",
+  "source_locks": {
+    "pre_activation_selector": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-activation/pre-activation-selector.json",
+      "raw_sha256": "aafab3b6e665f4f305738ed498ad2fd6dc3399d41f1d4b4b9c4ee670db5bcb15"
+    },
+    "selector_schema": {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/selector.schema.json",
+      "raw_sha256": "16f22fc55e49f6b32d6053f585937688828f0e739ee56429da0bc2c0d5d5377b"
+    },
+    "set_schema": {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/metadata-set.schema.json",
+      "raw_sha256": "23019f9491d945243da785fab2c9ee007708ec1b2d910a9fd5ae625bd822eee4"
+    },
+    "descriptor_289": {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-live-289.json",
+      "raw_sha256": "dcae065b6a4ed93a51c92f7a1403f454738bd61c75536d6653ab14e563d59059"
+    },
+    "pre_activation_descriptor_500": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-activation/pre-activation-staged-descriptor.json",
+      "raw_sha256": "dad58ec5c128b38235a3fc135cd1c66a0225fa3a80fa2f1f9b9cb42bce8b385c"
+    },
+    "resolver": {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/resolver.py",
+      "raw_sha256": "b10564b61c46b2d01894da735c550c5ab315224ba63e1b67df5e9f4b3719a1f3"
+    },
+    "resolver_init": {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/__init__.py",
+      "raw_sha256": "3205a3070c3068149c70bb12cbe27f983c8437d3ea6a0083ed6201d1ed5a388d"
+    },
+    "resolver_tests": {
+      "path": "deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py",
+      "raw_sha256": "b42140db6c87ba0ed1a9f3d8d67899a8eee70da0f075c48c117490e0387ff742"
+    },
+    "v2_validator": {
+      "path": "deploy/docker/thor-local/parity/capability_oracles_v2.py",
+      "raw_sha256": "a4ae44624c55b1b9555f506cf18ea1d916046200f6c1e125612af2678f836ef6"
+    },
+    "v2_validator_tests": {
+      "path": "deploy/docker/thor-local/parity/tests/test_capability_oracles_v2.py",
+      "raw_sha256": "c79d3067a4f116a768cc7e20c4afe9422ca6f5bd99489cf877151725b686a98e"
+    },
+    "bundle_verifier": {
+      "path": "deploy/docker/thor-local/parity/verify_metadata_set.py",
+      "raw_sha256": "b26fc78dbc43e5cd6f6a081c3fa7b18af90a7a2261ae3e8f792e56fc2fad1cb7"
+    },
+    "bundle_verifier_tests": {
+      "path": "deploy/docker/thor-local/parity/tests/test_verify_metadata_set.py",
+      "raw_sha256": "348e8058a65534ebe49c1673ff4d35f195341dde1273296782cece4200b541e5"
+    },
+    "v1_validator": {
+      "path": "deploy/docker/thor-local/parity/capability_oracles.py",
+      "raw_sha256": "32f18f2d74508a78282cf572c00ba5f7b739b7b0969019f963e04372e791de1c"
+    },
+    "official_verifier": {
+      "path": "deploy/docker/thor-local/parity/verify_official_capabilities.py",
+      "raw_sha256": "c21fd2910089c6981f0437d41d6c9ef7fff19d55c0153b04b7f7f91b00d79109"
+    },
+    "official_schema": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "fb817586b9a37ad7975ca820f69a7f2c6e575bca9f8d8686701d5fa0bf505896"
+    },
+    "migration_proof": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/migration.json",
+      "raw_sha256": "39ec1db0d4e42c7d39c237f647f80c15dff12cea15630ef3e8572bf5e32dac0d"
+    },
+    "migration_proof_schema": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/migration.schema.json",
+      "raw_sha256": "786b095f40510e87e76405d0b06e3aae63f50530670d9a8453d5d5dee9b47eb7"
+    },
+    "migration_tests": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/tests/test_compiler.py",
+      "raw_sha256": "5774c8b3680a0f11bc4be16548807ee65caea7c19dbd088943e7895b6f8c67f4"
+    },
+    "manifest_500": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-manifest.json",
+      "raw_sha256": "c71f75246fc1e4cbc388f93849d27c3b7dc7edf2d0a516fb3fa13f6d412a4a93"
+    },
+    "ledger_500": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-official-capabilities.json",
+      "raw_sha256": "f1e63b25c607a09f19a3c53aa47d8d152c61ffbd330440b93d54eccfaa49add6"
+    },
+    "acceptance_500": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-acceptance-inventory.json",
+      "raw_sha256": "69dc4aca160ae236880f9afe7b873c0b3b423f8981c5d934e4ed647043cd8cb0"
+    },
+    "oracles_500": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json",
+      "raw_sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"
+    },
+    "oracle_schema_500": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.schema.json",
+      "raw_sha256": "b24308d9647ff7a4c7b66cc91881749eaaa84c21ab7423677fc30ab4f9c36233"
+    }
+  },
+  "policy": {
+    "modifies_current_selector": false,
+    "modifies_current_descriptors": false,
+    "modifies_fixed_legacy_files": false,
+    "creates_git_patch": false,
+    "runtime_execution": "forbidden",
+    "network_access": false,
+    "docker_access": false,
+    "host_inspection": false,
+    "warehouse_sample_bundle": "excluded",
+    "candidate_runtime_promotion": false
+  },
+  "projection": {
+    "descriptor": {
+      "set_id": "thor-vss-3.2.1-metadata-500-staged",
+      "changed_json_pointers": [
+        "/lifecycle"
+      ],
+      "before_lifecycle": "validation_only",
+      "after_lifecycle": "live_ready",
+      "before_raw_sha256": "dad58ec5c128b38235a3fc135cd1c66a0225fa3a80fa2f1f9b9cb42bce8b385c",
+      "after_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9",
+      "before_canonical_sha256": "5549b7d12cf942968a9d9b4890d354ef983e9f980ce9e566e553165986818bde",
+      "after_canonical_sha256": "6f455ca42ab911ffc616b4cc7d77653828bc74ddb1abc4280a371c4958a8fd88"
+    },
+    "selector": {
+      "changed_json_pointers": [
+        "/selected_set",
+        "/available_sets/1/descriptor_raw_sha256"
+      ],
+      "before_selected_set": "thor-vss-3.2.1-live-289",
+      "after_selected_set": "thor-vss-3.2.1-metadata-500-staged",
+      "before_raw_sha256": "aafab3b6e665f4f305738ed498ad2fd6dc3399d41f1d4b4b9c4ee670db5bcb15",
+      "after_raw_sha256": "8021efc4684b106539a627b3ddfd82937c7ecf1d6111a3c87538fc5ea7360bec",
+      "before_canonical_sha256": "47521feb4560683ec70ca201ece8d27e658924027299d52df8db70717876f512",
+      "after_canonical_sha256": "ec2a0ffc8f86f503ef11131c83c646fd8e38dc4693652ea6bf34a83c8ba8aca2"
+    }
+  },
+  "transition_journal": {
+    "canonical_selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
+    "canonical_descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-metadata-500-staged.json",
+    "accepted_repository_states": {
+      "pre_activation": {
+        "selector_raw_sha256": "aafab3b6e665f4f305738ed498ad2fd6dc3399d41f1d4b4b9c4ee670db5bcb15",
+        "descriptor_raw_sha256": "dad58ec5c128b38235a3fc135cd1c66a0225fa3a80fa2f1f9b9cb42bce8b385c"
+      },
+      "applied": {
+        "selector_raw_sha256": "8021efc4684b106539a627b3ddfd82937c7ecf1d6111a3c87538fc5ea7360bec",
+        "descriptor_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9"
+      }
+    },
+    "partial_or_unknown_state": "rejected",
+    "atomic_pair_transition_required": true,
+    "observed_state_in_generated_artifacts": false
+  },
+  "authoritative_isolated_validation": {
+    "set_id": "thor-vss-3.2.1-metadata-500-staged",
+    "descriptor_raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9",
+    "oracle_schema_version": 2,
+    "oracle_validator": "capability_oracles_v2",
+    "counts": {
+      "capabilities": 500,
+      "oracles": 500,
+      "feature_families": 55
+    },
+    "official_validator_counts": {
+      "sources": 126,
+      "capabilities": 500,
+      "feature_families": 55,
+      "discrepancies": 47
+    },
+    "oracle_validator_counts": {
+      "capabilities": 500,
+      "oracles": 500,
+      "preserved_v1": 289,
+      "candidates": 211,
+      "candidate_evidence": 0,
+      "candidate_executor_ready": 0,
+      "candidate_protocol_bindings": 23,
+      "candidate_workload_bindings": 60
+    }
+  },
+  "candidate_boundary": {
+    "candidate_count": 211,
+    "runtime_evidence_count": 0,
+    "executor_ready_count": 0,
+    "promotable_count": 0
+  },
+  "fixed_legacy_files": {
+    "changed_paths": [],
+    "unchanged_raw_sha256_by_path": {
+      "deploy/docker/thor-local/parity/capability-oracles.json": "c4e7a5ecfedfa2ddf18e68fc2bc110bea48d9ff7ce63d0dd4fdc169711beda90",
+      "deploy/docker/thor-local/parity/manifest.json": "1f56d63437bd7742cf7488b9bd85b25fc886cdaf39a3c2b46aabecbc6b7201ce",
+      "deploy/docker/thor-local/parity/official-capabilities.json": "cde0dc3981aaf699a017c7108089aac72070101edc47a06489f3940e44fe52a0",
+      "deploy/docker/thor-local/qualification/acceptance_inventory.json": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+    }
+  },
+  "rollback": {
+    "strategy": "restore_selector_and_validation_only_descriptor",
+    "live_apply_authorized": false,
+    "restore_selected_set": "thor-vss-3.2.1-live-289",
+    "restore_selector_raw_sha256": "aafab3b6e665f4f305738ed498ad2fd6dc3399d41f1d4b4b9c4ee670db5bcb15",
+    "restore_descriptor_raw_sha256": "dad58ec5c128b38235a3fc135cd1c66a0225fa3a80fa2f1f9b9cb42bce8b385c",
+    "partial_activation_forbidden": true
+  },
+  "artifacts": {
+    "projected-live-ready-descriptor.json": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-activation/projected-live-ready-descriptor.json",
+      "raw_sha256": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9"
+    },
+    "projected-selector.json": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-activation/projected-selector.json",
+      "raw_sha256": "8021efc4684b106539a627b3ddfd82937c7ecf1d6111a3c87538fc5ea7360bec"
+    }
+  },
+  "execution_boundary": {
+    "id": "canonical-transition-outside-package",
+    "detail": "This package validates but never performs the canonical selector/descriptor pair transition; observed repository state is reported only by the CLI."
+  },
+  "activation_payload_sha256": "eabbd6869e139ce3b671b14489e7f2011fbb3dd723667e134e584fec9d51e657"
+}
