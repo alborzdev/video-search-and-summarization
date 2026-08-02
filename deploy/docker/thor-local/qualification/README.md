@@ -306,6 +306,12 @@ in this directory:
   three static runtime-not-applicable entries. The compiler has no write,
   receipt-consumption, action, or execution mode; receipts, trusted roots,
   admissions, and executable candidates are all zero;
+- `candidate-execution-binding-registry-successor/` binds the 208 mapped rows
+  to exact semantic, planning-action, observer, and lane projections plus 261
+  direct implementation/profile/Compose file locks. These projections remain
+  explicitly non-authoritative: every executable action, service/profile,
+  cleanup/rollback, postcondition, and evidence field is null or empty, and
+  admission-grade bindings remain zero;
 - `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
   13 families with no capability rows plus the partial VIOS family its own
   still-open semantic oracle plan. Its 74-entry scope is not the global missing

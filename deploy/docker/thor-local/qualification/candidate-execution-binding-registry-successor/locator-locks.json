@@ -1,0 +1,2981 @@
+{
+  "active_lane_files": [
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/developer-profiles/dev-profile-alerts/compose.yml",
+      "raw_sha256": "089f342f90939505b84e1ac428f1f1aafb863a74bfda7471a9ffa0153b703801"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/developer-profiles/dev-profile-base/compose.yml",
+      "raw_sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml",
+      "raw_sha256": "0a27ea8349b52f756fa2a4dc50a1dbb716a728510517729824422ca38cba54fe"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/developer-profiles/dev-profile-search/compose.yml",
+      "raw_sha256": "1a009bde3cc8c63dc173100f2a8ba1185d30c1d8363dfaeef993195fde39dd38"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-smartcity/compose.yml",
+      "raw_sha256": "ac1e8d4b7cfada2870f2cd3f919a6dfe77e6b45ee4cce290e3b3144327b2a82d"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+      "raw_sha256": "0c1d4bffdf4be3ed89123f0bec8c66a39ba0dd7a49590a040ec50a6afd7c4cfb"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/warehouse-2d-app.yml",
+      "raw_sha256": "919a7a44ee7d433a6b98c6cd4afe98e9e4346850477b9a9239ad80032678f10b"
+    },
+    {
+      "occurrence_count": 4,
+      "path": "deploy/docker/services/agent/compose.yml",
+      "raw_sha256": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/services/alert/compose.yml",
+      "raw_sha256": "1f36c1f666491549af3a808a6b932338f9de68e0b76a1c5dd87e810c1a9ddb31"
+    },
+    {
+      "occurrence_count": 3,
+      "path": "deploy/docker/services/analytics/behavior-analytics/compose.yml",
+      "raw_sha256": "2d1b225d9d706921d27785b414d0725bc0cc0881a90ef38ea67b4779946519af"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/services/analytics/video-analytics-api/compose.yml",
+      "raw_sha256": "cce192bcbdfe82441702467c2c6680270cc2db328a34044e2f7d3fb4c981feb7"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/services/auto-calibration/compose.yml",
+      "raw_sha256": "e0e3b376da5c0d78856e2d03dd382e442d1bb9d774ac505bd065ec6d10e36664"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/services/compose.yml",
+      "raw_sha256": "6e901bde4e67d19d0a0a78b6dffbcb1bb05b60253d2c945025f7d3adc444822c"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/services/infra/compose.yml",
+      "raw_sha256": "a1b38492963006e9cf0b55bb0a57a14de8e898abae5833babb9d20c1931b369c"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/services/monitoring/compose.yml",
+      "raw_sha256": "d989c5f44b1ea0f1aa2ff3784d989601e69d1976c27733b3be0ba9f2889e0545"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/services/nim/compose.yml",
+      "raw_sha256": "112226153ce598e6cb8965c3d7b70c442ed1bc00d2611fd9b26c212a9905dc3b"
+    },
+    {
+      "occurrence_count": 3,
+      "path": "deploy/docker/services/rtvi/rtvi-cv/compose.yaml",
+      "raw_sha256": "42c9281021adf6db5780f98918a03a79543fb5aca567d2a5255784544035099e"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/services/rtvi/rtvi-embed/rtvi-embed-docker-compose.yml",
+      "raw_sha256": "eea2f00020c0b9641fca8617ded7769a930cac73d6cbcb032f3c3a3016369a14"
+    },
+    {
+      "occurrence_count": 3,
+      "path": "deploy/docker/services/rtvi/rtvi-vlm/rtvi-vlm-docker-compose.yml",
+      "raw_sha256": "ae9d94feedd1fe153a8a02911eb5bb9ca20a1c2a86ecedc00396018453ca7ebd"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/services/ui/compose.yml",
+      "raw_sha256": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/services/video-summarization/compose.yml",
+      "raw_sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
+    },
+    {
+      "occurrence_count": 3,
+      "path": "deploy/docker/services/vios/compose.yml",
+      "raw_sha256": "0194433193d93547fdbb79e733534bc2aec9bfbd1e45e9a6f9ac65df0f6d53bd"
+    },
+    {
+      "occurrence_count": 1,
+      "path": "deploy/docker/thor-local/compose.yml",
+      "raw_sha256": "1943cc40645c6b41d61f28dc9262aa3793149cc3f4c6aac8a91ee47fd2842352"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/thor-local/warehouse-2d.compose.yml",
+      "raw_sha256": "e334d9d84b9818df747a750143b0a5c2a7389851ed05416b596277ce33ec55fc"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+      "raw_sha256": "a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b"
+    },
+    {
+      "occurrence_count": 2,
+      "path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+      "raw_sha256": "e385a4a3c78fe3cc35f51f7a5f35fae43746b5172f61c65a53b7ec8a1c05d914"
+    }
+  ],
+  "active_lane_ids": [
+    "alerts",
+    "base",
+    "custom-data-warehouse",
+    "external-optional",
+    "lvs",
+    "search",
+    "standalone-services"
+  ],
+  "locator_lock_id": "thor-vss-3.2.1-candidate-execution-projection-locators",
+  "mode": "read_only_direct_source_locks",
+  "schema_version": 1,
+  "semantic_base_files": [
+    {
+      "path": "assets/vss_nemoclaw_policy.yaml",
+      "raw_sha256": "c9228ca9fbb023e9d0c5cdc03c45be13ede94733bac1cb2d88c93938e0e6681a"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-alerts/compose.yml",
+      "raw_sha256": "089f342f90939505b84e1ac428f1f1aafb863a74bfda7471a9ffa0153b703801"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-base/compose.yml",
+      "raw_sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml",
+      "raw_sha256": "0a27ea8349b52f756fa2a4dc50a1dbb716a728510517729824422ca38cba54fe"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/compose.yml",
+      "raw_sha256": "1a009bde3cc8c63dc173100f2a8ba1185d30c1d8363dfaeef993195fde39dd38"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml",
+      "raw_sha256": "93fb055473c48585ef22505c5e1f1486f5f3e54885d54f0943bb526234b3814d"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "raw_sha256": "d465b9b45416b38639894ee477ce12c238ec48518ea365a7ba32c7ace4ac483c"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/compose.yml",
+      "raw_sha256": "c15631a68c8c6b51b317e640ad18f4156783082cff7ad98647ee9f50bbce96f4"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/kibana-dashboard/its-kibana-objects.ndjson",
+      "raw_sha256": "0080e887bc0ea50b9902cdc6be14f374adf4f615f0f0a2071da4e7275843d1e7"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/smc-app/calibration/sample-data/road-network.json",
+      "raw_sha256": "5992b1318c8bce017c3caf6dff881240092a0f6f1130d326f9f96039e5e4334e"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/smc-app/import-calibration/init-scripts/calibration-import.sh",
+      "raw_sha256": "ee9fce5594bd43fc5fa45381df0034a70fab0aa8aab252697d67b99b712bf359"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/smc-app/vss-video-analytics-api/configs/vss-video-analytics-api-config.json",
+      "raw_sha256": "aea346328419e12f48b7f50cac2388a4c929040337f116415cf8f12d487ae4e9"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/smc-app/vss-video-analytics-ui/config/vss-video-analytics-ui-config.json",
+      "raw_sha256": "86da9602efd355fbe8343d96988eefad05ac3189c53061bb8e407eff560227f9"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/vss-agent/configs/va_mcp_server_config.yml",
+      "raw_sha256": "4f65eca650dcdec8620d6a323f2a77eed599d980980f2418ecf8a301636a9189"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/vss-agent/templates/incident_report_template.md",
+      "raw_sha256": "4c22fef36daf2af2c0142d843ef2fbd374b5a70086a7452e6393a75a9b475fc9"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/smartcities/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json",
+      "raw_sha256": "ab57baad6001617f95adec1a2abee72bd213e632f15787433a9ce37bfbf89c40"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml",
+      "raw_sha256": "b094b035cd4d6afa41e11db8c4de1634535f77d4c0793b4ee210a15051839f1c"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+      "raw_sha256": "0c1d4bffdf4be3ed89123f0bec8c66a39ba0dd7a49590a040ec50a6afd7c4cfb"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-kafka-config.txt",
+      "raw_sha256": "47bfaeea2ac6743d94cfd75a3bd3981c7c7af30c219f94413b9e2adf79fc10c2"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-redis-config.txt",
+      "raw_sha256": "e21a6634f37a1319513dfcffc788bb5bc0a06186c967cfc6d6311dea9d2bfee9"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/nvstreamer/configs/vst-config.json",
+      "raw_sha256": "b45e7c9b76b13f76eace1e2958b6cfba8a35fcaa5e0b2f3400c3ac8fc2a0ba8c"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/vss-behavior-analytics/configs/vss-behavior-analytics-config.json",
+      "raw_sha256": "8424ac5a6f1ce041716bf00f057514a306f684ad93d938cbfdc7b82638b3e887"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/warehouse-2d-app.yml",
+      "raw_sha256": "919a7a44ee7d433a6b98c6cd4afe98e9e4346850477b9a9239ad80032678f10b"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app/warehouse-3d-app.yml",
+      "raw_sha256": "131b01a91d9d6cc495a6f96843cd27e587c84a2f5afd49a93a6e293f61d9d6c8"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/pub_sub_info_config.yml",
+      "raw_sha256": "00f891c0fb5563f6a86d616c09084cb7bc85c198b4b6fc7af0bf829a5af016c6"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/kibana-dashboard/warehouse-mv3dt-kibana-objects.ndjson",
+      "raw_sha256": "8e8136c9735d9cd1d2d4ee5048e76f3a4a4cb6ec9cb086875ded27df9304d5d7"
+    },
+    {
+      "path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/warehouse-mv3dt-app.yml",
+      "raw_sha256": "e69e1dd51f5c2468621d95c5764e32c1a7a74f1fce61dc607af71e7f32278f76"
+    },
+    {
+      "path": "deploy/docker/scripts/nemoclaw/init_nemoclaw.sh",
+      "raw_sha256": "443698f4f640aa4944d8897921b95600b0b4eaf43f8c8425c9e5238503884727"
+    },
+    {
+      "path": "deploy/docker/scripts/nemoclaw/update_openclaw_config.py",
+      "raw_sha256": "cc760fac32a685e8d0bfb045b99017331c175fea357c2c6a90a2526a97b3453e"
+    },
+    {
+      "path": "deploy/docker/scripts/thor-auto-calibration.sh",
+      "raw_sha256": "92b96463afa3e1e6549b836efd35d2d9fe4cad87ff6c04cf955b30c5c3dba017"
+    },
+    {
+      "path": "deploy/docker/scripts/thor-local.sh",
+      "raw_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"
+    },
+    {
+      "path": "deploy/docker/scripts/thor-warehouse-mv3dt.sh",
+      "raw_sha256": "e697a2a41a146bc84b701558918af1f24d10ba10cd4ffc05d9fd3d9818080499"
+    },
+    {
+      "path": "deploy/docker/services/agent/compose.yml",
+      "raw_sha256": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7"
+    },
+    {
+      "path": "deploy/docker/services/infra/elk/elasticsearch/configs/elasticsearch.yml",
+      "raw_sha256": "410ac1105d2657232c4d9f9ab1aea4736b11061f5847c11aacbffa0ca5c0b1a5"
+    },
+    {
+      "path": "deploy/docker/services/infra/elk/kibana/configs/kibana.yml",
+      "raw_sha256": "bb5d95e554b0e83c5dd18c1fbf6332f3298bb177df60088d47aed4380cb55de0"
+    },
+    {
+      "path": "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+      "raw_sha256": "8769bd6357506e93cd0d821630984314b320e76e498bec9474d8aef57603e882"
+    },
+    {
+      "path": "deploy/docker/services/infra/kafka/init-scripts/create-kafka-topics.sh",
+      "raw_sha256": "462fd81cc17c355b23c123f811294c3551f2ab34da66c2441bfa3147720c2b3b"
+    },
+    {
+      "path": "deploy/docker/services/infra/redis/configs/redis.conf",
+      "raw_sha256": "a737cd4945d8522576d7fb9a516b0cc78ce1ce8b4c0637716f8d777a6f7e03b1"
+    },
+    {
+      "path": "deploy/docker/services/monitoring/config/grafana-dashboard/thor-vss-observability.json",
+      "raw_sha256": "8c54fbe79704c1ccb439ced1e5b7e3866c05d84ec91b8626475abe47e89a0e90"
+    },
+    {
+      "path": "deploy/docker/services/monitoring/config/grafana-provisioning/datasources/datasource.yml",
+      "raw_sha256": "ae01b83e6a02fb4fab70778bfdc27b2d9689c0ceec56c86ae6244f290b6c05b2"
+    },
+    {
+      "path": "deploy/docker/services/rtvi/rtvi-cv/compose.yaml",
+      "raw_sha256": "42c9281021adf6db5780f98918a03a79543fb5aca567d2a5255784544035099e"
+    },
+    {
+      "path": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+      "raw_sha256": "24eb100f746ece4c1814e4290176fb6d8f36b99a379cc3674f4a4a352b82d879"
+    },
+    {
+      "path": "deploy/docker/services/video-summarization/compose.yml",
+      "raw_sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
+    },
+    {
+      "path": "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh",
+      "raw_sha256": "db31d5f21c8e1c72ccb2ea5e60f3608b73418468916dcd9e5e434fb6d8532f9f"
+    },
+    {
+      "path": "deploy/docker/thor-local/README.md",
+      "raw_sha256": "c3f26a47c044f50d7469384fee1ac8a37ff9cb289f792534173769f1deb5f66c"
+    },
+    {
+      "path": "deploy/docker/thor-local/WAREHOUSE_MV3DT.md",
+      "raw_sha256": "30add71d0b91f069e25c3778f62696b010190e78c3ec0efa054e0398c3c4f7cd"
+    },
+    {
+      "path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+      "raw_sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"
+    },
+    {
+      "path": "deploy/docker/thor-local/audio/omni.compose.yml",
+      "raw_sha256": "29413b95f33d4213ddf5848040d4c74968f6bb3574f9cad31eaad51001d7514c"
+    },
+    {
+      "path": "deploy/docker/thor-local/audio/rtvi-vlm-codecs/README.md",
+      "raw_sha256": "505060c7d57371394e852402279db79655cdbe4f82bc72d4d7768d9ff2a47687"
+    },
+    {
+      "path": "deploy/docker/thor-local/auto-calibration/README.md",
+      "raw_sha256": "80e95d952a3152675a051783657134b9d3ce2363c8bf0bd8886db229574718d2"
+    },
+    {
+      "path": "deploy/docker/thor-local/auto-calibration/artifact-inventory.json",
+      "raw_sha256": "042ebbf65a669d54e48af26348abb54dc7cbaf7e6d10814001b86296bc8d49ab"
+    },
+    {
+      "path": "deploy/docker/thor-local/auto-calibration/compose.yml",
+      "raw_sha256": "3d86f2c49b116bdf701ef00fdef0c6aca31deae27fa0a983985a5d43760c6fb0"
+    },
+    {
+      "path": "deploy/docker/thor-local/auto-calibration/tests/test_tool.py",
+      "raw_sha256": "4cf198c88c65c40bf569f298eff8de6848eb093a7028a636d3bc818b60c8b41e"
+    },
+    {
+      "path": "deploy/docker/thor-local/auto-calibration/tool.py",
+      "raw_sha256": "94664fc3a18b37f45f436ad6e0f74bed49d78d31b26dd809a489fef2f912b6c8"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "raw_sha256": "1943cc40645c6b41d61f28dc9262aa3793149cc3f4c6aac8a91ee47fd2842352"
+    },
+    {
+      "path": "deploy/docker/thor-local/install-vss-skills.sh",
+      "raw_sha256": "6409ec297e5a03d62775342a6ea635d5281347e25a4a78552c3ae5cb6324e094"
+    },
+    {
+      "path": "deploy/docker/thor-local/models/artifacts.lock.json",
+      "raw_sha256": "5b0030ba13fb1ccee5950e3c4b78d334d8dd0c30a2a45ce90e6166a57fe31d09"
+    },
+    {
+      "path": "deploy/docker/thor-local/models/verify_artifacts.py",
+      "raw_sha256": "fa8cbb9aeff45da151ae40990cf3c67be08014c464dcec17c952fac5d8b0ca53"
+    },
+    {
+      "path": "deploy/docker/thor-local/observability/prometheus.yml",
+      "raw_sha256": "c620a9a7c14be1652f59a360c1c6de48b7e812adf44cba327dc4dd5aea9672fb"
+    },
+    {
+      "path": "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+      "raw_sha256": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "raw_sha256": "2f64f1e9bb208ea3fd9a4b0aaa581bee852cbd819a3b753e53eb6325c6d1121b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/search-scale-qualification-plan/contract.json",
+      "raw_sha256": "3e82661532f6ae3ebde75793ecdbf270edc325c2d2743248fee6a9438a21cf39"
+    },
+    {
+      "path": "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+      "raw_sha256": "f9fda515975588794389661b0adfb3c41d4c803db360e8ab6b7842b3aaa70bd1"
+    },
+    {
+      "path": "deploy/docker/thor-local/rt-vlm/model_matrix.py",
+      "raw_sha256": "71931d95bfb09dccb8d9cfa80da571102198ab1d4df636d44e40b585e1ceeb2a"
+    },
+    {
+      "path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py",
+      "raw_sha256": "09c3497f8cd7302d871cf528c09467273ac6a3717535f772e05d0eb2e63d6aff"
+    },
+    {
+      "path": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py",
+      "raw_sha256": "ecbe1a4e43487a491547b8fd5b62fe542c19a2e90a6eb0c1d1108339b3cd02c3"
+    },
+    {
+      "path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+      "raw_sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"
+    },
+    {
+      "path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+      "raw_sha256": "a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b"
+    },
+    {
+      "path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+      "raw_sha256": "e385a4a3c78fe3cc35f51f7a5f35fae43746b5172f61c65a53b7ec8a1c05d914"
+    },
+    {
+      "path": "deploy/helm/services/agent/charts/va-mcp/templates/deployment.yaml",
+      "raw_sha256": "3b356a64238b1418f1ab9251c98e10af71982753c324cf9ce1727e0356041e02"
+    },
+    {
+      "path": "libs/nvschema/protobuf/schema.proto",
+      "raw_sha256": "bb59069e7283fe0443efd3a3ba4e1ac25481a1bcd9d57bdbf3b3ea7bbbb065b7"
+    },
+    {
+      "path": "services/agent/src/lib/knowledge/adapters/es_caption.py",
+      "raw_sha256": "9f4e947a616cf60599767014fd32adb713548e9cd9ac72594e359c1ef7c42c6b"
+    },
+    {
+      "path": "services/agent/src/lib/knowledge/adapters/frag_api.py",
+      "raw_sha256": "3082fbf16e3cffcff83fa60c1c9e9bf3620b1fb8c144b4f8292d214d94d2870b"
+    },
+    {
+      "path": "services/agent/src/vss_agents/agents/critic_agent.py",
+      "raw_sha256": "eb9d6f0aa5f9f4d361f7a0f980a89c908c60705dbcd8e437892e08cdbe77448f"
+    },
+    {
+      "path": "services/agent/src/vss_agents/agents/postprocessing/validators/url_validator.py",
+      "raw_sha256": "529ca8a958d76aed181dc60edaa845493a7b7fd3c66d1ae61fe8cdb62663ebe5"
+    },
+    {
+      "path": "services/agent/src/vss_agents/agents/report_agent.py",
+      "raw_sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"
+    },
+    {
+      "path": "services/agent/src/vss_agents/agents/search_agent.py",
+      "raw_sha256": "a5de8de3ab86839671de88dd5bc356339044806ad71c1e0d1310033ce5373040"
+    },
+    {
+      "path": "services/agent/src/vss_agents/agents/top_agent.py",
+      "raw_sha256": "a4aa4a051b589858078a7941cf32de8128d7c22f574bdf718974a70cb0c140c4"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py",
+      "raw_sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/health_endpoint.py",
+      "raw_sha256": "ec3cb57cbfac808548216dea909e87d8fcc0ef19edb5a3d3fbe42ff06d0cbbfc"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/rtsp_delete.py",
+      "raw_sha256": "0eb625e884390c295c95a32d58afe1f1f17da87e3d97a5a852f1f1bd9e321898"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/rtsp_ingest.py",
+      "raw_sha256": "df9a8808222d6c70fe40dc09707c1be05f9edf4e92f55c318d954cb511d0ded0"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/video_delete.py",
+      "raw_sha256": "d95d55aad6cd776431ea2c270a9e5796248755390b425879cc72ee8d14ae1657"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/video_ingest.py",
+      "raw_sha256": "39416707048715db5957951efaf2e6b0b2898a1199eac0f1f9b2508b6e467af5"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/video_search_ingest.py",
+      "raw_sha256": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77"
+    },
+    {
+      "path": "services/agent/src/vss_agents/orchestrator/storage.py",
+      "raw_sha256": "85de2e29d79fcca08ec16223c89b65b8093ec566fa31f60bd9d65c42ecd63b59"
+    },
+    {
+      "path": "services/agent/src/vss_agents/orchestrator/tools.py",
+      "raw_sha256": "1527076c32a8e4d0899b17b5273985863b55458502cd402ac7f42df4eee0960b"
+    },
+    {
+      "path": "services/agent/src/vss_agents/register_knowledge_layers.py",
+      "raw_sha256": "f0bd23c4bf49b322a9c61ee507ab8edd9a91e9f48df1ae725653123fd3efd6b1"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/attribute_search.py",
+      "raw_sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/embed_search.py",
+      "raw_sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/fusion.py",
+      "raw_sha256": "cc79953fdf75550dcbde841680120fe9e71fb4b3fba3cf680e6c9b04547c8a28"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/lvs_media_state.py",
+      "raw_sha256": "a85e27c18f3b7a1025d5fb0ae687e7fa190b3f64408861368eda4d8d4d1c34c3"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py",
+      "raw_sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/lvs_video_understanding.py",
+      "raw_sha256": "e58fcd165177c126f242abc53445d4d3e7b465c738bed6a5843a9d7590c4f508"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/search.py",
+      "raw_sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/template_report_gen.py",
+      "raw_sha256": "61f9f88a540e8d725946ae95ded3241569051934ebb103da8a9532b897561ec5"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/video_report_gen.py",
+      "raw_sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/video_understanding.py",
+      "raw_sha256": "59511bb172a030e0945a9c9a0ccb432e5b299ae1697e9ba023f4246d61c7c095"
+    },
+    {
+      "path": "services/agent/src/vss_agents/utils/url_translation.py",
+      "raw_sha256": "19605f56aad75c67e2395538cd3b8b890d2664eaf8e20c8fb7a6ad76946b1051"
+    },
+    {
+      "path": "services/agent/src/vss_agents/video_analytics/query_builders.py",
+      "raw_sha256": "66dcf8d4dafb0378e55d73750533e9d3f2d47f1c84fe7cf698c5be1a78cb3e59"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/api/incident_routes.py",
+      "raw_sha256": "57bbe827e60ad6e4dbdcb3084cdc743dfb7d81149e982e6c14c94fa140627d16"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/api/realtime_routes.py",
+      "raw_sha256": "352832e8ddf553184419b441b9186000bb7667ee01df6c4afdf885032aca4773"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/api/verification_routes.py",
+      "raw_sha256": "17fc24551c4c7651923917caa51cf52371237760d1b4f6900dfbef8e28980386"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/service/ondemand_verification_service.py",
+      "raw_sha256": "a17cf630af890cf3417ecb294468c4dc5bb14de941dfbf4e21b91b37da62e6d1"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/websocket/connection_manager.py",
+      "raw_sha256": "4b4d771f91c1b984ce21c5fb751f00fbaf515f4929e839284338a6a60234f766"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/websocket/websocket_routes.py",
+      "raw_sha256": "a1da545e448d76ed4f6c1586f21169329a7d2ac6dc5d542f0abb5bf844cf4068"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/websocket/websocket_service.py",
+      "raw_sha256": "b78d5dead3e6b11fffea29a6e0ec378cae0e237e8e7ff414f5b117299c241e2e"
+    },
+    {
+      "path": "services/alert/alert_type_config.json",
+      "raw_sha256": "9426cfe069c92b86176d10180fbfb0b7aaa83a439ae25ba79d132f7fe519e7e5"
+    },
+    {
+      "path": "services/alert/config.yaml",
+      "raw_sha256": "46d131768244706deda72b30fb394d6aedf2d91f73a0e74ab9a0dab0e6d1784b"
+    },
+    {
+      "path": "services/alert/elastic/elastic.py",
+      "raw_sha256": "7e570ce20a52115269daab0e3744437fbcb010e0b3953929a8576ca38ca64d43"
+    },
+    {
+      "path": "services/alert/handlers/async_vlm_mode_mixin.py",
+      "raw_sha256": "442020ef17bc7ff1312eaf14cc2a8b612e221d7aeb58de993398a4ae00079fcc"
+    },
+    {
+      "path": "services/alert/handlers/direct_media/direct_media_handler.py",
+      "raw_sha256": "b02d2f011b77f735d63ceffcad12d341d1888505bbe83ab47fed8154900d6a0d"
+    },
+    {
+      "path": "services/alert/handlers/direct_media/media_analyzer.py",
+      "raw_sha256": "7881f9f1a0e209cb6a06692d56f5c3d3a8d4f3a86ab8669159f1964ff7332002"
+    },
+    {
+      "path": "services/alert/mdx/anomaly/event_bridge_factory.py",
+      "raw_sha256": "081a9e1d44b85b5714cab2e7529c0544dfe6da8f864b9354b51404e2a75b3427"
+    },
+    {
+      "path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py",
+      "raw_sha256": "ff3daca60d0528ff47fbda929ed802bb707d814f191d7f983508b50cda42ccb4"
+    },
+    {
+      "path": "services/alert/metrics/recorder.py",
+      "raw_sha256": "d3adf24eeaf7690ab70468dfcc7f1a2d5b848b03ff2d89b9bfeabe21874f7005"
+    },
+    {
+      "path": "services/alert/models/base_response_parser.py",
+      "raw_sha256": "a62893a9092a502d136b428b9bc5ad61f4d6a5544a2edeff6b887831636a56ce"
+    },
+    {
+      "path": "services/alert/models/pluggable_parser_runtime.py",
+      "raw_sha256": "6570afd986167b918acc7262de8e805176e39824897aa9cb8c48b7896a0b9535"
+    },
+    {
+      "path": "services/alert/models/responses.py",
+      "raw_sha256": "0c658632db38f83a1a956f389c964f87dc44ba23032689983844cd2284b1c21f"
+    },
+    {
+      "path": "services/alert/openapi.json",
+      "raw_sha256": "d7336051ddbbb368d6376bbe0a0d71414b2738a7e1899321eddb4d24dcd95881"
+    },
+    {
+      "path": "services/alert/realtime/schemas/always_on_config.py",
+      "raw_sha256": "b5c299dcc1d788e7463a050dc220a53b85d8c18ac6d6bb180ca8d63dbc53bea7"
+    },
+    {
+      "path": "services/alert/realtime/services/always_on_service.py",
+      "raw_sha256": "bd797b7fb0f5f750a13166028f4a5549ceffeca7a1db8acd6c8e91a67aa31f4d"
+    },
+    {
+      "path": "services/alert/realtime/services/incident_service.py",
+      "raw_sha256": "02afe64d46b6837360313f02b7887e27db68c95b15cd5596e1775a57d2c756b1"
+    },
+    {
+      "path": "services/alert/realtime/services/realtime_service.py",
+      "raw_sha256": "43d787271f9dc1c7242a62474e6d2f2c7f16c4b3eca3b1775d1c3af314f99132"
+    },
+    {
+      "path": "services/alert/realtime/services/rtvi_client.py",
+      "raw_sha256": "5278d9d35425632a03ce54fe8572e2bd2c7c2270cf01d91ffde9169ee9feb152"
+    },
+    {
+      "path": "services/alert/realtime/services/rule_store.py",
+      "raw_sha256": "0d5dea8d6d4e048e8c04e5133d4bd1d396626976b7d458e3a2c936b154e3f0c5"
+    },
+    {
+      "path": "services/alert/utils/field_extractor.py",
+      "raw_sha256": "3b25d3c88f8883554e25212a6725ec5288b495539b104ab3d9c207eb51849120"
+    },
+    {
+      "path": "services/alert/vlm/vlm_client.py",
+      "raw_sha256": "81bb482256c4b84f89ce9410f34201027fa30c9930eeb3c7bff744453a57be1a"
+    },
+    {
+      "path": "services/alert/webhook/consumer.py",
+      "raw_sha256": "0c3927bbf7bed8b372eb62aec1ab9e43a0c999280b4b6c22e2c6aaf61d5744cb"
+    },
+    {
+      "path": "services/alert/webhook/openclaw_notifier.py",
+      "raw_sha256": "209936060c18a3a71bd227e02439fd790fa8a6dcfcf5e2139406b94f02acf43b"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/configs/frame_playback_config.json",
+      "raw_sha256": "7edcbceb49f43f0a3e5d08dffa7c971e7a078c025610874efb68a141f8a50ef9"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/configs/fusion_search_analytics_config.json",
+      "raw_sha256": "faa9de0d869a7f03c3675694a7e391f49f101a2986d24e3e50e7834311d9c4d4"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/configs/smart_city_config.json",
+      "raw_sha256": "8ecc0df53692159357409fcd0e5c3405d19f1d7ac126eb8aba297554284d4ae2"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/configs/space_utilization_config_sample.json",
+      "raw_sha256": "0df72785dfc7f3ae9cfd473137273d155c27f14bcfaf9285f76ea9824af49a7c"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/configs/warehouse_2d_config.json",
+      "raw_sha256": "1f38a082a2c9ab58340492ecb21fc155367af7d90447ec7371b8f1673ece8373"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/configs/warehouse_3d_config.json",
+      "raw_sha256": "09f527198efbe936fbbad51cdbaf900bdf0965daa31fcce4e06c9a6d9e6284eb"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/configuration.md",
+      "raw_sha256": "01bc4475df113cb873fce0d49908603cf76ae71b656d00813143765000aab957"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/dynamic-calibration.md",
+      "raw_sha256": "bcfe2d0c143163b8db8601720951f89aa036be15c684f42bce8469fa7cfa19bc"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/dynamic-config.md",
+      "raw_sha256": "42725e53be31859a92503ec21c93891f25251e7af24070c598e96f82951a94bf"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/incident-detection.md",
+      "raw_sha256": "bc78da8e5d3e99b6d02470dcde67fe7ab8f4e5f31e445c7891e3cf8725e9f2b1"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+      "raw_sha256": "1360a2f79ff360755d6c9b1ffb38c2079ef1ba5e2b7ee3a7396e167d6e513c52"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py",
+      "raw_sha256": "99fad8777a0138e22d01fa7051301669e43c652ba53ee12dc8e540132bd1effc"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/trajectory/trajectory.py",
+      "raw_sha256": "86ae6efeb37402881ae214ebe60d08919c7f0afa8ca10d4acfc62b8cb9ba3bd3"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/tools/space_utilization.py",
+      "raw_sha256": "30dfb8df2a73eb48a62d4aed5368b839aa9dc1e79556a2644262860b2799ba28"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/detection/proximity_detection.py",
+      "raw_sha256": "271cd1d8c0487d9f418687f0ae42e3e4f08600e91b3d1cd18ea78bea4e3ec0b4"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/base_event.py",
+      "raw_sha256": "7bb1d7b1bc484bb5404e5bb21b99a5098032a0746796040bde26a26a9b90f104"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/roi_event.py",
+      "raw_sha256": "2e9ef509c9867ab0458c3dca0b95c0baed45ea5ff056802caf69a72ef0aa190f"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/tripwire_event.py",
+      "raw_sha256": "ee351da91c59702261e156483c742af13003a58b8578bd2723af4dea43cb9d15"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/alerts.js",
+      "raw_sha256": "e16114c0375a2a6f5a738fe19b9b5a4afa219245f827b290c2e335d40f360848"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/behavior.js",
+      "raw_sha256": "d36267d80ae87c707d695eb7ef6236fd6cb187fa7717803099e493048b30bd30"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/config.js",
+      "raw_sha256": "7ae204805a9088440ab64a2aafa7d8d0f3f206a588ca468ca3f3038d12d04230"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/events.js",
+      "raw_sha256": "50fdead78359306c7e7d4269ccb58e7bf7c9e279fa1e09a39d705c973e538320"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/frames.js",
+      "raw_sha256": "ef75f900a306740327a532ada70d58cd7eacefe47b893e4d24703a1c05629993"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/incidents.js",
+      "raw_sha256": "1be233e05a9b1aa3a82096a47ce78b691afdc4789c6dc03ad346f008b2d5aa75"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/metrics.js",
+      "raw_sha256": "96f0db8f513f5283c575d02fdc753d8129ff9c5aae45524ca20679c85a30eb98"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/sensor.js",
+      "raw_sha256": "a4e36507f2c67787b3554c46376804a20d4fb0cbf4d41c86d32a31bea5ff313a"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/tracker.js",
+      "raw_sha256": "d8b721e99ebb8a3201dd294db5e999d31c99ae483284b5024c9cf3e4fc80c900"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/initializers/routes.js",
+      "raw_sha256": "4e1be4e8fbbca8b8d45dbbb2ad2dec87f1a7aec82bf162d253a5a7a790ef4c99"
+    },
+    {
+      "path": "services/analytics/video-analytics-api/src/app/specification/openapi.json",
+      "raw_sha256": "0ff2b2f412446e29149a4998e00a3c6b00c17402befa5f24d8b5b454fb625d37"
+    },
+    {
+      "path": "services/rtvi/rt-cv/README.md",
+      "raw_sha256": "8525ea798262f4fb903255e4163644d63a26ebcb5a71fae33aa0b682cfa27173"
+    },
+    {
+      "path": "services/rtvi/rt-cv/configs/smartcities/gdino/config_triton_nvinferserver_gdino.txt",
+      "raw_sha256": "d037382ca34197a24c8a38f082b42fbb775f724e122a54f4cc9349faef325c8e"
+    },
+    {
+      "path": "services/rtvi/rt-cv/configs/warehouse-2d/ds-main-config.txt",
+      "raw_sha256": "7be398d16d4ab3e1e1ab7a2ea518c04c214f8e8b8084d5179c4039cbe0879afb"
+    },
+    {
+      "path": "services/rtvi/rt-cv/configs/warehouse-2d/ds-nvdcf-accuracy-tracker-config.yml",
+      "raw_sha256": "d241c4ab85c8a47f8fb218b5f516ce7a30d72f10f382351a80cb4fce1dbdb995"
+    },
+    {
+      "path": "services/rtvi/rt-cv/src/metropolis_perception_app.c",
+      "raw_sha256": "0d63ff187623a1a1a9ec3f27173983412810f98d2fdf7e8c108d4ad385a8c29f"
+    },
+    {
+      "path": "services/rtvi/rt-cv/tests/test-scripts/add-stream-test.sh",
+      "raw_sha256": "471b452e894a43f47c896e848fc53e969ae77bb3015691c478c94da9ecc49f19"
+    },
+    {
+      "path": "services/rtvi/rt-cv/tests/test-scripts/health-test.sh",
+      "raw_sha256": "df8363f679ac52691fa902accc388c23f639aa65cceb9e368d731a0a17c30106"
+    },
+    {
+      "path": "services/rtvi/rt-cv/tests/test-scripts/kafka-messages-test.sh",
+      "raw_sha256": "ea2582441ea6a81e4fa29cf0a7cfb39644f13f84ef45fad42d515edb1736f1a3"
+    },
+    {
+      "path": "services/rtvi/rt-cv/tests/test-scripts/remove-stream-test.sh",
+      "raw_sha256": "51251a6cbfb94c35aa6243cc7b4c12e7b4047b4b7fced4df365d7ea7440dfa5d"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/api_models/embeddings.py",
+      "raw_sha256": "b77a9042c13705802b95502e9c35959beb21673371a085e27408d371c7003ee9"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/api_models/live_stream.py",
+      "raw_sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/common/health_status.py",
+      "raw_sha256": "203cc9e6ad8b75a4aa5785731ff28b0f2d75e89f58d2c7b920e4110efd205026"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/models/custom/samples/cosmos-embed1/inference.py",
+      "raw_sha256": "75cb5f44fc599e7782fc86ab9352ab0252d4de735b7ed723d9d126b3a61f75f7"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "raw_sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "raw_sha256": "9fc4bbe627f460358ac87e261b0219ef20165ce30e9fb915574564467731d70e"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/utils/asset_manager.py",
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/utils/otel_helper.py",
+      "raw_sha256": "20b78835e9d87738935258a5807c2b13c05d872609bedf3558813694aa85da60"
+    },
+    {
+      "path": "services/rtvi/rt-embed/tests/rtvi_embed/test_stream_cv_api.py",
+      "raw_sha256": "27cfa3d802780bc2a78b5d011ad1eb0745c3f567f42f7913856c5bead9df5212"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/file.py",
+      "raw_sha256": "e403a7437b77a2d60e45255b3fc46c503d0e12673a2fa7babec38c0880a3f6f3"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/live_stream.py",
+      "raw_sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py",
+      "raw_sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/common/chunk_info.py",
+      "raw_sha256": "8dd6b01613ee5eacba3cfc81d57bd5124f9838aec619b5e1f12f8094a7fe46af"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/common/health_status.py",
+      "raw_sha256": "203cc9e6ad8b75a4aa5785731ff28b0f2d75e89f58d2c7b920e4110efd205026"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py",
+      "raw_sha256": "145be0b6744bc2a4f670339d76d50b66b09a629a7d4185466a163a65bad95c64"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",
+      "raw_sha256": "c770c77c6b3ff8788efe57bd5469dd598d5a7fc965bf8fce5e20c11c460cfe10"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/protos/nv.proto",
+      "raw_sha256": "6887d2c2818141c38bcd3b336fd9045c1c3d4af7f6f98672cdd2d8e21fa71300"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "raw_sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/dense_caption_serializer.py",
+      "raw_sha256": "5e56b5ce021a5401d21b0b119917f490d23fe464a8b43d0b94a0a305ffe2eecd"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/media_io_kwargs.py",
+      "raw_sha256": "75a92d66ca3880620e2a4884af7ac03a074350decb337a1a37b0504471d30946"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/otel_helper.py",
+      "raw_sha256": "20b78835e9d87738935258a5807c2b13c05d872609bedf3558813694aa85da60"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vllm_cosmos3/model.py",
+      "raw_sha256": "bd091c5487f2e2135226698ed4cf468066acf611f4c2608b51cb90f92d262c22"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py",
+      "raw_sha256": "3de93d0113620ce963e76c4450e3b863f851c76ae0fb7db9db204c63bc00ad61"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+      "raw_sha256": "a4e8421e7b18ca1e64534a142168a777e10ebc11e9724c7e69cdcd37eb961be9"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+      "raw_sha256": "6cc1d682072e0944f224eccf169f083ded81adbf860140442cd972854d96dd80"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/tests/kafka/test_kafka_consumer.py",
+      "raw_sha256": "081f343e4eb662b593d87d85867b0155076b9ea0625edbdd3ca55dd3d1bd56b8"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/tests/test_context_overflow.py",
+      "raw_sha256": "1bbc758d95ef067c0cf97c75a75b9ff2f1b5ec761e87305d5a5bae90dfcd854a"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/tests/test_turn_by_turn_conversation.py",
+      "raw_sha256": "3c0b543f168560d4900a1ba216d491de39e7fed18f93eba0f46d350cb5d89939"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx",
+      "raw_sha256": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/TabWithChatSidebarLayout.tsx",
+      "raw_sha256": "39b71ad1b46a591aab04a3ba9cfe2f353de7cfe91ddd951eb461d1fcbb701511"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/hooks/useAppChatSidebar.ts",
+      "raw_sha256": "054ecd149969a9f0b1f98e12f471f494de3442050866c5d643668fd5f1356465"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/utils/mainTabChatVideoUploadRegistrars.ts",
+      "raw_sha256": "e1e7aa0af258d1830e087e41930a121b0682f1d2413005ba51cf67cb97fa439e"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/utils/tabChatSidebarConfig.ts",
+      "raw_sha256": "8545ea1e5f4d943acd2dd3aff6aaa20dbf0641b4fa6062b0cba15ca20d1c07c3"
+    },
+    {
+      "path": "services/ui/packages/common/lib-src/utils/chunkedUpload.ts",
+      "raw_sha256": "21a7e9e9e1857b0c1b24fff96fb7a48d283d1792f2457ffd1e1cef507b240976"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/chunkedUpload.ts",
+      "raw_sha256": "a0b142953c896874c6db4ee639d64783cf1ccb1657ad9a37cfadeefbddbac7be"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/rtspStream.ts",
+      "raw_sha256": "93658f792ecc86d42645f24f5c234dd43c7b13dc598a6aa5ccaf77a2331f2634"
+    },
+    {
+      "path": "services/video-summarization/src/kafka_producer.py",
+      "raw_sha256": "b12b0f7a32dd349501b3ab90f79a33c71404b022262014e05aa3cda66cdc217d"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+    },
+    {
+      "path": "services/video-summarization/src/otel_helper.py",
+      "raw_sha256": "2279bb13f80c4ff47173df276af9d25cc769ebce999d6d48bf0a71b0f31a9221"
+    },
+    {
+      "path": "services/video-summarization/src/rtvi_vlm_client.py",
+      "raw_sha256": "46cdf3abc75146497dd94b5fe0a41895ff900fc08f9ff278dc56de9858944383"
+    },
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "raw_sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "raw_sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+    },
+    {
+      "path": "services/video-summarization/src/vss_api_models.py",
+      "raw_sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"
+    },
+    {
+      "path": "services/vios/configs/vst_config.json",
+      "raw_sha256": "9e33e1ab37d07b6713b73b298175bd00d84c39c334a2ec7296a1ab7283e96ff7"
+    },
+    {
+      "path": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml",
+      "raw_sha256": "3ac10b1edbe86efd761986f6288a14a0bcc6bf2497c140b01afeaa6b9ddafcee"
+    },
+    {
+      "path": "services/vios/doc/api/vst_replay_stream_ms/swagger.yaml",
+      "raw_sha256": "db7060eef77799b0992123f99749e84f6cf2b48c0e747d3917ce880a8642b6e0"
+    },
+    {
+      "path": "services/vios/doc/api/vst_rtsp_proxy_stream_ms/swagger.yaml",
+      "raw_sha256": "2d02593babf6d759b989ad49cc18de6a98be4d513e9063097e18a0cc3909a3cb"
+    },
+    {
+      "path": "services/vios/doc/api/vst_sensor_management_ms/swagger.yaml",
+      "raw_sha256": "7ff32f7c05408e9e11c3c6c5caefcd62abdbfaf225f6a47946c40a121e414207"
+    },
+    {
+      "path": "services/vios/doc/api/vst_storage_management_ms/swagger.yaml",
+      "raw_sha256": "b37fadcab72ca7b7dc538708134b69ea67880bce47b13b609595f56873567194"
+    },
+    {
+      "path": "services/vios/doc/api/vst_stream_bridge_ms/swagger.yaml",
+      "raw_sha256": "ccbb53d33aec0d61ed680f1ba13a6e0b85fe47a6eb3815f4491929aeb7f292b6"
+    },
+    {
+      "path": "services/vios/doc/api/vst_stream_recorder_ms/swagger.yaml",
+      "raw_sha256": "679cd0215665ab46c3ac70f9a6509b9bcf70d2dcc511fe38faaceccc4e5dd318"
+    },
+    {
+      "path": "services/vios/mcp/src/server.py",
+      "raw_sha256": "54eb8f509d1653892c5bca9d24ca9976b776501d584727333b81d1fe3549c9d2"
+    },
+    {
+      "path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+      "raw_sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/App.tsx",
+      "raw_sha256": "64dca9ffbc5836e623ec76128bf0d4525c94aab651074546ed11ae8d25318eac"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/debugOptions/DebugOptions.tsx",
+      "raw_sha256": "7fa5fde4951be4afb8393dd63f731d5fc6f340cf41e9d69c6f98f6f84c60c1e5"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/sensorRecording/RecordingScheduleCard.tsx",
+      "raw_sha256": "e185f5f4b70f308b53dfbcab2e456ba200f064816b7a6d73ee467ba7a216d211"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+      "raw_sha256": "f60fda8c81869eb74a3126e531f6af91811f5acc54d5f970668f9ca650739b50"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/features/streamManager/StreamManager.tsx",
+      "raw_sha256": "08db676ff4657baab30bb928bb9388314789fc87ae59ba617254a237643646cd"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/RTSPStreamQOS.tsx",
+      "raw_sha256": "9f773291f5e44dbc61dedc5d93425f652531fa1d86bc70892e8d4940153a6711"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamAutomation.tsx",
+      "raw_sha256": "d650220c5bb47e17967a96053be4986a6586ecb53174baf139fbd28ec26dc03b"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamStats.tsx",
+      "raw_sha256": "989775ff8487f1a1a54da86c1db5d089fcbe9e6083015bb54d5b62b2ca833428"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/SystemStats.tsx",
+      "raw_sha256": "cb553b709c8300b242f67d5e3812e3d4ae9160aabeb7f14bdb5a8b196dcd6ef8"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/nvstreamer/MediaUpload.tsx",
+      "raw_sha256": "dccb44dd226cd8a92e32f9e7a97a8cf5509de2c7ca808f5fab05235d532cafba"
+    },
+    {
+      "path": "tools/message-broker-consumers/kafka_to_file.py",
+      "raw_sha256": "ffb27bcbf3ffdca9f04689a9fb1baeb2e3470f8a46b7e0350429caeeff8da363"
+    },
+    {
+      "path": "tools/message-broker-consumers/redis_to_file.py",
+      "raw_sha256": "00f9e03b05b8ca48124ff2cb125ed7956c879ba87bd67052d6a81e1f5d9d3d79"
+    }
+  ],
+  "semantic_locators": [
+    {
+      "base_path": "assets/vss_nemoclaw_policy.yaml",
+      "fragment": null,
+      "locator": "assets/vss_nemoclaw_policy.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "c9228ca9fbb023e9d0c5cdc03c45be13ede94733bac1cb2d88c93938e0e6681a"
+    },
+    {
+      "base_path": "deploy/docker/developer-profiles/dev-profile-alerts/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/developer-profiles/dev-profile-alerts/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "089f342f90939505b84e1ac428f1f1aafb863a74bfda7471a9ffa0153b703801"
+    },
+    {
+      "base_path": "deploy/docker/developer-profiles/dev-profile-base/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/developer-profiles/dev-profile-base/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+    },
+    {
+      "base_path": "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/developer-profiles/dev-profile-lvs/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "0a27ea8349b52f756fa2a4dc50a1dbb716a728510517729824422ca38cba54fe"
+    },
+    {
+      "base_path": "deploy/docker/developer-profiles/dev-profile-search/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/developer-profiles/dev-profile-search/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "1a009bde3cc8c63dc173100f2a8ba1185d30c1d8363dfaeef993195fde39dd38"
+    },
+    {
+      "base_path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/compose.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "93fb055473c48585ef22505c5e1f1486f5f3e54885d54f0943bb526234b3814d"
+    },
+    {
+      "base_path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "fragment": null,
+      "locator": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "occurrence_count": 5,
+      "raw_sha256": "d465b9b45416b38639894ee477ce12c238ec48518ea365a7ba32c7ace4ac483c"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/compose.yml",
+      "occurrence_count": 3,
+      "raw_sha256": "c15631a68c8c6b51b317e640ad18f4156783082cff7ad98647ee9f50bbce96f4"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/kibana-dashboard/its-kibana-objects.ndjson",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/kibana-dashboard/its-kibana-objects.ndjson",
+      "occurrence_count": 1,
+      "raw_sha256": "0080e887bc0ea50b9902cdc6be14f374adf4f615f0f0a2071da4e7275843d1e7"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/smc-app/calibration/sample-data/road-network.json",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/smc-app/calibration/sample-data/road-network.json",
+      "occurrence_count": 1,
+      "raw_sha256": "5992b1318c8bce017c3caf6dff881240092a0f6f1130d326f9f96039e5e4334e"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/smc-app/import-calibration/init-scripts/calibration-import.sh",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/smc-app/import-calibration/init-scripts/calibration-import.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "ee9fce5594bd43fc5fa45381df0034a70fab0aa8aab252697d67b99b712bf359"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/smc-app/vss-video-analytics-api/configs/vss-video-analytics-api-config.json",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/smc-app/vss-video-analytics-api/configs/vss-video-analytics-api-config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "aea346328419e12f48b7f50cac2388a4c929040337f116415cf8f12d487ae4e9"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/smc-app/vss-video-analytics-ui/config/vss-video-analytics-ui-config.json",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/smc-app/vss-video-analytics-ui/config/vss-video-analytics-ui-config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "86da9602efd355fbe8343d96988eefad05ac3189c53061bb8e407eff560227f9"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/vss-agent/configs/va_mcp_server_config.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/vss-agent/configs/va_mcp_server_config.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "4f65eca650dcdec8620d6a323f2a77eed599d980980f2418ecf8a301636a9189"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/vss-agent/templates/incident_report_template.md",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/vss-agent/templates/incident_report_template.md",
+      "occurrence_count": 1,
+      "raw_sha256": "4c22fef36daf2af2c0142d843ef2fbd374b5a70086a7452e6393a75a9b475fc9"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/smartcities/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/smartcities/vss-behavior-analytics/configs/vss-behavior-analytics-kafka-config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "ab57baad6001617f95adec1a2abee72bd213e632f15787433a9ce37bfbf89c40"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/blueprint-configurator/blueprint_config.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "b094b035cd4d6afa41e11db8c4de1634535f77d4c0793b4ee210a15051839f1c"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "0c1d4bffdf4be3ed89123f0bec8c66a39ba0dd7a49590a040ec50a6afd7c4cfb"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-kafka-config.txt",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-kafka-config.txt",
+      "occurrence_count": 1,
+      "raw_sha256": "47bfaeea2ac6743d94cfd75a3bd3981c7c7af30c219f94413b9e2adf79fc10c2"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-redis-config.txt",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs/ds-redis-config.txt",
+      "occurrence_count": 1,
+      "raw_sha256": "e21a6634f37a1319513dfcffc788bb5bc0a06186c967cfc6d6311dea9d2bfee9"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/nvstreamer/configs/vst-config.json",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/nvstreamer/configs/vst-config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "b45e7c9b76b13f76eace1e2958b6cfba8a35fcaa5e0b2f3400c3ac8fc2a0ba8c"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/vss-behavior-analytics/configs/vss-behavior-analytics-config.json",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/vss-behavior-analytics/configs/vss-behavior-analytics-config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "8424ac5a6f1ce041716bf00f057514a306f684ad93d938cbfdc7b82638b3e887"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/warehouse-2d-app.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/warehouse-2d-app.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "919a7a44ee7d433a6b98c6cd4afe98e9e4346850477b9a9239ad80032678f10b"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app/warehouse-3d-app.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app/warehouse-3d-app.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "131b01a91d9d6cc495a6f96843cd27e587c84a2f5afd49a93a6e293f61d9d6c8"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/pub_sub_info_config.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/deepstream/configs/pub_sub_info_config.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "00f891c0fb5563f6a86d616c09084cb7bc85c198b4b6fc7af0bf829a5af016c6"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/kibana-dashboard/warehouse-mv3dt-kibana-objects.ndjson",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/kibana-dashboard/warehouse-mv3dt-kibana-objects.ndjson",
+      "occurrence_count": 1,
+      "raw_sha256": "8e8136c9735d9cd1d2d4ee5048e76f3a4a4cb6ec9cb086875ded27df9304d5d7"
+    },
+    {
+      "base_path": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/warehouse-mv3dt-app.yml",
+      "fragment": null,
+      "locator": "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app/warehouse-mv3dt-app.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "e69e1dd51f5c2468621d95c5764e32c1a7a74f1fce61dc607af71e7f32278f76"
+    },
+    {
+      "base_path": "deploy/docker/scripts/nemoclaw/init_nemoclaw.sh",
+      "fragment": null,
+      "locator": "deploy/docker/scripts/nemoclaw/init_nemoclaw.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "443698f4f640aa4944d8897921b95600b0b4eaf43f8c8425c9e5238503884727"
+    },
+    {
+      "base_path": "deploy/docker/scripts/nemoclaw/update_openclaw_config.py",
+      "fragment": null,
+      "locator": "deploy/docker/scripts/nemoclaw/update_openclaw_config.py",
+      "occurrence_count": 1,
+      "raw_sha256": "cc760fac32a685e8d0bfb045b99017331c175fea357c2c6a90a2526a97b3453e"
+    },
+    {
+      "base_path": "deploy/docker/scripts/thor-auto-calibration.sh",
+      "fragment": null,
+      "locator": "deploy/docker/scripts/thor-auto-calibration.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "92b96463afa3e1e6549b836efd35d2d9fe4cad87ff6c04cf955b30c5c3dba017"
+    },
+    {
+      "base_path": "deploy/docker/scripts/thor-local.sh",
+      "fragment": null,
+      "locator": "deploy/docker/scripts/thor-local.sh",
+      "occurrence_count": 4,
+      "raw_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5"
+    },
+    {
+      "base_path": "deploy/docker/scripts/thor-warehouse-mv3dt.sh",
+      "fragment": null,
+      "locator": "deploy/docker/scripts/thor-warehouse-mv3dt.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "e697a2a41a146bc84b701558918af1f24d10ba10cd4ffc05d9fd3d9818080499"
+    },
+    {
+      "base_path": "deploy/docker/services/agent/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/services/agent/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7"
+    },
+    {
+      "base_path": "deploy/docker/services/infra/elk/elasticsearch/configs/elasticsearch.yml",
+      "fragment": null,
+      "locator": "deploy/docker/services/infra/elk/elasticsearch/configs/elasticsearch.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "410ac1105d2657232c4d9f9ab1aea4736b11061f5847c11aacbffa0ca5c0b1a5"
+    },
+    {
+      "base_path": "deploy/docker/services/infra/elk/kibana/configs/kibana.yml",
+      "fragment": null,
+      "locator": "deploy/docker/services/infra/elk/kibana/configs/kibana.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "bb5d95e554b0e83c5dd18c1fbf6332f3298bb177df60088d47aed4380cb55de0"
+    },
+    {
+      "base_path": "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+      "fragment": null,
+      "locator": "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+      "occurrence_count": 2,
+      "raw_sha256": "8769bd6357506e93cd0d821630984314b320e76e498bec9474d8aef57603e882"
+    },
+    {
+      "base_path": "deploy/docker/services/infra/kafka/init-scripts/create-kafka-topics.sh",
+      "fragment": null,
+      "locator": "deploy/docker/services/infra/kafka/init-scripts/create-kafka-topics.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "462fd81cc17c355b23c123f811294c3551f2ab34da66c2441bfa3147720c2b3b"
+    },
+    {
+      "base_path": "deploy/docker/services/infra/redis/configs/redis.conf",
+      "fragment": null,
+      "locator": "deploy/docker/services/infra/redis/configs/redis.conf",
+      "occurrence_count": 1,
+      "raw_sha256": "a737cd4945d8522576d7fb9a516b0cc78ce1ce8b4c0637716f8d777a6f7e03b1"
+    },
+    {
+      "base_path": "deploy/docker/services/monitoring/config/grafana-dashboard/thor-vss-observability.json",
+      "fragment": null,
+      "locator": "deploy/docker/services/monitoring/config/grafana-dashboard/thor-vss-observability.json",
+      "occurrence_count": 1,
+      "raw_sha256": "8c54fbe79704c1ccb439ced1e5b7e3866c05d84ec91b8626475abe47e89a0e90"
+    },
+    {
+      "base_path": "deploy/docker/services/monitoring/config/grafana-provisioning/datasources/datasource.yml",
+      "fragment": null,
+      "locator": "deploy/docker/services/monitoring/config/grafana-provisioning/datasources/datasource.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "ae01b83e6a02fb4fab70778bfdc27b2d9689c0ceec56c86ae6244f290b6c05b2"
+    },
+    {
+      "base_path": "deploy/docker/services/rtvi/rtvi-cv/compose.yaml",
+      "fragment": null,
+      "locator": "deploy/docker/services/rtvi/rtvi-cv/compose.yaml",
+      "occurrence_count": 2,
+      "raw_sha256": "42c9281021adf6db5780f98918a03a79543fb5aca567d2a5255784544035099e"
+    },
+    {
+      "base_path": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+      "fragment": null,
+      "locator": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "24eb100f746ece4c1814e4290176fb6d8f36b99a379cc3674f4a4a352b82d879"
+    },
+    {
+      "base_path": "deploy/docker/services/video-summarization/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/services/video-summarization/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "4bf61024fc548a56f0b8e8b01611609daed47b7201eba93878268ec06193a97f"
+    },
+    {
+      "base_path": "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh",
+      "fragment": null,
+      "locator": "deploy/docker/test-scripts/test-thor-warehouse-sparse4d.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "db31d5f21c8e1c72ccb2ea5e60f3608b73418468916dcd9e5e434fb6d8532f9f"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/README.md",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/README.md",
+      "occurrence_count": 2,
+      "raw_sha256": "c3f26a47c044f50d7469384fee1ac8a37ff9cb289f792534173769f1deb5f66c"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/WAREHOUSE_MV3DT.md",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/WAREHOUSE_MV3DT.md",
+      "occurrence_count": 1,
+      "raw_sha256": "30add71d0b91f069e25c3778f62696b010190e78c3ec0efa054e0398c3c4f7cd"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+      "occurrence_count": 1,
+      "raw_sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/audio/omni.compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/audio/omni.compose.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "29413b95f33d4213ddf5848040d4c74968f6bb3574f9cad31eaad51001d7514c"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/audio/rtvi-vlm-codecs/README.md",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/audio/rtvi-vlm-codecs/README.md",
+      "occurrence_count": 1,
+      "raw_sha256": "505060c7d57371394e852402279db79655cdbe4f82bc72d4d7768d9ff2a47687"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/auto-calibration/README.md",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/auto-calibration/README.md",
+      "occurrence_count": 1,
+      "raw_sha256": "80e95d952a3152675a051783657134b9d3ce2363c8bf0bd8886db229574718d2"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/auto-calibration/artifact-inventory.json",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/auto-calibration/artifact-inventory.json",
+      "occurrence_count": 1,
+      "raw_sha256": "042ebbf65a669d54e48af26348abb54dc7cbaf7e6d10814001b86296bc8d49ab"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/auto-calibration/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/auto-calibration/compose.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "3d86f2c49b116bdf701ef00fdef0c6aca31deae27fa0a983985a5d43760c6fb0"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/auto-calibration/tests/test_tool.py",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/auto-calibration/tests/test_tool.py",
+      "occurrence_count": 2,
+      "raw_sha256": "4cf198c88c65c40bf569f298eff8de6848eb093a7028a636d3bc818b60c8b41e"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/auto-calibration/tool.py",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/auto-calibration/tool.py",
+      "occurrence_count": 7,
+      "raw_sha256": "94664fc3a18b37f45f436ad6e0f74bed49d78d31b26dd809a489fef2f912b6c8"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/compose.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "1943cc40645c6b41d61f28dc9262aa3793149cc3f4c6aac8a91ee47fd2842352"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/install-vss-skills.sh",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/install-vss-skills.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "6409ec297e5a03d62775342a6ea635d5281347e25a4a78552c3ae5cb6324e094"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/models/artifacts.lock.json",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/models/artifacts.lock.json",
+      "occurrence_count": 1,
+      "raw_sha256": "5b0030ba13fb1ccee5950e3c4b78d334d8dd0c30a2a45ce90e6166a57fe31d09"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/models/verify_artifacts.py",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/models/verify_artifacts.py",
+      "occurrence_count": 1,
+      "raw_sha256": "fa8cbb9aeff45da151ae40990cf3c67be08014c464dcec17c952fac5d8b0ca53"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/observability/prometheus.yml",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/observability/prometheus.yml",
+      "occurrence_count": 1,
+      "raw_sha256": "c620a9a7c14be1652f59a360c1c6de48b7e812adf44cba327dc4dd5aea9672fb"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/parity/source-lock/source-lock.json",
+      "occurrence_count": 1,
+      "raw_sha256": "fbf21f64f13dc22328c4a01c79e427042c3112885073dc32bb0ebd6700f0fd07"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/qualification/expected/rt-vlm.json",
+      "occurrence_count": 1,
+      "raw_sha256": "2f64f1e9bb208ea3fd9a4b0aaa581bee852cbd819a3b753e53eb6325c6d1121b"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/qualification/search-scale-qualification-plan/contract.json",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/qualification/search-scale-qualification-plan/contract.json",
+      "occurrence_count": 2,
+      "raw_sha256": "3e82661532f6ae3ebde75793ecdbf270edc325c2d2743248fee6a9438a21cf39"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/rt-vlm/model-matrix.json",
+      "occurrence_count": 5,
+      "raw_sha256": "f9fda515975588794389661b0adfb3c41d4c803db360e8ab6b7842b3aaa70bd1"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/rt-vlm/model_matrix.py",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/rt-vlm/model_matrix.py",
+      "occurrence_count": 1,
+      "raw_sha256": "71931d95bfb09dccb8d9cfa80da571102198ab1d4df636d44e40b585e1ceeb2a"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/validate-warehouse-mv3dt-input.py",
+      "occurrence_count": 2,
+      "raw_sha256": "09c3497f8cd7302d871cf528c09467273ac6a3717535f772e05d0eb2e63d6aff"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/validate-warehouse-sparse4d-input.py",
+      "occurrence_count": 1,
+      "raw_sha256": "ecbe1a4e43487a491547b8fd5b62fe542c19a2e90a6eb0c1d1108339b3cd02c3"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+      "occurrence_count": 3,
+      "raw_sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/warehouse-mv3dt.compose.yml",
+      "occurrence_count": 4,
+      "raw_sha256": "a040c05a062d747e6cf02762e4b82210833db50c4c37afae556bd78b536a9a5b"
+    },
+    {
+      "base_path": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+      "fragment": null,
+      "locator": "deploy/docker/thor-local/warehouse-sparse4d.compose.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "e385a4a3c78fe3cc35f51f7a5f35fae43746b5172f61c65a53b7ec8a1c05d914"
+    },
+    {
+      "base_path": "deploy/helm/services/agent/charts/va-mcp/templates/deployment.yaml",
+      "fragment": null,
+      "locator": "deploy/helm/services/agent/charts/va-mcp/templates/deployment.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "3b356a64238b1418f1ab9251c98e10af71982753c324cf9ce1727e0356041e02"
+    },
+    {
+      "base_path": "libs/nvschema/protobuf/schema.proto",
+      "fragment": null,
+      "locator": "libs/nvschema/protobuf/schema.proto",
+      "occurrence_count": 1,
+      "raw_sha256": "bb59069e7283fe0443efd3a3ba4e1ac25481a1bcd9d57bdbf3b3ea7bbbb065b7"
+    },
+    {
+      "base_path": "services/agent/src/lib/knowledge/adapters/es_caption.py",
+      "fragment": null,
+      "locator": "services/agent/src/lib/knowledge/adapters/es_caption.py",
+      "occurrence_count": 2,
+      "raw_sha256": "9f4e947a616cf60599767014fd32adb713548e9cd9ac72594e359c1ef7c42c6b"
+    },
+    {
+      "base_path": "services/agent/src/lib/knowledge/adapters/frag_api.py",
+      "fragment": null,
+      "locator": "services/agent/src/lib/knowledge/adapters/frag_api.py",
+      "occurrence_count": 1,
+      "raw_sha256": "3082fbf16e3cffcff83fa60c1c9e9bf3620b1fb8c144b4f8292d214d94d2870b"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/agents/critic_agent.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/agents/critic_agent.py",
+      "occurrence_count": 1,
+      "raw_sha256": "eb9d6f0aa5f9f4d361f7a0f980a89c908c60705dbcd8e437892e08cdbe77448f"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/agents/postprocessing/validators/url_validator.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/agents/postprocessing/validators/url_validator.py",
+      "occurrence_count": 1,
+      "raw_sha256": "529ca8a958d76aed181dc60edaa845493a7b7fd3c66d1ae61fe8cdb62663ebe5"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/agents/report_agent.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/agents/report_agent.py",
+      "occurrence_count": 1,
+      "raw_sha256": "a9aeeea8a174f6b23bdf1ce064d59019a9115a57881117ee9c07b459355d572e"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/agents/search_agent.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/agents/search_agent.py",
+      "occurrence_count": 5,
+      "raw_sha256": "a5de8de3ab86839671de88dd5bc356339044806ad71c1e0d1310033ce5373040"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/agents/top_agent.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/agents/top_agent.py",
+      "occurrence_count": 3,
+      "raw_sha256": "a4aa4a051b589858078a7941cf32de8128d7c22f574bdf718974a70cb0c140c4"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/api/custom_fastapi_worker.py",
+      "occurrence_count": 1,
+      "raw_sha256": "ce467762e69ca682d8c94d62c8d52d17dbc3fab2a00af519ecd9b66498a3cdd2"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/health_endpoint.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/api/health_endpoint.py",
+      "occurrence_count": 1,
+      "raw_sha256": "ec3cb57cbfac808548216dea909e87d8fcc0ef19edb5a3d3fbe42ff06d0cbbfc"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/rtsp_delete.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/api/rtsp_delete.py",
+      "occurrence_count": 1,
+      "raw_sha256": "0eb625e884390c295c95a32d58afe1f1f17da87e3d97a5a852f1f1bd9e321898"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/rtsp_ingest.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/api/rtsp_ingest.py",
+      "occurrence_count": 2,
+      "raw_sha256": "df9a8808222d6c70fe40dc09707c1be05f9edf4e92f55c318d954cb511d0ded0"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/video_delete.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/api/video_delete.py",
+      "occurrence_count": 2,
+      "raw_sha256": "d95d55aad6cd776431ea2c270a9e5796248755390b425879cc72ee8d14ae1657"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/video_ingest.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/api/video_ingest.py",
+      "occurrence_count": 2,
+      "raw_sha256": "39416707048715db5957951efaf2e6b0b2898a1199eac0f1f9b2508b6e467af5"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/video_ingest.py",
+      "fragment": "create_video_upload_complete_router",
+      "locator": "services/agent/src/vss_agents/api/video_ingest.py#create_video_upload_complete_router",
+      "occurrence_count": 1,
+      "raw_sha256": "39416707048715db5957951efaf2e6b0b2898a1199eac0f1f9b2508b6e467af5"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/video_ingest.py",
+      "fragment": "create_video_upload_router",
+      "locator": "services/agent/src/vss_agents/api/video_ingest.py#create_video_upload_router",
+      "occurrence_count": 1,
+      "raw_sha256": "39416707048715db5957951efaf2e6b0b2898a1199eac0f1f9b2508b6e467af5"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/api/video_search_ingest.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/api/video_search_ingest.py",
+      "occurrence_count": 1,
+      "raw_sha256": "6598b13e31c637f10b6992ab14a254a6191ba0cea490c91795243fd612019d77"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/orchestrator/storage.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/orchestrator/storage.py",
+      "occurrence_count": 1,
+      "raw_sha256": "85de2e29d79fcca08ec16223c89b65b8093ec566fa31f60bd9d65c42ecd63b59"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/orchestrator/tools.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/orchestrator/tools.py",
+      "occurrence_count": 1,
+      "raw_sha256": "1527076c32a8e4d0899b17b5273985863b55458502cd402ac7f42df4eee0960b"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/register_knowledge_layers.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/register_knowledge_layers.py",
+      "occurrence_count": 1,
+      "raw_sha256": "f0bd23c4bf49b322a9c61ee507ab8edd9a91e9f48df1ae725653123fd3efd6b1"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/attribute_search.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/attribute_search.py",
+      "occurrence_count": 1,
+      "raw_sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/embed_search.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/embed_search.py",
+      "occurrence_count": 2,
+      "raw_sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/fusion.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/fusion.py",
+      "occurrence_count": 1,
+      "raw_sha256": "cc79953fdf75550dcbde841680120fe9e71fb4b3fba3cf680e6c9b04547c8a28"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/lvs_media_state.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/lvs_media_state.py",
+      "occurrence_count": 1,
+      "raw_sha256": "a85e27c18f3b7a1025d5fb0ae687e7fa190b3f64408861368eda4d8d4d1c34c3"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py",
+      "occurrence_count": 2,
+      "raw_sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/lvs_video_understanding.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/lvs_video_understanding.py",
+      "occurrence_count": 1,
+      "raw_sha256": "e58fcd165177c126f242abc53445d4d3e7b465c738bed6a5843a9d7590c4f508"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/search.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/search.py",
+      "occurrence_count": 2,
+      "raw_sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/template_report_gen.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/template_report_gen.py",
+      "occurrence_count": 1,
+      "raw_sha256": "61f9f88a540e8d725946ae95ded3241569051934ebb103da8a9532b897561ec5"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/video_report_gen.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/video_report_gen.py",
+      "occurrence_count": 3,
+      "raw_sha256": "ac3697452b6e24e756474ce85ed8a07efb64f9e2bfa9995e41d0d4a878709cd4"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/tools/video_understanding.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/tools/video_understanding.py",
+      "occurrence_count": 2,
+      "raw_sha256": "59511bb172a030e0945a9c9a0ccb432e5b299ae1697e9ba023f4246d61c7c095"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/utils/url_translation.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/utils/url_translation.py",
+      "occurrence_count": 1,
+      "raw_sha256": "19605f56aad75c67e2395538cd3b8b890d2664eaf8e20c8fb7a6ad76946b1051"
+    },
+    {
+      "base_path": "services/agent/src/vss_agents/video_analytics/query_builders.py",
+      "fragment": null,
+      "locator": "services/agent/src/vss_agents/video_analytics/query_builders.py",
+      "occurrence_count": 2,
+      "raw_sha256": "66dcf8d4dafb0378e55d73750533e9d3f2d47f1c84fe7cf698c5be1a78cb3e59"
+    },
+    {
+      "base_path": "services/alert/alert-agent-web/app/api/incident_routes.py",
+      "fragment": null,
+      "locator": "services/alert/alert-agent-web/app/api/incident_routes.py",
+      "occurrence_count": 1,
+      "raw_sha256": "57bbe827e60ad6e4dbdcb3084cdc743dfb7d81149e982e6c14c94fa140627d16"
+    },
+    {
+      "base_path": "services/alert/alert-agent-web/app/api/realtime_routes.py",
+      "fragment": null,
+      "locator": "services/alert/alert-agent-web/app/api/realtime_routes.py",
+      "occurrence_count": 3,
+      "raw_sha256": "352832e8ddf553184419b441b9186000bb7667ee01df6c4afdf885032aca4773"
+    },
+    {
+      "base_path": "services/alert/alert-agent-web/app/api/verification_routes.py",
+      "fragment": null,
+      "locator": "services/alert/alert-agent-web/app/api/verification_routes.py",
+      "occurrence_count": 1,
+      "raw_sha256": "17fc24551c4c7651923917caa51cf52371237760d1b4f6900dfbef8e28980386"
+    },
+    {
+      "base_path": "services/alert/alert-agent-web/app/service/ondemand_verification_service.py",
+      "fragment": null,
+      "locator": "services/alert/alert-agent-web/app/service/ondemand_verification_service.py",
+      "occurrence_count": 1,
+      "raw_sha256": "a17cf630af890cf3417ecb294468c4dc5bb14de941dfbf4e21b91b37da62e6d1"
+    },
+    {
+      "base_path": "services/alert/alert-agent-web/app/websocket/connection_manager.py",
+      "fragment": "WebSocketConnectionManager.broadcast_message",
+      "locator": "services/alert/alert-agent-web/app/websocket/connection_manager.py#WebSocketConnectionManager.broadcast_message",
+      "occurrence_count": 1,
+      "raw_sha256": "4b4d771f91c1b984ce21c5fb751f00fbaf515f4929e839284338a6a60234f766"
+    },
+    {
+      "base_path": "services/alert/alert-agent-web/app/websocket/websocket_routes.py",
+      "fragment": "websocket_alerts_endpoint",
+      "locator": "services/alert/alert-agent-web/app/websocket/websocket_routes.py#websocket_alerts_endpoint",
+      "occurrence_count": 1,
+      "raw_sha256": "a1da545e448d76ed4f6c1586f21169329a7d2ac6dc5d542f0abb5bf844cf4068"
+    },
+    {
+      "base_path": "services/alert/alert-agent-web/app/websocket/websocket_service.py",
+      "fragment": "WebSocketService._run_consumer",
+      "locator": "services/alert/alert-agent-web/app/websocket/websocket_service.py#WebSocketService._run_consumer",
+      "occurrence_count": 1,
+      "raw_sha256": "b78d5dead3e6b11fffea29a6e0ec378cae0e237e8e7ff414f5b117299c241e2e"
+    },
+    {
+      "base_path": "services/alert/alert_type_config.json",
+      "fragment": null,
+      "locator": "services/alert/alert_type_config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "9426cfe069c92b86176d10180fbfb0b7aaa83a439ae25ba79d132f7fe519e7e5"
+    },
+    {
+      "base_path": "services/alert/config.yaml",
+      "fragment": null,
+      "locator": "services/alert/config.yaml",
+      "occurrence_count": 2,
+      "raw_sha256": "46d131768244706deda72b30fb394d6aedf2d91f73a0e74ab9a0dab0e6d1784b"
+    },
+    {
+      "base_path": "services/alert/config.yaml",
+      "fragment": "webhook.openclaw",
+      "locator": "services/alert/config.yaml#webhook.openclaw",
+      "occurrence_count": 1,
+      "raw_sha256": "46d131768244706deda72b30fb394d6aedf2d91f73a0e74ab9a0dab0e6d1784b"
+    },
+    {
+      "base_path": "services/alert/elastic/elastic.py",
+      "fragment": null,
+      "locator": "services/alert/elastic/elastic.py",
+      "occurrence_count": 1,
+      "raw_sha256": "7e570ce20a52115269daab0e3744437fbcb010e0b3953929a8576ca38ca64d43"
+    },
+    {
+      "base_path": "services/alert/handlers/async_vlm_mode_mixin.py",
+      "fragment": null,
+      "locator": "services/alert/handlers/async_vlm_mode_mixin.py",
+      "occurrence_count": 1,
+      "raw_sha256": "442020ef17bc7ff1312eaf14cc2a8b612e221d7aeb58de993398a4ae00079fcc"
+    },
+    {
+      "base_path": "services/alert/handlers/direct_media/direct_media_handler.py",
+      "fragment": null,
+      "locator": "services/alert/handlers/direct_media/direct_media_handler.py",
+      "occurrence_count": 1,
+      "raw_sha256": "b02d2f011b77f735d63ceffcad12d341d1888505bbe83ab47fed8154900d6a0d"
+    },
+    {
+      "base_path": "services/alert/handlers/direct_media/media_analyzer.py",
+      "fragment": null,
+      "locator": "services/alert/handlers/direct_media/media_analyzer.py",
+      "occurrence_count": 2,
+      "raw_sha256": "7881f9f1a0e209cb6a06692d56f5c3d3a8d4f3a86ab8669159f1964ff7332002"
+    },
+    {
+      "base_path": "services/alert/mdx/anomaly/event_bridge_factory.py",
+      "fragment": null,
+      "locator": "services/alert/mdx/anomaly/event_bridge_factory.py",
+      "occurrence_count": 1,
+      "raw_sha256": "081a9e1d44b85b5714cab2e7529c0544dfe6da8f864b9354b51404e2a75b3427"
+    },
+    {
+      "base_path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py",
+      "fragment": null,
+      "locator": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py",
+      "occurrence_count": 1,
+      "raw_sha256": "ff3daca60d0528ff47fbda929ed802bb707d814f191d7f983508b50cda42ccb4"
+    },
+    {
+      "base_path": "services/alert/metrics/recorder.py",
+      "fragment": null,
+      "locator": "services/alert/metrics/recorder.py",
+      "occurrence_count": 1,
+      "raw_sha256": "d3adf24eeaf7690ab70468dfcc7f1a2d5b848b03ff2d89b9bfeabe21874f7005"
+    },
+    {
+      "base_path": "services/alert/models/base_response_parser.py",
+      "fragment": null,
+      "locator": "services/alert/models/base_response_parser.py",
+      "occurrence_count": 2,
+      "raw_sha256": "a62893a9092a502d136b428b9bc5ad61f4d6a5544a2edeff6b887831636a56ce"
+    },
+    {
+      "base_path": "services/alert/models/pluggable_parser_runtime.py",
+      "fragment": null,
+      "locator": "services/alert/models/pluggable_parser_runtime.py",
+      "occurrence_count": 2,
+      "raw_sha256": "6570afd986167b918acc7262de8e805176e39824897aa9cb8c48b7896a0b9535"
+    },
+    {
+      "base_path": "services/alert/models/responses.py",
+      "fragment": null,
+      "locator": "services/alert/models/responses.py",
+      "occurrence_count": 1,
+      "raw_sha256": "0c658632db38f83a1a956f389c964f87dc44ba23032689983844cd2284b1c21f"
+    },
+    {
+      "base_path": "services/alert/openapi.json",
+      "fragment": null,
+      "locator": "services/alert/openapi.json",
+      "occurrence_count": 1,
+      "raw_sha256": "d7336051ddbbb368d6376bbe0a0d71414b2738a7e1899321eddb4d24dcd95881"
+    },
+    {
+      "base_path": "services/alert/realtime/schemas/always_on_config.py",
+      "fragment": null,
+      "locator": "services/alert/realtime/schemas/always_on_config.py",
+      "occurrence_count": 1,
+      "raw_sha256": "b5c299dcc1d788e7463a050dc220a53b85d8c18ac6d6bb180ca8d63dbc53bea7"
+    },
+    {
+      "base_path": "services/alert/realtime/services/always_on_service.py",
+      "fragment": null,
+      "locator": "services/alert/realtime/services/always_on_service.py",
+      "occurrence_count": 1,
+      "raw_sha256": "bd797b7fb0f5f750a13166028f4a5549ceffeca7a1db8acd6c8e91a67aa31f4d"
+    },
+    {
+      "base_path": "services/alert/realtime/services/incident_service.py",
+      "fragment": null,
+      "locator": "services/alert/realtime/services/incident_service.py",
+      "occurrence_count": 1,
+      "raw_sha256": "02afe64d46b6837360313f02b7887e27db68c95b15cd5596e1775a57d2c756b1"
+    },
+    {
+      "base_path": "services/alert/realtime/services/realtime_service.py",
+      "fragment": null,
+      "locator": "services/alert/realtime/services/realtime_service.py",
+      "occurrence_count": 1,
+      "raw_sha256": "43d787271f9dc1c7242a62474e6d2f2c7f16c4b3eca3b1775d1c3af314f99132"
+    },
+    {
+      "base_path": "services/alert/realtime/services/rtvi_client.py",
+      "fragment": null,
+      "locator": "services/alert/realtime/services/rtvi_client.py",
+      "occurrence_count": 1,
+      "raw_sha256": "5278d9d35425632a03ce54fe8572e2bd2c7c2270cf01d91ffde9169ee9feb152"
+    },
+    {
+      "base_path": "services/alert/realtime/services/rule_store.py",
+      "fragment": null,
+      "locator": "services/alert/realtime/services/rule_store.py",
+      "occurrence_count": 2,
+      "raw_sha256": "0d5dea8d6d4e048e8c04e5133d4bd1d396626976b7d458e3a2c936b154e3f0c5"
+    },
+    {
+      "base_path": "services/alert/utils/field_extractor.py",
+      "fragment": null,
+      "locator": "services/alert/utils/field_extractor.py",
+      "occurrence_count": 1,
+      "raw_sha256": "3b25d3c88f8883554e25212a6725ec5288b495539b104ab3d9c207eb51849120"
+    },
+    {
+      "base_path": "services/alert/vlm/vlm_client.py",
+      "fragment": null,
+      "locator": "services/alert/vlm/vlm_client.py",
+      "occurrence_count": 1,
+      "raw_sha256": "81bb482256c4b84f89ce9410f34201027fa30c9930eeb3c7bff744453a57be1a"
+    },
+    {
+      "base_path": "services/alert/webhook/consumer.py",
+      "fragment": "WebhookKafkaForwarder.poll_and_forward",
+      "locator": "services/alert/webhook/consumer.py#WebhookKafkaForwarder.poll_and_forward",
+      "occurrence_count": 1,
+      "raw_sha256": "0c3927bbf7bed8b372eb62aec1ab9e43a0c999280b4b6c22e2c6aaf61d5744cb"
+    },
+    {
+      "base_path": "services/alert/webhook/openclaw_notifier.py",
+      "fragment": null,
+      "locator": "services/alert/webhook/openclaw_notifier.py",
+      "occurrence_count": 1,
+      "raw_sha256": "209936060c18a3a71bd227e02439fd790fa8a6dcfcf5e2139406b94f02acf43b"
+    },
+    {
+      "base_path": "services/alert/webhook/openclaw_notifier.py",
+      "fragment": "OpenClawNotifier.notify",
+      "locator": "services/alert/webhook/openclaw_notifier.py#OpenClawNotifier.notify",
+      "occurrence_count": 1,
+      "raw_sha256": "209936060c18a3a71bd227e02439fd790fa8a6dcfcf5e2139406b94f02acf43b"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/configs/frame_playback_config.json",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/configs/frame_playback_config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "7edcbceb49f43f0a3e5d08dffa7c971e7a078c025610874efb68a141f8a50ef9"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/configs/fusion_search_analytics_config.json",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/configs/fusion_search_analytics_config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "faa9de0d869a7f03c3675694a7e391f49f101a2986d24e3e50e7834311d9c4d4"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/configs/smart_city_config.json",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/configs/smart_city_config.json",
+      "occurrence_count": 2,
+      "raw_sha256": "8ecc0df53692159357409fcd0e5c3405d19f1d7ac126eb8aba297554284d4ae2"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/configs/space_utilization_config_sample.json",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/configs/space_utilization_config_sample.json",
+      "occurrence_count": 1,
+      "raw_sha256": "0df72785dfc7f3ae9cfd473137273d155c27f14bcfaf9285f76ea9824af49a7c"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/configs/warehouse_2d_config.json",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/configs/warehouse_2d_config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "1f38a082a2c9ab58340492ecb21fc155367af7d90447ec7371b8f1673ece8373"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/configs/warehouse_3d_config.json",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/configs/warehouse_3d_config.json",
+      "occurrence_count": 1,
+      "raw_sha256": "09f527198efbe936fbbad51cdbaf900bdf0965daa31fcce4e06c9a6d9e6284eb"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/docs/configuration.md",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/docs/configuration.md",
+      "occurrence_count": 1,
+      "raw_sha256": "01bc4475df113cb873fce0d49908603cf76ae71b656d00813143765000aab957"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/docs/dynamic-calibration.md",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/docs/dynamic-calibration.md",
+      "occurrence_count": 1,
+      "raw_sha256": "bcfe2d0c143163b8db8601720951f89aa036be15c684f42bce8469fa7cfa19bc"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/docs/dynamic-config.md",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/docs/dynamic-config.md",
+      "occurrence_count": 1,
+      "raw_sha256": "42725e53be31859a92503ec21c93891f25251e7af24070c598e96f82951a94bf"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/docs/incident-detection.md",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/docs/incident-detection.md",
+      "occurrence_count": 1,
+      "raw_sha256": "bc78da8e5d3e99b6d02470dcde67fe7ab8f4e5f31e445c7891e3cf8725e9f2b1"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+      "occurrence_count": 2,
+      "raw_sha256": "1360a2f79ff360755d6c9b1ffb38c2079ef1ba5e2b7ee3a7396e167d6e513c52"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py",
+      "occurrence_count": 1,
+      "raw_sha256": "99fad8777a0138e22d01fa7051301669e43c652ba53ee12dc8e540132bd1effc"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/trajectory/trajectory.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/trajectory/trajectory.py",
+      "occurrence_count": 1,
+      "raw_sha256": "86ae6efeb37402881ae214ebe60d08919c7f0afa8ca10d4acfc62b8cb9ba3bd3"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/tools/space_utilization.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/tools/space_utilization.py",
+      "occurrence_count": 1,
+      "raw_sha256": "30dfb8df2a73eb48a62d4aed5368b839aa9dc1e79556a2644262860b2799ba28"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/detection/proximity_detection.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/detection/proximity_detection.py",
+      "occurrence_count": 1,
+      "raw_sha256": "271cd1d8c0487d9f418687f0ae42e3e4f08600e91b3d1cd18ea78bea4e3ec0b4"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/base_event.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/base_event.py",
+      "occurrence_count": 1,
+      "raw_sha256": "7bb1d7b1bc484bb5404e5bb21b99a5098032a0746796040bde26a26a9b90f104"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/roi_event.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/roi_event.py",
+      "occurrence_count": 1,
+      "raw_sha256": "2e9ef509c9867ab0458c3dca0b95c0baed45ea5ff056802caf69a72ef0aa190f"
+    },
+    {
+      "base_path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/tripwire_event.py",
+      "fragment": null,
+      "locator": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/event/tripwire_event.py",
+      "occurrence_count": 1,
+      "raw_sha256": "ee351da91c59702261e156483c742af13003a58b8578bd2723af4dea43cb9d15"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/alerts.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/alerts.js",
+      "occurrence_count": 1,
+      "raw_sha256": "e16114c0375a2a6f5a738fe19b9b5a4afa219245f827b290c2e335d40f360848"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/behavior.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/behavior.js",
+      "occurrence_count": 1,
+      "raw_sha256": "d36267d80ae87c707d695eb7ef6236fd6cb187fa7717803099e493048b30bd30"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/config.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/config.js",
+      "occurrence_count": 1,
+      "raw_sha256": "7ae204805a9088440ab64a2aafa7d8d0f3f206a588ca468ca3f3038d12d04230"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/events.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/events.js",
+      "occurrence_count": 1,
+      "raw_sha256": "50fdead78359306c7e7d4269ccb58e7bf7c9e279fa1e09a39d705c973e538320"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/frames.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/frames.js",
+      "occurrence_count": 1,
+      "raw_sha256": "ef75f900a306740327a532ada70d58cd7eacefe47b893e4d24703a1c05629993"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/incidents.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/incidents.js",
+      "occurrence_count": 1,
+      "raw_sha256": "1be233e05a9b1aa3a82096a47ce78b691afdc4789c6dc03ad346f008b2d5aa75"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/metrics.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/metrics.js",
+      "occurrence_count": 1,
+      "raw_sha256": "96f0db8f513f5283c575d02fdc753d8129ff9c5aae45524ca20679c85a30eb98"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/sensor.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/sensor.js",
+      "occurrence_count": 1,
+      "raw_sha256": "a4e36507f2c67787b3554c46376804a20d4fb0cbf4d41c86d32a31bea5ff313a"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/tracker.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/controllers/rest-apis/tracker.js",
+      "occurrence_count": 1,
+      "raw_sha256": "d8b721e99ebb8a3201dd294db5e999d31c99ae483284b5024c9cf3e4fc80c900"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/initializers/routes.js",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/initializers/routes.js",
+      "occurrence_count": 1,
+      "raw_sha256": "4e1be4e8fbbca8b8d45dbbb2ad2dec87f1a7aec82bf162d253a5a7a790ef4c99"
+    },
+    {
+      "base_path": "services/analytics/video-analytics-api/src/app/specification/openapi.json",
+      "fragment": null,
+      "locator": "services/analytics/video-analytics-api/src/app/specification/openapi.json",
+      "occurrence_count": 6,
+      "raw_sha256": "0ff2b2f412446e29149a4998e00a3c6b00c17402befa5f24d8b5b454fb625d37"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/README.md",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/README.md",
+      "occurrence_count": 1,
+      "raw_sha256": "8525ea798262f4fb903255e4163644d63a26ebcb5a71fae33aa0b682cfa27173"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/configs/smartcities/gdino/config_triton_nvinferserver_gdino.txt",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/configs/smartcities/gdino/config_triton_nvinferserver_gdino.txt",
+      "occurrence_count": 1,
+      "raw_sha256": "d037382ca34197a24c8a38f082b42fbb775f724e122a54f4cc9349faef325c8e"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/configs/warehouse-2d/ds-main-config.txt",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/configs/warehouse-2d/ds-main-config.txt",
+      "occurrence_count": 2,
+      "raw_sha256": "7be398d16d4ab3e1e1ab7a2ea518c04c214f8e8b8084d5179c4039cbe0879afb"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/configs/warehouse-2d/ds-nvdcf-accuracy-tracker-config.yml",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/configs/warehouse-2d/ds-nvdcf-accuracy-tracker-config.yml",
+      "occurrence_count": 2,
+      "raw_sha256": "d241c4ab85c8a47f8fb218b5f516ce7a30d72f10f382351a80cb4fce1dbdb995"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/src/metropolis_perception_app.c",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/src/metropolis_perception_app.c",
+      "occurrence_count": 3,
+      "raw_sha256": "0d63ff187623a1a1a9ec3f27173983412810f98d2fdf7e8c108d4ad385a8c29f"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/tests/test-scripts/add-stream-test.sh",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/tests/test-scripts/add-stream-test.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "471b452e894a43f47c896e848fc53e969ae77bb3015691c478c94da9ecc49f19"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/tests/test-scripts/health-test.sh",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/tests/test-scripts/health-test.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "df8363f679ac52691fa902accc388c23f639aa65cceb9e368d731a0a17c30106"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/tests/test-scripts/kafka-messages-test.sh",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/tests/test-scripts/kafka-messages-test.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "ea2582441ea6a81e4fa29cf0a7cfb39644f13f84ef45fad42d515edb1736f1a3"
+    },
+    {
+      "base_path": "services/rtvi/rt-cv/tests/test-scripts/remove-stream-test.sh",
+      "fragment": null,
+      "locator": "services/rtvi/rt-cv/tests/test-scripts/remove-stream-test.sh",
+      "occurrence_count": 1,
+      "raw_sha256": "51251a6cbfb94c35aa6243cc7b4c12e7b4047b4b7fced4df365d7ea7440dfa5d"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/api_models/embeddings.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-embed/src/api_models/embeddings.py",
+      "occurrence_count": 1,
+      "raw_sha256": "b77a9042c13705802b95502e9c35959beb21673371a085e27408d371c7003ee9"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/api_models/live_stream.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-embed/src/api_models/live_stream.py",
+      "occurrence_count": 1,
+      "raw_sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/common/health_status.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-embed/src/common/health_status.py",
+      "occurrence_count": 1,
+      "raw_sha256": "203cc9e6ad8b75a4aa5785731ff28b0f2d75e89f58d2c7b920e4110efd205026"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/models/custom/samples/cosmos-embed1/inference.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-embed/src/models/custom/samples/cosmos-embed1/inference.py",
+      "occurrence_count": 1,
+      "raw_sha256": "75cb5f44fc599e7782fc86ab9352ab0252d4de735b7ed723d9d126b3a61f75f7"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "occurrence_count": 2,
+      "raw_sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "fragment": "RTVIServer.add_live_streams",
+      "locator": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py#RTVIServer.add_live_streams",
+      "occurrence_count": 1,
+      "raw_sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "fragment": "RTVIServer.generate_video_embeddings",
+      "locator": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py#RTVIServer.generate_video_embeddings",
+      "occurrence_count": 1,
+      "raw_sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler._create_rtsp_vlm_captions_request",
+      "locator": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler._create_rtsp_vlm_captions_request",
+      "occurrence_count": 1,
+      "raw_sha256": "9fc4bbe627f460358ac87e261b0219ef20165ce30e9fb915574564467731d70e"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler._send_error_message_to_redis",
+      "locator": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_error_message_to_redis",
+      "occurrence_count": 1,
+      "raw_sha256": "9fc4bbe627f460358ac87e261b0219ef20165ce30e9fb915574564467731d70e"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler._send_protobuf_to_kafka",
+      "locator": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_protobuf_to_kafka",
+      "occurrence_count": 1,
+      "raw_sha256": "9fc4bbe627f460358ac87e261b0219ef20165ce30e9fb915574564467731d70e"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler.remove_rtsp_stream",
+      "locator": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py#RTVIStreamHandler.remove_rtsp_stream",
+      "occurrence_count": 1,
+      "raw_sha256": "9fc4bbe627f460358ac87e261b0219ef20165ce30e9fb915574564467731d70e"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/utils/asset_manager.py",
+      "fragment": "AssetManager.download_file",
+      "locator": "services/rtvi/rt-embed/src/utils/asset_manager.py#AssetManager.download_file",
+      "occurrence_count": 1,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/utils/asset_manager.py",
+      "fragment": "AssetManager.save_from_base64",
+      "locator": "services/rtvi/rt-embed/src/utils/asset_manager.py#AssetManager.save_from_base64",
+      "occurrence_count": 1,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/src/utils/otel_helper.py",
+      "fragment": "init_otel",
+      "locator": "services/rtvi/rt-embed/src/utils/otel_helper.py#init_otel",
+      "occurrence_count": 1,
+      "raw_sha256": "20b78835e9d87738935258a5807c2b13c05d872609bedf3558813694aa85da60"
+    },
+    {
+      "base_path": "services/rtvi/rt-embed/tests/rtvi_embed/test_stream_cv_api.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-embed/tests/rtvi_embed/test_stream_cv_api.py",
+      "occurrence_count": 1,
+      "raw_sha256": "27cfa3d802780bc2a78b5d011ad1eb0745c3f567f42f7913856c5bead9df5212"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/api_models/file.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/api_models/file.py",
+      "occurrence_count": 2,
+      "raw_sha256": "e403a7437b77a2d60e45255b3fc46c503d0e12673a2fa7babec38c0880a3f6f3"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/api_models/live_stream.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/api_models/live_stream.py",
+      "occurrence_count": 2,
+      "raw_sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/api_models/nim_compat.py",
+      "occurrence_count": 3,
+      "raw_sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/common/chunk_info.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/common/chunk_info.py",
+      "occurrence_count": 1,
+      "raw_sha256": "8dd6b01613ee5eacba3cfc81d57bd5124f9838aec619b5e1f12f8094a7fe46af"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/common/health_status.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/common/health_status.py",
+      "occurrence_count": 1,
+      "raw_sha256": "203cc9e6ad8b75a4aa5785731ff28b0f2d75e89f58d2c7b920e4110efd205026"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py",
+      "fragment": "CompOpenAIModel.configure_openai_common",
+      "locator": "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py#CompOpenAIModel.configure_openai_common",
+      "occurrence_count": 1,
+      "raw_sha256": "145be0b6744bc2a4f670339d76d50b66b09a629a7d4185466a163a65bad95c64"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py",
+      "fragment": "CompOpenAIModel.generate_text_only_stream",
+      "locator": "services/rtvi/rt-vlm/src/models/openai_compat/openai_compat_model.py#CompOpenAIModel.generate_text_only_stream",
+      "occurrence_count": 1,
+      "raw_sha256": "145be0b6744bc2a4f670339d76d50b66b09a629a7d4185466a163a65bad95c64"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",
+      "occurrence_count": 3,
+      "raw_sha256": "c770c77c6b3ff8788efe57bd5469dd598d5a7fc965bf8fce5e20c11c460cfe10"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/protos/nv.proto",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/server/protos/nv.proto",
+      "occurrence_count": 2,
+      "raw_sha256": "6887d2c2818141c38bcd3b336fd9045c1c3d4af7f6f98672cdd2d8e21fa71300"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "occurrence_count": 3,
+      "raw_sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler._create_rtsp_vlm_captions_request",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py#RTVIStreamHandler._create_rtsp_vlm_captions_request",
+      "occurrence_count": 1,
+      "raw_sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler._send_error_message_to_kafka",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_error_message_to_kafka",
+      "occurrence_count": 1,
+      "raw_sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler._send_error_message_to_redis",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py#RTVIStreamHandler._send_error_message_to_redis",
+      "occurrence_count": 1,
+      "raw_sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "fragment": "RTVIStreamHandler.remove_rtsp_stream",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py#RTVIStreamHandler.remove_rtsp_stream",
+      "occurrence_count": 1,
+      "raw_sha256": "0d3a546b0d1edb604387c1b6a7281ee7228666792862ebb75f3186c4906c1d5e"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "occurrence_count": 13,
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "fragment": "EventSourceResponse",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py#EventSourceResponse",
+      "occurrence_count": 1,
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "fragment": "RTVIServer._register_data_url_asset",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py#RTVIServer._register_data_url_asset",
+      "occurrence_count": 1,
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "fragment": "RTVIServer.add_live_streams",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py#RTVIServer.add_live_streams",
+      "occurrence_count": 1,
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "fragment": "RTVIServer.add_video_file",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py#RTVIServer.add_video_file",
+      "occurrence_count": 1,
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "fragment": "RTVIServer.chat_completions",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py#RTVIServer.chat_completions",
+      "occurrence_count": 1,
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "fragment": "RTVIServer.metrics",
+      "locator": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py#RTVIServer.metrics",
+      "occurrence_count": 1,
+      "raw_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "occurrence_count": 2,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "fragment": "AssetManager._ssl_for_url",
+      "locator": "services/rtvi/rt-vlm/src/utils/asset_manager.py#AssetManager._ssl_for_url",
+      "occurrence_count": 1,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "fragment": "AssetManager.download_file",
+      "locator": "services/rtvi/rt-vlm/src/utils/asset_manager.py#AssetManager.download_file",
+      "occurrence_count": 1,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "fragment": "AssetManager.download_file_from_s3",
+      "locator": "services/rtvi/rt-vlm/src/utils/asset_manager.py#AssetManager.download_file_from_s3",
+      "occurrence_count": 1,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "fragment": "AssetManager.save_file",
+      "locator": "services/rtvi/rt-vlm/src/utils/asset_manager.py#AssetManager.save_file",
+      "occurrence_count": 1,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "fragment": "AssetManager.save_from_base64",
+      "locator": "services/rtvi/rt-vlm/src/utils/asset_manager.py#AssetManager.save_from_base64",
+      "occurrence_count": 1,
+      "raw_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/dense_caption_serializer.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/utils/dense_caption_serializer.py",
+      "occurrence_count": 1,
+      "raw_sha256": "5e56b5ce021a5401d21b0b119917f490d23fe464a8b43d0b94a0a305ffe2eecd"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/media_io_kwargs.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/utils/media_io_kwargs.py",
+      "occurrence_count": 2,
+      "raw_sha256": "75a92d66ca3880620e2a4884af7ac03a074350decb337a1a37b0504471d30946"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/otel_helper.py",
+      "fragment": "get_prometheus_metrics",
+      "locator": "services/rtvi/rt-vlm/src/utils/otel_helper.py#get_prometheus_metrics",
+      "occurrence_count": 1,
+      "raw_sha256": "20b78835e9d87738935258a5807c2b13c05d872609bedf3558813694aa85da60"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/utils/otel_helper.py",
+      "fragment": "init_otel",
+      "locator": "services/rtvi/rt-vlm/src/utils/otel_helper.py#init_otel",
+      "occurrence_count": 1,
+      "raw_sha256": "20b78835e9d87738935258a5807c2b13c05d872609bedf3558813694aa85da60"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/vllm_cosmos3/model.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/vllm_cosmos3/model.py",
+      "occurrence_count": 1,
+      "raw_sha256": "bd091c5487f2e2135226698ed4cf468066acf611f4c2608b51cb90f92d262c22"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py",
+      "occurrence_count": 1,
+      "raw_sha256": "3de93d0113620ce963e76c4450e3b863f851c76ae0fb7db9db204c63bc00ad61"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+      "occurrence_count": 2,
+      "raw_sha256": "a4e8421e7b18ca1e64534a142168a777e10ebc11e9724c7e69cdcd37eb961be9"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+      "occurrence_count": 1,
+      "raw_sha256": "6cc1d682072e0944f224eccf169f083ded81adbf860140442cd972854d96dd80"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/tests/kafka/test_kafka_consumer.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/tests/kafka/test_kafka_consumer.py",
+      "occurrence_count": 2,
+      "raw_sha256": "081f343e4eb662b593d87d85867b0155076b9ea0625edbdd3ca55dd3d1bd56b8"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/tests/test_context_overflow.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/tests/test_context_overflow.py",
+      "occurrence_count": 1,
+      "raw_sha256": "1bbc758d95ef067c0cf97c75a75b9ff2f1b5ec761e87305d5a5bae90dfcd854a"
+    },
+    {
+      "base_path": "services/rtvi/rt-vlm/tests/test_turn_by_turn_conversation.py",
+      "fragment": null,
+      "locator": "services/rtvi/rt-vlm/tests/test_turn_by_turn_conversation.py",
+      "occurrence_count": 1,
+      "raw_sha256": "3c0b543f168560d4900a1ba216d491de39e7fed18f93eba0f46d350cb5d89939"
+    },
+    {
+      "base_path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx",
+      "fragment": null,
+      "locator": "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx",
+      "occurrence_count": 4,
+      "raw_sha256": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f"
+    },
+    {
+      "base_path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/TabWithChatSidebarLayout.tsx",
+      "fragment": null,
+      "locator": "services/ui/apps/nv-metropolis-bp-vss-ui/components/TabWithChatSidebarLayout.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "39b71ad1b46a591aab04a3ba9cfe2f353de7cfe91ddd951eb461d1fcbb701511"
+    },
+    {
+      "base_path": "services/ui/apps/nv-metropolis-bp-vss-ui/hooks/useAppChatSidebar.ts",
+      "fragment": null,
+      "locator": "services/ui/apps/nv-metropolis-bp-vss-ui/hooks/useAppChatSidebar.ts",
+      "occurrence_count": 1,
+      "raw_sha256": "054ecd149969a9f0b1f98e12f471f494de3442050866c5d643668fd5f1356465"
+    },
+    {
+      "base_path": "services/ui/apps/nv-metropolis-bp-vss-ui/utils/mainTabChatVideoUploadRegistrars.ts",
+      "fragment": null,
+      "locator": "services/ui/apps/nv-metropolis-bp-vss-ui/utils/mainTabChatVideoUploadRegistrars.ts",
+      "occurrence_count": 1,
+      "raw_sha256": "e1e7aa0af258d1830e087e41930a121b0682f1d2413005ba51cf67cb97fa439e"
+    },
+    {
+      "base_path": "services/ui/apps/nv-metropolis-bp-vss-ui/utils/tabChatSidebarConfig.ts",
+      "fragment": null,
+      "locator": "services/ui/apps/nv-metropolis-bp-vss-ui/utils/tabChatSidebarConfig.ts",
+      "occurrence_count": 1,
+      "raw_sha256": "8545ea1e5f4d943acd2dd3aff6aaa20dbf0641b4fa6062b0cba15ca20d1c07c3"
+    },
+    {
+      "base_path": "services/ui/packages/common/lib-src/utils/chunkedUpload.ts",
+      "fragment": "chunkedUpload",
+      "locator": "services/ui/packages/common/lib-src/utils/chunkedUpload.ts#chunkedUpload",
+      "occurrence_count": 1,
+      "raw_sha256": "21a7e9e9e1857b0c1b24fff96fb7a48d283d1792f2457ffd1e1cef507b240976"
+    },
+    {
+      "base_path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/chunkedUpload.ts",
+      "fragment": null,
+      "locator": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/chunkedUpload.ts",
+      "occurrence_count": 1,
+      "raw_sha256": "a0b142953c896874c6db4ee639d64783cf1ccb1657ad9a37cfadeefbddbac7be"
+    },
+    {
+      "base_path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/chunkedUpload.ts",
+      "fragment": "chunkedUpload",
+      "locator": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/chunkedUpload.ts#chunkedUpload",
+      "occurrence_count": 1,
+      "raw_sha256": "a0b142953c896874c6db4ee639d64783cf1ccb1657ad9a37cfadeefbddbac7be"
+    },
+    {
+      "base_path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/rtspStream.ts",
+      "fragment": null,
+      "locator": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/rtspStream.ts",
+      "occurrence_count": 1,
+      "raw_sha256": "93658f792ecc86d42645f24f5c234dd43c7b13dc598a6aa5ccaf77a2331f2634"
+    },
+    {
+      "base_path": "services/video-summarization/src/kafka_producer.py",
+      "fragment": null,
+      "locator": "services/video-summarization/src/kafka_producer.py",
+      "occurrence_count": 1,
+      "raw_sha256": "b12b0f7a32dd349501b3ab90f79a33c71404b022262014e05aa3cda66cdc217d"
+    },
+    {
+      "base_path": "services/video-summarization/src/lvs_mcp.py",
+      "fragment": null,
+      "locator": "services/video-summarization/src/lvs_mcp.py",
+      "occurrence_count": 1,
+      "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+    },
+    {
+      "base_path": "services/video-summarization/src/lvs_mcp.py",
+      "fragment": "LvsMCPServer._invoke_call_tool",
+      "locator": "services/video-summarization/src/lvs_mcp.py#LvsMCPServer._invoke_call_tool",
+      "occurrence_count": 1,
+      "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+    },
+    {
+      "base_path": "services/video-summarization/src/lvs_mcp.py",
+      "fragment": "LvsMCPServer._setup_handlers",
+      "locator": "services/video-summarization/src/lvs_mcp.py#LvsMCPServer._setup_handlers",
+      "occurrence_count": 1,
+      "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+    },
+    {
+      "base_path": "services/video-summarization/src/lvs_mcp.py",
+      "fragment": "LvsMCPServer.run",
+      "locator": "services/video-summarization/src/lvs_mcp.py#LvsMCPServer.run",
+      "occurrence_count": 1,
+      "raw_sha256": "2d7f5fcf1b88119a60a75c71ee5560d7ecbd2872bd341fa906521ed859ec1de0"
+    },
+    {
+      "base_path": "services/video-summarization/src/otel_helper.py",
+      "fragment": null,
+      "locator": "services/video-summarization/src/otel_helper.py",
+      "occurrence_count": 1,
+      "raw_sha256": "2279bb13f80c4ff47173df276af9d25cc769ebce999d6d48bf0a71b0f31a9221"
+    },
+    {
+      "base_path": "services/video-summarization/src/rtvi_vlm_client.py",
+      "fragment": null,
+      "locator": "services/video-summarization/src/rtvi_vlm_client.py",
+      "occurrence_count": 1,
+      "raw_sha256": "46cdf3abc75146497dd94b5fe0a41895ff900fc08f9ff278dc56de9858944383"
+    },
+    {
+      "base_path": "services/video-summarization/src/via_server.py",
+      "fragment": null,
+      "locator": "services/video-summarization/src/via_server.py",
+      "occurrence_count": 8,
+      "raw_sha256": "80192bc98f7c501839ec2d561e8e9bedfce6673d1459276aa7b653d75dc3dd96"
+    },
+    {
+      "base_path": "services/video-summarization/src/via_stream_handler.py",
+      "fragment": null,
+      "locator": "services/video-summarization/src/via_stream_handler.py",
+      "occurrence_count": 4,
+      "raw_sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+    },
+    {
+      "base_path": "services/video-summarization/src/via_stream_handler.py",
+      "fragment": "format_response",
+      "locator": "services/video-summarization/src/via_stream_handler.py#format_response",
+      "occurrence_count": 1,
+      "raw_sha256": "0e55981fbacb39ec337c1012067475f021168aefce0d72ab14d2368c8803ad8c"
+    },
+    {
+      "base_path": "services/video-summarization/src/vss_api_models.py",
+      "fragment": null,
+      "locator": "services/video-summarization/src/vss_api_models.py",
+      "occurrence_count": 4,
+      "raw_sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"
+    },
+    {
+      "base_path": "services/video-summarization/src/vss_api_models.py",
+      "fragment": "ResponseFormat",
+      "locator": "services/video-summarization/src/vss_api_models.py#ResponseFormat",
+      "occurrence_count": 1,
+      "raw_sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"
+    },
+    {
+      "base_path": "services/video-summarization/src/vss_api_models.py",
+      "fragment": "ResponseType",
+      "locator": "services/video-summarization/src/vss_api_models.py#ResponseType",
+      "occurrence_count": 1,
+      "raw_sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"
+    },
+    {
+      "base_path": "services/vios/configs/vst_config.json",
+      "fragment": null,
+      "locator": "services/vios/configs/vst_config.json",
+      "occurrence_count": 3,
+      "raw_sha256": "9e33e1ab37d07b6713b73b298175bd00d84c39c334a2ec7296a1ab7283e96ff7"
+    },
+    {
+      "base_path": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml",
+      "fragment": null,
+      "locator": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "3ac10b1edbe86efd761986f6288a14a0bcc6bf2497c140b01afeaa6b9ddafcee"
+    },
+    {
+      "base_path": "services/vios/doc/api/vst_replay_stream_ms/swagger.yaml",
+      "fragment": null,
+      "locator": "services/vios/doc/api/vst_replay_stream_ms/swagger.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "db7060eef77799b0992123f99749e84f6cf2b48c0e747d3917ce880a8642b6e0"
+    },
+    {
+      "base_path": "services/vios/doc/api/vst_rtsp_proxy_stream_ms/swagger.yaml",
+      "fragment": null,
+      "locator": "services/vios/doc/api/vst_rtsp_proxy_stream_ms/swagger.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "2d02593babf6d759b989ad49cc18de6a98be4d513e9063097e18a0cc3909a3cb"
+    },
+    {
+      "base_path": "services/vios/doc/api/vst_sensor_management_ms/swagger.yaml",
+      "fragment": null,
+      "locator": "services/vios/doc/api/vst_sensor_management_ms/swagger.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "7ff32f7c05408e9e11c3c6c5caefcd62abdbfaf225f6a47946c40a121e414207"
+    },
+    {
+      "base_path": "services/vios/doc/api/vst_storage_management_ms/swagger.yaml",
+      "fragment": null,
+      "locator": "services/vios/doc/api/vst_storage_management_ms/swagger.yaml",
+      "occurrence_count": 3,
+      "raw_sha256": "b37fadcab72ca7b7dc538708134b69ea67880bce47b13b609595f56873567194"
+    },
+    {
+      "base_path": "services/vios/doc/api/vst_stream_bridge_ms/swagger.yaml",
+      "fragment": null,
+      "locator": "services/vios/doc/api/vst_stream_bridge_ms/swagger.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "ccbb53d33aec0d61ed680f1ba13a6e0b85fe47a6eb3815f4491929aeb7f292b6"
+    },
+    {
+      "base_path": "services/vios/doc/api/vst_stream_recorder_ms/swagger.yaml",
+      "fragment": null,
+      "locator": "services/vios/doc/api/vst_stream_recorder_ms/swagger.yaml",
+      "occurrence_count": 1,
+      "raw_sha256": "679cd0215665ab46c3ac70f9a6509b9bcf70d2dcc511fe38faaceccc4e5dd318"
+    },
+    {
+      "base_path": "services/vios/mcp/src/server.py",
+      "fragment": null,
+      "locator": "services/vios/mcp/src/server.py",
+      "occurrence_count": 1,
+      "raw_sha256": "54eb8f509d1653892c5bca9d24ca9976b776501d584727333b81d1fe3549c9d2"
+    },
+    {
+      "base_path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+      "fragment": null,
+      "locator": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp",
+      "occurrence_count": 2,
+      "raw_sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/App.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/App.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "64dca9ffbc5836e623ec76128bf0d4525c94aab651074546ed11ae8d25318eac"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/components/debugOptions/DebugOptions.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/components/debugOptions/DebugOptions.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "7fa5fde4951be4afb8393dd63f731d5fc6f340cf41e9d69c6f98f6f84c60c1e5"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/components/sensorRecording/RecordingScheduleCard.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/components/sensorRecording/RecordingScheduleCard.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "e185f5f4b70f308b53dfbcab2e456ba200f064816b7a6d73ee467ba7a216d211"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "f60fda8c81869eb74a3126e531f6af91811f5acc54d5f970668f9ca650739b50"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/features/streamManager/StreamManager.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/features/streamManager/StreamManager.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "08db676ff4657baab30bb928bb9388314789fc87ae59ba617254a237643646cd"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/RTSPStreamQOS.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/RTSPStreamQOS.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "9f773291f5e44dbc61dedc5d93425f652531fa1d86bc70892e8d4940153a6711"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamAutomation.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamAutomation.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "d650220c5bb47e17967a96053be4986a6586ecb53174baf139fbd28ec26dc03b"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamStats.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/StreamStats.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "989775ff8487f1a1a54da86c1db5d089fcbe9e6083015bb54d5b62b2ca833428"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/SystemStats.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/pages/common/experimentalPages/SystemStats.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "cb553b709c8300b242f67d5e3812e3d4ae9160aabeb7f14bdb5a8b196dcd6ef8"
+    },
+    {
+      "base_path": "services/vios/ui/vios-ui/src/pages/nvstreamer/MediaUpload.tsx",
+      "fragment": null,
+      "locator": "services/vios/ui/vios-ui/src/pages/nvstreamer/MediaUpload.tsx",
+      "occurrence_count": 1,
+      "raw_sha256": "dccb44dd226cd8a92e32f9e7a97a8cf5509de2c7ca808f5fab05235d532cafba"
+    },
+    {
+      "base_path": "tools/message-broker-consumers/kafka_to_file.py",
+      "fragment": null,
+      "locator": "tools/message-broker-consumers/kafka_to_file.py",
+      "occurrence_count": 1,
+      "raw_sha256": "ffb27bcbf3ffdca9f04689a9fb1baeb2e3470f8a46b7e0350429caeeff8da363"
+    },
+    {
+      "base_path": "tools/message-broker-consumers/redis_to_file.py",
+      "fragment": null,
+      "locator": "tools/message-broker-consumers/redis_to_file.py",
+      "occurrence_count": 1,
+      "raw_sha256": "00f9e03b05b8ca48124ff2cb125ed7956c879ba87bd67052d6a81e1f5d9d3d79"
+    }
+  ],
+  "summary": {
+    "active_lane_file_references": 45,
+    "active_lane_unique_files": 26,
+    "semantic_base_files": 235,
+    "semantic_locator_occurrences": 389,
+    "semantic_unique_locators": 269
+  },
+  "warehouse_sample_bundle": "excluded"
+}

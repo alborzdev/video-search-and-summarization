@@ -652,6 +652,18 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-admission-receipts-successor/tests"
 
+# The execution-binding registry source-locks all 208 mapped candidates and
+# keeps semantic, planning-action, observer, and lane projections distinct from
+# authoritative executable bindings. It directly checks 235 semantic files and
+# 26 active-lane profile/Compose files. Every executor, service/profile,
+# cleanup/rollback, postcondition, and evidence binding remains null or empty;
+# admission-grade bindings remain zero and Warehouse remains excluded.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-execution-binding-registry-successor/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-execution-binding-registry-successor/tests"
+
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact
 # remote pointers define no authoritative full-diff denominator and make no

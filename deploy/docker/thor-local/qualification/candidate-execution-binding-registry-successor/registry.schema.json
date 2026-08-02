@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "binding_rows_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "bindings": {"items": {"$ref": "#/$defs/binding"}, "maxItems": 208, "minItems": 208, "type": "array"},
+    "external_candidates": {"items": {"pattern": "^manifest-entry\\.", "type": "string"}, "maxItems": 4, "minItems": 4, "type": "array", "uniqueItems": true},
+    "mode": {"const": "inert_read_only_projection_registry_no_execution"},
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "authoritative_bindings_present": {"const": 0},
+        "compiler_can_execute": {"const": false},
+        "historical_executors_invoked": {"const": false},
+        "observer_projection_is_runtime_evidence": {"const": false},
+        "planning_projection_is_authoritative_binding": {"const": false},
+        "required_cloud_inference": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["authoritative_bindings_present", "compiler_can_execute", "historical_executors_invoked", "observer_projection_is_runtime_evidence", "planning_projection_is_authoritative_binding", "required_cloud_inference", "warehouse_sample_bundle"],
+      "type": "object"
+    },
+    "registry_id": {"const": "thor-vss-3.2.1-candidate-execution-binding-registry-successor"},
+    "schema_version": {"const": 1},
+    "source_identities": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_adapter_id": {"minLength": 1, "type": "string"},
+        "approval_bundle_contract_id": {"minLength": 1, "type": "string"},
+        "guarded_execution_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "locator_locks_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "mapping_id": {"minLength": 1, "type": "string"},
+        "protocol_candidate_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "runtime_lane_plan_id": {"minLength": 1, "type": "string"},
+        "wave8_receipt_id": {"minLength": 1, "type": "string"},
+        "workload_payload_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["approval_bundle_contract_id", "candidate_adapter_id", "guarded_execution_payload_sha256", "locator_locks_raw_sha256", "mapping_id", "protocol_candidate_payload_sha256", "runtime_lane_plan_id", "wave8_receipt_id", "workload_payload_sha256"],
+      "type": "object"
+    },
+    "source_locks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {"path": {"minLength": 1, "type": "string"}, "raw_sha256": {"$ref": "#/$defs/sha256"}},
+        "required": ["path", "raw_sha256"],
+        "type": "object"
+      },
+      "maxItems": 24,
+      "minItems": 24,
+      "type": "array"
+    },
+    "projection_locator_lock_identity": {
+      "additionalProperties": false,
+      "properties": {
+        "active_lane_unique_files": {"const": 26},
+        "locator_lock_id": {"const": "thor-vss-3.2.1-candidate-execution-projection-locators"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"},
+        "semantic_base_files": {"const": 235},
+        "semantic_unique_locators": {"const": 269}
+      },
+      "required": ["active_lane_unique_files", "locator_lock_id", "raw_sha256", "semantic_base_files", "semantic_unique_locators"],
+      "type": "object"
+    },
+    "static_gaps": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_id": {"pattern": "^manifest-entry\\.", "type": "string"},
+          "mapping_position": {"maximum": 210, "minimum": 0, "type": "integer"},
+          "oracle_index": {"maximum": 499, "minimum": 289, "type": "integer"},
+          "state": {"const": "static_nonactivating_not_in_registry"}
+        },
+        "required": ["candidate_id", "mapping_position", "oracle_index", "state"],
+        "type": "object"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "action_projection_counts": {
+          "additionalProperties": false,
+          "properties": {"oracle_only": {"const": 127}, "protocol": {"const": 23}, "workload": {"const": 58}},
+          "required": ["oracle_only", "protocol", "workload"],
+          "type": "object"
+        },
+        "admission_grade_bindings": {"const": 0},
+        "authoritative_binding_counts": {
+          "additionalProperties": false,
+          "properties": {"action_contracts": {"const": 0}, "cleanup_executors": {"const": 0}, "cleanup_rollback_contracts": {"const": 0}, "cleanup_targets": {"const": 0}, "compose_paths": {"const": 0}, "evidence_destinations": {"const": 0}, "evidence_records": {"const": 0}, "executors": {"const": 0}, "postcondition_collectors": {"const": 0}, "profile_ids": {"const": 0}, "profile_paths": {"const": 0}, "service_role_profile_bindings": {"const": 0}, "service_roles": {"const": 0}},
+          "required": ["action_contracts", "cleanup_executors", "cleanup_rollback_contracts", "cleanup_targets", "compose_paths", "evidence_destinations", "evidence_records", "executors", "postcondition_collectors", "profile_ids", "profile_paths", "service_role_profile_bindings", "service_roles"],
+          "type": "object"
+        },
+        "binding_count": {"const": 208},
+        "cross_tier_counts": {
+          "additionalProperties": false,
+          "properties": {"both": {"const": 28}, "enriched": {"const": 53}, "observer": {"const": 42}, "oracle": {"const": 85}},
+          "required": ["both", "enriched", "observer", "oracle"],
+          "type": "object"
+        },
+        "external_candidate_count": {"const": 4},
+        "lane_projection_counts": {
+          "additionalProperties": false,
+          "properties": {"exact_external": {"const": 4}, "family_multi": {"const": 28}, "family_single": {"const": 176}},
+          "required": ["exact_external", "family_multi", "family_single"],
+          "type": "object"
+        },
+        "observer_projection_counts": {
+          "additionalProperties": false,
+          "properties": {"absent": {"const": 138}, "guarded_adapter": {"const": 68}, "production_subset": {"const": 2}},
+          "required": ["absent", "guarded_adapter", "production_subset"],
+          "type": "object"
+        },
+        "static_gap_count": {"const": 3}
+      },
+      "required": ["action_projection_counts", "admission_grade_bindings", "authoritative_binding_counts", "binding_count", "cross_tier_counts", "external_candidate_count", "lane_projection_counts", "observer_projection_counts", "static_gap_count"],
+      "type": "object"
+    },
+    "target": {
+      "additionalProperties": false,
+      "properties": {"hardware": {"const": "NVIDIA Jetson Thor"}, "main_commit": {"pattern": "^[0-9a-f]{40}$", "type": "string"}, "product_version": {"const": "3.2.1"}},
+      "required": ["hardware", "main_commit", "product_version"],
+      "type": "object"
+    }
+  },
+  "required": ["registry_id", "schema_version", "mode", "target", "source_locks", "source_identities", "projection_locator_lock_identity", "policy", "static_gaps", "external_candidates", "bindings", "binding_rows_canonical_sha256", "summary"],
+  "type": "object",
+  "$defs": {
+    "sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "locator": {
+      "additionalProperties": false,
+      "properties": {
+        "json_pointer": {"pattern": "^/", "type": "string"},
+        "record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "source_id": {"enum": ["adapter", "guarded", "lanes", "mapping", "protocol", "wave8", "workloads"]}
+      },
+      "required": ["json_pointer", "record_canonical_sha256", "source_id"],
+      "type": "object"
+    },
+    "action_projection": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_canonical_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "source_locators": {"items": {"$ref": "#/$defs/locator"}, "maxItems": 2, "type": "array"},
+        "tier": {"enum": ["oracle_only", "protocol", "workload"]}
+      },
+      "required": ["binding_canonical_sha256", "source_locators", "tier"],
+      "type": "object"
+    },
+    "observer_projection": {
+      "additionalProperties": false,
+      "properties": {
+        "source_locators": {"items": {"$ref": "#/$defs/locator"}, "maxItems": 2, "type": "array"},
+        "tier": {"enum": ["absent", "guarded_adapter", "production_subset"]}
+      },
+      "required": ["source_locators", "tier"],
+      "type": "object"
+    },
+    "authoritative": {
+      "additionalProperties": false,
+      "properties": {
+        "action_contract_sha256": {"type": "null"},
+        "cleanup_executor": {"type": "null"},
+        "cleanup_rollback_contract_sha256": {"type": "null"},
+        "cleanup_targets": {"maxItems": 0, "type": "array"},
+        "compose_paths": {"maxItems": 0, "type": "array"},
+        "evidence_destination": {"type": "null"},
+        "evidence_records": {"maxItems": 0, "type": "array"},
+        "executor": {"type": "null"},
+        "postcondition_collectors": {"maxItems": 0, "type": "array"},
+        "profile_id": {"type": "null"},
+        "profile_paths": {"maxItems": 0, "type": "array"},
+        "service_role_profile_binding_sha256": {"type": "null"},
+        "service_roles": {"maxItems": 0, "type": "array"}
+      },
+      "required": ["action_contract_sha256", "cleanup_executor", "cleanup_rollback_contract_sha256", "cleanup_targets", "compose_paths", "evidence_destination", "evidence_records", "executor", "postcondition_collectors", "profile_id", "profile_paths", "service_role_profile_binding_sha256", "service_roles"],
+      "type": "object"
+    },
+    "binding": {
+      "additionalProperties": false,
+      "properties": {
+        "action_projection": {"$ref": "#/$defs/action_projection"},
+        "admission_grade": {"const": false},
+        "authoritative_executable_binding": {"$ref": "#/$defs/authoritative"},
+        "candidate_id": {"pattern": "^manifest-entry\\.", "type": "string"},
+        "candidate_record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "complete_dependency_closure": {"items": {"minLength": 1, "type": "string"}, "maxItems": 16, "minItems": 1, "type": "array", "uniqueItems": true},
+        "cross_tier": {"enum": ["both", "enriched", "observer", "oracle"]},
+        "execution_boundary": {"enum": ["alternate_local", "external", "local"]},
+        "lane_projection": {
+          "additionalProperties": false,
+          "properties": {
+            "deployment_source_path_count": {"minimum": 0, "type": "integer"},
+            "deployment_source_paths_canonical_sha256": {"$ref": "#/$defs/sha256"},
+            "lane_ids": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+            "source_locator": {"$ref": "#/$defs/locator"},
+            "tier": {"enum": ["exact_external", "family_multi", "family_single"]}
+          },
+          "required": ["deployment_source_path_count", "deployment_source_paths_canonical_sha256", "lane_ids", "source_locator", "tier"],
+          "type": "object"
+        },
+        "leaf_bundle_id": {"minLength": 1, "type": "string"},
+        "manifest_pointer": {"pattern": "^/features/[0-9]+/advertised/[0-9]+$", "type": "string"},
+        "mapping_locator": {"$ref": "#/$defs/locator"},
+        "mapping_position": {"maximum": 210, "minimum": 0, "type": "integer"},
+        "observer_projection": {"$ref": "#/$defs/observer_projection"},
+        "oracle_id": {"pattern": "^oracle\\.manifest-entry\\.", "type": "string"},
+        "oracle_index": {"maximum": 499, "minimum": 289, "type": "integer"},
+        "registry_position": {"maximum": 207, "minimum": 0, "type": "integer"},
+        "semantic_projection": {
+          "additionalProperties": false,
+          "properties": {"implementation_surface_count": {"minimum": 1, "type": "integer"}, "implementation_surfaces_canonical_sha256": {"$ref": "#/$defs/sha256"}, "source_locator": {"$ref": "#/$defs/locator"}, "tier": {"const": "candidate_oracle_adapter"}},
+          "required": ["implementation_surface_count", "implementation_surfaces_canonical_sha256", "source_locator", "tier"],
+          "type": "object"
+        },
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["action_projection", "admission_grade", "authoritative_executable_binding", "candidate_id", "candidate_record_canonical_sha256", "complete_dependency_closure", "cross_tier", "execution_boundary", "lane_projection", "leaf_bundle_id", "manifest_pointer", "mapping_locator", "mapping_position", "observer_projection", "oracle_id", "oracle_index", "registry_position", "semantic_projection", "warehouse_sample_bundle"],
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "active_lane_files": {
+      "items": {"$ref": "#/$defs/count_lock"},
+      "maxItems": 26,
+      "minItems": 26,
+      "type": "array"
+    },
+    "active_lane_ids": {
+      "items": {"minLength": 1, "type": "string"},
+      "maxItems": 7,
+      "minItems": 7,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "locator_lock_id": {"const": "thor-vss-3.2.1-candidate-execution-projection-locators"},
+    "mode": {"const": "read_only_direct_source_locks"},
+    "schema_version": {"const": 1},
+    "semantic_base_files": {
+      "items": {"$ref": "#/$defs/file_lock"},
+      "maxItems": 235,
+      "minItems": 235,
+      "type": "array"
+    },
+    "semantic_locators": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "base_path": {"minLength": 1, "type": "string"},
+          "fragment": {"oneOf": [{"minLength": 1, "type": "string"}, {"type": "null"}]},
+          "locator": {"minLength": 1, "type": "string"},
+          "occurrence_count": {"minimum": 1, "type": "integer"},
+          "raw_sha256": {"$ref": "#/$defs/sha256"}
+        },
+        "required": ["base_path", "fragment", "locator", "occurrence_count", "raw_sha256"],
+        "type": "object"
+      },
+      "maxItems": 269,
+      "minItems": 269,
+      "type": "array"
+    },
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "active_lane_file_references": {"const": 45},
+        "active_lane_unique_files": {"const": 26},
+        "semantic_base_files": {"const": 235},
+        "semantic_locator_occurrences": {"const": 389},
+        "semantic_unique_locators": {"const": 269}
+      },
+      "required": ["active_lane_file_references", "active_lane_unique_files", "semantic_base_files", "semantic_locator_occurrences", "semantic_unique_locators"],
+      "type": "object"
+    },
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "required": ["locator_lock_id", "schema_version", "mode", "semantic_locators", "semantic_base_files", "active_lane_ids", "active_lane_files", "summary", "warehouse_sample_bundle"],
+  "type": "object",
+  "$defs": {
+    "sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "file_lock": {
+      "additionalProperties": false,
+      "properties": {"path": {"minLength": 1, "type": "string"}, "raw_sha256": {"$ref": "#/$defs/sha256"}},
+      "required": ["path", "raw_sha256"],
+      "type": "object"
+    },
+    "count_lock": {
+      "additionalProperties": false,
+      "properties": {"occurrence_count": {"minimum": 1, "type": "integer"}, "path": {"minLength": 1, "type": "string"}, "raw_sha256": {"$ref": "#/$defs/sha256"}},
+      "required": ["occurrence_count", "path", "raw_sha256"],
+      "type": "object"
+    }
+  }
+}

@@ -350,6 +350,16 @@ for which runtime admission is not applicable. It cannot consume receipts,
 write state, authorize actions, or execute anything; trusted roots, receipts,
 admissions, and executable candidates remain zero.
 
+The additive
+[`qualification/candidate-execution-binding-registry-successor/`](qualification/candidate-execution-binding-registry-successor/README.md)
+then source-locks the 208 mapped candidates to their exact semantic,
+planning-action, observer, and lane projections, including 235 implementation
+files and 26 active-lane profile/Compose files. It deliberately prevents those
+projections from becoming executable bindings: all authoritative action,
+service/profile, cleanup/rollback, postcondition, and evidence fields remain
+empty, and admission-grade bindings remain zero. Required cloud inference is
+false and the Warehouse sample remains excluded.
+
 This is an application-envelope measurement, not a universal camera-count
 claim. Both inputs were copies of one local H.264 sample, so the result does
 not cover adverse RTSP networks, higher resolutions, different codecs,
