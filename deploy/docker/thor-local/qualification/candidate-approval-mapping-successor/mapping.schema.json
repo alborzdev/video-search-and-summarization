@@ -1,0 +1,456 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/candidate-approval-mapping-successor.schema.json",
+  "title": "Inert Thor VSS 211-candidate approval classification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mapping_id",
+    "mode",
+    "target",
+    "selected_metadata_set",
+    "source_locks",
+    "candidate_integrity",
+    "generic_approval_contract",
+    "policy",
+    "summary",
+    "mapping_records_canonical_sha256",
+    "mappings"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mapping_id": {"const": "thor-vss-3.2.1-candidate-approval-mapping-successor"},
+    "mode": {"const": "inert_classification_only_no_receipt_consumer"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "main_commit", "hardware"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "hardware": {"const": "NVIDIA Jetson Thor"}
+      }
+    },
+    "selected_metadata_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "set_id",
+        "selector_raw_sha256",
+        "descriptor_raw_sha256",
+        "oracle_raw_sha256",
+        "oracle_count",
+        "candidate_start_index",
+        "candidate_count"
+      ],
+      "properties": {
+        "set_id": {"const": "thor-vss-3.2.1-metadata-500-staged"},
+        "selector_raw_sha256": {"const": "8021efc4684b106539a627b3ddfd82937c7ecf1d6111a3c87538fc5ea7360bec"},
+        "descriptor_raw_sha256": {"const": "56ed8f555c0814e80a39c15198a33c80d400c991a4857a27b4609ea88b5750f9"},
+        "oracle_raw_sha256": {"const": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
+        "oracle_count": {"const": 500},
+        "candidate_start_index": {"const": 289},
+        "candidate_count": {"const": 211}
+      }
+    },
+    "source_locks": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {"$ref": "#/$defs/source_lock"}
+    },
+    "candidate_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_order_canonical_sha256",
+        "candidate_rows_canonical_sha256",
+        "workloads_payload_sha256",
+        "protocol_payload_sha256"
+      ],
+      "properties": {
+        "candidate_order_canonical_sha256": {"const": "1c0cc33efa1aa6283e467e5fc78bbed8b4cbe8ff23fdbf6db3190144996a3ef9"},
+        "candidate_rows_canonical_sha256": {"const": "8cc136ea78c7395c534db0c8601b4881ac7982a70e6c43218a6d7cc20b6ef5b4"},
+        "workloads_payload_sha256": {"const": "0e8512e64399af7d8acc0c7136efbd52da4ebf9119ad0826859e6fce6906d847"},
+        "protocol_payload_sha256": {"const": "65715e2ebfbe164ae38a6b20ca7dc23b6f3a65aaa9dd1632bdda746c4c929f24"}
+      }
+    },
+    "generic_approval_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "raw_sha256",
+        "bundle_count",
+        "ordered_bundle_ids",
+        "approval_inheritance"
+      ],
+      "properties": {
+        "contract_id": {"const": "vss-3.2.1-thor-runtime-approval-bundles"},
+        "raw_sha256": {"const": "8bfa16650574de7ac1906da4eab048a30680f4094dd62cbea0cd5319b9d24e4f"},
+        "bundle_count": {"const": 14},
+        "ordered_bundle_ids": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "host-prerequisite-evidence-collection"},
+            {"const": "read-only-docker-runtime-inspection"},
+            {"const": "cgroupfs-remediation"},
+            {"const": "tiny-audio-fixture-generation"},
+            {"const": "model-artifact-downloads"},
+            {"const": "profile-lifecycle"},
+            {"const": "search-scale-progressive-2-4-8-16"},
+            {"const": "search-scale-100"},
+            {"const": "mv3dt-custom-data"},
+            {"const": "sparse4d-custom-data-models"},
+            {"const": "audio-native-runtime"},
+            {"const": "audio-asr-transcript-runtime"},
+            {"const": "official-edge-staging"},
+            {"const": "external-attestations"}
+          ],
+          "items": false,
+          "minItems": 14,
+          "maxItems": 14
+        },
+        "approval_inheritance": {"const": false}
+      }
+    },
+    "policy": {"$ref": "#/$defs/policy"},
+    "summary": {"$ref": "#/$defs/summary"},
+    "mapping_records_canonical_sha256": {"$ref": "#/$defs/sha256"},
+    "mappings": {
+      "type": "array",
+      "minItems": 211,
+      "maxItems": 211,
+      "items": {"$ref": "#/$defs/mapping"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//).+$"
+    },
+    "bundle_id": {
+      "enum": [
+        "host-prerequisite-evidence-collection",
+        "read-only-docker-runtime-inspection",
+        "cgroupfs-remediation",
+        "tiny-audio-fixture-generation",
+        "model-artifact-downloads",
+        "profile-lifecycle",
+        "search-scale-progressive-2-4-8-16",
+        "search-scale-100",
+        "mv3dt-custom-data",
+        "sparse4d-custom-data-models",
+        "audio-native-runtime",
+        "audio-asr-transcript-runtime",
+        "official-edge-staging",
+        "external-attestations"
+      ]
+    },
+    "source_lock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "raw_sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "raw_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "zero_action_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification_only",
+        "dependency_disposition",
+        "receipt_consumer_present",
+        "receipts_present",
+        "approvals_granted",
+        "admitted_candidates",
+        "executable_candidates",
+        "commands_invented",
+        "action_flag_vectors_invented",
+        "service_roles_invented",
+        "profile_ids_invented",
+        "compose_paths_invented",
+        "approval_inheritance",
+        "external_can_qualify_local",
+        "required_cloud_inference",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "classification_only": {"const": true},
+        "dependency_disposition": {"const": "unresolved_until_separate_receipt_or_reviewed_not_required_determination"},
+        "receipt_consumer_present": {"const": false},
+        "receipts_present": {"const": 0},
+        "approvals_granted": {"const": 0},
+        "admitted_candidates": {"const": 0},
+        "executable_candidates": {"const": 0},
+        "commands_invented": {"const": 0},
+        "action_flag_vectors_invented": {"const": 0},
+        "service_roles_invented": {"const": 0},
+        "profile_ids_invented": {"const": 0},
+        "compose_paths_invented": {"const": 0},
+        "approval_inheritance": {"const": false},
+        "external_can_qualify_local": {"const": false},
+        "required_cloud_inference": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "policy": {"$ref": "#/$defs/zero_action_policy"},
+    "state_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mapped", "static_nonactivating", "unmapped_contract_conflict", "unmapped_scope_gap"],
+      "properties": {
+        "mapped": {"const": 206},
+        "static_nonactivating": {"const": 3},
+        "unmapped_contract_conflict": {"const": 1},
+        "unmapped_scope_gap": {"const": 1}
+      }
+    },
+    "direct_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host-prerequisite-evidence-collection",
+        "read-only-docker-runtime-inspection",
+        "cgroupfs-remediation",
+        "tiny-audio-fixture-generation",
+        "model-artifact-downloads",
+        "profile-lifecycle",
+        "search-scale-progressive-2-4-8-16",
+        "search-scale-100",
+        "mv3dt-custom-data",
+        "sparse4d-custom-data-models",
+        "audio-native-runtime",
+        "audio-asr-transcript-runtime",
+        "official-edge-staging",
+        "external-attestations"
+      ],
+      "properties": {
+        "host-prerequisite-evidence-collection": {"const": 0},
+        "read-only-docker-runtime-inspection": {"const": 0},
+        "cgroupfs-remediation": {"const": 0},
+        "tiny-audio-fixture-generation": {"const": 0},
+        "model-artifact-downloads": {"const": 0},
+        "profile-lifecycle": {"const": 184},
+        "search-scale-progressive-2-4-8-16": {"const": 1},
+        "search-scale-100": {"const": 1},
+        "mv3dt-custom-data": {"const": 9},
+        "sparse4d-custom-data-models": {"const": 2},
+        "audio-native-runtime": {"const": 3},
+        "audio-asr-transcript-runtime": {"const": 2},
+        "official-edge-staging": {"const": 0},
+        "external-attestations": {"const": 4}
+      }
+    },
+    "closure_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host-prerequisite-evidence-collection",
+        "read-only-docker-runtime-inspection",
+        "cgroupfs-remediation",
+        "tiny-audio-fixture-generation",
+        "model-artifact-downloads",
+        "profile-lifecycle",
+        "search-scale-progressive-2-4-8-16",
+        "search-scale-100",
+        "mv3dt-custom-data",
+        "sparse4d-custom-data-models",
+        "audio-native-runtime",
+        "audio-asr-transcript-runtime",
+        "official-edge-staging",
+        "external-attestations"
+      ],
+      "properties": {
+        "host-prerequisite-evidence-collection": {"const": 202},
+        "read-only-docker-runtime-inspection": {"const": 202},
+        "cgroupfs-remediation": {"const": 202},
+        "tiny-audio-fixture-generation": {"const": 5},
+        "model-artifact-downloads": {"const": 202},
+        "profile-lifecycle": {"const": 202},
+        "search-scale-progressive-2-4-8-16": {"const": 2},
+        "search-scale-100": {"const": 1},
+        "mv3dt-custom-data": {"const": 9},
+        "sparse4d-custom-data-models": {"const": 2},
+        "audio-native-runtime": {"const": 3},
+        "audio-asr-transcript-runtime": {"const": 2},
+        "official-edge-staging": {"const": 0},
+        "external-attestations": {"const": 4}
+      }
+    },
+    "binding_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workload", "protocol", "none"],
+      "properties": {
+        "workload": {"const": 60},
+        "protocol": {"const": 23},
+        "none": {"const": 128}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_count",
+        "state_counts",
+        "direct_leaf_counts",
+        "dependency_closure_link_counts",
+        "binding_counts",
+        "receipt_count",
+        "admitted_candidates",
+        "executable_candidates"
+      ],
+      "properties": {
+        "candidate_count": {"const": 211},
+        "state_counts": {"$ref": "#/$defs/state_counts"},
+        "direct_leaf_counts": {"$ref": "#/$defs/direct_counts"},
+        "dependency_closure_link_counts": {"$ref": "#/$defs/closure_counts"},
+        "binding_counts": {"$ref": "#/$defs/binding_counts"},
+        "receipt_count": {"const": 0},
+        "admitted_candidates": {"const": 0},
+        "executable_candidates": {"const": 0}
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "oracle_index",
+        "capability_id",
+        "oracle_id",
+        "manifest_pointer",
+        "feature_id",
+        "candidate_record_canonical_sha256",
+        "candidate_source_payload_sha256",
+        "mode",
+        "profile",
+        "execution_boundary",
+        "acceptance_class",
+        "implementation_surface_count",
+        "implementation_surfaces_canonical_sha256",
+        "binding_kind",
+        "workload_binding_canonical_sha256",
+        "protocol_binding_canonical_sha256",
+        "mapping_state",
+        "leaf_bundle_id",
+        "suggested_bundle_id",
+        "reason_code",
+        "dependency_closure",
+        "service_binding_state",
+        "approval_state",
+        "required_cloud_inference",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "oracle_index": {"type": "integer", "minimum": 289, "maximum": 499},
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\."},
+        "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\."},
+        "manifest_pointer": {"type": "string", "pattern": "^/features/[0-9]+/advertised/[0-9]+$"},
+        "feature_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+        "candidate_record_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "candidate_source_payload_sha256": {"$ref": "#/$defs/sha256"},
+        "mode": {"enum": ["api", "config", "deploy", "model", "protocol", "runtime", "static"]},
+        "profile": {"type": "string", "pattern": "^candidate-[a-z0-9-]+$"},
+        "execution_boundary": {"enum": ["local", "alternate_local", "external"]},
+        "acceptance_class": {"enum": ["required_local", "alternate_local_lane", "external_optional"]},
+        "implementation_surface_count": {"type": "integer", "minimum": 1, "maximum": 32},
+        "implementation_surfaces_canonical_sha256": {"$ref": "#/$defs/sha256"},
+        "binding_kind": {"enum": ["workload", "protocol", "none"]},
+        "workload_binding_canonical_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "protocol_binding_canonical_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "mapping_state": {"enum": ["mapped", "static_nonactivating", "unmapped_contract_conflict", "unmapped_scope_gap"]},
+        "leaf_bundle_id": {"oneOf": [{"$ref": "#/$defs/bundle_id"}, {"type": "null"}]},
+        "suggested_bundle_id": {"oneOf": [{"const": "sparse4d-custom-data-models"}, {"type": "null"}]},
+        "reason_code": {
+          "enum": [
+            "exact_static_nonactivating_exception",
+            "sparse4d_title_surface_conflicts_with_mv3dt_dependency",
+            "physical_interface_firewall_has_no_generic_bundle",
+            "external_optional_boundary",
+            "separate_search_100_scope",
+            "progressive_search_scope",
+            "sparse4d_custom_data_scope",
+            "mv3dt_custom_data_scope",
+            "native_audio_scope",
+            "local_asr_transcript_scope",
+            "generic_local_profile_scope"
+          ]
+        },
+        "dependency_closure": {
+          "type": "array",
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/bundle_id"}
+        },
+        "service_binding_state": {"const": "unresolved_not_declared_by_candidate"},
+        "approval_state": {"const": "no_receipt_not_admitted_not_executable"},
+        "required_cloud_inference": {"const": false},
+        "warehouse_sample_bundle": {"const": false}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"binding_kind": {"const": "workload"}}},
+          "then": {
+            "properties": {
+              "workload_binding_canonical_sha256": {"$ref": "#/$defs/sha256"},
+              "protocol_binding_canonical_sha256": {"const": null}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"binding_kind": {"const": "protocol"}}},
+          "then": {
+            "properties": {
+              "workload_binding_canonical_sha256": {"const": null},
+              "protocol_binding_canonical_sha256": {"$ref": "#/$defs/sha256"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"binding_kind": {"const": "none"}}},
+          "then": {
+            "properties": {
+              "workload_binding_canonical_sha256": {"const": null},
+              "protocol_binding_canonical_sha256": {"const": null}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"mapping_state": {"const": "mapped"}}},
+          "then": {
+            "properties": {
+              "leaf_bundle_id": {"$ref": "#/$defs/bundle_id"},
+              "suggested_bundle_id": {"const": null},
+              "dependency_closure": {"minItems": 1}
+            }
+          },
+          "else": {"properties": {"leaf_bundle_id": {"const": null}}}
+        },
+        {
+          "if": {"properties": {"mapping_state": {"const": "unmapped_contract_conflict"}}},
+          "then": {
+            "properties": {
+              "suggested_bundle_id": {"const": "sparse4d-custom-data-models"},
+              "dependency_closure": {"maxItems": 0}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"mapping_state": {"enum": ["static_nonactivating", "unmapped_scope_gap"]}}},
+          "then": {
+            "properties": {
+              "suggested_bundle_id": {"const": null},
+              "dependency_closure": {"maxItems": 0}
+            }
+          }
+        }
+      ]
+    }
+  }
+}
