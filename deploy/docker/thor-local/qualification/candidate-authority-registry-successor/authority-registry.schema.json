@@ -1,0 +1,229 @@
+{
+  "$defs": {
+    "authority_design": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_id": {"minLength": 1, "type": "string"},
+        "subject_identity": {"minLength": 1, "type": "string"}
+      },
+      "required": ["authority_id", "subject_identity"],
+      "type": "object"
+    },
+    "active_key_design": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_id": {"minLength": 1, "type": "string"},
+        "key_id": {"minLength": 1, "type": "string"},
+        "key_type": {"const": "Ed25519"},
+        "public_key_base64": {"pattern": "^[A-Za-z0-9+/]{43}=$", "type": "string"},
+        "roles": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "scopes": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true}
+      },
+      "required": ["authority_id", "key_id", "key_type", "public_key_base64", "roles", "scopes"],
+      "type": "object"
+    },
+    "max_ttl_policy_design": {
+      "additionalProperties": false,
+      "properties": {
+        "max_ttl_seconds": {"minimum": 1, "type": "integer"},
+        "receipt_type": {"enum": ["candidate_action_authorization", "candidate_action_completion"]},
+        "scope_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["scope_id", "receipt_type", "max_ttl_seconds"],
+      "type": "object"
+    },
+    "not_required_edge_policy_design": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {"pattern": "^manifest-entry\\.", "type": "string"},
+        "edge_child_bundle_id": {"minLength": 1, "type": "string"},
+        "edge_parent_bundle_id": {"minLength": 1, "type": "string"},
+        "policy_contract_sha256": {"$ref": "#/$defs/sha256"},
+        "required_role": {"minLength": 1, "type": "string"},
+        "scope_id": {"minLength": 1, "type": "string"},
+        "threshold": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["scope_id", "candidate_id", "edge_parent_bundle_id", "edge_child_bundle_id", "required_role", "threshold", "policy_contract_sha256"],
+      "type": "object"
+    },
+    "revocation_design": {
+      "additionalProperties": false,
+      "properties": {
+        "effective_at": {"$ref": "#/$defs/timestamp"},
+        "authority_id": {"minLength": 1, "type": "string"},
+        "authority_registry_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "key_id": {"minLength": 1, "type": "string"},
+        "reason_contract_sha256": {"$ref": "#/$defs/sha256"},
+        "registry_epoch": {"minimum": 1, "type": "integer"},
+        "revocation_id": {"minLength": 1, "type": "string"},
+        "role_ids": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "scope_ids": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true}
+      },
+      "required": ["revocation_id", "authority_id", "key_id", "registry_epoch", "authority_registry_raw_sha256", "scope_ids", "role_ids", "effective_at", "reason_contract_sha256"],
+      "type": "object"
+    },
+    "role_policy_design": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_receipt_types": {"items": {"enum": ["candidate_action_authorization", "candidate_action_completion"]}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "role_id": {"minLength": 1, "type": "string"},
+        "scope_ids": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true}
+      },
+      "required": ["role_id", "scope_ids", "allowed_receipt_types"],
+      "type": "object"
+    },
+    "scope_policy_design": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_ids": {"items": {"pattern": "^manifest-entry\\.", "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "execution_boundaries": {"items": {"enum": ["alternate_local", "external", "local"]}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "scope_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["scope_id", "candidate_ids", "execution_boundaries"],
+      "type": "object"
+    },
+    "sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+    "spent_receipt_design": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_registry_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "consumed_at": {"$ref": "#/$defs/timestamp"},
+        "nonce_id": {"minLength": 1, "type": "string"},
+        "receipt_id": {"minLength": 1, "type": "string"},
+        "replay_domain_sha256": {"$ref": "#/$defs/sha256"},
+        "run_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["receipt_id", "run_id", "nonce_id", "replay_domain_sha256", "authority_registry_raw_sha256", "consumed_at"],
+      "type": "object"
+    },
+    "source_lock": {
+      "additionalProperties": false,
+      "properties": {"path": {"minLength": 1, "type": "string"}, "raw_sha256": {"$ref": "#/$defs/sha256"}},
+      "required": ["path", "raw_sha256"],
+      "type": "object"
+    },
+    "threshold_policy_design": {
+      "additionalProperties": false,
+      "properties": {
+        "eligible_key_ids": {"items": {"minLength": 1, "type": "string"}, "minItems": 1, "type": "array", "uniqueItems": true},
+        "required_role": {"minLength": 1, "type": "string"},
+        "receipt_type": {"enum": ["candidate_action_authorization", "candidate_action_completion"]},
+        "scope_id": {"minLength": 1, "type": "string"},
+        "threshold": {"minimum": 1, "type": "integer"}
+      },
+      "required": ["scope_id", "required_role", "receipt_type", "eligible_key_ids", "threshold"],
+      "type": "object"
+    },
+    "timestamp": {"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$", "type": "string"}
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "active_keys": {"items": {"$ref": "#/$defs/active_key_design"}, "maxItems": 0, "type": "array"},
+    "authorities": {"items": {"$ref": "#/$defs/authority_design"}, "maxItems": 0, "type": "array"},
+    "authority_registry_id": {"minLength": 1, "type": "string"},
+    "cryptographic_profile": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm_negotiation": {"const": false},
+        "canonical_payload": {"const": "RFC8785_JCS_required_but_not_implemented"},
+        "dsse_pae_version": {"const": "DSSEv1"},
+        "envelope_format": {"const": "DSSE"},
+        "key_type": {"const": "Ed25519"},
+        "payload_type": {"const": "application/vnd.nvidia.vss.candidate-receipt.v1+json"},
+        "signature_algorithm": {"const": "Ed25519"},
+        "signed_receipt_envelope_schema_raw_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["algorithm_negotiation", "canonical_payload", "dsse_pae_version", "envelope_format", "key_type", "payload_type", "signature_algorithm", "signed_receipt_envelope_schema_raw_sha256"],
+      "type": "object"
+    },
+    "limitations": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_jcs_implementation_available": {"const": false},
+        "central_spent_ledger_available": {"const": false},
+        "cryptographic_verification_dependency_available": {"const": false},
+        "epoch_rollback_protection_available": {"const": false},
+        "global_durable_atomic_spent_ledger_available": {"const": false},
+        "model_signing_dependency_available": {"const": false},
+        "candidate_authority_qualification_dependency_available": {"const": false},
+        "revocation_mechanism_available": {"const": false},
+        "root_key_available": {"const": false},
+        "sha256_is_integrity_not_authority": {"const": true},
+        "signature_verifier_available": {"const": false},
+        "trusted_time_available": {"const": false}
+      },
+      "required": ["canonical_jcs_implementation_available", "candidate_authority_qualification_dependency_available", "central_spent_ledger_available", "cryptographic_verification_dependency_available", "epoch_rollback_protection_available", "global_durable_atomic_spent_ledger_available", "model_signing_dependency_available", "revocation_mechanism_available", "root_key_available", "sha256_is_integrity_not_authority", "signature_verifier_available", "trusted_time_available"],
+      "type": "object"
+    },
+    "max_ttl_policies": {"items": {"$ref": "#/$defs/max_ttl_policy_design"}, "maxItems": 0, "type": "array"},
+    "mode": {"const": "read_only_check_no_sign_no_verify_no_accept_no_consume_no_write_no_execute"},
+    "not_required_edge_policies": {"items": {"$ref": "#/$defs/not_required_edge_policy_design"}, "maxItems": 0, "type": "array"},
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "all_nonempty_authority_inputs_fail_closed": {"const": true},
+        "all_nonempty_receipt_inputs_fail_closed": {"const": true},
+        "authorization_and_completion_receipts_are_distinct": {"const": true},
+        "compiler_can_accept": {"const": false},
+        "compiler_can_consume": {"const": false},
+        "compiler_can_execute": {"const": false},
+        "compiler_can_sign": {"const": false},
+        "compiler_can_verify_signatures": {"const": false},
+        "compiler_can_write": {"const": false},
+        "required_cloud_inference": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["all_nonempty_authority_inputs_fail_closed", "all_nonempty_receipt_inputs_fail_closed", "authorization_and_completion_receipts_are_distinct", "compiler_can_accept", "compiler_can_consume", "compiler_can_execute", "compiler_can_sign", "compiler_can_verify_signatures", "compiler_can_write", "required_cloud_inference", "warehouse_sample_bundle"],
+      "type": "object"
+    },
+    "revocations": {"items": {"$ref": "#/$defs/revocation_design"}, "maxItems": 0, "type": "array"},
+    "revoked_keys": {"items": {"minLength": 1, "type": "string"}, "maxItems": 0, "type": "array"},
+    "role_policies": {"items": {"$ref": "#/$defs/role_policy_design"}, "maxItems": 0, "type": "array"},
+    "root_pinning": {
+      "additionalProperties": false,
+      "properties": {
+        "previous_registry_raw_sha256": {"type": "null"},
+        "registry_epoch": {"const": 0},
+        "root_set_canonical_sha256": {"type": "null"},
+        "trusted_root_count": {"const": 0}
+      },
+      "required": ["registry_epoch", "previous_registry_raw_sha256", "root_set_canonical_sha256", "trusted_root_count"],
+      "type": "object"
+    },
+    "schema_version": {"const": 1},
+    "scope_policies": {"items": {"$ref": "#/$defs/scope_policy_design"}, "maxItems": 0, "type": "array"},
+    "source_identity": {
+      "additionalProperties": false,
+      "properties": {
+        "admission_index_raw_sha256": {"$ref": "#/$defs/sha256"},
+        "binding_registry_raw_sha256": {"const": "59600e64e818b553039dd3d623d1a174714f6f51563da08251560c2994c7f544"},
+        "binding_rows_canonical_sha256": {"const": "25b6dc3b2046895b926df837b93560e8f367cc672afdd479eb31438e94cea96c"},
+        "candidate_count": {"const": 211},
+        "locator_locks_raw_sha256": {"const": "c8311f1dc9eca330a186c43e15766e2daf5418649e41258eb50baa6445a31708"},
+        "mapped_binding_count": {"const": 208}
+      },
+      "required": ["admission_index_raw_sha256", "binding_registry_raw_sha256", "binding_rows_canonical_sha256", "candidate_count", "locator_locks_raw_sha256", "mapped_binding_count"],
+      "type": "object"
+    },
+    "source_locks": {"items": {"$ref": "#/$defs/source_lock"}, "minItems": 10, "type": "array", "uniqueItems": true},
+    "spent_receipt_ledger": {"items": {"$ref": "#/$defs/spent_receipt_design"}, "maxItems": 0, "type": "array"},
+    "summary": {
+      "additionalProperties": false,
+      "properties": {
+        "active_key_count": {"const": 0},
+        "authority_count": {"const": 0},
+        "receipt_count": {"const": 0},
+        "revocation_count": {"const": 0},
+        "trusted_root_count": {"const": 0}
+      },
+      "required": ["active_key_count", "authority_count", "receipt_count", "revocation_count", "trusted_root_count"],
+      "type": "object"
+    },
+    "target": {"type": "object"},
+    "threshold_policies": {"items": {"$ref": "#/$defs/threshold_policy_design"}, "maxItems": 0, "type": "array"},
+    "trusted_roots": {"items": {"$ref": "#/$defs/active_key_design"}, "maxItems": 0, "type": "array"}
+  },
+  "required": ["authority_registry_id", "schema_version", "mode", "target", "source_locks", "source_identity", "root_pinning", "cryptographic_profile", "authorities", "trusted_roots", "active_keys", "revoked_keys", "revocations", "role_policies", "scope_policies", "threshold_policies", "max_ttl_policies", "not_required_edge_policies", "spent_receipt_ledger", "limitations", "policy", "summary"],
+  "type": "object"
+}

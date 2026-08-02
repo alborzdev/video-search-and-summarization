@@ -1,0 +1,121 @@
+{
+  "active_keys": [],
+  "authorities": [],
+  "authority_registry_id": "thor-vss-3.2.1-candidate-authority-empty-v1",
+  "cryptographic_profile": {
+    "algorithm_negotiation": false,
+    "canonical_payload": "RFC8785_JCS_required_but_not_implemented",
+    "dsse_pae_version": "DSSEv1",
+    "envelope_format": "DSSE",
+    "key_type": "Ed25519",
+    "payload_type": "application/vnd.nvidia.vss.candidate-receipt.v1+json",
+    "signature_algorithm": "Ed25519",
+    "signed_receipt_envelope_schema_raw_sha256": "3df35e5c82b36a029512f564f99753a05a63f7ba280c98c7a79672dd9d5f94d7"
+  },
+  "limitations": {
+    "candidate_authority_qualification_dependency_available": false,
+    "canonical_jcs_implementation_available": false,
+    "central_spent_ledger_available": false,
+    "cryptographic_verification_dependency_available": false,
+    "epoch_rollback_protection_available": false,
+    "global_durable_atomic_spent_ledger_available": false,
+    "model_signing_dependency_available": false,
+    "revocation_mechanism_available": false,
+    "root_key_available": false,
+    "sha256_is_integrity_not_authority": true,
+    "signature_verifier_available": false,
+    "trusted_time_available": false
+  },
+  "max_ttl_policies": [],
+  "mode": "read_only_check_no_sign_no_verify_no_accept_no_consume_no_write_no_execute",
+  "not_required_edge_policies": [],
+  "policy": {
+    "all_nonempty_authority_inputs_fail_closed": true,
+    "all_nonempty_receipt_inputs_fail_closed": true,
+    "authorization_and_completion_receipts_are_distinct": true,
+    "compiler_can_accept": false,
+    "compiler_can_consume": false,
+    "compiler_can_execute": false,
+    "compiler_can_sign": false,
+    "compiler_can_verify_signatures": false,
+    "compiler_can_write": false,
+    "required_cloud_inference": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "revocations": [],
+  "revoked_keys": [],
+  "role_policies": [],
+  "root_pinning": {
+    "previous_registry_raw_sha256": null,
+    "registry_epoch": 0,
+    "root_set_canonical_sha256": null,
+    "trusted_root_count": 0
+  },
+  "schema_version": 1,
+  "scope_policies": [],
+  "source_identity": {
+    "admission_index_raw_sha256": "6dc6345f9b057c164929a1046b8ebcfb08fdfbedaa1b7a66180f344915d7d7eb",
+    "binding_registry_raw_sha256": "59600e64e818b553039dd3d623d1a174714f6f51563da08251560c2994c7f544",
+    "binding_rows_canonical_sha256": "25b6dc3b2046895b926df837b93560e8f367cc672afdd479eb31438e94cea96c",
+    "candidate_count": 211,
+    "locator_locks_raw_sha256": "c8311f1dc9eca330a186c43e15766e2daf5418649e41258eb50baa6445a31708",
+    "mapped_binding_count": 208
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-successor/registry.json",
+      "raw_sha256": "59600e64e818b553039dd3d623d1a174714f6f51563da08251560c2994c7f544"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-successor/registry.schema.json",
+      "raw_sha256": "04eb378e9891a805069ad293a762c6e71c95498177baf0b5b21cf1db0c46ab7d"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-successor/locator-locks.json",
+      "raw_sha256": "c8311f1dc9eca330a186c43e15766e2daf5418649e41258eb50baa6445a31708"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-successor/locator-locks.schema.json",
+      "raw_sha256": "3cad143f04ebb9a80b11e180aed9a6ccb573d247d52b617ea8caeb9805075cb2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-execution-binding-registry-successor/compiler.py",
+      "raw_sha256": "fadfa7ff38585ce0604b0511113f12f1281016a3b39c08188022eda14144973d"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-successor/admission-index.json",
+      "raw_sha256": "6dc6345f9b057c164929a1046b8ebcfb08fdfbedaa1b7a66180f344915d7d7eb"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-successor/admission-index.schema.json",
+      "raw_sha256": "bc0603904f159a5759449cd4d6b54a94723cf26332611e25cb58432be6184c46"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-successor/receipt-set.json",
+      "raw_sha256": "7bfeb7e70f9a7c3a2bbbb007c785286146dbfe70e4f63245168cf382b62ec805"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-successor/receipt-set.schema.json",
+      "raw_sha256": "6cc3e19b809c48d23f8998908a2569d26dc4aad74a8ffdccfb8505914477764f"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/candidate-admission-receipts-successor/compiler.py",
+      "raw_sha256": "8254bd9fe13fc7954ed3007f6fbdfb0247079b8f44147434ebed2048e5f27c67"
+    }
+  ],
+  "spent_receipt_ledger": [],
+  "summary": {
+    "active_key_count": 0,
+    "authority_count": 0,
+    "receipt_count": 0,
+    "revocation_count": 0,
+    "trusted_root_count": 0
+  },
+  "target": {
+    "hardware": "NVIDIA Jetson Thor",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  },
+  "threshold_policies": [],
+  "trusted_roots": []
+}

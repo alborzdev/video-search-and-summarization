@@ -664,6 +664,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/candidate-execution-binding-registry-successor/tests"
 
+# The candidate authority successor freezes an empty, non-consuming trust
+# boundary and a design-only DSSEv1/Ed25519/JCS receipt-envelope contract. It
+# has zero roots, keys, policies, revocations, receipts, accepted/consumed
+# records, or spent-ledger entries and no sign/verify/write/execute mode. Hashes
+# provide integrity only; no candidate becomes admitted or executable.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/candidate-authority-registry-successor/compiler.py" \
+  --check >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/candidate-authority-registry-successor/tests"
+
 # The divergent VSS 3.3.0 development line remains an isolated curated
 # prerelease watchlist. Its 14 selected candidate-static families and 40 exact
 # remote pointers define no authoritative full-diff denominator and make no

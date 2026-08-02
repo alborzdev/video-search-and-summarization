@@ -312,6 +312,12 @@ in this directory:
   explicitly non-authoritative: every executable action, service/profile,
   cleanup/rollback, postcondition, and evidence field is null or empty, and
   admission-grade bindings remain zero;
+- `candidate-authority-registry-successor/` source-locks an exactly empty,
+  non-consuming authority boundary and publishes a design-only fixed
+  DSSEv1/Ed25519/JCS receipt-envelope contract. Trusted roots, keys, policies,
+  revocations, receipts, accepted/consumed records, and spent-ledger entries
+  are all zero. It performs no cryptography and grants no authority, admission,
+  or executability;
 - `advertised-entry-gaps/` gives each still-unmapped advertised entry from the
   13 families with no capability rows plus the partial VIOS family its own
   still-open semantic oracle plan. Its 74-entry scope is not the global missing
