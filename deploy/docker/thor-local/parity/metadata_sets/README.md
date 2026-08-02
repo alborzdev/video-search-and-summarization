@@ -11,8 +11,10 @@ The staged `thor-vss-3.2.1-metadata-500-staged` set is also registered with the
 `validation_only` lifecycle and can be resolved explicitly. It binds the
 isolated 500-capability post-state, but it cannot be the selector's default:
 default resolution accepts only a `live_ready` descriptor. The staged set
-therefore cannot alter live behavior until the live oracle validator supports
-the v2 mixed registry and a reviewed descriptor lifecycle change is made.
+therefore cannot alter live behavior until a reviewed activation receipt,
+descriptor lifecycle change, and selector switch are made. The additive v2
+oracle validator and authoritative bundle dispatcher already validate it
+explicitly without changing that lifecycle.
 
 `resolver.py` validates the selector, descriptor, and every member before it
 returns any document. Reads are bounded and file-descriptor-relative with
@@ -24,11 +26,11 @@ fail closed. Returned documents are deep copies of one fully validated
 in-memory snapshot.
 
 To add a future version, add a new `validation_only` immutable descriptor and
-its regular files, then add one hash-bound registry row. After its live validator
-is reviewed, change its lifecycle to `live_ready`, re-lock the descriptor, and
-change `selected_set` in the same transaction. The resolver semantics do not
-depend on the set ID or the count 289. Do not rewrite historical descriptors or
-use symlinks as metadata members.
+its regular files, then add one hash-bound registry row. After its validator and
+activation receipt are reviewed, change its lifecycle to `live_ready`, re-lock
+the descriptor, and change `selected_set` in the same transaction. The resolver
+semantics do not depend on the set ID or the count 289. Do not rewrite
+historical descriptors or use symlinks as metadata members.
 
 From the repository root:
 

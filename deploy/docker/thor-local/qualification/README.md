@@ -342,8 +342,9 @@ in this directory:
   locks every before/after byte and rollback object while keeping all 211
   candidates non-executable, evidence-empty, and non-promoting. The staged set
   is registered with the atomic metadata-set resolver, but the 289 predecessor
-  remains selected until a separately reviewed v2 live-validator adapter lands
-  and the staged descriptor is promoted from `validation_only` to `live_ready`;
+  remains selected. Its additive v2 validator and atomic bundle verifier now
+  pass; a separate activation receipt, promotion from `validation_only` to
+  `live_ready`, and selector switch remain required;
 - `host-preflight/` defaults to an inert plan and offers a separately explicit,
   read-only Thor host inspection;
 - `host-prerequisite-evidence/` binds exactly four platform prerequisite

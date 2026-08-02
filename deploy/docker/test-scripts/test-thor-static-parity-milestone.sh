@@ -512,6 +512,14 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
   --set thor-vss-3.2.1-metadata-500-staged --json >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/parity/metadata_sets/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/parity/verify_metadata_set.py" --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/parity/verify_metadata_set.py" \
+  --set thor-vss-3.2.1-metadata-500-staged --json >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/parity/tests/test_capability_oracles_v2.py" \
+  "${thor_local_root}/parity/tests/test_verify_metadata_set.py"
 
 # The candidate-only offline MV3DT observation and its immutable receipt are
 # verified above at exact predecessor identity by the CPU multimedia successor.

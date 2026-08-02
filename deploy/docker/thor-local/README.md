@@ -31,9 +31,10 @@ families with zero aggregate or acceptance gaps. A versioned, non-applying
 five-file post-state now stages that exact ledger, manifest, acceptance
 inventory, and a strict mixed v2 oracle registry. The fail-closed metadata-set
 resolver validates both generations atomically but continues to select the
-289-row predecessor. The v2 live-validator integration, reviewed lifecycle
-promotion to `live_ready`, selector switch, and candidate runtime evidence
-remain open.
+289-row predecessor. The v2 oracle path is now independently validated,
+including the preserved v1 prefix and strict planning-only suffix. A reviewed
+activation receipt, lifecycle promotion to `live_ready`, selector switch, and
+candidate runtime evidence remain open.
 
 This overlay runs NVIDIA Video Search and Summarization on Jetson AGX Thor while keeping inference and application data on the device. The initial image bootstrap requires network access and an NGC key; subsequent starts are pull-free and build-free. Bootstrap also creates a Thor-local derivative of the VIOS stream-processing image. It restores codec libraries represented in the released ARM64 package database but omitted from its filesystem, so VIOS never runs `apt` during an offline restart.
 
