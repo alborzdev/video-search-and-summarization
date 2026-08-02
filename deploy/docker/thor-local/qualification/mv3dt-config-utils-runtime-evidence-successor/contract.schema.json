@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "target", "policy", "environment", "corroborating_history", "capabilities"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-mv3dt-config-utils-runtime-evidence-successor-v1"},
+    "mode": {"const": "target_bound_offline_runtime_evidence"},
+    "target": {"type": "object"},
+    "policy": {"type": "object"},
+    "environment": {"type": "object"},
+    "corroborating_history": {"type": "object"},
+    "capabilities": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_id", "oracle_id", "current_oracle_sha256", "current_ledger_row_sha256", "adapter", "fixture_manifest", "source_controls", "expected_output_locks"],
+        "properties": {
+          "capability_id": {"type": "string"},
+          "oracle_id": {"type": "string"},
+          "current_oracle_sha256": {"$ref": "#/$defs/sha256"},
+          "current_ledger_row_sha256": {"$ref": "#/$defs/sha256"},
+          "adapter": {"enum": ["cam_info_generator", "pub_sub_generator"]},
+          "fixture_manifest": {"type": "object"},
+          "source_controls": {"type": "array", "minItems": 2},
+          "expected_output_locks": {"type": "object"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

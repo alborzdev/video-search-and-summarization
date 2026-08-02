@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "fixture_id": "fixture.tool.mv3dt.cam-info-generator",
+  "capability_id": "tool.mv3dt.cam-info-generator",
+  "kind": "generated_minimal_contract",
+  "namespace": "vss-oracle-tool-mv3dt-cam-info-generator",
+  "warehouse_sample_bundle": "excluded",
+  "source_payload": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/two-camera-calibration.json",
+    "sha256": "055c9cf201030130d9a449721492a495534815b81425cd98477ad25cdb7712b4"
+  },
+  "positive": {
+    "runs": 2,
+    "camera_ids": ["custom_cam_a", "custom_cam_b"],
+    "model_classes": [["0", "1.7", "0.3"], ["1", "1.2", "0.25"]],
+    "output": "camInfo/<sensor_id>.yml",
+    "projection_shape": [3, 4]
+  },
+  "adjacent_negative_case_ids": [
+    "unsafe-sensor-id",
+    "duplicate-sensor-id",
+    "invalid-camera-matrix",
+    "duplicate-class-id",
+    "symlink-output"
+  ]
+}

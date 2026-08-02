@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "captured_at_utc", "bindings", "environment", "capability_results", "cleanup", "confinement", "promotion"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-mv3dt-config-utils-runtime-evidence-successor-v1"},
+    "mode": {"enum": ["plan", "target_bound_offline_runtime_evidence"]},
+    "status": {"enum": ["plan", "pass"]},
+    "captured_at_utc": {"type": ["string", "null"]},
+    "bindings": {"type": "object"},
+    "environment": {"type": "object"},
+    "capability_results": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["capability_id", "oracle_id", "status", "independent_runs", "bounded_capability_actions", "target_case_actions", "supporting_cam_generation_actions", "requests", "imported_helper_invocations", "total_imported_source_function_invocations", "imported_source_function_counts", "deterministic_output", "fixture_sha256", "payload_sha256", "run_output_sha256", "positive_observations", "adjacent_negatives", "cleanup"]
+      }
+    },
+    "cleanup": {"type": "object"},
+    "confinement": {"type": "object"},
+    "promotion": {"type": "object"}
+  }
+}

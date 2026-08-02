@@ -1,0 +1,24 @@
+{
+  "fixture_id": "synthetic-mv3dt-two-camera-v2",
+  "fixture_origin": "code-authored tiny custom data; no NVIDIA Warehouse sample content",
+  "sensors": [
+    {
+      "type": "camera",
+      "id": "custom_cam_a",
+      "cameraMatrix": [
+        [100.0, 70.710678, -70.710678, 707.10678],
+        [0.0, 0.0, -141.421356, 707.10678],
+        [0.0, 0.70710678, -0.70710678, 7.0710678]
+      ]
+    },
+    {
+      "type": "camera",
+      "id": "custom_cam_b",
+      "cameraMatrix": [
+        [100.0, 70.710678, -70.710678, 507.10678],
+        [0.0, 0.0, -141.421356, 707.10678],
+        [0.0, 0.70710678, -0.70710678, 7.0710678]
+      ]
+    }
+  ]
+}

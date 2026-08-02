@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aggregate_execution_accounting": {
+      "additionalProperties": false,
+      "properties": {
+        "target_case_actions": {
+          "const": 14
+        },
+        "supporting_cam_generation_actions": {
+          "const": 3
+        },
+        "bounded_capability_actions": {
+          "const": 17
+        },
+        "requests": {
+          "const": 14
+        },
+        "imported_helper_invocations": {
+          "const": 6
+        },
+        "total_imported_source_function_invocations": {
+          "const": 23
+        }
+      },
+      "required": [
+        "target_case_actions",
+        "supporting_cam_generation_actions",
+        "bounded_capability_actions",
+        "requests",
+        "imported_helper_invocations",
+        "total_imported_source_function_invocations"
+      ],
+      "type": "object"
+    },
+    "acknowledgement": {
+      "const": "I_ACKNOWLEDGE_OFFLINE_MV3DT_CONFIG_UTILS_RUNTIME_EVIDENCE"
+    },
+    "capabilities": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "capability_id": {
+            "enum": [
+              "tool.mv3dt.cam-info-generator",
+              "tool.mv3dt.pub-sub-generator"
+            ]
+          },
+          "fixture_id": {
+            "pattern": "^fixture\\.tool\\.mv3dt\\.(cam-info|pub-sub)-generator$",
+            "type": "string"
+          },
+          "fixture_manifest": {
+            "$ref": "#/$defs/fileLock"
+          },
+          "execution_bounds": {
+            "additionalProperties": false,
+            "properties": {
+              "max_actions": {
+                "enum": [
+                  7,
+                  10
+                ]
+              },
+              "max_requests": {
+                "const": 7
+              },
+              "supporting_cam_generation_actions": {
+                "enum": [
+                  0,
+                  3
+                ]
+              },
+              "workload": {
+                "additionalProperties": false,
+                "properties": {
+                  "calculated_max_requests": {
+                    "const": 7
+                  },
+                  "overhead_requests": {
+                    "const": 0
+                  },
+                  "phases": {
+                    "const": [
+                      "positive_run_1",
+                      "positive_run_2",
+                      "adjacent_negative"
+                    ]
+                  },
+                  "requests_per_unit": {
+                    "const": 7
+                  },
+                  "units": {
+                    "const": 1
+                  }
+                },
+                "required": [
+                  "units",
+                  "requests_per_unit",
+                  "overhead_requests",
+                  "calculated_max_requests",
+                  "phases"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "max_actions",
+              "max_requests",
+              "supporting_cam_generation_actions",
+              "workload"
+            ],
+            "type": "object"
+          },
+          "namespace": {
+            "pattern": "^vss-oracle-tool-mv3dt-(cam-info|pub-sub)-generator$",
+            "type": "string"
+          },
+          "oracle_id": {
+            "pattern": "^oracle\\.tool\\.mv3dt\\.(cam-info|pub-sub)-generator$",
+            "type": "string"
+          },
+          "positive_runs": {
+            "const": 2
+          }
+        },
+        "required": [
+          "capability_id",
+          "oracle_id",
+          "fixture_id",
+          "fixture_manifest",
+          "execution_bounds",
+          "namespace",
+          "positive_runs"
+        ],
+        "type": "object"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "cli": {
+      "additionalProperties": false,
+      "properties": {
+        "development_flag": {
+          "const": "--allow-dirty-development"
+        },
+        "execute_flag": {
+          "const": "--execute"
+        },
+        "oracle_document_flag": {
+          "const": "--oracle-document"
+        },
+        "output_flag": {
+          "const": "--output"
+        },
+        "plan": {
+          "const": "inert_default"
+        }
+      },
+      "required": [
+        "plan",
+        "execute_flag",
+        "oracle_document_flag",
+        "output_flag",
+        "development_flag"
+      ],
+      "type": "object"
+    },
+    "confinement": {
+      "additionalProperties": false,
+      "properties": {
+        "docker": {
+          "const": false
+        },
+        "downloads": {
+          "const": false
+        },
+        "models": {
+          "const": false
+        },
+        "network": {
+          "const": false
+        },
+        "services": {
+          "const": false
+        },
+        "warehouse_sample_bundle": {
+          "const": "excluded"
+        }
+      },
+      "required": [
+        "network",
+        "docker",
+        "services",
+        "models",
+        "downloads",
+        "warehouse_sample_bundle"
+      ],
+      "type": "object"
+    },
+    "executor": {
+      "$ref": "#/$defs/roleBinding"
+    },
+    "executor_source": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "const": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/executor.py"
+        },
+        "sha256": {
+          "const": "650894ecc69baa518a92d8315c2d11c356b815a299ee50dc1e7b21737a87d567"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "fixture_generator": {
+      "$ref": "#/$defs/roleBinding"
+    },
+    "postcondition_collector": {
+      "$ref": "#/$defs/roleBinding"
+    },
+    "request_collector": {
+      "$ref": "#/$defs/roleBinding"
+    },
+    "runtime_package": {
+      "const": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor"
+    },
+    "runtime_contract": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "const": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/contract.json"
+        },
+        "sha256": {
+          "const": "1509df349f8ff9086bf6ade52f552f3b5338f0261111ab9b70ff7cc6d575b5f2"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "shared_source_payload": {
+      "$ref": "#/$defs/fileLock"
+    }
+  },
+  "required": [
+    "schema_version",
+    "aggregate_execution_accounting",
+    "runtime_package",
+    "runtime_contract",
+    "executor_source",
+    "acknowledgement",
+    "cli",
+    "confinement",
+    "shared_source_payload",
+    "fixture_generator",
+    "executor",
+    "request_collector",
+    "postcondition_collector",
+    "capabilities"
+  ],
+  "type": "object",
+  "$defs": {
+    "fileLock": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "pattern": "^deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/[a-z0-9-]+\\.json$",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "roleBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "const": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/executor.py"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    }
+  }
+}

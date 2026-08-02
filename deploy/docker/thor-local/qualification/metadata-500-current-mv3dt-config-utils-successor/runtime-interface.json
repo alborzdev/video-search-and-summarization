@@ -1,0 +1,108 @@
+{
+  "aggregate_execution_accounting": {
+    "bounded_capability_actions": 17,
+    "imported_helper_invocations": 6,
+    "requests": 14,
+    "supporting_cam_generation_actions": 3,
+    "target_case_actions": 14,
+    "total_imported_source_function_invocations": 23
+  },
+  "acknowledgement": "I_ACKNOWLEDGE_OFFLINE_MV3DT_CONFIG_UTILS_RUNTIME_EVIDENCE",
+  "capabilities": [
+    {
+      "capability_id": "tool.mv3dt.cam-info-generator",
+      "fixture_id": "fixture.tool.mv3dt.cam-info-generator",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/00-cam-info-generator.json",
+        "sha256": "8dd769695b2f9ce48081f79c6f1e9c6f54423411f738fb23e58abc791869d2a5"
+      },
+      "execution_bounds": {
+        "max_actions": 7,
+        "max_requests": 7,
+        "supporting_cam_generation_actions": 0,
+        "workload": {
+          "calculated_max_requests": 7,
+          "overhead_requests": 0,
+          "phases": [
+            "positive_run_1",
+            "positive_run_2",
+            "adjacent_negative"
+          ],
+          "requests_per_unit": 7,
+          "units": 1
+        }
+      },
+      "namespace": "vss-oracle-tool-mv3dt-cam-info-generator",
+      "oracle_id": "oracle.tool.mv3dt.cam-info-generator",
+      "positive_runs": 2
+    },
+    {
+      "capability_id": "tool.mv3dt.pub-sub-generator",
+      "fixture_id": "fixture.tool.mv3dt.pub-sub-generator",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/01-pub-sub-generator.json",
+        "sha256": "0cb77ffe349809e1a8fe9349ecb1859a63ac564077b3326aadac6af264cd57ab"
+      },
+      "execution_bounds": {
+        "max_actions": 10,
+        "max_requests": 7,
+        "supporting_cam_generation_actions": 3,
+        "workload": {
+          "calculated_max_requests": 7,
+          "overhead_requests": 0,
+          "phases": [
+            "positive_run_1",
+            "positive_run_2",
+            "adjacent_negative"
+          ],
+          "requests_per_unit": 7,
+          "units": 1
+        }
+      },
+      "namespace": "vss-oracle-tool-mv3dt-pub-sub-generator",
+      "oracle_id": "oracle.tool.mv3dt.pub-sub-generator",
+      "positive_runs": 2
+    }
+  ],
+  "cli": {
+    "development_flag": "--allow-dirty-development",
+    "execute_flag": "--execute",
+    "oracle_document_flag": "--oracle-document",
+    "output_flag": "--output",
+    "plan": "inert_default"
+  },
+  "confinement": {
+    "docker": false,
+    "downloads": false,
+    "models": false,
+    "network": false,
+    "services": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "executor": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/executor.py"
+  },
+  "executor_source": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/executor.py",
+    "sha256": "650894ecc69baa518a92d8315c2d11c356b815a299ee50dc1e7b21737a87d567"
+  },
+  "fixture_generator": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/executor.py"
+  },
+  "postcondition_collector": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/executor.py"
+  },
+  "request_collector": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/executor.py"
+  },
+  "runtime_package": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor",
+  "runtime_contract": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/contract.json",
+    "sha256": "1509df349f8ff9086bf6ade52f552f3b5338f0261111ab9b70ff7cc6d575b5f2"
+  },
+  "schema_version": 1,
+  "shared_source_payload": {
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/two-camera-calibration.json",
+    "sha256": "055c9cf201030130d9a449721492a495534815b81425cd98477ad25cdb7712b4"
+  }
+}

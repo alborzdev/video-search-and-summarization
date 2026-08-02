@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-mv3dt-config-utils-runtime-evidence-successor-v1",
+  "mode": "target_bound_offline_runtime_evidence",
+  "target": {
+    "upstream_repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "upstream_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1",
+    "current_oracle_document": "deploy/docker/thor-local/parity/capability-oracles.json",
+    "current_ledger_document": "deploy/docker/thor-local/parity/official-capabilities.json"
+  },
+  "policy": {
+    "network_allowed": false,
+    "docker_allowed": false,
+    "service_lifecycle_allowed": false,
+    "model_access_allowed": false,
+    "downloads_allowed": false,
+    "credentials_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "fixture_origin": "checked-in tiny two-camera custom calibration",
+    "filesystem_mutation": "one executor-owned temporary directory only",
+    "independent_positive_runs": 2,
+    "adjacent_negative_count_per_capability": 5,
+    "target_case_actions_per_capability": 7,
+    "supporting_cam_generation_actions": {
+      "tool.mv3dt.cam-info-generator": 0,
+      "tool.mv3dt.pub-sub-generator": 3
+    },
+    "aggregate_bounded_capability_actions": 17,
+    "aggregate_requests": 14,
+    "aggregate_imported_helper_invocations": 6,
+    "aggregate_total_imported_source_function_invocations": 23,
+    "aggregate_imported_source_function_counts": {
+      "cam._parse_model_args": 7,
+      "cam.generate_cam_info_files": 9,
+      "pub.generate_pub_sub_config": 7
+    },
+    "checked_receipt_requires_clean_committed_checkout": true
+  },
+  "environment": {
+    "platform": "linux-aarch64",
+    "python_major_minor": "3.12",
+    "declared_requirements": [
+      "numpy==2.2.6",
+      "opencv-python~=4.12.0",
+      "PyYAML==6.0.2",
+      "tqdm==4.67.1"
+    ],
+    "observed_distributions": {
+      "numpy": "2.5.1",
+      "opencv-python": "4.11.0.86",
+      "opencv-python-headless": "4.13.0.92",
+      "PyYAML": "6.0.3",
+      "tqdm": "4.68.4"
+    },
+    "observed_modules": {
+      "numpy": "2.5.1",
+      "cv2": "4.13.0",
+      "yaml": "6.0.3",
+      "tqdm": "4.68.4"
+    },
+    "declared_versions_match_observed": false,
+    "dependency_caveat": "The current Thor environment executes the exact tool semantics but does not match the upstream pinned requirements. This receipt is normative for observed current-Thor behavior only and does not claim exact dependency-pin parity."
+  },
+  "corroborating_history": {
+    "path": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/execution-receipt.json",
+    "sha256": "b01ae4fe7d6007ca89ce819462c44e04407ba0cedb20bb306067038091f38063",
+    "authority": "non_promoting_candidate_only"
+  },
+  "capabilities": [
+    {
+      "capability_id": "tool.mv3dt.cam-info-generator",
+      "oracle_id": "oracle.tool.mv3dt.cam-info-generator",
+      "current_oracle_sha256": "b4f7189a2c6d19db43431554dd9eea826cf1dcac3967b139528750b1b42cda06",
+      "current_ledger_row_sha256": "1bf217289ec3d9b19fe3e32256c7007c3cce1d5e78b3905f74d6d940310368e6",
+      "adapter": "cam_info_generator",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/00-cam-info-generator.json",
+        "sha256": "8dd769695b2f9ce48081f79c6f1e9c6f54423411f738fb23e58abc791869d2a5"
+      },
+      "source_controls": [
+        {
+          "path": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+          "sha256": "910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675"
+        },
+        {
+          "path": "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+          "sha256": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
+        }
+      ],
+      "expected_output_locks": {
+        "cam_info_tree_sha256": "921b0fe8ef3d0f2417245623465ba5e5d0b1fb4a427bbd96915c3ebd430dcece"
+      }
+    },
+    {
+      "capability_id": "tool.mv3dt.pub-sub-generator",
+      "oracle_id": "oracle.tool.mv3dt.pub-sub-generator",
+      "current_oracle_sha256": "0282f6c45a3211061b681fbc72f04122b1d95d40f75ca03999edf6180aa48791",
+      "current_ledger_row_sha256": "0d748077614585b78d0e0c7b0f06fa8109048f548c35741ab0375e96bead110c",
+      "adapter": "pub_sub_generator",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/01-pub-sub-generator.json",
+        "sha256": "0cb77ffe349809e1a8fe9349ecb1859a63ac564077b3326aadac6af264cd57ab"
+      },
+      "source_controls": [
+        {
+          "path": "tools/rtvi-cv-mv3dt-utils/generate_cam_info_configs.py",
+          "sha256": "910996b10ef5e135ba2752b7286841dce03bf20679f62e0ae4c28bbb682bb675"
+        },
+        {
+          "path": "tools/rtvi-cv-mv3dt-utils/generate_pub_sub_configs.py",
+          "sha256": "bc64ddf385f717793d6683eb4b57989067462c6a0f638ee46e9d7243285288fc"
+        },
+        {
+          "path": "tools/rtvi-cv-mv3dt-utils/requirements.txt",
+          "sha256": "8965115b8284cf715a14dcec429401b25c323685370a3d8bf05341ce19e028b4"
+        }
+      ],
+      "expected_output_locks": {
+        "pub_sub_file_sha256": "f6f823e94e0e736c5c8ecba33c913338e5eeb3641e691d67948b53a6727195e7"
+      }
+    }
+  ]
+}
