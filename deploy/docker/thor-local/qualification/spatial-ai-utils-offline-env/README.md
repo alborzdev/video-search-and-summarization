@@ -33,16 +33,19 @@ The schemas are fail-closed:
 - `receipt.schema.json` accepts only a fully successful execution receipt.
 - `producer-lock.json` binds the reviewed canonical producer, its four program
   files, seven tiny fixtures, 30 explicit product source controls, both canonical
-  parity documents, a complete 252-file manifest of the product root, and a
-  complete 14-file manifest of the producer root, including all tracked package
-  data. The 309 lock rows cover 268 unique files.
+  parity documents, six selector/descriptor/selected-metadata controls, a
+  complete 252-file manifest of the product root, and a complete 14-file
+  manifest of the producer root, including all tracked package data. The 315
+  lock rows cover 274 unique files and bind producer commit
+  `0bd7fef7e1426f6a298ceb1c422aa38b76f383d8`.
   `producer-lock.schema.json` fixes their
   cardinalities and the all-seven accounting contract. Its binding commit must
   resolve to a real commit ancestor of the current checkout, and every locked
   file must have the same content hash in that commit and in the worktree.
 - `integrated-receipt.schema.json` accepts only the combined all-seven success
-  shape; the materializer additionally derives every aggregate and nested
-  binding independently.
+  shape with the exact nested producer authority envelope; the materializer
+  additionally derives every aggregate, checkout/tree/ancestry binding, metadata
+  selection, cleanup proof, and mirrored authority field independently.
 - `materializer.py` accepts only the canonical adjacent `lock.json`; an
   alternate copy cannot be substituted through `--lock`.
 
@@ -99,7 +102,10 @@ python3 -I deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/m
 ```
 
 The work parent must exist, must be outside the repository, and must not be a
-symlink. The output parent must already exist. The receipt is created mode 0600.
+symlink. The output parent must already exist and contain no symlink component;
+the destination must be absent before materialization begins. The receipt is
+created exclusively at mode 0600, reread byte-for-byte, and removed if final
+validation or publication identity checks fail.
 
 During a successful run the materializer:
 
@@ -148,10 +154,16 @@ requests, 122 imported product function calls, 14 independent positive runs, 35
 rejected adjacent negatives, and zero network, Docker, service lifecycle, model,
 download, Warehouse sample, product subprocess, or filesystem-escape activity.
 The materializer independently validates the child schema and these values,
-rehashes the complete producer/source/canonical lock before and after execution,
-removes the materializer and producer temporary roots, then exclusively publishes
-one mode-0600 integrated receipt outside the repository. The nested and combined
-receipts remain explicitly non-promoting.
+rehashes the complete producer/source/canonical/selected-metadata lock before
+and after execution, removes the materializer and producer temporary roots, then
+exclusively publishes one mode-0600 integrated receipt outside the repository.
+The nested producer must itself assert the reviewed `spatial-ai-utils` authority
+envelope: clean all-seven eligibility, `development_smoke_only=false`, separate
+reviewed metadata integration required, and both runtime-evidence/promotable
+flags true. The outer receipt mirrors those exact fields and cannot upgrade
+them independently. Both layers keep `canonical_parity_mutated=false` and
+`runtime_producer_mutated=false`; canonical parity remains unchanged pending the
+separate reviewed integration.
 
 ## Tests
 
@@ -162,14 +174,16 @@ PYTHONDONTWRITEBYTECODE=1 python3 -I \
   deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/test_materializer.py
 ```
 
-They cover canonical-lock enforcement, the 56-artifact invariant, all 309
-producer-lock rows and both exact tracked root manifests, binding-commit ancestry and
-blob identity, manifest omissions/additions, ignored bytecode and native-module
-shadows, untracked code/data, symlinks and special files, opaque cache paths,
-exact wheelhouse copying, hash drift, both network denial layers, the 930-second
-timeout, cleanup after an injected failure, the exact all-seven child invocation,
-aggregate and row mutation rejection, inert defaults, bounded CLI rules, secure
-exclusive receipt publication, and the no-wheel-binaries repository rule.
+They cover canonical-lock enforcement, the 56-artifact invariant, all 315
+producer-lock rows and both exact tracked root manifests, binding-commit ancestry
+and blob identity, manifest omissions/additions, ignored bytecode and
+native-module shadows, untracked code/data, symlinks and special files, opaque
+cache paths, exact wheelhouse copying, hash drift, both network denial layers,
+the 930-second timeout, cleanup after an injected failure, the exact all-seven
+child invocation, every nested metadata/target/checkout authority binding,
+aggregate and row mutation rejection, mirrored-authority rejection, inert
+defaults, bounded CLI rules, exclusive byte-reread publication with post-write
+revalidation and safe failure cleanup, and the no-wheel-binaries repository rule.
 
 ## Lock maintenance
 

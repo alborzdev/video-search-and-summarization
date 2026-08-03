@@ -156,7 +156,14 @@ def make_valid_producer_receipt(
                 "deterministic_output": True,
                 "run_output_sha256": [observation_hash, observation_hash],
                 "adjacent_negatives": [
-                    {"case_id": case_id, "rejected": True}
+                    {
+                        "case_id": case_id,
+                        "rejected": True,
+                        "exception_type": "ValueError",
+                        "message_sha256": materializer.sha_bytes(
+                            f"rejected:{case_id}".encode("utf-8")
+                        ),
+                    }
                     for case_id in materializer.NEGATIVE_CASE_IDS[short_id]
                 ],
                 "imported_product_function_invocations": count,
@@ -165,9 +172,13 @@ def make_valid_producer_receipt(
                 ],
                 "positive_observations": positive_observations,
                 "cleanup": {
+                    "namespace": f"spatial-ai-{capability_id.split('.')[2]}",
+                    "pre_state_captured": "absent",
                     "temporary_files_only": True,
                     "removed": True,
                     "siblings_unchanged": True,
+                    "owned_tree_sha256": "c" * 64,
+                    "post_cleanup_tree_sha256": materializer.EMPTY_TREE_SHA256,
                 },
                 "runtime_evidence_binding": {
                     "captured_at_utc": captured_at,
@@ -194,7 +205,11 @@ def make_valid_producer_receipt(
             }
         )
     temporary_root = root / "tmp" / "vss-spatial-ai-runtime.synthetic"
+    metadata = lock["metadata_selection"]
+    metadata_hashes = {row["path"]: row["sha256"] for row in lock["metadata_controls"]}
     receipt: dict[str, object] = {
+        "schema_version": 1,
+        "package_id": "thor-spatial-ai-utils-runtime-evidence-successor-v1",
         "mode": "target_bound_offline_runtime_evidence",
         "status": "pass",
         "captured_at_utc": captured_at,
@@ -205,7 +220,28 @@ def make_valid_producer_receipt(
             "oracle_document_sha256": lock["canonical_controls"][1]["sha256"],
             "checkout_clean": True,
             "checkout_head": "a" * 40,
+            "checkout_tree": "b" * 40,
             "checkout_status_porcelain_sha256": materializer.sha_bytes(b""),
+            "invocation_allow_dirty_development": False,
+            "target_upstream_commit": metadata["target_main_commit"],
+            "target_ancestry_merge_base": metadata["target_main_commit"],
+            "metadata_selector_path": metadata["selector_path"],
+            "metadata_selector_raw_sha256": metadata_hashes[metadata["selector_path"]],
+            "selected_metadata_set_id": metadata["selected_set_id"],
+            "selected_descriptor_path": metadata["descriptor_path"],
+            "selected_descriptor_raw_sha256": metadata_hashes[
+                metadata["descriptor_path"]
+            ],
+            "selected_ledger_path": metadata["selected_ledger_path"],
+            "selected_ledger_raw_sha256": metadata_hashes[
+                metadata["selected_ledger_path"]
+            ],
+            "selected_oracle_path": metadata["selected_oracle_path"],
+            "selected_oracle_raw_sha256": metadata_hashes[
+                metadata["selected_oracle_path"]
+            ],
+            "selected_target_main_commit": metadata["target_main_commit"],
+            "selected_target_product_version": metadata["target_product_version"],
             "canonical_rows_are_open_unexecuted": True,
             "executor_ready_capabilities": materializer.EXECUTOR_READY_CAPABILITY_IDS,
         },
@@ -220,24 +256,40 @@ def make_valid_producer_receipt(
             **{key: 0 for key in materializer.EXTERNAL_ACTIVITY_KEYS},
         },
         "environment": {
+            "platform": "linux-aarch64",
+            "system": "Linux",
+            "machine": "aarch64",
+            "python_major_minor": "3.12",
+            "python_full": materializer.platform.python_version(),
             "capability_preflight": {
-                capability_id: {"ready": True}
+                capability_id: {
+                    "ready": True,
+                    "required_modules": materializer.REQUIRED_MODULES[
+                        contract_by_id[capability_id]["adapter"]
+                    ],
+                    "observed_versions": {
+                        module: "test"
+                        for module in materializer.REQUIRED_MODULES[
+                            contract_by_id[capability_id]["adapter"]
+                        ]
+                    },
+                    "missing_modules": [],
+                    "import_failures": [],
+                }
                 for capability_id in materializer.CAPABILITY_IDS
-            }
+            },
         },
         "cleanup": {
             "executor_owned_temporary_root": os.fspath(temporary_root),
+            "pre_execution_tree_sha256": materializer.EMPTY_TREE_SHA256,
+            "post_execution_tree_sha256": materializer.EMPTY_TREE_SHA256,
+            "sentinel_sha256": "d" * 64,
+            "checkout_status_before_sha256": materializer.sha_bytes(b""),
+            "checkout_status_after_sha256": materializer.sha_bytes(b""),
             "removed": True,
             "siblings_unchanged": True,
         },
-        "promotion": {
-            "individual_receipt_candidates": materializer.CAPABILITY_IDS,
-            "ledger_mutation_performed": False,
-            "oracle_mutation_performed": False,
-            "external_provider_entry_touched": False,
-            "receipt_is_runtime_evidence": False,
-            "aggregate_is_promotable": False,
-        },
+        "promotion": materializer._expected_producer_promotion(),
     }
     return receipt, lock
 
@@ -309,12 +361,7 @@ def make_valid_integrated_receipt(
             "product_sources_unchanged": True,
             "import_sensitive_roots_unchanged": True,
         },
-        "promotion": {
-            "canonical_parity_mutated": False,
-            "runtime_producer_mutated": False,
-            "receipt_is_runtime_evidence": False,
-            "aggregate_is_promotable": False,
-        },
+        "promotion": materializer._mirrored_integrated_promotion(producer_receipt),
     }
     receipt["bindings"]["execution_sha256"] = materializer._integrated_execution_sha256(
         receipt
@@ -352,11 +399,29 @@ class LockTests(unittest.TestCase):
         lock = materializer.load_producer_lock()
         self.assertEqual(4, len(lock["producer_bundle"]))
         self.assertEqual(2, len(lock["canonical_controls"]))
+        self.assertEqual(6, len(lock["metadata_controls"]))
         self.assertEqual(7, len(lock["fixture_controls"]))
         self.assertEqual(30, len(lock["product_source_controls"]))
         self.assertEqual(252, len(lock["product_root_manifest"]))
         self.assertEqual(14, len(lock["producer_root_manifest"]))
         self.assertEqual(122, lock["expectations"]["product_function_calls"])
+        rows = sum(
+            (
+                lock[key]
+                for key in (
+                    "producer_bundle",
+                    "canonical_controls",
+                    "metadata_controls",
+                    "fixture_controls",
+                    "product_source_controls",
+                    "product_root_manifest",
+                    "producer_root_manifest",
+                )
+            ),
+            [],
+        )
+        self.assertEqual(315, len(rows))
+        self.assertEqual(274, len({row["path"] for row in rows}))
 
     def test_producer_lock_hash_mutation_fails_closed(self) -> None:
         lock = materializer.load_producer_lock()
@@ -688,6 +753,12 @@ class IntegratedProducerTests(unittest.TestCase):
             root = Path(directory)
             (root / "tmp").mkdir()
             receipt, lock = make_valid_producer_receipt(root)
+            self.assertEqual(
+                [],
+                materializer.schema_errors(
+                    receipt, materializer.PRODUCER_RESULT_SCHEMA_PATH
+                ),
+            )
             captured: dict[str, object] = {}
 
             def fake_child(
@@ -701,9 +772,15 @@ class IntegratedProducerTests(unittest.TestCase):
 
             with (
                 mock.patch.object(materializer, "run_child", side_effect=fake_child),
-                mock.patch.object(materializer, "schema_errors", return_value=[]),
                 mock.patch.object(
-                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                    materializer,
+                    "_checkout_state",
+                    return_value=("a" * 40, "b" * 40, ""),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "_merge_base",
+                    return_value="7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
                 ),
             ):
                 result, _, accounting = materializer.run_canonical_producer(
@@ -731,9 +808,15 @@ class IntegratedProducerTests(unittest.TestCase):
             (root / "tmp").mkdir()
             receipt, lock = make_valid_producer_receipt(root)
             with (
-                mock.patch.object(materializer, "schema_errors", return_value=[]),
                 mock.patch.object(
-                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                    materializer,
+                    "_checkout_state",
+                    return_value=("a" * 40, "b" * 40, ""),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "_merge_base",
+                    return_value="7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
                 ),
             ):
                 materializer.validate_producer_receipt(receipt, lock, root)
@@ -741,7 +824,7 @@ class IntegratedProducerTests(unittest.TestCase):
                     ("status", "partial"),
                     ("confinement", "requests", 48),
                     ("confinement", "network_calls", 1),
-                    ("promotion", "aggregate_is_promotable", True),
+                    ("promotion", "aggregate_is_promotable", False),
                     ("cleanup", "removed", False),
                 )
                 for mutation in mutations:
@@ -757,15 +840,93 @@ class IntegratedProducerTests(unittest.TestCase):
                         with self.assertRaises(materializer.MaterializationError):
                             materializer.validate_producer_receipt(forged, lock, root)
 
+    def test_every_new_authority_binding_is_independently_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tmp").mkdir()
+            receipt, lock = make_valid_producer_receipt(root)
+            mutations = {
+                "checkout_tree": "0" * 40,
+                "invocation_allow_dirty_development": True,
+                "target_upstream_commit": "0" * 40,
+                "target_ancestry_merge_base": "0" * 40,
+                "metadata_selector_path": "forged-selector.json",
+                "metadata_selector_raw_sha256": "0" * 64,
+                "selected_metadata_set_id": "forged-set",
+                "selected_descriptor_path": "forged-descriptor.json",
+                "selected_descriptor_raw_sha256": "0" * 64,
+                "selected_ledger_path": "forged-ledger.json",
+                "selected_ledger_raw_sha256": "0" * 64,
+                "selected_oracle_path": "forged-oracle.json",
+                "selected_oracle_raw_sha256": "0" * 64,
+                "selected_target_main_commit": "0" * 40,
+                "selected_target_product_version": "0.0.0",
+            }
+            with (
+                mock.patch.object(
+                    materializer,
+                    "_checkout_state",
+                    return_value=("a" * 40, "b" * 40, ""),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "_merge_base",
+                    return_value="7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+                ),
+            ):
+                for field, value in mutations.items():
+                    with self.subTest(field=field):
+                        forged = copy.deepcopy(receipt)
+                        forged["bindings"][field] = value
+                        with self.assertRaises(materializer.MaterializationError):
+                            materializer.validate_producer_receipt(forged, lock, root)
+
+    def test_authority_cleanup_proofs_are_independently_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tmp").mkdir()
+            receipt, lock = make_valid_producer_receipt(root)
+            mutations = {
+                "pre_execution_tree_sha256": "0" * 64,
+                "post_execution_tree_sha256": "0" * 64,
+                "sentinel_sha256": None,
+                "checkout_status_before_sha256": "0" * 64,
+                "checkout_status_after_sha256": "0" * 64,
+            }
+            with (
+                mock.patch.object(
+                    materializer,
+                    "_checkout_state",
+                    return_value=("a" * 40, "b" * 40, ""),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "_merge_base",
+                    return_value="7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+                ),
+            ):
+                for field, value in mutations.items():
+                    with self.subTest(field=field):
+                        forged = copy.deepcopy(receipt)
+                        forged["cleanup"][field] = value
+                        with self.assertRaises(materializer.MaterializationError):
+                            materializer.validate_producer_receipt(forged, lock, root)
+
     def test_producer_cleanup_root_is_canonical_parent_bound_and_absent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "tmp").mkdir()
             receipt, lock = make_valid_producer_receipt(root)
             with (
-                mock.patch.object(materializer, "schema_errors", return_value=[]),
                 mock.patch.object(
-                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                    materializer,
+                    "_checkout_state",
+                    return_value=("a" * 40, "b" * 40, ""),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "_merge_base",
+                    return_value="7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
                 ),
             ):
                 for forged in (
@@ -807,9 +968,15 @@ class IntegratedProducerTests(unittest.TestCase):
             (root / "tmp").mkdir()
             receipt, lock = make_valid_producer_receipt(root)
             with (
-                mock.patch.object(materializer, "schema_errors", return_value=[]),
                 mock.patch.object(
-                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                    materializer,
+                    "_checkout_state",
+                    return_value=("a" * 40, "b" * 40, ""),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "_merge_base",
+                    return_value="7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
                 ),
             ):
                 for key, value in (
@@ -998,23 +1165,21 @@ class IntegratedReceiptIntegrityTests(unittest.TestCase):
             self.scan,
             self.temporary_root,
         ) = make_valid_integrated_receipt(self.root)
-        self.original_schema_errors = materializer.schema_errors
 
     def tearDown(self) -> None:
         self.directory.cleanup()
 
-    def schema_errors(self, value: object, path: Path) -> list[str]:
-        if path == materializer.PRODUCER_RESULT_SCHEMA_PATH:
-            return []
-        return self.original_schema_errors(value, path)
-
     def validate(self, receipt: dict[str, object]) -> None:
         with (
             mock.patch.object(
-                materializer, "schema_errors", side_effect=self.schema_errors
+                materializer,
+                "_checkout_state",
+                return_value=("a" * 40, "b" * 40, ""),
             ),
             mock.patch.object(
-                materializer, "_checkout_state", return_value=("a" * 40, "")
+                materializer,
+                "_merge_base",
+                return_value="7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
             ),
         ):
             materializer.validate_integrated_receipt(
@@ -1047,7 +1212,7 @@ class IntegratedReceiptIntegrityTests(unittest.TestCase):
             ("confinement", "network_calls", 1),
             ("cleanup", "producer_temporary_root_removed", False),
             ("bindings", "producer_executor_sha256", "0" * 64),
-            ("promotion", "aggregate_is_promotable", True),
+            ("promotion", "aggregate_is_promotable", False),
         )
         for section, field, value in mutations:
             with self.subTest(section=section, field=field):
@@ -1111,6 +1276,37 @@ class IntegratedReceiptIntegrityTests(unittest.TestCase):
         with self.assertRaises(materializer.MaterializationError):
             self.validate(forged)
 
+    def test_nested_and_outer_authority_cannot_be_upgraded_independently(self) -> None:
+        nested_mutations = {
+            "development_smoke_only": True,
+            "family_id": "forged-family",
+            "eligible_capability_ids": [],
+            "requires_separate_reviewed_metadata_integration": False,
+            "receipt_is_runtime_evidence": False,
+            "aggregate_is_promotable": False,
+        }
+        for field, value in nested_mutations.items():
+            with self.subTest(scope="nested", field=field):
+                forged = copy.deepcopy(self.receipt)
+                forged["producer_receipt"]["promotion"][field] = value
+                if field in forged["promotion"]:
+                    forged["promotion"][field] = value
+                self.rebind(forged)
+                with self.assertRaises(materializer.MaterializationError):
+                    self.validate(forged)
+        outer_mutations = {
+            "canonical_parity_mutated": True,
+            "runtime_producer_mutated": True,
+            **nested_mutations,
+        }
+        for field, value in outer_mutations.items():
+            with self.subTest(scope="outer", field=field):
+                forged = copy.deepcopy(self.receipt)
+                forged["promotion"][field] = value
+                self.rebind(forged)
+                with self.assertRaises(materializer.MaterializationError):
+                    self.validate(forged)
+
 
 class InterfaceTests(unittest.TestCase):
     def test_default_invocation_is_inert(self) -> None:
@@ -1167,6 +1363,85 @@ class InterfaceTests(unittest.TestCase):
         with self.assertRaisesRegex(materializer.MaterializationError, "outside"):
             materializer.publish_exclusive(HERE / "forbidden-receipt.json", "{}\n")
         self.assertFalse((HERE / "forbidden-receipt.json").exists())
+
+    def test_publish_callback_failure_removes_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "receipt.json"
+
+            def drifted() -> None:
+                raise materializer.MaterializationError("post-write drift")
+
+            with self.assertRaisesRegex(
+                materializer.MaterializationError, "post-write drift"
+            ):
+                materializer.publish_exclusive(
+                    path, "{}\n", validate_after_write=drifted
+                )
+            self.assertFalse(path.exists())
+
+    def test_publish_reread_and_fsync_failures_remove_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reread = root / "reread.json"
+            with (
+                mock.patch.object(materializer.os, "read", return_value=b"x"),
+                self.assertRaisesRegex(
+                    materializer.MaterializationError, "bytes differ"
+                ),
+            ):
+                materializer.publish_exclusive(reread, "{}\n")
+            self.assertFalse(reread.exists())
+            fsync = root / "fsync.json"
+            with (
+                mock.patch.object(
+                    materializer.os, "fsync", side_effect=OSError("fsync failed")
+                ),
+                self.assertRaisesRegex(
+                    materializer.MaterializationError, "secure output"
+                ),
+            ):
+                materializer.publish_exclusive(fsync, "{}\n")
+            self.assertFalse(fsync.exists())
+
+    def test_publish_does_not_delete_an_actor_replacement(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "receipt.json"
+            displaced = root / "displaced.json"
+
+            def replace_after_write() -> None:
+                path.rename(displaced)
+                path.write_text("actor replacement\n", encoding="utf-8")
+                path.chmod(0o600)
+
+            with self.assertRaisesRegex(
+                materializer.MaterializationError, "identity changed"
+            ):
+                materializer.publish_exclusive(
+                    path, "{}\n", validate_after_write=replace_after_write
+                )
+            self.assertEqual("actor replacement\n", path.read_text(encoding="utf-8"))
+            self.assertTrue(displaced.is_file())
+
+    def test_existing_output_preflight_skips_materialization(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "receipt.json"
+            output.write_text("existing\n", encoding="utf-8")
+            with (
+                mock.patch.object(materializer, "materialize") as run,
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
+                status = materializer.main(
+                    [
+                        "--execute",
+                        "--acknowledge",
+                        materializer.ACK,
+                        "--output",
+                        os.fspath(output),
+                    ]
+                )
+            self.assertEqual(1, status)
+            run.assert_not_called()
 
     def test_integrated_cli_requires_exact_all_and_acknowledgement(self) -> None:
         base = [

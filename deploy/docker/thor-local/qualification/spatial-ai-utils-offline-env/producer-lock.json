@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "thor-spatial-ai-offline-integrated-runtime-v1",
-  "producer_binding_commit": "ea5cae0ee85cc82184e90a1e1a9d53de145c3162",
+  "producer_binding_commit": "0bd7fef7e1426f6a298ceb1c422aa38b76f383d8",
   "producer_acknowledgement": "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE",
   "capability_ids": [
     "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
@@ -15,13 +15,30 @@
   "producer_bundle": [
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json", "sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json", "sha256": "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "0864a3a63a124bbfb23eabc7acbfca881dcab3b5c1aab203fedaff1deb6f6635"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json", "sha256": "639748643456e62037c6068169179603219b5f151f182da281e0197a08b52a9d"}
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json", "sha256": "c49f98b4ad1aea73b6c1938eb06b1218b252902d3f54d19b0b3c891c2fcbbf1b"}
   ],
   "canonical_controls": [
     {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "834bb40b576d9e9e546cecb3bdb866993b7be7fd3bf9d5e9e19a0d852d4e4e39"},
     {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "b8f03c0d949ae7c9bb6dd14f37142e4f723849125ec944eb9244bd0ad9b79a1a"}
   ],
+  "metadata_controls": [
+    {"path": "deploy/docker/thor-local/parity/metadata_sets/selector.json", "sha256": "bee044866dc53c4c868fd37fd7c21b35e7b8fe6e7b4f7f31e81f3c2263f977c6"},
+    {"path": "deploy/docker/thor-local/parity/metadata_sets/selector.schema.json", "sha256": "16f22fc55e49f6b32d6053f585937688828f0e739ee56429da0bc2c0d5d5377b"},
+    {"path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500.json", "sha256": "1eae1d4dc3a97082e17d377c60355d6e5dd6f0a555bc869652b8ec2167cc1301"},
+    {"path": "deploy/docker/thor-local/parity/metadata_sets/metadata-set.schema.json", "sha256": "23019f9491d945243da785fab2c9ee007708ec1b2d910a9fd5ae625bd822eee4"},
+    {"path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-official-capabilities.json", "sha256": "315fd11b4e40773cc711a43eb9c27edcaee752649cd71b3d6494fa3eb4d89229"},
+    {"path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-capability-oracles.json", "sha256": "c2b8d584b4bb00f42d6337bbad31038d016fe02a7cfbf92ac747f42075bdc6c0"}
+  ],
+  "metadata_selection": {
+    "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
+    "selected_set_id": "thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500",
+    "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500.json",
+    "selected_ledger_path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-official-capabilities.json",
+    "selected_oracle_path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-capability-oracles.json",
+    "target_main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "target_product_version": "3.2.1"
+  },
   "fixture_controls": [
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json", "sha256": "2ebb08521c5068dc3381bfb0131a80627e07c69e38c5bb8df6b663975c6dca63"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json", "sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542"},
@@ -1076,11 +1093,11 @@
   "producer_root_manifest": [
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/EVIDENCE.md",
-    "sha256": "b8a94da920aa9eb948cc71f43034a1a72c27446ebe2081433b646133cc5c002d"
+    "sha256": "40f01c68a31ad5de64f8b7642ce68bc52b6de482debbb1e0dc67d09847410a70"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/README.md",
-    "sha256": "f5aaf924d3e819d5e8937d8398c9487975b7df8d1b941a32588348d132dc2235"
+    "sha256": "bd277ab8300d283820738d0860731173b53ad5c7f95c16cb7fe9f6ac4f12d34b"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json",
@@ -1092,7 +1109,7 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
-    "sha256": "0864a3a63a124bbfb23eabc7acbfca881dcab3b5c1aab203fedaff1deb6f6635"
+    "sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json",
@@ -1124,11 +1141,11 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json",
-    "sha256": "639748643456e62037c6068169179603219b5f151f182da281e0197a08b52a9d"
+    "sha256": "c49f98b4ad1aea73b6c1938eb06b1218b252902d3f54d19b0b3c891c2fcbbf1b"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/tests/test_executor.py",
-    "sha256": "ec391d0c42a92b25852d307d9e483165409820cd849ea2177f9c8139b24a8513"
+    "sha256": "0f4bc4ae054fa1fa35de80ca0820883386abef7be0d81b4c06befec1d306ae62"
   }
   ],
   "expectations": {

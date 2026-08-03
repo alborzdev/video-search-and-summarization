@@ -13,7 +13,7 @@
       "type": "object", "additionalProperties": false,
       "required": ["environment_receipt_sha256", "producer_lock_sha256", "producer_contract_sha256", "producer_executor_sha256", "producer_result_schema_sha256", "import_sensitive_manifests_sha256", "producer_receipt_sha256", "execution_sha256"],
       "properties": {
-        "environment_receipt_sha256": {"$ref": "#/$defs/sha256"}, "producer_lock_sha256": {"$ref": "#/$defs/sha256"}, "producer_contract_sha256": {"$ref": "#/$defs/sha256"}, "producer_executor_sha256": {"$ref": "#/$defs/sha256"}, "producer_result_schema_sha256": {"$ref": "#/$defs/sha256"}, "import_sensitive_manifests_sha256": {"$ref": "#/$defs/sha256"}, "producer_receipt_sha256": {"$ref": "#/$defs/sha256"}, "execution_sha256": {"$ref": "#/$defs/sha256"}
+        "environment_receipt_sha256": {"$ref": "#/$defs/sha256"}, "producer_lock_sha256": {"$ref": "#/$defs/sha256"}, "producer_contract_sha256": {"const": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70"}, "producer_executor_sha256": {"const": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c"}, "producer_result_schema_sha256": {"const": "c49f98b4ad1aea73b6c1938eb06b1218b252902d3f54d19b0b3c891c2fcbbf1b"}, "import_sensitive_manifests_sha256": {"$ref": "#/$defs/sha256"}, "producer_receipt_sha256": {"$ref": "#/$defs/sha256"}, "execution_sha256": {"$ref": "#/$defs/sha256"}
       }
     },
     "selection": {
@@ -21,7 +21,19 @@
       "properties": {"kind": {"const": "all"}, "capability_ids": {"type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true, "items": {"type": "string", "pattern": "^manifest-entry\\.spatial-ai-utils\\.0[0-6]-"}}}
     },
     "environment_receipt": {"type": "object"},
-    "producer_receipt": {"type": "object"},
+    "producer_receipt": {
+      "type": "object",
+      "required": ["schema_version", "package_id", "mode", "status", "bindings", "capability_results", "promotion"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "package_id": {"const": "thor-spatial-ai-utils-runtime-evidence-successor-v1"},
+        "mode": {"const": "target_bound_offline_runtime_evidence"},
+        "status": {"const": "pass"},
+        "bindings": {"$ref": "#/$defs/producer_bindings"},
+        "capability_results": {"$ref": "#/$defs/all_capability_results"},
+        "promotion": {"$ref": "#/$defs/producer_authority"}
+      }
+    },
     "accounting": {
       "type": "object", "additionalProperties": false,
       "required": ["capabilities_passed", "bounded_capability_actions", "requests", "product_function_calls", "independent_positive_runs", "adjacent_negatives"],
@@ -39,9 +51,52 @@
     },
     "promotion": {
       "type": "object", "additionalProperties": false,
-      "required": ["canonical_parity_mutated", "runtime_producer_mutated", "receipt_is_runtime_evidence", "aggregate_is_promotable"],
-      "properties": {"canonical_parity_mutated": {"const": false}, "runtime_producer_mutated": {"const": false}, "receipt_is_runtime_evidence": {"const": false}, "aggregate_is_promotable": {"const": false}}
+      "required": ["canonical_parity_mutated", "runtime_producer_mutated", "development_smoke_only", "family_id", "eligible_capability_ids", "requires_separate_reviewed_metadata_integration", "receipt_is_runtime_evidence", "aggregate_is_promotable"],
+      "properties": {"canonical_parity_mutated": {"const": false}, "runtime_producer_mutated": {"const": false}, "development_smoke_only": {"const": false}, "family_id": {"const": "spatial-ai-utils"}, "eligible_capability_ids": {"$ref": "#/$defs/all_capability_ids"}, "requires_separate_reviewed_metadata_integration": {"const": true}, "receipt_is_runtime_evidence": {"const": true}, "aggregate_is_promotable": {"const": true}}
     }
   },
-  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "all_capability_ids": {
+      "type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true,
+      "prefixItems": [
+        {"const": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping"},
+        {"const": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry"},
+        {"const": "manifest-entry.spatial-ai-utils.02-multiview-visualization"},
+        {"const": "manifest-entry.spatial-ai-utils.03-detection-map"},
+        {"const": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count"},
+        {"const": "manifest-entry.spatial-ai-utils.05-nvschema-conversion"},
+        {"const": "manifest-entry.spatial-ai-utils.06-video-frame-tools"}
+      ], "items": false
+    },
+    "all_capability_results": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "prefixItems": [
+        {"type": "object", "required": ["capability_id", "status"], "properties": {"capability_id": {"const": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping"}, "status": {"const": "pass"}}},
+        {"type": "object", "required": ["capability_id", "status"], "properties": {"capability_id": {"const": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry"}, "status": {"const": "pass"}}},
+        {"type": "object", "required": ["capability_id", "status"], "properties": {"capability_id": {"const": "manifest-entry.spatial-ai-utils.02-multiview-visualization"}, "status": {"const": "pass"}}},
+        {"type": "object", "required": ["capability_id", "status"], "properties": {"capability_id": {"const": "manifest-entry.spatial-ai-utils.03-detection-map"}, "status": {"const": "pass"}}},
+        {"type": "object", "required": ["capability_id", "status"], "properties": {"capability_id": {"const": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count"}, "status": {"const": "pass"}}},
+        {"type": "object", "required": ["capability_id", "status"], "properties": {"capability_id": {"const": "manifest-entry.spatial-ai-utils.05-nvschema-conversion"}, "status": {"const": "pass"}}},
+        {"type": "object", "required": ["capability_id", "status"], "properties": {"capability_id": {"const": "manifest-entry.spatial-ai-utils.06-video-frame-tools"}, "status": {"const": "pass"}}}
+      ], "items": false
+    },
+    "producer_bindings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contract_sha256", "executor_sha256", "ledger_document_sha256", "oracle_document_sha256", "checkout_head", "checkout_tree", "checkout_clean", "checkout_status_porcelain_sha256", "invocation_allow_dirty_development", "target_upstream_commit", "target_ancestry_merge_base", "metadata_selector_path", "metadata_selector_raw_sha256", "selected_metadata_set_id", "selected_descriptor_path", "selected_descriptor_raw_sha256", "selected_ledger_path", "selected_ledger_raw_sha256", "selected_oracle_path", "selected_oracle_raw_sha256", "selected_target_main_commit", "selected_target_product_version", "canonical_rows_are_open_unexecuted", "executor_ready_capabilities"],
+      "properties": {
+        "contract_sha256": {"const": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70"}, "executor_sha256": {"const": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c"}, "ledger_document_sha256": {"const": "834bb40b576d9e9e546cecb3bdb866993b7be7fd3bf9d5e9e19a0d852d4e4e39"}, "oracle_document_sha256": {"const": "b8f03c0d949ae7c9bb6dd14f37142e4f723849125ec944eb9244bd0ad9b79a1a"},
+        "checkout_head": {"$ref": "#/$defs/sha1"}, "checkout_tree": {"$ref": "#/$defs/sha1"}, "checkout_clean": {"const": true}, "checkout_status_porcelain_sha256": {"const": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "invocation_allow_dirty_development": {"const": false},
+        "target_upstream_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"}, "target_ancestry_merge_base": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+        "metadata_selector_path": {"const": "deploy/docker/thor-local/parity/metadata_sets/selector.json"}, "metadata_selector_raw_sha256": {"const": "bee044866dc53c4c868fd37fd7c21b35e7b8fe6e7b4f7f31e81f3c2263f977c6"}, "selected_metadata_set_id": {"const": "thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500"}, "selected_descriptor_path": {"const": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500.json"}, "selected_descriptor_raw_sha256": {"const": "1eae1d4dc3a97082e17d377c60355d6e5dd6f0a555bc869652b8ec2167cc1301"}, "selected_ledger_path": {"const": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-official-capabilities.json"}, "selected_ledger_raw_sha256": {"const": "315fd11b4e40773cc711a43eb9c27edcaee752649cd71b3d6494fa3eb4d89229"}, "selected_oracle_path": {"const": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-capability-oracles.json"}, "selected_oracle_raw_sha256": {"const": "c2b8d584b4bb00f42d6337bbad31038d016fe02a7cfbf92ac747f42075bdc6c0"}, "selected_target_main_commit": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"}, "selected_target_product_version": {"const": "3.2.1"}, "canonical_rows_are_open_unexecuted": {"const": true},
+        "executor_ready_capabilities": {"type": "array", "prefixItems": [{"const": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry"}, {"const": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count"}, {"const": "manifest-entry.spatial-ai-utils.05-nvschema-conversion"}], "items": false, "minItems": 3, "maxItems": 3}
+      }
+    },
+    "producer_authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ledger_mutation_performed", "oracle_mutation_performed", "external_provider_entry_touched", "development_smoke_only", "family_id", "eligible_capability_ids", "requires_separate_reviewed_metadata_integration", "receipt_is_runtime_evidence", "aggregate_is_promotable"],
+      "properties": {"ledger_mutation_performed": {"const": false}, "oracle_mutation_performed": {"const": false}, "external_provider_entry_touched": {"const": false}, "development_smoke_only": {"const": false}, "family_id": {"const": "spatial-ai-utils"}, "eligible_capability_ids": {"$ref": "#/$defs/all_capability_ids"}, "requires_separate_reviewed_metadata_integration": {"const": true}, "receipt_is_runtime_evidence": {"const": true}, "aggregate_is_promotable": {"const": true}}
+    }
+  }
 }

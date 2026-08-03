@@ -49,6 +49,13 @@ PRODUCER_CONTRACT_PATH = PRODUCER_ROOT / "contract.json"
 PRODUCER_CONTRACT_SCHEMA_PATH = PRODUCER_ROOT / "contract.schema.json"
 PRODUCER_EXECUTOR_PATH = PRODUCER_ROOT / "executor.py"
 PRODUCER_RESULT_SCHEMA_PATH = PRODUCER_ROOT / "result.schema.json"
+METADATA_SELECTOR_REL = "deploy/docker/thor-local/parity/metadata_sets/selector.json"
+METADATA_SELECTOR_SCHEMA_REL = (
+    "deploy/docker/thor-local/parity/metadata_sets/selector.schema.json"
+)
+METADATA_SET_SCHEMA_REL = (
+    "deploy/docker/thor-local/parity/metadata_sets/metadata-set.schema.json"
+)
 ACK = "I_ACKNOWLEDGE_EPHEMERAL_OFFLINE_SPATIAL_AI_ENV"
 PRODUCER_ACK = "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE"
 TEMP_PREFIX = "vss-spatial-ai-offline-env."
@@ -161,6 +168,16 @@ PRODUCT_FUNCTION_COUNTS = {
         "video.video_to_frames": 7,
     },
 }
+REQUIRED_MODULES = {
+    "calibration_grouping": ["numpy", "shapely"],
+    "geometry_projection": ["numpy"],
+    "multiview_visualization": ["numpy", "cv2"],
+    "detection_map": ["numpy", "pandas", "nuscenes"],
+    "tracking_metrics": ["numpy", "scipy"],
+    "nvschema_conversion": ["numpy", "scipy"],
+    "video_frame_tools": ["numpy", "cv2", "tqdm"],
+}
+EMPTY_TREE_SHA256 = hashlib.sha256(b"{}").hexdigest()
 EXTERNAL_ACTIVITY_KEYS = (
     "network_calls",
     "docker_calls",
@@ -204,19 +221,36 @@ def sha_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def strict_json(path: Path) -> Any:
+def _strict_json_bytes(payload: bytes, label: str) -> Any:
     def pairs(rows: list[tuple[str, Any]]) -> dict[str, Any]:
         result: dict[str, Any] = {}
         for key, value in rows:
             if key in result:
-                raise MaterializationError(f"duplicate JSON key in {path}: {key}")
+                raise MaterializationError(f"duplicate JSON key in {label}: {key}")
             result[key] = value
         return result
 
     try:
-        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=pairs)
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        return json.loads(payload.decode("utf-8"), object_pairs_hook=pairs)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise MaterializationError(f"invalid JSON: {label}") from exc
+
+
+def strict_json(path: Path) -> Any:
+    try:
+        payload = path.read_bytes()
+    except OSError as exc:
         raise MaterializationError(f"invalid JSON: {path}") from exc
+    return _strict_json_bytes(payload, os.fspath(path))
+
+
+def _read_repo_json_record(relative: str) -> tuple[bytes, Any]:
+    path = _repo_file(relative)
+    try:
+        payload = path.read_bytes()
+    except OSError as exc:
+        raise MaterializationError(f"repository JSON read failed: {relative}") from exc
+    return payload, _strict_json_bytes(payload, relative)
 
 
 def schema_errors(value: Any, schema_path: Path) -> list[str]:
@@ -1083,6 +1117,209 @@ def verify_import_roots(producer_lock: dict[str, Any]) -> None:
         _verify_import_tree(root, relative_paths)
 
 
+def _rows_by_id(document: Any, collection: str, key: str) -> dict[str, Any]:
+    if not isinstance(document, dict) or not isinstance(document.get(collection), list):
+        raise MaterializationError(f"metadata {collection} collection is absent")
+    rows = document[collection]
+    indexed = {row.get(key): row for row in rows if isinstance(row, dict)}
+    if len(indexed) != len(rows):
+        raise MaterializationError(f"metadata {collection} rows are malformed")
+    return indexed
+
+
+def _validate_metadata_alignment(
+    contract: dict[str, Any],
+    selected_ledger: Any,
+    selected_oracle: Any,
+) -> None:
+    _, root_ledger_document = _read_repo_json_record(
+        contract["target"]["current_ledger_document"]
+    )
+    _, root_oracle_document = _read_repo_json_record(
+        contract["target"]["current_oracle_document"]
+    )
+    expected_target = {
+        "main_commit": contract["target"]["upstream_commit"],
+        "product_version": contract["target"]["product_version"],
+    }
+    for label, document in (
+        ("root ledger", root_ledger_document),
+        ("root oracle", root_oracle_document),
+        ("selected ledger", selected_ledger),
+        ("selected oracle", selected_oracle),
+    ):
+        target = document.get("target") if isinstance(document, dict) else None
+        if not isinstance(target, dict) or any(
+            target.get(key) != value for key, value in expected_target.items()
+        ):
+            raise MaterializationError(f"{label} target drift")
+    root_ledger = _rows_by_id(root_ledger_document, "capabilities", "id")
+    root_oracles = _rows_by_id(root_oracle_document, "oracles", "capability_id")
+    selected_rows = _rows_by_id(selected_ledger, "capabilities", "id")
+    selected_oracles = _rows_by_id(selected_oracle, "oracles", "capability_id")
+    if (
+        len(root_ledger) != 289
+        or len(root_oracles) != 289
+        or len(selected_rows) != 500
+        or len(selected_oracles) != 500
+    ):
+        raise MaterializationError("metadata denominator drift")
+    for capability in contract["capabilities"]:
+        capability_id = capability["capability_id"]
+        row = root_ledger.get(capability_id)
+        oracle = root_oracles.get(capability_id)
+        if (
+            row is None
+            or oracle is None
+            or selected_rows.get(capability_id) != row
+            or selected_oracles.get(capability_id) != oracle
+            or sha_bytes(canonical_bytes(row))
+            != capability["current_ledger_row_sha256"]
+            or sha_bytes(canonical_bytes(oracle)) != capability["current_oracle_sha256"]
+        ):
+            raise MaterializationError(
+                f"root/selected SpatialAI metadata drift: {capability_id}"
+            )
+        readiness = oracle.get("acceptance_readiness")
+        expected_classification = (
+            "executor_ready"
+            if capability_id in EXECUTOR_READY_CAPABILITY_IDS
+            else "planning_index_only"
+        )
+        blockers = readiness.get("blockers") if isinstance(readiness, dict) else None
+        if (
+            row.get("feature_id") != "spatial-ai-utils"
+            or row.get("runtime_state") != "not_qualified"
+            or oracle.get("current_state") != "open_unexecuted"
+            or oracle.get("evidence") != []
+            or not isinstance(readiness, dict)
+            or readiness.get("classification") != expected_classification
+            or (expected_classification == "executor_ready" and blockers != [])
+            or (
+                expected_classification == "planning_index_only"
+                and (not isinstance(blockers, list) or not blockers)
+            )
+        ):
+            raise MaterializationError(
+                f"root/selected SpatialAI state drift: {capability_id}"
+            )
+    external_id = contract["policy"]["external_provider_entry"]
+    external = root_ledger.get(external_id)
+    external_oracle = root_oracles.get(external_id)
+    if (
+        external is None
+        or external_oracle is None
+        or selected_rows.get(external_id) != external
+        or selected_oracles.get(external_id) != external_oracle
+        or (
+            external.get("acceptance_class"),
+            external.get("thor_state"),
+            external.get("runtime_state"),
+        )
+        != ("external_optional", "external_optional", "not_applicable")
+        or external_oracle.get("current_state") != "external_boundary_unexecuted"
+    ):
+        raise MaterializationError("root/selected external boundary drift")
+
+
+def _active_metadata_lock_state(
+    contract: dict[str, Any],
+) -> tuple[list[dict[str, str]], dict[str, str]]:
+    selector_payload, selector = _read_repo_json_record(METADATA_SELECTOR_REL)
+    selector_schema_payload, selector_schema = _read_repo_json_record(
+        METADATA_SELECTOR_SCHEMA_REL
+    )
+    selector_errors = list(Draft202012Validator(selector_schema).iter_errors(selector))
+    if selector_errors:
+        raise MaterializationError(
+            f"metadata selector schema violation: {selector_errors[0].message}"
+        )
+    if not isinstance(selector, dict):
+        raise MaterializationError("metadata selector is not an object")
+    selected_id = selector.get("selected_set")
+    available = selector.get("available_sets")
+    if not isinstance(available, list):
+        raise MaterializationError("metadata selector set list is absent")
+    entries = [
+        row
+        for row in available
+        if isinstance(row, dict) and row.get("set_id") == selected_id
+    ]
+    if len(entries) != 1:
+        raise MaterializationError("metadata selector identity drift")
+    entry = entries[0]
+    descriptor_path = entry.get("descriptor_path")
+    if not isinstance(descriptor_path, str):
+        raise MaterializationError("metadata descriptor path is absent")
+    descriptor_payload, descriptor = _read_repo_json_record(descriptor_path)
+    metadata_set_schema_payload, metadata_set_schema = _read_repo_json_record(
+        METADATA_SET_SCHEMA_REL
+    )
+    descriptor_errors = list(
+        Draft202012Validator(metadata_set_schema).iter_errors(descriptor)
+    )
+    if descriptor_errors:
+        raise MaterializationError(
+            f"metadata descriptor schema violation: {descriptor_errors[0].message}"
+        )
+    if (
+        sha_bytes(descriptor_payload) != entry.get("descriptor_raw_sha256")
+        or not isinstance(descriptor, dict)
+        or descriptor.get("set_id") != selected_id
+        or descriptor.get("lifecycle") != "live_ready"
+    ):
+        raise MaterializationError("metadata descriptor binding drift")
+    documents = descriptor.get("documents")
+    target = descriptor.get("target")
+    if not isinstance(documents, dict) or not isinstance(target, dict):
+        raise MaterializationError("metadata descriptor content drift")
+    ledger = documents.get("official_capabilities")
+    oracle = documents.get("capability_oracles")
+    if not isinstance(ledger, dict) or not isinstance(oracle, dict):
+        raise MaterializationError("metadata selected documents drift")
+    ledger_path = ledger.get("path")
+    oracle_path = oracle.get("path")
+    if not isinstance(ledger_path, str) or not isinstance(oracle_path, str):
+        raise MaterializationError("metadata selected document path drift")
+    ledger_payload, selected_ledger = _read_repo_json_record(ledger_path)
+    oracle_payload, selected_oracle = _read_repo_json_record(oracle_path)
+    if sha_bytes(ledger_payload) != ledger.get("raw_sha256") or sha_bytes(
+        oracle_payload
+    ) != oracle.get("raw_sha256"):
+        raise MaterializationError("metadata selected document digest drift")
+    expected_target = {
+        "main_commit": contract["target"]["upstream_commit"],
+        "product_version": contract["target"]["product_version"],
+    }
+    if any(target.get(key) != value for key, value in expected_target.items()):
+        raise MaterializationError("metadata selected target drift")
+    _validate_metadata_alignment(contract, selected_ledger, selected_oracle)
+    controls = [
+        {"path": METADATA_SELECTOR_REL, "sha256": sha_bytes(selector_payload)},
+        {
+            "path": METADATA_SELECTOR_SCHEMA_REL,
+            "sha256": sha_bytes(selector_schema_payload),
+        },
+        {"path": descriptor_path, "sha256": sha_bytes(descriptor_payload)},
+        {
+            "path": METADATA_SET_SCHEMA_REL,
+            "sha256": sha_bytes(metadata_set_schema_payload),
+        },
+        {"path": ledger_path, "sha256": sha_bytes(ledger_payload)},
+        {"path": oracle_path, "sha256": sha_bytes(oracle_payload)},
+    ]
+    selection = {
+        "selector_path": METADATA_SELECTOR_REL,
+        "selected_set_id": selected_id,
+        "descriptor_path": descriptor_path,
+        "selected_ledger_path": ledger_path,
+        "selected_oracle_path": oracle_path,
+        "target_main_commit": expected_target["main_commit"],
+        "target_product_version": expected_target["product_version"],
+    }
+    return controls, selection
+
+
 def load_producer_lock() -> dict[str, Any]:
     lock = strict_json(PRODUCER_LOCK_PATH)
     errors = schema_errors(lock, PRODUCER_LOCK_SCHEMA_PATH)
@@ -1122,6 +1359,13 @@ def load_producer_lock() -> dict[str, Any]:
     ]
     if lock["canonical_controls"] != expected_canonical:
         raise MaterializationError("producer canonical-control lock drift")
+    expected_metadata_controls, expected_metadata_selection = (
+        _active_metadata_lock_state(contract)
+    )
+    if lock["metadata_controls"] != expected_metadata_controls:
+        raise MaterializationError("producer metadata-control lock drift")
+    if lock["metadata_selection"] != expected_metadata_selection:
+        raise MaterializationError("producer metadata-selection lock drift")
     expected_fixtures = [row["fixture_manifest"] for row in contract["capabilities"]]
     if lock["fixture_controls"] != expected_fixtures:
         raise MaterializationError("producer fixture lock drift")
@@ -1148,6 +1392,7 @@ def load_producer_lock() -> dict[str, Any]:
     for row in (
         lock["producer_bundle"]
         + lock["canonical_controls"]
+        + lock["metadata_controls"]
         + lock["fixture_controls"]
         + lock["product_source_controls"]
         + lock["product_root_manifest"]
@@ -1162,6 +1407,7 @@ def _producer_locked_files(lock: dict[str, Any]) -> list[dict[str, str]]:
     return (
         lock["producer_bundle"]
         + lock["canonical_controls"]
+        + lock["metadata_controls"]
         + lock["fixture_controls"]
         + lock["product_source_controls"]
         + lock["product_root_manifest"]
@@ -1192,9 +1438,16 @@ def _import_sensitive_manifests_sha256(producer_lock: dict[str, Any]) -> str:
     )
 
 
-def _checkout_state() -> tuple[str, str]:
+def _checkout_state() -> tuple[str, str, str]:
     head = subprocess.run(
         ["git", "rev-parse", "HEAD"],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.strip()
+    tree = subprocess.run(
+        ["git", "rev-parse", f"{head}^{{tree}}"],
         cwd=REPO_ROOT,
         text=True,
         capture_output=True,
@@ -1207,7 +1460,49 @@ def _checkout_state() -> tuple[str, str]:
         capture_output=True,
         check=True,
     ).stdout
-    return head, status
+    return head, tree, status
+
+
+def _merge_base(ancestor: str, checkout_head: str) -> str:
+    return subprocess.run(
+        ["git", "merge-base", ancestor, checkout_head],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.strip()
+
+
+def _expected_producer_promotion() -> dict[str, Any]:
+    return {
+        "ledger_mutation_performed": False,
+        "oracle_mutation_performed": False,
+        "external_provider_entry_touched": False,
+        "development_smoke_only": False,
+        "family_id": "spatial-ai-utils",
+        "eligible_capability_ids": CAPABILITY_IDS,
+        "requires_separate_reviewed_metadata_integration": True,
+        "receipt_is_runtime_evidence": True,
+        "aggregate_is_promotable": True,
+    }
+
+
+def _mirrored_integrated_promotion(producer_receipt: dict[str, Any]) -> dict[str, Any]:
+    nested = producer_receipt.get("promotion")
+    if nested != _expected_producer_promotion():
+        raise MaterializationError("producer authority envelope drift")
+    return {
+        "canonical_parity_mutated": False,
+        "runtime_producer_mutated": False,
+        "development_smoke_only": nested["development_smoke_only"],
+        "family_id": nested["family_id"],
+        "eligible_capability_ids": nested["eligible_capability_ids"],
+        "requires_separate_reviewed_metadata_integration": nested[
+            "requires_separate_reviewed_metadata_integration"
+        ],
+        "receipt_is_runtime_evidence": nested["receipt_is_runtime_evidence"],
+        "aggregate_is_promotable": nested["aggregate_is_promotable"],
+    }
 
 
 def validate_removed_producer_temporary_root(
@@ -1242,12 +1537,23 @@ def validate_producer_receipt(
     if errors:
         raise MaterializationError(f"producer receipt schema violation: {errors[0]}")
     if (
-        result["mode"] != "target_bound_offline_runtime_evidence"
+        result.get("schema_version") != 1
+        or result.get("package_id")
+        != "thor-spatial-ai-utils-runtime-evidence-successor-v1"
+        or result["mode"] != "target_bound_offline_runtime_evidence"
         or result["status"] != "pass"
     ):
         raise MaterializationError("producer receipt is not an all-pass execution")
     bindings = result["bindings"]
-    expected_binding_hashes = {
+    contract = strict_json(PRODUCER_CONTRACT_PATH)
+    metadata = producer_lock["metadata_selection"]
+    metadata_hashes = {
+        row["path"]: row["sha256"] for row in producer_lock["metadata_controls"]
+    }
+    checkout_head, checkout_tree, checkout_status = _checkout_state()
+    upstream_commit = contract["target"]["upstream_commit"]
+    ancestry_merge_base = _merge_base(upstream_commit, checkout_head)
+    expected_bindings = {
         "contract_sha256": _producer_lock_row(producer_lock, PRODUCER_CONTRACT_PATH)[
             "sha256"
         ],
@@ -1256,28 +1562,37 @@ def validate_producer_receipt(
         ],
         "ledger_document_sha256": producer_lock["canonical_controls"][0]["sha256"],
         "oracle_document_sha256": producer_lock["canonical_controls"][1]["sha256"],
+        "checkout_head": checkout_head,
+        "checkout_tree": checkout_tree,
+        "checkout_clean": True,
+        "checkout_status_porcelain_sha256": sha_bytes(b""),
+        "invocation_allow_dirty_development": False,
+        "target_upstream_commit": upstream_commit,
+        "target_ancestry_merge_base": upstream_commit,
+        "metadata_selector_path": metadata["selector_path"],
+        "metadata_selector_raw_sha256": metadata_hashes[metadata["selector_path"]],
+        "selected_metadata_set_id": metadata["selected_set_id"],
+        "selected_descriptor_path": metadata["descriptor_path"],
+        "selected_descriptor_raw_sha256": metadata_hashes[metadata["descriptor_path"]],
+        "selected_ledger_path": metadata["selected_ledger_path"],
+        "selected_ledger_raw_sha256": metadata_hashes[metadata["selected_ledger_path"]],
+        "selected_oracle_path": metadata["selected_oracle_path"],
+        "selected_oracle_raw_sha256": metadata_hashes[metadata["selected_oracle_path"]],
+        "selected_target_main_commit": metadata["target_main_commit"],
+        "selected_target_product_version": metadata["target_product_version"],
+        "canonical_rows_are_open_unexecuted": True,
+        "executor_ready_capabilities": EXECUTOR_READY_CAPABILITY_IDS,
     }
-    if any(bindings[key] != value for key, value in expected_binding_hashes.items()):
-        raise MaterializationError("producer receipt binding drift")
-    if (
-        bindings["checkout_clean"] is not True
-        or bindings["canonical_rows_are_open_unexecuted"] is not True
-        or bindings["executor_ready_capabilities"] != EXECUTOR_READY_CAPABILITY_IDS
-    ):
-        raise MaterializationError("producer checkout or canonical-state binding drift")
-    checkout_head, checkout_status = _checkout_state()
     if (
         checkout_status != ""
-        or bindings["checkout_head"] != checkout_head
-        or bindings["checkout_status_porcelain_sha256"]
-        != sha_bytes(checkout_status.encode("utf-8"))
+        or ancestry_merge_base != upstream_commit
+        or bindings != expected_bindings
     ):
-        raise MaterializationError("producer checkout identity drift")
+        raise MaterializationError("producer receipt binding drift")
     rows = result["capability_results"]
     if [row["capability_id"] for row in rows] != CAPABILITY_IDS:
         raise MaterializationError("producer result capability order drift")
     expected_calls = PRODUCT_FUNCTION_CALLS_BY_CAPABILITY
-    contract = strict_json(PRODUCER_CONTRACT_PATH)
     contract_by_id = {row["capability_id"]: row for row in contract["capabilities"]}
     for row, capability_id in zip(rows, CAPABILITY_IDS, strict=True):
         short_id = capability_id.split(".")[2][:2]
@@ -1308,9 +1623,15 @@ def validate_producer_receipt(
         ):
             raise MaterializationError(f"producer accounting drift: {capability_id}")
         cleanup = row["cleanup"]
-        if not all(
-            cleanup[key] is True
-            for key in ("temporary_files_only", "removed", "siblings_unchanged")
+        if (
+            cleanup["namespace"] != f"spatial-ai-{capability_id.split('.')[2]}"
+            or cleanup["pre_state_captured"] != "absent"
+            or cleanup["temporary_files_only"] is not True
+            or cleanup["removed"] is not True
+            or cleanup["siblings_unchanged"] is not True
+            or not isinstance(cleanup["owned_tree_sha256"], str)
+            or len(cleanup["owned_tree_sha256"]) != 64
+            or cleanup["post_cleanup_tree_sha256"] != EMPTY_TREE_SHA256
         ):
             raise MaterializationError(f"producer cleanup drift: {capability_id}")
         binding = row["runtime_evidence_binding"]
@@ -1376,31 +1697,36 @@ def validate_producer_receipt(
     ):
         raise MaterializationError("producer confinement drift")
     preflight = result["environment"]["capability_preflight"]
-    if list(preflight) != CAPABILITY_IDS or not all(
-        preflight[capability_id]["ready"] is True for capability_id in CAPABILITY_IDS
-    ):
+    if list(preflight) != CAPABILITY_IDS:
         raise MaterializationError("producer all-seven preflight drift")
+    for capability_id in CAPABILITY_IDS:
+        adapter = contract_by_id[capability_id]["adapter"]
+        observed = preflight[capability_id]
+        if (
+            observed["ready"] is not True
+            or observed["required_modules"] != REQUIRED_MODULES[adapter]
+            or observed["missing_modules"] != []
+            or observed["import_failures"] != []
+            or set(observed["observed_versions"]) != set(REQUIRED_MODULES[adapter])
+        ):
+            raise MaterializationError("producer all-seven preflight drift")
     aggregate_cleanup = result["cleanup"]
     validate_removed_producer_temporary_root(
         aggregate_cleanup["executor_owned_temporary_root"], owned_root
     )
     if (
-        aggregate_cleanup["removed"] is not True
+        aggregate_cleanup["pre_execution_tree_sha256"] != EMPTY_TREE_SHA256
+        or aggregate_cleanup["post_execution_tree_sha256"] != EMPTY_TREE_SHA256
+        or not isinstance(aggregate_cleanup["sentinel_sha256"], str)
+        or len(aggregate_cleanup["sentinel_sha256"]) != 64
+        or aggregate_cleanup["checkout_status_before_sha256"] != sha_bytes(b"")
+        or aggregate_cleanup["checkout_status_after_sha256"] != sha_bytes(b"")
+        or aggregate_cleanup["removed"] is not True
         or aggregate_cleanup["siblings_unchanged"] is not True
     ):
         raise MaterializationError("producer aggregate cleanup drift")
-    promotion = result["promotion"]
-    if promotion["individual_receipt_candidates"] != CAPABILITY_IDS or any(
-        promotion[key]
-        for key in (
-            "ledger_mutation_performed",
-            "oracle_mutation_performed",
-            "external_provider_entry_touched",
-            "receipt_is_runtime_evidence",
-            "aggregate_is_promotable",
-        )
-    ):
-        raise MaterializationError("producer non-promotion policy drift")
+    if result["promotion"] != _expected_producer_promotion():
+        raise MaterializationError("producer authority envelope drift")
     return accounting
 
 
@@ -1432,7 +1758,7 @@ def run_canonical_producer(
             "canonical producer receipt is not private and unique"
         )
     raw = child_receipt.read_bytes()
-    result = strict_json(child_receipt)
+    result = _strict_json_bytes(raw, os.fspath(child_receipt))
     accounting = validate_producer_receipt(result, producer_lock, root)
     return result, sha_bytes(raw), accounting
 
@@ -1517,12 +1843,9 @@ def validate_integrated_receipt(
         "import_sensitive_roots_unchanged": True,
     }:
         raise MaterializationError("integrated cleanup drift")
-    if receipt["promotion"] != {
-        "canonical_parity_mutated": False,
-        "runtime_producer_mutated": False,
-        "receipt_is_runtime_evidence": False,
-        "aggregate_is_promotable": False,
-    }:
+    if receipt["promotion"] != _mirrored_integrated_promotion(
+        receipt["producer_receipt"]
+    ):
         raise MaterializationError("integrated promotion drift")
 
 
@@ -1648,12 +1971,7 @@ def materialize(
                     "product_sources_unchanged": True,
                     "import_sensitive_roots_unchanged": True,
                 },
-                "promotion": {
-                    "canonical_parity_mutated": False,
-                    "runtime_producer_mutated": False,
-                    "receipt_is_runtime_evidence": False,
-                    "aggregate_is_promotable": False,
-                },
+                "promotion": _mirrored_integrated_promotion(producer_receipt),
             }
             receipt["bindings"]["execution_sha256"] = _integrated_execution_sha256(
                 receipt
@@ -1707,7 +2025,7 @@ def materialize(
     return receipt
 
 
-def publish_exclusive(path: Path, rendered: str) -> None:
+def open_safe_output_parent(path: Path) -> tuple[Path, int]:
     destination = Path(os.path.abspath(os.fspath(path)))
     if not destination.name:
         raise MaterializationError(
@@ -1731,34 +2049,120 @@ def publish_exclusive(path: Path, rendered: str) -> None:
             next_descriptor = os.open(component, directory_flags, dir_fd=descriptor)
             os.close(descriptor)
             descriptor = next_descriptor
-        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
+        try:
+            os.stat(destination.name, dir_fd=descriptor, follow_symlinks=False)
+        except FileNotFoundError:
+            pass
+        else:
+            raise MaterializationError("output receipt already exists")
+        return destination, descriptor
+    except MaterializationError:
+        os.close(descriptor)
+        raise
+    except OSError as exc:
+        os.close(descriptor)
+        raise MaterializationError("secure output publication failed") from exc
+
+
+def publish_exclusive(
+    path: Path,
+    rendered: str,
+    validate_after_write: Any | None = None,
+) -> None:
+    destination, descriptor = open_safe_output_parent(path)
+    output_descriptor = -1
+    created = False
+    try:
+        flags = os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
         try:
             output_descriptor = os.open(
                 destination.name, flags, 0o600, dir_fd=descriptor
             )
+            created = True
         except FileExistsError as exc:
             raise MaterializationError("output receipt already exists") from exc
-        try:
-            data = rendered.encode("utf-8")
-            offset = 0
-            while offset < len(data):
-                offset += os.write(output_descriptor, data[offset:])
-            os.fsync(output_descriptor)
-        except BaseException:
-            os.close(output_descriptor)
-            output_descriptor = -1
-            os.unlink(destination.name, dir_fd=descriptor)
-            raise
-        finally:
-            if output_descriptor >= 0:
-                os.close(output_descriptor)
+        output_stat = os.fstat(output_descriptor)
+        if (
+            not stat.S_ISREG(output_stat.st_mode)
+            or stat.S_IMODE(output_stat.st_mode) != 0o600
+            or output_stat.st_nlink != 1
+        ):
+            raise MaterializationError("output receipt is not private and unique")
+        data = rendered.encode("utf-8")
+        offset = 0
+        while offset < len(data):
+            written = os.write(output_descriptor, data[offset:])
+            if written <= 0:
+                raise MaterializationError("output receipt write made no progress")
+            offset += written
+        os.fsync(output_descriptor)
+        os.lseek(output_descriptor, 0, os.SEEK_SET)
+        observed = b""
+        while len(observed) < len(data):
+            chunk = os.read(output_descriptor, len(data) - len(observed))
+            if not chunk:
+                break
+            observed += chunk
+        if observed != data or os.read(output_descriptor, 1) != b"":
+            raise MaterializationError("published receipt bytes differ")
+        if validate_after_write is not None:
+            validate_after_write()
+        final_descriptor_stat = os.fstat(output_descriptor)
+        final_name_stat = os.stat(
+            destination.name, dir_fd=descriptor, follow_symlinks=False
+        )
+        if (
+            not stat.S_ISREG(final_name_stat.st_mode)
+            or stat.S_IMODE(final_name_stat.st_mode) != 0o600
+            or final_name_stat.st_nlink != 1
+            or (final_name_stat.st_dev, final_name_stat.st_ino)
+            != (final_descriptor_stat.st_dev, final_descriptor_stat.st_ino)
+        ):
+            raise MaterializationError("published receipt identity changed")
         os.fsync(descriptor)
-    except MaterializationError:
-        raise
-    except OSError as exc:
+    except BaseException as exc:
+        if created:
+            try:
+                descriptor_stat = os.fstat(output_descriptor)
+                name_stat = os.stat(
+                    destination.name, dir_fd=descriptor, follow_symlinks=False
+                )
+                if (name_stat.st_dev, name_stat.st_ino) == (
+                    descriptor_stat.st_dev,
+                    descriptor_stat.st_ino,
+                ):
+                    os.unlink(destination.name, dir_fd=descriptor)
+                    os.fsync(descriptor)
+            except OSError:
+                pass
+        if isinstance(exc, MaterializationError):
+            raise
         raise MaterializationError("secure output publication failed") from exc
     finally:
+        if output_descriptor >= 0:
+            os.close(output_descriptor)
         os.close(descriptor)
+
+
+def revalidate_for_publication(receipt: dict[str, Any]) -> None:
+    lock = load_lock()
+    if receipt.get("package_id") == "thor-spatial-ai-offline-integrated-runtime-v1":
+        producer_lock = load_producer_lock()
+        verify_import_roots(producer_lock)
+        validate_integrated_receipt(
+            receipt,
+            lock,
+            producer_lock,
+            expected_cache_scan=receipt["environment_receipt"]["cache_scan"],
+            expected_temporary_root=receipt["cleanup"]["materializer_temporary_root"],
+        )
+    else:
+        validate_receipt(
+            receipt,
+            lock,
+            expected_cache_scan=receipt["cache_scan"],
+            expected_temporary_root=receipt["cleanup"]["temporary_root"],
+        )
 
 
 def plan(lock: dict[str, Any]) -> dict[str, Any]:
@@ -1825,6 +2229,8 @@ def main(argv: list[str] | None = None) -> int:
             raise MaterializationError(
                 "producer flags require --run-canonical-spatial-ai-producer"
             )
+        _, output_parent_descriptor = open_safe_output_parent(args.output)
+        os.close(output_parent_descriptor)
         roots = args.cache_root or [DEFAULT_CACHE_ROOT]
         receipt = materialize(
             lock,
@@ -1833,7 +2239,9 @@ def main(argv: list[str] | None = None) -> int:
             run_producer=args.run_canonical_spatial_ai_producer,
         )
         publish_exclusive(
-            args.output, json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+            args.output,
+            json.dumps(receipt, indent=2, sort_keys=True) + "\n",
+            validate_after_write=lambda: revalidate_for_publication(receipt),
         )
         return 0
     except MaterializationError as exc:
