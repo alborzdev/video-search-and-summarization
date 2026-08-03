@@ -13,41 +13,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Visualization convenience exports.
+
+The individual visualization modules have different optional dependencies.
+Keep the historical package-level API, but resolve its exports on first use so
+importing a lightweight submodule does not pull in unrelated dependencies such
+as Shapely.
+"""
+
+from __future__ import annotations
+
 import json
+from importlib import import_module
 from importlib.resources import files
+from typing import Any
 
 with (files("spatialai_data_utils") / "assets" / "colormap.json").open("r") as f:
     COLOR_MAP = json.load(f)
 
-from spatialai_data_utils.visualization.box_3d import (  # noqa: F401, E402
-    box3d_to_corners,
-    draw_bbox3d_multicam,
-    draw_bbox3d_on_bev,
-    draw_bbox3d_on_img,
-    draw_points3d_on_img,
-    draw_box3d_corners_on_img,
-)
-from spatialai_data_utils.visualization.draw_utils import (  # noqa: F401, E402
-    build_world2img_from_calib,
-    build_world2img_from_calib_info,
-    draw_camera_tag,
-    generate_bbox_text,
-    load_image,
-    save_viz,
-)
-from spatialai_data_utils.visualization.camera_groups import (  # noqa: F401, E402
-    CLUSTER_COLORS,
-    draw_polygon,
-    get_cluster_color,
-    plot_sensor_groups,
-    plot_sensor_groups_black_background,
-    transform_polygon,
-)
-from spatialai_data_utils.core.geometry.projection import (  # noqa: F401, E402
-    project_bev_objects_bbox_in_image,
-)
-from spatialai_data_utils.visualization.render import (  # noqa: F401, E402
-    draw_bev_objects_bbox_in_image,
-    visualize_3dbbox,
-    visualize_nvschema,
-)
+_LAZY_EXPORTS = {
+    "box3d_to_corners": "spatialai_data_utils.visualization.box_3d",
+    "draw_bbox3d_multicam": "spatialai_data_utils.visualization.box_3d",
+    "draw_bbox3d_on_bev": "spatialai_data_utils.visualization.box_3d",
+    "draw_bbox3d_on_img": "spatialai_data_utils.visualization.box_3d",
+    "draw_points3d_on_img": "spatialai_data_utils.visualization.box_3d",
+    "draw_box3d_corners_on_img": "spatialai_data_utils.visualization.box_3d",
+    "build_world2img_from_calib": "spatialai_data_utils.visualization.draw_utils",
+    "build_world2img_from_calib_info": "spatialai_data_utils.visualization.draw_utils",
+    "draw_camera_tag": "spatialai_data_utils.visualization.draw_utils",
+    "generate_bbox_text": "spatialai_data_utils.visualization.draw_utils",
+    "load_image": "spatialai_data_utils.visualization.draw_utils",
+    "save_viz": "spatialai_data_utils.visualization.draw_utils",
+    "CLUSTER_COLORS": "spatialai_data_utils.visualization.camera_groups",
+    "draw_polygon": "spatialai_data_utils.visualization.camera_groups",
+    "get_cluster_color": "spatialai_data_utils.visualization.camera_groups",
+    "plot_sensor_groups": "spatialai_data_utils.visualization.camera_groups",
+    "plot_sensor_groups_black_background": (
+        "spatialai_data_utils.visualization.camera_groups"
+    ),
+    "transform_polygon": "spatialai_data_utils.visualization.camera_groups",
+    "project_bev_objects_bbox_in_image": (
+        "spatialai_data_utils.core.geometry.projection"
+    ),
+    "draw_bev_objects_bbox_in_image": "spatialai_data_utils.visualization.render",
+    "visualize_3dbbox": "spatialai_data_utils.visualization.render",
+    "visualize_nvschema": "spatialai_data_utils.visualization.render",
+}
+
+__all__ = ["COLOR_MAP", *_LAZY_EXPORTS]
+
+
+def __getattr__(name: str) -> Any:
+    """Resolve a historical package-level export on first access."""
+
+    module_name = _LAZY_EXPORTS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+    value = getattr(import_module(module_name), name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    """Include lazily exported names in interactive discovery."""
+
+    return sorted({*globals(), *__all__})
