@@ -149,9 +149,11 @@ claims Thor runtime qualification.
 A first current-ledger successor added the exact CPU multimedia advertised entry
 as capability 277. The tooling-entry successor then added eight exact Spatial
 AI utility entries and four exact Synthetic Data tool entries as capabilities
-278 through 289. The four Synthetic Data entries are now qualified by exact
-current target-bound offline receipts, while the Spatial AI utilities remain
-unqualified or external-optional. The Warehouse sample bundle remains excluded.
+278 through 289. The four Synthetic Data entries have exact current target-bound
+offline receipts. Two MV3DT configuration utilities and three core SpatialAI
+utilities now have exact executor-ready bindings; the remaining SpatialAI
+utilities stay unqualified or external-optional. The Warehouse sample bundle
+remains excluded.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and
@@ -161,15 +163,17 @@ count from being treated as operation-level coverage.
 `capability-oracles.json` expands every reviewed capability into a unique
 record with exact ledger semantics, scenario identity, fixture identity,
 observations, assertions, work bounds, admission gates, and mutation ownership.
-Four Synthetic Data oracles now bind materialized tiny fixtures and the exact
-offline executor/collector/cleanup path, so they are `executor_ready`; the
-other 285 entries remain `planning_index_only`. Twenty-seven live planning
-bindings cover bounded file-only subsets, and the two MV3DT generator oracles
-additionally bind their deterministic custom-data tool observations from
+Nine oracles are `executor_ready`: four Synthetic Data, two MV3DT configuration
+utilities, and SpatialAI core entries 01, 04, and 05. The other 280 entries
+remain `planning_index_only`. The three SpatialAI rows bind their locked tiny
+fixtures and offline executor/collector/cleanup path, but remain
+`open_unexecuted` with empty evidence; the SpatialAI ledger and family runtime
+state are unchanged. Twenty-seven live planning bindings cover bounded
+file-only subsets, and the two MV3DT generator oracles additionally bind their
+deterministic custom-data tool observations from
 `../qualification/offline-mv3dt-tools/`. All 29 subset bindings are explicitly
-non-advancing: they cannot promote the full oracle, create runtime evidence, or
-change capability state. The seven planned modes are static, config, runtime,
-API, protocol, model, and deploy.
+non-advancing. The seven planned modes are static, config, runtime, API,
+protocol, model, and deploy.
 
 `../qualification/static-cases/` is an isolated first tranche of 24 bounded
 static observations. Its inventory, generated calibration fixtures, and tests

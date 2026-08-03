@@ -1,0 +1,53 @@
+{
+  "documents": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebase-successor/post-state-acceptance-inventory.json",
+      "raw_sha256": "69dc4aca160ae236880f9afe7b873c0b3b423f8981c5d934e4ed647043cd8cb0",
+      "schema_version": 1
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-successor/post-state-capability-oracles.json",
+      "raw_sha256": "c2b8d584b4bb00f42d6337bbad31038d016fe02a7cfbf92ac747f42075bdc6c0",
+      "schema_id": "capability_oracles_schema",
+      "schema_version": 2
+    },
+    "manifest": {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-mv3dt-config-utils-successor/post-state-manifest.json",
+      "raw_sha256": "97d7801134de5022bce7636f47dd08a34df78d913e01a59a5faddb9376d5dc37",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-successor/post-state-official-capabilities.json",
+      "raw_sha256": "315fd11b4e40773cc711a43eb9c27edcaee752649cd71b3d6494fa3eb4d89229",
+      "schema_id": "official_capabilities_schema",
+      "schema_version": 1
+    }
+  },
+  "expected_counts": {
+    "capabilities": 500,
+    "feature_families": 55,
+    "oracles": 500
+  },
+  "lifecycle": "live_ready",
+  "mode": "immutable_static_metadata_set",
+  "schema_version": 1,
+  "schemas": {
+    "capability_oracles_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/live-capability-oracles-v2.schema.json",
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebase-successor/post-state-capability-oracles.schema.json",
+      "raw_sha256": "b24308d9647ff7a4c7b66cc91881749eaaa84c21ab7423677fc30ab4f9c36233"
+    },
+    "official_capabilities_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "71f1e0f1d820c3809ea3b55abb504071321f61c6e36978226dd10108c7b2384b"
+    }
+  },
+  "set_id": "thor-vss-3.2.1-current-spatial-ai-utils-core-500",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

@@ -137,6 +137,48 @@ MV3DT_PROMOTED_GAP = (
     "MV3DT configuration generator contract twice, including adjacent-negative "
     "behavior, determinism, and exact cleanup without the Warehouse sample bundle."
 )
+SPATIAL_AI_CORE_INTERFACE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "metadata-500-current-spatial-ai-utils-core-successor/runtime-interface.json"
+    ),
+    "raw_sha256": "191e883c6bf5d2b1331d2e4555aded50d202dbe2070f7ddfc95c3d7bbf88f2e3",
+}
+SPATIAL_AI_CORE_INTERFACE_SCHEMA = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "metadata-500-current-spatial-ai-utils-core-successor/"
+        "runtime-interface.schema.json"
+    ),
+    "raw_sha256": "048cf87b58a5e21763074c77378d3422c9797f3f2bcb0e85987048df7698a831",
+}
+SPATIAL_AI_CORE_PRODUCER_COMMIT = "c06932bd641b00ac67df4508e5831644544f9ac1"
+SPATIAL_AI_CORE_IDS = (
+    "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+    "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+    "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+)
+SPATIAL_AI_IDS = tuple(
+    f"manifest-entry.spatial-ai-utils.0{index}-{suffix}"
+    for index, suffix in enumerate(
+        (
+            "calibration-and-camera-grouping",
+            "3d-2d-geometry",
+            "multiview-visualization",
+            "detection-map",
+            "tracking-hota-clear-identity-count",
+            "nvschema-conversion",
+            "video-frame-tools",
+            "aws-gcs-validation",
+        )
+    )
+)
+SPATIAL_AI_CORE_GAP = (
+    "No known gap: the committed target-bound offline SpatialAI runtime producer "
+    "covers two positive runs, five named adjacent cases, deterministic output, "
+    "exact cleanup, and observed imported-product calls without the Warehouse "
+    "sample bundle. Runtime evidence remains a separate, non-promoting stage."
+)
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 CPU_MULTIMEDIA_CAPABILITY_ID = (
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
@@ -899,6 +941,38 @@ def canonical_oracle_sha256(oracle: dict[str, Any]) -> str:
     ).hexdigest()
 
 
+def is_spatial_ai_core_stage1_binding(
+    capability: dict[str, Any], oracle: dict[str, Any]
+) -> bool:
+    """Recognize only the reviewed, evidence-empty SpatialAI Stage-1 delta."""
+    capability_id = capability.get("id")
+    binding = oracle.get("ledger_binding")
+    if capability_id not in SPATIAL_AI_CORE_IDS or not isinstance(binding, dict):
+        return False
+    unchanged_fields = (
+        "feature_id",
+        "kind",
+        "title",
+        "source_claims",
+        "acceptance_class",
+        "thor_state",
+    )
+    return (
+        capability.get("runtime_state") == "not_qualified"
+        and all(binding.get(key) == capability.get(key) for key in unchanged_fields)
+        and binding.get("runtime_state") == "passed_current"
+        and binding.get("gap") == SPATIAL_AI_CORE_GAP
+        and isinstance(binding.get("contract"), dict)
+        and binding["contract"].get("warehouse_sample_bundle") == "excluded"
+        and oracle.get("acceptance_readiness")
+        == {"classification": "executor_ready", "blockers": []}
+        and oracle.get("current_state") == "open_unexecuted"
+        and oracle.get("evidence") == []
+        and oracle.get("execution_bounds", {}).get("warehouse_sample_bundle")
+        == "excluded"
+    )
+
+
 def _mv3dt_runtime_state(capability: dict[str, Any]) -> str:
     if capability["id"] not in MV3DT_RUNTIME_FIXTURES:
         return "not_mv3dt_runtime"
@@ -971,6 +1045,275 @@ def _validate_mv3dt_runtime_locks(repo_root: Path) -> None:
             raise OracleContractError(
                 f"{capability_id}: MV3DT runtime fixture identity drift"
             )
+
+
+def _load_locked_reviewed_json(
+    repo_root: Path, lock: dict[str, str], label: str
+) -> dict[str, Any]:
+    path = _resolve_reviewed_file(repo_root, lock.get("path"), label)
+    payload = path.read_bytes()
+    if hashlib.sha256(payload).hexdigest() != lock.get("raw_sha256"):
+        raise OracleContractError(f"{label}: raw digest drift")
+    try:
+        value = json.loads(
+            payload.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise OracleContractError(f"{label}: invalid JSON") from exc
+    if not isinstance(value, dict):
+        raise OracleContractError(f"{label}: root must be an object")
+    return value
+
+
+def _validate_json_schema(
+    value: dict[str, Any], schema: dict[str, Any], label: str
+) -> None:
+    try:
+        Draft202012Validator.check_schema(schema)
+    except SchemaError as exc:
+        raise OracleContractError(f"{label}: invalid schema: {exc.message}") from exc
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(value),
+        key=lambda error: tuple(str(item) for item in error.absolute_path),
+    )
+    if errors:
+        error = errors[0]
+        path = "/".join(str(item) for item in error.absolute_path) or "<root>"
+        raise OracleContractError(
+            f"{label}: schema violation at {path}: {error.message}"
+        )
+
+
+def _spatial_ai_core_runtime_bindings(
+    repo_root: Path, ledger: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    interface = _load_locked_reviewed_json(
+        repo_root, SPATIAL_AI_CORE_INTERFACE, "SpatialAI core runtime interface"
+    )
+    interface_schema = _load_locked_reviewed_json(
+        repo_root,
+        SPATIAL_AI_CORE_INTERFACE_SCHEMA,
+        "SpatialAI core runtime interface schema",
+    )
+    _validate_json_schema(interface, interface_schema, "SpatialAI core interface")
+
+    producer = interface["producer"]
+    executor = producer["executor"]["path"]
+    if producer["commit"] != SPATIAL_AI_CORE_PRODUCER_COMMIT:
+        raise OracleContractError("SpatialAI core producer commit drift")
+    if set(interface["roles"].values()) != {executor}:
+        raise OracleContractError("SpatialAI core producer role binding drift")
+    producer_documents: dict[str, dict[str, Any]] = {}
+    for name in ("contract", "contract_schema", "executor", "result_schema"):
+        lock = producer[name]
+        path = _resolve_reviewed_file(
+            repo_root, lock["path"], f"SpatialAI core producer {name}"
+        )
+        if hashlib.sha256(path.read_bytes()).hexdigest() != lock["sha256"]:
+            raise OracleContractError(
+                f"SpatialAI core producer source lock drift: {name}"
+            )
+        if name != "executor":
+            producer_documents[name] = _load(path)
+    contract = producer_documents["contract"]
+    _validate_json_schema(
+        contract, producer_documents["contract_schema"], "SpatialAI core contract"
+    )
+    try:
+        Draft202012Validator.check_schema(producer_documents["result_schema"])
+    except SchemaError as exc:
+        raise OracleContractError(
+            f"SpatialAI core result schema is invalid: {exc.message}"
+        ) from exc
+
+    policy = contract["policy"]
+    if (
+        contract["target"]
+        != {
+            "upstream_repository": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+            "upstream_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+            "product_version": "3.2.1",
+            "current_oracle_document": "deploy/docker/thor-local/parity/capability-oracles.json",
+            "current_ledger_document": "deploy/docker/thor-local/parity/official-capabilities.json",
+        }
+        or contract["environment"]["platform"] != "linux-aarch64"
+        or contract["environment"]["python_major_minor"] != "3.12"
+        or contract["environment"]["dependency_policy"]
+        != "preinstalled_only_no_bootstrap"
+        or interface["target_environment"]
+        != {"platform": "linux-aarch64", "python_major_minor": "3.12"}
+        or policy["independent_positive_runs"] != 2
+        or policy["adjacent_negative_count_per_capability"] != 5
+        or policy["target_case_actions_per_capability"] != 7
+        or policy["product_execution_deadline_seconds"] != 900
+        or policy["warehouse_sample_bundle"] != "excluded"
+        or any(
+            policy[key]
+            for key in (
+                "network_allowed",
+                "docker_allowed",
+                "service_lifecycle_allowed",
+                "model_access_allowed",
+                "downloads_allowed",
+                "credentials_allowed",
+            )
+        )
+    ):
+        raise OracleContractError("SpatialAI core target or confinement policy drift")
+    if (
+        policy["external_provider_entry"] != SPATIAL_AI_IDS[7]
+        or policy["external_provider_treatment"]
+        != "excluded_external_optional_not_applicable"
+        or interface["projection"]
+        != {
+            "canonical_mutation": False,
+            "evidence_added": False,
+            "ledger_rows_changed": 0,
+            "oracle_rows_changed": 3,
+            "promotion_performed": False,
+            "selected_oracle_state": "open_unexecuted",
+            "selected_readiness": "executor_ready",
+        }
+        or interface["confinement"]
+        != {
+            "docker": False,
+            "downloads": False,
+            "filesystem_escape_attempts": 0,
+            "models": False,
+            "network": False,
+            "product_subprocesses": False,
+            "services": False,
+            "warehouse_sample_bundle": "excluded",
+        }
+    ):
+        raise OracleContractError("SpatialAI core projection boundary drift")
+
+    contract_rows = {row["capability_id"]: row for row in contract["capabilities"]}
+    if list(contract_rows) != list(SPATIAL_AI_IDS[:7]):
+        raise OracleContractError("SpatialAI seven-capability contract drift")
+    ledger_rows = {row["id"]: row for row in ledger["capabilities"]}
+    if not set(SPATIAL_AI_IDS).issubset(ledger_rows):
+        raise OracleContractError("SpatialAI canonical ledger denominator drift")
+    for capability_id, runtime in contract_rows.items():
+        if (
+            canonical_oracle_sha256(ledger_rows[capability_id])
+            != runtime["current_ledger_row_sha256"]
+        ):
+            raise OracleContractError(
+                f"{capability_id}: SpatialAI current ledger binding drift"
+            )
+
+    if [row["capability_id"] for row in interface["capabilities"]] != list(
+        SPATIAL_AI_CORE_IDS
+    ):
+        raise OracleContractError("SpatialAI core interface target order drift")
+    bindings: dict[str, dict[str, Any]] = {}
+    for row in interface["capabilities"]:
+        capability_id = row["capability_id"]
+        runtime = contract_rows[capability_id]
+        if (
+            row["oracle_id"] != runtime["oracle_id"]
+            or row["adapter"] != runtime["adapter"]
+            or row["fixture_manifest"] != runtime["fixture_manifest"]
+            or row["positive_runs"] != 2
+            or row["max_actions"] != 7
+            or row["max_requests"] != 7
+            or len(row["adjacent_negative_case_ids"]) != 5
+        ):
+            raise OracleContractError(
+                f"{capability_id}: SpatialAI core runtime binding drift"
+            )
+        fixture_lock = row["fixture_manifest"]
+        fixture_path = _resolve_reviewed_file(
+            repo_root,
+            fixture_lock["path"],
+            f"{capability_id}.SpatialAI runtime fixture",
+        )
+        if (
+            hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+            != fixture_lock["sha256"]
+        ):
+            raise OracleContractError(f"{capability_id}: SpatialAI fixture drift")
+        fixture = _load(fixture_path)
+        if fixture.get("fixture_id") != row["fixture_payload_id"]:
+            raise OracleContractError(
+                f"{capability_id}: SpatialAI fixture identity drift"
+            )
+        for source in runtime["source_controls"]:
+            source_path = _resolve_repo_regular_file(
+                repo_root, source["path"], f"{capability_id}.source_control"
+            )
+            if hashlib.sha256(source_path.read_bytes()).hexdigest() != source["sha256"]:
+                raise OracleContractError(
+                    f"{capability_id}: SpatialAI source-control drift"
+                )
+        bindings[capability_id] = {**copy.deepcopy(row), "runtime": runtime}
+    accounting = interface["aggregate_execution_accounting"]
+    if accounting != {
+        "bounded_capability_actions": 21,
+        "requests": 21,
+        "imported_product_function_invocations": 34,
+    }:
+        raise OracleContractError("SpatialAI aggregate execution accounting drift")
+    return interface, bindings
+
+
+def _apply_spatial_ai_core_runtime(
+    oracle: dict[str, Any], binding: dict[str, Any], executor: str
+) -> None:
+    capability_id = oracle["capability_id"]
+    runtime = binding["runtime"]
+    if canonical_oracle_sha256(oracle) != runtime["current_oracle_sha256"]:
+        raise OracleContractError(
+            f"{capability_id}: SpatialAI current oracle binding drift"
+        )
+    contract = copy.deepcopy(oracle["ledger_binding"]["contract"])
+    contract["source_controls"] = copy.deepcopy(runtime["source_controls"])
+    if "required_metrics" in contract:
+        contract["required_metrics"] = copy.deepcopy(runtime["required_semantics"])
+    elif "required_semantics" in contract:
+        contract["required_semantics"] = copy.deepcopy(runtime["required_semantics"])
+    else:
+        raise OracleContractError(
+            f"{capability_id}: SpatialAI semantic contract key is absent"
+        )
+    oracle["ledger_binding"]["runtime_state"] = "passed_current"
+    oracle["ledger_binding"]["gap"] = SPATIAL_AI_CORE_GAP
+    oracle["ledger_binding"]["contract"] = copy.deepcopy(contract)
+    oracle["fixture"]["input"]["contract"] = copy.deepcopy(contract)
+    oracle["fixture"]["input"]["namespace"] = binding["runtime_namespace"]
+    oracle["fixture"]["materialization"] = {
+        "path": binding["fixture_manifest"]["path"],
+        "generator": executor,
+        "sha256": binding["fixture_manifest"]["sha256"],
+    }
+    prefix = "contract_identity/contract/"
+    for assertion in oracle["assertions"]:
+        observation = assertion["observation"]
+        if observation.startswith(prefix):
+            key = observation.removeprefix(prefix)
+            if key in contract:
+                assertion["expected"] = copy.deepcopy(contract[key])
+    workload = {
+        "units": 1,
+        "requests_per_unit": binding["max_requests"],
+        "overhead_requests": 0,
+        "calculated_max_requests": binding["max_requests"],
+        "phases": ["positive_run_1", "positive_run_2", "adjacent_negative"],
+    }
+    oracle["execution_bounds"]["executor"] = executor
+    oracle["execution_bounds"]["collectors"] = [executor]
+    oracle["execution_bounds"]["max_actions"] = binding["max_actions"]
+    oracle["execution_bounds"]["max_requests"] = binding["max_requests"]
+    oracle["execution_bounds"]["workload"] = workload
+    oracle["cleanup"]["targets"] = [binding["runtime_namespace"]]
+    oracle["cleanup"]["allowlist"] = [binding["runtime_namespace"]]
+    oracle["cleanup"]["executor"] = executor
+    oracle["cleanup"]["postcondition_collectors"] = [executor]
+    oracle["acceptance_readiness"] = {
+        "classification": "executor_ready",
+        "blockers": [],
+    }
 
 
 def _protocol_case_bindings(document: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -1361,6 +1704,10 @@ def compile_plan(
         raise OracleContractError("partial MV3DT runtime family promotion")
     if mv3dt_runtime_ready_ids:
         _validate_mv3dt_runtime_locks(repo_root)
+    spatial_ai_interface, spatial_ai_bindings = _spatial_ai_core_runtime_bindings(
+        repo_root, ledger
+    )
+    spatial_ai_executor = spatial_ai_interface["producer"]["executor"]["path"]
     live_integration = include_local_runtime_bounds
     if live_integration:
         capability_ids = {
@@ -1506,6 +1853,10 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if capability_id in spatial_ai_bindings:
+            _apply_spatial_ai_core_runtime(
+                oracle, spatial_ai_bindings[capability_id], spatial_ai_executor
+            )
         oracles.append(oracle)
     return {
         "schema_version": 1,
@@ -1552,6 +1903,7 @@ def validate(
         include_local_runtime_bounds=True,
         repo_root=repo_root,
     )
+    historical_spatial_prefix = False
     if plan != expected:
         expected_by_id = {item["capability_id"]: item for item in expected["oracles"]}
         actual_by_id = {
@@ -1565,12 +1917,20 @@ def validate(
             raise OracleContractError(
                 f"oracle coverage drift: missing={missing}, extra={extra}"
             )
-        changed = next(
+        changed = {
             key for key in expected_by_id if actual_by_id[key] != expected_by_id[key]
+        }
+        _, spatial_bindings = _spatial_ai_core_runtime_bindings(repo_root, ledger)
+        historical_spatial_prefix = changed == set(SPATIAL_AI_CORE_IDS) and all(
+            canonical_oracle_sha256(actual_by_id[capability_id])
+            == spatial_bindings[capability_id]["runtime"]["current_oracle_sha256"]
+            for capability_id in SPATIAL_AI_CORE_IDS
         )
-        raise OracleContractError(
-            f"{changed}: oracle contract drift; regenerate and review"
-        )
+        if not historical_spatial_prefix:
+            first_changed = next(key for key in expected_by_id if key in changed)
+            raise OracleContractError(
+                f"{first_changed}: oracle contract drift; regenerate and review"
+            )
     oracle_ids = [item["oracle_id"] for item in plan["oracles"]]
     fixture_ids = [item["fixture"]["id"] for item in plan["oracles"]]
     unique_scenarios = [item["reviewed_scenario_ids"][-1] for item in plan["oracles"]]
@@ -1609,6 +1969,7 @@ def validate(
         raise OracleContractError(
             "unexecuted oracle plans must not contain passed state or evidence"
         )
+    ledger_by_id = {item["id"]: item for item in ledger["capabilities"]}
     for item in plan["oracles"]:
         for binding in item.get("planning_executor_bindings", []):
             if (
@@ -1668,7 +2029,9 @@ def validate(
         capability_id = item["capability_id"]
         override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability_id)
         mv3dt_runtime = MV3DT_RUNTIME_FIXTURES.get(capability_id)
-        if (
+        if is_spatial_ai_core_stage1_binding(ledger_by_id[capability_id], item):
+            expected_actions = 7
+        elif (
             mv3dt_runtime is not None
             and item["ledger_binding"]["thor_state"] == "wired"
             and item["ledger_binding"]["runtime_state"] == "passed_current"

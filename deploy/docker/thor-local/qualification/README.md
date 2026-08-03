@@ -493,6 +493,15 @@ in this directory:
   preserves the current 289-row prefix and selected 211-row candidate suffix,
   and supplies the current 289/500 selector descriptors. It performs no
   network, Docker, service, model, download, or Warehouse action;
+- `metadata-500-current-mv3dt-config-utils-successor/` is the immutable
+  historical layer that added exact executor-ready bindings for two MV3DT
+  configuration utilities without changing their ledger rows;
+- `metadata-500-current-spatial-ai-utils-core-successor/` is the current
+  Stage-1 projection consumed by the canonical 289-row v1 prefix and selected
+  500-row v2 plane. It changes exactly SpatialAI entries 01, 04, and 05 to
+  executor-ready bindings while preserving all 500 ledger rows, the other 497
+  oracles, entry 07, empty evidence, and family runtime state. It performs no
+  runtime execution and excludes the Warehouse sample bundle;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact
@@ -564,10 +573,12 @@ remain `422 + L` declared and `421 + L` normalized, with lower bounds 436 and
 and 431. None is a complete total while `L` remains unresolved.
 
 The deterministic static successors currently materialize 27 of 110
-planning requirements. All 289 full capability oracles remain
-`planning_index_only`; those 27 planning bindings plus two offline MV3DT tool
-bindings are static subsets only, with zero runtime evidence and zero
-`passed_current` promotions. The third successor updates the LVS adapter's
+planning requirements. Of the 289 full capability oracles, nine are now
+`executor_ready` (four Synthetic Data, two MV3DT config utilities, and three
+SpatialAI core utilities) and 280 remain `planning_index_only`. Canonical
+oracle evidence arrays remain empty; the SpatialAI Stage-1 change adds no
+runtime evidence or `passed_current` promotion, and the official ledger
+preserves its existing six passed rows. The third successor updates the LVS adapter's
 static API contract and binds those two MV3DT subsets without materializing an
 additional planning requirement. The fourth successor integrates the exact
 calibration-schema subset while preserving six uncovered global-vector

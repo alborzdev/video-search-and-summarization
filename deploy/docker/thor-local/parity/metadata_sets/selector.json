@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-mv3dt-config-utils-289.json",
-      "descriptor_raw_sha256": "f78ad2adbb93b0966318c365c00d0ddd7fe84e59a37d9d4cf061a99a73d9a1ef",
-      "set_id": "thor-vss-3.2.1-current-mv3dt-config-utils-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-spatial-ai-utils-core-289.json",
+      "descriptor_raw_sha256": "8e23a105b8f388891073f9e599fbc45b30ef53a96581af81bcf5e63b70fcce95",
+      "set_id": "thor-vss-3.2.1-current-spatial-ai-utils-core-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-mv3dt-config-utils-500.json",
-      "descriptor_raw_sha256": "2c13a744a2cbb5dd143f72be5872dc18b24653aca7d17f2e45e2b9c06f3dd0ae",
-      "set_id": "thor-vss-3.2.1-current-mv3dt-config-utils-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-spatial-ai-utils-core-500.json",
+      "descriptor_raw_sha256": "6b35f1c362d97785dbe49504bbe221309e7298c23de53128d7dc8f01bac36bfd",
+      "set_id": "thor-vss-3.2.1-current-spatial-ai-utils-core-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-mv3dt-config-utils-500"
+  "selected_set": "thor-vss-3.2.1-current-spatial-ai-utils-core-500"
 }

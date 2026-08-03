@@ -55,8 +55,10 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertEqual(counts["oracles"], capability_count)
         self.assertEqual(counts["open_runtime"], capability_count - external_count)
         self.assertEqual(counts["external_boundaries"], external_count)
-        executor_ready = len(verifier.SYNTHETIC_RUNTIME_FIXTURES) + len(
-            verifier.MV3DT_RUNTIME_FIXTURES
+        executor_ready = (
+            len(verifier.SYNTHETIC_RUNTIME_FIXTURES)
+            + len(verifier.MV3DT_RUNTIME_FIXTURES)
+            + len(verifier.SPATIAL_AI_CORE_IDS)
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -137,16 +139,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        expected = json.loads(
-            (root / "post-state-root-capability-oracles.json").read_text(
-                encoding="utf-8"
-            )
-        )
         acceptance = json.loads(verifier.ACCEPTANCE.read_text(encoding="utf-8"))
         compiled = verifier.compile_plan(ledger, acceptance_document=acceptance)
-        self.assertEqual(compiled, expected)
-        counts = verifier.validate(expected, ledger)
-        self.assertEqual(counts["executor_ready"], 6)
+        self.assertEqual(compiled, self.plan)
+        counts = verifier.validate(compiled, ledger)
+        self.assertEqual(counts["executor_ready"], 9)
         by_id = {row["capability_id"]: row for row in compiled["oracles"]}
         for capability_id, fixture in verifier.MV3DT_RUNTIME_FIXTURES.items():
             oracle = by_id[capability_id]
@@ -225,6 +222,109 @@ class CapabilityOracleTests(unittest.TestCase):
             ):
                 verifier.compile_plan(ledger, acceptance_document=acceptance)
 
+    def test_spatial_ai_core_oracles_are_exact_locked_projection(self) -> None:
+        projection_root = (
+            verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-spatial-ai-utils-core-successor"
+        )
+        predecessor_root = (
+            verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-mv3dt-config-utils-successor"
+        )
+        projected = json.loads(
+            (projection_root / "post-state-capability-oracles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        predecessor = json.loads(
+            (predecessor_root / "post-state-root-capability-oracles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(self.plan["oracles"], projected["oracles"][:289])
+        before = {row["capability_id"]: row for row in predecessor["oracles"]}
+        after = {row["capability_id"]: row for row in self.plan["oracles"]}
+        changed = {
+            capability_id
+            for capability_id in before
+            if before[capability_id] != after[capability_id]
+        }
+        self.assertEqual(changed, set(verifier.SPATIAL_AI_CORE_IDS))
+        for capability_id in verifier.SPATIAL_AI_CORE_IDS:
+            oracle = after[capability_id]
+            self.assertEqual(
+                oracle["acceptance_readiness"],
+                {"classification": "executor_ready", "blockers": []},
+            )
+            self.assertEqual(oracle["current_state"], "open_unexecuted")
+            self.assertEqual(oracle["evidence"], [])
+            self.assertEqual(oracle["execution_bounds"]["max_actions"], 7)
+            self.assertEqual(oracle["execution_bounds"]["max_requests"], 7)
+            self.assertEqual(
+                oracle["execution_bounds"]["warehouse_sample_bundle"], "excluded"
+            )
+            self.assertEqual(
+                oracle["ledger_binding"]["runtime_state"], "passed_current"
+            )
+            self.assertEqual(
+                oracle["ledger_binding"]["gap"], verifier.SPATIAL_AI_CORE_GAP
+            )
+
+        entry07 = verifier.SPATIAL_AI_IDS[7]
+        self.assertEqual(before[entry07], after[entry07])
+        ledger_by_id = {row["id"]: row for row in self.ledger["capabilities"]}
+        predecessor_ledger = json.loads(
+            (predecessor_root / "post-state-root-official-capabilities.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(self.ledger, predecessor_ledger)
+        for capability_id in verifier.SPATIAL_AI_IDS[:7]:
+            self.assertEqual(
+                ledger_by_id[capability_id]["runtime_state"], "not_qualified"
+            )
+        self.assertEqual(ledger_by_id[entry07]["runtime_state"], "not_applicable")
+
+    def test_spatial_ai_core_interface_lock_fails_closed(self) -> None:
+        acceptance = json.loads(verifier.ACCEPTANCE.read_text(encoding="utf-8"))
+        lock = copy.deepcopy(verifier.SPATIAL_AI_CORE_INTERFACE)
+        lock["raw_sha256"] = "0" * 64
+        with mock.patch.object(verifier, "SPATIAL_AI_CORE_INTERFACE", lock):
+            with self.assertRaisesRegex(
+                verifier.OracleContractError, "raw digest drift"
+            ):
+                verifier.compile_plan(
+                    copy.deepcopy(self.ledger), acceptance_document=acceptance
+                )
+
+    def test_partial_spatial_ai_stage1_reversion_fails_closed(self) -> None:
+        plan = copy.deepcopy(self.plan)
+        ledger_by_id = {row["id"]: row for row in self.ledger["capabilities"]}
+        oracle = next(
+            row
+            for row in plan["oracles"]
+            if row["capability_id"] == verifier.SPATIAL_AI_CORE_IDS[0]
+        )
+        capability = ledger_by_id[oracle["capability_id"]]
+        oracle["ledger_binding"] = {
+            key: copy.deepcopy(capability[key])
+            for key in (
+                "feature_id",
+                "kind",
+                "title",
+                "source_claims",
+                "acceptance_class",
+                "thor_state",
+                "runtime_state",
+                "contract",
+                "gap",
+            )
+        }
+        with self.assertRaisesRegex(
+            verifier.OracleContractError, "oracle contract drift"
+        ):
+            verifier.validate(plan, copy.deepcopy(self.ledger))
+
     def test_mv3dt_runtime_locks_use_confined_alternate_repository_root(self) -> None:
         projection = (
             verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
@@ -240,17 +340,25 @@ class CapabilityOracleTests(unittest.TestCase):
             verifier.MV3DT_RUNTIME_EXECUTOR,
             *verifier.MV3DT_RUNTIME_FIXTURES.values(),
         ]
+        spatial_bindings = verifier._spatial_ai_core_runtime_bindings(
+            verifier.REPO_ROOT, ledger
+        )
         with tempfile.TemporaryDirectory() as temporary_directory:
             alternate_root = Path(temporary_directory)
             for lock in locks:
                 destination = alternate_root / lock["path"]
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(verifier.REPO_ROOT / lock["path"], destination)
-            verifier.compile_plan(
-                ledger,
-                acceptance_document=acceptance,
-                repo_root=alternate_root,
-            )
+            with mock.patch.object(
+                verifier,
+                "_spatial_ai_core_runtime_bindings",
+                return_value=spatial_bindings,
+            ):
+                verifier.compile_plan(
+                    ledger,
+                    acceptance_document=acceptance,
+                    repo_root=alternate_root,
+                )
             package = (
                 alternate_root / "deploy/docker/thor-local/qualification/"
                 "mv3dt-config-utils-runtime-evidence-successor"
@@ -258,14 +366,19 @@ class CapabilityOracleTests(unittest.TestCase):
             real_package = alternate_root / "real-mv3dt-runtime-package"
             package.rename(real_package)
             package.symlink_to(real_package, target_is_directory=True)
-            with self.assertRaisesRegex(
-                verifier.OracleContractError, "path contains a symlink"
+            with mock.patch.object(
+                verifier,
+                "_spatial_ai_core_runtime_bindings",
+                return_value=spatial_bindings,
             ):
-                verifier.compile_plan(
-                    ledger,
-                    acceptance_document=acceptance,
-                    repo_root=alternate_root,
-                )
+                with self.assertRaisesRegex(
+                    verifier.OracleContractError, "path contains a symlink"
+                ):
+                    verifier.compile_plan(
+                        ledger,
+                        acceptance_document=acceptance,
+                        repo_root=alternate_root,
+                    )
 
     def test_static_planning_bindings_do_not_promote_full_oracles(self) -> None:
         bound = [
@@ -546,7 +659,13 @@ class CapabilityOracleTests(unittest.TestCase):
                 self.assertEqual(cleanup["targets"], [])
             else:
                 self.assertEqual(len(cleanup["targets"]), 1)
-                self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
+                if item["capability_id"] in verifier.SPATIAL_AI_CORE_IDS:
+                    self.assertEqual(
+                        cleanup["targets"], [item["fixture"]["input"]["namespace"]]
+                    )
+                    self.assertTrue(cleanup["targets"][0].startswith("spatial-ai-"))
+                else:
+                    self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
                 self.assertEqual(cleanup["allowlist"], cleanup["targets"])
             self.assertTrue(cleanup["postconditions"])
 

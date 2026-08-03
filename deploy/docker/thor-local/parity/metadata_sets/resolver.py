@@ -48,6 +48,21 @@ REQUIRED_SCHEMAS = {
     "official_capabilities_schema",
     "capability_oracles_schema",
 }
+SPATIAL_AI_STAGE1_SET_IDS = {
+    "thor-vss-3.2.1-current-spatial-ai-utils-core-289",
+    "thor-vss-3.2.1-current-spatial-ai-utils-core-500",
+}
+SPATIAL_AI_STAGE1_IDS = {
+    "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+    "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+    "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+}
+SPATIAL_AI_STAGE1_GAP = (
+    "No known gap: the committed target-bound offline SpatialAI runtime producer "
+    "covers two positive runs, five named adjacent cases, deterministic output, "
+    "exact cleanup, and observed imported-product calls without the Warehouse "
+    "sample bundle. Runtime evidence remains a separate, non-promoting stage."
+)
 
 
 class MetadataSetError(ValueError):
@@ -293,6 +308,36 @@ def _ledger_binding(capability: dict[str, Any]) -> dict[str, Any]:
         ) from exc
 
 
+def _is_spatial_ai_stage1_binding(
+    set_id: str, capability: dict[str, Any], oracle: dict[str, Any]
+) -> bool:
+    capability_id = capability.get("id")
+    binding = oracle.get("ledger_binding")
+    unchanged_fields = (
+        "feature_id",
+        "kind",
+        "title",
+        "source_claims",
+        "acceptance_class",
+        "thor_state",
+    )
+    return (
+        set_id in SPATIAL_AI_STAGE1_SET_IDS
+        and capability_id in SPATIAL_AI_STAGE1_IDS
+        and isinstance(binding, dict)
+        and capability.get("runtime_state") == "not_qualified"
+        and all(binding.get(key) == capability.get(key) for key in unchanged_fields)
+        and binding.get("runtime_state") == "passed_current"
+        and binding.get("gap") == SPATIAL_AI_STAGE1_GAP
+        and isinstance(binding.get("contract"), dict)
+        and binding["contract"].get("warehouse_sample_bundle") == "excluded"
+        and oracle.get("acceptance_readiness")
+        == {"classification": "executor_ready", "blockers": []}
+        and oracle.get("current_state") == "open_unexecuted"
+        and oracle.get("evidence") == []
+    )
+
+
 def _derived_family_status(capabilities: list[dict[str, Any]]) -> dict[str, str]:
     acceptance_classes = {item.get("acceptance_class") for item in capabilities}
     if "required_local" in acceptance_classes:
@@ -400,9 +445,21 @@ def _validate_bundle_semantics(
         or oracle_ids != capability_ids
     ):
         raise MetadataSetError("ledger/oracle capability id order differs")
+    stage1_bindings: set[str] = set()
     for capability, oracle in zip(capabilities, oracles, strict=True):
-        if oracle.get("ledger_binding") != _ledger_binding(capability):
+        if oracle.get("ledger_binding") == _ledger_binding(capability):
+            continue
+        if _is_spatial_ai_stage1_binding(descriptor["set_id"], capability, oracle):
+            stage1_bindings.add(capability["id"])
+        else:
             raise MetadataSetError(f"ledger/oracle binding differs: {capability['id']}")
+    expected_stage1_bindings = (
+        SPATIAL_AI_STAGE1_IDS
+        if descriptor["set_id"] in SPATIAL_AI_STAGE1_SET_IDS
+        else set()
+    )
+    if stage1_bindings != expected_stage1_bindings:
+        raise MetadataSetError("SpatialAI Stage-1 binding denominator differs")
 
     feature_ids = [item.get("id") for item in features]
     coverage_ids = [item.get("feature_id") for item in coverage_features]

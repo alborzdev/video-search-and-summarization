@@ -717,17 +717,11 @@ python3 "${thor_local_root}/qualification/official-edge-readiness/readiness.py" 
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/official-edge-readiness/tests" -v
 
-# Terminal metadata routing: reconstruct and byte-verify the exact current
-# Synthetic Data plus MV3DT config-utils promotion. This validates the four
-# retained Synthetic receipts, the shared two-capability MV3DT aggregate and
-# nested receipts, the 289-row current prefix, and the unchanged 211-row
-# candidate suffix. Then resolve and run both authoritative validator
-# generations through the atomically selected set.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/metadata-500-current-mv3dt-config-utils-successor/compiler.py" \
-  >/dev/null
+# Terminal metadata routing: prior projection compilers are immutable
+# historical records that intentionally lock their pre-promotion canonical
+# inputs. Resolve the current SpatialAI-core 500 snapshot and run both
+# authoritative validator generations through the atomically selected set.
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/metadata-500-current-mv3dt-config-utils-successor/tests" \
   "${thor_local_root}/parity/metadata_sets/tests" \
   "${thor_local_root}/parity/tests/test_verify_metadata_set.py"
 PYTHONDONTWRITEBYTECODE=1 python3 \

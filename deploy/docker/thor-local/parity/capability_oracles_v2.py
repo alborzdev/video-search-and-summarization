@@ -441,11 +441,18 @@ def validate(
         or capability_ids != oracle_ids
     ):
         raise OracleV2ContractError("ledger/oracle exact 500-row order differs")
+    spatial_stage1_ids: set[str] = set()
     for capability, oracle in zip(capabilities, oracles, strict=True):
-        if oracle.get("ledger_binding") != _ledger_binding(capability):
+        if oracle.get("ledger_binding") == _ledger_binding(capability):
+            continue
+        if v1_oracles.is_spatial_ai_core_stage1_binding(capability, oracle):
+            spatial_stage1_ids.add(capability["id"])
+        else:
             raise OracleV2ContractError(
                 f"{capability['id']}: nine-field ledger binding differs"
             )
+    if spatial_stage1_ids and spatial_stage1_ids != set(v1_oracles.SPATIAL_AI_CORE_IDS):
+        raise OracleV2ContractError("SpatialAI Stage-1 binding denominator differs")
     _acceptance_contract(selected_acceptance, capabilities)
     scenario_ids = set(_unique_ids(selected_acceptance["scenarios"], "id", "scenarios"))
 

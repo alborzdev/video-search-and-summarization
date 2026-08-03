@@ -66334,12 +66334,8 @@
     },
     {
       "acceptance_readiness": {
-        "blockers": [
-          "fixture path, generator, and digest are not materialized",
-          "request/command executor and collectors are not implemented",
-          "cleanup allowlist has no machine executor or postcondition collector"
-        ],
-        "classification": "planning_index_only"
+        "blockers": [],
+        "classification": "executor_ready"
       },
       "admission_prerequisites": [
         {
@@ -66362,9 +66358,9 @@
         {
           "expected": [
             "box3d_to_corners",
-            "project_points_3d_to_image",
             "project_boxes_3d_to_2d",
-            "project_bev_objects_bbox_in_image"
+            "visibility_filter",
+            "legacy_7dof_rejection"
           ],
           "id": "contract-01",
           "observation": "contract_identity/contract/required_semantics",
@@ -66417,39 +66413,44 @@
       "capability_id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
       "cleanup": {
         "allowlist": [
-          "vss-oracle-manifest-entry-spatial-ai-utils-01-3d-2d-geometry"
+          "spatial-ai-01-3d-2d-geometry"
         ],
-        "executor": null,
+        "executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
         "mutation": "temporary_files_only",
-        "postcondition_collectors": [],
+        "postcondition_collectors": [
+          "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+        ],
         "postconditions": [
           "the exact temporary target is absent and no sibling path changed"
         ],
         "pre_state": "exact target absence or digest must be captured",
         "restore": "delete the exact temporary directory after digest capture",
         "targets": [
-          "vss-oracle-manifest-entry-spatial-ai-utils-01-3d-2d-geometry"
+          "spatial-ai-01-3d-2d-geometry"
         ]
       },
       "current_state": "open_unexecuted",
       "evidence": [],
       "execution_bounds": {
-        "collectors": [],
-        "executor": null,
-        "max_actions": 2,
+        "collectors": [
+          "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+        ],
+        "executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+        "max_actions": 7,
         "max_duration_seconds": 900,
-        "max_requests": 2,
+        "max_requests": 7,
         "model_staging": "prerequisite_only",
         "network_scope": "loopback-or-compose-internal",
         "warehouse_sample_bundle": "excluded",
         "workload": {
-          "calculated_max_requests": 2,
+          "calculated_max_requests": 7,
           "overhead_requests": 0,
           "phases": [
-            "positive",
+            "positive_run_1",
+            "positive_run_2",
             "adjacent_negative"
           ],
-          "requests_per_unit": 2,
+          "requests_per_unit": 7,
           "units": 1
         }
       },
@@ -66476,9 +66477,9 @@
           "contract": {
             "required_semantics": [
               "box3d_to_corners",
-              "project_points_3d_to_image",
               "project_boxes_3d_to_2d",
-              "project_bev_objects_bbox_in_image"
+              "visibility_filter",
+              "legacy_7dof_rejection"
             ],
             "source_controls": [
               {
@@ -66497,13 +66498,13 @@
             "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
             "warehouse_sample_bundle": "excluded"
           },
-          "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-01-3d-2d-geometry"
+          "namespace": "spatial-ai-01-3d-2d-geometry"
         },
         "kind": "generated_minimal_contract",
         "materialization": {
-          "generator": null,
-          "path": null,
-          "sha256": null
+          "generator": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+          "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json",
+          "sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542"
         },
         "source": "bounded locally generated fixture",
         "warehouse_sample_bundle": false
@@ -66513,9 +66514,9 @@
         "contract": {
           "required_semantics": [
             "box3d_to_corners",
-            "project_points_3d_to_image",
             "project_boxes_3d_to_2d",
-            "project_bev_objects_bbox_in_image"
+            "visibility_filter",
+            "legacy_7dof_rejection"
           ],
           "source_controls": [
             {
@@ -66535,9 +66536,9 @@
           "warehouse_sample_bundle": "excluded"
         },
         "feature_id": "spatial-ai-utils",
-        "gap": "The exact 3D/2D geometry and projection implementation is wired and source-locked; run the real CLI on a bounded calibration fixture with visibility and legacy-shape negatives before qualification.",
+        "gap": "No known gap: the committed target-bound offline SpatialAI runtime producer covers two positive runs, five named adjacent cases, deterministic output, exact cleanup, and observed imported-product calls without the Warehouse sample bundle. Runtime evidence remains a separate, non-promoting stage.",
         "kind": "tooling",
-        "runtime_state": "not_qualified",
+        "runtime_state": "passed_current",
         "source_claims": [
           {
             "locator": "libs/analytics/spatialai-data-utils spatial geometry and projection",
@@ -67029,12 +67030,8 @@
     },
     {
       "acceptance_readiness": {
-        "blockers": [
-          "fixture path, generator, and digest are not materialized",
-          "request/command executor and collectors are not implemented",
-          "cleanup allowlist has no machine executor or postcondition collector"
-        ],
-        "classification": "planning_index_only"
+        "blockers": [],
+        "classification": "executor_ready"
       },
       "admission_prerequisites": [
         {
@@ -67095,10 +67092,6 @@
             {
               "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py",
               "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b"
-            },
-            {
-              "path": "libs/analytics/spatialai-data-utils/tools/evaluation/evaluate_aicity_mtmc.py",
-              "sha256": "582bbbb3fa24ad67b1d59bd79ea516291217a455e62b5abaec918062fad3feaa"
             }
           ],
           "id": "contract-02",
@@ -67133,11 +67126,13 @@
       "capability_id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
       "cleanup": {
         "allowlist": [
-          "vss-oracle-manifest-entry-spatial-ai-utils-04-tracking-hota-clear-identity-count"
+          "spatial-ai-04-tracking-hota-clear-identity-count"
         ],
-        "executor": null,
+        "executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
         "mutation": "namespaced_and_reversible",
-        "postcondition_collectors": [],
+        "postcondition_collectors": [
+          "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+        ],
         "postconditions": [
           "every allowlisted oracle-owned resource is absent",
           "captured service/config state and non-owned resource digests match pre-state"
@@ -67145,28 +67140,31 @@
         "pre_state": "service, configuration, resource IDs, and target absence/digests must be captured before mutation",
         "restore": "remove only recorded oracle-owned resources and restore the captured pre-test service/config state",
         "targets": [
-          "vss-oracle-manifest-entry-spatial-ai-utils-04-tracking-hota-clear-identity-count"
+          "spatial-ai-04-tracking-hota-clear-identity-count"
         ]
       },
       "current_state": "open_unexecuted",
       "evidence": [],
       "execution_bounds": {
-        "collectors": [],
-        "executor": null,
-        "max_actions": 2,
+        "collectors": [
+          "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+        ],
+        "executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+        "max_actions": 7,
         "max_duration_seconds": 900,
-        "max_requests": 2,
+        "max_requests": 7,
         "model_staging": "prerequisite_only",
         "network_scope": "loopback-or-compose-internal",
         "warehouse_sample_bundle": "excluded",
         "workload": {
-          "calculated_max_requests": 2,
+          "calculated_max_requests": 7,
           "overhead_requests": 0,
           "phases": [
-            "positive",
+            "positive_run_1",
+            "positive_run_2",
             "adjacent_negative"
           ],
-          "requests_per_unit": 2,
+          "requests_per_unit": 7,
           "units": 1
         }
       },
@@ -67221,22 +67219,18 @@
               {
                 "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py",
                 "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b"
-              },
-              {
-                "path": "libs/analytics/spatialai-data-utils/tools/evaluation/evaluate_aicity_mtmc.py",
-                "sha256": "582bbbb3fa24ad67b1d59bd79ea516291217a455e62b5abaec918062fad3feaa"
               }
             ],
             "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
             "warehouse_sample_bundle": "excluded"
           },
-          "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-04-tracking-hota-clear-identity-count"
+          "namespace": "spatial-ai-04-tracking-hota-clear-identity-count"
         },
         "kind": "generated_minimal_contract",
         "materialization": {
-          "generator": null,
-          "path": null,
-          "sha256": null
+          "generator": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+          "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/04-tracking-metrics.json",
+          "sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e"
         },
         "source": "bounded locally generated fixture",
         "warehouse_sample_bundle": false
@@ -67274,19 +67268,15 @@
             {
               "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py",
               "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b"
-            },
-            {
-              "path": "libs/analytics/spatialai-data-utils/tools/evaluation/evaluate_aicity_mtmc.py",
-              "sha256": "582bbbb3fa24ad67b1d59bd79ea516291217a455e62b5abaec918062fad3feaa"
             }
           ],
           "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
           "warehouse_sample_bundle": "excluded"
         },
         "feature_id": "spatial-ai-utils",
-        "gap": "The HOTA, CLEAR, identity, and count metric implementations are wired and source-locked; run their real imported evaluators or CLI against perfect and mismatched tiny tracks before qualification.",
+        "gap": "No known gap: the committed target-bound offline SpatialAI runtime producer covers two positive runs, five named adjacent cases, deterministic output, exact cleanup, and observed imported-product calls without the Warehouse sample bundle. Runtime evidence remains a separate, non-promoting stage.",
         "kind": "evaluation",
-        "runtime_state": "not_qualified",
+        "runtime_state": "passed_current",
         "source_claims": [
           {
             "locator": "libs/analytics/spatialai-data-utils tracking evaluation metrics",
@@ -67306,12 +67296,8 @@
     },
     {
       "acceptance_readiness": {
-        "blockers": [
-          "fixture path, generator, and digest are not materialized",
-          "request/command executor and collectors are not implemented",
-          "cleanup allowlist has no machine executor or postcondition collector"
-        ],
-        "classification": "planning_index_only"
+        "blockers": [],
+        "classification": "executor_ready"
       },
       "admission_prerequisites": [
         {
@@ -67340,11 +67326,13 @@
         {
           "expected": [
             "convert_sparse4d_to_nvschema",
+            "version_4_0",
             "class",
             "confidence",
+            "rotation",
+            "dimensions",
             "embedding",
-            "bbox3d",
-            "quaternion_rotation"
+            "strict_loader_round_trip"
           ],
           "id": "contract-02",
           "observation": "contract_identity/contract/required_semantics",
@@ -67354,11 +67342,15 @@
           "expected": [
             {
               "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py",
-              "sha256": "ccf56090b1fd9774d9c9615a03773ce85d4712e3239655d5348778eeeaaad3cb"
+              "sha256": "e433d69e7561e304cff99925122b7c44822ee1a279b29ce62607ac439cfec060"
             },
             {
               "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py",
               "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32"
+            },
+            {
+              "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py",
+              "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e"
             }
           ],
           "id": "contract-03",
@@ -67393,39 +67385,44 @@
       "capability_id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
       "cleanup": {
         "allowlist": [
-          "vss-oracle-manifest-entry-spatial-ai-utils-05-nvschema-conversion"
+          "spatial-ai-05-nvschema-conversion"
         ],
-        "executor": null,
+        "executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
         "mutation": "temporary_files_only",
-        "postcondition_collectors": [],
+        "postcondition_collectors": [
+          "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+        ],
         "postconditions": [
           "the exact temporary target is absent and no sibling path changed"
         ],
         "pre_state": "exact target absence or digest must be captured",
         "restore": "delete the exact temporary directory after digest capture",
         "targets": [
-          "vss-oracle-manifest-entry-spatial-ai-utils-05-nvschema-conversion"
+          "spatial-ai-05-nvschema-conversion"
         ]
       },
       "current_state": "open_unexecuted",
       "evidence": [],
       "execution_bounds": {
-        "collectors": [],
-        "executor": null,
-        "max_actions": 2,
+        "collectors": [
+          "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+        ],
+        "executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+        "max_actions": 7,
         "max_duration_seconds": 900,
-        "max_requests": 2,
+        "max_requests": 7,
         "model_staging": "prerequisite_only",
         "network_scope": "loopback-or-compose-internal",
         "warehouse_sample_bundle": "excluded",
         "workload": {
-          "calculated_max_requests": 2,
+          "calculated_max_requests": 7,
           "overhead_requests": 0,
           "phases": [
-            "positive",
+            "positive_run_1",
+            "positive_run_2",
             "adjacent_negative"
           ],
-          "requests_per_unit": 2,
+          "requests_per_unit": 7,
           "units": 1
         }
       },
@@ -67453,32 +67450,38 @@
             "output_schema_version": "4.0",
             "required_semantics": [
               "convert_sparse4d_to_nvschema",
+              "version_4_0",
               "class",
               "confidence",
+              "rotation",
+              "dimensions",
               "embedding",
-              "bbox3d",
-              "quaternion_rotation"
+              "strict_loader_round_trip"
             ],
             "source_controls": [
               {
                 "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py",
-                "sha256": "ccf56090b1fd9774d9c9615a03773ce85d4712e3239655d5348778eeeaaad3cb"
+                "sha256": "e433d69e7561e304cff99925122b7c44822ee1a279b29ce62607ac439cfec060"
               },
               {
                 "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py",
                 "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32"
+              },
+              {
+                "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py",
+                "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e"
               }
             ],
             "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
             "warehouse_sample_bundle": "excluded"
           },
-          "namespace": "vss-oracle-manifest-entry-spatial-ai-utils-05-nvschema-conversion"
+          "namespace": "spatial-ai-05-nvschema-conversion"
         },
         "kind": "generated_minimal_contract",
         "materialization": {
-          "generator": null,
-          "path": null,
-          "sha256": null
+          "generator": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+          "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json",
+          "sha256": "ed74f1c23c7999b01d6b7000e9c7a1be5a40b69c39ea90a993cbdccf66340cfd"
         },
         "source": "bounded locally generated fixture",
         "warehouse_sample_bundle": false
@@ -67489,29 +67492,35 @@
           "output_schema_version": "4.0",
           "required_semantics": [
             "convert_sparse4d_to_nvschema",
+            "version_4_0",
             "class",
             "confidence",
+            "rotation",
+            "dimensions",
             "embedding",
-            "bbox3d",
-            "quaternion_rotation"
+            "strict_loader_round_trip"
           ],
           "source_controls": [
             {
               "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py",
-              "sha256": "ccf56090b1fd9774d9c9615a03773ce85d4712e3239655d5348778eeeaaad3cb"
+              "sha256": "e433d69e7561e304cff99925122b7c44822ee1a279b29ce62607ac439cfec060"
             },
             {
               "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py",
               "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32"
+            },
+            {
+              "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py",
+              "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e"
             }
           ],
           "static_contract_package": "deploy/docker/thor-local/qualification/spatial-ai-entry-static-contract",
           "warehouse_sample_bundle": "excluded"
         },
         "feature_id": "spatial-ai-utils",
-        "gap": "The Sparse4D-to-NVSchema converter is wired and source-locked; run the imported converter twice on an owned tiny input and validate a strict NVSchema 4.0 loader round trip before qualification.",
+        "gap": "No known gap: the committed target-bound offline SpatialAI runtime producer covers two positive runs, five named adjacent cases, deterministic output, exact cleanup, and observed imported-product calls without the Warehouse sample bundle. Runtime evidence remains a separate, non-promoting stage.",
         "kind": "tooling",
-        "runtime_state": "not_qualified",
+        "runtime_state": "passed_current",
         "source_claims": [
           {
             "locator": "libs/analytics/spatialai-data-utils Sparse4D to NVSchema converter",

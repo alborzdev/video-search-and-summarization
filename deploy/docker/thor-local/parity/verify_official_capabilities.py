@@ -1415,6 +1415,7 @@ def validate(
             raise CapabilityContractError(
                 "injected capability oracle target differs from the ledger"
             )
+        spatial_stage1_ids: set[str] = set()
         for capability, oracle in zip(capabilities, oracle_rows, strict=True):
             expected_binding = {
                 key: capability[key]
@@ -1430,10 +1431,20 @@ def validate(
                     "gap",
                 )
             }
-            if oracle.get("ledger_binding") != expected_binding:
+            if oracle.get("ledger_binding") == expected_binding:
+                continue
+            if oracle_contract.is_spatial_ai_core_stage1_binding(capability, oracle):
+                spatial_stage1_ids.add(capability["id"])
+            else:
                 raise CapabilityContractError(
                     f"{capability['id']}: injected capability oracle binding differs"
                 )
+        if spatial_stage1_ids and spatial_stage1_ids != set(
+            oracle_contract.SPATIAL_AI_CORE_IDS
+        ):
+            raise CapabilityContractError(
+                "injected SpatialAI Stage-1 binding denominator differs"
+            )
     allowed_classes = set(manifest["status_contract"]["acceptance_class"])
     allowed_thor = set(manifest["status_contract"]["thor_state"])
     allowed_runtime = set(manifest["status_contract"]["runtime_state"])
