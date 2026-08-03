@@ -511,6 +511,19 @@ in this directory:
   clean integrated Thor receipt, 14 positive runs, 35 adjacent negatives, and
   122 imported product calls; preserves entry 07 and the full 211-row suffix;
   and publishes the current 289/500 selector pair without Warehouse data;
+- `metadata-500-current-agent-evaluation-contract-successor/` is the current
+  metadata-only correction for `evaluation.agent.report`. It replaces the
+  stale evaluator-default claim with the exact upstream dev-base
+  `eval_llm_judge` profile selected by the report evaluator, preserves all
+  runtime/evidence states and the 211-row suffix, and publishes the active
+  289/500 selector pair without treating runtime mechanics as qualification
+  evidence;
+- `agent-evaluation-runtime-evidence-successor/` is a producer-only,
+  non-promotable harness for the five required-local Agent Evaluation rows. It
+  locks the cached NAT image and product sources, exercises deterministic tiny
+  fixture and adjacent-negative mechanics, and keeps real judge inference,
+  product `nat eval`, and artifact generation explicitly unqualified until an
+  authorized local-service run is available;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact

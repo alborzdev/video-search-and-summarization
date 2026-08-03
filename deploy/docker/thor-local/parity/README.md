@@ -79,7 +79,7 @@ Validate either atomic set through the authoritative dispatcher:
 ```bash
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py --json
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py \
-  --set thor-vss-3.2.1-current-spatial-ai-utils-289 --json
+  --set thor-vss-3.2.1-current-agent-evaluation-contract-289 --json
 ```
 
 That direct-index denominator is also not the final documentation graph. A
