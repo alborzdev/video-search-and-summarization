@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nvidia.local/vss/thor/vios-core-file-lifecycle-producer-contract.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "producer_id", "mode", "default_execution_enabled", "target_upstream_revision", "capability_ids", "oracle_bindings", "constraints", "recorded_image_identities", "fixture_recipes", "cases", "source_locks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "producer_id": {"const": "vios-core-file-lifecycle-runtime-evidence-successor"},
+    "mode": {"const": "offline-inert-plan-only"},
+    "default_execution_enabled": {"const": false},
+    "target_upstream_revision": {"const": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"},
+    "capability_ids": {"const": ["behavior.vios.upload-playback-remediation", "behavior.vios.byte-identical-download", "behavior.vios.sensor-add-conflicts", "configuration.vios.upload-effective-limit", "runtime.nvstreamer.file-streaming", "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"]},
+    "oracle_bindings": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/oracle_binding"}},
+    "constraints": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network_allowed", "downloads_allowed", "docker_allowed", "container_allowed", "service_lifecycle_allowed", "product_calls_allowed", "model_calls_allowed", "subprocess_allowed", "warehouse_sample_bundle"],
+      "properties": {
+        "network_allowed": {"const": false}, "downloads_allowed": {"const": false}, "docker_allowed": {"const": false}, "container_allowed": {"const": false}, "service_lifecycle_allowed": {"const": false}, "product_calls_allowed": {"const": false}, "model_calls_allowed": {"const": false}, "subprocess_allowed": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "recorded_image_identities": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/image_identity"}},
+    "fixture_recipes": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/fixture_recipe"}},
+    "cases": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/case"}},
+    "source_locks": {"type": "array", "minItems": 42, "maxItems": 42, "items": {"$ref": "#/$defs/source_lock"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "capability_id": {"enum": ["behavior.vios.upload-playback-remediation", "behavior.vios.byte-identical-download", "behavior.vios.sensor-add-conflicts", "configuration.vios.upload-effective-limit", "runtime.nvstreamer.file-streaming", "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"]},
+    "oracle_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capability_id", "oracle_id", "index", "oracle_canonical_sha256", "official_index", "official_canonical_sha256"],
+      "properties": {"capability_id": {"$ref": "#/$defs/capability_id"}, "oracle_id": {"type": "string", "pattern": "^oracle\\."}, "index": {"type": "integer", "minimum": 0}, "oracle_canonical_sha256": {"$ref": "#/$defs/sha256"}, "official_index": {"type": "integer", "minimum": 0}, "official_canonical_sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "image_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "image", "digest", "evidence_path"],
+      "properties": {"kind": {"const": "repository_evidence_only"}, "image": {"type": "string", "minLength": 10}, "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}, "evidence_path": {"type": "string", "pattern": "^deploy/docker/thor-local/parity/evidence/"}}
+    },
+    "fixture_recipe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["recipe_id", "source", "codec", "container", "duration_ms", "width", "height", "frame_rate", "b_frames", "keyint", "audio", "materialized"],
+      "properties": {"recipe_id": {"type": "string", "pattern": "^tiny-"}, "source": {"enum": ["local20", "producer-plan"]}, "codec": {"enum": ["h264", "h265"]}, "container": {"const": "mp4"}, "duration_ms": {"const": 2000}, "width": {"const": 160}, "height": {"const": 120}, "frame_rate": {"const": "5/1"}, "b_frames": {"enum": [0, 2]}, "keyint": {"const": 30}, "audio": {"const": "aac"}, "materialized": {"const": false}}
+    },
+    "case": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capability_id", "max_actions", "max_requests", "bound_satisfiable", "proposed_future_bounds", "fixture_ids", "planned_steps", "adjacent_negatives", "blockers"],
+      "properties": {"capability_id": {"$ref": "#/$defs/capability_id"}, "max_actions": {"type": "integer", "minimum": 2, "maximum": 9}, "max_requests": {"type": "integer", "minimum": 2, "maximum": 8}, "bound_satisfiable": {"const": false}, "proposed_future_bounds": {"type": "object", "additionalProperties": false, "required": ["max_actions", "max_requests", "max_duration_seconds"], "properties": {"max_actions": {"type": "integer", "minimum": 9, "maximum": 27}, "max_requests": {"type": "integer", "minimum": 7, "maximum": 20}, "max_duration_seconds": {"enum": [300, 600, 900]}}}, "fixture_ids": {"type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": {"type": "string", "pattern": "^tiny-"}}, "planned_steps": {"type": "array", "minItems": 5, "maxItems": 10, "uniqueItems": true, "items": {"type": "string", "minLength": 5}}, "adjacent_negatives": {"type": "array", "minItems": 2, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 5}}, "blockers": {"type": "array", "minItems": 2, "maxItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 20}}}
+    },
+    "source_lock": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "pattern": "^(deploy|services|skills)/[A-Za-z0-9_./-]+$"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    }
+  }
+}

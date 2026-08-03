@@ -524,6 +524,11 @@ in this directory:
   fixture and adjacent-negative mechanics, and keeps real judge inference,
   product `nat eval`, and artifact generation explicitly unqualified until an
   authorized local-service run is available;
+- `vios-core-file-lifecycle-runtime-evidence-successor/` is an inert,
+  non-promotable producer for six warehouse-free VIOS/NvStreamer lifecycle
+  rows. It binds exact product and BDD sources, records corrected future
+  execution bounds, and exposes the currently unreachable configured upload
+  size check as a product gap before any runtime qualification;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact
