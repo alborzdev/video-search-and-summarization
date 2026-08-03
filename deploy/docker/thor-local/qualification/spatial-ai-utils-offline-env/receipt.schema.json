@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "captured_at_utc", "bindings", "target", "policy", "cache_scan", "wheelhouse", "environment", "confinement", "cleanup", "promotion"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-spatial-ai-utils-offline-env-v1"},
+    "mode": {"const": "offline_materialization"},
+    "status": {"const": "pass"},
+    "captured_at_utc": {"type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"},
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lock_sha256", "materializer_sha256", "source_inventory_sha256", "execution_sha256"],
+      "properties": {
+        "lock_sha256": {"const": "0f3035122fe04837eb0d9259969ca5c60f3639ef135db31d780dcf1d48c63d5a"},
+        "materializer_sha256": {"$ref": "#/$defs/sha256"},
+        "source_inventory_sha256": {"const": "bd5e643d1fe4bf1b66b29b3d217e45b1aa337648a914ccf799e8a45700cac3db"},
+        "execution_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system", "machine", "python_major_minor", "implementation", "abi", "soabi", "bootstrap_pip"],
+      "properties": {
+        "system": {"const": "Linux"},
+        "machine": {"const": "aarch64"},
+        "python_major_minor": {"const": "3.12"},
+        "implementation": {"const": "cp"},
+        "abi": {"const": "cp312"},
+        "soabi": {"const": "cpython-312-aarch64-linux-gnu"},
+        "bootstrap_pip": {"const": "24.0"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_count", "source", "network_allowed", "downloads_allowed", "index_allowed", "wheel_binaries_in_repository", "docker_allowed", "service_lifecycle_allowed", "model_access_allowed", "warehouse_sample_access_allowed", "venv_is_ephemeral", "install_dependencies"],
+      "properties": {
+        "artifact_count": {"const": 56},
+        "source": {"const": "preexisting-local-pip-cache-only"},
+        "network_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "index_allowed": {"const": false},
+        "wheel_binaries_in_repository": {"const": false},
+        "docker_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "model_access_allowed": {"const": false},
+        "warehouse_sample_access_allowed": {"const": false},
+        "venv_is_ephemeral": {"const": true},
+        "install_dependencies": {"const": false}
+      }
+    },
+    "cache_scan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["configured_roots", "existing_roots", "regular_candidates_examined", "matched_artifacts", "duplicate_content_sources"],
+      "properties": {
+        "configured_roots": {"type": "integer", "minimum": 1},
+        "existing_roots": {"type": "integer", "minimum": 1},
+        "regular_candidates_examined": {"type": "integer", "minimum": 56},
+        "matched_artifacts": {"const": 56},
+        "duplicate_content_sources": {"type": "integer", "minimum": 0}
+      }
+    },
+    "wheelhouse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_count", "aggregate_bytes", "inventory_sha256"],
+      "properties": {
+        "artifact_count": {"const": 56},
+        "aggregate_bytes": {"const": 151492796},
+        "inventory_sha256": {"const": "fed3d0146bdb7dae99524c91cc7142e454b645b9ceb3a3c0c5a6733591facfdd"}
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["python", "machine", "soabi", "pip", "pip_check", "installed_artifact_count", "installed_versions_sha256", "smoke_imports"],
+      "properties": {
+        "python": {"type": "string", "pattern": "^3\\.12\\.[0-9]+$"},
+        "machine": {"const": "aarch64"},
+        "soabi": {"const": "cpython-312-aarch64-linux-gnu"},
+        "pip": {"const": "24.0"},
+        "pip_check": {"const": "No broken requirements found."},
+        "installed_artifact_count": {"const": 56},
+        "installed_versions_sha256": {"const": "b8346da7c62b03cb9d2451b64769055176919bc02111b2e78659ee49a5f5e40a"},
+        "smoke_imports": {
+          "type": "array",
+          "minItems": 14,
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "confinement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network_denied", "network_guard_probe_passed", "kernel_network_denial_probe_passed", "pip_no_index", "pip_find_links_only", "pip_cache_disabled", "user_site_disabled", "docker_calls", "service_lifecycle_calls", "model_accesses", "warehouse_sample_accesses", "downloads"],
+      "properties": {
+        "network_denied": {"const": true},
+        "network_guard_probe_passed": {"const": true},
+        "kernel_network_denial_probe_passed": {"const": true},
+        "pip_no_index": {"const": true},
+        "pip_find_links_only": {"const": true},
+        "pip_cache_disabled": {"const": true},
+        "user_site_disabled": {"const": true},
+        "docker_calls": {"const": 0},
+        "service_lifecycle_calls": {"const": 0},
+        "model_accesses": {"const": 0},
+        "warehouse_sample_accesses": {"const": 0},
+        "downloads": {"const": 0}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["temporary_root", "pre_state", "removed", "sentinel_unchanged", "source_artifacts_unchanged"],
+      "properties": {
+        "temporary_root": {"type": "string", "pattern": "^vss-spatial-ai-offline-env\\.[a-z0-9_]{8}$"},
+        "pre_state": {"const": "absent"},
+        "removed": {"const": true},
+        "sentinel_unchanged": {"const": true},
+        "source_artifacts_unchanged": {"const": true}
+      }
+    },
+    "promotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_parity_mutated", "runtime_producer_mutated", "receipt_is_runtime_evidence"],
+      "properties": {
+        "canonical_parity_mutated": {"const": false},
+        "runtime_producer_mutated": {"const": false},
+        "receipt_is_runtime_evidence": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

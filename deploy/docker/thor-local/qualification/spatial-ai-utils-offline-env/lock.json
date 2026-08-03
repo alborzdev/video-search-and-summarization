@@ -1,0 +1,1163 @@
+{
+  "artifacts": [
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "attrs",
+        "version": "26.1.0"
+      },
+      "canonical_filename": "attrs-26.1.0-py3-none-any.whl",
+      "dist_info": "attrs-26.1.0.dist-info",
+      "metadata_sha256": "4cd40e690f23bf37cbcad34efd6758e062df1df07c86833f7e3ce95bf1fa38cc",
+      "name": "attrs",
+      "root_is_purelib": true,
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+      "size": 67548,
+      "version": "26.1.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "boto3",
+        "version": "1.36.2"
+      },
+      "canonical_filename": "boto3-1.36.2-py3-none-any.whl",
+      "dist_info": "boto3-1.36.2.dist-info",
+      "metadata_sha256": "afce74b7aca92209a53684f223dca31e129572c415f37a9021cf718c2adb518c",
+      "name": "boto3",
+      "root_is_purelib": true,
+      "sha256": "76cfc9a705be46e8d22607efacc8d688c064f923d785a01c00b28e9a96425d1a",
+      "size": 139166,
+      "version": "1.36.2",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "botocore",
+        "version": "1.36.26"
+      },
+      "canonical_filename": "botocore-1.36.26-py3-none-any.whl",
+      "dist_info": "botocore-1.36.26.dist-info",
+      "metadata_sha256": "7e25e285f8d188ac7518b9fdb76e196ef6bb912fcc65e536090d7a50aea580df",
+      "name": "botocore",
+      "root_is_purelib": true,
+      "sha256": "4e3f19913887a58502e71ef8d696fe7eaa54de7813ff73390cd5883f837dfa6e",
+      "size": 13360675,
+      "version": "1.36.26",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "cachetools",
+        "version": "7.1.6"
+      },
+      "canonical_filename": "cachetools-7.1.6-py3-none-any.whl",
+      "dist_info": "cachetools-7.1.6.dist-info",
+      "metadata_sha256": "81bfa2c97e02260ecdfc60494bba197e0b6eda49b7af587a1ff728a8a8c4eb94",
+      "name": "cachetools",
+      "root_is_purelib": true,
+      "sha256": "2c12e255780330af28b91bb7fb96cce4c766f04e38396b9a24510190a5827096",
+      "size": 16954,
+      "version": "7.1.6",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "certifi",
+        "version": "2026.7.22"
+      },
+      "canonical_filename": "certifi-2026.7.22-py3-none-any.whl",
+      "dist_info": "certifi-2026.7.22.dist-info",
+      "metadata_sha256": "ef5af1638fbb23676ac3c5777dfcfc2cd9c348fe4172ed5ba3d277655b248090",
+      "name": "certifi",
+      "root_is_purelib": true,
+      "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775",
+      "size": 136983,
+      "version": "2026.7.22",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "charset-normalizer",
+        "version": "3.4.9"
+      },
+      "canonical_filename": "charset_normalizer-3.4.9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "charset_normalizer-3.4.9.dist-info",
+      "metadata_sha256": "0dd3de17609b0db64bd1d4643c5bd0dd35b5eb3c5be77f8b17bc190f2f4a2ac0",
+      "name": "charset-normalizer",
+      "root_is_purelib": false,
+      "sha256": "9b2aff1c7b3884512b9512c3eaadd9bab39fb45042ffaaa1dd08ff2b9f8109d9",
+      "size": 215802,
+      "version": "3.4.9",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "contourpy",
+        "version": "1.3.3"
+      },
+      "canonical_filename": "contourpy-1.3.3-cp312-cp312-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "contourpy-1.3.3.dist-info",
+      "metadata_sha256": "c43cef86baef09cff9c77975e578fa8cca0c9454df40dc176938b499a63de54a",
+      "name": "contourpy",
+      "root_is_purelib": false,
+      "sha256": "92d9abc807cf7d0e047b95ca5d957cf4792fcd04e920ca70d48add15c1a90ea7",
+      "size": 332653,
+      "version": "1.3.3",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_26_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "cycler",
+        "version": "0.12.1"
+      },
+      "canonical_filename": "cycler-0.12.1-py3-none-any.whl",
+      "dist_info": "cycler-0.12.1.dist-info",
+      "metadata_sha256": "23289e19b76f1e01394227696e6af2b6cd1ce79e89731209bf9195148b18ed36",
+      "name": "cycler",
+      "root_is_purelib": true,
+      "sha256": "85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30",
+      "size": 8321,
+      "version": "0.12.1",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "descartes",
+        "version": "1.1.0"
+      },
+      "canonical_filename": "descartes-1.1.0-py3-none-any.whl",
+      "dist_info": "descartes-1.1.0.dist-info",
+      "metadata_sha256": "5cd4bad6edd84ff7e33dfddd467d7962a82155cd1457305862cbfd57dadebd59",
+      "name": "descartes",
+      "root_is_purelib": true,
+      "sha256": "4c62dc41109689d03e4b35de0a2bcbdeeb81047badc607c4415d5c753bd683af",
+      "size": 5804,
+      "version": "1.1.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "fire",
+        "version": "0.7.1"
+      },
+      "canonical_filename": "fire-0.7.1-py3-none-any.whl",
+      "dist_info": "fire-0.7.1.dist-info",
+      "metadata_sha256": "fd4cf680aadcfa80f49825bcb39bd41a8fd84c4928e5325d943a4b4f0909eebe",
+      "name": "fire",
+      "root_is_purelib": true,
+      "sha256": "e43fd8a5033a9001e7e2973bab96070694b9f12f2e0ecf96d4683971b5ab1882",
+      "size": 115945,
+      "version": "0.7.1",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "fonttools",
+        "version": "4.63.0"
+      },
+      "canonical_filename": "fonttools-4.63.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "fonttools-4.63.0.dist-info",
+      "metadata_sha256": "878374d811bfa83c045c55eabbcaa09e646f426fd4777b5e7f716e4e2198fbc1",
+      "name": "fonttools",
+      "root_is_purelib": false,
+      "sha256": "ef3048ef05dbb552b89817713d9cac912e00d0fde4a3105c00d29e52e10c89af",
+      "size": 5044298,
+      "version": "4.63.0",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "fvcore",
+        "version": "0.1.5.post20221221"
+      },
+      "canonical_filename": "fvcore-0.1.5.post20221221-py3-none-any.whl",
+      "dist_info": "fvcore-0.1.5.post20221221.dist-info",
+      "metadata_sha256": "8f0b3e03d143b6570198e13a4b93ca9ceed0f0e2d4582e01dda526d8ebbc5930",
+      "name": "fvcore",
+      "root_is_purelib": true,
+      "sha256": "5d8da058a003ee3bd0de9ca449f2957a5091376f18a751ff8621d5c9aee15a4b",
+      "size": 61443,
+      "version": "0.1.5.post20221221",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "h5py",
+        "version": "3.16.0"
+      },
+      "canonical_filename": "h5py-3.16.0-cp312-cp312-manylinux_2_28_aarch64.whl",
+      "dist_info": "h5py-3.16.0.dist-info",
+      "metadata_sha256": "e461fcf7eb9fee6242205f9225cc178455a0212d1c0cb8f997f7eebf8cd9695e",
+      "name": "h5py",
+      "root_is_purelib": false,
+      "sha256": "ff24039e2573297787c3063df64b60aab0591980ac898329a08b0320e0cf2527",
+      "size": 5198852,
+      "version": "3.16.0",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "idna",
+        "version": "3.18"
+      },
+      "canonical_filename": "idna-3.18-py3-none-any.whl",
+      "dist_info": "idna-3.18.dist-info",
+      "metadata_sha256": "46dfe6e5ac462d0f680ecd9abcf66e829b6a2334824b4d9e3979b31135caf281",
+      "name": "idna",
+      "root_is_purelib": true,
+      "sha256": "7f952cbe720b688055e3f87de14f5c3e5fdaa8bc3928985c4077ca689de849a2",
+      "size": 65455,
+      "version": "3.18",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "iopath",
+        "version": "0.1.9"
+      },
+      "canonical_filename": "iopath-0.1.9-py3-none-any.whl",
+      "dist_info": "iopath-0.1.9.dist-info",
+      "metadata_sha256": "2e8b6ff4a19b860952d094287305325ec8198c89f983ed0367a747cb6c07fd4f",
+      "name": "iopath",
+      "root_is_purelib": true,
+      "sha256": "9058ac24f0328decdf8dbe209b33074b8702a3c4d9ba2f7801d46cb61a880b6e",
+      "size": 27367,
+      "version": "0.1.9",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "jmespath",
+        "version": "1.1.0"
+      },
+      "canonical_filename": "jmespath-1.1.0-py3-none-any.whl",
+      "dist_info": "jmespath-1.1.0.dist-info",
+      "metadata_sha256": "81181e9a312f1b87e5be7c8376c57b0e8c962ba524a25a313d43dc2e2d3984f3",
+      "name": "jmespath",
+      "root_is_purelib": true,
+      "sha256": "a5663118de4908c91729bea0acadca56526eb2698e83de10cd116ae0f4e97c64",
+      "size": 20419,
+      "version": "1.1.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "joblib",
+        "version": "1.5.3"
+      },
+      "canonical_filename": "joblib-1.5.3-py3-none-any.whl",
+      "dist_info": "joblib-1.5.3.dist-info",
+      "metadata_sha256": "cee9c60896ae4e7a965a840fbde50d111d2f8018f61201d1ed2e9fc3dd4883e6",
+      "name": "joblib",
+      "root_is_purelib": true,
+      "sha256": "5fc3c5039fc5ca8c0276333a188bbd59d6b7ab37fe6632daa76bc7f9ec18e713",
+      "size": 309071,
+      "version": "1.5.3",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "jsonschema",
+        "version": "4.23.0"
+      },
+      "canonical_filename": "jsonschema-4.23.0-py3-none-any.whl",
+      "dist_info": "jsonschema-4.23.0.dist-info",
+      "metadata_sha256": "1ddf7a8007dd3b4bf946915e4f6e6a8f2a3b3ef8404b2e7a178270dc55144e5a",
+      "name": "jsonschema",
+      "root_is_purelib": true,
+      "sha256": "fbadb6f8b144a8f8cf9f0b89ba94501d143e50411a1278633f56a7acf7fd5566",
+      "size": 88462,
+      "version": "4.23.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "jsonschema-specifications",
+        "version": "2025.9.1"
+      },
+      "canonical_filename": "jsonschema_specifications-2025.9.1-py3-none-any.whl",
+      "dist_info": "jsonschema_specifications-2025.9.1.dist-info",
+      "metadata_sha256": "35abd41757f32b4ea24756920ded47b70173d77cbc052a5a6d3ab583b2e8d89d",
+      "name": "jsonschema-specifications",
+      "root_is_purelib": true,
+      "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe",
+      "size": 18437,
+      "version": "2025.9.1",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "kiwisolver",
+        "version": "1.5.0"
+      },
+      "canonical_filename": "kiwisolver-1.5.0-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "kiwisolver-1.5.0.dist-info",
+      "metadata_sha256": "bb843307a98b7bd2a7055f831cbfa2fe7c864716dea9d04c7a5c03e51f648b79",
+      "name": "kiwisolver",
+      "root_is_purelib": false,
+      "sha256": "b2af221f268f5af85e776a73d62b0845fc8baf8ef0abfae79d29c77d0e776aaf",
+      "size": 1278537,
+      "version": "1.5.0",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_24_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "lap",
+        "version": "0.5.12"
+      },
+      "canonical_filename": "lap-0.5.12-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "dist_info": "lap-0.5.12.dist-info",
+      "metadata_sha256": "cc25d423140080d6221db816165836541b35daee9cc8b48486223a404a9adcf2",
+      "name": "lap",
+      "root_is_purelib": false,
+      "sha256": "f721ed3fd2b4f6f614870d12aec48bc44c089587930512c3187c51583c811b1c",
+      "size": 1725693,
+      "version": "0.5.12",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "matplotlib",
+        "version": "3.11.0"
+      },
+      "canonical_filename": "matplotlib-3.11.0-cp312-cp312-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "matplotlib-3.11.0.dist-info",
+      "metadata_sha256": "776f562976d418b94697f9f84649f80d06167042eb810ed9cd9d72260bb2abb4",
+      "name": "matplotlib",
+      "root_is_purelib": false,
+      "sha256": "41635d7909d19e52e924a521dde6d8f670b0f53ab1d0e8c331fa831554f681d1",
+      "size": 10839232,
+      "version": "3.11.0",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_26_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "motmetrics",
+        "version": "1.4.0"
+      },
+      "canonical_filename": "motmetrics-1.4.0-py3-none-any.whl",
+      "dist_info": "motmetrics-1.4.0.dist-info",
+      "metadata_sha256": "5814732fe80e7ad6eb4141d2460d279609e061df9e61e37399c432fb302df8db",
+      "name": "motmetrics",
+      "root_is_purelib": true,
+      "sha256": "cd4d691bd787360f1cd0a2127fe8a14d0646fb2912b344a9498719e132b25738",
+      "size": 161542,
+      "version": "1.4.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "narwhals",
+        "version": "2.24.0"
+      },
+      "canonical_filename": "narwhals-2.24.0-py3-none-any.whl",
+      "dist_info": "narwhals-2.24.0.dist-info",
+      "metadata_sha256": "c8aa441e88f6ee9e37ac5232c33552426f87a6a200c6c66038d37c17b3c1ca56",
+      "name": "narwhals",
+      "root_is_purelib": true,
+      "sha256": "42fdedf44e5b2ca7505630d45b4ac3058f38d8485cba9fe1652ca23152df7489",
+      "size": 461030,
+      "version": "2.24.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "numpy",
+        "version": "1.26.4"
+      },
+      "canonical_filename": "numpy-1.26.4-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "dist_info": "numpy-1.26.4.dist-info",
+      "metadata_sha256": "cd7a5f30fae1d746a914838bfc713f412f5ccc3cec445b39483f304546398401",
+      "name": "numpy",
+      "root_is_purelib": false,
+      "sha256": "9fad7dcb1aac3c7f0584a5a8133e3a43eeb2fe127f47e3632d43d677c66c102b",
+      "size": 13925109,
+      "version": "1.26.4",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "nuscenes-devkit",
+        "version": "1.2.0"
+      },
+      "canonical_filename": "nuscenes_devkit-1.2.0-py3-none-any.whl",
+      "dist_info": "nuscenes_devkit-1.2.0.dist-info",
+      "metadata_sha256": "49eefd2bbce6375bebbebbe35329a405ba9f13f2a496abeec8766e5d75d734b5",
+      "name": "nuscenes-devkit",
+      "root_is_purelib": true,
+      "sha256": "76cee0e7f96ec96d6269ee3acb4ff69e8ac2f9413e974d9eb542233ea7479bf1",
+      "size": 315983,
+      "version": "1.2.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "opencv-python-headless",
+        "version": "4.11.0.86"
+      },
+      "canonical_filename": "opencv_python_headless-4.11.0.86-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "dist_info": "opencv_python_headless-4.11.0.86.dist-info",
+      "metadata_sha256": "33b8bffb26546642a9e96d317d6e0776f041939c7c695a8ac39e566822af08f3",
+      "name": "opencv-python-headless",
+      "root_is_purelib": false,
+      "sha256": "6efabcaa9df731f29e5ea9051776715b1bdd1845d7c9530065c7951d2a2899eb",
+      "size": 29487060,
+      "version": "4.11.0.86",
+      "wheel_tags": [
+        "cp37-abi3-manylinux_2_17_aarch64",
+        "cp37-abi3-manylinux2014_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "packaging",
+        "version": "26.2"
+      },
+      "canonical_filename": "packaging-26.2-py3-none-any.whl",
+      "dist_info": "packaging-26.2.dist-info",
+      "metadata_sha256": "4f9cbcd7933415a4793f7767c98a2b6a512c823fc81c87337815705f230ecabf",
+      "name": "packaging",
+      "root_is_purelib": true,
+      "sha256": "5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e",
+      "size": 100195,
+      "version": "26.2",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "pandas",
+        "version": "2.3.3"
+      },
+      "canonical_filename": "pandas-2.3.3-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "pandas-2.3.3.dist-info",
+      "metadata_sha256": "40ee953dc7ca155840b639a1881ff84578075187fce0ac20eeda55a7fa0d9a90",
+      "name": "pandas",
+      "root_is_purelib": false,
+      "sha256": "ecaf1e12bdc03c86ad4a7ea848d66c685cb6851d807a26aa245ca3d2017a1908",
+      "size": 11737212,
+      "version": "2.3.3",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_24_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "parameterized",
+        "version": "0.9.0"
+      },
+      "canonical_filename": "parameterized-0.9.0-py2.py3-none-any.whl",
+      "dist_info": "parameterized-0.9.0.dist-info",
+      "metadata_sha256": "dafdfee1e9fb18828e240becb51de08d823243f9a75cd75b3b7c7df7bfdae9a8",
+      "name": "parameterized",
+      "root_is_purelib": true,
+      "sha256": "4e0758e3d41bea3bbd05ec14fc2c24736723f243b28d702081aef438c9372b1b",
+      "size": 20475,
+      "version": "0.9.0",
+      "wheel_tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "pillow",
+        "version": "12.2.0"
+      },
+      "canonical_filename": "pillow-12.2.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "pillow-12.2.0.dist-info",
+      "metadata_sha256": "f921b97ad0d1c94e6e0fe84ac579c998f2c285a8b35f7f934d3fa0c2657e65ab",
+      "name": "pillow",
+      "root_is_purelib": false,
+      "sha256": "7371b48c4fa448d20d2714c9a1f775a81155050d383333e0a6c15b1123dda005",
+      "size": 6398371,
+      "version": "12.2.0",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_27_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "portalocker",
+        "version": "3.2.0"
+      },
+      "canonical_filename": "portalocker-3.2.0-py3-none-any.whl",
+      "dist_info": "portalocker-3.2.0.dist-info",
+      "metadata_sha256": "1a6cc9434cfd4a373630949c8807ab6c30f4783ad2024151eea755f0766ecc03",
+      "name": "portalocker",
+      "root_is_purelib": true,
+      "sha256": "3cdc5f565312224bc570c49337bd21428bba0ef363bbcf58b9ef4a9f11779968",
+      "size": 22424,
+      "version": "3.2.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "pycocotools",
+        "version": "2.0.11"
+      },
+      "canonical_filename": "pycocotools-2.0.11-cp312-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "pycocotools-2.0.11.dist-info",
+      "metadata_sha256": "4310ec1c3b4eab38c4d8f850366c0f90c2a4ac078f486bab19b86eafa17f2fa4",
+      "name": "pycocotools",
+      "root_is_purelib": false,
+      "sha256": "7fd4121766cc057133534679c0ec3f9023dbd96e9b31cf95c86a069ebdac2b65",
+      "size": 398434,
+      "version": "2.0.11",
+      "wheel_tags": [
+        "cp312-abi3-manylinux_2_17_aarch64",
+        "cp312-abi3-manylinux2014_aarch64",
+        "cp312-abi3-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "pyparsing",
+        "version": "3.3.2"
+      },
+      "canonical_filename": "pyparsing-3.3.2-py3-none-any.whl",
+      "dist_info": "pyparsing-3.3.2.dist-info",
+      "metadata_sha256": "3311a8b949d70f71a2b9788a9327f11d9d5a6a8012d6c046ca254ad2de877f45",
+      "name": "pyparsing",
+      "root_is_purelib": true,
+      "sha256": "850ba148bd908d7e2411587e247a1e4f0327839c40e2e5e6d05a007ecc69911d",
+      "size": 122781,
+      "version": "3.3.2",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "pyquaternion",
+        "version": "0.9.9"
+      },
+      "canonical_filename": "pyquaternion-0.9.9-py3-none-any.whl",
+      "dist_info": "pyquaternion-0.9.9.dist-info",
+      "metadata_sha256": "b2e3cbcf664c8af0e96d24cfafdf6d342f7b14bf8cf60c8e69e7e29fcfdebe09",
+      "name": "pyquaternion",
+      "root_is_purelib": true,
+      "sha256": "e65f6e3f7b1fdf1a9e23f82434334a1ae84f14223eee835190cd2e841f8172ec",
+      "size": 14361,
+      "version": "0.9.9",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "python-dateutil",
+        "version": "2.9.0.post0"
+      },
+      "canonical_filename": "python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+      "dist_info": "python_dateutil-2.9.0.post0.dist-info",
+      "metadata_sha256": "a9d436da322be808332f98d88325998e87cb693a678a9969feb4cfad729a6e93",
+      "name": "python-dateutil",
+      "root_is_purelib": true,
+      "sha256": "a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427",
+      "size": 229892,
+      "version": "2.9.0.post0",
+      "wheel_tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "python-dotenv",
+        "version": "1.0.1"
+      },
+      "canonical_filename": "python_dotenv-1.0.1-py3-none-any.whl",
+      "dist_info": "python_dotenv-1.0.1.dist-info",
+      "metadata_sha256": "7c291c4c4506df39276ee37504af1ed0f3c2220bcf04b93e2e778ad2644333fb",
+      "name": "python-dotenv",
+      "root_is_purelib": true,
+      "sha256": "f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a",
+      "size": 19863,
+      "version": "1.0.1",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "pytz",
+        "version": "2024.2"
+      },
+      "canonical_filename": "pytz-2024.2-py2.py3-none-any.whl",
+      "dist_info": "pytz-2024.2.dist-info",
+      "metadata_sha256": "0e0933808122b4383213f873feb29b42f72f74a506005589d168bf37fe70c17f",
+      "name": "pytz",
+      "root_is_purelib": true,
+      "sha256": "31c7c1817eb7fae7ca4b8c7ee50c72f93aa2dd863de768e1ef4245d426aa0725",
+      "size": 508002,
+      "version": "2024.2",
+      "wheel_tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "PyYAML",
+        "version": "6.0.3"
+      },
+      "canonical_filename": "pyyaml-6.0.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "pyyaml-6.0.3.dist-info",
+      "metadata_sha256": "03c3b415ed38d09faedc49360e930769b40c58f68585e6de00e2e4916a858d34",
+      "name": "pyyaml",
+      "root_is_purelib": false,
+      "sha256": "9149cad251584d5fb4981be1ecde53a1ca46c891a79788c0df828d2f166bda28",
+      "size": 775116,
+      "version": "6.0.3",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "referencing",
+        "version": "0.37.0"
+      },
+      "canonical_filename": "referencing-0.37.0-py3-none-any.whl",
+      "dist_info": "referencing-0.37.0.dist-info",
+      "metadata_sha256": "c93b00e6ab1524fd60848376604c189a114374776475c25a31d57be47b29de6a",
+      "name": "referencing",
+      "root_is_purelib": true,
+      "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231",
+      "size": 26766,
+      "version": "0.37.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "requests",
+        "version": "2.32.3"
+      },
+      "canonical_filename": "requests-2.32.3-py3-none-any.whl",
+      "dist_info": "requests-2.32.3.dist-info",
+      "metadata_sha256": "658ee8454c1e2e76fb8c2127116f61156b3b22941b3559c00389dca70038581a",
+      "name": "requests",
+      "root_is_purelib": true,
+      "sha256": "70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6",
+      "size": 64928,
+      "version": "2.32.3",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "rpds-py",
+        "version": "2026.6.3"
+      },
+      "canonical_filename": "rpds_py-2026.6.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "dist_info": "rpds_py-2026.6.3.dist-info",
+      "metadata_sha256": "f8be7b17da3980b2c48596941411a43c70ac41b1e2d530aa531f2c15eab2eb1c",
+      "name": "rpds-py",
+      "root_is_purelib": false,
+      "sha256": "55927d532399c2c646100ff7feb48eaa940ad70f42cd68e1328f3ded9f81ca24",
+      "size": 368180,
+      "version": "2026.6.3",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "s3transfer",
+        "version": "0.11.3"
+      },
+      "canonical_filename": "s3transfer-0.11.3-py3-none-any.whl",
+      "dist_info": "s3transfer-0.11.3.dist-info",
+      "metadata_sha256": "bd00bf5546eeb563ab942b1adcc5ce5d09cb482befe81a95f96317f888209f8a",
+      "name": "s3transfer",
+      "root_is_purelib": true,
+      "sha256": "ca855bdeb885174b5ffa95b9913622459d4ad8e331fc98eb01e6d5eb6a30655d",
+      "size": 84246,
+      "version": "0.11.3",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "scikit-learn",
+        "version": "1.9.0"
+      },
+      "canonical_filename": "scikit_learn-1.9.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+      "dist_info": "scikit_learn-1.9.0.dist-info",
+      "metadata_sha256": "ee61a579f42d3edabe3e483db483475e33fffec04d7f3e69c539527bd93eaca6",
+      "name": "scikit-learn",
+      "root_is_purelib": false,
+      "sha256": "5e50ed4da51974e86e940690e9a3d82e729b62b5a49f7c9bac534d515d39d86f",
+      "size": 8837603,
+      "version": "1.9.0",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_27_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "scipy",
+        "version": "1.15.3"
+      },
+      "canonical_filename": "scipy-1.15.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "dist_info": "scipy-1.15.3.dist-info",
+      "metadata_sha256": "c75caf32b67a13a9fc16aacf993a8bb883b7a69744ffe77cbbd4f3bfbad28f3d",
+      "name": "scipy",
+      "root_is_purelib": false,
+      "sha256": "c05045d8b9bfd807ee1b9f38761993297b10b245f012b11b13b91ba8945f7e45",
+      "size": 35210199,
+      "version": "1.15.3",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "shapely",
+        "version": "2.0.7"
+      },
+      "canonical_filename": "shapely-2.0.7-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "dist_info": "shapely-2.0.7.dist-info",
+      "metadata_sha256": "fed612a4a10263d668f75af3e531e2f2b96e74d815c54f8efae78a6fc69804fd",
+      "name": "shapely",
+      "root_is_purelib": false,
+      "sha256": "73c9ae8cf443187d784d57202199bf9fd2d4bb7d5521fe8926ba40db1bc33e8e",
+      "size": 2421540,
+      "version": "2.0.7",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_17_aarch64",
+        "cp312-cp312-manylinux2014_aarch64"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "six",
+        "version": "1.17.0"
+      },
+      "canonical_filename": "six-1.17.0-py2.py3-none-any.whl",
+      "dist_info": "six-1.17.0.dist-info",
+      "metadata_sha256": "562042078c2752549f6d8a7c86dbc5dd708088a7be6d80672ec7b07100b72468",
+      "name": "six",
+      "root_is_purelib": true,
+      "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+      "size": 11050,
+      "version": "1.17.0",
+      "wheel_tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "tabulate",
+        "version": "0.9.0"
+      },
+      "canonical_filename": "tabulate-0.9.0-py3-none-any.whl",
+      "dist_info": "tabulate-0.9.0.dist-info",
+      "metadata_sha256": "f2802aade2612091b45951f265af29174f90c3236f68cc8ccdeb646941e62969",
+      "name": "tabulate",
+      "root_is_purelib": true,
+      "sha256": "024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f",
+      "size": 35252,
+      "version": "0.9.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "termcolor",
+        "version": "3.3.0"
+      },
+      "canonical_filename": "termcolor-3.3.0-py3-none-any.whl",
+      "dist_info": "termcolor-3.3.0.dist-info",
+      "metadata_sha256": "880aeaba6300677d4ecc022fb63f8adcd57a753b6fd2b5ec17841f722f910196",
+      "name": "termcolor",
+      "root_is_purelib": true,
+      "sha256": "cf642efadaf0a8ebbbf4bc7a31cec2f9b5f21a9f726f4ccbb08192c9c26f43a5",
+      "size": 7734,
+      "version": "3.3.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "threadpoolctl",
+        "version": "3.6.0"
+      },
+      "canonical_filename": "threadpoolctl-3.6.0-py3-none-any.whl",
+      "dist_info": "threadpoolctl-3.6.0.dist-info",
+      "metadata_sha256": "a45df8d07ea1883d772183a501d7d526076aa70dfcfddb276a2cbdc04def5341",
+      "name": "threadpoolctl",
+      "root_is_purelib": true,
+      "sha256": "43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb",
+      "size": 18638,
+      "version": "3.6.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "tqdm",
+        "version": "4.67.1"
+      },
+      "canonical_filename": "tqdm-4.67.1-py3-none-any.whl",
+      "dist_info": "tqdm-4.67.1.dist-info",
+      "metadata_sha256": "688a1632df525a198fec52dcfefb1246d31eacee9c035aacac2d7eaf8d8ff669",
+      "name": "tqdm",
+      "root_is_purelib": true,
+      "sha256": "26445eca388f82e72884e0d580d5464cd801a3ea01e63e5601bdff9ba6a48de2",
+      "size": 78540,
+      "version": "4.67.1",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "typing_extensions",
+        "version": "4.16.0"
+      },
+      "canonical_filename": "typing_extensions-4.16.0-py3-none-any.whl",
+      "dist_info": "typing_extensions-4.16.0.dist-info",
+      "metadata_sha256": "b05084ca1d50879865178d9fff9fabeab61bdfb1f361bfbde95421ffc8f9be46",
+      "name": "typing-extensions",
+      "root_is_purelib": true,
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "size": 45571,
+      "version": "4.16.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "tzdata",
+        "version": "2026.3"
+      },
+      "canonical_filename": "tzdata-2026.3-py2.py3-none-any.whl",
+      "dist_info": "tzdata-2026.3.dist-info",
+      "metadata_sha256": "511c019df477939fe7f4c38e32ad74a570c4ebb05b13fd2fffd0f0f2dbe6f7b1",
+      "name": "tzdata",
+      "root_is_purelib": true,
+      "sha256": "dc096730c87af6cab1b171c9d532be840741ff5d459015e7f6947bd7d7e54931",
+      "size": 348168,
+      "version": "2026.3",
+      "wheel_tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "urllib3",
+        "version": "2.7.0"
+      },
+      "canonical_filename": "urllib3-2.7.0-py3-none-any.whl",
+      "dist_info": "urllib3-2.7.0.dist-info",
+      "metadata_sha256": "66147856d30bbb6bed01c6ce3326d0f48d84ed5f286ac177633a1486b82eace5",
+      "name": "urllib3",
+      "root_is_purelib": true,
+      "sha256": "9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897",
+      "size": 131087,
+      "version": "2.7.0",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "xmltodict",
+        "version": "1.0.4"
+      },
+      "canonical_filename": "xmltodict-1.0.4-py3-none-any.whl",
+      "dist_info": "xmltodict-1.0.4.dist-info",
+      "metadata_sha256": "08b2908e0ceb1edc16c270e005d52d3484ecab089aa1bb3dbe5a896507f7f1e3",
+      "name": "xmltodict",
+      "root_is_purelib": true,
+      "sha256": "a4a00d300b0e1c59fc2bfccb53d7b2e88c32f200df138a0dd2229f842497026a",
+      "size": 13580,
+      "version": "1.0.4",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    },
+    {
+      "cache_identity": {
+        "kind": "content-addressed-pip-cache-wheel-body",
+        "package_type": "bdist_wheel",
+        "project": "yacs",
+        "version": "0.1.8"
+      },
+      "canonical_filename": "yacs-0.1.8-py3-none-any.whl",
+      "dist_info": "yacs-0.1.8.dist-info",
+      "metadata_sha256": "247fc386c844cfbe17a39f9115b8eeb852f18190aa209fe9953685eeb2d5a3b3",
+      "name": "yacs",
+      "root_is_purelib": true,
+      "sha256": "99f893e30497a4b66842821bac316386f7bd5c4f47ad35c9073ef089aa33af32",
+      "size": 14747,
+      "version": "0.1.8",
+      "wheel_tags": [
+        "py3-none-any"
+      ]
+    }
+  ],
+  "package_id": "thor-spatial-ai-utils-offline-env-v1",
+  "policy": {
+    "artifact_count": 56,
+    "docker_allowed": false,
+    "downloads_allowed": false,
+    "index_allowed": false,
+    "install_dependencies": false,
+    "model_access_allowed": false,
+    "network_allowed": false,
+    "service_lifecycle_allowed": false,
+    "source": "preexisting-local-pip-cache-only",
+    "venv_is_ephemeral": true,
+    "warehouse_sample_access_allowed": false,
+    "wheel_binaries_in_repository": false
+  },
+  "root_requirements": [
+    "lap==0.5.12",
+    "tqdm==4.67.1",
+    "scipy==1.15.3",
+    "tabulate==0.9.0",
+    "fvcore==0.1.5.post20221221",
+    "iopath==0.1.9",
+    "shapely==2.0.7",
+    "h5py==3.16.0",
+    "jsonschema==4.23.0",
+    "boto3==1.36.2",
+    "python-dotenv==1.0.1",
+    "pytz==2024.2",
+    "requests==2.32.3",
+    "pandas==2.3.3",
+    "matplotlib==3.11.0",
+    "pyquaternion==0.9.9",
+    "scikit-learn==1.9.0",
+    "pycocotools==2.0.11",
+    "pillow==12.2.0",
+    "numpy==1.26.4",
+    "nuscenes-devkit==1.2.0",
+    "motmetrics==1.4.0",
+    "opencv-python-headless>=4.5.4.58,<=4.11.0.86"
+  ],
+  "schema_version": 1,
+  "smoke_imports": [
+    "numpy",
+    "scipy",
+    "shapely",
+    "pandas",
+    "sklearn",
+    "cv2",
+    "nuscenes",
+    "motmetrics",
+    "pyquaternion",
+    "jsonschema",
+    "spatialai_data_utils.core.cameras.group_utils",
+    "spatialai_data_utils.core.cameras.origin",
+    "spatialai_data_utils.visualization.box_3d",
+    "spatialai_data_utils.visualization.video_utils.frame2video",
+    "spatialai_data_utils.visualization.video_utils.video2frame",
+    "spatialai_data_utils.eval.detection.loaders",
+    "spatialai_data_utils.eval.detection.evaluate",
+    "spatialai_data_utils.eval.detection.data_classes"
+  ],
+  "target": {
+    "abi": "cp312",
+    "bootstrap_pip": "24.0",
+    "implementation": "cp",
+    "machine": "aarch64",
+    "python_major_minor": "3.12",
+    "soabi": "cpython-312-aarch64-linux-gnu",
+    "system": "Linux"
+  }
+}
