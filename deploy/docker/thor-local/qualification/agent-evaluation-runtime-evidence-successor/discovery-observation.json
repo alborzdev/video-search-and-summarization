@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "observed_on": "2026-08-03",
+  "scope": "cached-image CLI and registration discovery only",
+  "image": "nvcr.io/nvidia/vss-core/vss-agent@sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+  "confinement": {
+    "network": "none",
+    "filesystem": "read-only with temporary cache tmpfs",
+    "gpu_requested": false,
+    "service_started": false,
+    "model_started_or_accessed": false,
+    "install_proprietary_codecs": false,
+    "pull_policy": "never"
+  },
+  "successful_observations": [
+    {
+      "command": "/vss-agent/.venv/bin/nat eval --help",
+      "exit_code": 0,
+      "assertions": ["requires --config_file FILE", "supports --dataset FILE", "supports --skip_workflow", "supports --endpoint"]
+    },
+    {
+      "command": "/vss-agent/.venv/bin/nat info components -t evaluator",
+      "exit_code": 0,
+      "assertions": ["vss_agents 0.1.0 customized_qa_evaluator", "vss_agents 0.1.0 customized_trajectory_evaluator", "vss_agents 0.1.0 report_evaluator", "nvidia-nat components 1.6.0"]
+    }
+  ],
+  "not_observed": [
+    "nat eval --config_file execution",
+    "workflow execution",
+    "judge inference",
+    "semantic scores",
+    "product evaluation output files"
+  ],
+  "promotion_value": "none"
+}

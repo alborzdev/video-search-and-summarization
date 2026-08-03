@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "source_revision", "locks", "fixture_run", "nat_observation", "capability_results", "confinement", "promotion"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "agent-evaluation-runtime-evidence-successor"},
+    "status": {"enum": ["plan-nonpromotable", "executed-nonpromotable-mechanics"]},
+    "source_revision": {"pattern": "^[0-9a-f]{40}$"},
+    "locks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verified", "source_count", "config_count", "nat_version", "image_digest"],
+      "properties": {"verified": {"type": "boolean"}, "source_count": {"const": 9}, "config_count": {"const": 3}, "nat_version": {"const": "1.6.0"}, "image_digest": {"const": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1"}}
+    },
+    "fixture_run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["materialized", "generated_file_hashes", "deterministic", "adjacent_negatives_passed", "cleanup_passed"],
+      "properties": {"materialized": {"type": "boolean"}, "generated_file_hashes": {"type": "object", "additionalProperties": {"pattern": "^[0-9a-f]{64}$"}}, "deterministic": {"type": "boolean"}, "adjacent_negatives_passed": {"type": "boolean"}, "cleanup_passed": {"type": "boolean"}}
+    },
+    "nat_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cached_image_inspected", "cli_help_observed", "component_registration_observed", "config_file_execution", "semantic_judge_execution"],
+      "properties": {
+        "cached_image_inspected": {"type": "boolean"}, "cli_help_observed": {"type": "boolean"}, "component_registration_observed": {"type": "boolean"},
+        "config_file_execution": {"const": "not_executed_no_product_or_service_authorization"},
+        "semantic_judge_execution": {"const": "blocked_no_authorized_local_judge_service"}
+      }
+    },
+    "capability_results": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_id", "mechanics_status", "semantic_status", "advertised_semantics_proven", "adjacent_negative_passed", "proof_scope", "promotable"],
+        "properties": {
+          "capability_id": {"enum": ["evaluation.agent.report", "evaluation.agent.qa", "evaluation.agent.trajectory", "evaluation.agent.multi-turn", "evaluation.agent.execution-artifacts"]},
+          "mechanics_status": {"enum": ["planned", "passed_local_stub"]},
+          "semantic_status": {"enum": ["blocked_no_authorized_local_judge_service", "blocked_product_nat_eval_not_executed"]},
+          "advertised_semantics_proven": {"const": false}, "adjacent_negative_passed": {"type": "boolean"}, "proof_scope": {"type": "array", "items": {"type": "string"}}, "promotable": {"const": false}
+        }
+      },
+      "allOf": [
+        {"contains": {"properties": {"capability_id": {"const": "evaluation.agent.report"}}}},
+        {"contains": {"properties": {"capability_id": {"const": "evaluation.agent.qa"}}}},
+        {"contains": {"properties": {"capability_id": {"const": "evaluation.agent.trajectory"}}}},
+        {"contains": {"properties": {"capability_id": {"const": "evaluation.agent.multi-turn"}}}},
+        {"contains": {"properties": {"capability_id": {"const": "evaluation.agent.execution-artifacts"}}}}
+      ]
+    },
+    "confinement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network_calls", "downloads", "service_lifecycle_calls", "model_accesses", "docker_calls", "product_subprocess_calls", "warehouse_sample_accesses", "install_proprietary_codecs"],
+      "properties": {"network_calls": {"const": 0}, "downloads": {"const": 0}, "service_lifecycle_calls": {"const": 0}, "model_accesses": {"const": 0}, "docker_calls": {"const": 0}, "product_subprocess_calls": {"const": 0}, "warehouse_sample_accesses": {"const": 0}, "install_proprietary_codecs": {"const": false}}
+    },
+    "promotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledger_mutation_performed", "oracle_mutation_performed", "selector_mutation_performed", "eligible_capability_ids", "receipt_is_runtime_evidence", "aggregate_is_promotable", "requires_authorized_local_judge_and_product_run"],
+      "properties": {"ledger_mutation_performed": {"const": false}, "oracle_mutation_performed": {"const": false}, "selector_mutation_performed": {"const": false}, "eligible_capability_ids": {"const": []}, "receipt_is_runtime_evidence": {"const": false}, "aggregate_is_promotable": {"const": false}, "requires_authorized_local_judge_and_product_run": {"const": true}}
+    }
+  }
+}

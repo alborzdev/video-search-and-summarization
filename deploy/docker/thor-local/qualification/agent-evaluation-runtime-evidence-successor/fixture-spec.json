@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "report": {
+    "reference": {
+      "title": "Safety review",
+      "identifier": "R-001",
+      "date": "2026-08-03",
+      "tags": ["forklift", "vest"],
+      "dynamic_zone": "north aisle",
+      "analysis": "A worker wearing a vest crossed behind a stopped forklift."
+    },
+    "actual": {
+      "title": "Safety review",
+      "identifier": "R-001",
+      "date": "2026-08-03",
+      "tags": ["forklift", "vest"],
+      "dynamic_zone": "north aisle",
+      "analysis": "Behind the stationary forklift, a vest-wearing worker crossed."
+    },
+    "adjacent_negative": {
+      "title": "Wrong title",
+      "identifier": "",
+      "date": "03/08/26",
+      "tags": ["forklift"],
+      "analysis": "No activity."
+    },
+    "deterministic_metrics": ["exact_match", "f1", "regex", "non_empty"],
+    "judge_metric": "llm_judge",
+    "aggregation_methods": ["average", "dynamic"],
+    "judge_profile_config": {
+      "evaluator_metric": "llm_judge",
+      "llm_name": "eval_llm_judge",
+      "llm_profile": "eval_llm_judge",
+      "max_tokens": 4096,
+      "temperature": 0.0
+    }
+  },
+  "qa": [
+    {
+      "id": "qa-exact",
+      "query": "How many forklifts are visible?",
+      "ground_truth": "Two forklifts are visible.",
+      "generated_answer": "Two forklifts are visible.",
+      "evaluation_method": ["qa"]
+    },
+    {
+      "id": "qa-incomplete",
+      "query": "What happened and where?",
+      "ground_truth": "A worker fell beside the north loading bay.",
+      "generated_answer": "A worker fell.",
+      "evaluation_method": ["qa"]
+    },
+    {
+      "id": "qa-semantic",
+      "query": "Did the forklift move?",
+      "ground_truth": "No, the forklift remained stationary.",
+      "generated_answer": "The forklift did not move.",
+      "evaluation_method": ["qa"]
+    }
+  ],
+  "qa_adjacent_negatives": [
+    {"id": "qa-missing-ground-truth", "query": "What happened?", "generated_answer": "Nothing.", "evaluation_method": ["qa"]},
+    {"id": "qa-wrong-method", "query": "What happened?", "ground_truth": "Nothing.", "generated_answer": "Nothing.", "evaluation_method": ["trajectory"]}
+  ],
+  "trajectory": {
+    "with_reference": {
+      "id": "trajectory-reference",
+      "query": "Inspect camera one.",
+      "evaluation_method": ["trajectory"],
+      "trajectory_ground_truth": [
+        {"step": 1, "name": "sensor_list", "params": {}},
+        {"step": 1, "name": "timeline", "params": {"sensor_id": "camera-1"}},
+        {"step": 2, "name": "video_understanding", "params": {"sensor_id": "camera-1"}}
+      ]
+    },
+    "without_reference": {
+      "id": "trajectory-no-reference",
+      "query": "Check it again.",
+      "evaluation_method": ["trajectory"],
+      "conversation": [{"role": "user", "content": "Inspect camera one."}],
+      "tool_schemas": [{"name": "video_understanding", "required": ["sensor_id"]}]
+    },
+    "adjacent_negative": {
+      "id": "trajectory-malformed",
+      "query": "Inspect camera one.",
+      "evaluation_method": ["trajectory"],
+      "trajectory_ground_truth": [{"step": 1, "name": "video_understanding"}]
+    },
+    "malformed_reference": {
+      "id": "trajectory-bad-ref",
+      "query": "Inspect camera one.",
+      "evaluation_method": ["trajectory"],
+      "trajectory_ground_truth": [{"step": 1, "name": "video_understanding", "params": {"sensor_id": {"$ref": {"path": ["id"]}}}}]
+    },
+    "track_agent_selected_tools_only": true
+  },
+  "multi_turn": {
+    "id": "conversation-1",
+    "turns": [
+      {
+        "id": "turn-1",
+        "query": "Inspect camera one.",
+        "ground_truth": "Camera one is clear.",
+        "evaluation_method": ["qa", "trajectory"]
+      },
+      {
+        "id": "turn-2",
+        "query": "Was it still clear?",
+        "ground_truth": "Yes, camera one remained clear.",
+        "evaluation_method": ["qa", "trajectory"],
+        "conversation": [{"role": "user", "content": "Inspect camera one."}]
+      }
+    ],
+    "result_ids": ["conversation-1_turn-1", "conversation-1_turn-2"],
+    "parallel_conversation_ids": ["conversation-1", "conversation-2"]
+  },
+  "execution": {
+    "artifacts": [
+      "workflow_output.json",
+      "report_evaluator_output.json",
+      "qa_evaluator_output.json",
+      "trajectory_evaluator_output.json",
+      "latency_summary.json"
+    ],
+    "valid_filters": ["all", "qa", "trajectory", "report", "qa,trajectory", "qa,report", "trajectory,report", "qa,trajectory,report"],
+    "invalid_filters": ["all,qa", "qa,all", "unknown", ""],
+    "positive_precondition": {"referenced_videos_uploaded": true},
+    "adjacent_negative_precondition": {"referenced_videos_uploaded": false}
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "package_id": "agent-evaluation-runtime-evidence-successor",
+  "family": "agent-evaluation",
+  "source_revision": "a41c34c5bcd57f9da49f6a08758fd440064624b5",
+  "capability_ids": [
+    "evaluation.agent.report",
+    "evaluation.agent.qa",
+    "evaluation.agent.trajectory",
+    "evaluation.agent.multi-turn",
+    "evaluation.agent.execution-artifacts"
+  ],
+  "source_locks": [
+    {"path": "services/agent/src/vss_agents/evaluators/report_evaluator/register.py", "sha256": "bbd2590b077f4ed9cf9a916d7bdccd3869d6e2da3c2562d1064a5b4745e95239"},
+    {"path": "services/agent/src/vss_agents/evaluators/report_evaluator/evaluate.py", "sha256": "e36fccd2f36e9ea0eceacc49c623eb868b41c68215eac9293e2d6ac15fb4d684"},
+    {"path": "services/agent/src/vss_agents/evaluators/report_evaluator/eval_config_models.py", "sha256": "6016d4c03b284fcda4b957e9ddbf036e500652ee331112451a5a70c2a7467525"},
+    {"path": "services/agent/src/vss_agents/evaluators/customized_qa_evaluator/register.py", "sha256": "e3105853d41d6d3e9578697793abf4caffac2b9e3bd9d9926b1b815c1320bc48"},
+    {"path": "services/agent/src/vss_agents/evaluators/customized_qa_evaluator/evaluate.py", "sha256": "dc3c14005d088b22550268f6ede3c56325957ec7e4c909a61b646d7a9e8f222d"},
+    {"path": "services/agent/src/vss_agents/evaluators/customized_trajectory_evaluator/register.py", "sha256": "94b9161bfdd5284b6338cc22e0c3d512821415f1d7a507f16352c5f4e95140e9"},
+    {"path": "services/agent/src/vss_agents/evaluators/customized_trajectory_evaluator/evaluate.py", "sha256": "748d10b42c05eead6c535d4448a580d3a740c2047f99df4c063b144950e2a465"},
+    {"path": "services/agent/src/vss_agents/evaluators/evaluate_patch.py", "sha256": "b4c05075abbc049300f26cf4477b19dfa3d727a361e8088c310d17fb5971246c"},
+    {"path": "services/agent/src/vss_agents/evaluators/utils.py", "sha256": "f4947c7e0a3f2e6c25e0cba299dc3f17b1919a479b0e21672277a0afb4f52b02"}
+  ],
+  "config_locks": [
+    {"path": "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml", "sha256": "5d07f34fc24921326ca803c7d2958a7c6ac6428c834d628db259b417a56df5a9"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-base/eval/report_eval_metrics.yaml", "sha256": "1c17e889aeb4c2eebd6ec769dae3bad2fc426c389af312628fbf535dacdb7656"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-base/eval/README_eval.md", "sha256": "c0160ae73e19f012871aef6ede259c4bd55028b1265cd340c91def3c65dd2691"}
+  ],
+  "nat_lock": {
+    "package": "nvidia-nat",
+    "version": "1.6.0",
+    "pyproject_path": "services/agent/pyproject.toml",
+    "pyproject_sha256": "d4e32ddb05460f3928fab19309aa163b0dce69e0b59abd251c4a67ec6ae23b97",
+    "uv_lock_path": "services/agent/uv.lock",
+    "uv_lock_sha256": "8647f8a7e8eb22ef2c9e83850ba13c2405c32222a48f78c585e5fb8015566523",
+    "image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+    "image_digest": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+    "cli_path": "/vss-agent/.venv/bin/nat",
+    "command_shape": "nat eval --config_file <config>",
+    "registered_vss_evaluators": ["customized_qa_evaluator", "customized_trajectory_evaluator", "report_evaluator"],
+    "report_judge_profile": {
+      "upstream_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "upstream_config_raw_sha256": "e89664e421bac7b8869b9dfa1e4149930e11b935bf6dc01351392a6557bb4c79",
+      "local_thor_config_sha256": "5d07f34fc24921326ca803c7d2958a7c6ac6428c834d628db259b417a56df5a9",
+      "evaluator_metric": "llm_judge",
+      "llm_name": "eval_llm_judge",
+      "llm_profile": "eval_llm_judge",
+      "max_tokens": 4096,
+      "temperature": 0.0,
+      "local_lock_reason": "Thor locks the checked working profile; upstream raw SHA records repository authority for the same judge selection/profile semantics."
+    }
+  },
+  "fixture_spec": {
+    "path": "deploy/docker/thor-local/qualification/agent-evaluation-runtime-evidence-successor/fixture-spec.json",
+    "sha256": "37f085f143db29cdf1870f6de40e171880b739b410ea5d8ba1224d53259be986"
+  },
+  "policy": {
+    "network_allowed": false,
+    "downloads_allowed": false,
+    "services_allowed": false,
+    "models_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "install_proprietary_codecs": false,
+    "canonical_metadata_mutation_allowed": false,
+    "semantic_judge_execution_authorized": false,
+    "product_nat_eval_execution_authorized": false
+  },
+  "proof_ceiling": "nonpromotable_mechanics_only"
+}
