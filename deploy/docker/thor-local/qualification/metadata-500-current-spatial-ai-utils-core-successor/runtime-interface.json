@@ -1,0 +1,144 @@
+{
+  "aggregate_execution_accounting": {
+    "bounded_capability_actions": 21,
+    "imported_product_function_invocations": 34,
+    "requests": 21
+  },
+  "capabilities": [
+    {
+      "adapter": "geometry_projection",
+      "adjacent_negative_case_ids": [
+        "legacy-7dof",
+        "fully-offscreen",
+        "missing-intrinsic",
+        "scalar-box",
+        "malformed-world2img"
+      ],
+      "capability_id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "fixture_id": "fixture.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json",
+        "sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542"
+      },
+      "fixture_payload_id": "spatial-ai-projection-v1",
+      "max_actions": 7,
+      "max_requests": 7,
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "oracle_namespace": "vss-oracle-manifest-entry-spatial-ai-utils-01-3d-2d-geometry",
+      "positive_runs": 2,
+      "product_function_counts": {
+        "boxes.box3d_to_corners": 4,
+        "projection.project_boxes_3d_to_2d": 4,
+        "projection.project_points_3d_to_image": 1
+      },
+      "runtime_namespace": "spatial-ai-01-3d-2d-geometry"
+    },
+    {
+      "adapter": "tracking_metrics",
+      "adjacent_negative_case_ids": [
+        "identity-switch",
+        "empty-tracker",
+        "empty-ground-truth",
+        "similarity-shape-mismatch",
+        "missing-required-count"
+      ],
+      "capability_id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "fixture_id": "fixture.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/04-tracking-metrics.json",
+        "sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e"
+      },
+      "fixture_payload_id": "spatial-ai-tracking-metrics-v1",
+      "max_actions": 7,
+      "max_requests": 7,
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "oracle_namespace": "vss-oracle-manifest-entry-spatial-ai-utils-04-tracking-hota-clear-identity-count",
+      "positive_runs": 2,
+      "product_function_counts": {
+        "tracking.CLEAR.eval_sequence": 4,
+        "tracking.Count.eval_sequence": 4,
+        "tracking.HOTA.eval_sequence": 4,
+        "tracking.Identity.eval_sequence": 4
+      },
+      "runtime_namespace": "spatial-ai-04-tracking-hota-clear-identity-count"
+    },
+    {
+      "adapter": "nvschema_conversion",
+      "adjacent_negative_case_ids": [
+        "unknown-class",
+        "missing-results",
+        "strict-short-coordinates",
+        "invalid-output-format",
+        "malformed-frame-token"
+      ],
+      "capability_id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "fixture_id": "fixture.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "fixture_manifest": {
+        "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json",
+        "sha256": "ed74f1c23c7999b01d6b7000e9c7a1be5a40b69c39ea90a993cbdccf66340cfd"
+      },
+      "fixture_payload_id": "spatial-ai-nvschema-conversion-v1",
+      "max_actions": 7,
+      "max_requests": 7,
+      "oracle_id": "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "oracle_namespace": "vss-oracle-manifest-entry-spatial-ai-utils-05-nvschema-conversion",
+      "positive_runs": 2,
+      "product_function_counts": {
+        "nvschema.convert_sparse4d_to_nvschema": 5,
+        "nvschema.load_nvschema": 4
+      },
+      "runtime_namespace": "spatial-ai-05-nvschema-conversion"
+    }
+  ],
+  "confinement": {
+    "docker": false,
+    "downloads": false,
+    "filesystem_escape_attempts": 0,
+    "models": false,
+    "network": false,
+    "product_subprocesses": false,
+    "services": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "producer": {
+    "commit": "c06932bd641b00ac67df4508e5831644544f9ac1",
+    "contract": {
+      "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json",
+      "sha256": "e1a73e2c6a8fa92f60e462ccf6d6777e8a28df598aa7aa38bb50eab358f02d2f"
+    },
+    "contract_schema": {
+      "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json",
+      "sha256": "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"
+    },
+    "executor": {
+      "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+      "sha256": "494efc50a20ef2356acec2b728fe9c98600405c2d644ddd6c1228d6db034b115"
+    },
+    "package": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor",
+    "result_schema": {
+      "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json",
+      "sha256": "6934a06b1090a815df83d0b84eb6054ac851e4b6574ba588e921c6afde8470dd"
+    }
+  },
+  "projection": {
+    "canonical_mutation": false,
+    "evidence_added": false,
+    "ledger_rows_changed": 0,
+    "oracle_rows_changed": 3,
+    "promotion_performed": false,
+    "selected_oracle_state": "open_unexecuted",
+    "selected_readiness": "executor_ready"
+  },
+  "roles": {
+    "cleanup_executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+    "executor": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+    "fixture_generator": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+    "postcondition_collector": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+    "request_collector": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+  },
+  "schema_version": 1,
+  "target_environment": {
+    "platform": "linux-aarch64",
+    "python_major_minor": "3.12"
+  }
+}
