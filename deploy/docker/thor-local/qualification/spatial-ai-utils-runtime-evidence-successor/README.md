@@ -45,26 +45,50 @@ independent positive executions plus five named adjacent cases. Literal calls
 from the executor into imported product functions are counted separately by
 function name and bound into each result.
 
-- `00`: parse and apply a two-camera reassignment, recompute group origin and
-  dimensions, then reject malformed/empty moves and unknown strict targets.
-- `01`: generate 9-DoF corners and project visible/offscreen boxes, then cover
-  legacy shape, calibration, scalar, and transform negatives.
-- `02`: render two camera panels plus BEV twice, assert exact dimensions,
-  pixels, and input immutability, then exercise five transform/image/shape
-  negatives.
-- `03`: execute the JSONL loader, production evaluator, and save path for a
-  perfect fixture, normalize only nondeterministic evaluation time, and cover
-  missing/malformed/timestamp/legacy-shape inputs.
+- `00`: parse and apply a three-camera reassignment, create two overlapping
+  groups, create two capacity-bounded clusters, and run both in-memory and
+  file-backed group-origin calculation. Both generated groups must contain
+  exactly two cameras and cover all three source IDs; both clusters must be
+  nonempty, capacity-bounded, and assign every source camera exactly once.
+  Origins and dimensions must be finite, nonzero, and identical for every
+  member of a group. Calls implemented by `core.cameras.bev` are recorded under
+  exact `bev.*` product identities before five strict negatives.
+- `01`: generate 9-DoF corners, directly project their points successfully,
+  project visible/offscreen boxes, and run the NVSchema BEV-object wrapper on
+  both boxes while proving that only the visible object survives and the input
+  is immutable. The source-locked projection CLI `main()` is also executed
+  in-process twice against owned JSONL/calibration files; no subprocess is
+  spawned. Five legacy-shape, calibration, scalar, and transform negatives
+  remain.
+- `02`: directly execute the image and BEV renderers and the two-camera
+  composite renderer twice, asserting exact dimensions, pixels, and input
+  immutability before five transform/image/shape negatives.
+- `03`: execute both the direct JSONL evaluator/save path and the production
+  per-BEV-sensor orchestration for a perfect fixture. Calls to `accumulate`,
+  `calc_ap`, `evaluate_detection`, the per-BEV wrapper, the loader, and the save
+  path are counted explicitly. Direct and per-sensor output digests are stored
+  separately after normalizing only nondeterministic evaluation time, and the
+  locked CLI source proves its confidence-threshold binding. Each prediction
+  input includes confidences `0.9` and `0.4`; both the direct loader and the
+  counted sensor-split path must retain exactly the `0.9` object at threshold
+  `0.5`.
 - `04`: execute HOTA, CLEAR, Identity, and Count on a perfect two-frame track
   twice; the five adjacent cases include identity switch, empty tracker, empty
   ground truth, malformed similarities, and missing counts.
-- `05`: convert a tiny Sparse4D result with the product's timezone-aware
-  `base_timestamp`, byte-compare the two outputs, and load the emitted
-  NVSchema 4.0 JSONL. Negatives cover class, envelope, coordinates, output
-  format, and frame token.
+- `05`: convert a tiny Sparse4D result containing a non-identity 90-degree yaw
+  quaternion with the product's timezone-aware `base_timestamp`, byte-compare
+  the two outputs, assert the nonzero Euler rotation, and load the emitted
+  NVSchema 4.0 JSONL through the strict `gt_json_aicity` semantic path. The
+  flattened identity, type, confidence, location, scale, and rotation plus raw
+  top-level/bbox confidence are exact assertions. Negatives cover class,
+  envelope, coordinates, output format, and frame token.
 - `06`: generate four colored PNG frames, verify numeric ordering, encode a
-  downsampled MP4, decode it with frame-skip semantics, validate decoded
-  pixels, and cover five empty/missing/invalid media cases.
+  downsampled MP4, and decode it both fully and with `frame_skip=2`. The kept
+  pixel digests must equal source indices 0 and 2 from the full decode, proving
+  nontrivial skip behavior. Decoded dimensions must equal source dimensions
+  divided by two, and decoded mean/dominant BGR values must match all four
+  source colors within a locked codec tolerance. Five empty/missing/invalid
+  media cases remain.
 
 The product-execution section has a hard 900-second `SIGALRM` deadline. An
 install-once, active-execution-gated Python audit hook denies socket creation,

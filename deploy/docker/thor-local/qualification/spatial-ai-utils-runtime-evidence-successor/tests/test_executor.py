@@ -74,6 +74,20 @@ def test_contract_schema_exact_scope_and_bounds() -> None:
         assert contract["policy"][key] is False
 
 
+def test_extended_contract_preserves_every_canonical_semantic_name() -> None:
+    contract = EXECUTOR.load_contract()
+    official = EXECUTOR.strict_json(
+        REPO_ROOT / "deploy/docker/thor-local/parity/official-capabilities.json"
+    )
+    contract_by_id = {row["capability_id"]: row for row in contract["capabilities"]}
+    official_by_id = {row["id"]: row for row in official["capabilities"]}
+    for short_id in ("03", "05", "06"):
+        capability_id = EXECUTOR.SHORT_IDS[short_id]
+        assert set(
+            official_by_id[capability_id]["contract"]["required_semantics"]
+        ).issubset(contract_by_id[capability_id]["required_semantics"])
+
+
 def test_inert_plan_selection_is_schema_valid_and_nonpromoting() -> None:
     contract = EXECUTOR.load_contract()
     selected = EXECUTOR._resolve_selection(["01", "04", "05"])
@@ -107,6 +121,30 @@ def test_static_fixture_and_source_locks_match() -> None:
         )
         for lock in row["source_controls"]:
             assert EXECUTOR.sha_file(REPO_ROOT / lock["path"]) == lock["sha256"]
+
+
+def test_runtime_contract_never_narrows_advertised_surface() -> None:
+    contract = {
+        row["capability_id"]: row for row in EXECUTOR.load_contract()["capabilities"]
+    }
+    ledger = {
+        row["id"]: row
+        for row in EXECUTOR.strict_json(
+            REPO_ROOT / "deploy/docker/thor-local/parity/official-capabilities.json"
+        )["capabilities"]
+    }
+    assert set(contract) == set(EXECUTOR.EXPECTED_CAPABILITIES)
+    for capability_id, runtime in contract.items():
+        advertised = ledger[capability_id]["contract"]
+        semantics_key = (
+            "required_metrics"
+            if "required_metrics" in advertised
+            else "required_semantics"
+        )
+        assert set(advertised[semantics_key]).issubset(runtime["required_semantics"])
+        assert {row["path"] for row in advertised["source_controls"]}.issubset(
+            {row["path"] for row in runtime["source_controls"]}
+        )
 
 
 def test_preflight_confinement_error_preserves_exact_escaped_path(
@@ -388,13 +426,36 @@ def test_literal_imported_product_function_counts_are_exact(
     }
     assert by_short["01"]["imported_product_function_counts"] == {
         "boxes.box3d_to_corners": 4,
+        "projection.project_bev_objects_bbox_in_image": 2,
         "projection.project_boxes_3d_to_2d": 4,
-        "projection.project_points_3d_to_image": 1,
+        "projection.project_points_3d_to_image": 3,
+        "projection_cli.main": 2,
     }
     assert by_short["02"]["imported_product_function_counts"] == {
+        "visual.draw_bbox3d_on_bev": 2,
         "visual.draw_bbox3d_multicam": 2,
-        "visual.draw_bbox3d_on_img": 5,
+        "visual.draw_bbox3d_on_img": 7,
     }
+    expected_detection_counts = {
+        "detection.accumulate": 8,
+        "detection.calc_ap": 8,
+        "detection.evaluate_detection": 4,
+        "detection.evaluate_detection_per_BEV_sensor": 2,
+        "detection.load_boxes_from_jsonl": 9,
+        "detection.save_detection_results": 4,
+        "detection.split_files_by_sensor": 2,
+    }
+    assert EXECUTOR.EXPECTED_PRODUCT_FUNCTION_COUNTS["03"] == (
+        expected_detection_counts
+    )
+    if by_short["03"]["status"] == "pass":
+        assert (
+            by_short["03"]["imported_product_function_counts"]
+            == expected_detection_counts
+        )
+    else:
+        assert by_short["03"]["status"] == "blocked"
+        assert by_short["03"]["imported_product_function_counts"] == {}
     assert by_short["04"]["imported_product_function_counts"] == {
         "tracking.CLEAR.eval_sequence": 4,
         "tracking.Count.eval_sequence": 4,
@@ -407,9 +468,194 @@ def test_literal_imported_product_function_counts_are_exact(
     }
     assert by_short["06"]["imported_product_function_counts"] == {
         "video.frames_to_video": 3,
-        "video.list_frame_paths": 5,
-        "video.video_to_frames": 5,
+        "video.list_frame_paths": 7,
+        "video.video_to_frames": 7,
     }
+
+
+def test_calibration_contract_preserves_full_grouping_surface() -> None:
+    capability = EXECUTOR.load_contract()["capabilities"][0]
+    fixture = EXECUTOR.strict_json(REPO_ROOT / capability["fixture_manifest"]["path"])
+    assert set(capability["required_semantics"]) >= {
+        "parse_moves",
+        "apply_group_reassignments",
+        "create_camera_groups",
+        "create_camera_clusters",
+        "calculate_origin",
+        "calculate_and_update_group_origins",
+    }
+    assert len(fixture["sensors"]) >= 3
+    assert EXECUTOR.EXPECTED_PRODUCT_FUNCTION_COUNTS["00"] == {
+        "bev.calculate_group_origins_from_calibration": 2,
+        "bev.create_camera_clusters_from_calibration": 2,
+        "bev.create_camera_groups_from_calibration": 2,
+        "group.apply_group_reassignments": 4,
+        "group.parse_moves": 5,
+        "origin.calculate_and_update_group_origins": 2,
+    }
+    assert {Path(row["path"]).name for row in capability["source_controls"]} >= {
+        "bev.py",
+        "group_utils.py",
+        "origin.py",
+        "reassign_camera_groups.py",
+        "create_camera_groups.py",
+        "create_camera_clusters.py",
+        "calculate_origin.py",
+    }
+
+
+def test_geometry_executes_nvschema_bev_projection(current_execution: dict) -> None:
+    result = current_execution["capability_results"][1]
+    observation = result["positive_observations"]
+    assert result["status"] == "pass"
+    assert observation["bev_input_unchanged"] is True
+    assert [row["id"] for row in observation["bev_projection"]] == ["box-visible"]
+    assert observation["bev_projection"][0]["bbox3d"]["info"]["sensorId"] == (
+        "Camera_00"
+    )
+    vertices = json.loads(
+        observation["bev_projection"][0]["bbox3d"]["info"]["vertices"]
+    )
+    assert len(vertices) == 8
+    assert all(len(vertex) == 2 for vertex in vertices)
+    assert observation["point_projection"]["shape"] == [2, 8, 2]
+    assert observation["point_projection"]["front_count"] == 16
+    assert len(observation["point_projection"]["sha256"]) == 64
+    assert observation["cli_visible_ids"] == ["box-visible"]
+    assert len(observation["cli_output_sha256"]) == 64
+
+
+def test_visualization_records_each_authoritative_renderer(
+    current_execution: dict,
+) -> None:
+    result = current_execution["capability_results"][2]
+    observation = result["positive_observations"]
+    assert result["status"] == "pass"
+    assert observation["inputs_unchanged"] is True
+    assert observation["bev_shape"] == [96, 96, 3]
+    assert observation["bev_nonzero_pixels"] > 0
+    assert len(observation["bev_pixel_sha256"]) == 64
+    assert len(observation["direct_image_pixel_sha256"]) == 64
+
+
+def test_detection_map_executes_per_bev_orchestration_and_binds_cli_source(
+    current_execution: dict,
+) -> None:
+    contract = EXECUTOR.load_contract()
+    capability = contract["capabilities"][3]
+    result = current_execution["capability_results"][3]
+    observation = result["positive_observations"]
+    cli_path = (
+        "libs/analytics/spatialai-data-utils/tools/"
+        "validation_and_evaluation/run_validation_and_evaluation.py"
+    )
+    cli_lock = next(
+        source for source in capability["source_controls"] if source["path"] == cli_path
+    )
+    cli_text = (REPO_ROOT / cli_path).read_text(encoding="utf-8")
+    assert cli_lock["sha256"] == EXECUTOR.sha_file(REPO_ROOT / cli_path)
+    assert "evaluate_detection_per_BEV_sensor(" in cli_text
+    assert "confidence_threshold=args.confidence_threshold" in cli_text
+    if result["status"] == "blocked":
+        assert observation["preflight"]["ready"] is False
+        assert (
+            observation["preflight"]["missing_modules"]
+            or observation["preflight"]["import_failures"]
+        )
+        return
+    assert result["status"] == "pass"
+    assert observation["summary"]["direct"]["mean_ap"] > 0.99
+    assert observation["summary"]["direct"] == observation["summary"]["per_bev"]
+    assert observation["written_files"] == {
+        "direct": ["metrics_details.json", "metrics_summary.json"],
+        "per_bev": [
+            "detection_metrics.csv",
+            "metrics_details.json",
+            "metrics_summary.json",
+        ],
+    }
+    assert set(observation["semantic_output_sha256"]["direct"]) == {
+        "metrics_details.json",
+        "metrics_summary.json#without-eval_time",
+    }
+    assert set(observation["semantic_output_sha256"]["per_bev"]) == {
+        "detection_metrics.csv",
+        "metrics_details.json",
+        "metrics_summary.json#without-eval_time",
+    }
+    assert observation["cli_source_sha256"] == cli_lock["sha256"]
+    assert observation["prediction_filtering"] == {
+        "submitted": 2,
+        "below_threshold_confidence": 0.4,
+        "confidence_threshold": 0.5,
+        "direct_retained": 1,
+        "per_bev_retained": 1,
+    }
+
+
+def test_nvschema_conversion_proves_non_identity_quaternion_rotation(
+    current_execution: dict,
+) -> None:
+    result = current_execution["capability_results"][5]
+    observation = result["positive_observations"]
+    assert result["status"] == "pass"
+    assert observation["input_quaternion"] != [1.0, 0.0, 0.0, 0.0]
+    assert observation["non_identity_rotation_verified"] is True
+    assert observation["record"]["objects"][0]["bbox3d"]["coordinates"][6:9] == [
+        0.0,
+        0.0,
+        1.570796327,
+    ]
+    assert observation["flattened_record"] == {
+        "object id": 42,
+        "type": "Person",
+        "confidence": 0.9,
+        "3d location": [1.0, 2.0, 0.5],
+        "3d bounding box scale": [5.0, 2.0, 1.8],
+        "3d bounding box rotation": [0.0, 0.0, 1.570796327],
+    }
+    assert observation["confidence_consistency"] == {
+        "top_level": 0.9,
+        "bbox3d": 0.9,
+    }
+
+
+def test_video_frame_tools_proves_nontrivial_frame_skip_two(
+    current_execution: dict,
+) -> None:
+    result = current_execution["capability_results"][6]
+    observation = result["positive_observations"]
+    assert result["status"] == "pass"
+    assert observation["frame_skip"] == 2
+    assert observation["kept_source_frame_indices"] == [0, 2]
+    assert observation["decoded_frame_names"] == ["0.png", "1.png"]
+    assert (
+        observation["decoded_pixel_sha256"]
+        == observation["full_decoded_pixel_sha256"][::2]
+    )
+    assert observation["source_frame_dimensions"] == [48, 64]
+    assert observation["decoded_frame_dimensions"] == [24, 32]
+    assert observation["downsample"] == 2
+    assert observation["source_order_bgr"] == [
+        [255, 0, 0],
+        [0, 255, 0],
+        [0, 0, 255],
+        [255, 255, 255],
+    ]
+    assert observation["dominant_channel_indices"] == [
+        {"source": 0, "decoded": 0},
+        {"source": 1, "decoded": 1},
+        {"source": 2, "decoded": 2},
+    ]
+    assert all(
+        abs(observed - expected) <= observation["codec_color_tolerance"]
+        for observed_row, expected_row in zip(
+            observation["decoded_mean_bgr"],
+            observation["source_order_bgr"],
+            strict=True,
+        )
+        for observed, expected in zip(observed_row, expected_row, strict=True)
+    )
 
 
 def test_blocked_rows_retain_capability_local_preflight(

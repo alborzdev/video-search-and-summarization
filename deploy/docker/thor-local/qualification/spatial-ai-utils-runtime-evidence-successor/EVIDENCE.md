@@ -6,21 +6,33 @@ canonical parity-state change.
 
 Current Thor development evidence:
 
-- focused package suite: `44 passed` after the Stage-1 oracle rebind;
-- `01` 3D/2D geometry: pass, 2 positives + 5 adjacent cases, 9 literal product
+- focused package suite: `60 passed` after the complete-surface extension;
+- `00` calibration/grouping: pass in the cache-only locked ephemeral
+  environment, 2 positives + 5 adjacent cases, 17 literal product calls;
+- `01` 3D/2D geometry: pass, 2 positives + 5 adjacent cases, 15 literal product
   calls;
 - `04` HOTA/CLEAR/Identity/Count: pass, 2 positives + 5 adjacent cases, 16
   literal product calls;
 - `05` NVSchema conversion: pass, 2 positives + 5 adjacent cases, 9 literal
-  product calls;
-- `00` and `03`: capability-local dependency/ABI preflight blockers on the
-  current default Python;
-- `02` multiview visualization: pass, 2 positives + 5 adjacent cases, 7
+  product calls, with a non-identity quaternion producing the expected nonzero
+  Euler yaw and an exact strict-loader flattened semantic record;
+- `03` detection mAP: pass in the cache-only locked ephemeral environment,
+  2 positives + 5 adjacent cases, 37 literal direct/per-BEV product calls,
+  including two counted sensor-split calls and exact confidence filtering;
+- `02` multiview visualization: pass, 2 positives + 5 adjacent cases, 11
   literal product calls;
-- `06` video/frame tools: pass, 2 positives + 5 adjacent cases, 13 literal
-  product calls; the committed lazy visualization package boundary removes
-  both rows' former unrelated Shapely preflight dependency;
+- `06` video/frame tools: pass, 2 positives + 5 adjacent cases, 17 literal
+  product calls; `frame_skip=2` output equals source indices 0 and 2 from a
+  full decode, decoded dimensions prove the 2x downsample, codec-tolerant BGR
+  means/dominant channels match the source colors, and the committed lazy
+  visualization package boundary removes both rows' former unrelated Shapely
+  preflight dependency;
 - `07` AWS/GCS: excluded, unchanged, and not contacted.
+
+The seven provider-free rows account for 122 literal product calls per
+all-capability run. The current default Python still blocks `00` and `03` on
+missing optional dependencies; the checked offline environment supplies the
+locked complete dependency set used for their passing executions.
 
 Rows `01`, `04`, and `05` are now bound to their current canonical
 `executor_ready` oracle rows; all seven canonical rows remain

@@ -3,7 +3,19 @@
   "fixture_id": "spatial-ai-detection-map-v1",
   "fps": 30.0,
   "confidence_threshold": 0.5,
+  "below_threshold_confidence": 0.4,
   "perfect_box": [0.0, 0.0, 0.5, 1.0, 1.0, 1.8, 0.0, 0.0, 0.0],
   "class_name": "Person",
-  "timestamp": "2026-01-01T00:00:00.000Z"
+  "timestamp": "2026-01-01T00:00:00.000Z",
+  "camera_sensor_id": "Camera_00",
+  "bev_sensor_id": "bev-sensor-1",
+  "num_frames_to_eval": 2,
+  "expected_retained_predictions": 1,
+  "calibration": {
+    "sensors": [{
+      "id": "Camera_00",
+      "group": {"name": "bev-sensor-1"},
+      "attributes": [{"name": "fps", "value": "30.0"}]
+    }]
+  }
 }

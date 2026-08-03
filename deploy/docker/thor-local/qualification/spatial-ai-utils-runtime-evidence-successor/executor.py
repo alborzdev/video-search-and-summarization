@@ -19,6 +19,7 @@ import importlib.metadata
 import importlib.util
 import io
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -123,23 +124,33 @@ OS_PROCESS_ENTRYPOINTS = tuple(
 )
 EXPECTED_PRODUCT_FUNCTION_COUNTS = {
     "00": {
+        "bev.calculate_group_origins_from_calibration": 2,
+        "bev.create_camera_clusters_from_calibration": 2,
+        "bev.create_camera_groups_from_calibration": 2,
         "group.apply_group_reassignments": 4,
         "group.parse_moves": 5,
         "origin.calculate_and_update_group_origins": 2,
     },
     "01": {
         "boxes.box3d_to_corners": 4,
+        "projection.project_bev_objects_bbox_in_image": 2,
         "projection.project_boxes_3d_to_2d": 4,
-        "projection.project_points_3d_to_image": 1,
+        "projection.project_points_3d_to_image": 3,
+        "projection_cli.main": 2,
     },
     "02": {
+        "visual.draw_bbox3d_on_bev": 2,
         "visual.draw_bbox3d_multicam": 2,
-        "visual.draw_bbox3d_on_img": 5,
+        "visual.draw_bbox3d_on_img": 7,
     },
     "03": {
-        "detection.evaluate_detection": 2,
-        "detection.load_boxes_from_jsonl": 7,
-        "detection.save_detection_results": 2,
+        "detection.accumulate": 8,
+        "detection.calc_ap": 8,
+        "detection.evaluate_detection": 4,
+        "detection.evaluate_detection_per_BEV_sensor": 2,
+        "detection.load_boxes_from_jsonl": 9,
+        "detection.save_detection_results": 4,
+        "detection.split_files_by_sensor": 2,
     },
     "04": {
         "tracking.CLEAR.eval_sequence": 4,
@@ -153,8 +164,8 @@ EXPECTED_PRODUCT_FUNCTION_COUNTS = {
     },
     "06": {
         "video.frames_to_video": 3,
-        "video.list_frame_paths": 5,
-        "video.video_to_frames": 5,
+        "video.list_frame_paths": 7,
+        "video.video_to_frames": 7,
     },
 }
 EXPECTED_NEGATIVE_CASE_IDS = {
@@ -209,23 +220,73 @@ EXPECTED_NEGATIVE_CASE_IDS = {
     ],
 }
 EXPECTED_OBSERVATION_KEYS = {
-    "00": {"updated", "groups"},
-    "01": {"corner_shape", "visible_ids", "pixels"},
-    "02": {"shape", "nonzero_pixels", "pixel_sha256", "inputs_unchanged"},
+    "00": {
+        "updated",
+        "groups",
+        "generated_group_ids",
+        "generated_group_members",
+        "generated_cluster_ids",
+        "generated_cluster_members",
+        "origin_group_ids",
+        "origin_by_group",
+        "origin_output_sha256",
+    },
+    "01": {
+        "corner_shape",
+        "visible_ids",
+        "pixels",
+        "point_projection",
+        "bev_projection",
+        "bev_input_unchanged",
+        "cli_visible_ids",
+        "cli_output_sha256",
+    },
+    "02": {
+        "shape",
+        "nonzero_pixels",
+        "pixel_sha256",
+        "direct_image_pixel_sha256",
+        "bev_shape",
+        "bev_nonzero_pixels",
+        "bev_pixel_sha256",
+        "inputs_unchanged",
+    },
     "03": {
+        "cli_source_sha256",
         "summary",
         "written_files",
         "semantic_output_sha256",
         "determinism_scope",
+        "prediction_filtering",
     },
     "04": {"hota", "clear", "identity", "count", "identity_mismatch"},
-    "05": {"output_sha256", "record", "loaded_frame_ids", "fixed_clock"},
+    "05": {
+        "output_sha256",
+        "record",
+        "loaded_frame_ids",
+        "fixed_clock",
+        "input_quaternion",
+        "non_identity_rotation_verified",
+        "flattened_record",
+        "confidence_consistency",
+    },
     "06": {
         "order",
         "encode_status",
         "decode_status",
         "video_sha256",
         "decoded_pixel_sha256",
+        "decoded_frame_names",
+        "full_decoded_pixel_sha256",
+        "frame_skip",
+        "kept_source_frame_indices",
+        "source_frame_dimensions",
+        "decoded_frame_dimensions",
+        "downsample",
+        "source_order_bgr",
+        "decoded_mean_bgr",
+        "codec_color_tolerance",
+        "dominant_channel_indices",
     },
 }
 
@@ -994,6 +1055,34 @@ def deterministic_dependency_import(name: str) -> Iterator[None]:
             del numpy.__dict__["testing"]
 
 
+@contextlib.contextmanager
+def projection_cli_import_boundary() -> Iterator[None]:
+    """Mask an unused Shapely-backed calibration helper during CLI import.
+
+    The projection CLI calls the real ``load_calib_into_dict`` path, but that
+    module imports ``calculate_group_origin`` eagerly for unrelated grouping
+    entry points. Geometry projection never calls that helper. Keeping a
+    fail-closed stub only for module import preserves the row-01 NumPy-only
+    dependency boundary without replacing the loader or projection behavior.
+    """
+    module_name = "spatialai_data_utils.core.cameras.origin"
+    if module_name in sys.modules:
+        yield
+        return
+    stub = types.ModuleType(module_name)
+
+    def forbidden_group_origin(*_args: Any, **_kwargs: Any) -> None:
+        raise EvidenceError("projection CLI crossed into camera-origin semantics")
+
+    stub.calculate_group_origin = forbidden_group_origin  # type: ignore[attr-defined]
+    sys.modules[module_name] = stub
+    try:
+        yield
+    finally:
+        if sys.modules.get(module_name) is stub:
+            del sys.modules[module_name]
+
+
 def _module_preflight(adapter: str) -> dict[str, Any]:
     observed: dict[str, str] = {}
     missing: list[str] = []
@@ -1258,8 +1347,9 @@ def _calibration_grouping(
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     group = _import_product("spatialai_data_utils.core.cameras.group_utils")
     origin = _import_product("spatialai_data_utils.core.cameras.origin")
+    bev = _import_product("spatialai_data_utils.core.cameras.bev")
 
-    def positive() -> dict[str, Any]:
+    def positive(label: str) -> dict[str, Any]:
         calibration = {"sensors": copy.deepcopy(fixture["sensors"])}
         moves = _product_call("group.parse_moves", group.parse_moves, fixture["moves"])
         updated, warnings = _product_call(
@@ -1286,15 +1376,156 @@ def _calibration_grouping(
             for sensor in computed["sensors"]
         }
         if (
-            updated != 1
+            updated != 2
             or warnings
             or {row["name"] for row in groups.values()} != {"bev-sensor-1"}
         ):
             raise EvidenceError("camera grouping semantic assertion failed")
-        return _jsonable({"updated": updated, "groups": groups})
+        case = root / label
+        case.mkdir()
+        ungrouped = {
+            "version": fixture["version"],
+            "osmURL": fixture["osmURL"],
+            "calibrationType": fixture["calibrationType"],
+            "sensors": copy.deepcopy(fixture["sensors"]),
+        }
+        for sensor in ungrouped["sensors"]:
+            sensor.pop("group", None)
+        source = case / "calibration.json"
+        grouped_path = case / "calibration_grouped.json"
+        clustered_path = case / "calibration_clustered.json"
+        _write_json(source, ungrouped)
+        _product_call(
+            "bev.create_camera_groups_from_calibration",
+            bev.create_camera_groups_from_calibration,
+            str(source),
+            n_groups=2,
+            cameras_per_group=2,
+            output=str(grouped_path),
+            use_frustum=False,
+            image_size=(64, 48),
+            visualize=False,
+            overlap_threshold=0.0,
+            distance_threshold=float("inf"),
+            randomize=False,
+            random_seed=0,
+        )
+        _product_call(
+            "bev.create_camera_clusters_from_calibration",
+            bev.create_camera_clusters_from_calibration,
+            str(source),
+            max_camera_per_group=2,
+            output=str(clustered_path),
+            n_clusters=2,
+            use_frustum=False,
+            image_size=(64, 48),
+            visualize=False,
+            mode="balanced",
+        )
+        generated_groups = strict_json(grouped_path)
+        generated_clusters = strict_json(clustered_path)
+        generated_group_ids = sorted(
+            {sensor["group"]["name"] for sensor in generated_groups["sensors"]}
+        )
+        generated_group_members = {
+            group_id: sorted(
+                sensor["id"]
+                for sensor in generated_groups["sensors"]
+                if sensor["group"]["name"] == group_id
+            )
+            for group_id in generated_group_ids
+        }
+        generated_cluster_ids = sorted(
+            {sensor["group"]["name"] for sensor in generated_clusters["sensors"]}
+        )
+        generated_cluster_members = {
+            group_id: sorted(
+                sensor["id"]
+                for sensor in generated_clusters["sensors"]
+                if sensor["group"]["name"] == group_id
+            )
+            for group_id in generated_cluster_ids
+        }
+        source_ids = sorted(sensor["id"] for sensor in ungrouped["sensors"])
+        clustered_ids = sorted(sensor["id"] for sensor in generated_clusters["sensors"])
+        if (
+            len(generated_group_ids) != 2
+            or any(len(members) != 2 for members in generated_group_members.values())
+            or sorted(set().union(*map(set, generated_group_members.values())))
+            != source_ids
+            or len(generated_cluster_ids) != 2
+            or any(
+                not members or len(members) > 2
+                for members in generated_cluster_members.values()
+            )
+            or clustered_ids != source_ids
+            or len(clustered_ids) != len(set(clustered_ids))
+        ):
+            raise EvidenceError("generated camera grouping assertion failed")
+        origin_path = case / "calibration_with_origins.json"
+        _product_call(
+            "bev.calculate_group_origins_from_calibration",
+            bev.calculate_group_origins_from_calibration,
+            str(clustered_path),
+            output=str(origin_path),
+            prefer_existing_fov=True,
+            visualize=False,
+            n_sensor_groups=len(generated_cluster_ids),
+            max_sensors_per_group=2,
+        )
+        with_origins = strict_json(origin_path)
+        origin_group_ids = sorted(
+            {sensor["group"]["name"] for sensor in with_origins["sensors"]}
+        )
+        origin_by_group: dict[str, dict[str, list[float]]] = {}
+        for sensor in with_origins["sensors"]:
+            group_id = sensor["group"]["name"]
+            values = {
+                "origin": sensor["group"].get("origin"),
+                "dimensions": sensor["group"].get("dimensions"),
+            }
+            numeric = (
+                [*values["origin"], *values["dimensions"]]
+                if all(
+                    isinstance(values[key], list) for key in ("origin", "dimensions")
+                )
+                else []
+            )
+            if (
+                len(values["origin"] or []) != 2
+                or len(values["dimensions"] or []) != 4
+                or not numeric
+                or not all(
+                    isinstance(value, (int, float))
+                    and math.isfinite(value)
+                    and value != 0
+                    for value in numeric
+                )
+                or (group_id in origin_by_group and origin_by_group[group_id] != values)
+            ):
+                raise EvidenceError("group origin/dimensions consistency drift")
+            origin_by_group[group_id] = values
+        if (
+            origin_group_ids != generated_cluster_ids
+            or sorted(origin_by_group) != generated_cluster_ids
+        ):
+            raise EvidenceError("file-backed group origin assertion failed")
+        return _jsonable(
+            {
+                "updated": updated,
+                "groups": groups,
+                "generated_group_ids": generated_group_ids,
+                "generated_group_members": generated_group_members,
+                "generated_cluster_ids": generated_cluster_ids,
+                "generated_cluster_members": generated_cluster_members,
+                "origin_group_ids": origin_group_ids,
+                "origin_by_group": origin_by_group,
+                "origin_output_sha256": sha_file(origin_path),
+            }
+        )
 
-    first = _target_action("positive-run-1", positive)
-    second = _target_action("positive-run-2", positive)
+    first = _target_action("positive-run-1", lambda: positive("run-1"))
+    second = _target_action("positive-run-2", lambda: positive("run-2"))
     negatives = [
         _expect_exception(
             "malformed-move",
@@ -1343,16 +1574,39 @@ def _calibration_grouping(
 def _geometry_projection(
     root: Path, fixture: dict[str, Any]
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    del root
     np = _import_product("numpy")
     boxes = _import_product("spatialai_data_utils.core.boxes.box_3d")
     projection = _import_product("spatialai_data_utils.core.geometry.projection")
+    cli_path = PACKAGE_ROOT / "tools" / "projection" / "project_bbox3d_to_2d.py"
+    cli_spec = importlib.util.spec_from_file_location(
+        "vss_spatial_ai_project_bbox3d_to_2d", cli_path
+    )
+    if cli_spec is None or cli_spec.loader is None:
+        raise EvidenceError("projection CLI module cannot be loaded")
+    projection_cli = importlib.util.module_from_spec(cli_spec)
+    with projection_cli_import_boundary():
+        cli_spec.loader.exec_module(projection_cli)
 
-    def positive() -> dict[str, Any]:
+    def positive(label: str) -> dict[str, Any]:
         values = np.asarray(fixture["boxes_9dof"], dtype=np.float64)
         corners = _product_call(
             "boxes.box3d_to_corners", boxes.box3d_to_corners, values
         )
+        intrinsic = np.eye(4, dtype=np.float64)
+        intrinsic[:3, :3] = np.asarray(
+            fixture["calibration"]["intrinsic_matrix"], dtype=np.float64
+        )
+        world2img = intrinsic @ np.asarray(
+            fixture["calibration"]["w2c_matrix"], dtype=np.float64
+        )
+        point_pixels, point_front = _product_call(
+            "projection.project_points_3d_to_image",
+            projection.project_points_3d_to_image,
+            corners,
+            world2img,
+        )
+        if point_pixels.shape != (2, 8, 2) or not bool(point_front.all()):
+            raise EvidenceError("direct point projection assertion failed")
         pixels, visible = _product_call(
             "projection.project_boxes_3d_to_2d",
             projection.project_boxes_3d_to_2d,
@@ -1362,16 +1616,117 @@ def _geometry_projection(
         )
         if visible != fixture["expected_visible_ids"] or pixels.shape != (1, 8, 2):
             raise EvidenceError("projection visibility assertion failed")
+        bev_objects = []
+        for box_id, coordinates in zip(
+            ("box-visible", "box-offscreen"),
+            fixture["boxes_9dof"],
+            strict=True,
+        ):
+            bev_objects.append(
+                {
+                    "id": box_id,
+                    "type": "Person",
+                    "confidence": 0.9,
+                    "coordinate": {
+                        "x": coordinates[0],
+                        "y": coordinates[1],
+                        "z": coordinates[2],
+                    },
+                    "bbox3d": {
+                        "coordinates": coordinates,
+                        "confidence": 0.9,
+                        "embedding": [{"vector": [0.1, 0.2]}],
+                        "info": {"retained": "yes"},
+                    },
+                }
+            )
+        before = sha_bytes(canonical_bytes(bev_objects))
+        enriched = _product_call(
+            "projection.project_bev_objects_bbox_in_image",
+            projection.project_bev_objects_bbox_in_image,
+            "Camera_00",
+            {"Camera_00": fixture["calibration"]},
+            bev_objects,
+            image_size=tuple(fixture["image_size"]),
+        )
+        after = sha_bytes(canonical_bytes(bev_objects))
+        if [row["id"] for row in enriched] != ["box-visible"] or before != after:
+            raise EvidenceError("NVSchema BEV projection assertion failed")
+        info = enriched[0]["bbox3d"]["info"]
+        vertices = json.loads(info["vertices"])
+        if (
+            info.get("sensorId") != "Camera_00"
+            or info.get("retained") != "yes"
+            or len(vertices) != 8
+            or any(len(vertex) != 2 for vertex in vertices)
+        ):
+            raise EvidenceError("NVSchema BEV projection metadata drift")
+        case = root / label
+        case.mkdir()
+        calibration_path = case / "calibration.json"
+        nvschema_path = case / "input.jsonl"
+        cli_output = case / "output.jsonl"
+        _write_json(
+            calibration_path,
+            {
+                "version": "4.0",
+                "osmURL": "",
+                "calibrationType": "cartesian",
+                "sensors": [
+                    {
+                        "id": "Camera_00",
+                        "type": "camera",
+                        "intrinsicMatrix": fixture["calibration"]["intrinsic_matrix"],
+                        "extrinsicMatrix": fixture["calibration"]["w2c_matrix"][:3],
+                    }
+                ],
+            },
+        )
+        _write_json(
+            nvschema_path,
+            {"id": "0", "sensorId": "bev-sensor-1", "objects": bev_objects},
+        )
+        previous_argv = sys.argv
+        sys.argv = [
+            os.fspath(cli_path),
+            "--sensor_id",
+            "Camera_00",
+            "--calib_path",
+            os.fspath(calibration_path),
+            "--nvschema_path",
+            os.fspath(nvschema_path),
+            "--output_path",
+            os.fspath(cli_output),
+            "--image_size",
+            *(str(value) for value in fixture["image_size"]),
+        ]
+        try:
+            _product_call("projection_cli.main", projection_cli.main)
+        finally:
+            sys.argv = previous_argv
+        cli_frame = strict_json(cli_output)
+        cli_visible_ids = [row["id"] for row in cli_frame["objects"]]
+        if cli_visible_ids != ["box-visible"]:
+            raise EvidenceError("projection CLI visibility filtering drift")
         return _jsonable(
             {
                 "corner_shape": list(corners.shape),
                 "visible_ids": visible,
                 "pixels": pixels,
+                "point_projection": {
+                    "shape": list(point_pixels.shape),
+                    "front_count": int(point_front.sum()),
+                    "sha256": sha_bytes(point_pixels.tobytes()),
+                },
+                "bev_projection": enriched,
+                "bev_input_unchanged": True,
+                "cli_visible_ids": cli_visible_ids,
+                "cli_output_sha256": sha_file(cli_output),
             }
         )
 
-    first = _target_action("positive-run-1", positive)
-    second = _target_action("positive-run-2", positive)
+    first = _target_action("positive-run-1", lambda: positive("run-1"))
+    second = _target_action("positive-run-2", lambda: positive("run-2"))
     offscreen = np.asarray([fixture["boxes_9dof"][1]], dtype=np.float64)
 
     def fully_offscreen() -> tuple[Any, Any]:
@@ -1442,10 +1797,25 @@ def _multiview_visualization(
         shape = tuple(fixture["image_shape"])
         imgs = [np.zeros(shape, dtype=np.uint8) for _ in range(2)]
         before = [sha_bytes(item.tobytes()) for item in imgs]
+        boxes = np.asarray(fixture["boxes_9dof"], dtype=float)
+        direct_image = _product_call(
+            "visual.draw_bbox3d_on_img",
+            visual.draw_bbox3d_on_img,
+            boxes,
+            imgs[0],
+            world2img=np.asarray(fixture["world2imgs"][0], dtype=float),
+            shade_heading=False,
+        )
+        bev = _product_call(
+            "visual.draw_bbox3d_on_bev",
+            visual.draw_bbox3d_on_bev,
+            boxes,
+            shape[0],
+        )
         output = _product_call(
             "visual.draw_bbox3d_multicam",
             visual.draw_bbox3d_multicam,
-            np.asarray(fixture["boxes_9dof"], dtype=float),
+            boxes,
             imgs,
             world2imgs=[
                 np.asarray(item, dtype=float) for item in fixture["world2imgs"]
@@ -1455,6 +1825,10 @@ def _multiview_visualization(
         after = [sha_bytes(item.tobytes()) for item in imgs]
         if (
             before != after
+            or direct_image.shape != shape
+            or int(np.count_nonzero(direct_image)) == 0
+            or bev.shape != (shape[0], shape[0], 3)
+            or int(np.count_nonzero(bev)) == 0
             or output.shape != (96, 352, 3)
             or int(np.count_nonzero(output)) == 0
         ):
@@ -1463,6 +1837,10 @@ def _multiview_visualization(
             "shape": list(output.shape),
             "nonzero_pixels": int(np.count_nonzero(output)),
             "pixel_sha256": sha_bytes(output.tobytes()),
+            "direct_image_pixel_sha256": sha_bytes(direct_image.tobytes()),
+            "bev_shape": list(bev.shape),
+            "bev_nonzero_pixels": int(np.count_nonzero(bev)),
+            "bev_pixel_sha256": sha_bytes(bev.tobytes()),
             "inputs_unchanged": True,
         }
 
@@ -1525,13 +1903,18 @@ def _multiview_visualization(
     return first, negatives
 
 
-def _detection_row(fixture: dict[str, Any], confidence: float | None) -> dict[str, Any]:
+def _detection_row(
+    fixture: dict[str, Any],
+    confidence: float | None,
+    *,
+    sensor_id: str | None = None,
+) -> dict[str, Any]:
     bbox = {"coordinates": fixture["perfect_box"]}
     if confidence is not None:
         bbox["confidence"] = confidence
     return {
         "id": 1,
-        "sensorId": "Camera_00",
+        "sensorId": sensor_id or fixture["camera_sensor_id"],
         "timestamp": fixture["timestamp"],
         "objects": [{"id": 1, "type": fixture["class_name"], "bbox3d": bbox}],
     }
@@ -1548,19 +1931,20 @@ def _detection_map(
         case = root / label
         case.mkdir()
         gt_path, pred_path = case / "gt.jsonl", case / "pred.jsonl"
+        calibration_path = case / "calibration.json"
         _write_json(gt_path, _detection_row(fixture, None))
-        _write_json(pred_path, _detection_row(fixture, 0.9))
-        gt, pred = _product_call(
-            "detection.load_boxes_from_jsonl",
-            loaders.load_boxes_from_jsonl,
-            str(gt_path),
-            str(pred_path),
-            fps=fixture["fps"],
-            confidence_threshold=fixture["confidence_threshold"],
+        prediction_row = _detection_row(
+            fixture,
+            0.9,
+            sensor_id=fixture["bev_sensor_id"],
         )
+        below_threshold = copy.deepcopy(prediction_row["objects"][0])
+        below_threshold["id"] = 2
+        below_threshold["bbox3d"]["confidence"] = fixture["below_threshold_confidence"]
+        prediction_row["objects"].append(below_threshold)
+        _write_json(pred_path, prediction_row)
+        _write_json(calibration_path, fixture["calibration"])
         config = classes.DetectionConfig(
-            # The product loader emits its canonical, case-sensitive primary
-            # class name ("Person" in this locked fixture).
             class_range={fixture["class_name"]: 50},
             dist_fcn="center_distance",
             dist_ths=[0.5, 1.0],
@@ -1570,42 +1954,159 @@ def _detection_map(
             max_boxes_per_sample=500,
             mean_ap_weight=5,
         )
-        metrics, details = _product_call(
-            "detection.evaluate_detection",
-            evaluate.evaluate_detection,
-            gt,
-            pred,
-            config,
-            verbose=False,
+        original_accumulate = evaluate.accumulate
+        original_calc_ap = evaluate.calc_ap
+        original_load = evaluate.load_boxes_from_jsonl
+        original_evaluate = evaluate.evaluate_detection
+        original_save = evaluate.save_detection_results
+        original_split = evaluate.split_files_by_sensor
+
+        def counted_accumulate(*args: Any, **kwargs: Any) -> Any:
+            return _product_call(
+                "detection.accumulate", original_accumulate, *args, **kwargs
+            )
+
+        def counted_calc_ap(*args: Any, **kwargs: Any) -> Any:
+            return _product_call("detection.calc_ap", original_calc_ap, *args, **kwargs)
+
+        def counted_load(*args: Any, **kwargs: Any) -> Any:
+            return _product_call(
+                "detection.load_boxes_from_jsonl", original_load, *args, **kwargs
+            )
+
+        def counted_evaluate(*args: Any, **kwargs: Any) -> Any:
+            return _product_call(
+                "detection.evaluate_detection", original_evaluate, *args, **kwargs
+            )
+
+        def counted_save(*args: Any, **kwargs: Any) -> Any:
+            return _product_call(
+                "detection.save_detection_results", original_save, *args, **kwargs
+            )
+
+        def counted_split(*args: Any, **kwargs: Any) -> Any:
+            return _product_call(
+                "detection.split_files_by_sensor", original_split, *args, **kwargs
+            )
+
+        evaluate.accumulate = counted_accumulate
+        evaluate.calc_ap = counted_calc_ap
+        evaluate.load_boxes_from_jsonl = counted_load
+        evaluate.evaluate_detection = counted_evaluate
+        evaluate.save_detection_results = counted_save
+        evaluate.split_files_by_sensor = counted_split
+        direct_output = case / "direct-output"
+        try:
+            gt_boxes, pred_boxes = _product_call(
+                "detection.load_boxes_from_jsonl",
+                loaders.load_boxes_from_jsonl,
+                str(gt_path),
+                str(pred_path),
+                fps=fixture["fps"],
+                confidence_threshold=fixture["confidence_threshold"],
+            )
+            direct_prediction_count = sum(
+                len(boxes) for boxes in pred_boxes.boxes.values()
+            )
+            if direct_prediction_count != fixture["expected_retained_predictions"]:
+                raise EvidenceError("direct confidence filtering assertion failed")
+            metrics, details = evaluate.evaluate_detection(
+                gt_boxes,
+                pred_boxes,
+                config,
+                verbose=False,
+            )
+            evaluate.save_detection_results(
+                metrics,
+                details,
+                str(direct_output),
+            )
+            _product_call(
+                "detection.evaluate_detection_per_BEV_sensor",
+                evaluate.evaluate_detection_per_BEV_sensor,
+                ground_truth_file=str(gt_path),
+                prediction_file=str(pred_path),
+                calibration_file=str(calibration_path),
+                output_root_dir=str(case / "out"),
+                confidence_threshold=fixture["confidence_threshold"],
+                num_frames_to_eval=fixture["num_frames_to_eval"],
+                config=config,
+            )
+        finally:
+            evaluate.accumulate = original_accumulate
+            evaluate.calc_ap = original_calc_ap
+            evaluate.load_boxes_from_jsonl = original_load
+            evaluate.evaluate_detection = original_evaluate
+            evaluate.save_detection_results = original_save
+            evaluate.split_files_by_sensor = original_split
+        sensor_output = (
+            case / "out" / "detection_results" / fixture["bev_sensor_id"] / "output"
         )
-        summary = _product_call(
-            "detection.save_detection_results",
-            evaluate.save_detection_results,
-            metrics,
-            details,
-            str(case / "out"),
-        )
-        semantic = copy.deepcopy(summary)
-        semantic.pop("eval_time", None)
-        if float(semantic["mean_ap"]) <= 0.99:
-            raise EvidenceError("perfect detection mAP assertion failed")
-        written_files = sorted(
-            path.name for path in (case / "out").iterdir() if path.is_file()
-        )
-        written_summary = strict_json(case / "out" / "metrics_summary.json")
-        written_summary.pop("eval_time", None)
-        output_hashes = {
-            "metrics_details.json": sha_file(case / "out" / "metrics_details.json"),
+        split_prediction = strict_json(sensor_output.parent / "pred.json")
+        per_bev_prediction_count = len(split_prediction["objects"])
+        if (
+            per_bev_prediction_count != fixture["expected_retained_predictions"]
+            or split_prediction["objects"][0]["bbox3d"]["confidence"] != 0.9
+        ):
+            raise EvidenceError("per-BEV confidence filtering assertion failed")
+        direct_semantic = strict_json(direct_output / "metrics_summary.json")
+        direct_semantic.pop("eval_time", None)
+        per_bev_semantic = strict_json(sensor_output / "metrics_summary.json")
+        per_bev_semantic.pop("eval_time", None)
+        if (
+            float(direct_semantic["mean_ap"]) <= 0.99
+            or float(per_bev_semantic["mean_ap"]) <= 0.99
+            or direct_semantic != per_bev_semantic
+        ):
+            raise EvidenceError("direct/per-BEV detection mAP assertion failed")
+        written_files = {
+            "direct": sorted(
+                path.name for path in direct_output.iterdir() if path.is_file()
+            ),
+            "per_bev": sorted(
+                path.name for path in sensor_output.iterdir() if path.is_file()
+            ),
+        }
+        direct_output_hashes = {
+            "metrics_details.json": sha_file(direct_output / "metrics_details.json"),
             "metrics_summary.json#without-eval_time": sha_bytes(
-                canonical_bytes(written_summary)
+                canonical_bytes(direct_semantic)
+            ),
+        }
+        per_bev_output_hashes = {
+            "detection_metrics.csv": sha_file(sensor_output / "detection_metrics.csv"),
+            "metrics_details.json": sha_file(sensor_output / "metrics_details.json"),
+            "metrics_summary.json#without-eval_time": sha_bytes(
+                canonical_bytes(per_bev_semantic)
             ),
         }
         return _jsonable(
             {
-                "summary": semantic,
+                "cli_source_sha256": sha_file(
+                    repo_file(
+                        "libs/analytics/spatialai-data-utils/tools/"
+                        "validation_and_evaluation/run_validation_and_evaluation.py"
+                    )
+                ),
+                "summary": {
+                    "direct": direct_semantic,
+                    "per_bev": per_bev_semantic,
+                },
                 "written_files": written_files,
-                "semantic_output_sha256": output_hashes,
-                "determinism_scope": "semantic_payload_excluding_eval_time",
+                "semantic_output_sha256": {
+                    "direct": direct_output_hashes,
+                    "per_bev": per_bev_output_hashes,
+                },
+                "determinism_scope": (
+                    "direct_and_per_bev_payloads_excluding_summary_eval_time"
+                ),
+                "prediction_filtering": {
+                    "submitted": len(prediction_row["objects"]),
+                    "below_threshold_confidence": fixture["below_threshold_confidence"],
+                    "confidence_threshold": fixture["confidence_threshold"],
+                    "direct_retained": direct_prediction_count,
+                    "per_bev_retained": per_bev_prediction_count,
+                },
             }
         )
 
@@ -1856,19 +2357,62 @@ def _nvschema_conversion(
             "nvschema.load_nvschema",
             loader.load_nvschema,
             str(output),
-            output_format="nvschema",
+            output_format="gt_json_aicity",
         )
         record = json.loads(output.read_text(encoding="utf-8").strip())
         obj = record["objects"][0]
         coords = obj["bbox3d"]["coordinates"]
         if record["version"] != "4.0" or coords[3:6] != [5.0, 2.0, 1.8]:
             raise EvidenceError("NVSchema conversion assertion failed")
+        if (
+            fixture["results"]["sceneA+bev-sensor-1__0"][0]["rotation"]
+            == [1.0, 0.0, 0.0, 0.0]
+            or coords[6:9] != fixture["expected_euler_rotation"]
+            or not any(abs(value) > 1e-9 for value in coords[6:9])
+        ):
+            raise EvidenceError("non-identity quaternion rotation assertion failed")
         if obj["bbox3d"]["embedding"] != [{"vector": [0.1, 0.2, 0.3]}] or not loaded:
             raise EvidenceError("NVSchema loader round-trip assertion failed")
+        flattened = loaded[0]["bev-sensor-1"][0]
+        flattened_record = {
+            "object id": flattened["object id"],
+            "type": flattened["type"],
+            "confidence": flattened["confidence"],
+            "3d location": flattened["3d location"],
+            "3d bounding box scale": flattened["3d bounding box scale"],
+            "3d bounding box rotation": flattened["3d bounding box rotation"],
+        }
+        expected_flattened = {
+            "object id": 42,
+            "type": "Person",
+            "confidence": 0.9,
+            "3d location": [1.0, 2.0, 0.5],
+            "3d bounding box scale": [5.0, 2.0, 1.8],
+            "3d bounding box rotation": fixture["expected_euler_rotation"],
+        }
+        confidence_consistency = {
+            "top_level": obj["confidence"],
+            "bbox3d": obj["bbox3d"]["confidence"],
+        }
+        if (
+            flattened_record != expected_flattened
+            or not any(
+                abs(value) > 1e-9
+                for value in flattened_record["3d bounding box rotation"]
+            )
+            or confidence_consistency != {"top_level": 0.9, "bbox3d": 0.9}
+        ):
+            raise EvidenceError("flattened NVSchema semantic assertion failed")
         return {
             "output_sha256": sha_file(output),
             "record": _jsonable(record),
             "loaded_frame_ids": sorted(loaded),
+            "input_quaternion": fixture["results"]["sceneA+bev-sensor-1__0"][0][
+                "rotation"
+            ],
+            "non_identity_rotation_verified": True,
+            "flattened_record": flattened_record,
+            "confidence_consistency": confidence_consistency,
         }
 
     first = _target_action("positive-run-1", lambda: positive("run-1"))
@@ -1998,21 +2542,108 @@ def _video_frame_tools(
             "video.list_frame_paths", encode.list_frame_paths, str(decoded), ("*.png",)
         )
         sample = [cv2.imread(item) for item in paths]
+        full_decoded = case / "decoded-full"
+        full_status = _product_call(
+            "video.video_to_frames",
+            decode.video_to_frames,
+            str(video),
+            str(full_decoded),
+            frame_skip=1,
+            overwrite=True,
+            progress=False,
+        )
+        full_paths = _product_call(
+            "video.list_frame_paths",
+            encode.list_frame_paths,
+            str(full_decoded),
+            ("*.png",),
+        )
+        full_sample = [cv2.imread(item) for item in full_paths]
         if status_encode != "completed" or status_decode not in {
             "completed",
             "incomplete_extraction",
         }:
             raise EvidenceError(f"codec path failed: {status_encode}/{status_decode}")
-        if len(sample) != 4 or any(
-            item is None or item.shape[:2] != (24, 32) for item in sample
+        expected_kept = list(range(0, len(full_sample), fixture["frame_skip"]))
+        source_dimensions = [height, width]
+        expected_decoded_dimensions = [
+            height // fixture["downsample"],
+            width // fixture["downsample"],
+        ]
+        if len(sample) != len(expected_kept) or any(
+            item is None or list(item.shape[:2]) != expected_decoded_dimensions
+            for item in sample
         ):
             raise EvidenceError("decoded frame count/dimensions assertion failed")
+        if (
+            full_status not in {"completed", "incomplete_extraction"}
+            or len(full_sample) != 4
+            or any(
+                item is None or list(item.shape[:2]) != expected_decoded_dimensions
+                for item in full_sample
+            )
+            or expected_decoded_dimensions
+            != [value // fixture["downsample"] for value in source_dimensions]
+        ):
+            raise EvidenceError("full decode/downsample assertion failed")
+        skipped_digests = [sha_bytes(item.tobytes()) for item in sample]
+        full_digests = [sha_bytes(item.tobytes()) for item in full_sample]
+        if fixture["frame_skip"] != 2 or skipped_digests != [
+            full_digests[index] for index in expected_kept
+        ]:
+            raise EvidenceError("nontrivial frame_skip assertion failed")
+        color_by_name = dict(
+            zip(
+                ("10.png", "2.png", "1.png", "20.png"),
+                fixture["frames_bgr"],
+                strict=True,
+            )
+        )
+        source_order_bgr = [color_by_name[name] for name in order]
+        decoded_mean_bgr = [
+            [round(float(value), 3) for value in image.mean(axis=(0, 1))]
+            for image in full_sample
+        ]
+        tolerance = fixture["codec_color_tolerance"]
+        if any(
+            abs(observed - expected) > tolerance
+            for observed_row, expected_row in zip(
+                decoded_mean_bgr, source_order_bgr, strict=True
+            )
+            for observed, expected in zip(observed_row, expected_row, strict=True)
+        ):
+            raise EvidenceError("decoded mean BGR fidelity assertion failed")
+        dominant_channel_indices = []
+        for source_color, decoded_mean in zip(
+            source_order_bgr[:3], decoded_mean_bgr[:3], strict=True
+        ):
+            source_dominant = int(np.argmax(source_color))
+            decoded_dominant = int(np.argmax(decoded_mean))
+            if (
+                source_color.count(max(source_color)) != 1
+                or source_dominant != decoded_dominant
+            ):
+                raise EvidenceError("decoded dominant BGR channel assertion failed")
+            dominant_channel_indices.append(
+                {"source": source_dominant, "decoded": decoded_dominant}
+            )
         return {
             "order": order,
             "encode_status": status_encode,
             "decode_status": status_decode,
             "video_sha256": sha_file(video),
-            "decoded_pixel_sha256": [sha_bytes(item.tobytes()) for item in sample],
+            "decoded_pixel_sha256": skipped_digests,
+            "decoded_frame_names": [Path(item).name for item in paths],
+            "full_decoded_pixel_sha256": full_digests,
+            "frame_skip": fixture["frame_skip"],
+            "kept_source_frame_indices": expected_kept,
+            "source_frame_dimensions": source_dimensions,
+            "decoded_frame_dimensions": expected_decoded_dimensions,
+            "downsample": fixture["downsample"],
+            "source_order_bgr": source_order_bgr,
+            "decoded_mean_bgr": decoded_mean_bgr,
+            "codec_color_tolerance": tolerance,
+            "dominant_channel_indices": dominant_channel_indices,
         }
 
     first = _target_action("positive-run-1", lambda: positive("run-1"))

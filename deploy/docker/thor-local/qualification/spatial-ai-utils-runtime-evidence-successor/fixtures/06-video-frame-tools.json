@@ -4,7 +4,8 @@
   "frame_size": [64, 48],
   "fps": 5.0,
   "codec": "mp4v",
+  "codec_color_tolerance": 12.0,
   "frames_bgr": [[0, 0, 255], [0, 255, 0], [255, 0, 0], [255, 255, 255]],
   "downsample": 2,
-  "frame_skip": 1
+  "frame_skip": 2
 }

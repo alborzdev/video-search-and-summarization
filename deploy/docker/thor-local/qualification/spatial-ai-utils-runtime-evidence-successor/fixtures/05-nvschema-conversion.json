@@ -7,11 +7,12 @@
     "sceneA+bev-sensor-1__0": [{
       "translation": [1.0, 2.0, 0.5],
       "size": [2.0, 5.0, 1.8],
-      "rotation": [1.0, 0.0, 0.0, 0.0],
+      "rotation": [0.7071067811865476, 0.0, 0.0, 0.7071067811865475],
       "tracking_id": "42",
       "tracking_score": 0.9,
       "tracking_name": "person",
       "reid_embedding": [0.1, 0.2, 0.3]
     }]
-  }
+  },
+  "expected_euler_rotation": [0.0, 0.0, 1.570796327]
 }
