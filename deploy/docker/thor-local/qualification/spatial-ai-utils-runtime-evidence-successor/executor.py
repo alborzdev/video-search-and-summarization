@@ -47,6 +47,13 @@ EXECUTOR_REL = (
     "deploy/docker/thor-local/qualification/"
     "spatial-ai-utils-runtime-evidence-successor/executor.py"
 )
+METADATA_SELECTOR_REL = "deploy/docker/thor-local/parity/metadata_sets/selector.json"
+METADATA_SELECTOR_SCHEMA_REL = (
+    "deploy/docker/thor-local/parity/metadata_sets/selector.schema.json"
+)
+METADATA_SET_SCHEMA_REL = (
+    "deploy/docker/thor-local/parity/metadata_sets/metadata-set.schema.json"
+)
 EXPECTED_CAPABILITIES = [
     "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
     "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
@@ -56,6 +63,7 @@ EXPECTED_CAPABILITIES = [
     "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
     "manifest-entry.spatial-ai-utils.06-video-frame-tools",
 ]
+PROMOTION_FAMILY_ID = "spatial-ai-utils"
 EXPECTED_EXECUTOR_READY_CAPABILITIES = [
     "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
     "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
@@ -467,19 +475,27 @@ def sha_file(path: Path) -> str:
     return sha_bytes(path.read_bytes())
 
 
-def strict_json(path: Path) -> Any:
+def _strict_json_bytes(payload: bytes, label: str) -> Any:
     def pairs(rows: list[tuple[str, Any]]) -> dict[str, Any]:
         value: dict[str, Any] = {}
         for key, item in rows:
             if key in value:
-                raise EvidenceError(f"duplicate JSON key in {path}: {key}")
+                raise EvidenceError(f"duplicate JSON key in {label}: {key}")
             value[key] = item
         return value
 
     try:
-        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=pairs)
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        return json.loads(payload.decode("utf-8"), object_pairs_hook=pairs)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise EvidenceError(f"invalid JSON: {label}") from exc
+
+
+def strict_json(path: Path) -> Any:
+    try:
+        payload = path.read_bytes()
+    except OSError as exc:
         raise EvidenceError(f"invalid JSON: {path}") from exc
+    return _strict_json_bytes(payload, os.fspath(path))
 
 
 def repo_file(relative: str) -> Path:
@@ -506,10 +522,26 @@ def repo_file(relative: str) -> Path:
     return resolved
 
 
+def _read_repo_json_record(relative: str) -> tuple[bytes, Any]:
+    """Read once so the parsed value and recorded digest share exact bytes."""
+    path = repo_file(relative)
+    try:
+        payload = path.read_bytes()
+    except OSError as exc:
+        raise EvidenceError(f"repository JSON read failed: {relative}") from exc
+    return payload, _strict_json_bytes(payload, relative)
+
+
 def open_safe_output_parent(path: Path) -> tuple[Path, int]:
     absolute = Path(os.path.abspath(os.fspath(path)))
     if not absolute.name or absolute == Path(absolute.anchor):
         raise EvidenceError("receipt output must name a file")
+    try:
+        absolute.relative_to(REPO_ROOT.resolve(strict=True))
+    except ValueError:
+        pass
+    else:
+        raise EvidenceError("receipt output must be outside the repository")
     current_fd = os.open(absolute.anchor, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     try:
         for part in absolute.parent.parts[1:]:
@@ -528,14 +560,18 @@ def open_safe_output_parent(path: Path) -> tuple[Path, int]:
         ) from exc
 
 
-def publish_receipt_exclusive(path: Path, rendered: str) -> None:
+def publish_receipt_exclusive(
+    path: Path,
+    rendered: str,
+    validate_after_write: Callable[[], None] | None = None,
+) -> None:
     destination, parent_fd = open_safe_output_parent(path)
     receipt_fd: int | None = None
     created = False
     try:
         receipt_fd = os.open(
             destination.name,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+            os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
             0o600,
             dir_fd=parent_fd,
         )
@@ -547,6 +583,17 @@ def publish_receipt_exclusive(path: Path, rendered: str) -> None:
         while offset < len(payload):
             offset += os.write(receipt_fd, payload[offset:])
         os.fsync(receipt_fd)
+        os.lseek(receipt_fd, 0, os.SEEK_SET)
+        observed = b""
+        while len(observed) < len(payload):
+            chunk = os.read(receipt_fd, len(payload) - len(observed))
+            if not chunk:
+                break
+            observed += chunk
+        if observed != payload or os.read(receipt_fd, 1) != b"":
+            raise EvidenceError("published receipt bytes differ")
+        if validate_after_write is not None:
+            validate_after_write()
     except FileExistsError as exc:
         raise EvidenceError("receipt output path already exists") from exc
     except Exception:
@@ -953,7 +1000,180 @@ def verify_static_locks(contract: dict[str, Any]) -> None:
                 raise EvidenceError(f"source drift: {lock['path']}")
 
 
+def _validate_spatial_metadata_alignment(
+    contract: dict[str, Any],
+    root_ledger_document: dict[str, Any],
+    root_oracle_document: dict[str, Any],
+    selected_ledger_document: dict[str, Any],
+    selected_oracle_document: dict[str, Any],
+    descriptor: dict[str, Any],
+) -> dict[str, str]:
+    target = {
+        "main_commit": contract["target"]["upstream_commit"],
+        "product_version": contract["target"]["product_version"],
+    }
+    for label, document in (
+        ("root ledger", root_ledger_document),
+        ("root oracle", root_oracle_document),
+        ("selected ledger", selected_ledger_document),
+        ("selected oracle", selected_oracle_document),
+        ("selected descriptor", descriptor),
+    ):
+        if not isinstance(document, dict):
+            raise EvidenceError(f"{label} is not a JSON object")
+        observed = document.get("target", {})
+        if not isinstance(observed, dict) or any(
+            observed.get(key) != value for key, value in target.items()
+        ):
+            raise EvidenceError(f"{label} target differs from runtime contract")
+    root_ledger = _rows_by_id(root_ledger_document, "capabilities", "id")
+    root_oracles = _rows_by_id(root_oracle_document, "oracles", "capability_id")
+    selected_ledger = _rows_by_id(selected_ledger_document, "capabilities", "id")
+    selected_oracles = _rows_by_id(selected_oracle_document, "oracles", "capability_id")
+    if len(root_ledger) != 289 or len(root_oracles) != 289:
+        raise EvidenceError("root metadata denominator drift")
+    if len(selected_ledger) != 500 or len(selected_oracles) != 500:
+        raise EvidenceError("selected metadata denominator drift")
+    for capability in contract["capabilities"]:
+        capability_id = capability["capability_id"]
+        root_row = root_ledger.get(capability_id)
+        root_oracle = root_oracles.get(capability_id)
+        selected_row = selected_ledger.get(capability_id)
+        selected_oracle = selected_oracles.get(capability_id)
+        if any(
+            value is None
+            for value in (root_row, root_oracle, selected_row, selected_oracle)
+        ):
+            raise EvidenceError(f"missing root/selected SpatialAI row: {capability_id}")
+        if (
+            sha_bytes(canonical_bytes(root_row))
+            != capability["current_ledger_row_sha256"]
+            or sha_bytes(canonical_bytes(root_oracle))
+            != capability["current_oracle_sha256"]
+            or selected_row != root_row
+            or selected_oracle != root_oracle
+        ):
+            raise EvidenceError(
+                f"divergent root/selected SpatialAI row: {capability_id}"
+            )
+        if (
+            root_row.get("feature_id") != PROMOTION_FAMILY_ID
+            or root_row.get("runtime_state") != "not_qualified"
+            or root_oracle.get("current_state") != "open_unexecuted"
+            or root_oracle.get("evidence") != []
+        ):
+            raise EvidenceError(f"unexpected root/selected state: {capability_id}")
+        readiness = root_oracle.get("acceptance_readiness", {})
+        expected_classification = (
+            "executor_ready"
+            if capability_id in EXPECTED_EXECUTOR_READY_CAPABILITIES
+            else "planning_index_only"
+        )
+        blockers = readiness.get("blockers") if isinstance(readiness, dict) else None
+        if (
+            not isinstance(readiness, dict)
+            or readiness.get("classification") != expected_classification
+            or (expected_classification == "executor_ready" and blockers != [])
+            or (
+                expected_classification == "planning_index_only"
+                and (not isinstance(blockers, list) or not blockers)
+            )
+        ):
+            raise EvidenceError(f"unexpected root/selected readiness: {capability_id}")
+    external_id = contract["policy"]["external_provider_entry"]
+    root_external = root_ledger.get(external_id)
+    root_external_oracle = root_oracles.get(external_id)
+    if (
+        root_external is None
+        or root_external_oracle is None
+        or selected_ledger.get(external_id) != root_external
+        or selected_oracles.get(external_id) != root_external_oracle
+        or (
+            root_external.get("acceptance_class"),
+            root_external.get("thor_state"),
+            root_external.get("runtime_state"),
+        )
+        != ("external_optional", "external_optional", "not_applicable")
+        or root_external_oracle.get("current_state") != "external_boundary_unexecuted"
+    ):
+        raise EvidenceError("root/selected AWS/GCS external boundary drift")
+    return {
+        "selected_target_main_commit": target["main_commit"],
+        "selected_target_product_version": target["product_version"],
+    }
+
+
+def active_metadata_selection_binding(contract: dict[str, Any]) -> dict[str, Any]:
+    selector_payload, selector = _read_repo_json_record(METADATA_SELECTOR_REL)
+    _, selector_schema = _read_repo_json_record(METADATA_SELECTOR_SCHEMA_REL)
+    errors = sorted(
+        Draft202012Validator(selector_schema).iter_errors(selector),
+        key=lambda error: tuple(str(item) for item in error.absolute_path),
+    )
+    if errors:
+        raise EvidenceError(f"metadata selector schema violation: {errors[0].message}")
+    selected_id = selector["selected_set"]
+    entries = [
+        row for row in selector["available_sets"] if row["set_id"] == selected_id
+    ]
+    if len(entries) != 1:
+        raise EvidenceError("active metadata selector identity drift")
+    entry = entries[0]
+    descriptor_payload, descriptor = _read_repo_json_record(entry["descriptor_path"])
+    if sha_bytes(descriptor_payload) != entry["descriptor_raw_sha256"]:
+        raise EvidenceError("active metadata descriptor digest drift")
+    _, descriptor_schema = _read_repo_json_record(METADATA_SET_SCHEMA_REL)
+    errors = sorted(
+        Draft202012Validator(descriptor_schema).iter_errors(descriptor),
+        key=lambda error: tuple(str(item) for item in error.absolute_path),
+    )
+    if errors:
+        raise EvidenceError(
+            f"metadata descriptor schema violation: {errors[0].message}"
+        )
+    if descriptor["set_id"] != selected_id or descriptor["lifecycle"] != "live_ready":
+        raise EvidenceError("active metadata descriptor identity/lifecycle drift")
+    ledger = descriptor["documents"]["official_capabilities"]
+    oracle = descriptor["documents"]["capability_oracles"]
+    selected_ledger_payload, selected_ledger = _read_repo_json_record(ledger["path"])
+    selected_oracle_payload, selected_oracle = _read_repo_json_record(oracle["path"])
+    if sha_bytes(selected_ledger_payload) != ledger["raw_sha256"]:
+        raise EvidenceError("selected metadata ledger digest drift")
+    if sha_bytes(selected_oracle_payload) != oracle["raw_sha256"]:
+        raise EvidenceError("selected metadata oracle digest drift")
+    root_ledger_payload, root_ledger = _read_repo_json_record(
+        contract["target"]["current_ledger_document"]
+    )
+    root_oracle_payload, root_oracle = _read_repo_json_record(
+        contract["target"]["current_oracle_document"]
+    )
+    selected_target = _validate_spatial_metadata_alignment(
+        contract,
+        root_ledger,
+        root_oracle,
+        selected_ledger,
+        selected_oracle,
+        descriptor,
+    )
+    return {
+        "metadata_selector_path": METADATA_SELECTOR_REL,
+        "metadata_selector_raw_sha256": sha_bytes(selector_payload),
+        "selected_metadata_set_id": selected_id,
+        "selected_descriptor_path": entry["descriptor_path"],
+        "selected_descriptor_raw_sha256": sha_bytes(descriptor_payload),
+        "selected_ledger_path": ledger["path"],
+        "selected_ledger_raw_sha256": sha_bytes(selected_ledger_payload),
+        "selected_oracle_path": oracle["path"],
+        "selected_oracle_raw_sha256": sha_bytes(selected_oracle_payload),
+        "ledger_document_sha256": sha_bytes(root_ledger_payload),
+        "oracle_document_sha256": sha_bytes(root_oracle_payload),
+        **selected_target,
+    }
+
+
 def _rows_by_id(document: dict[str, Any], collection: str, key: str) -> dict[str, Any]:
+    if not isinstance(document, dict):
+        raise EvidenceError(f"metadata document for {collection} is not an object")
     rows = document.get(collection)
     if not isinstance(rows, list):
         raise EvidenceError(f"missing {collection} collection")
@@ -964,75 +1184,82 @@ def _rows_by_id(document: dict[str, Any], collection: str, key: str) -> dict[str
 
 
 def verify_bindings(contract: dict[str, Any], require_clean: bool) -> dict[str, Any]:
-    ledger_path = repo_file(contract["target"]["current_ledger_document"])
-    oracle_path = repo_file(contract["target"]["current_oracle_document"])
-    ledger = _rows_by_id(strict_json(ledger_path), "capabilities", "id")
-    oracles = _rows_by_id(strict_json(oracle_path), "oracles", "capability_id")
-    for capability in contract["capabilities"]:
-        capability_id = capability["capability_id"]
-        row = ledger.get(capability_id)
-        oracle = oracles.get(capability_id)
-        if row is None or oracle is None:
-            raise EvidenceError(f"missing canonical row: {capability_id}")
-        if sha_bytes(canonical_bytes(row)) != capability["current_ledger_row_sha256"]:
-            raise EvidenceError(f"current ledger row drift: {capability_id}")
-        if sha_bytes(canonical_bytes(oracle)) != capability["current_oracle_sha256"]:
-            raise EvidenceError(f"current oracle row drift: {capability_id}")
-        if (
-            row.get("feature_id") != "spatial-ai-utils"
-            or row.get("runtime_state") != "not_qualified"
-        ):
-            raise EvidenceError(f"unexpected current ledger state: {capability_id}")
-        if (
-            oracle.get("current_state") != "open_unexecuted"
-            or oracle.get("evidence") != []
-        ):
-            raise EvidenceError(f"unexpected current oracle state: {capability_id}")
-        readiness = oracle.get("acceptance_readiness")
-        expected_classification = (
-            "executor_ready"
-            if capability_id in EXPECTED_EXECUTOR_READY_CAPABILITIES
-            else "planning_index_only"
-        )
-        if (
-            not isinstance(readiness, dict)
-            or readiness.get("classification") != expected_classification
-        ):
-            raise EvidenceError(f"unexpected current oracle readiness: {capability_id}")
-        blockers = readiness.get("blockers")
-        if (expected_classification == "executor_ready" and blockers != []) or (
-            expected_classification == "planning_index_only"
-            and (not isinstance(blockers, list) or not blockers)
-        ):
-            raise EvidenceError(f"unexpected current oracle blockers: {capability_id}")
-    external = ledger.get(contract["policy"]["external_provider_entry"])
-    external_oracle = oracles.get(contract["policy"]["external_provider_entry"])
-    if not external or (
-        external.get("acceptance_class"),
-        external.get("thor_state"),
-        external.get("runtime_state"),
-    ) != ("external_optional", "external_optional", "not_applicable"):
-        raise EvidenceError("AWS/GCS external boundary state drift")
-    if (
-        not external_oracle
-        or external_oracle.get("current_state") != "external_boundary_unexecuted"
-    ):
-        raise EvidenceError("AWS/GCS external oracle drift")
+    metadata_binding = active_metadata_selection_binding(contract)
     status = git("status", "--porcelain=v1", "--untracked-files=all")
     clean = status == ""
     if require_clean and not clean:
         raise EvidenceError("promotable receipt requires a completely clean checkout")
+    checkout_head = git("rev-parse", "HEAD")
+    upstream_commit = contract["target"]["upstream_commit"]
+    ancestry_merge_base = git("merge-base", upstream_commit, checkout_head)
+    if ancestry_merge_base != upstream_commit:
+        raise EvidenceError("contract upstream commit is not an ancestor of checkout")
     return {
         "contract_sha256": sha_file(CONTRACT_PATH),
         "executor_sha256": sha_file(REPO_ROOT / EXECUTOR_REL),
-        "ledger_document_sha256": sha_file(ledger_path),
-        "oracle_document_sha256": sha_file(oracle_path),
-        "checkout_head": git("rev-parse", "HEAD"),
+        "checkout_head": checkout_head,
+        "checkout_tree": git("rev-parse", f"{checkout_head}^{{tree}}"),
         "checkout_clean": clean,
         "checkout_status_porcelain_sha256": sha_bytes(status.encode("utf-8")),
+        "invocation_allow_dirty_development": not require_clean,
+        "target_upstream_commit": upstream_commit,
+        "target_ancestry_merge_base": ancestry_merge_base,
+        **metadata_binding,
         "canonical_rows_are_open_unexecuted": True,
         "executor_ready_capabilities": EXPECTED_EXECUTOR_READY_CAPABILITIES,
     }
+
+
+def _promotion_envelope(
+    *, authoritative: bool, development_smoke_only: bool
+) -> dict[str, Any]:
+    """Construct an envelope only after semantic validation decides authority."""
+    return {
+        "ledger_mutation_performed": False,
+        "oracle_mutation_performed": False,
+        "external_provider_entry_touched": False,
+        "development_smoke_only": development_smoke_only,
+        "family_id": PROMOTION_FAMILY_ID,
+        "eligible_capability_ids": (
+            list(EXPECTED_CAPABILITIES) if authoritative else []
+        ),
+        "requires_separate_reviewed_metadata_integration": authoritative,
+        "receipt_is_runtime_evidence": authoritative,
+        "aggregate_is_promotable": authoritative,
+    }
+
+
+def _authority_predicate_after_validation(result: dict[str, Any]) -> bool:
+    """Evaluate aggregate-only gates after validate_result checks every proof."""
+    rows = result["capability_results"]
+    bindings = result["bindings"]
+    cleanup = result["cleanup"]
+    confinement = result["confinement"]
+    development_smoke_only = bindings.get("invocation_allow_dirty_development", False)
+    empty_status = sha_bytes(b"")
+    exact_all_pass = [
+        row["capability_id"] for row in rows
+    ] == EXPECTED_CAPABILITIES and all(row["status"] == "pass" for row in rows)
+    return (
+        result["mode"] == "target_bound_offline_runtime_evidence"
+        and result["status"] == "pass"
+        and exact_all_pass
+        and development_smoke_only is False
+        and bindings.get("checkout_clean") is True
+        and bindings.get("checkout_status_porcelain_sha256") == empty_status
+        and cleanup.get("checkout_status_before_sha256") == empty_status
+        and cleanup.get("checkout_status_after_sha256") == empty_status
+        and cleanup.get("pre_execution_tree_sha256") == EMPTY_TREE_SHA256
+        and cleanup.get("post_execution_tree_sha256") == EMPTY_TREE_SHA256
+        and cleanup.get("removed") is True
+        and cleanup.get("siblings_unchanged") is True
+        and confinement.get("bounded_capability_actions") == 49
+        and confinement.get("requests") == 49
+        and confinement.get("imported_product_function_invocations") == 122
+        and confinement.get("external_activity_instrumented") is True
+        and confinement.get("whole_temp_root_scanned") is True
+        and all(confinement.get(key) == 0 for key in EXTERNAL_ACTIVITY_KEYS)
+    )
 
 
 @contextlib.contextmanager
@@ -2779,7 +3006,7 @@ def plan(contract: dict[str, Any], selected: set[str] | None = None) -> dict[str
         )
         for row in contract["capabilities"]
     ]
-    return {
+    result = {
         "schema_version": 1,
         "package_id": contract["package_id"],
         "mode": "plan",
@@ -2823,15 +3050,12 @@ def plan(contract: dict[str, Any], selected: set[str] | None = None) -> dict[str
             "external_activity_instrumented": True,
             "whole_temp_root_scanned": True,
         },
-        "promotion": {
-            "ledger_mutation_performed": False,
-            "oracle_mutation_performed": False,
-            "external_provider_entry_touched": False,
-            "receipt_is_runtime_evidence": False,
-            "aggregate_is_promotable": False,
-            "individual_receipt_candidates": [],
-        },
+        "promotion": {},
     }
+    result["promotion"] = _promotion_envelope(
+        authoritative=False, development_smoke_only=False
+    )
+    return result
 
 
 def execute(
@@ -3021,7 +3245,7 @@ def execute(
         post_tree = scan_temp_root(temp_base)
         if post_tree:
             raise ConfinementError("temporary root not empty at aggregate completion")
-        return {
+        result = {
             "schema_version": 1,
             "package_id": contract["package_id"],
             "mode": contract["mode"],
@@ -3058,17 +3282,13 @@ def execute(
                 "external_activity_instrumented": True,
                 "whole_temp_root_scanned": True,
             },
-            "promotion": {
-                "ledger_mutation_performed": False,
-                "oracle_mutation_performed": False,
-                "external_provider_entry_touched": False,
-                "receipt_is_runtime_evidence": False,
-                "aggregate_is_promotable": False,
-                "individual_receipt_candidates": [
-                    row["capability_id"] for row in passed
-                ],
-            },
+            "promotion": {},
         }
+        result["promotion"] = _promotion_envelope(
+            authoritative=False,
+            development_smoke_only=bindings["invocation_allow_dirty_development"],
+        )
+        return result
     finally:
         _ACTIVE_ACTION_COUNTS = None
         _ACTIVE_PRODUCT_CALLS = None
@@ -3084,7 +3304,13 @@ def execute(
             raise ConfinementError("repository worktree changed during execution")
 
 
-def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
+def validate_result(
+    result: dict[str, Any],
+    contract: dict[str, Any],
+    *,
+    check_promotion: bool = True,
+) -> bool:
+    verify_static_locks(contract)
     schema = strict_json(RESULT_SCHEMA_PATH)
     errors = sorted(
         Draft202012Validator(schema).iter_errors(result),
@@ -3110,11 +3336,9 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
             "ledger_mutation_performed",
             "oracle_mutation_performed",
             "external_provider_entry_touched",
-            "receipt_is_runtime_evidence",
-            "aggregate_is_promotable",
         )
     ):
-        raise EvidenceError("staged producer cannot mutate or promote authority")
+        raise EvidenceError("runtime producer cannot mutate canonical authority")
 
     contract_by_id = {row["capability_id"]: row for row in contract["capabilities"]}
     passed_ids: list[str] = []
@@ -3298,9 +3522,27 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
             ):
                 raise EvidenceError(f"required module preflight drift: {capability_id}")
         bindings = result["bindings"]
+        live_status = git("status", "--porcelain=v1", "--untracked-files=all")
+        live_head = git("rev-parse", "HEAD")
+        upstream_commit = contract["target"]["upstream_commit"]
+        ancestry_merge_base = git("merge-base", upstream_commit, live_head)
+        selection_binding = active_metadata_selection_binding(contract)
         if (
             bindings["contract_sha256"] != sha_file(CONTRACT_PATH)
             or bindings["executor_sha256"] != sha_file(REPO_ROOT / EXECUTOR_REL)
+            or bindings["checkout_head"] != live_head
+            or bindings["checkout_tree"] != git("rev-parse", f"{live_head}^{{tree}}")
+            or bindings["checkout_clean"] is not (live_status == "")
+            or bindings["checkout_status_porcelain_sha256"]
+            != sha_bytes(live_status.encode("utf-8"))
+            or (
+                bindings["invocation_allow_dirty_development"] is False
+                and live_status != ""
+            )
+            or bindings["target_upstream_commit"] != upstream_commit
+            or bindings["target_ancestry_merge_base"] != ancestry_merge_base
+            or ancestry_merge_base != upstream_commit
+            or any(bindings[key] != value for key, value in selection_binding.items())
             or bindings["canonical_rows_are_open_unexecuted"] is not True
             or bindings["executor_ready_capabilities"]
             != EXPECTED_EXECUTOR_READY_CAPABILITIES
@@ -3333,8 +3575,6 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
 
     if result["cleanup"] != expected_cleanup:
         raise EvidenceError("aggregate cleanup proof drift")
-    if promotion["individual_receipt_candidates"] != passed_ids:
-        raise EvidenceError("individual candidate list drift")
     expected_actions = sum(
         row["bounded_capability_actions"] for row in result["capability_results"]
     )
@@ -3356,6 +3596,49 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
         or any(confinement[key] != 0 for key in EXTERNAL_ACTIVITY_KEYS)
     ):
         raise EvidenceError("aggregate confinement/accounting drift")
+    if result["mode"] != "plan":
+        # Re-read every mutable checkout/metadata authority after the full row
+        # validation so publication cannot rely on a pre-validation snapshot.
+        verify_static_locks(contract)
+        final_status = git("status", "--porcelain=v1", "--untracked-files=all")
+        final_head = git("rev-parse", "HEAD")
+        final_selection = active_metadata_selection_binding(contract)
+        final_upstream = contract["target"]["upstream_commit"]
+        if (
+            bindings["checkout_head"] != final_head
+            or bindings["checkout_tree"] != git("rev-parse", f"{final_head}^{{tree}}")
+            or bindings["checkout_clean"] is not (final_status == "")
+            or bindings["checkout_status_porcelain_sha256"]
+            != sha_bytes(final_status.encode("utf-8"))
+            or bindings["target_upstream_commit"] != final_upstream
+            or bindings["target_ancestry_merge_base"]
+            != git("merge-base", final_upstream, final_head)
+            or bindings["target_ancestry_merge_base"] != final_upstream
+            or any(bindings[key] != value for key, value in final_selection.items())
+        ):
+            raise EvidenceError("post-validation checkout/metadata binding drift")
+    authoritative = _authority_predicate_after_validation(result)
+    expected_promotion = _promotion_envelope(
+        authoritative=authoritative,
+        development_smoke_only=(
+            result["bindings"].get("invocation_allow_dirty_development", False)
+        ),
+    )
+    if check_promotion and promotion != expected_promotion:
+        raise EvidenceError("promotion authority predicate drift")
+    return authoritative
+
+
+def finalize_result_promotion(result: dict[str, Any], contract: dict[str, Any]) -> None:
+    """Elevate only a complete result that passed every semantic validator."""
+    authoritative = validate_result(result, contract, check_promotion=False)
+    result["promotion"] = _promotion_envelope(
+        authoritative=authoritative,
+        development_smoke_only=(
+            result["bindings"].get("invocation_allow_dirty_development", False)
+        ),
+    )
+    validate_result(result, contract)
 
 
 def _resolve_selection(values: list[str] | None) -> set[str]:
@@ -3389,6 +3672,8 @@ def main(argv: list[str] | None = None) -> int:
                 raise EvidenceError(f"--execute requires --acknowledge {ACK}")
             if args.output is None:
                 raise EvidenceError("--execute requires --output")
+            _, output_parent_fd = open_safe_output_parent(args.output)
+            os.close(output_parent_fd)
             result = execute(contract, selected, args.allow_dirty_development)
         else:
             if (
@@ -3398,10 +3683,14 @@ def main(argv: list[str] | None = None) -> int:
             ):
                 raise EvidenceError("execution-only flags require --execute")
             result = plan(contract, selected)
-        validate_result(result, contract)
+        finalize_result_promotion(result, contract)
         rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
         if args.execute:
-            publish_receipt_exclusive(args.output, rendered)
+            publish_receipt_exclusive(
+                args.output,
+                rendered,
+                validate_after_write=lambda: validate_result(result, contract),
+            )
         else:
             print(rendered, end="")
         return 0

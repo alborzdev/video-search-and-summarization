@@ -1,12 +1,15 @@
 # SpatialAI utilities staged runtime authority
 
-This directory is a non-promoting successor package for
-`manifest-entry.spatial-ai-utils.00` through `.06`. It is intentionally not a
-canonical parity-state change.
+This directory is a runtime-evidence producer for
+`manifest-entry.spatial-ai-utils.00` through `.06`. The producer performs no
+canonical parity-state change; only an exact clean all-seven pass is marked
+eligible for a separate reviewed metadata integration.
 
 Current Thor development evidence:
 
-- focused package suite: `60 passed` after the complete-surface extension;
+- focused package suite: `89 passed` after adding fail-closed mode/authority
+  discrimination, exact-byte selected-metadata and ancestry bindings, semantic
+  root/selected row alignment, and publication TOCTOU defenses;
 - `00` calibration/grouping: pass in the cache-only locked ephemeral
   environment, 2 positives + 5 adjacent cases, 17 literal product calls;
 - `01` 3D/2D geometry: pass, 2 positives + 5 adjacent cases, 15 literal product
@@ -36,22 +39,34 @@ locked complete dependency set used for their passing executions.
 
 Rows `01`, `04`, and `05` are now bound to their current canonical
 `executor_ready` oracle rows; all seven canonical rows remain
-`open_unexecuted` with empty evidence. The producer is still fail-closed and
-non-promoting: a dirty development result is not runtime evidence, and no
-canonical mutation may occur before a clean receipt is captured and validated.
+`open_unexecuted` with empty evidence. The producer is fail-closed and never
+performs promotion itself: a clean, non-development all-seven pass is runtime
+evidence eligible for separate review, while plan, partial, subset, blocked,
+and dirty-development results are non-evidence with empty eligibility. No
+canonical mutation may occur before an eligible receipt is captured,
+independently validated, and reviewed.
 The default-Python all-row development replay returns `partial` with exact
 passes `01`, `02`, `04`, `05`, and `06`, plus exact capability-local blockers
 `00` and `03`. Instrumented guards report zero network, Docker, service, model,
 download, Warehouse, product-subprocess, and filesystem-escape attempts.
 
-The closed result schema and semantic validator reject forged bindings,
-promotion candidates, environment claims, determinism and cleanup claims,
-row/aggregate counters, action IDs, function-call maps, and observations.
+The closed result schema and semantic validator reject forged checkout
+head/tree/status, canonical and selected metadata document hashes, selected
+target commit/version, target ancestry, promotion eligibility, environment
+claims, determinism and cleanup claims, row/aggregate counters, action IDs,
+function-call maps, and observations.
 Regression tests also prove that zero-product-call adapters cannot pass,
 sibling writes are denied and cleaned up, and non-target platform/Python
 runtimes fail before workload execution. A combined bypass regression uses
 `mkfifo` plus prebound `posix_spawn` and `SocketType` aliases; all attempts are
 denied, the FIFO path is absent after cleanup, and no false pass can validate.
+
+The schema now has disjoint plan/runtime shapes with exact capability identity
+and order. An authority envelope additionally requires seven ready preflights
+and complete per-row action, function-call, negative, determinism, binding, and
+cleanup proof. Publication refuses every repository or `.git` destination and
+every symlinked output parent, and deletes an exclusively-created receipt if
+the post-write checkout/metadata revalidation differs.
 
 No Warehouse sample, cloud provider, model, VSS deployment, container, stream,
 index, or service was used or changed.

@@ -111,16 +111,37 @@ the temporary root is removed in `finally`.
 
 ## Authority boundary
 
-This package is staged only. It verifies the current canonical rows and source
-locks. Rows `01`, `04`, and `05` are canonically `executor_ready`; rows `00`,
-`02`, `03`, and `06` remain `planning_index_only`, and every row remains
-`open_unexecuted` with no evidence. Therefore its output always records
-`receipt_is_runtime_evidence=false` and
-`aggregate_is_promotable=false`, performs no ledger/oracle/manifest mutation,
-and lists only successful rows as non-promoting `individual_receipt_candidates`.
-A later clean receipt capture, executor-ready projection for the remaining
-rows, and canonical promotion step must bind and validate any official
-receipts.
+The producer never mutates the ledger, oracle, manifest, runtime producer, or
+external-provider row. Its promotion envelope is derived rather than supplied
+by a caller. `receipt_is_runtime_evidence=true` and
+`aggregate_is_promotable=true` are emitted only when one execution passes the
+exact ordered `00`--`06` set from a clean checkout, both before/after status
+hashes are empty, the commit and commit-tree identities are bound, all 49
+actions and 122 imported product calls are present, cleanup is exact, and every
+external-activity counter is zero. That envelope identifies
+`family_id=spatial-ai-utils`, lists exactly `00`--`06` in
+`eligible_capability_ids`, records `development_smoke_only=false`, and requires
+a separate reviewed metadata integration before canonical state can change.
+
+Plan, partial, subset, blocked, or `--allow-dirty-development` output is always
+non-evidence and nonpromotable with an empty eligibility list. The development
+flag itself forces that result even if the checkout happens to be clean. The
+closed schema encodes both envelopes and the semantic validator independently
+re-derives the predicate while binding the live checkout head/tree/status and
+current ledger/oracle document hashes. Runtime bindings also record the raw
+active metadata selector, selected set and descriptor, resolved selected
+ledger/oracle paths and hashes, the selected target commit/version, and proof
+that the contract's upstream commit is the checkout's merge-base ancestor.
+Selector, descriptor, ledger, and oracle digests are computed from the exact
+bytes parsed for validation. The seven SpatialAI rows and the external-provider
+boundary must be identical in root and selector-resolved metadata.
+
+Execution receipts may be published only through exclusive mode-`0600`
+creation outside the repository (including outside `.git`) through a
+non-symlinked parent path. After the bytes are written and reread, the producer
+repeats source locks, HEAD/tree/status, root metadata, selected metadata, and
+ancestry validation. Any drift removes the new receipt instead of publishing
+stale authority.
 
 ## Tests
 

@@ -12,7 +12,7 @@ import time
 from types import ModuleType
 
 import pytest
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 
 
 PACKAGE = Path(__file__).resolve().parents[1]
@@ -31,6 +31,29 @@ def load_executor() -> ModuleType:
 
 
 EXECUTOR = load_executor()
+
+
+def active_metadata_documents() -> tuple[dict, dict, dict, dict, dict]:
+    contract = EXECUTOR.load_contract()
+    selector = EXECUTOR.strict_json(EXECUTOR.repo_file(EXECUTOR.METADATA_SELECTOR_REL))
+    selected_id = selector["selected_set"]
+    entry = next(
+        row for row in selector["available_sets"] if row["set_id"] == selected_id
+    )
+    descriptor = EXECUTOR.strict_json(EXECUTOR.repo_file(entry["descriptor_path"]))
+    selected_ledger = EXECUTOR.strict_json(
+        EXECUTOR.repo_file(descriptor["documents"]["official_capabilities"]["path"])
+    )
+    selected_oracle = EXECUTOR.strict_json(
+        EXECUTOR.repo_file(descriptor["documents"]["capability_oracles"]["path"])
+    )
+    root_ledger = EXECUTOR.strict_json(
+        EXECUTOR.repo_file(contract["target"]["current_ledger_document"])
+    )
+    root_oracle = EXECUTOR.strict_json(
+        EXECUTOR.repo_file(contract["target"]["current_oracle_document"])
+    )
+    return descriptor, root_ledger, root_oracle, selected_ledger, selected_oracle
 
 
 @pytest.fixture(scope="module")
@@ -107,8 +130,19 @@ def test_inert_plan_selection_is_schema_valid_and_nonpromoting() -> None:
         "not_selected",
     ]
     assert result["promotion"]["aggregate_is_promotable"] is False
+    assert result["promotion"]["receipt_is_runtime_evidence"] is False
+    assert result["promotion"]["development_smoke_only"] is False
+    assert result["promotion"]["eligible_capability_ids"] == []
     assert result["confinement"]["bounded_capability_actions"] == 0
     assert result["cleanup"]["executor_owned_temporary_root"] is None
+    forged = copy.deepcopy(result)
+    forged["promotion"] = EXECUTOR._promotion_envelope(
+        authoritative=True, development_smoke_only=False
+    )
+    with pytest.raises(ValidationError):
+        Draft202012Validator(
+            EXECUTOR.strict_json(PACKAGE / "result.schema.json")
+        ).validate(forged)
 
 
 def test_static_fixture_and_source_locks_match() -> None:
@@ -295,13 +329,108 @@ def test_lazy_visualization_source_lock_is_exactly_scoped_to_02_and_06() -> None
 
 
 def test_current_canonical_bindings_and_external_boundary_are_exact() -> None:
-    bindings = EXECUTOR.verify_bindings(EXECUTOR.load_contract(), require_clean=False)
+    contract = EXECUTOR.load_contract()
+    bindings = EXECUTOR.verify_bindings(contract, require_clean=False)
     assert bindings["canonical_rows_are_open_unexecuted"] is True
     assert (
         bindings["executor_ready_capabilities"]
         == EXECUTOR.EXPECTED_EXECUTOR_READY_CAPABILITIES
     )
     assert bindings["checkout_head"]
+    assert bindings["checkout_tree"] == EXECUTOR.git(
+        "rev-parse", f"{bindings['checkout_head']}^{{tree}}"
+    )
+    assert bindings["invocation_allow_dirty_development"] is True
+    assert bindings["target_upstream_commit"] == contract["target"]["upstream_commit"]
+    assert bindings["target_ancestry_merge_base"] == bindings["target_upstream_commit"]
+    selected_binding = EXECUTOR.active_metadata_selection_binding(contract)
+    assert {key: bindings[key] for key in selected_binding} == selected_binding
+    assert (
+        bindings["selected_target_main_commit"] == contract["target"]["upstream_commit"]
+    )
+    assert (
+        bindings["selected_target_product_version"]
+        == contract["target"]["product_version"]
+    )
+
+
+def test_selected_spatial_row_divergence_is_rejected() -> None:
+    contract = EXECUTOR.load_contract()
+    descriptor, root_ledger, root_oracle, selected_ledger, selected_oracle = (
+        active_metadata_documents()
+    )
+    forged = copy.deepcopy(selected_ledger)
+    capability_id = EXECUTOR.EXPECTED_CAPABILITIES[0]
+    row = next(row for row in forged["capabilities"] if row["id"] == capability_id)
+    row["runtime_state"] = "qualified"
+    with pytest.raises(EXECUTOR.EvidenceError, match="divergent root/selected"):
+        EXECUTOR._validate_spatial_metadata_alignment(
+            contract,
+            root_ledger,
+            root_oracle,
+            forged,
+            selected_oracle,
+            descriptor,
+        )
+
+
+def test_selected_external_boundary_divergence_is_rejected() -> None:
+    contract = EXECUTOR.load_contract()
+    descriptor, root_ledger, root_oracle, selected_ledger, selected_oracle = (
+        active_metadata_documents()
+    )
+    forged = copy.deepcopy(selected_oracle)
+    external_id = contract["policy"]["external_provider_entry"]
+    row = next(row for row in forged["oracles"] if row["capability_id"] == external_id)
+    row["current_state"] = "open_unexecuted"
+    with pytest.raises(EXECUTOR.EvidenceError, match="external boundary drift"):
+        EXECUTOR._validate_spatial_metadata_alignment(
+            contract,
+            root_ledger,
+            root_oracle,
+            selected_ledger,
+            forged,
+            descriptor,
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "forged_value"),
+    [("main_commit", "0" * 40), ("product_version", "0.0.0")],
+)
+def test_selected_descriptor_target_mismatch_is_rejected(
+    field: str, forged_value: str
+) -> None:
+    contract = EXECUTOR.load_contract()
+    descriptor, root_ledger, root_oracle, selected_ledger, selected_oracle = (
+        active_metadata_documents()
+    )
+    forged = copy.deepcopy(descriptor)
+    forged["target"][field] = forged_value
+    with pytest.raises(EXECUTOR.EvidenceError, match="descriptor target differs"):
+        EXECUTOR._validate_spatial_metadata_alignment(
+            contract,
+            root_ledger,
+            root_oracle,
+            selected_ledger,
+            selected_oracle,
+            forged,
+        )
+
+
+def test_upstream_ancestry_failure_is_rejected(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_git = EXECUTOR.git
+
+    def forged_git(*args: str) -> str:
+        if args and args[0] == "merge-base":
+            return "0" * 40
+        return real_git(*args)
+
+    monkeypatch.setattr(EXECUTOR, "git", forged_git)
+    with pytest.raises(EXECUTOR.EvidenceError, match="not an ancestor"):
+        EXECUTOR.verify_bindings(EXECUTOR.load_contract(), require_clean=False)
 
 
 def test_all_capability_execution_is_local_and_independent(
@@ -325,13 +454,12 @@ def test_all_capability_execution_is_local_and_independent(
         "00",
         "03",
     }
-    assert result["promotion"]["individual_receipt_candidates"] == [
-        EXECUTOR.SHORT_IDS["01"],
-        EXECUTOR.SHORT_IDS["02"],
-        EXECUTOR.SHORT_IDS["04"],
-        EXECUTOR.SHORT_IDS["05"],
-        EXECUTOR.SHORT_IDS["06"],
-    ]
+    assert result["promotion"]["eligible_capability_ids"] == []
+    assert result["promotion"]["development_smoke_only"] is True
+    assert result["promotion"]["family_id"] == "spatial-ai-utils"
+    assert (
+        result["promotion"]["requires_separate_reviewed_metadata_integration"] is False
+    )
     assert result["promotion"]["receipt_is_runtime_evidence"] is False
     assert result["promotion"]["aggregate_is_promotable"] is False
     assert result["promotion"]["external_provider_entry_touched"] is False
@@ -675,6 +803,98 @@ def test_blocked_rows_retain_capability_local_preflight(
         assert row["imported_product_function_invocations"] == 0
 
 
+def test_exact_authority_envelope_is_schema_valid_but_not_self_authorizing() -> None:
+    promotion = EXECUTOR._promotion_envelope(
+        authoritative=True, development_smoke_only=False
+    )
+    assert promotion == {
+        "ledger_mutation_performed": False,
+        "oracle_mutation_performed": False,
+        "external_provider_entry_touched": False,
+        "development_smoke_only": False,
+        "family_id": "spatial-ai-utils",
+        "eligible_capability_ids": EXECUTOR.EXPECTED_CAPABILITIES,
+        "requires_separate_reviewed_metadata_integration": True,
+        "receipt_is_runtime_evidence": True,
+        "aggregate_is_promotable": True,
+    }
+    schema = EXECUTOR.strict_json(PACKAGE / "result.schema.json")
+    assert not list(
+        Draft202012Validator(schema).descend(
+            promotion, schema["properties"]["promotion"]
+        )
+    )
+
+
+def test_schema_mode_discrimination_and_minimal_authority_forgery() -> None:
+    contract = EXECUTOR.load_contract()
+    schema = EXECUTOR.strict_json(PACKAGE / "result.schema.json")
+    validator = Draft202012Validator(schema)
+    plan = EXECUTOR.plan(contract)
+    for mutation in (
+        "plan-pass",
+        "plan-row-order",
+        "runtime-plan-bindings",
+        "minimal-authority",
+    ):
+        forged = copy.deepcopy(plan)
+        if mutation == "plan-pass":
+            forged["status"] = "pass"
+        elif mutation == "plan-row-order":
+            forged["capability_results"][0], forged["capability_results"][1] = (
+                forged["capability_results"][1],
+                forged["capability_results"][0],
+            )
+        elif mutation == "runtime-plan-bindings":
+            forged["mode"] = "target_bound_offline_runtime_evidence"
+            forged["status"] = "partial"
+            forged["captured_at_utc"] = "2026-08-03T00:00:00Z"
+        else:
+            forged["mode"] = "target_bound_offline_runtime_evidence"
+            forged["status"] = "pass"
+            forged["captured_at_utc"] = "2026-08-03T00:00:00Z"
+            for row in forged["capability_results"]:
+                row["status"] = "pass"
+            forged["promotion"] = EXECUTOR._promotion_envelope(
+                authoritative=True, development_smoke_only=False
+            )
+        assert list(validator.iter_errors(forged)), mutation
+        with pytest.raises(EXECUTOR.EvidenceError):
+            EXECUTOR.finalize_result_promotion(forged, contract)
+
+
+def test_development_partial_cannot_be_elevated(current_execution: dict) -> None:
+    value = copy.deepcopy(current_execution)
+    EXECUTOR.finalize_result_promotion(value, EXECUTOR.load_contract())
+    assert value["promotion"]["eligible_capability_ids"] == []
+    assert value["promotion"]["receipt_is_runtime_evidence"] is False
+    assert value["promotion"]["aggregate_is_promotable"] is False
+
+
+def test_post_validation_selector_drift_is_rejected(
+    current_execution: dict, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    contract = EXECUTOR.load_contract()
+    stable = EXECUTOR.active_metadata_selection_binding(contract)
+    calls = 0
+
+    def drifting_selection(_contract: dict) -> dict:
+        nonlocal calls
+        calls += 1
+        value = copy.deepcopy(stable)
+        if calls >= 2:
+            value["metadata_selector_raw_sha256"] = "0" * 64
+        return value
+
+    monkeypatch.setattr(
+        EXECUTOR, "active_metadata_selection_binding", drifting_selection
+    )
+    with pytest.raises(
+        EXECUTOR.EvidenceError, match="post-validation checkout/metadata"
+    ):
+        EXECUTOR.validate_result(copy.deepcopy(current_execution), contract)
+
+
 @pytest.mark.parametrize(
     "mutation",
     [
@@ -715,6 +935,22 @@ def test_deep_result_validation_rejects_drift(
         "nested-binding-injection",
         "aggregate-promotable",
         "forged-candidates",
+        "checkout-tree",
+        "checkout-head",
+        "checkout-clean",
+        "checkout-status",
+        "invocation-development-flag",
+        "ledger-document",
+        "oracle-document",
+        "selector-document",
+        "selected-set",
+        "selected-descriptor",
+        "selected-ledger",
+        "selected-oracle",
+        "selected-target-commit",
+        "selected-target-version",
+        "upstream-commit",
+        "ancestry-merge-base",
         "runtime-binding-hash",
         "observation-injection",
         "redistributed-function-counts",
@@ -742,7 +978,39 @@ def test_audit_mutations_are_rejected(current_execution: dict, mutation: str) ->
     elif mutation == "aggregate-promotable":
         value["promotion"]["aggregate_is_promotable"] = True
     elif mutation == "forged-candidates":
-        value["promotion"]["individual_receipt_candidates"] = [blocked["capability_id"]]
+        value["promotion"]["eligible_capability_ids"] = [blocked["capability_id"]]
+    elif mutation == "checkout-tree":
+        value["bindings"]["checkout_tree"] = "0" * 40
+    elif mutation == "checkout-head":
+        value["bindings"]["checkout_head"] = "0" * 40
+    elif mutation == "checkout-clean":
+        value["bindings"]["checkout_clean"] = not value["bindings"]["checkout_clean"]
+    elif mutation == "checkout-status":
+        value["bindings"]["checkout_status_porcelain_sha256"] = "0" * 64
+    elif mutation == "invocation-development-flag":
+        value["bindings"]["invocation_allow_dirty_development"] = False
+    elif mutation == "ledger-document":
+        value["bindings"]["ledger_document_sha256"] = "0" * 64
+    elif mutation == "oracle-document":
+        value["bindings"]["oracle_document_sha256"] = "0" * 64
+    elif mutation == "selector-document":
+        value["bindings"]["metadata_selector_raw_sha256"] = "0" * 64
+    elif mutation == "selected-set":
+        value["bindings"]["selected_metadata_set_id"] = "forged-set"
+    elif mutation == "selected-descriptor":
+        value["bindings"]["selected_descriptor_raw_sha256"] = "0" * 64
+    elif mutation == "selected-ledger":
+        value["bindings"]["selected_ledger_raw_sha256"] = "0" * 64
+    elif mutation == "selected-oracle":
+        value["bindings"]["selected_oracle_raw_sha256"] = "0" * 64
+    elif mutation == "selected-target-commit":
+        value["bindings"]["selected_target_main_commit"] = "0" * 40
+    elif mutation == "selected-target-version":
+        value["bindings"]["selected_target_product_version"] = "0.0.0"
+    elif mutation == "upstream-commit":
+        value["bindings"]["target_upstream_commit"] = "0" * 40
+    elif mutation == "ancestry-merge-base":
+        value["bindings"]["target_ancestry_merge_base"] = "0" * 40
     elif mutation == "runtime-binding-hash":
         passing["runtime_evidence_binding"]["executor_sha256"] = "0" * 64
     elif mutation == "observation-injection":
@@ -963,6 +1231,24 @@ def test_repo_file_rejects_symlink_component(
         EXECUTOR.repo_file("alias/payload.json")
 
 
+def test_repository_json_record_parses_and_hashes_one_read(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class ChangingRecord:
+        calls = 0
+
+        def read_bytes(self) -> bytes:
+            self.calls += 1
+            return b'{"snapshot":1}\n' if self.calls == 1 else b'{"snapshot":2}\n'
+
+    record = ChangingRecord()
+    monkeypatch.setattr(EXECUTOR, "repo_file", lambda _relative: record)
+    payload, document = EXECUTOR._read_repo_json_record("changing.json")
+    assert record.calls == 1
+    assert document == {"snapshot": 1}
+    assert EXECUTOR.sha_bytes(payload) == EXECUTOR.sha_bytes(b'{"snapshot":1}\n')
+
+
 def test_network_denial_restores_socket() -> None:
     original = socket.socket
     with EXECUTOR.network_denied():
@@ -983,6 +1269,43 @@ def test_receipt_writer_is_exclusive_and_mode_0600(tmp_path: Path) -> None:
     assert output.stat().st_mode & 0o777 == 0o600
     with pytest.raises(EXECUTOR.EvidenceError, match="already exists"):
         EXECUTOR.publish_receipt_exclusive(output, "{}\n")
+
+
+def test_receipt_writer_rejects_repository_and_git_destinations() -> None:
+    for output in (
+        PACKAGE / "forbidden-receipt.json",
+        REPO_ROOT / ".git/forbidden-receipt.json",
+    ):
+        with pytest.raises(EXECUTOR.EvidenceError, match="outside the repository"):
+            EXECUTOR.publish_receipt_exclusive(output, "{}\n")
+        assert not output.exists()
+
+
+def test_receipt_writer_rejects_symlinked_output_parent(tmp_path: Path) -> None:
+    real_parent = tmp_path / "real"
+    real_parent.mkdir()
+    alias_parent = tmp_path / "alias"
+    alias_parent.symlink_to(real_parent, target_is_directory=True)
+    output = alias_parent / "receipt.json"
+    with pytest.raises(EXECUTOR.EvidenceError, match="symlinked"):
+        EXECUTOR.publish_receipt_exclusive(output, "{}\n")
+    assert not (real_parent / "receipt.json").exists()
+
+
+def test_post_publication_revalidation_failure_removes_receipt(tmp_path: Path) -> None:
+    output = tmp_path / "receipt.json"
+    callbacks: list[str] = []
+
+    def checkout_changed() -> None:
+        callbacks.append("called")
+        raise EXECUTOR.EvidenceError("checkout changed after publication")
+
+    with pytest.raises(EXECUTOR.EvidenceError, match="changed after publication"):
+        EXECUTOR.publish_receipt_exclusive(
+            output, "{}\n", validate_after_write=checkout_changed
+        )
+    assert callbacks == ["called"]
+    assert not output.exists()
 
 
 def test_alternate_contract_is_rejected(tmp_path: Path) -> None:
