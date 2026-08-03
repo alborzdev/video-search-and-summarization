@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "thor-spatial-ai-offline-integrated-runtime-v1",
-  "producer_binding_commit": "5099e972b6821483fa73226158080ae73a90d2de",
+  "producer_binding_commit": "ea5cae0ee85cc82184e90a1e1a9d53de145c3162",
   "producer_acknowledgement": "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE",
   "capability_ids": [
     "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
@@ -13,9 +13,9 @@
     "manifest-entry.spatial-ai-utils.06-video-frame-tools"
   ],
   "producer_bundle": [
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json", "sha256": "7fa1c4070cc3089c3e7f30511cf89bbc0e50fe773ab408e702c6d5717e6470a8"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json", "sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json", "sha256": "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "0f0ab33b3d7dad4663d14645a4d7ff439e9355fcb64a7c391ad42e80b03ab76f"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "0864a3a63a124bbfb23eabc7acbfca881dcab3b5c1aab203fedaff1deb6f6635"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json", "sha256": "639748643456e62037c6068169179603219b5f151f182da281e0197a08b52a9d"}
   ],
   "canonical_controls": [
@@ -23,17 +23,18 @@
     {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "b8f03c0d949ae7c9bb6dd14f37142e4f723849125ec944eb9244bd0ad9b79a1a"}
   ],
   "fixture_controls": [
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json", "sha256": "e3cb834b4580c56c9e1204b90fca5d4f063271d97fe12f8cba6d106f37b69f64"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json", "sha256": "2ebb08521c5068dc3381bfb0131a80627e07c69e38c5bb8df6b663975c6dca63"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json", "sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/02-multiview-visualization.json", "sha256": "7836a8dd865207c1d7d8b8cd1fec16748ac60ff6eb3b9f7d22cb9db35b526210"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/03-detection-map.json", "sha256": "90fbe27b29b2cf3368fad59a967129bd7c52032c6ef1a5b8c64b35372b5a2463"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/03-detection-map.json", "sha256": "4022a7d7592692c79d6c34ae6babeec725e90a42f071297228bdd0267b27ff69"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/04-tracking-metrics.json", "sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json", "sha256": "ed74f1c23c7999b01d6b7000e9c7a1be5a40b69c39ea90a993cbdccf66340cfd"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/06-video-frame-tools.json", "sha256": "95e392791a66c758ab67be2f6d389a391a67f9f9f7c58f0cc025f49c6be34751"}
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json", "sha256": "f5172225171daef63dc35f79392c5f9a715bb729facb9a7566970ed9dc51a20f"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/06-video-frame-tools.json", "sha256": "b74bd41a8a8d7a2200433812990ed6f5231bce6da87449ac56b1747d20ca30f1"}
   ],
   "product_source_controls": [
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py", "sha256": "e433d69e7561e304cff99925122b7c44822ee1a279b29ce62607ac439cfec060"},
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_3d.py", "sha256": "8c7f61ff04ce7f68cb9f8ef29d0a5189dab299bb10b8b36ae9f343e1b8b7cabc"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/bev.py", "sha256": "869da13a859f332bb1b7743acb8c48b88589723fdd00657d2e3f5ff432c9c084"},
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/group_utils.py", "sha256": "05336334cde57578e878462bcace3a598d65fcf1aebdd1ba722c39c96e6b09d8"},
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/origin.py", "sha256": "a32fd3e47d9f720d7b50833cbbdea434855cd493707cf0d6bb4ede8479b5dd39"},
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/projection.py", "sha256": "8107092b08df576182e7a83ea1fa9babe27ea09f53ff7bd991e9f0d4f316958f"},
@@ -50,8 +51,13 @@
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_3d.py", "sha256": "19d645818a480485d2d51d4471e89f70d4c7714f2c43b4181b9ae95154bd21f5"},
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video.py", "sha256": "7bbd3fa74d1ca1238716c0b95ac375127be629212cac8e7a457b563eb571916f"},
     {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/video2frame.py", "sha256": "3a0da452fc4c69c9d71242c3134adc81f5bfb3ed587355abcd615b713d7385bd"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/calculate_origin.py", "sha256": "6b062045ce02bf09733a356325a25da705be99e5fd8a3690799c15b9e7f9d87f"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/create_camera_clusters.py", "sha256": "6ece1b187173588217035ce2045fcf597ebbc41ffc1f780b252d91752f65f256"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/create_camera_groups.py", "sha256": "60f45bf21ea91d744d6390eeffa6b787c90056cb88a769f29a73242c8b85880e"},
     {"path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/reassign_camera_groups.py", "sha256": "0a0f7ef446189d67bb3a5b1edfb27cb5e3d0f755665587e23f841e6228f1de24"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/evaluation/evaluate_aicity_mtmc.py", "sha256": "582bbbb3fa24ad67b1d59bd79ea516291217a455e62b5abaec918062fad3feaa"},
     {"path": "libs/analytics/spatialai-data-utils/tools/projection/project_bbox3d_to_2d.py", "sha256": "927c822821a26e667177a8b257a4dfaa657dde8737f5492a02f54b6fdb7d8572"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/validation_and_evaluation/run_validation_and_evaluation.py", "sha256": "303a8023ec4b617749d32f9a516403bc68de33bb331cf051db8a5911ef28557d"},
     {"path": "libs/analytics/spatialai-data-utils/tools/video_utils/frame2video.py", "sha256": "9c8839496d921d420d2a6e76466e889147097bdd8c1d67fac019683911d4f084"},
     {"path": "libs/analytics/spatialai-data-utils/tools/video_utils/video2frame.py", "sha256": "ae585b525ddeaf7536a122dacf6f6ea738368d3b2ab6d1f3737a030c628d92a7"},
     {"path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox.py", "sha256": "cc2fe3f0633e8f96c9afe549b467a4616e118e86f1cb232d7caa151fdc1cce2d"},
@@ -1070,15 +1076,15 @@
   "producer_root_manifest": [
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/EVIDENCE.md",
-    "sha256": "a49cb0a6094ba31d3b3012801deaac85061d7eeb8b653d106841ab429850e6ff"
+    "sha256": "b8a94da920aa9eb948cc71f43034a1a72c27446ebe2081433b646133cc5c002d"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/README.md",
-    "sha256": "2d5a4d80755c58239295a87c7c0919bcb8057011f287033f16fef482141df11a"
+    "sha256": "f5aaf924d3e819d5e8937d8398c9487975b7df8d1b941a32588348d132dc2235"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json",
-    "sha256": "7fa1c4070cc3089c3e7f30511cf89bbc0e50fe773ab408e702c6d5717e6470a8"
+    "sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json",
@@ -1086,11 +1092,11 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
-    "sha256": "0f0ab33b3d7dad4663d14645a4d7ff439e9355fcb64a7c391ad42e80b03ab76f"
+    "sha256": "0864a3a63a124bbfb23eabc7acbfca881dcab3b5c1aab203fedaff1deb6f6635"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json",
-    "sha256": "e3cb834b4580c56c9e1204b90fca5d4f063271d97fe12f8cba6d106f37b69f64"
+    "sha256": "2ebb08521c5068dc3381bfb0131a80627e07c69e38c5bb8df6b663975c6dca63"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json",
@@ -1102,7 +1108,7 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/03-detection-map.json",
-    "sha256": "90fbe27b29b2cf3368fad59a967129bd7c52032c6ef1a5b8c64b35372b5a2463"
+    "sha256": "4022a7d7592692c79d6c34ae6babeec725e90a42f071297228bdd0267b27ff69"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/04-tracking-metrics.json",
@@ -1110,11 +1116,11 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json",
-    "sha256": "ed74f1c23c7999b01d6b7000e9c7a1be5a40b69c39ea90a993cbdccf66340cfd"
+    "sha256": "f5172225171daef63dc35f79392c5f9a715bb729facb9a7566970ed9dc51a20f"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/06-video-frame-tools.json",
-    "sha256": "95e392791a66c758ab67be2f6d389a391a67f9f9f7c58f0cc025f49c6be34751"
+    "sha256": "b74bd41a8a8d7a2200433812990ed6f5231bce6da87449ac56b1747d20ca30f1"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json",
@@ -1122,24 +1128,24 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/tests/test_executor.py",
-    "sha256": "6a42fc9e60f4b9e0522dd5d3601ff49dbf013b82baa2f08767a8f0422f9f6562"
+    "sha256": "ec391d0c42a92b25852d307d9e483165409820cd849ea2177f9c8139b24a8513"
   }
   ],
   "expectations": {
     "capabilities_passed": 7,
     "bounded_capability_actions": 49,
     "requests": 49,
-    "product_function_calls": 76,
+    "product_function_calls": 122,
     "independent_positive_runs": 14,
     "adjacent_negatives": 35,
     "product_function_calls_by_capability": {
-      "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping": 11,
-      "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": 9,
-      "manifest-entry.spatial-ai-utils.02-multiview-visualization": 7,
-      "manifest-entry.spatial-ai-utils.03-detection-map": 11,
+      "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping": 17,
+      "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": 15,
+      "manifest-entry.spatial-ai-utils.02-multiview-visualization": 11,
+      "manifest-entry.spatial-ai-utils.03-detection-map": 37,
       "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count": 16,
       "manifest-entry.spatial-ai-utils.05-nvschema-conversion": 9,
-      "manifest-entry.spatial-ai-utils.06-video-frame-tools": 13
+      "manifest-entry.spatial-ai-utils.06-video-frame-tools": 17
     }
   }
 }

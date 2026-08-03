@@ -25,7 +25,7 @@
     "accounting": {
       "type": "object", "additionalProperties": false,
       "required": ["capabilities_passed", "bounded_capability_actions", "requests", "product_function_calls", "independent_positive_runs", "adjacent_negatives"],
-      "properties": {"capabilities_passed": {"const": 7}, "bounded_capability_actions": {"const": 49}, "requests": {"const": 49}, "product_function_calls": {"const": 76}, "independent_positive_runs": {"const": 14}, "adjacent_negatives": {"const": 35}}
+      "properties": {"capabilities_passed": {"const": 7}, "bounded_capability_actions": {"const": 49}, "requests": {"const": 49}, "product_function_calls": {"const": 122}, "independent_positive_runs": {"const": 14}, "adjacent_negatives": {"const": 35}}
     },
     "confinement": {
       "type": "object", "additionalProperties": false,

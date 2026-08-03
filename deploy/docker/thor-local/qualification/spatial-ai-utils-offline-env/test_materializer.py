@@ -213,7 +213,7 @@ def make_valid_producer_receipt(
         "confinement": {
             "bounded_capability_actions": 49,
             "requests": 49,
-            "imported_product_function_invocations": 76,
+            "imported_product_function_invocations": 122,
             "product_execution_deadline_seconds": 900,
             "external_activity_instrumented": True,
             "whole_temp_root_scanned": True,
@@ -353,10 +353,10 @@ class LockTests(unittest.TestCase):
         self.assertEqual(4, len(lock["producer_bundle"]))
         self.assertEqual(2, len(lock["canonical_controls"]))
         self.assertEqual(7, len(lock["fixture_controls"]))
-        self.assertEqual(24, len(lock["product_source_controls"]))
+        self.assertEqual(30, len(lock["product_source_controls"]))
         self.assertEqual(252, len(lock["product_root_manifest"]))
         self.assertEqual(14, len(lock["producer_root_manifest"]))
-        self.assertEqual(76, lock["expectations"]["product_function_calls"])
+        self.assertEqual(122, lock["expectations"]["product_function_calls"])
 
     def test_producer_lock_hash_mutation_fails_closed(self) -> None:
         lock = materializer.load_producer_lock()
@@ -723,7 +723,7 @@ class IntegratedProducerTests(unittest.TestCase):
             self.assertNotIn("--allow-dirty-development", argv)
             self.assertNotIn("--contract", argv)
             self.assertEqual("pass", result["status"])
-            self.assertEqual(76, accounting["product_function_calls"])
+            self.assertEqual(122, accounting["product_function_calls"])
 
     def test_every_required_aggregate_is_independently_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

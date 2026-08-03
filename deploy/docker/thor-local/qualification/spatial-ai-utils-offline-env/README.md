@@ -32,10 +32,10 @@ The schemas are fail-closed:
 - `lock.schema.json` requires exactly 23 roots and 56 artifacts.
 - `receipt.schema.json` accepts only a fully successful execution receipt.
 - `producer-lock.json` binds the reviewed canonical producer, its four program
-  files, seven tiny fixtures, 24 explicit product source controls, both canonical
+  files, seven tiny fixtures, 30 explicit product source controls, both canonical
   parity documents, a complete 252-file manifest of the product root, and a
   complete 14-file manifest of the producer root, including all tracked package
-  data. The 303 lock rows cover 268 unique files.
+  data. The 309 lock rows cover 268 unique files.
   `producer-lock.schema.json` fixes their
   cardinalities and the all-seven accounting contract. Its binding commit must
   resolve to a real commit ancestor of the current checkout, and every locked
@@ -144,7 +144,7 @@ python3 -I deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/m
 ```
 
 Success means exactly seven passing capabilities, 49 bounded actions, 49
-requests, 76 imported product function calls, 14 independent positive runs, 35
+requests, 122 imported product function calls, 14 independent positive runs, 35
 rejected adjacent negatives, and zero network, Docker, service lifecycle, model,
 download, Warehouse sample, product subprocess, or filesystem-escape activity.
 The materializer independently validates the child schema and these values,
@@ -162,7 +162,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -I \
   deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/test_materializer.py
 ```
 
-They cover canonical-lock enforcement, the 56-artifact invariant, all 303
+They cover canonical-lock enforcement, the 56-artifact invariant, all 309
 producer-lock rows and both exact tracked root manifests, binding-commit ancestry and
 blob identity, manifest omissions/additions, ignored bytecode and native-module
 shadows, untracked code/data, symlinks and special files, opaque cache paths,

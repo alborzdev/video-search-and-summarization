@@ -12,25 +12,25 @@
     "producer_bundle": {"$ref": "#/$defs/fourFiles"},
     "canonical_controls": {"$ref": "#/$defs/twoFiles"},
     "fixture_controls": {"$ref": "#/$defs/sevenFiles"},
-    "product_source_controls": {"type": "array", "minItems": 24, "maxItems": 24, "items": {"$ref": "#/$defs/file"}},
+    "product_source_controls": {"type": "array", "minItems": 30, "maxItems": 30, "items": {"$ref": "#/$defs/file"}},
     "product_root_manifest": {"type": "array", "minItems": 252, "maxItems": 252, "items": {"$ref": "#/$defs/file"}},
     "producer_root_manifest": {"type": "array", "minItems": 14, "maxItems": 14, "items": {"$ref": "#/$defs/file"}},
     "expectations": {
       "type": "object", "additionalProperties": false,
       "required": ["capabilities_passed", "bounded_capability_actions", "requests", "product_function_calls", "independent_positive_runs", "adjacent_negatives", "product_function_calls_by_capability"],
       "properties": {
-        "capabilities_passed": {"const": 7}, "bounded_capability_actions": {"const": 49}, "requests": {"const": 49}, "product_function_calls": {"const": 76}, "independent_positive_runs": {"const": 14}, "adjacent_negatives": {"const": 35},
+        "capabilities_passed": {"const": 7}, "bounded_capability_actions": {"const": 49}, "requests": {"const": 49}, "product_function_calls": {"const": 122}, "independent_positive_runs": {"const": 14}, "adjacent_negatives": {"const": 35},
         "product_function_calls_by_capability": {
           "type": "object", "additionalProperties": false,
           "required": ["manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping", "manifest-entry.spatial-ai-utils.01-3d-2d-geometry", "manifest-entry.spatial-ai-utils.02-multiview-visualization", "manifest-entry.spatial-ai-utils.03-detection-map", "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count", "manifest-entry.spatial-ai-utils.05-nvschema-conversion", "manifest-entry.spatial-ai-utils.06-video-frame-tools"],
           "properties": {
-            "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping": {"const": 11},
-            "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": {"const": 9},
-            "manifest-entry.spatial-ai-utils.02-multiview-visualization": {"const": 7},
-            "manifest-entry.spatial-ai-utils.03-detection-map": {"const": 11},
+            "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping": {"const": 17},
+            "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": {"const": 15},
+            "manifest-entry.spatial-ai-utils.02-multiview-visualization": {"const": 11},
+            "manifest-entry.spatial-ai-utils.03-detection-map": {"const": 37},
             "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count": {"const": 16},
             "manifest-entry.spatial-ai-utils.05-nvschema-conversion": {"const": 9},
-            "manifest-entry.spatial-ai-utils.06-video-frame-tools": {"const": 13}
+            "manifest-entry.spatial-ai-utils.06-video-frame-tools": {"const": 17}
           }
         }
       }

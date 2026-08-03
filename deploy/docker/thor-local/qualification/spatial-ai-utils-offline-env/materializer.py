@@ -65,7 +65,7 @@ CAPABILITY_IDS = [
 ]
 EXECUTOR_READY_CAPABILITY_IDS = [CAPABILITY_IDS[index] for index in (1, 4, 5)]
 PRODUCT_FUNCTION_CALLS_BY_CAPABILITY = dict(
-    zip(CAPABILITY_IDS, (11, 9, 7, 11, 16, 9, 13), strict=True)
+    zip(CAPABILITY_IDS, (17, 15, 11, 37, 16, 9, 17), strict=True)
 )
 NEGATIVE_CASE_IDS = {
     "00": [
@@ -120,20 +120,33 @@ NEGATIVE_CASE_IDS = {
 }
 PRODUCT_FUNCTION_COUNTS = {
     "00": {
+        "bev.calculate_group_origins_from_calibration": 2,
+        "bev.create_camera_clusters_from_calibration": 2,
+        "bev.create_camera_groups_from_calibration": 2,
         "group.apply_group_reassignments": 4,
         "group.parse_moves": 5,
         "origin.calculate_and_update_group_origins": 2,
     },
     "01": {
         "boxes.box3d_to_corners": 4,
+        "projection.project_bev_objects_bbox_in_image": 2,
         "projection.project_boxes_3d_to_2d": 4,
-        "projection.project_points_3d_to_image": 1,
+        "projection.project_points_3d_to_image": 3,
+        "projection_cli.main": 2,
     },
-    "02": {"visual.draw_bbox3d_multicam": 2, "visual.draw_bbox3d_on_img": 5},
+    "02": {
+        "visual.draw_bbox3d_on_bev": 2,
+        "visual.draw_bbox3d_multicam": 2,
+        "visual.draw_bbox3d_on_img": 7,
+    },
     "03": {
-        "detection.evaluate_detection": 2,
-        "detection.load_boxes_from_jsonl": 7,
-        "detection.save_detection_results": 2,
+        "detection.accumulate": 8,
+        "detection.calc_ap": 8,
+        "detection.evaluate_detection": 4,
+        "detection.evaluate_detection_per_BEV_sensor": 2,
+        "detection.load_boxes_from_jsonl": 9,
+        "detection.save_detection_results": 4,
+        "detection.split_files_by_sensor": 2,
     },
     "04": {
         "tracking.CLEAR.eval_sequence": 4,
@@ -144,8 +157,8 @@ PRODUCT_FUNCTION_COUNTS = {
     "05": {"nvschema.convert_sparse4d_to_nvschema": 5, "nvschema.load_nvschema": 4},
     "06": {
         "video.frames_to_video": 3,
-        "video.list_frame_paths": 5,
-        "video.video_to_frames": 5,
+        "video.list_frame_paths": 7,
+        "video.video_to_frames": 7,
     },
 }
 EXTERNAL_ACTIVITY_KEYS = (
