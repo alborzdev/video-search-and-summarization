@@ -24,10 +24,12 @@ sparse4d -> NVSchema JSON-lines converter, including:
 * the ``save_embedding`` toggle (drop vs. forward ``reid_embedding``).
 """
 
+import datetime
 import json
 
 import pytest
 
+import spatialai_data_utils.converters.nusc_results_to_nvschema as converter_module
 from spatialai_data_utils.converters.nusc_results_to_nvschema import (
     FloatEncoder,
     convert_sparse4d_to_nvschema,
@@ -78,10 +80,16 @@ def _sparse4d_input(frame_token_to_objects):
     return {"results": frame_token_to_objects}
 
 
-def _track_obj(*, translation=(1.0, 2.0, 0.5), size=(0.5, 1.0, 1.8),
-               rotation=(1.0, 0.0, 0.0, 0.0), tracking_id="42",
-               tracking_score=0.9, tracking_name="person",
-               reid_embedding=None):
+def _track_obj(
+    *,
+    translation=(1.0, 2.0, 0.5),
+    size=(0.5, 1.0, 1.8),
+    rotation=(1.0, 0.0, 0.0, 0.0),
+    tracking_id="42",
+    tracking_score=0.9,
+    tracking_name="person",
+    reid_embedding=None,
+):
     """One Sparse4D tracking-result object. ``size`` is in nuScenes
     ``[l, w, h]`` convention; the converter swaps to NVSchema ``[w, l, h]``."""
     obj = {
@@ -115,15 +123,106 @@ MAP_CLASS_NAMES = {"person": "Person"}
 
 
 class TestConvertSparse4DToNVSchema:
+    def test_omitted_base_timestamp_preserves_current_utc_default(
+        self, tmp_path, monkeypatch
+    ):
+        inp = tmp_path / "sparse4d.json"
+        out = tmp_path / "nvschema"
+        _write_sparse4d_json(inp, _sparse4d_input({"sceneA__0": [_track_obj()]}))
+
+        class FixedDateTime(datetime.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return cls(2026, 2, 3, 4, 5, 6, 789123, tzinfo=tz)
+
+        monkeypatch.setattr(converter_module.datetime, "datetime", FixedDateTime)
+        convert_sparse4d_to_nvschema(str(inp), str(out), MAP_CLASS_NAMES)
+
+        assert _read_jsonl(out / "sceneA.json")[0]["timestamp"] == (
+            "2026-02-03T04:05:06.789Z"
+        )
+
+    def test_injected_base_timestamp_makes_output_byte_deterministic(self, tmp_path):
+        inp = tmp_path / "sparse4d.json"
+        first_out = tmp_path / "first"
+        second_out = tmp_path / "second"
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [_track_obj()],
+                    "sceneA__15": [_track_obj()],
+                }
+            ),
+        )
+        base_timestamp = datetime.datetime(
+            2026, 1, 2, 3, 4, 5, 123456, tzinfo=datetime.timezone.utc
+        )
+
+        for output in (first_out, second_out):
+            convert_sparse4d_to_nvschema(
+                str(inp),
+                str(output),
+                MAP_CLASS_NAMES,
+                save_embedding=False,
+                base_timestamp=base_timestamp,
+            )
+
+        first = first_out.joinpath("sceneA.json").read_bytes()
+        second = second_out.joinpath("sceneA.json").read_bytes()
+        assert first == second
+        records = _read_jsonl(first_out / "sceneA.json")
+        assert [record["timestamp"] for record in records] == [
+            "2026-01-02T03:04:05.123Z",
+            "2026-01-02T03:04:05.623Z",
+        ]
+
+    def test_injected_base_timestamp_is_normalized_to_utc(self, tmp_path):
+        inp = tmp_path / "sparse4d.json"
+        out = tmp_path / "nvschema"
+        _write_sparse4d_json(inp, _sparse4d_input({"sceneA__0": [_track_obj()]}))
+        eastern = datetime.timezone(datetime.timedelta(hours=-5))
+
+        convert_sparse4d_to_nvschema(
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            base_timestamp=datetime.datetime(2026, 1, 1, 22, 0, tzinfo=eastern),
+        )
+
+        assert _read_jsonl(out / "sceneA.json")[0]["timestamp"] == (
+            "2026-01-02T03:00:00.000Z"
+        )
+
+    def test_injected_base_timestamp_rejects_naive_datetime(self, tmp_path):
+        inp = tmp_path / "sparse4d.json"
+        _write_sparse4d_json(inp, _sparse4d_input({"sceneA__0": [_track_obj()]}))
+
+        with pytest.raises(ValueError, match="base_timestamp must be timezone-aware"):
+            convert_sparse4d_to_nvschema(
+                str(inp),
+                str(tmp_path / "nvschema"),
+                MAP_CLASS_NAMES,
+                base_timestamp=datetime.datetime(2026, 1, 2, 3, 4, 5),
+            )
+
     def test_single_scene_writes_one_jsonl_file(self, tmp_path):
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj()],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [_track_obj()],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
 
         produced = list(out.glob("*.json"))
@@ -136,12 +235,20 @@ class TestConvertSparse4DToNVSchema:
         version / id / sensorId / timestamp / objects."""
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__7": [_track_obj()],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__7": [_track_obj()],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
         rec = _read_jsonl(out / "sceneA.json")[0]
         assert rec["version"] == "4.0"
@@ -158,16 +265,26 @@ class TestConvertSparse4DToNVSchema:
         ``[x, y, z, w, l, h, pitch, roll, yaw]``."""
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj(
-                translation=(0.0, 0.0, 0.0),
-                size=(2.0, 5.0, 1.8),  # [l=2, w=5, h=1.8]
-                rotation=(1.0, 0.0, 0.0, 0.0),
-            )],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [
+                        _track_obj(
+                            translation=(0.0, 0.0, 0.0),
+                            size=(2.0, 5.0, 1.8),  # [l=2, w=5, h=1.8]
+                            rotation=(1.0, 0.0, 0.0, 0.0),
+                        )
+                    ],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
         obj = _read_jsonl(out / "sceneA.json")[0]["objects"][0]
         coords = obj["bbox3d"]["coordinates"]
@@ -179,17 +296,27 @@ class TestConvertSparse4DToNVSchema:
     def test_object_metadata_fields_match_spec(self, tmp_path):
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj(
-                translation=(1.0, 2.0, 0.5),
-                tracking_id=99,
-                tracking_score=0.7,
-                tracking_name="person",
-            )],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [
+                        _track_obj(
+                            translation=(1.0, 2.0, 0.5),
+                            tracking_id=99,
+                            tracking_score=0.7,
+                            tracking_name="person",
+                        )
+                    ],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
         obj = _read_jsonl(out / "sceneA.json")[0]["objects"][0]
         assert obj["id"] == "99"  # tracking_id stringified
@@ -208,12 +335,20 @@ class TestConvertSparse4DToNVSchema:
         (NVSchema requires the field to be present)."""
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj(reid_embedding=[1.0, 2.0, 3.0])],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [_track_obj(reid_embedding=[1.0, 2.0, 3.0])],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
         emb = _read_jsonl(out / "sceneA.json")[0]["objects"][0]["bbox3d"]["embedding"]
         assert emb == [{}]
@@ -221,12 +356,20 @@ class TestConvertSparse4DToNVSchema:
     def test_save_embedding_true_forwards_reid_embedding(self, tmp_path):
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj(reid_embedding=[0.1, 0.2, 0.3])],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [_track_obj(reid_embedding=[0.1, 0.2, 0.3])],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=True,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=True,
         )
         emb = _read_jsonl(out / "sceneA.json")[0]["objects"][0]["bbox3d"]["embedding"]
         assert emb == [{"vector": [0.1, 0.2, 0.3]}]
@@ -237,12 +380,20 @@ class TestConvertSparse4DToNVSchema:
         to the empty-slot form."""
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj()],  # no reid_embedding
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [_track_obj()],  # no reid_embedding
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=True,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=True,
         )
         emb = _read_jsonl(out / "sceneA.json")[0]["objects"][0]["bbox3d"]["embedding"]
         assert emb == [{}]
@@ -250,14 +401,22 @@ class TestConvertSparse4DToNVSchema:
     def test_multiple_scenes_produce_one_file_each(self, tmp_path):
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj()],
-            "sceneA__1": [_track_obj()],
-            "sceneB__0": [_track_obj()],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [_track_obj()],
+                    "sceneA__1": [_track_obj()],
+                    "sceneB__0": [_track_obj()],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
         files = sorted(p.name for p in out.glob("*.json"))
         assert files == ["sceneA.json", "sceneB.json"]
@@ -272,12 +431,20 @@ class TestConvertSparse4DToNVSchema:
         record to a ``sceneA+bev-3.json`` file."""
         inp = tmp_path / "sparse4d.json"
         out = tmp_path / "nvschema"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA+bev-3__0": [_track_obj()],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA+bev-3__0": [_track_obj()],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
         produced = sorted(p.name for p in out.glob("*.json"))
         assert produced == ["sceneA+bev-3.json"]
@@ -288,11 +455,19 @@ class TestConvertSparse4DToNVSchema:
         """The converter should create its ``output_path`` if absent."""
         inp = tmp_path / "sparse4d.json"
         nested_out = tmp_path / "does" / "not" / "exist" / "yet"
-        _write_sparse4d_json(inp, _sparse4d_input({
-            "sceneA__0": [_track_obj()],
-        }))
+        _write_sparse4d_json(
+            inp,
+            _sparse4d_input(
+                {
+                    "sceneA__0": [_track_obj()],
+                }
+            ),
+        )
 
         convert_sparse4d_to_nvschema(
-            str(inp), str(nested_out), MAP_CLASS_NAMES, save_embedding=False,
+            str(inp),
+            str(nested_out),
+            MAP_CLASS_NAMES,
+            save_embedding=False,
         )
         assert (nested_out / "sceneA.json").is_file()

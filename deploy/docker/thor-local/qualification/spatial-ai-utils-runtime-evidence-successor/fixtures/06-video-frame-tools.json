@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "fixture_id": "spatial-ai-video-frame-tools-v1",
+  "frame_size": [64, 48],
+  "fps": 5.0,
+  "codec": "mp4v",
+  "frames_bgr": [[0, 0, 255], [0, 255, 0], [255, 0, 0], [255, 255, 255]],
+  "downsample": 2,
+  "frame_skip": 1
+}

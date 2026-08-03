@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "target", "policy", "environment", "capabilities"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-spatial-ai-utils-runtime-evidence-successor-v1"},
+    "mode": {"const": "target_bound_offline_runtime_evidence"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["upstream_repository", "upstream_commit", "product_version", "current_oracle_document", "current_ledger_document"],
+      "properties": {
+        "upstream_repository": {"type": "string"},
+        "upstream_commit": {"$ref": "#/$defs/sha1"},
+        "product_version": {"const": "3.2.1"},
+        "current_oracle_document": {"type": "string"},
+        "current_ledger_document": {"type": "string"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network_allowed", "docker_allowed", "service_lifecycle_allowed", "model_access_allowed", "downloads_allowed", "credentials_allowed", "warehouse_sample_bundle", "external_provider_entry", "external_provider_treatment", "fixture_origin", "filesystem_mutation", "independent_positive_runs", "adjacent_negative_count_per_capability", "target_case_actions_per_capability", "aggregate_bounded_capability_actions", "aggregate_requests", "product_execution_deadline_seconds", "checked_receipt_requires_clean_committed_checkout"],
+      "properties": {
+        "network_allowed": {"const": false},
+        "docker_allowed": {"const": false},
+        "service_lifecycle_allowed": {"const": false},
+        "model_access_allowed": {"const": false},
+        "downloads_allowed": {"const": false},
+        "credentials_allowed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "external_provider_entry": {"const": "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"},
+        "external_provider_treatment": {"const": "excluded_external_optional_not_applicable"},
+        "fixture_origin": {"type": "string"},
+        "filesystem_mutation": {"type": "string"},
+        "independent_positive_runs": {"const": 2},
+        "adjacent_negative_count_per_capability": {"const": 5},
+        "target_case_actions_per_capability": {"const": 7},
+        "aggregate_bounded_capability_actions": {"const": 49},
+        "aggregate_requests": {"const": 49},
+        "product_execution_deadline_seconds": {"const": 900},
+        "checked_receipt_requires_clean_committed_checkout": {"const": true}
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "python_major_minor", "required_modules", "dependency_policy"],
+      "properties": {
+        "platform": {"const": "linux-aarch64"},
+        "python_major_minor": {"const": "3.12"},
+        "required_modules": {"type": "array", "minItems": 10, "uniqueItems": true, "items": {"type": "string"}},
+        "dependency_policy": {"const": "preinstalled_only_no_bootstrap"}
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_id", "oracle_id", "current_oracle_sha256", "current_ledger_row_sha256", "adapter", "fixture_manifest", "source_controls", "required_semantics"],
+        "properties": {
+          "capability_id": {"type": "string", "pattern": "^manifest-entry\\.spatial-ai-utils\\.0[0-6]-"},
+          "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.spatial-ai-utils\\.0[0-6]-"},
+          "current_oracle_sha256": {"$ref": "#/$defs/sha256"},
+          "current_ledger_row_sha256": {"$ref": "#/$defs/sha256"},
+          "adapter": {"enum": ["calibration_grouping", "geometry_projection", "multiview_visualization", "detection_map", "tracking_metrics", "nvschema_conversion", "video_frame_tools"]},
+          "fixture_manifest": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha256"}}
+          },
+          "source_controls": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha256"}}
+            }
+          },
+          "required_semantics": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string"}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

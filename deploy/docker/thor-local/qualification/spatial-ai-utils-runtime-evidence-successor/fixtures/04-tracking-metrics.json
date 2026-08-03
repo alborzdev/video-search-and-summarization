@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "fixture_id": "spatial-ai-tracking-metrics-v1",
+  "num_timesteps": 2,
+  "perfect": {
+    "gt_ids": [[0], [0]],
+    "tracker_ids": [[0], [0]],
+    "similarity_scores": [[[1.0]], [[1.0]]]
+  },
+  "identity_mismatch": {
+    "gt_ids": [[0], [0]],
+    "tracker_ids": [[0], [1]],
+    "similarity_scores": [[[1.0]], [[1.0]]]
+  }
+}

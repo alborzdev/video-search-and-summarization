@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "fixture_id": "spatial-ai-nvschema-conversion-v1",
+  "fixed_utc": "2026-01-01T00:00:00+00:00",
+  "map_class_names": {"person": "Person"},
+  "results": {
+    "sceneA+bev-sensor-1__0": [{
+      "translation": [1.0, 2.0, 0.5],
+      "size": [2.0, 5.0, 1.8],
+      "rotation": [1.0, 0.0, 0.0, 0.0],
+      "tracking_id": "42",
+      "tracking_score": 0.9,
+      "tracking_name": "person",
+      "reid_embedding": [0.1, 0.2, 0.3]
+    }]
+  }
+}

@@ -47,7 +47,12 @@ class FloatEncoder(json.JSONEncoder):
 
 
 def convert_sparse4d_to_nvschema(
-    json_path, output_path, map_class_names, save_embedding=True
+    json_path,
+    output_path,
+    map_class_names,
+    save_embedding=True,
+    *,
+    base_timestamp=None,
 ):
     """
     Convert Sparse4D tracking results JSON to NVschema format JSON-lines files.
@@ -68,9 +73,19 @@ def convert_sparse4d_to_nvschema(
                            (if available as 'reid_embedding' in the input)
                            in the output NVschema. Defaults to True.
     :type save_embedding: bool, optional
+    :param base_timestamp: Optional timezone-aware timestamp used for frame zero.
+                           When omitted, the current UTC time is used, preserving
+                           the historical behavior. Supplying it makes generated
+                           timestamps deterministic across runs.
+    :type base_timestamp: datetime.datetime, optional
     """
     fps = FPS
-    base_timestamp = datetime.datetime.now(datetime.timezone.utc)
+    if base_timestamp is None:
+        base_timestamp = datetime.datetime.now(datetime.timezone.utc)
+    elif base_timestamp.tzinfo is None or base_timestamp.utcoffset() is None:
+        raise ValueError("base_timestamp must be timezone-aware")
+    else:
+        base_timestamp = base_timestamp.astimezone(datetime.timezone.utc)
 
     print(f"loading results from {json_path} ...")
     with open(json_path, "r") as f:

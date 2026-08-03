@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "captured_at_utc", "bindings", "environment", "capability_results", "cleanup", "confinement", "promotion"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-spatial-ai-utils-runtime-evidence-successor-v1"},
+    "mode": {"enum": ["plan", "target_bound_offline_runtime_evidence"]},
+    "status": {"enum": ["plan", "partial", "pass"]},
+    "captured_at_utc": {"type": ["string", "null"]},
+    "bindings": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["contract_sha256", "canonical_rows_are_planning_only"],
+          "properties": {
+            "contract_sha256": {"$ref": "#/$defs/sha256"},
+            "canonical_rows_are_planning_only": {"const": true}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["contract_sha256", "executor_sha256", "ledger_document_sha256", "oracle_document_sha256", "checkout_head", "checkout_clean", "checkout_status_porcelain_sha256", "canonical_rows_are_planning_only"],
+          "properties": {
+            "contract_sha256": {"$ref": "#/$defs/sha256"},
+            "executor_sha256": {"$ref": "#/$defs/sha256"},
+            "ledger_document_sha256": {"$ref": "#/$defs/sha256"},
+            "oracle_document_sha256": {"$ref": "#/$defs/sha256"},
+            "checkout_head": {"$ref": "#/$defs/sha1"},
+            "checkout_clean": {"type": "boolean"},
+            "checkout_status_porcelain_sha256": {"$ref": "#/$defs/sha256"},
+            "canonical_rows_are_planning_only": {"const": true}
+          }
+        }
+      ]
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "system", "machine", "python_major_minor", "python_full", "capability_preflight"],
+      "properties": {
+        "platform": {"const": "linux-aarch64"},
+        "system": {"const": "Linux"},
+        "machine": {"const": "aarch64"},
+        "python_major_minor": {"const": "3.12"},
+        "python_full": {"type": "string", "pattern": "^3\\.12\\.[0-9]+"},
+        "capability_preflight": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^manifest-entry\\.spatial-ai-utils\\.0[0-6]-": {"$ref": "#/$defs/preflight"}
+          }
+        }
+      }
+    },
+    "capability_results": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {"$ref": "#/$defs/capability_result"}
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executor_owned_temporary_root", "pre_execution_tree_sha256", "post_execution_tree_sha256", "sentinel_sha256", "checkout_status_before_sha256", "checkout_status_after_sha256", "removed", "siblings_unchanged"],
+      "properties": {
+        "executor_owned_temporary_root": {"type": ["string", "null"]},
+        "pre_execution_tree_sha256": {"$ref": "#/$defs/sha256"},
+        "post_execution_tree_sha256": {"$ref": "#/$defs/sha256"},
+        "sentinel_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "checkout_status_before_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "checkout_status_after_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "removed": {"const": true},
+        "siblings_unchanged": {"const": true}
+      }
+    },
+    "confinement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bounded_capability_actions", "requests", "imported_product_function_invocations", "product_execution_deadline_seconds", "network_calls", "docker_calls", "service_lifecycle_calls", "model_accesses", "downloads", "warehouse_sample_accesses", "product_subprocess_calls", "filesystem_escape_attempts", "external_activity_instrumented", "whole_temp_root_scanned"],
+      "properties": {
+        "bounded_capability_actions": {"type": "integer", "minimum": 0, "maximum": 49},
+        "requests": {"type": "integer", "minimum": 0, "maximum": 49},
+        "imported_product_function_invocations": {"type": "integer", "minimum": 0},
+        "product_execution_deadline_seconds": {"const": 900},
+        "network_calls": {"const": 0},
+        "docker_calls": {"const": 0},
+        "service_lifecycle_calls": {"const": 0},
+        "model_accesses": {"const": 0},
+        "downloads": {"const": 0},
+        "warehouse_sample_accesses": {"const": 0},
+        "product_subprocess_calls": {"const": 0},
+        "filesystem_escape_attempts": {"const": 0},
+        "external_activity_instrumented": {"const": true},
+        "whole_temp_root_scanned": {"const": true}
+      }
+    },
+    "promotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledger_mutation_performed", "oracle_mutation_performed", "external_provider_entry_touched", "receipt_is_runtime_evidence", "aggregate_is_promotable", "individual_receipt_candidates"],
+      "properties": {
+        "ledger_mutation_performed": {"const": false},
+        "oracle_mutation_performed": {"const": false},
+        "external_provider_entry_touched": {"const": false},
+        "receipt_is_runtime_evidence": {"const": false},
+        "aggregate_is_promotable": {"const": false},
+        "individual_receipt_candidates": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/capability_id"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "capability_id": {"type": "string", "pattern": "^manifest-entry\\.spatial-ai-utils\\.0[0-6]-"},
+    "preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ready", "required_modules", "observed_versions", "missing_modules", "import_failures"],
+      "properties": {
+        "ready": {"type": "boolean"},
+        "required_modules": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "observed_versions": {"type": "object", "additionalProperties": {"type": "string"}},
+        "missing_modules": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "import_failures": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "rejected", "exception_type", "message_sha256"],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1},
+        "rejected": {"const": true},
+        "exception_type": {"type": ["string", "null"]},
+        "message_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "row_cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespace", "pre_state_captured", "temporary_files_only", "removed", "siblings_unchanged", "owned_tree_sha256", "post_cleanup_tree_sha256"],
+      "properties": {
+        "namespace": {"type": "string", "pattern": "^spatial-ai-0[0-6]-"},
+        "pre_state_captured": {"enum": ["absent", "not_created"]},
+        "temporary_files_only": {"const": true},
+        "removed": {"const": true},
+        "siblings_unchanged": {"const": true},
+        "owned_tree_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "post_cleanup_tree_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "runtime_binding": {
+      "oneOf": [
+        {"type": "object", "maxProperties": 0},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["captured_at_utc", "executor_sha256", "contract_sha256", "current_oracle_sha256", "current_ledger_row_sha256", "fixture_sha256", "capability_evidence_sha256", "target_case_actions", "requests", "target_action_ids_sha256", "imported_product_function_invocations", "imported_product_function_counts_sha256"],
+          "properties": {
+            "captured_at_utc": {"type": "string"},
+            "executor_sha256": {"$ref": "#/$defs/sha256"},
+            "contract_sha256": {"$ref": "#/$defs/sha256"},
+            "current_oracle_sha256": {"$ref": "#/$defs/sha256"},
+            "current_ledger_row_sha256": {"$ref": "#/$defs/sha256"},
+            "fixture_sha256": {"$ref": "#/$defs/sha256"},
+            "capability_evidence_sha256": {"$ref": "#/$defs/sha256"},
+            "target_case_actions": {"const": 7},
+            "requests": {"const": 7},
+            "target_action_ids_sha256": {"$ref": "#/$defs/sha256"},
+            "imported_product_function_invocations": {"type": "integer", "minimum": 1},
+            "imported_product_function_counts_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        }
+      ]
+    },
+    "capability_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_id", "oracle_id", "status", "independent_runs", "bounded_capability_actions", "requests", "target_action_ids", "imported_product_function_invocations", "imported_product_function_counts", "deterministic_output", "fixture_sha256", "run_output_sha256", "positive_observations", "adjacent_negatives", "cleanup", "runtime_evidence_binding"],
+      "properties": {
+        "capability_id": {"$ref": "#/$defs/capability_id"},
+        "oracle_id": {"type": "string", "pattern": "^oracle\\.manifest-entry\\.spatial-ai-utils\\.0[0-6]-"},
+        "status": {"enum": ["plan", "pass", "blocked", "not_selected"]},
+        "independent_runs": {"type": "integer", "minimum": 0, "maximum": 2},
+        "bounded_capability_actions": {"type": "integer", "minimum": 0, "maximum": 7},
+        "requests": {"type": "integer", "minimum": 0, "maximum": 7},
+        "target_action_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "imported_product_function_invocations": {"type": "integer", "minimum": 0},
+        "imported_product_function_counts": {
+          "type": "object",
+          "propertyNames": {"type": "string", "minLength": 1},
+          "additionalProperties": {"type": "integer", "minimum": 1}
+        },
+        "deterministic_output": {"type": "boolean"},
+        "fixture_sha256": {"$ref": "#/$defs/sha256"},
+        "run_output_sha256": {"type": "array", "maxItems": 2, "items": {"$ref": "#/$defs/sha256"}},
+        "positive_observations": {"type": "object"},
+        "adjacent_negatives": {"type": "array", "maxItems": 5, "items": {"$ref": "#/$defs/negative"}},
+        "cleanup": {"$ref": "#/$defs/row_cleanup"},
+        "runtime_evidence_binding": {"$ref": "#/$defs/runtime_binding"}
+      }
+    }
+  }
+}
