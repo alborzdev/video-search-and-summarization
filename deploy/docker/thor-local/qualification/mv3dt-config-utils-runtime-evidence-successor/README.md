@@ -88,6 +88,17 @@ NumPy 2.2.6, OpenCV 4.12.x, PyYAML 6.0.2, and tqdm 4.67.1. The receipt records
 this mismatch and is normative only for observed current-Thor behavior; it does
 not claim dependency-pin parity.
 
+## Post-promotion boundary
+
+This producer is immutable evidence authority for the clean staging commit
+recorded in the aggregate receipt. After canonical promotion changes the two
+current ledger/oracle rows, its pre-state binding intentionally fails closed
+with `current oracle row drift`; do not rewrite the producer or its contract to
+make a second receipt appear current. Post-promotion verification runs through
+the aggregate-aware canonical verifier and the deterministic metadata promotion
+compiler instead. The focused producer suite is reproducible at the captured
+staging commit recorded by the receipt.
+
 ## Tests
 
 ```bash

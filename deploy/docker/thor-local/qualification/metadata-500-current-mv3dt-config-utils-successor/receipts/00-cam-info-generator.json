@@ -1,0 +1,188 @@
+{
+  "assertions": [
+    {
+      "expected": "camInfo/<sensor_id>.yml",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/output",
+      "observed": "camInfo/<sensor_id>.yml",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/per_class_height_radius",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        3,
+        4
+      ],
+      "id": "contract-03",
+      "observation": "contract_identity/contract/projection_shape",
+      "observed": [
+        3,
+        4
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "generate_cam_info_configs.py",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/script",
+      "observed": "generate_cam_info_configs.py",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "package": "calibration-warehouse",
+          "planning_requirement_ids": [
+            "warehouse-mv3dt-custom-media"
+          ]
+        }
+      ],
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/contributions",
+      "observed": [
+        {
+          "package": "calibration-warehouse",
+          "planning_requirement_ids": [
+            "warehouse-mv3dt-custom-media"
+          ]
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "warehouse-mv3dt-custom-media"
+      ],
+      "id": "contract-08",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "warehouse-mv3dt-custom-media"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "deterministic_output",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "tool.mv3dt.cam-info-generator",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-tool-mv3dt-cam-info-generator"
+    ],
+    "mutation": "temporary_files_only",
+    "postconditions": [
+      {
+        "description": "the exact temporary target is absent and no sibling path changed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-tool-mv3dt-cam-info-generator"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.tool.mv3dt.cam-info-generator",
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/00-cam-info-generator.json",
+    "sha256": "8dd769695b2f9ce48081f79c6f1e9c6f54423411f738fb23e58abc791869d2a5"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "output": "camInfo/<sensor_id>.yml",
+          "per_class_height_radius": true,
+          "projection_shape": [
+            3,
+            4
+          ],
+          "script": "generate_cam_info_configs.py",
+          "wave3_acceptance": {
+            "contributions": [
+              {
+                "package": "calibration-warehouse",
+                "planning_requirement_ids": [
+                  "warehouse-mv3dt-custom-media"
+                ]
+              }
+            ],
+            "executor_ready": false,
+            "materialized": false,
+            "planning_requirement_ids": [
+              "warehouse-mv3dt-custom-media"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": true
+    },
+    {
+      "id": "deterministic_output",
+      "result": "pass",
+      "value": true
+    }
+  ],
+  "oracle_id": "oracle.tool.mv3dt.cam-info-generator",
+  "oracle_sha256": "c9d74d11fde3469f7fa9adf010cbbb4538adaa24442557ab232ca3f61cc81ad5",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "offline-tool-workflows",
+    "oracle.tool.mv3dt.cam-info-generator"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

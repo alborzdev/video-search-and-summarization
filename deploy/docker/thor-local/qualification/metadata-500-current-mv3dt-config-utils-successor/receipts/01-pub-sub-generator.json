@@ -1,0 +1,179 @@
+{
+  "assertions": [
+    {
+      "expected": "localhost:1883",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/mqtt_broker",
+      "observed": "localhost:1883",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "pub_sub_info_config.yml",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/output",
+      "observed": "pub_sub_info_config.yml",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 0.1,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/overlap_threshold",
+      "observed": 0.1,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "generate_pub_sub_configs.py",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/script",
+      "observed": "generate_pub_sub_configs.py",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "package": "calibration-warehouse",
+          "planning_requirement_ids": [
+            "warehouse-mv3dt-custom-media"
+          ]
+        }
+      ],
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/contributions",
+      "observed": [
+        {
+          "package": "calibration-warehouse",
+          "planning_requirement_ids": [
+            "warehouse-mv3dt-custom-media"
+          ]
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "warehouse-mv3dt-custom-media"
+      ],
+      "id": "contract-08",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "warehouse-mv3dt-custom-media"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "deterministic_output",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "tool.mv3dt.pub-sub-generator",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-tool-mv3dt-pub-sub-generator"
+    ],
+    "mutation": "temporary_files_only",
+    "postconditions": [
+      {
+        "description": "the exact temporary target is absent and no sibling path changed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-tool-mv3dt-pub-sub-generator"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.tool.mv3dt.pub-sub-generator",
+    "path": "deploy/docker/thor-local/qualification/mv3dt-config-utils-runtime-evidence-successor/fixtures/01-pub-sub-generator.json",
+    "sha256": "0cb77ffe349809e1a8fe9349ecb1859a63ac564077b3326aadac6af264cd57ab"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "mqtt_broker": "localhost:1883",
+          "output": "pub_sub_info_config.yml",
+          "overlap_threshold": 0.1,
+          "script": "generate_pub_sub_configs.py",
+          "wave3_acceptance": {
+            "contributions": [
+              {
+                "package": "calibration-warehouse",
+                "planning_requirement_ids": [
+                  "warehouse-mv3dt-custom-media"
+                ]
+              }
+            ],
+            "executor_ready": false,
+            "materialized": false,
+            "planning_requirement_ids": [
+              "warehouse-mv3dt-custom-media"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": true
+    },
+    {
+      "id": "deterministic_output",
+      "result": "pass",
+      "value": true
+    }
+  ],
+  "oracle_id": "oracle.tool.mv3dt.pub-sub-generator",
+  "oracle_sha256": "7d8573b3383ca87bc74725f21f251fcc251097e90e86ae6c98af649b78d0f8cf",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "offline-tool-workflows",
+    "oracle.tool.mv3dt.pub-sub-generator"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

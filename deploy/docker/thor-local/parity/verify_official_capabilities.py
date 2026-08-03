@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -542,6 +543,718 @@ def _validate_bound_runtime_evidence(
         )
 
 
+def _canonical_bytes(value: Any) -> bytes:
+    return json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    ).encode("utf-8")
+
+
+def _json_sha256(value: Any) -> str:
+    return hashlib.sha256(_canonical_bytes(value)).hexdigest()
+
+
+def _git_bytes(repo_root: Path, *args: str) -> bytes:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=repo_root,
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if result.returncode:
+        raise CapabilityContractError(
+            f"aggregate captured-checkout provenance failed: {' '.join(args)}"
+        )
+    return result.stdout
+
+
+def _git_blob(repo_root: Path, commit: str, path: str) -> bytes:
+    if not isinstance(path, str) or not path:
+        raise CapabilityContractError("aggregate provenance contains an unsafe path")
+    normalized = Path(path)
+    if (
+        normalized.is_absolute()
+        or ".." in normalized.parts
+        or path != str(normalized)
+        or normalized.parts[0] == ".git"
+        or any(character in path for character in ("\x00", "\n", "\r"))
+    ):
+        raise CapabilityContractError("aggregate provenance contains an unsafe path")
+    return _git_bytes(repo_root, "show", f"{commit}:{path}")
+
+
+def _git_json_blob(repo_root: Path, commit: str, path: str) -> dict[str, Any]:
+    raw = _git_blob(repo_root, commit, path)
+    value = json.loads(raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs)
+    if not isinstance(value, dict):
+        raise CapabilityContractError("aggregate provenance JSON root is not an object")
+    return value
+
+
+def _select_aggregate_capability(
+    aggregate: dict[str, Any], reference: dict[str, Any]
+) -> dict[str, Any]:
+    pointer = reference.get("json_pointer")
+    if (
+        not isinstance(pointer, str)
+        or re.fullmatch(r"/capability_results/(0|[1-9][0-9]*)", pointer) is None
+    ):
+        raise CapabilityContractError(
+            "aggregate runtime evidence selector must be an exact capability-results JSON pointer"
+        )
+    index = int(pointer.rsplit("/", 1)[1])
+    rows = aggregate.get("capability_results")
+    if not isinstance(rows, list) or index >= len(rows):
+        raise CapabilityContractError(
+            "aggregate runtime evidence selector is out of range"
+        )
+    selected = rows[index]
+    if not isinstance(selected, dict) or selected.get("capability_id") != reference.get(
+        "capability_id"
+    ):
+        raise CapabilityContractError(
+            "aggregate runtime evidence selector does not match capability_id"
+        )
+    return selected
+
+
+def _validate_aggregate_runtime_evidence(
+    aggregate: dict[str, Any],
+    reference: dict[str, Any],
+    capability: dict[str, Any],
+    capabilities_by_id: dict[str, dict[str, Any]],
+    oracles_by_id: dict[str, dict[str, Any]],
+    target: dict[str, Any],
+    repo_root: Path,
+) -> dict[str, Any]:
+    capability_id = capability["id"]
+    if set(reference) != {"path", "sha256", "capability_id", "json_pointer"}:
+        raise CapabilityContractError(
+            f"{capability_id}: aggregate runtime evidence reference fields are not exact"
+        )
+    if reference["capability_id"] != capability_id:
+        raise CapabilityContractError(
+            f"{capability_id}: aggregate runtime evidence capability selector differs"
+        )
+    top_keys = {
+        "schema_version",
+        "package_id",
+        "mode",
+        "status",
+        "captured_at_utc",
+        "bindings",
+        "environment",
+        "capability_results",
+        "cleanup",
+        "confinement",
+        "promotion",
+    }
+    if set(aggregate) != top_keys:
+        raise CapabilityContractError("aggregate runtime evidence fields are not exact")
+    captured_at = aggregate.get("captured_at_utc")
+    if (
+        type(aggregate.get("schema_version")) is not int
+        or aggregate["schema_version"] != 1
+        or aggregate.get("mode") != "target_bound_offline_runtime_evidence"
+        or aggregate.get("status") != "pass"
+        or not isinstance(captured_at, str)
+        or not captured_at.endswith("Z")
+    ):
+        raise CapabilityContractError(
+            "aggregate runtime evidence is not a passed execution"
+        )
+
+    bindings = aggregate.get("bindings")
+    binding_keys = {
+        "checkout_head",
+        "checkout_tree",
+        "checkout_clean",
+        "checkout_status_porcelain_sha256",
+        "upstream_commit",
+        "product_version",
+        "current_oracle_document_path",
+        "current_oracle_row_sha256",
+        "current_ledger_row_sha256",
+        "execution_oracle_document_path",
+        "execution_oracle_document_sha256",
+        "execution_oracle_row_sha256",
+        "execution_oracles_executor_ready",
+        "fixture_manifest_sha256",
+        "contract_sha256",
+        "executor_sha256",
+    }
+    empty_sha = hashlib.sha256(b"").hexdigest()
+    if (
+        not isinstance(bindings, dict)
+        or set(bindings) != binding_keys
+        or bindings.get("checkout_clean") is not True
+        or bindings.get("checkout_status_porcelain_sha256") != empty_sha
+        or bindings.get("execution_oracles_executor_ready") is not True
+        or HEX40.fullmatch(str(bindings.get("checkout_head"))) is None
+        or HEX40.fullmatch(str(bindings.get("checkout_tree"))) is None
+        or bindings.get("upstream_commit") != target["main_commit"]
+        or bindings.get("product_version") != target["product_version"]
+        or any(
+            re.fullmatch(r"[0-9a-f]{64}", str(bindings.get(key))) is None
+            for key in (
+                "execution_oracle_document_sha256",
+                "contract_sha256",
+                "executor_sha256",
+            )
+        )
+    ):
+        raise CapabilityContractError(
+            "aggregate runtime evidence is not clean/executor/contract bound"
+        )
+    captured_commit = bindings["checkout_head"]
+    _git_bytes(repo_root, "cat-file", "-e", f"{captured_commit}^{{commit}}")
+    captured_tree = (
+        _git_bytes(repo_root, "rev-parse", f"{captured_commit}^{{tree}}")
+        .decode("ascii")
+        .strip()
+    )
+    if captured_tree != bindings["checkout_tree"]:
+        raise CapabilityContractError(
+            "aggregate captured checkout tree differs from its commit"
+        )
+    _git_bytes(
+        repo_root,
+        "merge-base",
+        "--is-ancestor",
+        target["main_commit"],
+        captured_commit,
+    )
+    execution_oracle_path = bindings["execution_oracle_document_path"]
+    execution_oracle_raw = _git_blob(repo_root, captured_commit, execution_oracle_path)
+    if (
+        hashlib.sha256(execution_oracle_raw).hexdigest()
+        != bindings["execution_oracle_document_sha256"]
+    ):
+        raise CapabilityContractError(
+            "aggregate execution-oracle blob differs at captured commit"
+        )
+    execution_oracle_document = json.loads(
+        execution_oracle_raw.decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    if not isinstance(execution_oracle_document, dict):
+        raise CapabilityContractError(
+            "aggregate execution-oracle root is not an object"
+        )
+    historical_oracles = {
+        row.get("capability_id"): row
+        for row in execution_oracle_document.get("oracles", [])
+        if isinstance(row, dict)
+    }
+
+    promotion = aggregate.get("promotion")
+    promotion_keys = {
+        "receipt_is_runtime_evidence",
+        "aggregate_is_promotable",
+        "eligible_capability_ids",
+        "family_id",
+        "ledger_mutation_performed",
+        "requires_separate_reviewed_metadata_integration",
+        "development_smoke_only",
+        "dependency_pin_parity_claimed",
+    }
+    if (
+        not isinstance(promotion, dict)
+        or set(promotion) != promotion_keys
+        or promotion.get("receipt_is_runtime_evidence") is not True
+        or promotion.get("aggregate_is_promotable") is not True
+        or promotion.get("development_smoke_only") is not False
+        or promotion.get("ledger_mutation_performed") is not False
+        or promotion.get("requires_separate_reviewed_metadata_integration") is not True
+        or promotion.get("dependency_pin_parity_claimed") is not False
+    ):
+        raise CapabilityContractError(
+            "aggregate runtime evidence is development or non-promotable"
+        )
+
+    environment = aggregate.get("environment")
+    if not isinstance(environment, dict) or set(environment) != {
+        "platform",
+        "python",
+        "declared_requirements",
+        "observed_distributions",
+        "observed_modules",
+        "declared_versions_match_observed",
+        "dependency_caveat",
+        "normative_scope",
+    }:
+        raise CapabilityContractError(
+            "aggregate runtime evidence environment is not exact"
+        )
+    if (
+        promotion.get("dependency_pin_parity_claimed")
+        is not environment.get("declared_versions_match_observed")
+        or environment.get("normative_scope") != "observed_current_thor_behavior_only"
+    ):
+        raise CapabilityContractError(
+            "aggregate dependency parity claim differs from observed environment"
+        )
+
+    rows = aggregate.get("capability_results")
+    eligible_ids = promotion.get("eligible_capability_ids")
+    if (
+        not isinstance(rows, list)
+        or not rows
+        or not isinstance(eligible_ids, list)
+        or [row.get("capability_id") for row in rows if isinstance(row, dict)]
+        != eligible_ids
+        or len(set(eligible_ids)) != len(eligible_ids)
+    ):
+        raise CapabilityContractError(
+            "aggregate runtime evidence capability denominator differs"
+        )
+    for map_key in (
+        "current_oracle_row_sha256",
+        "current_ledger_row_sha256",
+        "execution_oracle_row_sha256",
+        "fixture_manifest_sha256",
+    ):
+        value = bindings.get(map_key)
+        if not isinstance(value, dict) or list(value) != eligible_ids:
+            raise CapabilityContractError(
+                f"aggregate runtime evidence {map_key} denominator differs"
+            )
+    selected_capabilities = [capabilities_by_id.get(row_id) for row_id in eligible_ids]
+    if any(not isinstance(item, dict) for item in selected_capabilities):
+        raise CapabilityContractError(
+            "aggregate eligible capability lacks canonical ledger authority"
+        )
+    selected_feature_ids = {item["feature_id"] for item in selected_capabilities}
+    if len(selected_feature_ids) != 1 or promotion.get("family_id") != next(
+        iter(selected_feature_ids)
+    ):
+        raise CapabilityContractError(
+            "aggregate promotion family differs from canonical capability family"
+        )
+    executor_paths = {
+        oracles_by_id[row_id].get("execution_bounds", {}).get("executor")
+        for row_id in eligible_ids
+    }
+    if len(executor_paths) != 1 or not all(
+        isinstance(item, str) for item in executor_paths
+    ):
+        raise CapabilityContractError(
+            "aggregate eligible capabilities do not share one exact executor"
+        )
+    executor_path = next(iter(executor_paths))
+    executor_raw = _git_blob(repo_root, captured_commit, executor_path)
+    if hashlib.sha256(executor_raw).hexdigest() != bindings["executor_sha256"]:
+        raise CapabilityContractError(
+            "aggregate executor blob differs at captured commit"
+        )
+    contract_path = str(Path(executor_path).with_name("contract.json"))
+    contract_raw = _git_blob(repo_root, captured_commit, contract_path)
+    if hashlib.sha256(contract_raw).hexdigest() != bindings["contract_sha256"]:
+        raise CapabilityContractError(
+            "aggregate contract blob differs at captured commit"
+        )
+    contract_document = json.loads(
+        contract_raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+    )
+    if (
+        not isinstance(contract_document, dict)
+        or contract_document.get("package_id") != aggregate.get("package_id")
+        or contract_document.get("mode") != aggregate.get("mode")
+        or contract_document.get("target", {}).get("upstream_commit")
+        != target["main_commit"]
+        or contract_document.get("target", {}).get("product_version")
+        != target["product_version"]
+        or contract_document.get("target", {}).get("current_oracle_document")
+        != bindings["current_oracle_document_path"]
+    ):
+        raise CapabilityContractError(
+            "aggregate contract identity/target differs from receipt bindings"
+        )
+    contract_capabilities = contract_document.get("capabilities")
+    if (
+        not isinstance(contract_capabilities, list)
+        or [item.get("capability_id") for item in contract_capabilities] != eligible_ids
+    ):
+        raise CapabilityContractError(
+            "aggregate contract capability denominator differs"
+        )
+    contract_by_id = {item["capability_id"]: item for item in contract_capabilities}
+    seen_source_controls: dict[str, str] = {}
+    for contract_capability in contract_capabilities:
+        source_controls = contract_capability.get("source_controls")
+        if not isinstance(source_controls, list) or not source_controls:
+            raise CapabilityContractError(
+                "aggregate contract capability has no exact source controls"
+            )
+        for control in source_controls:
+            if (
+                not isinstance(control, dict)
+                or set(control) != {"path", "sha256"}
+                or not isinstance(control.get("path"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", str(control.get("sha256"))) is None
+            ):
+                raise CapabilityContractError(
+                    "aggregate contract source control is malformed"
+                )
+            previous = seen_source_controls.setdefault(
+                control["path"], control["sha256"]
+            )
+            if previous != control["sha256"]:
+                raise CapabilityContractError(
+                    "aggregate contract source control digest conflicts"
+                )
+            source_raw = _git_blob(repo_root, captured_commit, control["path"])
+            if hashlib.sha256(source_raw).hexdigest() != control["sha256"]:
+                raise CapabilityContractError(
+                    "aggregate source-control blob differs at captured commit"
+                )
+    historical_current_oracles = _git_json_blob(
+        repo_root,
+        captured_commit,
+        bindings["current_oracle_document_path"],
+    )
+    current_oracles_by_id = {
+        row.get("capability_id"): row
+        for row in historical_current_oracles.get("oracles", [])
+        if isinstance(row, dict)
+    }
+    historical_ledger = _git_json_blob(
+        repo_root,
+        captured_commit,
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+    )
+    historical_ledger_by_id = {
+        row.get("id"): row
+        for row in historical_ledger.get("capabilities", [])
+        if isinstance(row, dict)
+    }
+    for row_id in eligible_ids:
+        if (
+            _json_sha256(current_oracles_by_id.get(row_id))
+            != bindings["current_oracle_row_sha256"][row_id]
+            or _json_sha256(historical_ledger_by_id.get(row_id))
+            != bindings["current_ledger_row_sha256"][row_id]
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate current oracle/ledger provenance differs"
+            )
+
+    capability_keys = {
+        "capability_id",
+        "oracle_id",
+        "status",
+        "independent_runs",
+        "bounded_capability_actions",
+        "target_case_actions",
+        "supporting_cam_generation_actions",
+        "requests",
+        "imported_helper_invocations",
+        "total_imported_source_function_invocations",
+        "imported_source_function_counts",
+        "deterministic_output",
+        "fixture_sha256",
+        "payload_sha256",
+        "run_output_sha256",
+        "positive_observations",
+        "adjacent_negatives",
+        "oracle_observations",
+        "oracle_assertions",
+        "runtime_evidence_binding",
+        "official_receipt",
+        "cleanup",
+    }
+    aggregate_counts = {
+        "bounded_capability_actions": 0,
+        "target_case_actions": 0,
+        "supporting_cam_generation_actions": 0,
+        "requests": 0,
+        "imported_helper_invocations": 0,
+        "total_imported_source_function_invocations": 0,
+    }
+    aggregate_function_counts: dict[str, int] = {}
+    for row in rows:
+        if not isinstance(row, dict) or set(row) != capability_keys:
+            raise CapabilityContractError(
+                "aggregate capability result fields are not exact"
+            )
+        row_id = row["capability_id"]
+        row_capability = capabilities_by_id.get(row_id)
+        oracle = oracles_by_id.get(row_id)
+        if row_capability is None or oracle is None:
+            raise CapabilityContractError(
+                f"{row_id}: aggregate row lacks canonical capability/oracle authority"
+            )
+        independent_runs = row.get("independent_runs")
+        target_actions = row.get("target_case_actions")
+        supporting_actions = row.get("supporting_cam_generation_actions")
+        bounded_actions = row.get("bounded_capability_actions")
+        requests = row.get("requests")
+        helper_invocations = row.get("imported_helper_invocations")
+        total_invocations = row.get("total_imported_source_function_invocations")
+        run_hashes = row.get("run_output_sha256")
+        negatives = row.get("adjacent_negatives")
+        function_counts = row.get("imported_source_function_counts")
+        if (
+            row.get("oracle_id") != oracle["oracle_id"]
+            or row.get("status") != "pass"
+            or type(independent_runs) is not int
+            or independent_runs < 2
+            or type(target_actions) is not int
+            or type(supporting_actions) is not int
+            or type(bounded_actions) is not int
+            or type(requests) is not int
+            or type(helper_invocations) is not int
+            or type(total_invocations) is not int
+            or target_actions != requests
+            or bounded_actions != target_actions + supporting_actions
+            or total_invocations != bounded_actions + helper_invocations
+            or row.get("deterministic_output") is not True
+            or not isinstance(run_hashes, list)
+            or len(run_hashes) != independent_runs
+            or len(set(run_hashes)) != 1
+            or any(
+                re.fullmatch(r"[0-9a-f]{64}", str(item)) is None for item in run_hashes
+            )
+            or not isinstance(negatives, list)
+            or len(negatives) != target_actions - independent_runs
+            or any(
+                not isinstance(item, dict)
+                or set(item) != {"case_id", "rejected", "exception"}
+                or item["rejected"] is not True
+                for item in negatives
+            )
+            or not isinstance(function_counts, dict)
+            or not function_counts
+            or any(
+                type(value) is not int or value < 0
+                for value in function_counts.values()
+            )
+            or sum(function_counts.values()) != total_invocations
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate capability execution semantics differ"
+            )
+        positive = row.get("positive_observations")
+        if (
+            not isinstance(positive, dict)
+            or set(positive)
+            != {
+                "payload_sha256",
+                "output_sha256",
+                "file_sha256",
+                "semantic",
+                "input_unchanged",
+            }
+            or positive.get("input_unchanged") is not True
+            or positive.get("payload_sha256") != row.get("payload_sha256")
+            or any(
+                re.fullmatch(r"[0-9a-f]{64}", str(value)) is None
+                for value in (
+                    row.get("fixture_sha256"),
+                    row.get("payload_sha256"),
+                    positive.get("output_sha256"),
+                )
+            )
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate positive observations are not exact"
+            )
+        row_cleanup = row.get("cleanup")
+        if (
+            not isinstance(row_cleanup, dict)
+            or set(row_cleanup)
+            != {
+                "namespace",
+                "pre_state_captured",
+                "temporary_files_only",
+                "removed",
+                "siblings_unchanged",
+            }
+            or row_cleanup.get("pre_state_captured") != "absent"
+            or any(
+                row_cleanup.get(key) is not True
+                for key in ("temporary_files_only", "removed", "siblings_unchanged")
+            )
+        ):
+            raise CapabilityContractError(f"{row_id}: aggregate cleanup differs")
+
+        official = row["official_receipt"]
+        if not isinstance(official, dict):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate official receipt must be an object"
+            )
+        contract_capability = contract_by_id[row_id]
+        fixture_lock = contract_capability.get("fixture_manifest")
+        if (
+            contract_capability.get("oracle_id") != oracle["oracle_id"]
+            or not isinstance(fixture_lock, dict)
+            or set(fixture_lock) != {"path", "sha256"}
+            or fixture_lock.get("path") != official.get("fixture", {}).get("path")
+            or fixture_lock.get("sha256") != row["fixture_sha256"]
+            or contract_document.get("policy", {})
+            .get("supporting_cam_generation_actions", {})
+            .get(row_id)
+            != supporting_actions
+            or contract_document.get("policy", {}).get(
+                "target_case_actions_per_capability"
+            )
+            != target_actions
+            or contract_document.get("policy", {}).get("independent_positive_runs")
+            != independent_runs
+            or contract_document.get("policy", {}).get(
+                "adjacent_negative_count_per_capability"
+            )
+            != len(negatives)
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate contract capability/fixture mapping differs"
+            )
+        if historical_oracles.get(row_id) != oracle:
+            raise CapabilityContractError(
+                f"{row_id}: aggregate oracle differs from captured oracle document"
+            )
+        official_fixture = official.get("fixture")
+        if not isinstance(official_fixture, dict) or not isinstance(
+            official_fixture.get("path"), str
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate official fixture reference is absent"
+            )
+        fixture_raw = _git_blob(repo_root, captured_commit, official_fixture["path"])
+        if hashlib.sha256(fixture_raw).hexdigest() != row["fixture_sha256"]:
+            raise CapabilityContractError(
+                f"{row_id}: aggregate fixture blob differs at captured commit"
+            )
+        if official.get("observations") != row.get(
+            "oracle_observations"
+        ) or official.get("assertions") != row.get("oracle_assertions"):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate outer observations differ from official receipt"
+            )
+        _validate_bound_runtime_evidence(row_capability, oracle, official, target)
+
+        evidence_payload = {
+            key: value
+            for key, value in row.items()
+            if key not in {"official_receipt", "runtime_evidence_binding"}
+        }
+        expected_outer = {
+            "schema_version": 1,
+            "captured_at_utc": captured_at,
+            "executor_sha256": bindings["executor_sha256"],
+            "contract_sha256": bindings["contract_sha256"],
+            "oracle_sha256": oracle_contract.canonical_oracle_sha256(oracle),
+            "oracle_document_sha256": bindings["execution_oracle_document_sha256"],
+            "official_receipt_sha256": _json_sha256(official),
+            "product_execution_deadline_seconds": oracle["execution_bounds"][
+                "max_duration_seconds"
+            ],
+            "bounded_capability_actions": bounded_actions,
+            "target_case_actions": target_actions,
+            "supporting_cam_generation_actions": supporting_actions,
+            "requests": requests,
+            "imported_helper_invocations": helper_invocations,
+            "total_imported_source_function_invocations": total_invocations,
+            "run_output_sha256": run_hashes,
+            "positive_output_sha256": positive["output_sha256"],
+            "adjacent_negatives_sha256": _json_sha256(negatives),
+            "capability_evidence_sha256": _json_sha256(evidence_payload),
+        }
+        if row.get("runtime_evidence_binding") != expected_outer:
+            raise CapabilityContractError(
+                f"{row_id}: aggregate outer runtime evidence binding differs"
+            )
+        if (
+            bindings["execution_oracle_row_sha256"].get(row_id)
+            != expected_outer["oracle_sha256"]
+            or bindings["fixture_manifest_sha256"].get(row_id) != row["fixture_sha256"]
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: aggregate binding maps differ from selected evidence"
+            )
+        for key in aggregate_counts:
+            aggregate_counts[key] += row[key]
+        for key, value in function_counts.items():
+            aggregate_function_counts[key] = (
+                aggregate_function_counts.get(key, 0) + value
+            )
+
+    if aggregate.get("cleanup") != {
+        "root_removed": True,
+        "exact_namespace_count": len(rows),
+        "sibling_names_unchanged": True,
+        "repository_mutations": 0,
+    }:
+        raise CapabilityContractError("aggregate root cleanup differs")
+    policy = contract_document.get("policy", {})
+    if (
+        policy.get("aggregate_bounded_capability_actions")
+        != aggregate_counts["bounded_capability_actions"]
+        or policy.get("aggregate_requests") != aggregate_counts["requests"]
+        or policy.get("aggregate_imported_helper_invocations")
+        != aggregate_counts["imported_helper_invocations"]
+        or policy.get("aggregate_total_imported_source_function_invocations")
+        != aggregate_counts["total_imported_source_function_invocations"]
+        or policy.get("aggregate_imported_source_function_counts")
+        != aggregate_function_counts
+    ):
+        raise CapabilityContractError(
+            "aggregate contract policy differs from observed execution accounting"
+        )
+    confinement = aggregate.get("confinement")
+    confinement_keys = {
+        "network_calls",
+        "docker_calls",
+        "service_lifecycle_calls",
+        "model_accesses",
+        "downloads",
+        "warehouse_sample_accesses",
+        *aggregate_counts.keys(),
+        "imported_source_function_counts",
+        "product_subprocess_calls",
+        "provenance_git_command_count",
+        "network_boundary",
+        "product_execution_deadline_seconds",
+    }
+    if not isinstance(confinement, dict) or set(confinement) != confinement_keys:
+        raise CapabilityContractError("aggregate confinement fields are not exact")
+    if any(
+        confinement.get(key) != 0
+        for key in (
+            "network_calls",
+            "docker_calls",
+            "service_lifecycle_calls",
+            "model_accesses",
+            "downloads",
+            "warehouse_sample_accesses",
+            "product_subprocess_calls",
+        )
+    ) or any(confinement.get(key) != value for key, value in aggregate_counts.items()):
+        raise CapabilityContractError("aggregate confinement action counts differ")
+    if (
+        confinement.get("imported_source_function_counts") != aggregate_function_counts
+        or confinement.get("product_execution_deadline_seconds")
+        != max(
+            oracles_by_id[row["capability_id"]]["execution_bounds"][
+                "max_duration_seconds"
+            ]
+            for row in rows
+        )
+        or type(confinement.get("provenance_git_command_count")) is not int
+        or confinement["provenance_git_command_count"] < 1
+        or not isinstance(confinement.get("network_boundary"), str)
+        or not confinement["network_boundary"]
+    ):
+        raise CapabilityContractError("aggregate confinement provenance differs")
+
+    selected = _select_aggregate_capability(aggregate, reference)
+    if selected.get("capability_id") != capability_id:
+        raise CapabilityContractError(
+            f"{capability_id}: selected aggregate capability row differs"
+        )
+    return selected
+
+
 def validate(
     ledger: dict[str, Any] | None = None,
     manifest: dict[str, Any] | None = None,
@@ -681,6 +1394,7 @@ def validate(
     )
     if len(capability_ids) != len(capabilities):
         raise CapabilityContractError("every capability must be an object with an id")
+    capability_by_id = {item["id"]: item for item in capabilities}
     if injected_oracle_plan:
         oracle_rows = oracle_plan.get("oracles")
         if not isinstance(oracle_rows, list) or not all(
@@ -906,18 +1620,29 @@ def validate(
                     raise CapabilityContractError(
                         f"{capability_id}: runtime evidence digest differs"
                     )
-                evidence = _load(resolved)
                 oracle = oracle_by_capability.get(capability_id)
                 if oracle is None:
                     raise CapabilityContractError(
                         f"{capability_id}: passed_current has no capability oracle"
                     )
-                _validate_bound_runtime_evidence(
-                    capability,
-                    oracle,
-                    evidence,
-                    ledger["target"],
-                )
+                evidence = _load(resolved)
+                if set(reference) == {"path", "sha256"}:
+                    _validate_bound_runtime_evidence(
+                        capability,
+                        oracle,
+                        evidence,
+                        ledger["target"],
+                    )
+                else:
+                    _validate_aggregate_runtime_evidence(
+                        evidence,
+                        reference,
+                        capability,
+                        capability_by_id,
+                        oracle_by_capability,
+                        ledger["target"],
+                        repo_root,
+                    )
         by_feature.setdefault(feature_id, set()).add(capability_id)
 
     for source in sources:

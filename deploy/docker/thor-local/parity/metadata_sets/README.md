@@ -5,11 +5,12 @@ This directory provides the static, fail-closed metadata selector.
 binds a complete metadata plane: manifest, official ledger and schema,
 capability-oracle registry and schema, and acceptance inventory.
 
-The selected `thor-vss-3.2.1-current-synthetic-data-500` set contains the exact
-current 289-row Thor prefix plus the unchanged 211-row candidate suffix. Four
-Synthetic Data rows carry current runtime qualification; all candidate rows
-remain evidence-empty and non-promoting. The registered
-`thor-vss-3.2.1-current-synthetic-data-289` set exposes the same canonical
+The selected `thor-vss-3.2.1-current-mv3dt-config-utils-500` set contains the
+exact current 289-row Thor prefix plus the unchanged 211-row candidate suffix.
+Four Synthetic Data rows and two MV3DT configuration-tool rows carry current
+runtime qualification; all candidate rows remain evidence-empty and
+non-promoting. The registered
+`thor-vss-3.2.1-current-mv3dt-config-utils-289` set exposes the same canonical
 current prefix explicitly. Older descriptors remain checked in as immutable
 historical provenance but are deliberately not registered as current.
 
@@ -37,7 +38,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-current-synthetic-data-289 --json
+  --set thor-vss-3.2.1-current-mv3dt-config-utils-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

@@ -11,6 +11,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 PARITY_DIR = Path(__file__).resolve().parents[1]
@@ -54,12 +55,33 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertEqual(counts["oracles"], capability_count)
         self.assertEqual(counts["open_runtime"], capability_count - external_count)
         self.assertEqual(counts["external_boundaries"], external_count)
-        self.assertEqual(counts["planning_index_only"], capability_count - 4)
-        self.assertEqual(counts["executor_ready"], 4)
+        executor_ready = len(verifier.SYNTHETIC_RUNTIME_FIXTURES) + len(
+            verifier.MV3DT_RUNTIME_FIXTURES
+        )
+        self.assertEqual(
+            counts["planning_index_only"], capability_count - executor_ready
+        )
+        self.assertEqual(counts["executor_ready"], executor_ready)
         self.assertEqual(counts["planning_executor_bindings"], 27)
         self.assertEqual(counts["offline_tool_observation_bindings"], 2)
         self.assertEqual(counts["static_subset_oracle_bindings"], 29)
         self.assertGreater(counts["profiles"], 0)
+
+    def test_checked_in_plan_is_byte_exact_canonical_compiler_output(self) -> None:
+        acceptance = json.loads(verifier.ACCEPTANCE.read_text(encoding="utf-8"))
+        compiled = verifier.compile_plan(
+            copy.deepcopy(self.ledger), acceptance_document=acceptance
+        )
+        rendered = (
+            json.dumps(
+                compiled,
+                indent=2,
+                ensure_ascii=True,
+                sort_keys=True,
+            )
+            + "\n"
+        )
+        self.assertEqual(verifier.ORACLES.read_text(encoding="utf-8"), rendered)
 
     def test_synthetic_data_oracles_are_exact_executor_ready_rows(self) -> None:
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
@@ -104,6 +126,146 @@ class CapabilityOracleTests(unittest.TestCase):
             )
             self.assertEqual(oracle["current_state"], "open_unexecuted")
             self.assertEqual(oracle["evidence"], [])
+
+    def test_promoted_mv3dt_ledger_reproduces_exact_promoted_oracles(self) -> None:
+        root = (
+            verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-mv3dt-config-utils-successor"
+        )
+        ledger = json.loads(
+            (root / "post-state-root-official-capabilities.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected = json.loads(
+            (root / "post-state-root-capability-oracles.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        acceptance = json.loads(verifier.ACCEPTANCE.read_text(encoding="utf-8"))
+        compiled = verifier.compile_plan(ledger, acceptance_document=acceptance)
+        self.assertEqual(compiled, expected)
+        counts = verifier.validate(expected, ledger)
+        self.assertEqual(counts["executor_ready"], 6)
+        by_id = {row["capability_id"]: row for row in compiled["oracles"]}
+        for capability_id, fixture in verifier.MV3DT_RUNTIME_FIXTURES.items():
+            oracle = by_id[capability_id]
+            self.assertEqual(
+                oracle["fixture"]["materialization"],
+                {
+                    "path": fixture["path"],
+                    "generator": verifier.MV3DT_RUNTIME_EXECUTOR["path"],
+                    "sha256": fixture["raw_sha256"],
+                },
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["workload"],
+                verifier.MV3DT_RUNTIME_WORKLOAD,
+            )
+            self.assertEqual(
+                (
+                    oracle["execution_bounds"]["max_actions"],
+                    oracle["execution_bounds"]["max_requests"],
+                ),
+                (fixture["max_actions"], fixture["max_requests"]),
+            )
+            self.assertEqual(oracle["cleanup"]["targets"], [fixture["namespace"]])
+            self.assertEqual(
+                oracle["acceptance_readiness"],
+                {"classification": "executor_ready", "blockers": []},
+            )
+            self.assertEqual(oracle["evidence"], [])
+            self.assertEqual(
+                oracle["ledger_binding"]["contract"]["wave3_acceptance"][
+                    "materialized"
+                ],
+                False,
+            )
+            self.assertEqual(
+                oracle["ledger_binding"]["contract"]["wave3_acceptance"][
+                    "executor_ready"
+                ],
+                False,
+            )
+            self.assertTrue(oracle["offline_tool_observation_bindings"])
+
+    def test_mv3dt_runtime_locks_and_counts_fail_closed(self) -> None:
+        root = (
+            verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-mv3dt-config-utils-successor"
+        )
+        ledger = json.loads(
+            (root / "post-state-root-official-capabilities.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        acceptance = json.loads(verifier.ACCEPTANCE.read_text(encoding="utf-8"))
+        executor_lock = copy.deepcopy(verifier.MV3DT_RUNTIME_EXECUTOR)
+        executor_lock["raw_sha256"] = "0" * 64
+        with mock.patch.object(verifier, "MV3DT_RUNTIME_EXECUTOR", executor_lock):
+            with self.assertRaisesRegex(
+                verifier.OracleContractError, "runtime file lock drift"
+            ):
+                verifier.compile_plan(ledger, acceptance_document=acceptance)
+
+        fixtures = copy.deepcopy(verifier.MV3DT_RUNTIME_FIXTURES)
+        fixtures["tool.mv3dt.pub-sub-generator"]["max_actions"] = 7
+        with mock.patch.object(verifier, "MV3DT_RUNTIME_FIXTURES", fixtures):
+            with self.assertRaisesRegex(
+                verifier.OracleContractError,
+                "action/request/cleanup drift",
+            ):
+                verifier.compile_plan(ledger, acceptance_document=acceptance)
+
+        workload = copy.deepcopy(verifier.MV3DT_RUNTIME_WORKLOAD)
+        workload["calculated_max_requests"] = 10
+        with mock.patch.object(verifier, "MV3DT_RUNTIME_WORKLOAD", workload):
+            with self.assertRaisesRegex(
+                verifier.OracleContractError, "runtime workload drift"
+            ):
+                verifier.compile_plan(ledger, acceptance_document=acceptance)
+
+    def test_mv3dt_runtime_locks_use_confined_alternate_repository_root(self) -> None:
+        projection = (
+            verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-mv3dt-config-utils-successor"
+        )
+        ledger = json.loads(
+            (projection / "post-state-root-official-capabilities.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        acceptance = json.loads(verifier.ACCEPTANCE.read_text(encoding="utf-8"))
+        locks = [
+            verifier.MV3DT_RUNTIME_EXECUTOR,
+            *verifier.MV3DT_RUNTIME_FIXTURES.values(),
+        ]
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            alternate_root = Path(temporary_directory)
+            for lock in locks:
+                destination = alternate_root / lock["path"]
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(verifier.REPO_ROOT / lock["path"], destination)
+            verifier.compile_plan(
+                ledger,
+                acceptance_document=acceptance,
+                repo_root=alternate_root,
+            )
+            package = (
+                alternate_root / "deploy/docker/thor-local/qualification/"
+                "mv3dt-config-utils-runtime-evidence-successor"
+            )
+            real_package = alternate_root / "real-mv3dt-runtime-package"
+            package.rename(real_package)
+            package.symlink_to(real_package, target_is_directory=True)
+            with self.assertRaisesRegex(
+                verifier.OracleContractError, "path contains a symlink"
+            ):
+                verifier.compile_plan(
+                    ledger,
+                    acceptance_document=acceptance,
+                    repo_root=alternate_root,
+                )
 
     def test_static_planning_bindings_do_not_promote_full_oracles(self) -> None:
         bound = [
@@ -501,9 +663,15 @@ class CapabilityOracleTests(unittest.TestCase):
             override = verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(
                 item["capability_id"]
             )
-            self.assertEqual(
-                bounds["max_actions"], override[2] if override is not None else expected
+            mv3dt_runtime = verifier.MV3DT_RUNTIME_FIXTURES.get(item["capability_id"])
+            expected_actions = (
+                mv3dt_runtime["max_actions"]
+                if mv3dt_runtime is not None
+                else override[2]
+                if override is not None
+                else expected
             )
+            self.assertEqual(bounds["max_actions"], expected_actions)
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
         self.assertEqual(
             by_id["behavior.rt-embed.kafka-queue-bound"]["execution_bounds"][

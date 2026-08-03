@@ -10,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 PARITY_DIR = Path(__file__).resolve().parents[1]
@@ -183,6 +184,118 @@ class OfficialCapabilityTests(unittest.TestCase):
                 "cleanup_result": "pass",
             }
         return capability, oracle, evidence
+
+    def _mv3dt_aggregate_inputs(
+        self,
+    ) -> tuple[
+        dict[str, object],
+        dict[str, dict[str, object]],
+        dict[str, dict[str, object]],
+    ]:
+        aggregate_path = (
+            verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-mv3dt-config-utils-successor/"
+            "aggregate-runtime-receipt.json"
+        )
+        aggregate = json.loads(aggregate_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            hashlib.sha256(aggregate_path.read_bytes()).hexdigest(),
+            "7fb004dd62139c3d738e5c2b4bfcf7430ec0c1e3000efa664f4cfb12b1406cf2",
+        )
+        projected_oracles = json.loads(
+            (
+                verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+                "metadata-500-current-mv3dt-config-utils-successor/"
+                "post-state-capability-oracles.json"
+            ).read_text(encoding="utf-8")
+        )
+        oracles_by_id = {
+            row["capability_id"]: row for row in projected_oracles["oracles"]
+        }
+        capabilities_by_id = {
+            row["id"]: copy.deepcopy(row) for row in self.ledger["capabilities"]
+        }
+        for capability_id in aggregate["promotion"]["eligible_capability_ids"]:
+            capabilities_by_id[capability_id].update(
+                copy.deepcopy(oracles_by_id[capability_id]["ledger_binding"])
+            )
+        return aggregate, capabilities_by_id, oracles_by_id
+
+    def _mv3dt_root_projection(
+        self,
+    ) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
+        root = (
+            verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-mv3dt-config-utils-successor"
+        )
+        return tuple(
+            json.loads((root / name).read_text(encoding="utf-8"))
+            for name in (
+                "post-state-root-official-capabilities.json",
+                "post-state-root-manifest.json",
+                "post-state-root-capability-oracles.json",
+            )
+        )
+
+    def _validate_mv3dt_aggregate(
+        self,
+        aggregate: dict[str, object],
+        capabilities_by_id: dict[str, dict[str, object]],
+        oracles_by_id: dict[str, dict[str, object]],
+        *,
+        capability_id: str = "tool.mv3dt.cam-info-generator",
+        index: int = 0,
+    ) -> None:
+        reference = {
+            "path": "deploy/docker/thor-local/qualification/"
+            "metadata-500-current-mv3dt-config-utils-successor/"
+            "aggregate-runtime-receipt.json",
+            "sha256": "7fb004dd62139c3d738e5c2b4bfcf7430ec0c1e3000efa664f4cfb12b1406cf2",
+            "capability_id": capability_id,
+            "json_pointer": f"/capability_results/{index}",
+        }
+        verifier._validate_aggregate_runtime_evidence(
+            aggregate,
+            reference,
+            capabilities_by_id[capability_id],
+            capabilities_by_id,
+            oracles_by_id,
+            self.ledger["target"],
+            verifier.REPO_ROOT,
+        )
+
+    @staticmethod
+    def _recompute_outer_binding(aggregate: dict[str, object], index: int) -> None:
+        row = aggregate["capability_results"][index]
+        binding = row["runtime_evidence_binding"]
+        payload = {
+            key: value
+            for key, value in row.items()
+            if key not in {"official_receipt", "runtime_evidence_binding"}
+        }
+        binding.update(
+            {
+                "official_receipt_sha256": verifier._json_sha256(
+                    row["official_receipt"]
+                ),
+                "bounded_capability_actions": row["bounded_capability_actions"],
+                "target_case_actions": row["target_case_actions"],
+                "supporting_cam_generation_actions": row[
+                    "supporting_cam_generation_actions"
+                ],
+                "requests": row["requests"],
+                "imported_helper_invocations": row["imported_helper_invocations"],
+                "total_imported_source_function_invocations": row[
+                    "total_imported_source_function_invocations"
+                ],
+                "run_output_sha256": row["run_output_sha256"],
+                "positive_output_sha256": row["positive_observations"]["output_sha256"],
+                "adjacent_negatives_sha256": verifier._json_sha256(
+                    row["adjacent_negatives"]
+                ),
+                "capability_evidence_sha256": verifier._json_sha256(payload),
+            }
+        )
 
     def test_checked_in_contract_is_cross_linked(self) -> None:
         counts = verifier.validate(
@@ -721,6 +834,180 @@ class OfficialCapabilityTests(unittest.TestCase):
         verifier._validate_bound_runtime_evidence(
             capability, oracle, evidence, self.ledger["target"]
         )
+
+    def test_mv3dt_aggregate_reference_selects_both_exact_capability_rows(
+        self,
+    ) -> None:
+        aggregate, capabilities_by_id, oracles_by_id = self._mv3dt_aggregate_inputs()
+        self._validate_mv3dt_aggregate(aggregate, capabilities_by_id, oracles_by_id)
+        self._validate_mv3dt_aggregate(
+            aggregate,
+            capabilities_by_id,
+            oracles_by_id,
+            capability_id="tool.mv3dt.pub-sub-generator",
+            index=1,
+        )
+
+    def test_mv3dt_aggregate_references_pass_full_canonical_projection(self) -> None:
+        ledger, manifest, oracles = self._mv3dt_root_projection()
+        counts = verifier.validate(
+            ledger,
+            manifest,
+            copy.deepcopy(self.acceptance),
+            oracles,
+            json.loads(verifier.oracle_contract.SCHEMA.read_text(encoding="utf-8")),
+            repo_root=verifier.REPO_ROOT,
+        )
+        self.assertEqual(counts["capabilities"], 289)
+        mv3dt = [
+            row
+            for row in ledger["capabilities"]
+            if row["id"]
+            in {
+                "tool.mv3dt.cam-info-generator",
+                "tool.mv3dt.pub-sub-generator",
+            }
+        ]
+        self.assertEqual(
+            [row["runtime_evidence"][0]["json_pointer"] for row in mv3dt],
+            ["/capability_results/0", "/capability_results/1"],
+        )
+
+    def test_mv3dt_aggregate_full_digest_is_checked_before_selection(self) -> None:
+        ledger, manifest, oracles = self._mv3dt_root_projection()
+        capability = next(
+            row
+            for row in ledger["capabilities"]
+            if row["id"] == "tool.mv3dt.cam-info-generator"
+        )
+        capability["runtime_evidence"][0]["sha256"] = "0" * 64
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "runtime evidence digest differs"
+        ):
+            verifier.validate(
+                ledger,
+                manifest,
+                copy.deepcopy(self.acceptance),
+                oracles,
+                json.loads(verifier.oracle_contract.SCHEMA.read_text(encoding="utf-8")),
+                repo_root=verifier.REPO_ROOT,
+            )
+
+    def test_mv3dt_aggregate_selector_cannot_cross_or_escape_rows(self) -> None:
+        aggregate, capabilities_by_id, oracles_by_id = self._mv3dt_aggregate_inputs()
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "selector does not match"
+        ):
+            self._validate_mv3dt_aggregate(
+                aggregate,
+                capabilities_by_id,
+                oracles_by_id,
+                capability_id="tool.mv3dt.cam-info-generator",
+                index=1,
+            )
+        reference = {
+            "path": "deploy/docker/thor-local/evidence.json",
+            "sha256": "0" * 64,
+            "capability_id": "tool.mv3dt.cam-info-generator",
+            "json_pointer": "/capability_results/00",
+        }
+        with self.assertRaisesRegex(
+            verifier.CapabilityContractError, "exact capability-results JSON pointer"
+        ):
+            verifier._select_aggregate_capability(aggregate, reference)
+
+    def test_mv3dt_aggregate_deep_shape_promotion_and_provenance_fail_closed(
+        self,
+    ) -> None:
+        cases = {
+            "top-level injection": lambda value: value.update(extra=True),
+            "dirty checkout": lambda value: value["bindings"].update(
+                checkout_clean=False
+            ),
+            "non-empty checkout": lambda value: value["bindings"].update(
+                checkout_status_porcelain_sha256="0" * 64
+            ),
+            "development receipt": lambda value: value["promotion"].update(
+                development_smoke_only=True
+            ),
+            "non-promotable receipt": lambda value: value["promotion"].update(
+                aggregate_is_promotable=False
+            ),
+            "family mismatch": lambda value: value["promotion"].update(
+                family_id="other"
+            ),
+            "captured tree drift": lambda value: value["bindings"].update(
+                checkout_tree="0" * 40
+            ),
+            "executor blob drift": lambda value: value["bindings"].update(
+                executor_sha256="0" * 64
+            ),
+            "oracle blob drift": lambda value: value["bindings"].update(
+                execution_oracle_document_sha256="0" * 64
+            ),
+            "row injection": lambda value: value["capability_results"][0].update(
+                extra=True
+            ),
+            "outer binding drift": lambda value: value["capability_results"][0][
+                "runtime_evidence_binding"
+            ].update(capability_evidence_sha256="0" * 64),
+        }
+        for label, mutate in cases.items():
+            with self.subTest(label=label):
+                aggregate, capabilities_by_id, oracles_by_id = (
+                    self._mv3dt_aggregate_inputs()
+                )
+                mutate(aggregate)
+                with self.assertRaises(verifier.CapabilityContractError):
+                    self._validate_mv3dt_aggregate(
+                        aggregate, capabilities_by_id, oracles_by_id
+                    )
+
+    def test_mv3dt_fabricated_nested_receipts_fail_even_with_recomputed_wrapper(
+        self,
+    ) -> None:
+        mutations = {
+            "shallow-only official receipt": lambda row: row.update(
+                official_receipt={}
+            ),
+            "nested result drift": lambda row: row["official_receipt"].update(
+                result="passed_prior"
+            ),
+            "nested assertion drift": lambda row: row["official_receipt"]["assertions"][
+                0
+            ].update(observed="fabricated"),
+            "bounded action drift": lambda row: row.update(
+                bounded_capability_actions=6
+            ),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label):
+                aggregate, capabilities_by_id, oracles_by_id = (
+                    self._mv3dt_aggregate_inputs()
+                )
+                mutate(aggregate["capability_results"][0])
+                self._recompute_outer_binding(aggregate, 0)
+                with self.assertRaises(verifier.CapabilityContractError):
+                    self._validate_mv3dt_aggregate(
+                        aggregate, capabilities_by_id, oracles_by_id
+                    )
+
+    def test_mv3dt_aggregate_source_controls_are_historical_blobs(self) -> None:
+        aggregate, capabilities_by_id, oracles_by_id = self._mv3dt_aggregate_inputs()
+        original = verifier._git_blob
+
+        def tamper_source(repo_root: Path, commit: str, path: str) -> bytes:
+            if path == "tools/rtvi-cv-mv3dt-utils/requirements.txt":
+                return b"fabricated\n"
+            return original(repo_root, commit, path)
+
+        with mock.patch.object(verifier, "_git_blob", side_effect=tamper_source):
+            with self.assertRaisesRegex(
+                verifier.CapabilityContractError, "source-control blob"
+            ):
+                self._validate_mv3dt_aggregate(
+                    aggregate, capabilities_by_id, oracles_by_id
+                )
 
     def test_executor_evidence_oracle_hash_fixture_assertions_and_cleanup_fail_closed(
         self,

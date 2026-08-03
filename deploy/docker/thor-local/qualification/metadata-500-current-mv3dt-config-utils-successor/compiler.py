@@ -15,7 +15,6 @@ from typing import Any
 
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 
-
 sys.dont_write_bytecode = True
 
 PACKAGE = Path(__file__).resolve().parent
@@ -45,6 +44,9 @@ INTERFACE_SCHEMA = (
 )
 EXPECTED_OUTPUT_SHA256 = (
     "53fe977aa208cdc78604e214817dac7d3683edea4402b160b9d3cf46571b49e3"
+)
+POST_PROMOTION_CURRENT_ORACLES_SHA256 = (
+    "856a93bf11bbe4cb77b315fe5ae1884ccedb7dc83107f4142c6721e78688308c"
 )
 FINAL_GAP = (
     "No known gap: a current target-bound offline runtime receipt covers the exact "
@@ -130,7 +132,10 @@ def load_locked(source: tuple[str, str]) -> Any:
     if re.fullmatch(r"[0-9a-f]{64}", expected) is None:
         raise ProjectionError(f"unfinalized source lock: {relative}")
     payload = repo_file(relative).read_bytes()
-    if sha256(payload) != expected:
+    allowed = {expected}
+    if relative == CURRENT_ORACLES[0]:
+        allowed.add(POST_PROMOTION_CURRENT_ORACLES_SHA256)
+    if sha256(payload) not in allowed:
         raise ProjectionError(f"raw source digest drift: {relative}")
     return strict_json(payload, relative)
 
@@ -254,6 +259,12 @@ def derive() -> tuple[dict[str, Any], dict[str, Any], dict[str, dict[str, Any]]]
     baseline = copy.deepcopy(selected)
     baseline["policy"] = copy.deepcopy(current["policy"])
     baseline["oracles"][:289] = copy.deepcopy(current["oracles"])
+    selected_prefix = {row["capability_id"]: row for row in selected["oracles"][:289]}
+    for index, row in enumerate(baseline["oracles"][:289]):
+        if row["capability_id"] in TARGET_IDS:
+            baseline["oracles"][index] = copy.deepcopy(
+                selected_prefix[row["capability_id"]]
+            )
     if baseline["oracles"][289:] != selected_suffix:
         raise ProjectionError("selected 211-row candidate suffix changed during rebase")
     output = copy.deepcopy(baseline)
@@ -430,9 +441,21 @@ def main(argv: list[str] | None = None) -> int:
         else:
             check_output(payload)
         counts = validate(baseline, output, bindings)
-        print(json.dumps({"status": "pass", **counts}, sort_keys=True))
+        import promotion
+
+        promotion_counts = promotion.write_or_check(output, args.write)
+        print(
+            json.dumps({"status": "pass", **counts, **promotion_counts}, sort_keys=True)
+        )
         return 0
-    except (ProjectionError, OSError, KeyError, TypeError, ValueError) as exc:
+    except (
+        ProjectionError,
+        RuntimeError,
+        OSError,
+        KeyError,
+        TypeError,
+        ValueError,
+    ) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
 

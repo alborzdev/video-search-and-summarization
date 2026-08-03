@@ -1,6 +1,20 @@
 # Evidence boundary
 
-This package is a future oracle projection, not runtime evidence.
+This package contains a future oracle projection plus a separately captured, clean,
+target-bound runtime-evidence aggregate. Canonical metadata is still only projected,
+not mutated by this package.
+
+Stage-2 aggregate:
+
+- Raw SHA-256: `7fb004dd62139c3d738e5c2b4bfcf7430ec0c1e3000efa664f4cfb12b1406cf2`.
+- Clean checkout: `537b3e1fd0b5104de5a09515a53bade8ef5e9a79`.
+- Exactly two promotion-eligible capability results; zero network, Docker, download,
+  model, service-lifecycle, and Warehouse-sample accesses.
+- The compiler deep-validates outer result bindings and both nested canonical official
+  receipts, proves a 289-row promoted prefix and preserved 211-row suffix, and permits
+  exactly two capability-row changes plus one family change.
+- Aggregate-selector-compatible official schema copy SHA-256:
+  `71f1e0f1d820c3809ea3b55abb504071321f61c6e36978226dd10108c7b2384b`.
 
 Locked baseline:
 

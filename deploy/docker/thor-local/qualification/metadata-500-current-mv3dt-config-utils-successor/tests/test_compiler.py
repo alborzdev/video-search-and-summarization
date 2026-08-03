@@ -31,7 +31,18 @@ class MV3DTConfigUtilsProjectionTests(unittest.TestCase):
         current = compiler.load_locked(compiler.CURRENT_ORACLES)
         selected = compiler.load_locked(compiler.SELECTED_ORACLES)
         self.assertEqual(baseline["policy"], current["policy"])
-        self.assertEqual(baseline["oracles"][:289], current["oracles"])
+        current_by_id = {row["capability_id"]: row for row in current["oracles"]}
+        selected_by_id = {
+            row["capability_id"]: row for row in selected["oracles"][:289]
+        }
+        for row in baseline["oracles"][:289]:
+            capability_id = row["capability_id"]
+            expected = (
+                selected_by_id[capability_id]
+                if capability_id in compiler.TARGET_IDS
+                else current_by_id[capability_id]
+            )
+            self.assertEqual(row, expected)
         self.assertEqual(baseline["oracles"][289:], selected["oracles"][289:])
         self.assertEqual(len(baseline["oracles"][289:]), 211)
 

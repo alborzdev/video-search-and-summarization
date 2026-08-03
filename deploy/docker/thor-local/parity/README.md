@@ -197,6 +197,20 @@ identity/digest, product and GA/main commits/date, exact oracle scenario, every
 observation and assertion (including expected values), and all cleanup
 postconditions. A generic `pass` check cannot advance the ledger.
 
+Runtime-evidence references support two fail-closed forms. Existing direct
+receipts retain the exact `{path, sha256}` reference. An aggregate receipt uses
+exactly `{path, sha256, capability_id, json_pointer}`, where the pointer is
+restricted to `/capability_results/<index>` and must select the named enclosing
+ledger capability. Aggregate validation checks the full raw-file digest and
+deep aggregate/result shape, clean non-development promotability, exact
+confinement and cleanup accounting, recomputes the outer runtime-evidence
+binding, and then validates the selected nested official receipt through the
+same canonical oracle verifier. It also resolves the recorded checkout commit
+and tree and hashes the executor, contract, oracle document, fixtures, and every
+contract source-control blob from that historical commit. Promotion therefore
+does not require current `HEAD` to remain at the capture commit, but trusted
+booleans or a shallow nested receipt cannot substitute for captured provenance.
+
 The seven non-REST protocol planning records additionally bind the exact
 [`protocol-cases.json`](../qualification/protocol-cases/protocol-cases.json)
 whole-file and internal-set hashes, matching case and vector IDs, target commit,

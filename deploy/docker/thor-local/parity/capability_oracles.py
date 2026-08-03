@@ -94,6 +94,49 @@ SYNTHETIC_RUNTIME_FIXTURES = {
         "0a1f7d857d582aa47cd54aa1a956175a67976719443c8a9ed946962d8ef77939",
     ),
 }
+MV3DT_RUNTIME_EXECUTOR = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "mv3dt-config-utils-runtime-evidence-successor/executor.py"
+    ),
+    "raw_sha256": "650894ecc69baa518a92d8315c2d11c356b815a299ee50dc1e7b21737a87d567",
+}
+MV3DT_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 7,
+    "overhead_requests": 0,
+    "calculated_max_requests": 7,
+    "phases": ["positive_run_1", "positive_run_2", "adjacent_negative"],
+}
+MV3DT_RUNTIME_FIXTURES = {
+    "tool.mv3dt.cam-info-generator": {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "mv3dt-config-utils-runtime-evidence-successor/fixtures/"
+            "00-cam-info-generator.json"
+        ),
+        "raw_sha256": "8dd769695b2f9ce48081f79c6f1e9c6f54423411f738fb23e58abc791869d2a5",
+        "namespace": "vss-oracle-tool-mv3dt-cam-info-generator",
+        "max_actions": 7,
+        "max_requests": 7,
+    },
+    "tool.mv3dt.pub-sub-generator": {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "mv3dt-config-utils-runtime-evidence-successor/fixtures/"
+            "01-pub-sub-generator.json"
+        ),
+        "raw_sha256": "0cb77ffe349809e1a8fe9349ecb1859a63ac564077b3326aadac6af264cd57ab",
+        "namespace": "vss-oracle-tool-mv3dt-pub-sub-generator",
+        "max_actions": 10,
+        "max_requests": 7,
+    },
+}
+MV3DT_PROMOTED_GAP = (
+    "No known gap: a current target-bound offline runtime receipt covers the exact "
+    "MV3DT configuration generator contract twice, including adjacent-negative "
+    "behavior, determinism, and exact cleanup without the Warehouse sample bundle."
+)
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 CPU_MULTIMEDIA_CAPABILITY_ID = (
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
@@ -856,6 +899,80 @@ def canonical_oracle_sha256(oracle: dict[str, Any]) -> str:
     ).hexdigest()
 
 
+def _mv3dt_runtime_state(capability: dict[str, Any]) -> str:
+    if capability["id"] not in MV3DT_RUNTIME_FIXTURES:
+        return "not_mv3dt_runtime"
+    state = (capability.get("thor_state"), capability.get("runtime_state"))
+    if state == ("source_only", "not_qualified"):
+        return "historical_planning"
+    if (
+        state == ("wired", "passed_current")
+        and capability.get("gap") == MV3DT_PROMOTED_GAP
+    ):
+        return "promoted_runtime"
+    raise OracleContractError(
+        f"{capability['id']}: partial MV3DT runtime promotion state"
+    )
+
+
+def _validate_mv3dt_runtime_locks(repo_root: Path) -> None:
+    expected = {
+        "tool.mv3dt.cam-info-generator": (
+            "vss-oracle-tool-mv3dt-cam-info-generator",
+            7,
+            7,
+        ),
+        "tool.mv3dt.pub-sub-generator": (
+            "vss-oracle-tool-mv3dt-pub-sub-generator",
+            10,
+            7,
+        ),
+    }
+    if set(MV3DT_RUNTIME_FIXTURES) != set(expected):
+        raise OracleContractError("MV3DT runtime fixture denominator drift")
+    if MV3DT_RUNTIME_WORKLOAD != {
+        "units": 1,
+        "requests_per_unit": 7,
+        "overhead_requests": 0,
+        "calculated_max_requests": 7,
+        "phases": ["positive_run_1", "positive_run_2", "adjacent_negative"],
+    }:
+        raise OracleContractError("MV3DT runtime workload drift")
+    locks = [MV3DT_RUNTIME_EXECUTOR, *MV3DT_RUNTIME_FIXTURES.values()]
+    for lock in locks:
+        path = _resolve_reviewed_file(
+            repo_root, lock["path"], "mv3dt_runtime_materialization"
+        )
+        if hashlib.sha256(path.read_bytes()).hexdigest() != lock["raw_sha256"]:
+            raise OracleContractError(f"MV3DT runtime file lock drift: {lock['path']}")
+    for capability_id, (namespace, max_actions, max_requests) in expected.items():
+        lock = MV3DT_RUNTIME_FIXTURES[capability_id]
+        if (
+            lock["namespace"] != namespace
+            or lock["max_actions"] != max_actions
+            or lock["max_requests"] != max_requests
+        ):
+            raise OracleContractError(
+                f"{capability_id}: MV3DT runtime action/request/cleanup drift"
+            )
+        fixture = _load(
+            _resolve_reviewed_file(
+                repo_root,
+                lock["path"],
+                f"{capability_id}.mv3dt_runtime_fixture",
+            )
+        )
+        if (
+            fixture.get("capability_id") != capability_id
+            or fixture.get("fixture_id") != f"fixture.{capability_id}"
+            or fixture.get("namespace") != namespace
+            or fixture.get("warehouse_sample_bundle") != "excluded"
+        ):
+            raise OracleContractError(
+                f"{capability_id}: MV3DT runtime fixture identity drift"
+            )
+
+
 def _protocol_case_bindings(document: dict[str, Any]) -> dict[str, dict[str, Any]]:
     if (
         hashlib.sha256(PROTOCOL_CASES.read_bytes()).hexdigest()
@@ -1222,11 +1339,28 @@ def compile_plan(
     protocol_document: dict[str, Any] | None = None,
     acceptance_document: dict[str, Any] | None = None,
     include_local_runtime_bounds: bool = True,
+    repo_root: Path = REPO_ROOT,
 ) -> dict[str, Any]:
     target = ledger.get("target")
     capabilities = ledger.get("capabilities")
     if not isinstance(target, dict) or not isinstance(capabilities, list):
         raise OracleContractError("official capability ledger is malformed")
+    mv3dt_states = {
+        item["id"]: _mv3dt_runtime_state(item)
+        for item in capabilities
+        if isinstance(item, dict) and item.get("id") in MV3DT_RUNTIME_FIXTURES
+    }
+    if set(mv3dt_states) != set(MV3DT_RUNTIME_FIXTURES):
+        raise OracleContractError("exact MV3DT runtime capability denominator drift")
+    mv3dt_runtime_ready_ids = {
+        capability_id
+        for capability_id, state in mv3dt_states.items()
+        if state == "promoted_runtime"
+    }
+    if len(mv3dt_runtime_ready_ids) not in {0, len(MV3DT_RUNTIME_FIXTURES)}:
+        raise OracleContractError("partial MV3DT runtime family promotion")
+    if mv3dt_runtime_ready_ids:
+        _validate_mv3dt_runtime_locks(repo_root)
     live_integration = include_local_runtime_bounds
     if live_integration:
         capability_ids = {
@@ -1261,6 +1395,8 @@ def compile_plan(
         profile, mode = _profile(capability)
         external_boundary = capability["acceptance_class"] == "external_optional"
         workload = _workload(capability, live_integration=live_integration)
+        if capability_id in mv3dt_runtime_ready_ids:
+            workload = copy.deepcopy(MV3DT_RUNTIME_WORKLOAD)
         execution_bounds = {
             "executor": None,
             "collectors": [],
@@ -1274,7 +1410,11 @@ def compile_plan(
             "warehouse_sample_bundle": "excluded",
         }
         if live_integration:
-            execution_bounds["max_actions"] = _max_actions(capability, workload)
+            execution_bounds["max_actions"] = (
+                MV3DT_RUNTIME_FIXTURES[capability_id]["max_actions"]
+                if capability_id in mv3dt_runtime_ready_ids
+                else _max_actions(capability, workload)
+            )
         oracle = {
             "capability_id": capability_id,
             "oracle_id": f"oracle.{capability_id}",
@@ -1347,6 +1487,25 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if capability_id in mv3dt_runtime_ready_ids:
+            fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
+            executor = MV3DT_RUNTIME_EXECUTOR["path"]
+            oracle["fixture"]["materialization"] = {
+                "path": fixture["path"],
+                "generator": executor,
+                "sha256": fixture["raw_sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = executor
+            oracle["execution_bounds"]["collectors"] = [executor]
+            oracle["execution_bounds"]["max_requests"] = fixture["max_requests"]
+            oracle["cleanup"]["targets"] = [fixture["namespace"]]
+            oracle["cleanup"]["allowlist"] = [fixture["namespace"]]
+            oracle["cleanup"]["executor"] = executor
+            oracle["cleanup"]["postcondition_collectors"] = [executor]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         oracles.append(oracle)
     return {
         "schema_version": 1,
@@ -1391,6 +1550,7 @@ def validate(
         ledger,
         acceptance_document=_load(ACCEPTANCE),
         include_local_runtime_bounds=True,
+        repo_root=repo_root,
     )
     if plan != expected:
         expected_by_id = {item["capability_id"]: item for item in expected["oracles"]}
@@ -1505,8 +1665,17 @@ def validate(
             raise OracleContractError(
                 f"{item['capability_id']}: execution-bound arithmetic differs"
             )
-        override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(item["capability_id"])
-        expected_actions = override[2] if override is not None else calculated
+        capability_id = item["capability_id"]
+        override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability_id)
+        mv3dt_runtime = MV3DT_RUNTIME_FIXTURES.get(capability_id)
+        if (
+            mv3dt_runtime is not None
+            and item["ledger_binding"]["thor_state"] == "wired"
+            and item["ledger_binding"]["runtime_state"] == "passed_current"
+        ):
+            expected_actions = mv3dt_runtime["max_actions"]
+        else:
+            expected_actions = override[2] if override is not None else calculated
         if item["execution_bounds"]["max_actions"] != expected_actions:
             raise OracleContractError(
                 f"{item['capability_id']}: execution action bound differs"
@@ -1639,7 +1808,8 @@ def main() -> int:
                         include_local_runtime_bounds=True,
                     ),
                     indent=2,
-                    ensure_ascii=False,
+                    ensure_ascii=True,
+                    sort_keys=True,
                 )
                 + "\n"
             )
