@@ -49,8 +49,8 @@ REQUIRED_SCHEMAS = {
     "capability_oracles_schema",
 }
 SPATIAL_AI_STAGE1_SET_IDS = {
-    "thor-vss-3.2.1-current-spatial-ai-utils-core-289",
-    "thor-vss-3.2.1-current-spatial-ai-utils-core-500",
+    "thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-289",
+    "thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500",
 }
 SPATIAL_AI_STAGE1_IDS = {
     "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",

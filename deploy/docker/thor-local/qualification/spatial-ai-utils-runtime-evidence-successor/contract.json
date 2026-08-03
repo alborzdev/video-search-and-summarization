@@ -53,7 +53,7 @@
     {
       "capability_id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
       "oracle_id": "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
-      "current_oracle_sha256": "8e5db30cb2604c52d1b1ef1ad0e3aaa796649d9335ce2d570efe3e36e68c8669",
+      "current_oracle_sha256": "f872c3be72c90ee04b6be0f1bff964915203460f01efccff45cdcde307cc7525",
       "current_ledger_row_sha256": "bb3468281074183a1d0a55cdeb6959e74073317f318e593d6caf54f601a1c3f6",
       "adapter": "geometry_projection",
       "fixture_manifest": {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json", "sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542"},
@@ -72,6 +72,7 @@
       "adapter": "multiview_visualization",
       "fixture_manifest": {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/02-multiview-visualization.json", "sha256": "7836a8dd865207c1d7d8b8cd1fec16748ac60ff6eb3b9f7d22cb9db35b526210"},
       "source_controls": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/__init__.py", "sha256": "b7c16527fac2557a287ae0f2583be6aa43f4485db9887bb7ae69a35be67ba3a4"},
         {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_3d.py", "sha256": "19d645818a480485d2d51d4471e89f70d4c7714f2c43b4181b9ae95154bd21f5"},
         {"path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox.py", "sha256": "cc2fe3f0633e8f96c9afe549b467a4616e118e86f1cb232d7caa151fdc1cce2d"},
         {"path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox_batch.py", "sha256": "8485c512a8c3bca4048a6769b399eb23f5c07b281397433b1efa460131910971"}
@@ -95,7 +96,7 @@
     {
       "capability_id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
       "oracle_id": "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
-      "current_oracle_sha256": "73770bdd0758be1bcfeb74548740dcfd84ba06b6818ca0ba8c9661efb071d333",
+      "current_oracle_sha256": "54914139e5f63e586e35a6b9bbc3b5786a5a401da520a5ba5cf08c203b500da5",
       "current_ledger_row_sha256": "a5b220ac2dfda57493fe507406e13668ce27fb6afa3b10f102562fbac8069e2b",
       "adapter": "tracking_metrics",
       "fixture_manifest": {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/04-tracking-metrics.json", "sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e"},
@@ -110,7 +111,7 @@
     {
       "capability_id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
       "oracle_id": "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
-      "current_oracle_sha256": "eb82438b6bde164e4c12b18287e1e472362d8d694f0e088d537fb552b2899e0e",
+      "current_oracle_sha256": "0d8319b2f1365ccfdb03e50885ece11c3ac387232185003d4f7b2b62190e75be",
       "current_ledger_row_sha256": "585bf4e0b87847e1be535a9034968bce239871e45dba3b3ed38b29912b47e12d",
       "adapter": "nvschema_conversion",
       "fixture_manifest": {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json", "sha256": "ed74f1c23c7999b01d6b7000e9c7a1be5a40b69c39ea90a993cbdccf66340cfd"},
@@ -129,6 +130,7 @@
       "adapter": "video_frame_tools",
       "fixture_manifest": {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/06-video-frame-tools.json", "sha256": "95e392791a66c758ab67be2f6d389a391a67f9f9f7c58f0cc025f49c6be34751"},
       "source_controls": [
+        {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/__init__.py", "sha256": "b7c16527fac2557a287ae0f2583be6aa43f4485db9887bb7ae69a35be67ba3a4"},
         {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video.py", "sha256": "7bbd3fa74d1ca1238716c0b95ac375127be629212cac8e7a457b563eb571916f"},
         {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/video2frame.py", "sha256": "3a0da452fc4c69c9d71242c3134adc81f5bfb3ed587355abcd615b713d7385bd"},
         {"path": "libs/analytics/spatialai-data-utils/tools/video_utils/frame2video.py", "sha256": "9c8839496d921d420d2a6e76466e889147097bdd8c1d67fac019683911d4f084"},

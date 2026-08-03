@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "aggregate_execution_accounting": {
+      "additionalProperties": false,
+      "properties": {
+        "bounded_capability_actions": {"const": 21},
+        "imported_product_function_invocations": {"const": 34},
+        "requests": {"const": 21}
+      },
+      "required": ["bounded_capability_actions", "requests", "imported_product_function_invocations"],
+      "type": "object"
+    },
+    "capabilities": {
+      "items": {"$ref": "#/$defs/capability"},
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "confinement": {
+      "additionalProperties": false,
+      "properties": {
+        "docker": {"const": false},
+        "downloads": {"const": false},
+        "filesystem_escape_attempts": {"const": 0},
+        "models": {"const": false},
+        "network": {"const": false},
+        "product_subprocesses": {"const": false},
+        "services": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      },
+      "required": ["network", "docker", "services", "models", "downloads", "product_subprocesses", "filesystem_escape_attempts", "warehouse_sample_bundle"],
+      "type": "object"
+    },
+    "producer": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_base_commit": {"const": "548f7fdda9148b3ee521c09dcdb298309f25fe2b"},
+        "contract": {"$ref": "#/$defs/fileLock"},
+        "contract_schema": {"$ref": "#/$defs/fileLock"},
+        "executor": {"$ref": "#/$defs/fileLock"},
+        "package": {"const": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor"},
+        "result_schema": {"$ref": "#/$defs/fileLock"},
+        "source_binding": {"const": "raw_sha256_current_checkpoint"}
+      },
+      "required": ["canonical_base_commit", "source_binding", "package", "contract", "contract_schema", "executor", "result_schema"],
+      "type": "object"
+    },
+    "projection": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_mutation": {"const": false},
+        "evidence_added": {"const": false},
+        "ledger_rows_changed": {"const": 0},
+        "oracle_rows_changed": {"const": 0},
+        "promotion_performed": {"const": false},
+        "selected_oracle_state": {"const": "open_unexecuted"},
+        "selected_readiness": {"const": "executor_ready"}
+      },
+      "required": ["oracle_rows_changed", "ledger_rows_changed", "canonical_mutation", "promotion_performed", "evidence_added", "selected_oracle_state", "selected_readiness"],
+      "type": "object"
+    },
+    "roles": {
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(fixture_generator|executor|request_collector|cleanup_executor|postcondition_collector)$": {
+          "const": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+        }
+      },
+      "required": ["fixture_generator", "executor", "request_collector", "cleanup_executor", "postcondition_collector"],
+      "type": "object"
+    },
+    "schema_version": {"const": 1},
+    "target_environment": {
+      "additionalProperties": false,
+      "properties": {
+        "platform": {"const": "linux-aarch64"},
+        "python_major_minor": {"const": "3.12"}
+      },
+      "required": ["platform", "python_major_minor"],
+      "type": "object"
+    }
+  },
+  "required": ["schema_version", "producer", "target_environment", "roles", "confinement", "projection", "aggregate_execution_accounting", "capabilities"],
+  "type": "object",
+  "$defs": {
+    "capability": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter": {"enum": ["geometry_projection", "tracking_metrics", "nvschema_conversion"]},
+        "adjacent_negative_case_ids": {
+          "items": {"minLength": 1, "type": "string"},
+          "maxItems": 5,
+          "minItems": 5,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "capability_id": {
+          "enum": [
+            "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+            "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+            "manifest-entry.spatial-ai-utils.05-nvschema-conversion"
+          ]
+        },
+        "fixture_id": {"pattern": "^fixture\\.manifest-entry\\.spatial-ai-utils\\.(01-3d-2d-geometry|04-tracking-hota-clear-identity-count|05-nvschema-conversion)$", "type": "string"},
+        "fixture_manifest": {"$ref": "#/$defs/fileLock"},
+        "fixture_payload_id": {"enum": ["spatial-ai-projection-v1", "spatial-ai-tracking-metrics-v1", "spatial-ai-nvschema-conversion-v1"]},
+        "max_actions": {"const": 7},
+        "max_requests": {"const": 7},
+        "oracle_id": {"pattern": "^oracle\\.manifest-entry\\.spatial-ai-utils\\.(01-3d-2d-geometry|04-tracking-hota-clear-identity-count|05-nvschema-conversion)$", "type": "string"},
+        "oracle_namespace": {"pattern": "^vss-oracle-manifest-entry-spatial-ai-utils-(01-3d-2d-geometry|04-tracking-hota-clear-identity-count|05-nvschema-conversion)$", "type": "string"},
+        "positive_runs": {"const": 2},
+        "product_function_counts": {
+          "additionalProperties": {"minimum": 1, "type": "integer"},
+          "minProperties": 2,
+          "propertyNames": {"minLength": 1, "type": "string"},
+          "type": "object"
+        },
+        "runtime_namespace": {"pattern": "^spatial-ai-(01-3d-2d-geometry|04-tracking-hota-clear-identity-count|05-nvschema-conversion)$", "type": "string"}
+      },
+      "required": ["capability_id", "oracle_id", "adapter", "fixture_id", "fixture_payload_id", "fixture_manifest", "oracle_namespace", "runtime_namespace", "positive_runs", "adjacent_negative_case_ids", "max_actions", "max_requests", "product_function_counts"],
+      "type": "object"
+    },
+    "fileLock": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {"pattern": "^deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/[a-zA-Z0-9_./-]+$", "type": "string"},
+        "sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}
+      },
+      "required": ["path", "sha256"],
+      "type": "object"
+    }
+  }
+}

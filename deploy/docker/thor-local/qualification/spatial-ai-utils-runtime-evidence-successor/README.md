@@ -18,8 +18,10 @@ Execution is capability-local. `--select` accepts `00` through `06` or a full
 capability ID and may be repeated. A missing or ABI-incompatible dependency
 blocks only its own row; other selected rows continue and retain independent
 results. Both planning and execution fail closed unless the runtime is Linux
-on AArch64 with Python 3.12, matching the contract. For example, the currently
-runnable Thor rows are:
+on AArch64 with Python 3.12, matching the contract. The checked-in offline
+environment supplies the complete dependency set for all seven provider-free
+rows. For a default-environment development check, select only rows whose
+dependencies are already present, for example:
 
 ```bash
 output="$(mktemp -u /tmp/spatial-ai-runtime.XXXXXX.json)"
@@ -86,12 +88,15 @@ the temporary root is removed in `finally`.
 ## Authority boundary
 
 This package is staged only. It verifies the current canonical rows and source
-locks, but the current oracles are still `planning_index_only`. Therefore its
-output always records `receipt_is_runtime_evidence=false` and
+locks. Rows `01`, `04`, and `05` are canonically `executor_ready`; rows `00`,
+`02`, `03`, and `06` remain `planning_index_only`, and every row remains
+`open_unexecuted` with no evidence. Therefore its output always records
+`receipt_is_runtime_evidence=false` and
 `aggregate_is_promotable=false`, performs no ledger/oracle/manifest mutation,
 and lists only successful rows as non-promoting `individual_receipt_candidates`.
-A later executor-ready oracle projection and canonical promotion step must bind
-and validate any official receipts.
+A later clean receipt capture, executor-ready projection for the remaining
+rows, and canonical promotion step must bind and validate any official
+receipts.
 
 ## Tests
 

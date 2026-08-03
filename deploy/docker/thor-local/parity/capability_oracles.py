@@ -140,19 +140,20 @@ MV3DT_PROMOTED_GAP = (
 SPATIAL_AI_CORE_INTERFACE = {
     "path": (
         "deploy/docker/thor-local/qualification/"
-        "metadata-500-current-spatial-ai-utils-core-successor/runtime-interface.json"
+        "metadata-500-current-spatial-ai-utils-core-rebind-successor/"
+        "runtime-interface.json"
     ),
-    "raw_sha256": "191e883c6bf5d2b1331d2e4555aded50d202dbe2070f7ddfc95c3d7bbf88f2e3",
+    "raw_sha256": "37a3d29e7a83f2bfa6c09c2a41508eb6c785f8b8267117e82f6ebfdcd1edd305",
 }
 SPATIAL_AI_CORE_INTERFACE_SCHEMA = {
     "path": (
         "deploy/docker/thor-local/qualification/"
-        "metadata-500-current-spatial-ai-utils-core-successor/"
+        "metadata-500-current-spatial-ai-utils-core-rebind-successor/"
         "runtime-interface.schema.json"
     ),
-    "raw_sha256": "048cf87b58a5e21763074c77378d3422c9797f3f2bcb0e85987048df7698a831",
+    "raw_sha256": "5c08e40ff22e6101f20fa7938199a90763d1eab668edb156ae479a2061dcac83",
 }
-SPATIAL_AI_CORE_PRODUCER_COMMIT = "c06932bd641b00ac67df4508e5831644544f9ac1"
+SPATIAL_AI_CORE_CANONICAL_BASE_COMMIT = "548f7fdda9148b3ee521c09dcdb298309f25fe2b"
 SPATIAL_AI_CORE_IDS = (
     "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
     "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
@@ -179,6 +180,17 @@ SPATIAL_AI_CORE_GAP = (
     "exact cleanup, and observed imported-product calls without the Warehouse "
     "sample bundle. Runtime evidence remains a separate, non-promoting stage."
 )
+SPATIAL_AI_CORE_HISTORICAL_PREDECESSOR_SHA256 = {
+    "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": (
+        "8e5db30cb2604c52d1b1ef1ad0e3aaa796649d9335ce2d570efe3e36e68c8669"
+    ),
+    "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count": (
+        "73770bdd0758be1bcfeb74548740dcfd84ba06b6818ca0ba8c9661efb071d333"
+    ),
+    "manifest-entry.spatial-ai-utils.05-nvschema-conversion": (
+        "eb82438b6bde164e4c12b18287e1e472362d8d694f0e088d537fb552b2899e0e"
+    ),
+}
 PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 CPU_MULTIMEDIA_CAPABILITY_ID = (
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
@@ -1099,8 +1111,11 @@ def _spatial_ai_core_runtime_bindings(
 
     producer = interface["producer"]
     executor = producer["executor"]["path"]
-    if producer["commit"] != SPATIAL_AI_CORE_PRODUCER_COMMIT:
-        raise OracleContractError("SpatialAI core producer commit drift")
+    if (
+        producer["canonical_base_commit"] != SPATIAL_AI_CORE_CANONICAL_BASE_COMMIT
+        or producer["source_binding"] != "raw_sha256_current_checkpoint"
+    ):
+        raise OracleContractError("SpatialAI core producer source-binding drift")
     if set(interface["roles"].values()) != {executor}:
         raise OracleContractError("SpatialAI core producer role binding drift")
     producer_documents: dict[str, dict[str, Any]] = {}
@@ -1169,7 +1184,7 @@ def _spatial_ai_core_runtime_bindings(
             "canonical_mutation": False,
             "evidence_added": False,
             "ledger_rows_changed": 0,
-            "oracle_rows_changed": 3,
+            "oracle_rows_changed": 0,
             "promotion_performed": False,
             "selected_oracle_state": "open_unexecuted",
             "selected_readiness": "executor_ready",
@@ -1263,10 +1278,6 @@ def _apply_spatial_ai_core_runtime(
 ) -> None:
     capability_id = oracle["capability_id"]
     runtime = binding["runtime"]
-    if canonical_oracle_sha256(oracle) != runtime["current_oracle_sha256"]:
-        raise OracleContractError(
-            f"{capability_id}: SpatialAI current oracle binding drift"
-        )
     contract = copy.deepcopy(oracle["ledger_binding"]["contract"])
     contract["source_controls"] = copy.deepcopy(runtime["source_controls"])
     if "required_metrics" in contract:
@@ -1314,6 +1325,10 @@ def _apply_spatial_ai_core_runtime(
         "classification": "executor_ready",
         "blockers": [],
     }
+    if canonical_oracle_sha256(oracle) != runtime["current_oracle_sha256"]:
+        raise OracleContractError(
+            f"{capability_id}: SpatialAI current oracle binding drift"
+        )
 
 
 def _protocol_case_bindings(document: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -1920,10 +1935,9 @@ def validate(
         changed = {
             key for key in expected_by_id if actual_by_id[key] != expected_by_id[key]
         }
-        _, spatial_bindings = _spatial_ai_core_runtime_bindings(repo_root, ledger)
         historical_spatial_prefix = changed == set(SPATIAL_AI_CORE_IDS) and all(
             canonical_oracle_sha256(actual_by_id[capability_id])
-            == spatial_bindings[capability_id]["runtime"]["current_oracle_sha256"]
+            == SPATIAL_AI_CORE_HISTORICAL_PREDECESSOR_SHA256[capability_id]
             for capability_id in SPATIAL_AI_CORE_IDS
         )
         if not historical_spatial_prefix:

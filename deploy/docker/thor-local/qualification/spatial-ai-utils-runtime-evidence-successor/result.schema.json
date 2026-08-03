@@ -14,16 +14,17 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["contract_sha256", "canonical_rows_are_planning_only"],
+          "required": ["contract_sha256", "canonical_rows_are_open_unexecuted", "executor_ready_capabilities"],
           "properties": {
             "contract_sha256": {"$ref": "#/$defs/sha256"},
-            "canonical_rows_are_planning_only": {"const": true}
+            "canonical_rows_are_open_unexecuted": {"const": true},
+            "executor_ready_capabilities": {"$ref": "#/$defs/executor_ready_capabilities"}
           }
         },
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["contract_sha256", "executor_sha256", "ledger_document_sha256", "oracle_document_sha256", "checkout_head", "checkout_clean", "checkout_status_porcelain_sha256", "canonical_rows_are_planning_only"],
+          "required": ["contract_sha256", "executor_sha256", "ledger_document_sha256", "oracle_document_sha256", "checkout_head", "checkout_clean", "checkout_status_porcelain_sha256", "canonical_rows_are_open_unexecuted", "executor_ready_capabilities"],
           "properties": {
             "contract_sha256": {"$ref": "#/$defs/sha256"},
             "executor_sha256": {"$ref": "#/$defs/sha256"},
@@ -32,7 +33,8 @@
             "checkout_head": {"$ref": "#/$defs/sha1"},
             "checkout_clean": {"type": "boolean"},
             "checkout_status_porcelain_sha256": {"$ref": "#/$defs/sha256"},
-            "canonical_rows_are_planning_only": {"const": true}
+            "canonical_rows_are_open_unexecuted": {"const": true},
+            "executor_ready_capabilities": {"$ref": "#/$defs/executor_ready_capabilities"}
           }
         }
       ]
@@ -119,6 +121,13 @@
   "$defs": {
     "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "executor_ready_capabilities": {
+      "const": [
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion"
+      ]
+    },
     "capability_id": {"type": "string", "pattern": "^manifest-entry\\.spatial-ai-utils\\.0[0-6]-"},
     "preflight": {
       "type": "object",

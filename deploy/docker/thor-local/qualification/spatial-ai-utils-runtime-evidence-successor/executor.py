@@ -54,17 +54,22 @@ EXPECTED_CAPABILITIES = [
     "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
     "manifest-entry.spatial-ai-utils.06-video-frame-tools",
 ]
+EXPECTED_EXECUTOR_READY_CAPABILITIES = [
+    "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+    "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+    "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+]
 SHORT_IDS = {
     value.split(".")[2].split("-")[0]: value for value in EXPECTED_CAPABILITIES
 }
 REQUIRED_MODULES = {
     "calibration_grouping": ("numpy", "shapely"),
     "geometry_projection": ("numpy",),
-    "multiview_visualization": ("numpy", "cv2", "shapely"),
+    "multiview_visualization": ("numpy", "cv2"),
     "detection_map": ("numpy", "pandas", "nuscenes"),
     "tracking_metrics": ("numpy", "scipy"),
     "nvschema_conversion": ("numpy", "scipy"),
-    "video_frame_tools": ("numpy", "cv2", "tqdm", "shapely"),
+    "video_frame_tools": ("numpy", "cv2", "tqdm"),
 }
 NAMESPACES = {
     capability_id: f"spatial-ai-{capability_id.split('.')[2]}"
@@ -885,8 +890,28 @@ def verify_bindings(contract: dict[str, Any], require_clean: bool) -> dict[str, 
             or row.get("runtime_state") != "not_qualified"
         ):
             raise EvidenceError(f"unexpected current ledger state: {capability_id}")
-        if oracle.get("current_state") != "open_unexecuted":
+        if (
+            oracle.get("current_state") != "open_unexecuted"
+            or oracle.get("evidence") != []
+        ):
             raise EvidenceError(f"unexpected current oracle state: {capability_id}")
+        readiness = oracle.get("acceptance_readiness")
+        expected_classification = (
+            "executor_ready"
+            if capability_id in EXPECTED_EXECUTOR_READY_CAPABILITIES
+            else "planning_index_only"
+        )
+        if (
+            not isinstance(readiness, dict)
+            or readiness.get("classification") != expected_classification
+        ):
+            raise EvidenceError(f"unexpected current oracle readiness: {capability_id}")
+        blockers = readiness.get("blockers")
+        if (expected_classification == "executor_ready" and blockers != []) or (
+            expected_classification == "planning_index_only"
+            and (not isinstance(blockers, list) or not blockers)
+        ):
+            raise EvidenceError(f"unexpected current oracle blockers: {capability_id}")
     external = ledger.get(contract["policy"]["external_provider_entry"])
     external_oracle = oracles.get(contract["policy"]["external_provider_entry"])
     if not external or (
@@ -912,7 +937,8 @@ def verify_bindings(contract: dict[str, Any], require_clean: bool) -> dict[str, 
         "checkout_head": git("rev-parse", "HEAD"),
         "checkout_clean": clean,
         "checkout_status_porcelain_sha256": sha_bytes(status.encode("utf-8")),
-        "canonical_rows_are_planning_only": True,
+        "canonical_rows_are_open_unexecuted": True,
+        "executor_ready_capabilities": EXPECTED_EXECUTOR_READY_CAPABILITIES,
     }
 
 
@@ -1952,7 +1978,8 @@ def plan(contract: dict[str, Any], selected: set[str] | None = None) -> dict[str
         "captured_at_utc": None,
         "bindings": {
             "contract_sha256": sha_file(CONTRACT_PATH),
-            "canonical_rows_are_planning_only": True,
+            "canonical_rows_are_open_unexecuted": True,
+            "executor_ready_capabilities": EXPECTED_EXECUTOR_READY_CAPABILITIES,
         },
         "environment": {
             **target_environment,
@@ -2405,7 +2432,8 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
             raise EvidenceError("plan mode/state coherence drift")
         expected_bindings = {
             "contract_sha256": sha_file(CONTRACT_PATH),
-            "canonical_rows_are_planning_only": True,
+            "canonical_rows_are_open_unexecuted": True,
+            "executor_ready_capabilities": EXPECTED_EXECUTOR_READY_CAPABILITIES,
         }
         if result["bindings"] != expected_bindings:
             raise EvidenceError("plan binding drift")
@@ -2441,7 +2469,9 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
         if (
             bindings["contract_sha256"] != sha_file(CONTRACT_PATH)
             or bindings["executor_sha256"] != sha_file(REPO_ROOT / EXECUTOR_REL)
-            or bindings["canonical_rows_are_planning_only"] is not True
+            or bindings["canonical_rows_are_open_unexecuted"] is not True
+            or bindings["executor_ready_capabilities"]
+            != EXPECTED_EXECUTOR_READY_CAPABILITIES
         ):
             raise EvidenceError("execution binding drift")
         expected_cleanup = {

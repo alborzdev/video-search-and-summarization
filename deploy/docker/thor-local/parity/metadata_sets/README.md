@@ -5,15 +5,17 @@ This directory provides the static, fail-closed metadata selector.
 binds a complete metadata plane: manifest, official ledger and schema,
 capability-oracle registry and schema, and acceptance inventory.
 
-The selected `thor-vss-3.2.1-current-spatial-ai-utils-core-500` set contains the
-exact current 289-row Thor prefix plus the unchanged 211-row candidate suffix.
-Its prefix has nine executor-ready rows: four Synthetic Data, two MV3DT
+The selected
+`thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500` set contains the exact
+current 289-row Thor prefix plus the unchanged 211-row candidate suffix. Its
+prefix has nine executor-ready rows: four Synthetic Data, two MV3DT
 configuration-tool, and three SpatialAI core rows. The SpatialAI rows remain
 open and evidence-empty, and all 211 candidate rows remain evidence-empty and
 non-promoting. The registered
-`thor-vss-3.2.1-current-spatial-ai-utils-core-289` set exposes the same canonical
-current prefix explicitly. Older descriptors remain checked in as immutable
-historical provenance but are deliberately not registered as current.
+`thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-289` set exposes the same
+canonical current prefix explicitly. The predecessor SpatialAI Stage-1
+descriptors and all older descriptors remain checked in as immutable historical
+provenance but are deliberately not registered as current.
 
 `resolver.py` validates the selector, descriptor, and every member before it
 returns any document. Reads are bounded and file-descriptor-relative with
@@ -39,7 +41,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-current-spatial-ai-utils-core-289 --json
+  --set thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

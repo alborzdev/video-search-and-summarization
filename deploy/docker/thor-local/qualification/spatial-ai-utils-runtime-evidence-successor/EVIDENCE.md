@@ -6,24 +6,31 @@ canonical parity-state change.
 
 Current Thor development evidence:
 
-- focused package suite: `43 passed`;
+- focused package suite: `44 passed` after the Stage-1 oracle rebind;
 - `01` 3D/2D geometry: pass, 2 positives + 5 adjacent cases, 9 literal product
   calls;
 - `04` HOTA/CLEAR/Identity/Count: pass, 2 positives + 5 adjacent cases, 16
   literal product calls;
 - `05` NVSchema conversion: pass, 2 positives + 5 adjacent cases, 9 literal
   product calls;
-- `00`, `02`, `03`, and `06`: capability-local dependency/ABI preflight
-  blockers on the current default Python; their workloads are staged but no
-  runtime success is claimed;
+- `00` and `03`: capability-local dependency/ABI preflight blockers on the
+  current default Python;
+- `02` multiview visualization: pass, 2 positives + 5 adjacent cases, 7
+  literal product calls;
+- `06` video/frame tools: pass, 2 positives + 5 adjacent cases, 13 literal
+  product calls; the committed lazy visualization package boundary removes
+  both rows' former unrelated Shapely preflight dependency;
 - `07` AWS/GCS: excluded, unchanged, and not contacted.
 
-The all-row development run returns `partial` while preserving the three
-independent passing rows. Instrumented fail-closed guards report zero network,
-Docker, service, model, download, Warehouse, product-subprocess, and filesystem
-escape attempts. The receipt is development evidence only because the checkout
-is dirty and current canonical oracles have not yet been projected to
-executor-ready bindings.
+Rows `01`, `04`, and `05` are now bound to their current canonical
+`executor_ready` oracle rows; all seven canonical rows remain
+`open_unexecuted` with empty evidence. The producer is still fail-closed and
+non-promoting: a dirty development result is not runtime evidence, and no
+canonical mutation may occur before a clean receipt is captured and validated.
+The default-Python all-row development replay returns `partial` with exact
+passes `01`, `02`, `04`, `05`, and `06`, plus exact capability-local blockers
+`00` and `03`. Instrumented guards report zero network, Docker, service, model,
+download, Warehouse, product-subprocess, and filesystem-escape attempts.
 
 The closed result schema and semantic validator reject forged bindings,
 promotion candidates, environment claims, determinism and cleanup claims,

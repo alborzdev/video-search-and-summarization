@@ -225,7 +225,7 @@ class CapabilityOracleTests(unittest.TestCase):
     def test_spatial_ai_core_oracles_are_exact_locked_projection(self) -> None:
         projection_root = (
             verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
-            "metadata-500-current-spatial-ai-utils-core-successor"
+            "metadata-500-current-spatial-ai-utils-core-rebind-successor"
         )
         predecessor_root = (
             verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"

@@ -105,9 +105,34 @@ def test_static_fixture_and_source_locks_match() -> None:
             assert EXECUTOR.sha_file(REPO_ROOT / lock["path"]) == lock["sha256"]
 
 
+def test_lazy_visualization_source_lock_is_exactly_scoped_to_02_and_06() -> None:
+    contract = EXECUTOR.load_contract()
+    lazy_init = (
+        "libs/analytics/spatialai-data-utils/"
+        "spatialai_data_utils/visualization/__init__.py"
+    )
+    locked_rows = [
+        row["capability_id"]
+        for row in contract["capabilities"]
+        if any(lock["path"] == lazy_init for lock in row["source_controls"])
+    ]
+    assert locked_rows == [EXECUTOR.SHORT_IDS["02"], EXECUTOR.SHORT_IDS["06"]]
+    assert {
+        adapter: EXECUTOR.REQUIRED_MODULES[adapter]
+        for adapter in ("multiview_visualization", "video_frame_tools")
+    } == {
+        "multiview_visualization": ("numpy", "cv2"),
+        "video_frame_tools": ("numpy", "cv2", "tqdm"),
+    }
+
+
 def test_current_canonical_bindings_and_external_boundary_are_exact() -> None:
     bindings = EXECUTOR.verify_bindings(EXECUTOR.load_contract(), require_clean=False)
-    assert bindings["canonical_rows_are_planning_only"] is True
+    assert bindings["canonical_rows_are_open_unexecuted"] is True
+    assert (
+        bindings["executor_ready_capabilities"]
+        == EXECUTOR.EXPECTED_EXECUTOR_READY_CAPABILITIES
+    )
     assert bindings["checkout_head"]
 
 
@@ -123,19 +148,21 @@ def test_all_capability_execution_is_local_and_independent(
     assert result["status"] == "partial"
     assert {key for key, row in by_short.items() if row["status"] == "pass"} == {
         "01",
+        "02",
         "04",
         "05",
+        "06",
     }
     assert {key for key, row in by_short.items() if row["status"] == "blocked"} == {
         "00",
-        "02",
         "03",
-        "06",
     }
     assert result["promotion"]["individual_receipt_candidates"] == [
         EXECUTOR.SHORT_IDS["01"],
+        EXECUTOR.SHORT_IDS["02"],
         EXECUTOR.SHORT_IDS["04"],
         EXECUTOR.SHORT_IDS["05"],
+        EXECUTOR.SHORT_IDS["06"],
     ]
     assert result["promotion"]["receipt_is_runtime_evidence"] is False
     assert result["promotion"]["aggregate_is_promotable"] is False
@@ -187,6 +214,10 @@ def test_literal_imported_product_function_counts_are_exact(
         "projection.project_boxes_3d_to_2d": 4,
         "projection.project_points_3d_to_image": 1,
     }
+    assert by_short["02"]["imported_product_function_counts"] == {
+        "visual.draw_bbox3d_multicam": 2,
+        "visual.draw_bbox3d_on_img": 5,
+    }
     assert by_short["04"]["imported_product_function_counts"] == {
         "tracking.CLEAR.eval_sequence": 4,
         "tracking.Count.eval_sequence": 4,
@@ -196,6 +227,11 @@ def test_literal_imported_product_function_counts_are_exact(
     assert by_short["05"]["imported_product_function_counts"] == {
         "nvschema.convert_sparse4d_to_nvschema": 5,
         "nvschema.load_nvschema": 4,
+    }
+    assert by_short["06"]["imported_product_function_counts"] == {
+        "video.frames_to_video": 3,
+        "video.list_frame_paths": 5,
+        "video.video_to_frames": 5,
     }
 
 

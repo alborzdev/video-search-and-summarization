@@ -496,12 +496,17 @@ in this directory:
 - `metadata-500-current-mv3dt-config-utils-successor/` is the immutable
   historical layer that added exact executor-ready bindings for two MV3DT
   configuration utilities without changing their ledger rows;
-- `metadata-500-current-spatial-ai-utils-core-successor/` is the current
-  Stage-1 projection consumed by the canonical 289-row v1 prefix and selected
-  500-row v2 plane. It changes exactly SpatialAI entries 01, 04, and 05 to
-  executor-ready bindings while preserving all 500 ledger rows, the other 497
-  oracles, entry 07, empty evidence, and family runtime state. It performs no
-  runtime execution and excludes the Warehouse sample bundle;
+- `metadata-500-current-spatial-ai-utils-core-successor/` is the immutable
+  historical Stage-1 projection that first changed exactly SpatialAI entries
+  01, 04, and 05 to executor-ready bindings while preserving all 500 ledger
+  rows, the other 497 oracles, entry 07, empty evidence, and family runtime
+  state;
+- `metadata-500-current-spatial-ai-utils-core-rebind-successor/` is the current
+  Stage-1 rebind consumed by the canonical 289-row v1 prefix and selected
+  500-row v2 plane. It preserves the same three-row readiness delta and all
+  ledger/runtime/evidence state while binding the current fail-closed
+  SpatialAI producer interface. Its compiler and tests are static only: no
+  runtime execution, network, downloads, or Warehouse sample are involved;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact

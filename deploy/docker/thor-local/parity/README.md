@@ -66,20 +66,20 @@ discrepancies with zero aggregate or acceptance gaps. The live 289-row files,
 live oracle migration, and candidate runtime qualification remain separate.
 
 `metadata_sets/` now resolves the complete metadata plane as one immutable,
-hash-bound snapshot. The selector defaults to the registered 500 set under
-`qualification/live-metadata-500-migration/`, including a compact strict v2
-oracle schema and exact 289+211 registry. The activation receipt under
-`qualification/live-metadata-500-activation/` binds the descriptor's
-`live_ready` promotion, selector switch, fixed 289 prerequisites, and rollback.
-The historical 289 set remains explicitly resolvable. Neither metadata
-selection nor `live_ready` promotes any capability runtime state.
+hash-bound snapshot. The selector defaults to the current SpatialAI-core
+rebind 500 set: the exact current 289-row prefix plus the unchanged 211-row
+candidate suffix under the strict v2 oracle schema. The matching rebind 289
+set remains explicitly resolvable. Prior activation and Stage-1 descriptors
+remain immutable historical provenance but are not registered as current.
+Neither metadata selection nor `live_ready` promotes any capability runtime
+state.
 
 Validate either atomic set through the authoritative dispatcher:
 
 ```bash
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py --json
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py \
-  --set thor-vss-3.2.1-live-289 --json
+  --set thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-289 --json
 ```
 
 That direct-index denominator is also not the final documentation graph. A

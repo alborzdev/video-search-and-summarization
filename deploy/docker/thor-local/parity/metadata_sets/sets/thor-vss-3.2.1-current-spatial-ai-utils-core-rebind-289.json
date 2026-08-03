@@ -1,0 +1,53 @@
+{
+  "documents": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
+      "schema_version": 1
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "b8f03c0d949ae7c9bb6dd14f37142e4f723849125ec944eb9244bd0ad9b79a1a",
+      "schema_id": "capability_oracles_schema",
+      "schema_version": 1
+    },
+    "manifest": {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "629f3dbf69b42a73037d7dd5e8f8b369dd72885e9a82f3a59fcfa4f19cbc0744",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "834bb40b576d9e9e546cecb3bdb866993b7be7fd3bf9d5e9e19a0d852d4e4e39",
+      "schema_id": "official_capabilities_schema",
+      "schema_version": 1
+    }
+  },
+  "expected_counts": {
+    "capabilities": 289,
+    "feature_families": 55,
+    "oracles": 289
+  },
+  "lifecycle": "live_ready",
+  "mode": "immutable_static_metadata_set",
+  "schema_version": 1,
+  "schemas": {
+    "capability_oracles_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://nvidia.com/vss/thor/capability-oracles.schema.json",
+      "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+      "raw_sha256": "55de87c13e78b4f349e7095232f31c1135155e0bc13ed6bcb8e4abb906f26cf1"
+    },
+    "official_capabilities_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "71f1e0f1d820c3809ea3b55abb504071321f61c6e36978226dd10108c7b2384b"
+    }
+  },
+  "set_id": "thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-289",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}
