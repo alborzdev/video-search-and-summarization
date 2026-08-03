@@ -501,12 +501,16 @@ in this directory:
   01, 04, and 05 to executor-ready bindings while preserving all 500 ledger
   rows, the other 497 oracles, entry 07, empty evidence, and family runtime
   state;
-- `metadata-500-current-spatial-ai-utils-core-rebind-successor/` is the current
-  Stage-1 rebind consumed by the canonical 289-row v1 prefix and selected
-  500-row v2 plane. It preserves the same three-row readiness delta and all
+- `metadata-500-current-spatial-ai-utils-core-rebind-successor/` is the immutable
+  historical Stage-1 rebind. It preserves the same three-row readiness delta and all
   ledger/runtime/evidence state while binding the current fail-closed
   SpatialAI producer interface. Its compiler and tests are static only: no
   runtime execution, network, downloads, or Warehouse sample are involved;
+- `metadata-500-current-spatial-ai-utils-successor/` is the current reviewed
+  promotion for all seven provider-free SpatialAI utility rows. It binds the
+  clean integrated Thor receipt, 14 positive runs, 35 adjacent negatives, and
+  122 imported product calls; preserves entry 07 and the full 211-row suffix;
+  and publishes the current 289/500 selector pair without Warehouse data;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact

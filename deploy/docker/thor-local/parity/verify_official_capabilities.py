@@ -5,6 +5,8 @@
 from __future__ import annotations
 
 import argparse
+import copy
+from functools import lru_cache
 import hashlib
 import json
 import re
@@ -591,6 +593,58 @@ def _git_json_blob(repo_root: Path, commit: str, path: str) -> dict[str, Any]:
     return value
 
 
+@lru_cache(maxsize=4)
+def _validate_spatial_ai_producer_lock_graph(
+    repo_root_text: str, captured_commit: str, lock_json: str
+) -> None:
+    repo_root = Path(repo_root_text)
+    producer_lock = json.loads(lock_json, object_pairs_hook=_reject_duplicate_pairs)
+    binding_commit = producer_lock.get("producer_binding_commit")
+    if binding_commit != "0bd7fef7e1426f6a298ceb1c422aa38b76f383d8":
+        raise CapabilityContractError("SpatialAI producer binding commit differs")
+    _git_bytes(
+        repo_root, "merge-base", "--is-ancestor", binding_commit, captured_commit
+    )
+    collections = (
+        "producer_bundle",
+        "canonical_controls",
+        "metadata_controls",
+        "fixture_controls",
+        "product_source_controls",
+        "product_root_manifest",
+        "producer_root_manifest",
+    )
+    rows = [row for key in collections for row in producer_lock[key]]
+    if len(rows) != 315 or len({row["path"] for row in rows}) != 274:
+        raise CapabilityContractError("SpatialAI producer-lock denominator differs")
+    locked: dict[str, str] = {}
+    for row in rows:
+        if set(row) != {"path", "sha256"}:
+            raise CapabilityContractError("SpatialAI producer-lock row differs")
+        prior = locked.setdefault(row["path"], row["sha256"])
+        if prior != row["sha256"]:
+            raise CapabilityContractError("SpatialAI producer-lock digest conflicts")
+    for relative_path, expected in locked.items():
+        for commit in (binding_commit, captured_commit):
+            listing = _git_bytes(repo_root, "ls-tree", commit, "--", relative_path)
+            fields = listing.decode("utf-8").split(None, 3)
+            if (
+                len(fields) != 4
+                or fields[0] not in {"100644", "100755"}
+                or fields[1] != "blob"
+            ):
+                raise CapabilityContractError(
+                    f"SpatialAI producer-lock path is not a regular blob: {relative_path}"
+                )
+            if (
+                hashlib.sha256(_git_blob(repo_root, commit, relative_path)).hexdigest()
+                != expected
+            ):
+                raise CapabilityContractError(
+                    f"SpatialAI producer-lock blob differs: {relative_path}"
+                )
+
+
 def _select_aggregate_capability(
     aggregate: dict[str, Any], reference: dict[str, Any]
 ) -> dict[str, Any]:
@@ -618,7 +672,7 @@ def _select_aggregate_capability(
     return selected
 
 
-def _validate_aggregate_runtime_evidence(
+def _validate_mv3dt_aggregate_runtime_evidence(
     aggregate: dict[str, Any],
     reference: dict[str, Any],
     capability: dict[str, Any],
@@ -1253,6 +1307,956 @@ def _validate_aggregate_runtime_evidence(
             f"{capability_id}: selected aggregate capability row differs"
         )
     return selected
+
+
+def _validate_spatial_ai_aggregate_runtime_evidence(
+    aggregate: dict[str, Any],
+    reference: dict[str, Any],
+    capability: dict[str, Any],
+    capabilities_by_id: dict[str, dict[str, Any]],
+    oracles_by_id: dict[str, dict[str, Any]],
+    target: dict[str, Any],
+    repo_root: Path,
+) -> dict[str, Any]:
+    """Validate the exact reviewed SpatialAI producer receipt and outer authority."""
+    capability_id = capability["id"]
+    expected_ids = [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+    ]
+    if set(reference) != {"path", "sha256", "capability_id", "json_pointer"}:
+        raise CapabilityContractError(
+            f"{capability_id}: SpatialAI aggregate reference fields are not exact"
+        )
+    if reference.get("capability_id") != capability_id:
+        raise CapabilityContractError(
+            f"{capability_id}: SpatialAI aggregate selector differs"
+        )
+    if reference.get("path") != (
+        "deploy/docker/thor-local/qualification/"
+        "metadata-500-current-spatial-ai-utils-successor/producer-runtime-receipt.json"
+    ):
+        raise CapabilityContractError(
+            f"{capability_id}: SpatialAI evidence path differs"
+        )
+    expected_binding = {
+        key: capability[key]
+        for key in (
+            "feature_id",
+            "kind",
+            "title",
+            "source_claims",
+            "acceptance_class",
+            "thor_state",
+            "runtime_state",
+            "contract",
+            "gap",
+        )
+    }
+    if oracles_by_id[capability_id].get("ledger_binding") != expected_binding:
+        raise CapabilityContractError(
+            f"{capability_id}: SpatialAI oracle ledger binding differs"
+        )
+
+    result_schema_path = _resolve_repo_file(
+        repo_root,
+        "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json",
+        label="SpatialAI result schema",
+        required_prefix="deploy/docker/thor-local/qualification/",
+    )
+    result_schema_raw = result_schema_path.read_bytes()
+    if (
+        hashlib.sha256(result_schema_raw).hexdigest()
+        != "c49f98b4ad1aea73b6c1938eb06b1218b252902d3f54d19b0b3c891c2fcbbf1b"
+    ):
+        raise CapabilityContractError("SpatialAI result schema digest differs")
+    result_schema = json.loads(
+        result_schema_raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+    )
+    Draft202012Validator.check_schema(result_schema)
+    result_errors = sorted(
+        Draft202012Validator(result_schema).iter_errors(aggregate),
+        key=lambda error: tuple(map(str, error.absolute_path)),
+    )
+    if result_errors:
+        raise CapabilityContractError(
+            f"SpatialAI aggregate schema failure: {result_errors[0].message}"
+        )
+    if (
+        aggregate.get("package_id")
+        != "thor-spatial-ai-utils-runtime-evidence-successor-v1"
+        or aggregate.get("mode") != "target_bound_offline_runtime_evidence"
+        or aggregate.get("status") != "pass"
+    ):
+        raise CapabilityContractError("SpatialAI aggregate is not the reviewed pass")
+
+    outer_path = _resolve_repo_file(
+        repo_root,
+        "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-successor/authoritative-integrated-receipt.json",
+        label="SpatialAI integrated authority",
+        required_prefix="deploy/docker/thor-local/qualification/",
+    )
+    outer_raw = outer_path.read_bytes()
+    if (
+        hashlib.sha256(outer_raw).hexdigest()
+        != "9ca6de79ac42605a80b5de9c2397ba4d303fdc423e9713a061a520f3a730fce7"
+    ):
+        raise CapabilityContractError("SpatialAI integrated authority digest differs")
+    outer = json.loads(
+        outer_raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+    )
+    integrated_schema_path = _resolve_repo_file(
+        repo_root,
+        "deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/integrated-receipt.schema.json",
+        label="SpatialAI integrated schema",
+        required_prefix="deploy/docker/thor-local/qualification/",
+    )
+    integrated_schema_raw = integrated_schema_path.read_bytes()
+    if (
+        hashlib.sha256(integrated_schema_raw).hexdigest()
+        != "907bbd439372ad89161cf42154e800be1c7571f39f2ec7aa4991c14e4e009a0b"
+    ):
+        raise CapabilityContractError("SpatialAI integrated schema digest differs")
+    integrated_schema = json.loads(
+        integrated_schema_raw.decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    Draft202012Validator.check_schema(integrated_schema)
+    integrated_errors = sorted(
+        Draft202012Validator(integrated_schema).iter_errors(outer),
+        key=lambda error: tuple(map(str, error.absolute_path)),
+    )
+    if integrated_errors:
+        raise CapabilityContractError(
+            f"SpatialAI integrated authority schema failure: {integrated_errors[0].message}"
+        )
+    environment_receipt = outer["environment_receipt"]
+    environment_schema_path = _resolve_repo_file(
+        repo_root,
+        "deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/receipt.schema.json",
+        label="SpatialAI environment receipt schema",
+        required_prefix="deploy/docker/thor-local/qualification/",
+    )
+    environment_schema_raw = environment_schema_path.read_bytes()
+    if (
+        hashlib.sha256(environment_schema_raw).hexdigest()
+        != "02ad6d92b18171815115b613b279783b1fdf659b2e8ba41c0b4ce02c02fb8dbf"
+    ):
+        raise CapabilityContractError(
+            "SpatialAI environment receipt schema digest differs"
+        )
+    environment_schema = json.loads(
+        environment_schema_raw.decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    environment_errors = sorted(
+        Draft202012Validator(environment_schema).iter_errors(environment_receipt),
+        key=lambda error: tuple(map(str, error.absolute_path)),
+    )
+    if environment_errors:
+        raise CapabilityContractError(
+            f"SpatialAI environment receipt schema failure: {environment_errors[0].message}"
+        )
+    environment_execution = copy.deepcopy(environment_receipt)
+    environment_execution["bindings"].pop("execution_sha256", None)
+    integrated_execution = copy.deepcopy(outer)
+    integrated_execution["bindings"].pop("execution_sha256", None)
+    if (
+        environment_receipt["bindings"]["execution_sha256"]
+        != _json_sha256(environment_execution)
+        or outer["bindings"]["execution_sha256"] != _json_sha256(integrated_execution)
+        or outer["bindings"]["environment_receipt_sha256"]
+        != _json_sha256(environment_receipt)
+    ):
+        raise CapabilityContractError("SpatialAI execution binding differs")
+
+    authority_locks = {
+        "environment lock": (
+            "deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/lock.json",
+            "0f3035122fe04837eb0d9259969ca5c60f3639ef135db31d780dcf1d48c63d5a",
+        ),
+        "environment lock schema": (
+            "deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/lock.schema.json",
+            "52df2acd4027b3808ae01673ecdc6c2c1a891655a79a5ec607bda960490dc14e",
+        ),
+        "materializer": (
+            "deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/materializer.py",
+            "00a74a1c824e8c2dfa6b2751de3eaed47a8d1717d36d82003048066b0d6b6c42",
+        ),
+        "producer lock": (
+            "deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/producer-lock.json",
+            "ab623de8e6bcadd2a41086285e9f81f54bbb1174844279e8e18bf639fa9ab9b7",
+        ),
+        "producer lock schema": (
+            "deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/producer-lock.schema.json",
+            "7d60a599a99aed129062b9d0b537ce45663ebb175d5c4685aa9e8ade5ac2e73d",
+        ),
+    }
+    authority_payloads: dict[str, bytes] = {}
+    for label, (relative_path, expected) in authority_locks.items():
+        path = _resolve_repo_file(
+            repo_root,
+            relative_path,
+            label=f"SpatialAI {label}",
+            required_prefix="deploy/docker/thor-local/qualification/",
+        )
+        payload = path.read_bytes()
+        if hashlib.sha256(payload).hexdigest() != expected:
+            raise CapabilityContractError(f"SpatialAI {label} digest differs")
+        authority_payloads[label] = payload
+    environment_lock = json.loads(
+        authority_payloads["environment lock"].decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    environment_lock_schema = json.loads(
+        authority_payloads["environment lock schema"].decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    producer_lock = json.loads(
+        authority_payloads["producer lock"].decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    producer_lock_schema = json.loads(
+        authority_payloads["producer lock schema"].decode("utf-8"),
+        object_pairs_hook=_reject_duplicate_pairs,
+    )
+    for value, schema, label in (
+        (environment_lock, environment_lock_schema, "environment lock"),
+        (producer_lock, producer_lock_schema, "producer lock"),
+    ):
+        errors = sorted(
+            Draft202012Validator(schema).iter_errors(value),
+            key=lambda error: tuple(map(str, error.absolute_path)),
+        )
+        if errors:
+            raise CapabilityContractError(
+                f"SpatialAI {label} schema failure: {errors[0].message}"
+            )
+    if (
+        environment_receipt["bindings"]["lock_sha256"]
+        != authority_locks["environment lock"][1]
+        or environment_receipt["bindings"]["materializer_sha256"]
+        != authority_locks["materializer"][1]
+        or outer["bindings"]["producer_lock_sha256"]
+        != authority_locks["producer lock"][1]
+    ):
+        raise CapabilityContractError(
+            "SpatialAI environment/producer authority differs"
+        )
+    _validate_spatial_ai_producer_lock_graph(
+        str(repo_root.resolve()),
+        aggregate["bindings"]["checkout_head"],
+        json.dumps(producer_lock, sort_keys=True, separators=(",", ":")),
+    )
+    if (
+        outer.get("producer_receipt") != aggregate
+        or outer.get("bindings", {}).get("producer_receipt_sha256")
+        != reference["sha256"]
+        or outer.get("selection", {}).get("capability_ids") != expected_ids
+        or outer.get("accounting")
+        != {
+            "capabilities_passed": 7,
+            "bounded_capability_actions": 49,
+            "requests": 49,
+            "product_function_calls": 122,
+            "independent_positive_runs": 14,
+            "adjacent_negatives": 35,
+        }
+    ):
+        raise CapabilityContractError("SpatialAI outer/producer authority differs")
+    outer_promotion = outer.get("promotion", {})
+    if (
+        outer_promotion.get("eligible_capability_ids") != expected_ids
+        or outer_promotion.get("family_id") != "spatial-ai-utils"
+        or outer_promotion.get("aggregate_is_promotable") is not True
+        or outer_promotion.get("receipt_is_runtime_evidence") is not True
+        or outer_promotion.get("requires_separate_reviewed_metadata_integration")
+        is not True
+        or outer_promotion.get("development_smoke_only") is not False
+        or outer_promotion.get("canonical_parity_mutated") is not False
+        or outer_promotion.get("runtime_producer_mutated") is not False
+        or any(
+            outer.get("confinement", {}).get(key) != 0
+            for key in (
+                "network_calls",
+                "docker_calls",
+                "service_lifecycle_calls",
+                "model_accesses",
+                "downloads",
+                "warehouse_sample_accesses",
+                "product_subprocess_calls",
+                "filesystem_escape_attempts",
+            )
+        )
+        or not all(
+            outer.get("cleanup", {}).get(key) is True
+            for key in (
+                "materializer_temporary_root_removed",
+                "producer_temporary_root_removed",
+                "canonical_controls_unchanged",
+                "producer_bundle_unchanged",
+                "product_sources_unchanged",
+                "import_sensitive_roots_unchanged",
+            )
+        )
+    ):
+        raise CapabilityContractError("SpatialAI outer promotion/cleanup differs")
+
+    bindings = aggregate["bindings"]
+    captured_commit = bindings["checkout_head"]
+    if (
+        captured_commit != "f7ea82feef81739b6861f49e8a2eb5fea9583900"
+        or bindings["checkout_tree"] != "d86ca3a4bffdc99c0693a135f5b3623f8b98edce"
+        or bindings["checkout_clean"] is not True
+        or bindings["checkout_status_porcelain_sha256"]
+        != hashlib.sha256(b"").hexdigest()
+        or bindings["invocation_allow_dirty_development"] is not False
+        or bindings["target_upstream_commit"] != target["main_commit"]
+        or bindings["target_ancestry_merge_base"] != target["main_commit"]
+        or bindings["selected_target_main_commit"] != target["main_commit"]
+        or bindings["selected_target_product_version"] != target["product_version"]
+    ):
+        raise CapabilityContractError("SpatialAI checkout/target binding differs")
+    captured_tree = (
+        _git_bytes(repo_root, "rev-parse", f"{captured_commit}^{{tree}}")
+        .decode("ascii")
+        .strip()
+    )
+    if captured_tree != bindings["checkout_tree"]:
+        raise CapabilityContractError("SpatialAI captured tree differs")
+    _git_bytes(
+        repo_root,
+        "merge-base",
+        "--is-ancestor",
+        target["main_commit"],
+        captured_commit,
+    )
+    merge_base = (
+        _git_bytes(repo_root, "merge-base", target["main_commit"], captured_commit)
+        .decode("ascii")
+        .strip()
+    )
+    if merge_base != target["main_commit"]:
+        raise CapabilityContractError("SpatialAI checkout ancestry differs")
+
+    locked_documents = {
+        "metadata_selector_path": "metadata_selector_raw_sha256",
+        "selected_descriptor_path": "selected_descriptor_raw_sha256",
+        "selected_ledger_path": "selected_ledger_raw_sha256",
+        "selected_oracle_path": "selected_oracle_raw_sha256",
+    }
+    for path_key, digest_key in locked_documents.items():
+        if (
+            hashlib.sha256(
+                _git_blob(repo_root, captured_commit, bindings[path_key])
+            ).hexdigest()
+            != bindings[digest_key]
+        ):
+            raise CapabilityContractError(
+                f"SpatialAI receipt-head document differs: {path_key}"
+            )
+    historical_ledger_raw = _git_blob(
+        repo_root,
+        captured_commit,
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+    )
+    historical_oracle_raw = _git_blob(
+        repo_root,
+        captured_commit,
+        "deploy/docker/thor-local/parity/capability-oracles.json",
+    )
+    if (
+        hashlib.sha256(historical_ledger_raw).hexdigest()
+        != bindings["ledger_document_sha256"]
+        or hashlib.sha256(historical_oracle_raw).hexdigest()
+        != bindings["oracle_document_sha256"]
+    ):
+        raise CapabilityContractError("SpatialAI historical canonical binding differs")
+    historical_ledger = json.loads(
+        historical_ledger_raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+    )
+    historical_oracles = json.loads(
+        historical_oracle_raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+    )
+    historical_ledger_by_id = {
+        row["id"]: row for row in historical_ledger["capabilities"]
+    }
+    historical_oracles_by_id = {
+        row["capability_id"]: row for row in historical_oracles["oracles"]
+    }
+
+    contract_path = "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json"
+    executor_path = "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py"
+    contract_raw = _git_blob(repo_root, captured_commit, contract_path)
+    executor_raw = _git_blob(repo_root, captured_commit, executor_path)
+    if (
+        hashlib.sha256(contract_raw).hexdigest() != bindings["contract_sha256"]
+        or hashlib.sha256(executor_raw).hexdigest() != bindings["executor_sha256"]
+        or bindings["contract_sha256"]
+        != "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70"
+        or bindings["executor_sha256"]
+        != "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c"
+    ):
+        raise CapabilityContractError("SpatialAI contract/executor binding differs")
+    contract = json.loads(
+        contract_raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+    )
+    contract_schema_path = _resolve_repo_file(
+        repo_root,
+        "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json",
+        label="SpatialAI contract schema",
+        required_prefix="deploy/docker/thor-local/qualification/",
+    )
+    contract_schema_raw = contract_schema_path.read_bytes()
+    if (
+        hashlib.sha256(contract_schema_raw).hexdigest()
+        != "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"
+    ):
+        raise CapabilityContractError("SpatialAI contract schema digest differs")
+    contract_schema = json.loads(
+        contract_schema_raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+    )
+    contract_errors = sorted(
+        Draft202012Validator(contract_schema).iter_errors(contract),
+        key=lambda error: tuple(map(str, error.absolute_path)),
+    )
+    if contract_errors:
+        raise CapabilityContractError(
+            f"SpatialAI contract schema failure: {contract_errors[0].message}"
+        )
+    contract_rows = {row["capability_id"]: row for row in contract["capabilities"]}
+    rows = aggregate["capability_results"]
+    if (
+        [row["capability_id"] for row in rows] != expected_ids
+        or aggregate["promotion"]["eligible_capability_ids"] != expected_ids
+        or any(
+            capabilities_by_id[row_id]["feature_id"] != "spatial-ai-utils"
+            for row_id in expected_ids
+        )
+    ):
+        raise CapabilityContractError("SpatialAI capability denominator differs")
+
+    final_gap = (
+        "No known gap: the reviewed clean all-seven Thor receipt proves two independent "
+        "positive runs, five named adjacent negatives, deterministic output, exact "
+        "cleanup, and locked imported-product execution without the Warehouse sample."
+    )
+    executor_path = (
+        "deploy/docker/thor-local/qualification/"
+        "spatial-ai-utils-runtime-evidence-successor/executor.py"
+    )
+    for index, row_id in enumerate(expected_ids):
+        runtime = contract_rows[row_id]
+        if runtime["current_ledger_row_sha256"] != _json_sha256(
+            historical_ledger_by_id[row_id]
+        ) or runtime["current_oracle_sha256"] != _json_sha256(
+            historical_oracles_by_id[row_id]
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: SpatialAI historical contract binding differs"
+            )
+        expected_capability = copy.deepcopy(historical_ledger_by_id[row_id])
+        semantic_key = (
+            "required_metrics"
+            if "required_metrics" in expected_capability["contract"]
+            else "required_semantics"
+        )
+        expected_capability["contract"]["source_controls"] = copy.deepcopy(
+            runtime["source_controls"]
+        )
+        expected_capability["contract"][semantic_key] = copy.deepcopy(
+            runtime["required_semantics"]
+        )
+        expected_capability["thor_state"] = "wired"
+        expected_capability["runtime_state"] = "passed_current"
+        expected_capability["gap"] = final_gap
+        expected_capability["runtime_evidence"] = [
+            {
+                "path": reference["path"],
+                "sha256": reference["sha256"],
+                "capability_id": row_id,
+                "json_pointer": f"/capability_results/{index}",
+            }
+        ]
+        if capabilities_by_id[row_id] != expected_capability:
+            raise CapabilityContractError(
+                f"{row_id}: SpatialAI canonical ledger projection differs"
+            )
+        expected_oracle = copy.deepcopy(historical_oracles_by_id[row_id])
+        expected_oracle["ledger_binding"] = {
+            key: copy.deepcopy(value)
+            for key, value in expected_capability.items()
+            if key not in {"id", "scenario_ids", "runtime_evidence"}
+        }
+        expected_oracle["fixture"]["input"]["contract"] = copy.deepcopy(
+            expected_capability["contract"]
+        )
+        namespace = f"spatial-ai-{row_id.split('.')[2]}"
+        expected_oracle["fixture"]["input"]["namespace"] = namespace
+        expected_oracle["fixture"]["materialization"] = {
+            "generator": executor_path,
+            "path": runtime["fixture_manifest"]["path"],
+            "sha256": runtime["fixture_manifest"]["sha256"],
+        }
+        for assertion in expected_oracle["assertions"]:
+            prefix = "contract_identity/contract/"
+            observation = assertion["observation"]
+            if observation.startswith(prefix):
+                key = observation.removeprefix(prefix)
+                if key in expected_capability["contract"]:
+                    assertion["expected"] = copy.deepcopy(
+                        expected_capability["contract"][key]
+                    )
+        expected_oracle["execution_bounds"]["executor"] = executor_path
+        expected_oracle["execution_bounds"]["collectors"] = [executor_path]
+        expected_oracle["execution_bounds"]["max_actions"] = 7
+        expected_oracle["execution_bounds"]["max_requests"] = 7
+        expected_oracle["execution_bounds"]["workload"] = {
+            "units": 1,
+            "requests_per_unit": 7,
+            "overhead_requests": 0,
+            "calculated_max_requests": 7,
+            "phases": ["positive_run_1", "positive_run_2", "adjacent_negative"],
+        }
+        expected_oracle["cleanup"]["targets"] = [namespace]
+        expected_oracle["cleanup"]["allowlist"] = [namespace]
+        expected_oracle["cleanup"]["executor"] = executor_path
+        expected_oracle["cleanup"]["postcondition_collectors"] = [executor_path]
+        expected_oracle["acceptance_readiness"] = {
+            "classification": "executor_ready",
+            "blockers": [],
+        }
+        if (
+            expected_oracle["current_state"] != "open_unexecuted"
+            or expected_oracle["evidence"] != []
+            or oracles_by_id[row_id] != expected_oracle
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: SpatialAI canonical oracle projection differs"
+            )
+    external_id = "manifest-entry.spatial-ai-utils.07-aws-gcs-validation"
+    if (
+        capabilities_by_id[external_id] != historical_ledger_by_id[external_id]
+        or oracles_by_id[external_id] != historical_oracles_by_id[external_id]
+    ):
+        raise CapabilityContractError("SpatialAI external row 07 differs")
+
+    negative_ids = (
+        (
+            "malformed-move",
+            "empty-camera",
+            "empty-group",
+            "unknown-camera-strict",
+            "unknown-group-strict",
+        ),
+        (
+            "legacy-7dof",
+            "fully-offscreen",
+            "missing-intrinsic",
+            "scalar-box",
+            "malformed-world2img",
+        ),
+        (
+            "missing-transform",
+            "ambiguous-transform",
+            "legacy-7dof",
+            "malformed-world2img",
+            "missing-image",
+        ),
+        (
+            "missing-ground-truth",
+            "missing-prediction",
+            "malformed-jsonl",
+            "malformed-timestamp",
+            "legacy-short-box",
+        ),
+        (
+            "identity-switch",
+            "empty-tracker",
+            "empty-ground-truth",
+            "similarity-shape-mismatch",
+            "missing-required-count",
+        ),
+        (
+            "unknown-class",
+            "missing-results",
+            "strict-short-coordinates",
+            "invalid-output-format",
+            "malformed-frame-token",
+        ),
+        (
+            "empty-frame-list",
+            "empty-frame-directory",
+            "missing-video",
+            "empty-video",
+            "invalid-video",
+        ),
+    )
+    target_action_ids = tuple(
+        ("positive-run-1", "positive-run-2", *items) for items in negative_ids
+    )
+    target_action_ids = (
+        target_action_ids[0],
+        (
+            "positive-run-1",
+            "positive-run-2",
+            "fully-offscreen",
+            "legacy-7dof",
+            "missing-intrinsic",
+            "scalar-box",
+            "malformed-world2img",
+        ),
+        *target_action_ids[2:],
+    )
+    expected_product_calls = (17, 15, 11, 37, 16, 9, 17)
+    expected_product_maps = (
+        {
+            "bev.calculate_group_origins_from_calibration": 2,
+            "bev.create_camera_clusters_from_calibration": 2,
+            "bev.create_camera_groups_from_calibration": 2,
+            "group.apply_group_reassignments": 4,
+            "group.parse_moves": 5,
+            "origin.calculate_and_update_group_origins": 2,
+        },
+        {
+            "boxes.box3d_to_corners": 4,
+            "projection.project_bev_objects_bbox_in_image": 2,
+            "projection.project_boxes_3d_to_2d": 4,
+            "projection.project_points_3d_to_image": 3,
+            "projection_cli.main": 2,
+        },
+        {
+            "visual.draw_bbox3d_multicam": 2,
+            "visual.draw_bbox3d_on_bev": 2,
+            "visual.draw_bbox3d_on_img": 7,
+        },
+        {
+            "detection.accumulate": 8,
+            "detection.calc_ap": 8,
+            "detection.evaluate_detection": 4,
+            "detection.evaluate_detection_per_BEV_sensor": 2,
+            "detection.load_boxes_from_jsonl": 9,
+            "detection.save_detection_results": 4,
+            "detection.split_files_by_sensor": 2,
+        },
+        {
+            "tracking.CLEAR.eval_sequence": 4,
+            "tracking.Count.eval_sequence": 4,
+            "tracking.HOTA.eval_sequence": 4,
+            "tracking.Identity.eval_sequence": 4,
+        },
+        {"nvschema.convert_sparse4d_to_nvschema": 5, "nvschema.load_nvschema": 4},
+        {
+            "video.frames_to_video": 3,
+            "video.list_frame_paths": 7,
+            "video.video_to_frames": 7,
+        },
+    )
+    expected_observation_keys = (
+        (
+            "generated_cluster_ids",
+            "generated_cluster_members",
+            "generated_group_ids",
+            "generated_group_members",
+            "groups",
+            "origin_by_group",
+            "origin_group_ids",
+            "origin_output_sha256",
+            "updated",
+        ),
+        (
+            "bev_input_unchanged",
+            "bev_projection",
+            "cli_output_sha256",
+            "cli_visible_ids",
+            "corner_shape",
+            "pixels",
+            "point_projection",
+            "visible_ids",
+        ),
+        (
+            "bev_nonzero_pixels",
+            "bev_pixel_sha256",
+            "bev_shape",
+            "direct_image_pixel_sha256",
+            "inputs_unchanged",
+            "nonzero_pixels",
+            "pixel_sha256",
+            "shape",
+        ),
+        (
+            "cli_source_sha256",
+            "determinism_scope",
+            "prediction_filtering",
+            "semantic_output_sha256",
+            "summary",
+            "written_files",
+        ),
+        ("clear", "count", "hota", "identity", "identity_mismatch"),
+        (
+            "confidence_consistency",
+            "fixed_clock",
+            "flattened_record",
+            "input_quaternion",
+            "loaded_frame_ids",
+            "non_identity_rotation_verified",
+            "output_sha256",
+            "record",
+        ),
+        (
+            "codec_color_tolerance",
+            "decode_status",
+            "decoded_frame_dimensions",
+            "decoded_frame_names",
+            "decoded_mean_bgr",
+            "decoded_pixel_sha256",
+            "dominant_channel_indices",
+            "downsample",
+            "encode_status",
+            "frame_skip",
+            "full_decoded_pixel_sha256",
+            "kept_source_frame_indices",
+            "order",
+            "source_frame_dimensions",
+            "source_order_bgr",
+            "video_sha256",
+        ),
+    )
+    expected_owned_tree_sha256 = (
+        "cf534d91a6ba384282176c03fdc6dc0ceac2ad8086b5f0206261a6caf85cdfa4",
+        "cbaf4bc15be598f7d80b094287df2d5632037ddceb5a82bb524cb6a1c9e0c116",
+        "796e5c1e18d0f3d33eae2ef5dc3a6a6ffb3567f5de276750dfb4125f45ed9cff",
+        "4ad26d9ca18a8f9373bc3f05ac62bd696116b7884f88239c6583eddf0778eb0a",
+        "c94709806b61bf5a9799523c13c6d802b48719ffc883ccfc6b13bcae890a4e00",
+        "d208f896fab1a68aa199bd448e6b19b1f73736dd1ecfbc24d8f7caa63e8df5b5",
+        "7fbc41f3b6569d2a4fb771743c481d6c82f28db828dfa577afa45c29737377ca",
+    )
+    row_keys = {
+        "adjacent_negatives",
+        "bounded_capability_actions",
+        "capability_id",
+        "cleanup",
+        "deterministic_output",
+        "fixture_sha256",
+        "imported_product_function_counts",
+        "imported_product_function_invocations",
+        "independent_runs",
+        "oracle_id",
+        "positive_observations",
+        "requests",
+        "run_output_sha256",
+        "runtime_evidence_binding",
+        "status",
+        "target_action_ids",
+    }
+    binding_keys = {
+        "capability_evidence_sha256",
+        "captured_at_utc",
+        "contract_sha256",
+        "current_ledger_row_sha256",
+        "current_oracle_sha256",
+        "executor_sha256",
+        "fixture_sha256",
+        "imported_product_function_counts_sha256",
+        "imported_product_function_invocations",
+        "requests",
+        "target_action_ids_sha256",
+        "target_case_actions",
+    }
+    actions = requests = product_calls = positive_runs = negatives = 0
+    for row_index, row in enumerate(rows):
+        row_id = row["capability_id"]
+        row_contract = contract_rows[row_id]
+        canonical = capabilities_by_id[row_id]
+        oracle = oracles_by_id[row_id]
+        semantic_key = (
+            "required_metrics"
+            if "required_metrics" in canonical["contract"]
+            else "required_semantics"
+        )
+        runtime_binding = row["runtime_evidence_binding"]
+        if (
+            set(row) != row_keys
+            or row["status"] != "pass"
+            or row["oracle_id"] != oracle["oracle_id"]
+            or row["independent_runs"] != 2
+            or row["bounded_capability_actions"] != 7
+            or row["requests"] != 7
+            or len(row["adjacent_negatives"]) != 5
+            or [item["case_id"] for item in row["adjacent_negatives"]]
+            != list(negative_ids[row_index])
+            or not all(
+                set(item) == {"case_id", "exception_type", "message_sha256", "rejected"}
+                and item["rejected"] is True
+                for item in row["adjacent_negatives"]
+            )
+            or row["target_action_ids"] != list(target_action_ids[row_index])
+            or row["deterministic_output"] is not True
+            or len(row["run_output_sha256"]) != 2
+            or len(set(row["run_output_sha256"])) != 1
+            or row["run_output_sha256"][0] != _json_sha256(row["positive_observations"])
+            or tuple(row["positive_observations"])
+            != expected_observation_keys[row_index]
+            or row["imported_product_function_counts"]
+            != expected_product_maps[row_index]
+            or sum(row["imported_product_function_counts"].values())
+            != expected_product_calls[row_index]
+            or row["imported_product_function_invocations"]
+            != expected_product_calls[row_index]
+            or row["fixture_sha256"] != row_contract["fixture_manifest"]["sha256"]
+            or canonical["contract"].get("source_controls")
+            != row_contract["source_controls"]
+            or canonical["contract"].get(semantic_key)
+            != row_contract["required_semantics"]
+            or oracle.get("fixture", {}).get("input", {}).get("contract")
+            != canonical["contract"]
+            or oracle.get("fixture", {}).get("materialization")
+            != {
+                "generator": executor_path,
+                "path": row_contract["fixture_manifest"]["path"],
+                "sha256": row_contract["fixture_manifest"]["sha256"],
+            }
+            or oracle.get("execution_bounds", {}).get("executor") != executor_path
+            or oracle.get("cleanup", {}).get("executor") != executor_path
+            or oracle.get("acceptance_readiness", {}).get("classification")
+            != "executor_ready"
+            or runtime_binding.get("captured_at_utc") != aggregate["captured_at_utc"]
+            or runtime_binding.get("contract_sha256") != bindings["contract_sha256"]
+            or runtime_binding.get("executor_sha256") != bindings["executor_sha256"]
+            or runtime_binding.get("current_ledger_row_sha256")
+            != _json_sha256(historical_ledger_by_id[row_id])
+            or runtime_binding.get("current_oracle_sha256")
+            != _json_sha256(historical_oracles_by_id[row_id])
+            or runtime_binding.get("fixture_sha256") != row["fixture_sha256"]
+            or runtime_binding.get("requests") != row["requests"]
+            or runtime_binding.get("target_case_actions")
+            != row["bounded_capability_actions"]
+            or runtime_binding.get("imported_product_function_invocations")
+            != row["imported_product_function_invocations"]
+            or runtime_binding.get("imported_product_function_counts_sha256")
+            != _json_sha256(row["imported_product_function_counts"])
+            or runtime_binding.get("target_action_ids_sha256")
+            != _json_sha256(row["target_action_ids"])
+            or runtime_binding.get("capability_evidence_sha256")
+            != row["run_output_sha256"][0]
+            or set(runtime_binding) != binding_keys
+            or row["cleanup"].get("namespace") != f"spatial-ai-{row_id.split('.')[2]}"
+            or row["cleanup"].get("pre_state_captured") != "absent"
+            or row["cleanup"].get("post_cleanup_tree_sha256")
+            != hashlib.sha256(b"{}").hexdigest()
+            or row["cleanup"].get("owned_tree_sha256")
+            != expected_owned_tree_sha256[row_index]
+            or any(
+                row["cleanup"].get(key) is not True
+                for key in ("temporary_files_only", "removed", "siblings_unchanged")
+            )
+        ):
+            raise CapabilityContractError(
+                f"{row_id}: SpatialAI execution proof differs"
+            )
+        for control in row_contract["source_controls"]:
+            if (
+                hashlib.sha256(
+                    _git_blob(repo_root, captured_commit, control["path"])
+                ).hexdigest()
+                != control["sha256"]
+            ):
+                raise CapabilityContractError(
+                    f"{row_id}: SpatialAI source-control blob differs"
+                )
+        actions += row["bounded_capability_actions"]
+        requests += row["requests"]
+        product_calls += row["imported_product_function_invocations"]
+        positive_runs += row["independent_runs"]
+        negatives += len(row["adjacent_negatives"])
+    if (actions, requests, product_calls, positive_runs, negatives) != (
+        49,
+        49,
+        122,
+        14,
+        35,
+    ):
+        raise CapabilityContractError("SpatialAI aggregate accounting differs")
+    confinement = aggregate["confinement"]
+    if (
+        confinement["bounded_capability_actions"] != actions
+        or confinement["requests"] != requests
+        or confinement["imported_product_function_invocations"] != product_calls
+        or any(
+            confinement[key] != 0
+            for key in (
+                "network_calls",
+                "docker_calls",
+                "service_lifecycle_calls",
+                "model_accesses",
+                "downloads",
+                "warehouse_sample_accesses",
+                "product_subprocess_calls",
+                "filesystem_escape_attempts",
+            )
+        )
+        or aggregate["cleanup"]["pre_execution_tree_sha256"]
+        != aggregate["cleanup"]["post_execution_tree_sha256"]
+        or aggregate["cleanup"]["checkout_status_before_sha256"]
+        != hashlib.sha256(b"").hexdigest()
+        or aggregate["cleanup"]["checkout_status_after_sha256"]
+        != hashlib.sha256(b"").hexdigest()
+        or aggregate["cleanup"]["removed"] is not True
+        or aggregate["cleanup"]["siblings_unchanged"] is not True
+        or confinement["product_execution_deadline_seconds"] != 900
+        or confinement["external_activity_instrumented"] is not True
+        or confinement["whole_temp_root_scanned"] is not True
+    ):
+        raise CapabilityContractError("SpatialAI confinement/cleanup differs")
+    selected = _select_aggregate_capability(aggregate, reference)
+    if selected["capability_id"] != capability_id:
+        raise CapabilityContractError(
+            f"{capability_id}: selected SpatialAI row differs"
+        )
+    return selected
+
+
+def _validate_aggregate_runtime_evidence(
+    aggregate: dict[str, Any],
+    reference: dict[str, Any],
+    capability: dict[str, Any],
+    capabilities_by_id: dict[str, dict[str, Any]],
+    oracles_by_id: dict[str, dict[str, Any]],
+    target: dict[str, Any],
+    repo_root: Path,
+) -> dict[str, Any]:
+    if (
+        aggregate.get("package_id")
+        == "thor-spatial-ai-utils-runtime-evidence-successor-v1"
+    ):
+        return _validate_spatial_ai_aggregate_runtime_evidence(
+            aggregate,
+            reference,
+            capability,
+            capabilities_by_id,
+            oracles_by_id,
+            target,
+            repo_root,
+        )
+    if (
+        aggregate.get("package_id")
+        != "thor-mv3dt-config-utils-runtime-evidence-successor-v1"
+    ):
+        raise CapabilityContractError("unknown aggregate runtime evidence package")
+    return _validate_mv3dt_aggregate_runtime_evidence(
+        aggregate,
+        reference,
+        capability,
+        capabilities_by_id,
+        oracles_by_id,
+        target,
+        repo_root,
+    )
 
 
 def validate(

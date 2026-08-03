@@ -66,9 +66,9 @@ discrepancies with zero aggregate or acceptance gaps. The live 289-row files,
 live oracle migration, and candidate runtime qualification remain separate.
 
 `metadata_sets/` now resolves the complete metadata plane as one immutable,
-hash-bound snapshot. The selector defaults to the current SpatialAI-core
-rebind 500 set: the exact current 289-row prefix plus the unchanged 211-row
-candidate suffix under the strict v2 oracle schema. The matching rebind 289
+hash-bound snapshot. The selector defaults to the current full SpatialAI
+500 set: the exact current 289-row prefix plus the unchanged 211-row
+candidate suffix under the strict v2 oracle schema. The matching SpatialAI 289
 set remains explicitly resolvable. Prior activation and Stage-1 descriptors
 remain immutable historical provenance but are not registered as current.
 Neither metadata selection nor `live_ready` promotes any capability runtime
@@ -79,7 +79,7 @@ Validate either atomic set through the authoritative dispatcher:
 ```bash
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py --json
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py \
-  --set thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-289 --json
+  --set thor-vss-3.2.1-current-spatial-ai-utils-289 --json
 ```
 
 That direct-index denominator is also not the final documentation graph. A
@@ -150,10 +150,10 @@ A first current-ledger successor added the exact CPU multimedia advertised entry
 as capability 277. The tooling-entry successor then added eight exact Spatial
 AI utility entries and four exact Synthetic Data tool entries as capabilities
 278 through 289. The four Synthetic Data entries have exact current target-bound
-offline receipts. Two MV3DT configuration utilities and three core SpatialAI
-utilities now have exact executor-ready bindings; the remaining SpatialAI
-utilities stay unqualified or external-optional. The Warehouse sample bundle
-remains excluded.
+offline receipts. Two MV3DT configuration utilities and all seven provider-free
+SpatialAI utilities now have exact executor-ready bindings and reviewed runtime
+evidence. SpatialAI entry 07 remains external-optional. The Warehouse sample
+bundle remains excluded.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and
@@ -163,12 +163,13 @@ count from being treated as operation-level coverage.
 `capability-oracles.json` expands every reviewed capability into a unique
 record with exact ledger semantics, scenario identity, fixture identity,
 observations, assertions, work bounds, admission gates, and mutation ownership.
-Nine oracles are `executor_ready`: four Synthetic Data, two MV3DT configuration
-utilities, and SpatialAI core entries 01, 04, and 05. The other 280 entries
-remain `planning_index_only`. The three SpatialAI rows bind their locked tiny
-fixtures and offline executor/collector/cleanup path, but remain
-`open_unexecuted` with empty evidence; the SpatialAI ledger and family runtime
-state are unchanged. Twenty-seven live planning bindings cover bounded
+Thirteen oracles are `executor_ready`: four Synthetic Data, two MV3DT
+configuration utilities, and all seven provider-free SpatialAI utilities. The
+other 276 entries remain `planning_index_only`. The seven SpatialAI rows bind
+their locked tiny fixtures and offline executor/collector/cleanup path, but
+remain `open_unexecuted` with empty oracle evidence. Their ledger rows are
+`passed_current`; entry 07 remains an unexecuted external optional boundary, so
+the SpatialAI family remains `partial/not_qualified`. Twenty-seven live planning bindings cover bounded
 file-only subsets, and the two MV3DT generator oracles additionally bind their
 deterministic custom-data tool observations from
 `../qualification/offline-mv3dt-tools/`. All 29 subset bindings are explicitly

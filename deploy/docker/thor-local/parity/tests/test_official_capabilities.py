@@ -545,12 +545,27 @@ class OfficialCapabilityTests(unittest.TestCase):
                     self.assertEqual(capability["thor_state"], "external_optional")
                     self.assertEqual(capability["runtime_state"], "not_applicable")
                 else:
-                    self.assertNotIn("runtime_evidence", capability)
                     self.assertEqual(
                         capability["acceptance_class"], "alternate_local_lane"
                     )
                     self.assertEqual(capability["thor_state"], "wired")
-                    self.assertEqual(capability["runtime_state"], "not_qualified")
+                    self.assertEqual(capability["runtime_state"], "passed_current")
+                    index = int(capability_id.split(".")[2].split("-", 1)[0])
+                    self.assertEqual(
+                        capability["runtime_evidence"],
+                        [
+                            {
+                                "path": (
+                                    "deploy/docker/thor-local/qualification/"
+                                    "metadata-500-current-spatial-ai-utils-successor/"
+                                    "producer-runtime-receipt.json"
+                                ),
+                                "sha256": "9c0c9294b78bc5e01b8cc9500a70f050bb52d7b618399a13569b78064966d95a",
+                                "capability_id": capability_id,
+                                "json_pointer": f"/capability_results/{index}",
+                            }
+                        ],
+                    )
 
     def test_cpu_multimedia_entry_is_exactly_wired_but_unqualified(self) -> None:
         capability = next(

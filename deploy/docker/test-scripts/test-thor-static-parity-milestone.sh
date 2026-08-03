@@ -717,17 +717,17 @@ python3 "${thor_local_root}/qualification/official-edge-readiness/readiness.py" 
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/official-edge-readiness/tests" -v
 
-# Terminal SpatialAI rebind and metadata routing: prior projection compilers
+# Terminal reviewed SpatialAI promotion and metadata routing: prior projection compilers
 # are immutable historical records that intentionally lock their
-# pre-promotion canonical inputs. The rebind successor validates the exact
-# current producer/interface projection without executing it, then the atomic
+# pre-promotion canonical inputs. The all-seven successor validates the exact
+# current producer receipt and canonical projection without executing it, then the atomic
 # selector runs both authoritative validator generations over the current
-# SpatialAI-core rebind snapshots.
+# SpatialAI snapshots.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/compiler.py" \
+  "${thor_local_root}/qualification/metadata-500-current-spatial-ai-utils-successor/compiler.py" \
   >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/tests"
+  "${thor_local_root}/qualification/metadata-500-current-spatial-ai-utils-successor/tests"
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/parity/metadata_sets/tests" \
   "${thor_local_root}/parity/tests/test_verify_metadata_set.py"

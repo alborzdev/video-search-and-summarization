@@ -16,6 +16,7 @@ import copy
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -154,6 +155,7 @@ SPATIAL_AI_CORE_INTERFACE_SCHEMA = {
     "raw_sha256": "5c08e40ff22e6101f20fa7938199a90763d1eab668edb156ae479a2061dcac83",
 }
 SPATIAL_AI_CORE_CANONICAL_BASE_COMMIT = "548f7fdda9148b3ee521c09dcdb298309f25fe2b"
+SPATIAL_AI_CORE_PRODUCER_COMMIT = "68ed897f4a5121d8d487a60e0519205a28fc6c09"
 SPATIAL_AI_CORE_IDS = (
     "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
     "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
@@ -1096,9 +1098,121 @@ def _validate_json_schema(
         )
 
 
+def _spatial_ai_promoted_runtime_bindings(
+    repo_root: Path, ledger_rows: dict[str, dict[str, Any]]
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    root = "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor"
+    locks = {
+        "contract": (
+            f"{root}/contract.json",
+            "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+        ),
+        "contract_schema": (
+            f"{root}/contract.schema.json",
+            "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553",
+        ),
+        "executor": (
+            f"{root}/executor.py",
+            "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+        ),
+        "result_schema": (
+            f"{root}/result.schema.json",
+            "c49f98b4ad1aea73b6c1938eb06b1218b252902d3f54d19b0b3c891c2fcbbf1b",
+        ),
+    }
+    documents: dict[str, dict[str, Any]] = {}
+    for name, (relative_path, expected) in locks.items():
+        path = _resolve_reviewed_file(repo_root, relative_path, f"SpatialAI {name}")
+        payload = path.read_bytes()
+        if hashlib.sha256(payload).hexdigest() != expected:
+            raise OracleContractError(f"SpatialAI promoted {name} lock drift")
+        if name != "executor":
+            documents[name] = json.loads(
+                payload.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+            )
+    _validate_json_schema(
+        documents["contract"], documents["contract_schema"], "SpatialAI contract"
+    )
+    try:
+        Draft202012Validator.check_schema(documents["result_schema"])
+    except SchemaError as exc:
+        raise OracleContractError(
+            f"SpatialAI result schema is invalid: {exc.message}"
+        ) from exc
+    contract_rows = {
+        row["capability_id"]: row for row in documents["contract"]["capabilities"]
+    }
+    if list(contract_rows) != list(SPATIAL_AI_IDS[:7]):
+        raise OracleContractError("SpatialAI promoted contract denominator drift")
+    bindings: dict[str, dict[str, Any]] = {}
+    for capability_id, runtime in contract_rows.items():
+        ledger_contract = ledger_rows[capability_id]["contract"]
+        semantic_key = (
+            "required_metrics"
+            if "required_metrics" in ledger_contract
+            else "required_semantics"
+        )
+        if (
+            ledger_contract.get("source_controls") != runtime["source_controls"]
+            or ledger_contract.get(semantic_key) != runtime["required_semantics"]
+            or not ledger_rows[capability_id].get("runtime_evidence")
+        ):
+            raise OracleContractError(
+                f"{capability_id}: promoted SpatialAI ledger contract drift"
+            )
+        fixture_path = _resolve_reviewed_file(
+            repo_root,
+            runtime["fixture_manifest"]["path"],
+            f"{capability_id}.SpatialAI promoted fixture",
+        )
+        if (
+            hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+            != runtime["fixture_manifest"]["sha256"]
+        ):
+            raise OracleContractError(f"{capability_id}: SpatialAI fixture drift")
+        fixture = _load(fixture_path)
+        for source in runtime["source_controls"]:
+            source_path = _resolve_repo_regular_file(
+                repo_root, source["path"], f"{capability_id}.source_control"
+            )
+            if hashlib.sha256(source_path.read_bytes()).hexdigest() != source["sha256"]:
+                raise OracleContractError(
+                    f"{capability_id}: SpatialAI source-control drift"
+                )
+        bindings[capability_id] = {
+            "runtime": runtime,
+            "runtime_namespace": f"spatial-ai-{capability_id.split('.')[2]}",
+            "fixture_manifest": copy.deepcopy(runtime["fixture_manifest"]),
+            "fixture_payload_id": fixture["fixture_id"],
+            "max_actions": 7,
+            "max_requests": 7,
+            "promotion_state": "promoted_runtime",
+        }
+    return {"producer": {"executor": {"path": locks["executor"][0]}}}, bindings
+
+
 def _spatial_ai_core_runtime_bindings(
     repo_root: Path, ledger: dict[str, Any]
 ) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    ledger_rows = {row["id"]: row for row in ledger["capabilities"]}
+    if not set(SPATIAL_AI_IDS).issubset(ledger_rows):
+        raise OracleContractError("SpatialAI canonical ledger denominator drift")
+    target_states = {
+        capability_id: (
+            ledger_rows[capability_id]["thor_state"],
+            ledger_rows[capability_id]["runtime_state"],
+        )
+        for capability_id in SPATIAL_AI_IDS[:7]
+    }
+    historical = all(state[1] == "not_qualified" for state in target_states.values())
+    promoted = all(
+        state == ("wired", "passed_current") for state in target_states.values()
+    )
+    if not historical and not promoted:
+        raise OracleContractError("partial SpatialAI runtime family promotion")
+    if promoted:
+        return _spatial_ai_promoted_runtime_bindings(repo_root, ledger_rows)
+
     interface = _load_locked_reviewed_json(
         repo_root, SPATIAL_AI_CORE_INTERFACE, "SpatialAI core runtime interface"
     )
@@ -1121,15 +1235,27 @@ def _spatial_ai_core_runtime_bindings(
     producer_documents: dict[str, dict[str, Any]] = {}
     for name in ("contract", "contract_schema", "executor", "result_schema"):
         lock = producer[name]
-        path = _resolve_reviewed_file(
-            repo_root, lock["path"], f"SpatialAI core producer {name}"
+        result = subprocess.run(
+            [
+                "git",
+                "show",
+                f"{SPATIAL_AI_CORE_PRODUCER_COMMIT}:{lock['path']}",
+            ],
+            cwd=repo_root,
+            capture_output=True,
+            check=False,
         )
-        if hashlib.sha256(path.read_bytes()).hexdigest() != lock["sha256"]:
+        if (
+            result.returncode
+            or hashlib.sha256(result.stdout).hexdigest() != lock["sha256"]
+        ):
             raise OracleContractError(
                 f"SpatialAI core producer source lock drift: {name}"
             )
         if name != "executor":
-            producer_documents[name] = _load(path)
+            producer_documents[name] = json.loads(
+                result.stdout.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs
+            )
     contract = producer_documents["contract"]
     _validate_json_schema(
         contract, producer_documents["contract_schema"], "SpatialAI core contract"
@@ -1206,9 +1332,6 @@ def _spatial_ai_core_runtime_bindings(
     contract_rows = {row["capability_id"]: row for row in contract["capabilities"]}
     if list(contract_rows) != list(SPATIAL_AI_IDS[:7]):
         raise OracleContractError("SpatialAI seven-capability contract drift")
-    ledger_rows = {row["id"]: row for row in ledger["capabilities"]}
-    if not set(SPATIAL_AI_IDS).issubset(ledger_rows):
-        raise OracleContractError("SpatialAI canonical ledger denominator drift")
     for capability_id, runtime in contract_rows.items():
         if (
             canonical_oracle_sha256(ledger_rows[capability_id])
@@ -1239,17 +1362,26 @@ def _spatial_ai_core_runtime_bindings(
                 f"{capability_id}: SpatialAI core runtime binding drift"
             )
         fixture_lock = row["fixture_manifest"]
-        fixture_path = _resolve_reviewed_file(
-            repo_root,
-            fixture_lock["path"],
-            f"{capability_id}.SpatialAI runtime fixture",
+        fixture_result = subprocess.run(
+            [
+                "git",
+                "show",
+                f"{SPATIAL_AI_CORE_PRODUCER_COMMIT}:{fixture_lock['path']}",
+            ],
+            cwd=repo_root,
+            capture_output=True,
+            check=False,
         )
         if (
-            hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+            fixture_result.returncode
+            or hashlib.sha256(fixture_result.stdout).hexdigest()
             != fixture_lock["sha256"]
         ):
             raise OracleContractError(f"{capability_id}: SpatialAI fixture drift")
-        fixture = _load(fixture_path)
+        fixture = json.loads(
+            fixture_result.stdout.decode("utf-8"),
+            object_pairs_hook=_reject_duplicate_pairs,
+        )
         if fixture.get("fixture_id") != row["fixture_payload_id"]:
             raise OracleContractError(
                 f"{capability_id}: SpatialAI fixture identity drift"
@@ -1289,7 +1421,8 @@ def _apply_spatial_ai_core_runtime(
             f"{capability_id}: SpatialAI semantic contract key is absent"
         )
     oracle["ledger_binding"]["runtime_state"] = "passed_current"
-    oracle["ledger_binding"]["gap"] = SPATIAL_AI_CORE_GAP
+    if binding.get("promotion_state") != "promoted_runtime":
+        oracle["ledger_binding"]["gap"] = SPATIAL_AI_CORE_GAP
     oracle["ledger_binding"]["contract"] = copy.deepcopy(contract)
     oracle["fixture"]["input"]["contract"] = copy.deepcopy(contract)
     oracle["fixture"]["input"]["namespace"] = binding["runtime_namespace"]
@@ -1325,7 +1458,10 @@ def _apply_spatial_ai_core_runtime(
         "classification": "executor_ready",
         "blockers": [],
     }
-    if canonical_oracle_sha256(oracle) != runtime["current_oracle_sha256"]:
+    if (
+        binding.get("promotion_state") != "promoted_runtime"
+        and canonical_oracle_sha256(oracle) != runtime["current_oracle_sha256"]
+    ):
         raise OracleContractError(
             f"{capability_id}: SpatialAI current oracle binding drift"
         )
@@ -2046,6 +2182,12 @@ def validate(
         if is_spatial_ai_core_stage1_binding(ledger_by_id[capability_id], item):
             expected_actions = 7
         elif (
+            capability_id in SPATIAL_AI_IDS[:7]
+            and item["ledger_binding"]["thor_state"] == "wired"
+            and item["ledger_binding"]["runtime_state"] == "passed_current"
+        ):
+            expected_actions = 7
+        elif (
             mv3dt_runtime is not None
             and item["ledger_binding"]["thor_state"] == "wired"
             and item["ledger_binding"]["runtime_state"] == "passed_current"
@@ -2101,10 +2243,29 @@ def validate(
             fixture_path = _resolve_reviewed_file(
                 repo_root, materialization["path"], f"{capability_id}.fixture"
             )
-            if (
+            fixture_matches = (
                 hashlib.sha256(fixture_path.read_bytes()).hexdigest()
-                != materialization["sha256"]
+                == materialization["sha256"]
+            )
+            if not fixture_matches and is_spatial_ai_core_stage1_binding(
+                ledger_by_id[capability_id], item
             ):
+                historical_fixture = subprocess.run(
+                    [
+                        "git",
+                        "show",
+                        f"{SPATIAL_AI_CORE_PRODUCER_COMMIT}:{materialization['path']}",
+                    ],
+                    cwd=repo_root,
+                    capture_output=True,
+                    check=False,
+                )
+                fixture_matches = (
+                    historical_fixture.returncode == 0
+                    and hashlib.sha256(historical_fixture.stdout).hexdigest()
+                    == materialization["sha256"]
+                )
+            if not fixture_matches:
                 raise OracleContractError(f"{capability_id}: fixture digest differs")
             _resolve_reviewed_file(
                 repo_root,

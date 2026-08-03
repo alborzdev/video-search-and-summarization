@@ -1,0 +1,2092 @@
+{
+  "accounting": {
+    "adjacent_negatives": 35,
+    "bounded_capability_actions": 49,
+    "capabilities_passed": 7,
+    "independent_positive_runs": 14,
+    "product_function_calls": 122,
+    "requests": 49
+  },
+  "bindings": {
+    "environment_receipt_sha256": "afa7db056e2936f02caeb7124c8cab922a50bfaa92c351daa5118c2ed1250713",
+    "execution_sha256": "5d6bcd5bdb6e6f5a0c8bbb80dc2ece10a5c2969162e405bd54f4f79b3ce42827",
+    "import_sensitive_manifests_sha256": "83139a705e1348227b384c1f67b72d03edfb1e8f04d3d8bc9a1bc4a0ca0b0f14",
+    "producer_contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+    "producer_executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+    "producer_lock_sha256": "ab623de8e6bcadd2a41086285e9f81f54bbb1174844279e8e18bf639fa9ab9b7",
+    "producer_receipt_sha256": "9c0c9294b78bc5e01b8cc9500a70f050bb52d7b618399a13569b78064966d95a",
+    "producer_result_schema_sha256": "c49f98b4ad1aea73b6c1938eb06b1218b252902d3f54d19b0b3c891c2fcbbf1b"
+  },
+  "captured_at_utc": "2026-08-03T05:55:57.904416Z",
+  "cleanup": {
+    "canonical_controls_unchanged": true,
+    "import_sensitive_roots_unchanged": true,
+    "materializer_temporary_root": "vss-spatial-ai-offline-env.2x03c0oy",
+    "materializer_temporary_root_removed": true,
+    "producer_bundle_unchanged": true,
+    "producer_temporary_root_removed": true,
+    "product_sources_unchanged": true
+  },
+  "confinement": {
+    "docker_calls": 0,
+    "downloads": 0,
+    "filesystem_escape_attempts": 0,
+    "import_shadow_scan_passed": true,
+    "inherited_kernel_network_denial": true,
+    "model_accesses": 0,
+    "network_calls": 0,
+    "outer_timeout_seconds": 930,
+    "product_subprocess_calls": 0,
+    "service_lifecycle_calls": 0,
+    "warehouse_sample_accesses": 0
+  },
+  "environment_receipt": {
+    "bindings": {
+      "execution_sha256": "0bf93aa451314c9524cd01e52d92b3d588f214e250e0314ea42d36ab32f71865",
+      "lock_sha256": "0f3035122fe04837eb0d9259969ca5c60f3639ef135db31d780dcf1d48c63d5a",
+      "materializer_sha256": "00a74a1c824e8c2dfa6b2751de3eaed47a8d1717d36d82003048066b0d6b6c42",
+      "source_inventory_sha256": "bd5e643d1fe4bf1b66b29b3d217e45b1aa337648a914ccf799e8a45700cac3db"
+    },
+    "cache_scan": {
+      "configured_roots": 1,
+      "duplicate_content_sources": 0,
+      "existing_roots": 1,
+      "matched_artifacts": 56,
+      "regular_candidates_examined": 657
+    },
+    "captured_at_utc": "2026-08-03T05:55:52.533745Z",
+    "cleanup": {
+      "pre_state": "absent",
+      "removed": true,
+      "sentinel_unchanged": true,
+      "source_artifacts_unchanged": true,
+      "temporary_root": "vss-spatial-ai-offline-env.2x03c0oy"
+    },
+    "confinement": {
+      "docker_calls": 0,
+      "downloads": 0,
+      "kernel_network_denial_probe_passed": true,
+      "model_accesses": 0,
+      "network_denied": true,
+      "network_guard_probe_passed": true,
+      "pip_cache_disabled": true,
+      "pip_find_links_only": true,
+      "pip_no_index": true,
+      "service_lifecycle_calls": 0,
+      "user_site_disabled": true,
+      "warehouse_sample_accesses": 0
+    },
+    "environment": {
+      "installed_artifact_count": 56,
+      "installed_versions_sha256": "b8346da7c62b03cb9d2451b64769055176919bc02111b2e78659ee49a5f5e40a",
+      "machine": "aarch64",
+      "pip": "24.0",
+      "pip_check": "No broken requirements found.",
+      "python": "3.12.3",
+      "smoke_imports": [
+        "numpy",
+        "scipy",
+        "shapely",
+        "pandas",
+        "sklearn",
+        "cv2",
+        "nuscenes",
+        "motmetrics",
+        "pyquaternion",
+        "jsonschema",
+        "spatialai_data_utils.core.cameras.group_utils",
+        "spatialai_data_utils.core.cameras.origin",
+        "spatialai_data_utils.visualization.box_3d",
+        "spatialai_data_utils.visualization.video_utils.frame2video",
+        "spatialai_data_utils.visualization.video_utils.video2frame",
+        "spatialai_data_utils.eval.detection.loaders",
+        "spatialai_data_utils.eval.detection.evaluate",
+        "spatialai_data_utils.eval.detection.data_classes"
+      ],
+      "soabi": "cpython-312-aarch64-linux-gnu"
+    },
+    "mode": "offline_materialization",
+    "package_id": "thor-spatial-ai-utils-offline-env-v1",
+    "policy": {
+      "artifact_count": 56,
+      "docker_allowed": false,
+      "downloads_allowed": false,
+      "index_allowed": false,
+      "install_dependencies": false,
+      "model_access_allowed": false,
+      "network_allowed": false,
+      "service_lifecycle_allowed": false,
+      "source": "preexisting-local-pip-cache-only",
+      "venv_is_ephemeral": true,
+      "warehouse_sample_access_allowed": false,
+      "wheel_binaries_in_repository": false
+    },
+    "promotion": {
+      "canonical_parity_mutated": false,
+      "receipt_is_runtime_evidence": false,
+      "runtime_producer_mutated": false
+    },
+    "schema_version": 1,
+    "status": "pass",
+    "target": {
+      "abi": "cp312",
+      "bootstrap_pip": "24.0",
+      "implementation": "cp",
+      "machine": "aarch64",
+      "python_major_minor": "3.12",
+      "soabi": "cpython-312-aarch64-linux-gnu",
+      "system": "Linux"
+    },
+    "wheelhouse": {
+      "aggregate_bytes": 151492796,
+      "artifact_count": 56,
+      "inventory_sha256": "fed3d0146bdb7dae99524c91cc7142e454b645b9ceb3a3c0c5a6733591facfdd"
+    }
+  },
+  "mode": "offline_environment_with_canonical_spatial_ai_all",
+  "package_id": "thor-spatial-ai-offline-integrated-runtime-v1",
+  "producer_receipt": {
+    "bindings": {
+      "canonical_rows_are_open_unexecuted": true,
+      "checkout_clean": true,
+      "checkout_head": "f7ea82feef81739b6861f49e8a2eb5fea9583900",
+      "checkout_status_porcelain_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "checkout_tree": "d86ca3a4bffdc99c0693a135f5b3623f8b98edce",
+      "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+      "executor_ready_capabilities": [
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion"
+      ],
+      "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+      "invocation_allow_dirty_development": false,
+      "ledger_document_sha256": "834bb40b576d9e9e546cecb3bdb866993b7be7fd3bf9d5e9e19a0d852d4e4e39",
+      "metadata_selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
+      "metadata_selector_raw_sha256": "bee044866dc53c4c868fd37fd7c21b35e7b8fe6e7b4f7f31e81f3c2263f977c6",
+      "oracle_document_sha256": "b8f03c0d949ae7c9bb6dd14f37142e4f723849125ec944eb9244bd0ad9b79a1a",
+      "selected_descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500.json",
+      "selected_descriptor_raw_sha256": "1eae1d4dc3a97082e17d377c60355d6e5dd6f0a555bc869652b8ec2167cc1301",
+      "selected_ledger_path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-official-capabilities.json",
+      "selected_ledger_raw_sha256": "315fd11b4e40773cc711a43eb9c27edcaee752649cd71b3d6494fa3eb4d89229",
+      "selected_metadata_set_id": "thor-vss-3.2.1-current-spatial-ai-utils-core-rebind-500",
+      "selected_oracle_path": "deploy/docker/thor-local/qualification/metadata-500-current-spatial-ai-utils-core-rebind-successor/post-state-capability-oracles.json",
+      "selected_oracle_raw_sha256": "c2b8d584b4bb00f42d6337bbad31038d016fe02a7cfbf92ac747f42075bdc6c0",
+      "selected_target_main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "selected_target_product_version": "3.2.1",
+      "target_ancestry_merge_base": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+      "target_upstream_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+    },
+    "capability_results": [
+      {
+        "adjacent_negatives": [
+          {
+            "case_id": "malformed-move",
+            "exception_type": "ValueError",
+            "message_sha256": "6ff05d202a7fd51d6de26c0246e6b6da5f64306d96bda2d630de569e297e793f",
+            "rejected": true
+          },
+          {
+            "case_id": "empty-camera",
+            "exception_type": "ValueError",
+            "message_sha256": "02051658f6398a4193be08fd1dc12cb0cc9fb891348869fe85622bcc7ca08039",
+            "rejected": true
+          },
+          {
+            "case_id": "empty-group",
+            "exception_type": "ValueError",
+            "message_sha256": "986271840e0db9b9e0edfcf292c1e103805767fd9173b6a009b598ec041b7ede",
+            "rejected": true
+          },
+          {
+            "case_id": "unknown-camera-strict",
+            "exception_type": "KeyError",
+            "message_sha256": "f07b1e6d1703061eb867d44dfaeaa7832b29e4e523cd52737602deb3ca6ceba7",
+            "rejected": true
+          },
+          {
+            "case_id": "unknown-group-strict",
+            "exception_type": "KeyError",
+            "message_sha256": "114229912cf8a65259b61883e1750a97cee1b45b4b1fb139e44d145e1645c0ca",
+            "rejected": true
+          }
+        ],
+        "bounded_capability_actions": 7,
+        "capability_id": "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "cleanup": {
+          "namespace": "spatial-ai-00-calibration-and-camera-grouping",
+          "owned_tree_sha256": "cf534d91a6ba384282176c03fdc6dc0ceac2ad8086b5f0206261a6caf85cdfa4",
+          "post_cleanup_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "pre_state_captured": "absent",
+          "removed": true,
+          "siblings_unchanged": true,
+          "temporary_files_only": true
+        },
+        "deterministic_output": true,
+        "fixture_sha256": "2ebb08521c5068dc3381bfb0131a80627e07c69e38c5bb8df6b663975c6dca63",
+        "imported_product_function_counts": {
+          "bev.calculate_group_origins_from_calibration": 2,
+          "bev.create_camera_clusters_from_calibration": 2,
+          "bev.create_camera_groups_from_calibration": 2,
+          "group.apply_group_reassignments": 4,
+          "group.parse_moves": 5,
+          "origin.calculate_and_update_group_origins": 2
+        },
+        "imported_product_function_invocations": 17,
+        "independent_runs": 2,
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "positive_observations": {
+          "generated_cluster_ids": [
+            "bev-sensor-1",
+            "bev-sensor-2"
+          ],
+          "generated_cluster_members": {
+            "bev-sensor-1": [
+              "Camera_00",
+              "Camera_01"
+            ],
+            "bev-sensor-2": [
+              "Camera_02"
+            ]
+          },
+          "generated_group_ids": [
+            "bev-sensor-1",
+            "bev-sensor-2"
+          ],
+          "generated_group_members": {
+            "bev-sensor-1": [
+              "Camera_00",
+              "Camera_01"
+            ],
+            "bev-sensor-2": [
+              "Camera_01",
+              "Camera_02"
+            ]
+          },
+          "groups": {
+            "Camera_00": {
+              "dimensions": [
+                -1.0,
+                -1.0,
+                31.0,
+                11.0
+              ],
+              "name": "bev-sensor-1",
+              "origin": [
+                14.990965082,
+                5.0
+              ]
+            },
+            "Camera_01": {
+              "dimensions": [
+                -1.0,
+                -1.0,
+                31.0,
+                11.0
+              ],
+              "name": "bev-sensor-1",
+              "origin": [
+                14.990965082,
+                5.0
+              ]
+            },
+            "Camera_02": {
+              "dimensions": [
+                -1.0,
+                -1.0,
+                31.0,
+                11.0
+              ],
+              "name": "bev-sensor-1",
+              "origin": [
+                14.990965082,
+                5.0
+              ]
+            }
+          },
+          "origin_by_group": {
+            "bev-sensor-1": {
+              "dimensions": [
+                -1.0,
+                -1.0,
+                19.0,
+                11.0
+              ],
+              "origin": [
+                9.0,
+                5.0
+              ]
+            },
+            "bev-sensor-2": {
+              "dimensions": [
+                19.0,
+                -1.0,
+                31.0,
+                11.0
+              ],
+              "origin": [
+                25.0,
+                5.0
+              ]
+            }
+          },
+          "origin_group_ids": [
+            "bev-sensor-1",
+            "bev-sensor-2"
+          ],
+          "origin_output_sha256": "37b4226ffd29396df32880aaf361bdf02bb59ac50c28864cdc2e4250e3c77be3",
+          "updated": 2
+        },
+        "requests": 7,
+        "run_output_sha256": [
+          "0536232653ae56c2f1aa62728dc5e81f16409a8b246efcf91c010fd19623a0b2",
+          "0536232653ae56c2f1aa62728dc5e81f16409a8b246efcf91c010fd19623a0b2"
+        ],
+        "runtime_evidence_binding": {
+          "capability_evidence_sha256": "0536232653ae56c2f1aa62728dc5e81f16409a8b246efcf91c010fd19623a0b2",
+          "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+          "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+          "current_ledger_row_sha256": "7fdfb34f9ea049ecca5077b3b602723245c9cf6f1c8c5dd1f0f1a9a963495e58",
+          "current_oracle_sha256": "3d1dc7c0df2ec9b5ba8f410cf9ce68c3d99029ef364ffbb1303b3afb9aa864e9",
+          "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+          "fixture_sha256": "2ebb08521c5068dc3381bfb0131a80627e07c69e38c5bb8df6b663975c6dca63",
+          "imported_product_function_counts_sha256": "e70a65c9df21f2e142cc90a898b1bc0ff1495f5328c6ba629e4f2ac8443a085e",
+          "imported_product_function_invocations": 17,
+          "requests": 7,
+          "target_action_ids_sha256": "03e5478c8fb045be0190e0ff49bc2161b3b3ea33bb0c5040914f919499f19dd5",
+          "target_case_actions": 7
+        },
+        "status": "pass",
+        "target_action_ids": [
+          "positive-run-1",
+          "positive-run-2",
+          "malformed-move",
+          "empty-camera",
+          "empty-group",
+          "unknown-camera-strict",
+          "unknown-group-strict"
+        ]
+      },
+      {
+        "adjacent_negatives": [
+          {
+            "case_id": "legacy-7dof",
+            "exception_type": "ValueError",
+            "message_sha256": "3a475dbeca3199386b0ba77521163f3c79a1088fbca1dd5e0d500da9e15f6ed0",
+            "rejected": true
+          },
+          {
+            "case_id": "fully-offscreen",
+            "exception_type": null,
+            "message_sha256": "1436679f33c80e4ec43485f345a019f0dd9eff6ed4a8b5fff6405eccd4584d77",
+            "rejected": true
+          },
+          {
+            "case_id": "missing-intrinsic",
+            "exception_type": "KeyError",
+            "message_sha256": "2b89f614853d860890b2114fac8617bc2ba03a7050de43c7548b6c69e447303e",
+            "rejected": true
+          },
+          {
+            "case_id": "scalar-box",
+            "exception_type": "IndexError",
+            "message_sha256": "9501aa44341937d99101d37ef8c97a51dd7cc10f3fe2bc5cc0f0e23d3695b182",
+            "rejected": true
+          },
+          {
+            "case_id": "malformed-world2img",
+            "exception_type": "ValueError",
+            "message_sha256": "916db765861a31e029b658df5a3003f97a7de99073723d4a486957ba011b49c9",
+            "rejected": true
+          }
+        ],
+        "bounded_capability_actions": 7,
+        "capability_id": "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "cleanup": {
+          "namespace": "spatial-ai-01-3d-2d-geometry",
+          "owned_tree_sha256": "cbaf4bc15be598f7d80b094287df2d5632037ddceb5a82bb524cb6a1c9e0c116",
+          "post_cleanup_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "pre_state_captured": "absent",
+          "removed": true,
+          "siblings_unchanged": true,
+          "temporary_files_only": true
+        },
+        "deterministic_output": true,
+        "fixture_sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542",
+        "imported_product_function_counts": {
+          "boxes.box3d_to_corners": 4,
+          "projection.project_bev_objects_bbox_in_image": 2,
+          "projection.project_boxes_3d_to_2d": 4,
+          "projection.project_points_3d_to_image": 3,
+          "projection_cli.main": 2
+        },
+        "imported_product_function_invocations": 15,
+        "independent_runs": 2,
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "positive_observations": {
+          "bev_input_unchanged": true,
+          "bev_projection": [
+            {
+              "bbox3d": {
+                "confidence": 0.9,
+                "coordinates": [
+                  0.0,
+                  0.0,
+                  10.0,
+                  2.0,
+                  4.0,
+                  2.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "embedding": [
+                  {
+                    "vector": [
+                      0.1,
+                      0.2
+                    ]
+                  }
+                ],
+                "info": {
+                  "retained": "yes",
+                  "sensorId": "Camera_00",
+                  "vertices": "[[264.44444444444446, 128.88888888888889], [274.54545454545456, 149.0909090909091], [274.54545454545456, 330.90909090909093], [264.44444444444446, 351.1111111111111], [375.55555555555554, 128.88888888888889], [365.45454545454544, 149.0909090909091], [365.45454545454544, 330.90909090909093], [375.55555555555554, 351.1111111111111]]"
+                }
+              },
+              "confidence": 0.9,
+              "coordinate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 10.0
+              },
+              "id": "box-visible",
+              "type": "Person"
+            }
+          ],
+          "cli_output_sha256": "96de01db82dc0395bc3a528be7af30be8f2ca9e74f9b4960c53a5bbf971d9f6d",
+          "cli_visible_ids": [
+            "box-visible"
+          ],
+          "corner_shape": [
+            2,
+            8,
+            3
+          ],
+          "pixels": [
+            [
+              [
+                264.444444444,
+                128.888888889
+              ],
+              [
+                274.545454545,
+                149.090909091
+              ],
+              [
+                274.545454545,
+                330.909090909
+              ],
+              [
+                264.444444444,
+                351.111111111
+              ],
+              [
+                375.555555556,
+                128.888888889
+              ],
+              [
+                365.454545455,
+                149.090909091
+              ],
+              [
+                365.454545455,
+                330.909090909
+              ],
+              [
+                375.555555556,
+                351.111111111
+              ]
+            ]
+          ],
+          "point_projection": {
+            "front_count": 16,
+            "sha256": "632750be543994ba0b84d714449e02618cdbbdec043427fc6ac4d4f9c276659a",
+            "shape": [
+              2,
+              8,
+              2
+            ]
+          },
+          "visible_ids": [
+            0
+          ]
+        },
+        "requests": 7,
+        "run_output_sha256": [
+          "5b6ca839b7dc266e1b046fae55574b79ea5d41770223ec3a07f2592fa3f5e068",
+          "5b6ca839b7dc266e1b046fae55574b79ea5d41770223ec3a07f2592fa3f5e068"
+        ],
+        "runtime_evidence_binding": {
+          "capability_evidence_sha256": "5b6ca839b7dc266e1b046fae55574b79ea5d41770223ec3a07f2592fa3f5e068",
+          "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+          "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+          "current_ledger_row_sha256": "bb3468281074183a1d0a55cdeb6959e74073317f318e593d6caf54f601a1c3f6",
+          "current_oracle_sha256": "f872c3be72c90ee04b6be0f1bff964915203460f01efccff45cdcde307cc7525",
+          "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+          "fixture_sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542",
+          "imported_product_function_counts_sha256": "17822e5a2b1a93a44bccb981373b8c09bc4347738102e6b5b225df25ff8094af",
+          "imported_product_function_invocations": 15,
+          "requests": 7,
+          "target_action_ids_sha256": "0d04c35a4cceb4e593d968b8e0d2916e8766a61476a0111ead9dcab0d6aa67f6",
+          "target_case_actions": 7
+        },
+        "status": "pass",
+        "target_action_ids": [
+          "positive-run-1",
+          "positive-run-2",
+          "fully-offscreen",
+          "legacy-7dof",
+          "missing-intrinsic",
+          "scalar-box",
+          "malformed-world2img"
+        ]
+      },
+      {
+        "adjacent_negatives": [
+          {
+            "case_id": "missing-transform",
+            "exception_type": "ValueError",
+            "message_sha256": "3d6359a2fc09f2a6ad9f444e6c1e4fbd2417c4809d6b1166b1276c97a0d2e264",
+            "rejected": true
+          },
+          {
+            "case_id": "ambiguous-transform",
+            "exception_type": "ValueError",
+            "message_sha256": "1c720b46d274c0172840b5cc0124a093748fabf1251371f7e76c2437aa336aec",
+            "rejected": true
+          },
+          {
+            "case_id": "legacy-7dof",
+            "exception_type": "ValueError",
+            "message_sha256": "3a475dbeca3199386b0ba77521163f3c79a1088fbca1dd5e0d500da9e15f6ed0",
+            "rejected": true
+          },
+          {
+            "case_id": "malformed-world2img",
+            "exception_type": "ValueError",
+            "message_sha256": "916db765861a31e029b658df5a3003f97a7de99073723d4a486957ba011b49c9",
+            "rejected": true
+          },
+          {
+            "case_id": "missing-image",
+            "exception_type": "AttributeError",
+            "message_sha256": "1a0f32e1126efa0b820942dc5dea6a59a7d7f22afba42916fc85a522db6111ab",
+            "rejected": true
+          }
+        ],
+        "bounded_capability_actions": 7,
+        "capability_id": "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "cleanup": {
+          "namespace": "spatial-ai-02-multiview-visualization",
+          "owned_tree_sha256": "796e5c1e18d0f3d33eae2ef5dc3a6a6ffb3567f5de276750dfb4125f45ed9cff",
+          "post_cleanup_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "pre_state_captured": "absent",
+          "removed": true,
+          "siblings_unchanged": true,
+          "temporary_files_only": true
+        },
+        "deterministic_output": true,
+        "fixture_sha256": "7836a8dd865207c1d7d8b8cd1fec16748ac60ff6eb3b9f7d22cb9db35b526210",
+        "imported_product_function_counts": {
+          "visual.draw_bbox3d_multicam": 2,
+          "visual.draw_bbox3d_on_bev": 2,
+          "visual.draw_bbox3d_on_img": 7
+        },
+        "imported_product_function_invocations": 11,
+        "independent_runs": 2,
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "positive_observations": {
+          "bev_nonzero_pixels": 11802,
+          "bev_pixel_sha256": "4164984b2787d08b865c3ca7697e2483cf818479a462dd0571eab8e11b1931be",
+          "bev_shape": [
+            96,
+            96,
+            3
+          ],
+          "direct_image_pixel_sha256": "882489823ae7962621259df92abcc22fd34f5f6be0e663370bc54b3440457d68",
+          "inputs_unchanged": true,
+          "nonzero_pixels": 12755,
+          "pixel_sha256": "16153c4b4d2b152448f96ce0740ec22fc7a4bdf4aa770bbacfb72641aac87c1b",
+          "shape": [
+            96,
+            352,
+            3
+          ]
+        },
+        "requests": 7,
+        "run_output_sha256": [
+          "6b148ca6ac704a8a73ad019ca6b4d910665961e9f0f02c1366e280434fb914f4",
+          "6b148ca6ac704a8a73ad019ca6b4d910665961e9f0f02c1366e280434fb914f4"
+        ],
+        "runtime_evidence_binding": {
+          "capability_evidence_sha256": "6b148ca6ac704a8a73ad019ca6b4d910665961e9f0f02c1366e280434fb914f4",
+          "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+          "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+          "current_ledger_row_sha256": "c527d661e11c7be19891d444f2b4dd0d7d5d029306f078ec6191c1938aa48434",
+          "current_oracle_sha256": "bad0444611dcaaa498d19fe610aa60054b75e3f3a950a1462518414b4a51553a",
+          "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+          "fixture_sha256": "7836a8dd865207c1d7d8b8cd1fec16748ac60ff6eb3b9f7d22cb9db35b526210",
+          "imported_product_function_counts_sha256": "1d779007de6d8f6d9e0dfe69a032fc3be49112c14f315a5c05bbd0a81493cbc6",
+          "imported_product_function_invocations": 11,
+          "requests": 7,
+          "target_action_ids_sha256": "1c467f6479f8ae93a9cb3dcbd802a9a5a167e5373f8dd6de29996de65eade69b",
+          "target_case_actions": 7
+        },
+        "status": "pass",
+        "target_action_ids": [
+          "positive-run-1",
+          "positive-run-2",
+          "missing-transform",
+          "ambiguous-transform",
+          "legacy-7dof",
+          "malformed-world2img",
+          "missing-image"
+        ]
+      },
+      {
+        "adjacent_negatives": [
+          {
+            "case_id": "missing-ground-truth",
+            "exception_type": "FileNotFoundError",
+            "message_sha256": "af2694a25185df0d78de77b37d74888bf9c5efac76b102aa035f864a09dd6407",
+            "rejected": true
+          },
+          {
+            "case_id": "missing-prediction",
+            "exception_type": "FileNotFoundError",
+            "message_sha256": "faa70b1d0e98373d2786ca1391d8cedfdeb6e13c5ceeb9714a8e7e67059ad5ca",
+            "rejected": true
+          },
+          {
+            "case_id": "malformed-jsonl",
+            "exception_type": "JSONDecodeError",
+            "message_sha256": "6eb3494a6875a6e47f73dda566a791365c435b9431b2fae90f81607a3b0ef29b",
+            "rejected": true
+          },
+          {
+            "case_id": "malformed-timestamp",
+            "exception_type": "ValueError",
+            "message_sha256": "43c5c9bcbaf0454bb4023dba393bf9a097d7d21e7c3783313b14dfa71d151f30",
+            "rejected": true
+          },
+          {
+            "case_id": "legacy-short-box",
+            "exception_type": "IndexError",
+            "message_sha256": "f6b287406351f81a2a8c959bba6392243f74f2a3017d6e0c85b2bb74e6a9c284",
+            "rejected": true
+          }
+        ],
+        "bounded_capability_actions": 7,
+        "capability_id": "manifest-entry.spatial-ai-utils.03-detection-map",
+        "cleanup": {
+          "namespace": "spatial-ai-03-detection-map",
+          "owned_tree_sha256": "4ad26d9ca18a8f9373bc3f05ac62bd696116b7884f88239c6583eddf0778eb0a",
+          "post_cleanup_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "pre_state_captured": "absent",
+          "removed": true,
+          "siblings_unchanged": true,
+          "temporary_files_only": true
+        },
+        "deterministic_output": true,
+        "fixture_sha256": "4022a7d7592692c79d6c34ae6babeec725e90a42f071297228bdd0267b27ff69",
+        "imported_product_function_counts": {
+          "detection.accumulate": 8,
+          "detection.calc_ap": 8,
+          "detection.evaluate_detection": 4,
+          "detection.evaluate_detection_per_BEV_sensor": 2,
+          "detection.load_boxes_from_jsonl": 9,
+          "detection.save_detection_results": 4,
+          "detection.split_files_by_sensor": 2
+        },
+        "imported_product_function_invocations": 37,
+        "independent_runs": 2,
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.03-detection-map",
+        "positive_observations": {
+          "cli_source_sha256": "303a8023ec4b617749d32f9a516403bc68de33bb331cf051db8a5911ef28557d",
+          "determinism_scope": "direct_and_per_bev_payloads_excluding_summary_eval_time",
+          "prediction_filtering": {
+            "below_threshold_confidence": 0.4,
+            "confidence_threshold": 0.5,
+            "direct_retained": 1,
+            "per_bev_retained": 1,
+            "submitted": 2
+          },
+          "semantic_output_sha256": {
+            "direct": {
+              "metrics_details.json": "f87995b17fb6e05deb008c84aa736d59b5b3c30f41db089b15109683bd64b238",
+              "metrics_summary.json#without-eval_time": "fab0bcce10220ce2509661fbed3c131c5a96d16704b4674517796a03843a3ec5"
+            },
+            "per_bev": {
+              "detection_metrics.csv": "5b89998bb254b50f3bb282615d38813e4cdb2c5e45f808d2416b07b60eb8e63a",
+              "metrics_details.json": "f87995b17fb6e05deb008c84aa736d59b5b3c30f41db089b15109683bd64b238",
+              "metrics_summary.json#without-eval_time": "fab0bcce10220ce2509661fbed3c131c5a96d16704b4674517796a03843a3ec5"
+            }
+          },
+          "summary": {
+            "direct": {
+              "cfg": {
+                "class_range": {
+                  "Person": 50
+                },
+                "dist_fcn": "center_distance",
+                "dist_th_tp": 0.5,
+                "dist_ths": [
+                  0.5,
+                  1.0
+                ],
+                "max_boxes_per_sample": 500,
+                "mean_ap_weight": 5,
+                "min_precision": 0.0,
+                "min_recall": 0.0
+              },
+              "label_aps": {
+                "Person": {
+                  "0.5": 1.0,
+                  "1.0": 1.0
+                }
+              },
+              "label_tp_errors": {
+                "Person": {
+                  "attr_err": "NaN",
+                  "orient_err": 0.0,
+                  "scale_err": 0.0,
+                  "trans_err": 0.0,
+                  "vel_err": "NaN"
+                }
+              },
+              "mean_ap": 1.0,
+              "mean_dist_aps": {
+                "Person": 1.0
+              },
+              "nd_score": 0.8,
+              "tp_errors": {
+                "attr_err": "NaN",
+                "orient_err": 0.0,
+                "scale_err": 0.0,
+                "trans_err": 0.0,
+                "vel_err": "NaN"
+              },
+              "tp_scores": {
+                "attr_err": 0.0,
+                "orient_err": 1.0,
+                "scale_err": 1.0,
+                "trans_err": 1.0,
+                "vel_err": 0.0
+              }
+            },
+            "per_bev": {
+              "cfg": {
+                "class_range": {
+                  "Person": 50
+                },
+                "dist_fcn": "center_distance",
+                "dist_th_tp": 0.5,
+                "dist_ths": [
+                  0.5,
+                  1.0
+                ],
+                "max_boxes_per_sample": 500,
+                "mean_ap_weight": 5,
+                "min_precision": 0.0,
+                "min_recall": 0.0
+              },
+              "label_aps": {
+                "Person": {
+                  "0.5": 1.0,
+                  "1.0": 1.0
+                }
+              },
+              "label_tp_errors": {
+                "Person": {
+                  "attr_err": "NaN",
+                  "orient_err": 0.0,
+                  "scale_err": 0.0,
+                  "trans_err": 0.0,
+                  "vel_err": "NaN"
+                }
+              },
+              "mean_ap": 1.0,
+              "mean_dist_aps": {
+                "Person": 1.0
+              },
+              "nd_score": 0.8,
+              "tp_errors": {
+                "attr_err": "NaN",
+                "orient_err": 0.0,
+                "scale_err": 0.0,
+                "trans_err": 0.0,
+                "vel_err": "NaN"
+              },
+              "tp_scores": {
+                "attr_err": 0.0,
+                "orient_err": 1.0,
+                "scale_err": 1.0,
+                "trans_err": 1.0,
+                "vel_err": 0.0
+              }
+            }
+          },
+          "written_files": {
+            "direct": [
+              "metrics_details.json",
+              "metrics_summary.json"
+            ],
+            "per_bev": [
+              "detection_metrics.csv",
+              "metrics_details.json",
+              "metrics_summary.json"
+            ]
+          }
+        },
+        "requests": 7,
+        "run_output_sha256": [
+          "ee999e2b716865a48bb4c8ca0e4503fd0f88a5e3948096e78cd52530cfd9c9a1",
+          "ee999e2b716865a48bb4c8ca0e4503fd0f88a5e3948096e78cd52530cfd9c9a1"
+        ],
+        "runtime_evidence_binding": {
+          "capability_evidence_sha256": "ee999e2b716865a48bb4c8ca0e4503fd0f88a5e3948096e78cd52530cfd9c9a1",
+          "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+          "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+          "current_ledger_row_sha256": "2a34e6ab0346917a903c5a3033ed7844de23882722d84df264e402c09b8b5cf6",
+          "current_oracle_sha256": "f818d54624f6ef58816e30def5d004a210a5394aec04191dd46fc1c4bc34146e",
+          "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+          "fixture_sha256": "4022a7d7592692c79d6c34ae6babeec725e90a42f071297228bdd0267b27ff69",
+          "imported_product_function_counts_sha256": "8d9468ce336b0f4c1c2ab0d590f0454ba0f2159c6f918daace61bfc5a349cb31",
+          "imported_product_function_invocations": 37,
+          "requests": 7,
+          "target_action_ids_sha256": "f752186bdd0951885cc0255052db7a37b9486044763bc8abac92894e24af28bf",
+          "target_case_actions": 7
+        },
+        "status": "pass",
+        "target_action_ids": [
+          "positive-run-1",
+          "positive-run-2",
+          "missing-ground-truth",
+          "missing-prediction",
+          "malformed-jsonl",
+          "malformed-timestamp",
+          "legacy-short-box"
+        ]
+      },
+      {
+        "adjacent_negatives": [
+          {
+            "case_id": "identity-switch",
+            "exception_type": null,
+            "message_sha256": "bff2c5e1ec49202ae80da1f5d51a2c1fe4304cf186401481f337149290846aa8",
+            "rejected": true
+          },
+          {
+            "case_id": "empty-tracker",
+            "exception_type": null,
+            "message_sha256": "dcdff456194982e98e87c7aceb843dd11579738259f6e3de95fb5de736c9e59d",
+            "rejected": true
+          },
+          {
+            "case_id": "empty-ground-truth",
+            "exception_type": null,
+            "message_sha256": "1b274e275b2e05b6a8c7b79265d73d69e959028292ee1037ad1795a1dea93b45",
+            "rejected": true
+          },
+          {
+            "case_id": "similarity-shape-mismatch",
+            "exception_type": "ValueError",
+            "message_sha256": "8edb545b53a344b3889e7207f959c3598700cfd578a861b2690fd292ba856afe",
+            "rejected": true
+          },
+          {
+            "case_id": "missing-required-count",
+            "exception_type": "KeyError",
+            "message_sha256": "5c5565d5df087aed194ac03de63a253ee3db4ed2a5086f47182766eac9f6d81a",
+            "rejected": true
+          }
+        ],
+        "bounded_capability_actions": 7,
+        "capability_id": "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "cleanup": {
+          "namespace": "spatial-ai-04-tracking-hota-clear-identity-count",
+          "owned_tree_sha256": "c94709806b61bf5a9799523c13c6d802b48719ffc883ccfc6b13bcae890a4e00",
+          "post_cleanup_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "pre_state_captured": "absent",
+          "removed": true,
+          "siblings_unchanged": true,
+          "temporary_files_only": true
+        },
+        "deterministic_output": true,
+        "fixture_sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e",
+        "imported_product_function_counts": {
+          "tracking.CLEAR.eval_sequence": 4,
+          "tracking.Count.eval_sequence": 4,
+          "tracking.HOTA.eval_sequence": 4,
+          "tracking.Identity.eval_sequence": 4
+        },
+        "imported_product_function_invocations": 16,
+        "independent_runs": 2,
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "positive_observations": {
+          "clear": {
+            "CLR_F1": 1.0,
+            "CLR_FN": 0,
+            "CLR_FP": 0,
+            "CLR_Frames": 2,
+            "CLR_Pr": 1.0,
+            "CLR_Re": 1.0,
+            "CLR_TP": 2,
+            "FP_per_frame": 0.0,
+            "Frag": 0.0,
+            "IDSW": 0,
+            "ML": 0,
+            "MLR": 0.0,
+            "MODA": 1.0,
+            "MOTA": 1.0,
+            "MOTAL": 1.0,
+            "MOTP": 1.0,
+            "MOTP_sum": 2.0,
+            "MT": 1,
+            "MTR": 1.0,
+            "PT": 0,
+            "PTR": 0.0,
+            "sMOTA": 1.0
+          },
+          "count": {
+            "Dets": 2,
+            "Frames": 2,
+            "GT_Dets": 2,
+            "GT_IDs": 1,
+            "IDs": 1
+          },
+          "hota": {
+            "AssA": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "AssPr": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "AssRe": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "DetA": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "DetPr": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "DetRe": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "HOTA": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "HOTA(0)": 1.0,
+            "HOTALocA(0)": 1.0,
+            "HOTA_FN": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "HOTA_FP": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "HOTA_TP": [
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0,
+              2.0
+            ],
+            "LocA": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "LocA(0)": 1.0,
+            "OWTA": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "identity": {
+            "IDF1": 1.0,
+            "IDFN": 0,
+            "IDFP": 0,
+            "IDP": 1.0,
+            "IDR": 1.0,
+            "IDTP": 2
+          },
+          "identity_mismatch": {
+            "clear": {
+              "CLR_F1": 1.0,
+              "CLR_FN": 0,
+              "CLR_FP": 0,
+              "CLR_Frames": 2,
+              "CLR_Pr": 1.0,
+              "CLR_Re": 1.0,
+              "CLR_TP": 2,
+              "FP_per_frame": 0.0,
+              "Frag": 0.0,
+              "IDSW": 1,
+              "ML": 0,
+              "MLR": 0.0,
+              "MODA": 1.0,
+              "MOTA": 0.5,
+              "MOTAL": 1.0,
+              "MOTP": 1.0,
+              "MOTP_sum": 2.0,
+              "MT": 1,
+              "MTR": 1.0,
+              "PT": 0,
+              "PTR": 0.0,
+              "sMOTA": 0.5
+            },
+            "count": {
+              "Dets": 2,
+              "Frames": 2,
+              "GT_Dets": 2,
+              "GT_IDs": 1,
+              "IDs": 2
+            },
+            "hota": {
+              "AssA": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ],
+              "AssPr": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "AssRe": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ],
+              "DetA": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "DetPr": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "DetRe": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "HOTA": [
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781
+              ],
+              "HOTA(0)": 0.707106781,
+              "HOTALocA(0)": 0.707106781,
+              "HOTA_FN": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "HOTA_FP": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "HOTA_TP": [
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                2.0
+              ],
+              "LocA": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "LocA(0)": 1.0,
+              "OWTA": [
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781,
+                0.707106781
+              ]
+            },
+            "identity": {
+              "IDF1": 0.5,
+              "IDFN": 1,
+              "IDFP": 1,
+              "IDP": 0.5,
+              "IDR": 0.5,
+              "IDTP": 1
+            }
+          }
+        },
+        "requests": 7,
+        "run_output_sha256": [
+          "c4a6b07e5015b8e3229f82c48b43293a7d86126eeead9742e6ff85ee4d38e0c6",
+          "c4a6b07e5015b8e3229f82c48b43293a7d86126eeead9742e6ff85ee4d38e0c6"
+        ],
+        "runtime_evidence_binding": {
+          "capability_evidence_sha256": "c4a6b07e5015b8e3229f82c48b43293a7d86126eeead9742e6ff85ee4d38e0c6",
+          "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+          "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+          "current_ledger_row_sha256": "a5b220ac2dfda57493fe507406e13668ce27fb6afa3b10f102562fbac8069e2b",
+          "current_oracle_sha256": "54914139e5f63e586e35a6b9bbc3b5786a5a401da520a5ba5cf08c203b500da5",
+          "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+          "fixture_sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e",
+          "imported_product_function_counts_sha256": "88e4fbce3d0c05987d92a2cfd98c6b099a3e950c6391c3369ca4b2e582b24852",
+          "imported_product_function_invocations": 16,
+          "requests": 7,
+          "target_action_ids_sha256": "ddb76bdc2e3f341fe5d3583875724ae9f292f21c1b4b48ec2a6b21c90f75eb8f",
+          "target_case_actions": 7
+        },
+        "status": "pass",
+        "target_action_ids": [
+          "positive-run-1",
+          "positive-run-2",
+          "identity-switch",
+          "empty-tracker",
+          "empty-ground-truth",
+          "similarity-shape-mismatch",
+          "missing-required-count"
+        ]
+      },
+      {
+        "adjacent_negatives": [
+          {
+            "case_id": "unknown-class",
+            "exception_type": "KeyError",
+            "message_sha256": "551b29bdf877b9cb40b917f9879125e93a61d9d82f143793115ea4b1139a95ba",
+            "rejected": true
+          },
+          {
+            "case_id": "missing-results",
+            "exception_type": "KeyError",
+            "message_sha256": "0175e9fc4723d10108c984a473ec54c5fe686c402889656b315d616c5afd53a8",
+            "rejected": true
+          },
+          {
+            "case_id": "strict-short-coordinates",
+            "exception_type": "ValueError",
+            "message_sha256": "997fe77774ed6cb5f1fa616002c8bd9c4ed35cbdf779b7f6381c716f34204ea5",
+            "rejected": true
+          },
+          {
+            "case_id": "invalid-output-format",
+            "exception_type": "ValueError",
+            "message_sha256": "57751e6268e565f9adaf1b496810888ed248e046cd0da3ceed18ec13533192a3",
+            "rejected": true
+          },
+          {
+            "case_id": "malformed-frame-token",
+            "exception_type": "ValueError",
+            "message_sha256": "19e77327a7f8f496e2c7ce8eb290bd347c6e7edd2d975c3383fd9106917dcc56",
+            "rejected": true
+          }
+        ],
+        "bounded_capability_actions": 7,
+        "capability_id": "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "cleanup": {
+          "namespace": "spatial-ai-05-nvschema-conversion",
+          "owned_tree_sha256": "d208f896fab1a68aa199bd448e6b19b1f73736dd1ecfbc24d8f7caa63e8df5b5",
+          "post_cleanup_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "pre_state_captured": "absent",
+          "removed": true,
+          "siblings_unchanged": true,
+          "temporary_files_only": true
+        },
+        "deterministic_output": true,
+        "fixture_sha256": "f5172225171daef63dc35f79392c5f9a715bb729facb9a7566970ed9dc51a20f",
+        "imported_product_function_counts": {
+          "nvschema.convert_sparse4d_to_nvschema": 5,
+          "nvschema.load_nvschema": 4
+        },
+        "imported_product_function_invocations": 9,
+        "independent_runs": 2,
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "positive_observations": {
+          "confidence_consistency": {
+            "bbox3d": 0.9,
+            "top_level": 0.9
+          },
+          "fixed_clock": "2026-01-01T00:00:00+00:00",
+          "flattened_record": {
+            "3d bounding box rotation": [
+              0.0,
+              0.0,
+              1.570796327
+            ],
+            "3d bounding box scale": [
+              5.0,
+              2.0,
+              1.8
+            ],
+            "3d location": [
+              1.0,
+              2.0,
+              0.5
+            ],
+            "confidence": 0.9,
+            "object id": 42,
+            "type": "Person"
+          },
+          "input_quaternion": [
+            0.7071067811865476,
+            0.0,
+            0.0,
+            0.7071067811865475
+          ],
+          "loaded_frame_ids": [
+            0
+          ],
+          "non_identity_rotation_verified": true,
+          "output_sha256": "dda1feadf32a384879a3e67b61c31bde0455013a65b061b201262d0b32c41dce",
+          "record": {
+            "id": "0",
+            "objects": [
+              {
+                "bbox3d": {
+                  "confidence": 0.9,
+                  "coordinates": [
+                    1.0,
+                    2.0,
+                    0.5,
+                    5.0,
+                    2.0,
+                    1.8,
+                    0.0,
+                    0.0,
+                    1.570796327
+                  ],
+                  "embedding": [
+                    {
+                      "vector": [
+                        0.1,
+                        0.2,
+                        0.3
+                      ]
+                    }
+                  ]
+                },
+                "confidence": 0.9,
+                "coordinate": {
+                  "x": 1.0,
+                  "y": 2.0,
+                  "z": 0.5
+                },
+                "id": "42",
+                "type": "Person"
+              }
+            ],
+            "sensorId": "bev-sensor-1",
+            "timestamp": "2026-01-01T00:00:00.000Z",
+            "version": "4.0"
+          }
+        },
+        "requests": 7,
+        "run_output_sha256": [
+          "794ca1e191e5a4c418c3907bc29d87b7b287543480a026d5f93c965ab186e367",
+          "794ca1e191e5a4c418c3907bc29d87b7b287543480a026d5f93c965ab186e367"
+        ],
+        "runtime_evidence_binding": {
+          "capability_evidence_sha256": "794ca1e191e5a4c418c3907bc29d87b7b287543480a026d5f93c965ab186e367",
+          "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+          "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+          "current_ledger_row_sha256": "585bf4e0b87847e1be535a9034968bce239871e45dba3b3ed38b29912b47e12d",
+          "current_oracle_sha256": "0d8319b2f1365ccfdb03e50885ece11c3ac387232185003d4f7b2b62190e75be",
+          "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+          "fixture_sha256": "f5172225171daef63dc35f79392c5f9a715bb729facb9a7566970ed9dc51a20f",
+          "imported_product_function_counts_sha256": "17ec50b92b91a9e2dab42fd9167133264710486a3a6f765138aa06bfa45af13b",
+          "imported_product_function_invocations": 9,
+          "requests": 7,
+          "target_action_ids_sha256": "83f3c8bade9e1a1b66eb13936d7b2bbdce972b169d2946defb181aec21f2f078",
+          "target_case_actions": 7
+        },
+        "status": "pass",
+        "target_action_ids": [
+          "positive-run-1",
+          "positive-run-2",
+          "unknown-class",
+          "missing-results",
+          "strict-short-coordinates",
+          "invalid-output-format",
+          "malformed-frame-token"
+        ]
+      },
+      {
+        "adjacent_negatives": [
+          {
+            "case_id": "empty-frame-list",
+            "exception_type": null,
+            "message_sha256": "164dcede7c330fa1b2b4c788d00b2932cc93c3284a53b1378a77cafac48f461f",
+            "rejected": true
+          },
+          {
+            "case_id": "empty-frame-directory",
+            "exception_type": null,
+            "message_sha256": "19adcb88edfe68a79a4499e416f408ddfee90f3efad18bc4f4f9b39bd921945c",
+            "rejected": true
+          },
+          {
+            "case_id": "missing-video",
+            "exception_type": null,
+            "message_sha256": "5a163dbd0a55a85b36332bcc00a7950c67e7868dd961d500efe3161a356bfaae",
+            "rejected": true
+          },
+          {
+            "case_id": "empty-video",
+            "exception_type": null,
+            "message_sha256": "e80ecbbc70a7e4bc40ce7685b5545fb1d837c053e00a2f5f1b89dc15efd4a390",
+            "rejected": true
+          },
+          {
+            "case_id": "invalid-video",
+            "exception_type": null,
+            "message_sha256": "69edf0c0831db04be49f46c7d70c7f0bf1445b19d9ac6d049013bec3b6577c2e",
+            "rejected": true
+          }
+        ],
+        "bounded_capability_actions": 7,
+        "capability_id": "manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "cleanup": {
+          "namespace": "spatial-ai-06-video-frame-tools",
+          "owned_tree_sha256": "7fbc41f3b6569d2a4fb771743c481d6c82f28db828dfa577afa45c29737377ca",
+          "post_cleanup_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "pre_state_captured": "absent",
+          "removed": true,
+          "siblings_unchanged": true,
+          "temporary_files_only": true
+        },
+        "deterministic_output": true,
+        "fixture_sha256": "b74bd41a8a8d7a2200433812990ed6f5231bce6da87449ac56b1747d20ca30f1",
+        "imported_product_function_counts": {
+          "video.frames_to_video": 3,
+          "video.list_frame_paths": 7,
+          "video.video_to_frames": 7
+        },
+        "imported_product_function_invocations": 17,
+        "independent_runs": 2,
+        "oracle_id": "oracle.manifest-entry.spatial-ai-utils.06-video-frame-tools",
+        "positive_observations": {
+          "codec_color_tolerance": 12.0,
+          "decode_status": "completed",
+          "decoded_frame_dimensions": [
+            24,
+            32
+          ],
+          "decoded_frame_names": [
+            "0.png",
+            "1.png"
+          ],
+          "decoded_mean_bgr": [
+            [
+              251.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              254.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              251.0
+            ],
+            [
+              251.0,
+              254.0,
+              251.0
+            ]
+          ],
+          "decoded_pixel_sha256": [
+            "d4485b1fc0f6f6db1cbafd1a78be60d8eca129982315f235c932472d1702cd95",
+            "1b1a7e4f69c5098918b61eff516f0b819ad4a5c8cffa2948485a8f1f1816bb0e"
+          ],
+          "dominant_channel_indices": [
+            {
+              "decoded": 0,
+              "source": 0
+            },
+            {
+              "decoded": 1,
+              "source": 1
+            },
+            {
+              "decoded": 2,
+              "source": 2
+            }
+          ],
+          "downsample": 2,
+          "encode_status": "completed",
+          "frame_skip": 2,
+          "full_decoded_pixel_sha256": [
+            "d4485b1fc0f6f6db1cbafd1a78be60d8eca129982315f235c932472d1702cd95",
+            "465d87244bee74ae68cb9a4e25cf75630052eaaf41afff61f777202d95179fcf",
+            "1b1a7e4f69c5098918b61eff516f0b819ad4a5c8cffa2948485a8f1f1816bb0e",
+            "163d7e33c6ad9636f845ac829605dd01ab42f6b42c0ef05ff8780eea75c6154b"
+          ],
+          "kept_source_frame_indices": [
+            0,
+            2
+          ],
+          "order": [
+            "1.png",
+            "2.png",
+            "10.png",
+            "20.png"
+          ],
+          "source_frame_dimensions": [
+            48,
+            64
+          ],
+          "source_order_bgr": [
+            [
+              255,
+              0,
+              0
+            ],
+            [
+              0,
+              255,
+              0
+            ],
+            [
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255
+            ]
+          ],
+          "video_sha256": "1dab59fc8adf666be092c167d748f43e92808ddea800093787da8460728a6e4d"
+        },
+        "requests": 7,
+        "run_output_sha256": [
+          "c5a57bb37603018bc568e89038a14ad95d5d1cf61326ce15e0c19f35e7de890c",
+          "c5a57bb37603018bc568e89038a14ad95d5d1cf61326ce15e0c19f35e7de890c"
+        ],
+        "runtime_evidence_binding": {
+          "capability_evidence_sha256": "c5a57bb37603018bc568e89038a14ad95d5d1cf61326ce15e0c19f35e7de890c",
+          "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+          "contract_sha256": "029b17846f5e137d6aaad1e092abd444e7e17f112517841ce59fc960b096ec70",
+          "current_ledger_row_sha256": "d19d4c3d7f8b1cb29ee61c8cf23ddb3499147030127a6cccd4115877ee7021f4",
+          "current_oracle_sha256": "f9fad7b2d0412e2dbe8ec225a8d8cc18975a639f3f38e264de1444405cb79466",
+          "executor_sha256": "6f3af563886565f2688f97472fa2e6d993f8dc47ed12215d2d02c77ac4f8066c",
+          "fixture_sha256": "b74bd41a8a8d7a2200433812990ed6f5231bce6da87449ac56b1747d20ca30f1",
+          "imported_product_function_counts_sha256": "65217e4cf0075a402106650d50d4f903ed29189b4bfa2cec9b243b902b205608",
+          "imported_product_function_invocations": 17,
+          "requests": 7,
+          "target_action_ids_sha256": "c96d827eea504e8d4addb0004f075e0e0df1d1808b5f2f737d3ea3f02a628ed8",
+          "target_case_actions": 7
+        },
+        "status": "pass",
+        "target_action_ids": [
+          "positive-run-1",
+          "positive-run-2",
+          "empty-frame-list",
+          "empty-frame-directory",
+          "missing-video",
+          "empty-video",
+          "invalid-video"
+        ]
+      }
+    ],
+    "captured_at_utc": "2026-08-03T05:55:53.041297Z",
+    "cleanup": {
+      "checkout_status_after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "checkout_status_before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "executor_owned_temporary_root": "/tmp/vss-spatial-ai-offline-env.2x03c0oy/tmp/vss-spatial-ai-runtime.lipihg81",
+      "post_execution_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "pre_execution_tree_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "removed": true,
+      "sentinel_sha256": "19aa1a22434dc883c4cea90f1c87fa40aca5185318a5cb296d011fd99140aa54",
+      "siblings_unchanged": true
+    },
+    "confinement": {
+      "bounded_capability_actions": 49,
+      "docker_calls": 0,
+      "downloads": 0,
+      "external_activity_instrumented": true,
+      "filesystem_escape_attempts": 0,
+      "imported_product_function_invocations": 122,
+      "model_accesses": 0,
+      "network_calls": 0,
+      "product_execution_deadline_seconds": 900,
+      "product_subprocess_calls": 0,
+      "requests": 49,
+      "service_lifecycle_calls": 0,
+      "warehouse_sample_accesses": 0,
+      "whole_temp_root_scanned": true
+    },
+    "environment": {
+      "capability_preflight": {
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping": {
+          "import_failures": [],
+          "missing_modules": [],
+          "observed_versions": {
+            "numpy": "1.26.4",
+            "shapely": "2.0.7"
+          },
+          "ready": true,
+          "required_modules": [
+            "numpy",
+            "shapely"
+          ]
+        },
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": {
+          "import_failures": [],
+          "missing_modules": [],
+          "observed_versions": {
+            "numpy": "1.26.4"
+          },
+          "ready": true,
+          "required_modules": [
+            "numpy"
+          ]
+        },
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization": {
+          "import_failures": [],
+          "missing_modules": [],
+          "observed_versions": {
+            "cv2": "4.11.0",
+            "numpy": "1.26.4"
+          },
+          "ready": true,
+          "required_modules": [
+            "numpy",
+            "cv2"
+          ]
+        },
+        "manifest-entry.spatial-ai-utils.03-detection-map": {
+          "import_failures": [],
+          "missing_modules": [],
+          "observed_versions": {
+            "numpy": "1.26.4",
+            "nuscenes": "unknown",
+            "pandas": "2.3.3"
+          },
+          "ready": true,
+          "required_modules": [
+            "numpy",
+            "pandas",
+            "nuscenes"
+          ]
+        },
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count": {
+          "import_failures": [],
+          "missing_modules": [],
+          "observed_versions": {
+            "numpy": "1.26.4",
+            "scipy": "1.15.3"
+          },
+          "ready": true,
+          "required_modules": [
+            "numpy",
+            "scipy"
+          ]
+        },
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion": {
+          "import_failures": [],
+          "missing_modules": [],
+          "observed_versions": {
+            "numpy": "1.26.4",
+            "scipy": "1.15.3"
+          },
+          "ready": true,
+          "required_modules": [
+            "numpy",
+            "scipy"
+          ]
+        },
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools": {
+          "import_failures": [],
+          "missing_modules": [],
+          "observed_versions": {
+            "cv2": "4.11.0",
+            "numpy": "1.26.4",
+            "tqdm": "4.67.1"
+          },
+          "ready": true,
+          "required_modules": [
+            "numpy",
+            "cv2",
+            "tqdm"
+          ]
+        }
+      },
+      "machine": "aarch64",
+      "platform": "linux-aarch64",
+      "python_full": "3.12.3",
+      "python_major_minor": "3.12",
+      "system": "Linux"
+    },
+    "mode": "target_bound_offline_runtime_evidence",
+    "package_id": "thor-spatial-ai-utils-runtime-evidence-successor-v1",
+    "promotion": {
+      "aggregate_is_promotable": true,
+      "development_smoke_only": false,
+      "eligible_capability_ids": [
+        "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+        "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+        "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+        "manifest-entry.spatial-ai-utils.03-detection-map",
+        "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+        "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+        "manifest-entry.spatial-ai-utils.06-video-frame-tools"
+      ],
+      "external_provider_entry_touched": false,
+      "family_id": "spatial-ai-utils",
+      "ledger_mutation_performed": false,
+      "oracle_mutation_performed": false,
+      "receipt_is_runtime_evidence": true,
+      "requires_separate_reviewed_metadata_integration": true
+    },
+    "schema_version": 1,
+    "status": "pass"
+  },
+  "promotion": {
+    "aggregate_is_promotable": true,
+    "canonical_parity_mutated": false,
+    "development_smoke_only": false,
+    "eligible_capability_ids": [
+      "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+      "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+      "manifest-entry.spatial-ai-utils.03-detection-map",
+      "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "manifest-entry.spatial-ai-utils.06-video-frame-tools"
+    ],
+    "family_id": "spatial-ai-utils",
+    "receipt_is_runtime_evidence": true,
+    "requires_separate_reviewed_metadata_integration": true,
+    "runtime_producer_mutated": false
+  },
+  "schema_version": 1,
+  "selection": {
+    "capability_ids": [
+      "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+      "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+      "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+      "manifest-entry.spatial-ai-utils.03-detection-map",
+      "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+      "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+      "manifest-entry.spatial-ai-utils.06-video-frame-tools"
+    ],
+    "kind": "all"
+  },
+  "status": "pass"
+}
