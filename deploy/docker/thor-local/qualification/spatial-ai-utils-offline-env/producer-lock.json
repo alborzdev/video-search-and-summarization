@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "thor-spatial-ai-offline-integrated-runtime-v1",
-  "producer_binding_commit": "494b80c7c63ad3bd4fafddb6e9d093e1fc8bd537",
+  "producer_binding_commit": "5099e972b6821483fa73226158080ae73a90d2de",
   "producer_acknowledgement": "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE",
   "capability_ids": [
     "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
@@ -15,8 +15,8 @@
   "producer_bundle": [
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json", "sha256": "7fa1c4070cc3089c3e7f30511cf89bbc0e50fe773ab408e702c6d5717e6470a8"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json", "sha256": "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "61d9acc31102273156a3b00f8a39ecc009a34ff937836e404338c49f14ea0a69"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json", "sha256": "469e3ee85e34481c6d55ca2d544a80bfdefc092f83b55fde28eea0ac6bff4571"}
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "0f0ab33b3d7dad4663d14645a4d7ff439e9355fcb64a7c391ad42e80b03ab76f"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json", "sha256": "639748643456e62037c6068169179603219b5f151f182da281e0197a08b52a9d"}
   ],
   "canonical_controls": [
     {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "834bb40b576d9e9e546cecb3bdb866993b7be7fd3bf9d5e9e19a0d852d4e4e39"},
@@ -1086,7 +1086,7 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
-    "sha256": "61d9acc31102273156a3b00f8a39ecc009a34ff937836e404338c49f14ea0a69"
+    "sha256": "0f0ab33b3d7dad4663d14645a4d7ff439e9355fcb64a7c391ad42e80b03ab76f"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json",
@@ -1118,11 +1118,11 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json",
-    "sha256": "469e3ee85e34481c6d55ca2d544a80bfdefc092f83b55fde28eea0ac6bff4571"
+    "sha256": "639748643456e62037c6068169179603219b5f151f182da281e0197a08b52a9d"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/tests/test_executor.py",
-    "sha256": "60d422580936136839f30a00574e5da527e0abba5754a8c640a9595baef02eed"
+    "sha256": "6a42fc9e60f4b9e0522dd5d3601ff49dbf013b82baa2f08767a8f0422f9f6562"
   }
   ],
   "expectations": {
