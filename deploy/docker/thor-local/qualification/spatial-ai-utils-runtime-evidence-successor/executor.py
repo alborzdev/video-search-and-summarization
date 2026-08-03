@@ -29,6 +29,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import types
 from typing import Any, Callable, Iterator
 
 from jsonschema import Draft202012Validator
@@ -213,7 +214,7 @@ EXPECTED_OBSERVATION_KEYS = {
     "03": {
         "summary",
         "written_files",
-        "raw_output_sha256",
+        "semantic_output_sha256",
         "determinism_scope",
     },
     "04": {"hota", "clear", "identity", "count", "identity_mismatch"},
@@ -279,24 +280,35 @@ if _audit_state is None:
                         )
             return candidate
 
-        def require_namespace(path: Any, dir_fd: int | None = None) -> None:
+        def render_path(path: Any) -> str:
+            if isinstance(path, (str, bytes, os.PathLike)):
+                return json.dumps(os.fsdecode(path), ensure_ascii=True)
+            return f"<{type(path).__name__}>"
+
+        def require_namespace(
+            path: Any, dir_fd: int | None = None, operation: str = "mutation"
+        ) -> None:
             getter = _audit_state["namespace_getter"]
-            namespace = getter() if getter is not None else None
-            if namespace is None:
+            namespaces = getter() if getter is not None else ()
+            if not namespaces:
                 deny(
                     "filesystem_escape_attempts",
-                    "filesystem mutation attempted without an owned namespace",
+                    f"filesystem {operation} attempted without an owned namespace: "
+                    f"path={render_path(path)}",
                 )
             candidate = namespace_path(path, dir_fd)
-            try:
-                candidate.resolve(strict=False).relative_to(
-                    namespace.resolve(strict=False)
-                )
-            except ValueError:
-                deny(
-                    "filesystem_escape_attempts",
-                    f"filesystem mutation escaped owned namespace: {candidate}",
-                )
+            resolved = candidate.resolve(strict=False)
+            for namespace in namespaces:
+                try:
+                    resolved.relative_to(namespace.resolve(strict=False))
+                    return
+                except ValueError:
+                    continue
+            deny(
+                "filesystem_escape_attempts",
+                f"filesystem {operation} escaped owned namespace: "
+                f"path={render_path(candidate)}",
+            )
 
         if event == "open":
             path = args[0] if args else None
@@ -322,9 +334,9 @@ if _audit_state is None:
                 os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_APPEND
             )
             if flags & mutation_flags:
-                require_namespace(path)
+                require_namespace(path, operation="open")
         elif event == "os.mkdir":
-            require_namespace(args[0], args[2] if len(args) > 2 else None)
+            require_namespace(args[0], args[2] if len(args) > 2 else None, "mkdir")
         elif event in {
             "os.remove",
             "os.rmdir",
@@ -333,14 +345,18 @@ if _audit_state is None:
             "os.utime",
             "os.truncate",
         }:
-            require_namespace(args[0], args[-1] if event != "os.truncate" else None)
+            require_namespace(
+                args[0],
+                args[-1] if event != "os.truncate" else None,
+                event,
+            )
         elif event == "os.rename":
-            require_namespace(args[0], args[2] if len(args) > 2 else None)
-            require_namespace(args[1], args[3] if len(args) > 3 else None)
+            require_namespace(args[0], args[2] if len(args) > 2 else None, event)
+            require_namespace(args[1], args[3] if len(args) > 3 else None, event)
         elif event == "os.link":
-            require_namespace(args[1], args[3] if len(args) > 3 else None)
+            require_namespace(args[1], args[3] if len(args) > 3 else None, event)
         elif event == "os.symlink":
-            require_namespace(args[1], args[2] if len(args) > 2 else None)
+            require_namespace(args[1], args[2] if len(args) > 2 else None, event)
         elif event in {
             "subprocess.Popen",
             "os.system",
@@ -599,11 +615,21 @@ def _classify_forbidden_read(path: Any) -> str | None:
     return None
 
 
-def _require_mutation_in_namespace(path: Any, dir_fd: int | None = None) -> None:
-    if _ACTIVE_NAMESPACE is None or not isinstance(path, (str, bytes, os.PathLike)):
+def _render_diagnostic_path(path: Any) -> str:
+    if isinstance(path, (str, bytes, os.PathLike)):
+        return json.dumps(os.fsdecode(path), ensure_ascii=True)
+    return f"<{type(path).__name__}>"
+
+
+def _require_mutation_in_namespace(
+    path: Any, dir_fd: int | None = None, operation: str = "mutation"
+) -> None:
+    namespaces = (_ACTIVE_NAMESPACE,) if _ACTIVE_NAMESPACE is not None else ()
+    if not namespaces or not isinstance(path, (str, bytes, os.PathLike)):
         _increment_activity("filesystem_escape_attempts")
         raise ConfinementError(
-            "filesystem mutation attempted without an owned namespace"
+            f"filesystem {operation} attempted without an owned namespace: "
+            f"path={_render_diagnostic_path(path)}"
         )
     candidate = Path(os.fsdecode(path))
     if not candidate.is_absolute():
@@ -617,15 +643,18 @@ def _require_mutation_in_namespace(path: Any, dir_fd: int | None = None) -> None
                 raise ConfinementError(
                     f"cannot resolve mutation directory fd: {dir_fd}"
                 ) from exc
-    try:
-        candidate.resolve(strict=False).relative_to(
-            _ACTIVE_NAMESPACE.resolve(strict=False)
-        )
-    except ValueError as exc:
-        _increment_activity("filesystem_escape_attempts")
-        raise ConfinementError(
-            f"filesystem mutation escaped owned namespace: {candidate}"
-        ) from exc
+    resolved = candidate.resolve(strict=False)
+    for namespace in namespaces:
+        try:
+            resolved.relative_to(namespace.resolve(strict=False))
+            return
+        except ValueError:
+            continue
+    _increment_activity("filesystem_escape_attempts")
+    raise ConfinementError(
+        f"filesystem {operation} escaped owned namespace: "
+        f"path={_render_diagnostic_path(candidate)}"
+    )
 
 
 @contextlib.contextmanager
@@ -689,7 +718,7 @@ def external_activity_denied(counters: dict[str, int]) -> Iterator[None]:
             _increment_activity(forbidden)
             raise ConfinementError(f"forbidden external input: {file}")
         if any(flag in mode for flag in ("w", "a", "x", "+")):
-            _require_mutation_in_namespace(file)
+            _require_mutation_in_namespace(file, operation="open")
         return originals["builtin_open"](file, mode, *args, **kwargs)
 
     def guarded_io_open(file: Any, mode: str = "r", *args: Any, **kwargs: Any) -> Any:
@@ -698,7 +727,7 @@ def external_activity_denied(counters: dict[str, int]) -> Iterator[None]:
             _increment_activity(forbidden)
             raise ConfinementError(f"forbidden external input: {file}")
         if any(flag in mode for flag in ("w", "a", "x", "+")):
-            _require_mutation_in_namespace(file)
+            _require_mutation_in_namespace(file, operation="open")
         return originals["io_open"](file, mode, *args, **kwargs)
 
     def guarded_os_open(path: Any, flags: int, *args: Any, **kwargs: Any) -> int:
@@ -708,70 +737,72 @@ def external_activity_denied(counters: dict[str, int]) -> Iterator[None]:
             raise ConfinementError(f"forbidden external input: {path}")
         mutation_flags = os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_APPEND
         if flags & mutation_flags:
-            _require_mutation_in_namespace(path)
+            _require_mutation_in_namespace(path, operation="open")
         return originals["os_open"](path, flags, *args, **kwargs)
 
     def guarded_mkdir(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "mkdir")
         return originals["mkdir"](path, *args, **kwargs)
 
     def guarded_rename(src: Any, dst: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(src, kwargs.get("src_dir_fd"))
-        _require_mutation_in_namespace(dst, kwargs.get("dst_dir_fd"))
+        _require_mutation_in_namespace(src, kwargs.get("src_dir_fd"), "rename-source")
+        _require_mutation_in_namespace(dst, kwargs.get("dst_dir_fd"), "rename-target")
         return originals["rename"](src, dst, *args, **kwargs)
 
     def guarded_replace(src: Any, dst: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(src, kwargs.get("src_dir_fd"))
-        _require_mutation_in_namespace(dst, kwargs.get("dst_dir_fd"))
+        _require_mutation_in_namespace(src, kwargs.get("src_dir_fd"), "replace-source")
+        _require_mutation_in_namespace(dst, kwargs.get("dst_dir_fd"), "replace-target")
         return originals["replace"](src, dst, *args, **kwargs)
 
     def guarded_unlink(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "unlink")
         return originals["unlink"](path, *args, **kwargs)
 
     def guarded_remove(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "remove")
         return originals["remove"](path, *args, **kwargs)
 
     def guarded_rmdir(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "rmdir")
         return originals["rmdir"](path, *args, **kwargs)
 
     def guarded_link(src: Any, dst: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(dst, kwargs.get("dst_dir_fd"))
+        _require_mutation_in_namespace(dst, kwargs.get("dst_dir_fd"), "link-target")
         return originals["link"](src, dst, *args, **kwargs)
 
     def guarded_symlink(src: Any, dst: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(dst, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(dst, kwargs.get("dir_fd"), "symlink-target")
         return originals["symlink"](src, dst, *args, **kwargs)
 
     def guarded_metadata(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "chmod")
         return originals["chmod"](path, *args, **kwargs)
 
     def guarded_chown(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "chown")
         return originals["chown"](path, *args, **kwargs)
 
     def guarded_utime(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "utime")
         return originals["utime"](path, *args, **kwargs)
 
     def guarded_truncate(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path)
+        _require_mutation_in_namespace(path, operation="truncate")
         return originals["truncate"](path, *args, **kwargs)
 
     def guarded_mkfifo(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "mkfifo")
         return originals["mkfifo"](path, *args, **kwargs)
 
     def guarded_mknod(path: Any, *args: Any, **kwargs: Any) -> Any:
-        _require_mutation_in_namespace(path, kwargs.get("dir_fd"))
+        _require_mutation_in_namespace(path, kwargs.get("dir_fd"), "mknod")
         return originals["mknod"](path, *args, **kwargs)
 
     _ACTIVE_ACTIVITY_COUNTS = counters
     _audit_state["counters"] = counters
-    _audit_state["namespace_getter"] = lambda: _ACTIVE_NAMESPACE
+    _audit_state["namespace_getter"] = lambda: tuple(
+        namespace for namespace in (_ACTIVE_NAMESPACE,) if namespace is not None
+    )
     _audit_state["error_type"] = ConfinementError
     socket.socket = reject_network  # type: ignore[assignment]
     socket.SocketType = reject_network  # type: ignore[assignment,misc]
@@ -942,13 +973,34 @@ def verify_bindings(contract: dict[str, Any], require_clean: bool) -> dict[str, 
     }
 
 
+@contextlib.contextmanager
+def deterministic_dependency_import(name: str) -> Iterator[None]:
+    """Prevent a test-only NumPy hardware probe in the nuScenes import chain."""
+    numpy = sys.modules.get("numpy")
+    if name != "nuscenes" or numpy is None:
+        yield
+        return
+    missing = object()
+    previous = numpy.__dict__.get("testing", missing)
+    if previous is missing:
+        testing_stub = types.ModuleType("numpy.testing")
+        testing_stub.__all__ = []
+        numpy.__dict__["testing"] = testing_stub
+    try:
+        yield
+    finally:
+        if previous is missing:
+            del numpy.__dict__["testing"]
+
+
 def _module_preflight(adapter: str) -> dict[str, Any]:
     observed: dict[str, str] = {}
     missing: list[str] = []
     failures: list[str] = []
     for name in REQUIRED_MODULES[adapter]:
         try:
-            module = importlib.import_module(name)
+            with deterministic_dependency_import(name):
+                module = importlib.import_module(name)
             version = getattr(module, "__version__", None)
             if version is None:
                 try:
@@ -956,6 +1008,8 @@ def _module_preflight(adapter: str) -> dict[str, Any]:
                 except importlib.metadata.PackageNotFoundError:
                     version = "unknown"
             observed[name] = str(version)
+        except ConfinementError:
+            raise
         except ModuleNotFoundError as exc:
             missing.append(exc.name or name)
         except Exception as exc:  # ABI/import failures are capability-local blockers.
@@ -1084,6 +1138,96 @@ def require_exact_owned_tree(
         raise ConfinementError(
             f"temporary tree contains sibling escape: {', '.join(escaped)}"
         )
+
+
+CAPABILITY_OWNER_MAX_ENTRIES = 512
+CAPABILITY_OWNER_MAX_BYTES = 64 * 1024 * 1024
+
+
+def validate_capability_owner_tree(
+    inventory: dict[str, dict[str, Any]], owner: str
+) -> tuple[int, int]:
+    require_exact_owned_tree(inventory, owner)
+    allowed_prefixes = (f"{owner}/cache", f"{owner}/work")
+    unexpected = [
+        name
+        for name in inventory
+        if name != owner
+        and not any(
+            name == prefix or name.startswith(f"{prefix}/")
+            for prefix in allowed_prefixes
+        )
+    ]
+    if unexpected:
+        raise ConfinementError(
+            f"capability owner contains an unexpected partition: {unexpected[0]}"
+        )
+    entries = len(inventory)
+    total_bytes = sum(
+        row["size"] for row in inventory.values() if row["type"] == "file"
+    )
+    if entries > CAPABILITY_OWNER_MAX_ENTRIES:
+        raise ConfinementError(f"capability owner entry bound exceeded: {entries}")
+    if total_bytes > CAPABILITY_OWNER_MAX_BYTES:
+        raise ConfinementError(f"capability owner byte bound exceeded: {total_bytes}")
+    return entries, total_bytes
+
+
+@contextlib.contextmanager
+def capability_owner_namespace(
+    temp_base: Path, capability_id: str
+) -> Iterator[dict[str, Any]]:
+    """Own cache and work partitions for one full preflight/adapter lifetime."""
+    global _ACTIVE_NAMESPACE
+    if _ACTIVE_NAMESPACE is not None:
+        raise EvidenceError("capability owner entered while another is active")
+    owner = temp_base / NAMESPACES[capability_id]
+    if owner.exists() or scan_temp_root(temp_base):
+        raise ConfinementError("capability owner did not start from an empty tree")
+    _ACTIVE_NAMESPACE = owner
+    owner.mkdir(mode=0o700)
+    state: dict[str, Any] = {
+        "owner": owner,
+        "work": owner / "work",
+        "owned_tree_sha256": None,
+        "entry_count": None,
+        "aggregate_bytes": None,
+    }
+    environment_values = {
+        "MPLCONFIGDIR": os.fspath(owner / "cache/matplotlib"),
+        "XDG_CACHE_HOME": os.fspath(owner / "cache/xdg-cache"),
+        "XDG_CONFIG_HOME": os.fspath(owner / "cache/xdg-config"),
+        # Matplotlib otherwise shells out to fc-list while building a fresh font
+        # cache. Use only its wheel-bundled fonts so subprocess confinement stays
+        # exact and provider-free.
+        "MPL_IGNORE_SYSTEM_FONTS": "1",
+        # joblib otherwise probes physical cores with lscpu during the nuScenes
+        # import chain. The bounded executor is deliberately single-process.
+        "LOKY_MAX_CPU_COUNT": "1",
+    }
+    previous = {key: os.environ.get(key) for key in environment_values}
+    os.environ.update(environment_values)
+    try:
+        yield state
+        owned_tree = scan_temp_root(temp_base)
+        entries, total_bytes = validate_capability_owner_tree(owned_tree, owner.name)
+        state["owned_tree_sha256"] = sha_bytes(canonical_bytes(owned_tree))
+        state["entry_count"] = entries
+        state["aggregate_bytes"] = total_bytes
+    finally:
+        for key, value in previous.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        _ACTIVE_NAMESPACE = owner
+        try:
+            if owner.exists():
+                shutil.rmtree(owner)
+        finally:
+            _ACTIVE_NAMESPACE = None
+        if owner.exists() or scan_temp_root(temp_base):
+            raise ConfinementError("capability owner cleanup failed")
 
 
 def _calibration_grouping(
@@ -1392,7 +1536,9 @@ def _detection_map(
             confidence_threshold=fixture["confidence_threshold"],
         )
         config = classes.DetectionConfig(
-            class_range={"person": 50},
+            # The product loader emits its canonical, case-sensitive primary
+            # class name ("Person" in this locked fixture).
+            class_range={fixture["class_name"]: 50},
             dist_fcn="center_distance",
             dist_ths=[0.5, 1.0],
             dist_th_tp=0.5,
@@ -1420,25 +1566,28 @@ def _detection_map(
         semantic.pop("eval_time", None)
         if float(semantic["mean_ap"]) <= 0.99:
             raise EvidenceError("perfect detection mAP assertion failed")
+        written_files = sorted(
+            path.name for path in (case / "out").iterdir() if path.is_file()
+        )
+        written_summary = strict_json(case / "out" / "metrics_summary.json")
+        written_summary.pop("eval_time", None)
         output_hashes = {
-            path.name: sha_file(path)
-            for path in sorted((case / "out").iterdir())
-            if path.is_file()
+            "metrics_details.json": sha_file(case / "out" / "metrics_details.json"),
+            "metrics_summary.json#without-eval_time": sha_bytes(
+                canonical_bytes(written_summary)
+            ),
         }
         return _jsonable(
             {
                 "summary": semantic,
-                "written_files": sorted(output_hashes),
-                "raw_output_sha256": output_hashes,
+                "written_files": written_files,
+                "semantic_output_sha256": output_hashes,
+                "determinism_scope": "semantic_payload_excluding_eval_time",
             }
         )
 
     first = _target_action("positive-run-1", lambda: positive("run-1"))
     second = _target_action("positive-run-2", lambda: positive("run-2"))
-    # Raw summary contains eval_time; determinism is defined by the exact semantic payload.
-    first_cmp, second_cmp = copy.deepcopy(first), copy.deepcopy(second)
-    first_cmp.pop("raw_output_sha256", None)
-    second_cmp.pop("raw_output_sha256", None)
     missing = root / "missing.jsonl"
     invalid = root / "invalid.jsonl"
     invalid.write_text("{not-json}\n", encoding="utf-8")
@@ -1504,9 +1653,8 @@ def _detection_map(
             ),
         ),
     ]
-    if first_cmp != second_cmp:
+    if first != second:
         raise EvidenceError("detection semantic output is not deterministic")
-    first["determinism_scope"] = "semantic_payload_excluding_eval_time"
     return first, negatives
 
 
@@ -1931,8 +2079,15 @@ ADAPTERS: dict[
 
 
 def _empty_result(
-    capability: dict[str, Any], status: str, preflight: dict[str, Any] | None = None
+    capability: dict[str, Any],
+    status: str,
+    preflight: dict[str, Any] | None = None,
+    owned_tree_sha256: str | None = None,
 ) -> dict[str, Any]:
+    if status == "blocked" and owned_tree_sha256 is None:
+        raise EvidenceError("blocked result requires an owned-tree digest")
+    if status != "blocked" and owned_tree_sha256 is not None:
+        raise EvidenceError("inert result cannot bind an owned-tree digest")
     return {
         "capability_id": capability["capability_id"],
         "oracle_id": capability["oracle_id"],
@@ -1950,11 +2105,11 @@ def _empty_result(
         "adjacent_negatives": [],
         "cleanup": {
             "namespace": NAMESPACES[capability["capability_id"]],
-            "pre_state_captured": "not_created",
+            "pre_state_captured": "absent" if status == "blocked" else "not_created",
             "temporary_files_only": True,
             "removed": True,
             "siblings_unchanged": True,
-            "owned_tree_sha256": None,
+            "owned_tree_sha256": owned_tree_sha256,
             "post_cleanup_tree_sha256": EMPTY_TREE_SHA256,
         },
         "runtime_evidence_binding": {},
@@ -2067,108 +2222,126 @@ def execute(
                 if capability_id not in selected:
                     results.append(_empty_result(capability, "not_selected"))
                     continue
-                preflight = _module_preflight(capability["adapter"])
-                preflights[capability_id] = preflight
+                row: dict[str, Any] | None = None
+                with capability_owner_namespace(
+                    temp_base, capability_id
+                ) as owner_state:
+                    preflight = _module_preflight(capability["adapter"])
+                    preflights[capability_id] = preflight
+                    if preflight["ready"]:
+                        namespace = owner_state["work"]
+                        if namespace.exists():
+                            raise EvidenceError(
+                                f"non-absent work partition: {namespace.name}"
+                            )
+                        namespace.mkdir(mode=0o700)
+                        fixture = strict_json(
+                            repo_file(capability["fixture_manifest"]["path"])
+                        )
+                        _ACTIVE_PRODUCT_CALLS = {}
+                        _ACTIVE_ACTION_COUNTS = {}
+                        try:
+                            observation, negatives = ADAPTERS[capability["adapter"]](
+                                namespace, fixture
+                            )
+                            product_counts = dict(sorted(_ACTIVE_PRODUCT_CALLS.items()))
+                            target_action_ids = list(_ACTIVE_ACTION_COUNTS)
+                        finally:
+                            _ACTIVE_PRODUCT_CALLS = None
+                            _ACTIVE_ACTION_COUNTS = None
+                        if len(target_action_ids) != 7:
+                            raise EvidenceError(
+                                "observed target action count drift for "
+                                f"{capability_id}: {len(target_action_ids)}"
+                            )
+                        short_id = capability_id.split(".")[2][:2]
+                        if product_counts != EXPECTED_PRODUCT_FUNCTION_COUNTS[short_id]:
+                            raise EvidenceError(
+                                "imported product-function count drift for "
+                                f"{capability_id}"
+                            )
+                        if sum(product_counts.values()) <= 0:
+                            raise EvidenceError(
+                                "passing capability has no product calls: "
+                                f"{capability_id}"
+                            )
+                        owned_tree = scan_temp_root(temp_base)
+                        validate_capability_owner_tree(
+                            owned_tree, owner_state["owner"].name
+                        )
+                        observation_hash = sha_bytes(canonical_bytes(observation))
+                        row = {
+                            "capability_id": capability_id,
+                            "oracle_id": capability["oracle_id"],
+                            "status": "pass",
+                            "independent_runs": 2,
+                            "bounded_capability_actions": len(target_action_ids),
+                            "requests": len(target_action_ids),
+                            "target_action_ids": target_action_ids,
+                            "imported_product_function_invocations": sum(
+                                product_counts.values()
+                            ),
+                            "imported_product_function_counts": product_counts,
+                            "deterministic_output": True,
+                            "fixture_sha256": capability["fixture_manifest"]["sha256"],
+                            "run_output_sha256": [observation_hash, observation_hash],
+                            "positive_observations": observation,
+                            "adjacent_negatives": negatives,
+                            "cleanup": {
+                                "namespace": owner_state["owner"].name,
+                                "pre_state_captured": "absent",
+                                "temporary_files_only": True,
+                                "removed": True,
+                                "siblings_unchanged": True,
+                                "owned_tree_sha256": sha_bytes(
+                                    canonical_bytes(owned_tree)
+                                ),
+                                "post_cleanup_tree_sha256": EMPTY_TREE_SHA256,
+                            },
+                            "runtime_evidence_binding": {
+                                "captured_at_utc": captured,
+                                "executor_sha256": bindings["executor_sha256"],
+                                "contract_sha256": bindings["contract_sha256"],
+                                "current_oracle_sha256": capability[
+                                    "current_oracle_sha256"
+                                ],
+                                "current_ledger_row_sha256": capability[
+                                    "current_ledger_row_sha256"
+                                ],
+                                "fixture_sha256": capability["fixture_manifest"][
+                                    "sha256"
+                                ],
+                                "capability_evidence_sha256": observation_hash,
+                                "target_case_actions": len(target_action_ids),
+                                "requests": len(target_action_ids),
+                                "target_action_ids_sha256": sha_bytes(
+                                    canonical_bytes(target_action_ids)
+                                ),
+                                "imported_product_function_invocations": sum(
+                                    product_counts.values()
+                                ),
+                                "imported_product_function_counts_sha256": sha_bytes(
+                                    canonical_bytes(product_counts)
+                                ),
+                            },
+                        }
+                owned_tree_sha256 = owner_state["owned_tree_sha256"]
+                if owned_tree_sha256 is None:
+                    raise EvidenceError("capability owner inventory was not bound")
                 if not preflight["ready"]:
-                    results.append(_empty_result(capability, "blocked", preflight))
+                    results.append(
+                        _empty_result(
+                            capability,
+                            "blocked",
+                            preflight,
+                            owned_tree_sha256=owned_tree_sha256,
+                        )
+                    )
                     continue
-                namespace = temp_base / NAMESPACES[capability_id]
-                if namespace.exists():
-                    raise EvidenceError(f"non-absent namespace: {namespace.name}")
-                if scan_temp_root(temp_base):
-                    raise ConfinementError(
-                        "temporary root contains an unexpected sibling"
-                    )
-                _ACTIVE_NAMESPACE = namespace
-                namespace.mkdir(mode=0o700)
-                fixture = strict_json(repo_file(capability["fixture_manifest"]["path"]))
-                _ACTIVE_PRODUCT_CALLS = {}
-                _ACTIVE_ACTION_COUNTS = {}
-                try:
-                    observation, negatives = ADAPTERS[capability["adapter"]](
-                        namespace, fixture
-                    )
-                    product_counts = dict(sorted(_ACTIVE_PRODUCT_CALLS.items()))
-                    target_action_ids = list(_ACTIVE_ACTION_COUNTS)
-                finally:
-                    _ACTIVE_PRODUCT_CALLS = None
-                    _ACTIVE_ACTION_COUNTS = None
-                if len(target_action_ids) != 7:
-                    raise EvidenceError(
-                        f"observed target action count drift for {capability_id}: "
-                        f"{len(target_action_ids)}"
-                    )
-                short_id = capability_id.split(".")[2][:2]
-                if product_counts != EXPECTED_PRODUCT_FUNCTION_COUNTS[short_id]:
-                    raise EvidenceError(
-                        f"imported product-function count drift for {capability_id}"
-                    )
-                if sum(product_counts.values()) <= 0:
-                    raise EvidenceError(
-                        f"passing capability has no product calls: {capability_id}"
-                    )
-                owned_tree = scan_temp_root(temp_base)
-                require_exact_owned_tree(owned_tree, namespace.name)
-                owned_tree_sha256 = sha_bytes(canonical_bytes(owned_tree))
-                observation_hash = sha_bytes(canonical_bytes(observation))
-                row = {
-                    "capability_id": capability_id,
-                    "oracle_id": capability["oracle_id"],
-                    "status": "pass",
-                    "independent_runs": 2,
-                    "bounded_capability_actions": len(target_action_ids),
-                    "requests": len(target_action_ids),
-                    "target_action_ids": target_action_ids,
-                    "imported_product_function_invocations": sum(
-                        product_counts.values()
-                    ),
-                    "imported_product_function_counts": product_counts,
-                    "deterministic_output": True,
-                    "fixture_sha256": capability["fixture_manifest"]["sha256"],
-                    "run_output_sha256": [observation_hash, observation_hash],
-                    "positive_observations": observation,
-                    "adjacent_negatives": negatives,
-                    "cleanup": {
-                        "namespace": namespace.name,
-                        "pre_state_captured": "absent",
-                        "temporary_files_only": True,
-                        "removed": True,
-                        "siblings_unchanged": True,
-                        "owned_tree_sha256": owned_tree_sha256,
-                        "post_cleanup_tree_sha256": EMPTY_TREE_SHA256,
-                    },
-                    "runtime_evidence_binding": {
-                        "captured_at_utc": captured,
-                        "executor_sha256": bindings["executor_sha256"],
-                        "contract_sha256": bindings["contract_sha256"],
-                        "current_oracle_sha256": capability["current_oracle_sha256"],
-                        "current_ledger_row_sha256": capability[
-                            "current_ledger_row_sha256"
-                        ],
-                        "fixture_sha256": capability["fixture_manifest"]["sha256"],
-                        "capability_evidence_sha256": observation_hash,
-                        "target_case_actions": len(target_action_ids),
-                        "requests": len(target_action_ids),
-                        "target_action_ids_sha256": sha_bytes(
-                            canonical_bytes(target_action_ids)
-                        ),
-                        "imported_product_function_invocations": sum(
-                            product_counts.values()
-                        ),
-                        "imported_product_function_counts_sha256": sha_bytes(
-                            canonical_bytes(product_counts)
-                        ),
-                    },
-                }
-                shutil.rmtree(namespace)
-                if namespace.exists():
-                    raise EvidenceError(f"cleanup failed: {namespace.name}")
-                _ACTIVE_NAMESPACE = None
-                post_cleanup_tree = scan_temp_root(temp_base)
-                if post_cleanup_tree:
-                    raise ConfinementError(
-                        f"temporary root not empty after {namespace.name} cleanup"
-                    )
+                if row is None:
+                    raise EvidenceError("passing capability result was not captured")
+                if row["cleanup"]["owned_tree_sha256"] != owned_tree_sha256:
+                    raise EvidenceError("capability owner inventory digest drift")
                 results.append(row)
         if any(activity_counts.values()):
             raise ConfinementError(
@@ -2402,8 +2575,6 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
                 or row["run_output_sha256"]
                 or row["adjacent_negatives"]
                 or row["runtime_evidence_binding"]
-                or cleanup["pre_state_captured"] != "not_created"
-                or cleanup["owned_tree_sha256"] is not None
             ):
                 raise EvidenceError(f"non-passing row drift: {capability_id}")
             if status == "blocked":
@@ -2412,10 +2583,16 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
                     capability_id not in preflight
                     or preflight[capability_id]["ready"] is not False
                     or row["positive_observations"] != expected_observation
+                    or cleanup["pre_state_captured"] != "absent"
+                    or cleanup["owned_tree_sha256"] is None
                 ):
                     raise EvidenceError(f"blocked preflight drift: {capability_id}")
-            elif row["positive_observations"]:
-                raise EvidenceError(f"inert row observation drift: {capability_id}")
+            elif (
+                row["positive_observations"]
+                or cleanup["pre_state_captured"] != "not_created"
+                or cleanup["owned_tree_sha256"] is not None
+            ):
+                raise EvidenceError(f"inert row drift: {capability_id}")
         else:  # Schema should make this unreachable.
             raise EvidenceError(f"unknown capability status: {status}")
 

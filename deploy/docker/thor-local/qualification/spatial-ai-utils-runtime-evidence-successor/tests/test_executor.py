@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
+import os
 from pathlib import Path
 import socket
+import sys
 import tempfile
 import time
 from types import ModuleType
@@ -103,6 +106,132 @@ def test_static_fixture_and_source_locks_match() -> None:
         )
         for lock in row["source_controls"]:
             assert EXECUTOR.sha_file(REPO_ROOT / lock["path"]) == lock["sha256"]
+
+
+def test_preflight_confinement_error_preserves_exact_escaped_path(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    outside = tmp_path / "outside-config"
+
+    def mutating_import(_name: str) -> ModuleType:
+        outside.mkdir()
+        return ModuleType("never-returned")
+
+    monkeypatch.setattr(EXECUTOR.importlib, "import_module", mutating_import)
+    counters = {key: 0 for key in EXECUTOR.EXTERNAL_ACTIVITY_KEYS}
+    with (
+        EXECUTOR.external_activity_denied(counters),
+        pytest.raises(EXECUTOR.ConfinementError) as captured,
+    ):
+        EXECUTOR._module_preflight("geometry_projection")
+    assert "mkdir" in str(captured.value)
+    assert f"path={json.dumps(os.fspath(outside))}" in str(captured.value)
+    assert counters["filesystem_escape_attempts"] == 1
+    assert not outside.exists()
+
+
+def test_nuscenes_import_masks_and_restores_test_only_numpy_namespace(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    numpy = ModuleType("numpy")
+    monkeypatch.setitem(sys.modules, "numpy", numpy)
+    observed: list[ModuleType] = []
+
+    def import_nuscenes(name: str) -> ModuleType:
+        assert name == "nuscenes"
+        testing = numpy.__dict__["testing"]
+        assert isinstance(testing, ModuleType)
+        assert testing.__name__ == "numpy.testing"
+        assert testing.__all__ == []
+        observed.append(testing)
+        return ModuleType(name)
+
+    monkeypatch.setattr(EXECUTOR.importlib, "import_module", import_nuscenes)
+    with EXECUTOR.deterministic_dependency_import("nuscenes"):
+        module = EXECUTOR.importlib.import_module("nuscenes")
+    assert module.__name__ == "nuscenes"
+    assert len(observed) == 1
+    assert "testing" not in numpy.__dict__
+
+
+def test_capability_owner_keeps_cache_owned_through_adapter_and_cleans_exactly(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    temp_base = tmp_path / "executor-root"
+    temp_base.mkdir()
+    previous = {
+        "MPLCONFIGDIR": os.environ.get("MPLCONFIGDIR"),
+        "XDG_CACHE_HOME": os.environ.get("XDG_CACHE_HOME"),
+        "XDG_CONFIG_HOME": os.environ.get("XDG_CONFIG_HOME"),
+        "MPL_IGNORE_SYSTEM_FONTS": os.environ.get("MPL_IGNORE_SYSTEM_FONTS"),
+        "LOKY_MAX_CPU_COUNT": os.environ.get("LOKY_MAX_CPU_COUNT"),
+    }
+
+    def cache_initializing_import(name: str) -> ModuleType:
+        namespace = EXECUTOR._ACTIVE_NAMESPACE
+        assert namespace is not None
+        for key in ("MPLCONFIGDIR", "XDG_CACHE_HOME", "XDG_CONFIG_HOME"):
+            configured = Path(os.environ[key])
+            configured.relative_to(namespace)
+        assert os.environ["MPL_IGNORE_SYSTEM_FONTS"] == "1"
+        assert os.environ["LOKY_MAX_CPU_COUNT"] == "1"
+        matplotlib = Path(os.environ["MPLCONFIGDIR"])
+        matplotlib.mkdir(parents=True)
+        (matplotlib / "fontlist-v-test.json").write_text("{}\n", encoding="utf-8")
+        module = ModuleType(name)
+        module.__version__ = "test"
+        return module
+
+    monkeypatch.setattr(EXECUTOR.importlib, "import_module", cache_initializing_import)
+    counters = {key: 0 for key in EXECUTOR.EXTERNAL_ACTIVITY_KEYS}
+    with EXECUTOR.external_activity_denied(counters):
+        with EXECUTOR.capability_owner_namespace(
+            temp_base, EXECUTOR.SHORT_IDS["01"]
+        ) as owner_state:
+            preflight = EXECUTOR._module_preflight("geometry_projection")
+            work = owner_state["work"]
+            work.mkdir()
+            (work / "adapter-output.json").write_text("{}\n", encoding="utf-8")
+            # Matplotlib memoizes its cache directory. A lazy write after preflight
+            # must remain inside the same owner for the full adapter lifetime.
+            matplotlib = Path(os.environ["MPLCONFIGDIR"])
+            (matplotlib / "lazy-fontlist.json").write_text("{}\n", encoding="utf-8")
+    assert preflight["ready"] is True
+    assert not any(counters.values())
+    assert owner_state["owned_tree_sha256"] is not None
+    assert owner_state["entry_count"] >= 6
+    assert owner_state["aggregate_bytes"] > 0
+    assert EXECUTOR._ACTIVE_NAMESPACE is None
+    assert EXECUTOR.scan_temp_root(temp_base) == {}
+    assert {key: os.environ.get(key) for key in previous} == previous
+
+
+def test_blocked_preflight_owner_is_bound_and_removed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    blocked = {
+        "ready": False,
+        "required_modules": ["numpy"],
+        "observed_versions": {},
+        "missing_modules": ["synthetic-missing"],
+        "import_failures": [],
+    }
+    monkeypatch.setattr(EXECUTOR, "_module_preflight", lambda _adapter: blocked)
+    result = EXECUTOR.execute(
+        EXECUTOR.load_contract(),
+        {EXECUTOR.SHORT_IDS["01"]},
+        allow_dirty_development=True,
+    )
+    row = next(
+        item
+        for item in result["capability_results"]
+        if item["capability_id"] == EXECUTOR.SHORT_IDS["01"]
+    )
+    assert row["status"] == "blocked"
+    assert row["cleanup"]["namespace"] == EXECUTOR.NAMESPACES[EXECUTOR.SHORT_IDS["01"]]
+    assert row["cleanup"]["pre_state_captured"] == "absent"
+    assert row["cleanup"]["owned_tree_sha256"] is not None
+    assert result["confinement"]["filesystem_escape_attempts"] == 0
 
 
 def test_lazy_visualization_source_lock_is_exactly_scoped_to_02_and_06() -> None:
@@ -394,7 +523,7 @@ def test_sibling_escape_is_denied_and_executor_cleans_up(
     def escaping_adapter(root: Path, _fixture: dict) -> tuple[dict, list]:
         EXECUTOR._target_action(
             "positive-run-1",
-            lambda: (root.parent / "escaped-sibling").write_text(
+            lambda: (root.parent.parent / "escaped-sibling").write_text(
                 "escape", encoding="utf-8"
             ),
         )
@@ -421,7 +550,7 @@ def test_combined_fifo_spawn_and_socket_alias_bypass_is_denied_and_cleaned(
     denied: list[str] = []
 
     def attacking_adapter(root: Path, fixture: dict) -> tuple[dict, list]:
-        escaped_fifo = root.parent / "escaped-sibling.fifo"
+        escaped_fifo = root.parent.parent / "escaped-sibling.fifo"
         escaped_paths.append(escaped_fifo)
         attacks = (
             lambda: EXECUTOR.os.mkfifo(escaped_fifo),
