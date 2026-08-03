@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "mode", "status", "captured_at_utc", "bindings", "selection", "environment_receipt", "producer_receipt", "accounting", "confinement", "cleanup", "promotion"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-spatial-ai-offline-integrated-runtime-v1"},
+    "mode": {"const": "offline_environment_with_canonical_spatial_ai_all"},
+    "status": {"const": "pass"},
+    "captured_at_utc": {"type": "string", "format": "date-time"},
+    "bindings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["environment_receipt_sha256", "producer_lock_sha256", "producer_contract_sha256", "producer_executor_sha256", "producer_result_schema_sha256", "import_sensitive_manifests_sha256", "producer_receipt_sha256", "execution_sha256"],
+      "properties": {
+        "environment_receipt_sha256": {"$ref": "#/$defs/sha256"}, "producer_lock_sha256": {"$ref": "#/$defs/sha256"}, "producer_contract_sha256": {"$ref": "#/$defs/sha256"}, "producer_executor_sha256": {"$ref": "#/$defs/sha256"}, "producer_result_schema_sha256": {"$ref": "#/$defs/sha256"}, "import_sensitive_manifests_sha256": {"$ref": "#/$defs/sha256"}, "producer_receipt_sha256": {"$ref": "#/$defs/sha256"}, "execution_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "selection": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "capability_ids"],
+      "properties": {"kind": {"const": "all"}, "capability_ids": {"type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true, "items": {"type": "string", "pattern": "^manifest-entry\\.spatial-ai-utils\\.0[0-6]-"}}}
+    },
+    "environment_receipt": {"type": "object"},
+    "producer_receipt": {"type": "object"},
+    "accounting": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capabilities_passed", "bounded_capability_actions", "requests", "product_function_calls", "independent_positive_runs", "adjacent_negatives"],
+      "properties": {"capabilities_passed": {"const": 7}, "bounded_capability_actions": {"const": 49}, "requests": {"const": 49}, "product_function_calls": {"const": 76}, "independent_positive_runs": {"const": 14}, "adjacent_negatives": {"const": 35}}
+    },
+    "confinement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["inherited_kernel_network_denial", "import_shadow_scan_passed", "outer_timeout_seconds", "network_calls", "docker_calls", "service_lifecycle_calls", "model_accesses", "downloads", "warehouse_sample_accesses", "product_subprocess_calls", "filesystem_escape_attempts"],
+      "properties": {"inherited_kernel_network_denial": {"const": true}, "import_shadow_scan_passed": {"const": true}, "outer_timeout_seconds": {"const": 930}, "network_calls": {"const": 0}, "docker_calls": {"const": 0}, "service_lifecycle_calls": {"const": 0}, "model_accesses": {"const": 0}, "downloads": {"const": 0}, "warehouse_sample_accesses": {"const": 0}, "product_subprocess_calls": {"const": 0}, "filesystem_escape_attempts": {"const": 0}}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["materializer_temporary_root", "materializer_temporary_root_removed", "producer_temporary_root_removed", "producer_bundle_unchanged", "canonical_controls_unchanged", "product_sources_unchanged", "import_sensitive_roots_unchanged"],
+      "properties": {"materializer_temporary_root": {"type": "string", "pattern": "^vss-spatial-ai-offline-env\\."}, "materializer_temporary_root_removed": {"const": true}, "producer_temporary_root_removed": {"const": true}, "producer_bundle_unchanged": {"const": true}, "canonical_controls_unchanged": {"const": true}, "product_sources_unchanged": {"const": true}, "import_sensitive_roots_unchanged": {"const": true}}
+    },
+    "promotion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["canonical_parity_mutated", "runtime_producer_mutated", "receipt_is_runtime_evidence", "aggregate_is_promotable"],
+      "properties": {"canonical_parity_mutated": {"const": false}, "runtime_producer_mutated": {"const": false}, "receipt_is_runtime_evidence": {"const": false}, "aggregate_is_promotable": {"const": false}}
+    }
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "producer_binding_commit", "producer_acknowledgement", "capability_ids", "producer_bundle", "canonical_controls", "fixture_controls", "product_source_controls", "product_root_manifest", "producer_root_manifest", "expectations"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-spatial-ai-offline-integrated-runtime-v1"},
+    "producer_binding_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "producer_acknowledgement": {"const": "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE"},
+    "capability_ids": {"type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true, "items": {"type": "string", "pattern": "^manifest-entry\\.spatial-ai-utils\\.0[0-6]-"}},
+    "producer_bundle": {"$ref": "#/$defs/fourFiles"},
+    "canonical_controls": {"$ref": "#/$defs/twoFiles"},
+    "fixture_controls": {"$ref": "#/$defs/sevenFiles"},
+    "product_source_controls": {"type": "array", "minItems": 24, "maxItems": 24, "items": {"$ref": "#/$defs/file"}},
+    "product_root_manifest": {"type": "array", "minItems": 252, "maxItems": 252, "items": {"$ref": "#/$defs/file"}},
+    "producer_root_manifest": {"type": "array", "minItems": 14, "maxItems": 14, "items": {"$ref": "#/$defs/file"}},
+    "expectations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capabilities_passed", "bounded_capability_actions", "requests", "product_function_calls", "independent_positive_runs", "adjacent_negatives", "product_function_calls_by_capability"],
+      "properties": {
+        "capabilities_passed": {"const": 7}, "bounded_capability_actions": {"const": 49}, "requests": {"const": 49}, "product_function_calls": {"const": 76}, "independent_positive_runs": {"const": 14}, "adjacent_negatives": {"const": 35},
+        "product_function_calls_by_capability": {
+          "type": "object", "additionalProperties": false,
+          "required": ["manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping", "manifest-entry.spatial-ai-utils.01-3d-2d-geometry", "manifest-entry.spatial-ai-utils.02-multiview-visualization", "manifest-entry.spatial-ai-utils.03-detection-map", "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count", "manifest-entry.spatial-ai-utils.05-nvschema-conversion", "manifest-entry.spatial-ai-utils.06-video-frame-tools"],
+          "properties": {
+            "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping": {"const": 11},
+            "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": {"const": 9},
+            "manifest-entry.spatial-ai-utils.02-multiview-visualization": {"const": 7},
+            "manifest-entry.spatial-ai-utils.03-detection-map": {"const": 11},
+            "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count": {"const": 16},
+            "manifest-entry.spatial-ai-utils.05-nvschema-conversion": {"const": 9},
+            "manifest-entry.spatial-ai-utils.06-video-frame-tools": {"const": 13}
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "file": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "twoFiles": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/file"}},
+    "fourFiles": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/file"}},
+    "sevenFiles": {"type": "array", "minItems": 7, "maxItems": 7, "items": {"$ref": "#/$defs/file"}}
+  }
+}

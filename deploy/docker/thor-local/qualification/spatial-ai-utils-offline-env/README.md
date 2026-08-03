@@ -31,6 +31,18 @@ The schemas are fail-closed:
 
 - `lock.schema.json` requires exactly 23 roots and 56 artifacts.
 - `receipt.schema.json` accepts only a fully successful execution receipt.
+- `producer-lock.json` binds the reviewed canonical producer, its four program
+  files, seven tiny fixtures, 24 explicit product source controls, both canonical
+  parity documents, a complete 252-file manifest of the product root, and a
+  complete 14-file manifest of the producer root, including all tracked package
+  data. The 303 lock rows cover 268 unique files.
+  `producer-lock.schema.json` fixes their
+  cardinalities and the all-seven accounting contract. Its binding commit must
+  resolve to a real commit ancestor of the current checkout, and every locked
+  file must have the same content hash in that commit and in the worktree.
+- `integrated-receipt.schema.json` accepts only the combined all-seven success
+  shape; the materializer additionally derives every aggregate and nested
+  binding independently.
 - `materializer.py` accepts only the canonical adjacent `lock.json`; an
   alternate copy cannot be substituted through `--lock`.
 
@@ -49,7 +61,7 @@ from an external trust authority.
 The default invocation is read-only and prints an inert plan:
 
 ```bash
-python3 deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/materializer.py
+python3 -I deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/materializer.py
 ```
 
 Execution requires both `--execute` and the literal acknowledgement. Child
@@ -65,13 +77,20 @@ access, download, or package-index request is part of the code path. Cache and
 work directories containing a `warehouse`, `model`, or `models` path component
 are rejected.
 
+Integrated mode also verifies the exact Git-tracked path sets under the entire
+product and producer roots before the first product import. Its recursive
+live-tree scan rejects
+unlisted package data, untracked Python files, `.pyc`/`.pyo`, every native-module
+suffix recognized by the running interpreter, any `__pycache__`, symlink, or
+special file. Ignored caches elsewhere in the repository are outside this gate.
+
 ## Execute on Thor
 
 Choose a new receipt path; publishing is exclusive and will not overwrite an
 existing file:
 
 ```bash
-python3 deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/materializer.py \
+python3 -I deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/materializer.py \
   --execute \
   --acknowledge I_ACKNOWLEDGE_EPHEMERAL_OFFLINE_SPATIAL_AI_ENV \
   --cache-root "$HOME/.cache/pip" \
@@ -98,19 +117,59 @@ The receipt is qualification evidence for this offline environment package. It
 is explicitly not VSS runtime evidence and does not promote or mutate canonical
 parity results or the existing runtime evidence producer.
 
+## Integrated all-seven execution
+
+The reviewed integrated mode builds the same private environment and then calls
+only the adjacent canonical SpatialAI producer. The CLI intentionally exposes no
+arbitrary command, producer path, contract path, partial selection, or dirty-tree
+override. It always supplies all seven full capability IDs, uses the producer's
+literal acknowledgement, inherits the kernel network-denial filter, and applies
+a 930-second outer deadline around the producer's own 900-second product deadline.
+
+Run it only from a completely clean committed checkout; the canonical producer
+fails closed otherwise. The product and producer trees must also contain no
+ignored bytecode/native-module shadows or other unlisted files. Direct CLI use
+without Python isolated mode (`-I`) is rejected before any shadowable import:
+
+```bash
+python3 -I deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/materializer.py \
+  --execute \
+  --acknowledge I_ACKNOWLEDGE_EPHEMERAL_OFFLINE_SPATIAL_AI_ENV \
+  --run-canonical-spatial-ai-producer \
+  --producer-selection all \
+  --producer-acknowledge I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE \
+  --cache-root "$HOME/.cache/pip" \
+  --work-parent /tmp \
+  --output /tmp/thor-spatial-ai-integrated-receipt.json
+```
+
+Success means exactly seven passing capabilities, 49 bounded actions, 49
+requests, 76 imported product function calls, 14 independent positive runs, 35
+rejected adjacent negatives, and zero network, Docker, service lifecycle, model,
+download, Warehouse sample, product subprocess, or filesystem-escape activity.
+The materializer independently validates the child schema and these values,
+rehashes the complete producer/source/canonical lock before and after execution,
+removes the materializer and producer temporary roots, then exclusively publishes
+one mode-0600 integrated receipt outside the repository. The nested and combined
+receipts remain explicitly non-promoting.
+
 ## Tests
 
 The tests need no network or wheel downloads:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3 \
+PYTHONDONTWRITEBYTECODE=1 python3 -I \
   deploy/docker/thor-local/qualification/spatial-ai-utils-offline-env/test_materializer.py
 ```
 
-They cover canonical-lock enforcement, the 56-artifact invariant, opaque cache
-paths, exact wheelhouse copying, hash drift, symlink rejection, both network
-denial layers, cleanup after an injected failure, inert defaults, exclusive
-receipt publication, and the no-wheel-binaries repository rule.
+They cover canonical-lock enforcement, the 56-artifact invariant, all 303
+producer-lock rows and both exact tracked root manifests, binding-commit ancestry and
+blob identity, manifest omissions/additions, ignored bytecode and native-module
+shadows, untracked code/data, symlinks and special files, opaque cache paths,
+exact wheelhouse copying, hash drift, both network denial layers, the 930-second
+timeout, cleanup after an injected failure, the exact all-seven child invocation,
+aggregate and row mutation rejection, inert defaults, bounded CLI rules, secure
+exclusive receipt publication, and the no-wheel-binaries repository rule.
 
 ## Lock maintenance
 

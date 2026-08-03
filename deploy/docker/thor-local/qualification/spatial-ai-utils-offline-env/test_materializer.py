@@ -6,11 +6,13 @@ from __future__ import annotations
 import contextlib
 import copy
 import hashlib
+import importlib.machinery
 import importlib.util
 import io
 import json
 import os
 from pathlib import Path
+import py_compile
 import shutil
 import stat
 import subprocess
@@ -113,6 +115,213 @@ def make_valid_receipt() -> tuple[
     return receipt, lock, scan, temporary_root
 
 
+def make_valid_producer_receipt(
+    root: Path,
+) -> tuple[dict[str, object], dict[str, object]]:
+    lock = materializer.load_producer_lock()
+    contract = materializer.strict_json(materializer.PRODUCER_CONTRACT_PATH)
+    contract_by_id = {row["capability_id"]: row for row in contract["capabilities"]}
+    calls = lock["expectations"]["product_function_calls_by_capability"]
+    captured_at = "2026-08-03T01:48:06.323881Z"
+    executor_sha = materializer._producer_lock_row(
+        lock, materializer.PRODUCER_EXECUTOR_PATH
+    )["sha256"]
+    contract_sha = materializer._producer_lock_row(
+        lock, materializer.PRODUCER_CONTRACT_PATH
+    )["sha256"]
+    rows = []
+    for capability_id in materializer.CAPABILITY_IDS:
+        capability = contract_by_id[capability_id]
+        short_id = capability_id.split(".")[2][:2]
+        count = calls[capability_id]
+        target_action_ids = [
+            "positive-run-1",
+            "positive-run-2",
+            *materializer.NEGATIVE_CASE_IDS[short_id],
+        ]
+        positive_observations = {"synthetic": capability_id}
+        observation_hash = materializer.sha_bytes(
+            materializer.canonical_bytes(positive_observations)
+        )
+        rows.append(
+            {
+                "capability_id": capability_id,
+                "oracle_id": capability["oracle_id"],
+                "fixture_sha256": capability["fixture_manifest"]["sha256"],
+                "status": "pass",
+                "independent_runs": 2,
+                "bounded_capability_actions": 7,
+                "requests": 7,
+                "target_action_ids": target_action_ids,
+                "deterministic_output": True,
+                "run_output_sha256": [observation_hash, observation_hash],
+                "adjacent_negatives": [
+                    {"case_id": case_id, "rejected": True}
+                    for case_id in materializer.NEGATIVE_CASE_IDS[short_id]
+                ],
+                "imported_product_function_invocations": count,
+                "imported_product_function_counts": materializer.PRODUCT_FUNCTION_COUNTS[
+                    short_id
+                ],
+                "positive_observations": positive_observations,
+                "cleanup": {
+                    "temporary_files_only": True,
+                    "removed": True,
+                    "siblings_unchanged": True,
+                },
+                "runtime_evidence_binding": {
+                    "captured_at_utc": captured_at,
+                    "executor_sha256": executor_sha,
+                    "contract_sha256": contract_sha,
+                    "current_oracle_sha256": capability["current_oracle_sha256"],
+                    "current_ledger_row_sha256": capability[
+                        "current_ledger_row_sha256"
+                    ],
+                    "fixture_sha256": capability["fixture_manifest"]["sha256"],
+                    "capability_evidence_sha256": observation_hash,
+                    "target_case_actions": 7,
+                    "requests": 7,
+                    "target_action_ids_sha256": materializer.sha_bytes(
+                        materializer.canonical_bytes(target_action_ids)
+                    ),
+                    "imported_product_function_invocations": count,
+                    "imported_product_function_counts_sha256": materializer.sha_bytes(
+                        materializer.canonical_bytes(
+                            materializer.PRODUCT_FUNCTION_COUNTS[short_id]
+                        )
+                    ),
+                },
+            }
+        )
+    temporary_root = root / "tmp" / "vss-spatial-ai-runtime.synthetic"
+    receipt: dict[str, object] = {
+        "mode": "target_bound_offline_runtime_evidence",
+        "status": "pass",
+        "captured_at_utc": captured_at,
+        "bindings": {
+            "contract_sha256": contract_sha,
+            "executor_sha256": executor_sha,
+            "ledger_document_sha256": lock["canonical_controls"][0]["sha256"],
+            "oracle_document_sha256": lock["canonical_controls"][1]["sha256"],
+            "checkout_clean": True,
+            "checkout_head": "a" * 40,
+            "checkout_status_porcelain_sha256": materializer.sha_bytes(b""),
+            "canonical_rows_are_open_unexecuted": True,
+            "executor_ready_capabilities": materializer.EXECUTOR_READY_CAPABILITY_IDS,
+        },
+        "capability_results": rows,
+        "confinement": {
+            "bounded_capability_actions": 49,
+            "requests": 49,
+            "imported_product_function_invocations": 76,
+            "product_execution_deadline_seconds": 900,
+            "external_activity_instrumented": True,
+            "whole_temp_root_scanned": True,
+            **{key: 0 for key in materializer.EXTERNAL_ACTIVITY_KEYS},
+        },
+        "environment": {
+            "capability_preflight": {
+                capability_id: {"ready": True}
+                for capability_id in materializer.CAPABILITY_IDS
+            }
+        },
+        "cleanup": {
+            "executor_owned_temporary_root": os.fspath(temporary_root),
+            "removed": True,
+            "siblings_unchanged": True,
+        },
+        "promotion": {
+            "individual_receipt_candidates": materializer.CAPABILITY_IDS,
+            "ledger_mutation_performed": False,
+            "oracle_mutation_performed": False,
+            "external_provider_entry_touched": False,
+            "receipt_is_runtime_evidence": False,
+            "aggregate_is_promotable": False,
+        },
+    }
+    return receipt, lock
+
+
+def make_valid_integrated_receipt(
+    root: Path,
+) -> tuple[
+    dict[str, object], dict[str, object], dict[str, object], dict[str, int], str
+]:
+    environment_receipt, environment_lock, scan, temporary_root = make_valid_receipt()
+    producer_receipt, producer_lock = make_valid_producer_receipt(root)
+    producer_raw = (
+        json.dumps(producer_receipt, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+    accounting = {
+        key: producer_lock["expectations"][key]
+        for key in (
+            "capabilities_passed",
+            "bounded_capability_actions",
+            "requests",
+            "product_function_calls",
+            "independent_positive_runs",
+            "adjacent_negatives",
+        )
+    }
+    receipt: dict[str, object] = {
+        "schema_version": 1,
+        "package_id": "thor-spatial-ai-offline-integrated-runtime-v1",
+        "mode": "offline_environment_with_canonical_spatial_ai_all",
+        "status": "pass",
+        "captured_at_utc": "2026-08-03T01:48:06.323881Z",
+        "bindings": {
+            "environment_receipt_sha256": materializer.sha_bytes(
+                materializer.canonical_bytes(environment_receipt)
+            ),
+            "producer_lock_sha256": materializer.sha_file(
+                materializer.PRODUCER_LOCK_PATH
+            ),
+            "producer_contract_sha256": materializer._producer_lock_row(
+                producer_lock, materializer.PRODUCER_CONTRACT_PATH
+            )["sha256"],
+            "producer_executor_sha256": materializer._producer_lock_row(
+                producer_lock, materializer.PRODUCER_EXECUTOR_PATH
+            )["sha256"],
+            "producer_result_schema_sha256": materializer._producer_lock_row(
+                producer_lock, materializer.PRODUCER_RESULT_SCHEMA_PATH
+            )["sha256"],
+            "import_sensitive_manifests_sha256": materializer._import_sensitive_manifests_sha256(
+                producer_lock
+            ),
+            "producer_receipt_sha256": materializer.sha_bytes(producer_raw),
+        },
+        "selection": {"kind": "all", "capability_ids": materializer.CAPABILITY_IDS},
+        "environment_receipt": environment_receipt,
+        "producer_receipt": producer_receipt,
+        "accounting": accounting,
+        "confinement": {
+            "inherited_kernel_network_denial": True,
+            "import_shadow_scan_passed": True,
+            "outer_timeout_seconds": 930,
+            **{key: 0 for key in materializer.EXTERNAL_ACTIVITY_KEYS},
+        },
+        "cleanup": {
+            "materializer_temporary_root": temporary_root,
+            "materializer_temporary_root_removed": True,
+            "producer_temporary_root_removed": True,
+            "producer_bundle_unchanged": True,
+            "canonical_controls_unchanged": True,
+            "product_sources_unchanged": True,
+            "import_sensitive_roots_unchanged": True,
+        },
+        "promotion": {
+            "canonical_parity_mutated": False,
+            "runtime_producer_mutated": False,
+            "receipt_is_runtime_evidence": False,
+            "aggregate_is_promotable": False,
+        },
+    }
+    receipt["bindings"]["execution_sha256"] = materializer._integrated_execution_sha256(
+        receipt
+    )
+    return receipt, environment_lock, producer_lock, scan, temporary_root
+
+
 class LockTests(unittest.TestCase):
     def test_canonical_lock_and_inventory(self) -> None:
         lock = materializer.load_lock()
@@ -138,6 +347,119 @@ class LockTests(unittest.TestCase):
             if path.is_file() and path.suffix in {".whl", ".body"}
         ]
         self.assertEqual([], forbidden)
+
+    def test_producer_lock_is_contract_derived_and_complete(self) -> None:
+        lock = materializer.load_producer_lock()
+        self.assertEqual(4, len(lock["producer_bundle"]))
+        self.assertEqual(2, len(lock["canonical_controls"]))
+        self.assertEqual(7, len(lock["fixture_controls"]))
+        self.assertEqual(24, len(lock["product_source_controls"]))
+        self.assertEqual(252, len(lock["product_root_manifest"]))
+        self.assertEqual(14, len(lock["producer_root_manifest"]))
+        self.assertEqual(76, lock["expectations"]["product_function_calls"])
+
+    def test_producer_lock_hash_mutation_fails_closed(self) -> None:
+        lock = materializer.load_producer_lock()
+        forged = copy.deepcopy(lock)
+        forged["fixture_controls"][0]["sha256"] = "0" * 64
+        original_strict_json = materializer.strict_json
+
+        def substitute(path: Path) -> object:
+            if path == materializer.PRODUCER_LOCK_PATH:
+                return forged
+            return original_strict_json(path)
+
+        with (
+            mock.patch.object(materializer, "strict_json", side_effect=substitute),
+            self.assertRaisesRegex(materializer.MaterializationError, "fixture lock"),
+        ):
+            materializer.load_producer_lock()
+
+    def test_zero_and_nonexistent_binding_commits_fail_closed(self) -> None:
+        lock = materializer.load_producer_lock()
+        original_strict_json = materializer.strict_json
+        for commit in ("0" * 40, "f" * 40):
+            forged = copy.deepcopy(lock)
+            forged["producer_binding_commit"] = commit
+
+            def substitute(path: Path) -> object:
+                if path == materializer.PRODUCER_LOCK_PATH:
+                    return forged
+                return original_strict_json(path)
+
+            with (
+                self.subTest(commit=commit),
+                mock.patch.object(materializer, "strict_json", side_effect=substitute),
+                self.assertRaisesRegex(
+                    materializer.MaterializationError, "commit object"
+                ),
+            ):
+                materializer.load_producer_lock()
+
+    def test_nonancestor_binding_commit_fails_closed(self) -> None:
+        commit = "a" * 40
+        responses = (
+            subprocess.CompletedProcess(
+                ["git", "rev-parse"], 0, stdout=commit + "\n", stderr=""
+            ),
+            subprocess.CompletedProcess(["git", "merge-base"], 1, stdout="", stderr=""),
+        )
+        with (
+            mock.patch.object(materializer.subprocess, "run", side_effect=responses),
+            self.assertRaisesRegex(
+                materializer.MaterializationError, "not an ancestor"
+            ),
+        ):
+            materializer._validated_ancestor_commit(commit)
+
+    def test_binding_commit_blob_drift_fails_closed(self) -> None:
+        lock = materializer.load_producer_lock()
+        with (
+            mock.patch.object(
+                materializer,
+                "_validated_ancestor_commit",
+                return_value=lock["producer_binding_commit"],
+            ),
+            mock.patch.object(materializer, "_blob_at_commit", return_value=b"drift"),
+            self.assertRaisesRegex(materializer.MaterializationError, "blob drift"),
+        ):
+            materializer._validate_producer_binding_commit(lock)
+
+    def test_import_manifest_omission_and_addition_fail_closed(self) -> None:
+        lock = materializer.load_producer_lock()
+        tracked_by_root = {
+            materializer.PRODUCT_ROOT_REL: [
+                row["path"] for row in lock["product_root_manifest"]
+            ],
+            materializer.PRODUCER_ROOT_REL: [
+                row["path"] for row in lock["producer_root_manifest"]
+            ],
+        }
+        for key, tracked in (
+            ("product_root_manifest", tracked_by_root[materializer.PRODUCT_ROOT_REL]),
+            (
+                "producer_root_manifest",
+                tracked_by_root[materializer.PRODUCER_ROOT_REL],
+            ),
+        ):
+            for forged_paths in (tracked[:-1], [*tracked, tracked[-1] + ".added"]):
+                forged = copy.deepcopy(lock)
+                forged[key] = [
+                    {"path": path, "sha256": "0" * 64} for path in forged_paths
+                ]
+                with (
+                    self.subTest(key=key, count=len(forged_paths)),
+                    mock.patch.object(
+                        materializer,
+                        "_tracked_root_paths",
+                        side_effect=lambda root: tracked_by_root[root],
+                    ),
+                    mock.patch.object(materializer, "_verify_import_tree"),
+                    self.assertRaisesRegex(
+                        materializer.MaterializationError, "manifest"
+                    ),
+                ):
+                    materializer.verify_import_roots(forged)
 
 
 class CacheResolutionTests(unittest.TestCase):
@@ -238,6 +560,7 @@ class ConfinementTests(unittest.TestCase):
                     "build_environment",
                     side_effect=materializer.MaterializationError("injected"),
                 ),
+                mock.patch.object(materializer, "require_isolated_execution"),
             ):
                 with self.assertRaisesRegex(
                     materializer.MaterializationError, "injected"
@@ -245,6 +568,285 @@ class ConfinementTests(unittest.TestCase):
                     materializer.materialize(lock, [parent], parent)
             names = sorted(path.name for path in parent.iterdir())
             self.assertEqual(["source.body"], names)
+
+    def test_child_timeout_is_a_closed_failure(self) -> None:
+        with (
+            mock.patch.object(
+                materializer.subprocess,
+                "run",
+                side_effect=subprocess.TimeoutExpired(["python"], 930),
+            ),
+            self.assertRaisesRegex(materializer.MaterializationError, "930-second"),
+        ):
+            materializer.run_child(["python"], {}, Path("/tmp"), timeout=930)
+
+    def test_valid_ignored_bytecode_is_rejected_in_import_root(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "module.py"
+            source.write_text("VALUE = 1\n", encoding="utf-8")
+            cache = root / "__pycache__"
+            cache.mkdir()
+            py_compile.compile(
+                os.fspath(source),
+                cfile=os.fspath(cache / "module.cpython-312.pyc"),
+                doraise=True,
+            )
+            with self.assertRaisesRegex(
+                materializer.MaterializationError, "__pycache__"
+            ):
+                materializer._verify_import_tree(root, {"module.py"})
+
+    def test_fake_native_extension_and_untracked_python_are_rejected(self) -> None:
+        for name in (
+            "shadow" + importlib.machinery.EXTENSION_SUFFIXES[0],
+            "shadow.py",
+        ):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                (root / "listed.py").write_text("VALUE = 1\n", encoding="utf-8")
+                (root / name).write_bytes(b"shadow")
+                with self.assertRaisesRegex(
+                    materializer.MaterializationError, "executable import shadow"
+                ):
+                    materializer._verify_import_tree(root, {"listed.py"})
+
+    def test_product_and_producer_top_level_native_shadows_are_rejected(self) -> None:
+        for shadow in (
+            "numpy" + importlib.machinery.EXTENSION_SUFFIXES[0],
+            "jsonschema" + importlib.machinery.EXTENSION_SUFFIXES[0],
+        ):
+            with (
+                self.subTest(shadow=shadow),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                root = Path(directory)
+                (root / "listed.txt").write_text("tracked\n", encoding="utf-8")
+                (root / shadow).write_bytes(b"shadow")
+                with self.assertRaisesRegex(
+                    materializer.MaterializationError, "executable import shadow"
+                ):
+                    materializer._verify_import_tree(root, {"listed.txt"})
+
+    def test_import_root_symlink_and_special_file_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "listed.py"
+            target.write_text("VALUE = 1\n", encoding="utf-8")
+            (root / "shadow.py").symlink_to(target)
+            with self.assertRaisesRegex(materializer.MaterializationError, "symlink"):
+                materializer._verify_import_tree(root, {"listed.py"})
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            os.mkfifo(root / "shadow")
+            with self.assertRaisesRegex(
+                materializer.MaterializationError, "special file"
+            ):
+                materializer._verify_import_tree(root, set())
+
+    def test_unlisted_package_data_and_missing_manifest_file_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "extra.json").write_text("{}\n", encoding="utf-8")
+            with self.assertRaisesRegex(
+                materializer.MaterializationError, "unlisted package data"
+            ):
+                materializer._verify_import_tree(root, set())
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(
+                materializer.MaterializationError, "manifest files are absent"
+            ):
+                materializer._verify_import_tree(Path(directory), {"missing.py"})
+
+    def test_ignored_cache_outside_import_root_is_out_of_scope(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            root = parent / "spatialai_data_utils"
+            root.mkdir()
+            (root / "listed.py").write_text("VALUE = 1\n", encoding="utf-8")
+            sibling_cache = parent / "outside" / "__pycache__"
+            sibling_cache.mkdir(parents=True)
+            cache_file = sibling_cache / "ignored.pyc"
+            cache_file.write_bytes(b"ignored outside import root")
+            materializer._verify_import_tree(root, {"listed.py"})
+            self.assertTrue(cache_file.is_file())
+
+    def test_child_environment_disables_bytecode_writes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            guard = root / "guard"
+            wheelhouse = root / "wheelhouse"
+            guard.mkdir()
+            wheelhouse.mkdir()
+            env = materializer._child_environment(root, guard, wheelhouse)
+            self.assertEqual("1", env["PYTHONDONTWRITEBYTECODE"])
+
+
+class IntegratedProducerTests(unittest.TestCase):
+    def test_exact_all_seven_bounded_invocation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tmp").mkdir()
+            receipt, lock = make_valid_producer_receipt(root)
+            captured: dict[str, object] = {}
+
+            def fake_child(
+                argv: list[str], env: dict[str, str], cwd: Path, timeout: int = 900
+            ) -> subprocess.CompletedProcess[str]:
+                captured.update(argv=argv, env=env, cwd=cwd, timeout=timeout)
+                output = Path(argv[argv.index("--output") + 1])
+                output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+                output.chmod(0o600)
+                return subprocess.CompletedProcess(argv, 0, "", "")
+
+            with (
+                mock.patch.object(materializer, "run_child", side_effect=fake_child),
+                mock.patch.object(materializer, "schema_errors", return_value=[]),
+                mock.patch.object(
+                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                ),
+            ):
+                result, _, accounting = materializer.run_canonical_producer(
+                    root / "venv/bin/python", {}, root, lock
+                )
+            argv = captured["argv"]
+            self.assertEqual(930, captured["timeout"])
+            self.assertEqual("-I", argv[1])
+            self.assertEqual(
+                materializer.CAPABILITY_IDS,
+                [
+                    argv[index + 1]
+                    for index, value in enumerate(argv)
+                    if value == "--select"
+                ],
+            )
+            self.assertNotIn("--allow-dirty-development", argv)
+            self.assertNotIn("--contract", argv)
+            self.assertEqual("pass", result["status"])
+            self.assertEqual(76, accounting["product_function_calls"])
+
+    def test_every_required_aggregate_is_independently_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tmp").mkdir()
+            receipt, lock = make_valid_producer_receipt(root)
+            with (
+                mock.patch.object(materializer, "schema_errors", return_value=[]),
+                mock.patch.object(
+                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                ),
+            ):
+                materializer.validate_producer_receipt(receipt, lock, root)
+                mutations = (
+                    ("status", "partial"),
+                    ("confinement", "requests", 48),
+                    ("confinement", "network_calls", 1),
+                    ("promotion", "aggregate_is_promotable", True),
+                    ("cleanup", "removed", False),
+                )
+                for mutation in mutations:
+                    with self.subTest(mutation=mutation):
+                        forged = copy.deepcopy(receipt)
+                        target = forged
+                        for key in mutation[:-2]:
+                            target = target[key]
+                        if len(mutation) == 2:
+                            target[mutation[0]] = mutation[1]
+                        else:
+                            target[mutation[-2]] = mutation[-1]
+                        with self.assertRaises(materializer.MaterializationError):
+                            materializer.validate_producer_receipt(forged, lock, root)
+
+    def test_row_level_positive_negative_and_call_mutations_fail(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tmp").mkdir()
+            receipt, lock = make_valid_producer_receipt(root)
+            with (
+                mock.patch.object(materializer, "schema_errors", return_value=[]),
+                mock.patch.object(
+                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                ),
+            ):
+                for key, value in (
+                    ("independent_runs", 1),
+                    ("bounded_capability_actions", 6),
+                    ("requests", 6),
+                    ("deterministic_output", False),
+                    ("imported_product_function_invocations", 10),
+                ):
+                    with self.subTest(key=key):
+                        forged = copy.deepcopy(receipt)
+                        forged["capability_results"][0][key] = value
+                        with self.assertRaises(materializer.MaterializationError):
+                            materializer.validate_producer_receipt(forged, lock, root)
+                forged = copy.deepcopy(receipt)
+                forged["capability_results"][0]["adjacent_negatives"][0]["case_id"] = (
+                    "forged-negative"
+                )
+                with self.assertRaises(materializer.MaterializationError):
+                    materializer.validate_producer_receipt(forged, lock, root)
+                forged = copy.deepcopy(receipt)
+                forged["capability_results"][0]["imported_product_function_counts"][
+                    "group.parse_moves"
+                ] = 4
+                with self.assertRaises(materializer.MaterializationError):
+                    materializer.validate_producer_receipt(forged, lock, root)
+
+    def test_locked_bundle_drift_fails_and_removes_owned_root(self) -> None:
+        environment_receipt, environment_lock, _, _ = make_valid_receipt()
+        producer_lock = materializer.load_producer_lock()
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            source, _ = make_wheel(parent, "source.body")
+            sources = {row["name"]: source for row in environment_lock["artifacts"]}
+            before = {"locked": "1" * 64}
+            after = {"locked": "2" * 64}
+            with (
+                mock.patch.object(
+                    materializer, "load_producer_lock", return_value=producer_lock
+                ),
+                mock.patch.object(materializer, "verify_import_roots"),
+                mock.patch.object(materializer, "require_isolated_execution"),
+                mock.patch.object(
+                    materializer,
+                    "_producer_snapshot",
+                    side_effect=(before, after, before),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "resolve_cache_artifacts",
+                    return_value=(sources, {"matched_artifacts": 56}),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "materialize_wheelhouse",
+                    return_value=environment_receipt["wheelhouse"],
+                ),
+                mock.patch.object(
+                    materializer,
+                    "build_environment",
+                    return_value=(
+                        environment_receipt["environment"],
+                        parent / "venv/bin/python",
+                        {},
+                    ),
+                ),
+                mock.patch.object(
+                    materializer,
+                    "run_canonical_producer",
+                    return_value=({}, "3" * 64, {}),
+                ),
+                self.assertRaisesRegex(
+                    materializer.MaterializationError, "producer bundle"
+                ),
+            ):
+                materializer.materialize(
+                    environment_lock, [parent], parent, run_producer=True
+                )
+            self.assertEqual(
+                ["source.body"], sorted(path.name for path in parent.iterdir())
+            )
 
 
 class ReceiptIntegrityTests(unittest.TestCase):
@@ -340,6 +942,118 @@ class ReceiptIntegrityTests(unittest.TestCase):
                     self.assert_mutation_rejected(section, field, value)
 
 
+class IntegratedReceiptIntegrityTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.directory = tempfile.TemporaryDirectory()
+        self.root = Path(self.directory.name)
+        (self.root / "tmp").mkdir()
+        (
+            self.receipt,
+            self.environment_lock,
+            self.producer_lock,
+            self.scan,
+            self.temporary_root,
+        ) = make_valid_integrated_receipt(self.root)
+        self.original_schema_errors = materializer.schema_errors
+
+    def tearDown(self) -> None:
+        self.directory.cleanup()
+
+    def schema_errors(self, value: object, path: Path) -> list[str]:
+        if path == materializer.PRODUCER_RESULT_SCHEMA_PATH:
+            return []
+        return self.original_schema_errors(value, path)
+
+    def validate(self, receipt: dict[str, object]) -> None:
+        with (
+            mock.patch.object(
+                materializer, "schema_errors", side_effect=self.schema_errors
+            ),
+            mock.patch.object(
+                materializer, "_checkout_state", return_value=("a" * 40, "")
+            ),
+        ):
+            materializer.validate_integrated_receipt(
+                receipt,
+                self.environment_lock,
+                self.producer_lock,
+                expected_cache_scan=self.scan,
+                expected_temporary_root=self.temporary_root,
+            )
+
+    def rebind(self, receipt: dict[str, object]) -> None:
+        receipt["bindings"]["environment_receipt_sha256"] = materializer.sha_bytes(
+            materializer.canonical_bytes(receipt["environment_receipt"])
+        )
+        receipt["bindings"]["producer_receipt_sha256"] = materializer.sha_bytes(
+            (
+                json.dumps(receipt["producer_receipt"], indent=2, sort_keys=True) + "\n"
+            ).encode("utf-8")
+        )
+        receipt["bindings"]["execution_sha256"] = (
+            materializer._integrated_execution_sha256(receipt)
+        )
+
+    def test_valid_integrated_envelope_passes_direct_validation(self) -> None:
+        self.validate(self.receipt)
+
+    def test_outer_rebinding_cannot_hide_independently_derived_mutations(self) -> None:
+        mutations = (
+            ("accounting", "capabilities_passed", 6),
+            ("confinement", "network_calls", 1),
+            ("cleanup", "producer_temporary_root_removed", False),
+            ("bindings", "producer_executor_sha256", "0" * 64),
+            ("promotion", "aggregate_is_promotable", True),
+        )
+        for section, field, value in mutations:
+            with self.subTest(section=section, field=field):
+                forged = copy.deepcopy(self.receipt)
+                forged[section][field] = value
+                self.rebind(forged)
+                with self.assertRaises(materializer.MaterializationError):
+                    self.validate(forged)
+
+    def test_nested_accounting_mutations_fail_even_after_raw_and_outer_rebind(
+        self,
+    ) -> None:
+        mutations = (
+            ("bounded_capability_actions", 6),
+            ("requests", 6),
+            ("imported_product_function_invocations", 10),
+            ("independent_runs", 1),
+        )
+        for field, value in mutations:
+            with self.subTest(field=field):
+                forged = copy.deepcopy(self.receipt)
+                forged["producer_receipt"]["capability_results"][0][field] = value
+                self.rebind(forged)
+                with self.assertRaises(materializer.MaterializationError):
+                    self.validate(forged)
+        forged = copy.deepcopy(self.receipt)
+        forged["producer_receipt"]["capability_results"][0]["adjacent_negatives"].pop()
+        self.rebind(forged)
+        with self.assertRaises(materializer.MaterializationError):
+            self.validate(forged)
+
+    def test_nested_raw_sha_and_environment_mutations_fail(self) -> None:
+        forged = copy.deepcopy(self.receipt)
+        forged["bindings"]["producer_receipt_sha256"] = "0" * 64
+        forged["bindings"]["execution_sha256"] = (
+            materializer._integrated_execution_sha256(forged)
+        )
+        with self.assertRaises(materializer.MaterializationError):
+            self.validate(forged)
+
+        forged = copy.deepcopy(self.receipt)
+        forged["environment_receipt"]["environment"]["installed_artifact_count"] = 55
+        forged["environment_receipt"]["bindings"]["execution_sha256"] = (
+            materializer._execution_sha256(forged["environment_receipt"])
+        )
+        self.rebind(forged)
+        with self.assertRaises(materializer.MaterializationError):
+            self.validate(forged)
+
+
 class InterfaceTests(unittest.TestCase):
     def test_default_invocation_is_inert(self) -> None:
         output = io.StringIO()
@@ -349,6 +1063,30 @@ class InterfaceTests(unittest.TestCase):
         self.assertFalse(plan["writes_performed"])
         self.assertEqual("inert_plan", plan["mode"])
 
+    def test_direct_nonisolated_cli_rejects_before_shadowable_imports(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = root / "materializer.py"
+            shutil.copyfile(materializer.HERE / "materializer.py", script)
+            (root / "json.py").write_text(
+                "raise RuntimeError('shadow imported')\n", encoding="utf-8"
+            )
+            result = subprocess.run(
+                [sys.executable, os.fspath(script)],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(1, result.returncode)
+            self.assertIn("requires isolated mode", result.stderr)
+            self.assertNotIn("shadow imported", result.stderr)
+
+    def test_materialize_api_rejects_nonisolated_runtime(self) -> None:
+        if sys.flags.isolated:
+            self.skipTest("test runner itself is isolated")
+        with self.assertRaisesRegex(materializer.MaterializationError, "isolated"):
+            materializer.materialize(materializer.load_lock(), [], Path("/tmp"))
+
     def test_publish_is_exclusive_and_private(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "receipt.json"
@@ -356,6 +1094,47 @@ class InterfaceTests(unittest.TestCase):
             self.assertEqual(0o600, stat.S_IMODE(path.stat().st_mode))
             with self.assertRaisesRegex(materializer.MaterializationError, "exists"):
                 materializer.publish_exclusive(path, "{}\n")
+
+    def test_publish_rejects_symlink_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            real = root / "real"
+            real.mkdir()
+            link = root / "link"
+            link.symlink_to(real, target_is_directory=True)
+            with self.assertRaisesRegex(materializer.MaterializationError, "secure"):
+                materializer.publish_exclusive(link / "receipt.json", "{}\n")
+
+    def test_publish_rejects_repository_destination(self) -> None:
+        with self.assertRaisesRegex(materializer.MaterializationError, "outside"):
+            materializer.publish_exclusive(HERE / "forbidden-receipt.json", "{}\n")
+        self.assertFalse((HERE / "forbidden-receipt.json").exists())
+
+    def test_integrated_cli_requires_exact_all_and_acknowledgement(self) -> None:
+        base = [
+            "--execute",
+            "--acknowledge",
+            materializer.ACK,
+            "--output",
+            "/tmp/unused-integrated-receipt.json",
+            "--run-canonical-spatial-ai-producer",
+        ]
+        for extra in ([], ["--producer-selection", "all"]):
+            with self.subTest(extra=extra), contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(1, materializer.main(base + extra))
+
+    def test_plain_execution_rejects_producer_only_flags(self) -> None:
+        argv = [
+            "--execute",
+            "--acknowledge",
+            materializer.ACK,
+            "--output",
+            "/tmp/unused-integrated-receipt.json",
+            "--producer-selection",
+            "all",
+        ]
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(1, materializer.main(argv))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1145 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-spatial-ai-offline-integrated-runtime-v1",
+  "producer_binding_commit": "68ed897f4a5121d8d487a60e0519205a28fc6c09",
+  "producer_acknowledgement": "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE",
+  "capability_ids": [
+    "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
+    "manifest-entry.spatial-ai-utils.01-3d-2d-geometry",
+    "manifest-entry.spatial-ai-utils.02-multiview-visualization",
+    "manifest-entry.spatial-ai-utils.03-detection-map",
+    "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count",
+    "manifest-entry.spatial-ai-utils.05-nvschema-conversion",
+    "manifest-entry.spatial-ai-utils.06-video-frame-tools"
+  ],
+  "producer_bundle": [
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json", "sha256": "7fa1c4070cc3089c3e7f30511cf89bbc0e50fe773ab408e702c6d5717e6470a8"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json", "sha256": "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "e736ff075c3494ab0a6a11208fa564a863588ee14608ba6d1016286a807f78e6"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json", "sha256": "469e3ee85e34481c6d55ca2d544a80bfdefc092f83b55fde28eea0ac6bff4571"}
+  ],
+  "canonical_controls": [
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "834bb40b576d9e9e546cecb3bdb866993b7be7fd3bf9d5e9e19a0d852d4e4e39"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "b8f03c0d949ae7c9bb6dd14f37142e4f723849125ec944eb9244bd0ad9b79a1a"}
+  ],
+  "fixture_controls": [
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json", "sha256": "e3cb834b4580c56c9e1204b90fca5d4f063271d97fe12f8cba6d106f37b69f64"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json", "sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/02-multiview-visualization.json", "sha256": "7836a8dd865207c1d7d8b8cd1fec16748ac60ff6eb3b9f7d22cb9db35b526210"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/03-detection-map.json", "sha256": "90fbe27b29b2cf3368fad59a967129bd7c52032c6ef1a5b8c64b35372b5a2463"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/04-tracking-metrics.json", "sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json", "sha256": "ed74f1c23c7999b01d6b7000e9c7a1be5a40b69c39ea90a993cbdccf66340cfd"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/06-video-frame-tools.json", "sha256": "95e392791a66c758ab67be2f6d389a391a67f9f9f7c58f0cc025f49c6be34751"}
+  ],
+  "product_source_controls": [
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py", "sha256": "e433d69e7561e304cff99925122b7c44822ee1a279b29ce62607ac439cfec060"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_3d.py", "sha256": "8c7f61ff04ce7f68cb9f8ef29d0a5189dab299bb10b8b36ae9f343e1b8b7cabc"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/group_utils.py", "sha256": "05336334cde57578e878462bcace3a598d65fcf1aebdd1ba722c39c96e6b09d8"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/origin.py", "sha256": "a32fd3e47d9f720d7b50833cbbdea434855cd493707cf0d6bb4ede8479b5dd39"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/projection.py", "sha256": "8107092b08df576182e7a83ea1fa9babe27ea09f53ff7bd991e9f0d4f316958f"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py", "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py", "sha256": "f5d9e8120ee1196bd6add34ec1960ac8fb7b65252283a2ccf4c1d2a7f27afa3a"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py", "sha256": "b6e8ece795f6986b2cdb1afd133474deb94338b5daf35e54b9e171ab97691ba6"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py", "sha256": "d1b5b48668b8b24cd3c232ca8b026f080dc3e4380301c136e72e03119dd92aa1"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/clear.py", "sha256": "5e5baadcb3b00c938bd929acf8bd1f8e1eface219cffabb6e4609fdb6f7cca4f"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py", "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/hota.py", "sha256": "b225a9b4f0a0f1c823257c8d3d892285ffdbf2325aedba881175ae967f2f8d33"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/identity.py", "sha256": "f01a9d644bbeeaf6864c64d340164d3ac99c4e3a24abf77c28d0f2cc91f2e973"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py", "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/__init__.py", "sha256": "b7c16527fac2557a287ae0f2583be6aa43f4485db9887bb7ae69a35be67ba3a4"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_3d.py", "sha256": "19d645818a480485d2d51d4471e89f70d4c7714f2c43b4181b9ae95154bd21f5"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video.py", "sha256": "7bbd3fa74d1ca1238716c0b95ac375127be629212cac8e7a457b563eb571916f"},
+    {"path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/video2frame.py", "sha256": "3a0da452fc4c69c9d71242c3134adc81f5bfb3ed587355abcd615b713d7385bd"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/reassign_camera_groups.py", "sha256": "0a0f7ef446189d67bb3a5b1edfb27cb5e3d0f755665587e23f841e6228f1de24"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/projection/project_bbox3d_to_2d.py", "sha256": "927c822821a26e667177a8b257a4dfaa657dde8737f5492a02f54b6fdb7d8572"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/video_utils/frame2video.py", "sha256": "9c8839496d921d420d2a6e76466e889147097bdd8c1d67fac019683911d4f084"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/video_utils/video2frame.py", "sha256": "ae585b525ddeaf7536a122dacf6f6ea738368d3b2ab6d1f3737a030c628d92a7"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox.py", "sha256": "cc2fe3f0633e8f96c9afe549b467a4616e118e86f1cb232d7caa151fdc1cce2d"},
+    {"path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox_batch.py", "sha256": "8485c512a8c3bca4048a6769b399eb23f5c07b281397433b1efa460131910971"}
+  ],
+  "product_root_manifest": [
+  {
+    "path": "libs/analytics/spatialai-data-utils/.gitattributes",
+    "sha256": "a47d9685915215c785c1fdb9f51bc1f60bc7b82a14796332e341378075f894b0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/.gitignore",
+    "sha256": "03fa91a1d72ace7b34cd532aae3148c05937a38b2cea865cdd3a2c81a9a017ac"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/3rdParty_Licenses.md",
+    "sha256": "98152837d5ff518a1ac1fa412ff35b3ddc611cfd3831b7a323b17a702778fbed"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/NOTICE",
+    "sha256": "d336ce6831ad330b4edc70f793f9f4293f2ac8d8b8bf8b1757d7227ff3b49137"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/Pipfile",
+    "sha256": "10f4ca4c11f211e99f6f82bbf85cb604173ce65de8d9d51ccd1496b39a5bf956"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/Pipfile.lock",
+    "sha256": "1e966fdbbd1534f6781f8f8fb73fbe821ce7f2bf5fda64cbd83ae6c3f926b705"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/README.md",
+    "sha256": "7d5cccd4ae0b3eed146c05502fafa2ae3b29350017bbeb0eabc081997cd7f12f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/benchmarks/README.md",
+    "sha256": "4f8995bf66e01a185f13154891aafe697a3fbfd0e1882768a87a76a2727fa4b8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/benchmarks/benchmark_frustum.py",
+    "sha256": "c01680ba0a7c3779dcd08d746c23f9b9bff7c4e733488ebebabf88b370b41d35"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/docker/Dockerfile",
+    "sha256": "a311db8e7563e26036e2718139080200c30b7d0448f256218595711c1597254c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/docker/Dockerfile.dockerignore",
+    "sha256": "3ff2c9f0dd6c6963c58ec377323cb4ec46b6ee14bd59435a0193bfa8417c8f8b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/docker/deps.json",
+    "sha256": "7bc5a928c577c55169bbd442d21f45ff21dc452569a8692c10593b341e247bf6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/release/3rdParty_Licenses.md",
+    "sha256": "98152837d5ff518a1ac1fa412ff35b3ddc611cfd3831b7a323b17a702778fbed"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/release/MANIFEST.in",
+    "sha256": "4484cd7cbe0e14d999987d9b17f46ac60046612323bfd4437cc4d46be7574718"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/release/NOTICE",
+    "sha256": "d336ce6831ad330b4edc70f793f9f4293f2ac8d8b8bf8b1757d7227ff3b49137"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/release/README.md",
+    "sha256": "140d2d20dd3a23de2667426cb0d6aad51257c8f15fa074e5dbe25b67301a144f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/release/pyproject.toml",
+    "sha256": "260418e6907fb5bda5daa383b6701bf05420fccd24f28e2c478beddc20532ddc"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/release/setup.py",
+    "sha256": "4ec0cf2c43ddec47b690931ba55a646c578e510f8be7ad592d3d58d46de9e876"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/__init__.py",
+    "sha256": "18c336672f932c9c29b5b1329b5f7f57430014ccececeefc09f102696d406657"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/assets/colormap.json",
+    "sha256": "99749f283da94d2b8e8b3c5d515e496f84f1d26fac7f4de3cdb3587268d7ce86"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/converters/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/converters/default.py",
+    "sha256": "987e40a9473c51f16cc24ad693b09e635e0446c3254f711d0b70803be5446c33"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/eval/__init__.py",
+    "sha256": "4bad6687089bbee9a8d2da673fa5a3e912ee2cd03ceec297079ba788ec164222"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/eval/detection.py",
+    "sha256": "f44f14be20669d6884ce670a455de5084b9df3b39e5649e732f3d6f6c73b2d17"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/object_classes/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/object_classes/default.py",
+    "sha256": "5095e8e1adadc87d7b6f0592e17b18be716cac254f826f90f93c0f0b6a90736b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/object_classes/scout.py",
+    "sha256": "368edd47872cf7d9215f9baa2c78db739b16b6e32e08674d8ccf81a9c436d1dc"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/configs/object_classes/warehouse.py",
+    "sha256": "6969397b1731fcb0cb0e79f1a0401f669772bff75cc0d967b84a1250424d86a6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/constants.py",
+    "sha256": "73e1ea82df56e8bfc0fea23b094d48e9e2c27d6a2d959c7e3ab9d80ce9c3c763"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/config_loader.py",
+    "sha256": "1020b4d9e2f22dd356fa1785904a28019132d5d04cb2f7297385e9a4090b7ba8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/converters/nusc_results_to_nvschema.py",
+    "sha256": "e433d69e7561e304cff99925122b7c44822ee1a279b29ce62607ac439cfec060"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/aicity_box.py",
+    "sha256": "a4c2d19430662b1d6618a24a018aa378ec6297bfac189df9814540af89dbcbc0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/bbox_overlaps.py",
+    "sha256": "7870354bf84388d951bdf48fdcfece388b131b5f6c768564046c7d867e0bd2cd"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_2d.py",
+    "sha256": "d5df9ef94a38d9390683ae53fdfb8e9bcb5a498257ffe4f509837c03b0fe0a03"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/boxes/box_3d.py",
+    "sha256": "8c7f61ff04ce7f68cb9f8ef29d0a5189dab299bb10b8b36ae9f343e1b8b7cabc"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/bev.py",
+    "sha256": "869da13a859f332bb1b7743acb8c48b88589723fdd00657d2e3f5ff432c9c084"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/calibration_fields.py",
+    "sha256": "fa163c5f08b121110c324d52cbe54274fbd9c27bbf59e53618f5c6734aa41264"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/clustering.py",
+    "sha256": "75e3677226e1761faa7831df1dbcf1d4d51c560fcf873fb30197e8ab77548c93"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/filtering.py",
+    "sha256": "3eaa36c840565728f488a451db4f9cc4ab9976e20ec4ad72ec8d3a14721d4634"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/group_utils.py",
+    "sha256": "05336334cde57578e878462bcace3a598d65fcf1aebdd1ba722c39c96e6b09d8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/grouping.py",
+    "sha256": "c358caaac6b703d57a7aca7309eb3ccf48f557a4034fd50e7fed6eafb3399b4d"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/origin.py",
+    "sha256": "a32fd3e47d9f720d7b50833cbbdea434855cd493707cf0d6bb4ede8479b5dd39"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/polygon.py",
+    "sha256": "7ee397f7855e34fc189574ae7a2fc814c6834af3d2f919e615e7b48438357cb6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/utils.py",
+    "sha256": "4dcb892719bae525c1a81f6539baf1f68b6d8a61efa3f22b0b8fe74b8d46d030"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/cameras/visualization.py",
+    "sha256": "f6580227891aeb8f3d4b8ef1cd71d52438b9390e2a9e0ed129377ea67b97a7d3"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/projection.py",
+    "sha256": "8107092b08df576182e7a83ea1fa9babe27ea09f53ff7bd991e9f0d4f316958f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/geometry/rotation.py",
+    "sha256": "c284a70fbdcc116a9310cfb568d34256ff3516235080571a38fbda05a5de9f32"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/post_processing/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/post_processing/bev_boundary.py",
+    "sha256": "c418ce26675166f05de06c5a88ee2ad6339599eee70581b6e23b1080a6f34ab4"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/post_processing/box3d_nms.py",
+    "sha256": "ec84f955d675a9b56e191efcc8671aa3e2543cf562aebc4229710742d04bf386"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/core/post_processing/filters.py",
+    "sha256": "06ed2150e2dcff209aa00c738295e71ff35853366bdf1967b840ebe5525e774f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/__init__.py",
+    "sha256": "b406f3b5ccd8044755b96ece284e38c0bd8a85382e3d345f498f20052003cb4c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity24/__init__.py",
+    "sha256": "04493e9540f8b29d20fd0f549a8cb6643d375d7ab2db7e34ed3551391fe67817"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity24/dataset_utils.py",
+    "sha256": "7d55864a55eea7a379ec4ff4cdc06569c560a9a7088359ae93e221d12d264fd2"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity25/__init__.py",
+    "sha256": "b6407cceb22dea51b5a69bdcd9cf54c0d7503bb83f89fca4b914a198afb9e4b8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity25/object_class_utils.py",
+    "sha256": "aa8d7bd137639abb3d58b2f78a0f8fbb715a80e6375c936c6eae4874c48ed884"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity25/scene_utils.py",
+    "sha256": "b0276e7c1e77ae238e8e0a8855335982d1a1e5a5c6219b813c884e07b4bdd208"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity25/scenes/scene_id_to_name.json",
+    "sha256": "d68e98f1f1c854a963448536b939665b5b0c2640ac02e818ed0e4c7506f92403"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity25/spec.py",
+    "sha256": "5de94f537a66574392b1eac797916d3ea8516bab2a0ae086321f4c441afc5e01"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity26/__init__.py",
+    "sha256": "c66015055e27add9455323a15635ee95d0481ad4fafcba4aac4b0dcd54e62fed"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity26/scene_utils.py",
+    "sha256": "7ea18fd7f1873b6ffbd090e52ff4d461cb5f46a2bf4d484ac906f7588ac7a0d0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity26/scenes/scene_id_to_name.json",
+    "sha256": "f4ec24c853ee0a41c0eb63c72a33a2b13c3aec5579b05e86afe45039cb2f036a"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/aicity26/spec.py",
+    "sha256": "c06ea3c9aacf65d8477777964420cd4213140b1f3915fa8372e01b180469383c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/__init__.py",
+    "sha256": "c6f9bb3c3024fce28703dbe289503ab529bb9cca8522d6210f256782bbef47f8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/common.py",
+    "sha256": "45a82ec714865bdf462262eb4334c8fadd6ca831441a050b82bfe3e8ecd06242"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/download_utils.py",
+    "sha256": "b4669fc52deb0e64bd086b7b184af4602601e6eb2decdf3a32da35ef9b51aa32"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/upload_utils.py",
+    "sha256": "d484d3c6337c8f2a56f078300f15833d94df0c95c7b58142ea6c6b8e0c74413d"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/cloud_utils/validation_utils.py",
+    "sha256": "c8202a1ee2525f27fcc8f364b65305c658dead6ba0cd0b242ab1894b0b2066a8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/frame_paths.py",
+    "sha256": "7fc4017d1a5119c59a60c80a6f9bdb7aa1bc0438301aea6c9f42b109ecb85bba"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/scenes.py",
+    "sha256": "033d2091bf7ca9310525ef9738f03b2cb6f68da86a518add1c308c873901f88c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/datasets/splits.py",
+    "sha256": "b001cec5f60733efbedb512004a4b1ca7643a7eee982fce418fa8e030df26ebe"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/common/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/common/classes.py",
+    "sha256": "208a6bb305ea318bde0f9d5200f0a27575f37edf0fe2488c0e51c924de293329"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/common/loaders.py",
+    "sha256": "13c79d09f42c058b21e4a37a698ad72f2ac56631817888f33380152c90da457d"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/common/preprocessing.py",
+    "sha256": "eab35e726b5bfe415fbee4565b3ffe45edd3966a662550c7debf1b3403e567e6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/common/utils.py",
+    "sha256": "c4079f9ac581f3685e647dec3aa5fa2b02833bf461abe04a44a4e7ca635d3357"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/data_classes.py",
+    "sha256": "f5d9e8120ee1196bd6add34ec1960ac8fb7b65252283a2ccf4c1d2a7f27afa3a"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/evaluate.py",
+    "sha256": "b6e8ece795f6986b2cdb1afd133474deb94338b5daf35e54b9e171ab97691ba6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/detection/loaders.py",
+    "sha256": "d1b5b48668b8b24cd3c232ca8b026f080dc3e4380301c136e72e03119dd92aa1"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/aic24_eval.py",
+    "sha256": "5bc50342dc9a3f67585048e089e8acd61a78ecf9e5c1382925654e4f98273f71"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/aicity_mtmc_eval.py",
+    "sha256": "1c49aef9933ca77faefd6d0f319462256dc223aa498724009b58ad58b5ab4aaa"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/algo.py",
+    "sha256": "f5a561dc60cfbe9582ef0c83388c8d167f8a368af1c02087a78b73b199be109b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/data_classes.py",
+    "sha256": "4fc0f8a9a7e18985563b155a5279cf480debb22b1839435ed3340d8f23dfc4b5"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/__init__.py",
+    "sha256": "dde00d4187f3b7d66095914c6e269203a16924f240f93673013d4e52e8cfb217"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/_timing.py",
+    "sha256": "6eaf966914a72a036fe53328c5f0d895cb807258d6ffbed4ffde74e7dc3a70d3"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/datasets/__init__.py",
+    "sha256": "d0fbe31bf364a05ccc826abe69d6077817d531398002bf57ea852ed23d467900"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/datasets/_base_dataset.py",
+    "sha256": "d9ee36c790f776561e57fabc330a82e956e300c33bcf52750a0f75a2fdd30a9b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/datasets/mot_challenge_2d_box.py",
+    "sha256": "e6d1e688bd55e3af3597a24f519fb673bddfbed7aa10c27a25b50286af319587"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/datasets/mot_challenge_3d_location.py",
+    "sha256": "2667dc73a10b7e2f45b832c3c21156c3e02344fa522f5b4004d2656174043729"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/datasets/mtmc_challenge_3d_bbox.py",
+    "sha256": "581c2c8b3377096b2a8dc97957ad213a421304046da4bf1295392de8d83e4aeb"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/datasets/mtmc_challenge_3d_location.py",
+    "sha256": "3a8dbf0d9ec8d86fa742984dfc2dc34f60b9cb97b0da2725c22001a71e5635c2"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/evaluate.py",
+    "sha256": "d4ee7f56ead167c4575b77aa93e59fdd3e8c27e59e5bfac368c1e30353f1ca47"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/hota_eval.py",
+    "sha256": "4415cd9fa570b7e370fdfcce4128ed6ebf8c99d6b3e8749ac70d86d614ab38da"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/__init__.py",
+    "sha256": "120585d5691fad6c32631ce05b86b5428ec280e6ec2220fc86def84bf94f2096"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/_base_metric.py",
+    "sha256": "b48f033e11b0bfc81ece63242593896910d816df27d97d9008b40811babeadd3"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/clear.py",
+    "sha256": "5e5baadcb3b00c938bd929acf8bd1f8e1eface219cffabb6e4609fdb6f7cca4f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/count.py",
+    "sha256": "743bb807b21123f35acba70dedbe5fb71acf0e13371db8e1ad8ac53c1c3d6e4b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/hota.py",
+    "sha256": "b225a9b4f0a0f1c823257c8d3d892285ffdbf2325aedba881175ae967f2f8d33"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/metrics/identity.py",
+    "sha256": "f01a9d644bbeeaf6864c64d340164d3ac99c4e3a24abf77c28d0f2cc91f2e973"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/plotting.py",
+    "sha256": "bfcfc2e869474e2cab86061d504ec6caaaa6351a1bda532d64cb04fc3b5af510"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/trackeval_utils.py",
+    "sha256": "c82a681f75dc82308d5deb48ecbc4857c98368383c8b2a7f3398fcab2962a0b8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/hota/utils.py",
+    "sha256": "58622fa0c85d145f6216372433afd183d26f33126cf751f1b9e74689c88f0249"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/eval/tracking/loaders.py",
+    "sha256": "23fd23447f8155be5c9316d508318f12548a7f520cb312a071f0a5d01d05d90e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/__init__.py",
+    "sha256": "d22bea69bfffb8abcf99415a80de4de7c4b7422f87fa795416568018bed0b0db"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/calibration.py",
+    "sha256": "20ffd606bde0775e13ecc0dd326872a84d0566efa5ef1a8949765cca7f12f123"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/ground_truth.py",
+    "sha256": "966f75c3845aa8e616f2a941a9efe1024dd4aa760b5d64b589dcac99cf5f1f99"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/nvschema.py",
+    "sha256": "81faba50eaf2a239e0bbc7b9022c33baeea123ccae49812ca95a0ca060dc6f3e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/object_classes.py",
+    "sha256": "253a6fc387ddbd5a0a05be5cfdb6bf781cfb21bf5047d1941c03b4f013f03c4f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/loaders/sparse4d.py",
+    "sha256": "ed9193271de32c35e1565402e31cf5c7b4a2065729b70f96c5f61af12d270782"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/schemas/calibration.json",
+    "sha256": "075c626431eb1b95913b970d67060a3ccafd5662eff50e6646a17fec29ee2b43"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/utils/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/utils/datetime_utils.py",
+    "sha256": "7114bb098f42bd265d5406f22c503857f1400e5cd94171f9f438df2a586a21e6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/utils/filesystem_utils.py",
+    "sha256": "2a6bbdad0aeeb2c3669eeb80e1f529582c4126e0a3cc43fb9ed992209d008225"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/utils/optional_dependencies.py",
+    "sha256": "78f5f9d4566cb35f0cb9e9f37bc56a50cfebe7f86bf2cd2aeaf75fbff04e4e8b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/utils/string_utils.py",
+    "sha256": "5fcf801af31d950d45e5890fd82a2db284624aee2b53750c32d1f55fd7445b91"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/validation/__init__.py",
+    "sha256": "996f3e738504fa4ee03116d5e811b4470a7e33892d500ad3e5005fd3ff212a5b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/validation/bev_utils.py",
+    "sha256": "0b011459ec224e3cd51439118f01037d46e3a61fbd2e165a97fc2ca6700a8c4e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/validation/gt_utils.py",
+    "sha256": "18d18670c53bb7caa8bd5163333578af5ae7da73cf6351f819258d1a7006357c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/__init__.py",
+    "sha256": "b7c16527fac2557a287ae0f2583be6aa43f4485db9887bb7ae69a35be67ba3a4"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_2d.py",
+    "sha256": "9cb68fd2c60fbc9ea92d7af7dc64801b966b1c7edcceafa2202f02d0d16883b4"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/box_3d.py",
+    "sha256": "19d645818a480485d2d51d4471e89f70d4c7714f2c43b4181b9ae95154bd21f5"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/camera_groups.py",
+    "sha256": "8badc6d88fc8295633312c1f29db8621b1d072f970e2d8559c1e05a788a69ce7"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/camera_placement/__init__.py",
+    "sha256": "18f33a6a86f8f223b3335c5d2ff686bae154f7ab0fe9977ad5cef5229345714f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/camera_placement/calibration_parser.py",
+    "sha256": "8c9cf84c13e665c300542cec06966a4eb5390fb6052ba4b389ca577d1c3904e6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/camera_placement/plotter.py",
+    "sha256": "0b3ff94f2f8ebac9149ceff9ed719fae40d10e544fe29e651db1d6b960c72212"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/coloring.py",
+    "sha256": "2f020bbf0156639a6d108bc9070a39e6fd1bb23dd88a69c1cb0ef08046894eea"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/draw_utils.py",
+    "sha256": "bd1b6fea7615606f7596de386074c0d3589a0021991cba473168f9f426d69ed8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/points.py",
+    "sha256": "6990241c8b5833416fab6db4319dda710c0065a8550d948f05a628b4cd6ca04f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/render.py",
+    "sha256": "0df484d126f9e5a0307ce35251ac52e3f054548d4ce3934296fe6e1d46422436"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/__init__.py",
+    "sha256": "862109d9a8c1e73859b993941c0c877d303dc3d50d8728228fb869e327c0e901"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/format.py",
+    "sha256": "605de47f4a623739052398f810fd0205b49d0e2412620067d63f11dce705d08f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video.py",
+    "sha256": "7bbd3fa74d1ca1238716c0b95ac375127be629212cac8e7a457b563eb571916f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/frame2video_grid.py",
+    "sha256": "51a835266fd6c21e8dee03ac87eac6c91434459be88dc3525135c35c6a5493da"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/text_writer.py",
+    "sha256": "c416be2d6e07373166c7affa083e4cf8bba867123f40ff695a1b91009551e510"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/spatialai_data_utils/visualization/video_utils/video2frame.py",
+    "sha256": "3a0da452fc4c69c9d71242c3134adc81f5bfb3ed587355abcd615b713d7385bd"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/configs/converters/test_default.py",
+    "sha256": "d8161c2cab1e004e63f215a9637045de51b7f5d73b8d91acad7aef9351bec2ad"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/configs/eval/test_detection.py",
+    "sha256": "ca883a00f17dc867bf7677623974f342c6fd619cb685a3e8525a56c604b40965"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/configs/object_classes/test_default_and_scout.py",
+    "sha256": "b8c93e8d6ada28a9937738a7b19319ab6f46516fdeda9a354f98d3d51a408d68"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/converters/test_config_loader.py",
+    "sha256": "b86063118d10796f86cb838a02d6d5c7d2e9be9f7ced484cfb8dddc673b6753e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/converters/test_nusc_results_to_nvschema.py",
+    "sha256": "b63ce279e238f0fc6d26cc85ca44d87c1f765292369de3960e01472d6004c195"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/boxes/test_aicity_box.py",
+    "sha256": "3bcefa3b9504d159edfc8fe21c0dcee6f773e76723b46946b89898f5eae7d235"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/boxes/test_bbox_overlaps.py",
+    "sha256": "ecd8a093af053f3c639a9f5cd547134797e2e80298c0e2953ef47a6ea00ae105"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/boxes/test_box_2d.py",
+    "sha256": "37a2fa6f5e069ee9fa3a2f1bf837c5fcead569006e34a04081f837b8b9b723d1"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/boxes/test_box_3d_transforms.py",
+    "sha256": "75632db53a75ff37d8305565feab05eb2cd1a312f730eb1bc545d58bcc57af67"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_calibration_fields.py",
+    "sha256": "6698f60b66ff7ad96bea8467f69a0249e312e3458a17fd2babeae106a612bf63"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_camera_clustering.py",
+    "sha256": "a5910dfbd875b93e843866bd64b19c4547c8dc9d881242aa748bb7718b94bc57"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_camera_grouping.py",
+    "sha256": "60f24702cd627018b1fb54db3b8fb2151a99156531ac43a98bd9270afe2121c2"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_fill_tripwire_roi_groups.py",
+    "sha256": "4120188ba0240174424c56ad530b6b3447e03d189fcaa571a0fbd81e5b7a1eda"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_filtering.py",
+    "sha256": "af8195d7c4007a587979b2471087ff1a938272f778d099a6a4ca685bf120702f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_group_utils.py",
+    "sha256": "bf0a345f6b4f51f133a32038d8110094a77bb2ed3051634bad5ff64f66102e8b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_log_global_stats.py",
+    "sha256": "baa33834db77206500f4ea287b9aae0113a1b098e9e65709f8ce737c608f076d"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_origin_calculation.py",
+    "sha256": "068c039d8b06b4303d7615f7c2c9f79147a04da5907881165375f2df1579225e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_origin_direct.py",
+    "sha256": "742747cc74605ddb4f8c3798234b08d46e32fd402b520f7451ced7772e0f6e0a"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/cameras/test_utils.py",
+    "sha256": "7ac8fd1f8b86346ea6c3f19ef4ab1d7ce79c77bfa12b178c1825338fc4e7bbba"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/geometry/test_projection.py",
+    "sha256": "49d626846e2b143d3de108d617f91e8e8075b74fec5ffd4308069cef5acacd87"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/geometry/test_rotation.py",
+    "sha256": "cbb8cef318cb021393650611efdfa6e01e137de4007187605e43189a21e05b38"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/post_processing/test_bev_boundary.py",
+    "sha256": "3e372d9c8aec7f0a4ba7c54b28c71b3e40d5d1eca2da59d1108a92f33bcce73c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/post_processing/test_box3d_nms.py",
+    "sha256": "a6ef5bae6a6b6de0d8b1169bfd7ec59d9f91c16415e05c13d17bb0abe90f2056"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/core/post_processing/test_filters.py",
+    "sha256": "60a067b72b0c6ce01e965d541b62daf30aa02021914ab8dfb851b4eb522bd3d7"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/datasets/cloud_utils/s3_utils/test_download_utils.py",
+    "sha256": "7a6bf890ee3c311297ac536c2351e2caf5eb93210c0d79f4c4e10742b859b387"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/datasets/cloud_utils/s3_utils/test_upload_utils.py",
+    "sha256": "04e38bf855ce7ffdc9f7e899e3f73427a78060e4d564ca78fa3e5e1a77376d24"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/datasets/cloud_utils/test_validation_utils.py",
+    "sha256": "969a2c524274eeb262149c7fd6fe0db19aced9f70f8792d810d780fbb28b7784"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/datasets/test_datasets.py",
+    "sha256": "5422893105c000d406898a026989d6da5c26f61937401b4166821213f511337c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/common/test_common_loaders.py",
+    "sha256": "a30ef211bdc7f3d7320d5ef22f7881f42ded892d92c3a57d0de181234f8709e2"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/common/test_preprocessing.py",
+    "sha256": "b1acd138b32594d99b38d1f43a9cdcd35d88540535c90ceb34bd076bce0263e6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/detection/test_data_classes.py",
+    "sha256": "6f23aced28657b2680914479f2c5b877bba85ca86f1464a01b311e921a5a11ef"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/detection/test_evaluate.py",
+    "sha256": "adaf622ab4cada2bafd35c74df1a67cb571aa8c2f428b2d1ea7121a9228af5e7"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/detection/test_loaders.py",
+    "sha256": "08ffa243838528901b4283b59730f6c770fa8fa2e91a904636a811a5d55ad337"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/test_import_paths.py",
+    "sha256": "5666c7e17219aa21493e9f4afeb0098fdb317dc13f6a41790d62c4171f437c0f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_3d_iou_and_hota.py",
+    "sha256": "fa1ec0d8aef84ef5616ca2d880cf7cfbaff61b3b331b2ed76dfc885f76ddf4f9"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_base_dataset.py",
+    "sha256": "8abdd38202702a443195da5bd7305e1424e2e30c237dcb96c87c5ceea1bd610a"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_hota_eval.py",
+    "sha256": "e7a432de26e82716a8d0be1f69192b860b94b78c1c3a74fea33da61895d78ce3"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_hota_evaluator.py",
+    "sha256": "1d438db880be06d9d5ae98b485fe9b9aa6435c59c2a8c061953ab648a5555806"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_hota_metric.py",
+    "sha256": "afc4dc950815e689920072ee5af7fa04a19f8a09decbd65a0fbfa539d53462eb"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_metrics_and_utils.py",
+    "sha256": "78596da7c55659ce928ee79c4e0d59a0b8ee897ae7a72338477967ba196675d2"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_mot_dataset_adapters.py",
+    "sha256": "a81d141414685ac1855c8155eebc8a4eb2db98d1e94bc67cd5e7816b74d750ce"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_mot_dataset_preprocessing.py",
+    "sha256": "b52080fe07b46064768b54ffe6dff708800b7a5be5ca39efa27604a1bc950147"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_plotting.py",
+    "sha256": "7532c75fe649eaa51e8e3a0b38826cfafa10321df4d0a811b1659b714be5db63"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_timing.py",
+    "sha256": "6edf016d650d5596cb7eb20c603bf4213d8f4cb46ea452f18af363f97bd00592"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/hota/test_trackeval_utils.py",
+    "sha256": "96bb3f0ef3b8df89e428e0a7d2078b145e42c33cbe679e15a773e92f9f3f006a"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/test_aic24_eval.py",
+    "sha256": "63df82f19c6170a4d46df40da1bd680935525b74160c6a01f2f394180b0d44e7"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/test_aicity_mtmc_eval.py",
+    "sha256": "f950ac8989f87f2d9ccea9036d82150eddbf127242f62cc82f778739139fd5b3"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/test_aicity_mtmc_eval_orchestrator.py",
+    "sha256": "16f79a581b54bc249cd3de3f6699aa5bc8631c112941466cf4c37e2ba1466b57"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/test_algo.py",
+    "sha256": "d6b8728338e609304bcfb4fae05e40573385dadc22df3c0501cada55c6757928"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/test_tracking_data_classes.py",
+    "sha256": "7a36950c73894e3d524c49e2a8f1c6490863f334db9a63d6a494af217ecff4e8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/eval/tracking/test_tracking_loaders.py",
+    "sha256": "4e5fa21ea75f48ae6d0f29c51c1cc20af5e4e0b059c143639f3eddf2152e86c7"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/loaders/test_calibration.py",
+    "sha256": "fd2cbee95bd4f13674b6e34973ce0df2b986161f676df8528c1ba54485c6689e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/loaders/test_calibration_variants.py",
+    "sha256": "34ecde8c0597b801e387f7efe8b7ba916e31a4712a1242f5ff3e8353eb81373c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/loaders/test_ground_truth.py",
+    "sha256": "e51d573fb4a21cf355bd36a120cf65d6834353a42c0a247831fb85c799c5098b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/loaders/test_ground_truth_loader.py",
+    "sha256": "827e30029b337b87a1e84c006b180e326875d53c832efd6ae5cc14aea1f3a281"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/loaders/test_nvschema_loader.py",
+    "sha256": "b9563cb1404cb5bc30796b6c1c70a3440f9ed510a0808784888d8fa0cdec710e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/loaders/test_object_classes.py",
+    "sha256": "9f33d8efb3b384c1ada270fdbf0007f11b59ce662d2b5b30da6688e975b94299"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/loaders/test_sparse4d.py",
+    "sha256": "28891a6ad8db7e629b72e9781d2b1f3c70bc0e1e28e538af31587af7cf2c38f2"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/test_box_3d_rotation_contracts.py",
+    "sha256": "bc7ac61ccf021aeada50fff2c70c61568243f211045714195868e2ebc3d9fbe0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/test_optional_nuscenes_deps.py",
+    "sha256": "b948c7e68b098b3518cb598b73f3cb2cfeea67d0155662f5acff0f23042f5468"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/test_optional_opencv_deps.py",
+    "sha256": "3458daf3cef3eb4819002813feac30324b9e5aea25457fbca0ea631ef670c0e8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/test_optional_shapely_deps.py",
+    "sha256": "085949e3ce6d5ad9318090dd3d59e7d0c7f3e2928959f511217d23466d8f49ba"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/test_optional_torch_deps.py",
+    "sha256": "8ce625370764cdaa7b2dc0c188768779e3f8ddfcb6e05ee37d1f2db40a89467e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/tools/visualization/test_draw_3dbbox_cli.py",
+    "sha256": "7a3955d7ee6732d335595e3050a7522e02cb755ef3b27bd4b6eb07b97713b2c0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/tools/visualization/test_draw_camera_placement_cli.py",
+    "sha256": "608f7e103a1b315fc17d2c2432c011e9be082851efa8f704fb8d36b77a2db4ce"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/utils/test_datetime_utils.py",
+    "sha256": "3b01dd1feac75be71097b961520e42e106ba23aff01cfd588418895b12dc4173"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/utils/test_filesystem_utils.py",
+    "sha256": "5f2ce6eba3038d7067da762d564db45b4be3b1f2c49fda7b29b5b3dacfda3ac0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/utils/test_string_utils.py",
+    "sha256": "97b556b87905f25197096383e570805728693a8050af2435893961d69c1430c0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/validation/test_bev_utils.py",
+    "sha256": "1a0ed9216b7bdb5e1c2707c9c54564da5d0776320c183a973c9b62d159745e8f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/validation/test_gt_utils.py",
+    "sha256": "f3f81819529d2dc6d8b0bffd940b97634ac16e4586dda0c19ea852d5a670cea1"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/camera_placement/test_calibration_parser.py",
+    "sha256": "2f7cddc236e131e6266345cb79662e6aaa24cddf465f8613eb63afe13754912c"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/camera_placement/test_camera_placement.py",
+    "sha256": "066ca9f6051001055317ce400d4562be259e86415f47b8b4e37915f3f5a85f2f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/camera_placement/test_plotter.py",
+    "sha256": "f839f72979a16ecd275672e5c393187b0aca50f977b2518ce7f08c9893757dbc"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_box_3d.py",
+    "sha256": "ffbfb3b51d527995c7764e31fe12df0dea174fe5ab5268189505c32624dfbee6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_camera_groups.py",
+    "sha256": "058ba03714a6de3834e0141d637d8fb679b0d87fb2e2dad02a20ca6eccedae17"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_camera_groups_visualization.py",
+    "sha256": "1ee8720beb445f0fa25db04cb43cb72f4731d4f4abc349abfaaa5ef2e54ef553"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_coloring.py",
+    "sha256": "f1ed7087fdba4138761c4ef1e9d327ed1e8707b0dab4a5ca3019f2a4a0c2d8ee"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_draw_box_2d.py",
+    "sha256": "707997ff1046d72db00207ffa4f3d4e78c68d56f4e785638154c10b9f6abd151"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_points.py",
+    "sha256": "77c5a734af9d6a720a445381080572f742840ab4dbd6847bb371c7f23d54b4f6"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_render.py",
+    "sha256": "d6dd3b83b993d8d3272a87439caa2287a977def391fda4cdbdbef7b4086895da"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/test_visualization.py",
+    "sha256": "ebe0e2ce57b787c0021ebabe5dc84fc49918757e8863865637d84505bb1d9086"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/video_utils/test_frame2video_branches.py",
+    "sha256": "1003baace29f27bfd399c03f4c334768a325cc43e1bacb01c6db1cc25bfd5a26"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/video_utils/test_frame2video_grid.py",
+    "sha256": "d35120fdd339a40a23378c20f2d54fb40fb2b4c5b4ab61413f964d3751a8f56b"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/video_utils/test_video2frame.py",
+    "sha256": "0b50c75f46b790264bc4bd97750100762af9792550c54909fd05a09230faf1a0"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tests/visualization/video_utils/test_video_utils.py",
+    "sha256": "6096922b9ebd8cc304a2c0b4a449ed0a8460ef48c6412db4824fc242c0257f49"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/README.md",
+    "sha256": "c18e5b41326cf19d616b7200d08a8044cf8071401a0b483c16cdae48aae7ff7f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/batch_create_camera_groups.sh",
+    "sha256": "8812b84774d1b592e36c3267b8f99c7aeb9c934a41fada78b55ea058f8d15a83"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/calculate_origin.py",
+    "sha256": "6b062045ce02bf09733a356325a25da705be99e5fd8a3690799c15b9e7f9d87f"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/create_camera_clusters.py",
+    "sha256": "6ece1b187173588217035ce2045fcf597ebbc41ffc1f780b252d91752f65f256"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/create_camera_groups.py",
+    "sha256": "60f45bf21ea91d744d6390eeffa6b787c90056cb88a769f29a73242c8b85880e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/find_suggested_cluster_params.py",
+    "sha256": "1530cabab02a45879d037d1ae3a7be5a805a96c6a55ed1957ad07d07e1e2d2b8"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/camera_grouping/reassign_camera_groups.py",
+    "sha256": "0a0f7ef446189d67bb3a5b1edfb27cb5e3d0f755665587e23f841e6228f1de24"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/evaluation/README.md",
+    "sha256": "bbf61e31ac03cefaf563310cb74d70fd3124b823409f052c7e4c4191ee406f6d"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/evaluation/evaluate_aicity_mtmc.py",
+    "sha256": "582bbbb3fa24ad67b1d59bd79ea516291217a455e62b5abaec918062fad3feaa"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/projection/README.md",
+    "sha256": "aeaff06b79a3634d6b2de659c2c83c34edfb4e1eec330b7c8c3a190ecce6cc81"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/projection/project_bbox3d_to_2d.py",
+    "sha256": "927c822821a26e667177a8b257a4dfaa657dde8737f5492a02f54b6fdb7d8572"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/validation_and_evaluation/.env",
+    "sha256": "a0006c6be77d5f4721d29f7a4c735e72b630e7de22d9322c8309a85cd7056e69"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/validation_and_evaluation/README.md",
+    "sha256": "102d4d8c62d37315049cde8350b5cc50e90d734e3cd1d94bd0a95720e0b3d786"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/validation_and_evaluation/run_validation_and_evaluation.py",
+    "sha256": "303a8023ec4b617749d32f9a516403bc68de33bb331cf051db8a5911ef28557d"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/video_utils/README.md",
+    "sha256": "10f2594536a4820fef524e0f8214e50470f1decb52b742cd6eccdaed71a75cab"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/video_utils/frame2video.py",
+    "sha256": "9c8839496d921d420d2a6e76466e889147097bdd8c1d67fac019683911d4f084"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/video_utils/frame2video_scene.py",
+    "sha256": "1085c267b285590b4a6b536441604ded5335c6f26917e03bc6f8edf2ff75fd2e"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/video_utils/video2frame.py",
+    "sha256": "ae585b525ddeaf7536a122dacf6f6ea738368d3b2ab6d1f3737a030c628d92a7"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/video_utils/video2frame_scene.py",
+    "sha256": "8282f56ac2d638f51590426d7fd0b43ca9a7f89e55be471cde6844685c467689"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/visualization/README.md",
+    "sha256": "9bee2ba1db24e72f7ecdc0dfb9b25e1e5100f03c7b6e69534e210a9672e43e63"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox.py",
+    "sha256": "cc2fe3f0633e8f96c9afe549b467a4616e118e86f1cb232d7caa151fdc1cce2d"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_3dbbox_batch.py",
+    "sha256": "8485c512a8c3bca4048a6769b399eb23f5c07b281397433b1efa460131910971"
+  },
+  {
+    "path": "libs/analytics/spatialai-data-utils/tools/visualization/draw_camera_placement.py",
+    "sha256": "a592c19c6b0ec9a13b3b1fbd54d12ed47c37d782e2a1070e73870e356c6596f2"
+  }
+  ],
+  "producer_root_manifest": [
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/EVIDENCE.md",
+    "sha256": "a49cb0a6094ba31d3b3012801deaac85061d7eeb8b653d106841ab429850e6ff"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/README.md",
+    "sha256": "2d5a4d80755c58239295a87c7c0919bcb8057011f287033f16fef482141df11a"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json",
+    "sha256": "7fa1c4070cc3089c3e7f30511cf89bbc0e50fe773ab408e702c6d5717e6470a8"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json",
+    "sha256": "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
+    "sha256": "e736ff075c3494ab0a6a11208fa564a863588ee14608ba6d1016286a807f78e6"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json",
+    "sha256": "e3cb834b4580c56c9e1204b90fca5d4f063271d97fe12f8cba6d106f37b69f64"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/01-3d-2d-geometry.json",
+    "sha256": "617eadeaf22d9da8c93356a8072d9890857e1e05d472ecd28ad939f18c07b542"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/02-multiview-visualization.json",
+    "sha256": "7836a8dd865207c1d7d8b8cd1fec16748ac60ff6eb3b9f7d22cb9db35b526210"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/03-detection-map.json",
+    "sha256": "90fbe27b29b2cf3368fad59a967129bd7c52032c6ef1a5b8c64b35372b5a2463"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/04-tracking-metrics.json",
+    "sha256": "c3b5e87f0e10efe522cb09dd9f86a4f4c028babdb034c6dc483cf0bb7395e62e"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/05-nvschema-conversion.json",
+    "sha256": "ed74f1c23c7999b01d6b7000e9c7a1be5a40b69c39ea90a993cbdccf66340cfd"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/06-video-frame-tools.json",
+    "sha256": "95e392791a66c758ab67be2f6d389a391a67f9f9f7c58f0cc025f49c6be34751"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json",
+    "sha256": "469e3ee85e34481c6d55ca2d544a80bfdefc092f83b55fde28eea0ac6bff4571"
+  },
+  {
+    "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/tests/test_executor.py",
+    "sha256": "ff926cc4173b5d6da53de3b6c0989ad743e7463cab303e87017b1b7050c67047"
+  }
+  ],
+  "expectations": {
+    "capabilities_passed": 7,
+    "bounded_capability_actions": 49,
+    "requests": 49,
+    "product_function_calls": 76,
+    "independent_positive_runs": 14,
+    "adjacent_negatives": 35,
+    "product_function_calls_by_capability": {
+      "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping": 11,
+      "manifest-entry.spatial-ai-utils.01-3d-2d-geometry": 9,
+      "manifest-entry.spatial-ai-utils.02-multiview-visualization": 7,
+      "manifest-entry.spatial-ai-utils.03-detection-map": 11,
+      "manifest-entry.spatial-ai-utils.04-tracking-hota-clear-identity-count": 16,
+      "manifest-entry.spatial-ai-utils.05-nvschema-conversion": 9,
+      "manifest-entry.spatial-ai-utils.06-video-frame-tools": 13
+    }
+  }
+}
