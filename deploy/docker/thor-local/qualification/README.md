@@ -527,8 +527,8 @@ in this directory:
 - `vios-core-file-lifecycle-runtime-evidence-successor/` is an inert,
   non-promotable producer for six warehouse-free VIOS/NvStreamer lifecycle
   rows. It binds exact product and BDD sources, records corrected future
-  execution bounds, and exposes the currently unreachable configured upload
-  size check as a product gap before any runtime qualification;
+  execution bounds, and verifies the source correction for the configured
+  per-request upload size check while keeping runtime qualification open;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact

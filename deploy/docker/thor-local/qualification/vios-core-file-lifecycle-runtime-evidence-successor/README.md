@@ -13,12 +13,15 @@ It has no execute mode and makes no network, Docker, service, product, model,
 subprocess, FFmpeg, or warehouse-data call. Every result is explicitly
 `runtime_evidence=false`, nonpromotable, and has an empty eligible-ID set.
 
-The plan records conservative future bounds and adjacent negatives. It also
-fails closed on the current upload-limit product gap: file-upload handling
-returns before the configured NvStreamer content-length check. Equal current
-limits (nginx `25G`, NvStreamer `25600MB`) mask that gap, so qualification needs
-a code fix and both asymmetric limit orderings under separately authorized,
-reversible low-limit configuration.
+The plan records conservative future bounds and adjacent negatives. It verifies
+the source correction that enforces the configured NvStreamer upload limit
+before raw-media handling: a missing `Content-Length` fails closed, the exact
+limit is accepted, and one byte over selects the HTTP 413 error path. This is a
+per-request `Content-Length` gate, so multipart envelope overhead counts toward
+the limit and multiple requests are not treated as one aggregate upload. Equal
+current limits (nginx `25G`, NvStreamer `25600MB`) still require both asymmetric
+limit orderings under separately authorized, reversible low-limit configuration
+before runtime qualification.
 
 Other blockers remain explicit: all three NvStreamer input surfaces plus RTSP,
 actual WebRTC, and removal; three BDD-enumerated sensor conflicts; two-download

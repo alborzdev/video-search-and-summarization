@@ -86,7 +86,7 @@
       "fixture_ids": ["tiny-identity-mp4-v1"],
       "planned_steps": ["capture-nginx-and-nvstreamer-limits", "confirm-product-gap-fix", "test-nginx-lower-ordering", "test-nvstreamer-lower-ordering", "restore-both-limits", "verify-readback"],
       "adjacent_negatives": ["using only nginx client_max_body_size is insufficient", "using only nv_streamer max_upload_size is insufficient", "one byte over the effective minimum must be rejected"],
-      "blockers": ["the current upload handler returns before the configured nvStreamer content-length validation, so the advertised min-law is a product gap rather than merely runtime-unqualified", "the equal current 25G and 25600MB limits mask the product gap and a future code fix must be tested with both limit orderings", "lower-limit configuration mutation and restoration require separate authorization", "the two-request canonical bound cannot cover both orderings, configuration readback, restore, and postconditions"]
+      "blockers": ["the source-level upload content-length gate is corrected, but no Thor runtime response proves enforcement", "the equal current 25G and 25600MB limits require both asymmetric limit orderings to prove the effective-minimum law", "the implemented gate is per-request Content-Length; multipart envelope overhead and aggregate multi-request reconstruction remain explicit runtime boundaries", "separately authorized lower-limit mutation plus restoration, both orderings, configuration readback, and postconditions cannot fit the two-request canonical bound"]
     },
     {
       "capability_id": "runtime.nvstreamer.file-streaming",
@@ -131,7 +131,7 @@
     {"path": "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp", "sha256": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787"},
     {"path": "services/vios/src/framework/utilities/config.cpp", "sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92"},
     {"path": "services/vios/src/framework/platform_specific/nvhwdetection.h", "sha256": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0"},
-    {"path": "services/vios/src/framework/web/http_server/HttpServerRequestHandler.cpp", "sha256": "e0fecc434f57adb74011b0435cf46574010b63d0df921c91671a7a76e774c1ee"},
+    {"path": "services/vios/src/framework/web/http_server/HttpServerRequestHandler.cpp", "sha256": "9b29f9e5bb387696701cc2f897cf2e5a09c8ee7571c958b2a370a50f133118b5"},
     {"path": "services/vios/src/modules/sensor_management/sensor_management_apis.cpp", "sha256": "76b8e0b0b5ce98fe67b9d5f858f7104ad39130908cfd89c9b334094cc816124d"},
     {"path": "services/vios/src/modules/sensor_management/sensor_management_utils.cpp", "sha256": "e16897ab85ea2132f5baef39a275d938155ab898dd324cd7efbf66e09ccd6e88"},
     {"path": "services/vios/src/modules/storage_management/storage_management.cpp", "sha256": "7be7d980ffb676556782430bf8f7c0330155ba31daa235d2d67e39a7db536e66"},

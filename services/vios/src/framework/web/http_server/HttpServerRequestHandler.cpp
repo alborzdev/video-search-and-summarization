@@ -43,6 +43,26 @@ constexpr char STORAGE_MANAGEMENT_UPLOAD_API_VST[] = "/vst/api/v1/storage/file";
 constexpr int MAX_JSON_CONTENT_LENGTH = 100000;  // 100KB max for JSON payloads
 #define MAX_FILE_UPLOAD_SIZE_MB_TO_BYTES(mb) ((long long)(mb) * 1024 * 1024)  // Convert MB to bytes
 
+enum class UploadContentLengthPolicy
+{
+    Allow,
+    Missing,
+    TooLarge,
+};
+
+constexpr UploadContentLengthPolicy validateUploadContentLength(long long contentLength, long long maxAllowedLength)
+{
+    if (contentLength < 0)
+    {
+        return UploadContentLengthPolicy::Missing;
+    }
+    if (contentLength > maxAllowedLength)
+    {
+        return UploadContentLengthPolicy::TooLarge;
+    }
+    return UploadContentLengthPolicy::Allow;
+}
+
 // HTTP Method constants
 constexpr const char* HTTP_METHOD_GET = "GET";
 constexpr const char* HTTP_METHOD_HEAD = "HEAD";
@@ -457,7 +477,7 @@ class RequestHandler : public CivetHandler
 
     VmsErrorCode getInputMessage(const struct mg_request_info *req_info, struct mg_connection *conn, Json::Value& out)
     {
-        //Return if content length is zero otherwise procede to check content type
+        // Validate request pointers before inspecting method, route, or body metadata.
         if(req_info == nullptr || conn == nullptr)
         {
             out = Json::nullValue;
@@ -466,15 +486,49 @@ class RequestHandler : public CivetHandler
             SET_VMS_ERROR2(VmsErrorCode::InvalidParameterError, out, error_message.c_str());
             return VmsErrorCode::InvalidParameterError;
         }
-        // Don't parse input message if its a upload API
-        if(isFileUploadAPI(req_info->request_uri, req_info->request_method))
+
+        const bool isUploadRequest = isFileUploadAPI(req_info->request_uri, req_info->request_method);
+        const std::string method = safeGetString(req_info->request_method);
+
+        // Upload bodies are consumed as raw media by the storage API, not parsed as JSON.
+        // Validate their declared size before returning to the upload handler. Requests
+        // without Content-Length fail closed because this layer has no streaming byte
+        // counter that could enforce the configured limit for a chunked request. This
+        // intentionally rejects unknown-length raw PUT and multipart POST uploads,
+        // including their optional /vst-prefixed routes.
+        if (isUploadRequest)
         {
+            const DeviceConfig config = GET_CONFIG();
+            const long long maxAllowedLength =
+                MAX_FILE_UPLOAD_SIZE_MB_TO_BYTES(config.nv_streamer_max_upload_file_size_MB);
+            const UploadContentLengthPolicy contentLengthPolicy =
+                validateUploadContentLength(req_info->content_length, maxAllowedLength);
+
+            if (contentLengthPolicy == UploadContentLengthPolicy::Missing)
+            {
+                out = Json::nullValue;
+                string error_message = "Content-Length is required for file uploads";
+                LOG(error) << error_message << " for method: " << method << endl;
+                SET_VMS_ERROR2(VmsErrorCode::InvalidParameterError, out, error_message.c_str());
+                return VmsErrorCode::InvalidParameterError;
+            }
+
+            if (contentLengthPolicy == UploadContentLengthPolicy::TooLarge)
+            {
+                out = Json::nullValue;
+                string error_message = "File upload exceeds the configured size limit";
+                LOG(error) << error_message << ": " << req_info->content_length
+                           << " bytes for method: " << method
+                           << " (max allowed: " << maxAllowedLength << ")" << endl;
+                SET_VMS_ERROR2(VmsErrorCode::PayloadTooLargeError, out, error_message.c_str());
+                return VmsErrorCode::PayloadTooLargeError;
+            }
+
             LOG(info) << "Upload API, skip parsing message" << endl;
             return VmsErrorCode::NoError;
         }
         
         // For GET, HEAD, DELETE, OPTIONS requests, typically no content to parse
-        std::string method = safeGetString(req_info->request_method);
         if (method == HTTP_METHOD_GET || method == HTTP_METHOD_HEAD || method == HTTP_METHOD_DELETE || method == HTTP_METHOD_OPTIONS) 
         {
             if (req_info->content_length > 0) 
@@ -484,20 +538,8 @@ class RequestHandler : public CivetHandler
             return VmsErrorCode::NoError;
         }
         
-        // For other methods, validate content length with appropriate limits
-        long long maxAllowedLength;
-        
-        if (isFileUploadAPI(req_info->request_uri, req_info->request_method)) 
-        {
-            // For file upload APIs, use the configured upload size limit
-            DeviceConfig config = GET_CONFIG();
-            maxAllowedLength = MAX_FILE_UPLOAD_SIZE_MB_TO_BYTES(config.nv_streamer_max_upload_file_size_MB);
-        }
-        else 
-        {
-            // For JSON APIs, use smaller limit
-            maxAllowedLength = MAX_JSON_CONTENT_LENGTH;
-        }
+        // For JSON APIs, use the smaller fixed request-body limit.
+        const long long maxAllowedLength = MAX_JSON_CONTENT_LENGTH;
         
         if (!isValidContentLength(req_info->content_length, maxAllowedLength, req_info->request_method))
         {

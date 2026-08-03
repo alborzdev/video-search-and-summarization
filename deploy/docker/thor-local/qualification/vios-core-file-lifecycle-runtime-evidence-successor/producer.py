@@ -308,29 +308,34 @@ def _verify_recorded_images(
             raise ProducerError(f"recorded image identity drift: {identity['image']}")
 
 
-def _verify_effective_limit_gap(sources: dict[str, bytes]) -> dict[str, Any]:
+def _verify_effective_limit_fix(sources: dict[str, bytes]) -> dict[str, Any]:
     source_path = (
         "services/vios/src/framework/web/http_server/HttpServerRequestHandler.cpp"
     )
     handler = sources[source_path].decode()
-    early_marker = "// Don't parse input message if its a upload API"
-    limit_marker = (
-        "maxAllowedLength = MAX_FILE_UPLOAD_SIZE_MB_TO_BYTES("
-        "config.nv_streamer_max_upload_file_size_MB);"
+    route_marker = "const bool isUploadRequest = isFileUploadAPI("
+    limit_marker = "MAX_FILE_UPLOAD_SIZE_MB_TO_BYTES("
+    policy_marker = (
+        "validateUploadContentLength(req_info->content_length, maxAllowedLength)"
     )
-    validator_marker = "if (!isValidContentLength("
-    early = handler.find(early_marker)
-    configured_limit = handler.find(limit_marker)
-    validator = handler.find(validator_marker)
-    if not 0 <= early < configured_limit < validator:
-        raise ProducerError("effective-limit source ordering drift")
-    early_region = handler[early:configured_limit]
+    bypass_marker = 'LOG(info) << "Upload API, skip parsing message"'
+    route = handler.find(route_marker)
+    configured_limit = handler.find(limit_marker, route)
+    policy = handler.find(policy_marker, configured_limit)
+    bypass = handler.find(bypass_marker, policy)
+    if not 0 <= route < configured_limit < policy < bypass:
+        raise ProducerError("effective-limit fix source ordering drift")
+    upload_region = handler[route:bypass]
     if (
-        "if(isFileUploadAPI(req_info->request_uri, req_info->request_method))"
-        not in early_region
-        or "return VmsErrorCode::NoError;" not in early_region
+        "UploadContentLengthPolicy::Missing" not in upload_region
+        or "Content-Length is required for file uploads" not in upload_region
+        or "VmsErrorCode::InvalidParameterError" not in upload_region
+        or "UploadContentLengthPolicy::TooLarge" not in upload_region
+        or "VmsErrorCode::PayloadTooLargeError" not in upload_region
     ):
-        raise ProducerError("effective-limit early-return gap no longer detected")
+        raise ProducerError("effective-limit source fix no longer verified")
+    if handler.count(route_marker) != 1:
+        raise ProducerError("upload route must be computed exactly once")
     vst_config = _strict_json(
         sources["deploy/docker/thor-local/vios/vst_config.json"], "VST config"
     )
@@ -340,16 +345,20 @@ def _verify_effective_limit_gap(sources: dict[str, bytes]) -> dict[str, Any]:
     if "client_max_body_size 25G;" not in nginx:
         raise ProducerError("nginx configured limit drift")
     return {
-        "detected": True,
-        "kind": "upload-handler-early-return-bypasses-nvstreamer-content-length-gate",
+        "detected": False,
+        "previous_gap": "upload-handler-early-return-bypassed-nvstreamer-content-length-gate",
+        "source_fix_verified": True,
+        "enforcement_scope": "per-request Content-Length",
+        "unknown_length_policy": "reject",
         "current_nginx_limit": "25G",
         "current_nvstreamer_limit_mb": 25600,
-        "current_equality_masks_gap": True,
-        "required_future_matrix": [
+        "current_equality_still_requires_asymmetric_runtime_matrix": True,
+        "required_runtime_matrix": [
             "nginx_limit_below_nvstreamer_limit",
             "nvstreamer_limit_below_nginx_limit",
         ],
-        "requires_code_fix_before_runtime_qualification": True,
+        "requires_code_fix_before_runtime_qualification": False,
+        "runtime_qualified": False,
     }
 
 
@@ -401,7 +410,7 @@ def compile_plan(contract_path: Path = CONTRACT_PATH) -> dict[str, Any]:
     _verify_case_bounds(contract, oracle_by_id)
     _verify_fixture_and_plan_bindings(contract, sources)
     _verify_recorded_images(contract, sources)
-    effective_limit_gap = _verify_effective_limit_gap(sources)
+    effective_limit_gap = _verify_effective_limit_fix(sources)
 
     cases = []
     for case in contract["cases"]:
@@ -455,9 +464,9 @@ def compile_plan(contract_path: Path = CONTRACT_PATH) -> dict[str, Any]:
             "five canonical two-request bounds are insufficient for their full contract plus ownership-safe restoration",
             "NvStreamer qualification requires upload, UI, and local-mount inputs plus RTSP, actual WebRTC, and removal",
             "VPN transport behavior is not proven by a local B-frame remediation run",
-            "the current upload handler bypasses the configured nvStreamer content-length gate before validation",
+            "the corrected upload content-length gate has no Thor runtime response or asymmetric-limit evidence",
             "CPU multimedia qualification requires H.264/H.265 hardware-default versus software-path selection and AAC runtime evidence",
-            "a separately authorized service run, reviewed execution bounds, and product-gap fix are required before promotion",
+            "a separately authorized service run and reviewed execution bounds are required before promotion",
         ],
     }
     _validate(plan, PLAN_SCHEMA_PATH, "plan")

@@ -49,11 +49,16 @@ def test_plan_is_inert_and_nonpromotable() -> None:
     assert all(case["runtime_evidence"] is False for case in plan["cases"])
 
 
-def test_product_gap_and_full_future_surfaces_are_explicit() -> None:
+def test_product_fix_and_full_future_surfaces_are_explicit() -> None:
     plan = producer.compile_plan()
     gap = plan["effective_limit_product_gap"]
-    assert gap["detected"] is True
-    assert gap["requires_code_fix_before_runtime_qualification"] is True
+    assert gap["detected"] is False
+    assert gap["source_fix_verified"] is True
+    assert gap["requires_code_fix_before_runtime_qualification"] is False
+    assert gap["runtime_qualified"] is False
+    assert gap["unknown_length_policy"] == "reject"
+    assert not any("product-gap fix" in blocker for blocker in plan["blockers"])
+    assert any("asymmetric-limit evidence" in blocker for blocker in plan["blockers"])
     nvstreamer = next(
         case
         for case in plan["cases"]
