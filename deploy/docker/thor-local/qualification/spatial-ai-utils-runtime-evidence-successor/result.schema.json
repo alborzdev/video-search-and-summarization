@@ -69,7 +69,15 @@
       "additionalProperties": false,
       "required": ["executor_owned_temporary_root", "pre_execution_tree_sha256", "post_execution_tree_sha256", "sentinel_sha256", "checkout_status_before_sha256", "checkout_status_after_sha256", "removed", "siblings_unchanged"],
       "properties": {
-        "executor_owned_temporary_root": {"type": ["string", "null"]},
+        "executor_owned_temporary_root": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/(?:[^/]+/)*vss-spatial-ai-runtime\\.[^/]+$"
+            },
+            {"type": "null"}
+          ]
+        },
         "pre_execution_tree_sha256": {"$ref": "#/$defs/sha256"},
         "post_execution_tree_sha256": {"$ref": "#/$defs/sha256"},
         "sentinel_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},

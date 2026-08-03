@@ -81,6 +81,7 @@ _ACTIVE_ACTION_COUNTS: dict[str, int] | None = None
 _ACTIVE_ACTIVITY_COUNTS: dict[str, int] | None = None
 _ACTIVE_NAMESPACE: Path | None = None
 EMPTY_TREE_SHA256 = hashlib.sha256(b"{}").hexdigest()
+TEMP_PREFIX = "vss-spatial-ai-runtime."
 
 EXTERNAL_ACTIVITY_KEYS = (
     "network_calls",
@@ -1173,6 +1174,28 @@ def validate_capability_owner_tree(
     return entries, total_bytes
 
 
+def validate_removed_temporary_root(value: Any) -> Path:
+    """Validate the canonical, independently parent-bound cleanup identity."""
+    if not isinstance(value, str) or not value:
+        raise EvidenceError("execution cleanup root identity is absent")
+    temporary_root = Path(value)
+    suffix = temporary_root.name.removeprefix(TEMP_PREFIX)
+    try:
+        expected_parent = Path(tempfile.gettempdir()).resolve(strict=True)
+    except OSError as exc:
+        raise EvidenceError("execution temporary parent is inaccessible") from exc
+    if (
+        not temporary_root.is_absolute()
+        or os.path.normpath(value) != value
+        or not temporary_root.name.startswith(TEMP_PREFIX)
+        or not suffix
+        or temporary_root.parent != expected_parent
+        or os.path.lexists(value)
+    ):
+        raise EvidenceError("execution cleanup root identity is invalid")
+    return temporary_root
+
+
 @contextlib.contextmanager
 def capability_owner_namespace(
     temp_base: Path, capability_id: str
@@ -2191,7 +2214,8 @@ def execute(
     verify_static_locks(contract)
     captured = dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")
     checkout_before = git("status", "--porcelain=v1", "--untracked-files=all")
-    temp_base = Path(tempfile.mkdtemp(prefix="vss-spatial-ai-runtime."))
+    temp_base = Path(tempfile.mkdtemp(prefix=TEMP_PREFIX))
+    temp_base_receipt_path = os.fspath(temp_base.resolve(strict=True))
     pre_tree = scan_temp_root(temp_base)
     if pre_tree:
         raise EvidenceError("executor temporary root was not initially empty")
@@ -2379,7 +2403,7 @@ def execute(
             },
             "capability_results": results,
             "cleanup": {
-                "executor_owned_temporary_root": temp_base.name,
+                "executor_owned_temporary_root": temp_base_receipt_path,
                 "pre_execution_tree_sha256": sha_bytes(canonical_bytes(pre_tree)),
                 "post_execution_tree_sha256": sha_bytes(canonical_bytes(post_tree)),
                 "sentinel_sha256": sentinel_hash,
@@ -2672,6 +2696,9 @@ def validate_result(result: dict[str, Any], contract: dict[str, Any]) -> None:
             or not expected_cleanup["sentinel_sha256"]
         ):
             raise EvidenceError("execution cleanup identity is absent")
+        validate_removed_temporary_root(
+            expected_cleanup["executor_owned_temporary_root"]
+        )
 
     if result["cleanup"] != expected_cleanup:
         raise EvidenceError("aggregate cleanup proof drift")

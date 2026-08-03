@@ -757,6 +757,50 @@ class IntegratedProducerTests(unittest.TestCase):
                         with self.assertRaises(materializer.MaterializationError):
                             materializer.validate_producer_receipt(forged, lock, root)
 
+    def test_producer_cleanup_root_is_canonical_parent_bound_and_absent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tmp").mkdir()
+            receipt, lock = make_valid_producer_receipt(root)
+            with (
+                mock.patch.object(materializer, "schema_errors", return_value=[]),
+                mock.patch.object(
+                    materializer, "_checkout_state", return_value=("a" * 40, "")
+                ),
+            ):
+                for forged in (
+                    "vss-spatial-ai-runtime.relative",
+                    os.fspath(
+                        root / "tmp" / ".." / "tmp" / "vss-spatial-ai-runtime.dotdot"
+                    ),
+                    "/var/tmp/vss-spatial-ai-runtime.wrong-parent",
+                ):
+                    with self.subTest(forged=forged):
+                        value = copy.deepcopy(receipt)
+                        value["cleanup"]["executor_owned_temporary_root"] = forged
+                        with self.assertRaises(materializer.MaterializationError):
+                            materializer.validate_producer_receipt(value, lock, root)
+
+                existing = root / "tmp" / "vss-spatial-ai-runtime.existing"
+                existing.mkdir()
+                value = copy.deepcopy(receipt)
+                value["cleanup"]["executor_owned_temporary_root"] = os.fspath(existing)
+                with self.assertRaises(materializer.MaterializationError):
+                    materializer.validate_producer_receipt(value, lock, root)
+                existing.rmdir()
+
+                dangling = root / "tmp" / "vss-spatial-ai-runtime.dangling"
+                dangling.symlink_to(root / "tmp" / "absent-target")
+                try:
+                    value = copy.deepcopy(receipt)
+                    value["cleanup"]["executor_owned_temporary_root"] = os.fspath(
+                        dangling
+                    )
+                    with self.assertRaises(materializer.MaterializationError):
+                        materializer.validate_producer_receipt(value, lock, root)
+                finally:
+                    dangling.unlink()
+
     def test_row_level_positive_negative_and_call_mutations_fail(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -1009,6 +1053,20 @@ class IntegratedReceiptIntegrityTests(unittest.TestCase):
             with self.subTest(section=section, field=field):
                 forged = copy.deepcopy(self.receipt)
                 forged[section][field] = value
+                self.rebind(forged)
+                with self.assertRaises(materializer.MaterializationError):
+                    self.validate(forged)
+
+    def test_nested_cleanup_root_must_remain_canonical_and_absent(self) -> None:
+        for forged_path in (
+            "vss-spatial-ai-runtime.relative",
+            "/tmp/../tmp/vss-spatial-ai-runtime.dotdot",
+        ):
+            with self.subTest(forged_path=forged_path):
+                forged = copy.deepcopy(self.receipt)
+                forged["producer_receipt"]["cleanup"][
+                    "executor_owned_temporary_root"
+                ] = forged_path
                 self.rebind(forged)
                 with self.assertRaises(materializer.MaterializationError):
                     self.validate(forged)

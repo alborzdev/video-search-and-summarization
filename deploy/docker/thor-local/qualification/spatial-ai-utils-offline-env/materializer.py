@@ -52,6 +52,7 @@ PRODUCER_RESULT_SCHEMA_PATH = PRODUCER_ROOT / "result.schema.json"
 ACK = "I_ACKNOWLEDGE_EPHEMERAL_OFFLINE_SPATIAL_AI_ENV"
 PRODUCER_ACK = "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE"
 TEMP_PREFIX = "vss-spatial-ai-offline-env."
+PRODUCER_TEMP_PREFIX = "vss-spatial-ai-runtime."
 PRODUCER_TIMEOUT_SECONDS = 930
 CAPABILITY_IDS = [
     "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
@@ -1196,6 +1197,31 @@ def _checkout_state() -> tuple[str, str]:
     return head, status
 
 
+def validate_removed_producer_temporary_root(
+    value: Any, owned_root: Path | None
+) -> Path:
+    """Validate a child-reported removed path without ever deleting it."""
+    if not isinstance(value, str) or not value:
+        raise MaterializationError("producer temporary root identity is absent")
+    temporary_root = Path(value)
+    suffix = temporary_root.name.removeprefix(PRODUCER_TEMP_PREFIX)
+    if (
+        not temporary_root.is_absolute()
+        or os.path.normpath(value) != value
+        or not temporary_root.name.startswith(PRODUCER_TEMP_PREFIX)
+        or not suffix
+        or os.path.lexists(value)
+    ):
+        raise MaterializationError("producer aggregate cleanup drift")
+    if owned_root is not None:
+        expected_parent = (owned_root / "tmp").resolve(strict=True)
+        if temporary_root.parent != expected_parent:
+            raise MaterializationError(
+                "producer temporary root escaped materializer root"
+            )
+    return temporary_root
+
+
 def validate_producer_receipt(
     result: dict[str, Any], producer_lock: dict[str, Any], owned_root: Path | None
 ) -> dict[str, int]:
@@ -1342,18 +1368,14 @@ def validate_producer_receipt(
     ):
         raise MaterializationError("producer all-seven preflight drift")
     aggregate_cleanup = result["cleanup"]
-    temporary_root = Path(aggregate_cleanup["executor_owned_temporary_root"])
+    validate_removed_producer_temporary_root(
+        aggregate_cleanup["executor_owned_temporary_root"], owned_root
+    )
     if (
-        not temporary_root.name.startswith("vss-spatial-ai-runtime.")
-        or temporary_root.exists()
-        or aggregate_cleanup["removed"] is not True
+        aggregate_cleanup["removed"] is not True
         or aggregate_cleanup["siblings_unchanged"] is not True
     ):
         raise MaterializationError("producer aggregate cleanup drift")
-    if owned_root is not None and temporary_root.parent != (owned_root / "tmp").resolve(
-        strict=True
-    ):
-        raise MaterializationError("producer temporary root escaped materializer root")
     promotion = result["promotion"]
     if promotion["individual_receipt_candidates"] != CAPABILITY_IDS or any(
         promotion[key]
@@ -1457,14 +1479,10 @@ def validate_integrated_receipt(
     )
     # The nested producer cleanup path was already validated while its owned root
     # existed; after cleanup only its exact prefix and absence remain observable.
-    producer_temp = Path(
-        receipt["producer_receipt"]["cleanup"]["executor_owned_temporary_root"]
+    validate_removed_producer_temporary_root(
+        receipt["producer_receipt"]["cleanup"]["executor_owned_temporary_root"],
+        None,
     )
-    if (
-        not producer_temp.name.startswith("vss-spatial-ai-runtime.")
-        or producer_temp.exists()
-    ):
-        raise MaterializationError("nested producer temporary root cleanup drift")
     if receipt["accounting"] != accounting:
         raise MaterializationError("integrated accounting drift")
     if receipt["selection"] != {"kind": "all", "capability_ids": CAPABILITY_IDS}:

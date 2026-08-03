@@ -94,6 +94,7 @@ def test_inert_plan_selection_is_schema_valid_and_nonpromoting() -> None:
     ]
     assert result["promotion"]["aggregate_is_promotable"] is False
     assert result["confinement"]["bounded_capability_actions"] == 0
+    assert result["cleanup"]["executor_owned_temporary_root"] is None
 
 
 def test_static_fixture_and_source_locks_match() -> None:
@@ -296,6 +297,10 @@ def test_all_capability_execution_is_local_and_independent(
     assert result["promotion"]["receipt_is_runtime_evidence"] is False
     assert result["promotion"]["aggregate_is_promotable"] is False
     assert result["promotion"]["external_provider_entry_touched"] is False
+    temporary_root = Path(result["cleanup"]["executor_owned_temporary_root"])
+    assert temporary_root.is_absolute()
+    assert temporary_root.name.startswith(EXECUTOR.TEMP_PREFIX)
+    assert not temporary_root.exists()
     for key in (
         "network_calls",
         "docker_calls",
@@ -306,6 +311,49 @@ def test_all_capability_execution_is_local_and_independent(
         "product_subprocess_calls",
     ):
         assert result["confinement"][key] == 0
+
+
+@pytest.mark.parametrize(
+    "forged",
+    [
+        "vss-spatial-ai-runtime.relative",
+        "/tmp/../tmp/vss-spatial-ai-runtime.dotdot",
+        "/var/tmp/vss-spatial-ai-runtime.wrong-parent",
+    ],
+)
+def test_cleanup_root_rejects_relative_noncanonical_and_wrong_parent(
+    current_execution: dict, forged: str
+) -> None:
+    value = copy.deepcopy(current_execution)
+    value["cleanup"]["executor_owned_temporary_root"] = forged
+    with pytest.raises(EXECUTOR.EvidenceError):
+        EXECUTOR.validate_result(value, EXECUTOR.load_contract())
+
+
+def test_cleanup_root_rejects_existing_and_dangling_symlink(
+    current_execution: dict,
+) -> None:
+    expected_parent = Path(tempfile.gettempdir()).resolve(strict=True)
+    with tempfile.TemporaryDirectory(
+        prefix=EXECUTOR.TEMP_PREFIX, dir=expected_parent
+    ) as existing:
+        value = copy.deepcopy(current_execution)
+        value["cleanup"]["executor_owned_temporary_root"] = existing
+        with pytest.raises(EXECUTOR.EvidenceError):
+            EXECUTOR.validate_result(value, EXECUTOR.load_contract())
+
+    with tempfile.NamedTemporaryFile(
+        prefix=EXECUTOR.TEMP_PREFIX, dir=expected_parent, delete=True
+    ) as placeholder:
+        dangling = Path(placeholder.name)
+    dangling.symlink_to(expected_parent / "absent-cleanup-target")
+    try:
+        value = copy.deepcopy(current_execution)
+        value["cleanup"]["executor_owned_temporary_root"] = os.fspath(dangling)
+        with pytest.raises(EXECUTOR.EvidenceError):
+            EXECUTOR.validate_result(value, EXECUTOR.load_contract())
+    finally:
+        dangling.unlink()
 
 
 def test_passing_rows_have_exact_actions_requests_negatives_and_cleanup(
