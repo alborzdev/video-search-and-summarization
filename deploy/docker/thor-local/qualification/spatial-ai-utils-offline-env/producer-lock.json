@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "thor-spatial-ai-offline-integrated-runtime-v1",
-  "producer_binding_commit": "68ed897f4a5121d8d487a60e0519205a28fc6c09",
+  "producer_binding_commit": "494b80c7c63ad3bd4fafddb6e9d093e1fc8bd537",
   "producer_acknowledgement": "I_ACKNOWLEDGE_OFFLINE_SPATIAL_AI_UTILS_RUNTIME_EVIDENCE",
   "capability_ids": [
     "manifest-entry.spatial-ai-utils.00-calibration-and-camera-grouping",
@@ -15,7 +15,7 @@
   "producer_bundle": [
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.json", "sha256": "7fa1c4070cc3089c3e7f30511cf89bbc0e50fe773ab408e702c6d5717e6470a8"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/contract.schema.json", "sha256": "beda5705dad3b6cdff0c9aa11ae3ecd716df1508e0f7042d503f3a87fde80553"},
-    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "e736ff075c3494ab0a6a11208fa564a863588ee14608ba6d1016286a807f78e6"},
+    {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py", "sha256": "61d9acc31102273156a3b00f8a39ecc009a34ff937836e404338c49f14ea0a69"},
     {"path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/result.schema.json", "sha256": "469e3ee85e34481c6d55ca2d544a80bfdefc092f83b55fde28eea0ac6bff4571"}
   ],
   "canonical_controls": [
@@ -1086,7 +1086,7 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/executor.py",
-    "sha256": "e736ff075c3494ab0a6a11208fa564a863588ee14608ba6d1016286a807f78e6"
+    "sha256": "61d9acc31102273156a3b00f8a39ecc009a34ff937836e404338c49f14ea0a69"
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/fixtures/00-calibration-and-camera-grouping.json",
@@ -1122,7 +1122,7 @@
   },
   {
     "path": "deploy/docker/thor-local/qualification/spatial-ai-utils-runtime-evidence-successor/tests/test_executor.py",
-    "sha256": "ff926cc4173b5d6da53de3b6c0989ad743e7463cab303e87017b1b7050c67047"
+    "sha256": "60d422580936136839f30a00574e5da527e0abba5754a8c640a9595baef02eed"
   }
   ],
   "expectations": {
