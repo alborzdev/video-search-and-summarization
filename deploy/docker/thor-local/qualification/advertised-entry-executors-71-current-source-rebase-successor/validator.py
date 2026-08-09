@@ -62,7 +62,7 @@ EXPECTED_OVERLAY = {
     "services/agent/src/vss_agents/api/rtsp_delete.py": "d90e887b26f518a15a628224a33577e3469c4f3f29b66d84dae0470fe75285cb",
     "services/agent/src/vss_agents/tools/video_report_gen.py": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab",
     "deploy/docker/services/video-summarization/compose.yml": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74",
-    "deploy/docker/thor-local/qualification/expected/agent.json": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540",
+    "deploy/docker/thor-local/qualification/expected/agent.json": "ea4f92b9e331b585170d4bd8e1b618c92d5b83db16372ee6e6193458f15391ca",
     "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
     "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d",
     "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44",
@@ -97,6 +97,17 @@ EXPECTED_SEARCH_ADDITIONS = {
     "POST /api/v1/search/image/atif",
     "POST /api/v1/search/image/full",
     "POST /api/v1/search/image/stream",
+}
+
+EXPECTED_RELEASED_ROUTE_ADDITIONS = {
+    "GET /evaluate/job/last",
+    "GET /evaluate/job/{job_id}",
+    "GET /evaluate/jobs",
+    "GET /generate/async/job/{job_id}",
+    "GET /v1/workflow/async/job/{job_id}",
+    "POST /evaluate",
+    "POST /generate/async",
+    "POST /v1/workflow/async",
 }
 
 
@@ -349,12 +360,17 @@ def _validate_nat_inventory(
     nat = contract.get("nat_inventory")
     if not isinstance(nat, dict):
         raise RebaseError("NAT inventory contract missing")
-    if nat.get("historical_denominator") != 44 or nat.get("current_denominator") != 56:
+    if nat.get("historical_denominator") != 44 or nat.get("current_denominator") != 64:
         raise RebaseError("NAT denominator contract drift")
     if set(nat.get("required_nat_generate_chat_routes", [])) != EXPECTED_NAT_ROUTES:
         raise RebaseError("required NAT route contract drift")
     if set(nat.get("search_additions", [])) != EXPECTED_SEARCH_ADDITIONS:
         raise RebaseError("Search addition contract drift")
+    if (
+        set(nat.get("released_route_additions", []))
+        != EXPECTED_RELEASED_ROUTE_ADDITIONS
+    ):
+        raise RebaseError("released route addition contract drift")
 
     document = _strict_json(_read(nat["source_path"]), nat["source_path"])
     operations = document.get("operations")
@@ -371,12 +387,12 @@ def _validate_nat_inventory(
         current.add(f"{row['method']} {row['path']}")
     if (
         document.get("surface") != "agent"
-        or document.get("declared_operation_count") != 56
-        or document.get("normalized_unique_operation_count") != 56
-        or len(operations) != 56
-        or len(current) != 56
+        or document.get("declared_operation_count") != 64
+        or document.get("normalized_unique_operation_count") != 64
+        or len(operations) != 64
+        or len(current) != 64
     ):
-        raise RebaseError("current NAT operation denominator is not exact 56")
+        raise RebaseError("current NAT operation denominator is not exact 64")
     methods = Counter(row["method"] for row in operations)
     if document.get("method_counts") != dict(methods):
         raise RebaseError("current NAT method counts drift")
@@ -384,8 +400,13 @@ def _validate_nat_inventory(
         raise RebaseError("one or more required NAT generate/chat routes are absent")
     if not EXPECTED_SEARCH_ADDITIONS.issubset(current):
         raise RebaseError("one or more exact Search additions are absent")
-    if len(current - EXPECTED_SEARCH_ADDITIONS) != 44:
-        raise RebaseError("56-operation inventory does not partition as 44 + 12")
+    if not EXPECTED_RELEASED_ROUTE_ADDITIONS.issubset(current):
+        raise RebaseError("one or more released route additions are absent")
+    if (
+        len(current - EXPECTED_SEARCH_ADDITIONS - EXPECTED_RELEASED_ROUTE_ADDITIONS)
+        != 44
+    ):
+        raise RebaseError("64-operation inventory does not partition as 44 + 12 + 8")
 
     wave6 = next(row for row in historical_waves if row.get("wave") == 6)
     executor_source = _read(wave6["executor_path"])
@@ -404,9 +425,11 @@ def _validate_nat_inventory(
         raise RebaseError("historical executor 44-operation denominator missing")
     return {
         "historical_denominator": 44,
-        "current_denominator": 56,
+        "current_denominator": 64,
         "search_additions": sorted(EXPECTED_SEARCH_ADDITIONS),
         "search_addition_count": 12,
+        "released_route_additions": sorted(EXPECTED_RELEASED_ROUTE_ADDITIONS),
+        "released_route_addition_count": 8,
         "required_nat_generate_chat_routes": sorted(EXPECTED_NAT_ROUTES),
         "required_nat_generate_chat_route_count": 8,
     }
@@ -585,7 +608,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(
             "PASS: 71 retained rows = 39 unchanged + 32 current-source rebased; "
-            "sixteen locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
+            "sixteen locks; Kafka abort gate; NAT 64 = 44 + 12 + 8; no promotion"
         )
     return 0
 

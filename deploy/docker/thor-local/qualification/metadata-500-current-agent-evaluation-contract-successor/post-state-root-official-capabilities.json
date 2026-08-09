@@ -3732,7 +3732,7 @@
       "contract": {
         "direct_auth": "none",
         "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
-        "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
+        "expected_manifest_sha256": "3de511a9b8d37f94b5d9191486660e93792d18d979f2adca426a3305ba334fd6",
         "gateway_auth": "optional",
         "implementation_operation_count": 21,
         "operation_count": 19,
@@ -12833,7 +12833,7 @@
   ],
   "sources": [
     {
-      "claim_set_sha256": "b016a98294bf2bdec940e42634395785b71840ca9cdaf4d8b8fecfc77a2aaad3",
+      "claim_set_sha256": "28b7c13c4e0be34439997c857e35a8123a9c850c9198a7f28005bad0dad04ca9",
       "id": "release-notes-3.2.1",
       "kind": "release_notes",
       "locator_policy": "Versioned HTML heading/table/line locator captured 2026-07-31.",
@@ -12985,7 +12985,7 @@
       "version": "3.2.1"
     },
     {
-      "claim_set_sha256": "ef707e775022a65dc20c4a10b1648cfe48a7cb4fc115466b96e7e017d95fa059",
+      "claim_set_sha256": "7eea32c47ecad66ed5281327e3f2c7796ab8d6d16c40837cf459fb2a124ed80e",
       "id": "alerts-api-doc-3.2.1",
       "kind": "versioned_official_docs",
       "locator_policy": "Versioned HTML base URL, submission scope, and authentication boundary locator captured 2026-07-31.",
@@ -13449,7 +13449,7 @@
       "version": "3.2.1"
     },
     {
-      "claim_set_sha256": "bff28d874a148a03d5bef14c32d7f9c208404b4144eea93d69a623a15a3925f2",
+      "claim_set_sha256": "d4a538998b9eea35835a169c52b262b51045b24f858a71eba5d76a852b8e0d61",
       "id": "doc.alerts",
       "kind": "versioned_official_docs",
       "locator_policy": "Wave 3 Systems system extraction captured 2026-07-31.",

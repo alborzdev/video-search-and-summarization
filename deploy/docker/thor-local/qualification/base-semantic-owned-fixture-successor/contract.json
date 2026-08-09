@@ -77,10 +77,10 @@
   "promotion_eligible": false,
   "warehouse_sample_bundle": "excluded",
   "source_locks": [
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "088d0fcd6dfc0217cf67bfb3b252c8eadf168a268146417db110b71abeb117c1"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/contract.json", "sha256": "bfa91de04cb343c5b6b17054f569bca414ce3324a05b304836c60a0e444bb94e"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-full-envelope-successor/executor.py", "sha256": "93d197d0242cd09fd5853551aac6a1fa061dd8de8a462d911cc356f2f00cfaf8"},
     {"path": "deploy/docker/thor-local/qualification/candidate-oracle-adapter/adapter.json", "sha256": "59359d95ec768ab79f9c7a99404f2a7304addb018bbc3c591900d6ee7e9540b0"},
-    {"path": "deploy/docker/thor-local/compose.yml", "sha256": "69a4b0a2d0379ac2213d56180d8ed79e3598b3d67efa122e29c00a396c0e6bf3"},
+    {"path": "deploy/docker/thor-local/compose.yml", "sha256": "e94959360badcda5a2bf801775291d7af4afe150400e30ca480a79ca6ed38531"},
     {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
     {"path": "services/agent/src/vss_agents/tools/filesystem_object_store.py", "sha256": "4f1d045894fac46301f3f5d94605e84c1129b60e1ba521dc828b6abd85cc2b4f"},
     {"path": "services/agent/src/vss_agents/tools/video_understanding.py", "sha256": "59511bb172a030e0945a9c9a0ccb432e5b299ae1697e9ba023f4246d61c7c095"},

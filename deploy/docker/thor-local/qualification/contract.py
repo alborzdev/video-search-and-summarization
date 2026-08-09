@@ -72,6 +72,11 @@ def contract_shape(value: Any) -> Any:
         }
     if isinstance(value, list):
         return [contract_shape(item) for item in value]
+    if isinstance(value, float) and value.is_integer():
+        # JSON Schema numbers are mathematical values: 1 and 1.0 impose the
+        # same constraint, even when different Pydantic releases emit them
+        # with different JSON number spellings.
+        return int(value)
     return value
 
 

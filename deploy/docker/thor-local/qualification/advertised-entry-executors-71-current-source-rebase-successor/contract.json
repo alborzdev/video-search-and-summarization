@@ -77,7 +77,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/expected/agent.json",
-      "sha256": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540"
+      "sha256": "ea4f92b9e331b585170d4bd8e1b618c92d5b83db16372ee6e6193458f15391ca"
     },
     {
       "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
@@ -130,7 +130,7 @@
   "nat_inventory": {
     "source_path": "deploy/docker/thor-local/qualification/expected/agent.json",
     "historical_denominator": 44,
-    "current_denominator": 56,
+    "current_denominator": 64,
     "required_nat_generate_chat_routes": [
       "POST /chat",
       "POST /chat/stream",
@@ -154,6 +154,16 @@
       "POST /api/v1/search/image/atif",
       "POST /api/v1/search/image/full",
       "POST /api/v1/search/image/stream"
+    ],
+    "released_route_additions": [
+      "GET /evaluate/job/last",
+      "GET /evaluate/job/{job_id}",
+      "GET /evaluate/jobs",
+      "GET /generate/async/job/{job_id}",
+      "GET /v1/workflow/async/job/{job_id}",
+      "POST /evaluate",
+      "POST /generate/async",
+      "POST /v1/workflow/async"
     ]
   },
   "policy": {

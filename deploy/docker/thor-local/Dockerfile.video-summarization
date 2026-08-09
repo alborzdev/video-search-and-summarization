@@ -12,10 +12,6 @@ RUN /usr/local/bin/python3 /tmp/patch_lvs_llm_provider.py && \
     /usr/local/bin/python3 /tmp/patch_lvs_file_management.py
 COPY services/video-summarization/src/lvs_mcp.py /opt/nvidia/via/via-engine/lvs_mcp.py
 COPY services/video-summarization/src/lvs_mcp_sse.py /opt/nvidia/via/via-engine/lvs_mcp_sse.py
-COPY deploy/docker/thor-local/vios-mcp/wheelhouse/mcp-1.23.0-py3-none-any.whl /tmp/mcp-1.23.0-py3-none-any.whl
-RUN /usr/local/bin/python3 -c 'from hashlib import sha256; from pathlib import Path; p = Path("/tmp/mcp-1.23.0-py3-none-any.whl"); b = p.read_bytes(); assert len(b) == 231427; assert sha256(b).hexdigest() == "5a645cf111ed329f4619f2629a3f15d9aabd7adc2ea09d600d31467b51ecb64f"' && \
-    UV_OFFLINE=1 /usr/local/bin/uv pip install --system --no-index --no-deps --reinstall /tmp/mcp-1.23.0-py3-none-any.whl && \
-    UV_OFFLINE=1 /usr/local/bin/uv pip check --system && \
-    /usr/local/bin/python3 -c 'from importlib.metadata import version; from pathlib import Path; from mcp.server.sse import SseServerTransport; from mcp.types import CallToolResult; assert version("mcp") == "1.23.0"; transport = SseServerTransport("/messages"); assert isinstance(transport._read_stream_writers, dict); assert callable(transport.connect_sse); assert callable(transport.handle_post_message); assert CallToolResult(content=[], isError=True).isError is True; Path("/tmp/mcp-1.23.0-py3-none-any.whl").unlink()'
+RUN /usr/local/bin/python3 -c 'from importlib.metadata import version; from mcp.server.sse import SseServerTransport; from mcp.types import CallToolResult; assert version("mcp") == "1.28.1"; transport = SseServerTransport("/messages"); assert isinstance(transport._read_stream_writers, dict); assert callable(transport.connect_sse); assert callable(transport.handle_post_message); assert CallToolResult(content=[], isError=True).isError is True'
 
 USER lvsuser

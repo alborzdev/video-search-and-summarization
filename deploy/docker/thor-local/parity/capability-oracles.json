@@ -23612,7 +23612,7 @@
           "operator": "equals"
         },
         {
-          "expected": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
+          "expected": "3de511a9b8d37f94b5d9191486660e93792d18d979f2adca426a3305ba334fd6",
           "id": "contract-03",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals"
@@ -23777,7 +23777,7 @@
           "contract": {
             "direct_auth": "none",
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
-            "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
+            "expected_manifest_sha256": "3de511a9b8d37f94b5d9191486660e93792d18d979f2adca426a3305ba334fd6",
             "gateway_auth": "optional",
             "implementation_operation_count": 21,
             "operation_count": 19,
@@ -23829,7 +23829,7 @@
         "contract": {
           "direct_auth": "none",
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/alerts.json",
-          "expected_manifest_sha256": "b4604b621376c6e356003027678f962e7dc39193f75347abaeab0eaa153388f1",
+          "expected_manifest_sha256": "3de511a9b8d37f94b5d9191486660e93792d18d979f2adca426a3305ba334fd6",
           "gateway_auth": "optional",
           "implementation_operation_count": 21,
           "operation_count": 19,

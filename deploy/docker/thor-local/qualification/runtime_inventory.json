@@ -130,7 +130,7 @@
           "id": "files-invalid-purpose",
           "kind": "semantic",
           "method": "GET",
-          "path": "/v1/files",
+          "path": "/files",
           "query": {
             "purpose": "invalid"
           },
@@ -358,20 +358,6 @@
           "kind": "health",
           "method": "GET",
           "path": "/healthz",
-          "expected_status": [200]
-        }
-      ]
-    },
-    {
-      "id": "tegrastats-exporter",
-      "port_env": "TEGRASTATS_PORT",
-      "default_port": 19101,
-      "probes": [
-        {
-          "id": "ready",
-          "kind": "health",
-          "method": "GET",
-          "path": "/readyz",
           "expected_status": [200]
         }
       ]

@@ -237,11 +237,16 @@ class OfficialCapabilityTests(unittest.TestCase):
             )
         )
         # The projection exists to test the two historical MV3DT promotions.
-        # Overlay the unrelated LVS row with its reviewed live contract because
-        # the verifier intentionally checks operation manifests from this checkout.
+        # Overlay unrelated live API rows whose reviewed contracts have advanced
+        # since this historical MV3DT projection. The verifier intentionally checks
+        # operation manifests from the current checkout.
         for key, identifier in (
             ("sources", "lvs-api-doc-3.2.1"),
             ("capabilities", "api.core.lvs-17"),
+            ("sources", "release-notes-3.2.1"),
+            ("sources", "alerts-api-doc-3.2.1"),
+            ("sources", "doc.alerts"),
+            ("capabilities", "api.core.alerts-19"),
         ):
             projected = next(
                 index
@@ -252,17 +257,18 @@ class OfficialCapabilityTests(unittest.TestCase):
                 row for row in self.ledger[key] if row["id"] == identifier
             )
             ledger[key][projected] = copy.deepcopy(current)
-        projected_oracle = next(
-            index
-            for index, row in enumerate(oracles["oracles"])
-            if row["capability_id"] == "api.core.lvs-17"
-        )
-        current_oracle = next(
-            row
-            for row in self.oracles["oracles"]
-            if row["capability_id"] == "api.core.lvs-17"
-        )
-        oracles["oracles"][projected_oracle] = copy.deepcopy(current_oracle)
+        for capability_id in ("api.core.lvs-17", "api.core.alerts-19"):
+            projected_oracle = next(
+                index
+                for index, row in enumerate(oracles["oracles"])
+                if row["capability_id"] == capability_id
+            )
+            current_oracle = next(
+                row
+                for row in self.oracles["oracles"]
+                if row["capability_id"] == capability_id
+            )
+            oracles["oracles"][projected_oracle] = copy.deepcopy(current_oracle)
         return ledger, manifest, oracles
 
     def _validate_mv3dt_aggregate(

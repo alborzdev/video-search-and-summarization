@@ -25,7 +25,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json",
-      "sha256": "b5797039e01b676919c66b153f55069e9ae2e85b3fed0cd4e9905ac139f93179"
+      "sha256": "353bb686b59a9375ac95f2be0133c5bbf3b49ad102930388da13e5db5795f01a"
     }
   ],
   "denominators": {

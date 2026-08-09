@@ -1,5 +1,5 @@
 {
-  "component_schema_hash": "e74f4ec3bca63c1b745761a4aa29011fc97fd172cce4a0a6cdad17d17f79ad44",
+  "component_schema_hash": "387705265b86255130419b940cb3496806406d8bee2a856a3bc72107ed4cfe6a",
   "declared_operation_count": 21,
   "kind": "rest",
   "method_counts": {
@@ -141,7 +141,7 @@
   "source_files": [
     {
       "path": "services/alert/openapi.json",
-      "sha256": "d7336051ddbbb368d6376bbe0a0d71414b2738a7e1899321eddb4d24dcd95881"
+      "sha256": "eb01f609af9fbefda9a92924f9ccd217a9a4a048033439d415f004ac8692a1c3"
     }
   ],
   "surface": "alerts"

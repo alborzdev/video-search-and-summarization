@@ -22,10 +22,10 @@
     "secret_inputs": []
   },
   "expected_totals": {
-    "declared_rest_operations": 342,
-    "normalized_unique_rest_operations": 341,
-    "official_declared_rest_operations": 338,
-    "official_normalized_unique_rest_operations": 337,
+    "declared_rest_operations": 350,
+    "normalized_unique_rest_operations": 349,
+    "official_declared_rest_operations": 346,
+    "official_normalized_unique_rest_operations": 345,
     "thor_local_extension_operations": 4,
     "mcp_tools": 42,
     "mcp_prompts": 5
@@ -108,7 +108,7 @@
       "kind": "rest",
       "extractor": "agent_routes",
       "expected_manifest": "agent.json",
-      "expected_operation_count": 56,
+      "expected_operation_count": 64,
       "direct": {
         "port_env": "VSS_AGENT_PORT",
         "default_port": 8100,
@@ -239,6 +239,90 @@
       },
       "sources": [
         "services/alert/openapi.json"
+      ],
+      "openapi_overrides": [
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "chunk_duration", "default"],
+          "expected": 30,
+          "value": 10
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "chunk_duration", "minimum"],
+          "expected": 1,
+          "value": 1.0
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "chunk_overlap_duration", "default"],
+          "expected": 5,
+          "value": 2
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "chunk_overlap_duration", "minimum"],
+          "expected": 0,
+          "value": 0.0
+        },
+        {
+          "operation": "add",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "enable_audio", "default"],
+          "value": false
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "enable_reasoning", "default"],
+          "expected": true,
+          "value": false
+        },
+        {
+          "operation": "add",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "max_tokens", "default"],
+          "value": 128
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "num_frames_per_second_or_fixed_frames_chunk", "default"],
+          "expected": 10,
+          "value": 4
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "num_frames_per_second_or_fixed_frames_chunk", "minimum"],
+          "expected": 1,
+          "value": 1.0
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "use_fps_for_chunking", "default"],
+          "expected": true,
+          "value": false
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "vlm_input_height", "default"],
+          "expected": 256,
+          "value": 512
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "vlm_input_height", "minimum"],
+          "expected": 1,
+          "value": 1.0
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "vlm_input_width", "default"],
+          "expected": 256,
+          "value": 512
+        },
+        {
+          "operation": "replace",
+          "path": ["components", "schemas", "RealtimeAlertRequest", "properties", "vlm_input_width", "minimum"],
+          "expected": 1,
+          "value": 1.0
+        }
       ]
     },
     {

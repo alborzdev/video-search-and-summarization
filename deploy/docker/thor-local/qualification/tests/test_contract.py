@@ -79,6 +79,20 @@ class ContractNormalizationTests(unittest.TestCase):
             contract.normalize_openapi_document(second),
         )
 
+    def test_openapi_integral_number_spellings_are_equivalent(self) -> None:
+        first = {
+            "paths": {},
+            "components": {
+                "schemas": {"Count": {"type": "number", "minimum": 1}}
+            },
+        }
+        second = json.loads(json.dumps(first))
+        second["components"]["schemas"]["Count"]["minimum"] = 1.0
+        self.assertEqual(
+            contract.normalize_openapi_document(first),
+            contract.normalize_openapi_document(second),
+        )
+
     def test_path_prefix_and_parameter_normalization_are_separate(self) -> None:
         document = {
             "paths": {"/v1/file/{sensorId}": {"get": {"responses": {"200": {}}}}}
@@ -195,19 +209,19 @@ class CheckedInInventoryTests(unittest.TestCase):
     def test_inventory_totals_are_exact(self) -> None:
         rest = [item for item in self.manifests.values() if item["kind"] == "rest"]
         mcp = [item for item in self.manifests.values() if item["kind"] == "mcp"]
-        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 342)
+        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 350)
         self.assertEqual(
-            sum(item["normalized_unique_operation_count"] for item in rest), 341
+            sum(item["normalized_unique_operation_count"] for item in rest), 349
         )
         self.assertEqual(
             self.inventory["expected_totals"]["official_declared_rest_operations"],
-            338,
+            346,
         )
         self.assertEqual(
             self.inventory["expected_totals"][
                 "official_normalized_unique_rest_operations"
             ],
-            337,
+            345,
         )
         self.assertEqual(
             self.inventory["expected_totals"]["thor_local_extension_operations"],
@@ -346,8 +360,8 @@ class CheckedInInventoryTests(unittest.TestCase):
                 QUALIFICATION_DIR / "expected",
             )
         self.assertEqual(status, 0, output.getvalue())
-        self.assertIn("342 declared REST operations", output.getvalue())
-        self.assertIn("official core denominator is 338 declared", output.getvalue())
+        self.assertIn("350 declared REST operations", output.getvalue())
+        self.assertIn("official core denominator is 346 declared", output.getvalue())
         self.assertIn("42 MCP tools plus 5 MCP prompts", output.getvalue())
 
     def test_local_live_openapi_helper_does_not_accept_urls(self) -> None:

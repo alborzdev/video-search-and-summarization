@@ -3583,6 +3583,55 @@
                             }
                         ],
                         "title": "Enable Reasoning"
+                    },
+                    "media_mode": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "video",
+                                    "snapshots"
+                                ]
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Media Mode"
+                    },
+                    "snapshot_frames": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Snapshot Frames"
+                    },
+                    "response_format": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Response Format"
+                    },
+                    "json_parser": {
+                        "anyOf": [
+                            {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Json Parser"
                     }
                 },
                 "additionalProperties": false,

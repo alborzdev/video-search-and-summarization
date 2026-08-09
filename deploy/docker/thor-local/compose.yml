@@ -93,6 +93,15 @@ services:
       retries: 30
       start_period: 60s
 
+  # Grafana is published on loopback only. Allow anonymous Viewer access so
+  # the bundled Thor dashboard and its read-only qualification probe work
+  # without storing or transmitting an operator password.
+  grafana:
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_DISABLE_LOGIN_FORM: "false"
+
   # Jetson does not expose the datacenter DCGM contract. Reuse the already
   # locked VSS Agent Python runtime to translate the host's L4T tegrastats
   # stream without adding an image or package. The exporter bounds line/label

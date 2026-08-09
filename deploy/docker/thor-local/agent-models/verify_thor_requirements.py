@@ -64,7 +64,7 @@ EXPECTED_SOURCE_LOCKS = {
         "d5427164ccbd33529ddc2678c969601b09bb67776df332e230910702281766ae"
     ),
     "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json": (
-        "b5797039e01b676919c66b153f55069e9ae2e85b3fed0cd4e9905ac139f93179"
+        "353bb686b59a9375ac95f2be0133c5bbf3b49ad102930388da13e5db5795f01a"
     ),
 }
 RUNTIME_COLLECTOR_DIR = (

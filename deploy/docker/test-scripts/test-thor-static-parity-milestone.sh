@@ -475,7 +475,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # The current-source 71-row rebase preserves the immutable historical receipt
 # while resolving all 182 row/source references through an exact sixteen-path
 # overlay. It independently checks cancellation-aware Kafka publication and
-# the 56-operation NAT inventory; evidence and promotion remain empty.
+# the 64-operation Agent inventory (44 historical + 12 Search + 8 released
+# evaluation/async routes); evidence and promotion remain empty.
 PYTHONDONTWRITEBYTECODE=1 python3 \
   "${thor_local_root}/qualification/advertised-entry-executors-71-current-source-rebase-successor/validator.py" \
   --check --json >/dev/null

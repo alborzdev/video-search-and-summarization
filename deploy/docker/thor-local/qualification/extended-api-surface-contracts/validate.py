@@ -501,10 +501,10 @@ def _validate_core_denominator(
     _require(
         totals
         == {
-            "declared_rest_operations": 342,
-            "normalized_unique_rest_operations": 341,
-            "official_declared_rest_operations": 338,
-            "official_normalized_unique_rest_operations": 337,
+            "declared_rest_operations": 350,
+            "normalized_unique_rest_operations": 349,
+            "official_declared_rest_operations": 346,
+            "official_normalized_unique_rest_operations": 345,
             "thor_local_extension_operations": 4,
             "mcp_tools": 42,
             "mcp_prompts": 5,
@@ -721,7 +721,7 @@ def run(
     try:
         document = load_json(contract_path)
         validate(document, schema_path, repo_root)
-    except (ContractError, ast.SyntaxError, ValueError, TypeError, KeyError) as exc:
+    except (ContractError, SyntaxError, ValueError, TypeError, KeyError) as exc:
         if json_output:
             print(json.dumps({"result": "fail", "error": str(exc)}, sort_keys=True))
         else:

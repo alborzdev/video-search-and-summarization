@@ -94,13 +94,18 @@ class CurrentSourceRebaseTest(unittest.TestCase):
             with self.assertRaisesRegex(VALIDATOR.RebaseError, "bypasses guarded"):
                 VALIDATOR._validate_kafka_topology(self.contract)
 
-    def test_nat_inventory_is_exact_56_equals_44_plus_12(self) -> None:
+    def test_nat_inventory_is_exact_64_equals_44_plus_12_plus_8(self) -> None:
         nat = self.result["nat_inventory"]
         self.assertEqual(nat["historical_denominator"], 44)
-        self.assertEqual(nat["current_denominator"], 56)
+        self.assertEqual(nat["current_denominator"], 64)
         self.assertEqual(nat["search_addition_count"], 12)
+        self.assertEqual(nat["released_route_addition_count"], 8)
         self.assertEqual(
             set(nat["search_additions"]), VALIDATOR.EXPECTED_SEARCH_ADDITIONS
+        )
+        self.assertEqual(
+            set(nat["released_route_additions"]),
+            VALIDATOR.EXPECTED_RELEASED_ROUTE_ADDITIONS,
         )
 
     def test_eight_historical_nat_routes_remain_required(self) -> None:

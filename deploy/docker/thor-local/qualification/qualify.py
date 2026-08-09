@@ -55,6 +55,62 @@ def _source_files(surface: dict[str, Any]) -> list[tuple[str, Path]]:
     return [(relative, _repo_path(relative)) for relative in sources]
 
 
+def _apply_openapi_overrides(
+    document: dict[str, Any], surface_id: str, overrides: Any
+) -> None:
+    """Apply reviewed profile-specific OpenAPI defaults without hiding drift."""
+
+    if overrides is None:
+        return
+    if not isinstance(overrides, list):
+        raise ContractError(f"{surface_id}: openapi_overrides must be a list")
+    for index, override in enumerate(overrides):
+        if not isinstance(override, dict):
+            raise ContractError(
+                f"{surface_id}: openapi override {index} must be an object"
+            )
+        operation = override.get("operation")
+        required_keys = {"operation", "path", "value"}
+        if operation == "replace":
+            required_keys.add("expected")
+        if operation not in {"add", "replace"} or set(override) != required_keys:
+            raise ContractError(
+                f"{surface_id}: openapi override {index} has an invalid shape"
+            )
+        path = override["path"]
+        if (
+            not isinstance(path, list)
+            or len(path) < 3
+            or path[0] != "components"
+            or not all(isinstance(part, str) and part for part in path)
+        ):
+            raise ContractError(
+                f"{surface_id}: openapi override {index} has an unsafe path"
+            )
+        parent: Any = document
+        for part in path[:-1]:
+            if not isinstance(parent, dict) or part not in parent:
+                raise ContractError(
+                    f"{surface_id}: openapi override {index} parent is missing"
+                )
+            parent = parent[part]
+        if not isinstance(parent, dict):
+            raise ContractError(
+                f"{surface_id}: openapi override {index} parent is not an object"
+            )
+        leaf = path[-1]
+        if operation == "add":
+            if leaf in parent:
+                raise ContractError(
+                    f"{surface_id}: openapi override {index} add target exists"
+                )
+        elif leaf not in parent or parent[leaf] != override["expected"]:
+            raise ContractError(
+                f"{surface_id}: openapi override {index} expected value drifted"
+            )
+        parent[leaf] = override["value"]
+
+
 def _agent_operations(surface: dict[str, Any]) -> list[dict[str, Any]]:
     config_path = _repo_path(surface["config_source"])
     config_lines = config_path.read_text(encoding="utf-8").splitlines()
@@ -99,6 +155,14 @@ def _agent_operations(surface: dict[str, Any]) -> list[dict[str, Any]]:
         ("GET", "/mcp/client/tool/list"),
         ("GET", "/mcp/client/tool/list/per_user"),
         ("POST", "/evaluate/item"),
+        ("POST", "/evaluate"),
+        ("GET", "/evaluate/jobs"),
+        ("GET", "/evaluate/job/last"),
+        ("GET", "/evaluate/job/{job_id}"),
+        ("POST", "/generate/async"),
+        ("GET", "/generate/async/job/{job_id}"),
+        ("POST", "/v1/workflow/async"),
+        ("GET", "/v1/workflow/async/job/{job_id}"),
     ]
     operations = [
         {"method": method, "path": path, "operation_id": None, "schema_hash": None}
@@ -172,6 +236,9 @@ def derive_surface(surface: dict[str, Any]) -> dict[str, Any]:
         path_prefix = surface.get("path_prefix", "")
         if extractor == "openapi_json":
             document = load_json_document(sources[0][1])
+            _apply_openapi_overrides(
+                document, surface_id, surface.get("openapi_overrides")
+            )
             operations, component_hash = normalize_openapi_document(
                 document, path_prefix=path_prefix
             )

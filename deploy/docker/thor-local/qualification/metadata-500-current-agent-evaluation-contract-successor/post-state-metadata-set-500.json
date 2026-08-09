@@ -7,7 +7,7 @@
     },
     "capability_oracles": {
       "path": "deploy/docker/thor-local/qualification/metadata-500-current-agent-evaluation-contract-successor/post-state-capability-oracles.json",
-      "raw_sha256": "cea9183f695691405e2fe69c3d6b68eb94fc3cfe5e203b6de034dce9c544d802",
+      "raw_sha256": "4a39cd5433068843b858313a89cfb7820d0415bcff554d02fdc06c1e98efc95c",
       "schema_id": "capability_oracles_schema",
       "schema_version": 2
     },
@@ -18,7 +18,7 @@
     },
     "official_capabilities": {
       "path": "deploy/docker/thor-local/qualification/metadata-500-current-agent-evaluation-contract-successor/post-state-official-capabilities.json",
-      "raw_sha256": "54e68ec183a59e0010c1101f9673d41e0aaaeee2c602fc6b52459ad757dd617c",
+      "raw_sha256": "05524aa7ce305c8f3694af57b7c66d6d2d9f9f8029b0ce1f309c88ebfba4b0e1",
       "schema_id": "official_capabilities_schema",
       "schema_version": 1
     }

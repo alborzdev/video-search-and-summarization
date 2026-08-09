@@ -157,26 +157,27 @@ def execute() -> dict[str, Any]:
         _repo_path("deploy/docker/thor-local/qualification/api_inventory.json")
     )
     if inventory["expected_totals"] != {
-        "declared_rest_operations": 342,
-        "normalized_unique_rest_operations": 341,
-        "official_declared_rest_operations": 338,
-        "official_normalized_unique_rest_operations": 337,
+        "declared_rest_operations": 350,
+        "normalized_unique_rest_operations": 349,
+        "official_declared_rest_operations": 346,
+        "official_normalized_unique_rest_operations": 345,
         "thor_local_extension_operations": 4,
         "mcp_tools": 42,
         "mcp_prompts": 5,
     }:
         raise ContractError("successor aggregate API totals drift")
     expected_inventory_result = {
-        "agent_declared_operations": 56,
-        "agent_normalized_unique_operations": 56,
-        "aggregate_declared_rest_operations": 342,
-        "aggregate_normalized_unique_rest_operations": 341,
-        "aggregate_official_declared_rest_operations": 338,
-        "aggregate_official_normalized_unique_rest_operations": 337,
+        "agent_declared_operations": 64,
+        "agent_normalized_unique_operations": 64,
+        "aggregate_declared_rest_operations": 350,
+        "aggregate_normalized_unique_rest_operations": 349,
+        "aggregate_official_declared_rest_operations": 346,
+        "aggregate_official_normalized_unique_rest_operations": 345,
         "aggregate_thor_local_extension_operations": 4,
         "derivation": (
-            "three additive configured endpoints times four NAT variants equals "
-            "twelve additive agent operations"
+            "the current Agent exposes 64 live routes after recognizing "
+            "path-converter routes and the released evaluation and asynchronous "
+            "workflow endpoints"
         ),
     }
     if contract["api_inventory_result"] != expected_inventory_result:

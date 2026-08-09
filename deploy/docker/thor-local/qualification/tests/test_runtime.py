@@ -125,8 +125,8 @@ class RuntimeQualificationTests(unittest.TestCase):
         services = config["services"]
         probes = [probe for service in services for probe in service["probes"]]
 
-        self.assertEqual(len(services), 22)
-        self.assertEqual(len(probes), 32)
+        self.assertEqual(len(services), 21)
+        self.assertEqual(len(probes), 31)
         vios_mcp = next(service for service in services if service["id"] == "vios-mcp")
         self.assertEqual(vios_mcp["port_env"], "VST_MCP_PORT")
         self.assertEqual(vios_mcp["default_port"], 8001)
@@ -141,7 +141,18 @@ class RuntimeQualificationTests(unittest.TestCase):
         )
         self.assertEqual(semantic["kind"], "semantic")
         self.assertEqual(semantic["query"], {"purpose": "invalid"})
+        self.assertEqual(semantic["path"], "/files")
         self.assertEqual(semantic["expected_status"], [422])
+
+    def test_openapi_path_converters_match_framework_emitted_paths(self) -> None:
+        document = openapi_document("/static/{file_path}")
+        expected = expected_manifest(document)
+        expected["operations"][0]["path"] = "/static/{file_path:path}"
+
+        comparison = runtime.compare_live_openapi(document, expected)
+
+        self.assertEqual(comparison["missing_route_count"], 0)
+        self.assertEqual(comparison["extra_route_count"], 0)
 
     def test_prometheus_targets_require_exact_healthy_job_set(self) -> None:
         jobs = [

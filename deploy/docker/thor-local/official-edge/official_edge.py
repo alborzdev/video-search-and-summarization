@@ -71,6 +71,13 @@ RTVLM_IMAGE = (
 RTVLM_IMAGE_ID = (
     "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
 )
+RTVLM_SERVER_OVERLAY = (
+    REPO_ROOT / "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py"
+)
+RTVLM_SERVER_OVERLAY_SHA256 = (
+    "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+)
+RTVLM_SERVER_CONTAINER = "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py"
 AGENT_CONFIG_CONTAINER = (
     "/vss-agent/deploy/docker/thor-local/official-edge/config_edge.yml"
 )
@@ -468,6 +475,8 @@ def _command_contains(command: Any, required: list[str], context: str) -> None:
 
 
 def verify_compose_contract() -> None:
+    if _sha256_file(RTVLM_SERVER_OVERLAY) != RTVLM_SERVER_OVERLAY_SHA256:
+        raise ContractError("RT-VLM request-cancellation overlay source drifted")
     compose = _load_yaml(OFFICIAL_COMPOSE)
     services = compose.get("services")
     if not isinstance(services, dict):
@@ -542,10 +551,11 @@ def verify_compose_contract() -> None:
             "compose RT-VLM environment differs from exact Cosmos3 lane"
         )
     if rtvlm.get("volumes") != [
-        "${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache"
+        "${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py:/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py:ro",
     ]:
         raise ContractError(
-            "compose RT-VLM cache-root mount differs from exact Cosmos3 lane"
+            "compose RT-VLM cache-root or request-cancellation overlay mount differs from exact Cosmos3 lane"
         )
 
     agent_env = agent.get("environment")
@@ -1360,7 +1370,10 @@ def verify_resolved_compose(
     )
     _reject_mount_overlays(
         rtvlm_mounts,
-        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache"},
+        {
+            "/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
+            RTVLM_SERVER_CONTAINER,
+        },
         "resolved rtvi-vlm",
     )
     if not isinstance(edge_mounts, list) or not any(
@@ -1391,6 +1404,17 @@ def verify_resolved_compose(
     ):
         raise ContractError(
             "resolved Cosmos3 cache is not the exact dedicated writable bind"
+        )
+    if not any(
+        isinstance(mount, dict)
+        and mount.get("type") == "bind"
+        and mount.get("source") == str(RTVLM_SERVER_OVERLAY.resolve())
+        and mount.get("target") == RTVLM_SERVER_CONTAINER
+        and mount.get("read_only") is True
+        for mount in rtvlm_mounts
+    ):
+        raise ContractError(
+            "resolved RT-VLM lacks exact read-only request-cancellation overlay"
         )
     for forbidden in ("qwen3-vl-8b-instruct", "qwen3-vl-8b-instruct-shared-gpu"):
         if forbidden in services:
@@ -1678,7 +1702,10 @@ def verify_readiness(
             "HF_TOKEN": "",
             "OPENAI_API_KEY": "",
         },
-        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache": _cosmos_cache_root(cosmos_cache)},
+        {
+            "/opt/nvidia/rtvi/.rtvi/ngc_model_cache": _cosmos_cache_root(cosmos_cache),
+            RTVLM_SERVER_CONTAINER: RTVLM_SERVER_OVERLAY,
+        },
         {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache"},
     )
     _verify_running_environment(

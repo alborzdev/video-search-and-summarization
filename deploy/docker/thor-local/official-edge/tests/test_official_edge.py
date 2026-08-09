@@ -579,6 +579,12 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                         "Source": str(cosmos_cache.parent),
                         "Destination": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
                         "RW": True,
+                    },
+                    {
+                        "Type": "bind",
+                        "Source": str(oe.RTVLM_SERVER_OVERLAY.resolve()),
+                        "Destination": oe.RTVLM_SERVER_CONTAINER,
+                        "RW": False,
                     }
                 ],
             }

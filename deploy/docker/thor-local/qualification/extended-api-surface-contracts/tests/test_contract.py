@@ -40,7 +40,7 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
     def test_canonical_hash_is_stable(self) -> None:
         self.assertEqual(
             self.document["contract_set_sha256"],
-            "215c57c82c350f1c5e9742ed6a570d898e6bf605398e91a409d8acb87a142047",
+            "3bcddb6b031523cfba58109a9abd68c66e1bb208eb9b92a21e8778d24f39fc40",
         )
         self.assertEqual(
             VALIDATOR.canonical_contract_hash(self.document),
@@ -74,23 +74,23 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
         self.assertEqual(
             inventory["expected_totals"],
             {
-                "declared_rest_operations": 342,
-                "normalized_unique_rest_operations": 341,
-                "official_declared_rest_operations": 338,
-                "official_normalized_unique_rest_operations": 337,
+                "declared_rest_operations": 350,
+                "normalized_unique_rest_operations": 349,
+                "official_declared_rest_operations": 346,
+                "official_normalized_unique_rest_operations": 345,
                 "thor_local_extension_operations": 4,
                 "mcp_tools": 42,
                 "mcp_prompts": 5,
             },
         )
-        self.assertEqual(scope["complete_declared_rest_formula"], "422 + L")
-        self.assertEqual(scope["complete_normalized_rest_formula"], "421 + L")
-        self.assertEqual(scope["minimum_declared_rest_operations"], 436)
-        self.assertEqual(scope["minimum_normalized_rest_operations"], 435)
-        self.assertEqual(scope["complete_official_declared_rest_formula"], "418 + L")
-        self.assertEqual(scope["complete_official_normalized_rest_formula"], "417 + L")
-        self.assertEqual(scope["minimum_official_declared_rest_operations"], 432)
-        self.assertEqual(scope["minimum_official_normalized_rest_operations"], 431)
+        self.assertEqual(scope["complete_declared_rest_formula"], "430 + L")
+        self.assertEqual(scope["complete_normalized_rest_formula"], "429 + L")
+        self.assertEqual(scope["minimum_declared_rest_operations"], 444)
+        self.assertEqual(scope["minimum_normalized_rest_operations"], 443)
+        self.assertEqual(scope["complete_official_declared_rest_formula"], "426 + L")
+        self.assertEqual(scope["complete_official_normalized_rest_formula"], "425 + L")
+        self.assertEqual(scope["minimum_official_declared_rest_operations"], 440)
+        self.assertEqual(scope["minimum_official_normalized_rest_operations"], 439)
 
     def test_core_denominator_cannot_be_rebased_without_source_lock(self) -> None:
         mutated = copy.deepcopy(self.document)

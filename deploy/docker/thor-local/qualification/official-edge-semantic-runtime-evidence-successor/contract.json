@@ -22,11 +22,11 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official_edge.py",
-      "sha256": "123057e2f5fbd7da93c1840e2239d7ab1e912d7c0959374ab0b83e1704d430e7"
+      "sha256": "0709d85cee2dd5a32e1c4adf97eb4e60d6929b6363ba73ac174bbf51ffb6ecfc"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/compose.yml",
-      "sha256": "e150076b05d5c104780d936cd0c232e1d5d2546d648540249df205961f0a0de0"
+      "sha256": "3718e01ae5c91d29da442bad6f07e70fefbc15c92c6e9c650b1c77cb1257fdd2"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official-edge.env",
@@ -38,7 +38,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json",
-      "sha256": "b5797039e01b676919c66b153f55069e9ae2e85b3fed0cd4e9905ac139f93179"
+      "sha256": "353bb686b59a9375ac95f2be0133c5bbf3b49ad102930388da13e5db5795f01a"
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",
@@ -46,7 +46,7 @@
     },
     {
       "path": "deploy/docker/thor-local/agent-models/thor-requirements.json",
-      "sha256": "d400ded2ae3c72ede61df53b7c15ce0374d359363ee5b70d45eb6795052cba4f"
+      "sha256": "2fbf24d0c35baa32435efcbad2f13f32802bae6ef3f0b28d92e3c7fc9fbe5756"
     },
     {
       "path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py",

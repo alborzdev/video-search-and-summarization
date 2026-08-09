@@ -1,14 +1,14 @@
 {
   "component_schema_hash": null,
-  "declared_operation_count": 56,
+  "declared_operation_count": 64,
   "kind": "rest",
   "method_counts": {
     "DELETE": 3,
-    "GET": 5,
-    "POST": 46,
+    "GET": 10,
+    "POST": 49,
     "PUT": 2
   },
-  "normalized_unique_operation_count": 56,
+  "normalized_unique_operation_count": 64,
   "operations": [
     {
       "method": "POST",
@@ -235,7 +235,31 @@
     {
       "method": "POST",
       "operation_id": null,
+      "path": "/evaluate",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
       "path": "/evaluate/item",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/evaluate/job/last",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/evaluate/job/{job_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/evaluate/jobs",
       "schema_hash": null
     },
     {
@@ -254,6 +278,18 @@
       "method": "POST",
       "operation_id": null,
       "path": "/generate",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/generate/async",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/generate/async/job/{job_id}",
       "schema_hash": null
     },
     {
@@ -326,6 +362,18 @@
       "method": "POST",
       "operation_id": null,
       "path": "/v1/workflow",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/v1/workflow/async",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/v1/workflow/async/job/{job_id}",
       "schema_hash": null
     },
     {

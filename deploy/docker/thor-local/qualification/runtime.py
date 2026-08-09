@@ -463,6 +463,12 @@ def _drift_fingerprint(values: list[Any]) -> str | None:
     return hashlib.sha256(canonical).hexdigest()
 
 
+def _canonical_route_path(path: str) -> str:
+    """Match framework path-converter syntax to its emitted OpenAPI path."""
+
+    return re.sub(r"\{([^{}:]+):[^{}]+\}", r"{\1}", path)
+
+
 def compare_live_openapi(
     live_document: dict[str, Any],
     expected: dict[str, Any],
@@ -476,7 +482,10 @@ def compare_live_openapi(
     if not isinstance(expected_operations, list):
         raise RuntimeConfigError("configuration_error")
 
-    live_by_route = {(item["method"], item["path"]): item for item in operations}
+    live_by_route = {
+        (item["method"], _canonical_route_path(item["path"])): item
+        for item in operations
+    }
     expected_by_route: dict[tuple[str, str], dict[str, Any]] = {}
     for item in expected_operations:
         if not isinstance(item, dict):
@@ -485,7 +494,7 @@ def compare_live_openapi(
         path = item.get("path")
         if not isinstance(method, str) or not isinstance(path, str):
             raise RuntimeConfigError("configuration_error")
-        expected_by_route[(method, path)] = item
+        expected_by_route[(method, _canonical_route_path(path))] = item
 
     expected_routes = set(expected_by_route)
     live_routes = set(live_by_route)

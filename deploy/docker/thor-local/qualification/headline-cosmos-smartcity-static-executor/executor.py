@@ -80,13 +80,13 @@ EXPECTED_SOURCE_LOCKS = {
         "134e4369f21ce80c4fd2261552d83925da900ca80f23d93622cc7bf2756d8074"
     ),
     "deploy/docker/thor-local/official-edge/compose.yml": (
-        "e150076b05d5c104780d936cd0c232e1d5d2546d648540249df205961f0a0de0"
+        "3718e01ae5c91d29da442bad6f07e70fefbc15c92c6e9c650b1c77cb1257fdd2"
     ),
     "deploy/docker/thor-local/official-edge/config_edge.yml": (
         "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662"
     ),
     "deploy/docker/thor-local/official-edge/official_edge.py": (
-        "123057e2f5fbd7da93c1840e2239d7ab1e912d7c0959374ab0b83e1704d430e7"
+        "0709d85cee2dd5a32e1c4adf97eb4e60d6929b6363ba73ac174bbf51ffb6ecfc"
     ),
     "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json": (
         "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"
