@@ -25,8 +25,8 @@ inventory = json.loads(
     (thor_dir / "qualification/runtime_inventory.json").read_text(encoding="utf-8")
 )
 services = {service["id"]: service for service in inventory["services"]}
-assert len(services) == 22
-assert sum(len(service["probes"]) for service in services.values()) == 32
+assert len(services) == 21
+assert sum(len(service["probes"]) for service in services.values()) == 31
 assert services["vios-mcp"] == {
     "id": "vios-mcp",
     "port_env": "VST_MCP_PORT",
@@ -74,17 +74,6 @@ assert any(
     probe["path"] == "/api/dashboards/uid/thor-vss-observability"
     for probe in services["grafana"]["probes"]
 )
-assert services["tegrastats-exporter"]["default_port"] == 19101
-assert services["tegrastats-exporter"]["port_env"] == "TEGRASTATS_PORT"
-assert services["tegrastats-exporter"]["probes"] == [
-    {
-        "id": "ready",
-        "kind": "health",
-        "method": "GET",
-        "path": "/readyz",
-        "expected_status": [200],
-    }
-]
 
 with (thor_dir / "observability/prometheus.yml").open(encoding="utf-8") as stream:
     prometheus = yaml.safe_load(stream)
@@ -108,6 +97,14 @@ assert kibana_config["telemetry.tracing.enabled"] is False
 assert kibana_config["telemetry.metrics.enabled"] is False
 assert kibana_config["newsfeed.enabled"] is False
 assert kibana_config["xpack.fleet.isAirGapped"] is True
+kibana_init = (
+    docker_dir
+    / "developer-profiles/dev-profile-thor-full/kibana-dashboard/init-scripts/kibana-import-dashboards.sh"
+).read_text(encoding="utf-8")
+assert "ensure_dashboard_index mdx-raw-thor-bootstrap" in kibana_init
+assert "ensure_dashboard_index mdx-behavior-thor-bootstrap" in kibana_init
+assert '\"timestamp\":{\"type\":\"date\"}' in kibana_init
+assert '\"number_of_shards\":1' in kibana_init
 environment = os.environ.copy()
 environment.update(
     {
