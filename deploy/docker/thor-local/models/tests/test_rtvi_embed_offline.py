@@ -27,3 +27,19 @@ def test_thor_rtvi_embed_is_source_overlaid_and_offline() -> None:
         assert fragment in section
 
     assert "MODEL_PATH:" not in section
+
+
+def test_embedding_cache_uses_base_image_as_artifact_provenance() -> None:
+    launcher = (REPO_ROOT / "deploy/docker/scripts/thor-local.sh").read_text()
+    contract = launcher.split("\nembedding_cache_contract() {\n", 1)[1].split(
+        "\n}\n\nstream_embedding_volume_tree()", 1
+    )[0]
+    verifier = launcher.split("\nstaged_embedding_cache_is_present() {\n", 1)[1].split(
+        "\n}\n\nrequire_staged_embedding_cache()", 1
+    )[0]
+
+    assert 'print(service["image"])' in contract
+    assert 'print(service["build"]["args"]["BASE_IMAGE"])' in contract
+    assert 'docker image inspect "${embed_image}"' in verifier
+    assert '--image "${provenance_image}"' in verifier
+    assert '--image "${embed_image}"' not in verifier

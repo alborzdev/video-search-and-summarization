@@ -1428,6 +1428,7 @@ service = config["services"]["rtvi-embed"]
 print(volumes["rtvi-ngc-model-cache"]["name"])
 print(volumes["rtvi-triton-model-repo"]["name"])
 print(service["image"])
+print(service["build"]["args"]["BASE_IMAGE"])
 print(service["environment"]["MODEL_PATH"])
 '
 }
@@ -1452,15 +1453,16 @@ stream_embedding_volume_tree() {
 }
 
 staged_embedding_cache_is_present() {
-  local ngc_volume triton_volume embed_image source_spec
+  local ngc_volume triton_volume embed_image provenance_image source_spec
   local ngc_root triton_root ngc_path triton_path
   local -a cache_contract=()
   mapfile -t cache_contract < <(embedding_cache_contract) || return 1
-  (( ${#cache_contract[@]} == 4 )) || return 1
+  (( ${#cache_contract[@]} == 5 )) || return 1
   ngc_volume="${cache_contract[0]}"
   triton_volume="${cache_contract[1]}"
   embed_image="${cache_contract[2]}"
-  source_spec="${cache_contract[3]}"
+  provenance_image="${cache_contract[3]}"
+  source_spec="${cache_contract[4]}"
   ngc_root="Cosmos-Embed1-448p-anomaly-detection"
   triton_root="cosmos-embed1-448p-anomaly-detection"
   ngc_path="/opt/nvidia/rtvi/.rtvi/ngc_model_cache/${ngc_root}"
@@ -1475,7 +1477,7 @@ staged_embedding_cache_is_present() {
       --lock "${model_artifact_lock}" \
       --artifact cosmos_embed_model \
       --source-spec "${source_spec}" \
-      --image "${embed_image}" \
+      --image "${provenance_image}" \
       --container-path "${ngc_path}" \
       --batch-size "${RTVI_EMBED_BATCH_SIZE}" || return 1
   stream_embedding_volume_tree "${triton_volume}" "${triton_root}" "${embed_image}" |
@@ -1483,7 +1485,7 @@ staged_embedding_cache_is_present() {
       --lock "${model_artifact_lock}" \
       --artifact cosmos_embed_triton \
       --source-spec "${source_spec}" \
-      --image "${embed_image}" \
+      --image "${provenance_image}" \
       --container-path "${triton_path}" \
       --batch-size "${RTVI_EMBED_BATCH_SIZE}" || return 1
 }
