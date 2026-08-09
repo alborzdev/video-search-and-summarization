@@ -1,23 +1,557 @@
 {
-  "schema_version": 1,
-  "lock_state": "incomplete_fail_closed",
   "artifacts": {
+    "cosmos3_nano_bf16": {
+      "identity": {
+        "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
+      },
+      "kind": "ngc_model_cache",
+      "provenance": {
+        "evidence_path": "deploy/docker/thor-local/official-edge/provenance/cosmos3-nano-reasoner-bf16-final.json",
+        "evidence_sha256": "77f9d7b68084cc8ec62c8dc62abbc452960eeb90c33ab7c7aadd3bc18b6c37cf",
+        "identity": {
+          "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
+        },
+        "reviewed_by": "codex-thor-local-review-2026-08-09",
+        "state": "independently_reviewed_upstream_provenance"
+      },
+      "state": "locked_exact",
+      "tree": {
+        "entries": [
+          {
+            "path": ".cache",
+            "type": "directory"
+          },
+          {
+            "path": ".cache/huggingface",
+            "type": "directory"
+          },
+          {
+            "path": ".cache/huggingface/.gitignore",
+            "sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+            "size": 1,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/CACHEDIR.TAG",
+            "sha256": "f6572428f6d5e1575e73a1502895a8731f10757dfbb634909c6e154b849af91d",
+            "size": 191,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download",
+            "type": "directory"
+          },
+          {
+            "path": ".cache/huggingface/download/.gitattributes.metadata",
+            "sha256": "9cee197f044be2d3270c977844c8ccc11e8acc4e2a0e2f73eeda8a42ba2f180f",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/README.md.metadata",
+            "sha256": "bfe2a38d0969a3c34acd1ebab7173b9833c069440a97bc35ec6e37fad496da33",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/chat_template.json.metadata",
+            "sha256": "06515d7f4bb1432095156e0531091f42bbad2b9effaa4b68ed30ceaad1eaa5b3",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/config.json.metadata",
+            "sha256": "093946bc544241b4deabc801274204261ca6af164f35aa3a6949e5681f105537",
+            "size": 100,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/generation_config.json.metadata",
+            "sha256": "7ef94e3941a290dfdb6b35e7ff5c5581fb8089234b63b61949b7524058e9d538",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/merges.txt.metadata",
+            "sha256": "1ff476a756876b3106265d32399969da6ed0330dead3de7718d57c93a7bb9926",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/model-00001-of-00004.safetensors.metadata",
+            "sha256": "b1db4a98025082fa4d64e05e8bd6f2392f0ee64d90878d816dbd539f1d178a2b",
+            "size": 125,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/model-00002-of-00004.safetensors.metadata",
+            "sha256": "64f78179845896517f4ccecfabdb61713d35183147ed24765caedb1cf958d358",
+            "size": 124,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/model-00003-of-00004.safetensors.metadata",
+            "sha256": "c7840a3cbb3d3535653d40d5639776e50e189a89332bc7f262815e738acb0535",
+            "size": 125,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/model-00004-of-00004.safetensors.metadata",
+            "sha256": "6c66e73640462e75339208a172ad1e600eb5677c473ed0dc351dfe5e3537da93",
+            "size": 125,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/model.safetensors.index.json.metadata",
+            "sha256": "aaa75e4c681eecd8bb76537a70fb47d1c5a29c36b195e7160e91b3301dce1cff",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/preprocessor_config.json.metadata",
+            "sha256": "6dd578e0c87648f8802e1d249f925647d6b6fa3bc57dd42e88ca8c29e0f98e31",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/tokenizer.json.metadata",
+            "sha256": "221a1e569c0cb1c03e7d2d8d5a71626223ba1c1b4982d4f75f0ac52c471e8971",
+            "size": 100,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/tokenizer_config.json.metadata",
+            "sha256": "0691128ffe6d37d8dbcf5d87b34b6dfc4e886073d2d89530a77b332e7bcf7cd7",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/video_preprocessor_config.json.metadata",
+            "sha256": "96b5f6f64978089ed769a54d85a7eb99158a679349942ffb6d614d189500115a",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".cache/huggingface/download/vocab.json.metadata",
+            "sha256": "e50f2e53f787733480228f7610c5a7403a219fa7f2b3a994dbd27fbcf5f6d0c4",
+            "size": 101,
+            "type": "file"
+          },
+          {
+            "path": ".gitattributes",
+            "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+            "size": 1519,
+            "type": "file"
+          },
+          {
+            "path": "README.md",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0,
+            "type": "file"
+          },
+          {
+            "path": "chat_template.json",
+            "sha256": "5c72a170d2a4a1a3bc5adad2e689ae28138a9700e5b8c96c0266331e86c0acce",
+            "size": 5499,
+            "type": "file"
+          },
+          {
+            "path": "config.json",
+            "sha256": "5cd452860dc1e9c29dd71cc3cef7f39b338b7a40793f7a260655c2d3568f3661",
+            "size": 1474,
+            "type": "file"
+          },
+          {
+            "path": "generation_config.json",
+            "sha256": "8469742d1fce0de951c8909b26a2c0c0d8490837ce476efb114da9e0cefc4d44",
+            "size": 269,
+            "type": "file"
+          },
+          {
+            "path": "merges.txt",
+            "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+            "size": 1671839,
+            "type": "file"
+          },
+          {
+            "path": "model-00001-of-00004.safetensors",
+            "sha256": "80477bcd15599fb4bb854acc44ac68a5de19256bf32508acac3af45ac023aeaa",
+            "size": 5283287392,
+            "type": "file"
+          },
+          {
+            "path": "model-00002-of-00004.safetensors",
+            "sha256": "0da8a3b53656dfc0f13e370ccd863e3149d8c069271d5f43ee66b99a0a5306cb",
+            "size": 5301856744,
+            "type": "file"
+          },
+          {
+            "path": "model-00003-of-00004.safetensors",
+            "sha256": "e9b33eb0a26c5f9107b9ced02f53e519bd6f2c82aa76270355146c7b38566e76",
+            "size": 5360576128,
+            "type": "file"
+          },
+          {
+            "path": "model-00004-of-00004.safetensors",
+            "sha256": "a8480817a68d8af42c799b980095708ce9ee4045aced724d90ee94bf8b2430c1",
+            "size": 1588619104,
+            "type": "file"
+          },
+          {
+            "path": "model.safetensors.index.json",
+            "sha256": "31e5064be5695aee8fc2721d45ac431875a964d6de0e3ff3de50dc38619f9d41",
+            "size": 67748,
+            "type": "file"
+          },
+          {
+            "path": "preprocessor_config.json",
+            "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516",
+            "size": 390,
+            "type": "file"
+          },
+          {
+            "path": "tokenizer.json",
+            "sha256": "a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7",
+            "size": 7032403,
+            "type": "file"
+          },
+          {
+            "path": "tokenizer_config.json",
+            "sha256": "c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399",
+            "size": 10868,
+            "type": "file"
+          },
+          {
+            "path": "video_preprocessor_config.json",
+            "sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13",
+            "size": 385,
+            "type": "file"
+          },
+          {
+            "path": "vocab.json",
+            "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+            "size": 2776833,
+            "type": "file"
+          }
+        ],
+        "entry_count": 37
+      }
+    },
     "edge4b": {
-      "kind": "huggingface_snapshot",
+      "blob_tree": {
+        "entries": [
+          {
+            "path": "08a3c073d74a7d3bb9fc5e605996cf8a1f8d25de",
+            "sha256": "b5b5f4cf5b098cd174b1307c5133d662e7d78cf665d4e184ee0e1c7e15f75e01",
+            "size": 188035,
+            "type": "file"
+          },
+          {
+            "path": "0d5c2c9dba131d5da20e58336dd09b022142ea50",
+            "sha256": "e3a4f63da745f02317a45e00e6476c17fc66ac41faf14bb1b0be1f3211b0ca53",
+            "size": 420,
+            "type": "file"
+          },
+          {
+            "path": "21098cbc3d437701f6e491a114beb2f6aa752aa6",
+            "sha256": "07fa66e5b3da7e6a71c1a263e3dd68da11c8afa9178b47c49510ba628746fcff",
+            "size": 12119,
+            "type": "file"
+          },
+          {
+            "path": "258e7b73106a6fcf5bbf022a1663fc8bdfcd7771",
+            "sha256": "6d151c2a33634d62897bce3507ade32155d15680fdfc0326cef43e8f5a4e8026",
+            "size": 34393,
+            "type": "file"
+          },
+          {
+            "path": "3d8362958dda6eb7550340c279544b3652b2a51b",
+            "sha256": "1cd33e90311e0b9abba4b8b0fc68ceb568ed368d2aa20ee5aab8016c16651d5d",
+            "size": 13067,
+            "type": "file"
+          },
+          {
+            "path": "43dc7b2b59a04140e761020bce62c7307527a22fd5e1d55c44fd3b5f8f98a054",
+            "sha256": "43dc7b2b59a04140e761020bce62c7307527a22fd5e1d55c44fd3b5f8f98a054",
+            "size": 1285019664,
+            "type": "file"
+          },
+          {
+            "path": "52373fe24473b1aa44333d318f578ae6bf04b49b",
+            "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930",
+            "size": 1570,
+            "type": "file"
+          },
+          {
+            "path": "598990ea0a5a3a57e944b710ed5e939b6381c892",
+            "sha256": "9d37e4338d0db72a6626183c848cf19b7cf1453de94103991cca148733831022",
+            "size": 59951,
+            "type": "file"
+          },
+          {
+            "path": "623c34567aebb18582765289fbe23d901c62704d6518d71866e0e58db892b5b7",
+            "sha256": "623c34567aebb18582765289fbe23d901c62704d6518d71866e0e58db892b5b7",
+            "size": 17077484,
+            "type": "file"
+          },
+          {
+            "path": "67ca3ce54a7118ed74d6fd793b7cc9fd6b2a9f03",
+            "sha256": "ab7813c3abdd9cb655905a410728b26c7884eca45ddfab8d9f931553485a7862",
+            "size": 10504,
+            "type": "file"
+          },
+          {
+            "path": "739d5ee0f909f6b582d2ee718f65c96c3f2ddd9e",
+            "sha256": "ea54e0e4760ee56212f5e5f642102e921c48283c633bae6f5e28f7964d1c4c6c",
+            "size": 3133,
+            "type": "file"
+          },
+          {
+            "path": "7e00775136cbb6c92775da111339a334d721a8e4",
+            "sha256": "bdfed38dfd46bb2e7fcc464fdeb9eaad5142d6b01bb217d193331a2ef3632cdf",
+            "size": 21412,
+            "type": "file"
+          },
+          {
+            "path": "7f20fdf0f8895e46af7ad0579847b3b4d0cf88e4",
+            "sha256": "fd316076134cbadac02f083463c579b2a3c4a587f51b0855f02202adf2f8a7ce",
+            "size": 173,
+            "type": "file"
+          },
+          {
+            "path": "a1f56594260896ffcf1c0d0c89da33ebff16dfa978b669fecfd073295ae789f3",
+            "sha256": "a1f56594260896ffcf1c0d0c89da33ebff16dfa978b669fecfd073295ae789f3",
+            "size": 3982036144,
+            "type": "file"
+          },
+          {
+            "path": "a98f34ada69256d5bc4cbd476d91f18a58a97f6c",
+            "sha256": "94fcc8626dd8e139516804c324e31e73b95dfb96bd81fdb50ad8e8bb6b947766",
+            "size": 2420,
+            "type": "file"
+          },
+          {
+            "path": "cf5113d9d81cd2e9b88a8d687e6d92e290139f31",
+            "sha256": "2f56ab5f569276bfdb794e057443a83891c2b7c511ddf09d79ddf2446a5959d5",
+            "size": 2387,
+            "type": "file"
+          },
+          {
+            "path": "d3ea6626404ebcd28042d67c84a0224bcec1d215",
+            "sha256": "aafb12208054504f619cbdd01837e1532a482ad937ed987bfe9a13fb812ae2b7",
+            "size": 798,
+            "type": "file"
+          },
+          {
+            "path": "d41bf390c6d4abf7235467657443e09affc3b149",
+            "sha256": "1a0a0703a73600ff4b1042dde35cb2137c7e4d76dadc5a88f6f436f2323aa3e9",
+            "size": 1459,
+            "type": "file"
+          },
+          {
+            "path": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0,
+            "type": "file"
+          },
+          {
+            "path": "eca1a4bf3e64518b8f298c89b64c6cd4be5f89b3",
+            "sha256": "89486a1663880a7a682e5b887ced0b90fe7ae660c105bd8fa8f6f4682cdcf89d",
+            "size": 3012,
+            "type": "file"
+          },
+          {
+            "path": "f04b17d36b21d80851c364fa6fe9b8aec77b4429",
+            "sha256": "ea982af0b805f181573f919ecb001d5bbc0153459923cf4b2f1ccae194e415a4",
+            "size": 78629,
+            "type": "file"
+          },
+          {
+            "path": "ffc47adbc1ea04473416f79dfdb030c519ff4017",
+            "sha256": "1d3cdeaf859ec8c3ea9403d95475f97852ea12079da4966ddde35f6e0a939eef",
+            "size": 2709,
+            "type": "file"
+          }
+        ],
+        "entry_count": 22
+      },
       "identity": {
         "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
         "revision": "3fe6dab75665a93884214ad4b1b95cf02717d081"
       },
-      "state": "missing_exact_artifact_unqualified",
-      "tree": null
-    },
-    "cosmos3_nano_bf16": {
-      "kind": "ngc_model_cache",
-      "identity": {
-        "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
+      "kind": "huggingface_snapshot",
+      "provenance": {
+        "evidence_path": "deploy/docker/thor-local/official-edge/provenance/edge4b-huggingface-3fe6dab75665a93884214ad4b1b95cf02717d081.json",
+        "evidence_sha256": "aa004ae5e092d9e2b814b4d1d57c6d6736565e496ef743b28c680e6ae01ccdfc",
+        "identity": {
+          "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+          "revision": "3fe6dab75665a93884214ad4b1b95cf02717d081"
+        },
+        "reviewed_by": "codex-thor-local-review-2026-08-09",
+        "state": "independently_reviewed_upstream_provenance"
       },
-      "state": "missing_exact_artifact_unqualified",
-      "tree": null
+      "state": "locked_exact",
+      "tree": {
+        "entries": [
+          {
+            "path": ".gitattributes",
+            "resolved_sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930",
+            "resolved_size": 1570,
+            "target": "../../blobs/52373fe24473b1aa44333d318f578ae6bf04b49b",
+            "type": "symlink"
+          },
+          {
+            "path": "LICENSE",
+            "resolved_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "resolved_size": 0,
+            "target": "../../blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+            "type": "symlink"
+          },
+          {
+            "path": "README.md",
+            "resolved_sha256": "9d37e4338d0db72a6626183c848cf19b7cf1453de94103991cca148733831022",
+            "resolved_size": 59951,
+            "target": "../../blobs/598990ea0a5a3a57e944b710ed5e939b6381c892",
+            "type": "symlink"
+          },
+          {
+            "path": "bias.md",
+            "resolved_sha256": "1d3cdeaf859ec8c3ea9403d95475f97852ea12079da4966ddde35f6e0a939eef",
+            "resolved_size": 2709,
+            "target": "../../blobs/ffc47adbc1ea04473416f79dfdb030c519ff4017",
+            "type": "symlink"
+          },
+          {
+            "path": "chat_template.jinja",
+            "resolved_sha256": "ab7813c3abdd9cb655905a410728b26c7884eca45ddfab8d9f931553485a7862",
+            "resolved_size": 10504,
+            "target": "../../blobs/67ca3ce54a7118ed74d6fd793b7cc9fd6b2a9f03",
+            "type": "symlink"
+          },
+          {
+            "path": "config.json",
+            "resolved_sha256": "1a0a0703a73600ff4b1042dde35cb2137c7e4d76dadc5a88f6f436f2323aa3e9",
+            "resolved_size": 1459,
+            "target": "../../blobs/d41bf390c6d4abf7235467657443e09affc3b149",
+            "type": "symlink"
+          },
+          {
+            "path": "configuration_nemotron_h.py",
+            "resolved_sha256": "07fa66e5b3da7e6a71c1a263e3dd68da11c8afa9178b47c49510ba628746fcff",
+            "resolved_size": 12119,
+            "target": "../../blobs/21098cbc3d437701f6e491a114beb2f6aa752aa6",
+            "type": "symlink"
+          },
+          {
+            "path": "explainability.md",
+            "resolved_sha256": "ea54e0e4760ee56212f5e5f642102e921c48283c633bae6f5e28f7964d1c4c6c",
+            "resolved_size": 3133,
+            "target": "../../blobs/739d5ee0f909f6b582d2ee718f65c96c3f2ddd9e",
+            "type": "symlink"
+          },
+          {
+            "path": "generation_config.json",
+            "resolved_sha256": "fd316076134cbadac02f083463c579b2a3c4a587f51b0855f02202adf2f8a7ce",
+            "resolved_size": 173,
+            "target": "../../blobs/7f20fdf0f8895e46af7ad0579847b3b4d0cf88e4",
+            "type": "symlink"
+          },
+          {
+            "path": "hf_quant_config.json",
+            "resolved_sha256": "2f56ab5f569276bfdb794e057443a83891c2b7c511ddf09d79ddf2446a5959d5",
+            "resolved_size": 2387,
+            "target": "../../blobs/cf5113d9d81cd2e9b88a8d687e6d92e290139f31",
+            "type": "symlink"
+          },
+          {
+            "path": "model-00001-of-00002.json",
+            "resolved_sha256": "bdfed38dfd46bb2e7fcc464fdeb9eaad5142d6b01bb217d193331a2ef3632cdf",
+            "resolved_size": 21412,
+            "target": "../../blobs/7e00775136cbb6c92775da111339a334d721a8e4",
+            "type": "symlink"
+          },
+          {
+            "path": "model-00001-of-00002.safetensors",
+            "resolved_sha256": "a1f56594260896ffcf1c0d0c89da33ebff16dfa978b669fecfd073295ae789f3",
+            "resolved_size": 3982036144,
+            "target": "../../blobs/a1f56594260896ffcf1c0d0c89da33ebff16dfa978b669fecfd073295ae789f3",
+            "type": "symlink"
+          },
+          {
+            "path": "model-00002-of-00002.json",
+            "resolved_sha256": "1cd33e90311e0b9abba4b8b0fc68ceb568ed368d2aa20ee5aab8016c16651d5d",
+            "resolved_size": 13067,
+            "target": "../../blobs/3d8362958dda6eb7550340c279544b3652b2a51b",
+            "type": "symlink"
+          },
+          {
+            "path": "model-00002-of-00002.safetensors",
+            "resolved_sha256": "43dc7b2b59a04140e761020bce62c7307527a22fd5e1d55c44fd3b5f8f98a054",
+            "resolved_size": 1285019664,
+            "target": "../../blobs/43dc7b2b59a04140e761020bce62c7307527a22fd5e1d55c44fd3b5f8f98a054",
+            "type": "symlink"
+          },
+          {
+            "path": "model.safetensors.index.json",
+            "resolved_sha256": "6d151c2a33634d62897bce3507ade32155d15680fdfc0326cef43e8f5a4e8026",
+            "resolved_size": 34393,
+            "target": "../../blobs/258e7b73106a6fcf5bbf022a1663fc8bdfcd7771",
+            "type": "symlink"
+          },
+          {
+            "path": "modeling_nemotron_h.py",
+            "resolved_sha256": "ea982af0b805f181573f919ecb001d5bbc0153459923cf4b2f1ccae194e415a4",
+            "resolved_size": 78629,
+            "target": "../../blobs/f04b17d36b21d80851c364fa6fe9b8aec77b4429",
+            "type": "symlink"
+          },
+          {
+            "path": "nano_v3_reasoning_parser.py",
+            "resolved_sha256": "aafb12208054504f619cbdd01837e1532a482ad937ed987bfe9a13fb812ae2b7",
+            "resolved_size": 798,
+            "target": "../../blobs/d3ea6626404ebcd28042d67c84a0224bcec1d215",
+            "type": "symlink"
+          },
+          {
+            "path": "privacy.md",
+            "resolved_sha256": "94fcc8626dd8e139516804c324e31e73b95dfb96bd81fdb50ad8e8bb6b947766",
+            "resolved_size": 2420,
+            "target": "../../blobs/a98f34ada69256d5bc4cbd476d91f18a58a97f6c",
+            "type": "symlink"
+          },
+          {
+            "path": "safety.md",
+            "resolved_sha256": "89486a1663880a7a682e5b887ced0b90fe7ae660c105bd8fa8f6f4682cdcf89d",
+            "resolved_size": 3012,
+            "target": "../../blobs/eca1a4bf3e64518b8f298c89b64c6cd4be5f89b3",
+            "type": "symlink"
+          },
+          {
+            "path": "special_tokens_map.json",
+            "resolved_sha256": "e3a4f63da745f02317a45e00e6476c17fc66ac41faf14bb1b0be1f3211b0ca53",
+            "resolved_size": 420,
+            "target": "../../blobs/0d5c2c9dba131d5da20e58336dd09b022142ea50",
+            "type": "symlink"
+          },
+          {
+            "path": "tokenizer.json",
+            "resolved_sha256": "623c34567aebb18582765289fbe23d901c62704d6518d71866e0e58db892b5b7",
+            "resolved_size": 17077484,
+            "target": "../../blobs/623c34567aebb18582765289fbe23d901c62704d6518d71866e0e58db892b5b7",
+            "type": "symlink"
+          },
+          {
+            "path": "tokenizer_config.json",
+            "resolved_sha256": "b5b5f4cf5b098cd174b1307c5133d662e7d78cf665d4e184ee0e1c7e15f75e01",
+            "resolved_size": 188035,
+            "target": "../../blobs/08a3c073d74a7d3bb9fc5e605996cf8a1f8d25de",
+            "type": "symlink"
+          }
+        ],
+        "entry_count": 22
+      }
     }
-  }
+  },
+  "lock_state": "complete_exact",
+  "schema_version": 1
 }

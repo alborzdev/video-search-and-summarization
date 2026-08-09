@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "state": "independently_reviewed_upstream_provenance",
+  "identity": {
+    "repository": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "revision": "3fe6dab75665a93884214ad4b1b95cf02717d081"
+  },
+  "reviewed_by": "codex-thor-local-review-2026-08-09",
+  "sources": [
+    "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8/tree/3fe6dab75665a93884214ad4b1b95cf02717d081",
+    "https://huggingface.co/api/models/nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8/revision/3fe6dab75665a93884214ad4b1b95cf02717d081"
+  ],
+  "upstream_sha256": [
+    "a1f56594260896ffcf1c0d0c89da33ebff16dfa978b669fecfd073295ae789f3",
+    "43dc7b2b59a04140e761020bce62c7307527a22fd5e1d55c44fd3b5f8f98a054",
+    "623c34567aebb18582765289fbe23d901c62704d6518d71866e0e58db892b5b7"
+  ]
+}

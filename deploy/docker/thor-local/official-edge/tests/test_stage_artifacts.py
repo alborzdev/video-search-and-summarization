@@ -160,6 +160,19 @@ class StageArtifactsTests(unittest.TestCase):
             with self.assertRaisesRegex(staging.StagingError, "credential source"):
                 staging._request_from_args(staging._parser().parse_args(argv))
 
+    def test_child_env_keeps_home_private_and_supports_user_installed_cli(self) -> None:
+        tool_home = Path("/private/tool-home")
+        tool = Path("/operator/.local/bin/hf")
+
+        child_env = staging._base_child_env(tool_home, tool)
+
+        self.assertEqual(child_env["HOME"], str(tool_home))
+        self.assertEqual(child_env["XDG_CACHE_HOME"], str(tool_home / ".cache"))
+        self.assertEqual(child_env["XDG_CONFIG_HOME"], str(tool_home / ".config"))
+        self.assertEqual(child_env["PYTHONUSERBASE"], "/operator/.local")
+        self.assertNotIn("HF_TOKEN", child_env)
+        self.assertNotIn("NGC_CLI_API_KEY", child_env)
+
     def test_existing_root_and_child_redirects_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)

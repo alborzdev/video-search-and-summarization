@@ -327,9 +327,13 @@ def verify_contract_identity(contract: dict[str, Any]) -> None:
                 "an unstaged Edge vLLM image cannot claim a local image ID"
             )
     elif edge_state == "locked_exact":
-        if edge_image_id != EDGE_IMAGE_CONFIG_DIGEST:
+        if edge_image_id not in {
+            EDGE_IMAGE_CONFIG_DIGEST,
+            EDGE_IMAGE_MANIFEST_DIGEST,
+        }:
             raise ContractError(
-                "a locked Edge vLLM image ID must equal the exact manifest config digest"
+                "a locked Edge vLLM image ID must equal the exact manifest or "
+                "manifest config digest"
             )
     else:
         raise ContractError(f"unsupported Edge vLLM image state: {edge_state!r}")

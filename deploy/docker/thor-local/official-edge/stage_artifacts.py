@@ -493,6 +493,10 @@ def _base_child_env(tool_home: Path, tool_path: Path) -> dict[str, str]:
     return {
         "PATH": str(tool_path.parent),
         "HOME": str(tool_home),
+        # Keep HOME isolated from operator credentials and caches while allowing
+        # an explicitly selected ``pip --user`` CLI to import its own packages.
+        # Python ignores this variable for non-Python tools.
+        "PYTHONUSERBASE": str(tool_path.parent.parent),
         "XDG_CACHE_HOME": str(tool_home / ".cache"),
         "XDG_CONFIG_HOME": str(tool_home / ".config"),
         "LC_ALL": "C",
@@ -697,8 +701,10 @@ def _docker_inspect(
     ):
         raise StagingError("Docker image inspect did not return exactly one image")
     image = payload[0]
-    if image.get("Id") != EDGE_IMAGE_CONFIG_DIGEST:
-        raise StagingError("vLLM image config digest does not match the exact contract")
+    if image.get("Id") not in {EDGE_IMAGE_CONFIG_DIGEST, EDGE_IMAGE_MANIFEST_DIGEST}:
+        raise StagingError(
+            "vLLM local image ID is neither the exact manifest nor config digest"
+        )
     if image.get("Architecture") != "arm64" or image.get("Os") != "linux":
         raise StagingError("vLLM image platform must be linux/arm64")
     repo_digests = image.get("RepoDigests")

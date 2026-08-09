@@ -71,9 +71,12 @@ class OfficialEdgeStaticTests(unittest.TestCase):
         )
         self.assertEqual(
             contract["images"]["edge4b_vllm"]["state"],
-            "missing_exact_image_unqualified",
+            "locked_exact",
         )
-        self.assertIsNone(contract["images"]["edge4b_vllm"]["image_id"])
+        self.assertEqual(
+            contract["images"]["edge4b_vllm"]["image_id"],
+            oe.EDGE_IMAGE_MANIFEST_DIGEST,
+        )
         self.assertEqual(
             contract["images"]["edge4b_vllm"]["manifest_config_digest"],
             oe.EDGE_IMAGE_CONFIG_DIGEST,
@@ -88,8 +91,11 @@ class OfficialEdgeStaticTests(unittest.TestCase):
         image["image_id"] = oe.EDGE_IMAGE_CONFIG_DIGEST
         oe.verify_contract_identity(contract)
 
+        image["image_id"] = oe.EDGE_IMAGE_MANIFEST_DIGEST
+        oe.verify_contract_identity(contract)
+
         image["image_id"] = "sha256:" + "f" * 64
-        with self.assertRaisesRegex(oe.ContractError, "manifest config digest"):
+        with self.assertRaisesRegex(oe.ContractError, "manifest or manifest config"):
             oe.verify_contract_identity(contract)
 
     def test_thor_operator_guidance_routes_to_exact_current_contract(self) -> None:
@@ -122,13 +128,13 @@ class OfficialEdgeStaticTests(unittest.TestCase):
             with self.assertRaisesRegex(oe.ContractError, "duplicate object key"):
                 oe._load_json(path)
 
-    def test_checked_in_lock_fails_closed(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            with self.assertRaisesRegex(oe.ContractError, "intentionally incomplete"):
-                oe.verify_artifacts(
-                    oe.DEFAULT_ARTIFACT_LOCK, root / "edge", root / "cosmos"
-                )
+    def test_checked_in_lock_is_complete_and_exact(self) -> None:
+        lock = oe._load_json(oe.DEFAULT_ARTIFACT_LOCK)
+        self.assertEqual(lock["lock_state"], "complete_exact")
+        self.assertEqual(
+            {entry["state"] for entry in lock["artifacts"].values()},
+            {"locked_exact"},
+        )
 
     def test_memory_gate_enforces_combined_eighty_percent(self) -> None:
         contract = oe._load_json(oe.DEFAULT_CONTRACT)
@@ -164,21 +170,30 @@ class OfficialEdgeStaticTests(unittest.TestCase):
     def test_renderer_cli_fails_before_printing_command_with_incomplete_lock(
         self,
     ) -> None:
-        output = io.StringIO()
-        errors = io.StringIO()
-        with redirect_stdout(output), redirect_stderr(errors):
-            result = oe.main(
-                [
-                    "--edge4b-snapshot",
-                    "/missing/edge",
-                    "--cosmos3-cache",
-                    "/missing/cosmos",
-                    "render-command",
-                ]
-            )
-        self.assertEqual(result, 1)
-        self.assertNotIn("docker compose", output.getvalue())
-        self.assertIn("intentionally incomplete", errors.getvalue())
+        with tempfile.TemporaryDirectory() as temporary:
+            incomplete = Path(temporary) / "artifacts.lock.json"
+            payload = oe._load_json(oe.DEFAULT_ARTIFACT_LOCK)
+            payload["lock_state"] = "incomplete_fail_closed"
+            incomplete.write_text(json.dumps(payload), encoding="utf-8")
+            output = io.StringIO()
+            errors = io.StringIO()
+            with (
+                mock.patch.object(oe, "DEFAULT_ARTIFACT_LOCK", incomplete),
+                redirect_stdout(output),
+                redirect_stderr(errors),
+            ):
+                result = oe.main(
+                    [
+                        "--edge4b-snapshot",
+                        "/missing/edge",
+                        "--cosmos3-cache",
+                        "/missing/cosmos",
+                        "render-command",
+                    ]
+                )
+            self.assertEqual(result, 1)
+            self.assertNotIn("docker compose", output.getvalue())
+            self.assertIn("intentionally incomplete", errors.getvalue())
 
     def test_tracked_fixture_resolves_only_official_model_lane(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -244,9 +259,9 @@ class OfficialEdgeStaticTests(unittest.TestCase):
                 oe.verify_resolved_compose(tracked_env, edge, cosmos)
 
             consumer_leak = deepcopy(resolved)
-            consumer_leak["services"]["vss-agent"]["environment"]["OPENAI_API_KEY"] = (
-                "secret"
-            )
+            consumer_leak["services"]["vss-agent"]["environment"][
+                "OPENAI_API_KEY"
+            ] = "secret"
             with (
                 mock.patch.object(oe, "_run", return_value=json.dumps(consumer_leak)),
                 self.assertRaisesRegex(oe.ContractError, "credential environment"),
@@ -272,13 +287,14 @@ class OfficialEdgeStaticTests(unittest.TestCase):
                 oe.verify_resolved_compose(tracked_env, edge, cosmos)
 
     def test_image_gate_requires_id_and_repository_digest(self) -> None:
-        contract = oe._load_json(oe.DEFAULT_CONTRACT)
+        contract = deepcopy(oe._load_json(oe.DEFAULT_CONTRACT))
+        contract["images"]["edge4b_vllm"]["state"] = "missing_exact_image_unqualified"
+        contract["images"]["edge4b_vllm"]["image_id"] = None
         with self.assertRaisesRegex(oe.ContractError, "not locked_exact"):
             oe.verify_images(contract)
 
-        contract = deepcopy(contract)
         contract["images"]["edge4b_vllm"]["state"] = "locked_exact"
-        contract["images"]["edge4b_vllm"]["image_id"] = "sha256:edge-config-id"
+        contract["images"]["edge4b_vllm"]["image_id"] = oe.EDGE_IMAGE_MANIFEST_DIGEST
 
         def inspect(command: list[str], **_: object) -> str:
             reference = command[-1]
@@ -621,9 +637,9 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 mock.patch.object(oe, "_get_json", side_effect=response),
             ):
                 contract = oe._load_json(oe.DEFAULT_CONTRACT)
-                contract["images"]["edge4b_vllm"]["image_id"] = (
-                    oe.EDGE_IMAGE_CONFIG_DIGEST
-                )
+                contract["images"]["edge4b_vllm"][
+                    "image_id"
+                ] = oe.EDGE_IMAGE_CONFIG_DIGEST
                 oe.verify_readiness(contract, 1.0, edge_snapshot, cosmos_cache)
 
     def test_alias_model_id_is_rejected(self) -> None:
