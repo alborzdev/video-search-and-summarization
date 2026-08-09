@@ -126,9 +126,9 @@ class PlanTests(unittest.TestCase):
         with self.assertRaisesRegex(rd.ReadinessError, "checked-in plan"):
             rd.validate_plan(tampered)
         tampered = deepcopy(plan)
-        tampered["identities"]["llm"]["standard_hf_cache_directory"] = (
-            "../../credential-area"
-        )
+        tampered["identities"]["llm"][
+            "standard_hf_cache_directory"
+        ] = "../../credential-area"
         with self.assertRaisesRegex(rd.ReadinessError, "checked-in plan"):
             rd.validate_plan(tampered)
 
@@ -149,7 +149,12 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(
             remote["edge_vllm_image"]["manifest_payload_bytes"], 14_586_467_388
         )
-        self.assertIsNone(remote["cosmos3_nano_bf16"]["total_bytes"])
+        self.assertEqual(remote["cosmos3_nano_bf16"]["file_count"], 34)
+        self.assertEqual(remote["cosmos3_nano_bf16"]["total_bytes"], 17_545_910_496)
+        self.assertEqual(
+            remote["cosmos3_nano_bf16"]["access_state"],
+            "signed_manifest_verified",
+        )
         self.assertIsNone(remote["edge_vllm_image"]["installed_or_unpacked_size"])
 
     def test_forbidden_docker_operation_is_rejected_without_execution(self) -> None:
@@ -362,7 +367,7 @@ class DockerTests(unittest.TestCase):
     def test_contract_image_must_be_explicitly_graduated(self) -> None:
         plan = rd._load_json(rd.DEFAULT_PLAN)
         locks = rd.inspect_contract_image_locks(plan)
-        self.assertEqual(locks["edge_vllm"]["state"], "not_locked_exact")
+        self.assertEqual(locks["edge_vllm"]["state"], "locked_exact")
         self.assertEqual(locks["rt_vlm"]["state"], "locked_exact")
 
     def test_missing_container_is_classified_as_absent(self) -> None:

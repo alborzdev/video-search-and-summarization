@@ -5,11 +5,11 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/official-edge/contract.json",
-      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+      "sha256": "ff7fbfd3296ff1d5af6cf688b58a0611dbcc811cc64ebe1d9272f13a0f29c63e"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
-      "sha256": "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"
+      "sha256": "d5427164ccbd33529ddc2678c969601b09bb67776df332e230910702281766ae"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/compose.yml",
@@ -21,7 +21,7 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official_edge.py",
-      "sha256": "779ef64bd134fa00934a7bdfdde3b1066678dd1e8ffa75c11c8b9b5af3f06faa"
+      "sha256": "dd00611c1ec1b00bfeb459da6f3addc599dcf6dd9d4ea4738fc2cf63ce172fc8"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
@@ -37,11 +37,11 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/readiness.py",
-      "sha256": "ce850cd3bc5b2044d6522bd46b646ae69517b4db70b061b0fc080d3b287525b1"
+      "sha256": "2cbf4f9831d12c521ef215ffc418a07eb5207e0451527a7f7b4cb9fc253a928e"
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",
-      "sha256": "f0e47d9aa03f5a016ab1d13cfb813f0ad7cbefb4b6b1badc1702f7389ebf5e8a"
+      "sha256": "b81dea62c5077e6cf2f81f8c34dbbfbb5b97d4d720fb6e0f95701149aa2d74fb"
     },
     {
       "path": "skills/vss-deploy-profile/SKILL.md",
@@ -68,7 +68,7 @@
     "edge_vllm": {
       "exact_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
       "required_manifest_digest": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
-      "required_image_id": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09",
+      "required_image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
       "documented_mutable_tag": "ghcr.io/nvidia-ai-iot/vllm:latest-jetson-thor",
       "required_architecture": "arm64"
     },
@@ -95,7 +95,7 @@
     }
   },
   "reviewed_remote_staging_metadata": {
-    "evidence_date": "2026-07-31",
+    "evidence_date": "2026-08-09",
     "local_readiness_evidence": false,
     "edge_llm": {
       "source": "public_hugging_face_model_api_blobs_true",
@@ -120,12 +120,12 @@
       "installed_or_unpacked_size": null
     },
     "cosmos3_nano_bf16": {
-      "source": "ngc_cli_model_info_attempt",
-      "reproduction_command": "ngc registry model info nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "source": "nvidia_signed_ngc_sigstore_payload_and_exact_local_tree_review",
+      "reproduction_command": "ngc registry model download-version nim/nvidia/cosmos3-nano-reasoner:bf16-final",
       "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
-      "access_state": "blocked_invalid_apikey",
-      "file_count": null,
-      "total_bytes": null,
+      "access_state": "signed_manifest_verified",
+      "file_count": 34,
+      "total_bytes": 17545910496,
       "credential_contents_recorded": false
     }
   },

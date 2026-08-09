@@ -52,9 +52,12 @@ inside any downstream receipt digest. Callers cannot supply or replace it, and
 filesystem modification time is not readiness freshness evidence.
 
 Image readiness requires all three identities to agree: the immutable
-repository digest, Docker's exact image/config ID, and a `locked_exact`
-graduation in the source-locked official contract. A caller-supplied plan cannot
-replace either image identity or lower the 0.80 unified-memory admission gate.
+repository digest, Docker's exact locally observed image ID, and a `locked_exact`
+graduation in the source-locked official contract. Thor's containerd image store
+reports the manifest digest as `.Id` for the Edge vLLM image; the registry's
+config digest remains recorded separately in the official contract. A
+caller-supplied plan cannot replace either image identity or lower the 0.80
+unified-memory admission gate.
 The plan must be byte-semantically identical to the checked-in plan, and host
 readiness accepts only canonical `/proc/meminfo`; alternate files cannot produce
 a prelaunch-ready host claim.
@@ -70,17 +73,19 @@ evidence:
 - the exact public GHCR arm64 manifest has 103 compressed layers totalling
   14,586,393,839 bytes plus a 73,549-byte config;
 - NVIDIA's Cosmos3 Nano BF16 support matrix documents 30 GB of disk space,
-  which is recorded as a planning floor rather than exact NGC cache bytes;
-- Cosmos3 metadata remains unknown because the available NGC CLI probe was not
-  authorized by a valid API key.
+  which remains recorded as the original planning floor;
+- the staged Cosmos3 tree contains 34 files totalling 17,545,910,496 bytes,
+  all matched against NVIDIA's signed NGC sigstore payload. This reviewed
+  upstream identity is bound separately from the local exact-tree lock.
 
 These values estimate transfer payload or documented installed-model space only. They are not local artifact
 proof, not installed/unpacked disk requirements, and cannot populate the
 official artifact lock. Because the Cosmos3 byte size and the vLLM unpacked
 size remain unknown, disk capacity stays unverified while anything is missing,
 even when current free space exceeds the 49,871,036,871-byte planning floor.
-Once both exact artifact trees and both exact images are already local, the
-staging-capacity gate records that zero additional staging bytes are required.
+Once both exact artifact trees and both exact images are already local, as they
+are on this Thor, the staging-capacity gate records that zero additional staging
+bytes are required.
 
 ## Tests
 

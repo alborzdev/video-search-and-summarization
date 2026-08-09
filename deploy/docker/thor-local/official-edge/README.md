@@ -24,26 +24,23 @@ the two repositories as equivalent.
 `7732edf8fb38ef896b20f2a0a6a701a4db10dc57` and the dereferenced `v3.2.1`
 tag `7640d917047cf7b0fd3085eefb8282754b56bc94`. Source blobs and SHA-256 values
 are rechecked without network access. The mutable documented vLLM tag resolved
-on 2026-07-31 to manifest digest `sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8`,
-but that exact image is not present locally and therefore has no trusted local
-image ID. RT-VLM is the only locally locked runtime image in this lane.
+on 2026-07-31 to manifest digest `sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8`.
+That exact arm64 image and the pinned RT-VLM image are both locally locked.
 
-## Current intentional blocker
+## Current artifact state
 
-The exact Nemotron 3 Nano 4B snapshot and Cosmos3 NGC cache were absent during
-this milestone, as was the exact vLLM image described above.
-Consequently, `artifacts.lock.json` is intentionally marked
-`incomplete_fail_closed`. The public immutable Nemotron revision is pinned, but
-the lock contains no invented local content hashes.
-The launcher will not print a command, much less execute one, until a later
-connected staging step:
+`artifacts.lock.json` is `complete_exact`. The exact Nemotron 3 Nano 4B
+snapshot, its Hugging Face blob tree, the Cosmos3 NGC cache, and both model
+runtime images are locked to their local bytes and independently reviewed
+upstream provenance. The two evidence documents under `provenance/` bind the
+promoted trees to the immutable Hugging Face revision and NVIDIA's signed NGC
+payload. No model or image pull is required for a pull-free launch.
 
-1. obtains the exact licensed/gated artifacts;
-2. confirms the staged snapshot matches the already reviewed immutable Edge 4B revision;
-3. records every snapshot/cache directory, file, symlink target, size and
-   SHA-256 in the two exact tree locks;
-4. changes both entries to `locked_exact` and the top-level state to
-   `complete_exact`.
+The remaining admission check is dynamic: the launcher requires at least 80%
+of Thor's unified memory to be available before starting the official lane.
+Pause other GPU or memory-heavy workloads first and restore them after VSS
+qualification. The launcher remains fail-closed when that condition is not
+met.
 
 There is deliberately no "capture and trust" command here. Creating an exact
 lock is a review operation, not a way to bless whatever happens to be in a
@@ -160,8 +157,10 @@ This is read-only and succeeds now:
 python3 deploy/docker/thor-local/official-edge/official_edge.py static
 ```
 
-The complete audit is also read-only and currently fails with explicit artifact,
-vLLM image, and memory blockers:
+The complete audit is also read-only. With the promoted artifact paths
+supplied, it passes the source, prompt, Compose, exact-tree, provenance, and image
+identity gates; it will fail only while the host does not satisfy the dynamic
+80% unified-memory admission rule:
 
 ```bash
 python3 deploy/docker/thor-local/official-edge/official_edge.py \

@@ -21,7 +21,6 @@ from jsonschema.exceptions import (  # type: ignore[import-untyped]
     ValidationError,
 )
 
-
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[4]
 DEFAULT_PLAN = HERE / "staging-plan.json"
@@ -40,7 +39,7 @@ EDGE_VLLM_REFERENCE = (
     "b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"
 )
 EDGE_VLLM_IMAGE_ID = (
-    "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"
+    "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"
 )
 RT_VLM_REFERENCE = (
     "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:"
@@ -239,7 +238,19 @@ def validate_plan(plan: dict[str, Any]) -> None:
     _expect(
         remote["cosmos3_nano_bf16"],
         "access_state",
-        "blocked_invalid_apikey",
+        "signed_manifest_verified",
+        "remote_staging.cosmos3_nano_bf16",
+    )
+    _expect(
+        remote["cosmos3_nano_bf16"],
+        "file_count",
+        34,
+        "remote_staging.cosmos3_nano_bf16",
+    )
+    _expect(
+        remote["cosmos3_nano_bf16"],
+        "total_bytes",
+        17545910496,
         "remote_staging.cosmos3_nano_bf16",
     )
     _expect(
@@ -312,9 +323,9 @@ def verify_source_locks(plan: dict[str, Any]) -> dict[str, Any]:
             }
         )
     return {
-        "state": "match"
-        if all(item["state"] == "match" for item in results)
-        else "drift",
+        "state": (
+            "match" if all(item["state"] == "match" for item in results) else "drift"
+        ),
         "files": results,
     }
 
@@ -444,9 +455,11 @@ def inspect_edge_artifact(plan: dict[str, Any], hf_hub: Path) -> dict[str, Any]:
         "state": (
             "candidate_present_unlocked"
             if matching
-            else "wrong_revision_candidates_only"
-            if candidates
-            else "missing_exact_artifact"
+            else (
+                "wrong_revision_candidates_only"
+                if candidates
+                else "missing_exact_artifact"
+            )
         ),
     }
 
@@ -479,9 +492,11 @@ def inspect_cosmos_artifact(
         "state": (
             "candidate_present_unlocked"
             if present_nonempty
-            else "empty_candidate_directory"
-            if summary["state"] == "readable"
-            else "missing_or_unreadable_exact_cache"
+            else (
+                "empty_candidate_directory"
+                if summary["state"] == "readable"
+                else "missing_or_unreadable_exact_cache"
+            )
         ),
     }
 
@@ -769,9 +784,9 @@ def inspect_artifact_lock(plan: dict[str, Any]) -> dict[str, Any]:
             "state": entry.get("state"),
             "identity": identity,
             "tree_present": isinstance(tree, dict),
-            "tree_entry_count": tree.get("entry_count")
-            if isinstance(tree, dict)
-            else None,
+            "tree_entry_count": (
+                tree.get("entry_count") if isinstance(tree, dict) else None
+            ),
         }
     return results
 
