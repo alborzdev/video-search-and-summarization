@@ -71,7 +71,7 @@
     {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/compiler.py", "sha256": "528388ffbe13e53b1a2164d0084b905865561b86423ae52400f6b02d4978eef0"},
     {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/layered-current-contract.json", "sha256": "cb3e1e2b15374a9a2a60715a475aaae055b4564f73b59987a0ca34b6ae454a59"},
     {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/layered-current-contract.schema.json", "sha256": "9bb6b3c9be5028a8c1ca8d3f4bcdaef46d787c4fa82f89476c9484ed2b5412f8"},
-    {"path": "deploy/docker/thor-local/qualification/expected/lvs.json", "sha256": "6ad38eea843c3ccf4e1a816f1edef7c698b226ec149ebfa74b6d2e35718be038"},
+    {"path": "deploy/docker/thor-local/qualification/expected/lvs.json", "sha256": "cc623baaf7bdc2e40e33df0b4783f4ad769f6ed3a6f05b777208349f5b512c5e"},
     {"path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json", "sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"},
     {"path": "deploy/docker/thor-local/qualification/expected/rt-vlm.json", "sha256": "51d2c0b107fd12fb7a498c416541724edbbd01bf930f5a6b2cb37f6199d4a5ff"},
     {"path": "deploy/docker/thor-local/qualification/advertised-entry-executors-wave8-cancellation-successor/compiler.py", "sha256": "83c0d6e7fb6bfcd34a02cfede17de2344c14a80cd9d36bf3f6f71cb00bea82d0"},

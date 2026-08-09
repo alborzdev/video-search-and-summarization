@@ -2,12 +2,12 @@
   "available_sets": [
     {
       "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-agent-evaluation-contract-289.json",
-      "descriptor_raw_sha256": "5d4c3bb6a74c0529992ecccee861dd253105aaf0499510f72e9361d959b3c0cb",
+      "descriptor_raw_sha256": "477874bc9c56786234221f754fa96ebf6e44d309db29c9a967725b1e5280273c",
       "set_id": "thor-vss-3.2.1-current-agent-evaluation-contract-289"
     },
     {
       "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-agent-evaluation-contract-500.json",
-      "descriptor_raw_sha256": "a5cac63b3b4e661f099a2b5b1c5919ca5528b0327a9feabbd941575ef6bc631b",
+      "descriptor_raw_sha256": "22b5b66242d015ce325825ee21d0f799c81cea7e0c816e4fb15b29c1d77f9c65",
       "set_id": "thor-vss-3.2.1-current-agent-evaluation-contract-500"
     }
   ],

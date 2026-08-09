@@ -940,6 +940,12 @@ class ViaServer:
                 "vlm_input_width": query.vlm_input_width,
                 "vlm_input_height": query.vlm_input_height,
                 "enable_reasoning": query.enable_reasoning,
+                # VlmQuery.prompt is the public caption instruction. Preserve
+                # it instead of replacing it with the summarization prompt
+                # assembled from the intentionally empty scenario/events
+                # fields below. generate_vlm_captions supplies its documented
+                # default caption prompt later when this value is empty.
+                "override_vlm_prompt": True,
                 # VLM captions specific defaults (no summarization)
                 "summarize": False,
                 "scenario": "",

@@ -23,7 +23,7 @@
     },
     {
       "path": "services/video-summarization/src/via_server.py",
-      "raw_sha256": "c6ea204dafca72d7439ae28ae06ca59f097d56738474e5004dd3b7ab0ec7e768"
+      "raw_sha256": "6007322ec3ee00c00e29807cc65bbf257c57123ba18e091f592e3e030fd12fe1"
     },
     {
       "path": "services/video-summarization/src/via_stream_handler.py",

@@ -64,6 +64,36 @@ seconds, H.264 1920x1080 at 30 fps plus AAC-LC, SHA-256
   chat retained the supplied codeword and terminated with `data: [DONE]`.
 - RT-Embed and RT-VLM both reported zero stored assets after cleanup.
 
+## Video summarization and LVS MCP
+
+- LVS fetched a VIOS-hosted ten-second `sample-sim-traffic` clip and used the
+  exact local Cosmos3 Nano model. `POST /v1/summarize` returned a structured
+  narrative plus a timestamped black-car event. The compatibility
+  `POST /summarize` route also passed with an existing file ID, a 0-10 second
+  media offset, object/event/scenario focus, reasoning, sampling controls, and
+  structured output enabled.
+- A second ten-second `sample-sim-jaywalking` request returned a timestamped
+  pedestrian-crossing event. Supplying both resulting file IDs in the direct
+  LVS `id` array was accepted but processed only the first ID. This is retained
+  as an upstream direct-API limitation; the separate Agent multi-video report
+  workflow remains to be exercised through its endpoint and HITL contract.
+- The live LVS SSE MCP transport negotiated protocol `2024-11-05` and exposed
+  all 13 tools. Readiness, liveness, model listing, empty file listing,
+  recommended configuration, and Prometheus retrieval returned valid tool
+  results. The MCP `summarize_video` streaming path passed its bounded SSE
+  validator, and exact-ID `list_files`, `get_file_info`, and confirmed
+  `delete_file` cleanup completed with zero assets remaining.
+- The file-caption route initially accepted its public `prompt` field but
+  replaced it with an empty summarization template. The Thor derivative now
+  preserves the supplied caption prompt (and still allows the documented
+  default when empty). After rebuilding only LVS,
+  `POST /generate_vlm_captions` returned one 0-5 second natural-language chunk
+  describing a white car moving along the road. The owned file was deleted and
+  LVS returned to an empty file inventory.
+- `POST /recommended_config` returned chunk size 60 for the documented
+  300/60/5 input, while missing required summarization fields and an unknown
+  request field each failed closed with HTTP 422.
+
 ## Native audio boundary
 
 The installed Cosmos model honestly reports `audio_support: false`. An
