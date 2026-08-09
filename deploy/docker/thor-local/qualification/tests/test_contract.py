@@ -183,6 +183,35 @@ def help_prompt():
         self.assertIn("missing prompts: old", difference)
         self.assertIn("extra prompts: new", difference)
 
+    def test_va_mcp_extractor_covers_functions_groups_and_workflow(self) -> None:
+        config = """
+functions:
+  vst_sensor_list:
+    _type: vst.sensor_list
+function_groups:
+  video_analytics:
+    _type: video_analytics
+    include:
+    - get_incidents
+    - analyze
+workflow:
+  _type: react_agent
+  tool_names: [video_analytics]
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "va_mcp.yml"
+            path.write_text(config, encoding="utf-8")
+            tools = contract.extract_va_mcp_tools(path)
+        self.assertEqual(
+            [item["name"] for item in tools],
+            [
+                "react_agent",
+                "video_analytics__analyze",
+                "video_analytics__get_incidents",
+                "vst_sensor_list",
+            ],
+        )
+
 
 class CheckedInInventoryTests(unittest.TestCase):
     @classmethod
@@ -227,7 +256,7 @@ class CheckedInInventoryTests(unittest.TestCase):
             self.inventory["expected_totals"]["thor_local_extension_operations"],
             4,
         )
-        self.assertEqual(sum(item["tool_count"] for item in mcp), 42)
+        self.assertEqual(sum(item["tool_count"] for item in mcp), 44)
         self.assertEqual(sum(item["prompt_count"] for item in mcp), 5)
 
     def test_vios_mcp_declarations_are_exact(self) -> None:
@@ -362,7 +391,7 @@ class CheckedInInventoryTests(unittest.TestCase):
         self.assertEqual(status, 0, output.getvalue())
         self.assertIn("350 declared REST operations", output.getvalue())
         self.assertIn("official core denominator is 346 declared", output.getvalue())
-        self.assertIn("42 MCP tools plus 5 MCP prompts", output.getvalue())
+        self.assertIn("44 MCP tools plus 5 MCP prompts", output.getvalue())
 
     def test_local_live_openapi_helper_does_not_accept_urls(self) -> None:
         with self.assertRaises(contract.ContractError):

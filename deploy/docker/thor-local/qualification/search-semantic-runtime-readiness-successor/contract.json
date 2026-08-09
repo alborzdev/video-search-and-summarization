@@ -66,7 +66,7 @@
     {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
     {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
     {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts", "sha256": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f"},
-    {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "sha256": "3073b21a80831b4461bfdbe5887b2ae4282c37765396bf4993ca1badf6929e84"},
+    {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "sha256": "64ef398f735d88edc670cb238d6c137e302c85aa9f9a8d389eba3737efbe3937"},
     {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "ea4f92b9e331b585170d4bd8e1b618c92d5b83db16372ee6e6193458f15391ca"},
     {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/compiler.py", "sha256": "528388ffbe13e53b1a2164d0084b905865561b86423ae52400f6b02d4978eef0"},
     {"path": "deploy/docker/thor-local/qualification/lvs-rtvi-current-contract-source-claim-layered-successor/layered-current-contract.json", "sha256": "cb3e1e2b15374a9a2a60715a475aaae055b4564f73b59987a0ca34b6ae454a59"},

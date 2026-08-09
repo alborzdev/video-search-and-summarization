@@ -587,17 +587,17 @@ The optional NVIDIA Warehouse sample bundle is excluded throughout. Small
 operator-owned custom media and calibration remain valid inputs for the
 Warehouse capability lanes.
 
-The core API inventory remains at 17 surfaces, 342 declared implementation
-REST operations, 341 normalized implementation routes, 42 MCP tools, and five
+The core API inventory remains at 17 surfaces, 350 declared implementation
+REST operations, 349 normalized implementation routes, 44 MCP tools, and five
 MCP prompts. Four operations are explicit Thor-local extensions: RT-VLM
 request cancellation, LVS single-file metadata, and Alerts on-demand status
-and cancellation. The official core denominator is therefore 338 declared and
-337 normalized. The separate extended contract proves 80 more operations
+and cancellation. The official core denominator is therefore 346 declared and
+345 normalized. The separate extended contract proves 80 more operations
 across six surfaces and keeps the seventh, legacy calibration, at `L >= 14`
 rather than inventing an exact server count. Complete implementation totals
-remain `422 + L` declared and `421 + L` normalized, with lower bounds 436 and
-435. Official-surface totals are `418 + L` and `417 + L`, with lower bounds 432
-and 431. None is a complete total while `L` remains unresolved.
+remain `430 + L` declared and `429 + L` normalized, with lower bounds 444 and
+443. Official-surface totals are `426 + L` and `425 + L`, with lower bounds 440
+and 439. None is a complete total while `L` remains unresolved.
 
 The deterministic static successors currently materialize 27 of 110
 planning requirements. Of the 289 full capability oracles, nine are now

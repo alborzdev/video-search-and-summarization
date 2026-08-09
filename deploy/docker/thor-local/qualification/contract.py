@@ -345,35 +345,60 @@ def extract_lvs_mcp_tools(path: Path) -> list[dict[str, Any]]:
 
 def extract_va_mcp_tools(path: Path) -> list[dict[str, Any]]:
     lines = path.read_text(encoding="utf-8").splitlines()
-    in_video_analytics = False
+    section: str | None = None
+    function_group: str | None = None
     in_include = False
     names: list[str] = []
     for raw_line in lines:
         stripped = raw_line.strip()
         indent = len(raw_line) - len(raw_line.lstrip(" "))
-        if indent == 2 and stripped == "video_analytics:":
-            in_video_analytics = True
+
+        if indent == 0 and stripped.endswith(":"):
+            section = stripped[:-1]
+            function_group = None
             in_include = False
             continue
+
+        if section == "functions" and indent == 2 and stripped.endswith(":"):
+            names.append(stripped[:-1])
+            continue
+
         if (
-            in_video_analytics
-            and indent <= 2
-            and stripped
-            and stripped != "video_analytics:"
+            section == "function_groups"
+            and indent == 2
+            and stripped.endswith(":")
         ):
-            break
-        if in_video_analytics and indent == 4 and stripped == "include:":
+            function_group = stripped[:-1]
+            in_include = False
+            continue
+        if section == "function_groups" and indent == 4 and stripped == "include:":
             in_include = True
             continue
-        if in_include and indent == 4 and stripped.startswith("- "):
-            names.append(stripped[2:].strip())
+        if (
+            section == "function_groups"
+            and function_group
+            and in_include
+            and indent == 4
+            and stripped.startswith("- ")
+        ):
+            names.append(f"{function_group}__{stripped[2:].strip()}")
             continue
-        if in_include and indent == 4 and stripped and stripped != "include:":
-            break
+        if section == "function_groups" and indent <= 4 and stripped:
+            in_include = False
+
+        if section == "workflow" and indent == 2 and stripped.startswith("_type:"):
+            workflow_type = stripped.partition(":")[2].strip().strip("\"'")
+            names.append(workflow_type)
+
     if not names:
-        raise ContractError(f"no video_analytics include list found in {path}")
+        raise ContractError(f"no VA-MCP function declarations found in {path}")
+    name_pattern = r"[A-Za-z_][A-Za-z0-9_-]*(__[A-Za-z_][A-Za-z0-9_-]*)?"
+    if any(not re.fullmatch(name_pattern, name) for name in names):
+        raise ContractError(f"invalid VA-MCP function name in {path}")
+    if len(names) != len(set(names)):
+        raise ContractError(f"duplicate VA-MCP function name in {path}")
     return [
-        {"name": f"video_analytics__{name}", "input_schema_hash": None}
+        {"name": name, "input_schema_hash": None}
         for name in sorted(names)
     ]
 

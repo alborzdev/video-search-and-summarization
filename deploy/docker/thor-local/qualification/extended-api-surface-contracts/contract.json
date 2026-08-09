@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "target_commit": "862bdcc46db9c81d920703d1ba14c9a4dfa21377",
-  "contract_set_sha256": "3bcddb6b031523cfba58109a9abd68c66e1bb208eb9b92a21e8778d24f39fc40",
+  "contract_set_sha256": "72e500a620f2b07411a5c7668b533aa1974ac456dc7b63e8af35446774dbc82d",
   "scope": {
     "advertised_claim_family_count": 5,
     "addressable_surface_count": 7,
@@ -260,7 +260,7 @@
       "type": "checked_in_source_snapshot",
       "extraction_method": "The current checked-in API inventory supplies the exact 17-surface core denominator; the extended formulas are derived from its declared and normalized totals",
       "files": [
-        {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "content_sha256": "3073b21a80831b4461bfdbe5887b2ae4282c37765396bf4993ca1badf6929e84", "git_blob_oid": "f21e07fdd5aa76c47e8b54c73fa59987bf399d83", "role": "exact current 17-surface implementation and official API denominators"}
+        {"path": "deploy/docker/thor-local/qualification/api_inventory.json", "content_sha256": "64ef398f735d88edc670cb238d6c137e302c85aa9f9a8d389eba3737efbe3937", "git_blob_oid": "b6fbd235d312408f2002dfcd06f8e8bc0fa13aa1", "role": "exact current 17-surface implementation and official API denominators"}
       ]
     },
     {

@@ -35,6 +35,11 @@ external inference endpoint was used.
   analytics agent correctly reported that `sample-sim-traffic` had no
   incidents in the requested one-minute interval. No analytics state was
   mutated.
+- The VIOS MCP prompt catalog negotiated protocol `2024-11-05`, listed exactly
+  the five advertised prompts, and rendered each prompt through `prompts/get`:
+  `sensors_count`, `sensors_recording_status`, `video_for_sensor`,
+  `picture_for_camera`, and `picture_url_for_camera`. Each returned one
+  user-role text message without mutating VIOS state.
 - Direct Video Analytics queries returned valid empty results for alerts,
   incidents, severe alerts/incidents, frames, object counts, object lists,
   sensor lookup, and last-processed timestamp. A valid behavior query initially
@@ -153,7 +158,7 @@ with no visualization error. No synthetic analytics documents were inserted.
 ## Verification
 
 - The inert stateful acceptance compiler now resolves all 500 advertised
-  capabilities, 350 REST operations, 42 MCP tools, five MCP prompts, and 16
+  capabilities, 350 REST operations, 44 MCP tools, five MCP prompts, and 16
   installed VSS skills across 17 API surfaces. Its Agent surface lock was
   refreshed from the pre-sync 56-operation contract to the current exact
   64-operation manifest, and the compiler plus its 41 safety/coverage tests

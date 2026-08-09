@@ -277,9 +277,9 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 7,
+        "expected_item_count": 9,
         "expected_prompt_count": 0,
-        "items_sha256": "857354f73e9774cb008edd06e03206cb5caed6279f9e19cb58b34db6959b069f",
+        "items_sha256": "6bc2e5ac0e0e97d35187b3aac5e898e4ede9634fa989bad802c3d167beb45a4f",
         "prompt_names": [],
         "prompts_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "scenario_id": "mcp-tool-operation-matrix",

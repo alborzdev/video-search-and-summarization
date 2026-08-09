@@ -40,7 +40,7 @@ contract_command_is_offline() {
   local output
   output="$("${thor_local}" qualify --tier contract 2>&1)" &&
     grep -q 'PASS: qualified 17 Thor VSS API surfaces offline' <<< "${output}" &&
-    grep -q '42 MCP tools plus 5 MCP prompts' <<< "${output}" &&
+    grep -q '44 MCP tools plus 5 MCP prompts' <<< "${output}" &&
     ! grep -Eqi 'docker|container start|https?://' <<< "${output}"
 }
 

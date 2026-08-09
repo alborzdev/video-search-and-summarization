@@ -82,7 +82,7 @@
     {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "09701f84f6f7786a053eb05201c0679a5606591721d9307735e1be6a40fbcaa4"},
     {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/contract.json", "sha256": "7fad91d1b858ecbbf5b6e36303241512ba9b387439f21b9cff1efe5f35ae6ffc"},
-    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "sha256": "e422d92ca76efa2b984463cf59a2b54e90b50f8537a87a6aef7e0542c36f38df"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "sha256": "70fc6f2da7ae03998b6390eaf2e7d6850e4a6c2927dff51dd4b98c0dfe5f1cf2"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py", "sha256": "ae8d669faa819e9a07ef4bd0903f33ada98f0cb0cc1236c8a03f1f12528d1946"},
     {"path": "services/ui/packages/common/lib-src/utils/videoUpload.ts", "sha256": "9d893263bcf7d6742ac876778781bdc2ba902c55f4ea425af6ccea175b503d62"},
     {"path": "skills/vss-search-archive/SKILL.md", "sha256": "337ae027bfa4de55716a0ee0c7ba4f22d2c965aa863191d0337ec1eb957f331b"}

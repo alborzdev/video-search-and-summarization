@@ -162,7 +162,7 @@ def execute() -> dict[str, Any]:
         "official_declared_rest_operations": 346,
         "official_normalized_unique_rest_operations": 345,
         "thor_local_extension_operations": 4,
-        "mcp_tools": 42,
+        "mcp_tools": 44,
         "mcp_prompts": 5,
     }:
         raise ContractError("successor aggregate API totals drift")

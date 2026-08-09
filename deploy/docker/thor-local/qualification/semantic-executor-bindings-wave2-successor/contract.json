@@ -91,7 +91,7 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/qualification/semantic-executor-bindings-current/contract.json",
-      "sha256": "1058628e7302f0ff9dea80fbb9cefd543254a712fb798cc2e010083316923ec4"
+      "sha256": "852afffeb1693ca9e83cd1388d73c6b2d6135063bad533eedf0cc89e120d28be"
     },
     {
       "path": "deploy/docker/thor-local/qualification/semantic-executor-bindings-current/execution-status-registry.json",

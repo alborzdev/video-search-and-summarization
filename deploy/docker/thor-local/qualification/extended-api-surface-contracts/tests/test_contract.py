@@ -40,7 +40,7 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
     def test_canonical_hash_is_stable(self) -> None:
         self.assertEqual(
             self.document["contract_set_sha256"],
-            "3bcddb6b031523cfba58109a9abd68c66e1bb208eb9b92a21e8778d24f39fc40",
+            "72e500a620f2b07411a5c7668b533aa1974ac456dc7b63e8af35446774dbc82d",
         )
         self.assertEqual(
             VALIDATOR.canonical_contract_hash(self.document),
@@ -79,7 +79,7 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
                 "official_declared_rest_operations": 346,
                 "official_normalized_unique_rest_operations": 345,
                 "thor_local_extension_operations": 4,
-                "mcp_tools": 42,
+                "mcp_tools": 44,
                 "mcp_prompts": 5,
             },
         )

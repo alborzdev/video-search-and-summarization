@@ -2,7 +2,7 @@
   "documents": {
     "acceptance_inventory": {
       "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
-      "raw_sha256": "19db529678f1518800f62257f82d0b4e9ee9652a2ff9b54f9acbd9c300820307",
+      "raw_sha256": "cc055d0824bc48e2642166f01ded6f3c0e4c37f6fe53fbe2d694c9cda7d5b136",
       "schema_version": 1
     },
     "capability_oracles": {

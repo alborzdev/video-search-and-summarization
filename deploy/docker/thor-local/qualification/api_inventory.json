@@ -27,7 +27,7 @@
     "official_declared_rest_operations": 346,
     "official_normalized_unique_rest_operations": 345,
     "thor_local_extension_operations": 4,
-    "mcp_tools": 42,
+    "mcp_tools": 44,
     "mcp_prompts": 5
   },
   "known_contract_differences": {
@@ -556,8 +556,8 @@
       "id": "va-mcp",
       "kind": "mcp",
       "extractor": "va_mcp",
-      "expected_manifest": "va-mcp.json",
-      "expected_tool_count": 7,
+      "expected_manifest": "va-mcp-full.json",
+      "expected_tool_count": 9,
       "expected_prompt_count": 0,
       "direct": {
         "port_env": "VSS_VA_MCP_PORT",
@@ -575,7 +575,8 @@
       },
       "sources": [
         "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml",
-        "services/agent/src/vss_agents/video_analytics/tools.py"
+        "services/agent/src/vss_agents/video_analytics/tools.py",
+        "services/agent/src/vss_agents/tools/vst/sensor_list.py"
       ]
     },
     {
