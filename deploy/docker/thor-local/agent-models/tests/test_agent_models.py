@@ -184,12 +184,12 @@ class AgentModelContractTests(unittest.TestCase):
         self.assertEqual(normal.returncode, 0, normal.stderr)
         self.assertEqual(thor_complete.returncode, 2)
         self.assertEqual(selectors_complete.returncode, 2)
-        self.assertIn("Canonical official-edge pair blockers: 5", thor_complete.stdout)
+        self.assertIn("Canonical official-edge pair blockers: 1", thor_complete.stdout)
         self.assertIn(
             "All-advertised-selector completeness blockers: 24",
             selectors_complete.stdout,
         )
-        self.assertIn("canonical.artifact.edge4b", thor_complete.stderr)
+        self.assertIn("canonical.runtime_evidence", thor_complete.stderr)
         self.assertIn("nvidia/nvidia-nemotron-nano-9b-v2", selectors_complete.stderr)
 
     def test_missing_local_llm_is_rejected(self) -> None:

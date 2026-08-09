@@ -41,10 +41,9 @@ URLs, or authorization material.
 The current inputs cannot prove complete parity, and this validator refuses to
 say otherwise:
 
-1. The supplied live semantic receipt proves the exact official LLM/VLM pair
-   only for its fresh readiness-gated run. The checked-in canonical artifact
-   lock remains `incomplete_fail_closed`; staged artifact/readiness state is
-   therefore receipt-scoped, not a canonical artifact-lock promotion.
+1. The exact official LLM/VLM artifact and image locks are complete. A fresh,
+   approved semantic-runtime receipt is still required; readiness alone does
+   not promote canonical runtime evidence.
 2. The provider-free multi-video result has
    `materialized_video_count=0` and `runtime_evidence=[]`. Its deterministic
    four artifacts are not the Agent receipt's live Markdown/PDF bytes.

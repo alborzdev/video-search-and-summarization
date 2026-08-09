@@ -17,15 +17,15 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/contract.json",
-      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+      "sha256": "ff7fbfd3296ff1d5af6cf688b58a0611dbcc811cc64ebe1d9272f13a0f29c63e"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
-      "sha256": "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"
+      "sha256": "d5427164ccbd33529ddc2678c969601b09bb67776df332e230910702281766ae"
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json",
-      "sha256": "857b9fb83662a99fcf37a66eed91d36fedf489068958ea48824c3fb9364d0609"
+      "sha256": "b5797039e01b676919c66b153f55069e9ae2e85b3fed0cd4e9905ac139f93179"
     }
   ],
   "denominators": {
@@ -41,7 +41,7 @@
         "artifact_lock_key": "edge4b",
         "backend_image_key": "edge4b_vllm",
         "backend_image_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
-        "backend_image_id": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"
+        "backend_image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"
       },
       "vlm": {
         "agent_selector_model_id": "nvidia/cosmos3-nano-reasoner",

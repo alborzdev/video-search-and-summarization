@@ -22,8 +22,8 @@ scrape_configs:
     static_configs:
       - targets: ['node-exporter:9100']
 
-  # The exporter is a Thor-only host-network service with a hardcoded
-  # loopback listener. Prometheus reaches it through Docker's private gateway.
+  # The exporter is a Thor-only host-network service bound exclusively to
+  # Docker's private host gateway. It is not exposed on a physical interface.
   - job_name: 'tegrastats-exporter'
     static_configs:
       - targets: ['host.docker.internal:19101']

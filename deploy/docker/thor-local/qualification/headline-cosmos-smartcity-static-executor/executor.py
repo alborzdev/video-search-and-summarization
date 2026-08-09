@@ -74,19 +74,19 @@ EXPECTED_BINDINGS = {
 }
 EXPECTED_SOURCE_LOCKS = {
     "deploy/docker/thor-local/official-edge/contract.json": (
-        "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+        "ff7fbfd3296ff1d5af6cf688b58a0611dbcc811cc64ebe1d9272f13a0f29c63e"
     ),
     "deploy/docker/thor-local/official-edge/official-edge.env": (
         "134e4369f21ce80c4fd2261552d83925da900ca80f23d93622cc7bf2756d8074"
     ),
     "deploy/docker/thor-local/official-edge/compose.yml": (
-        "8a57b27d6798fa1c4655994fecb1c7abd78a3f738e8d20370f0ecdbefb11369c"
+        "e150076b05d5c104780d936cd0c232e1d5d2546d648540249df205961f0a0de0"
     ),
     "deploy/docker/thor-local/official-edge/config_edge.yml": (
         "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662"
     ),
     "deploy/docker/thor-local/official-edge/official_edge.py": (
-        "779ef64bd134fa00934a7bdfdde3b1066678dd1e8ffa75c11c8b9b5af3f06faa"
+        "123057e2f5fbd7da93c1840e2239d7ab1e912d7c0959374ab0b83e1704d430e7"
     ),
     "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json": (
         "7b544d9aa3d74ab1935f44647026fa4ff85c1dacee3d1c284aa52269bfdca395"

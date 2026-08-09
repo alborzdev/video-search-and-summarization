@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import math
 import re
 import signal
@@ -16,7 +17,6 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import BinaryIO
-
 
 BIND_ADDRESS = "127.0.0.1"
 DEFAULT_TEGRSTATS_PATH = "/usr/local/bin/tegrastats"
@@ -34,18 +34,15 @@ _RAM_RE = re.compile(
     r"(?:\s+\(lfb\s+(?P<lfb_count>\d+)x(?P<lfb_size>\d+)MB\))?"
 )
 _SWAP_RE = re.compile(
-    r"\bSWAP\s+(?P<used>\d+)/(?P<total>\d+)MB"
-    r"(?:\s+\(cached\s+(?P<cached>\d+)MB\))?"
+    r"\bSWAP\s+(?P<used>\d+)/(?P<total>\d+)MB" r"(?:\s+\(cached\s+(?P<cached>\d+)MB\))?"
 )
 _CPU_RE = re.compile(r"\bCPU\s+\[(?P<cores>[^\]]*)\]")
 _CPU_CORE_RE = re.compile(r"^(?P<util>\d+)%@(?P<mhz>\d+)$")
 _GPU_RE = re.compile(
-    r"\bGR3D_FREQ\s+(?P<util>\d+)%"
-    r"(?:@(?P<frequency>\d+)(?:MHz)?)?"
+    r"\bGR3D_FREQ\s+(?P<util>\d+)%" r"(?:@(?P<frequency>\d+)(?:MHz)?)?"
 )
 _EMC_RE = re.compile(
-    r"\bEMC(?:_FREQ)?\s+(?P<util>\d+)%"
-    r"(?:@(?P<frequency>\d+)(?:MHz)?)?"
+    r"\bEMC(?:_FREQ)?\s+(?P<util>\d+)%" r"(?:@(?P<frequency>\d+)(?:MHz)?)?"
 )
 _TEMPERATURE_RE = re.compile(
     r"(?<![A-Za-z0-9_])(?P<zone>[A-Za-z][A-Za-z0-9_]*)@"
@@ -77,7 +74,9 @@ def parse_tegrastats_line(line: str) -> dict[str, object]:
         metrics["ram_total_bytes"] = int(ram.group("total")) * 1024 * 1024
         if ram.group("lfb_count") is not None:
             metrics["ram_largest_free_block_count"] = int(ram.group("lfb_count"))
-            metrics["ram_largest_free_block_bytes"] = int(ram.group("lfb_size")) * 1024 * 1024
+            metrics["ram_largest_free_block_bytes"] = (
+                int(ram.group("lfb_size")) * 1024 * 1024
+            )
 
     swap = _SWAP_RE.search(line)
     if swap:
@@ -135,7 +134,10 @@ def parse_tegrastats_line(line: str) -> dict[str, object]:
             break
         label = _bounded_label(match.group("rail"))
         if label:
-            rails[label] = (float(match.group("current")), float(match.group("average")))
+            rails[label] = (
+                float(match.group("current")),
+                float(match.group("average")),
+            )
     if rails:
         metrics["power_milliwatts"] = rails
 
@@ -330,7 +332,9 @@ def collector_command(
     ]
 
 
-def collect_stream(stream: BinaryIO, state: ExporterState, stop_event: threading.Event) -> None:
+def collect_stream(
+    stream: BinaryIO, state: ExporterState, stop_event: threading.Event
+) -> None:
     """Read newline-delimited samples while bounding every allocation."""
 
     while not stop_event.is_set():
@@ -343,7 +347,9 @@ def collect_stream(stream: BinaryIO, state: ExporterState, stop_event: threading
             state.record_line_too_long()
             continue
         try:
-            state.record_sample(parse_tegrastats_line(raw.decode("utf-8", errors="replace")))
+            state.record_sample(
+                parse_tegrastats_line(raw.decode("utf-8", errors="replace"))
+            )
         except ValueError:
             state.record_parse_error()
 
@@ -358,11 +364,17 @@ class MetricsHandler(BaseHTTPRequestHandler):
             return
         if self.path == "/readyz":
             _, _, ready = self.server.exporter_state.snapshot()  # type: ignore[attr-defined]
-            self._reply(200 if ready else 503, b"ready\n" if ready else b"not ready\n", "text/plain; charset=utf-8")
+            self._reply(
+                200 if ready else 503,
+                b"ready\n" if ready else b"not ready\n",
+                "text/plain; charset=utf-8",
+            )
             return
         if self.path == "/metrics":
             body, ready = render_metrics(self.server.exporter_state)  # type: ignore[attr-defined]
-            self._reply(200 if ready else 503, body, "text/plain; version=0.0.4; charset=utf-8")
+            self._reply(
+                200 if ready else 503, body, "text/plain; version=0.0.4; charset=utf-8"
+            )
             return
         self._reply(404, b"not found\n", "text/plain; charset=utf-8")
 
@@ -381,8 +393,10 @@ class MetricsHandler(BaseHTTPRequestHandler):
 class ExporterServer(HTTPServer):
     allow_reuse_address = True
 
-    def __init__(self, port: int, state: ExporterState) -> None:
-        super().__init__((BIND_ADDRESS, port), MetricsHandler)
+    def __init__(
+        self, port: int, state: ExporterState, bind_address: str = BIND_ADDRESS
+    ) -> None:
+        super().__init__((bind_address, port), MetricsHandler)
         self.exporter_state = state
 
 
@@ -427,6 +441,7 @@ def collector_supervisor(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--bind-address", default=BIND_ADDRESS)
     parser.add_argument("--port", type=int, default=19101)
     parser.add_argument("--interval-ms", type=int, default=1000)
     parser.add_argument("--tegrastats", default=DEFAULT_TEGRSTATS_PATH)
@@ -435,6 +450,16 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error("--port must be between 1 and 65535")
+    try:
+        bind_address = ipaddress.ip_address(args.bind_address)
+    except ValueError:
+        parser.error("--bind-address must be a literal IPv4 address")
+    if (
+        bind_address.version != 4
+        or bind_address.is_unspecified
+        or not (bind_address.is_loopback or bind_address.is_private)
+    ):
+        parser.error("--bind-address must be a loopback or private IPv4 address")
     if not 250 <= args.interval_ms <= 60_000:
         parser.error("--interval-ms must be between 250 and 60000")
     for name in ("tegrastats", "loader", "library_path"):
@@ -448,7 +473,7 @@ def main() -> int:
     state = ExporterState(stale_after_seconds=max(5.0, args.interval_ms / 1000.0 * 3.0))
     stop_event = threading.Event()
     process_holder: list[subprocess.Popen[bytes] | None] = [None]
-    server = ExporterServer(args.port, state)
+    server = ExporterServer(args.port, state, args.bind_address)
 
     def stop(_signum: int, _frame: object) -> None:
         stop_event.set()

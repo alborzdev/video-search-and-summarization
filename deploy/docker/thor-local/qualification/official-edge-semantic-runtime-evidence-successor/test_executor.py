@@ -178,7 +178,7 @@ def readiness_receipt() -> dict[str, object]:
             "edge_vllm": {
                 "state": "present_exact",
                 "reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
-                "image_id": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09",
+                "image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
                 "contract_lock": {"state": "locked_exact"},
             },
             "rt_vlm": {

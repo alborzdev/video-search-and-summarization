@@ -105,7 +105,7 @@
     {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/contract.json", "sha256": "7494b3d77559c99a689ecfa204297405769ac3d4ad338e6e40da9e2cb016a489"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/executor.py", "sha256": "3ddc4e08f2013e1f512254dc1309020ef63d88b8fce203f6c2a34537f1d57df4"},
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "588c0c5e0a0eb3cd08af33427f3d31cd1427d1c21ec6acafce6664fee557202b"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "b8c7d44c1354c7390132aaa5726345c165647f6c3aa1673abda74461781d7e82"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/executor.py", "sha256": "42bfdeeef88d947fdb6e5138b86d0c248620f4b65754a71b70b936c71d064ca7"},
     {"path": "deploy/docker/thor-local/qualification/expected/agent.json", "sha256": "a20d7d3e2fcd8c8f9861477e9097e8071abdf493a4b3355793e4ef758d647540"},
     {"path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py", "sha256": "b9b5354f32dd32c89e798559c7080b045d55cee8df41ca4822bdabab48f88075"},

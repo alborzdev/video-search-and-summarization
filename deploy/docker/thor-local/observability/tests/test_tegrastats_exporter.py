@@ -5,13 +5,13 @@ from __future__ import annotations
 
 import importlib.util
 import io
+import sys
 import threading
 import time
 import unittest
 import urllib.error
 import urllib.request
 from pathlib import Path
-
 
 MODULE_PATH = Path(__file__).parents[1] / "tegrastats_exporter.py"
 SPEC = importlib.util.spec_from_file_location("tegrastats_exporter", MODULE_PATH)
@@ -89,7 +89,10 @@ class ParseTests(unittest.TestCase):
         self.assertEqual(len(parsed["temperatures_celsius"]), EXPORTER.MAX_TEMPERATURES)
         self.assertEqual(len(parsed["power_milliwatts"]), EXPORTER.MAX_POWER_RAILS)
         self.assertTrue(
-            all(len(label) <= EXPORTER.MAX_LABEL_LENGTH for label in parsed["temperatures_celsius"])
+            all(
+                len(label) <= EXPORTER.MAX_LABEL_LENGTH
+                for label in parsed["temperatures_celsius"]
+            )
         )
 
 
@@ -155,6 +158,28 @@ class StateAndRenderTests(unittest.TestCase):
             server.shutdown()
             server.server_close()
             thread.join(timeout=1)
+
+
+class ArgumentTests(unittest.TestCase):
+    def test_private_bind_address_is_accepted(self) -> None:
+        original = sys.argv
+        try:
+            sys.argv = ["tegrastats_exporter.py", "--bind-address", "172.17.0.1"]
+            args = EXPORTER.parse_args()
+        finally:
+            sys.argv = original
+        self.assertEqual(args.bind_address, "172.17.0.1")
+
+    def test_unspecified_and_public_bind_addresses_are_rejected(self) -> None:
+        for address in ("0.0.0.0", "8.8.8.8", "not-an-address", "::1"):
+            with self.subTest(address=address):
+                original = sys.argv
+                try:
+                    sys.argv = ["tegrastats_exporter.py", "--bind-address", address]
+                    with self.assertRaises(SystemExit):
+                        EXPORTER.parse_args()
+                finally:
+                    sys.argv = original
 
 
 if __name__ == "__main__":

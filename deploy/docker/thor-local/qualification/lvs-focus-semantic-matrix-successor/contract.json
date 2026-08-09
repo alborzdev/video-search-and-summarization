@@ -60,9 +60,9 @@
     "canonical_state_advanced": false
   },
   "source_locks": [
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "588c0c5e0a0eb3cd08af33427f3d31cd1427d1c21ec6acafce6664fee557202b"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "b8c7d44c1354c7390132aaa5726345c165647f6c3aa1673abda74461781d7e82"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/executor.py", "sha256": "42bfdeeef88d947fdb6e5138b86d0c248620f4b65754a71b70b936c71d064ca7"},
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "ee8870039c39942b9b8e58b3900d38ea4bd7d296f91ba4c4240a29bb53ccaa86"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "d39e1acabc868065f911a1a335b841488e514b1570a8f2936f10bbbb19104e5a"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
     {"path": "services/video-summarization/api_spec/openapi.json", "sha256": "2ce997975112a3e6e43c511612d7df682de0dc4283b7c96fb38e078aad2150e8"},
     {"path": "services/video-summarization/src/via_server.py", "sha256": "c6ea204dafca72d7439ae28ae06ca59f097d56738474e5004dd3b7ab0ec7e768"},

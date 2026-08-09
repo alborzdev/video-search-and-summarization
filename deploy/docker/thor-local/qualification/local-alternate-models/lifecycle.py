@@ -65,7 +65,7 @@ PROVISIONER = qualifier.REPO_ROOT / "deploy/docker/thor-local/provision-local-mo
 PROVISIONER_SHA256 = "d842b91b870c47614c2e862e7e2444379375fed66a8ebbb57203c2fea265c39c"
 THOR_LOCAL_SCRIPT = qualifier.REPO_ROOT / "deploy/docker/scripts/thor-local.sh"
 THOR_LOCAL_SCRIPT_SHA256 = (
-    "7bfd773fc6126cf9ae0f78aa68d95db231dcaa0651319be974ad477707afae40"
+    "c8f95aabdf17852f96a4ae3a59e8f8623c772a1abe54b6951a447a8862941785"
 )
 ARTIFACT_VERIFIER = (
     qualifier.REPO_ROOT / "deploy/docker/thor-local/models/verify_artifacts.py"

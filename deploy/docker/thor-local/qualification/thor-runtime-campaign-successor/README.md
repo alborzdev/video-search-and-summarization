@@ -121,9 +121,8 @@ A valid receipt set is
 `campaign-receipt-set-valid-incomplete-nonpromoting`, never complete evidence.
 Six blockers are mandatory:
 
-- official-model staged-artifact/readiness evidence is scoped to the supplied
-  non-promoting live receipt while the canonical artifact lock remains
-  `incomplete_fail_closed`;
+- the exact official-model artifact and image locks are complete, but the
+  canonical semantic-runtime receipt remains required and non-promoting;
 - the static LVS multi-video oracle did not consume live report bytes;
 - Alerts exposes neither its authorized run namespace nor served-media digest;
 - the UI receipt does not expose the reviewed RTSP descriptor digest;

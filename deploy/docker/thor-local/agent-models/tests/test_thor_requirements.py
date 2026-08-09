@@ -37,20 +37,10 @@ class ThorRequirementsTests(unittest.TestCase):
         self.assertEqual(
             canonical,
             [
-                "canonical.artifact_lock: official-edge artifact lock is not complete_exact",
-                "canonical.artifact.edge4b: exact artifact tree is not staged and locked",
-                (
-                    "canonical.artifact.cosmos3_nano_bf16: exact artifact tree is not "
-                    "staged and locked"
-                ),
-                (
-                    "canonical.backend.edge4b_vllm: exact backend image is not staged "
-                    "and locked"
-                ),
                 (
                     "canonical.runtime_evidence: approved semantic runtime receipt is "
                     "absent"
-                ),
+                )
             ],
         )
         self.assertEqual(len(selectors), 24)
@@ -75,7 +65,7 @@ class ThorRequirementsTests(unittest.TestCase):
         )
         self.assertEqual(static.returncode, 0, static.stderr)
         self.assertEqual(complete.returncode, 2)
-        self.assertIn("canonical official-edge blockers: 5", static.stdout)
+        self.assertIn("canonical official-edge blockers: 1", static.stdout)
         self.assertIn("canonical.runtime_evidence", complete.stderr)
 
     def test_denominators_cannot_be_conflated(self) -> None:

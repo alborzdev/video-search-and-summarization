@@ -259,16 +259,19 @@ class InspectionTests(unittest.TestCase):
         self.assertEqual(image["status"], "missing_exact")
         self.assertEqual(len(image["conflicting_same_repository"]), 1)
 
-    def test_current_official_edge_lock_remains_explicitly_incomplete(self) -> None:
+    def test_current_official_edge_lock_is_complete_but_scan_remains_required(
+        self,
+    ) -> None:
         report = pf.inspect_host(
             pf.load_contract(), complete_runner(), complete_reader()
         )
         edge = report["official_edge"]
-        self.assertEqual(edge["lock_state"], "incomplete_fail_closed")
+        self.assertEqual(edge["lock_state"], "complete_exact")
         self.assertFalse(edge["filesystem_trees_verified"])
         self.assertFalse(edge["runtime_launch_ready"])
         self.assertEqual(edge["status"], "blocker")
-        self.assertTrue(any("complete_exact" in item for item in edge["blockers"]))
+        self.assertFalse(any("not 'complete_exact'" in item for item in edge["blockers"]))
+        self.assertTrue(any("not scanned" in item for item in edge["blockers"]))
 
     def test_daemon_json_is_summarized_without_echoing_unknown_keys(self) -> None:
         reader = complete_reader()

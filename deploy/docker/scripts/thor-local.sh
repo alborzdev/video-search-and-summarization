@@ -114,6 +114,7 @@ export GRAFANA_PORT="${GRAFANA_PORT:-35000}"
 export NODE_EXPORTER_PORT="${NODE_EXPORTER_PORT:-19100}"
 export CADVISOR_PORT="${CADVISOR_PORT:-18080}"
 export TEGRASTATS_PORT="${TEGRASTATS_PORT:-19101}"
+export TEGRASTATS_BIND_ADDRESS="${TEGRASTATS_BIND_ADDRESS:-${docker_bridge_ip:-127.0.0.1}}"
 export THOR_FULL_STAGE_TIMEOUT_SECONDS="${THOR_FULL_STAGE_TIMEOUT_SECONDS:-1800}"
 export THOR_FULL_READINESS_TIMEOUT_SECONDS="${THOR_FULL_READINESS_TIMEOUT_SECONDS:-1200}"
 export RTVI_EMBED_BATCH_SIZE="${RTVI_EMBED_BATCH_SIZE:-8}"
@@ -237,6 +238,7 @@ Optional environment overrides:
   MONITORING_BIND_ADDRESS, PROMETHEUS_CONFIG_FILE,
   PROMETHEUS_PORT, GRAFANA_PORT, NODE_EXPORTER_PORT, CADVISOR_PORT,
   TEGRASTATS_PORT (fixed at 19101 by the checked-in Prometheus target),
+  TEGRASTATS_BIND_ADDRESS (fixed to the detected private docker0 gateway),
   VLM_MAX_FRAMES_PER_REQUEST, VST_VIDEO_STORAGE_SIZE_MB.
   NPM_CONFIG_REGISTRY (defaults to https://registry.npmmirror.com).
   NEXT_PUBLIC_APP_TITLE, NEXT_PUBLIC_APP_SUBTITLE,
@@ -620,6 +622,8 @@ validate_thor_full_contract() {
     die "BACKEND_PORT must remain 38111 while the versioned Thor Prometheus config scrapes LVS on that port"
   [[ "${TEGRASTATS_PORT}" == "19101" ]] ||
     die "TEGRASTATS_PORT must remain 19101 while the versioned Thor Prometheus config scrapes tegrastats on that port"
+  [[ "${TEGRASTATS_BIND_ADDRESS}" == "${docker_bridge_ip:-127.0.0.1}" ]] ||
+    die "TEGRASTATS_BIND_ADDRESS must use Docker's private host gateway ${docker_bridge_ip:-127.0.0.1}"
   [[ "${VIOS_MCP_ENDPOINT}" == "http://127.0.0.1:${VST_MCP_PORT}/mcp" ]] ||
     die "VIOS_MCP_ENDPOINT must remain the loopback VIOS MCP endpoint http://127.0.0.1:${VST_MCP_PORT}/mcp"
   [[ "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "true" || "${THOR_LOCAL_FORCE_BOOTSTRAP}" == "false" ]] ||
@@ -879,6 +883,7 @@ print_runtime_contract() {
     NODE_EXPORTER_PORT "${NODE_EXPORTER_PORT}" \
     CADVISOR_PORT "${CADVISOR_PORT}" \
     TEGRASTATS_PORT "${TEGRASTATS_PORT}" \
+    TEGRASTATS_BIND_ADDRESS "${TEGRASTATS_BIND_ADDRESS}" \
     NUM_STREAMS 1 \
     NUM_SENSORS 1 \
     ENABLE_CRITIC true \
@@ -1251,7 +1256,7 @@ preflight() {
   echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, VIOS-MCP=${VST_MCP_PORT}."
   echo "[OK] Planned intelligence ports: embed=${RTVI_EMBED_PORT}, RTVI-VLM=${RTVI_VLM_PORT}, perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, LVS=${BACKEND_PORT}."
   echo "[OK] Planned data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, Kibana=${KIBANA_PORT} (enabled=${THOR_FULL_ENABLE_KIBANA}), Phoenix=${PHOENIX_HOST}:${PHOENIX_PORT}, Logstash API=127.0.0.1:${LOGSTASH_API_PORT}."
-  echo "[OK] Planned observability ports (loopback): Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT}, tegrastats=${TEGRASTATS_PORT}."
+  echo "[OK] Planned observability ports: Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT} on loopback; tegrastats=${TEGRASTATS_BIND_ADDRESS}:${TEGRASTATS_PORT} on Docker's private gateway."
   echo "[OK] VLM frame request limit: ${VLM_MAX_FRAMES_PER_REQUEST}."
 }
 
@@ -2271,7 +2276,7 @@ doctor_check_endpoints() {
   doctor_http_status "Grafana" "http://127.0.0.1:${GRAFANA_PORT}/api/health" 200
   doctor_http_status "Node exporter" "http://127.0.0.1:${NODE_EXPORTER_PORT}/metrics" 200
   doctor_http_status "cAdvisor" "http://127.0.0.1:${CADVISOR_PORT}/healthz" 200
-  doctor_http_status "Thor tegrastats exporter" "http://127.0.0.1:${TEGRASTATS_PORT}/readyz" 200
+  doctor_http_status "Thor tegrastats exporter" "http://${TEGRASTATS_BIND_ADDRESS}:${TEGRASTATS_PORT}/readyz" 200
   if [[ "${LVS_ENABLE_MCP}" == "true" ]]; then
     if ss -H -ltn "sport = :${LVS_MCP_PORT}" | grep -q .; then
       doctor_pass "Video summarization MCP is listening on ${LVS_MCP_PORT}."

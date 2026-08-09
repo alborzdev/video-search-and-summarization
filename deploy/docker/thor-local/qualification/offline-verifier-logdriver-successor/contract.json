@@ -15,11 +15,11 @@
     "helper_removed_on_exit": true
   },
   "predecessor_live_source_sha256": "2b67c0b0ee25582ef5acd45ddf12dc02279700ffad065299e6577082fd189df5",
-  "current_live_source_sha256": "1cef540e1dd4ab627bcc8c90da8315c7b6b9abfd6d5a41a937f3c006fa21235b",
+  "current_live_source_sha256": "c8f95aabdf17852f96a4ae3a59e8f8623c772a1abe54b6951a447a8862941785",
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/runtime-approval-bundles-rebase-successor/contract.json", "sha256": "415931c48a231c150c62d90e134da5f60a75adb8bed653dcef45251ef6caf194"},
     {"path": "deploy/docker/thor-local/qualification/runtime-approval-bundles-rebase-successor/compiler.py", "sha256": "291cccb9d120e074e3139e6827efab530643085ac64d581c649bca682625883e"},
-    {"path": "deploy/docker/scripts/thor-local.sh", "sha256": "1cef540e1dd4ab627bcc8c90da8315c7b6b9abfd6d5a41a937f3c006fa21235b"},
+    {"path": "deploy/docker/scripts/thor-local.sh", "sha256": "c8f95aabdf17852f96a4ae3a59e8f8623c772a1abe54b6951a447a8862941785"},
     {"path": "deploy/docker/test-scripts/test-dev-profile.sh", "sha256": "aad08c554a6cd9c0918e4960b46aae05209c924dfccf24365eafe40abb6e39dc"},
     {"path": "deploy/docker/test-scripts/test-thor-local-security-models.sh", "sha256": "17f42d49f760ba9be05609b704f05c636ddfb005abea63943b576106ce773908"}
   ]

@@ -95,9 +95,10 @@ services:
 
   # Jetson does not expose the datacenter DCGM contract. Reuse the already
   # locked VSS Agent Python runtime to translate the host's L4T tegrastats
-  # stream without adding an image or package. The exporter hardcodes a
-  # loopback listener, bounds line/label cardinality, and stays unready until
-  # it has a fresh parsed sample.
+  # stream without adding an image or package. The exporter bounds line/label
+  # cardinality and stays unready until it has a fresh parsed sample. Bind it
+  # only to Docker's private host gateway:
+  # bridged Prometheus can scrape it, while no physical interface exposes it.
   tegrastats-exporter:
     image: nvcr.io/nvidia/vss-core/vss-agent:${VSS_AGENT_VERSION}
     container_name: tegrastats-exporter
@@ -105,6 +106,8 @@ services:
       - /usr/local/bin/python3
       - /opt/thor-observability/tegrastats_exporter.py
     command:
+      - --bind-address
+      - "${TEGRASTATS_BIND_ADDRESS:-127.0.0.1}"
       - --port
       - "${TEGRASTATS_PORT:-19101}"
       - --interval-ms
@@ -137,7 +140,7 @@ services:
         - -c
         - >-
           import urllib.request,sys;
-          sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:${TEGRASTATS_PORT:-19101}/readyz', timeout=3).getcode() == 200 else sys.exit(1)
+          sys.exit(0) if urllib.request.urlopen('http://${TEGRASTATS_BIND_ADDRESS:-127.0.0.1}:${TEGRASTATS_PORT:-19101}/readyz', timeout=3).getcode() == 200 else sys.exit(1)
       interval: 10s
       timeout: 5s
       retries: 12

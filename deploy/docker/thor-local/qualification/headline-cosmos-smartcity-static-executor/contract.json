@@ -65,7 +65,7 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/official-edge/contract.json",
-      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+      "sha256": "ff7fbfd3296ff1d5af6cf688b58a0611dbcc811cc64ebe1d9272f13a0f29c63e"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official-edge.env",
@@ -73,7 +73,7 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/compose.yml",
-      "sha256": "8a57b27d6798fa1c4655994fecb1c7abd78a3f738e8d20370f0ecdbefb11369c"
+      "sha256": "e150076b05d5c104780d936cd0c232e1d5d2546d648540249df205961f0a0de0"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
@@ -81,7 +81,7 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official_edge.py",
-      "sha256": "779ef64bd134fa00934a7bdfdde3b1066678dd1e8ffa75c11c8b9b5af3f06faa"
+      "sha256": "123057e2f5fbd7da93c1840e2239d7ab1e912d7c0959374ab0b83e1704d430e7"
     },
     {
       "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",

@@ -14,19 +14,19 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/official-edge/contract.json",
-      "sha256": "e632804c98f931661336f3be0e464b5bf4798f807dcd660327a5fdafb8c94055"
+      "sha256": "ff7fbfd3296ff1d5af6cf688b58a0611dbcc811cc64ebe1d9272f13a0f29c63e"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
-      "sha256": "8174f8785ca8511f60fcdc321a79b9fe721701a1f4bc477054c86823d0152513"
+      "sha256": "d5427164ccbd33529ddc2678c969601b09bb67776df332e230910702281766ae"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official_edge.py",
-      "sha256": "779ef64bd134fa00934a7bdfdde3b1066678dd1e8ffa75c11c8b9b5af3f06faa"
+      "sha256": "123057e2f5fbd7da93c1840e2239d7ab1e912d7c0959374ab0b83e1704d430e7"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/compose.yml",
-      "sha256": "8a57b27d6798fa1c4655994fecb1c7abd78a3f738e8d20370f0ecdbefb11369c"
+      "sha256": "e150076b05d5c104780d936cd0c232e1d5d2546d648540249df205961f0a0de0"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official-edge.env",
@@ -38,15 +38,15 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json",
-      "sha256": "857b9fb83662a99fcf37a66eed91d36fedf489068958ea48824c3fb9364d0609"
+      "sha256": "b5797039e01b676919c66b153f55069e9ae2e85b3fed0cd4e9905ac139f93179"
     },
     {
       "path": "deploy/docker/thor-local/qualification/official-edge-readiness/result.schema.json",
-      "sha256": "f0e47d9aa03f5a016ab1d13cfb813f0ad7cbefb4b6b1badc1702f7389ebf5e8a"
+      "sha256": "b81dea62c5077e6cf2f81f8c34dbbfbb5b97d4d720fb6e0f95701149aa2d74fb"
     },
     {
       "path": "deploy/docker/thor-local/agent-models/thor-requirements.json",
-      "sha256": "a2ce1edcbe782bef22dbb6139c46591c377bd63ccf8cce78b27b4904b67fc885"
+      "sha256": "d400ded2ae3c72ede61df53b7c15ce0374d359363ee5b70d45eb6795052cba4f"
     },
     {
       "path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py",
@@ -62,7 +62,7 @@
       "models_path": "/v1/models",
       "semantic_path": "/v1/chat/completions",
       "image_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
-      "image_id": "sha256:11544a7267571a837e2abc4a14be638257d7f402b0fc45d2223eec0f5f3e8c09"
+      "image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"
     },
     "vlm": {
       "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",

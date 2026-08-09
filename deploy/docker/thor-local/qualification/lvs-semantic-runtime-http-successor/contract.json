@@ -99,6 +99,6 @@
     {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab"},
     {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"},
     {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
-    {"path": "deploy/docker/thor-local/generated.env", "sha256": "3eb2c3a49c651083437e17b7bc75d1e44e5e21bd13d372ee62a8498206b97a3a"}
+    {"path": "deploy/docker/thor-local/generated.env", "sha256": "3f7690fc0dba4111931399a3ac12ac917bd8721b37914f4b925b28a8c133e6c4"}
   ]
 }

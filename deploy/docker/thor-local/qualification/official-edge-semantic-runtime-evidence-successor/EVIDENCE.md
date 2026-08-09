@@ -12,7 +12,7 @@ Approved collector hashes:
 
 | File | SHA-256 |
 | --- | --- |
-| `contract.json` | `50c627f2cdba661f744180fe4190cfc98b153d200845522c539b727904a9573f` |
+| `contract.json` | `867e0596d1662b1c61c87054e686453d1481d0e72ba78e66bb79451440066da4` |
 | `contract.schema.json` | `207aab65cb37cd18fa56a98539222604d8f32287d3beceb82201a6bc70b10dc9` |
 | `executor.py` | `653546a1d3943c09f24b0c6e5e2fad6506696867e9bd10a531d6e9374075825c` |
 | `manifest.schema.json` | `a80b0c799b61a159c8799c6eb3eaa27c9eb24586aa7a3d070bce3a316c2c217a` |

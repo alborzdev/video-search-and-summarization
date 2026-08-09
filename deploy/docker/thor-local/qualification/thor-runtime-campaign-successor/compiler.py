@@ -506,7 +506,7 @@ def _load_contract_and_sources() -> tuple[
         != "incomplete_fail_closed"
         or requirements["current_state"]["runtime_evidence_promoted"] is not False
         or requirements["current_state"]["warehouse_sample_required"] is not False
-        or artifact_lock["lock_state"] != "incomplete_fail_closed"
+        or artifact_lock["lock_state"] != "complete_exact"
     ):
         raise CampaignError("official model readiness/live-receipt boundary drift")
     return (
