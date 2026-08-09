@@ -152,6 +152,12 @@ with no visualization error. No synthetic analytics documents were inserted.
 
 ## Verification
 
+- The inert stateful acceptance compiler now resolves all 500 advertised
+  capabilities, 350 REST operations, 42 MCP tools, five MCP prompts, and 16
+  installed VSS skills across 17 API surfaces. Its Agent surface lock was
+  refreshed from the pre-sync 56-operation contract to the current exact
+  64-operation manifest, and the compiler plus its 41 safety/coverage tests
+  are now part of the unified static milestone.
 - `deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh` passed.
 - The final read-only runtime qualifier reported 33 total probes: 32 passed,
   one optional Video Analytics OpenAPI probe skipped, and zero failed or

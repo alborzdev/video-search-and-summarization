@@ -2,7 +2,7 @@
   "available_sets": [
     {
       "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-agent-evaluation-contract-289.json",
-      "descriptor_raw_sha256": "477874bc9c56786234221f754fa96ebf6e44d309db29c9a967725b1e5280273c",
+      "descriptor_raw_sha256": "c1d57d5c667ee383a2dede77085a1cfc877f1d15e5985b22bc93c6c9272f0e90",
       "set_id": "thor-vss-3.2.1-current-agent-evaluation-contract-289"
     },
     {

@@ -723,6 +723,15 @@ python3 -m unittest discover \
 # Evaluation selector has advanced beyond both snapshots, so current metadata
 # coherence is validated through the generic selector/schema verifier below,
 # not by replaying a stale historical publisher against later source rebases.
+# The live acceptance compiler is a separate current-state consumer. Compile
+# its inert Phase 0 plan and run its safety/coverage tests so REST or MCP
+# operation drift cannot leave the advertised 500-capability plan stale.
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  "${thor_local_root}/qualification/acceptance.py" >/dev/null
+PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
+  "${thor_local_root}/qualification/tests/test_acceptance.py" \
+  "${thor_local_root}/qualification/tests/test_acceptance_executor.py"
+
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/parity/metadata_sets/tests" \
   "${thor_local_root}/parity/tests/test_verify_metadata_set.py"

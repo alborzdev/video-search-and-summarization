@@ -109,8 +109,8 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 56,
-        "items_sha256": "e75271b309f962526c5aa646259c3a89913d534d8be2a4a862d314a7a946e703",
+        "expected_item_count": 64,
+        "items_sha256": "c55d806da185b52850c513475f7dd57de4d63ec4452e96cc465d18ab6579d5ee",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "agent"
