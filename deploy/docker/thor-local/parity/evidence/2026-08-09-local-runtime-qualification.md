@@ -7,7 +7,7 @@ external inference endpoint was used.
 
 ## Core runtime
 
-- The live qualifier completed 31 probes: 30 passed, one optional probe was
+- The live qualifier completed 33 probes: 32 passed, one optional probe was
   skipped, and none failed or was unavailable.
 - The Agent exposed 64 routes. RT-VLM, RT-Embed, Alert Bridge, LVS, VIOS,
   VA-MCP, Prometheus, Grafana, Kibana, and the public ingress were reachable.
@@ -21,6 +21,29 @@ external inference endpoint was used.
   (110,905 bytes). A two-second clip returned HTTP 200 MP4 (194,059 bytes).
 - A correctly initialized VA-MCP session listed all nine tools. Sensor and
   incident queries returned valid empty results for the fresh analytics store.
+- Direct Video Analytics queries returned valid empty results for alerts,
+  incidents, severe alerts/incidents, frames, object counts, object lists,
+  sensor lookup, and last-processed timestamp. A valid behavior query initially
+  exposed an unmapped `end` sort field on the empty bootstrap index; the
+  bootstrap mapping now defines both `timestamp` and `end` as dates, and the
+  same request returns HTTP 200 with an empty behavior list.
+
+## Alerts and observability
+
+- Alert Bridge health, alert-submission dependencies, verification-config
+  persistence, realtime-rule listing, and realtime-incident listing returned
+  valid HTTP 200 responses through numeric loopback. The public ingress also
+  routed Alert Bridge REST calls correctly.
+- The WebSocket service initially reported degraded because it opened the
+  image's default `config.yaml` instead of the launcher's substituted
+  `CONFIG_PATH`. The service now uses `CONFIG_PATH` by default. Its Redis
+  consumer reports healthy, and real ping/pong exchanges passed through both
+  `ws://127.0.0.1:9080/ws/alerts` and the public
+  `ws://127.0.0.1:7777/alert-bridge/ws/alerts` route.
+- Alert Bridge Prometheus export is enabled on dedicated loopback port 9081.
+  The registry returned HTTP 200, Prometheus scraped the `alert-bridge` job as
+  healthy, and all eight configured Prometheus jobs were present with zero
+  unhealthy targets.
 
 ## Local inference
 
@@ -72,5 +95,8 @@ with no visualization error. No synthetic analytics documents were inserted.
 ## Verification
 
 - `deploy/docker/test-scripts/test-thor-runtime-infrastructure.sh` passed.
+- The final read-only runtime qualifier reported 33 total probes: 32 passed,
+  one optional Video Analytics OpenAPI probe skipped, and zero failed or
+  unavailable.
 - `deploy/docker/test-scripts/test-thor-static-parity-milestone.sh` finished
   with `PASS: unified static-only Thor parity milestone`.

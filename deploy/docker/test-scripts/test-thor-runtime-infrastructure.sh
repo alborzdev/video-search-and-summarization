@@ -25,8 +25,8 @@ inventory = json.loads(
     (thor_dir / "qualification/runtime_inventory.json").read_text(encoding="utf-8")
 )
 services = {service["id"]: service for service in inventory["services"]}
-assert len(services) == 21
-assert sum(len(service["probes"]) for service in services.values()) == 31
+assert len(services) == 22
+assert sum(len(service["probes"]) for service in services.values()) == 33
 assert services["vios-mcp"] == {
     "id": "vios-mcp",
     "port_env": "VST_MCP_PORT",
@@ -55,6 +55,7 @@ assert services["phoenix"]["probes"][0]["path"] == "/readyz"
 assert services["logstash"]["probes"][0]["path"] == "/"
 
 expected_jobs = {
+    "alert-bridge",
     "prometheus",
     "cadvisor",
     "node-exporter",
@@ -62,6 +63,31 @@ expected_jobs = {
     "rtvi-vlm",
     "rtvi-embed",
     "lvs",
+}
+assert services["alerts-prometheus"] == {
+    "id": "alerts-prometheus",
+    "port_env": "ALERT_PROMETHEUS_PORT",
+    "default_port": 9081,
+    "probes": [
+        {
+            "id": "metrics",
+            "kind": "health",
+            "method": "GET",
+            "path": "/metrics",
+            "expected_status": [200],
+        }
+    ],
+}
+behavior_probe = next(
+    probe
+    for probe in services["video-analytics"]["probes"]
+    if probe["id"] == "behavior-empty-store"
+)
+assert behavior_probe["path"] == "/behavior"
+assert behavior_probe["query"] == {
+    "sensorId": "thor-qualification-no-such-sensor",
+    "fromTimestamp": "2026-01-01T00:00:00.000Z",
+    "toTimestamp": "2026-01-01T00:00:01.000Z",
 }
 target_probe = next(
     probe
@@ -104,6 +130,7 @@ kibana_init = (
 assert "ensure_dashboard_index mdx-raw-thor-bootstrap" in kibana_init
 assert "ensure_dashboard_index mdx-behavior-thor-bootstrap" in kibana_init
 assert '\"timestamp\":{\"type\":\"date\"}' in kibana_init
+assert '\"end\":{\"type\":\"date\"}' in kibana_init
 assert '\"number_of_shards\":1' in kibana_init
 environment = os.environ.copy()
 environment.update(
@@ -115,6 +142,7 @@ environment.update(
         "PHOENIX_HOST": "127.0.0.1",
         "PHOENIX_PORT": "6006",
         "LOGSTASH_API_PORT": "9600",
+        "ALERT_PROMETHEUS_PORT": "9081",
         "TEGRASTATS_PORT": "19101",
         "VST_MCP_PORT": "8001",
         "MONITORING_BIND_ADDRESS": "127.0.0.1",
@@ -146,6 +174,10 @@ resolved = json.loads(
     ).stdout
 )
 resolved_services = resolved["services"]
+assert resolved_services["alert-bridge"]["environment"][
+    "PROMETHEUS_METRICS_ENABLED"
+] == "true"
+assert resolved_services["alert-bridge"]["environment"]["PROMETHEUS_PORT"] == "9081"
 vios_mcp = resolved_services["vios-mcp"]
 assert vios_mcp["image"] == "cti-vss-vios-mcp:thor-local"
 assert vios_mcp["network_mode"] == "host"

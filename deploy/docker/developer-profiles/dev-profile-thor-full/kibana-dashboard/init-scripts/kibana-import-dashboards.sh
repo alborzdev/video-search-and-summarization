@@ -48,7 +48,7 @@ ensure_dashboard_index() {
       --request PUT \
       "${elasticsearch_url}/${index}" \
       --header "Content-Type: application/json" \
-      --data '{"settings":{"number_of_shards":1,"number_of_replicas":0},"mappings":{"properties":{"timestamp":{"type":"date"}}}}'
+      --data '{"settings":{"number_of_shards":1,"number_of_replicas":0},"mappings":{"properties":{"timestamp":{"type":"date"},"end":{"type":"date"}}}}'
   elif [[ "${status}" != "200" ]]; then
     echo "Unexpected Elasticsearch status ${status} for ${index}" >&2
     return 1
@@ -58,6 +58,13 @@ ensure_dashboard_index() {
     "${elasticsearch_url}/${index}/_mapping/field/timestamp")"
   if ! grep -Eq '"type"[[:space:]]*:[[:space:]]*"date"' <<<"${mapping}"; then
     echo "Dashboard bootstrap index ${index} does not expose timestamp as a date" >&2
+    return 1
+  fi
+
+  mapping="$(curl --fail --silent --show-error \
+    "${elasticsearch_url}/${index}/_mapping/field/end")"
+  if ! grep -Eq '"type"[[:space:]]*:[[:space:]]*"date"' <<<"${mapping}"; then
+    echo "Dashboard bootstrap index ${index} does not expose end as a date" >&2
     return 1
   fi
 }

@@ -27,6 +27,7 @@ COPY services/alert/alert-agent-web/app/service/ondemand_verification_service.py
 COPY services/alert/alert-agent-web/app/service/terminal_job_store.py /app/alert-agent-web/app/service/terminal_job_store.py
 COPY services/alert/alert-agent-web/app/api/verification_routes.py /app/alert-agent-web/app/api/verification_routes.py
 COPY services/alert/alert-agent-web/app/schema/verification_schemas.py /app/alert-agent-web/app/schema/verification_schemas.py
+COPY services/alert/alert-agent-web/app/websocket/websocket_service.py /app/alert-agent-web/app/websocket/websocket_service.py
 COPY services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py /app/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py
 COPY services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py /app/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py
 COPY services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_kafka.py /app/mdx/anomaly/sink/vlm_enhanced_sink/sink_kafka.py

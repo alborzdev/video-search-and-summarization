@@ -348,6 +348,10 @@ services:
       ALERT_VERIFICATION_NUM_WORKERS: "1"
       ALERT_VERIFICATION_ASYNC_IO: "false"
       ALERT_VERIFICATION_OVERRIDE_PROMPTS: "false"
+      # Export Alert Bridge pipeline metrics from the main host-network
+      # process on a dedicated loopback port for the Thor Prometheus stack.
+      PROMETHEUS_METRICS_ENABLED: "true"
+      PROMETHEUS_PORT: "${ALERT_PROMETHEUS_PORT:-9081}"
       # The local JSON verifier must produce confirmed/rejected incidents;
       # upstream keeps direct-media parsing in freestyle mode by default.
       ALERT_DIRECT_MEDIA_USE_VERDICT: "true"

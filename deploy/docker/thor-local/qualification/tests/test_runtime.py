@@ -125,8 +125,23 @@ class RuntimeQualificationTests(unittest.TestCase):
         services = config["services"]
         probes = [probe for service in services for probe in service["probes"]]
 
-        self.assertEqual(len(services), 21)
-        self.assertEqual(len(probes), 31)
+        self.assertEqual(len(services), 22)
+        self.assertEqual(len(probes), 33)
+        alert_metrics = next(
+            service for service in services if service["id"] == "alerts-prometheus"
+        )
+        self.assertEqual(alert_metrics["default_port"], 9081)
+        self.assertEqual(alert_metrics["probes"][0]["path"], "/metrics")
+        video_analytics = next(
+            service for service in services if service["id"] == "video-analytics"
+        )
+        behavior_probe = next(
+            probe
+            for probe in video_analytics["probes"]
+            if probe["id"] == "behavior-empty-store"
+        )
+        self.assertEqual(behavior_probe["kind"], "semantic")
+        self.assertEqual(behavior_probe["path"], "/behavior")
         vios_mcp = next(service for service in services if service["id"] == "vios-mcp")
         self.assertEqual(vios_mcp["port_env"], "VST_MCP_PORT")
         self.assertEqual(vios_mcp["default_port"], 8001)

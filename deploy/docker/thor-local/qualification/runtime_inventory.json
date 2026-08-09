@@ -107,6 +107,20 @@
       ]
     },
     {
+      "id": "alerts-prometheus",
+      "port_env": "ALERT_PROMETHEUS_PORT",
+      "default_port": 9081,
+      "probes": [
+        {
+          "id": "metrics",
+          "kind": "health",
+          "method": "GET",
+          "path": "/metrics",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
       "id": "lvs",
       "port_env": "BACKEND_PORT",
       "default_port": 38111,
@@ -148,6 +162,18 @@
           "kind": "health",
           "method": "GET",
           "path": "/livez",
+          "expected_status": [200]
+        },
+        {
+          "id": "behavior-empty-store",
+          "kind": "semantic",
+          "method": "GET",
+          "path": "/behavior",
+          "query": {
+            "sensorId": "thor-qualification-no-such-sensor",
+            "fromTimestamp": "2026-01-01T00:00:00.000Z",
+            "toTimestamp": "2026-01-01T00:00:01.000Z"
+          },
           "expected_status": [200]
         },
         {
@@ -302,6 +328,7 @@
           "path": "/api/v1/targets",
           "expected_status": [200],
           "expected_jobs": [
+            "alert-bridge",
             "prometheus",
             "cadvisor",
             "node-exporter",

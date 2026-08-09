@@ -23,6 +23,7 @@ Runs as a background task in the FastAPI application.
 
 import asyncio
 import logging
+import os
 import yaml
 from typing import Dict, Any, Optional
 from .redis_consumer import RedisStreamConsumer
@@ -35,15 +36,16 @@ class WebSocketService:
     and WebSocket broadcasting.
     """
     
-    def __init__(self, config_file: str = "config.yaml"):
+    def __init__(self, config_file: Optional[str] = None):
         """
         Initialize WebSocket service.
         
         Args:
-            config_file: Path to configuration file
+            config_file: Path to configuration file. When omitted, use the
+                same ``CONFIG_PATH`` selected by the Alert Bridge launcher.
         """
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.config_file = config_file
+        self.config_file = config_file or os.getenv("CONFIG_PATH", "config.yaml")
         
         # Load configuration
         self.config = self._load_config()
@@ -250,4 +252,4 @@ class WebSocketService:
 
 
 # Global WebSocket service instance
-websocket_service = WebSocketService() 
+websocket_service = WebSocketService()

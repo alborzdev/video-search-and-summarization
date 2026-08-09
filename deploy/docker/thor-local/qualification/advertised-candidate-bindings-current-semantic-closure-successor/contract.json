@@ -294,7 +294,7 @@
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/candidate-approval-mapping-rebase-successor-v2/mapping.json", "sha256": "cb9bea95b4cfeab7c44441854e331a7093667d6b379fe0555692e5105ce4507f"},
     {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"},
-    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.json", "sha256": "8fa0cf733ff8b57ea162d27394dcdfb01c7c11246db6fe7396bb7526deffdd85"},
+    {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.json", "sha256": "206529fd0a0343d8f2eae88ddaa4891aba4312f70da6fdf18387cc37fd230aaa"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/contract.schema.json", "sha256": "013c90984595035f6b08fdd50fafc4a252aafdc8911172dbb8c7a5ab21cee3fd"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/executor.py", "sha256": "e5a4dc8e97b27d5fea701706c8c0498a02fb6d56c2a552531a6bc9f95e63572b"},
     {"path": "deploy/docker/thor-local/qualification/base-semantic-owned-fixture-successor/request-manifest.schema.json", "sha256": "5bc6a9f678df4202dff87a5d2518dfee0c21e47720d7871357676e97329fa70a"},

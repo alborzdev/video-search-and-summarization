@@ -44,3 +44,10 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['host.docker.internal:38111']
+
+  # Alert Bridge runs in host-network mode and exports its process/pipeline
+  # registry on the dedicated port selected by the Thor overlay.
+  - job_name: 'alert-bridge'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['host.docker.internal:9081']
