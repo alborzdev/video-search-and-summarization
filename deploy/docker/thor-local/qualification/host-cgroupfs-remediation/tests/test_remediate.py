@@ -13,7 +13,6 @@ from pathlib import Path
 import jsonschema
 import pytest
 
-
 HERE = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("cgroup_remediate", HERE / "remediate.py")
 assert SPEC and SPEC.loader
@@ -179,9 +178,11 @@ class FakeRuntime:
                         item,
                         running=True,
                         status="running",
-                        health="healthy"
-                        if item.id in self.before.healthy_ids
-                        else item.health,
+                        health=(
+                            "healthy"
+                            if item.id in self.before.healthy_ids
+                            else item.health
+                        ),
                     )
                 )
             else:
@@ -411,7 +412,104 @@ def test_system_runtime_container_inventory_accepts_missing_healthcheck() -> Non
     assert inventory[0].health is None
 
 
-def test_system_runtime_accepts_dockerd_success_message_on_stderr() -> None:
+def test_docker_read_retries_transient_daemon_failure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sleeps: list[float] = []
+    monkeypatch.setattr(remediate.time, "sleep", sleeps.append)
+
+    class TransientReadRuntime(remediate.SystemRuntime):
+        def __init__(self) -> None:
+            super().__init__()
+            self.attempts = 0
+
+        def _run(self, argv, **kwargs):
+            self.attempts += 1
+            if self.attempts < 3:
+                raise remediate.RemediationError("command_failed")
+            return subprocess.CompletedProcess(
+                argv, 0, stdout=b"cgroupfs\n", stderr=b""
+            )
+
+    runtime = TransientReadRuntime()
+    assert runtime._docker_text("info") == "cgroupfs"
+    assert runtime.attempts == 3
+    assert sleeps == [
+        remediate.DOCKER_READ_RETRY_SECONDS,
+        remediate.DOCKER_READ_RETRY_SECONDS,
+    ]
+
+
+def test_health_wait_targets_only_previously_healthy_containers(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(remediate.time, "sleep", lambda _: None)
+
+    class HealthRuntime(remediate.SystemRuntime):
+        def __init__(self) -> None:
+            super().__init__()
+            self.calls: list[tuple[str, ...]] = []
+
+        def _docker_text(self, *args: str) -> str:
+            self.calls.append(args)
+            return "\n".join(
+                f'{json.dumps(item)} {json.dumps({"Health": {"Status": "healthy"}})}'
+                for item in args[4:]
+            )
+
+    targets = (cid("a"), cid("b"))
+    runtime = HealthRuntime()
+    runtime.wait_healthy(targets)
+
+    assert len(runtime.calls) == 1
+    assert runtime.calls[0][:4] == (
+        "container",
+        "inspect",
+        "--format",
+        "{{json .Id}} {{json .State}}",
+    )
+    assert runtime.calls[0][4:] == targets
+
+
+def test_restart_waits_past_transient_docker_info_timeout(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(remediate.time, "sleep", lambda _: None)
+
+    class SlowStartupRuntime(remediate.SystemRuntime):
+        def __init__(self) -> None:
+            super().__init__()
+            self.calls: list[tuple[str, ...]] = []
+            self.info_attempts = 0
+
+        def _run(self, argv, **kwargs):
+            self.calls.append(argv)
+            if argv[0] == remediate.SYSTEMCTL:
+                return subprocess.CompletedProcess(argv, 0, stdout=b"", stderr=b"")
+            self.info_attempts += 1
+            if self.info_attempts == 1:
+                raise remediate.RemediationError("command_timed_out")
+            return subprocess.CompletedProcess(
+                argv, 0, stdout=b"cgroupfs\n", stderr=b""
+            )
+
+    runtime = SlowStartupRuntime()
+    runtime.restart_docker("cgroupfs")
+
+    assert runtime.info_attempts == 2
+    assert runtime.calls[0] == (
+        remediate.SYSTEMCTL,
+        "restart",
+        "--no-block",
+        "docker.service",
+    )
+
+
+def test_system_runtime_accepts_dockerd_success_message_on_stderr(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(remediate, "ACTIVE_JOURNAL", tmp_path / "active.json")
+
     class StderrValidationRuntime(remediate.SystemRuntime):
         def snapshot(self) -> remediate.HostSnapshot:
             return snapshot()
@@ -432,6 +530,30 @@ def test_system_runtime_accepts_dockerd_success_message_on_stderr() -> None:
     inspection = StderrValidationRuntime().inspect()
     assert inspection.candidate_validated is True
     assert "dockerd_candidate_validation_failed" not in inspection.blockers
+
+
+def test_systemd_exec_start_runtime_fields_do_not_create_host_drift() -> None:
+    before = snapshot(
+        exec_start=(
+            "{ path=/usr/bin/dockerd ; argv[]=/usr/bin/dockerd -H fd:// ; "
+            "ignore_errors=no ; start_time=[Sun 2026-08-09 10:17:41 EDT] ; "
+            "stop_time=[Sun 2026-08-09 10:17:49 EDT] ; pid=140019 ; "
+            "code=exited ; status=0/0 }"
+        )
+    )
+    final = snapshot(
+        exec_start=(
+            "{ path=/usr/bin/dockerd ; argv[]=/usr/bin/dockerd -H fd:// ; "
+            "ignore_errors=no ; start_time=[Sun 2026-08-09 10:23:48 EDT] ; "
+            "stop_time=[n/a] ; pid=164383 ; code=(null) ; status=0/0 }"
+        )
+    )
+
+    assert remediate._restoration_snapshot_failures(before, final) == []
+    assert remediate._stable_unit_exec_start(before.unit_exec_start) == (
+        "{ path=/usr/bin/dockerd ; argv[]=/usr/bin/dockerd -H fd:// ; "
+        "ignore_errors=no}"
+    )
 
 
 def test_unvalidated_candidate_is_never_ready_or_executed() -> None:
@@ -471,6 +593,27 @@ def test_success_restarts_and_starts_only_snapshot_target() -> None:
     installed_phase = runtime.events.index(("phase", "candidate_installed"))
     assert candidate_phase < install < installed_phase
     validate_schema(value)
+
+
+def test_unexpected_runtime_error_reports_stage_and_rolls_back() -> None:
+    class UnexpectedRestoreRuntime(FakeRuntime):
+        injected = False
+
+        def snapshot(self):
+            if not self.injected and ("restart", "cgroupfs") in self.events:
+                self.injected = True
+                raise ValueError("synthetic")
+            return super().snapshot()
+
+    runtime = UnexpectedRestoreRuntime()
+    value = remediate.execute_transaction(runtime)
+
+    assert value["failure"] == (
+        "unexpected_runtime_error_restore_running_set_value_error"
+    )
+    assert value["rollback"]["failures"] == []
+    assert runtime.current == runtime.before
+    assert runtime.active is None
 
 
 def test_restart_failure_rolls_back_config_and_exact_set() -> None:
@@ -634,6 +777,20 @@ def test_recover_candidate_installing_conservatively_rolls_back() -> None:
     assert value["status"] == "passed"
     assert value["rollback"]["attempted"] is True
     assert runtime.current == runtime.before
+    assert runtime.active is None
+
+
+def test_recovery_accepts_exact_final_state_after_restart_command_error() -> None:
+    runtime = FakeRuntime()
+    transaction = remediate.Transaction("7" * 32)
+    runtime.active = (transaction, runtime.before, "rollback_incomplete")
+    runtime.restart_failures = ["restart_failed"]
+
+    value = remediate.recover_transaction(runtime)
+
+    assert value["status"] == "passed"
+    assert value["rollback"]["failures"] == []
+    assert value["rollback"]["exact_set_restored"] is True
     assert runtime.active is None
 
 

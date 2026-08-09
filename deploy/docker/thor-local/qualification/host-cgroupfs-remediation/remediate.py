@@ -48,7 +48,13 @@ MAX_OUTPUT = 1024 * 1024
 SERVICE_DEADLINE_SECONDS = 180.0
 HEALTH_DEADLINE_SECONDS = 900.0
 POLL_SECONDS = 2.0
+DOCKER_READ_ATTEMPTS = 5
+DOCKER_READ_RETRY_SECONDS = 0.5
 CONTAINER_ID = re.compile(r"^[0-9a-f]{64}$")
+UNIT_EXEC_RUNTIME_FIELD = re.compile(
+    r"\s*;\s*(?:start_time|stop_time|pid|code|status)="
+    r"(?:\[[^\]]*\]|\([^)]*\)|[^;}]*)(?=\s*;|\s*})"
+)
 HERE = Path(__file__).resolve().parent
 EVIDENCE_SCHEMA = HERE / "evidence.schema.json"
 _EVIDENCE_VALIDATOR: Draft202012Validator | None = None
@@ -75,6 +81,11 @@ def _canonical_sha(value: Any) -> str:
     except (TypeError, ValueError) as exc:
         raise RemediationError("json_value_not_canonical") from exc
     return _sha256(encoded)
+
+
+def _stable_unit_exec_start(value: str) -> str:
+    """Remove systemd's per-invocation fields while retaining command semantics."""
+    return " ".join(UNIT_EXEC_RUNTIME_FIELD.sub("", value).split())
 
 
 def _strict_object_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -563,7 +574,8 @@ def _restoration_snapshot_failures(
         final.live_restore != before.live_restore
         or final.swarm != before.swarm
         or final.rootless != before.rootless
-        or final.unit_exec_start != before.unit_exec_start
+        or _stable_unit_exec_start(final.unit_exec_start)
+        != _stable_unit_exec_start(before.unit_exec_start)
         or final.unit_drop_ins != before.unit_drop_ins
     ):
         failures.append("docker_host_contract_mismatch")
@@ -630,9 +642,15 @@ def _rollback(
             ]
             if not result["daemon_config"]["original_restored"]:
                 failures.append("rollback_config_verification_failed")
+            restoration_failures = _restoration_snapshot_failures(before, final)
+            if (
+                not restoration_failures
+                and "rollback_docker_restart_failed" in failures
+            ):
+                failures.remove("rollback_docker_restart_failed")
             failures.extend(
                 f"rollback_final_{item}"
-                for item in _restoration_snapshot_failures(before, final)
+                for item in restoration_failures
                 if f"rollback_final_{item}" not in failures
             )
         except Exception:
@@ -647,6 +665,7 @@ def execute_transaction(runtime: Runtime) -> dict[str, Any]:
     transaction: Transaction | None = None
     before: HostSnapshot | None = None
     installed = False
+    stage = "inspection"
     try:
         with runtime.lock():
             try:
@@ -677,10 +696,12 @@ def execute_transaction(runtime: Runtime) -> dict[str, Any]:
                 result["docker"]["driver_before"] = before.driver
                 _checkpoint()
                 result["writes_or_lifecycle_actions"] = True
+                stage = "prepare_transaction"
                 transaction = runtime.prepare(inspection)
                 result["transaction_id"] = transaction.id
                 runtime.phase(transaction, "prepared")
                 _checkpoint()
+                stage = "preinstall_snapshot"
                 if runtime.snapshot() != before:
                     raise RemediationError("host_state_changed_before_install")
                 _checkpoint()
@@ -691,13 +712,26 @@ def execute_transaction(runtime: Runtime) -> dict[str, Any]:
                 # atomic replacement may have succeeded even if a later fsync
                 # or bookkeeping operation raises.
                 installed = True
+                stage = "install_candidate"
                 runtime.install_candidate(transaction, inspection)
                 runtime.phase(transaction, "candidate_installed")
                 _checkpoint()
+                stage = "restart_cgroupfs"
+                print(
+                    "[cgroup-remediation] Restarting Docker with cgroupfs (up to 3 minutes).",
+                    file=sys.stderr,
+                    flush=True,
+                )
                 result["docker"]["restart_attempted"] = True
                 runtime.restart_docker("cgroupfs")
                 runtime.phase(transaction, "docker_restarted")
                 _checkpoint()
+                stage = "restore_running_set"
+                print(
+                    "[cgroup-remediation] Restoring the exact prior running set and waiting for its health checks (up to 15 minutes).",
+                    file=sys.stderr,
+                    flush=True,
+                )
                 final = _restore_running_set(runtime, before, result)
                 _checkpoint()
                 _snapshot_fields(result, final, "after")
@@ -711,8 +745,15 @@ def execute_transaction(runtime: Runtime) -> dict[str, Any]:
                 )
                 if not result["daemon_config"]["full_file_state_match"]:
                     raise RemediationError("post_restart_daemon_file_state_drift")
+                stage = "validate_success_evidence"
                 result["status"] = "passed"
                 validate_evidence(result)
+                stage = "complete_success_journal"
+                print(
+                    "[cgroup-remediation] All postconditions passed; closing the transaction.",
+                    file=sys.stderr,
+                    flush=True,
+                )
                 runtime.phase(transaction, "complete")
                 runtime.complete(transaction, result)
             except RemediationError as exc:
@@ -732,8 +773,9 @@ def execute_transaction(runtime: Runtime) -> dict[str, Any]:
                         runtime.phase(transaction, "aborted_before_install")
                         validate_evidence(result)
                         runtime.complete(transaction, result)
-            except Exception:
-                result["failure"] = "unexpected_runtime_error"
+            except Exception as exc:
+                kind = re.sub(r"(?<!^)(?=[A-Z])", "_", type(exc).__name__).lower()
+                result["failure"] = f"unexpected_runtime_error_{stage}_{kind}"
                 if installed and transaction is not None and before is not None:
                     _rollback(runtime, transaction, before, result)
                     if result["rollback"]["failures"]:
@@ -1093,16 +1135,21 @@ class SystemRuntime:
     ) -> subprocess.CompletedProcess[bytes]:
         if not argv or argv[0] not in {DOCKER, DOCKERD, SYSTEMCTL}:
             raise RemediationError("command_not_allowlisted")
-        completed = subprocess.run(
-            argv,
-            input=input_bytes,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            env=self._env,
-            shell=False,
-            timeout=timeout,
-            check=False,
-        )
+        try:
+            completed = subprocess.run(
+                argv,
+                input=input_bytes,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=self._env,
+                shell=False,
+                timeout=timeout,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise RemediationError("command_timed_out") from exc
+        except OSError as exc:
+            raise RemediationError("command_execution_failed") from exc
         if len(completed.stdout) > MAX_OUTPUT or len(completed.stderr) > MAX_OUTPUT:
             raise RemediationError("command_output_limit_exceeded")
         if check and completed.returncode != 0:
@@ -1158,7 +1205,66 @@ class SystemRuntime:
             os.close(fd)
 
     def _docker_text(self, *args: str) -> str:
-        return self._run((DOCKER, *args)).stdout.decode("utf-8", "strict").strip()
+        # The Docker socket can accept a request just before daemon startup is
+        # completely quiescent.  Read-only probes made in that small window may
+        # see a broken pipe or timeout even though the daemon is healthy.  Keep
+        # lifecycle calls single-shot, but retry bounded, idempotent reads.
+        retryable = {"command_failed", "command_timed_out", "command_execution_failed"}
+        for attempt in range(DOCKER_READ_ATTEMPTS):
+            try:
+                output = self._run((DOCKER, *args)).stdout
+                try:
+                    return output.decode("utf-8", "strict").strip()
+                except UnicodeDecodeError as exc:
+                    raise RemediationError("command_output_not_utf8") from exc
+            except RemediationError as exc:
+                if exc.code not in retryable or attempt + 1 == DOCKER_READ_ATTEMPTS:
+                    raise
+                time.sleep(DOCKER_READ_RETRY_SECONDS)
+        raise RemediationError("docker_read_retry_exhausted")
+
+    def _container_health(
+        self, container_ids: tuple[str, ...]
+    ) -> dict[str, str | None]:
+        if any(not CONTAINER_ID.fullmatch(item) for item in container_ids):
+            raise RemediationError("container_id_invalid")
+        if not container_ids:
+            return {}
+        template = "{{json .Id}} {{json .State}}"
+        lines = self._docker_text(
+            "container", "inspect", "--format", template, *container_ids
+        )
+        result: dict[str, str | None] = {}
+        decoder = json.JSONDecoder()
+        try:
+            for line in lines.splitlines():
+                container_id, index = decoder.raw_decode(line)
+                while index < len(line) and line[index].isspace():
+                    index += 1
+                state, index = decoder.raw_decode(line, index)
+                if line[index:].strip():
+                    raise ValueError("trailing container health data")
+                if (
+                    not isinstance(container_id, str)
+                    or not CONTAINER_ID.fullmatch(container_id)
+                    or not isinstance(state, dict)
+                    or container_id in result
+                ):
+                    raise ValueError("invalid container health data")
+                health_record = state.get("Health")
+                health = (
+                    health_record.get("Status")
+                    if isinstance(health_record, dict)
+                    else None
+                )
+                if health is not None and not isinstance(health, str):
+                    raise ValueError("invalid container health status")
+                result[container_id] = health
+        except (json.JSONDecodeError, ValueError) as exc:
+            raise RemediationError("container_health_inspect_invalid") from exc
+        if set(result) != set(container_ids):
+            raise RemediationError("container_health_inventory_mismatch")
+        return result
 
     def _containers(self) -> tuple[ContainerState, ...]:
         raw_ids = self._docker_text("container", "ls", "-aq", "--no-trunc")
@@ -1257,7 +1363,7 @@ class SystemRuntime:
             live_restore=live_restore,
             swarm=swarm,
             rootless="rootless" in security.lower(),
-            unit_exec_start=fields.get("ExecStart", ""),
+            unit_exec_start=_stable_unit_exec_start(fields.get("ExecStart", "")),
             unit_drop_ins=fields.get("DropInPaths", ""),
             config=self._read_config(),
             containers=self._containers(),
@@ -1446,16 +1552,30 @@ class SystemRuntime:
         self._run((SYSTEMCTL, "restart", "--no-block", "docker.service"), timeout=15)
         deadline = time.monotonic() + SERVICE_DEADLINE_SECONDS
         while time.monotonic() < deadline:
-            completed = self._run(
-                (DOCKER, "info", "--format", "{{.CgroupDriver}}"),
-                check=False,
-                timeout=10,
-            )
-            if (
-                completed.returncode == 0
-                and completed.stdout.decode().strip() == expected_driver
-            ):
-                return
+            try:
+                completed = self._run(
+                    (DOCKER, "info", "--format", "{{.CgroupDriver}}"),
+                    check=False,
+                    timeout=10,
+                )
+                if (
+                    completed.returncode == 0
+                    and completed.stdout.decode("utf-8", "strict").strip()
+                    == expected_driver
+                ):
+                    return
+            except RemediationError as exc:
+                # Loading the existing container inventory can make the first
+                # Docker API probe exceed its per-call timeout on Thor.  The
+                # service-level deadline, not one transient probe, governs the
+                # restart.  A lifecycle-command failure above remains fatal.
+                if exc.code not in {
+                    "command_timed_out",
+                    "command_execution_failed",
+                }:
+                    raise
+            except UnicodeDecodeError as exc:
+                raise RemediationError("command_output_not_utf8") from exc
             time.sleep(POLL_SECONDS)
         raise RemediationError("docker_restart_deadline_exceeded")
 
@@ -1469,13 +1589,20 @@ class SystemRuntime:
             return
         deadline = time.monotonic() + HEALTH_DEADLINE_SECONDS
         while time.monotonic() < deadline:
-            snapshot = self.snapshot()
-            states = {item.id: item for item in snapshot.containers}
-            if all(
-                states.get(item) and states[item].health == "healthy"
-                for item in container_ids
-            ):
-                return
+            try:
+                health = self._container_health(container_ids)
+                if all(health.get(item) == "healthy" for item in container_ids):
+                    return
+            except RemediationError as exc:
+                # A just-restarted daemon may transiently reject an inspect.
+                # The final exact snapshot remains the authoritative check.
+                if exc.code not in {
+                    "command_failed",
+                    "command_timed_out",
+                    "command_execution_failed",
+                    "container_health_inventory_mismatch",
+                }:
+                    raise
             time.sleep(POLL_SECONDS)
         raise RemediationError("container_health_deadline_exceeded")
 
