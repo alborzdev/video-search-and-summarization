@@ -228,7 +228,7 @@ class OfficialCapabilityTests(unittest.TestCase):
             verifier.REPO_ROOT / "deploy/docker/thor-local/qualification/"
             "metadata-500-current-mv3dt-config-utils-successor"
         )
-        return tuple(
+        ledger, manifest, oracles = tuple(
             json.loads((root / name).read_text(encoding="utf-8"))
             for name in (
                 "post-state-root-official-capabilities.json",
@@ -236,6 +236,34 @@ class OfficialCapabilityTests(unittest.TestCase):
                 "post-state-root-capability-oracles.json",
             )
         )
+        # The projection exists to test the two historical MV3DT promotions.
+        # Overlay the unrelated LVS row with its reviewed live contract because
+        # the verifier intentionally checks operation manifests from this checkout.
+        for key, identifier in (
+            ("sources", "lvs-api-doc-3.2.1"),
+            ("capabilities", "api.core.lvs-17"),
+        ):
+            projected = next(
+                index
+                for index, row in enumerate(ledger[key])
+                if row["id"] == identifier
+            )
+            current = next(
+                row for row in self.ledger[key] if row["id"] == identifier
+            )
+            ledger[key][projected] = copy.deepcopy(current)
+        projected_oracle = next(
+            index
+            for index, row in enumerate(oracles["oracles"])
+            if row["capability_id"] == "api.core.lvs-17"
+        )
+        current_oracle = next(
+            row
+            for row in self.oracles["oracles"]
+            if row["capability_id"] == "api.core.lvs-17"
+        )
+        oracles["oracles"][projected_oracle] = copy.deepcopy(current_oracle)
+        return ledger, manifest, oracles
 
     def _validate_mv3dt_aggregate(
         self,

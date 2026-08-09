@@ -23386,7 +23386,7 @@
           "operator": "equals"
         },
         {
-          "expected": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0",
+          "expected": "6ad38eea843c3ccf4e1a816f1edef7c698b226ec149ebfa74b6d2e35718be038",
           "id": "contract-04",
           "observation": "contract_identity/contract/expected_manifest_sha256",
           "operator": "equals"
@@ -23505,7 +23505,7 @@
             "auth": "bearer",
             "conditional_prefix": "/v1",
             "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-            "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0",
+            "expected_manifest_sha256": "6ad38eea843c3ccf4e1a816f1edef7c698b226ec149ebfa74b6d2e35718be038",
             "implementation_operation_count": 18,
             "mcp_base": "http://<host>:38112",
             "operation_count": 17,
@@ -23534,7 +23534,7 @@
           "auth": "bearer",
           "conditional_prefix": "/v1",
           "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-          "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0",
+          "expected_manifest_sha256": "6ad38eea843c3ccf4e1a816f1edef7c698b226ec149ebfa74b6d2e35718be038",
           "implementation_operation_count": 18,
           "mcp_base": "http://<host>:38112",
           "operation_count": 17,

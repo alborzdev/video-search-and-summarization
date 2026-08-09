@@ -60,13 +60,13 @@
     "canonical_state_advanced": false
   },
   "source_locks": [
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "b0cb6bdd4830ce4f4e4de902820e74dd35d31977c630a17ee3fe2962fe5cfbee"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "588c0c5e0a0eb3cd08af33427f3d31cd1427d1c21ec6acafce6664fee557202b"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/executor.py", "sha256": "42bfdeeef88d947fdb6e5138b86d0c248620f4b65754a71b70b936c71d064ca7"},
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "c65035f3932dfd540978803dc1b3b3b1afe091ce2b21a489abc9c57cda8f7858"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "ee8870039c39942b9b8e58b3900d38ea4bd7d296f91ba4c4240a29bb53ccaa86"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
     {"path": "services/video-summarization/api_spec/openapi.json", "sha256": "2ce997975112a3e6e43c511612d7df682de0dc4283b7c96fb38e078aad2150e8"},
-    {"path": "services/video-summarization/src/via_server.py", "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},
-    {"path": "services/video-summarization/src/vss_api_models.py", "sha256": "75c7b800c1c087315e6eab7bd10cdf904e229c728a5635aa05ee87e1235d391b"},
+    {"path": "services/video-summarization/src/via_server.py", "sha256": "c6ea204dafca72d7439ae28ae06ca59f097d56738474e5004dd3b7ab0ec7e768"},
+    {"path": "services/video-summarization/src/vss_api_models.py", "sha256": "08bd3c31eb7abecf294098ace984d7260349e4bcabb481142a60bfe15407cbd6"},
     {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"}
   ]
 }

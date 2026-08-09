@@ -511,6 +511,18 @@ class AcceptancePlanTests(unittest.TestCase):
         with self.assertRaises(acceptance.AcceptanceConfigError):
             self.validate(inventory=candidate)
 
+        binding = copy.deepcopy(self.inventory)
+        requirement = next(
+            item
+            for item in binding["wave3_contracts"]["planning_requirements"]
+            if item["materialized"] is True
+        )
+        requirement["static_executor_binding"]["result"][
+            "can_advance_capability"
+        ] = True
+        with self.assertRaises(acceptance.AcceptanceConfigError):
+            self.validate(inventory=binding)
+
     def test_wave3_planning_cross_reference_drift_fails_closed(self) -> None:
         ledger = acceptance.load_json(acceptance.DEFAULT_OFFICIAL_LEDGER)
         target = next(

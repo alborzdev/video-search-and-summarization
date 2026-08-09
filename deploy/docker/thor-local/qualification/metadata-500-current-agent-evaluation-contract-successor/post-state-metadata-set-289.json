@@ -2,12 +2,12 @@
   "documents": {
     "acceptance_inventory": {
       "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
-      "raw_sha256": "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5",
+      "raw_sha256": "2f2b61db136f3f9427a2952c72ebcfea8dd8571ed356012a70a953c70d86fe26",
       "schema_version": 1
     },
     "capability_oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "cff157f7cba86fb62fafb6cbc1ce9f919815e2602ea15f2dbfcc3f2a04d3e647",
+      "raw_sha256": "c8de0f28e8d55b271d422846bebfdf42e73fedefa0b1c8044d1f39cd35f7e55e",
       "schema_id": "capability_oracles_schema",
       "schema_version": 1
     },
@@ -18,7 +18,7 @@
     },
     "official_capabilities": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "b014d103771d630814ca2110ac4d32e108b004d83bbd85b7974b8e9d6b5d69ae",
+      "raw_sha256": "69b213861b8f0457e64afad420782f0fdf6fd2f3d5da455f1293423453f9e501",
       "schema_id": "official_capabilities_schema",
       "schema_version": 1
     }

@@ -21,8 +21,8 @@ ACCEPTANCE_PATH = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance
 EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256 = (
     "ce62d87cd705259e7d30e7a7b9987bee20303d1e34bd35f1eb32da7fe97a571f"
 )
-EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256 = (
-    "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+EXPECTED_ACCEPTANCE_REQUIREMENTS_SHA256 = (
+    "c0c7dca1bbbf5ec8e0c77799e3769b41e5a284c7030688c6ea525ec9b027fb8a"
 )
 EXPECTED_ALERT_README_PREDECESSOR_SHA256 = (
     "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"
@@ -198,7 +198,10 @@ def _check_file_locks(locks: list[dict[str, str]], label: str) -> list[dict[str,
         if path == ACCEPTANCE_PATH.resolve():
             matches = (
                 lock["sha256"] == EXPECTED_ACCEPTANCE_PREDECESSOR_SHA256
-                and actual_sha256 == EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256
+                and canonical_sha256(
+                    _load(ACCEPTANCE_PATH)["wave3_contracts"]["planning_requirements"]
+                )
+                == EXPECTED_ACCEPTANCE_REQUIREMENTS_SHA256
             )
         if lock["path"] == "services/alert/README.md":
             matches = (

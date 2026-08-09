@@ -1165,7 +1165,12 @@ else
 fi
 
 _thor_overlay="${REPO_ROOT}/deploy/docker/thor-local/compose.yml"
-if grep -A2 '^  rtvi-embed:$' "${_thor_overlay}" | grep -q 'runtime: nvidia'; then
+if awk '
+  /^  rtvi-embed:$/ { in_service = 1; next }
+  in_service && /^  [[:alnum:]_-]+:$/ { in_service = 0 }
+  in_service && $1 == "runtime:" && $2 == "nvidia" { found = 1 }
+  END { exit(found ? 0 : 1) }
+' "${_thor_overlay}"; then
   echo "PASS: Thor overlay forces the NVIDIA runtime for RTVI embedding"
   ((TESTS_PASSED++)) || true
 else

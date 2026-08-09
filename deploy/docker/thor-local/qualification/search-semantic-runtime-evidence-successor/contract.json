@@ -77,7 +77,7 @@
   },
   "source_locks": [
     {"path": "deploy/docker/thor-local/qualification/live-metadata-500-migration/post-state-capability-oracles.json", "sha256": "17091a3c0e9ac4d3aba7b5c6d91f09c8832648f149ac0624f3b63cd2c5e77271"},
-    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/contract.json", "sha256": "023022babca7af98db205bf64435d88a2684a01ab69f31ca583b2f4c04b82b04"},
+    {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/contract.json", "sha256": "2aba2f61e71c6e82ed650fd315c66d7c42b123e31d5513e0fbdf189a8c6d56d9"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/executor.py", "sha256": "6c4f95d8c22e1b17b0d634a32a8f8f85762bd04da4e9839026ebbaea44bf6524"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/result.schema.json", "sha256": "1e47a4abcadf5957059e46868b399f6d182cb1d71770bab51d2d4e29f70012e6"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-readiness-successor/selected-bbox-fixture.json", "sha256": "3e5edfcabd4b69973c4b0700c1a257b16384d5e84c7c31488b483ca0e976f8ee"},

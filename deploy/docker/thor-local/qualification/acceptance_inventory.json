@@ -109,8 +109,8 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 44,
-        "items_sha256": "a4079e9696f1abad7ca6b18b77be195a317316d3ef244b45c040709a8848582b",
+        "expected_item_count": 56,
+        "items_sha256": "e75271b309f962526c5aa646259c3a89913d534d8be2a4a862d314a7a946e703",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "agent"
@@ -121,8 +121,8 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 27,
-        "items_sha256": "51be3f2633cf62b4d4c10dfac722f2c8bfb88b05653c355f51a77c9d59ae156b",
+        "expected_item_count": 28,
+        "items_sha256": "1e4c1b301297463d4287b745042a6813ff93a1df84e195d185bd741b4bcb6e8b",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "rt-vlm"
@@ -157,8 +157,8 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 19,
-        "items_sha256": "5b9a1d233e84e1dd3648eb07d691b80a579345a7624809412fd6aa5152eec424",
+        "expected_item_count": 21,
+        "items_sha256": "632310a4fda1369404583bb9f8fce457c03bbb3678d65a56386b9c601fa2ad1c",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "alerts"
@@ -779,7 +779,8 @@
       },
       {
         "blocker_ids": [
-          "phase1-execution-disabled"
+          "phase1-execution-disabled",
+          "current-runtime-evidence-required"
         ],
         "capabilities_sha256": "e9c5961f2f43669ff5b1089abb8754d9e9db0ec4a40bf1ccea27f5a66af724d6",
         "disposition": "planned",

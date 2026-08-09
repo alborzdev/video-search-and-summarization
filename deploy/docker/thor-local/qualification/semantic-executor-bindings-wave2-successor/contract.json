@@ -91,7 +91,7 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/qualification/semantic-executor-bindings-current/contract.json",
-      "sha256": "ed96c78bba2d8555685f0a6dea7b031f50e19296b8a194b5b200ceda2dd7c848"
+      "sha256": "49aa793d8888f5fb76b7f0cb3ac3469d00f4d37abf80fbee346ad0a9c54acb5a"
     },
     {
       "path": "deploy/docker/thor-local/qualification/semantic-executor-bindings-current/execution-status-registry.json",
@@ -163,7 +163,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json",
-      "sha256": "c65035f3932dfd540978803dc1b3b3b1afe091ce2b21a489abc9c57cda8f7858"
+      "sha256": "ee8870039c39942b9b8e58b3900d38ea4bd7d296f91ba4c4240a29bb53ccaa86"
     },
     {
       "path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py",

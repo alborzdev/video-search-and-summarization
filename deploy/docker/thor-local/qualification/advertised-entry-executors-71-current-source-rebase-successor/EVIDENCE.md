@@ -2,7 +2,7 @@
 
 This package proves a current-source, static-only rebase of the 71 retained
 advertised-entry candidate rows. It locks the immutable predecessor inventory
-and receipt, resolves all 182 row/source references using exactly fifteen changed
+and receipt, resolves all 182 row/source references using exactly sixteen changed
 paths, and preserves the exact 39 unchanged / 32 rebased partition.
 
 The `video_report_gen.py` overlay is referenced by three retained rows. It moves

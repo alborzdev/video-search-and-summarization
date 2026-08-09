@@ -3698,7 +3698,7 @@
         "auth": "bearer",
         "conditional_prefix": "/v1",
         "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
-        "expected_manifest_sha256": "d1ed1fef7a40b1459722bcdefa766919705fd546d77074da087d5a2791ebd4f0",
+        "expected_manifest_sha256": "6ad38eea843c3ccf4e1a816f1edef7c698b226ec149ebfa74b6d2e35718be038",
         "implementation_operation_count": 18,
         "mcp_base": "http://<host>:38112",
         "operation_count": 17,
@@ -12969,7 +12969,7 @@
       "version": "3.2.1"
     },
     {
-      "claim_set_sha256": "8e1734a8e730b85e8d1b605f3ec5043c579effc074b03bf7ee170dcdcc2e0d7d",
+      "claim_set_sha256": "1cb18b70140d211a15ee141fc8426840253309e25406ba3e26578d4ec210f032",
       "id": "lvs-api-doc-3.2.1",
       "kind": "versioned_official_docs",
       "locator_policy": "Versioned HTML REST/MCP base URL, version prefix, and authentication locator captured 2026-07-31.",

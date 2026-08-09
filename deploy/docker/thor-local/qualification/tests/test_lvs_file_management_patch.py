@@ -27,6 +27,7 @@ def server_fixture() -> str:
         + patcher.SERVER_IMPORT_OLD
         + ")\n"
         + patcher.SERVER_GUARD_HELPERS_OLD
+        + "\n\nclass ViaServer:\n"
         + "    def setup(self, args):\n"
         + patcher.SERVER_MIDDLEWARE_OLD
         + "        async def add_video_file(\n"

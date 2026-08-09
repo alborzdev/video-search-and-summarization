@@ -84,8 +84,8 @@
     {"path": "services/agent/src/vss_agents/tools/lvs_stream_understanding.py", "sha256": "c4818f4501bb152a8aa15cc8d8eb90ff9076054230c860c642fd8ad1ffd2c055"},
     {"path": "services/agent/src/vss_agents/tools/video_report_gen.py", "sha256": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab"},
     {"path": "services/agent/src/vss_agents/register_knowledge_layers.py", "sha256": "f0bd23c4bf49b322a9c61ee507ab8edd9a91e9f48df1ae725653123fd3efd6b1"},
-    {"path": "services/video-summarization/src/via_stream_handler.py", "sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"},
-    {"path": "services/video-summarization/src/via_server.py", "sha256": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c"},
+    {"path": "services/video-summarization/src/via_stream_handler.py", "sha256": "2695f1d2019ee5e9a862f595f967c233fe366544b8effa134a7a70a86139ab5e"},
+    {"path": "services/video-summarization/src/via_server.py", "sha256": "c6ea204dafca72d7439ae28ae06ca59f097d56738474e5004dd3b7ab0ec7e768"},
     {"path": "services/video-summarization/src/lvs_mcp.py", "sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"}
   ]
 }

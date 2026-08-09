@@ -20,8 +20,8 @@ INVENTORY_SCHEMA_PATH = HERE / "inventory.schema.json"
 RESULT_SCHEMA_PATH = HERE / "result.schema.json"
 ACCEPTANCE_PATH = REPO_ROOT / "deploy/docker/thor-local/qualification/acceptance_inventory.json"
 CANDIDATE_PATH = REPO_ROOT / "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json"
-EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256 = (
-    "79001985f9cc9d0dbb64adea2a014aaedacd0b0411d8becb5b311c8697a563a5"
+EXPECTED_ACCEPTANCE_REQUIREMENTS_SHA256 = (
+    "c0c7dca1bbbf5ec8e0c77799e3769b41e5a284c7030688c6ea525ec9b027fb8a"
 )
 
 EXPECTED_BINDINGS = {
@@ -160,11 +160,14 @@ def _evaluate(assertion: dict[str, Any], texts: dict[str, str]) -> tuple[bool, s
 
 def build_result() -> dict[str, Any]:
     inventory = _load_inventory()
-    if file_sha256(ACCEPTANCE_PATH) != EXPECTED_ACCEPTANCE_SUCCESSOR_SHA256:
-        raise QualificationError("canonical fourth-successor acceptance identity drifted")
     acceptance = _load(ACCEPTANCE_PATH)
+    planning_requirements = acceptance.get("wave3_contracts", {}).get(
+        "planning_requirements"
+    )
+    if canonical_sha256(planning_requirements) != EXPECTED_ACCEPTANCE_REQUIREMENTS_SHA256:
+        raise QualificationError("canonical Wave-3 planning requirements drifted")
     candidate = _load(CANDIDATE_PATH)
-    requirements = {item["id"]: item for item in acceptance["wave3_contracts"]["planning_requirements"]}
+    requirements = {item["id"]: item for item in planning_requirements}
     capabilities = {item["id"]: item for item in candidate["proposed_capabilities"]}
     results: list[dict[str, Any]] = []
     selected_ids = {case["planning_requirement_id"] for case in inventory["cases"]}

@@ -28,11 +28,14 @@ from ipaddress import ip_address
 from typing import Annotated, Optional
 """
 
-SERVER_GUARD_HELPERS_OLD = """
-
-class ViaServer:
+SERVER_GUARD_HELPERS_OLD = """def add_common_error_responses(errors=[]):
+    return (
+        {err: COMMON_ERROR_RESPONSES[err] for err in (errors + [401, 429, 422])}
+        if errors
+        else COMMON_ERROR_RESPONSES
+    )
 """
-SERVER_GUARD_HELPERS_NEW = """
+SERVER_GUARD_HELPERS_NEW = SERVER_GUARD_HELPERS_OLD + """
 
 def _strict_environment_flag(name: str, default: bool) -> bool:
     raw = os.environ.get(name, str(default)).strip().lower()
@@ -54,9 +57,6 @@ def _file_api_request_allowed(path: str, client_host: str, loopback_only: bool) 
     files_root = f"{API_PREFIX}/files"
     is_file_api = path == files_root or path.startswith(f"{files_root}/")
     return not loopback_only or not is_file_api or _is_numeric_loopback(client_host)
-
-
-class ViaServer:
 """
 
 SERVER_MIDDLEWARE_OLD = """        self._app.config["host"] = args.host

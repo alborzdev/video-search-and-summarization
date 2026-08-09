@@ -20,7 +20,6 @@ import binascii
 import copy
 import fcntl
 import hashlib
-import importlib.util
 import ipaddress
 import json
 import os
@@ -48,9 +47,6 @@ DEFAULT_PHASE1_INVENTORY = SCRIPT_DIR / "acceptance_phase1_inventory.json"
 DEFAULT_OFFICIAL_LEDGER = REPO_ROOT / "deploy/docker/thor-local/parity/official-capabilities.json"
 DEFAULT_WAVE3_RECEIPT = REPO_ROOT / (
     "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
-)
-DEFAULT_EXECUTOR_LIVE_INTEGRATION = (
-    SCRIPT_DIR / "calibration-schema-static-integration/integrate_live.py"
 )
 
 WAVE3_RECEIPT_PATH = (
@@ -1222,24 +1218,161 @@ def _validate_wave3_contracts(
     }:
         raise AcceptanceConfigError("configuration_error")
 
-    try:
-        spec = importlib.util.spec_from_file_location(
-            "acceptance_executor_live_integration",
-            DEFAULT_EXECUTOR_LIVE_INTEGRATION,
+    reviewed_requirements = wave3.get("planning_requirements")
+    if not isinstance(reviewed_requirements, list):
+        raise AcceptanceConfigError("configuration_error")
+    execution_state = [
+        {
+            key: requirement[key]
+            for key in (
+                "id",
+                "materialized",
+                "executor_ready",
+                "runtime_evidence",
+                "static_executor_binding",
+            )
+            if key in requirement
+        }
+        for requirement in reviewed_requirements
+        if isinstance(requirement, dict)
+    ]
+    if (
+        len(execution_state) != len(reviewed_requirements)
+        or _wave3_canonical_sha256(execution_state)
+        != "34e84cb5a45347b45d4ede6574f934956d35b261e2755764cc9dfe0d69d89764"
+    ):
+        raise AcceptanceConfigError("configuration_error")
+
+    static_integration = {
+        "receipt_path": (
+            "deploy/docker/thor-local/qualification/"
+            "source-contract-integration/live-integration-receipt.json"
+        ),
+        "receipt_contract_sha256": (
+            "1ba9dac99127932ddf8f517e1d87631bd13240fa61b8f360b123c42242f98cb9"
+        ),
+        "predecessor_receipt_path": (
+            "deploy/docker/thor-local/qualification/"
+            "executor-cases/live-integration-receipt.json"
+        ),
+        "predecessor_receipt_raw_sha256": (
+            "1548dd1ca0871a24dd0adba231001ee5757e19ddfa6314d4d883656b9e8d432d"
+        ),
+        "predecessor_contract_sha256": (
+            "2eb1812f8854ef0f03334f68ceadcda64ffbfd166422da253f48c52ec8cdab71"
+        ),
+        "new_materialized_requirement_count": 16,
+        "new_executor_ready_requirement_count": 16,
+        "materialized_requirement_count": 26,
+        "executor_ready_requirement_count": 26,
+        "open_requirement_count": 84,
+        "static_subset_oracle_binding_count": 26,
+        "runtime_evidence_count": 0,
+        "full_oracle_executor_ready_count": 0,
+        "passed_current_promotion_count": 0,
+    }
+    if wave3.get("static_executor_integration") != static_integration:
+        raise AcceptanceConfigError("configuration_error")
+    source_receipt = _wave3_load_bound_json(
+        static_integration["receipt_path"],
+        "ae8716961b6a2ad30680cdf19587bd0578209594b6a39987b704ad2a29a1aad5",
+        "b1bd743da7511d2034ab0755d458f6b019df493f34c76fe81c9b2af2291a31fa",
+    )
+    predecessor_receipt = _wave3_load_bound_json(
+        static_integration["predecessor_receipt_path"],
+        static_integration["predecessor_receipt_raw_sha256"],
+        "ae0d9ac206018b79d84203bfa8af5c574cbb83ca7a7af8cb3a4e17f82898aaa0",
+    )
+    if (
+        source_receipt.get("contract_sha256")
+        != static_integration["receipt_contract_sha256"]
+        or source_receipt.get("lifecycle")
+        != "second_live_planning_successor_integrated"
+        or source_receipt.get("expected_counts", {}).get(
+            "materialized_planning_requirements"
         )
-        if spec is None or spec.loader is None:
+        != 26
+        or source_receipt.get("expected_counts", {}).get(
+            "executor_ready_planning_requirements"
+        )
+        != 26
+        or source_receipt.get("expected_counts", {}).get(
+            "static_subset_oracle_bindings"
+        )
+        != 26
+        or predecessor_receipt.get("contract_sha256")
+        != static_integration["predecessor_contract_sha256"]
+    ):
+        raise AcceptanceConfigError("configuration_error")
+
+    materialized_count = 0
+    for requirement in reviewed_requirements:
+        materialized = requirement.get("materialized")
+        executor_ready = requirement.get("executor_ready")
+        binding = requirement.get("static_executor_binding")
+        if materialized is False and executor_ready is False:
+            if binding is not None or requirement.get("runtime_evidence") != []:
+                raise AcceptanceConfigError("configuration_error")
+            continue
+        if (
+            materialized is not True
+            or executor_ready is not True
+            or not isinstance(binding, dict)
+            or requirement.get("runtime_evidence") != []
+        ):
             raise AcceptanceConfigError("configuration_error")
-        integration = importlib.util.module_from_spec(spec)
-        sys.modules[spec.name] = integration
-        spec.loader.exec_module(integration)
-        expected_live_wave3 = integration.build_expected(execute=True)[2][
-            "wave3_contracts"
+        materialized_count += 1
+        case = binding.get("case")
+        result = binding.get("result")
+        if (
+            not isinstance(case, dict)
+            or case.get("planning_requirement_id") != requirement.get("id")
+            or case.get("planning_payload_sha256")
+            != requirement.get("payload_canonical_sha256")
+            or not isinstance(result, dict)
+            or result.get("can_advance_capability") is not False
+            or result.get("can_mark_passed_current") is not False
+            or result.get("runtime_evidence") != []
+            or result.get("evidence_class")
+            != "deterministic_file_static_evidence_not_runtime"
+        ):
+            raise AcceptanceConfigError("configuration_error")
+        executor = binding.get("executor")
+        if not isinstance(executor, dict):
+            raise AcceptanceConfigError("configuration_error")
+        reviewed_files = [
+            (executor, "path", "raw_sha256"),
+            (executor, "inventory_path", "inventory_raw_sha256"),
+            (executor, "inventory_schema_path", "inventory_schema_raw_sha256"),
+            (result, "schema_path", "schema_raw_sha256"),
         ]
-    except AcceptanceConfigError:
-        raise
-    except Exception as exc:
-        raise AcceptanceConfigError("configuration_error") from exc
-    if wave3 != expected_live_wave3:
+        if "execution_receipt_path" in result:
+            reviewed_files.append(
+                (result, "execution_receipt_path", "execution_receipt_raw_sha256")
+            )
+        for record, path_key, digest_key in reviewed_files:
+            relative = record.get(path_key)
+            digest = record.get(digest_key)
+            if (
+                not isinstance(relative, str)
+                or Path(relative).is_absolute()
+                or ".." in Path(relative).parts
+                or not isinstance(digest, str)
+            ):
+                raise AcceptanceConfigError("configuration_error")
+            path = REPO_ROOT / relative
+            if (
+                path.is_symlink()
+                or not path.is_file()
+                or hashlib.sha256(path.read_bytes()).hexdigest() != digest
+            ):
+                raise AcceptanceConfigError("configuration_error")
+        inventory_path = REPO_ROOT / executor["inventory_path"]
+        if executor.get("inventory_canonical_sha256") != _wave3_canonical_sha256(
+            load_json(inventory_path)
+        ):
+            raise AcceptanceConfigError("configuration_error")
+    if materialized_count != 27:
         raise AcceptanceConfigError("configuration_error")
 
     receipt = load_json(DEFAULT_WAVE3_RECEIPT)
@@ -1479,7 +1612,7 @@ def _validate_wave3_contracts(
         if owners & WAVE3_EXTERNAL_CAPABILITIES:
             requirement["blocker_ids"] = [WAVE3_EXTERNAL_BLOCKER]
     live_requirement_by_id = {
-        item["id"]: item for item in expected_live_wave3["planning_requirements"]
+        item["id"]: item for item in reviewed_requirements
     }
     for requirement in expected_requirements:
         live_requirement = live_requirement_by_id.get(requirement["id"])

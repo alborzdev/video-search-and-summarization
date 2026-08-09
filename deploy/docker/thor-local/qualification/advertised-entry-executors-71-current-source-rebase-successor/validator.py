@@ -68,8 +68,9 @@ EXPECTED_OVERLAY = {
     "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44",
     "services/video-summarization/src/lvs_mcp.py": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a",
     "services/video-summarization/src/rtvi_vlm_client.py": "bb10ff75f6cb13453b8c558a3060ee64b78d24b3c03469f7ae55d534c739bc6c",
-    "services/video-summarization/src/via_server.py": "d4bd721cc0030f49875ef56f7c07a24aea3dd895d23fd405399a9c2ebf25856c",
-    "services/video-summarization/src/via_stream_handler.py": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7",
+    "services/video-summarization/src/via_server.py": "c6ea204dafca72d7439ae28ae06ca59f097d56738474e5004dd3b7ab0ec7e768",
+    "services/video-summarization/src/via_stream_handler.py": "2695f1d2019ee5e9a862f595f967c233fe366544b8effa134a7a70a86139ab5e",
+    "services/video-summarization/src/vss_api_models.py": "08bd3c31eb7abecf294098ace984d7260349e4bcabb481142a60bfe15407cbd6",
 }
 
 EXPECTED_NAT_ROUTES = {
@@ -441,7 +442,7 @@ def validate() -> dict[str, Any]:
         if isinstance(row, dict)
     }
     if overlay != EXPECTED_OVERLAY or len(overlay_rows) != len(overlay):
-        raise RebaseError("exact fifteen-path overlay drift")
+        raise RebaseError("exact sixteen-path overlay drift")
     for path, digest in overlay.items():
         if _sha(_read(path)) != digest:
             raise RebaseError(f"current overlay source drift: {path}")
@@ -545,7 +546,7 @@ def validate() -> dict[str, Any]:
         "retained_candidate_rows": 71,
         "unchanged_rows": 39,
         "rebased_rows": 32,
-        "current_source_overlay_paths": 15,
+        "current_source_overlay_paths": 16,
         "current_source_lock_references": 182,
         "overlay_reference_counts": dict(sorted(overlay_usage.items())),
         "rebased_entry_ids": sorted(rebased),
@@ -584,7 +585,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(
             "PASS: 71 retained rows = 39 unchanged + 32 current-source rebased; "
-            "fifteen locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
+            "sixteen locks; Kafka abort gate; NAT 56 = 44 + 12; no promotion"
         )
     return 0
 

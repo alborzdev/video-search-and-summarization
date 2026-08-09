@@ -473,7 +473,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-74-drift-observation-successor/tests"
 
 # The current-source 71-row rebase preserves the immutable historical receipt
-# while resolving all 182 row/source references through an exact fourteen-path
+# while resolving all 182 row/source references through an exact sixteen-path
 # overlay. It independently checks cancellation-aware Kafka publication and
 # the 56-operation NAT inventory; evidence and promotion remain empty.
 PYTHONDONTWRITEBYTECODE=1 python3 \
@@ -717,17 +717,11 @@ python3 "${thor_local_root}/qualification/official-edge-readiness/readiness.py" 
 python3 -m unittest discover \
   -s "${thor_local_root}/qualification/official-edge-readiness/tests" -v
 
-# Terminal reviewed SpatialAI promotion and metadata routing: prior projection compilers
-# are immutable historical records that intentionally lock their
-# pre-promotion canonical inputs. The all-seven successor validates the exact
-# current producer receipt and canonical projection without executing it, then the atomic
-# selector runs both authoritative validator generations over the current
-# SpatialAI snapshots.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/metadata-500-current-spatial-ai-utils-successor/compiler.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/metadata-500-current-spatial-ai-utils-successor/tests"
+# SpatialAI and Agent Evaluation promotion compilers are immutable historical
+# records that lock their publication-time canonical inputs. The active Agent
+# Evaluation selector has advanced beyond both snapshots, so current metadata
+# coherence is validated through the generic selector/schema verifier below,
+# not by replaying a stale historical publisher against later source rebases.
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/parity/metadata_sets/tests" \
   "${thor_local_root}/parity/tests/test_verify_metadata_set.py"

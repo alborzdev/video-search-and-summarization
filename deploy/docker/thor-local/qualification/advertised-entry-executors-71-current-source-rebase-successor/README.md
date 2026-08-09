@@ -5,7 +5,7 @@ the current checkout without changing or relabeling the immutable
 `advertised-entry-executors-74-successor` inventory or execution receipt.
 
 The exact partition is 39 rows whose complete historical source-lock sets still
-match and 32 rows affected by an exact fifteen-path current-source overlay. All 182
+match and 32 rows affected by an exact sixteen-path current-source overlay. All 182
 retained row/source references resolve against either their immutable historical
 digest or the overlay digest. The historical dispatcher is never imported or
 replayed.

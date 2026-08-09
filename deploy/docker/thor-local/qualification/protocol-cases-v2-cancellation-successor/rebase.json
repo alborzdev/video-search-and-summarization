@@ -43,7 +43,7 @@
     },
     {
       "path": "services/video-summarization/src/via_stream_handler.py",
-      "raw_sha256": "d6b8593af72f240b513f9b800c37bad1a3eb65115111ee9092d7d5d3a80ad9e7"
+      "raw_sha256": "2695f1d2019ee5e9a862f595f967c233fe366544b8effa134a7a70a86139ab5e"
     },
     {
       "path": "services/rtvi/rt-vlm/tests/rtvi_vlm/test_request_abort.py",
