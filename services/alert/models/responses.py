@@ -351,6 +351,17 @@ class VLMResponse(BaseModel):
                     lines = lines[1:]
                 text = "\n".join(lines).strip()
 
+        # Some OpenAI-compatible VLMs occasionally honor the requested JSON
+        # schema semantically but emit only the binary verdict token.  Keep
+        # this fallback deliberately narrow: an exact YES/NO/A/B token is
+        # unambiguous, while every other non-JSON response still fails closed.
+        bare_verdict = text.upper()
+        if bare_verdict in {"YES", "NO", "A", "B"}:
+            return cls.model_validate({
+                "reasoning": "",
+                "verdict": bare_verdict,
+            })
+
         try:
             data = json.loads(text)
         except json.JSONDecodeError as exc:

@@ -52,7 +52,7 @@
       "source_locks": [
         {"path": "services/alert/README.md", "sha256": "6635f452ae16057166e6d12fe7e91607f4c82f66565c81e2308cd08d7ed42ab9"},
         {"path": "services/alert/config.yaml", "sha256": "846e1a71aaf9765b55e20ba36a7d0da0e208a08037c1a6d78d8d675d9d6550b3"},
-        {"path": "services/alert/models/responses.py", "sha256": "0c658632db38f83a1a956f389c964f87dc44ba23032689983844cd2284b1c21f"}
+        {"path": "services/alert/models/responses.py", "sha256": "9edb0ea74a6c1ef413f13d3f2110087f2354ce3b88a0601c271353fc5eda59e3"}
       ],
       "assertions": [
         {

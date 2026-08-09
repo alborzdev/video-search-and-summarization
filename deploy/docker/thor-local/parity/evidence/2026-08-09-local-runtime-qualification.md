@@ -44,6 +44,20 @@ external inference endpoint was used.
   The registry returned HTTP 200, Prometheus scraped the `alert-bridge` job as
   healthy, and all eight configured Prometheus jobs were present with zero
   unhealthy targets.
+- On-demand verification accepted an existing VIOS traffic snapshot set with
+  HTTP 202, exposed bounded queued/running/completed job state, invoked the
+  exact local Cosmos3 model, parsed a rejected verdict with visual reasoning,
+  and wrote the transformed `Person in Monitored Zone` incident to the local
+  Elasticsearch sink. Both the intended four-frame request and a one-frame
+  request completed with verification response code 200. During the first
+  one-frame probe Cosmos3 returned the exact bare token `NO` despite the JSON
+  response-format request; the Thor Alert Bridge derivative now accepts only
+  exact binary `YES`/`NO`/`A`/`B` fallbacks while continuing to reject all
+  other malformed non-JSON text. Its response-parser suite passed 123 tests,
+  and the rebuilt image is
+  `sha256:74879bdea9efaaf5786f0570fcec2dbb193f3a7df6b0f72b609984e33da881fb`.
+  Every owned Elasticsearch qualification document was deleted by exact ID,
+  and a prefix query confirmed that zero test documents remained.
 
 ## Local inference
 

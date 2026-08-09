@@ -690,6 +690,17 @@ class TestJSONResponseParsing:
         resp = VLMResponse.model_validate_text(text, response_format="json")
         assert resp.verdict == "NO"
 
+    def test_exact_bare_binary_verdict_fallback(self):
+        """A schema-capable VLM may still emit only its binary verdict."""
+        for text, expected in (("NO", "NO"), (" yes \n", "YES"), ("A", "A"), ("b", "B")):
+            resp = VLMResponse.model_validate_text(text, response_format="json")
+            assert resp.verdict == expected
+            assert resp.reasoning == ""
+
+    def test_bare_binary_fallback_remains_strict(self):
+        with pytest.raises(ValueError, match="not valid JSON"):
+            VLMResponse.model_validate_text("NO person is visible", response_format="json")
+
     # --- Cookbook-style nested JSON with custom config ---
 
     def test_cookbook_format_with_custom_config(self):
