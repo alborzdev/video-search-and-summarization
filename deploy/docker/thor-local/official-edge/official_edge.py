@@ -53,6 +53,7 @@ EDGE_BASE_URL = "http://127.0.0.1:30081"
 COSMOS_ARTIFACT = "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
 COSMOS_MODEL_ID = "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
 COSMOS_BASE_URL = "http://127.0.0.1:8018"
+COSMOS_CACHE_DIRECTORY = "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
 EDGE_IMAGE = (
     "ghcr.io/nvidia-ai-iot/vllm@"
     "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8"
@@ -496,6 +497,12 @@ def verify_compose_contract() -> None:
         "HF_HUB_DISABLE_TELEMETRY": "1",
         "HF_HOME": "/runtime/huggingface",
         "XDG_CACHE_HOME": "/runtime/cache",
+        "XDG_CONFIG_HOME": "/runtime/config",
+        "FLASHINFER_WORKSPACE_BASE": "/runtime/cache",
+        "TRITON_CACHE_DIR": "/runtime/cache/triton",
+        "TORCHINDUCTOR_CACHE_DIR": "/runtime/cache/torchinductor",
+        "VLLM_CACHE_ROOT": "/runtime/cache/vllm",
+        "CUDA_CACHE_PATH": "/runtime/cache/cuda",
         "NVIDIA_VISIBLE_DEVICES": "0",
         "NVIDIA_DRIVER_CAPABILITIES": "all",
     }
@@ -533,6 +540,12 @@ def verify_compose_contract() -> None:
     if rtvlm_env != expected_rtvlm:
         raise ContractError(
             "compose RT-VLM environment differs from exact Cosmos3 lane"
+        )
+    if rtvlm.get("volumes") != [
+        "${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache"
+    ]:
+        raise ContractError(
+            "compose RT-VLM cache-root mount differs from exact Cosmos3 lane"
         )
 
     agent_env = agent.get("environment")
@@ -675,7 +688,11 @@ def _within(path: Path, root: Path) -> bool:
     return True
 
 
-def _actual_tree_entries(root: Path, allowed_root: Path) -> list[dict[str, Any]]:
+def _actual_tree_entries(
+    root: Path,
+    allowed_root: Path,
+    ignored_top_level: set[str] | None = None,
+) -> list[dict[str, Any]]:
     if not root.is_dir() or root.is_symlink():
         raise ContractError(f"artifact root must be a real directory: {root}")
     allowed = allowed_root.resolve(strict=True)
@@ -683,9 +700,18 @@ def _actual_tree_entries(root: Path, allowed_root: Path) -> list[dict[str, Any]]
     if not _within(resolved_root, allowed):
         raise ContractError(f"artifact root escapes allowed root: {root}")
 
+    ignored = ignored_top_level or set()
+    if any(len(_safe_relative(name).parts) != 1 for name in ignored):
+        raise ContractError("ignored artifact runtime paths must be top-level")
+
     entries: list[dict[str, Any]] = []
     for current, directory_names, file_names in os.walk(root, followlinks=False):
         current_path = Path(current)
+        if current_path == root:
+            directory_names[:] = [
+                name for name in directory_names if name not in ignored
+            ]
+            file_names = [name for name in file_names if name not in ignored]
         for name in sorted(directory_names):
             path = current_path / name
             relative = path.relative_to(root).as_posix()
@@ -795,6 +821,7 @@ def _verify_locked_artifact(
     expected_identity: dict[str, str],
     context: str,
     provenance_root: Path,
+    allowed_runtime_state: dict[str, str] | None = None,
 ) -> None:
     if not isinstance(entry, dict):
         raise ContractError(f"{context} lock entry must be an object")
@@ -918,7 +945,30 @@ def _verify_locked_artifact(
                 f"Edge4B snapshot directory {root.name!r} != locked revision {revision!r}"
             )
     expected_entries = _validate_expected_tree(entry.get("tree"), context)
-    actual_entries = _actual_tree_entries(root, allowed_root)
+    ignored_runtime_state: set[str] = set()
+    for name, expected_type in (allowed_runtime_state or {}).items():
+        relative = _safe_relative(name)
+        if len(relative.parts) != 1 or expected_type not in {"file", "directory"}:
+            raise ContractError(f"{context} runtime-state contract is invalid")
+        path = root / name
+        try:
+            mode = path.lstat().st_mode
+        except FileNotFoundError:
+            continue
+        actual_type = (
+            "file"
+            if stat.S_ISREG(mode)
+            else "directory" if stat.S_ISDIR(mode) else "unsupported"
+        )
+        if actual_type != expected_type:
+            raise ContractError(
+                f"{context} runtime state {name} is {actual_type}, "
+                f"expected {expected_type}"
+            )
+        ignored_runtime_state.add(name)
+    actual_entries = _actual_tree_entries(
+        root, allowed_root, ignored_top_level=ignored_runtime_state
+    )
     if expected_kind == "huggingface_snapshot":
         repository = _verify_edge_snapshot_layout(root, actual_entries)
         expected_blob_entries = _validate_expected_tree(
@@ -1033,6 +1083,7 @@ def verify_artifacts(
         expected_identity={"artifact_id": COSMOS_ARTIFACT},
         context="artifacts.cosmos3_nano_bf16",
         provenance_root=reviewed_root,
+        allowed_runtime_state={".lock": "file", ".vllm": "directory"},
     )
 
 
@@ -1131,6 +1182,15 @@ def _compose_prefix(runtime_env: Path) -> list[str]:
     ]
 
 
+def _cosmos_cache_root(cosmos_cache: Path) -> Path:
+    if cosmos_cache.name != COSMOS_CACHE_DIRECTORY:
+        raise ContractError(
+            f"Cosmos3 cache directory is {cosmos_cache.name!r}; "
+            f"expected {COSMOS_CACHE_DIRECTORY!r}"
+        )
+    return cosmos_cache.parent
+
+
 def _environment_list_to_map(value: Any, context: str) -> dict[str, str]:
     if isinstance(value, dict):
         return {
@@ -1212,6 +1272,9 @@ def verify_resolved_compose(
         _edge_repository(edge_snapshot) / "blobs"
     )
     process_env["THOR_OFFICIAL_COSMOS3_CACHE_DIR"] = str(cosmos_cache)
+    process_env["THOR_OFFICIAL_COSMOS3_CACHE_ROOT"] = str(
+        _cosmos_cache_root(cosmos_cache)
+    )
     for key in CREDENTIAL_ENV_KEYS:
         process_env[key] = ""
     output = _run(
@@ -1291,7 +1354,7 @@ def verify_resolved_compose(
     expected_edge_blobs_source = str(
         (_edge_repository(edge_snapshot) / "blobs").resolve()
     )
-    expected_cosmos_source = str(cosmos_cache.resolve())
+    expected_cosmos_source = str(_cosmos_cache_root(cosmos_cache).resolve())
     _reject_mount_overlays(
         edge_mounts, {"/models/edge4b", "/blobs"}, "resolved nemotron-edge"
     )
@@ -1323,11 +1386,11 @@ def verify_resolved_compose(
         and mount.get("type") == "bind"
         and mount.get("source") == expected_cosmos_source
         and mount.get("target") == "/opt/nvidia/rtvi/.rtvi/ngc_model_cache"
-        and mount.get("read_only") is True
+        and mount.get("read_only", False) is False
         for mount in rtvlm_mounts
     ):
         raise ContractError(
-            "resolved Cosmos3 cache is not the exact dedicated read-only bind"
+            "resolved Cosmos3 cache is not the exact dedicated writable bind"
         )
     for forbidden in ("qwen3-vl-8b-instruct", "qwen3-vl-8b-instruct-shared-gpu"):
         if forbidden in services:
@@ -1392,6 +1455,7 @@ def render_pull_free_command(
             f"THOR_OFFICIAL_EDGE4B_SNAPSHOT={edge_snapshot}",
             f"THOR_OFFICIAL_EDGE4B_BLOBS_DIR={_edge_repository(edge_snapshot) / 'blobs'}",
             f"THOR_OFFICIAL_COSMOS3_CACHE_DIR={cosmos_cache}",
+            f"THOR_OFFICIAL_COSMOS3_CACHE_ROOT={_cosmos_cache_root(cosmos_cache)}",
             "NVIDIA_API_KEY=",
             "OPENAI_API_KEY=",
             "HF_TOKEN=",
@@ -1424,6 +1488,7 @@ def _verify_running_container(
     required_command: list[str],
     expected_env: dict[str, str],
     expected_mounts: dict[str, Path] | None = None,
+    writable_mount_destinations: set[str] | None = None,
 ) -> None:
     container = _docker_container(name)
     state = container.get("State")
@@ -1440,7 +1505,7 @@ def _verify_running_container(
     if name == "vss-nemotron-edge-4b":
         if config.get("Cmd") != required_command:
             raise ContractError(f"container {name} command differs from exact contract")
-    else:
+    elif required_command:
         _command_contains(config.get("Cmd"), required_command, f"container {name}")
     environment = _environment_list_to_map(config.get("Env"), f"container {name}")
     for key, expected in expected_env.items():
@@ -1462,6 +1527,11 @@ def _verify_running_container(
             f"container {name} exposes non-empty credential environment: {leaked}"
         )
     if expected_mounts:
+        writable = writable_mount_destinations or set()
+        if not writable.issubset(expected_mounts):
+            raise ContractError(
+                f"container {name} has an invalid writable-mount contract"
+            )
         mounts = container.get("Mounts")
         if not isinstance(mounts, list):
             raise ContractError(f"container {name} has no inspectable mounts")
@@ -1492,16 +1562,18 @@ def _verify_running_container(
             )
         for destination, source in expected_mounts.items():
             expected_source = str(source.resolve(strict=True))
+            expected_rw = destination in writable
             if not any(
                 isinstance(mount, dict)
                 and mount.get("Type") == "bind"
                 and mount.get("Source") == expected_source
                 and mount.get("Destination") == destination
-                and mount.get("RW") is False
+                and mount.get("RW") is expected_rw
                 for mount in mounts
             ):
+                mode = "writable" if expected_rw else "read-only"
                 raise ContractError(
-                    f"container {name} does not use exact read-only bind "
+                    f"container {name} does not use exact {mode} bind "
                     f"{expected_source} -> {destination}"
                 )
 
@@ -1516,7 +1588,8 @@ def _verify_running_environment(
         raise ContractError(f"container {name} has incomplete inspection data")
     if state.get("Running") is not True:
         raise ContractError(f"container {name} is not running")
-    _command_contains(config.get("Cmd"), required_command, f"container {name}")
+    if required_command:
+        _command_contains(config.get("Cmd"), required_command, f"container {name}")
     environment = _environment_list_to_map(config.get("Env"), f"container {name}")
     for key, expected in expected_env.items():
         if environment.get(key) != expected:
@@ -1575,7 +1648,16 @@ def verify_readiness(
         EDGE_IMAGE,
         edge_image_id,
         EDGE_COMMAND,
-        {"HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1"},
+        {
+            "HF_HUB_OFFLINE": "1",
+            "TRANSFORMERS_OFFLINE": "1",
+            "XDG_CONFIG_HOME": "/runtime/config",
+            "FLASHINFER_WORKSPACE_BASE": "/runtime/cache",
+            "TRITON_CACHE_DIR": "/runtime/cache/triton",
+            "TORCHINDUCTOR_CACHE_DIR": "/runtime/cache/torchinductor",
+            "VLLM_CACHE_ROOT": "/runtime/cache/vllm",
+            "CUDA_CACHE_PATH": "/runtime/cache/cuda",
+        },
         {
             "/models/edge4b": edge_snapshot,
             "/blobs": _edge_repository(edge_snapshot) / "blobs",
@@ -1596,7 +1678,8 @@ def verify_readiness(
             "HF_TOKEN": "",
             "OPENAI_API_KEY": "",
         },
-        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache": cosmos_cache},
+        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache": _cosmos_cache_root(cosmos_cache)},
+        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache"},
     )
     _verify_running_environment(
         "vss-agent",

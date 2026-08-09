@@ -46,6 +46,12 @@ The report is intentionally not runtime evidence. It always emits
 `runtime_qualification_performed: false`; even a fully staged report can claim
 only `prelaunch_ready_not_runtime_qualified`.
 
+Runtime qualification is intentionally handled by the separate launchers in
+`deploy/docker/thor-local/official-edge`: `official_edge.py` preserves NVIDIA's
+0.80 admission baseline, while `thor_demo.py` preserves the exact models and
+full graph with the measured lower-KV Nemotron lane. This read-only readiness
+package remains an immutable prelaunch inventory for both paths.
+
 Every plan and host result generates its own microsecond UTC
 `captured_at_utc`. The field is inside the schema-validated result and therefore
 inside any downstream receipt digest. Callers cannot supply or replace it, and

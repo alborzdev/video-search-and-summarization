@@ -40,15 +40,17 @@ From the repository root, first run the networkless static contract check:
 python3 deploy/docker/thor-local/official-edge/official_edge.py static
 ```
 
-Then follow the official-edge README. Its checked-in artifact lock is currently
-intentionally incomplete, so audit and command rendering stop until an operator
-has separately staged and reviewed the exact licensed artifacts. Missing
-artifacts are a blocker: do not fall back to the older Edge 4B identity, use a
-mutable image tag, or silently substitute the repository's separate Qwen lane.
+Then follow the official-edge README. Its checked-in artifact lock is
+`complete_exact`, and the reviewed Nemotron and Cosmos3 trees plus both pinned
+images are local on this Thor. Missing or changed artifacts remain a blocker:
+do not fall back to the older Edge 4B identity, use a mutable image tag, or
+silently substitute the repository's separate Qwen lane.
 
-The official-edge renderer is pull-free and does not accept credentials. A later
-connected staging operation may require credentials, but it must record exact
-artifact revisions and tree hashes before this lane can render a launch command.
+The official-edge renderer is pull-free and does not accept credentials. Use
+`thor_demo.py` from the same directory when the exact official models must run
+alongside the Thor desktop and full local VSS graph; it preserves all exact
+identities and changes only the Nemotron KV-cache allocation after a separate
+70% admission check. The official `official_edge.py` 80% lane remains unchanged.
 
 If the user explicitly chooses an external OpenAI-compatible LLM instead, follow
 the normal remote-endpoint validation flow. That is a user-selected remote lane,

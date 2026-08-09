@@ -11,7 +11,8 @@ The exact contract is:
 | LLM | Local standalone `nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8` on `127.0.0.1:30081`; VSS calls it through `LLM_MODE=remote` because the service is outside NVIDIA's released Compose graph. |
 | VLM | RT-VLM 3.2.1 loads `ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final` in-process with selector `cosmos-reason3` and advertises `nim_nvidia_cosmos3-nano-reasoner_bf16-final` on port `8018`. |
 | Agent | The complete Thor-full feature graph remains the base config. Only the two Edge 4B planning/response prompt fields are inherited exactly from NVIDIA's `dev-profile-base/.../config_edge.yml`. |
-| Memory | Edge 4B `0.25` + Cosmos3 `0.35` + required UMA reserve `0.20`; launch admission therefore requires `MemAvailable / MemTotal >= 0.80`. |
+| Official memory lane | Edge 4B `0.25` + Cosmos3 `0.35` + required UMA reserve `0.20`; launch admission therefore requires `MemAvailable / MemTotal >= 0.80`. |
+| Thor demo memory lane | The exact same artifacts and images with Edge 4B KV allocation `0.12`, Cosmos3 at its required `0.35`, and a `0.23` admission reserve; launch admission requires `MemAvailable / MemTotal >= 0.70`. |
 
 The authoritative model identity comes from NVIDIA's versioned
 [VSS 3.2.1 Edge Deployment documentation](https://docs.nvidia.com/vss/3.2.1/edge-deployment.html),
@@ -36,11 +37,13 @@ upstream provenance. The two evidence documents under `provenance/` bind the
 promoted trees to the immutable Hugging Face revision and NVIDIA's signed NGC
 payload. No model or image pull is required for a pull-free launch.
 
-The remaining admission check is dynamic: the launcher requires at least 80%
-of Thor's unified memory to be available before starting the official lane.
-Pause other GPU or memory-heavy workloads first and restore them after VSS
-qualification. The launcher remains fail-closed when that condition is not
-met.
+The official launcher requires at least 80% of Thor's unified memory to be
+available. A second, explicitly named Thor demo lane is provided for a machine
+that also hosts the desktop and operator session. It preserves both exact
+models, model IDs, image digests, prompts, and the complete Compose graph; only
+the Edge LLM KV-cache allocation is reduced. Its measured `0.12` setting keeps
+a 2.95 GiB KV cache (54,560 tokens) while Cosmos3 retains NVIDIA's required
+`0.35`. The demo launcher remains fail-closed below 70% prelaunch availability.
 
 There is deliberately no "capture and trust" command here. Creating an exact
 lock is a review operation, not a way to bless whatever happens to be in a
@@ -196,8 +199,25 @@ The overlay uses host-private endpoints. Edge 4B binds only to loopback. A
 standard Hugging Face cache snapshot is a symlink forest, so the snapshot and
 its sibling `blobs` directory are verified and mounted separately read-only;
 mounting the snapshot alone would leave its model files broken. The
-Cosmos3 NGC cache is a separate, read-only operator-provided bind path so it is not
-silently conflated with the existing exact Cosmos Embed volume lock.
+Cosmos3 NGC cache is a separate operator-provided bind path, so it is not
+silently conflated with the existing exact Cosmos Embed volume lock. RT-VLM's
+download helper resolves the canonical child directory below the mounted cache
+root, and its vLLM runtime must create `.lock` and `.vllm` state beside the
+model. The cache-root bind is therefore writable, matching NVIDIA's released
+Compose service. The verifier still hashes every locked model file and permits
+only those two type-checked runtime-state paths in addition to the reviewed
+tree. The pinned RT-VLM image runs as UID 1001, so a host-staged cache must grant
+that UID read/traverse access and write access on the exact model directory.
+
+For an operator-owned cache, that can be applied without making the weights
+writable by UID 1001:
+
+```bash
+setfacl -m u:1001:rx /absolute/ngc/model-cache
+setfacl -R -m u:1001:rX /absolute/ngc/model-cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final
+setfacl -m u:1001:rwx,d:u:1001:rwx \
+  /absolute/ngc/model-cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final
+```
 
 The inherited planning prompt mentions a warehouse only as an example query.
 No warehouse video or large warehouse sample bundle is required by this lane.
@@ -221,6 +241,36 @@ than this lane. Each `/v1/models` endpoint must advertise only its exact model
 ID. This is not a substitute for later semantic acceptance of Edge 4B tool calls
 or Cosmos3 file, RTSP, dense-caption, alert, LVS and Agent workflows.
 
+## Exact-model Thor demo lane
+
+Use `thor_demo.py` when the official 80% admission gate cannot coexist with
+other required Thor services. The audit and renderer use the same exact
+artifact locks and image identities as `official_edge.py`; the additional
+overlay is proved to differ from the official resolved graph only in the Edge
+LLM memory value.
+
+```bash
+python3 deploy/docker/thor-local/official-edge/thor_demo.py \
+  --edge4b-snapshot /exact/hf/repository/snapshots/<revision> \
+  --cosmos3-cache /absolute/ngc/model-cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final \
+  audit
+
+python3 deploy/docker/thor-local/official-edge/thor_demo.py \
+  --edge4b-snapshot /exact/hf/repository/snapshots/<revision> \
+  --cosmos3-cache /absolute/ngc/model-cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final \
+  render-command
+
+python3 deploy/docker/thor-local/official-edge/thor_demo.py \
+  --edge4b-snapshot /exact/hf/repository/snapshots/<revision> \
+  --cosmos3-cache /absolute/ngc/model-cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final \
+  readiness
+```
+
+The rendered command is still pull-free (`--no-build --pull never`) and blanks
+all model-service credentials. On this Thor, live readiness passed with both
+exact model endpoints, Agent, LVS, VA-MCP, Alert Bridge, VIOS, embeddings,
+analytics, UI, and observability dependencies healthy.
+
 ## Tests
 
 ```bash
@@ -230,7 +280,8 @@ python3 -m unittest discover \
 
 The focused suite includes source drift, exact tree mutation/extra-file,
 symlink escape, model-ID alias, image identity, Compose resolution, inert
-renderer and the exact `0.25 + 0.35 + 0.20` memory boundary. The repository-
+renderers, the exact official `0.25 + 0.35 + 0.20` boundary, and the Thor demo
+`0.12 + 0.35 + 0.23` boundary. The repository-
 reproducible full-Compose resolution test uses the tracked Thor-full environment
 with sanitized `VSS_APPS_DIR`/`VSS_DATA_DIR` substitutions; it does not require
 the gitignored protected `generated.env`.

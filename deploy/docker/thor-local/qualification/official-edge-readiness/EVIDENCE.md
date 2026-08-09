@@ -3,15 +3,21 @@
 The static official-edge verifier and exact artifact/image audit pass against
 the checked-in VSS 3.2.1 contract. The exact Nemotron and Cosmos3 trees and both
 digest-pinned model-serving images are local. No additional staging download is
-required. The read-only host inspection remains
-`blocked_not_runtime_qualified` only because the dynamic unified-memory gate is
-below 0.80; runtime lifecycle and semantic qualification have not yet run.
+required. NVIDIA's unchanged `0.80` official-memory admission remains a
+prelaunch-only gate; the exact-model Thor demo lane now has separate live
+runtime evidence at its measured `0.12` LLM / `0.35` VLM settings.
+
+At `2026-08-09T18:15:34.609074Z`, `thor_demo.py readiness` passed after the
+complete Thor-full graph started pull-free. Both exact model containers, Agent,
+LVS, VIOS, embedding, RT-CV, VA-MCP, Elasticsearch, Kafka, Redis, Phoenix,
+Prometheus, Grafana, Kibana, and Tegrastats were running and healthy where a
+healthcheck is defined. The two model containers had zero restarts and no OOM.
 
 The exact-tree gate remains separate from the complete-lock metadata gate. A
 lock-only metadata change therefore cannot pass without hashing and matching
 both complete local trees.
 
-## Blocking gates
+## Qualification gates
 
 | Gate | Observation |
 |---|---|
@@ -20,8 +26,10 @@ both complete local trees.
 | Nemotron artifact | Immutable revision `3fe6dab7…` is present and bound to the reviewed Hugging Face LFS hashes. |
 | Cosmos3 artifact | The 34-file, 17,545,910,496-byte tree matches NVIDIA's signed NGC sigstore payload. |
 | Edge vLLM image | Exact digest `b587dd56…` is present and `locked_exact`; Thor's containerd store reports that manifest digest as the local image ID. |
-| Unified memory | At `2026-08-09T17:09:07.519439Z`, after temporarily stopping only `ctai-vision-playground-api`, `MemAvailable / MemTotal` was `0.367361`, below the exact `0.80` admission threshold. This is the sole prelaunch blocking gate. |
-| Disk | Both model trees and both exact images are already local, so required additional staging bytes are zero. The audit observed `38,055,469,056` available bytes, sufficient for a pull-free launch. |
+| Official unified-memory lane | NVIDIA's exact `0.25 + 0.35 + 0.20` lane still requires `0.80` prelaunch availability and remains available as the unchanged baseline. |
+| Thor demo unified-memory lane | The exact-model `0.12 + 0.35 + 0.23` admission passed before launch. Live Nemotron reported a 2.95 GiB / 54,560-token KV cache; Cosmos3 required the official `0.35` value. At the evidence timestamp the full graph retained `11,663,872` kB available. |
+| Elasticsearch disk admission | Thor's single-node overlay uses absolute free-space watermarks of 20/15/10 GB. Elasticsearch recovered from red to healthy without deleting data. |
+| Disk | Both model trees and both exact images are local, so required additional staging bytes are zero. The live graph retained `64,963,608,576` available bytes. |
 
 ## Unverified observations
 
@@ -29,7 +37,7 @@ both complete local trees.
 |---|---|
 | Cosmos volume | The older existing Docker volume remains discovery metadata only; the separately staged and signed exact cache is the qualified artifact. |
 | Mutable vLLM tag | The local tag resolves to a non-required digest and cannot substitute for the exact image. |
-| Runtime | `vss-nemotron-edge-4b` is absent. The existing VSS consumers and RT-VLM container are stopped and reflect an older/non-official resolved lane. Runtime qualification was not performed. |
+| Semantic feature workflows | Identity/readiness is complete. Per-feature ingestion, search, summarization, Q&A, alert, calibration, audio, and reporting acceptance remains tracked separately by the main capability campaign. |
 
 ## Exact local image observations
 

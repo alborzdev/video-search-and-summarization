@@ -5,6 +5,15 @@
 # supplies the runtime, while PYTHONPATH selects the checked-out source so local
 # fixes can be qualified before a new immutable image is built.
 services:
+  # Elasticsearch's percentage watermarks mark a 1 TB Thor disk red despite
+  # tens of GiB remaining. Absolute free-space thresholds retain a 10 GiB
+  # flood-stage guard while allowing the single-node demo indices to allocate.
+  elasticsearch:
+    environment:
+      cluster.routing.allocation.disk.watermark.low: 20gb
+      cluster.routing.allocation.disk.watermark.high: 15gb
+      cluster.routing.allocation.disk.watermark.flood_stage: 10gb
+
   # The upstream service installs logstash-codec-protobuf from Rubygems every
   # time a Kafka container is recreated. Thor instead builds an immutable
   # derivative from a checksum-locked official offline-plugin pack. Build-time

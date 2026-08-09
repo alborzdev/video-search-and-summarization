@@ -1,0 +1,25 @@
+# Same exact NVIDIA VSS 3.2.1 Edge models with a smaller LLM KV-cache allocation.
+# This overlay changes only the Edge LLM GPU-memory utilization value. It exists for
+# a single Thor that is also hosting the desktop and Codex operator session.
+services:
+  nemotron-edge:
+    command:
+      - python3
+      - -m
+      - vllm.entrypoints.openai.api_server
+      - --model
+      - /models/edge4b
+      - --tokenizer
+      - /models/edge4b
+      - --served-model-name
+      - nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8
+      - --trust-remote-code
+      - --host
+      - 127.0.0.1
+      - --port
+      - "30081"
+      - --gpu-memory-utilization
+      - "0.12"
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - qwen3_coder

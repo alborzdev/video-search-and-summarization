@@ -155,9 +155,8 @@ class OfficialEdgeStaticTests(unittest.TestCase):
     def test_pull_free_renderer_is_inert(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             edge, blobs = make_edge_cache(Path(temporary))
-            command = oe.render_pull_free_command(
-                oe.DEFAULT_RUNTIME_ENV, edge, Path("/verified/cosmos")
-            )
+            cosmos = Path("/verified") / oe.COSMOS_CACHE_DIRECTORY
+            command = oe.render_pull_free_command(oe.DEFAULT_RUNTIME_ENV, edge, cosmos)
         self.assertIn("--no-build", command)
         self.assertIn("--pull never", command)
         self.assertNotIn("docker pull", command)
@@ -165,7 +164,8 @@ class OfficialEdgeStaticTests(unittest.TestCase):
         self.assertTrue(command.endswith("up -d --no-build --pull never"))
         self.assertIn(f"THOR_OFFICIAL_EDGE4B_SNAPSHOT={edge}", command)
         self.assertIn(f"THOR_OFFICIAL_EDGE4B_BLOBS_DIR={blobs}", command)
-        self.assertIn("THOR_OFFICIAL_COSMOS3_CACHE_DIR=/verified/cosmos", command)
+        self.assertIn(f"THOR_OFFICIAL_COSMOS3_CACHE_DIR={cosmos}", command)
+        self.assertIn("THOR_OFFICIAL_COSMOS3_CACHE_ROOT=/verified", command)
 
     def test_renderer_cli_fails_before_printing_command_with_incomplete_lock(
         self,
@@ -199,8 +199,8 @@ class OfficialEdgeStaticTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             edge, _ = make_edge_cache(root)
-            cosmos = root / "cosmos"
-            cosmos.mkdir()
+            cosmos = root / "ngc" / oe.COSMOS_CACHE_DIRECTORY
+            cosmos.mkdir(parents=True)
             tracked_env = (
                 oe.DEPLOY_DOCKER / "developer-profiles/dev-profile-thor-full/.env"
             )
@@ -220,8 +220,8 @@ class OfficialEdgeStaticTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             edge, _ = make_edge_cache(root)
-            cosmos = root / "cosmos"
-            cosmos.mkdir()
+            cosmos = root / "ngc" / oe.COSMOS_CACHE_DIRECTORY
+            cosmos.mkdir(parents=True)
             tracked_env = (
                 oe.DEPLOY_DOCKER / "developer-profiles/dev-profile-thor-full/.env"
             )
@@ -402,6 +402,27 @@ class OfficialEdgeArtifactTests(unittest.TestCase):
                     lock, snapshot, cosmos, provenance_root=Path(temporary)
                 )
 
+    def test_cosmos_runtime_lock_and_vllm_cache_do_not_weaken_weight_lock(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lock, snapshot, cosmos = self._fixture(root)
+            (cosmos / ".lock").write_text("", encoding="utf-8")
+            (cosmos / ".vllm").mkdir()
+            (cosmos / ".vllm" / "compiled.bin").write_bytes(b"runtime-cache")
+            oe.verify_artifacts(lock, snapshot, cosmos, provenance_root=root)
+
+            (cosmos / "model" / "weights.bin").write_bytes(b"changed")
+            with self.assertRaisesRegex(oe.ContractError, "tree differs"):
+                oe.verify_artifacts(lock, snapshot, cosmos, provenance_root=root)
+
+    def test_cosmos_runtime_state_must_have_the_exact_safe_types(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lock, snapshot, cosmos = self._fixture(root)
+            (cosmos / ".vllm").symlink_to(cosmos / "model", target_is_directory=True)
+            with self.assertRaisesRegex(oe.ContractError, "runtime state .vllm"):
+                oe.verify_artifacts(lock, snapshot, cosmos, provenance_root=root)
+
     def test_unreferenced_mounted_blob_fails(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             lock, snapshot, cosmos = self._fixture(Path(temporary))
@@ -501,7 +522,7 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             edge_snapshot, edge_blobs = make_edge_cache(root)
-            cosmos_cache = root / "cosmos"
+            cosmos_cache = root / oe.COSMOS_CACHE_DIRECTORY
             cosmos_cache.mkdir()
             edge_container = {
                 "Image": oe.EDGE_IMAGE_CONFIG_DIGEST,
@@ -509,7 +530,16 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "Config": {
                     "Image": oe.EDGE_IMAGE,
                     "Cmd": oe.EDGE_COMMAND,
-                    "Env": ["HF_HUB_OFFLINE=1", "TRANSFORMERS_OFFLINE=1"],
+                    "Env": [
+                        "HF_HUB_OFFLINE=1",
+                        "TRANSFORMERS_OFFLINE=1",
+                        "XDG_CONFIG_HOME=/runtime/config",
+                        "FLASHINFER_WORKSPACE_BASE=/runtime/cache",
+                        "TRITON_CACHE_DIR=/runtime/cache/triton",
+                        "TORCHINDUCTOR_CACHE_DIR=/runtime/cache/torchinductor",
+                        "VLLM_CACHE_ROOT=/runtime/cache/vllm",
+                        "CUDA_CACHE_PATH=/runtime/cache/cuda",
+                    ],
                 },
                 "Mounts": [
                     {
@@ -531,7 +561,7 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "State": {"Running": True},
                 "Config": {
                     "Image": oe.RTVLM_IMAGE,
-                    "Cmd": [],
+                    "Cmd": None,
                     "Env": [
                         "VLM_MODEL_TO_USE=cosmos-reason3",
                         f"MODEL_PATH={oe.COSMOS_ARTIFACT}",
@@ -546,9 +576,9 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "Mounts": [
                     {
                         "Type": "bind",
-                        "Source": str(cosmos_cache),
+                        "Source": str(cosmos_cache.parent),
                         "Destination": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
-                        "RW": False,
+                        "RW": True,
                     }
                 ],
             }
@@ -580,7 +610,7 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                     "State": {"Running": True},
                     "Config": {
                         "Image": "lvs",
-                        "Cmd": [],
+                        "Cmd": None,
                         "Env": [
                             f"LVS_LLM_MODEL_NAME={oe.EDGE_MODEL_ID}",
                             f"LVS_LLM_BASE_URL={oe.EDGE_BASE_URL}/v1",

@@ -17,6 +17,12 @@ services:
       HF_HUB_DISABLE_TELEMETRY: "1"
       HF_HOME: /runtime/huggingface
       XDG_CACHE_HOME: /runtime/cache
+      XDG_CONFIG_HOME: /runtime/config
+      FLASHINFER_WORKSPACE_BASE: /runtime/cache
+      TRITON_CACHE_DIR: /runtime/cache/triton
+      TORCHINDUCTOR_CACHE_DIR: /runtime/cache/torchinductor
+      VLLM_CACHE_ROOT: /runtime/cache/vllm
+      CUDA_CACHE_PATH: /runtime/cache/cuda
       NVIDIA_VISIBLE_DEVICES: "0"
       NVIDIA_DRIVER_CAPABILITIES: all
     volumes:
@@ -78,7 +84,7 @@ services:
       VLM_BATCH_SIZE: "1"
       NUM_VLM_PROCS: "1"
     volumes:
-      - ${THOR_OFFICIAL_COSMOS3_CACHE_DIR:?Set the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache:ro
+      - ${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache
 
   vss-agent:
     environment:
