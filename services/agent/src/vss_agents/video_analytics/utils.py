@@ -14,6 +14,7 @@
 # limitations under the License.
 """Utility functions for video analytics tools."""
 
+import ast
 from datetime import UTC
 from datetime import datetime
 from datetime import timedelta
@@ -161,21 +162,52 @@ def build_place_map(sensors: list[dict[str, Any]]) -> dict[str, list[str]]:
     return city_map_lists
 
 
-def parse_vst_sensor_list_response(sensors_str: str) -> set[str]:
+def parse_vst_sensor_list_response(sensors_response: Any) -> set[str]:
     """
     Parse VST sensor list response string into a set of sensor names.
 
     Supports:
     - VSTSensorListOutput format: {"sensor_names": ["name1", "name2", ...]}
+    - LangChain/Pydantic text format: sensor_names=['name1', 'name2', ...]
     - Legacy format: {"sensor_id": {"name": "...", "sensorId": "...", ...}, ...}
 
     Args:
-        sensors_str: String response from VST sensor list tool
+        sensors_response: Structured or string response from VST sensor list tool
 
     Returns:
         Set of sensor names extracted from the response (always set[str], empty on parse failure).
     """
-    text = (sensors_str or "").strip()
+    if isinstance(sensors_response, dict):
+        decoded = sensors_response
+    elif isinstance(sensors_response, list):
+        return {item for item in sensors_response if isinstance(item, str)}
+    elif not isinstance(sensors_response, str):
+        sensor_names = getattr(sensors_response, "sensor_names", None)
+        if isinstance(sensor_names, list):
+            return {item for item in sensor_names if isinstance(item, str)}
+        model_dump = getattr(sensors_response, "model_dump", None)
+        if callable(model_dump):
+            dumped = model_dump()
+            if isinstance(dumped, dict):
+                decoded = dumped
+            else:
+                return set()
+        else:
+            return set()
+    else:
+        decoded = None
+
+    if decoded is not None:
+        names = decoded.get("sensor_names")
+        if isinstance(names, list):
+            return {item for item in names if isinstance(item, str)}
+        result: set[str] = set()
+        for value in decoded.values():
+            if isinstance(value, dict) and isinstance(value.get("name"), str):
+                result.add(value["name"])
+        return result
+
+    text = sensors_response.strip()
 
     # Trim surrounding quotes if present (e.g., "..." or '...')
     if text and text[0] == text[-1] and text[0] in ('"', "'"):
@@ -183,6 +215,23 @@ def parse_vst_sensor_list_response(sensors_str: str) -> set[str]:
 
     if not text:
         return set()
+
+    # The LangChain wrapper stringifies the Pydantic output instead of
+    # serializing it as JSON. Bound the input and parse only the exact
+    # ``sensor_names=[...]`` literal form; never evaluate arbitrary text.
+    if text.startswith("sensor_names="):
+        if len(text) > 65_536:
+            return set()
+        literal = text.removeprefix("sensor_names=").strip()
+        if not (literal.startswith("[") and literal.endswith("]")):
+            return set()
+        try:
+            decoded = ast.literal_eval(literal)
+        except (SyntaxError, ValueError):
+            return set()
+        if not isinstance(decoded, list):
+            return set()
+        return {item for item in decoded if isinstance(item, str)}
 
     try:
         decoded = json.loads(text)

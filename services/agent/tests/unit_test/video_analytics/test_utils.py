@@ -16,6 +16,7 @@
 
 from datetime import UTC
 from datetime import datetime
+from types import SimpleNamespace
 
 import pytest
 
@@ -169,6 +170,23 @@ class TestParseVstSensorListResponse:
         result = parse_vst_sensor_list_response(response)
         assert "Camera1" in result
         assert "Camera2" in result
+
+    def test_parse_langchain_pydantic_response(self):
+        """Parse the exact text representation emitted by the live wrapper."""
+        response = "sensor_names=['pit-POV', 'sample-sim-jaywalking', 'sample-sim-traffic']"
+        result = parse_vst_sensor_list_response(response)
+        assert result == {"pit-POV", "sample-sim-jaywalking", "sample-sim-traffic"}
+
+    def test_parse_structured_wrapper_responses(self):
+        expected = {"pit-POV", "sample-sim-traffic"}
+        assert parse_vst_sensor_list_response({"sensor_names": sorted(expected)}) == expected
+        assert parse_vst_sensor_list_response(SimpleNamespace(sensor_names=sorted(expected))) == expected
+        assert parse_vst_sensor_list_response(sorted(expected)) == expected
+
+    def test_pydantic_response_parser_is_literal_only(self):
+        """Reject arbitrary expressions and ignore non-string list members."""
+        assert parse_vst_sensor_list_response("sensor_names=__import__('os').environ") == set()
+        assert parse_vst_sensor_list_response("sensor_names=['Camera1', 7, None]") == {"Camera1"}
 
     def test_parse_quoted_response(self):
         """Test parsing quoted response."""

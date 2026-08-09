@@ -21,6 +21,20 @@ external inference endpoint was used.
   (110,905 bytes). A two-second clip returned HTTP 200 MP4 (194,059 bytes).
 - A correctly initialized VA-MCP session listed all nine tools. Sensor and
   incident queries returned valid empty results for the fresh analytics store.
+- Every live VA-MCP tool was then invoked through a separate initialized
+  protocol `2024-11-05` session. VIOS sensor listing returned `pit-POV`,
+  `sample-sim-jaywalking`, and `sample-sim-traffic`; direct sensor/place,
+  incident, single-incident, average-speed, four-bucket person histogram, and
+  average-person analysis calls all returned valid bounded results for the
+  empty analytics indexes. The `react_agent` initially lost those sensor names
+  because its nested LangChain wrapper returns a structured/Pydantic value
+  while the upstream helper accepted only JSON text. The bounded parser now
+  accepts only the known structured, JSON, or literal sensor-list shapes, and
+  VA-MCP loads that audited local source through a read-only mount. After its
+  isolated restart, `get_sensor_ids` returned all three sensors and the local
+  analytics agent correctly reported that `sample-sim-traffic` had no
+  incidents in the requested one-minute interval. No analytics state was
+  mutated.
 - Direct Video Analytics queries returned valid empty results for alerts,
   incidents, severe alerts/incidents, frames, object counts, object lists,
   sensor lookup, and last-processed timestamp. A valid behavior query initially

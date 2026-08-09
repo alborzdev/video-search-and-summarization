@@ -265,6 +265,12 @@ services:
       vss-agent:
         condition: service_healthy
 
+  vss-va-mcp:
+    environment:
+      PYTHONPATH: /vss-agent/thor-local-src
+    volumes:
+      - ${VSS_REPO_ROOT}/services/agent/src:/vss-agent/thor-local-src:ro
+
   vss-agent:
     environment:
       PYTHONPATH: /vss-agent/thor-local-src
