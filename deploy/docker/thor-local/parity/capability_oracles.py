@@ -671,6 +671,61 @@ RT_VLM_SSE_RUNTIME_WORKLOAD = {
     ],
 }
 RT_VLM_SSE_RUNTIME_MAX_ACTIONS = 8
+OFFICIAL_EDGE_MODEL_RUNTIME_CAPABILITY_IDS = {
+    "model.edge.nemotron-3-nano-4b-fp8",
+    "model.edge.cosmos3-nano-served-id",
+}
+OFFICIAL_EDGE_MODEL_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "official-edge-model-identities-runtime/execute.py"
+)
+OFFICIAL_EDGE_MODEL_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "official-edge-model-identities-runtime/contract.json"
+    ),
+    "sha256": "87f7d363c51c840dd079297cb55bc66d312d2e79b2679f4db0c6d5a878d0b924",
+}
+OFFICIAL_EDGE_MODEL_RUNTIME_EVIDENCE = {
+    "model.edge.nemotron-3-nano-4b-fp8": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/"
+                "official-edge-model-identities-runtime/"
+                "official-runtime-evidence-nemotron.json"
+            ),
+            "sha256": "2ff121a4cc600641ccd62d4e6fc163e115e759b8654523ebf1ffc383577e69a4",
+        }
+    ],
+    "model.edge.cosmos3-nano-served-id": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/"
+                "official-edge-model-identities-runtime/"
+                "official-runtime-evidence-cosmos3.json"
+            ),
+            "sha256": "b142e6a770b126611fb2033575210cb51f61ee5c9326bdb930bbfc89ac4fa373",
+        }
+    ],
+}
+OFFICIAL_EDGE_MODEL_RUNTIME_NAMESPACES = [
+    "vss-oracle-model-edge-nemotron-3-nano-4b-fp8",
+    "vss-oracle-model-edge-cosmos3-nano-served-id",
+]
+OFFICIAL_EDGE_MODEL_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 6,
+    "overhead_requests": 0,
+    "calculated_max_requests": 6,
+    "phases": [
+        "exact_model_readiness",
+        "runtime_and_endpoint_identity",
+        "asset_pre_state",
+        "llm_and_vlm_semantic_inference",
+        "asset_and_container_postcondition",
+    ],
+}
+OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS = 2
 LVS_FORMATS_RUNTIME_CAPABILITY_ID = "runtime.lvs.supported-formats"
 LVS_FORMATS_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/lvs-formats-runtime/execute.py"
@@ -889,6 +944,16 @@ def _is_current_rt_vlm_sse_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == RT_VLM_SSE_RUNTIME_EVIDENCE[capability_id]
+    )
+
+
+def _is_current_official_edge_model_runtime(capability: dict[str, Any]) -> bool:
+    capability_id = capability.get("id")
+    return (
+        capability_id in OFFICIAL_EDGE_MODEL_RUNTIME_CAPABILITY_IDS
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == OFFICIAL_EDGE_MODEL_RUNTIME_EVIDENCE[capability_id]
     )
 
 
@@ -1632,6 +1697,8 @@ def _workload(
         return copy.deepcopy(ALERT_WEBSOCKET_RUNTIME_WORKLOAD)
     if live_integration and _is_current_rt_vlm_sse_runtime(capability):
         return copy.deepcopy(RT_VLM_SSE_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_official_edge_model_runtime(capability):
+        return copy.deepcopy(OFFICIAL_EDGE_MODEL_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_formats_runtime(capability):
         return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_single_request_runtime(capability):
@@ -1709,6 +1776,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
     if _is_current_rt_vlm_sse_runtime(capability):
         return RT_VLM_SSE_RUNTIME_MAX_ACTIONS
+    if _is_current_official_edge_model_runtime(capability):
+        return OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_formats_runtime(capability):
         return LVS_FORMATS_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_single_request_runtime(capability):
@@ -2965,6 +3034,45 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_official_edge_model_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": OFFICIAL_EDGE_MODEL_RUNTIME_FIXTURE["path"],
+                "generator": OFFICIAL_EDGE_MODEL_RUNTIME_EXECUTOR,
+                "sha256": OFFICIAL_EDGE_MODEL_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = (
+                OFFICIAL_EDGE_MODEL_RUNTIME_EXECUTOR
+            )
+            oracle["execution_bounds"]["collectors"] = [
+                OFFICIAL_EDGE_MODEL_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["mutation"] = "read_only"
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                OFFICIAL_EDGE_MODEL_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                OFFICIAL_EDGE_MODEL_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["pre_state"] = (
+                "exact model endpoint, asset statistics, and container identity "
+                "state must be captured before semantic inference"
+            )
+            oracle["cleanup"]["restore"] = (
+                "no restore action: the executor performs no mutation"
+            )
+            oracle["cleanup"]["executor"] = OFFICIAL_EDGE_MODEL_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                OFFICIAL_EDGE_MODEL_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["postconditions"] = [
+                "RT-VLM asset statistics match pre-state exactly",
+                "both model container identities, start times, health, restart counts, and OOM states match pre-state exactly",
+                "no file, stream, report, rule, sensor, index, model, image, container, or volume is created or removed",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if _is_current_lvs_formats_runtime(capability):
             oracle["fixture"]["materialization"] = {
                 "path": LVS_FORMATS_RUNTIME_FIXTURE["path"],
@@ -3255,6 +3363,10 @@ def validate(
             expected_actions = ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
         elif _is_current_rt_vlm_sse_runtime(ledger_by_id[capability_id]):
             expected_actions = RT_VLM_SSE_RUNTIME_MAX_ACTIONS
+        elif _is_current_official_edge_model_runtime(
+            ledger_by_id[capability_id]
+        ):
+            expected_actions = OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_single_request_runtime(ledger_by_id[capability_id]):

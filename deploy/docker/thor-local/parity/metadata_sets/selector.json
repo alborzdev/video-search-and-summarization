@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-289.json",
-      "descriptor_raw_sha256": "1d52a6356cccd47556de106558e016066c0c9cfd3e9bf1bf485a6ed00b838f4f",
-      "set_id": "thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-official-edge-model-identities-runtime-289.json",
+      "descriptor_raw_sha256": "63fdc746273ca1a68c6b9f0659439716f84cc4efb45780838b0ee0e4d8482905",
+      "set_id": "thor-vss-3.2.1-current-official-edge-model-identities-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-500.json",
-      "descriptor_raw_sha256": "4c2b95bbff7c02ed017076c60b20adecaf726946dd8c9c38081b845c8a9779a1",
-      "set_id": "thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-official-edge-model-identities-runtime-500.json",
+      "descriptor_raw_sha256": "d2dcbf02f64330b4e1c86bc16c3167bd793f6e19e48be604f95d8425240e5c92",
+      "set_id": "thor-vss-3.2.1-current-official-edge-model-identities-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-official-edge-model-identities-runtime-500"
 }

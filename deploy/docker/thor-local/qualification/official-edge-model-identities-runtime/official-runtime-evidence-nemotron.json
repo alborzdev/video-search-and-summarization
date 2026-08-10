@@ -1,0 +1,134 @@
+{
+  "assertions": [
+    {
+      "expected": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/model_id",
+      "observed": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "local-vllm",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/placement",
+      "observed": "local-vllm",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "model_response",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "model.edge.nemotron-3-nano-4b-fp8",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-model-edge-nemotron-3-nano-4b-fp8",
+      "vss-oracle-model-edge-cosmos3-nano-served-id"
+    ],
+    "mutation": "read_only",
+    "postconditions": [
+      {
+        "description": "RT-VLM asset statistics match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "both model container identities, start times, health, restart counts, and OOM states match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "no file, stream, report, rule, sensor, index, model, image, container, or volume is created or removed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-model-edge-nemotron-3-nano-4b-fp8",
+      "vss-oracle-model-edge-cosmos3-nano-served-id"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.model.edge.nemotron-3-nano-4b-fp8",
+    "path": "deploy/docker/thor-local/qualification/official-edge-model-identities-runtime/contract.json",
+    "sha256": "87f7d363c51c840dd079297cb55bc66d312d2e79b2679f4db0c6d5a878d0b924"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+          "placement": "local-vllm"
+        },
+        "contract_sha256": "87f7d363c51c840dd079297cb55bc66d312d2e79b2679f4db0c6d5a878d0b924",
+        "readiness_passed": true,
+        "receipt_sha256": "2ef3f5df21e3dd5635f961b358932f9e4921290fc67345346986388a546c4e76",
+        "source_projection_sha256": "e8f7766b566c16c761db4abdc058f1e97887581b63e5bafea129d127b4048df9"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "artifact_revision": "3fe6dab75665a93884214ad4b1b95cf02717d081",
+        "container_healthy": true,
+        "container_oom_killed": false,
+        "container_restart_count": 0,
+        "image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+        "runtime_configuration": {
+          "command_sha256": "b3124b5be98fcdd0190c2edb55a078c1c8722339de7c47fe8bf6731d9ffd527f",
+          "gpu_memory_utilization": "0.12",
+          "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+          "tool_call_parser": "qwen3_coder"
+        },
+        "semantic_response_bytes": 758,
+        "semantic_response_sha256": "189b8b49331c7ad430d0310b045fc9756a250889ea08970035f11624baa1c1a2",
+        "thinking_disabled": true,
+        "tool_arguments_exact": true,
+        "tool_call_count": 1,
+        "tool_name_exact": true
+      }
+    },
+    {
+      "id": "model_response",
+      "result": "pass",
+      "value": {
+        "container_identity_exact_after": true,
+        "model_identity_exact": true,
+        "model_response_sha256": "9eb86a43ff4c407aea61b0140c05af62eccab62a2f5139088bd3d3b0218394e1",
+        "no_fallback_observed": true,
+        "response_model_exact": true,
+        "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8"
+      }
+    }
+  ],
+  "oracle_id": "oracle.model.edge.nemotron-3-nano-4b-fp8",
+  "oracle_sha256": "6a241afe35fbb1f12029114e2d7c893269de50e5dc9050ef2bcf44ca07b5a143",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.model.edge.nemotron-3-nano-4b-fp8"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

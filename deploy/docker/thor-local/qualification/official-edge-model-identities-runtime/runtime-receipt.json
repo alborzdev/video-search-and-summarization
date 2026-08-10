@@ -1,0 +1,235 @@
+{
+  "capability_ids": [
+    "model.edge.nemotron-3-nano-4b-fp8",
+    "model.edge.cosmos3-nano-served-id"
+  ],
+  "cleanup": {
+    "asset_statistics_exact": true,
+    "asset_statistics_post_sha256": "9d9f43bfff885fd2d9f14112db219e9abbe7e276781d893dcaaf04aea4019f9b",
+    "asset_statistics_pre_sha256": "9d9f43bfff885fd2d9f14112db219e9abbe7e276781d893dcaaf04aea4019f9b",
+    "container_identity_exact": true,
+    "failures": [],
+    "mutation": "none",
+    "owned_resource_count": 0
+  },
+  "completed_at": "2026-08-10T19:36:07.035287Z",
+  "contract_sha256": "87f7d363c51c840dd079297cb55bc66d312d2e79b2679f4db0c6d5a878d0b924",
+  "duration_seconds": 31.702697,
+  "failure": null,
+  "forbidden_actions_observed": [],
+  "http_request_count": 6,
+  "llm_proof": {
+    "arguments_sha256": "e7cfd4d99644201db2ec507c49555339c140f3a41811ac5ebd255ab32adf2def",
+    "artifact_revision": "3fe6dab75665a93884214ad4b1b95cf02717d081",
+    "model_identity_exact": true,
+    "model_response_sha256": "9eb86a43ff4c407aea61b0140c05af62eccab62a2f5139088bd3d3b0218394e1",
+    "response_model_exact": true,
+    "semantic_response_bytes": 758,
+    "semantic_response_sha256": "189b8b49331c7ad430d0310b045fc9756a250889ea08970035f11624baa1c1a2",
+    "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "thinking_disabled": true,
+    "tool_arguments_exact": true,
+    "tool_call_count": 1,
+    "tool_name_exact": true
+  },
+  "mode": "execute",
+  "network_scope": "numeric-loopback-only",
+  "observations": [
+    {
+      "http_status": 200,
+      "method": "GET",
+      "order": 1,
+      "path_template": "/v1/models",
+      "request_bytes": 0,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_bytes": 486,
+      "response_sha256": "9eb86a43ff4c407aea61b0140c05af62eccab62a2f5139088bd3d3b0218394e1",
+      "role": "llm"
+    },
+    {
+      "http_status": 200,
+      "method": "GET",
+      "order": 2,
+      "path_template": "/v1/models",
+      "request_bytes": 0,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_bytes": 181,
+      "response_sha256": "3d2eecda0be2ae35fc30de1d1f8a7f0df9f1f93eb3aa4328293199570c8ba968",
+      "role": "vlm"
+    },
+    {
+      "http_status": 200,
+      "method": "GET",
+      "order": 3,
+      "path_template": "/v1/assets/stats",
+      "request_bytes": 0,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_bytes": 149,
+      "response_sha256": "ae34d5142ad5963d2082f09bb841c1327e9ae7ffc9fe8502948429e156fa4b80",
+      "role": "vlm"
+    },
+    {
+      "http_status": 200,
+      "method": "POST",
+      "order": 4,
+      "path_template": "/v1/chat/completions",
+      "request_bytes": 614,
+      "request_sha256": "ec7dc1bd2ec278f9aae16d23b7381742644d6365b97b724597f7563c284ac48a",
+      "response_bytes": 758,
+      "response_sha256": "189b8b49331c7ad430d0310b045fc9756a250889ea08970035f11624baa1c1a2",
+      "role": "llm"
+    },
+    {
+      "http_status": 200,
+      "method": "POST",
+      "order": 5,
+      "path_template": "/v1/chat/completions",
+      "request_bytes": 4239,
+      "request_sha256": "a7220e15d7f54a09b2322a04bf4414906b806eb65bf57447afb05f0da0316acc",
+      "response_bytes": 357,
+      "response_sha256": "8063eca2fe5ad04e0a8f11c6d3bb8a497aec91036cb75a7de64f8a51c1b97b6c",
+      "role": "vlm"
+    },
+    {
+      "http_status": 200,
+      "method": "GET",
+      "order": 6,
+      "path_template": "/v1/assets/stats",
+      "request_bytes": 0,
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_bytes": 149,
+      "response_sha256": "ae34d5142ad5963d2082f09bb841c1327e9ae7ffc9fe8502948429e156fa4b80",
+      "role": "vlm"
+    }
+  ],
+  "readiness": {
+    "duration_seconds": 30.186623,
+    "passed": true,
+    "stdout_sha256": "0488e0d3b07aec08722fbeecbf0abaaf814f7662a3f499b834c6ebfe26db46d1"
+  },
+  "runtime_identity": {
+    "exact": true,
+    "post": {
+      "llm": {
+        "configuration": {
+          "command_sha256": "b3124b5be98fcdd0190c2edb55a078c1c8722339de7c47fe8bf6731d9ffd527f",
+          "gpu_memory_utilization": "0.12",
+          "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+          "tool_call_parser": "qwen3_coder"
+        },
+        "container_id_sha256": "6e03c6434545575f96e1bf28ba7ef0a3fd3560939dd7dc41d75685c0fa458d60",
+        "health": "healthy",
+        "image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+        "image_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+        "mounts": {
+          "blob_source_sha256": "0249f5379ceb653671c6dcf48664a2f4cc28a54b2d095a0e91e05ff8535aab2e",
+          "both_read_only": true,
+          "model_source_sha256": "2baaaf34ce205c47a9309d6fb3c7e0deeec27ada3768cf8163c312087b034cba"
+        },
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "4680be8b420dd94cb2bcf014f6bc8f5a1054c9d3182a010ea3f81566c48a6464"
+      },
+      "vlm": {
+        "configuration": {
+          "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+          "environment_sha256": "ba57af89f409cd2c76c17c36f16b273015e604acac8b5bdd3ca6dfe132f57a3e",
+          "selector": "cosmos-reason3",
+          "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        },
+        "container_id_sha256": "6776106a78b3f03da22df95a636d9f1795bbc94945b33dd71e4dff162700d0c8",
+        "health": "healthy",
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "image_reference": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "mounts": {
+          "cache_source_sha256": "17269e423e54723eb8e5ce6ecd625dea843b90738149a25f75104133cd1edec3",
+          "writable_runtime_cache": true
+        },
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "8122b5898e6b28ba3cb974005e1a7586182071a6047b81927ed5a3d36d179c05"
+      }
+    },
+    "pre": {
+      "llm": {
+        "configuration": {
+          "command_sha256": "b3124b5be98fcdd0190c2edb55a078c1c8722339de7c47fe8bf6731d9ffd527f",
+          "gpu_memory_utilization": "0.12",
+          "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+          "tool_call_parser": "qwen3_coder"
+        },
+        "container_id_sha256": "6e03c6434545575f96e1bf28ba7ef0a3fd3560939dd7dc41d75685c0fa458d60",
+        "health": "healthy",
+        "image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+        "image_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+        "mounts": {
+          "blob_source_sha256": "0249f5379ceb653671c6dcf48664a2f4cc28a54b2d095a0e91e05ff8535aab2e",
+          "both_read_only": true,
+          "model_source_sha256": "2baaaf34ce205c47a9309d6fb3c7e0deeec27ada3768cf8163c312087b034cba"
+        },
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "4680be8b420dd94cb2bcf014f6bc8f5a1054c9d3182a010ea3f81566c48a6464"
+      },
+      "vlm": {
+        "configuration": {
+          "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+          "environment_sha256": "ba57af89f409cd2c76c17c36f16b273015e604acac8b5bdd3ca6dfe132f57a3e",
+          "selector": "cosmos-reason3",
+          "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        },
+        "container_id_sha256": "6776106a78b3f03da22df95a636d9f1795bbc94945b33dd71e4dff162700d0c8",
+        "health": "healthy",
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "image_reference": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "mounts": {
+          "cache_source_sha256": "17269e423e54723eb8e5ce6ecd625dea843b90738149a25f75104133cd1edec3",
+          "writable_runtime_cache": true
+        },
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "8122b5898e6b28ba3cb974005e1a7586182071a6047b81927ed5a3d36d179c05"
+      }
+    }
+  },
+  "sanitization": {
+    "credential_values_included": false,
+    "dynamic_identifiers_included": false,
+    "local_paths_included": false,
+    "raw_prompts_included": false,
+    "response_bodies_included": false
+  },
+  "schema_version": 1,
+  "semantic_action_count": 2,
+  "source_projection_sha256": "e8f7766b566c16c761db4abdc058f1e97887581b63e5bafea129d127b4048df9",
+  "started_at": "2026-08-10T19:35:35.332576Z",
+  "status": "passed",
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  },
+  "tool_id": "thor-official-edge-model-identities-runtime",
+  "vlm_proof": {
+    "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+    "fixture_image_sha256": "10ca3ff1ff66a52743bd6a1e6ed2908de73365d4a73c13a82d687d0f9cc8dbd6",
+    "model_identity_exact": true,
+    "model_response_sha256": "3d2eecda0be2ae35fc30de1d1f8a7f0df9f1f93eb3aa4328293199570c8ba968",
+    "normalized_answer_sha256": "663c7ec2dff7f9a1b5e780b31cd28bb37a964b222fc70baebc312038f6f2612b",
+    "ordered_image_count": 1,
+    "ordered_panel_count": 4,
+    "response_model_exact": true,
+    "selector": "cosmos-reason3",
+    "semantic_response_bytes": 357,
+    "semantic_response_sha256": "8063eca2fe5ad04e0a8f11c6d3bb8a497aec91036cb75a7de64f8a51c1b97b6c",
+    "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "visual_answer_exact": true
+  },
+  "warehouse_sample_bundle": false,
+  "writes_or_lifecycle_actions": false
+}

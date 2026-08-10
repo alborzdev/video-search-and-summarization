@@ -1,0 +1,138 @@
+{
+  "assertions": [
+    {
+      "expected": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/artifact_id",
+      "observed": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/served_model_id",
+      "observed": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "model_response",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "model.edge.cosmos3-nano-served-id",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-model-edge-nemotron-3-nano-4b-fp8",
+      "vss-oracle-model-edge-cosmos3-nano-served-id"
+    ],
+    "mutation": "read_only",
+    "postconditions": [
+      {
+        "description": "RT-VLM asset statistics match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "both model container identities, start times, health, restart counts, and OOM states match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "no file, stream, report, rule, sensor, index, model, image, container, or volume is created or removed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-model-edge-nemotron-3-nano-4b-fp8",
+      "vss-oracle-model-edge-cosmos3-nano-served-id"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.model.edge.cosmos3-nano-served-id",
+    "path": "deploy/docker/thor-local/qualification/official-edge-model-identities-runtime/contract.json",
+    "sha256": "87f7d363c51c840dd079297cb55bc66d312d2e79b2679f4db0c6d5a878d0b924"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+          "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        },
+        "contract_sha256": "87f7d363c51c840dd079297cb55bc66d312d2e79b2679f4db0c6d5a878d0b924",
+        "readiness_passed": true,
+        "receipt_sha256": "2ef3f5df21e3dd5635f961b358932f9e4921290fc67345346986388a546c4e76",
+        "source_projection_sha256": "e8f7766b566c16c761db4abdc058f1e97887581b63e5bafea129d127b4048df9"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+        "container_healthy": true,
+        "container_oom_killed": false,
+        "container_restart_count": 0,
+        "fixture_image_sha256": "10ca3ff1ff66a52743bd6a1e6ed2908de73365d4a73c13a82d687d0f9cc8dbd6",
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "normalized_answer_sha256": "663c7ec2dff7f9a1b5e780b31cd28bb37a964b222fc70baebc312038f6f2612b",
+        "ordered_image_count": 1,
+        "ordered_panel_count": 4,
+        "runtime_configuration": {
+          "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+          "environment_sha256": "ba57af89f409cd2c76c17c36f16b273015e604acac8b5bdd3ca6dfe132f57a3e",
+          "selector": "cosmos-reason3",
+          "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        },
+        "selector": "cosmos-reason3",
+        "semantic_response_bytes": 357,
+        "semantic_response_sha256": "8063eca2fe5ad04e0a8f11c6d3bb8a497aec91036cb75a7de64f8a51c1b97b6c",
+        "visual_answer_exact": true
+      }
+    },
+    {
+      "id": "model_response",
+      "result": "pass",
+      "value": {
+        "asset_statistics_exact_after": true,
+        "container_identity_exact_after": true,
+        "model_identity_exact": true,
+        "model_response_sha256": "3d2eecda0be2ae35fc30de1d1f8a7f0df9f1f93eb3aa4328293199570c8ba968",
+        "no_fallback_observed": true,
+        "owned_resource_count_after": 0,
+        "response_model_exact": true,
+        "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+      }
+    }
+  ],
+  "oracle_id": "oracle.model.edge.cosmos3-nano-served-id",
+  "oracle_sha256": "d11f2a182b6358121b7a97f9792aa98f318351fb39732084ad22eb8ac9a78d45",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.model.edge.cosmos3-nano-served-id"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

@@ -72,6 +72,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current LVS five-format local summarization receipt
             + 1  # current LVS one-video-at-a-time runtime receipt
             + 1  # current LVS custom-model and custom-prompt runtime receipt
+            + 2  # exact official Thor Nemotron and Cosmos3 model runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -973,7 +974,14 @@ class CapabilityOracleTests(unittest.TestCase):
                 {"read_only", "temporary_files_only", "namespaced_and_reversible"},
             )
             if cleanup["mutation"] == "read_only":
-                self.assertEqual(cleanup["targets"], [])
+                expected_targets = (
+                    verifier.OFFICIAL_EDGE_MODEL_RUNTIME_NAMESPACES
+                    if item["capability_id"]
+                    in verifier.OFFICIAL_EDGE_MODEL_RUNTIME_CAPABILITY_IDS
+                    else []
+                )
+                self.assertEqual(cleanup["targets"], expected_targets)
+                self.assertEqual(cleanup["allowlist"], expected_targets)
             else:
                 expected_target_count = (
                     len(
@@ -1235,6 +1243,9 @@ class CapabilityOracleTests(unittest.TestCase):
                 else verifier.RT_VLM_SSE_RUNTIME_MAX_ACTIONS
                 if item["capability_id"]
                 in verifier.RT_VLM_SSE_RUNTIME_CAPABILITY_IDS
+                else verifier.OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
+                if item["capability_id"]
+                in verifier.OFFICIAL_EDGE_MODEL_RUNTIME_CAPABILITY_IDS
                 else verifier.LVS_FORMATS_RUNTIME_MAX_ACTIONS
                 if (
                     item["capability_id"]

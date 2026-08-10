@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-official-edge-model-identities-runtime",
+  "capability_ids": [
+    "model.edge.nemotron-3-nano-4b-fp8",
+    "model.edge.cosmos3-nano-served-id"
+  ],
+  "acknowledgement": "I_ACK_OFFICIAL_EDGE_MODEL_IDENTITIES_AND_NO_STATE_CHANGE",
+  "default_execution_enabled": false,
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "official_contract": {
+    "documentation": "https://docs.nvidia.com/vss/3.2.1/edge-deployment.html",
+    "documentation_last_updated": "2026-07-16",
+    "llm_model": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+    "vlm_artifact": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+    "vlm_served_model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "vlm_selector": "cosmos-reason3",
+    "older_edge4b_fallback_forbidden": true,
+    "cloud_inference_required": false
+  },
+  "source_anchors": [
+    {
+      "path": "deploy/docker/thor-local/official-edge/contract.json",
+      "bytes": 5832,
+      "sha256": "ff7fbfd3296ff1d5af6cf688b58a0611dbcc811cc64ebe1d9272f13a0f29c63e"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/artifacts.lock.json",
+      "bytes": 22073,
+      "sha256": "d5427164ccbd33529ddc2678c969601b09bb67776df332e230910702281766ae"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/official_edge.py",
+      "bytes": 78970,
+      "sha256": "3ed5c97f7fa26226093231b24d66e7a6b9bb9a5733d0856984daf288bcf8610b"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/thor_demo.py",
+      "bytes": 14212,
+      "sha256": "88dc26ae746f9bdf41aabe24a3e39359d48158467dbc2c586965f0d5804146cd"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.yml",
+      "bytes": 5759,
+      "sha256": "8ce9b8eade977f523422ec9f19279686d6267a6009f038caca3ed1bad8c4a5c6"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.thor-demo-memory.yml",
+      "bytes": 730,
+      "sha256": "ce82e20b733c1178f8e45586bd2ae4773f3ead806cdb1ec854422131b29c93c7"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/official-edge.env",
+      "bytes": 1022,
+      "sha256": "134e4369f21ce80c4fd2261552d83925da900ca80f23d93622cc7bf2756d8074"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
+      "bytes": 2392,
+      "sha256": "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/runtime-evidence-common/common.py",
+      "bytes": 30885,
+      "sha256": "e89a4dedc5edf68a542b4d7de9c840821249d1121356676bc98e0d5fcc6e3627"
+    }
+  ],
+  "models": {
+    "llm": {
+      "container": "vss-nemotron-edge-4b",
+      "origin": "http://127.0.0.1:30081",
+      "served_model_id": "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+      "artifact_revision": "3fe6dab75665a93884214ad4b1b95cf02717d081",
+      "image_reference": "ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+      "image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+      "model_mount_destination": "/models/edge4b",
+      "blob_mount_destination": "/blobs",
+      "gpu_memory_utilization": "0.12",
+      "tool_call_parser": "qwen3_coder",
+      "command": [
+        "python3",
+        "-m",
+        "vllm.entrypoints.openai.api_server",
+        "--model",
+        "/models/edge4b",
+        "--tokenizer",
+        "/models/edge4b",
+        "--served-model-name",
+        "nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8",
+        "--trust-remote-code",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "30081",
+        "--gpu-memory-utilization",
+        "0.12",
+        "--enable-auto-tool-choice",
+        "--tool-call-parser",
+        "qwen3_coder"
+      ]
+    },
+    "vlm": {
+      "container": "vss-rtvi-vlm",
+      "origin": "http://127.0.0.1:8018",
+      "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "selector": "cosmos-reason3",
+      "image_reference": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "ngc_cache_mount_destination": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
+      "environment": {
+        "MODEL_PATH": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "NUM_GPUS": "1",
+        "VLM_BATCH_SIZE": "1",
+        "NGC_API_KEY": "",
+        "VIA_VLM_API_KEY": ""
+      }
+    }
+  },
+  "semantic_contract": {
+    "llm_tool_name": "thor_contract_ping",
+    "llm_tool_message": "THOR_OFFICIAL_EDGE_MODEL_OK",
+    "llm_enable_thinking": false,
+    "vlm_expected_color_tokens": ["red", "green", "blue", "yellow"],
+    "vlm_composite_image": {
+      "width": 448,
+      "height": 448,
+      "panel_width": 112,
+      "sha256": "10ca3ff1ff66a52743bd6a1e6ed2908de73365d4a73c13a82d687d0f9cc8dbd6",
+      "panels": [
+        {"color": "red", "rgb": [255, 0, 0]},
+        {"color": "green", "rgb": [0, 255, 0]},
+        {"color": "blue", "rgb": [0, 0, 255]},
+        {"color": "yellow", "rgb": [255, 255, 0]}
+      ]
+    }
+  },
+  "http_workload": [
+    {"order": 1, "role": "llm", "method": "GET", "path": "/v1/models"},
+    {"order": 2, "role": "vlm", "method": "GET", "path": "/v1/models"},
+    {"order": 3, "role": "vlm", "method": "GET", "path": "/v1/assets/stats"},
+    {"order": 4, "role": "llm", "method": "POST", "path": "/v1/chat/completions"},
+    {"order": 5, "role": "vlm", "method": "POST", "path": "/v1/chat/completions"},
+    {"order": 6, "role": "vlm", "method": "GET", "path": "/v1/assets/stats"}
+  ],
+  "execution_bounds": {
+    "max_duration_seconds": 240,
+    "max_http_requests": 6,
+    "max_semantic_actions": 2,
+    "max_request_bytes": 262144,
+    "max_response_bytes": 1048576,
+    "request_timeout_seconds": 45,
+    "readiness_timeout_seconds": 120,
+    "min_free_bytes": 10737418240,
+    "network_scope": "numeric-loopback-only",
+    "model_staging": "forbidden",
+    "service_lifecycle": "forbidden",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "cleanup": {
+    "mutation": "none",
+    "logical_namespaces": [
+      "vss-oracle-model-edge-nemotron-3-nano-4b-fp8",
+      "vss-oracle-model-edge-cosmos3-nano-served-id"
+    ],
+    "postconditions": [
+      "the RT-VLM asset-statistics digest matches pre-state",
+      "both exact container identities, start times, health, restart counts, and OOM states match pre-state",
+      "the exact model endpoint identities remain unchanged",
+      "no file, stream, report, rule, sensor, index, model, image, container, or volume is created or removed"
+    ]
+  }
+}
