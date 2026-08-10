@@ -758,6 +758,49 @@ LVS_SINGLE_REQUEST_RUNTIME_WORKLOAD = {
     ],
 }
 LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS = 2
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID = (
+    "configuration.lvs.custom-model-prompt"
+)
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "lvs-custom-model-prompt-runtime/execute.py"
+)
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "lvs-custom-model-prompt-runtime/contract.json"
+    ),
+    "sha256": "16a1c5ff167774c07e1a9dca057bf15650ff5ae0367db42d7576bfc55322de9b",
+}
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "lvs-custom-model-prompt-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "79269793902ca6a4cb603d4caf99476707233c2dab05435bf0ca9d1eaae191ad",
+    }
+]
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_NAMESPACES = [
+    "vss-oracle-configuration-lvs-custom-model-prompt",
+    "00000000-0000-4000-8000-000000000041",
+]
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 19,
+    "overhead_requests": 0,
+    "calculated_max_requests": 19,
+    "phases": [
+        "static_source_and_compose_contract",
+        "runtime_identity_and_pre_state",
+        "owned_file_upload_and_readback",
+        "invalid_model_adjacent_negative",
+        "compatible_custom_prompt_summary",
+        "exact_cleanup",
+        "postcondition",
+    ],
+}
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_MAX_ACTIONS = 2
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -863,6 +906,17 @@ def _is_current_lvs_single_request_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == LVS_SINGLE_REQUEST_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_lvs_custom_model_prompt_runtime(
+    capability: dict[str, Any],
+) -> bool:
+    return (
+        capability.get("id") == LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EVIDENCE
     )
 
 
@@ -1582,6 +1636,8 @@ def _workload(
         return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_single_request_runtime(capability):
         return copy.deepcopy(LVS_SINGLE_REQUEST_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_lvs_custom_model_prompt_runtime(capability):
+        return copy.deepcopy(LVS_CUSTOM_MODEL_PROMPT_RUNTIME_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1657,6 +1713,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return LVS_FORMATS_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_single_request_runtime(capability):
         return LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS
+    if _is_current_lvs_custom_model_prompt_runtime(capability):
+        return LVS_CUSTOM_MODEL_PROMPT_RUNTIME_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2957,6 +3015,34 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_lvs_custom_model_prompt_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": LVS_CUSTOM_MODEL_PROMPT_RUNTIME_FIXTURE["path"],
+                "generator": LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR,
+                "sha256": LVS_CUSTOM_MODEL_PROMPT_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = (
+                LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
+            )
+            oracle["execution_bounds"]["collectors"] = [
+                LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                LVS_CUSTOM_MODEL_PROMPT_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                LVS_CUSTOM_MODEL_PROMPT_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["executor"] = (
+                LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
+            )
+            oracle["cleanup"]["postcondition_collectors"] = [
+                LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -3173,6 +3259,10 @@ def validate(
             expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_single_request_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS
+        elif _is_current_lvs_custom_model_prompt_runtime(
+            ledger_by_id[capability_id]
+        ):
+            expected_actions = LVS_CUSTOM_MODEL_PROMPT_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

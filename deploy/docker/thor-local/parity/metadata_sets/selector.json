@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-single-request-queue-runtime-289.json",
-      "descriptor_raw_sha256": "85e4701839eb251f16304bd7b500f33ecd22d0000a81304b58dc1d9a26035db9",
-      "set_id": "thor-vss-3.2.1-current-lvs-single-request-queue-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-289.json",
+      "descriptor_raw_sha256": "1d52a6356cccd47556de106558e016066c0c9cfd3e9bf1bf485a6ed00b838f4f",
+      "set_id": "thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-single-request-queue-runtime-500.json",
-      "descriptor_raw_sha256": "694f885066d99e67a9bc6f8b3e410a2e1ff10f3f425a8b9b68a369586c1017c8",
-      "set_id": "thor-vss-3.2.1-current-lvs-single-request-queue-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-500.json",
+      "descriptor_raw_sha256": "4c2b95bbff7c02ed017076c60b20adecaf726946dd8c9c38081b845c8a9779a1",
+      "set_id": "thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-lvs-single-request-queue-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-lvs-custom-model-prompt-runtime-500"
 }

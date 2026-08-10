@@ -71,6 +71,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 6  # current RT-VLM model, SSE, limits, and endpoint receipt
             + 1  # current LVS five-format local summarization receipt
             + 1  # current LVS one-video-at-a-time runtime receipt
+            + 1  # current LVS custom-model and custom-prompt runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -676,26 +677,35 @@ class CapabilityOracleTests(unittest.TestCase):
             sum(len(item["planning_executor_bindings"]) for item in bound), 27
         )
         for item in bound:
-            if item["capability_id"] == verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID:
+            runtime_bound = {
+                verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID: (
+                    verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR
+                ),
+                verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID: (
+                    verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
+                ),
+            }
+            if item["capability_id"] in runtime_bound:
+                expected_executor = runtime_bound[item["capability_id"]]
                 self.assertEqual(
                     item["acceptance_readiness"]["classification"],
                     "executor_ready",
                 )
                 self.assertEqual(
                     item["execution_bounds"]["executor"],
-                    verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR,
+                    expected_executor,
                 )
                 self.assertEqual(
                     item["execution_bounds"]["collectors"],
-                    [verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR],
+                    [expected_executor],
                 )
                 self.assertEqual(
                     item["cleanup"]["executor"],
-                    verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR,
+                    expected_executor,
                 )
                 self.assertEqual(
                     item["cleanup"]["postcondition_collectors"],
-                    [verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR],
+                    [expected_executor],
                 )
             else:
                 self.assertEqual(
@@ -985,6 +995,9 @@ class CapabilityOracleTests(unittest.TestCase):
                     else len(verifier.LVS_SINGLE_REQUEST_RUNTIME_NAMESPACES)
                     if item["capability_id"]
                     == verifier.LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID
+                    else len(verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_NAMESPACES)
+                    if item["capability_id"]
+                    == verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID
                     else len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
                     if item["capability_id"]
                     == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
@@ -1231,6 +1244,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     == verifier.LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID
+                )
+                else verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID
                 )
                 else override[2]
                 if override is not None

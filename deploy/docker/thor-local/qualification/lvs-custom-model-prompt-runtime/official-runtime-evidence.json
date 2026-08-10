@@ -1,0 +1,258 @@
+{
+  "assertions": [
+    {
+      "expected": true,
+      "id": "contract-01",
+      "observation": "contract_identity/contract/custom_model_environment",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/output_shape_must_match",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/prompt_override",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "model-customization",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/wave3_acceptance/candidate_family",
+      "observed": "model-customization",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "systems",
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "systems",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "systems-lvs-custom-model-prompt"
+      ],
+      "id": "contract-08",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "systems-lvs-custom-model-prompt"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "round_trip",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "configuration.lvs.custom-model-prompt",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-configuration-lvs-custom-model-prompt",
+      "00000000-0000-4000-8000-000000000041"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-configuration-lvs-custom-model-prompt",
+      "00000000-0000-4000-8000-000000000041"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.configuration.lvs.custom-model-prompt",
+    "path": "deploy/docker/thor-local/qualification/lvs-custom-model-prompt-runtime/contract.json",
+    "sha256": "16a1c5ff167774c07e1a9dca057bf15650ff5ae0367db42d7576bfc55322de9b"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "custom_model_environment": true,
+          "output_shape_must_match": true,
+          "prompt_override": true,
+          "wave3_acceptance": {
+            "candidate_family": "model-customization",
+            "executor_ready": false,
+            "materialized": false,
+            "package": "systems",
+            "planning_requirement_ids": [
+              "systems-lvs-custom-model-prompt"
+            ]
+          }
+        },
+        "contract_sha256": "16a1c5ff167774c07e1a9dca057bf15650ff5ae0367db42d7576bfc55322de9b",
+        "official_contract": {
+          "custom_model_environment": true,
+          "faq_lines": "234-254",
+          "faq_sections": [
+            "How do I use a custom VLM model in the Video Summarization microservice?",
+            "How can I change the VLM prompt for summarization?"
+          ],
+          "output_shape_must_match": true,
+          "prompt_override": true,
+          "verified_on": "2026-08-10"
+        },
+        "receipt_sha256": "48fc2c5515f2ace79992277bd528ee133d6ac4c0712c5653639e1d9efb7ed1a7",
+        "source_anchor_count": 6
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "adjacent_negative": {
+          "error_code": "BadParameters",
+          "http_status": 400,
+          "model_identity_rejected_before_inference": true,
+          "response_bytes": 83,
+          "response_sha256": "9c134bbf43b4ce18c1911bc616f0092ebfb7494f3ed494177f2afadba1782b99"
+        },
+        "compatible_custom_prompt_passed": true,
+        "compose_render": {
+          "lvs_model_root_environment_exact": true,
+          "lvs_model_root_mount_exact": true,
+          "model_path_below_model_root": true,
+          "model_path_exact": true,
+          "model_selector_exact": true,
+          "rendered_projection_sha256": "568d9701e816c19bcef90649716c1751156648e2b92663cc990122608dedffe5",
+          "rt_vlm_model_root_environment_exact": true,
+          "rt_vlm_model_root_mount_exact": true,
+          "rt_vlm_model_root_mount_read_only": true
+        },
+        "custom_prompt": {
+          "caption_event_shape_compatible": true,
+          "chunks_processed": 1,
+          "content_bytes": 753,
+          "content_sha256": "4abc6c0b7a03623142f70b54b907c7be3798bd602b1f597267076230dfafab7f",
+          "custom_prompt_bytes": 905,
+          "custom_prompt_sha256": "de33d71c5ee43453f8d1956dc3e3738d8901c6cab5ff5bc55515c6e64b7ddb84",
+          "duration_seconds": 16.613295,
+          "event_count": 1,
+          "finish_reason": "stop",
+          "http_status": 200,
+          "model_exact": true,
+          "override_flag_sent": true,
+          "request_id_well_formed": true,
+          "request_projection_sha256": "8bbf5a0a63bb47d4775a30e3aac77d7f898edc7deebd3f98b1e7158a0d3a2f56",
+          "response_bytes": 1362,
+          "response_sha256": "7a7fc5b914ae3fc5fd96a2f53a27e891efb58c545909f2a6f874ca7cd725a467",
+          "source_uuid_count": 1,
+          "summary_shape_exact": true,
+          "total_events_exact": true,
+          "video_identity_exact": true,
+          "video_summary_nonempty": true
+        },
+        "live_model": {
+          "container": "vss-rtvi-vlm",
+          "environment": {
+            "MODEL_PATH": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+            "MODEL_ROOT_DIR": "/home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/models",
+            "NUM_GPUS": "1",
+            "VLM_BATCH_SIZE": "1",
+            "VLM_MODEL_TO_USE": "cosmos-reason3"
+          },
+          "model_root_mount_exact": true,
+          "model_root_mount_read_only": true,
+          "ngc_cache_mount_present": true
+        },
+        "local_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "openapi": {
+          "custom_prompt_maximum_exact": true,
+          "http_status": 200,
+          "override_flag_default_false": true,
+          "projection_sha256": "a7f8a26ba7a9b36e693e1f56b97c73af7735297ccf17969b61df25460223c73a",
+          "required_fields_present": true
+        },
+        "served_model": {
+          "api_type": "internal",
+          "audio_support": false,
+          "http_status": 200,
+          "model_count": 1,
+          "owned_by": "custom",
+          "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        }
+      }
+    },
+    {
+      "id": "round_trip",
+      "result": "pass",
+      "value": {
+        "all_owned_assets_absent": true,
+        "complete_file_list_exact": true,
+        "container_identity_exact": true,
+        "lvs_image_id": "sha256:1037a857158cfbc9c2be87bea92838c60cc1d528357ec5c3d9feea483bd9aefd",
+        "lvs_ready_model_metadata_exact": true,
+        "pre_post_state_exact": true,
+        "rt_vlm_asset_statistics_exact": true,
+        "rt_vlm_image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+      }
+    }
+  ],
+  "oracle_id": "oracle.configuration.lvs.custom-model-prompt",
+  "oracle_sha256": "b153cde4a023f8a18f80966af8feab7ba938b8fdaa5f4237e18b22e7273a9d62",
+  "result": "passed_current",
+  "scenario_ids": [
+    "model-alternate-workflows",
+    "oracle.configuration.lvs.custom-model-prompt"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

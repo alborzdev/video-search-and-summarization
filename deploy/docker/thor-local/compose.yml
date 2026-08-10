@@ -518,6 +518,13 @@ services:
       NUM_VLM_PROCS: "${RTVI_VLM_NUM_VLM_PROCS:-1}"
       VIA_VLM_API_KEY: "${RTVI_VLM_API_KEY:-}"
       NGC_API_KEY: ""
+      # NVIDIA's LVS custom-model contract supplies a model selector plus a
+      # MODEL_ROOT_DIR bind.  Keep the host and container path identical so
+      # RTVI_VLM_MODEL_PATH can name a checkpoint below this root without a
+      # Thor-specific path translation.
+      MODEL_ROOT_DIR: "${MODEL_ROOT_DIR:-/tmp/model_cache}"
+    volumes:
+      - "${MODEL_ROOT_DIR:-/tmp/model_cache}:${MODEL_ROOT_DIR:-/tmp/model_cache}:ro"
 
   # Preserve NVIDIA's released Alert Bridge while replacing only its default
   # schema modules. This lets API, agent, and UI callers omit hardware tuning
