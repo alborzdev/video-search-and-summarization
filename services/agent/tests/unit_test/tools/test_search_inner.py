@@ -288,6 +288,98 @@ class TestSearchInner:
         assert isinstance(result, SearchOutput)
 
     @pytest.mark.asyncio
+    async def test_agent_mode_ignores_invented_zero_width_time_range(self, config, mock_builder):
+        """A hallucinated default instant must not suppress otherwise valid results."""
+        embed_output = _make_embed_output_with_results(
+            [
+                {
+                    "video_name": "cam.mp4",
+                    "similarity_score": 0.85,
+                    "start_time": "2025-01-01T00:00:00Z",
+                    "end_time": "2025-01-01T00:00:10Z",
+                }
+            ]
+        )
+        mock_embed = AsyncMock()
+        mock_embed.ainvoke.return_value = embed_output
+        mock_builder.get_function.return_value = mock_embed
+
+        mock_llm = AsyncMock()
+        mock_llm.ainvoke.return_value = MagicMock(
+            content=json.dumps(
+                {
+                    "query": "person walking",
+                    "timestamp_start": "2025-01-01T00:00:00Z",
+                    "timestamp_end": "2025-01-01T00:00:00Z",
+                    "has_action": True,
+                }
+            )
+        )
+        mock_builder.get_llm.return_value = mock_llm
+
+        gen = search.__wrapped__(config, mock_builder)
+        function_info = await gen.__anext__()
+        result = await function_info.single_fn(
+            SearchInput(query="person walking", source_type="video_file", agent_mode=True)
+        )
+
+        assert isinstance(result, SearchOutput)
+        assert len(result.data) == 1
+        embed_input = json.loads(mock_embed.ainvoke.await_args.args[0])
+        assert "timestamp_start" not in embed_input["params"]
+        assert "timestamp_end" not in embed_input["params"]
+
+    @pytest.mark.asyncio
+    async def test_agent_mode_preserves_explicit_time_range_over_decomposition(self, config, mock_builder):
+        """Structured request bounds remain authoritative over LLM output."""
+        from datetime import UTC
+        from datetime import datetime
+
+        embed_output = _make_embed_output_with_results(
+            [
+                {
+                    "video_name": "cam.mp4",
+                    "similarity_score": 0.85,
+                    "start_time": "2025-01-01T00:00:00Z",
+                    "end_time": "2025-01-01T00:00:10Z",
+                }
+            ]
+        )
+        mock_embed = AsyncMock()
+        mock_embed.ainvoke.return_value = embed_output
+        mock_builder.get_function.return_value = mock_embed
+
+        mock_llm = AsyncMock()
+        mock_llm.ainvoke.return_value = MagicMock(
+            content=json.dumps(
+                {
+                    "query": "person walking",
+                    "timestamp_start": "2025-01-01T00:00:00Z",
+                    "timestamp_end": "2025-01-01T00:00:00Z",
+                    "has_action": True,
+                }
+            )
+        )
+        mock_builder.get_llm.return_value = mock_llm
+
+        gen = search.__wrapped__(config, mock_builder)
+        function_info = await gen.__anext__()
+        result = await function_info.single_fn(
+            SearchInput(
+                query="person walking",
+                source_type="video_file",
+                agent_mode=True,
+                timestamp_start=datetime(2025, 1, 1, 0, 0, 0, tzinfo=UTC),
+                timestamp_end=datetime(2025, 1, 1, 0, 0, 19, 205000, tzinfo=UTC),
+            )
+        )
+
+        assert isinstance(result, SearchOutput)
+        embed_input = json.loads(mock_embed.ainvoke.await_args.args[0])
+        assert embed_input["params"]["timestamp_start"] == "2025-01-01T00:00:00+00:00"
+        assert embed_input["params"]["timestamp_end"] == "2025-01-01T00:00:19.205000+00:00"
+
+    @pytest.mark.asyncio
     async def test_search_agent_mode_rtsp_keeps_video_source_name_for_attribute_search(self, mock_builder, monkeypatch):
         """RTSP agent-mode search must preserve camera names for attribute_search filters."""
         from vss_agents.tools import search as search_module

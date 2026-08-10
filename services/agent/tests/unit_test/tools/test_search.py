@@ -470,6 +470,8 @@ class TestQueryDecompositionPrompt:
         assert "attributes" in QUERY_DECOMPOSITION_PROMPT
         assert "top_k" in QUERY_DECOMPOSITION_PROMPT
         assert "min_cosine_similarity" not in QUERY_DECOMPOSITION_PROMPT
+        assert "Only set this when the user explicitly mentions a time" in QUERY_DECOMPOSITION_PROMPT
+        assert "timestamp_end must be later than timestamp_start" in QUERY_DECOMPOSITION_PROMPT
 
 
 class TestDecomposeQuery:

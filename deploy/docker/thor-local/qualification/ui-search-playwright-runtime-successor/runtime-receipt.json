@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-search-playwright-runtime-successor-v1",
+  "status": "partial_current_candidate",
+  "captured_at": "2026-08-10T22:05:13.419Z",
+  "target_commit": "cea6897406e09afe341c4a5a9817364b77ff6c03",
+  "contract_sha256": "742799e8e476dac50a9e455eb564fea6b6c31fe85aa07dd9776a1f802931d632",
+  "harness_sha256": "69aabfd8e8549cb142ce4e47a2196adb913c756acd12e4b489da724b6c1a6e7b",
+  "identity": {
+    "node_sha256": "d8fa08f79c8198c5a5ccc9faa5a69803052703fc9513f99e7200e0ab42e1d799",
+    "playwright_entry_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+    "browser_executable_sha256": "187b178dc80a432fbe99ecf7e293f39a7fcd2224aef1395472525afcfbf70984",
+    "browser_version_sha256": "08582aa65552ab5710023eb71f08d991b30c9dd710da10949512a0fb20294866",
+    "ui_origin_sha256": "db604082b8b63636b4ce557eaadc9c91e5c4d9166a79d5c0d7a7969762521bfa"
+  },
+  "bounds": {
+    "duration_ms": 37525,
+    "browser_actions": 18,
+    "loopback_browser_responses": 100,
+    "max_duration_ms": 240000,
+    "max_browser_actions": 30,
+    "max_loopback_browser_responses": 500
+  },
+  "direct": {
+    "actions": 14,
+    "query_sha256": "ae36db619669ad97223d57d94cc681f7c83170ded9753d1fcf5d512625e839aa",
+    "query_bytes": 45,
+    "filter_defaults": {
+      "top_k": 10,
+      "similarity": -1
+    },
+    "filter_selected_source": true,
+    "filter_top_k_5": true,
+    "http_status": 200,
+    "response_sha256": "5217454488e064c80e8d145a73e8c3c34a6591bfe4cabda259fbc6598fe401af",
+    "result_count": 1,
+    "rendered_card_count": 1,
+    "similarities": [
+      0.4
+    ],
+    "playback_modal_opened": true,
+    "image_flow": {
+      "button_visible": true,
+      "overlay_visible": true,
+      "no_boxes_hint": true,
+      "select_hint": false
+    },
+    "desktop": {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "overflow": {
+        "viewport": 1440,
+        "document": 1440,
+        "body": 1440
+      },
+      "screenshot": {
+        "sha256": "b38b7e358ada0bf7157a9cda57bcc7252b16c25906482033436e9ff3273d8105",
+        "bytes": 74166
+      }
+    },
+    "mobile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "component_width": 390,
+      "overflow": {
+        "viewport": 390,
+        "document": 390,
+        "body": 390
+      },
+      "screenshot": {
+        "sha256": "7b645de4ee87d983f0881bf8e4cac093b24cc7363b14e7d8a08a414acd579afb",
+        "bytes": 96430
+      }
+    },
+    "diagnostics": {
+      "console_hashes": [],
+      "page_error_hashes": [],
+      "response_status_counts": {
+        "200": 38,
+        "206": 2
+      },
+      "failing_response_hashes": [],
+      "non_loopback_response_count": 0
+    }
+  },
+  "critic": {
+    "actions": 4,
+    "prompt_sha256": "64c13a0df28ff9df54681168fcf7ce0595695249595c1ac74f5a1fcc8c30d0cd",
+    "prompt_bytes": 136,
+    "rendered_card_count": 1,
+    "cards": [
+      {
+        "label": "Confirmed",
+        "criteria_true": 4,
+        "criteria_false": 0,
+        "similarity": 0.02
+      }
+    ],
+    "assistant_message_count": 1,
+    "input_enabled_after_completion": true,
+    "overflow": {
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440
+    },
+    "screenshot": {
+      "sha256": "c557f6da7f89e2573f02bff70b000306eb04a709045ff822418153164649d626",
+      "bytes": 119397
+    },
+    "diagnostics": {
+      "console_hashes": [],
+      "page_error_hashes": [],
+      "response_status_counts": {
+        "200": 59,
+        "206": 1
+      },
+      "failing_response_hashes": [],
+      "non_loopback_response_count": 0
+    }
+  },
+  "corpus_boundary": {
+    "vst_frame_rendered": true,
+    "tracked_bbox_present": false,
+    "no_bbox_observed": true,
+    "selected_object_knn_exercised": false,
+    "blocker": "tracked_object_bbox_corpus_absent"
+  },
+  "cleanup": {
+    "mutation": "none_read_only",
+    "isolated_browser_closed": true,
+    "persistent_resources_created": 0,
+    "persistent_resources_deleted": 0,
+    "temporary_screenshots_deleted_after_hashing": true
+  },
+  "warehouse_sample_bundle": "excluded"
+}

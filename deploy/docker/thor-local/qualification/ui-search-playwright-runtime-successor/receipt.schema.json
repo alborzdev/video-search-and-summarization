@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "captured_at", "target_commit", "contract_sha256", "harness_sha256", "identity", "bounds", "direct", "critic", "corpus_boundary", "cleanup", "warehouse_sample_bundle"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-ui-search-playwright-runtime-successor-v1"},
+    "status": {"const": "partial_current_candidate"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "target_commit": {"$ref": "#/$defs/commit"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "harness_sha256": {"$ref": "#/$defs/sha256"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_sha256", "playwright_entry_sha256", "browser_executable_sha256", "browser_version_sha256", "ui_origin_sha256"],
+      "properties": {
+        "node_sha256": {"$ref": "#/$defs/sha256"},
+        "playwright_entry_sha256": {"$ref": "#/$defs/sha256"},
+        "browser_executable_sha256": {"$ref": "#/$defs/sha256"},
+        "browser_version_sha256": {"$ref": "#/$defs/sha256"},
+        "ui_origin_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "browser_actions", "loopback_browser_responses", "max_duration_ms", "max_browser_actions", "max_loopback_browser_responses"],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 240000},
+        "browser_actions": {"type": "integer", "minimum": 10, "maximum": 30},
+        "loopback_browser_responses": {"type": "integer", "minimum": 1, "maximum": 500},
+        "max_duration_ms": {"const": 240000},
+        "max_browser_actions": {"const": 30},
+        "max_loopback_browser_responses": {"const": 500}
+      }
+    },
+    "direct": {"$ref": "#/$defs/direct"},
+    "critic": {"$ref": "#/$defs/critic"},
+    "corpus_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vst_frame_rendered", "tracked_bbox_present", "no_bbox_observed", "selected_object_knn_exercised", "blocker"],
+      "properties": {
+        "vst_frame_rendered": {"const": true},
+        "tracked_bbox_present": {"const": false},
+        "no_bbox_observed": {"const": true},
+        "selected_object_knn_exercised": {"const": false},
+        "blocker": {"const": "tracked_object_bbox_corpus_absent"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mutation", "isolated_browser_closed", "persistent_resources_created", "persistent_resources_deleted", "temporary_screenshots_deleted_after_hashing"],
+      "properties": {
+        "mutation": {"const": "none_read_only"},
+        "isolated_browser_closed": {"const": true},
+        "persistent_resources_created": {"const": 0},
+        "persistent_resources_deleted": {"const": 0},
+        "temporary_screenshots_deleted_after_hashing": {"const": true}
+      }
+    },
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["console_hashes", "page_error_hashes", "response_status_counts", "failing_response_hashes", "non_loopback_response_count"],
+      "properties": {
+        "console_hashes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+        "page_error_hashes": {"const": []},
+        "response_status_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "failing_response_hashes": {"const": []},
+        "non_loopback_response_count": {"const": 0}
+      }
+    },
+    "overflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["viewport", "document", "body"],
+      "properties": {
+        "viewport": {"type": "integer", "minimum": 1},
+        "document": {"type": "integer", "minimum": 1},
+        "body": {"type": "integer", "minimum": 1}
+      }
+    },
+    "screenshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "bytes"],
+      "properties": {
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "viewport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {"width": {"type": "integer", "minimum": 1}, "height": {"type": "integer", "minimum": 1}}
+    },
+    "direct": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actions", "query_sha256", "query_bytes", "filter_defaults", "filter_selected_source", "filter_top_k_5", "http_status", "response_sha256", "result_count", "rendered_card_count", "similarities", "playback_modal_opened", "image_flow", "desktop", "mobile", "diagnostics"],
+      "properties": {
+        "actions": {"type": "integer", "minimum": 8, "maximum": 20},
+        "query_sha256": {"$ref": "#/$defs/sha256"},
+        "query_bytes": {"type": "integer", "minimum": 8, "maximum": 4096},
+        "filter_defaults": {"type": "object", "additionalProperties": false, "required": ["top_k", "similarity"], "properties": {"top_k": {"const": 10}, "similarity": {"const": -1}}},
+        "filter_selected_source": {"const": true},
+        "filter_top_k_5": {"const": true},
+        "http_status": {"const": 200},
+        "response_sha256": {"$ref": "#/$defs/sha256"},
+        "result_count": {"type": "integer", "minimum": 1},
+        "rendered_card_count": {"type": "integer", "minimum": 1},
+        "similarities": {"type": "array", "minItems": 1, "items": {"type": "number", "minimum": -1, "maximum": 1}},
+        "playback_modal_opened": {"const": true},
+        "image_flow": {"type": "object", "additionalProperties": false, "required": ["button_visible", "overlay_visible", "no_boxes_hint", "select_hint"], "properties": {"button_visible": {"const": true}, "overlay_visible": {"const": true}, "no_boxes_hint": {"const": true}, "select_hint": {"const": false}}},
+        "desktop": {"type": "object", "additionalProperties": false, "required": ["viewport", "overflow", "screenshot"], "properties": {"viewport": {"$ref": "#/$defs/viewport"}, "overflow": {"$ref": "#/$defs/overflow"}, "screenshot": {"$ref": "#/$defs/screenshot"}}},
+        "mobile": {"type": "object", "additionalProperties": false, "required": ["viewport", "component_width", "overflow", "screenshot"], "properties": {"viewport": {"$ref": "#/$defs/viewport"}, "component_width": {"type": "number", "exclusiveMinimum": 0}, "overflow": {"$ref": "#/$defs/overflow"}, "screenshot": {"$ref": "#/$defs/screenshot"}}},
+        "diagnostics": {"$ref": "#/$defs/diagnostics"}
+      }
+    },
+    "criticCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "criteria_true", "criteria_false", "similarity"],
+      "properties": {
+        "label": {"enum": ["Confirmed", "Unverified", "Rejected"]},
+        "criteria_true": {"type": "integer", "minimum": 0},
+        "criteria_false": {"type": "integer", "minimum": 0},
+        "similarity": {"type": "number", "minimum": -1, "maximum": 1}
+      }
+    },
+    "critic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actions", "prompt_sha256", "prompt_bytes", "rendered_card_count", "cards", "assistant_message_count", "input_enabled_after_completion", "overflow", "screenshot", "diagnostics"],
+      "properties": {
+        "actions": {"type": "integer", "minimum": 4, "maximum": 10},
+        "prompt_sha256": {"$ref": "#/$defs/sha256"},
+        "prompt_bytes": {"type": "integer", "minimum": 8, "maximum": 4096},
+        "rendered_card_count": {"type": "integer", "minimum": 1},
+        "cards": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/criticCard"}},
+        "assistant_message_count": {"type": "integer", "minimum": 1},
+        "input_enabled_after_completion": {"const": true},
+        "overflow": {"$ref": "#/$defs/overflow"},
+        "screenshot": {"$ref": "#/$defs/screenshot"},
+        "diagnostics": {"$ref": "#/$defs/diagnostics"}
+      }
+    }
+  }
+}

@@ -68,8 +68,8 @@ Extract the following parameters from the user query:
 - query: The main search description including actions AND attributes (e.g., "person moving with white pants")
 - video_sources: List of video source names mentioned (from available sources above, empty list if none mentioned)
 - source_type: "rtsp" if referring to live/camera streams, "video_file" if referring to uploaded video files (default: "video_file")
-- timestamp_start: Start time in ISO format (e.g., "2025-01-01T13:00:00Z"). Use 2025-01-01 as the base date.
-- timestamp_end: End time in ISO format (e.g., "2025-01-01T14:00:00Z"). Use 2025-01-01 as the base date.
+- timestamp_start: Start time in ISO format (e.g., "2025-01-01T13:00:00Z"). Use 2025-01-01 as the base date. Only set this when the user explicitly mentions a time; otherwise use null.
+- timestamp_end: End time in ISO format (e.g., "2025-01-01T14:00:00Z"). Use 2025-01-01 as the base date. Only set this when the user explicitly mentions a time; otherwise use null. When both timestamps are set, timestamp_end must be later than timestamp_start.
 - attributes: List of person with attributes, ONLY. Don't include other objects, don't just put "person".
 - has_action: REQUIRED boolean. Set to True if the query explicitly mentions an action/event/activity (e.g., running, walking, carrying, pushing, entering, leaving, moving). Set to False if the query only describes visual/physical attributes (what someone/something LOOKS LIKE) without any action. Examples: "person" → false, "person walking" → true, "red car" → false, "person carrying box" → true, "forklift" → false.
 - object_ids: List of integer object IDs if explicitly mentioned in the query (e.g., "find object 5" → [5], "search for objects 10, 20" → [10, 20]). null if no object IDs are mentioned.
@@ -370,6 +370,48 @@ async def decompose_query(
     except Exception as e:
         logger.warning(f"Failed to decompose query, using original: {e}")
         return DecomposedQuery(query=user_query)
+
+
+def _apply_decomposed_time_range(search_input: "SearchInput", decomposed: DecomposedQuery) -> None:
+    """Merge LLM-extracted timestamps without weakening explicit request filters.
+
+    Structured REST/UI timestamps are authoritative.  Small local LLMs can
+    occasionally invent a default zero-width range when a query contains no
+    time expression; forwarding that range makes an otherwise valid search
+    deterministically empty.  Decomposed bounds therefore fill only missing
+    request fields and are ignored when they would make the effective range
+    non-positive.
+    """
+
+    explicit_start = search_input.timestamp_start
+    explicit_end = search_input.timestamp_end
+    decomposed_start: datetime | None = None
+    decomposed_end: datetime | None = None
+
+    if decomposed.timestamp_start:
+        try:
+            decomposed_start = iso8601_to_datetime(decomposed.timestamp_start)
+        except Exception as error:
+            logger.warning(f"Failed to parse decomposed timestamp_start: {error}")
+    if decomposed.timestamp_end:
+        try:
+            decomposed_end = iso8601_to_datetime(decomposed.timestamp_end)
+        except Exception as error:
+            logger.warning(f"Failed to parse decomposed timestamp_end: {error}")
+
+    candidate_start = explicit_start if explicit_start is not None else decomposed_start
+    candidate_end = explicit_end if explicit_end is not None else decomposed_end
+    if candidate_start is not None and candidate_end is not None and candidate_end <= candidate_start:
+        logger.warning(
+            "Ignoring non-positive decomposed search time range; preserving explicit request bounds"
+        )
+        if explicit_start is None:
+            candidate_start = None
+        if explicit_end is None:
+            candidate_end = None
+
+    search_input.timestamp_start = candidate_start
+    search_input.timestamp_end = candidate_end
 
 
 def _resolve_video_sources_for_search(
@@ -929,16 +971,7 @@ async def execute_core_search(
                     name_to_uuid=name_to_uuid,
                     source_type=search_input.source_type,
                 )
-            if decomposed.timestamp_start:
-                try:
-                    search_input.timestamp_start = iso8601_to_datetime(decomposed.timestamp_start)
-                except Exception as e:
-                    logger.warning(f"Failed to parse decomposed timestamp_start: {e}")
-            if decomposed.timestamp_end:
-                try:
-                    search_input.timestamp_end = iso8601_to_datetime(decomposed.timestamp_end)
-                except Exception as e:
-                    logger.warning(f"Failed to parse decomposed timestamp_end: {e}")
+            _apply_decomposed_time_range(search_input, decomposed)
             if decomposed.top_k is not None:
                 search_input.top_k = decomposed.top_k
 

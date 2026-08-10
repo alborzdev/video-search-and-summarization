@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-search-playwright-runtime-successor-v1",
+  "capability_id": "runtime.ui.search-tab",
+  "supporting_capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.ui.search-tab",
+  "mode": "authorization-gated-isolated-playwright-numeric-loopback-runtime",
+  "default_execution_enabled": false,
+  "authorization": {
+    "acknowledgement": "I_ACK_UI_SEARCH_READ_ONLY_RUNTIME"
+  },
+  "bounds": {
+    "max_duration_ms": 240000,
+    "max_browser_actions": 30,
+    "max_loopback_browser_responses": 500,
+    "max_response_bytes": 4194304
+  },
+  "runtime_boundary": {
+    "numeric_loopback_only": true,
+    "ambient_proxies_allowed": false,
+    "redirects_outside_numeric_loopback_allowed": false,
+    "isolated_browser_launch_allowed": true,
+    "browser_install_allowed": false,
+    "service_lifecycle_allowed": false,
+    "persistent_mutation": false,
+    "temporary_screenshots_outside_repository": true,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "proven_facets": [
+    "search-tab-rendered-desktop-and-mobile",
+    "video-file-source-default",
+    "top-k-default-10-and-minimum-1",
+    "similarity-default-minus-1",
+    "video-source-filter",
+    "direct-semantic-search-result-card",
+    "playback-modal",
+    "search-by-image-frame-overlay",
+    "agent-mode-local-critic-confirmed-card"
+  ],
+  "open_facets": [
+    "selected-object-bbox-selection",
+    "selected-object-image-knn",
+    "attribute-merge-and-fusion-route-runtime-semantics"
+  ],
+  "evidence_scope": {
+    "status": "partial_current_candidate",
+    "promotion_eligible": false,
+    "canonical_state_advanced": false,
+    "reason": "The current local video corpus has searchable embeddings and VST frames but no stored tracked-object bbox documents, so the selected-object image-KNN path cannot be exercised without provisioning a detection stream."
+  },
+  "source_locks": [
+    {
+      "path": "services/agent/src/vss_agents/tools/search.py",
+      "sha256": "6c23fd3854cad838311bcaf4cd5636db3ed02831a659a21b2d8e411841962aca"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/SearchComponent.tsx",
+      "sha256": "9ca6bc45a8d6c02831225f9715a2d4e254128cb2304b28ba8ea2a34d3b294143"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/SearchHeader.tsx",
+      "sha256": "b494f8f8eed7775cf7633dcf6de20d85824a44b038e75ae286753f8b75261be5"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/VideoSearchList.tsx",
+      "sha256": "e9696dffbeb68b28020d6ef47aa32c0ed7597e118c977a6adc2efa1cfee3efa8"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts",
+      "sha256": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearchByImage.ts",
+      "sha256": "24d3fd995dfbf94d96a905a4b68a4e06cdfa06e46bc1ad97418dfb7ccc855a6c"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/utils/agentResponseParser.ts",
+      "sha256": "db7da7b496408e16f83cce488d0c998858f3cc888bc164d355820a8a95857f6d"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "sha256": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+      "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+    }
+  ]
+}
