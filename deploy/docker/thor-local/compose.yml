@@ -111,6 +111,17 @@ services:
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
       GF_AUTH_DISABLE_LOGIN_FORM: "false"
 
+  # Jetson's cpufreq trans_table pseudo-files exceed node-exporter's bounded
+  # sysfs reader and make that collector fail on every scrape. Tegrastats is
+  # the authoritative Thor clock/power source, so disable only cpufreq while
+  # retaining the complete host/process/filesystem node-exporter surface.
+  node-exporter:
+    command: !override
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/rootfs
+      - --no-collector.cpufreq
+
   # Jetson does not expose the datacenter DCGM contract. Reuse the already
   # locked VSS Agent Python runtime to translate the host's L4T tegrastats
   # stream without adding an image or package. The exporter bounds line/label

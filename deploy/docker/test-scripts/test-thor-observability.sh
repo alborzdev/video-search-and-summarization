@@ -72,6 +72,14 @@ for service_name in thor_services:
 # the datacenter warehouse profiles where NVIDIA DCGM is supported.
 assert thor_profile not in services["dcgm-exporter"]["profiles"]
 
+thor_node_exporter = thor_overlay["node-exporter"]
+assert thor_node_exporter["command"] == [
+    "--path.procfs=/host/proc",
+    "--path.sysfs=/host/sys",
+    "--path.rootfs=/rootfs",
+    "--no-collector.cpufreq",
+]
+
 tegrastats = thor_overlay["tegrastats-exporter"]
 assert tegrastats["image"] == "nvcr.io/nvidia/vss-core/vss-agent:${VSS_AGENT_VERSION}"
 assert tegrastats["entrypoint"] == [
@@ -79,6 +87,8 @@ assert tegrastats["entrypoint"] == [
     "/opt/thor-observability/tegrastats_exporter.py",
 ]
 assert tegrastats["command"] == [
+    "--bind-address",
+    "${TEGRASTATS_BIND_ADDRESS:-127.0.0.1}",
     "--port",
     "${TEGRASTATS_PORT:-19101}",
     "--interval-ms",
@@ -100,7 +110,7 @@ assert "/lib/aarch64-linux-gnu/libc.so.6:/opt/tegrastats-runtime/libc.so.6:ro" i
 assert "/lib/aarch64-linux-gnu/libm.so.6:/opt/tegrastats-runtime/libm.so.6:ro" in tegrastats["volumes"]
 assert "/sys:/sys:ro" in tegrastats["volumes"]
 assert tegrastats["healthcheck"]["test"][0:3] == ["CMD", "/usr/local/bin/python3", "-c"]
-assert "127.0.0.1:${TEGRASTATS_PORT:-19101}/readyz" in tegrastats["healthcheck"]["test"][3]
+assert "${TEGRASTATS_BIND_ADDRESS:-127.0.0.1}:${TEGRASTATS_PORT:-19101}/readyz" in tegrastats["healthcheck"]["test"][3]
 assert tegrastats["logging"] == {
     "driver": "local",
     "options": {
@@ -212,6 +222,7 @@ assert {
     "rtvi-vlm",
     "rtvi-embed",
     "lvs",
+    "alert-bridge",
 } == thor_jobs.keys()
 assert "dcgm-exporter" not in thor_jobs
 assert thor_jobs["tegrastats-exporter"]["static_configs"] == [
@@ -225,11 +236,15 @@ assert thor_jobs["lvs"]["metrics_path"] == "/metrics"
 assert thor_jobs["lvs"]["static_configs"] == [
     {"targets": ["host.docker.internal:38111"]}
 ]
+assert thor_jobs["alert-bridge"]["metrics_path"] == "/metrics"
+assert thor_jobs["alert-bridge"]["static_configs"] == [
+    {"targets": ["host.docker.internal:9081"]}
+]
 
-# Route assertions are tied directly to source. Alert Bridge and Phoenix have
-# disabled, separate Prometheus listeners, while RT-CV only exposes OTLP
-# exporter configuration in this checkout; none may become a guaranteed-down
-# static scrape target.
+# Route assertions are tied directly to source. The shared Alert Bridge keeps
+# metrics disabled by default while the Thor overlay enables its dedicated
+# local listener. Phoenix remains disabled and RT-CV only exposes OTLP exporter
+# configuration in this checkout; neither may become a guaranteed-down target.
 rtvi_vlm_source = (root / "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py").read_text(encoding="utf-8")
 rtvi_embed_source = (root / "services/rtvi/rt-embed/src/server/rtvi_embed_server.py").read_text(encoding="utf-8")
 lvs_source = (root / "services/video-summarization/src/via_server.py").read_text(encoding="utf-8")
@@ -248,8 +263,10 @@ assert not any(
     str(item).startswith("PROMETHEUS_METRICS_ENABLED=")
     for item in alert_compose["services"]["alert-bridge"]["environment"]
 )
+assert thor_overlay["alert-bridge"]["environment"]["PROMETHEUS_METRICS_ENABLED"] == "true"
+assert thor_overlay["alert-bridge"]["environment"]["PROMETHEUS_PORT"] == "${ALERT_PROMETHEUS_PORT:-9081}"
 assert "OTEL_METRICS_EXPORTER" in rtcv_compose
-assert {"alert-bridge", "rt-cv", "phoenix"}.isdisjoint(thor_jobs)
+assert {"rt-cv", "phoenix"}.isdisjoint(thor_jobs)
 
 with (monitoring_dir / "config/grafana-provisioning/datasources/datasource.yml").open(encoding="utf-8") as stream:
     datasource = yaml.safe_load(stream)["datasources"][0]
@@ -265,7 +282,8 @@ assert dashboard["editable"] is False
 assert {panel["type"] for panel in dashboard["panels"]} == {"stat", "timeseries"}
 for panel in dashboard["panels"]:
     assert panel["datasource"] == {"type": "prometheus", "uid": "prometheus"}
-    assert all("|lvs" in target["expr"] for target in panel["targets"])
+    expected_jobs = "prometheus|node-exporter|cadvisor|tegrastats-exporter|rtvi-vlm|rtvi-embed|lvs|alert-bridge"
+    assert all(expected_jobs in target["expr"] for target in panel["targets"])
 dashboard_text = dashboard_path.read_text(encoding="utf-8").lower()
 assert "http://" not in dashboard_text
 assert "https://" not in dashboard_text
@@ -320,6 +338,12 @@ for service_name in thor_services:
         "options": {"max-file": "3", "max-size": "10m"},
     }
 assert "prometheus-storage" in resolved["volumes"]
+assert resolved_services["node-exporter"]["command"] == [
+    "--path.procfs=/host/proc",
+    "--path.sysfs=/host/sys",
+    "--path.rootfs=/rootfs",
+    "--no-collector.cpufreq",
+]
 prometheus_config_mount = next(
     volume
     for volume in resolved_services["prometheus"]["volumes"]
@@ -335,6 +359,8 @@ assert "ports" not in resolved_tegrastats
 assert resolved_tegrastats["read_only"] is True
 assert resolved_tegrastats["image"] == resolved_services["vss-agent"]["image"]
 assert resolved_tegrastats["command"] == [
+    "--bind-address",
+    "127.0.0.1",
     "--port",
     "19101",
     "--interval-ms",
