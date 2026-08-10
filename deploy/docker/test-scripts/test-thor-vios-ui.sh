@@ -49,12 +49,32 @@ overlay = yaml.load(
     Loader=ComposeLoader,
 )
 services = overlay["services"]
+ingress = services["vst-ingress"]
+assert ingress["image"] == "${THOR_LOCAL_VST_INGRESS_IMAGE:-cti-vss-vios-ingress:3.2.1-thor-local}"
+assert ingress["build"]["context"] == "${VSS_REPO_ROOT}/services/vios/ui"
+assert ingress["build"]["dockerfile"] == "Dockerfile.thor-local"
 expected_mount = (
     "${THOR_LOCAL_VST_CONFIG_FILE:-${VSS_REPO_ROOT}/deploy/docker/thor-local/"
     "vios/vst_config.json}:/home/vst/vst_release/configs/vst_config.json:ro"
 )
 for service_name in ("sensor-ms", "streamprocessing-ms"):
     assert expected_mount in services[service_name]["volumes"]
+
+ui_dockerfile = (root / "services/vios/ui/Dockerfile.thor-local").read_text()
+assert "npm ci --no-audit --no-fund" in ui_dockerfile
+assert "NPM_CONFIG_REGISTRY=https://registry.npmmirror.com/" in ui_dockerfile
+assert "COPY --from=ui-build --chown=nginx:nginx /src/vios-ui/dist/ /vst-ui/" in ui_dockerfile
+
+video_player = (root / "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx").read_text()
+sensor_utils = (root / "services/vios/ui/vios-ui/src/utils/misc/sensorUtils.ts").read_text()
+websocket_endpoint = (
+    root
+    / "services/vios/ui/vios-ui/src/components/videoPlayer/videoPlayerUtils/websocketEndpoint.ts"
+).read_text()
+assert "buildWebSocketEndpoint(streamingEndpoint, window.location.pathname)" in video_player
+assert "const initialTimelines = sensor?.timelines ?? []" in video_player
+assert "availableSensors.flatMap<Sensor>" in sensor_utils
+assert "proxyPathname.replace(/^\\/+|\\/+$/g, '')" in websocket_endpoint
 
 foundational = yaml.safe_load(
     (docker_dir / "services/vios/foundational/docker-compose.yaml").read_text(encoding="utf-8")

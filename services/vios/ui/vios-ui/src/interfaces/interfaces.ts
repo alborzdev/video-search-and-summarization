@@ -80,6 +80,8 @@ export interface Sensor {
     resolution: string;
     streamId?: string;
     isMain?: boolean;
+    /** Recording intervals already resolved for a replay-capable sensor. */
+    timelines?: Timeline[];
 }
 
 /**

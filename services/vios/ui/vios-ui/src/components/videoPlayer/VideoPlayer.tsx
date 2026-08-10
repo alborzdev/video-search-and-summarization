@@ -72,6 +72,7 @@ import BitrateSparkline from './videoPlayerUtils/BitrateSparkline';
 import Analytics from './videoPlayerUtils/analytics/Analytics';
 import { useShowEvents, useEventImages } from './videoPlayerUtils/ShowEvents';
 import useVSTUIStore from '../../services/StateManagement';
+import { buildWebSocketEndpoint } from './videoPlayerUtils/websocketEndpoint';
 
 const FALLBACK_START_TIME = '1970-01-01T00:00:00.000Z';
 const DEFAULT_QUALITY = 'auto';
@@ -127,9 +128,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ sensor, streamType, videoElem
     // Calendar and timeline related
     const [calenderStartTime, setCalenderStartTime] = useState<string>();
     const [calenderEndTime, setCalenderEndTime] = useState<string>();
-    const [timelines, setTimelines] = useState<Timeline[]>([]);
-    const timelinesRef = useRef<Timeline[]>([]);
-    const [disabledIntervals, setDisabledIntervals] = useState<Timeline[] | undefined>([]);
+    const initialTimelines = sensor?.timelines ?? [];
+    const [timelines, setTimelines] = useState<Timeline[]>(initialTimelines);
+    const timelinesRef = useRef<Timeline[]>(initialTimelines);
+    const [disabledIntervals, setDisabledIntervals] = useState<Timeline[] | undefined>(getTimelineGaps(initialTimelines));
 
     // Error handling
     const [hasError, setHasError] = useState(false);
@@ -314,18 +316,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ sensor, streamType, videoElem
             setConnectionPhase('initial');
         };
 
-        let wsEndpoint = config.liveStreamEndpoint.startsWith('https')
-            ? config.liveStreamEndpoint.replace('https', 'wss')
-            : config.liveStreamEndpoint.replace('http', 'ws');
-
-        let proxy = window.location.pathname;
-        if (proxy !== '/' && proxy.length > 0) {
-            if (proxy[proxy.length - 1] === '/') {
-                proxy = proxy.slice(0, -1);
-            }
-            // Add the proxy path to the endpoint with proper / separator
-            wsEndpoint = `${wsEndpoint}${wsEndpoint.endsWith('/') ? '' : '/'}${proxy}`;
-        }
+        const streamingEndpoint = streamType === StreamType.Replay ? config.replayStreamEndpoint : config.liveStreamEndpoint;
+        const wsEndpoint = buildWebSocketEndpoint(streamingEndpoint, window.location.pathname);
 
         const webStreamerConfig: AppConfig = {
             inboundStreamVideoElementId: videoElementId,

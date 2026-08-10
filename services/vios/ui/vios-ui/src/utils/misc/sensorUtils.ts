@@ -37,6 +37,7 @@ interface StreamTimeline {
 interface TimelineResponse {
     [streamId: string]:
         | StreamTimeline
+        | TimelineEntry[]
         | {
               remainingStorageDays: number;
               sizeInMegabytes: number;
@@ -94,18 +95,25 @@ export const getSensorsWithTimeline = async (sensors: Sensor[], replaySensors: S
 
         console.log('getSensorsWithTimeline - Response received:', Object.keys(timelineData).length, 'streams');
 
-        // Filter sensors that have timelines in the API response
-        return availableSensors.filter(sensor => {
+        // Retain the timelines on each replay-capable sensor. VideoPlayer is
+        // mounted only after this call resolves, so carrying the intervals into
+        // the selected sensor prevents replay startup from racing the player's
+        // second timeline request and incorrectly starting at the Unix epoch.
+        return availableSensors.flatMap<Sensor>(sensor => {
             const idToCheck = sensor.streamId || sensor.sensorId;
             const streamTimeline = timelineData[idToCheck];
+            let sensorTimelines: TimelineEntry[] = [];
 
             // For MMS, the response is an array of timelines directly
             if (vstAdaptorType === 'mms') {
-                return Array.isArray(streamTimeline) && streamTimeline.length > 0;
+                if (Array.isArray(streamTimeline)) {
+                    sensorTimelines = streamTimeline;
+                }
+            } else if (streamTimeline && !Array.isArray(streamTimeline) && 'timelines' in streamTimeline && streamTimeline.timelines) {
+                sensorTimelines = streamTimeline.timelines;
             }
 
-            // For VST, check if it's a StreamTimeline (not the total object) and has timelines
-            return streamTimeline && 'timelines' in streamTimeline && streamTimeline.timelines && streamTimeline.timelines.length > 0;
+            return sensorTimelines.length > 0 ? [{ ...sensor, timelines: sensorTimelines }] : [];
         });
     } catch (error) {
         console.error('Error fetching timeline data:', error);

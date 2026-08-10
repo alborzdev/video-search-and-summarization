@@ -208,6 +208,14 @@ services:
   # Do not advertise ingress before both sensor control and the actual video
   # processor can serve requests.
   vst-ingress:
+    image: ${THOR_LOCAL_VST_INGRESS_IMAGE:-cti-vss-vios-ingress:3.2.1-thor-local}
+    build:
+      context: ${VSS_REPO_ROOT}/services/vios/ui
+      dockerfile: Dockerfile.thor-local
+      args:
+        NODE_BUILD_IMAGE: ${THOR_LOCAL_VIOS_UI_NODE_IMAGE:-node:22-slim@sha256:6c74791e557ce11fc957704f6d4fe134a7bc8d6f5ca4403205b2966bd488f6b3}
+        NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com/}
+        VST_INGRESS_BASE_IMAGE: ${THOR_LOCAL_VST_INGRESS_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-vios-ingress:3.2.1@sha256:ecee4b30ab5e76fa5d342ba4c7ade5b3f176dbb2543ccad03d07759fea2a5e47}
     depends_on:
       streamprocessing-ms:
         condition: service_healthy
