@@ -61,6 +61,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + len(verifier.SPATIAL_AI_IDS[:7])
             + 1  # current VIOS byte-identical full-file runtime receipt
             + 1  # current NvStreamer file/RTSP/WebRTC runtime receipt
+            + 1  # current NvStreamer synchronized-playback runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -685,6 +686,10 @@ class CapabilityOracleTests(unittest.TestCase):
                     self.assertEqual(
                         cleanup["targets"], [verifier.NVSTREAMER_FILE_NAMESPACE]
                     )
+                elif item["capability_id"] == verifier.NVSTREAMER_SYNC_CAPABILITY_ID:
+                    self.assertEqual(
+                        cleanup["targets"], [verifier.NVSTREAMER_SYNC_NAMESPACE]
+                    )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
                 self.assertEqual(cleanup["allowlist"], cleanup["targets"])
@@ -817,6 +822,8 @@ class CapabilityOracleTests(unittest.TestCase):
             expected_actions = (
                 mv3dt_runtime["max_actions"]
                 if mv3dt_runtime is not None
+                else verifier.NVSTREAMER_SYNC_MAX_ACTIONS
+                if item["capability_id"] == verifier.NVSTREAMER_SYNC_CAPABILITY_ID
                 else override[2]
                 if override is not None
                 else expected

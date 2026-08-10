@@ -1,0 +1,188 @@
+{
+  "bounds": {
+    "agent_generate_called": false,
+    "existing_container_count": 51,
+    "existing_running_container_count": 37,
+    "external_downloads": false,
+    "http_endpoint": "http://127.0.0.1:31010/vst/api/v1",
+    "http_loopback_only": true,
+    "main_vios_sensor_added": false,
+    "rt_cv_stream_added": false,
+    "rtsp_endpoint": "rtsp://127.0.0.1:31654",
+    "rtsp_loopback_only": true,
+    "runtime_package_installs": false,
+    "warehouse_sample_bundle_used": false
+  },
+  "capability_results": {
+    "configuration.nvstreamer.sync": "passed_current"
+  },
+  "captured_at": "2026-08-10T14:09:03.627285Z",
+  "cleanup": {
+    "all_reserved_ports_released": true,
+    "attempts": [
+      {
+        "operation": "container-stop",
+        "status": 0
+      },
+      {
+        "operation": "container-remove",
+        "status": 0
+      }
+    ],
+    "exact_container_inventory_restored": true,
+    "exact_running_set_restored": true,
+    "result": "passed",
+    "temporary_media_count": 2,
+    "temporary_tree_removed_by_context": true
+  },
+  "fixture": {
+    "b_frames": 0,
+    "bytes": 793162,
+    "codec": "h264",
+    "duration_seconds": 8,
+    "file_count": 2,
+    "file_sha256s": [
+      "211900643528d726b65e7e2ac6648dcf4b34bb53040e923d90bd3d42427bff0a",
+      "211900643528d726b65e7e2ac6648dcf4b34bb53040e923d90bd3d42427bff0a"
+    ],
+    "files_byte_identical": true,
+    "frame_count": 240,
+    "frame_rate": "30/1",
+    "height": 180,
+    "keyframe_indices": [
+      0,
+      30,
+      60,
+      90,
+      120,
+      150,
+      180,
+      210
+    ],
+    "keyint": 30,
+    "profile": "Constrained Baseline",
+    "sha256": "211900643528d726b65e7e2ac6648dcf4b34bb53040e923d90bd3d42427bff0a",
+    "width": 320
+  },
+  "identity": {
+    "base_config_sha256": "5e706d472f28406e4df09434e0064f4ee7f9e2094ecb3dc091ee269a2b1f0c28",
+    "derived_config_canonical_sha256": "7775ee79a531e464cb198586c0947e405e9496e9d66fb9212923d37c22a4d55c",
+    "derived_config_sha256": "f52182c4021b58f2183e7c733974a9899ab94832777ca839278adb9401401f92",
+    "executor_sha256": "ac189cfd5bcc6d4884e626b73fe8a63e533482c7948bfae857f918e8b51f09e2",
+    "image": {
+      "codec_package_set": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+      "container_id": "98d50084f7519ee84275e42f1d62aa84c45bf360ea4269b4c51bde4c71584cc7",
+      "image_architecture": "arm64",
+      "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+      "image_repo_digests": [
+        "vss-vios-nvstreamer@sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563"
+      ],
+      "image_size_bytes": 3456921334,
+      "offline_runtime_install": "disabled"
+    },
+    "overrides_sha256": "5ca4b6a956d2e000151f92565b7135090716f64b29ce2f12b87a00512533c7fd",
+    "service_version": {
+      "type": "streamer",
+      "version": "2.1.0-26.05.4"
+    },
+    "storage_config_sha256": "df3467bc7636fab7b75be3b663168ef9829affcf48ce4c0aefe1b7334edefdbb"
+  },
+  "observations": {
+    "barrier": {
+      "barrier_hold_ms": 3039,
+      "client_return_codes": [
+        0,
+        0
+      ],
+      "decoded_frame_count_per_client": [
+        1,
+        1
+      ],
+      "first_frame_completion_after_second_ms": [
+        1210,
+        1210
+      ],
+      "first_frame_completion_skew_ms": 0,
+      "post_barrier_logs_sha256": "f6054ed47851a4dbb6498c62027bd54e2255281f5ea6879f9245838c4a3f868f",
+      "pre_barrier_logs_sha256": "4b0dff230ac2a35850c86209aa32ed447745c727c89230827dfc6137bb8370f8",
+      "pre_barrier_sync_start_count": 0,
+      "second_client_released_barrier": true,
+      "shared_base_gst_time": 44707282796582,
+      "shared_clock_marker_sha256": "57284c135f7de979e838a28fe3b3f70398858688d76a572208f13fc2dbfb0bba",
+      "shared_clock_start_count": 1,
+      "single_client_barrier_held": true
+    },
+    "config": {
+      "key": "nv_streamer_sync_file_count",
+      "nv_streamer_loop_playback": true,
+      "nv_streamer_sync_playback": false,
+      "value": 2
+    },
+    "request_accounting": {
+      "http_failure_count": 0,
+      "http_response_count": 4
+    },
+    "rtsp_paths": [
+      "/nvstream/home/vst/vst_release/streamer_videos/vss_qual_sync_a.mp4",
+      "/nvstream/home/vst/vst_release/streamer_videos/vss_qual_sync_b.mp4"
+    ],
+    "rtsp_raw_host_scopes": [
+      "container_bridge",
+      "container_bridge"
+    ],
+    "sensor_ids": [
+      "vss_qual_sync_a_0",
+      "vss_qual_sync_b_1"
+    ],
+    "sensor_names": [
+      "vss_qual_sync_a",
+      "vss_qual_sync_b"
+    ],
+    "sensor_states": [
+      "online",
+      "online"
+    ]
+  },
+  "qualification_id": "thor-vss-3.2.1-nvstreamer-sync-playback-runtime",
+  "requests": [
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/version",
+      "response_bytes": 54,
+      "response_sha256": "0e2788a95c9416d75aa9e4d9c7b431b830fa65900a1d02f63cb882541a001e48",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/list",
+      "response_bytes": 1546,
+      "response_sha256": "3643818dd78f452e7cee6c54243d831a30b4155ce6226b1d3b7c82ad3e77cb10",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/vss_qual_sync_a_0/streams",
+      "response_bytes": 391,
+      "response_sha256": "00dfcbf942c6de37c4f614326d1a27b3a31a5e2231c007de08da46e1f715431d",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/vss_qual_sync_b_1/streams",
+      "response_bytes": 391,
+      "response_sha256": "28ed977297a1c58bda298f66f61961ef5047a159d401b6af8f026059772fa0ac",
+      "status": 200
+    }
+  ],
+  "runtime_evidence": true,
+  "schema_version": 1,
+  "status": "passed",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

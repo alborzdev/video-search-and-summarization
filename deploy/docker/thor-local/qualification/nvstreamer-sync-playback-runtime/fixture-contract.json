@@ -1,0 +1,32 @@
+{
+  "container": "mp4",
+  "duration_seconds": 8,
+  "encoding_identity_required": true,
+  "expected_bytes": 793162,
+  "expected_media_sha256": "211900643528d726b65e7e2ac6648dcf4b34bb53040e923d90bd3d42427bff0a",
+  "file_count": 2,
+  "generator": "deploy/docker/thor-local/qualification/nvstreamer-sync-playback-runtime/execute.py#_fixture",
+  "namespace": "vss_qual_sync",
+  "schema_version": 1,
+  "sync": {
+    "barrier_hold_seconds": 3,
+    "config_key": "nv_streamer_sync_file_count",
+    "config_value": 2,
+    "maximum_first_frame_skew_ms": 250
+  },
+  "transport_bounds": {
+    "http": "http://127.0.0.1:31010",
+    "rtsp": "rtsp://127.0.0.1:31654"
+  },
+  "video": {
+    "b_frames": 0,
+    "codec": "h264",
+    "frame_count": 240,
+    "frame_rate": "30/1",
+    "height": 180,
+    "keyint": 30,
+    "profile": "Constrained Baseline",
+    "width": 320
+  },
+  "warehouse_sample_bundle": "excluded"
+}

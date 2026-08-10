@@ -265,6 +265,43 @@ NVSTREAMER_FILE_WORKLOAD = {
         "postcondition",
     ],
 }
+NVSTREAMER_SYNC_CAPABILITY_ID = "configuration.nvstreamer.sync"
+NVSTREAMER_SYNC_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "nvstreamer-sync-playback-runtime/execute.py"
+)
+NVSTREAMER_SYNC_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "nvstreamer-sync-playback-runtime/fixture-contract.json"
+    ),
+    "sha256": "9135836e0962e2c1ed1634def225ffd873a4b57e563452c0652f317604afc019",
+}
+NVSTREAMER_SYNC_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "nvstreamer-sync-playback-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "eb13cebb154ac082803143e01e08df978991f40e1d15a5a0265d9f03aa8bd07e",
+    }
+]
+NVSTREAMER_SYNC_NAMESPACE = "vss_qual_sync"
+NVSTREAMER_SYNC_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 4,
+    "overhead_requests": 12,
+    "calculated_max_requests": 16,
+    "phases": [
+        "pre_state",
+        "config_apply",
+        "single_client_barrier",
+        "second_client_release",
+        "cleanup",
+        "postcondition",
+    ],
+}
+NVSTREAMER_SYNC_MAX_ACTIONS = 24
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -281,6 +318,14 @@ def _is_current_nvstreamer_file_workflow(capability: dict[str, Any]) -> bool:
         capability.get("id") == NVSTREAMER_FILE_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence") == NVSTREAMER_FILE_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_nvstreamer_sync(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == NVSTREAMER_SYNC_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == NVSTREAMER_SYNC_RUNTIME_EVIDENCE
     )
 
 # capability_id: (planning_requirement_id, minimum requests, maximum actions)
@@ -979,6 +1024,8 @@ def _workload(
         return copy.deepcopy(VIOS_BYTE_DOWNLOAD_WORKLOAD)
     if live_integration and _is_current_nvstreamer_file_workflow(capability):
         return copy.deepcopy(NVSTREAMER_FILE_WORKLOAD)
+    if live_integration and _is_current_nvstreamer_sync(capability):
+        return copy.deepcopy(NVSTREAMER_SYNC_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1034,6 +1081,8 @@ def _workload(
 
 
 def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
+    if _is_current_nvstreamer_sync(capability):
+        return NVSTREAMER_SYNC_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2114,6 +2163,26 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_nvstreamer_sync(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": NVSTREAMER_SYNC_FIXTURE["path"],
+                "generator": NVSTREAMER_SYNC_EXECUTOR,
+                "sha256": NVSTREAMER_SYNC_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = NVSTREAMER_SYNC_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                NVSTREAMER_SYNC_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = [NVSTREAMER_SYNC_NAMESPACE]
+            oracle["cleanup"]["allowlist"] = [NVSTREAMER_SYNC_NAMESPACE]
+            oracle["cleanup"]["executor"] = NVSTREAMER_SYNC_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                NVSTREAMER_SYNC_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -2310,6 +2379,8 @@ def validate(
         mv3dt_runtime = MV3DT_RUNTIME_FIXTURES.get(capability_id)
         if is_spatial_ai_core_stage1_binding(ledger_by_id[capability_id], item):
             expected_actions = 7
+        elif _is_current_nvstreamer_sync(ledger_by_id[capability_id]):
+            expected_actions = NVSTREAMER_SYNC_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

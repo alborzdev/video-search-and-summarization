@@ -1,0 +1,23 @@
+{
+  "data": {
+    "nv_streamer_loop_playback": true,
+    "nv_streamer_sync_file_count": 2,
+    "nv_streamer_sync_playback": false
+  },
+  "network": {
+    "http_port": "31010",
+    "rtsp_server_instances_count": 1,
+    "rtsp_server_port": 31654,
+    "server_domain_name": "127.0.0.1",
+    "webrtc_port_range": {
+      "max": 32320,
+      "min": 32300
+    }
+  },
+  "notifications": {
+    "enable_notification": false
+  },
+  "observability": {
+    "enable_telemetry": false
+  }
+}

@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-nvstreamer-file-workflow-runtime-289.json",
-      "descriptor_raw_sha256": "4b7c17cb229b0df0182fb3be4410ceabba67e54007476cdfdb9299bc815dcc64",
-      "set_id": "thor-vss-3.2.1-current-nvstreamer-file-workflow-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-nvstreamer-sync-runtime-289.json",
+      "descriptor_raw_sha256": "f9c34657c9af1b43ab96f510505db921e129c61178ae79c2bfead05f644ca205",
+      "set_id": "thor-vss-3.2.1-current-nvstreamer-sync-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-nvstreamer-file-workflow-runtime-500.json",
-      "descriptor_raw_sha256": "a957df5bf49bc1d9062944688a8c9a28ec5b39c0522d701ee68acb0dedf0cd38",
-      "set_id": "thor-vss-3.2.1-current-nvstreamer-file-workflow-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-nvstreamer-sync-runtime-500.json",
+      "descriptor_raw_sha256": "a3b227e2f4e2a34b0552f34b67b2898dc7dad111399b1f75b2676e403e4119af",
+      "set_id": "thor-vss-3.2.1-current-nvstreamer-sync-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-nvstreamer-file-workflow-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-nvstreamer-sync-runtime-500"
 }

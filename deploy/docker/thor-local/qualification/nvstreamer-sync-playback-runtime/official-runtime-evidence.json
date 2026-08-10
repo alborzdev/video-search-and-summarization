@@ -1,0 +1,195 @@
+{
+  "assertions": [
+    {
+      "expected": true,
+      "id": "contract-01",
+      "observation": "contract_identity/contract/identical_encoding_required",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "nv_streamer_sync_file_count",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/key",
+      "observed": "nv_streamer_sync_file_count",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 0,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/recommended_bframes",
+      "observed": 0,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 30,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/recommended_keyint",
+      "observed": 30,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "configuration-control-plane",
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/candidate_family",
+      "observed": "configuration-control-plane",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "systems",
+      "id": "contract-08",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "systems",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "systems-nvstreamer-sync"
+      ],
+      "id": "contract-09",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "systems-nvstreamer-sync"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "round_trip",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "configuration.nvstreamer.sync",
+  "cleanup": {
+    "allowlist": [
+      "vss_qual_sync"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss_qual_sync"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.configuration.nvstreamer.sync",
+    "path": "deploy/docker/thor-local/qualification/nvstreamer-sync-playback-runtime/fixture-contract.json",
+    "sha256": "9135836e0962e2c1ed1634def225ffd873a4b57e563452c0652f317604afc019"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "base_config_sha256": "5e706d472f28406e4df09434e0064f4ee7f9e2094ecb3dc091ee269a2b1f0c28",
+        "derived_config_canonical_sha256": "7775ee79a531e464cb198586c0947e405e9496e9d66fb9212923d37c22a4d55c",
+        "executor_sha256": "ac189cfd5bcc6d4884e626b73fe8a63e533482c7948bfae857f918e8b51f09e2",
+        "fixture_contract_sha256": "9135836e0962e2c1ed1634def225ffd873a4b57e563452c0652f317604afc019",
+        "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+        "overrides_sha256": "5ca4b6a956d2e000151f92565b7135090716f64b29ce2f12b87a00512533c7fd",
+        "raw_receipt_sha256": "56289140451822cf97202eff3b2cb81fa34116bcda4231ca3f5d9a2e211a4663",
+        "service_version": "2.1.0-26.05.4"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "barrier_hold_ms": 3039,
+        "config_key": "nv_streamer_sync_file_count",
+        "config_value": 2,
+        "decoded_frame_count_per_client": [
+          1,
+          1
+        ],
+        "files_byte_identical": true,
+        "first_frame_completion_after_second_ms": [
+          1210,
+          1210
+        ],
+        "first_frame_completion_skew_ms": 0,
+        "h264_b_frames": 0,
+        "h264_keyint": 30,
+        "pre_barrier_sync_start_count": 0,
+        "second_client_released_barrier": true,
+        "shared_base_gst_time": 44707282796582,
+        "shared_clock_start_count": 1,
+        "single_client_barrier_held": true
+      }
+    },
+    {
+      "id": "round_trip",
+      "result": "pass",
+      "value": {
+        "agent_generate_called": false,
+        "all_reserved_ports_released": true,
+        "exact_container_inventory_restored": true,
+        "exact_running_set_restored": true,
+        "http_failure_count": 0,
+        "main_vios_sensor_added": false,
+        "rt_cv_stream_added": false,
+        "runtime_package_installs": false,
+        "temporary_media_count": 2,
+        "warehouse_sample_bundle_used": false
+      }
+    }
+  ],
+  "oracle_id": "oracle.configuration.nvstreamer.sync",
+  "oracle_sha256": "c4e785c765aa18a96f60f1a81d7159aad906d5a8c256ea31361cb1cd1c0e8d29",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.configuration.nvstreamer.sync"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}
