@@ -1,0 +1,156 @@
+{
+  "assertions": [
+    {
+      "expected": "live",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/mode",
+      "observed": "live",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "webrtc",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/protocol",
+      "observed": "webrtc",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "wire_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "protocol.vios.webrtc-live",
+  "cleanup": {
+    "allowlist": [
+      "vss-vios-webrtc-live-owned-container",
+      "vss_qual_nvstreamer_owned_local_mount",
+      "vss_qual_nvstreamer_owned_api_upload"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-vios-webrtc-live-owned-container",
+      "vss_qual_nvstreamer_owned_local_mount",
+      "vss_qual_nvstreamer_owned_api_upload"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.protocol.vios.webrtc-live",
+    "path": "deploy/docker/thor-local/qualification/vios-webrtc-live-runtime/fixture-contract.json",
+    "sha256": "b8b1436835a8db5f7cfc29f8eb12cda959e3df1056b9a3003123a44f3eaffc89"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "mode": "live",
+          "protocol": "webrtc"
+        },
+        "fixture_media_sha256": "7c6e18340906dca00451268e3389a869d0d9fd169088a41ebad922b7dec846e9",
+        "receipt_sha256": "1d482e06ea5a2a59eb1d064ee475f67c4d6303461864b390f5847999f9d93fe4",
+        "service_version": "2.1.0-26.05.4"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "decoded_frames_final": 26,
+        "decoded_frames_first": 2,
+        "final_height": 180,
+        "final_width": 320,
+        "first_height": 1080,
+        "first_width": 1920,
+        "initial_decoded_frame_delta": 12,
+        "live_unmuted_video_track": true,
+        "presentation_time_nondecreasing": true,
+        "ready_state": 4,
+        "service_timestamps_integer_and_nondecreasing": true,
+        "sustained_decoded_frame_delta": 12
+      }
+    },
+    {
+      "id": "wire_contract",
+      "result": "pass",
+      "value": {
+        "active_state": "PLAYING",
+        "active_status": 200,
+        "aggregate_status_after_stop_is_null": true,
+        "missing_peer_error_code": "InvalidParameterError",
+        "missing_peer_status": 400,
+        "signaling_complete": true,
+        "stop_frame_observed": true,
+        "targeted_peer_absent_after_stop": true,
+        "video_removed": true,
+        "websocket_closed": true,
+        "websocket_path": "/api/v1/live/ws"
+      }
+    }
+  ],
+  "oracle_id": "oracle.protocol.vios.webrtc-live",
+  "oracle_sha256": "bcce967d3f8c6dedd4be5d0da3afc586db751cd5c74abafca87e319da85048f8",
+  "protocol_case": {
+    "case_id": "protocol-case.vios.webrtc-live",
+    "case_sha256": "8fc6d70c7ddd3eac1788eeb3f6b7c5a5bb4d1f12ad1a8c7863ca5d17feef4199",
+    "cleanup_result": "pass",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "negative_vector_ids": [
+      "vios-live-missing-peer"
+    ],
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "positive_vector_id": "vios-live-one-loopback-source",
+    "source_hashes": [
+      {
+        "content_sha256": "3ac10b1edbe86efd761986f6288a14a0bcc6bf2497c140b01afeaa6b9ddafcee",
+        "git_blob_oid": "ba76c845cd7217f3897c9c90052bcc3dd6293eb6",
+        "path": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml"
+      },
+      {
+        "content_sha256": "3fc0b76b21ff9f402482789dcabd61665c3a9e1ecf84bc77b6d70e328a9c72c8",
+        "git_blob_oid": "3edaf80713bfa6984b17b4d33e4a168343fb14f4",
+        "path": "services/vios/src/modules/webrtc_live/LivePeerConnection.cpp"
+      }
+    ],
+    "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc"
+  },
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.protocol.vios.webrtc-live"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

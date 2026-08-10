@@ -1,0 +1,415 @@
+{
+  "acknowledgement": "I_ACK_VIOS_WEBRTC_LIVE_EPHEMERAL_RUNTIME",
+  "capability_id": "protocol.vios.webrtc-live",
+  "cleanup": {
+    "all_reserved_ports_released": true,
+    "attempts": [
+      {
+        "operation": "container-stop",
+        "status": 0
+      },
+      {
+        "operation": "container-remove",
+        "status": 0
+      }
+    ],
+    "browser_session_stopped": true,
+    "browser_websocket_closed": true,
+    "exact_container_inventory_restored": true,
+    "exact_running_set_restored": true,
+    "isolated_aggregate_live_status_null": true,
+    "main_vios_live_status_restored": true,
+    "main_vios_post_state_sha256": "32a7b1369f8e4bb5987af2a7ff6d9b193aa01f4f63dc7217ce5314ee0c5eb66a",
+    "main_vios_pre_state_sha256": "32a7b1369f8e4bb5987af2a7ff6d9b193aa01f4f63dc7217ce5314ee0c5eb66a",
+    "main_vios_sensor_count_restored": true,
+    "main_vios_sensors_restored": true,
+    "temporary_tree_removed": true
+  },
+  "contract_sha256": "b8b1436835a8db5f7cfc29f8eb12cda959e3df1056b9a3003123a44f3eaffc89",
+  "executed_at": "2026-08-10T15:56:30.802140+00:00",
+  "fixture": {
+    "bootstrap_sensor_id_sha256": "d864c401a9a3331f61b2acb8e7aaf61ca459b340cca588ebe2f4bdf157888b32",
+    "bootstrap_sensor_name": "vss_qual_nvstreamer_ec6a88bc8ebb_local_mount",
+    "bytes": 55942,
+    "rtsp": {
+      "advertised_host_scope": "exact-owned-container-private-ipv4",
+      "advertised_port": 31554,
+      "advertised_port_range": [
+        31554,
+        31561
+      ],
+      "host_publish": "127.0.0.1",
+      "host_published_port": 31554,
+      "scheme": "rtsp"
+    },
+    "sensor_id_sha256": "24b4bdffb24e2bb0479b99985b6bbd7da2788430bf4424ef54489ba918799e3d",
+    "sensor_name": "vss_qual_nvstreamer_ec6a88bc8ebb_api_upload",
+    "sha256": "7c6e18340906dca00451268e3389a869d0d9fd169088a41ebad922b7dec846e9",
+    "stream_id_sha256": "24b4bdffb24e2bb0479b99985b6bbd7da2788430bf4424ef54489ba918799e3d",
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "has_b_frames": 0,
+        "height": 180,
+        "r_frame_rate": "10/1",
+        "width": 320
+      },
+      {
+        "channels": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0",
+        "sample_rate": "48000"
+      }
+    ],
+    "warehouse_sample_bundle": false
+  },
+  "oracle_id": "oracle.protocol.vios.webrtc-live",
+  "privacy": {
+    "retain_ice_candidates": false,
+    "retain_media_session_ids": false,
+    "retain_peer_ids": false,
+    "retain_sdp": false
+  },
+  "qualification_id": "thor-vss-3.2.1-vios-webrtc-live-runtime",
+  "runtime": {
+    "browser": {
+      "bounds": {
+        "duration_ms": 7340,
+        "external_request_count": 0,
+        "max_browser_actions": 16,
+        "max_duration_ms": 90000,
+        "max_http_responses": 400,
+        "max_websocket_frames": 240,
+        "numeric_loopback_only": true
+      },
+      "browser": {
+        "executable_path": "/snap/bin/chromium",
+        "launch_mode": "fresh-headless",
+        "playwright_module_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f"
+      },
+      "cleanup": {
+        "post_stop_status": {
+          "aggregate": {
+            "body_is_null": true,
+            "status": 200
+          },
+          "targeted": {
+            "error_code": "InvalidParameterError",
+            "error_message": "getStreamStatus",
+            "status": 400
+          }
+        },
+        "stop_frame_observed": true,
+        "video_removed": true,
+        "websocket_closed": true
+      },
+      "errors": [],
+      "network": {
+        "external_requests": 0,
+        "http_response_count": 26,
+        "http_status_counts": {
+          "200": 24,
+          "400": 1,
+          "404": 1
+        },
+        "loopback_request_failure_count": 0,
+        "non_loopback_request_failure_count": 0,
+        "request_failure_count": 0,
+        "response_path_counts": {
+          "GET /": 1,
+          "GET /api/v1/live/configuration": 2,
+          "GET /api/v1/live/stream/query": 2,
+          "GET /api/v1/live/stream/status": 3,
+          "GET /api/v1/live/streams": 1,
+          "GET /api/v1/live/version": 1,
+          "GET /api/v1/record/version": 1,
+          "GET /api/v1/replay/streams": 1,
+          "GET /api/v1/replay/version": 1,
+          "GET /api/v1/sensor/list": 1,
+          "GET /api/v1/sensor/status": 1,
+          "GET /api/v1/sensor/streams": 1,
+          "GET /api/v1/sensor/version": 2,
+          "GET /api/v1/storage/size": 1,
+          "GET /api/v1/storage/version": 1,
+          "GET /api/v1/streambridge/version": 1,
+          "GET /assets/js/index-5EoNMyg4.js": 1,
+          "GET /assets/js/vendor-CRrbei2B.js": 1,
+          "GET /config/calibration": 1,
+          "GET /favicon/favicon-16x16.png": 2
+        },
+        "websocket_frame_count": 19
+      },
+      "privacy": {
+        "ice_candidates_retained": false,
+        "media_session_ids_retained": false,
+        "peer_ids_retained": false,
+        "sdp_retained": false
+      },
+      "schema_version": 1,
+      "status": "passed",
+      "ui": {
+        "browser_actions": 10,
+        "route": "/#/media-streams",
+        "screenshot_bytes": 137925,
+        "screenshot_path": "/tmp/vss-vios-webrtc-live-ec6a88bc8ebb.png",
+        "screenshot_sha256": "9e68c0fded78fd7db3a029476bd3ffdf7a6682519cf013a094221fcf6c09e907",
+        "sensor_name": "vss_qual_nvstreamer_ec6a88bc8ebb_api_upload",
+        "title": "VSS VIOS"
+      },
+      "webrtc": {
+        "decoded_frame_deltas": {
+          "initial": 12,
+          "sustained": 12
+        },
+        "final_sample": {
+          "current_time": 2.381,
+          "decoded_frames": 26,
+          "dropped_frames": 1,
+          "ended": false,
+          "media_error": null,
+          "paused": false,
+          "ready_state": 4,
+          "tracks": [
+            {
+              "enabled": true,
+              "kind": "video",
+              "muted": false,
+              "ready_state": "live"
+            }
+          ],
+          "video_height": 180,
+          "video_width": 320
+        },
+        "first_sample": {
+          "current_time": 0.036,
+          "decoded_frames": 2,
+          "dropped_frames": 0,
+          "ended": false,
+          "media_error": null,
+          "paused": false,
+          "ready_state": 4,
+          "tracks": [
+            {
+              "enabled": true,
+              "kind": "video",
+              "muted": false,
+              "ready_state": "live"
+            }
+          ],
+          "video_height": 1080,
+          "video_width": 1920
+        },
+        "presentation_time_nondecreasing": true,
+        "received_api_keys": {
+          "api/v1/live/configuration": 1,
+          "api/v1/live/iceCandidate": 1,
+          "api/v1/live/iceServers": 1,
+          "api/v1/live/ping": 1,
+          "api/v1/live/setAnswer": 1,
+          "api/v1/live/stream/status": 5
+        },
+        "sent_api_keys": {
+          "api/v1/live/configuration": 1,
+          "api/v1/live/iceCandidate": 2,
+          "api/v1/live/iceServers": 1,
+          "api/v1/live/ping": 1,
+          "api/v1/live/stream/start": 1
+        },
+        "signaling_complete": true,
+        "status_while_active": {
+          "error": false,
+          "state": "PLAYING",
+          "status": 200
+        },
+        "timestamp_query": {
+          "first_integer": true,
+          "nondecreasing": true,
+          "second_integer": true,
+          "statuses": [
+            200,
+            200
+          ]
+        },
+        "websocket_path": "/api/v1/live/ws"
+      }
+    },
+    "container": {
+      "configured_image": "vss-vios-nvstreamer:3.2.1-thor-local",
+      "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+      "network_mode": "bridge",
+      "runtime": "nvidia"
+    },
+    "image": {
+      "codec_package_set": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+      "container_id": "a84f70519f2a4307e2ef3f114141e0f9dace3dd379a7422823f31a6e1fc3063c",
+      "image_architecture": "arm64",
+      "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+      "image_repo_digests": [
+        "vss-vios-nvstreamer@sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563"
+      ],
+      "image_size_bytes": 3456921334,
+      "offline_runtime_install": "disabled"
+    },
+    "negative": {
+      "adjacent_mutation": {
+        "operation": "remove",
+        "path": "/peerId"
+      },
+      "error_code": "InvalidParameterError",
+      "id": "vios-live-missing-peer",
+      "no_peer_retained": true,
+      "request": {
+        "method": "POST",
+        "path": "/live/stream/start",
+        "request_sha256": "6fd5c25eec14d553f0f065dd448974c8455fddc75c30fadc181a50a9f9dea431",
+        "response_bytes": 100,
+        "response_sha256": "a08e37553a5ca1f0af6ec63660aac46bf44a0e873ba4f73b5b97bdb27e65ce3d",
+        "status": 400
+      },
+      "status_after": {
+        "method": "GET",
+        "path": "/live/stream/status",
+        "request_sha256": null,
+        "response_bytes": 4,
+        "response_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "status": 200
+      }
+    },
+    "nvstreamer_version": {
+      "type": "streamer",
+      "version": "2.1.0-26.05.4"
+    },
+    "protocol_case": {
+      "case_id": "protocol-case.vios.webrtc-live",
+      "negative_vector_ids": [
+        "vios-live-missing-peer"
+      ],
+      "positive_vector_id": "vios-live-one-loopback-source"
+    },
+    "request_receipts": [
+      {
+        "content_type": "text/plain",
+        "method": "GET",
+        "path": "/sensor/version",
+        "response_bytes": 30,
+        "response_sha256": "c4cc0f83931d829e754d693b3983be7cc039635bc2581198ed0e3420623a3c4f",
+        "status": 404
+      },
+      {
+        "content_type": "text/plain",
+        "method": "GET",
+        "path": "/sensor/version",
+        "response_bytes": 54,
+        "response_sha256": "0e2788a95c9416d75aa9e4d9c7b431b830fa65900a1d02f63cb882541a001e48",
+        "status": 200
+      },
+      {
+        "content_type": "text/plain",
+        "method": "GET",
+        "path": "/sensor/list",
+        "response_bytes": 861,
+        "response_sha256": "54eb0cbe0f8e7b7a61f1a2d31aca573c0b06da90a9eeb3af80c536f1e5db7b3b",
+        "status": 200
+      },
+      {
+        "content_type": "text/plain",
+        "method": "POST",
+        "path": "/storage/file",
+        "response_bytes": 361,
+        "response_sha256": "bf87157677afced260b6a083458c9af0e323eefc43c9db628be9bcee672e7b6e",
+        "status": 200
+      },
+      {
+        "content_type": "text/plain",
+        "method": "GET",
+        "path": "/sensor/list",
+        "response_bytes": 1799,
+        "response_sha256": "37a69183b2ed6af857f48a6cb8b74bc312c8762fc702557c30b3cbe63c28ecde",
+        "status": 200
+      },
+      {
+        "content_type": "text/plain",
+        "method": "GET",
+        "path": "/live/version",
+        "response_bytes": 54,
+        "response_sha256": "0e2788a95c9416d75aa9e4d9c7b431b830fa65900a1d02f63cb882541a001e48",
+        "status": 200
+      },
+      {
+        "content_type": "text/plain",
+        "method": "GET",
+        "path": "/sensor/vss_qual_nvstreamer_ec6a88bc8ebb_api_upload/streams",
+        "response_bytes": 467,
+        "response_sha256": "5e39cfa0ac7d88adfe04916ec97370e138468812afa6821a6184dfd5c93d20bc",
+        "status": 200
+      },
+      {
+        "content_type": "text/plain",
+        "method": "GET",
+        "path": "/live/stream/status",
+        "response_bytes": 4,
+        "response_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "status": 200
+      }
+    ],
+    "upload": {
+      "bytes": 55942,
+      "filename": "vss_qual_nvstreamer_ec6a88bc8ebb_api_upload",
+      "id_sha256": "24b4bdffb24e2bb0479b99985b6bbd7da2788430bf4424ef54489ba918799e3d",
+      "method": "POST multipart single-request",
+      "path": "/storage/file",
+      "status": 200,
+      "stream_id_sha256": "24b4bdffb24e2bb0479b99985b6bbd7da2788430bf4424ef54489ba918799e3d"
+    }
+  },
+  "schema_version": 1,
+  "source_locks": [
+    {
+      "path": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml",
+      "sha256": "3ac10b1edbe86efd761986f6288a14a0bcc6bf2497c140b01afeaa6b9ddafcee"
+    },
+    {
+      "path": "services/vios/src/modules/webrtc_live/LivePeerConnection.cpp",
+      "sha256": "3fc0b76b21ff9f402482789dcabd61665c3a9e1ecf84bc77b6d70e328a9c72c8"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/vst/LiveStream.tsx",
+      "sha256": "3aac820bb28fc2d136476f5e6fd5995dc0b9ec6782bb55938d1cdade0d1f2a4d"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+      "sha256": "744010401465ac1ad569a92c972ffabd6a05da4a005238ab368f0bd28686a867"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/videoPlayerUtils/websocketEndpoint.ts",
+      "sha256": "4ca13fd18459acec73ded240f8fecf7b7602bf39394d1bc60c05a6393593cd22"
+    },
+    {
+      "path": "services/vios/ui/streaming-lib/src/websocket/WebSocket.ts",
+      "sha256": "6b6d784b32911f94eadbe1f75ffbd22c9049bb2a1d473cfb397f567f806b81f4"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+      "sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/execute.py",
+      "sha256": "c4a7935234a98a6d23e764f5d8887d01dba9d64ec33de51cd559845fae9a00e3"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/configs/vst_config.json",
+      "sha256": "5e706d472f28406e4df09434e0064f4ee7f9e2094ecb3dc091ee269a2b1f0c28"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/configs/vst_storage.json",
+      "sha256": "df3467bc7636fab7b75be3b663168ef9829affcf48ce4c0aefe1b7334edefdbb"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-webrtc-live-runtime/harness.mjs",
+      "sha256": "3935cc7f234c3212916eb470944ba18b5b29b6b497214982a06ab804eadfa6a4"
+    }
+  ],
+  "status": "passed"
+}

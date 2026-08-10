@@ -374,6 +374,50 @@ VIOS_WEBRTC_REPLAY_WORKLOAD = {
     ],
 }
 VIOS_WEBRTC_REPLAY_MAX_ACTIONS = 32
+VIOS_WEBRTC_LIVE_CAPABILITY_ID = "protocol.vios.webrtc-live"
+VIOS_WEBRTC_LIVE_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/vios-webrtc-live-runtime/execute.py"
+)
+VIOS_WEBRTC_LIVE_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "vios-webrtc-live-runtime/fixture-contract.json"
+    ),
+    "sha256": "b8b1436835a8db5f7cfc29f8eb12cda959e3df1056b9a3003123a44f3eaffc89",
+}
+VIOS_WEBRTC_LIVE_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "vios-webrtc-live-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "01a6f1e7e37445235256218ea9d87268d1b8fefbbc5d3766b789a93951d8009c",
+    }
+]
+VIOS_WEBRTC_LIVE_NAMESPACES = [
+    "vss-vios-webrtc-live-owned-container",
+    "vss_qual_nvstreamer_owned_local_mount",
+    "vss_qual_nvstreamer_owned_api_upload",
+]
+VIOS_WEBRTC_LIVE_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 10,
+    "overhead_requests": 86,
+    "calculated_max_requests": 96,
+    "phases": [
+        "pre_state",
+        "bootstrap",
+        "upload",
+        "adjacent_negative",
+        "browser_signaling",
+        "decoded_media",
+        "timestamp_readback",
+        "explicit_stop",
+        "cleanup",
+        "postcondition",
+    ],
+}
+VIOS_WEBRTC_LIVE_MAX_ACTIONS = 32
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -415,6 +459,14 @@ def _is_current_vios_webrtc_replay(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == VIOS_WEBRTC_REPLAY_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_vios_webrtc_live(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == VIOS_WEBRTC_LIVE_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == VIOS_WEBRTC_LIVE_RUNTIME_EVIDENCE
     )
 
 
@@ -1120,6 +1172,8 @@ def _workload(
         return copy.deepcopy(NVSTREAMER_FULL_CONFIG_WORKLOAD)
     if live_integration and _is_current_vios_webrtc_replay(capability):
         return copy.deepcopy(VIOS_WEBRTC_REPLAY_WORKLOAD)
+    if live_integration and _is_current_vios_webrtc_live(capability):
+        return copy.deepcopy(VIOS_WEBRTC_LIVE_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1181,6 +1235,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return NVSTREAMER_FULL_CONFIG_MAX_ACTIONS
     if _is_current_vios_webrtc_replay(capability):
         return VIOS_WEBRTC_REPLAY_MAX_ACTIONS
+    if _is_current_vios_webrtc_live(capability):
+        return VIOS_WEBRTC_LIVE_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2309,6 +2365,30 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_vios_webrtc_live(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": VIOS_WEBRTC_LIVE_FIXTURE["path"],
+                "generator": VIOS_WEBRTC_LIVE_EXECUTOR,
+                "sha256": VIOS_WEBRTC_LIVE_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = VIOS_WEBRTC_LIVE_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                VIOS_WEBRTC_LIVE_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                VIOS_WEBRTC_LIVE_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                VIOS_WEBRTC_LIVE_NAMESPACES
+            )
+            oracle["cleanup"]["executor"] = VIOS_WEBRTC_LIVE_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                VIOS_WEBRTC_LIVE_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -2511,6 +2591,8 @@ def validate(
             expected_actions = NVSTREAMER_FULL_CONFIG_MAX_ACTIONS
         elif _is_current_vios_webrtc_replay(ledger_by_id[capability_id]):
             expected_actions = VIOS_WEBRTC_REPLAY_MAX_ACTIONS
+        elif _is_current_vios_webrtc_live(ledger_by_id[capability_id]):
+            expected_actions = VIOS_WEBRTC_LIVE_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

@@ -5,14 +5,14 @@ This directory provides the static, fail-closed metadata selector.
 binds a complete metadata plane: manifest, official ledger and schema,
 capability-oracle registry and schema, and acceptance inventory.
 
-The selected `thor-vss-3.2.1-current-vios-webrtc-replay-runtime-500` set
+The selected `thor-vss-3.2.1-current-vios-webrtc-live-runtime-500` set
 contains the exact current 289-row Thor prefix plus the unchanged 211-row
 candidate suffix. The current prefix includes every prior runtime promotion and
-the oracle-bound native VIOS WebRTC replay receipt; the suffix remains
-evidence-empty and non-promoting. The registered
-`thor-vss-3.2.1-current-vios-webrtc-replay-runtime-289` set exposes the same
-canonical current prefix explicitly. Previous NvStreamer, VIOS lifecycle,
-codec-runtime, agent-evaluation, SpatialAI, and older descriptors remain
+the oracle-bound native VIOS live and replay WebRTC receipts; the suffix
+remains evidence-empty and non-promoting. The registered
+`thor-vss-3.2.1-current-vios-webrtc-live-runtime-289` set exposes the same
+canonical current prefix explicitly. Previous WebRTC replay, NvStreamer, VIOS
+lifecycle, codec-runtime, agent-evaluation, SpatialAI, and older descriptors remain
 checked in as immutable historical provenance but are deliberately not
 registered as current.
 
@@ -45,7 +45,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-current-vios-webrtc-replay-runtime-289 --json
+  --set thor-vss-3.2.1-current-vios-webrtc-live-runtime-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

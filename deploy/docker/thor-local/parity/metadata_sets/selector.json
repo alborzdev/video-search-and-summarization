@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-webrtc-replay-runtime-289.json",
-      "descriptor_raw_sha256": "19d36bdea73a846e45d54299abc157f863b50c75ea1ccf26238db40ea344c024",
-      "set_id": "thor-vss-3.2.1-current-vios-webrtc-replay-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-webrtc-live-runtime-289.json",
+      "descriptor_raw_sha256": "0e16e85b74894b278c185c8471d36b5de118e4a42ee5baceb7782e427da0104f",
+      "set_id": "thor-vss-3.2.1-current-vios-webrtc-live-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-webrtc-replay-runtime-500.json",
-      "descriptor_raw_sha256": "833627786f336dfe744cca3a59ddf5295beb997683a4db42ef777e73d945a39f",
-      "set_id": "thor-vss-3.2.1-current-vios-webrtc-replay-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-webrtc-live-runtime-500.json",
+      "descriptor_raw_sha256": "13cd8a85000d697aed005507d8201061257cfbd5f2779f3e250007209df1ac20",
+      "set_id": "thor-vss-3.2.1-current-vios-webrtc-live-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-vios-webrtc-replay-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-vios-webrtc-live-runtime-500"
 }

@@ -37,7 +37,14 @@
         "behavior.agent.known-issues",
         "runtime.agent.operational-modes",
         "runtime.workflow.base-chat-report",
-        "runtime.agent.base-hitl"
+        "runtime.agent.base-hitl",
+        "manifest-entry.base-agent-workflow.00-short-video-retrieval",
+        "manifest-entry.base-agent-workflow.01-visual-question-answering",
+        "manifest-entry.base-agent-workflow.02-vlm-report-generation",
+        "manifest-entry.base-agent-workflow.03-templated-reports",
+        "manifest-entry.base-agent-workflow.04-large-file-chunked-upload",
+        "manifest-entry.base-agent-workflow.05-local-shared-remote-model-layouts",
+        "manifest-entry.base-agent-workflow.06-public-media-url-rewriting"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -74,7 +81,16 @@
       "official_capability_ids": [
         "runtime.agent.lvs-profile",
         "runtime.lvs.single-request-queue",
-        "runtime.lvs.supported-formats"
+        "runtime.lvs.supported-formats",
+        "manifest-entry.video-summarization-file.00-chunked-dense-captions",
+        "manifest-entry.video-summarization-file.01-file-summarization",
+        "manifest-entry.video-summarization-file.02-multi-video-report",
+        "manifest-entry.video-summarization-file.03-structured-output",
+        "manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+        "manifest-entry.video-summarization-file.05-reasoning",
+        "manifest-entry.video-summarization-file.06-partial-video-offsets",
+        "manifest-entry.video-summarization-file.07-recommended-configuration",
+        "manifest-entry.video-summarization-file.08-prometheus-metrics"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -105,6 +121,14 @@
       "category": "workflow",
       "gap": "All 18 LVS HTTP routes and 13 SSE MCP tools, including the four Thor-local file-management adapters, are statically qualified. MCP health tools probe real LVS readiness/liveness, but every tool and the separate dense-caption cache/embedding lanes still require runtime exercise.",
       "id": "video-summarization-live",
+      "official_capability_ids": [
+        "manifest-entry.video-summarization-live.00-live-captions",
+        "manifest-entry.video-summarization-live.01-live-stream-summaries",
+        "manifest-entry.video-summarization-live.02-stream-reports",
+        "manifest-entry.video-summarization-live.03-caption-backed-q-a",
+        "manifest-entry.video-summarization-live.04-elasticsearch-caption-storage",
+        "manifest-entry.video-summarization-live.05-sse-mcp-server"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "services/video-summarization/src",
@@ -117,7 +141,7 @@
         "deploy/docker/thor-local/qualification/expected/lvs.json",
         "deploy/docker/thor-local/qualification/expected/lvs-mcp.json"
       ],
-      "thor_state": "partial"
+      "thor_state": "wired"
     },
     {
       "acceptance_class": "required_local",
@@ -138,7 +162,15 @@
       "id": "semantic-search",
       "official_capability_ids": [
         "runtime.agent.search-profile",
-        "behavior.search-upload.content-type"
+        "behavior.search-upload.content-type",
+        "manifest-entry.semantic-search.00-natural-language-action-event-search",
+        "manifest-entry.semantic-search.01-cv-attribute-search",
+        "manifest-entry.semantic-search.02-multi-embedding-fusion",
+        "manifest-entry.semantic-search.03-search-by-image",
+        "manifest-entry.semantic-search.04-follow-up-q-a",
+        "manifest-entry.semantic-search.05-query-time-source-count-refinement",
+        "manifest-entry.semantic-search.06-default-critic-vlm",
+        "manifest-entry.semantic-search.07-file-and-rtsp-archive-management"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -161,6 +193,10 @@
       "category": "scale",
       "gap": "Thor's qualified envelope is one conservative stream and two supervised demo streams; upstream scale figures are not Thor claims.",
       "id": "search-scale",
+      "official_capability_ids": [
+        "manifest-entry.search-scale.00-configuration-up-to-100-streams",
+        "manifest-entry.search-scale.01-16-concurrent-1080p-streams-tested-by-nvidia"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "deploy/docker/developer-profiles/dev-profile-search"
@@ -190,7 +226,14 @@
       "official_capability_ids": [
         "runtime.workflow.alert-verification",
         "runtime.alerts.workflow-modes",
-        "runtime.alerts.persistence-output"
+        "runtime.alerts.persistence-output",
+        "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+        "manifest-entry.alert-verification.01-post-alert-verification",
+        "manifest-entry.alert-verification.02-contextualization",
+        "manifest-entry.alert-verification.03-multi-category-classification",
+        "manifest-entry.alert-verification.04-on-demand-verification",
+        "manifest-entry.alert-verification.05-custom-vlm-parsing",
+        "manifest-entry.alert-verification.06-non-blocking-multithreaded-execution"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -220,7 +263,14 @@
       "gap": "Realtime rules, persistence/replay, always-on lifecycle, and WebSocket broadcast are selected; exercise them with bounded local rules and verify restart recovery. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
       "id": "realtime-alerts",
       "official_capability_ids": [
-        "runtime.workflow.real-time-alerts"
+        "runtime.workflow.real-time-alerts",
+        "manifest-entry.realtime-alerts.00-live-stream-vlm-rules",
+        "manifest-entry.realtime-alerts.01-rule-crud",
+        "manifest-entry.realtime-alerts.02-rule-replay",
+        "manifest-entry.realtime-alerts.03-always-on-lifecycle",
+        "manifest-entry.realtime-alerts.04-incident-retrieval",
+        "manifest-entry.realtime-alerts.05-websocket-delivery",
+        "manifest-entry.realtime-alerts.06-natural-language-alert-management"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -244,6 +294,9 @@
       "external_dependency": "A user-managed Slack workspace, app, token, and destination channel.",
       "gap": "Optional Slack delivery remains available when the user supplies a Slack workspace and credentials; it is outside local Thor inference acceptance.",
       "id": "alert-notifications-slack",
+      "official_capability_ids": [
+        "manifest-entry.alert-notifications-slack.00-slack-notification"
+      ],
       "runtime_state": "not_applicable",
       "source_evidence": [
         "services/alert"
@@ -271,6 +324,19 @@
       "category": "service",
       "gap": "The exact Cosmos3 lane passed uploaded-file dense captions, caption SSE with usage, file-backed video chat, exact cancellation, and cleanup. HTTP/S, S3, allowlisted file URI, inline data URI, RTSP mutation, incident/category/reasoning options, and the artifact-blocked native-audio Omni lane remain individually unqualified.",
       "id": "rt-vlm-media",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-media.00-file-upload",
+        "manifest-entry.rt-vlm-media.01-http-s",
+        "manifest-entry.rt-vlm-media.02-s3",
+        "manifest-entry.rt-vlm-media.03-allowlisted-file-uri",
+        "manifest-entry.rt-vlm-media.04-inline-data-uri",
+        "manifest-entry.rt-vlm-media.05-rtsp",
+        "manifest-entry.rt-vlm-media.06-dense-captions",
+        "manifest-entry.rt-vlm-media.07-incidents",
+        "manifest-entry.rt-vlm-media.08-categories",
+        "manifest-entry.rt-vlm-media.09-reasoning",
+        "manifest-entry.rt-vlm-media.10-audio-transcript"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "services/rtvi/rt-vlm/src",
@@ -286,7 +352,7 @@
         "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md",
         "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
-      "thor_state": "partial"
+      "thor_state": "wired"
     },
     {
       "acceptance_class": "required_local",
@@ -303,6 +369,16 @@
       "category": "api",
       "gap": "The live loopback-only API exposed all 27 documented methods plus exact-request DELETE. Health/model/metadata/metrics/assets, complete file lifecycle, captioning, caption SSE, file-backed chat, legacy completion negative behavior, schema caps, empty stream inventories, and exact cancellation passed. RTSP mutation and same-stream multi-job semantics remain unqualified without an operator stream URL.",
       "id": "rt-vlm-api",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-api.00-openai-compatible-chat-completions",
+        "manifest-entry.rt-vlm-api.01-text-only-chat",
+        "manifest-entry.rt-vlm-api.02-multimodal-multi-turn-chat",
+        "manifest-entry.rt-vlm-api.03-token-sse",
+        "manifest-entry.rt-vlm-api.04-original-stream-api",
+        "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api",
+        "manifest-entry.rt-vlm-api.06-file-api",
+        "manifest-entry.rt-vlm-api.07-health-metadata-models-metrics"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "services/rtvi/rt-vlm/src"
@@ -328,6 +404,13 @@
       "category": "model",
       "gap": "The exact default Cosmos3 Nano BF16 lane passed local captioning, SSE, chat, cancellation, cleanup, and readiness. The broader 11-variant advertised matrix remains source-anchored: CR2 8B/2B and inactive overlays are locked but not current-runtime qualified, the 8B Hugging Face revision is not claimed equivalent to NGC hf-0303, 2B is non-advertised, Omni is artifact/capacity blocked, and the remaining exact variants are absent.",
       "id": "rt-vlm-models",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-models.00-cosmos-reason-1-2",
+        "manifest-entry.rt-vlm-models.01-cosmos-3-nano-super",
+        "manifest-entry.rt-vlm-models.02-nemotron-omni",
+        "manifest-entry.rt-vlm-models.03-qwen-3-5-and-moe",
+        "manifest-entry.rt-vlm-models.04-remote-openai-compatible-endpoint"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "services/rtvi/rt-vlm"
@@ -367,6 +450,16 @@
       "category": "service",
       "gap": "Timestamp prompt controls are pinned by the Thor contract; prove custom templates and model-gated absolute metadata at runtime.",
       "id": "rt-vlm-performance-observability",
+      "official_capability_ids": [
+        "manifest-entry.rt-vlm-performance-observability.00-efficient-video-sampling",
+        "manifest-entry.rt-vlm-performance-observability.01-gop-aware-decode",
+        "manifest-entry.rt-vlm-performance-observability.02-decoder-reuse",
+        "manifest-entry.rt-vlm-performance-observability.03-vllm-tuning",
+        "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry",
+        "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+        "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+        "manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "services/rtvi/rt-vlm/src"
@@ -401,7 +494,14 @@
         "model.rt-embed.cosmos-embed1-336p",
         "model.rt-embed.cosmos-embed1-224p",
         "model.rt-embed.cosmos-embed1-448p-anomaly",
-        "configuration.rt-embed.model-source"
+        "configuration.rt-embed.model-source",
+        "manifest-entry.rt-embed.00-video-image-text-embedding",
+        "manifest-entry.rt-embed.01-live-rtsp",
+        "manifest-entry.rt-embed.02-url-and-inline-base64-video",
+        "manifest-entry.rt-embed.03-cosmos-embed1",
+        "manifest-entry.rt-embed.04-kafka-redis-opentelemetry",
+        "manifest-entry.rt-embed.05-original-and-cv-compatible-stream-apis",
+        "manifest-entry.rt-embed.06-health-metadata-models-metrics"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -439,7 +539,15 @@
       "id": "rt-cv-2d",
       "official_capability_ids": [
         "runtime.rt-cv.model-pipelines",
-        "runtime.rtvi.input-codec-boundary"
+        "runtime.rtvi.input-codec-boundary",
+        "manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking",
+        "manifest-entry.rt-cv-2d.01-warehouse-and-smart-city-rt-detr-gdino",
+        "manifest-entry.rt-cv-2d.02-radio-clip",
+        "manifest-entry.rt-cv-2d.03-siglip2-re-identification",
+        "manifest-entry.rt-cv-2d.04-on-demand-image-embedding",
+        "manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle",
+        "manifest-entry.rt-cv-2d.06-health-and-metrics",
+        "manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -461,6 +569,10 @@
       "category": "service",
       "gap": "The sample-free launcher now enforces exact 19/31-service Redis graphs, private snapshots, pull-free startup, and strict four-camera/model/calibration contracts. Stage the missing Sparse4D v2.2 ONNX and (900,11) anchor plus aligned operator data, then run preflight and runtime qualification.",
       "id": "rt-cv-3d-sparse4d",
+      "official_capability_ids": [
+        "manifest-entry.rt-cv-3d-sparse4d.00-sparse4d-multi-camera-3d-detection-and-tracking",
+        "manifest-entry.rt-cv-3d-sparse4d.01-shared-rt-cv-lifecycle-health-metrics"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "deploy/docker/industry-profiles/warehouse-operations/warehouse-3d-app"
@@ -490,6 +602,14 @@
       "category": "service",
       "gap": "The sample-free custom-data launcher enforces exact 20/28-service Redis graphs, private snapshots, pull-free startup, synchronized H.264/H.265 media, finite calibration/projection matrices, top-view metadata, and ONNX-only model inputs. Provide the missing matching videos/calibration/models, then run preflight and runtime qualification.",
       "id": "rt-cv-3d-mv3dt",
+      "official_capability_ids": [
+        "manifest-entry.rt-cv-3d-mv3dt.00-per-camera-rt-detr",
+        "manifest-entry.rt-cv-3d-mv3dt.01-mv3dt-bev-fusion",
+        "manifest-entry.rt-cv-3d-mv3dt.02-bodypose3dnet",
+        "manifest-entry.rt-cv-3d-mv3dt.03-four-camera-calibrated-multiview-tracking",
+        "manifest-entry.rt-cv-3d-mv3dt.04-compose-deployment",
+        "manifest-entry.rt-cv-3d-mv3dt.05-associated-skill"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "deploy/docker/industry-profiles/warehouse-operations/warehouse-mv3dt-app",
@@ -528,7 +648,13 @@
         "runtime.behavior.pipeline",
         "runtime.behavior.events-incidents",
         "runtime.behavior.embedding-downsampling",
-        "runtime.behavior.space-utilization"
+        "runtime.behavior.space-utilization",
+        "manifest-entry.behavior-analytics.00-2d-3d-mv3dt-smart-city-warehouse-playback-fusion-apps",
+        "manifest-entry.behavior-analytics.01-events-and-incidents",
+        "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
+        "manifest-entry.behavior-analytics.03-tripwires-and-rois",
+        "manifest-entry.behavior-analytics.04-proximity-and-clustering",
+        "manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -559,7 +685,15 @@
       "id": "video-analytics-api",
       "official_capability_ids": [
         "runtime.video-analytics.query-and-library-contract",
-        "behavior.video-analytics.optional-kafka"
+        "behavior.video-analytics.optional-kafka",
+        "manifest-entry.video-analytics-api.00-speed-flow-travel-time-occupancy-space-metrics",
+        "manifest-entry.video-analytics-api.01-objects-and-locations",
+        "manifest-entry.video-analytics-api.02-frames-bev-alerts-proximity",
+        "manifest-entry.video-analytics-api.03-behaviors-incidents-clustering",
+        "manifest-entry.video-analytics-api.04-tripwire-roi-amr-events",
+        "manifest-entry.video-analytics-api.05-dynamic-config-and-audit",
+        "manifest-entry.video-analytics-api.06-calibration-road-network-usd-images",
+        "manifest-entry.video-analytics-api.07-sensor-lookup"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -606,7 +740,13 @@
         "boundary.auto-calibration.thor-extension",
         "behavior.auto-calibration.known-limitations",
         "behavior.auto-calibration.failure-recovery",
-        "behavior.auto-calibration.result-verification"
+        "behavior.auto-calibration.result-verification",
+        "manifest-entry.auto-calibration.00-single-and-multi-camera-calibration",
+        "manifest-entry.auto-calibration.01-file-and-rtsp-through-vios",
+        "manifest-entry.auto-calibration.02-camera-pose-focal-lens-distortion-rectification",
+        "manifest-entry.auto-calibration.03-vggt-frame-selection",
+        "manifest-entry.auto-calibration.04-global-roi-tripwire",
+        "manifest-entry.auto-calibration.05-image-coordinate-export"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -649,7 +789,16 @@
       "id": "vios-core",
       "official_capability_ids": [
         "runtime.vios.modular-capabilities",
-        "runtime.nvstreamer.file-streaming"
+        "runtime.nvstreamer.file-streaming",
+        "manifest-entry.vios-core.00-camera-discovery-and-sensor-management",
+        "manifest-entry.vios-core.01-file-upload-and-registration",
+        "manifest-entry.vios-core.02-file-to-rtsp-republish",
+        "manifest-entry.vios-core.03-recording-schedules-and-timelines",
+        "manifest-entry.vios-core.04-clip-and-raw-full-file-download",
+        "manifest-entry.vios-core.05-snapshots",
+        "manifest-entry.vios-core.06-live-replay-webrtc",
+        "manifest-entry.vios-core.07-rtsp-proxy-and-stream-bridge",
+        "manifest-entry.vios-core.08-qos-and-storage-caps"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -682,10 +831,15 @@
         "CPU multimedia support"
       ],
       "category": "media",
-      "gap": "Current isolated Thor evidence passes B-frame handling, four-slice HEVC/RFC7798, H.264/H.265, non-B-frame H.264/HEVC AAC republish, and both hardware-default and CPU software paths using the exact 63-package networkless derivatives. The only remaining family item is NvStreamer-to-main-VIOS AAC recording/clip verification, gated by the exact operator approval phrase `approve RT-CV sample stream add`; direct H.264+B-frame+AAC republish has a qualified software-transcode substitute.",
+      "gap": "The canonical Thor receipt passes CPU multimedia, B-frame handling, HEVC multislice/RFC7798, H.264/H.265, and bounded AAC RTSP republish with its documented transcode substitute. In this 500-row planning overlay, the four non-CPU passed results remain candidate rows until separately evidence-bound; main-VIOS audio recording remains approval-gated and unqualified.",
       "id": "vios-codecs-audio",
       "official_capability_ids": [
-        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+        "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+        "manifest-entry.vios-codecs-audio.00-b-frame-handling",
+        "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
+        "manifest-entry.vios-codecs-audio.02-h-264-h-265",
+        "manifest-entry.vios-codecs-audio.03-audio-recording",
+        "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -705,7 +859,7 @@
         "deploy/docker/thor-local/qualification/vios-codecs-runtime/official-runtime-evidence.json",
         "deploy/docker/thor-local/qualification/vios-codecs-runtime/EVIDENCE.md"
       ],
-      "thor_state": "wired",
+      "thor_state": "partial",
       "unqualified_advertised": [
         "audio recording"
       ]
@@ -720,7 +874,12 @@
       "category": "model",
       "gap": "The exact locked 63-package ARM64 bundle and 3.2.1 audio-codec RT-VLM derivative are staged; the pinned Omni inventory and mutually exclusive memory-gated overlay pass source checks. Stage the FP8 Omni snapshot, free at least 80 GiB, add a tiny known-speech fixture, then qualify H.264/AAC through RT-VLM, agent, LVS, and alerts.",
       "id": "audio-understanding",
-      "runtime_state": "blocked",
+      "official_capability_ids": [
+        "manifest-entry.audio-understanding.00-audio-aware-base-workflow",
+        "manifest-entry.audio-understanding.01-audio-transcript-per-rt-vlm-chunk",
+        "manifest-entry.audio-understanding.02-audio-aware-summarization-and-alerts"
+      ],
+      "runtime_state": "not_qualified",
       "source_evidence": [
         "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml",
         "services/rtvi/rt-vlm"
@@ -758,6 +917,15 @@
       "category": "ui",
       "gap": "The full ARM64 VIOS SPA is selected and routed at /vst, Thor overrides public STUN with a loopback-only config, and native Recorded Streams replay now passes real browser SDP/ICE, decoded video, API and UI seek, adjacent-negative, stop, and external-attempt monitoring. Live/video-wall/schedule/media/stats/debug acceptance and a pull-free restart repeat remain open. Calibration remains in the dedicated auto-calibration family.",
       "id": "vios-ui",
+      "official_capability_ids": [
+        "manifest-entry.vios-ui.00-vios-dashboard",
+        "manifest-entry.vios-ui.01-sensor-and-stream-management",
+        "manifest-entry.vios-ui.02-recording-schedules",
+        "manifest-entry.vios-ui.03-media-management-upload",
+        "manifest-entry.vios-ui.04-live-replay-video-wall",
+        "manifest-entry.vios-ui.05-qos-system-stream-stats",
+        "manifest-entry.vios-ui.06-debug-and-playback-automation"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "services/vios/ui"
@@ -769,7 +937,7 @@
         "deploy/docker/thor-local/compose.yml",
         "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-ui-audit.md"
       ],
-      "thor_state": "wired"
+      "thor_state": "partial"
     },
     {
       "acceptance_class": "required_local",
@@ -798,7 +966,15 @@
         "runtime.ui.dashboard-tab",
         "runtime.ui.search-tab",
         "runtime.ui.video-management-tab",
-        "behavior.ui.known-issues"
+        "behavior.ui.known-issues",
+        "manifest-entry.main-ui.00-streaming-agent-chat",
+        "manifest-entry.main-ui.01-websocket-recovery",
+        "manifest-entry.main-ui.02-hitl",
+        "manifest-entry.main-ui.03-search-and-search-by-image",
+        "manifest-entry.main-ui.04-alerts-and-realtime-rule-creation",
+        "manifest-entry.main-ui.05-chunked-upload-and-rtsp-management",
+        "manifest-entry.main-ui.06-dashboard",
+        "manifest-entry.main-ui.07-map"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -852,7 +1028,15 @@
         "runtime.smart-city.agent-workflow",
         "model.smart-city.perception-options",
         "configuration.smart-city.custom-location",
-        "behavior.smart-city.known-limitations"
+        "behavior.smart-city.known-limitations",
+        "manifest-entry.smart-city.00-traffic-rt-detr",
+        "manifest-entry.smart-city.01-traffic-behavior-analytics",
+        "manifest-entry.smart-city.02-geo-map-matching",
+        "manifest-entry.smart-city.03-calibration-toolkit-import",
+        "manifest-entry.smart-city.04-its-analytics-api-ui",
+        "manifest-entry.smart-city.05-smart-city-reports-and-va-mcp",
+        "manifest-entry.smart-city.06-kibana-dashboard",
+        "manifest-entry.smart-city.07-ten-sensor-sample-profile"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -920,7 +1104,13 @@
         "performance.warehouse.profile-latency",
         "runtime.warehouse.profile-2d-pipeline",
         "runtime.warehouse.profile-2d-agent-pipeline",
-        "configuration.warehouse.rtdetr-deepstream"
+        "configuration.warehouse.rtdetr-deepstream",
+        "manifest-entry.warehouse-2d.00-single-camera-2d-warehouse",
+        "manifest-entry.warehouse-2d.01-kafka-and-redis-paths",
+        "manifest-entry.warehouse-2d.02-ppe-load-quality-spillover-pathway-rules",
+        "manifest-entry.warehouse-2d.03-dynamic-analytics-configuration",
+        "manifest-entry.warehouse-2d.04-api-ui-dashboard",
+        "manifest-entry.warehouse-2d.05-playback"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -957,7 +1147,12 @@
         "runtime.warehouse.profile-3d-sparse4d-pipeline",
         "runtime.warehouse.profile-mv3dt-pipeline",
         "configuration.warehouse.sparse4d-deepstream",
-        "configuration.warehouse.mv3dt-deepstream"
+        "configuration.warehouse.mv3dt-deepstream",
+        "manifest-entry.warehouse-3d-and-mv3dt.00-sparse4d-3d-warehouse",
+        "manifest-entry.warehouse-3d-and-mv3dt.01-mv3dt-multiview-warehouse",
+        "manifest-entry.warehouse-3d-and-mv3dt.02-bev-fusion",
+        "manifest-entry.warehouse-3d-and-mv3dt.03-auto-calibration-variants",
+        "manifest-entry.warehouse-3d-and-mv3dt.04-top-view-visualization"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -996,6 +1191,16 @@
       "category": "api",
       "gap": "The scoped core ledger passes 342 declared REST operations (341 normalized routes) plus all 42 tools and five prompts across 17 surfaces. Four operations are explicit Thor-local extensions, so the official core denominator is 338 declared (337 normalized). It is not the complete product API: configuration and calibration surfaces are tracked separately by extended-api-surfaces. The GET-only loopback tier defines 32 probes across 22 services; the stopped unified stack still needs every inventoried route, tool, prompt, and VIOS-backed path exercised.",
       "id": "agent-and-mcp-apis",
+      "official_capability_ids": [
+        "manifest-entry.agent-and-mcp-apis.00-nat-generate-chat",
+        "manifest-entry.agent-and-mcp-apis.01-health",
+        "manifest-entry.agent-and-mcp-apis.02-upload-handshake-and-completion",
+        "manifest-entry.agent-and-mcp-apis.03-video-delete",
+        "manifest-entry.agent-and-mcp-apis.04-rtsp-add-delete",
+        "manifest-entry.agent-and-mcp-apis.05-va-mcp",
+        "manifest-entry.agent-and-mcp-apis.06-lvs-mcp",
+        "manifest-entry.agent-and-mcp-apis.07-vios-mcp"
+      ],
       "runtime_state": "not_qualified",
       "source_evidence": [
         "services/agent",
@@ -1015,7 +1220,7 @@
         "deploy/docker/thor-local/parity/evidence/2026-07-31-runtime-qualification.md",
         "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-mcp-local.md"
       ],
-      "thor_state": "wired"
+      "thor_state": "partial"
     },
     {
       "acceptance_class": "required_local",
@@ -1042,7 +1247,15 @@
         "observability.alerts.prometheus",
         "storage.elk.indices-ilm",
         "deployment.elk.gpu-vector-indexing",
-        "observability.system.prometheus-stack"
+        "observability.system.prometheus-stack",
+        "manifest-entry.infra-observability.00-api-gateway",
+        "manifest-entry.infra-observability.01-kafka",
+        "manifest-entry.infra-observability.02-redis",
+        "manifest-entry.infra-observability.03-elasticsearch-kibana",
+        "manifest-entry.infra-observability.04-prometheus-grafana",
+        "manifest-entry.infra-observability.05-phoenix-opentelemetry",
+        "manifest-entry.infra-observability.06-nvschema",
+        "manifest-entry.infra-observability.07-broker-debugging-tools"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -1179,7 +1392,13 @@
       "id": "docker-compose",
       "official_capability_ids": [
         "deployment.rt-cv.compose-extension-contract",
-        "deployment.vios.horizontal-scaling"
+        "deployment.vios.horizontal-scaling",
+        "manifest-entry.docker-compose.00-base-compose",
+        "manifest-entry.docker-compose.01-search-compose",
+        "manifest-entry.docker-compose.02-lvs-compose",
+        "manifest-entry.docker-compose.03-alerts-compose",
+        "manifest-entry.docker-compose.04-warehouse-compose",
+        "manifest-entry.docker-compose.05-smart-city-launchable-compose"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -1212,7 +1431,9 @@
       "gap": "Charts are preserved exactly; this single-node Compose deployment has no Kubernetes cluster, StorageClass, kubectl or Helm runtime. The four developer-profile charts remain an external Kubernetes surface, not a Thor-local Compose runtime requirement.",
       "id": "helm",
       "official_capability_ids": [
-        "deployment.helm.developer-profiles"
+        "deployment.helm.developer-profiles",
+        "manifest-entry.helm.00-helm-for-four-developer-workflows",
+        "manifest-entry.helm.01-helm-for-most-standalone-services"
       ],
       "runtime_state": "not_applicable",
       "source_evidence": [
@@ -1244,7 +1465,13 @@
         "deployment.nemoclaw.same-host-operating-path",
         "configuration.nemoclaw.model-surface-boundary",
         "security.nemoclaw.policy-provider-network-boundary",
-        "behavior.nemoclaw.recovery-and-destructive-boundaries"
+        "behavior.nemoclaw.recovery-and-destructive-boundaries",
+        "manifest-entry.nemoclaw-openclaw.00-nemoclaw-openclaw-sandbox",
+        "manifest-entry.nemoclaw-openclaw.01-vss-sandbox-policy",
+        "manifest-entry.nemoclaw-openclaw.02-vss-skills-upload",
+        "manifest-entry.nemoclaw-openclaw.03-orchestrator-mcp",
+        "manifest-entry.nemoclaw-openclaw.04-local-openai-compatible-provider-option",
+        "manifest-entry.nemoclaw-openclaw.05-openclaw-alert-notification-integration"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -1279,6 +1506,10 @@
       "external_dependency": "A separately deployed NVIDIA Enterprise RAG server implementing the configured retrieval endpoint.",
       "gap": "The integration remains available for a user-supplied Enterprise RAG endpoint; the external server is not part of local VSS product parity.",
       "id": "enterprise-rag",
+      "official_capability_ids": [
+        "manifest-entry.enterprise-rag.00-rag-report-generation",
+        "manifest-entry.enterprise-rag.01-frag-retrieval-integration"
+      ],
       "runtime_state": "not_applicable",
       "source_evidence": [
         "deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config_rag.yml",
@@ -1308,7 +1539,13 @@
         "security.trusted-network-boundary",
         "security.external-edge-controls",
         "security.known-unmitigated-limitations",
-        "deployment.network.bridge-firewall"
+        "deployment.network.bridge-firewall",
+        "manifest-entry.offline-security.00-offline-restart",
+        "manifest-entry.offline-security.01-content-addressed-image-locks",
+        "manifest-entry.offline-security.02-model-checksums",
+        "manifest-entry.offline-security.03-credential-scrubbing",
+        "manifest-entry.offline-security.04-loopback-ingress",
+        "manifest-entry.offline-security.05-physical-interface-firewall"
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [

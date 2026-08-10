@@ -64,6 +64,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current NvStreamer synchronized-playback runtime receipt
             + 1  # current NvStreamer complete-configuration runtime receipt
             + 1  # current VIOS native WebRTC replay runtime receipt
+            + 1  # current VIOS native WebRTC live runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -126,6 +127,45 @@ class CapabilityOracleTests(unittest.TestCase):
         self.assertEqual(
             oracle["protocol_case_binding"]["negative_vector_ids"],
             ["vios-replay-bad-seek-action"],
+        )
+        self.assertEqual(oracle["evidence"], [])
+
+    def test_vios_webrtc_live_is_exact_executor_ready_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.VIOS_WEBRTC_LIVE_FIXTURE["path"],
+                "generator": verifier.VIOS_WEBRTC_LIVE_EXECUTOR,
+                "sha256": verifier.VIOS_WEBRTC_LIVE_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.VIOS_WEBRTC_LIVE_WORKLOAD,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.VIOS_WEBRTC_LIVE_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.VIOS_WEBRTC_LIVE_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["cleanup"]["targets"], verifier.VIOS_WEBRTC_LIVE_NAMESPACES
+        )
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(
+            oracle["protocol_case_binding"]["negative_vector_ids"],
+            ["vios-live-missing-peer"],
         )
         self.assertEqual(oracle["evidence"], [])
 
@@ -732,7 +772,13 @@ class CapabilityOracleTests(unittest.TestCase):
             if cleanup["mutation"] == "read_only":
                 self.assertEqual(cleanup["targets"], [])
             else:
-                self.assertEqual(len(cleanup["targets"]), 1)
+                expected_target_count = (
+                    len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
+                    if item["capability_id"]
+                    == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
+                    else 1
+                )
+                self.assertEqual(len(cleanup["targets"]), expected_target_count)
                 if item["capability_id"] in verifier.SPATIAL_AI_IDS[:7]:
                     self.assertEqual(
                         cleanup["targets"], [item["fixture"]["input"]["namespace"]]
@@ -765,6 +811,13 @@ class CapabilityOracleTests(unittest.TestCase):
                     self.assertEqual(
                         cleanup["targets"],
                         [verifier.VIOS_WEBRTC_REPLAY_NAMESPACE],
+                    )
+                elif (
+                    item["capability_id"]
+                    == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
+                ):
+                    self.assertEqual(
+                        cleanup["targets"], verifier.VIOS_WEBRTC_LIVE_NAMESPACES
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
@@ -907,6 +960,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID
+                )
+                else verifier.VIOS_WEBRTC_LIVE_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
                 )
                 else override[2]
                 if override is not None

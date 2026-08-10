@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "qualification_id": "thor-vss-3.2.1-vios-webrtc-live-runtime",
+  "capability_id": "protocol.vios.webrtc-live",
+  "oracle_id": "oracle.protocol.vios.webrtc-live",
+  "default_execution_enabled": false,
+  "acknowledgement": "I_ACK_VIOS_WEBRTC_LIVE_EPHEMERAL_RUNTIME",
+  "contract": {
+    "mode": "live",
+    "protocol": "webrtc"
+  },
+  "target": {
+    "product_version": "3.2.1",
+    "service_version": "2.1.0-26.05.4",
+    "upstream_main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "fixture": {
+    "id": "fixture.protocol.vios.webrtc-live.generated-isolated-rtsp",
+    "kind": "deterministic_generated_media_uploaded_through_isolated_nvstreamer_api",
+    "sensor_name_pattern": "^vss_qual_nvstreamer_[0-9a-f]{12}_api_upload$",
+    "bootstrap_sensor_name_pattern": "^vss_qual_nvstreamer_[0-9a-f]{12}_local_mount$",
+    "media": {
+      "bytes": 55942,
+      "sha256": "7c6e18340906dca00451268e3389a869d0d9fd169088a41ebad922b7dec846e9",
+      "duration_seconds": 2.0,
+      "generator": "source-locked NvStreamer helper: testsrc2+sine, H.264 baseline, no B-frames, AAC, faststart",
+      "video": {
+        "codec": "h264",
+        "width": 320,
+        "height": 180,
+        "frame_rate": "10/1",
+        "b_frames": 0
+      },
+      "audio": {
+        "codec": "aac",
+        "sample_rate": 48000,
+        "channels": 1
+      }
+    },
+    "warehouse_sample_bundle": false,
+    "main_vios_sensor_mutation": false
+  },
+  "bounds": {
+    "max_duration_seconds": 180,
+    "max_requests": 96,
+    "max_actions": 32,
+    "network_scope": "host numeric-loopback plus owned Docker bridge only",
+    "browser": {
+      "mode": "fresh-headless-system-chromium",
+      "executable": "/snap/bin/chromium"
+    },
+    "isolated_vios_ui": "http://127.0.0.1:31000/#/media-streams",
+    "isolated_http": "http://127.0.0.1:31000",
+    "isolated_rtsp": {
+      "advertised_scope": "exact owned-container Docker bridge IPv4",
+      "advertised_port_range": [31554, 31561],
+      "host_publish": "rtsp://127.0.0.1:31554"
+    },
+    "isolated_webrtc_udp_range": [32200, 32220],
+    "docker_lifecycle_allowed": "owned qualifier container only",
+    "persistent_mutation_allowed": false,
+    "service_configuration_mutation_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "rt_cv_stream_add": "forbidden",
+    "main_vios_sensor_add": "forbidden",
+    "agent_generate": "forbidden"
+  },
+  "workflow": [
+    "capture exact Docker inventory, running set, reserved ports, fixture, and main-VIOS sensor state",
+    "start the exact offline arm64 Thor-local NvStreamer image in an isolated temporary namespace with one oracle-owned bootstrap file",
+    "wait for the bootstrap sensor to prove the streamer adaptor and RTSP load balancer are initialized",
+    "generate the exact bounded 2-second H.264/AAC oracle and upload it through the documented isolated NvStreamer single-chunk API",
+    "republish the uploaded clip as an isolated local RTSP/live source",
+    "reject a live stream/start request with peerId removed and prove no peer resource is retained",
+    "select the oracle-owned source in the shipped Media Streams UI",
+    "complete live WebSocket configuration, SDP, and ICE negotiation in Chromium",
+    "observe an unmuted 16:9 WebRTC track at the source 320x180 or service-default 1920x1080 output, with advancing decoded frames and nondecreasing presentation and service timestamps",
+    "observe targeted PLAYING status while the peer is active",
+    "close the player, observe stream/stop and WebSocket close, and verify the peer is absent",
+    "remove the isolated container and temporary tree and verify exact host/main-VIOS restoration"
+  ],
+  "privacy": {
+    "retain_peer_ids": false,
+    "retain_media_session_ids": false,
+    "retain_sdp": false,
+    "retain_ice_candidates": false
+  },
+  "cleanup": {
+    "mutation": "isolated_ephemeral_container_and_session_only",
+    "executor": "native UI stream/stop followed by owned-container removal",
+    "postconditions": [
+      "the executor-owned live peer is rejected as absent",
+      "aggregate live status is null",
+      "the live WebSocket is closed",
+      "the video element is removed",
+      "the qualifier container and temporary fixture are absent",
+      "all reserved ports are released",
+      "Docker inventory/running set and main-VIOS sensors equal pre-state"
+    ]
+  },
+  "source_locks": [
+    {
+      "path": "services/vios/doc/api/vst_live_stream_ms/swagger.yaml",
+      "sha256": "3ac10b1edbe86efd761986f6288a14a0bcc6bf2497c140b01afeaa6b9ddafcee"
+    },
+    {
+      "path": "services/vios/src/modules/webrtc_live/LivePeerConnection.cpp",
+      "sha256": "3fc0b76b21ff9f402482789dcabd61665c3a9e1ecf84bc77b6d70e328a9c72c8"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/vst/LiveStream.tsx",
+      "sha256": "3aac820bb28fc2d136476f5e6fd5995dc0b9ec6782bb55938d1cdade0d1f2a4d"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+      "sha256": "744010401465ac1ad569a92c972ffabd6a05da4a005238ab368f0bd28686a867"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/videoPlayerUtils/websocketEndpoint.ts",
+      "sha256": "4ca13fd18459acec73ded240f8fecf7b7602bf39394d1bc60c05a6393593cd22"
+    },
+    {
+      "path": "services/vios/ui/streaming-lib/src/websocket/WebSocket.ts",
+      "sha256": "6b6d784b32911f94eadbe1f75ffbd22c9049bb2a1d473cfb397f567f806b81f4"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+      "sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/execute.py",
+      "sha256": "c4a7935234a98a6d23e764f5d8887d01dba9d64ec33de51cd559845fae9a00e3"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/configs/vst_config.json",
+      "sha256": "5e706d472f28406e4df09434e0064f4ee7f9e2094ecb3dc091ee269a2b1f0c28"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/configs/vst_storage.json",
+      "sha256": "df3467bc7636fab7b75be3b663168ef9829affcf48ce4c0aefe1b7334edefdbb"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-webrtc-live-runtime/harness.mjs",
+      "sha256": "3935cc7f234c3212916eb470944ba18b5b29b6b497214982a06ab804eadfa6a4"
+    }
+  ]
+}
