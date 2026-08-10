@@ -21,9 +21,12 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, "../../../../..");
 const fixtures = resolve(here, "fixtures");
 const apiBase = process.env.VSS_VIDEO_ANALYTICS_URL ?? "http://127.0.0.1:8081";
+const brokerlessApiBase = "http://127.0.0.1:18081";
 const esBase = process.env.VSS_VIDEO_ANALYTICS_ES_URL ?? "http://127.0.0.1:9200";
 const apiContainer = process.env.VSS_VIDEO_ANALYTICS_CONTAINER ?? "vss-video-analytics-api";
 const oracleContainer = "vss-video-analytics-runtime-oracle";
+const brokerlessContainer = "vss-video-analytics-brokerless-oracle";
+const apiImage = "nvcr.io/nvidia/vss-core/vss-video-analytics-api:3.2.0";
 const behaviorImage = "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1";
 const behaviorConfig = resolve(
   repo,
@@ -38,6 +41,7 @@ const openapiPath = resolve(
   "services/analytics/video-analytics-api/src/app/specification/openapi.json",
 );
 const semanticDocumentsPath = resolve(fixtures, "semantic-documents.json");
+const brokerlessConfigPath = resolve(fixtures, "brokerless-config.json");
 const imageDataDir = resolve(
   repo,
   "deploy/docker/data-dir/data_log/vss_video_analytics_api",
@@ -125,6 +129,7 @@ const receipt = {
 
 const stoppedContainers = [];
 let oracleStarted = false;
+let brokerlessStarted = false;
 let cleanupAttempted = false;
 let preFileSet = new Set();
 
@@ -223,9 +228,10 @@ async function apiRequest({
   expectedStatuses = [200],
   operationKey = null,
   polarity = "positive",
+  baseUrl = apiBase,
 }) {
   const started = Date.now();
-  const result = await rawFetch(`${apiBase}${path}`, { method, body, headers });
+  const result = await rawFetch(`${baseUrl}${path}`, { method, body, headers });
   const record = {
     label,
     method,
@@ -373,7 +379,7 @@ async function verifyOpenApi() {
 }
 
 async function preflight() {
-  for (const path of [openapiPath, expectedPath, behaviorConfig, semanticDocumentsPath]) {
+  for (const path of [openapiPath, expectedPath, behaviorConfig, semanticDocumentsPath, brokerlessConfigPath]) {
     assert(existsSync(path), `Required file missing: ${path}`);
   }
   assert(existsSync(imageDataDir), `Video Analytics upload directory missing: ${imageDataDir}`);
@@ -384,6 +390,7 @@ async function preflight() {
   assert((await dockerContainerState("kafka")) === "running", "kafka must be running");
   assert((await dockerContainerState("elasticsearch")) === "running", "elasticsearch must be running");
   assert((await dockerContainerState(oracleContainer)) === null, `${oracleContainer} already exists; remove it before retrying`);
+  assert((await dockerContainerState(brokerlessContainer)) === null, `${brokerlessContainer} already exists; remove it before retrying`);
 
   for (const name of managedBehaviorContainers) {
     const state = await dockerContainerState(name);
@@ -1041,6 +1048,91 @@ async function runPositiveDeletes() {
   };
 }
 
+async function runBrokerlessScenario() {
+  log("Exercising the official API with kafka.brokers=null on isolated port 18081.");
+  const containerConfigPath = "/opt/mdx/vss-video-analytics-api/configs/vss-video-analytics-api-brokerless.json";
+  await command(
+    "docker",
+    [
+      "run",
+      "--detach",
+      "--name",
+      brokerlessContainer,
+      "--network",
+      "host",
+      "--volume",
+      `${brokerlessConfigPath}:${containerConfigPath}:ro`,
+      apiImage,
+      "node",
+      "index.js",
+      "--config",
+      containerConfigPath,
+    ],
+    { timeout: 30_000 },
+  );
+  brokerlessStarted = true;
+
+  await waitFor(
+    async () => {
+      if ((await dockerContainerState(brokerlessContainer)) !== "running") return false;
+      const result = await rawFetch(`${brokerlessApiBase}/livez`, { timeoutMs: 2_000 });
+      return result.response.status === 200 && result.json?.isAlive === true;
+    },
+    "brokerless Video Analytics API livez",
+    30_000,
+    500,
+  );
+
+  const livez = await apiRequest({
+    label: "brokerless GET /livez",
+    path: "/livez",
+    expectedStatuses: [200],
+    operationKey: "BROKERLESS GET /livez",
+    polarity: "brokerless",
+    baseUrl: brokerlessApiBase,
+  });
+  assert(livez.json?.isAlive === true, "Brokerless API /livez was not alive");
+
+  const frames = await apiRequest({
+    label: "brokerless non-Kafka raw-frame read",
+    path: query("/frames", { sensorId: sensor, fromTimestamp, toTimestamp, maxResultSize: 1 }),
+    expectedStatuses: [200],
+    operationKey: "BROKERLESS GET /frames",
+    polarity: "brokerless",
+    baseUrl: brokerlessApiBase,
+  });
+  assert(frames.json?.frames?.some((entry) => entry.id === "150" && entry.sensorId === sensor), `Brokerless non-Kafka read omitted the raw frame: ${JSON.stringify(frames.json)}`);
+
+  const brokerRequired = await apiRequest({
+    label: "brokerless Kafka-dependent tracker request",
+    path: query("/tracker/unique-object-count-with-locations", { place }),
+    expectedStatuses: [422],
+    operationKey: "BROKERLESS GET /tracker/unique-object-count-with-locations",
+    polarity: "brokerless_expected_error",
+    baseUrl: brokerlessApiBase,
+  });
+  assert(
+    brokerRequired.json?.error === "A message broker like 'kafka' is required to consume messages which provide real time locations and object count.",
+    `Brokerless tracker endpoint returned an unexpected error contract: ${JSON.stringify(brokerRequired.json)}`,
+  );
+
+  const logs = await command("docker", ["logs", brokerlessContainer], { allowFailure: true });
+  const logText = `${logs.stdout}\n${logs.stderr}`;
+  assert(!/KafkaJSConnectionError|Connection error.*9092/i.test(logText), "Brokerless API attempted a Kafka connection despite brokers=null");
+  receipt.operations.brokerless = {
+    config_brokers: null,
+    api_started: true,
+    livez_http_status: 200,
+    non_kafka_endpoint: { path: "/frames", http_status: 200, fixture_frame_id: "150" },
+    kafka_dependent_endpoint: {
+      path: "/tracker/unique-object-count-with-locations",
+      http_status: 422,
+      exact_message_contract: true,
+    },
+    kafka_connection_attempt_observed: false,
+  };
+}
+
 async function cleanup() {
   if (cleanupAttempted) return;
   cleanupAttempted = true;
@@ -1068,6 +1160,13 @@ async function cleanup() {
       timeout: 30_000,
     });
     if (removed.code !== 0) failures.push(`remove oracle container: ${removed.stderr.trim()}`);
+  }
+  if (brokerlessStarted || (await dockerContainerState(brokerlessContainer)) !== null) {
+    const removed = await command("docker", ["rm", "--force", brokerlessContainer], {
+      allowFailure: true,
+      timeout: 30_000,
+    });
+    if (removed.code !== 0) failures.push(`remove brokerless API container: ${removed.stderr.trim()}`);
   }
 
   for (const name of stoppedContainers) {
@@ -1103,6 +1202,7 @@ async function cleanup() {
   if (newFiles.length) failures.push(`new upload files remain: ${newFiles.join(", ")}`);
   if (missingFiles.length) failures.push(`pre-existing upload files missing: ${missingFiles.join(", ")}`);
   if ((await dockerContainerState(oracleContainer)) !== null) failures.push("oracle container still exists");
+  if ((await dockerContainerState(brokerlessContainer)) !== null) failures.push("brokerless API container still exists");
 
   receipt.cleanup = {
     attempted: true,
@@ -1111,6 +1211,7 @@ async function cleanup() {
     upload_file_set_exact: newFiles.length === 0 && missingFiles.length === 0,
     upload_file_count_after: afterFiles.size,
     disposable_container_absent: (await dockerContainerState(oracleContainer)) === null,
+    brokerless_container_absent: (await dockerContainerState(brokerlessContainer)) === null,
     original_behavior_containers_restored: (
       await Promise.all(managedBehaviorContainers.map((name) => dockerContainerState(name)))
     ).every((state) => state === "running"),
@@ -1133,6 +1234,7 @@ async function main() {
     await runNegativePosts();
     log("Exercising reversible calibration deletion operations.");
     await runPositiveDeletes();
+    await runBrokerlessScenario();
     await cleanup();
     receipt.status = "passed";
   } catch (error) {

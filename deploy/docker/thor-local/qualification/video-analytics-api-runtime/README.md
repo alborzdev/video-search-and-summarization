@@ -11,6 +11,7 @@ The harness fails closed unless:
 
 - `vss-video-analytics-api`, `kafka`, and `elasticsearch` are running;
 - the two normal Thor behavior consumers are running;
+- both disposable qualifier container names are absent;
 - the checked-in and running-container OpenAPI bytes exactly match the locked
   56-operation manifest;
 - all qualifier-owned Elasticsearch indices and temporary templates are
@@ -54,8 +55,13 @@ stream, warehouse dataset, or VSS Agent `/generate` call is involved.
   bytes/metadata, occupancy reset, and cluster-label readbacks;
 - dynamic configuration ACK and behavior checkpoint;
 - dynamic calibration upload/upsert/delete checkpoints;
+- an official isolated API instance with `kafka.brokers: null`, proving healthy
+  startup, a populated non-Kafka raw-frame read, the exact HTTP 422
+  broker-required contract for real-time tracker locations, and zero Kafka
+  connection attempts;
 - exact cleanup and restoration.
 
 This proves the complete routed API surface, the advertised non-empty query
-families, and its write/read/Kafka plumbing. Kafka-absent behavior is a
-separate destructive-boundary scenario and remains tracked independently.
+families, write/read/Kafka plumbing, and the optional-Kafka failure contract.
+The brokerless proof uses a second official API container on loopback port
+18081; it never stops or reconfigures the shared Kafka broker.

@@ -24,6 +24,8 @@
     "road-network and USD wrapper-qualified numeric mappings are live",
     "dynamic configuration receives a successful behavior-analytics ACK",
     "dynamic calibration upload, upsert, and delete checkpoints are observed",
+    "an official API instance with kafka.brokers null starts without a Kafka connection attempt",
+    "a non-Kafka data endpoint succeeds and a Kafka-dependent endpoint returns the exact broker-required HTTP 422 contract",
     "semantic fixture readbacks match expected values and bytes",
     "qualifier-owned state is absent and original behavior consumers are restored"
   ],
@@ -31,11 +33,10 @@
     "indices": "only the fixed qualifier-owned index allowlist",
     "templates": "only qualifier-created calibration templates",
     "files": "only files absent from the pre-run upload-directory snapshot",
-    "containers": "only vss-video-analytics-runtime-oracle",
+    "containers": "only vss-video-analytics-runtime-oracle and vss-video-analytics-brokerless-oracle",
     "restore": "restart only normal behavior containers stopped by this run"
   },
   "non_claims": [
-    "Kafka-absent error behavior",
     "VSS Agent /generate behavior"
   ]
 }

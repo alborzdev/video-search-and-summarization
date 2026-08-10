@@ -8,9 +8,10 @@ value-level semantics for every data-bearing query family, successful
 write/read workflows, adjacent-negative validation, Kafka-backed dynamic
 configuration and calibration, and exact cleanup/restoration.
 
-The retained successful run started at `2026-08-10T10:17:27.299Z` and finished
-at `2026-08-10T10:18:02.710Z`. Its JSON receipt had SHA-256
-`43b01ddcf15e2cc9b839d834187b2029d8c75ace5c7c989367c8c27362309dbe`.
+The complete qualifier passed twice consecutively. The retained final run
+started at `2026-08-10T10:26:16.785Z` and finished at
+`2026-08-10T10:26:37.188Z`. Its JSON receipt had SHA-256
+`758d71542b251ec761f09f2ff0f51886551d7bc01af4171059300de3cb19c1f7`.
 
 ## Runtime identity
 
@@ -30,9 +31,10 @@ The operation set was exactly 48 GET and 8 POST operations.
 
 ## Request and semantic evidence
 
-- 68 total runtime HTTP requests
+- 71 total runtime HTTP requests
 - 60 positive requests
 - 8 adjacent-negative requests
+- 3 brokerless-contract requests
 - 0 HTTP 5xx responses
 - all 48 unique GET operations returned HTTP 200
 - all 8 unique POST operations completed a positive HTTP 201 workflow
@@ -68,6 +70,21 @@ The operation set was exactly 48 GET and 8 POST operations.
   behavior-analytics config checkpoint
 - dynamic calibration upload, upsert, and delete produced at least three
   behavior-analytics calibration checkpoints
+
+## Optional Kafka behavior
+
+A second official `vss-video-analytics-api:3.2.0` container started on
+loopback port 18081 with the checked-in fixture setting `kafka.brokers` and
+`kafka.retries` to `null`. The shared broker remained running and unchanged.
+
+- `/livez` returned HTTP 200 with `isAlive: true`.
+- `/frames` returned the seeded raw frame `150`, proving ordinary
+  Elasticsearch-backed endpoints remain functional without a Kafka client.
+- `/tracker/unique-object-count-with-locations` without a historical timestamp
+  returned HTTP 422 with the exact broker-required message documented by the
+  implementation.
+- container logs contained no Kafka connection failure or port-9092 attempt.
+- cleanup removed the brokerless container exactly.
 
 ## Mapping defects and corrections
 
@@ -111,6 +128,7 @@ The successful receipt proved:
 - both qualifier-created calibration templates absent;
 - the upload directory exactly matched its empty pre-run snapshot;
 - the disposable behavior container absent;
+- the disposable brokerless API container absent;
 - both original behavior containers restored and running; and
 - no cleanup failures.
 
@@ -135,7 +153,7 @@ was retained.
 ## Scope boundary
 
 This pass qualifies the exact HTTP route set, validation behavior, populated
-query semantics, write/read semantics, and Kafka update plumbing. The one
-remaining Video Analytics API scenario is intentional Kafka-absent error
-behavior; it requires temporarily stopping the shared broker and is tracked as
-a separate reversible runtime qualification rather than being inferred here.
+query semantics, write/read semantics, Kafka update plumbing, and optional
+Kafka behavior. No known Video Analytics API runtime gap remains on this Thor.
+The VSS Agent `/generate` safety gate is a separate component boundary and was
+not invoked by this qualifier.
