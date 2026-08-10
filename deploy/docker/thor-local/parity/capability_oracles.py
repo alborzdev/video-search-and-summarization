@@ -418,6 +418,58 @@ VIOS_WEBRTC_LIVE_WORKLOAD = {
     ],
 }
 VIOS_WEBRTC_LIVE_MAX_ACTIONS = 32
+VIDEO_ANALYTICS_RUNTIME_CAPABILITY_IDS = (
+    "runtime.video-analytics.query-and-library-contract",
+    "behavior.video-analytics.optional-kafka",
+)
+VIDEO_ANALYTICS_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/video-analytics-api-runtime/harness.mjs"
+)
+VIDEO_ANALYTICS_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "video-analytics-api-runtime/contract.json"
+    ),
+    "sha256": "7cbe3cdb682e0180e835eddb703920afc3538645e2669d73076ef3e6c123502b",
+}
+VIDEO_ANALYTICS_RUNTIME_EVIDENCE = {
+    "runtime.video-analytics.query-and-library-contract": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/video-analytics-api-runtime/"
+                "official-runtime-evidence-query-library.json"
+            ),
+            "sha256": "895962811784eb8b03897f048fb9ed5d31156fc0443384ad39c49c1ed13bf8f5",
+        }
+    ],
+    "behavior.video-analytics.optional-kafka": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/video-analytics-api-runtime/"
+                "official-runtime-evidence-optional-kafka.json"
+            ),
+            "sha256": "125f3ab237b425c3d0bbd530755f26040d66fc13664fab43626da26d563eb1b3",
+        }
+    ],
+}
+VIDEO_ANALYTICS_RUNTIME_NAMESPACE = "vss-oracle-video-analytics"
+VIDEO_ANALYTICS_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 71,
+    "overhead_requests": 0,
+    "calculated_max_requests": 71,
+    "phases": [
+        "pre_state",
+        "positive_posts",
+        "all_get_operations",
+        "adjacent_negative_posts",
+        "calibration_cleanup",
+        "brokerless_boundary",
+        "cleanup",
+        "postcondition",
+    ],
+}
+VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS = 96
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -467,6 +519,16 @@ def _is_current_vios_webrtc_live(capability: dict[str, Any]) -> bool:
         capability.get("id") == VIOS_WEBRTC_LIVE_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence") == VIOS_WEBRTC_LIVE_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_video_analytics_runtime(capability: dict[str, Any]) -> bool:
+    capability_id = capability.get("id")
+    return (
+        capability_id in VIDEO_ANALYTICS_RUNTIME_CAPABILITY_IDS
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == VIDEO_ANALYTICS_RUNTIME_EVIDENCE[capability_id]
     )
 
 
@@ -1174,6 +1236,8 @@ def _workload(
         return copy.deepcopy(VIOS_WEBRTC_REPLAY_WORKLOAD)
     if live_integration and _is_current_vios_webrtc_live(capability):
         return copy.deepcopy(VIOS_WEBRTC_LIVE_WORKLOAD)
+    if live_integration and _is_current_video_analytics_runtime(capability):
+        return copy.deepcopy(VIDEO_ANALYTICS_RUNTIME_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1237,6 +1301,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return VIOS_WEBRTC_REPLAY_MAX_ACTIONS
     if _is_current_vios_webrtc_live(capability):
         return VIOS_WEBRTC_LIVE_MAX_ACTIONS
+    if _is_current_video_analytics_runtime(capability):
+        return VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2389,6 +2455,28 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_video_analytics_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": VIDEO_ANALYTICS_RUNTIME_FIXTURE["path"],
+                "generator": VIDEO_ANALYTICS_RUNTIME_EXECUTOR,
+                "sha256": VIDEO_ANALYTICS_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = (
+                VIDEO_ANALYTICS_RUNTIME_EXECUTOR
+            )
+            oracle["execution_bounds"]["collectors"] = [
+                VIDEO_ANALYTICS_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = [VIDEO_ANALYTICS_RUNTIME_NAMESPACE]
+            oracle["cleanup"]["allowlist"] = [VIDEO_ANALYTICS_RUNTIME_NAMESPACE]
+            oracle["cleanup"]["executor"] = VIDEO_ANALYTICS_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                VIDEO_ANALYTICS_RUNTIME_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -2593,6 +2681,8 @@ def validate(
             expected_actions = VIOS_WEBRTC_REPLAY_MAX_ACTIONS
         elif _is_current_vios_webrtc_live(ledger_by_id[capability_id]):
             expected_actions = VIOS_WEBRTC_LIVE_MAX_ACTIONS
+        elif _is_current_video_analytics_runtime(ledger_by_id[capability_id]):
+            expected_actions = VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

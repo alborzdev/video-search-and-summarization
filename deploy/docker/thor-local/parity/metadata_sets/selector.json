@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-webrtc-live-runtime-289.json",
-      "descriptor_raw_sha256": "0e16e85b74894b278c185c8471d36b5de118e4a42ee5baceb7782e427da0104f",
-      "set_id": "thor-vss-3.2.1-current-vios-webrtc-live-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-video-analytics-api-runtime-289.json",
+      "descriptor_raw_sha256": "d3b06bf5b17edc5cc733e5c342bd58306b40232cb3c553ede7d2ee4f4b62cbd9",
+      "set_id": "thor-vss-3.2.1-current-video-analytics-api-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-webrtc-live-runtime-500.json",
-      "descriptor_raw_sha256": "13cd8a85000d697aed005507d8201061257cfbd5f2779f3e250007209df1ac20",
-      "set_id": "thor-vss-3.2.1-current-vios-webrtc-live-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-video-analytics-api-runtime-500.json",
+      "descriptor_raw_sha256": "1097588dda5ecb660fdf10de055d7a90359e6d82aee45e512abc53785bfb0f42",
+      "set_id": "thor-vss-3.2.1-current-video-analytics-api-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-vios-webrtc-live-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-video-analytics-api-runtime-500"
 }

@@ -1,0 +1,156 @@
+{
+  "assertions": [
+    {
+      "expected": "error",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/kafka_endpoint_without_broker",
+      "observed": "error",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": null,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/redis_profile_brokers",
+      "observed": null,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "analytics-vios-workflows",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/wave3_acceptance/candidate_family",
+      "observed": "analytics-vios-workflows",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "systems",
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "systems",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "systems-va-optional-kafka"
+      ],
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "systems-va-optional-kafka"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "behavior.video-analytics.optional-kafka",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-video-analytics"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-video-analytics"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.behavior.video-analytics.optional-kafka",
+    "path": "deploy/docker/thor-local/qualification/video-analytics-api-runtime/contract.json",
+    "sha256": "7cbe3cdb682e0180e835eddb703920afc3538645e2669d73076ef3e6c123502b"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "kafka_endpoint_without_broker": "error",
+          "redis_profile_brokers": null
+        },
+        "receipt_sha256": "5917fead7e3c57a4f34ab4fb26a4c19489b534f01050f7d1c7d9be1d00fa1222"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "api_started": true,
+        "brokers": null,
+        "kafka_connection_attempt_observed": false,
+        "livez_http_status": 200
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "brokerless_container_absent_after": true,
+        "kafka_dependent_exact_message": true,
+        "kafka_dependent_http_status": 422,
+        "non_kafka_fixture_frame_id": "150",
+        "non_kafka_http_status": 200,
+        "original_consumers_restored": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.behavior.video-analytics.optional-kafka",
+  "oracle_sha256": "9b06fffbab0e64fe16bf3a01184ce92b6a2582be7b3526e5689ed4a31c56b1c8",
+  "result": "passed_current",
+  "scenario_ids": [
+    "analytics-vios-workflows",
+    "oracle.behavior.video-analytics.optional-kafka"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

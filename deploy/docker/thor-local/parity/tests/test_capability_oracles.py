@@ -65,6 +65,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current NvStreamer complete-configuration runtime receipt
             + 1  # current VIOS native WebRTC replay runtime receipt
             + 1  # current VIOS native WebRTC live runtime receipt
+            + 2  # current Video Analytics query and optional-Kafka receipts
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -168,6 +169,42 @@ class CapabilityOracleTests(unittest.TestCase):
             ["vios-live-missing-peer"],
         )
         self.assertEqual(oracle["evidence"], [])
+
+    def test_video_analytics_runtime_oracles_are_exact_executor_ready_rows(
+        self,
+    ) -> None:
+        by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
+        for capability_id in verifier.VIDEO_ANALYTICS_RUNTIME_CAPABILITY_IDS:
+            oracle = by_id[capability_id]
+            self.assertEqual(
+                oracle["fixture"]["materialization"],
+                {
+                    "path": verifier.VIDEO_ANALYTICS_RUNTIME_FIXTURE["path"],
+                    "generator": verifier.VIDEO_ANALYTICS_RUNTIME_EXECUTOR,
+                    "sha256": verifier.VIDEO_ANALYTICS_RUNTIME_FIXTURE["sha256"],
+                },
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["workload"],
+                verifier.VIDEO_ANALYTICS_RUNTIME_WORKLOAD,
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["max_actions"],
+                verifier.VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS,
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["executor"],
+                verifier.VIDEO_ANALYTICS_RUNTIME_EXECUTOR,
+            )
+            self.assertEqual(
+                oracle["cleanup"]["targets"],
+                [verifier.VIDEO_ANALYTICS_RUNTIME_NAMESPACE],
+            )
+            self.assertEqual(
+                oracle["acceptance_readiness"],
+                {"classification": "executor_ready", "blockers": []},
+            )
+            self.assertEqual(oracle["evidence"], [])
 
     def test_synthetic_data_oracles_are_exact_executor_ready_rows(self) -> None:
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
@@ -965,6 +1002,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
+                )
+                else verifier.VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    in verifier.VIDEO_ANALYTICS_RUNTIME_CAPABILITY_IDS
                 )
                 else override[2]
                 if override is not None

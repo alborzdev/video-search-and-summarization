@@ -1,0 +1,1042 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-video-analytics-api-runtime",
+  "status": "passed",
+  "started_at": "2026-08-10T16:14:45.501Z",
+  "runtime": {
+    "docker": "Docker version 29.2.1, build a5c7197",
+    "compose": "Docker Compose version v5.0.2",
+    "api_container": "vss-video-analytics-api",
+    "api_image": "nvcr.io/nvidia/vss-core/vss-video-analytics-api:3.2.0",
+    "behavior_oracle_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "behavior_oracle_image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "elasticsearch_status": "yellow",
+    "kafka_container": "kafka",
+    "original_behavior_containers": [
+      "vss-behavior-analytics",
+      "vss-behavior-analytics-thor-candidates"
+    ],
+    "upload_file_count_before": 0
+  },
+  "openapi": {
+    "version": "3.2.0",
+    "source_sha256": "0ff2b2f412446e29149a4998e00a3c6b00c17402befa5f24d8b5b454fb625d37",
+    "container_sha256": "0ff2b2f412446e29149a4998e00a3c6b00c17402befa5f24d8b5b454fb625d37",
+    "operation_count": 56,
+    "method_counts": {
+      "GET": 48,
+      "POST": 8
+    },
+    "exact_operation_set_match": true
+  },
+  "fixtures": {
+    "persistent_mapping_templates": {
+      "mdx_rtls_template": {
+        "priority": 507,
+        "index_patterns": [
+          "mdx-rtls-*"
+        ],
+        "fields": {
+          "objectCounts": "nested"
+        }
+      },
+      "mdx-road-network-template": {
+        "priority": 553,
+        "index_patterns": [
+          "mdx-road-network"
+        ],
+        "fields": {
+          "roadNetwork.intersections.segments.start.lat": "float",
+          "roadNetwork.intersections.segments.start.lng": "float",
+          "roadNetwork.intersections.segments.end.lat": "float",
+          "roadNetwork.intersections.segments.end.lng": "float",
+          "roadNetwork.intersections.segments.points.lat": "float",
+          "roadNetwork.intersections.segments.points.lng": "float",
+          "roadNetwork.intersections.segments.points.alt": "float"
+        }
+      },
+      "mdx-usd-assets-template": {
+        "priority": 552,
+        "index_patterns": [
+          "mdx-usd-assets"
+        ],
+        "fields": {
+          "usdAssets.assets.bbox.dimension.x": "double",
+          "usdAssets.assets.bbox.dimension.y": "double",
+          "usdAssets.assets.bbox.dimension.z": "double"
+        }
+      }
+    },
+    "semantic_documents": {
+      "document_count": 14,
+      "index_count": 13,
+      "indices": [
+        "mdx-alerts-vss-oracle-runtime",
+        "mdx-amr-events-vss-oracle-runtime",
+        "mdx-amr-locations-vss-oracle-runtime",
+        "mdx-behavior-vss-oracle-runtime",
+        "mdx-bev-vss-oracle-runtime",
+        "mdx-events-vss-oracle-runtime",
+        "mdx-frames-vss-oracle-runtime",
+        "mdx-incidents-vss-oracle-runtime",
+        "mdx-mtmc-vss-oracle-runtime",
+        "mdx-raw-vss-oracle-runtime",
+        "mdx-rtls-vss-oracle-runtime",
+        "mdx-sensor-lookup",
+        "mdx-space-utilization-vss-oracle-runtime"
+      ]
+    },
+    "sensor": "vss-oracle-video-analytics",
+    "place": "city=VSSOracle/building=Thor",
+    "behavior_index": "mdx-behavior-vss-oracle-runtime",
+    "dynamic_config_reference_shape_valid": true,
+    "dynamic_config_status": "success",
+    "dynamic_config_checkpoint_observed": true,
+    "occupancy_readback_count": 1,
+    "cluster_label_readback_count": 1,
+    "dynamic_calibration_checkpoints_observed": true
+  },
+  "requests": [
+    {
+      "label": "upload calibration",
+      "method": "POST",
+      "path": "/config/upload-file/calibration",
+      "operation_key": "POST /config/upload-file/{docType}",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 425,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "c955e57777ec0d73639dca6748560d00aa5eb8e12f13ebb2ed9656add3908f97"
+    },
+    {
+      "label": "upload road-network",
+      "method": "POST",
+      "path": "/config/upload-file/road-network",
+      "operation_key": "POST /config/upload-file/{docType}",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 139,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "c955e57777ec0d73639dca6748560d00aa5eb8e12f13ebb2ed9656add3908f97"
+    },
+    {
+      "label": "upload usd-assets",
+      "method": "POST",
+      "path": "/config/upload-file/usd-assets",
+      "operation_key": "POST /config/upload-file/{docType}",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 129,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "c955e57777ec0d73639dca6748560d00aa5eb8e12f13ebb2ed9656add3908f97"
+    },
+    {
+      "label": "calibration upsert",
+      "method": "POST",
+      "path": "/config/calibration/upsert",
+      "operation_key": "POST /config/calibration/upsert",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 157,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "c955e57777ec0d73639dca6748560d00aa5eb8e12f13ebb2ed9656add3908f97"
+    },
+    {
+      "label": "calibration image upload",
+      "method": "POST",
+      "path": "/config/calibration/images",
+      "operation_key": "POST /config/calibration/images",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 376,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 66,
+      "body_sha256": "4c3e61066c13f72be9436810e9ed571adfdf6c6ad79f190fe756717000585412"
+    },
+    {
+      "label": "cluster label add",
+      "method": "POST",
+      "path": "/clustering/add-label",
+      "operation_key": "POST /clustering/add-label",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 458,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "c955e57777ec0d73639dca6748560d00aa5eb8e12f13ebb2ed9656add3908f97"
+    },
+    {
+      "label": "occupancy reset",
+      "method": "POST",
+      "path": "/metrics/occupancy/reset",
+      "operation_key": "POST /metrics/occupancy/reset",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 392,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "c955e57777ec0d73639dca6748560d00aa5eb8e12f13ebb2ed9656add3908f97"
+    },
+    {
+      "label": "behavior analytics dynamic config update",
+      "method": "POST",
+      "path": "/config/update/behavior-analytics",
+      "operation_key": "POST /config/update/{docType}",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 438,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 80,
+      "body_sha256": "7e87cad28584e148fcd9c2276d16887d73b12e9cc9775b6291138e7ea312a2e6"
+    },
+    {
+      "label": "dynamic config status poll",
+      "method": "GET",
+      "path": "/config/update/status/behavior-analytics/video-analytics-api-<reference>",
+      "operation_key": "GET /config/update/status/{docType}/{referenceId}",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 50,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 227,
+      "body_sha256": "95c97a07a97d2d145bf87ed56e71c660f2ae3f20e1d29725ab2c07c2246e1606"
+    },
+    {
+      "label": "dynamic config status poll",
+      "method": "GET",
+      "path": "/config/update/status/behavior-analytics/video-analytics-api-<reference>",
+      "operation_key": "GET /config/update/status/{docType}/{referenceId}",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 22,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 227,
+      "body_sha256": "842781296f0a4a94f874b2563aacf9482e19325d053354b6fc315fabe0388ff0"
+    },
+    {
+      "label": "GET /metrics/average-speed",
+      "method": "GET",
+      "path": "/metrics/average-speed?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&sensorId=vss-oracle-video-analytics",
+      "operation_key": "GET /metrics/average-speed",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 24,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 54,
+      "body_sha256": "7f894a7fceb1cd7c3c2ec6ca410396d0f2ae0e6ba43825b612334577f2b801a2"
+    },
+    {
+      "label": "GET /metrics/flowrate",
+      "method": "GET",
+      "path": "/metrics/flowrate?toTimestamp=2026-08-10T06%3A00%3A05.000Z&sensorId=vss-oracle-video-analytics",
+      "operation_key": "GET /metrics/flowrate",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 20,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 52,
+      "body_sha256": "576e9ff514940e80a2871869457e8d1becef9b2799f0e1b9e1bef9b65d37b6c0"
+    },
+    {
+      "label": "GET /metrics/average-speed-with-flowrate",
+      "method": "GET",
+      "path": "/metrics/average-speed-with-flowrate?fromTimestamp=2026-08-10T06%3A00%3A00.000Z&toTimestamp=2026-08-10T06%3A00%3A10.000Z&sensorId=vss-oracle-video-analytics",
+      "operation_key": "GET /metrics/average-speed-with-flowrate",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 20,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 75,
+      "body_sha256": "c180788135facd495a3d71abb1149da9fcaac5a313444269eff548f7cdb8aed3"
+    },
+    {
+      "label": "GET /metrics/average-speed-with-travel-time",
+      "method": "GET",
+      "path": "/metrics/average-speed-with-travel-time?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&place=city%3DVSSOracle%2Fcorridor%3DThor",
+      "operation_key": "GET /metrics/average-speed-with-travel-time",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 34,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 85,
+      "body_sha256": "12b4b5f7606cc2f7393d46996186fb553f32b472fe885174af44794e01538be4"
+    },
+    {
+      "label": "GET /metrics/tripwire/counts",
+      "method": "GET",
+      "path": "/metrics/tripwire/counts?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&sensorId=vss-oracle-video-analytics",
+      "operation_key": "GET /metrics/tripwire/counts",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 21,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 346,
+      "body_sha256": "3c5066359f944b687470ac1b3ecfa7a6336eb3878c4014544f99754b0ff3f27a"
+    },
+    {
+      "label": "GET /metrics/occupancy/tripwire",
+      "method": "GET",
+      "path": "/metrics/occupancy/tripwire?timestamp=2026-08-10T06%3A00%3A05.000Z&place=city%3DVSSOracle%2Fbuilding%3DThor&objectType=Person",
+      "operation_key": "GET /metrics/occupancy/tripwire",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 20,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 277,
+      "body_sha256": "e5c9821bc8063592660fadb8e249438391d5428a50ecd6c9583cb07f01e9e391"
+    },
+    {
+      "label": "GET /metrics/tripwire/histogram",
+      "method": "GET",
+      "path": "/metrics/tripwire/histogram?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z",
+      "operation_key": "GET /metrics/tripwire/histogram",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 43,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 4203,
+      "body_sha256": "dc772482e000416239cb0a5c7f7d9896da975cd20d8db2a990c96e15f3f09549"
+    },
+    {
+      "label": "GET /metrics/occupancy/fov",
+      "method": "GET",
+      "path": "/metrics/occupancy/fov?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&sensorId=vss-oracle-video-analytics",
+      "operation_key": "GET /metrics/occupancy/fov",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 50,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 53,
+      "body_sha256": "4f1f6f9b1655ace592dd034ce53056e99c13794634bc283eec6b0c20ed44fcd6"
+    },
+    {
+      "label": "GET /metrics/occupancy/fov/histogram",
+      "method": "GET",
+      "path": "/metrics/occupancy/fov/histogram?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z",
+      "operation_key": "GET /metrics/occupancy/fov/histogram",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 55,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 2378,
+      "body_sha256": "d665d518c074e58caf19649f5a1be7c7d20aff6183707fdce733f124d6eb5f34"
+    },
+    {
+      "label": "GET /metrics/occupancy/roi",
+      "method": "GET",
+      "path": "/metrics/occupancy/roi?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&sensorId=vss-oracle-video-analytics",
+      "operation_key": "GET /metrics/occupancy/roi",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 19,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 116,
+      "body_sha256": "4c3f53debac6b28ba5a901d754d445802a75b19d0c35d8ed3b432129177befc0"
+    },
+    {
+      "label": "GET /metrics/occupancy/roi/histogram",
+      "method": "GET",
+      "path": "/metrics/occupancy/roi/histogram?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z",
+      "operation_key": "GET /metrics/occupancy/roi/histogram",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 40,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 2853,
+      "body_sha256": "a456067ab4226b11577dcb3726aebef4a1db7cb196d37680637a4fec107ccc4d"
+    },
+    {
+      "label": "GET /metrics/occupancy/roi/mutually-exclusive",
+      "method": "GET",
+      "path": "/metrics/occupancy/roi/mutually-exclusive?place=city%3DVSSOracle%2Fbuilding%3DThor&timestamp=2026-08-10T06%3A00%3A05.000Z",
+      "operation_key": "GET /metrics/occupancy/roi/mutually-exclusive",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 19,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 115,
+      "body_sha256": "0c55cc8fac90587fbc0c0f0e4fbf0425cd0bbf8e0b94918491d2b7dd693b017b"
+    },
+    {
+      "label": "GET /metrics/occupancy/tracker",
+      "method": "GET",
+      "path": "/metrics/occupancy/tracker?place=city%3DVSSOracle%2Fbuilding%3DThor&timestamp=2026-08-10T06%3A00%3A05.000Z&timeWindowInMs=1000",
+      "operation_key": "GET /metrics/occupancy/tracker",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 24,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 75,
+      "body_sha256": "0db5468ece6e5a2d84f9cb50ec40cf6d0c2c92c100b6ce27c50d843abaa5bf6c"
+    },
+    {
+      "label": "GET /metrics/occupancy/tracker/histogram",
+      "method": "GET",
+      "path": "/metrics/occupancy/tracker/histogram?place=city%3DVSSOracle%2Fbuilding%3DThor&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&bucketCount=4",
+      "operation_key": "GET /metrics/occupancy/tracker/histogram",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 54,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 635,
+      "body_sha256": "1981099ade23d99e6edf9edf13f989fe2b5e0f1c2c6041994cdc5b7fa1bc868a"
+    },
+    {
+      "label": "GET /metrics/space-utilization/histogram",
+      "method": "GET",
+      "path": "/metrics/space-utilization/histogram?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&bucketCount=4",
+      "operation_key": "GET /metrics/space-utilization/histogram",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 28,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 1030,
+      "body_sha256": "92fc056ca3babe5cd46a9ce78c6b7415dfde5bce3689239654dffe1d1a45a773"
+    },
+    {
+      "label": "GET /metrics/last-processed-timestamp",
+      "method": "GET",
+      "path": "/metrics/last-processed-timestamp?sensorId=vss-oracle-video-analytics",
+      "operation_key": "GET /metrics/last-processed-timestamp",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 19,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 100,
+      "body_sha256": "cf6b9910d5c8e9ff2df507e39b7c946c1ac95ae54af3acc7c1db94326a0de8ff"
+    },
+    {
+      "label": "GET /metrics/road-network/segment-speed",
+      "method": "GET",
+      "path": "/metrics/road-network/segment-speed?place=city%3DVSSOracle&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&segmentInfo=true",
+      "operation_key": "GET /metrics/road-network/segment-speed",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 42,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 229,
+      "body_sha256": "684d2b740e94e904a31eb95c9bd4aba0ec7a0f174b14e9fea7ecc45a722ec6af"
+    },
+    {
+      "label": "GET /tracker/unique-object-count",
+      "method": "GET",
+      "path": "/tracker/unique-object-count?timestamp=2026-08-10T06%3A00%3A05.000Z&timeWindowInMs=1000&sensorIds=vss-oracle-video-analytics&sensorIds=vss-oracle-video-analytics-secondary",
+      "operation_key": "GET /tracker/unique-object-count",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 21,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 23,
+      "body_sha256": "448d9af3fc3b3ccb94d848abb76dc36ce019e2b48bcedf09055511a1b3ce1049"
+    },
+    {
+      "label": "GET /tracker/unique-object-count-with-locations",
+      "method": "GET",
+      "path": "/tracker/unique-object-count-with-locations?place=city%3DVSSOracle%2Fbuilding%3DThor&timestamp=2026-08-10T06%3A00%3A05.000Z&timeWindowInMs=1000",
+      "operation_key": "GET /tracker/unique-object-count-with-locations",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 34,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 407,
+      "body_sha256": "be88481a8f50d710234c484e9eee8b2a8cb4c6585357190f2e8468d992ce76be"
+    },
+    {
+      "label": "GET /tracker/unique-objects",
+      "method": "GET",
+      "path": "/tracker/unique-objects?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&sensorIds=vss-oracle-video-analytics&sensorIds=vss-oracle-video-analytics-secondary",
+      "operation_key": "GET /tracker/unique-objects",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 20,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 387,
+      "body_sha256": "b6abee0fea732e308f802f37beb22913c30836edde6ca2ad1074f8c8aad88ff8"
+    },
+    {
+      "label": "GET /tracker/behavior-locations",
+      "method": "GET",
+      "path": "/tracker/behavior-locations?fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&globalId=vss-oracle-global",
+      "operation_key": "GET /tracker/behavior-locations",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 44,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 391,
+      "body_sha256": "fa64649bb5f439a3ae738267dd6710e463017ce31386f2721686c94f7e2f287e"
+    },
+    {
+      "label": "GET /tracker/last-record",
+      "method": "GET",
+      "path": "/tracker/last-record?place=city%3DVSSOracle%2Fbuilding%3DThor&source=RTLS",
+      "operation_key": "GET /tracker/last-record",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 18,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 223,
+      "body_sha256": "790d558c9dbee5d4d119268eafd18491d4fa580cbb903cb177358a23813b6a93"
+    },
+    {
+      "label": "GET /frames",
+      "method": "GET",
+      "path": "/frames?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /frames",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 17,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 243,
+      "body_sha256": "fb320a3348d0fa4f4314148f8ff89e150448e4fd1dd5a0a05db90699bdd51388"
+    },
+    {
+      "label": "GET /frames/enhanced",
+      "method": "GET",
+      "path": "/frames/enhanced?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /frames/enhanced",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 19,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 1004,
+      "body_sha256": "e0a2713eeb8258ff5cb8d9cd377b15ec34cea3ee8c629fbd73a117aaeab716ea"
+    },
+    {
+      "label": "GET /frames/bev",
+      "method": "GET",
+      "path": "/frames/bev?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /frames/bev",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 16,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 276,
+      "body_sha256": "3ba3c7f724e2b4990f808cbabca8a75a8ce86fc5adf922302b4638dc2bc52eab"
+    },
+    {
+      "label": "GET /frames/alerts",
+      "method": "GET",
+      "path": "/frames/alerts?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /frames/alerts",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 17,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 533,
+      "body_sha256": "6bbd924180ec249328d1f14d6b0902d9aa21e95632ee5fd2357e94421c69d4ca"
+    },
+    {
+      "label": "GET /frames/high-confidence-objects",
+      "method": "GET",
+      "path": "/frames/high-confidence-objects?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /frames/high-confidence-objects",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 21,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 226,
+      "body_sha256": "01b808b9aa27392a9af58462511c7110a1581cbaab6c5d6291d207cbf50bc4e9"
+    },
+    {
+      "label": "GET /frames/proximity-detection",
+      "method": "GET",
+      "path": "/frames/proximity-detection?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z",
+      "operation_key": "GET /frames/proximity-detection",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 20,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 152,
+      "body_sha256": "8f3bcd054890d4fd70e043aeeed0c1569db2077ee1c751217d5e80211b5148bd"
+    },
+    {
+      "label": "GET /frames/pts",
+      "method": "GET",
+      "path": "/frames/pts?sensorId=vss-oracle-video-analytics&frameId=30",
+      "operation_key": "GET /frames/pts",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 26,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 12,
+      "body_sha256": "c4c0a52f56ce4ed98dbd3dc989bf97e4a2ef35d89aa3a4c17426233f3b04c9e7"
+    },
+    {
+      "label": "GET /behavior",
+      "method": "GET",
+      "path": "/behavior?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /behavior",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 19,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 1302,
+      "body_sha256": "d9a0e9506e60af62251dfcf83ef0d5e547ce4e9b4c47a3a7679fb29977c67ea0"
+    },
+    {
+      "label": "GET /behavior/pts",
+      "method": "GET",
+      "path": "/behavior/pts?sensorId=vss-oracle-video-analytics&endFrameId=60&behaviorTimeInterval=1",
+      "operation_key": "GET /behavior/pts",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 34,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 31,
+      "body_sha256": "092cdc5aee1404f88c2b76de7d317701f2d8cbdfdfc70449c5ce732b7961a562"
+    },
+    {
+      "label": "GET /alerts",
+      "method": "GET",
+      "path": "/alerts?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /alerts",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 20,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 443,
+      "body_sha256": "baca6df4c005b0a4e06e57cad91b359e3061e23c2218cec00084c5e63bfdac46"
+    },
+    {
+      "label": "GET /alerts/severe",
+      "method": "GET",
+      "path": "/alerts/severe?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z",
+      "operation_key": "GET /alerts/severe",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 18,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 59,
+      "body_sha256": "1d8fccd8ba0caa22e88b93e1b6e4e011d9a802c606709f4f68ffa66820add04e"
+    },
+    {
+      "label": "GET /incidents",
+      "method": "GET",
+      "path": "/incidents?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /incidents",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 17,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 453,
+      "body_sha256": "f8c6c1b8aa4389eebfce8a760a7b5d2a8ad3ac72f604f186669ef5b184990596"
+    },
+    {
+      "label": "GET /incidents/severe",
+      "method": "GET",
+      "path": "/incidents/severe?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z",
+      "operation_key": "GET /incidents/severe",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 17,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 62,
+      "body_sha256": "2a7edd6a36530b7e5eada827bcd379b02463b1b245c5cf7a75a6b1b8720f578d"
+    },
+    {
+      "label": "GET /clustering/behavior",
+      "method": "GET",
+      "path": "/clustering/behavior?sensorId=vss-oracle-video-analytics&clusterIndex=7&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&minBehaviorDistance=0",
+      "operation_key": "GET /clustering/behavior",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 35,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 1161,
+      "body_sha256": "30a6a92f73e957c9f8c5e39e9704fbfb9c5b00c13798f58fbd72d46c7a6327a1"
+    },
+    {
+      "label": "GET /events/tripwire",
+      "method": "GET",
+      "path": "/events/tripwire?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /events/tripwire",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 24,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 409,
+      "body_sha256": "9d761a9b8c7b8bf112c69b6ec02fb4691402898ab2990c4e58f50532fe8bd4a9"
+    },
+    {
+      "label": "GET /events/amr",
+      "method": "GET",
+      "path": "/events/amr?place=city%3DVSSOracle%2Fbuilding%3DThor&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /events/amr",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 17,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 219,
+      "body_sha256": "ed4c13d1b77bcb118825df0abd6ca6c508953a5f50a49105c48a3ce81fe8437d"
+    },
+    {
+      "label": "GET /events/roi",
+      "method": "GET",
+      "path": "/events/roi?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "GET /events/roi",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 17,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 382,
+      "body_sha256": "a4b3c3ce11087e56dfdc272abf76e5cd59308103a253438004042de9037f94b7"
+    },
+    {
+      "label": "GET /config/update/status/{docType}/{referenceId}",
+      "method": "GET",
+      "path": "/config/update/status/behavior-analytics/video-analytics-api-<reference>",
+      "operation_key": "GET /config/update/status/{docType}/{referenceId}",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 17,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 227,
+      "body_sha256": "842781296f0a4a94f874b2563aacf9482e19325d053354b6fc315fabe0388ff0"
+    },
+    {
+      "label": "GET /config/calibration",
+      "method": "GET",
+      "path": "/config/calibration?sensorId=vss-oracle-video-analytics&emptyIfNotFound=false",
+      "operation_key": "GET /config/calibration",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 20,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 806,
+      "body_sha256": "9afcbeca7674e7d0fb157e51d7b23a9108d784f9617d3524c4cedba265f0e978"
+    },
+    {
+      "label": "GET /config/calibration/last-modified-timestamp",
+      "method": "GET",
+      "path": "/config/calibration/last-modified-timestamp",
+      "operation_key": "GET /config/calibration/last-modified-timestamp",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 4,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 40,
+      "body_sha256": "5fa96a348d209062964cbbf711cd57dcb1aaec16231b742548bae85260d7f976"
+    },
+    {
+      "label": "GET /config/road-network",
+      "method": "GET",
+      "path": "/config/road-network",
+      "operation_key": "GET /config/road-network",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 7,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 276,
+      "body_sha256": "1b9d58018b51a13a17657226a755b81260a5593c1e862eabb37f667bea317e40"
+    },
+    {
+      "label": "GET /config/usd-assets",
+      "method": "GET",
+      "path": "/config/usd-assets",
+      "operation_key": "GET /config/usd-assets",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 4,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 243,
+      "body_sha256": "b4fbfa596b915b25a34ea679e45c4535e20f0b050ea4b5576ee5b3531ec083bd"
+    },
+    {
+      "label": "GET /config/calibration/image",
+      "method": "GET",
+      "path": "/config/calibration/image?sensorId=vss-oracle-video-analytics&view=camera-view",
+      "operation_key": "GET /config/calibration/image",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 22,
+      "content_type": "image/svg+xml",
+      "body_bytes": 183,
+      "body_sha256": "c4d6c3cc94c67717087cdc1ca52b226acc69d4adf99a19cb5d5e7b192c344349"
+    },
+    {
+      "label": "GET /config/calibration/image-metadata",
+      "method": "GET",
+      "path": "/config/calibration/image-metadata?sensorId=vss-oracle-video-analytics&view=camera-view",
+      "operation_key": "GET /config/calibration/image-metadata",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 22,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 82,
+      "body_sha256": "87c76ee9c0497014037aba1c8047336b7c6e5f833c5b550f9a19baca18cf10c4"
+    },
+    {
+      "label": "GET /sensor/lookup",
+      "method": "GET",
+      "path": "/sensor/lookup?place=city%3DVSSOracle%2Fbuilding%3DThor&x=0&y=0&z=0",
+      "operation_key": "GET /sensor/lookup",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 23,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 44,
+      "body_sha256": "cabaad5e5709f2532f1a7433b686e5218b5bd9d9cfec02a170bb480a8e0040cd"
+    },
+    {
+      "label": "GET /livez",
+      "method": "GET",
+      "path": "/livez",
+      "operation_key": "GET /livez",
+      "polarity": "positive",
+      "status": 200,
+      "duration_ms": 2,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "afc908e33641a06e61a097a224b7167eab97fa563046b6017abd70933ed21e22"
+    },
+    {
+      "label": "POST /metrics/occupancy/reset adjacent negative",
+      "method": "POST",
+      "path": "/metrics/occupancy/reset",
+      "operation_key": "POST /metrics/occupancy/reset",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 15,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 130,
+      "body_sha256": "30324e6c52573fa2eb8c8efd6a3b10295dd4df05143069aceea6d04bdaf21937"
+    },
+    {
+      "label": "POST /clustering/add-label adjacent negative",
+      "method": "POST",
+      "path": "/clustering/add-label",
+      "operation_key": "POST /clustering/add-label",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 13,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 129,
+      "body_sha256": "529c19e3342f9240334ee085578c41a439f5fdf29518e27d6d7e474e3250fddb"
+    },
+    {
+      "label": "POST /config/upload-file/{docType} adjacent negative",
+      "method": "POST",
+      "path": "/config/upload-file/calibration",
+      "operation_key": "POST /config/upload-file/{docType}",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 3,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 74,
+      "body_sha256": "8cd8c6079654e50061ff0f49f0f3ea5c230a141068c3309db513b0d66f6ab0ce"
+    },
+    {
+      "label": "POST /config/update/{docType} adjacent negative",
+      "method": "POST",
+      "path": "/config/update/behavior-analytics",
+      "operation_key": "POST /config/update/{docType}",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 16,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 67,
+      "body_sha256": "54be158479b627e47323ffd43472e8896f30d33b14f65160227f7aaed3b99802"
+    },
+    {
+      "label": "POST /config/calibration/upsert adjacent negative",
+      "method": "POST",
+      "path": "/config/calibration/upsert",
+      "operation_key": "POST /config/calibration/upsert",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 52,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 60,
+      "body_sha256": "96fd3de4f94e399858c8d67d2c757c9298bcd87e6c6d278467da9bb623243851"
+    },
+    {
+      "label": "POST /config/calibration/delete-sensor adjacent negative",
+      "method": "POST",
+      "path": "/config/calibration/delete-sensor",
+      "operation_key": "POST /config/calibration/delete-sensor",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 34,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 84,
+      "body_sha256": "29bdff1785c8280384199b424d74d38612b12c77c87f1dcec08d836fa7cb4507"
+    },
+    {
+      "label": "POST /config/calibration/images adjacent negative",
+      "method": "POST",
+      "path": "/config/calibration/images",
+      "operation_key": "POST /config/calibration/images",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 26,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 63,
+      "body_sha256": "0af99405bead91599cb28375629fe19c6e3d3d7fb19f18fbc7034dca4435f6c8"
+    },
+    {
+      "label": "POST /config/calibration/delete-images adjacent negative",
+      "method": "POST",
+      "path": "/config/calibration/delete-images",
+      "operation_key": "POST /config/calibration/delete-images",
+      "polarity": "negative",
+      "status": 400,
+      "duration_ms": 22,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 92,
+      "body_sha256": "e872db3b616d23c77b2ffc148826083ff830a87f53290e814222ec9aa926ea33"
+    },
+    {
+      "label": "calibration image delete",
+      "method": "POST",
+      "path": "/config/calibration/delete-images",
+      "operation_key": "POST /config/calibration/delete-images",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 34,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 157,
+      "body_sha256": "d903a6935096c277907c6363ae2142780ad6f1bd2525dac394272b35f7e3d79a"
+    },
+    {
+      "label": "calibration sensor delete",
+      "method": "POST",
+      "path": "/config/calibration/delete-sensor",
+      "operation_key": "POST /config/calibration/delete-sensor",
+      "polarity": "positive",
+      "status": 201,
+      "duration_ms": 112,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 769,
+      "body_sha256": "9e4470f52e23ed8e8ace5669f0a9245503d9ae288d8b3aa35c0c736976a1b0c2"
+    },
+    {
+      "label": "brokerless GET /livez",
+      "method": "GET",
+      "path": "/livez",
+      "operation_key": "BROKERLESS GET /livez",
+      "polarity": "brokerless",
+      "status": 200,
+      "duration_ms": 3,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 16,
+      "body_sha256": "afc908e33641a06e61a097a224b7167eab97fa563046b6017abd70933ed21e22"
+    },
+    {
+      "label": "brokerless non-Kafka raw-frame read",
+      "method": "GET",
+      "path": "/frames?sensorId=vss-oracle-video-analytics&fromTimestamp=2026-08-10T00%3A00%3A00.000Z&toTimestamp=2026-08-10T23%3A59%3A59.000Z&maxResultSize=1",
+      "operation_key": "BROKERLESS GET /frames",
+      "polarity": "brokerless",
+      "status": 200,
+      "duration_ms": 62,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 243,
+      "body_sha256": "fb320a3348d0fa4f4314148f8ff89e150448e4fd1dd5a0a05db90699bdd51388"
+    },
+    {
+      "label": "brokerless Kafka-dependent tracker request",
+      "method": "GET",
+      "path": "/tracker/unique-object-count-with-locations?place=city%3DVSSOracle%2Fbuilding%3DThor",
+      "operation_key": "BROKERLESS GET /tracker/unique-object-count-with-locations",
+      "polarity": "brokerless_expected_error",
+      "status": 422,
+      "duration_ms": 28,
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 125,
+      "body_sha256": "3e555eeeb999053c8ea49d6af71625deb9e1f1e0b4b262573bd60ac34bd8086b"
+    }
+  ],
+  "operations": {
+    "get": {
+      "expected": 48,
+      "exercised": 48,
+      "all_http_200": true,
+      "exact_openapi_set": true,
+      "semantic_readbacks": {
+        "frames_pts_ms": 1000,
+        "behavior_pts": {
+          "start_ms": 1000,
+          "end_ms": 2000
+        },
+        "calibration_sensor": true,
+        "road_network_city": true,
+        "usd_scene": true,
+        "calibration_image_exact_bytes": true,
+        "cluster_label": "thor-qualified",
+        "non_empty_data_endpoints": 40,
+        "analytics_metrics": {
+          "average_speed": true,
+          "flowrate": true,
+          "travel_time": true,
+          "tripwire": true,
+          "occupancy": true,
+          "space_utilization": true,
+          "road_segment_speed": true
+        },
+        "tracker_and_events": true,
+        "raw_enhanced_bev_frames": true,
+        "alerts_and_incidents": true,
+        "sensor_lookup": true
+      }
+    },
+    "post_negatives": {
+      "expected": 8,
+      "exercised": 8,
+      "exact_openapi_set": true,
+      "no_5xx": true
+    },
+    "post": {
+      "expected": 8,
+      "exercised": 8,
+      "all_positive_201": true,
+      "exact_openapi_set": true,
+      "upload_document_types": [
+        "calibration",
+        "road-network",
+        "usd-assets"
+      ],
+      "calibration_delete_readback": true,
+      "image_delete_readback": true
+    },
+    "brokerless": {
+      "config_brokers": null,
+      "api_started": true,
+      "livez_http_status": 200,
+      "non_kafka_endpoint": {
+        "path": "/frames",
+        "http_status": 200,
+        "fixture_frame_id": "150"
+      },
+      "kafka_dependent_endpoint": {
+        "path": "/tracker/unique-object-count-with-locations",
+        "http_status": 422,
+        "exact_message_contract": true
+      },
+      "kafka_connection_attempt_observed": false
+    }
+  },
+  "cleanup": {
+    "attempted": true,
+    "qualifier_indices_absent": true,
+    "qualifier_templates_absent": true,
+    "upload_file_set_exact": true,
+    "upload_file_count_after": 0,
+    "disposable_container_absent": true,
+    "brokerless_container_absent": true,
+    "original_behavior_containers_restored": true,
+    "failures": []
+  },
+  "blockers": [],
+  "failure": null,
+  "finished_at": "2026-08-10T16:15:05.207Z",
+  "request_counts": {
+    "total": 71,
+    "positive": 60,
+    "negative": 8,
+    "status_5xx": 0
+  }
+}

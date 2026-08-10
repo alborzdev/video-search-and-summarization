@@ -8,10 +8,18 @@ value-level semantics for every data-bearing query family, successful
 write/read workflows, adjacent-negative validation, Kafka-backed dynamic
 configuration and calibration, and exact cleanup/restoration.
 
-The complete qualifier passed twice consecutively. The retained final run
-started at `2026-08-10T10:26:16.785Z` and finished at
-`2026-08-10T10:26:37.188Z`. Its JSON receipt had SHA-256
-`758d71542b251ec761f09f2ff0f51886551d7bc01af4171059300de3cb19c1f7`.
+The complete qualifier passed three times. The retained final run started at
+`2026-08-10T16:14:45.501Z` and finished at `2026-08-10T16:15:05.207Z`.
+Its JSON receipt has SHA-256
+`5917fead7e3c57a4f34ab4fb26a4c19489b534f01050f7d1c7d9be1d00fa1222`.
+The query/library official evidence is
+`895962811784eb8b03897f048fb9ed5d31156fc0443384ad39c49c1ed13bf8f5`
+and binds oracle
+`cb013af999e6287d8a95343bb6a4f18adb3cfc38cf1215f1010d262f867aa09d`.
+The optional-Kafka official evidence is
+`125f3ab237b425c3d0bbd530755f26040d66fc13664fab43626da26d563eb1b3`
+and binds oracle
+`9b06fffbab0e64fe16bf3a01184ce92b6a2582be7b3526e5689ed4a31c56b1c8`.
 
 ## Runtime identity
 

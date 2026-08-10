@@ -40,6 +40,13 @@ The command emits a JSON receipt to standard output and exits nonzero unless
 all assertions and cleanup postconditions pass. No sudo, model pull, sample
 stream, warehouse dataset, or VSS Agent `/generate` call is involved.
 
+Verify the retained receipt and its two official capability projections:
+
+```bash
+pytest -q deploy/docker/thor-local/qualification/video-analytics-api-runtime/tests
+python3 deploy/docker/thor-local/qualification/video-analytics-api-runtime/verify.py
+```
+
 ## Coverage
 
 - exact OpenAPI identity: 56 operations (48 GET, 8 POST);
