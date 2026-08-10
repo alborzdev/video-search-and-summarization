@@ -27,6 +27,23 @@ class OfficialCapabilityTests(unittest.TestCase):
         cls.acceptance = json.loads(verifier.ACCEPTANCE.read_text(encoding="utf-8"))
         cls.oracles = json.loads(verifier.ORACLES.read_text(encoding="utf-8"))
 
+    def _planning_index_only_capability(
+        self, ledger: dict[str, object]
+    ) -> dict[str, object]:
+        planning_ids = {
+            oracle["capability_id"]
+            for oracle in self.oracles["oracles"]
+            if oracle["acceptance_readiness"]["classification"]
+            == "planning_index_only"
+        }
+        return next(
+            capability
+            for capability in ledger["capabilities"]
+            if capability["id"] in planning_ids
+            and capability["runtime_state"] == "not_qualified"
+            and "runtime_evidence" not in capability
+        )
+
     def _validate_runtime_evidence(
         self,
         mutate: object | None = None,
@@ -36,7 +53,7 @@ class OfficialCapabilityTests(unittest.TestCase):
         reference_digest: str | None = None,
     ) -> dict[str, int]:
         ledger = copy.deepcopy(self.ledger)
-        capability = ledger["capabilities"][0]
+        capability = self._planning_index_only_capability(ledger)
         capability["runtime_state"] = "passed_current"
         evidence = {
             "schema_version": 1,
@@ -61,12 +78,16 @@ class OfficialCapabilityTests(unittest.TestCase):
                 manifest_path = reviewed_capability.get("contract", {}).get(
                     "expected_manifest"
                 )
-                if not manifest_path:
-                    continue
-                source = verifier.REPO_ROOT / manifest_path
-                destination = root / manifest_path
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_bytes(source.read_bytes())
+                retained_paths = ([manifest_path] if manifest_path else []) + [
+                    reference["path"]
+                    for reference in reviewed_capability.get("runtime_evidence", [])
+                ]
+                for retained_path in retained_paths:
+                    source = verifier.REPO_ROOT / retained_path
+                    destination = root / retained_path
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    if not destination.exists():
+                        destination.write_bytes(source.read_bytes())
             digest = (
                 reference_digest
                 or hashlib.sha256(evidence_path.read_bytes()).hexdigest()
@@ -882,7 +903,8 @@ class OfficialCapabilityTests(unittest.TestCase):
 
     def test_passed_current_without_evidence_is_rejected(self) -> None:
         ledger = copy.deepcopy(self.ledger)
-        ledger["capabilities"][0]["runtime_state"] = "passed_current"
+        capability = self._planning_index_only_capability(ledger)
+        capability["runtime_state"] = "passed_current"
         with self.assertRaises(verifier.CapabilityContractError):
             verifier.validate(
                 ledger, copy.deepcopy(self.manifest), copy.deepcopy(self.acceptance)
@@ -1164,7 +1186,7 @@ class OfficialCapabilityTests(unittest.TestCase):
 
     def test_runtime_evidence_parent_symlink_is_rejected(self) -> None:
         ledger = copy.deepcopy(self.ledger)
-        capability = ledger["capabilities"][0]
+        capability = self._planning_index_only_capability(ledger)
         capability["runtime_state"] = "passed_current"
         evidence = {
             "schema_version": 1,
@@ -1301,7 +1323,8 @@ class OfficialCapabilityTests(unittest.TestCase):
 
     def test_source_claim_snapshot_drift_fails_closed(self) -> None:
         ledger = copy.deepcopy(self.ledger)
-        ledger["capabilities"][0]["contract"]["unexpected"] = True
+        capability = self._planning_index_only_capability(ledger)
+        capability["contract"]["unexpected"] = True
         with self.assertRaisesRegex(
             verifier.CapabilityContractError, "claim set drift"
         ):

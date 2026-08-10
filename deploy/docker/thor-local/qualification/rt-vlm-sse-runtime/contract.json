@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-rt-vlm-sse-runtime",
+  "capability_ids": [
+    "model.rt-vlm.default-cosmos3-nano-bf16",
+    "protocol.rt-vlm.sse",
+    "behavior.rt-vlm.generation-token-cap",
+    "behavior.rt-vlm.user-prompt-cap",
+    "behavior.rt-vlm.system-prompt-cap",
+    "behavior.rt-vlm.generate-captions-endpoint-rename"
+  ],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "network_scope": "loopback_only",
+  "warehouse_sample_bundle": false,
+  "max_duration_seconds": 180,
+  "max_semantic_actions": 8,
+  "max_http_requests": 32,
+  "max_request_bytes": 4194304,
+  "max_response_bytes": 1048576,
+  "protocol_case": {
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "case_id": "protocol-case.rt-vlm.sse",
+    "case_sha256": "65848ab6ecb90cae6ed795acf3564c84309abc8fc417ce280e7bcc7ec84faa41",
+    "positive_vector_id": "rt-vlm-sse-one-owned-clip",
+    "negative_vector_id": "rt-vlm-sse-blank-prompt"
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/captions.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/captions.py",
+      "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0",
+      "mounted_read_only": false
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py",
+      "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d",
+      "mounted_read_only": true
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py",
+      "sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
+      "mounted_read_only": true
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py",
+      "sha256": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44",
+      "mounted_read_only": true
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py",
+      "sha256": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91",
+      "mounted_read_only": true
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.yml",
+      "container_path": null,
+      "sha256": "8ce9b8eade977f523422ec9f19279686d6267a6009f038caca3ed1bad8c4a5c6",
+      "mounted_read_only": false
+    }
+  ],
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "bytes": 2575454,
+    "filename": "vss-protocol-case-rt-vlm.mp4",
+    "asset_id": "00000000-0000-4000-8000-000000000003",
+    "absent_boundary_asset_id": "00000000-0000-4000-8000-000000000004",
+    "sensor_name": "vss-oracle-protocol-rt-vlm-sse"
+  },
+  "runtime": {
+    "container": "vss-rtvi-vlm",
+    "compose_project": "mdx",
+    "compose_service": "rtvi-vlm",
+    "image": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "architecture": "arm64",
+    "host": "127.0.0.1",
+    "host_port": 8018,
+    "container_port": "8000/tcp",
+    "model_selector": "cosmos-reason3",
+    "model_artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+    "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "model_cache_path": "/home/nvidia/vss-official-edge-artifacts/ngc/model-cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "model_index_sha256": "31e5064be5695aee8fc2721d45ac431875a964d6de0e3ff3de50dc38619f9d41",
+    "model_config_sha256": "5cd452860dc1e9c29dd71cc3cef7f39b338b7a40793f7a260655c2d3568f3661",
+    "model_shards": {
+      "model-00001-of-00004.safetensors": 5283287392,
+      "model-00002-of-00004.safetensors": 5301856744,
+      "model-00003-of-00004.safetensors": 5360576128,
+      "model-00004-of-00004.safetensors": 1588619104
+    }
+  },
+  "api_contract": {
+    "current_path": "/v1/generate_captions",
+    "removed_legacy_path": "/v1/generate_captions_alerts",
+    "generation_token_cap": {
+      "field": "max_tokens",
+      "default": 16384,
+      "environment": "VLM_MAX_GENERATION_TOKENS"
+    },
+    "user_prompt_cap": {
+      "field": "prompt",
+      "default": 10240,
+      "environment": "VLM_PROMPT_MAX_LENGTH"
+    },
+    "system_prompt_cap": {
+      "field": "system_prompt",
+      "default": 10240,
+      "environment": "VLM_SYSTEM_PROMPT_MAX_LENGTH"
+    }
+  },
+  "positive": {
+    "prompt": "Return a concise literal caption.",
+    "stream": true,
+    "include_usage": true,
+    "chunk_duration": 2,
+    "max_tokens": 16,
+    "deadline_seconds": 60,
+    "max_events": 32
+  },
+  "boundary_oracles": {
+    "absent_asset_http_status": 400,
+    "at_limit_http_status": 400,
+    "above_limit_http_status": 422,
+    "blank_prompt_http_status": 422
+  },
+  "cleanup": {
+    "mutation": "namespaced_and_reversible",
+    "allowlist": [
+      "00000000-0000-4000-8000-000000000003",
+      "vss-oracle-protocol-rt-vlm-sse"
+    ],
+    "postconditions": [
+      "the exact qualifier-owned asset is absent",
+      "RT-VLM asset statistics match the captured empty pre-state",
+      "the RT-VLM container identity, health, image, restart count, and OOM state match pre-state",
+      "all qualifier requests stayed on the loopback-bound RT-VLM port"
+    ]
+  },
+  "forbidden_actions": [
+    "VSS Agent /generate",
+    "RTSP stream registration or deletion",
+    "main VIOS sensor or stream mutation",
+    "RT-CV sample stream mutation",
+    "warehouse sample bundle access",
+    "RT-VLM service restart or configuration mutation",
+    "model download or image pull",
+    "external network request"
+  ]
+}

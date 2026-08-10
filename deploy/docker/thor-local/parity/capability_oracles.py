@@ -575,6 +575,102 @@ ALERT_WEBSOCKET_RUNTIME_WORKLOAD = {
     ],
 }
 ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS = 12
+RT_VLM_SSE_RUNTIME_CAPABILITY_IDS = {
+    "model.rt-vlm.default-cosmos3-nano-bf16",
+    "protocol.rt-vlm.sse",
+    "behavior.rt-vlm.generation-token-cap",
+    "behavior.rt-vlm.user-prompt-cap",
+    "behavior.rt-vlm.system-prompt-cap",
+    "behavior.rt-vlm.generate-captions-endpoint-rename",
+}
+RT_VLM_SSE_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/execute.py"
+)
+RT_VLM_SSE_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json"
+    ),
+    "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc",
+}
+RT_VLM_SSE_RUNTIME_EVIDENCE = {
+    "model.rt-vlm.default-cosmos3-nano-bf16": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
+                "official-runtime-evidence-model.json"
+            ),
+            "sha256": "a92a884b145f218c0be58111553494371dc1300f7bd0435fe0b412dc636e3409",
+        }
+    ],
+    "protocol.rt-vlm.sse": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
+                "official-runtime-evidence-sse.json"
+            ),
+            "sha256": "6d78857a71168d7e4400bb7d57b24e64e9639d50f461858e17fd4c245bbab56b",
+        }
+    ],
+    "behavior.rt-vlm.generation-token-cap": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
+                "official-runtime-evidence-generation-token-cap.json"
+            ),
+            "sha256": "d8125f3e06804e39be83bb6931028450e122bc8357df311ddb2d2f2f89debc11",
+        }
+    ],
+    "behavior.rt-vlm.user-prompt-cap": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
+                "official-runtime-evidence-user-prompt-cap.json"
+            ),
+            "sha256": "35d9c234983c137f31ab888367d7d89b4dea4d3db83354fefdec88f6ec8621b1",
+        }
+    ],
+    "behavior.rt-vlm.system-prompt-cap": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
+                "official-runtime-evidence-system-prompt-cap.json"
+            ),
+            "sha256": "efe38ec8bef437f1717c1811c0d2ec7e06925e14d28a66c6e85220d85bdf46c5",
+        }
+    ],
+    "behavior.rt-vlm.generate-captions-endpoint-rename": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
+                "official-runtime-evidence-endpoint-rename.json"
+            ),
+            "sha256": "68a010f9812af969985cc8d2f8a828fcd7b5f9d7ecf65a92f1fb23f195c4009e",
+        }
+    ],
+}
+RT_VLM_SSE_RUNTIME_NAMESPACES = [
+    "00000000-0000-4000-8000-000000000003",
+    "vss-oracle-protocol-rt-vlm-sse",
+]
+RT_VLM_SSE_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 22,
+    "overhead_requests": 0,
+    "calculated_max_requests": 22,
+    "phases": [
+        "static_and_runtime_identity",
+        "pre_state",
+        "owned_file_upload_and_readback",
+        "blank_prompt_negative",
+        "generation_token_boundary_pair",
+        "user_prompt_boundary_pair",
+        "system_prompt_boundary_pair",
+        "caption_sse_positive",
+        "exact_owned_cleanup",
+        "postcondition",
+    ],
+}
+RT_VLM_SSE_RUNTIME_MAX_ACTIONS = 8
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -653,6 +749,16 @@ def _is_current_alert_websocket_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == ALERT_WEBSOCKET_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_rt_vlm_sse_runtime(capability: dict[str, Any]) -> bool:
+    capability_id = capability.get("id")
+    return (
+        capability_id in RT_VLM_SSE_RUNTIME_CAPABILITY_IDS
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == RT_VLM_SSE_RUNTIME_EVIDENCE[capability_id]
     )
 
 
@@ -1366,6 +1472,8 @@ def _workload(
         return copy.deepcopy(EVENT_TRANSPORT_RUNTIME_WORKLOAD)
     if live_integration and _is_current_alert_websocket_runtime(capability):
         return copy.deepcopy(ALERT_WEBSOCKET_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_rt_vlm_sse_runtime(capability):
+        return copy.deepcopy(RT_VLM_SSE_RUNTIME_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1435,6 +1543,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS
     if _is_current_alert_websocket_runtime(capability):
         return ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
+    if _is_current_rt_vlm_sse_runtime(capability):
+        return RT_VLM_SSE_RUNTIME_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2661,6 +2771,30 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_rt_vlm_sse_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": RT_VLM_SSE_RUNTIME_FIXTURE["path"],
+                "generator": RT_VLM_SSE_RUNTIME_EXECUTOR,
+                "sha256": RT_VLM_SSE_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = RT_VLM_SSE_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                RT_VLM_SSE_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                RT_VLM_SSE_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                RT_VLM_SSE_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["executor"] = RT_VLM_SSE_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                RT_VLM_SSE_RUNTIME_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -2871,6 +3005,8 @@ def validate(
             expected_actions = EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS
         elif _is_current_alert_websocket_runtime(ledger_by_id[capability_id]):
             expected_actions = ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
+        elif _is_current_rt_vlm_sse_runtime(ledger_by_id[capability_id]):
+            expected_actions = RT_VLM_SSE_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

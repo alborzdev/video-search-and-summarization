@@ -1,0 +1,205 @@
+{
+  "assertions": [
+    {
+      "expected": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/artifact_id",
+      "observed": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/default",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/older_default_prose_overridden",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "3.2.1",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/release_provenance",
+      "observed": "3.2.1",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "rt-vlm",
+        "agent-vlm"
+      ],
+      "id": "contract-05",
+      "observation": "contract_identity/contract/roles",
+      "observed": [
+        "rt-vlm",
+        "agent-vlm"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "package": "systems",
+          "planning_requirement_ids": []
+        }
+      ],
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/contributions",
+      "observed": [
+        {
+          "package": "systems",
+          "planning_requirement_ids": []
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-08",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "model_response",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "model.rt-vlm.default-cosmos3-nano-bf16",
+  "cleanup": {
+    "allowlist": [
+      "00000000-0000-4000-8000-000000000003",
+      "vss-oracle-protocol-rt-vlm-sse"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "00000000-0000-4000-8000-000000000003",
+      "vss-oracle-protocol-rt-vlm-sse"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.model.rt-vlm.default-cosmos3-nano-bf16",
+    "path": "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json",
+    "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+          "default": true,
+          "older_default_prose_overridden": true,
+          "release_provenance": "3.2.1",
+          "roles": [
+            "rt-vlm",
+            "agent-vlm"
+          ],
+          "wave3_acceptance": {
+            "contributions": [
+              {
+                "package": "systems",
+                "planning_requirement_ids": []
+              }
+            ],
+            "executor_ready": false,
+            "materialized": false
+          }
+        },
+        "receipt_sha256": "a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "all_caption_chunks_nonblank": true,
+        "architecture": "arm64",
+        "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final",
+        "container_healthy": true,
+        "container_oom_killed": false,
+        "container_restart_count": 0,
+        "image": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "model_config_sha256": "5cd452860dc1e9c29dd71cc3cef7f39b338b7a40793f7a260655c2d3568f3661",
+        "model_index_sha256": "31e5064be5695aee8fc2721d45ac431875a964d6de0e3ff3de50dc38619f9d41",
+        "model_selector": "cosmos-reason3",
+        "model_shards_present": 4,
+        "real_caption_chunk_count": 5
+      }
+    },
+    {
+      "id": "model_response",
+      "result": "pass",
+      "value": {
+        "SSE_model_identity_stable": true,
+        "advertised_model_count": 1,
+        "model_identity_after_cleanup": true,
+        "no_fallback_observed": true,
+        "served_model_expected": true,
+        "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "terminal_event": "[DONE]",
+        "usage_event_count": 1
+      }
+    }
+  ],
+  "oracle_id": "oracle.model.rt-vlm.default-cosmos3-nano-bf16",
+  "oracle_sha256": "eb8482e1c6356a38a20ee831ef66475156ebe04ebdef39816b7025f64b860f51",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.model.rt-vlm.default-cosmos3-nano-bf16"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

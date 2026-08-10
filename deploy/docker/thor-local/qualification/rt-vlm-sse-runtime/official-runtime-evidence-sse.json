@@ -1,0 +1,153 @@
+{
+  "assertions": [
+    {
+      "expected": "sse",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/protocol",
+      "observed": "sse",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "streaming-response",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/role",
+      "observed": "streaming-response",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "wire_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "protocol.rt-vlm.sse",
+  "cleanup": {
+    "allowlist": [
+      "00000000-0000-4000-8000-000000000003",
+      "vss-oracle-protocol-rt-vlm-sse"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "00000000-0000-4000-8000-000000000003",
+      "vss-oracle-protocol-rt-vlm-sse"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.protocol.rt-vlm.sse",
+    "path": "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json",
+    "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "protocol": "sse",
+          "role": "streaming-response"
+        },
+        "receipt_sha256": "a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "all_caption_chunks_nonblank": true,
+        "caption_chunk_count": 5,
+        "caption_event_count": 5,
+        "content_type": "text/event-stream",
+        "http_status": 200,
+        "negative_http_status": 422,
+        "negative_schema_outcome": "rejected",
+        "negative_vector_id": "rt-vlm-sse-blank-prompt",
+        "positive_vector_id": "rt-vlm-sse-one-owned-clip",
+        "terminal_event": "[DONE]",
+        "usage_event_count": 1
+      }
+    },
+    {
+      "id": "wire_contract",
+      "result": "pass",
+      "value": {
+        "asset_statistics_exact_after": true,
+        "chunk_ids_nondecreasing": true,
+        "container_identity_exact_after": true,
+        "created_timestamp_stable": true,
+        "data_event_count": 7,
+        "model_identity_stable": true,
+        "owned_asset_absent_after": true,
+        "ping_comment_count": 8,
+        "request_id_well_formed": true,
+        "request_identity_stable": true,
+        "response_header_identity_match": true,
+        "terminal_event_last": true,
+        "usage_after_captions": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.protocol.rt-vlm.sse",
+  "oracle_sha256": "090e07879bceff0168fa87e8c48b389edfe66930eae74ce44c935bdf79e9af70",
+  "protocol_case": {
+    "case_id": "protocol-case.rt-vlm.sse",
+    "case_sha256": "65848ab6ecb90cae6ed795acf3564c84309abc8fc417ce280e7bcc7ec84faa41",
+    "cleanup_result": "pass",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "negative_vector_ids": [
+      "rt-vlm-sse-blank-prompt"
+    ],
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "positive_vector_id": "rt-vlm-sse-one-owned-clip",
+    "source_hashes": [
+      {
+        "content_sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0",
+        "git_blob_oid": "80b5414d323e4a515c860559609c00e3bea73c21",
+        "path": "services/rtvi/rt-vlm/src/api_models/captions.py"
+      },
+      {
+        "content_sha256": "4a08c7e360817d44935db679c8c817241865b947613ddca4c3b5de12a79d7a9d",
+        "git_blob_oid": "21d43499d3b8d3096c6c83f1f4d3c7a742422b1a",
+        "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py"
+      }
+    ],
+    "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc"
+  },
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.protocol.rt-vlm.sse"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

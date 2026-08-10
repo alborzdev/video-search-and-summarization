@@ -1,0 +1,117 @@
+{
+  "assertions": [
+    {
+      "expected": "/v1/generate_captions",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/current",
+      "observed": "/v1/generate_captions",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "/v1/generate_captions_alerts",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/removed_legacy",
+      "observed": "/v1/generate_captions_alerts",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "api_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "behavior.rt-vlm.generate-captions-endpoint-rename",
+  "cleanup": {
+    "allowlist": [
+      "00000000-0000-4000-8000-000000000003",
+      "vss-oracle-protocol-rt-vlm-sse"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "00000000-0000-4000-8000-000000000003",
+      "vss-oracle-protocol-rt-vlm-sse"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.behavior.rt-vlm.generate-captions-endpoint-rename",
+    "path": "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json",
+    "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "current": "/v1/generate_captions",
+          "removed_legacy": "/v1/generate_captions_alerts"
+        },
+        "receipt_sha256": "a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "caption_chunk_count": 5,
+        "current_http_status": 200,
+        "current_path_called": true,
+        "current_path_discovered": true,
+        "removed_legacy_path_absent": true
+      }
+    },
+    {
+      "id": "api_contract",
+      "result": "pass",
+      "value": {
+        "asset_statistics_exact_after": true,
+        "authorization_dependency_declared": false,
+        "current_method_present": "POST",
+        "openapi_document_sha256": "88132c9733fa91e5ddf26460948db02464431bf42b611e572003e42998841bf1",
+        "openapi_operation_count": 28,
+        "owned_cleanup_exact": true,
+        "owned_upload_exact": true,
+        "removed_legacy_path_absent": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.behavior.rt-vlm.generate-captions-endpoint-rename",
+  "oracle_sha256": "4e7787087ae5c9477372b482a7d3d4cb4a29e00d2abb3db5e0d8e3aab199e141",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.behavior.rt-vlm.generate-captions-endpoint-rename"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}
