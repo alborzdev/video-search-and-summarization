@@ -1,5 +1,8 @@
 # Pull-free, opt-in NVIDIA Thor official edge model lane.
 services:
+  perception-2d-fusion:
+    restart: unless-stopped
+
   nemotron-edge:
     image: ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8
     container_name: vss-nemotron-edge-4b

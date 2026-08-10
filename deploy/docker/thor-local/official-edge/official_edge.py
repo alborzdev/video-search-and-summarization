@@ -529,6 +529,7 @@ def verify_compose_contract() -> None:
     if not isinstance(services, dict):
         raise ContractError("official-edge compose must define services")
     if set(services) != {
+        "perception-2d-fusion",
         "nemotron-edge",
         "rtvi-vlm",
         "vss-agent",
@@ -538,6 +539,7 @@ def verify_compose_contract() -> None:
     }:
         raise ContractError("official-edge compose service set drifted")
 
+    perception = services["perception-2d-fusion"]
     edge = services["nemotron-edge"]
     rtvlm = services["rtvi-vlm"]
     agent = services["vss-agent"]
@@ -545,6 +547,7 @@ def verify_compose_contract() -> None:
     va_mcp = services["vss-va-mcp"]
     alert_bridge = services["alert-bridge"]
     for name, value in (
+        ("perception-2d-fusion", perception),
         ("nemotron-edge", edge),
         ("rtvi-vlm", rtvlm),
         ("vss-agent", agent),
@@ -554,6 +557,11 @@ def verify_compose_contract() -> None:
     ):
         if not isinstance(value, dict):
             raise ContractError(f"compose service {name} must be an object")
+
+    if perception != {"restart": "unless-stopped"}:
+        raise ContractError(
+            "compose perception-2d-fusion override must only preserve reboot restart"
+        )
 
     _expect(edge, "image", EDGE_IMAGE, "compose.nemotron-edge")
     _expect(edge, "network_mode", "host", "compose.nemotron-edge")

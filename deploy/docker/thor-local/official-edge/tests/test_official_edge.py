@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -215,6 +216,28 @@ class OfficialEdgeStaticTests(unittest.TestCase):
                 resolved = oe.verify_resolved_compose(tracked_env, edge, cosmos)
         self.assertIn("nemotron-edge", resolved["services"])
         self.assertNotIn("qwen3-vl-8b-instruct", resolved["services"])
+        self.assertEqual(
+            resolved["services"]["perception-2d-fusion"]["restart"],
+            "unless-stopped",
+        )
+
+    def test_search_detector_engine_batch_matches_primary_gie_batch(self) -> None:
+        config_dir = (
+            oe.DEPLOY_DOCKER
+            / "developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs"
+        )
+        pgie = oe._load_yaml(config_dir / "ds-pgie-config.yml")
+        engine_name = Path(pgie["property"]["model-engine-file"]).name
+        main_config = (config_dir / "ds-main-config.txt").read_text(encoding="utf-8")
+        primary_gie = re.search(
+            r"^\[primary-gie\]\s*(.*?)(?=^\[|\Z)",
+            main_config,
+            flags=re.MULTILINE | re.DOTALL,
+        )
+        self.assertIsNotNone(primary_gie)
+        batch = re.search(r"^batch-size=(\d+)$", primary_gie.group(1), re.MULTILINE)
+        self.assertIsNotNone(batch)
+        self.assertIn(f"_b{batch.group(1)}_gpu0_fp16.engine", engine_name)
 
     def test_resolved_compose_rejects_credentials_and_shadow_mounts(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
