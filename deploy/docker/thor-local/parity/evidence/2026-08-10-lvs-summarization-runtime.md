@@ -156,6 +156,14 @@ The OpenAPI source independently requires `model`, `scenario`, and `events`,
 sets `additionalProperties: false`, and exposes both canonical
 `/v1/summarize` and compatibility `/summarize` routes.
 
+URL summarization registered the primary clip, four format fixtures, and two
+queue fixtures in LVS's file catalog. After retaining the response evidence,
+all seven exact test-owned IDs were deleted through `DELETE /files/{id}`. Each
+call returned HTTP 200 with the exact `{id, object: "file", deleted: true}`
+confirmation, and the final `GET /files?purpose=vision` response was the empty
+`{object: "list", data: []}` catalog. VIOS continued to retain the original
+`pit-POV` recording; only the disposable LVS copies were removed.
+
 This evidence qualifies local LVS file summarization, all five advertised file
 containers, request serialization at the model boundary, core health/model/
 metrics/config probes, and the live upstream-main `Purpose` enum behavior. It
