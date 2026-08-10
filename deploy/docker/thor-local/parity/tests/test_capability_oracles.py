@@ -67,6 +67,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current VIOS native WebRTC live runtime receipt
             + 2  # current Video Analytics query and optional-Kafka receipts
             + 2  # current Kafka NvSchema and Redis event transport receipts
+            + 1  # current Agent WebSocket runtime receipt
             + 1  # current Alert Bridge WebSocket runtime receipt
             + 6  # current RT-VLM model, SSE, limits, and endpoint receipt
             + 1  # current LVS five-format local summarization receipt
@@ -248,6 +249,47 @@ class CapabilityOracleTests(unittest.TestCase):
                 {"classification": "executor_ready", "blockers": []},
             )
             self.assertEqual(oracle["evidence"], [])
+
+    def test_agent_websocket_oracle_is_exact_executor_ready_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"]
+            == verifier.AGENT_WEBSOCKET_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.AGENT_WEBSOCKET_RUNTIME_FIXTURE["path"],
+                "generator": verifier.AGENT_WEBSOCKET_RUNTIME_EXECUTOR,
+                "sha256": verifier.AGENT_WEBSOCKET_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.AGENT_WEBSOCKET_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.AGENT_WEBSOCKET_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.AGENT_WEBSOCKET_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["cleanup"]["targets"],
+            verifier.AGENT_WEBSOCKET_RUNTIME_NAMESPACES,
+        )
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(
+            oracle["protocol_case_binding"]["negative_vector_ids"],
+            ["agent-ws-missing-conversation"],
+        )
+        self.assertEqual(oracle["evidence"], [])
 
     def test_alert_websocket_oracle_is_exact_executor_ready_row(self) -> None:
         oracle = next(

@@ -1,0 +1,167 @@
+{
+  "blockers": [],
+  "capability_id": "protocol.agent.websocket",
+  "captured_at": "2026-08-10T22:24:21.482031Z",
+  "cleanup": {
+    "agent_report_tree_exact": true,
+    "attempted": true,
+    "failures": [],
+    "owned_conversation_ephemeral": true,
+    "owned_socket_closed": true,
+    "related_runtime_exact": true,
+    "temporary_compilation_absent": true
+  },
+  "completed_at": "2026-08-10T22:24:24.334640Z",
+  "contract_sha256": "f6c6508734f7e4ce2bc724c78617f28821fea0f2810276f912498ec9800b5180",
+  "duration_ms": 2852,
+  "failure": null,
+  "forbidden_actions_observed": [],
+  "max_requests": 2,
+  "network_scope": "loopback_only",
+  "pre_state": {
+    "agent_report_tree": {
+      "file_count": 8,
+      "total_bytes": 355385,
+      "tree_sha256": "92215917d109cb60aa8a8f4aacc3de4b736953ff758302df9e02f514f23c8a2b"
+    },
+    "related_runtime": {
+      "agent": {
+        "container_id_sha256": "62d8fdf6463cb1127c502c3324463b0d5809aaa26828ebec21497bc5b0065e0d",
+        "health": "healthy",
+        "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "5f16fc19fe556184c7e267e1b60d40a46d8e04e5918ce55d1b2994e90064a0b9"
+      },
+      "architecture": "arm64",
+      "gateway": {
+        "container_id_sha256": "865ea38262631163b9519c7ede546acc5fa062496bfa9ce1a90e7a38183858f7",
+        "health": null,
+        "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "e568d4a62c11b428b6364e5154181fc0eb9cfe35c465831ff5a28e3165bf89a0"
+      },
+      "loopback_port_open": true,
+      "ui": {
+        "container_id_sha256": "1cca8e89ecac9c0729d811ee4e09acc13cb6ad33a9f4db0bbe082288c16b588f",
+        "health": null,
+        "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594",
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "6433a4ffc15ef21eb7a6d6808081c8335ff7a47198e29d9b6e0e0bac84afb047"
+      }
+    }
+  },
+  "runtime": {
+    "adjacent_negative": {
+      "candidate_sha256": "dffcc69ab7d45dd5082efb9dfbb7b01cc9ea5afa4501060e6a5a1cfecaefe925",
+      "compiled_validator_sha256": "04b3afb5692c79ae36d85c8f77c0258a7bfe290ca025c7eba2c0a715fdd4e8cb",
+      "error_message_sha256": "505c550decca774cff0dd66837ea72c3ea47fcea66a667af29ef3d45828674fb",
+      "error_type": "Error",
+      "missing_conversation_rejected": true,
+      "temporary_compilation_absent_after": true,
+      "vector_id": "agent-ws-missing-conversation"
+    },
+    "positive": {
+      "complete_terminal_count": 1,
+      "content_nonempty": true,
+      "content_sha256": "b8ad2c0186fa0a5fb13a4fec379df10782c08e6cdb01e26e68c07cb7c43b68e3",
+      "conversation_id_sha256": "3776c26f15d49c8d2cfd3d843b74df808b14c9264e58a1371111440fcd8d115a",
+      "elapsed_ms": 2045,
+      "frame_count": 3,
+      "frames": [
+        {
+          "bytes": 409,
+          "conversation_match": true,
+          "frame_sha256": "66998b56b889fb7e4842fbe276796faaf70ea152a0e039a5937b3e1365a83ed1",
+          "ordinal": 1,
+          "status": "in_progress",
+          "type": "system_response_message"
+        },
+        {
+          "bytes": 311,
+          "conversation_match": true,
+          "frame_sha256": "1c3c919e1b579db7b58c9c6f0200515be49f2506a05bbb8668986a94e01e0daf",
+          "ordinal": 2,
+          "status": "in_progress",
+          "type": "system_response_message"
+        },
+        {
+          "bytes": 290,
+          "conversation_match": true,
+          "frame_sha256": "f796178ee570d70ddedb01b7460b3491e7425cfee519c6cc11c9b21df58dc537",
+          "ordinal": 3,
+          "status": "complete",
+          "type": "system_response_message"
+        }
+      ],
+      "handshake_http_status": 101,
+      "ordered_completion": true,
+      "outbound_frame_bytes": 293,
+      "outbound_frame_sha256": "309fece121dc7bfa3771ca9c456aa073a7eaa6820a8a8c0a0ae3d9773600749b",
+      "request_id_sha256": "11e594f481958c10e3015d0bf0447a22f068a8a647f475df15ce2c7ab4b8f3f1",
+      "schema_type_materialized_from_current_ui_default": true,
+      "schema_type_sha256": "1c5a46be8315e7da3bad18b62e2b216059f61b7ab23b2a724131b62e8a258db3",
+      "socket_close_code": 1000,
+      "template_fixture_sha256": "8b4c201bab43502518df03a048d468f687d23603fb10d3aeec24dd8414adedab",
+      "upgrade_headers_valid": true,
+      "vector_id": "agent-ws-one-turn"
+    },
+    "status": "passed"
+  },
+  "runtime_identity": {
+    "agent": {
+      "container_id_sha256": "62d8fdf6463cb1127c502c3324463b0d5809aaa26828ebec21497bc5b0065e0d",
+      "health": "healthy",
+      "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+      "restart_count": 0,
+      "running": true,
+      "started_at_sha256": "5f16fc19fe556184c7e267e1b60d40a46d8e04e5918ce55d1b2994e90064a0b9"
+    },
+    "architecture": "arm64",
+    "gateway": {
+      "container_id_sha256": "865ea38262631163b9519c7ede546acc5fa062496bfa9ce1a90e7a38183858f7",
+      "health": null,
+      "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+      "restart_count": 0,
+      "running": true,
+      "started_at_sha256": "e568d4a62c11b428b6364e5154181fc0eb9cfe35c465831ff5a28e3165bf89a0"
+    },
+    "loopback_port_open": true,
+    "ui": {
+      "container_id_sha256": "1cca8e89ecac9c0729d811ee4e09acc13cb6ad33a9f4db0bbe082288c16b588f",
+      "health": null,
+      "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594",
+      "restart_count": 0,
+      "running": true,
+      "started_at_sha256": "6433a4ffc15ef21eb7a6d6808081c8335ff7a47198e29d9b6e0e0bac84afb047"
+    }
+  },
+  "schema_version": 1,
+  "semantic_action_count": 2,
+  "static_contract": {
+    "harness_sha256": "1af95e28ae11e298f4db56510e3aaab62b00a6aecb80401f26d516adfca6c9b6",
+    "protocol_case_sha256": "5a801a460b37822952c01953cccd37ee61c10ee2c8b40b162b40de6d73528264",
+    "source_hashes": {
+      "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6",
+      "deploy/docker/services/infra/haproxy/haproxy.cfg.template": "8769bd6357506e93cd0d821630984314b320e76e498bec9474d8aef57603e882",
+      "deploy/docker/services/ui/compose.yml": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3",
+      "deploy/docker/thor-local/compose.yml": "a36ecd65c49636cab8db6b57c85564bdec18189d2d6e3f819f6f22dee894f1cc",
+      "deploy/docker/thor-local/official-edge/compose.yml": "8ce9b8eade977f523422ec9f19279686d6267a6009f038caca3ed1bad8c4a5c6",
+      "deploy/docker/thor-local/official-edge/config_edge.yml": "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662",
+      "services/ui/package-lock.json": "f64070ed3f244d91a56cc46f2debd3af9cb9f019c011a9d8805b882f449e6c5f",
+      "services/ui/packages/nemo-agent-toolkit-ui/.swcrc": "58d3ae201c2bae3f983f6aef34c8b94fccc2696f48534246af1bf724ff28fcb9",
+      "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/Chat.tsx": "91ae0fde8223e998f3bd4f32a2006e8a968a79ffb77518b33388dc276a68d945",
+      "services/ui/packages/nemo-agent-toolkit-ui/package.json": "c4050a3adfede34f1a8ccfe172d4846c1fee1296858e8889158e1237aadcbaab",
+      "services/ui/packages/nemo-agent-toolkit-ui/pages/api/home/home.state.tsx": "6a458c4f2187cc2eaf3567212a91081f1d0c7d8a86e7634d3f17d86354c77a55",
+      "services/ui/packages/nemo-agent-toolkit-ui/types/websocket.ts": "58025ab9a569324457be3517108aeea039352004c36b6f1e861fc2a414cc3cb1"
+    }
+  },
+  "status": "passed",
+  "target_commit": "efcfed56c9f9d966acebbf431a9816ff9f2e28cd",
+  "target_release": "VSS 3.2.1",
+  "tool_id": "thor-agent-websocket-runtime-successor",
+  "warehouse_sample_bundle": false,
+  "writes_or_lifecycle_actions": true
+}

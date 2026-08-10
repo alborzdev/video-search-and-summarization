@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-ui-dashboard-runtime-289.json",
-      "descriptor_raw_sha256": "2b998e3e0aa29658177998e08a90f8faa58d0779b326fc158a7c31747d7fdedc",
-      "set_id": "thor-vss-3.2.1-current-ui-dashboard-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-agent-websocket-runtime-289.json",
+      "descriptor_raw_sha256": "2e8eaf1c47877225a1d9d71cca31673c59125a42bfaea0180cede933c4874242",
+      "set_id": "thor-vss-3.2.1-current-agent-websocket-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-ui-dashboard-runtime-500.json",
-      "descriptor_raw_sha256": "e53363e1211534ea5b0eafc90fdbf159bdddd5e197f1f6992eccf2de3e48ecb2",
-      "set_id": "thor-vss-3.2.1-current-ui-dashboard-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-agent-websocket-runtime-500.json",
+      "descriptor_raw_sha256": "6191ae71598fc0566b55e4a2501a936bf7a6261a3264fcf34d7a1b364868d3d3",
+      "set_id": "thor-vss-3.2.1-current-agent-websocket-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-ui-dashboard-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-agent-websocket-runtime-500"
 }

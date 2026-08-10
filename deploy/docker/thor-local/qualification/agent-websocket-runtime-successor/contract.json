@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-agent-websocket-runtime-successor",
+  "capability_id": "protocol.agent.websocket",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "efcfed56c9f9d966acebbf431a9816ff9f2e28cd",
+  "network_scope": "loopback_only",
+  "warehouse_sample_bundle": false,
+  "max_duration_seconds": 120,
+  "max_requests": 2,
+  "max_semantic_actions": 2,
+  "protocol_case": {
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "case_id": "protocol-case.agent.websocket",
+    "case_sha256": "5a801a460b37822952c01953cccd37ee61c10ee2c8b40b162b40de6d73528264",
+    "positive_vector_id": "agent-ws-one-turn",
+    "negative_vector_ids": [
+      "agent-ws-missing-conversation"
+    ]
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/services/ui/compose.yml",
+      "sha256": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3"
+    },
+    {
+      "path": "deploy/docker/services/infra/haproxy/haproxy.cfg.template",
+      "sha256": "8769bd6357506e93cd0d821630984314b320e76e498bec9474d8aef57603e882"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/Chat.tsx",
+      "sha256": "91ae0fde8223e998f3bd4f32a2006e8a968a79ffb77518b33388dc276a68d945"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/types/websocket.ts",
+      "sha256": "58025ab9a569324457be3517108aeea039352004c36b6f1e861fc2a414cc3cb1"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/pages/api/home/home.state.tsx",
+      "sha256": "6a458c4f2187cc2eaf3567212a91081f1d0c7d8a86e7634d3f17d86354c77a55"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/.swcrc",
+      "sha256": "58d3ae201c2bae3f983f6aef34c8b94fccc2696f48534246af1bf724ff28fcb9"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/package.json",
+      "sha256": "c4050a3adfede34f1a8ccfe172d4846c1fee1296858e8889158e1237aadcbaab"
+    },
+    {
+      "path": "services/ui/package-lock.json",
+      "sha256": "f64070ed3f244d91a56cc46f2debd3af9cb9f019c011a9d8805b882f449e6c5f"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "a36ecd65c49636cab8db6b57c85564bdec18189d2d6e3f819f6f22dee894f1cc"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.yml",
+      "sha256": "8ce9b8eade977f523422ec9f19279686d6267a6009f038caca3ed1bad8c4a5c6"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
+      "sha256": "4690cd45b8a4498fcd5d2ef9f55837c75b77f249c8abba936b842d4a797ef662"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "sha256": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6"
+    }
+  ],
+  "runtime": {
+    "agent": {
+      "container": "vss-agent",
+      "image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+      "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1"
+    },
+    "gateway": {
+      "container": "vss-haproxy-ingress",
+      "image": "haproxy:3.0-alpine",
+      "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f"
+    },
+    "ui": {
+      "container": "vss-agent-ui",
+      "image": "vss-agent-ui:thor-local",
+      "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594"
+    },
+    "endpoint": {
+      "host_class": "ipv4_loopback",
+      "port": 7777,
+      "path": "/websocket"
+    }
+  },
+  "positive": {
+    "deadline_seconds": 30,
+    "max_events": 16,
+    "expected_terminal_count": 1,
+    "schema_type_materialization": "chat_stream",
+    "schema_type_source": "services/ui/packages/nemo-agent-toolkit-ui/pages/api/home/home.state.tsx"
+  },
+  "adjacent_negative": {
+    "vector_id": "agent-ws-missing-conversation",
+    "validator_source": "services/ui/packages/nemo-agent-toolkit-ui/types/websocket.ts",
+    "compiler": "services/ui/packages/nemo-agent-toolkit-ui/node_modules/.bin/swc",
+    "compiler_config": "services/ui/packages/nemo-agent-toolkit-ui/.swcrc",
+    "harness": {
+      "path": "deploy/docker/thor-local/qualification/agent-websocket-runtime-successor/validator_negative.mjs",
+      "sha256": "1af95e28ae11e298f4db56510e3aaab62b00a6aecb80401f26d516adfca6c9b6"
+    },
+    "expected_rejection": "missing_nonempty_conversation_id"
+  },
+  "cleanup": {
+    "mutation": "transient_namespaced",
+    "targets": [
+      "vss-oracle-protocol-agent-websocket"
+    ],
+    "allowlist": [
+      "vss-oracle-protocol-agent-websocket"
+    ],
+    "postconditions": [
+      "the owned WebSocket is closed normally",
+      "the owned conversation is ephemeral and no report artifact is created",
+      "related container identities, health, start times, and restart counts match pre-state",
+      "the temporary compiled validator tree is absent"
+    ]
+  },
+  "forbidden_actions": [
+    "VSS Agent /generate",
+    "VSS service lifecycle mutation",
+    "main VIOS sensor or stream mutation",
+    "RT-CV sample stream mutation",
+    "warehouse sample bundle access",
+    "external network request",
+    "raw chat content retention",
+    "raw request, conversation, or session identifier retention"
+  ]
+}

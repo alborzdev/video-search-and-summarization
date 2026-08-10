@@ -1,0 +1,13 @@
+# Current 500-row Agent WebSocket runtime successor
+
+This deterministic successor combines the current 289-row canonical Thor ledger—including the oracle-bound Agent WebSocket runtime qualification—with the unchanged 211 reviewed planning candidates from the prior LVS-formats-qualified 500-row view. Candidate IDs, order, planning-only states, and evidence-empty status remain unchanged.
+
+Regenerate atomically and verify:
+
+```bash
+python3 deploy/docker/thor-local/qualification/metadata-500-current-agent-websocket-runtime-successor/project.py --write
+python3 deploy/docker/thor-local/qualification/metadata-500-current-agent-websocket-runtime-successor/project.py
+python3 deploy/docker/thor-local/parity/verify_metadata_set.py --json
+```
+
+The projector performs no Docker, network, service, GPU, model, or product API operation. Its explicit write mode changes only the four post-state documents, two descriptors, and the selected-set pointer.

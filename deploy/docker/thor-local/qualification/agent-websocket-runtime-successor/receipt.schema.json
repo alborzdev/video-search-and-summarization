@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool_id",
+    "capability_id",
+    "target_release",
+    "target_commit",
+    "captured_at",
+    "completed_at",
+    "duration_ms",
+    "status",
+    "failure",
+    "blockers",
+    "contract_sha256",
+    "network_scope",
+    "warehouse_sample_bundle",
+    "semantic_action_count",
+    "max_requests",
+    "writes_or_lifecycle_actions",
+    "forbidden_actions_observed",
+    "static_contract",
+    "runtime_identity",
+    "runtime",
+    "pre_state",
+    "cleanup"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "tool_id": {"const": "thor-agent-websocket-runtime-successor"},
+    "capability_id": {"const": "protocol.agent.websocket"},
+    "target_release": {"const": "VSS 3.2.1"},
+    "target_commit": {"$ref": "#/$defs/commit"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "duration_ms": {"type": "integer", "minimum": 1, "maximum": 120000},
+    "status": {"const": "passed"},
+    "failure": {"type": "null"},
+    "blockers": {"const": []},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "network_scope": {"const": "loopback_only"},
+    "warehouse_sample_bundle": {"const": false},
+    "semantic_action_count": {"const": 2},
+    "max_requests": {"const": 2},
+    "writes_or_lifecycle_actions": {"const": true},
+    "forbidden_actions_observed": {"const": []},
+    "static_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["harness_sha256", "protocol_case_sha256", "source_hashes"],
+      "properties": {
+        "harness_sha256": {"$ref": "#/$defs/sha256"},
+        "protocol_case_sha256": {"$ref": "#/$defs/sha256"},
+        "source_hashes": {
+          "type": "object",
+          "minProperties": 12,
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "runtime_identity": {"$ref": "#/$defs/runtimeIdentity"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "positive", "adjacent_negative"],
+      "properties": {
+        "status": {"const": "passed"},
+        "positive": {"$ref": "#/$defs/positive"},
+        "adjacent_negative": {"$ref": "#/$defs/negative"}
+      }
+    },
+    "pre_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_report_tree", "related_runtime"],
+      "properties": {
+        "agent_report_tree": {"$ref": "#/$defs/tree"},
+        "related_runtime": {"$ref": "#/$defs/runtimeIdentity"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempted",
+        "failures",
+        "owned_socket_closed",
+        "owned_conversation_ephemeral",
+        "related_runtime_exact",
+        "agent_report_tree_exact",
+        "temporary_compilation_absent"
+      ],
+      "properties": {
+        "attempted": {"const": true},
+        "failures": {"const": []},
+        "owned_socket_closed": {"const": true},
+        "owned_conversation_ephemeral": {"const": true},
+        "related_runtime_exact": {"const": true},
+        "agent_report_tree_exact": {"const": true},
+        "temporary_compilation_absent": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sha256Image": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "container": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_id_sha256",
+        "image_id",
+        "restart_count",
+        "running",
+        "started_at_sha256",
+        "health"
+      ],
+      "properties": {
+        "container_id_sha256": {"$ref": "#/$defs/sha256"},
+        "image_id": {"$ref": "#/$defs/sha256Image"},
+        "restart_count": {"const": 0},
+        "running": {"const": true},
+        "started_at_sha256": {"$ref": "#/$defs/sha256"},
+        "health": {"type": ["string", "null"]}
+      }
+    },
+    "runtimeIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent", "architecture", "gateway", "loopback_port_open", "ui"],
+      "properties": {
+        "agent": {"$ref": "#/$defs/container"},
+        "architecture": {"const": "arm64"},
+        "gateway": {"$ref": "#/$defs/container"},
+        "loopback_port_open": {"const": true},
+        "ui": {"$ref": "#/$defs/container"}
+      }
+    },
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bytes", "conversation_match", "frame_sha256", "ordinal", "status", "type"],
+      "properties": {
+        "bytes": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "conversation_match": {"const": true},
+        "frame_sha256": {"$ref": "#/$defs/sha256"},
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 16},
+        "status": {"enum": ["in_progress", "complete"]},
+        "type": {"enum": ["system_response_message", "system_intermediate_message", "system_interaction_message"]}
+      }
+    },
+    "positive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "complete_terminal_count",
+        "content_nonempty",
+        "content_sha256",
+        "conversation_id_sha256",
+        "elapsed_ms",
+        "frame_count",
+        "frames",
+        "handshake_http_status",
+        "ordered_completion",
+        "outbound_frame_bytes",
+        "outbound_frame_sha256",
+        "request_id_sha256",
+        "schema_type_materialized_from_current_ui_default",
+        "schema_type_sha256",
+        "socket_close_code",
+        "template_fixture_sha256",
+        "upgrade_headers_valid",
+        "vector_id"
+      ],
+      "properties": {
+        "complete_terminal_count": {"const": 1},
+        "content_nonempty": {"const": true},
+        "content_sha256": {"$ref": "#/$defs/sha256"},
+        "conversation_id_sha256": {"$ref": "#/$defs/sha256"},
+        "elapsed_ms": {"type": "integer", "minimum": 1, "maximum": 30000},
+        "frame_count": {"type": "integer", "minimum": 1, "maximum": 16},
+        "frames": {"type": "array", "minItems": 1, "maxItems": 16, "items": {"$ref": "#/$defs/frame"}},
+        "handshake_http_status": {"const": 101},
+        "ordered_completion": {"const": true},
+        "outbound_frame_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "outbound_frame_sha256": {"$ref": "#/$defs/sha256"},
+        "request_id_sha256": {"$ref": "#/$defs/sha256"},
+        "schema_type_materialized_from_current_ui_default": {"const": true},
+        "schema_type_sha256": {"$ref": "#/$defs/sha256"},
+        "socket_close_code": {"const": 1000},
+        "template_fixture_sha256": {"$ref": "#/$defs/sha256"},
+        "upgrade_headers_valid": {"const": true},
+        "vector_id": {"const": "agent-ws-one-turn"}
+      }
+    },
+    "negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_sha256",
+        "compiled_validator_sha256",
+        "error_message_sha256",
+        "error_type",
+        "missing_conversation_rejected",
+        "temporary_compilation_absent_after",
+        "vector_id"
+      ],
+      "properties": {
+        "candidate_sha256": {"$ref": "#/$defs/sha256"},
+        "compiled_validator_sha256": {"$ref": "#/$defs/sha256"},
+        "error_message_sha256": {"$ref": "#/$defs/sha256"},
+        "error_type": {"const": "Error"},
+        "missing_conversation_rejected": {"const": true},
+        "temporary_compilation_absent_after": {"const": true},
+        "vector_id": {"const": "agent-ws-missing-conversation"}
+      }
+    },
+    "tree": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file_count", "total_bytes", "tree_sha256"],
+      "properties": {
+        "file_count": {"type": "integer", "minimum": 0},
+        "total_bytes": {"type": "integer", "minimum": 0},
+        "tree_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

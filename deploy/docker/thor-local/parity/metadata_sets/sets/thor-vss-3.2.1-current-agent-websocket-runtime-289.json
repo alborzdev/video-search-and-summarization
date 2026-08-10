@@ -1,0 +1,53 @@
+{
+  "documents": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "cc055d0824bc48e2642166f01ded6f3c0e4c37f6fe53fbe2d694c9cda7d5b136",
+      "schema_version": 1
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "90d39491a1ee2820b1264bfc9c914ad981b3b3f7be11d6ffc1fe7ae31fad09a7",
+      "schema_id": "capability_oracles_schema",
+      "schema_version": 1
+    },
+    "manifest": {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "eca09f28ac9be227b24598ae6bff476f5e1205ec272368bf74a48f3f322ff232",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "1e52fc2e698847b106f53509a7db60cb8dcd76989c22be96244d376b52125d0f",
+      "schema_id": "official_capabilities_schema",
+      "schema_version": 1
+    }
+  },
+  "expected_counts": {
+    "capabilities": 289,
+    "feature_families": 55,
+    "oracles": 289
+  },
+  "lifecycle": "live_ready",
+  "mode": "immutable_static_metadata_set",
+  "schema_version": 1,
+  "schemas": {
+    "capability_oracles_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://nvidia.com/vss/thor/capability-oracles.schema.json",
+      "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+      "raw_sha256": "2d9c2127bce3a8280105f7bc78af96c13db3d59da67f928fa9df9e0d42965801"
+    },
+    "official_capabilities_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "6644cffdd6b58f68891d8de27707beb421fb8cc5cd904b1925884c42c9333902"
+    }
+  },
+  "set_id": "thor-vss-3.2.1-current-agent-websocket-runtime-289",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}
