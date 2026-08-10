@@ -60,6 +60,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + len(verifier.MV3DT_RUNTIME_FIXTURES)
             + len(verifier.SPATIAL_AI_IDS[:7])
             + 1  # current VIOS byte-identical full-file runtime receipt
+            + 1  # current NvStreamer file/RTSP/WebRTC runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -679,6 +680,10 @@ class CapabilityOracleTests(unittest.TestCase):
                 ):
                     self.assertEqual(
                         cleanup["targets"], [verifier.VIOS_BYTE_DOWNLOAD_NAMESPACE]
+                    )
+                elif item["capability_id"] == verifier.NVSTREAMER_FILE_CAPABILITY_ID:
+                    self.assertEqual(
+                        cleanup["targets"], [verifier.NVSTREAMER_FILE_NAMESPACE]
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))

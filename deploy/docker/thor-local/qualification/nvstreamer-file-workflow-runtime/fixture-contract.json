@@ -1,0 +1,46 @@
+{
+  "adjacent_negative": {
+    "expected_error_fragment": "Failed to get media information",
+    "expected_status": 400,
+    "payload": "not-an-mp4"
+  },
+  "container": "mp4",
+  "duration_seconds": 2,
+  "expected_bytes": 55942,
+  "expected_media_sha256": "7c6e18340906dca00451268e3389a869d0d9fd169088a41ebad922b7dec846e9",
+  "generator": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/execute.py#_fixture",
+  "inputs": [
+    "upload",
+    "ui",
+    "local-mount"
+  ],
+  "namespace_prefix": "vss_qual_nvstreamer",
+  "outputs": {
+    "automatic": "RTSP",
+    "playback": "WebRTC",
+    "remove_supported": true
+  },
+  "schema_version": 1,
+  "transport_bounds": {
+    "http": "http://127.0.0.1:31000",
+    "rtsp": "rtsp://127.0.0.1:31554",
+    "webrtc_udp_range": [
+      32200,
+      32220
+    ]
+  },
+  "video": {
+    "b_frames": 0,
+    "codec": "h264",
+    "frame_rate": "10/1",
+    "height": 180,
+    "profile": "baseline",
+    "width": 320
+  },
+  "audio": {
+    "channels": 1,
+    "codec": "aac",
+    "sample_rate": 48000
+  },
+  "warehouse_sample_bundle": "excluded"
+}

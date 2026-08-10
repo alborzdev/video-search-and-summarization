@@ -1,0 +1,220 @@
+{
+  "assertions": [
+    {
+      "expected": "RTSP",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/automatic_output",
+      "observed": "RTSP",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "upload",
+        "ui",
+        "local-mount"
+      ],
+      "id": "contract-02",
+      "observation": "contract_identity/contract/inputs",
+      "observed": [
+        "upload",
+        "ui",
+        "local-mount"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "WebRTC",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/playback",
+      "observed": "WebRTC",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/remove_supported",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "analytics-vios-workflows",
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/candidate_family",
+      "observed": "analytics-vios-workflows",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "systems",
+      "id": "contract-08",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "systems",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "systems-nvstreamer-file"
+      ],
+      "id": "contract-09",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "systems-nvstreamer-file"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "runtime.nvstreamer.file-streaming",
+  "cleanup": {
+    "allowlist": [
+      "vss_qual_nvstreamer"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss_qual_nvstreamer"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.runtime.nvstreamer.file-streaming",
+    "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/fixture-contract.json",
+    "sha256": "f7706aeb2a76e06945a080d258057ce25d23435f2cd1412f35975e515baafe00"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "config_sha256": "5e706d472f28406e4df09434e0064f4ee7f9e2094ecb3dc091ee269a2b1f0c28",
+        "executor_sha256": "c4a7935234a98a6d23e764f5d8887d01dba9d64ec33de51cd559845fae9a00e3",
+        "fixture_contract_sha256": "f7706aeb2a76e06945a080d258057ce25d23435f2cd1412f35975e515baafe00",
+        "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+        "raw_receipt_sha256": "2ab858671747ea315634d846e12c4c8d87abd690a52a8381a0a614fdbe2ef8a1",
+        "service_version": "2.1.0-26.05.4",
+        "ui_harness_sha256": "6529bc2c69a86bb37f90814cafe0fa071132e333b792b9e0052af50dac1c2ac4"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "automatic_output": "RTSP",
+        "input_modes": [
+          "upload",
+          "ui",
+          "local-mount"
+        ],
+        "playback": "WebRTC",
+        "remove_supported": true,
+        "request_accounting": {
+          "browser_api_failures": 0,
+          "browser_api_responses": 29,
+          "browser_websocket_frames_sent": 5,
+          "executor_http_responses": 12
+        },
+        "rtsp": {
+          "audio": "aac/48000/mono",
+          "endpoint": "rtsp://127.0.0.1:31554",
+          "video": "h264/320x180"
+        },
+        "snapshot": {
+          "bytes": 6804,
+          "codec": "mjpeg",
+          "height": 180,
+          "sha256": "da193c36859d75aca7f5c20325385f6c642faeca51474a5b1c670b9751cf866d",
+          "width": 320
+        },
+        "ui_upload_status": 200,
+        "webrtc": {
+          "current_time_advanced": true,
+          "external_request_count": 0,
+          "first_frame_observed": true,
+          "height": 180,
+          "live_video_track": true,
+          "ready_state": 4,
+          "width": 320
+        }
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "all_reserved_ports_released": true,
+        "direct_upload_status": 200,
+        "exact_container_inventory_restored": true,
+        "exact_running_set_restored": true,
+        "invalid_media_status": 400,
+        "owned_delete_statuses": [
+          200,
+          200,
+          200
+        ],
+        "owned_media_absent": true,
+        "owned_sensors_absent": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.runtime.nvstreamer.file-streaming",
+  "oracle_sha256": "691957a9b9f2921c109fecb7019aceb5e5aee6c9ca8c1cb7ce32825458691eda",
+  "result": "passed_current",
+  "scenario_ids": [
+    "analytics-vios-workflows",
+    "oracle.runtime.nvstreamer.file-streaming"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

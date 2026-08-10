@@ -1,0 +1,405 @@
+{
+  "bounds": {
+    "agent_generate_called": false,
+    "browser_external_request_count": 0,
+    "existing_container_count": 51,
+    "existing_running_container_count": 37,
+    "http_endpoint": "http://127.0.0.1:31000/vst/api/v1",
+    "http_loopback_only": true,
+    "main_vios_sensor_added": false,
+    "rt_cv_stream_added": false,
+    "rtsp_loopback_only": true,
+    "warehouse_sample_bundle_used": false
+  },
+  "capability_results": {
+    "nvstreamer_local_mount_input": "passed_current",
+    "nvstreamer_remove_supported": "passed_current",
+    "nvstreamer_rtsp_output": "passed_current",
+    "nvstreamer_ui_input": "passed_current",
+    "nvstreamer_upload_input": "passed_current",
+    "nvstreamer_webrtc_playback": "passed_current",
+    "runtime.nvstreamer.file-streaming": "passed_current"
+  },
+  "captured_at": "2026-08-10T13:49:16.559362Z",
+  "cleanup": {
+    "all_reserved_ports_released": true,
+    "attempts": [
+      {
+        "operation": "owned-file-delete",
+        "status": 200,
+        "stream_id": "vss_qual_nvstreamer_16d1b7cd9ba9_api_upload"
+      },
+      {
+        "operation": "owned-file-delete",
+        "status": 200,
+        "stream_id": "vss_qual_nvstreamer_16d1b7cd9ba9_local_mount_0"
+      },
+      {
+        "operation": "owned-file-delete",
+        "status": 200,
+        "stream_id": "vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload"
+      },
+      {
+        "operation": "container-stop",
+        "status": 0
+      },
+      {
+        "operation": "container-remove",
+        "status": 0
+      }
+    ],
+    "exact_container_inventory_restored": true,
+    "exact_running_set_restored": true,
+    "owned_media_absent": true,
+    "owned_sensors_absent": true,
+    "owned_stream_ids": [
+      "vss_qual_nvstreamer_16d1b7cd9ba9_api_upload",
+      "vss_qual_nvstreamer_16d1b7cd9ba9_local_mount_0",
+      "vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload"
+    ],
+    "result": "passed",
+    "temporary_tree_removed_by_context": true
+  },
+  "fixture": {
+    "bytes": 55942,
+    "sha256": "7c6e18340906dca00451268e3389a869d0d9fd169088a41ebad922b7dec846e9",
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "has_b_frames": 0,
+        "height": 180,
+        "r_frame_rate": "10/1",
+        "width": 320
+      },
+      {
+        "channels": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0",
+        "sample_rate": "48000"
+      }
+    ]
+  },
+  "identity": {
+    "config_sha256": "5e706d472f28406e4df09434e0064f4ee7f9e2094ecb3dc091ee269a2b1f0c28",
+    "executor_sha256": "c4a7935234a98a6d23e764f5d8887d01dba9d64ec33de51cd559845fae9a00e3",
+    "image": {
+      "codec_package_set": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+      "container_id": "8366a74fde537dfcb0c4981679acaa00d411ccfcecabf3eed39a7bb53c74b875",
+      "image_architecture": "arm64",
+      "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+      "image_repo_digests": [
+        "vss-vios-nvstreamer@sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563"
+      ],
+      "image_size_bytes": 3456921334,
+      "offline_runtime_install": "disabled"
+    },
+    "service_version": {
+      "type": "streamer",
+      "version": "2.1.0-26.05.4"
+    },
+    "storage_config_sha256": "df3467bc7636fab7b75be3b663168ef9829affcf48ce4c0aefe1b7334edefdbb",
+    "ui_harness_sha256": "6529bc2c69a86bb37f90814cafe0fa071132e333b792b9e0052af50dac1c2ac4"
+  },
+  "observations": {
+    "automatic_output": "RTSP",
+    "direct_upload": {
+      "id": "vss_qual_nvstreamer_16d1b7cd9ba9_api_upload",
+      "status": 200,
+      "stream_id": "vss_qual_nvstreamer_16d1b7cd9ba9_api_upload"
+    },
+    "input_modes": [
+      "upload",
+      "ui",
+      "local-mount"
+    ],
+    "invalid_media_status": 400,
+    "local_mount": {
+      "location_suffix": "vss_qual_nvstreamer_16d1b7cd9ba9_local_mount.mp4",
+      "rtsp_url": "rtsp://127.0.0.1:31554/nvstream/home/vst/vst_release/streamer_videos/vss_qual_nvstreamer_16d1b7cd9ba9_local_mount.mp4",
+      "sensor_id": "vss_qual_nvstreamer_16d1b7cd9ba9_local_mount_0"
+    },
+    "playback": "WebRTC",
+    "post_sensor_list_count": 0,
+    "remove_supported": true,
+    "request_accounting": {
+      "browser_api_failures": 0,
+      "browser_api_responses": 29,
+      "browser_websocket_frames_sent": 5,
+      "executor_http_responses": 12
+    },
+    "rtsp_probe": {
+      "audio": {
+        "channels": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0",
+        "sample_rate": "48000"
+      },
+      "video": {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "height": 180,
+        "r_frame_rate": "30/1",
+        "width": 320
+      }
+    },
+    "sensor_names": [
+      "vss_qual_nvstreamer_16d1b7cd9ba9_api_upload",
+      "vss_qual_nvstreamer_16d1b7cd9ba9_local_mount",
+      "vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload"
+    ],
+    "sensor_states": {
+      "vss_qual_nvstreamer_16d1b7cd9ba9_api_upload": "online",
+      "vss_qual_nvstreamer_16d1b7cd9ba9_local_mount": "online",
+      "vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload": "online"
+    },
+    "snapshot": {
+      "bytes": 6804,
+      "codec": "mjpeg",
+      "height": 180,
+      "sha256": "da193c36859d75aca7f5c20325385f6c642faeca51474a5b1c670b9751cf866d",
+      "width": 320
+    },
+    "ui": {
+      "endpoint": "http://127.0.0.1:31000",
+      "network": {
+        "api_failure_count": 0,
+        "api_response_count": 29,
+        "external_request_count": 0,
+        "failures": [
+          {
+            "error": "net::ERR_FAILED",
+            "host": "127.0.0.1:8081",
+            "loopback": true,
+            "method": "GET",
+            "path": "/config/calibration"
+          }
+        ],
+        "requests": [
+          {
+            "host": "127.0.0.1:31000",
+            "loopback": true,
+            "method": "GET",
+            "path": "/api/v1/live/configuration",
+            "status": 200
+          },
+          {
+            "host": "127.0.0.1:31000",
+            "loopback": true,
+            "method": "GET",
+            "path": "/api/v1/live/version",
+            "status": 200
+          },
+          {
+            "host": "127.0.0.1:31000",
+            "loopback": true,
+            "method": "GET",
+            "path": "/api/v1/live/streams",
+            "status": 200
+          },
+          {
+            "host": "127.0.0.1:31000",
+            "loopback": true,
+            "method": "POST",
+            "path": "/api/v1/storage/file",
+            "status": 200
+          },
+          {
+            "host": "127.0.0.1:31000",
+            "loopback": true,
+            "method": "GET",
+            "path": "/api/v1/live/version",
+            "status": 200
+          },
+          {
+            "host": "127.0.0.1:31000",
+            "loopback": true,
+            "method": "GET",
+            "path": "/api/v1/live/streams",
+            "status": 200
+          },
+          {
+            "host": "127.0.0.1:31000",
+            "loopback": true,
+            "method": "GET",
+            "path": "/api/v1/live/configuration",
+            "status": 200
+          }
+        ],
+        "response_count": 34,
+        "websocket": {
+          "closed": false,
+          "frames_received": 11,
+          "frames_sent": 5,
+          "host": "127.0.0.1:31000",
+          "loopback": true,
+          "path": "/api/v1/live/ws"
+        }
+      },
+      "schema_version": 1,
+      "status": "passed",
+      "upload": {
+        "bytes": 55942,
+        "filename": "vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload.mp4",
+        "id": "vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload",
+        "request_status": 200,
+        "sensor_info_status": 200,
+        "stream_id": "vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload"
+      },
+      "webrtc": {
+        "connecting_overlay_count": 0,
+        "first_frame_observed": true,
+        "sensor_name": "vss_qual_nvstreamer_16d1b7cd9ba9_local_mount",
+        "video_samples": [
+          {
+            "current_time": 0,
+            "elapsed_seconds": 0,
+            "ended": false,
+            "has_src_object": false,
+            "network_state": 0,
+            "paused": true,
+            "ready_state": 0,
+            "tracks": [],
+            "video_height": 0,
+            "video_width": 0
+          },
+          {
+            "current_time": 0.116,
+            "elapsed_seconds": 1,
+            "ended": false,
+            "has_src_object": true,
+            "network_state": 2,
+            "paused": false,
+            "ready_state": 4,
+            "tracks": [
+              {
+                "enabled": true,
+                "kind": "video",
+                "muted": false,
+                "ready_state": "live"
+              }
+            ],
+            "video_height": 180,
+            "video_width": 320
+          }
+        ]
+      }
+    }
+  },
+  "qualification_id": "thor-vss-3.2.1-nvstreamer-file-workflow-runtime",
+  "requests": [
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/version",
+      "response_bytes": 30,
+      "response_sha256": "c4cc0f83931d829e754d693b3983be7cc039635bc2581198ed0e3420623a3c4f",
+      "status": 404
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/version",
+      "response_bytes": 54,
+      "response_sha256": "0e2788a95c9416d75aa9e4d9c7b431b830fa65900a1d02f63cb882541a001e48",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/list",
+      "response_bytes": 861,
+      "response_sha256": "5a92cd053367545feb1f2cc09678288e472468be660944ef674d8c087934ca29",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "POST",
+      "path": "/storage/file",
+      "response_bytes": 360,
+      "response_sha256": "bdfaf37c084137ef5ff3df83b8107162793eaf32a00c043ec23296b6954bb0a0",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "POST",
+      "path": "/storage/file",
+      "response_bytes": 97,
+      "response_sha256": "a203f59dbaad61d19349d1c1dd545479ed82ba695896e619d6c8bca83832360d",
+      "status": 400
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/list",
+      "response_bytes": 2734,
+      "response_sha256": "d3f081edf0a5f0404dfc74a39d49914a9c83b7bee82fbd16451886d6555dfb3a",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/streams",
+      "response_bytes": 1695,
+      "response_sha256": "ead1f37bf1c7a558a84fc0c34d9f7bb2cbcf29ea4f33efe2ab064a76d0ec03c4",
+      "status": 200
+    },
+    {
+      "content_type": "image/jpeg",
+      "method": "GET",
+      "path": "/live/stream/vss_qual_nvstreamer_16d1b7cd9ba9_local_mount_0/picture?frameId=0",
+      "response_bytes": 6804,
+      "response_sha256": "da193c36859d75aca7f5c20325385f6c642faeca51474a5b1c670b9751cf866d",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "DELETE",
+      "path": "/storage/file/vss_qual_nvstreamer_16d1b7cd9ba9_api_upload",
+      "response_bytes": 4,
+      "response_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "DELETE",
+      "path": "/storage/file/vss_qual_nvstreamer_16d1b7cd9ba9_local_mount_0",
+      "response_bytes": 4,
+      "response_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "DELETE",
+      "path": "/storage/file/vss_qual_nvstreamer_16d1b7cd9ba9_ui_upload",
+      "response_bytes": 4,
+      "response_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/list",
+      "response_bytes": 2,
+      "response_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/list",
+      "response_bytes": 2,
+      "response_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "status": 200
+    }
+  ],
+  "runtime_evidence": true,
+  "schema_version": 1,
+  "status": "passed",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

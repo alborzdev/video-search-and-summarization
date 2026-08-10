@@ -226,6 +226,45 @@ VIOS_BYTE_DOWNLOAD_WORKLOAD = {
     "calculated_max_requests": 13,
     "phases": ["positive", "adjacent_negative", "cleanup"],
 }
+NVSTREAMER_FILE_CAPABILITY_ID = "runtime.nvstreamer.file-streaming"
+NVSTREAMER_FILE_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "nvstreamer-file-workflow-runtime/execute.py"
+)
+NVSTREAMER_FILE_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "nvstreamer-file-workflow-runtime/fixture-contract.json"
+    ),
+    "sha256": "f7706aeb2a76e06945a080d258057ce25d23435f2cd1412f35975e515baafe00",
+}
+NVSTREAMER_FILE_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "nvstreamer-file-workflow-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "a4daa8ba496146cfb09feba89131c103efa7211734cc60cd655a29ae812ac7b2",
+    }
+]
+NVSTREAMER_FILE_NAMESPACE = "vss_qual_nvstreamer"
+NVSTREAMER_FILE_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 3,
+    "overhead_requests": 45,
+    "calculated_max_requests": 48,
+    "phases": [
+        "pre_state",
+        "positive_upload",
+        "positive_ui",
+        "positive_local_mount",
+        "rtsp",
+        "webrtc",
+        "adjacent_negative",
+        "cleanup",
+        "postcondition",
+    ],
+}
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -234,6 +273,14 @@ def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == VIOS_BYTE_DOWNLOAD_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_nvstreamer_file_workflow(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == NVSTREAMER_FILE_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == NVSTREAMER_FILE_RUNTIME_EVIDENCE
     )
 
 # capability_id: (planning_requirement_id, minimum requests, maximum actions)
@@ -930,6 +977,8 @@ def _workload(
     contract = capability["contract"]
     if live_integration and _is_current_vios_byte_download(capability):
         return copy.deepcopy(VIOS_BYTE_DOWNLOAD_WORKLOAD)
+    if live_integration and _is_current_nvstreamer_file_workflow(capability):
+        return copy.deepcopy(NVSTREAMER_FILE_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -2040,6 +2089,26 @@ def compile_plan(
             oracle["cleanup"]["executor"] = VIOS_BYTE_DOWNLOAD_EXECUTOR
             oracle["cleanup"]["postcondition_collectors"] = [
                 VIOS_BYTE_DOWNLOAD_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
+        if _is_current_nvstreamer_file_workflow(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": NVSTREAMER_FILE_FIXTURE["path"],
+                "generator": NVSTREAMER_FILE_EXECUTOR,
+                "sha256": NVSTREAMER_FILE_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = NVSTREAMER_FILE_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                NVSTREAMER_FILE_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = [NVSTREAMER_FILE_NAMESPACE]
+            oracle["cleanup"]["allowlist"] = [NVSTREAMER_FILE_NAMESPACE]
+            oracle["cleanup"]["executor"] = NVSTREAMER_FILE_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                NVSTREAMER_FILE_EXECUTOR
             ]
             oracle["acceptance_readiness"] = {
                 "classification": "executor_ready",
