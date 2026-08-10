@@ -1,0 +1,308 @@
+{
+  "assertions": [
+    {
+      "expected": "external_required",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/batch_queue",
+      "observed": "external_required",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "single_vlm_worker_and_single_inflight_slot",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/gpu_utilization_boundary",
+      "observed": "single_vlm_worker_and_single_inflight_slot",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/simultaneous_video_processing",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "video-summarization-file",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/wave3_acceptance/candidate_family",
+      "observed": "video-summarization-file",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "systems",
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "systems",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "systems-lvs-queue"
+      ],
+      "id": "contract-08",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "systems-lvs-queue"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "runtime.lvs.single-request-queue",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-runtime-lvs-single-request-queue",
+      "00000000-0000-4000-8000-000000000031",
+      "00000000-0000-4000-8000-000000000032"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-runtime-lvs-single-request-queue",
+      "00000000-0000-4000-8000-000000000031",
+      "00000000-0000-4000-8000-000000000032"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.runtime.lvs.single-request-queue",
+    "path": "deploy/docker/thor-local/qualification/lvs-single-request-queue-runtime/contract.json",
+    "sha256": "2065ca45457490b299bbde56dfa0fd64529cc857f7b5e4a34c34468cc29ab49c"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "batch_queue": "external_required",
+          "gpu_utilization_boundary": "single_vlm_worker_and_single_inflight_slot",
+          "simultaneous_video_processing": false,
+          "wave3_acceptance": {
+            "candidate_family": "video-summarization-file",
+            "executor_ready": false,
+            "materialized": false,
+            "package": "systems",
+            "planning_requirement_ids": [
+              "systems-lvs-queue"
+            ]
+          }
+        },
+        "official_source_interpretation": {
+          "external_batch_queue_required": true,
+          "internal_batch_scheduler_claimed": false,
+          "one_video_at_a_time": true
+        },
+        "receipt_sha256": "3359142428b97702c5a1524e66ece01db1adb7dfea13895c99c3dc928c1cc84f"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "both_requests_completed_semantically": true,
+        "local_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "lvs_image_id": "sha256:1037a857158cfbc9c2be87bea92838c60cc1d528357ec5c3d9feea483bd9aefd",
+        "outstanding_work": {
+          "decode_admission_queue_sum_delta_seconds": 0.003,
+          "metric_sample_count": 130,
+          "metric_samples_sha256": "8172b65bb332180a1e6a7b689595b605793d3b5ad0f46d5017fb25fe8f5494c2",
+          "processed_delta": 2,
+          "queue_count_delta": 2,
+          "transition": [
+            {
+              "offset_seconds": 0.259368,
+              "pending": 2,
+              "processed": 20,
+              "queue_count": 20,
+              "queue_sum_seconds": 0.022000000000000013,
+              "sample_index": 1
+            },
+            {
+              "offset_seconds": 22.709708,
+              "pending": 1,
+              "processed": 21,
+              "queue_count": 21,
+              "queue_sum_seconds": 0.023000000000000013,
+              "sample_index": 89
+            },
+            {
+              "offset_seconds": 32.886602,
+              "pending": 0,
+              "processed": 22,
+              "queue_count": 22,
+              "queue_sum_seconds": 0.025000000000000015,
+              "sample_index": 129
+            }
+          ]
+        },
+        "responses": [
+          {
+            "chunks_processed": 1,
+            "completion_offset_seconds": 22.625721,
+            "duration_seconds": 22.625456,
+            "finish_reason": "stop",
+            "http_status": 200,
+            "label": "a",
+            "model_exact": true,
+            "response_bytes": 1506,
+            "response_sha256": "ee8a76a61cc840fb265627a1d5a57cbb7d23a784c0700f7492d14293d7223652",
+            "semantic_output_bytes": 898,
+            "semantic_output_nonempty": true,
+            "semantic_output_sha256": "d31c20567fe07ae68fef2f766944bc2fbcdc799aa636893bb81473f041f6ad31",
+            "start_offset_seconds": 0.000264,
+            "video_identity_exact": true
+          },
+          {
+            "chunks_processed": 1,
+            "completion_offset_seconds": 32.810835,
+            "duration_seconds": 32.810724,
+            "finish_reason": "stop",
+            "http_status": 200,
+            "label": "b",
+            "model_exact": true,
+            "response_bytes": 1416,
+            "response_sha256": "0e64c1d276e6fab5efe5d31432aee19524aa14992eaf504e73c5907da8eee0a2",
+            "semantic_output_bytes": 805,
+            "semantic_output_nonempty": true,
+            "semantic_output_sha256": "33c969927a9c2261dd15e9c9480894505257be6daa8c1607e7c16500a8ba1f79",
+            "start_offset_seconds": 0.000111,
+            "video_identity_exact": true
+          }
+        ],
+        "rt_vlm_image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "runtime_topology": {
+          "container": "vss-rtvi-vlm",
+          "environment": {
+            "NUM_GPUS": "1",
+            "VLM_BATCH_SIZE": "1",
+            "VLM_MODEL_TO_USE": "cosmos-reason3"
+          },
+          "files": [
+            {
+              "bytes": 85915,
+              "container_path": "/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py",
+              "provenance": "read_only_bind",
+              "required_literal_count": 6,
+              "required_literals_present": true,
+              "sha256": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
+            },
+            {
+              "bytes": 18166,
+              "container_path": "/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py",
+              "provenance": "read_only_bind",
+              "required_literal_count": 3,
+              "required_literals_present": true,
+              "sha256": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"
+            },
+            {
+              "bytes": 78838,
+              "container_path": "/opt/nvidia/rtvi/rtvi/models/vllm_compatible/vllm_compatible_model.py",
+              "provenance": "image",
+              "required_literal_count": 1,
+              "required_literals_present": true,
+              "sha256": "3d76dc0a9462ad668d290d50f14f5bc203cdc2acb4618f9d787ce619cf1c5637"
+            }
+          ],
+          "process_flags": {
+            "--num-gpus": "1",
+            "--vlm-batch-size": "1",
+            "--vlm-model-type": "cosmos-reason3"
+          },
+          "server_module": "server.rtvi_vlm_server",
+          "server_process_count": 1,
+          "single_gpu": true,
+          "single_inflight_slot": true,
+          "single_vlm_process": true,
+          "vlm_batch_size_one": true
+        },
+        "simultaneous_submission": {
+          "request_count": 2,
+          "start_skew_seconds": 0.000153
+        }
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "advertised_simultaneous_video_processing": false,
+        "all_owned_assets_absent": true,
+        "complete_file_list_exact": true,
+        "container_identity_exact": true,
+        "external_batch_queue_required": true,
+        "global_http_serialization_claimed": false,
+        "internal_batch_scheduler_claimed": false,
+        "outstanding_work_transition": [
+          2,
+          1,
+          0
+        ],
+        "rt_vlm_asset_statistics_exact": true,
+        "thor_single_inflight_slot": true,
+        "thor_single_vlm_worker": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.runtime.lvs.single-request-queue",
+  "oracle_sha256": "4d6fe29f9ca73b5402cbbc0fd9db4e033eaed2c4feeb6756628e17eabaa1925b",
+  "result": "passed_current",
+  "scenario_ids": [
+    "core-agent-workflows",
+    "oracle.runtime.lvs.single-request-queue"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

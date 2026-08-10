@@ -715,6 +715,49 @@ LVS_FORMATS_RUNTIME_WORKLOAD = {
     ],
 }
 LVS_FORMATS_RUNTIME_MAX_ACTIONS = 9
+LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID = "runtime.lvs.single-request-queue"
+LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "lvs-single-request-queue-runtime/execute.py"
+)
+LVS_SINGLE_REQUEST_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "lvs-single-request-queue-runtime/contract.json"
+    ),
+    "sha256": "2065ca45457490b299bbde56dfa0fd64529cc857f7b5e4a34c34468cc29ab49c",
+}
+LVS_SINGLE_REQUEST_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "lvs-single-request-queue-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "7467cc46d9ebe25f6dec89dcacb60da602abce314c28b7c35bb11e13e708e9bf",
+    }
+]
+LVS_SINGLE_REQUEST_RUNTIME_NAMESPACES = [
+    "vss-oracle-runtime-lvs-single-request-queue",
+    "00000000-0000-4000-8000-000000000031",
+    "00000000-0000-4000-8000-000000000032",
+]
+LVS_SINGLE_REQUEST_RUNTIME_WORKLOAD = {
+    "units": 2,
+    "requests_per_unit": 75,
+    "overhead_requests": 0,
+    "calculated_max_requests": 150,
+    "phases": [
+        "static_and_runtime_identity",
+        "pre_state",
+        "two_owned_file_uploads_and_readbacks",
+        "simultaneous_summary_submission",
+        "outstanding_work_metric_sampling",
+        "one_worker_one_inflight_topology_proof",
+        "exact_cleanup",
+        "postcondition",
+    ],
+}
+LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS = 2
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -811,6 +854,15 @@ def _is_current_lvs_formats_runtime(capability: dict[str, Any]) -> bool:
         capability.get("id") == LVS_FORMATS_RUNTIME_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence") == LVS_FORMATS_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_lvs_single_request_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == LVS_SINGLE_REQUEST_RUNTIME_EVIDENCE
     )
 
 
@@ -1528,6 +1580,8 @@ def _workload(
         return copy.deepcopy(RT_VLM_SSE_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_formats_runtime(capability):
         return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_lvs_single_request_runtime(capability):
+        return copy.deepcopy(LVS_SINGLE_REQUEST_RUNTIME_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1601,6 +1655,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return RT_VLM_SSE_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_formats_runtime(capability):
         return LVS_FORMATS_RUNTIME_MAX_ACTIONS
+    if _is_current_lvs_single_request_runtime(capability):
+        return LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2875,6 +2931,32 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_lvs_single_request_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": LVS_SINGLE_REQUEST_RUNTIME_FIXTURE["path"],
+                "generator": LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR,
+                "sha256": LVS_SINGLE_REQUEST_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = (
+                LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR
+            )
+            oracle["execution_bounds"]["collectors"] = [
+                LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                LVS_SINGLE_REQUEST_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                LVS_SINGLE_REQUEST_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["executor"] = LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -3089,6 +3171,8 @@ def validate(
             expected_actions = RT_VLM_SSE_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
+        elif _is_current_lvs_single_request_runtime(ledger_by_id[capability_id]):
+            expected_actions = LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

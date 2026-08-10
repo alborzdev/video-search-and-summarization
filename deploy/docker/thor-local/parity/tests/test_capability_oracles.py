@@ -70,6 +70,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current Alert Bridge WebSocket runtime receipt
             + 6  # current RT-VLM model, SSE, limits, and endpoint receipt
             + 1  # current LVS five-format local summarization receipt
+            + 1  # current LVS one-video-at-a-time runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -981,6 +982,9 @@ class CapabilityOracleTests(unittest.TestCase):
                     else len(verifier.LVS_FORMATS_RUNTIME_NAMESPACES)
                     if item["capability_id"]
                     == verifier.LVS_FORMATS_RUNTIME_CAPABILITY_ID
+                    else len(verifier.LVS_SINGLE_REQUEST_RUNTIME_NAMESPACES)
+                    if item["capability_id"]
+                    == verifier.LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID
                     else len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
                     if item["capability_id"]
                     == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
@@ -1222,6 +1226,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     == verifier.LVS_FORMATS_RUNTIME_CAPABILITY_ID
+                )
+                else verifier.LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID
                 )
                 else override[2]
                 if override is not None

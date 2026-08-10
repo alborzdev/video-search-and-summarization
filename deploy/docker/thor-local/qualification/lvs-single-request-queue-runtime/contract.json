@@ -1,0 +1,232 @@
+{
+  "acknowledgement": "I_ACK_LVS_TWO_REQUEST_QUEUE_AND_EXACT_CLEANUP",
+  "assets": [
+    {
+      "asset_id": "00000000-0000-4000-8000-000000000031",
+      "filename": "vss-lvs-queue-a.mp4",
+      "label": "a",
+      "sensor_name": "vss-lvs-queue-a"
+    },
+    {
+      "asset_id": "00000000-0000-4000-8000-000000000032",
+      "filename": "vss-lvs-queue-b.mp4",
+      "label": "b",
+      "sensor_name": "vss-lvs-queue-b"
+    }
+  ],
+  "autonomous_hitl_defaults": {
+    "events": [
+      "notable activity"
+    ],
+    "scenario": "activity monitoring"
+  },
+  "base_dependency": {
+    "contract": {
+      "bytes": 6972,
+      "path": "deploy/docker/thor-local/qualification/lvs-formats-runtime/contract.json",
+      "sha256": "28030f32ef10d0fe240b11671511a75b5b308041732206a258f9e1f333bf20d7"
+    },
+    "executor": {
+      "bytes": 51082,
+      "path": "deploy/docker/thor-local/qualification/lvs-formats-runtime/execute.py",
+      "sha256": "a52ab32e86cd7f70cb325a0ffe5bb49e669766cc76e7ed221d579c7be10efa4c"
+    }
+  },
+  "capability_id": "runtime.lvs.single-request-queue",
+  "cleanup": {
+    "logical_namespace": "vss-oracle-runtime-lvs-single-request-queue",
+    "mutation": "upload two fixed qualifier-owned files, submit two simultaneous summaries, and exact-delete both files",
+    "postconditions": [
+      "both fixed qualifier-owned IDs are absent",
+      "the complete non-owned LVS file-list digest matches pre-state",
+      "RT-VLM asset statistics match pre-state",
+      "LVS and RT-VLM identity, health, restart count, and OOM state match pre-state"
+    ],
+    "target_ids": [
+      "00000000-0000-4000-8000-000000000031",
+      "00000000-0000-4000-8000-000000000032"
+    ]
+  },
+  "containers": {
+    "lvs": {
+      "image": "cti-vss-video-summarization:thor-local",
+      "image_id": "sha256:1037a857158cfbc9c2be87bea92838c60cc1d528357ec5c3d9feea483bd9aefd",
+      "name": "vss-lvs"
+    },
+    "rt_vlm": {
+      "image": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "name": "vss-rtvi-vlm"
+    }
+  },
+  "default_execution_enabled": false,
+  "endpoints": {
+    "lvs_origin": "http://127.0.0.1:38111",
+    "rt_vlm_origin": "http://127.0.0.1:8018"
+  },
+  "execution_bounds": {
+    "max_duration_seconds": 480,
+    "max_http_requests": 750,
+    "max_metric_samples": 720,
+    "max_semantic_actions": 2,
+    "min_free_bytes": 10737418240,
+    "model_staging": "forbidden",
+    "network_scope": "numeric-loopback-only",
+    "service_lifecycle": "forbidden",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "official_contract": {
+    "batch_queue": "external_required",
+    "gpu_utilization_boundary": "single_vlm_worker_and_single_inflight_slot",
+    "simultaneous_video_processing": false
+  },
+  "media": {
+    "derivation": [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      "<source>",
+      "-vf",
+      "scale=640:-2,fps=5",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "ultrafast",
+      "-crf",
+      "28",
+      "-pix_fmt",
+      "yuv420p",
+      "<mp4>"
+    ],
+    "expected_bytes": 251674,
+    "expected_sha256": "bcd1187ab962147762bc832495472fb89c8d047dff52da9d61d4eaeefe71ac6c",
+    "format": {
+      "audio_stream_count": 0,
+      "codec": "h264",
+      "duration_seconds": 10.0,
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "frame_rate": "5/1",
+      "height": 360,
+      "video_stream_count": 1,
+      "width": 640
+    },
+    "mime_type": "video/mp4"
+  },
+  "metrics": {
+    "expected_processed_delta": 2,
+    "expected_queue_count_delta": 2,
+    "maximum_start_skew_seconds": 0.05,
+    "path": "/metrics",
+    "poll_interval_seconds": 0.25,
+    "queue_time_semantics": "decode-admission-only-not-model-worker-wait",
+    "required_help": {
+      "video_file_queries_pending": "Number of video file queries which are queued and yet to be processed",
+      "video_file_queries_processed": "Number of video file queries whose processing is complete",
+      "vlm_queue_time_seconds": "Time a chunk waited in RTVI's VLM queue before processing"
+    },
+    "required_pending_transition": [
+      2,
+      1,
+      0
+    ],
+    "series": {
+      "pending": "video_file_queries_pending",
+      "processed": "video_file_queries_processed",
+      "queue_count": "vlm_queue_time_seconds_count",
+      "queue_sum": "vlm_queue_time_seconds_sum"
+    }
+  },
+  "model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+  "schema_version": 1,
+  "service_contract": {
+    "lvs_metadata_port": "38111",
+    "lvs_metadata_sub_version": "d16a216",
+    "lvs_metadata_version": "3.0.0",
+    "lvs_model_count": 1
+  },
+  "source_fixture": {
+    "bytes": 2575454,
+    "duration_seconds": 10.0,
+    "path": "services/alert/warmup/test.mp4",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "warehouse_sample_bundle": false
+  },
+  "runtime_queue_topology": {
+    "container": "vss-rtvi-vlm",
+    "environment": {
+      "NUM_GPUS": "1",
+      "VLM_BATCH_SIZE": "1",
+      "VLM_MODEL_TO_USE": "cosmos-reason3"
+    },
+    "files": [
+      {
+        "bytes": 85915,
+        "container_path": "/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py",
+        "host_path": "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py",
+        "mount": "read_only_bind",
+        "required_literals": [
+          "\"cosmos-reason3\": \"models.vllm_compatible.vllm_compatible_model.VllmCompatible\"",
+          "batch_size=args.vlm_batch_size",
+          "self._num_futures_threads = max(1, vlm_batch_size)",
+          "\"max_batch_size\": self._batch_size",
+          "return not self._model.can_enqueue_requests()",
+          "self._num_vlm_procs = args.num_gpus"
+        ],
+        "sha256": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
+      },
+      {
+        "bytes": 18166,
+        "container_path": "/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py",
+        "host_path": "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py",
+        "mount": "read_only_bind",
+        "required_literals": [
+          "if not self._disabled and self._is_busy():",
+          "if self._supports_batching():",
+          "self.__process_int(**items[0])"
+        ],
+        "sha256": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"
+      },
+      {
+        "bytes": 78838,
+        "container_path": "/opt/nvidia/rtvi/rtvi/models/vllm_compatible/vllm_compatible_model.py",
+        "host_path": null,
+        "mount": "image",
+        "required_literals": [
+          "return len(self._inflight_req_ids) < self._max_batch_size"
+        ],
+        "sha256": "3d76dc0a9462ad668d290d50f14f5bc203cdc2acb4618f9d787ce619cf1c5637"
+      }
+    ],
+    "process_flags": {
+      "--num-gpus": "1",
+      "--vlm-batch-size": "1",
+      "--vlm-model-type": "cosmos-reason3"
+    },
+    "server_module": "server.rtvi_vlm_server"
+  },
+  "summarization": {
+    "chunk_duration": 10,
+    "expected_chunks_processed": 1,
+    "fixed_frames_per_chunk": 8,
+    "max_tokens": 256,
+    "seed": 1,
+    "use_fps_for_chunking": false
+  },
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  },
+  "tool_id": "thor-lvs-single-request-queue-runtime",
+  "transport": {
+    "max_request_bytes": 4194304,
+    "max_response_bytes": 16777216,
+    "short_timeout_seconds": 15,
+    "summarize_timeout_seconds": 240,
+    "tool_timeout_seconds": 120
+  }
+}
