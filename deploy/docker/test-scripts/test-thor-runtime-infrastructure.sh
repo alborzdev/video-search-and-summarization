@@ -25,8 +25,22 @@ inventory = json.loads(
     (thor_dir / "qualification/runtime_inventory.json").read_text(encoding="utf-8")
 )
 services = {service["id"]: service for service in inventory["services"]}
-assert len(services) == 22
-assert sum(len(service["probes"]) for service in services.values()) == 33
+assert len(services) == 23
+assert sum(len(service["probes"]) for service in services.values()) == 34
+assert services["vios-sdr"] == {
+    "id": "vios-sdr",
+    "port_env": "SDR_STREAMPROCESSING_PORT",
+    "default_port": 4003,
+    "probes": [
+        {
+            "id": "health",
+            "kind": "health",
+            "method": "GET",
+            "path": "/healthz",
+            "expected_status": [200],
+        }
+    ],
+}
 assert services["vios-mcp"] == {
     "id": "vios-mcp",
     "port_env": "VST_MCP_PORT",

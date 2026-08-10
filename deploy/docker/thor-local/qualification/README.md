@@ -529,6 +529,11 @@ in this directory:
   rows. It binds exact product and BDD sources, records corrected future
   execution bounds, and verifies the source correction for the configured
   per-request upload size check while keeping runtime qualification open;
+- `vios-sdr-compose-runtime/` retains the local RTSP add-to-recording runtime
+  receipt and verifies the checked-in NVIDIA SDR dispatcher, current
+  `vst.event` consumer group, restart-safe startup order, private Redis/bridge
+  topology, Thor operator gates, and exact-owned cleanup without Warehouse
+  data or an external camera;
 - `advertised-entry-executors-74-successor/` rebases the immutable historical
   Waves 1-7 inventory onto the current gap denominator: exactly 71 retained
   candidate rows, three external-attestation blockers, and a separate exact
@@ -708,7 +713,7 @@ transport outage produces `result: "unavailable"` and exit 2, making a stopped
 stack distinguishable from a broken contract without treating it as a pass.
 An OpenAPI endpoint marked optional is skipped only when it returns 404 or 405.
 `runtime_inventory.json` defines the health, OpenAPI, MCP, UI, ingress,
-VIOS, VIOS MCP, Elasticsearch, Kibana, Phoenix, Logstash, Prometheus, Grafana,
+VIOS, VIOS SDR, VIOS MCP, Elasticsearch, Kibana, Phoenix, Logstash, Prometheus, Grafana,
 node-exporter, cAdvisor, and the Thor `tegrastats` exporter GET probes and their
 default Thor-local ports. A valid port environment variable listed there
 overrides its default. The deployment contract requires `TEGRASTATS_PORT=19101`

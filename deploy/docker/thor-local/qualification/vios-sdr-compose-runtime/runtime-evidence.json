@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "evidence_id": "thor-vios-sdr-compose-runtime-20260810",
+  "status": "passed",
+  "captured_at": "2026-08-10T11:11:22Z",
+  "target": {
+    "platform": "NVIDIA Thor",
+    "vss_release": "3.2.1",
+    "branch": "agent/vss-3.2.1-thor-parity",
+    "checkout_commit": "794409befa9f78ff0d92ec085214d6fdd19bbe1e",
+    "checkout_tree": "64b3eb3c6ebc6087a0291ffcef0eeb280f3e2f53",
+    "docker_cgroup_driver": "cgroupfs"
+  },
+  "images": {
+    "sdr": {
+      "reference": "nvcr.io/nvidia/vss-core/sdr:3.1.0@sha256:d9912bc9b412188b9beae5948f93a1be2a86affdb3df1a0e0c1933bb1c05d24d",
+      "image_id": "sha256:d9912bc9b412188b9beae5948f93a1be2a86affdb3df1a0e0c1933bb1c05d24d"
+    },
+    "redis": {
+      "reference": "redis:8.6.2-alpine@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17",
+      "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17"
+    },
+    "stream_processor": {
+      "image_id": "sha256:3c9cd12bf4c1199def87215586e1fb5404cae41f1125b11414f0cfd94e1da0a4"
+    }
+  },
+  "topology": {
+    "sdr_network": "mdx_default",
+    "sdr_health_listener": "127.0.0.1:4003",
+    "sdr_cap_drop": ["ALL"],
+    "sdr_no_new_privileges": true,
+    "sdr_memory_limit_bytes": 314572800,
+    "redis_bind": ["127.0.0.1", "172.17.0.1"],
+    "redis_physical_interface_listener": false,
+    "controller_fqdn_sink": "127.0.0.1",
+    "docker_target": "vss-vios-streamprocessing:30001"
+  },
+  "fixture": {
+    "sensor_id": "c3fbd6f5-5621-49ef-814f-154e9e4a5ca8",
+    "name": "vss-qual-sdr-compose-20260810",
+    "ownership_tag": "vss-core-qualifier",
+    "source": "owned local NvStreamer file fixture",
+    "source_codec": "h264",
+    "source_resolution": "1280x720",
+    "source_frame_rate": "60/1",
+    "warehouse_sample_used": false,
+    "external_camera_used": false
+  },
+  "assertions": [
+    {
+      "id": "sdr.health",
+      "expected": "HTTP 200",
+      "observed": "HTTP 200 with body OK",
+      "passed": true
+    },
+    {
+      "id": "sdr.redis-current-event",
+      "expected": "one current camera_proxy event creates one proxy",
+      "observed": "proxy and always-on recorder ready after two one-second polling attempts",
+      "passed": true
+    },
+    {
+      "id": "sdr.redis-no-backlog-replay",
+      "expected": "pending=0 and lag=0 after first start and restart",
+      "observed": "pending=0, lag=0, entries-read=259 before and after restart",
+      "passed": true
+    },
+    {
+      "id": "vios.sensor-online",
+      "expected": "owned RTSP sensor online",
+      "observed": "sensor_rtsp state online with exact ownership tag",
+      "passed": true
+    },
+    {
+      "id": "vios.ui-stream-metadata",
+      "expected": "proxy and VOD URLs plus decoded metadata",
+      "observed": "H264, 1280x720, 60 fps, proxy port 30555, VOD port 30564",
+      "passed": true
+    },
+    {
+      "id": "vios.proxy-media",
+      "expected": "actual RTSP media decodes through generated proxy",
+      "observed": "ffprobe decoded H264 1280x720 at 60/1",
+      "passed": true
+    },
+    {
+      "id": "vios.live-snapshot",
+      "expected": "native live picture response",
+      "observed": "136636-byte JPEG 1280x720, sha256 5d68e2804d3c64a353990026b989df9d4a917b6491ab99e17a6e3382632e2b87",
+      "passed": true
+    },
+    {
+      "id": "vios.recording",
+      "expected": "always-on recording and non-empty timeline",
+      "observed": "alwaysOn; timeline 2026-08-10T11:08:21.706Z through 2026-08-10T11:09:39.789Z",
+      "passed": true
+    },
+    {
+      "id": "sdr.restart-persistence",
+      "expected": "restart preserves exactly one proxy and recording",
+      "observed": "proxy count 1 before/after, recording alwaysOn, Redis last-delivered ID unchanged",
+      "passed": true
+    }
+  ],
+  "cleanup": {
+    "sensor_delete": true,
+    "proxy_count_after": 0,
+    "sensor_count_after": 0,
+    "recording_timeline_after": null,
+    "recording_space_saved_mb": 60,
+    "owned_nvstreamer_container_removed": true,
+    "owned_sdr_test_container_removed": true,
+    "compose_sdr_remains_healthy": true,
+    "redis_pending_after": 0,
+    "redis_lag_after": 0
+  },
+  "final_host_headroom": {
+    "disk_available_bytes": 20276396032,
+    "memory_available_bytes": 25040801792
+  }
+}

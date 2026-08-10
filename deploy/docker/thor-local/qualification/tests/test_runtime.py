@@ -125,8 +125,8 @@ class RuntimeQualificationTests(unittest.TestCase):
         services = config["services"]
         probes = [probe for service in services for probe in service["probes"]]
 
-        self.assertEqual(len(services), 22)
-        self.assertEqual(len(probes), 33)
+        self.assertEqual(len(services), 23)
+        self.assertEqual(len(probes), 34)
         alert_metrics = next(
             service for service in services if service["id"] == "alerts-prometheus"
         )
@@ -147,6 +147,11 @@ class RuntimeQualificationTests(unittest.TestCase):
         self.assertEqual(vios_mcp["default_port"], 8001)
         self.assertEqual(vios_mcp["probes"][0]["path"], "/mcp")
         self.assertEqual(vios_mcp["probes"][0]["expected_status"], [200, 400, 406])
+        vios_sdr = next(service for service in services if service["id"] == "vios-sdr")
+        self.assertEqual(vios_sdr["port_env"], "SDR_STREAMPROCESSING_PORT")
+        self.assertEqual(vios_sdr["default_port"], 4003)
+        self.assertEqual(vios_sdr["probes"][0]["path"], "/healthz")
+        self.assertEqual(vios_sdr["probes"][0]["expected_status"], [200])
         self.assertNotIn("local-llm", {service["id"] for service in services})
         self.assertNotIn("local-vlm", {service["id"] for service in services})
         self.assertTrue(all(probe.get("method", "GET") == "GET" for probe in probes))

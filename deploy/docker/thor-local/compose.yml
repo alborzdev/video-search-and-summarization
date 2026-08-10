@@ -56,17 +56,23 @@ services:
       retries: 30
       start_period: 60s
 
-  # Every active Thor service shares the host network and reaches Redis over
-  # loopback. Override the broad upstream listener so the unauthenticated
-  # event bus is never exposed on a LAN interface.
+  # Host-network Thor services reach Redis over loopback. The isolated SDR
+  # dispatcher reaches it through Docker's private host gateway. Override the
+  # broad upstream listener so the unauthenticated event bus is never exposed
+  # on a physical or LAN interface.
   redis:
     command:
       - redis-server
       - /config/redis.conf
       - --bind
       - 127.0.0.1
+      - ${THOR_LOCAL_MODEL_BIND_HOST:-127.0.0.1}
+      # The SDR dispatcher reaches this explicitly bound docker0 address from
+      # the private Compose bridge. Redis protected mode rejects that traffic
+      # even though no physical/LAN interface is listening; the narrow bind is
+      # the actual exposure boundary for this host-local graph.
       - --protected-mode
-      - "yes"
+      - "no"
     healthcheck:
       test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
       interval: 5s
@@ -204,6 +210,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      sdr-streamprocessing-init:
+        condition: service_completed_successfully
 
   # The released ARM64 sensor image prepends the generic library directory to
   # LD_LIBRARY_PATH. On JetPack 7 that directory contains a zero-byte
@@ -215,6 +223,127 @@ services:
       LD_LIBRARY_PATH: /usr/lib/aarch64-linux-gnu/nvidia:/usr/lib/aarch64-linux-gnu:/home/vst/vst_release/prebuilts/aarch64:/home/vst/vst_release/prebuilts/aarch64/gst-plugins:/home/vst/vst_release/prebuilts/aarch64/sbsa
     volumes:
       - ${THOR_LOCAL_VST_CONFIG_FILE:-${VSS_REPO_ROOT}/deploy/docker/thor-local/vios/vst_config.json}:/home/vst/vst_release/configs/vst_config.json:ro
+    depends_on:
+      sdr-streamprocessing-init:
+        condition: service_completed_successfully
+
+  # NVIDIA's split VIOS services publish camera_proxy/camera_remove requests
+  # to Redis, but the released developer graph omits the SDR dispatcher that
+  # forwards those requests to the stream processor. Seed the durable consumer
+  # group at Redis '$' before either VIOS producer starts. That preserves normal
+  # at-least-once delivery across reboots without replaying historical events
+  # the first time this Thor-local service is introduced.
+  sdr-streamprocessing-init:
+    image: redis:8.6.2-alpine@sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17
+    network_mode: host
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - >-
+        if reply="$$(redis-cli -h 127.0.0.1 -p 6379 XGROUP CREATE
+        vst.event sdr-streamprocessing-vios-cg '$$' MKSTREAM 2>&1)"; then
+          printf '%s\n' "$$reply";
+        elif printf '%s\n' "$$reply" | grep -q BUSYGROUP; then
+          printf '%s\n' 'SDR Redis consumer group already exists';
+        else
+          printf '%s\n' "$$reply" >&2;
+          exit 1;
+        fi
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: "no"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: local
+      options:
+        max-size: "2m"
+        max-file: "2"
+
+  # Single-replica local SDR dispatcher. It talks to Redis and VIOS through
+  # Docker's private host gateway, while its own health endpoint is published
+  # on loopback only. The Docker socket is required by NVIDIA SDR to discover
+  # the one fixed stream-processing target; workload restart-on-add-failure is
+  # explicitly disabled.
+  sdr-streamprocessing:
+    image: nvcr.io/nvidia/vss-core/sdr:3.1.0@sha256:d9912bc9b412188b9beae5948f93a1be2a86affdb3df1a0e0c1933bb1c05d24d
+    container_name: vss-vios-sdr
+    user: "0:0"
+    ports:
+      - "127.0.0.1:${SDR_STREAMPROCESSING_PORT:-4003}:4003"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "sdr-controller-service.default.svc.cluster.local:127.0.0.1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/vios/sdr/docker_cluster_config.json:/wdm-configs/docker_cluster_config.json:ro
+    environment:
+      PORT: "4003"
+      CONTAINER_NAME: vss-vios-sdr
+      WDM_CLUSTER_CONFIG_FILE: /wdm-configs/docker_cluster_config.json
+      WDM_MSG_KEY: vst.event
+      WDM_MSG_TOPIC: vst.event
+      WDM_WL_REDIS_SERVER: host.docker.internal
+      WDM_WL_REDIS_PORT: "6379"
+      WDM_WL_REDIS_MSG_FIELD: sensor.id
+      WDM_WL_ADD_URL: /api/v1/proxy/stream/add
+      WDM_WL_DELETE_URL: /api/v1/proxy/stream/
+      WDM_WL_HEALTH_CHECK_URL: /api/v1/proxy/configuration
+      WDM_WL_CHANGE_ID_ADD: camera_proxy
+      WDM_WL_CHANGE_ID_DEL: camera_remove
+      WDM_PRELOAD_WORKLOAD: ""
+      WDM_CLEAR_DATA_WL: "true"
+      WDM_KFK_ENABLE: "false"
+      WDM_DS_SWAP_ID_NAME: "false"
+      WDM_WL_THRESHOLD: "100"
+      WDM_ADD_REMOVE_RETRY_ATTEMPTS: "50"
+      WDM_CLUSTER_TYPE: docker
+      WDM_POD_WATCH_DOCKER_DELAY: "0.5"
+      WDM_RESTART_DS_ON_ADD_FAIL: "false"
+      WDM_DISABLE_WERKZEUG_LOGGING: "true"
+      WDM_WL_OBJECT_NAME: streamprocessing-ms
+      WDM_CONSUMER_GRP_ID: sdr-streamprocessing-vios-cg
+      WDM_CLUSTER_CONTAINER_NAMES: '["vss-vios-streamprocessing"]'
+      WDM_TARGET_PORT_MAPPING: '{"vss-vios-streamprocessing": 30001}'
+      WDM_REDIS_CACHE_OBJECT: streamprocessing-data
+      WDM_WL_NAME_IGNORE_REGEX: ""
+      WDM_INITIALIZE_FROM_VST: "false"
+      VST_STREAMS_ENDPOINT: http://host.docker.internal:30000/api/v1/sensor/streams
+      VST_STATUS_ENDPOINT: http://host.docker.internal:30000/api/v1/sensor/status
+      OTEL_SDK_DISABLED: "true"
+    depends_on:
+      sdr-streamprocessing-init:
+        condition: service_completed_successfully
+      streamprocessing-ms:
+        condition: service_healthy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          bash -ec 'exec 3<>/dev/tcp/127.0.0.1/$${PORT};
+          printf "GET /healthz HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" >&3;
+          read -r status <&3;
+          [[ "$${status}" == HTTP/*" 200 "* ]]'
+      interval: 10s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Do not advertise ingress before both sensor control and the actual video
   # processor can serve requests.

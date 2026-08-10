@@ -112,8 +112,8 @@
     }
   ],
   "source_locks": [
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "c8de0f28e8d55b271d422846bebfdf42e73fedefa0b1c8044d1f39cd35f7e55e"},
-    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "69b213861b8f0457e64afad420782f0fdf6fd2f3d5da455f1293423453f9e501"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "d7db6de39585e7a1e9a62cc76ae4251648e017422dfc4cd1493bd00723a0df40"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "c43296924169efa0904979b18aa36a963f1e2196cc5eb37ec660a9b1a9f210cb"},
     {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
     {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave10/inventory.json", "sha256": "e9c81d33ea07018c3dc0e7d0ea9794e09d5fae962b959175cd65c73e2f136a35"},
@@ -141,7 +141,7 @@
     {"path": "services/vios/src/modules/rtsp_server/NvMediaServer.cpp", "sha256": "2225e0fc77557c434af1c0a221abb4675c1c8c81f629bd3b22a6cb14ae426b81"},
     {"path": "services/vios/src/modules/webrtc_live/LivePeerConnection.cpp", "sha256": "3fc0b76b21ff9f402482789dcabd61665c3a9e1ecf84bc77b6d70e328a9c72c8"},
     {"path": "services/vios/ui/vios-ui/src/features/AddNvStreamerStreams/AddNvStreamerStreams.tsx", "sha256": "f602be639a1d5ec322521872e4e9416a6d4abb8eb02eabf5ef88f1b083ebc186"},
-    {"path": "deploy/docker/thor-local/compose.yml", "sha256": "69a4b0a2d0379ac2213d56180d8ed79e3598b3d67efa122e29c00a396c0e6bf3"},
+    {"path": "deploy/docker/thor-local/compose.yml", "sha256": "2b5538dadd1b19bdf522e8048beae88717794ddb2b6f4c5cb9b8289d33ad5ea1"},
     {"path": "services/vios/test/bdd_tests/features/unit_tests/sensor_management/sensor_add_duplicate.feature", "sha256": "7992e3f9728878aaf34bb0be859540bbc5b7480accc7cc0de55da6dcc2d8be89"},
     {"path": "services/vios/test/bdd_tests/tests/unit_tests/sensor_management/test_sensor_add_duplicate.py", "sha256": "785a67d89d02b7b82d3c70d360d449feb0177a1cca24e0ca03205f1ba357194b"},
     {"path": "services/vios/test/bdd_tests/features/file_download/download_full_file.feature", "sha256": "70284ba3bf2ad10e22b1d9ed2bed2944bf04582801fdb16f9f3116b819ec6d8b"},

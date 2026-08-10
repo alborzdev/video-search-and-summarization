@@ -1,0 +1,6 @@
+{
+  "vss-vios-streamprocessing": {
+    "provisioning_address": "host.docker.internal:30001",
+    "process_type": "docker"
+  }
+}

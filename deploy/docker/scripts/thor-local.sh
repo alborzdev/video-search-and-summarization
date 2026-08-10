@@ -88,6 +88,7 @@ export VST_MCP_PORT="${VST_MCP_PORT:-8001}"
 export VIOS_MCP_ENDPOINT="${VIOS_MCP_ENDPOINT:-http://127.0.0.1:${VST_MCP_PORT}/mcp}"
 export SENSOR_HTTP_PORT="${SENSOR_HTTP_PORT:-30000}"
 export STREAM_PROCESSOR_HTTP_PORT="${STREAM_PROCESSOR_HTTP_PORT:-30001}"
+export SDR_STREAMPROCESSING_PORT="${SDR_STREAMPROCESSING_PORT:-4003}"
 export RTVI_EMBED_PORT="${RTVI_EMBED_PORT:-8017}"
 export RTVI_VLM_PORT="${RTVI_VLM_PORT:-8018}"
 export RTVI_CV_PORT="${RTVI_CV_PORT:-9000}"
@@ -232,6 +233,7 @@ Optional environment overrides:
   THOR_LOCAL_MIN_MEMORY_GB_BEFORE_MODEL_START (defaults 50) and
   THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START (defaults 20),
   VST_PORT, VST_MCP_PORT, VIOS_MCP_ENDPOINT, SENSOR_HTTP_PORT, STREAM_PROCESSOR_HTTP_PORT,
+  SDR_STREAMPROCESSING_PORT,
   RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT,
   VIDEO_ANALYTICS_API_PORT, SMARTCITY_MAP_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
   VSS_VA_MCP_PORT, BACKEND_PORT, KIBANA_PORT, PHOENIX_PORT,
@@ -726,6 +728,7 @@ validate_thor_full_contract() {
     "VST_MCP_PORT:${VST_MCP_PORT}" \
     "SENSOR_HTTP_PORT:${SENSOR_HTTP_PORT}" \
     "STREAM_PROCESSOR_HTTP_PORT:${STREAM_PROCESSOR_HTTP_PORT}" \
+    "SDR_STREAMPROCESSING_PORT:${SDR_STREAMPROCESSING_PORT}" \
     "RTVI_EMBED_PORT:${RTVI_EMBED_PORT}" \
     "RTVI_VLM_PORT:${RTVI_VLM_PORT}" \
     "RTVI_CV_PORT:${RTVI_CV_PORT}" \
@@ -828,6 +831,7 @@ print_runtime_contract() {
     VIOS_MCP_ENDPOINT "${VIOS_MCP_ENDPOINT}" \
     SENSOR_HTTP_PORT "${SENSOR_HTTP_PORT}" \
     STREAM_PROCESSOR_HTTP_PORT "${STREAM_PROCESSOR_HTTP_PORT}" \
+    SDR_STREAMPROCESSING_PORT "${SDR_STREAMPROCESSING_PORT}" \
     SENSOR_MODULE_ENDPOINT "http://localhost:${SENSOR_HTTP_PORT}" \
     STREAM_PROCESSOR_MODULE_ENDPOINT "http://localhost:${STREAM_PROCESSOR_HTTP_PORT}" \
     RTVI_EMBED_PORT "${RTVI_EMBED_PORT}" \
@@ -970,7 +974,7 @@ Thor-local environment contract:
   VA-MCP LLM adapter: ${THOR_LOCAL_VA_MCP_LLM_MODEL_TYPE} (same local model endpoint)
   VLM: ${THOR_LOCAL_VLM_MODEL} via ${THOR_LOCAL_VLM_MODEL_TYPE} at ${VLM_ENDPOINT_URL} (container ${THOR_LOCAL_VLM_CONTAINER})
   RTVI-VLM upstream: ${VLM_CONTAINER_ENDPOINT_URL}/v1 (bridge-to-host)
-  Runtime ports: agent=${VSS_AGENT_PORT}, UI=${VSS_UI_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, VIOS-MCP=${VST_MCP_PORT}
+  Runtime ports: agent=${VSS_AGENT_PORT}, UI=${VSS_UI_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, SDR=${SDR_STREAMPROCESSING_PORT}, VIOS-MCP=${VST_MCP_PORT}
   Intelligence ports: embed=${RTVI_EMBED_PORT} (batch ${RTVI_EMBED_BATCH_SIZE}), RTVI-VLM=${RTVI_VLM_PORT} (batch ${RTVI_VLM_BATCH_SIZE}, processes ${RTVI_VLM_NUM_VLM_PROCS}), perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, LVS=${BACKEND_PORT}
   RTVI timestamps: prompt=${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}, absolute_metadata=${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}
   LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}, MCP=${LVS_ENABLE_MCP}@${LVS_MCP_PORT}
@@ -1220,6 +1224,7 @@ preflight() {
   require_available_port "${VST_MCP_PORT}" vss-vios-mcp
   require_available_port "${SENSOR_HTTP_PORT}" vss-vios-sensor
   require_available_port "${STREAM_PROCESSOR_HTTP_PORT}" vss-vios-streamprocessing
+  require_available_port "${SDR_STREAMPROCESSING_PORT}" vss-vios-sdr
   require_available_port "${RTVI_EMBED_PORT}" vss-rtvi-embed
   require_available_port "${RTVI_VLM_PORT}" vss-rtvi-vlm
   require_available_port "${RTVI_CV_PORT}" vss-rtvi-cv
@@ -1253,7 +1258,7 @@ preflight() {
   fi
 
   echo "[OK] AGX Thor platform and local model endpoints are ready."
-  echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, VIOS-MCP=${VST_MCP_PORT}."
+  echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, SDR=${SDR_STREAMPROCESSING_PORT}, VIOS-MCP=${VST_MCP_PORT}."
   echo "[OK] Planned intelligence ports: embed=${RTVI_EMBED_PORT}, RTVI-VLM=${RTVI_VLM_PORT}, perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, LVS=${BACKEND_PORT}."
   echo "[OK] Planned data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, Kibana=${KIBANA_PORT} (enabled=${THOR_FULL_ENABLE_KIBANA}), Phoenix=${PHOENIX_HOST}:${PHOENIX_PORT}, Logstash API=127.0.0.1:${LOGSTASH_API_PORT}."
   echo "[OK] Planned observability ports: Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT} on loopback; tegrastats=${TEGRASTATS_BIND_ADDRESS}:${TEGRASTATS_PORT} on Docker's private gateway."
@@ -1573,7 +1578,7 @@ security_internal_ports() {
     8000 "${RTVI_EMBED_PORT}" "${RTVI_VLM_PORT}" "${VIDEO_ANALYTICS_API_PORT}" "${SMARTCITY_MAP_PORT}" \
     "${VSS_AGENT_PORT}" 8554 8787 8888 8889 8892 "${RTVI_CV_PORT}" \
     "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 "${KIBANA_PORT}" "${LOGSTASH_API_PORT}" \
-    "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" \
+    "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" "${SDR_STREAMPROCESSING_PORT}" \
     30554 30555 30556 30557 30558 30559 30560 30561 30562 30563 30564 \
     "${VST_PORT}" "${VST_MCP_PORT}" "${BACKEND_PORT}" "${LVS_MCP_PORT}" \
     "${PROMETHEUS_PORT}" "${GRAFANA_PORT}" "${NODE_EXPORTER_PORT}" "${CADVISOR_PORT}" "${TEGRASTATS_PORT}" | sort -n -u
@@ -1877,6 +1882,7 @@ critical_http_endpoints_are_ready() {
     "operator-ui|http://127.0.0.1:${VSS_UI_PORT}/" \
     "video-analytics-mcp|http://127.0.0.1:${VSS_VA_MCP_PORT}/health" \
     "video-summarization|http://127.0.0.1:${BACKEND_PORT}/v1/ready" \
+    "vios-sdr|http://127.0.0.1:${SDR_STREAMPROCESSING_PORT}/healthz" \
     "rtvi-embed|http://127.0.0.1:${RTVI_EMBED_PORT}/v1/ready" \
     "rtvi-vlm|http://127.0.0.1:${RTVI_VLM_PORT}/v1/health/ready" \
     "deepstream-perception|http://127.0.0.1:${RTVI_CV_PORT}/api/v1/health/get-dsready-state"; do
@@ -2256,6 +2262,7 @@ doctor_check_endpoints() {
   doctor_http_status "RTVI-VLM proxy" "http://127.0.0.1:${RTVI_VLM_PORT}/v1/health/ready" 200
   doctor_http_status "VST/VIOS" "http://127.0.0.1:${VST_PORT}/health" 200
   doctor_http_status "VIOS MCP" "${VIOS_MCP_ENDPOINT}" 200 400 406
+  doctor_http_status "VIOS SDR dispatcher" "http://127.0.0.1:${SDR_STREAMPROCESSING_PORT}/healthz" 200
   doctor_http_status "Elasticsearch search backend" "http://127.0.0.1:${VSS_ES_PORT}/_cluster/health" 200
   if [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" ]]; then
     doctor_http_status "Kibana" "http://127.0.0.1:${KIBANA_PORT}/kibana/api/status" 200

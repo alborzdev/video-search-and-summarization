@@ -202,6 +202,20 @@
       ]
     },
     {
+      "id": "vios-sdr",
+      "port_env": "SDR_STREAMPROCESSING_PORT",
+      "default_port": 4003,
+      "probes": [
+        {
+          "id": "health",
+          "kind": "health",
+          "method": "GET",
+          "path": "/healthz",
+          "expected_status": [200]
+        }
+      ]
+    },
+    {
       "id": "vios-mcp",
       "port_env": "VST_MCP_PORT",
       "default_port": 8001,
