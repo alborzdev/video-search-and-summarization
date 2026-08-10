@@ -18,6 +18,9 @@
     "all 48 GET operations return HTTP 200 with contract-valid parameters",
     "all 8 unique POST operations have a successful HTTP 201 workflow",
     "all 8 unique POST operations reject an adjacent invalid request without HTTP 5xx",
+    "14 isolated semantic documents populate 13 qualifier-owned indices",
+    "all 40 data-bearing GET endpoints return non-empty value-level fixture correlations",
+    "RTLS objectCounts is mapped nested for tracker occupancy histograms",
     "road-network and USD wrapper-qualified numeric mappings are live",
     "dynamic configuration receives a successful behavior-analytics ACK",
     "dynamic calibration upload, upsert, and delete checkpoints are observed",
@@ -32,7 +35,6 @@
     "restore": "restart only normal behavior containers stopped by this run"
   },
   "non_claims": [
-    "non-empty hand-computed semantics for every metric, tracker, frame, incident, and event query",
     "Kafka-absent error behavior",
     "VSS Agent /generate behavior"
   ]

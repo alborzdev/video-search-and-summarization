@@ -15,8 +15,8 @@ The harness fails closed unless:
   56-operation manifest;
 - all qualifier-owned Elasticsearch indices and temporary templates are
   absent; and
-- the persistent road-network and USD mapping templates have the exact
-  wrapper-qualified numeric fields.
+- the persistent RTLS, road-network, and USD mapping templates have the exact
+  nested and wrapper-qualified fields required by the API queries.
 
 It stops the two normal behavior consumers, runs one disposable official
 3.2.1 consumer, exercises the API, and restores the original consumers. Its
@@ -45,13 +45,17 @@ stream, warehouse dataset, or VSS Agent `/generate` call is involved.
 - every GET with contract-valid parameters;
 - every unique POST with a successful fixture workflow;
 - an adjacent invalid request for every unique POST operation;
-- semantic readbacks for behavior PTS, frame PTS, calibration, road network,
-  USD assets, image bytes/metadata, occupancy reset, and cluster label;
+- 14 isolated semantic documents across 13 Elasticsearch indices;
+- non-empty, value-level readbacks across all 40 data-bearing GET endpoints,
+  including speed/flow/travel time, tripwire/ROI/FOV/tracker occupancy,
+  space utilization, road-segment speed, MTMC locations, raw/enhanced/BEV
+  frames, alerts, incidents, tripwire/ROI/AMR events, and sensor lookup;
+- exact behavior/frame PTS, calibration, road network, USD assets, image
+  bytes/metadata, occupancy reset, and cluster-label readbacks;
 - dynamic configuration ACK and behavior checkpoint;
 - dynamic calibration upload/upsert/delete checkpoints;
 - exact cleanup and restoration.
 
-This proves the complete routed API surface and its write/read/Kafka plumbing.
-It does not by itself claim populated, hand-computed non-empty results for
-every analytics query family; those deeper semantic scenarios remain tracked
-separately in the parity ledger.
+This proves the complete routed API surface, the advertised non-empty query
+families, and its write/read/Kafka plumbing. Kafka-absent behavior is a
+separate destructive-boundary scenario and remains tracked independently.

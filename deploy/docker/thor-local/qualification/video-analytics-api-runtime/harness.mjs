@@ -37,6 +37,7 @@ const openapiPath = resolve(
   repo,
   "services/analytics/video-analytics-api/src/app/specification/openapi.json",
 );
+const semanticDocumentsPath = resolve(fixtures, "semantic-documents.json");
 const imageDataDir = resolve(
   repo,
   "deploy/docker/data-dir/data_log/vss_video_analytics_api",
@@ -45,11 +46,27 @@ const imageDataDir = resolve(
 const sensor = "vss-oracle-video-analytics";
 const place = "city=VSSOracle/building=Thor";
 const corridor = "city=VSSOracle/corridor=Thor";
-const intersection = "city=VSSOracle/intersection=Thor";
+const city = "city=VSSOracle";
 const fromTimestamp = "2026-08-10T00:00:00.000Z";
 const toTimestamp = "2026-08-10T23:59:59.000Z";
 const pointTimestamp = "2026-08-10T06:00:05.000Z";
+const metricFromTimestamp = "2026-08-10T06:00:00.000Z";
+const metricToTimestamp = "2026-08-10T06:00:10.000Z";
 const behaviorIndex = "mdx-behavior-vss-oracle-runtime";
+const semanticIndices = [
+  "mdx-raw-vss-oracle-runtime",
+  "mdx-frames-vss-oracle-runtime",
+  "mdx-bev-vss-oracle-runtime",
+  "mdx-events-vss-oracle-runtime",
+  "mdx-alerts-vss-oracle-runtime",
+  "mdx-incidents-vss-oracle-runtime",
+  "mdx-mtmc-vss-oracle-runtime",
+  "mdx-sensor-lookup",
+  "mdx-rtls-vss-oracle-runtime",
+  "mdx-amr-locations-vss-oracle-runtime",
+  "mdx-amr-events-vss-oracle-runtime",
+  "mdx-space-utilization-vss-oracle-runtime",
+];
 const mutableIndices = [
   "mdx-calibration",
   "mdx-calibration-audit",
@@ -61,12 +78,16 @@ const mutableIndices = [
   "mdx-configs",
   "mdx-configs-audit",
   behaviorIndex,
+  ...semanticIndices,
 ];
 const mutableTemplates = [
   "mdx-calibration-template",
   "mdx-calibration-audit-template",
 ];
 const persistentMappingTemplates = {
+  "mdx_rtls_template": {
+    objectCounts: "nested",
+  },
   "mdx-road-network-template": {
     "roadNetwork.intersections.segments.start.lat": "float",
     "roadNetwork.intersections.segments.start.lng": "float",
@@ -352,7 +373,7 @@ async function verifyOpenApi() {
 }
 
 async function preflight() {
-  for (const path of [openapiPath, expectedPath, behaviorConfig]) {
+  for (const path of [openapiPath, expectedPath, behaviorConfig, semanticDocumentsPath]) {
     assert(existsSync(path), `Required file missing: ${path}`);
   }
   assert(existsSync(imageDataDir), `Video Analytics upload directory missing: ${imageDataDir}`);
@@ -454,6 +475,39 @@ async function uploadDocument(docType, fixtureName) {
   assert(result.json?.success === true, `${docType} upload did not report success`);
 }
 
+async function seedSemanticDocuments() {
+  const fixture = JSON.parse(readFileSync(semanticDocumentsPath, "utf8"));
+  assert(Array.isArray(fixture.documents), "Semantic fixture must contain a documents array");
+  assert(fixture.documents.length === 14, `Expected 14 semantic documents, found ${fixture.documents.length}`);
+
+  const allowedIndices = new Set([behaviorIndex, ...semanticIndices]);
+  const seededIndices = new Set();
+  for (const document of fixture.documents) {
+    assert(allowedIndices.has(document.index), `Semantic fixture references unmanaged index ${document.index}`);
+    assert(typeof document.id === "string" && document.id.length > 0, "Semantic fixture document ID is missing");
+    assert(document.source && typeof document.source === "object", `Semantic fixture ${document.id} has no source`);
+    await esRequest(
+      `/${encodeURIComponent(document.index)}/_doc/${encodeURIComponent(document.id)}`,
+      {
+        method: "PUT",
+        body: document.source,
+        expectedStatuses: [200, 201],
+      },
+    );
+    seededIndices.add(document.index);
+  }
+  assert(
+    JSON.stringify([...seededIndices].sort()) === JSON.stringify([...allowedIndices].sort()),
+    "Semantic fixture did not seed every managed semantic index",
+  );
+  await esRequest(`/${[...seededIndices].map(encodeURIComponent).join(",")}/_refresh`, { method: "POST" });
+  receipt.fixtures.semantic_documents = {
+    document_count: fixture.documents.length,
+    index_count: seededIndices.size,
+    indices: [...seededIndices].sort(),
+  };
+}
+
 async function seedFixturesAndPositivePosts() {
   await uploadDocument("calibration", "calibration.json");
   await uploadDocument("road-network", "road-network.json");
@@ -496,6 +550,7 @@ async function seedFixturesAndPositivePosts() {
     body: JSON.parse(readFileSync(resolve(fixtures, "behavior.json"), "utf8")),
     expectedStatuses: [200, 201],
   });
+  await seedSemanticDocuments();
   const clusterPost = await apiRequest({
     label: "cluster label add",
     method: "POST",
@@ -622,24 +677,24 @@ async function seedFixturesAndPositivePosts() {
 function getOperations(referenceId) {
   return [
     ["/metrics/average-speed", { fromTimestamp, toTimestamp, sensorId: sensor }],
-    ["/metrics/flowrate", { toTimestamp, sensorId: sensor }],
-    ["/metrics/average-speed-with-flowrate", { fromTimestamp, toTimestamp, sensorId: sensor }],
+    ["/metrics/flowrate", { toTimestamp: pointTimestamp, sensorId: sensor }],
+    ["/metrics/average-speed-with-flowrate", { fromTimestamp: metricFromTimestamp, toTimestamp: metricToTimestamp, sensorId: sensor }],
     ["/metrics/average-speed-with-travel-time", { fromTimestamp, toTimestamp, place: corridor }],
     ["/metrics/tripwire/counts", { fromTimestamp, toTimestamp, sensorId: sensor }],
-    ["/metrics/occupancy/tripwire", { timestamp: pointTimestamp, place }],
+    ["/metrics/occupancy/tripwire", { timestamp: pointTimestamp, place, objectType: "Person" }],
     ["/metrics/tripwire/histogram", { sensorId: sensor, fromTimestamp, toTimestamp }],
     ["/metrics/occupancy/fov", { fromTimestamp, toTimestamp, sensorId: sensor }],
     ["/metrics/occupancy/fov/histogram", { sensorId: sensor, fromTimestamp, toTimestamp }],
     ["/metrics/occupancy/roi", { fromTimestamp, toTimestamp, sensorId: sensor }],
     ["/metrics/occupancy/roi/histogram", { sensorId: sensor, fromTimestamp, toTimestamp }],
     ["/metrics/occupancy/roi/mutually-exclusive", { place, timestamp: pointTimestamp }],
-    ["/metrics/occupancy/tracker", { place, timestamp: pointTimestamp }],
-    ["/metrics/occupancy/tracker/histogram", { place, fromTimestamp, toTimestamp }],
-    ["/metrics/space-utilization/histogram", { fromTimestamp, toTimestamp }],
+    ["/metrics/occupancy/tracker", { place, timestamp: pointTimestamp, timeWindowInMs: 1000 }],
+    ["/metrics/occupancy/tracker/histogram", { place, fromTimestamp, toTimestamp, bucketCount: 4 }],
+    ["/metrics/space-utilization/histogram", { fromTimestamp, toTimestamp, bucketCount: 4 }],
     ["/metrics/last-processed-timestamp", { sensorId: sensor }],
-    ["/metrics/road-network/segment-speed", { place: intersection, fromTimestamp, toTimestamp, segmentInfo: true }],
-    ["/tracker/unique-object-count", { timestamp: pointTimestamp, sensorIds: [sensor, `${sensor}-secondary`] }],
-    ["/tracker/unique-object-count-with-locations", { place, timestamp: pointTimestamp }],
+    ["/metrics/road-network/segment-speed", { place: city, fromTimestamp, toTimestamp, segmentInfo: true }],
+    ["/tracker/unique-object-count", { timestamp: pointTimestamp, timeWindowInMs: 1000, sensorIds: [sensor, `${sensor}-secondary`] }],
+    ["/tracker/unique-object-count-with-locations", { place, timestamp: pointTimestamp, timeWindowInMs: 1000 }],
     ["/tracker/unique-objects", { fromTimestamp, toTimestamp, sensorIds: [sensor, `${sensor}-secondary`] }],
     ["/tracker/behavior-locations", { fromTimestamp, toTimestamp, globalId: "vss-oracle-global" }],
     ["/tracker/last-record", { place, source: "RTLS" }],
@@ -726,6 +781,151 @@ async function runAllGetOperations(referenceId) {
     "Clustering readback omitted the normalized label",
   );
 
+  const responseJson = (path) => {
+    const body = responses.get(path)?.json;
+    assert(body !== null && body !== undefined, `${path} did not return JSON`);
+    return body;
+  };
+  const requireMatch = (path, values, predicate, description) => {
+    assert(
+      Array.isArray(values) && values.some(predicate),
+      `${path} omitted ${description}: ${JSON.stringify(responseJson(path))}`,
+    );
+  };
+  const positiveMetric = (value) => Number.parseFloat(value) > 0;
+
+  const averageSpeed = responseJson("/metrics/average-speed").metrics;
+  requireMatch("/metrics/average-speed", averageSpeed, (entry) => entry.direction === "N" && positiveMetric(entry.averageSpeed), "positive northbound average speed");
+  const flowrate = responseJson("/metrics/flowrate").metrics;
+  requireMatch("/metrics/flowrate", flowrate, (entry) => entry.direction === "N" && positiveMetric(entry.flowrate), "positive northbound flowrate");
+  requireMatch(
+    "/metrics/average-speed-with-flowrate",
+    responseJson("/metrics/average-speed-with-flowrate").metrics,
+    (entry) => entry.direction === "N" && positiveMetric(entry.averageSpeed) && positiveMetric(entry.flowrate),
+    "combined speed and flowrate",
+  );
+  requireMatch(
+    "/metrics/average-speed-with-travel-time",
+    responseJson("/metrics/average-speed-with-travel-time").metrics,
+    (entry) => entry.direction === "N" && positiveMetric(entry.averageSpeed) && positiveMetric(entry.corridorTravelTime),
+    "combined speed and corridor travel time",
+  );
+
+  const tripwireCounts = responseJson("/metrics/tripwire/counts");
+  requireMatch(
+    "/metrics/tripwire/counts",
+    tripwireCounts.tripwireMetrics,
+    (entry) => entry.id === "vss-oracle-tripwire-1" && entry.events.some((event) => event.objectType === "Person" && event.actualCount === 1),
+    "tripwire event count",
+  );
+  requireMatch(
+    "/metrics/occupancy/tripwire",
+    responseJson("/metrics/occupancy/tripwire").occupancy,
+    (entry) => entry.objectType === "Person" && entry.count === 2,
+    "reset-aware Person occupancy",
+  );
+  requireMatch(
+    "/metrics/tripwire/histogram",
+    responseJson("/metrics/tripwire/histogram").tripwires,
+    (entry) => entry.id === "vss-oracle-tripwire-1" && entry.histogram.some((bucket) => bucket.events.some((event) => event.objectType === "Person" && event.actualCount === 1)),
+    "non-empty tripwire histogram",
+  );
+
+  requireMatch(
+    "/metrics/occupancy/fov",
+    responseJson("/metrics/occupancy/fov").fovOccupancy,
+    (entry) => entry.type === "Person" && entry.averageCount === 3,
+    "FOV Person occupancy",
+  );
+  requireMatch(
+    "/metrics/occupancy/fov/histogram",
+    responseJson("/metrics/occupancy/fov/histogram").histogram,
+    (bucket) => bucket.objects.some((entry) => entry.type === "Person" && entry.averageCount === 3),
+    "FOV Person histogram bucket",
+  );
+  requireMatch(
+    "/metrics/occupancy/roi",
+    responseJson("/metrics/occupancy/roi").roiOccupancy,
+    (entry) => entry.roiId === "vss-oracle-roi-1" && entry.objects.some((object) => object.type === "Person" && object.averageCount === 2 && object.uniqueObjectCount === 2),
+    "ROI Person occupancy",
+  );
+  requireMatch(
+    "/metrics/occupancy/roi/histogram",
+    responseJson("/metrics/occupancy/roi/histogram").rois,
+    (entry) => entry.id === "vss-oracle-roi-1" && entry.histogram.some((bucket) => bucket.objects.some((object) => object.type === "Person" && object.averageCount === 2)),
+    "ROI Person histogram bucket",
+  );
+  const mutuallyExclusive = responseJson("/metrics/occupancy/roi/mutually-exclusive");
+  assert(mutuallyExclusive.occupancy === 2 && mutuallyExclusive.objectType === "Person", `/metrics/occupancy/roi/mutually-exclusive omitted exact Person occupancy: ${JSON.stringify(mutuallyExclusive)}`);
+
+  const trackerOccupancy = responseJson("/metrics/occupancy/tracker").trackerOccupancy;
+  requireMatch("/metrics/occupancy/tracker", trackerOccupancy, (entry) => entry.type === "Person" && entry.count === 3, "RTLS Person count");
+  requireMatch("/metrics/occupancy/tracker", trackerOccupancy, (entry) => entry.type === "AMR" && entry.count === 1, "AMR count");
+  requireMatch(
+    "/metrics/occupancy/tracker/histogram",
+    responseJson("/metrics/occupancy/tracker/histogram").histogram,
+    (bucket) => bucket.objects.some((entry) => entry.type === "Person" && entry.averageCount === 3),
+    "tracker Person histogram bucket",
+  );
+  requireMatch(
+    "/metrics/space-utilization/histogram",
+    responseJson("/metrics/space-utilization/histogram").rois,
+    (entry) => entry.id === "vss-oracle-space-1" && entry.histogram.some((bucket) => bucket.metrics.avgTotalSpace === 100 && bucket.metrics.avgSpaceOccupied === 40),
+    "space-utilization metrics",
+  );
+  const lastProcessed = responseJson("/metrics/last-processed-timestamp").latestTimestamp;
+  assert(lastProcessed?.sensorId === sensor && lastProcessed.timestamp === pointTimestamp, `/metrics/last-processed-timestamp omitted the seeded frame timestamp: ${JSON.stringify(responseJson("/metrics/last-processed-timestamp"))}`);
+  requireMatch(
+    "/metrics/road-network/segment-speed",
+    responseJson("/metrics/road-network/segment-speed").roadSegments,
+    (entry) => entry.id === "vss-oracle-segment-1" && entry.speed === 6 && entry.objectCount === 1,
+    "road-segment speed",
+  );
+
+  const uniqueCount = responseJson("/tracker/unique-object-count").uniqueObjectCount;
+  assert(uniqueCount === 1, `/tracker/unique-object-count expected 1, received ${JSON.stringify(uniqueCount)}`);
+  const countWithLocations = responseJson("/tracker/unique-object-count-with-locations");
+  requireMatch("/tracker/unique-object-count-with-locations", countWithLocations.objectCounts, (entry) => entry.type === "Person" && entry.count === 3, "RTLS Person count with locations");
+  requireMatch("/tracker/unique-object-count-with-locations", countWithLocations.objectCounts, (entry) => entry.type === "AMR" && entry.count === 1, "AMR count with locations");
+  requireMatch("/tracker/unique-object-count-with-locations", countWithLocations.locationsOfObjects, (entry) => entry.id === "rtls-object-1", "RTLS object location");
+  requireMatch("/tracker/unique-object-count-with-locations", countWithLocations.locationsOfObjects, (entry) => entry.id === "amr-1", "AMR object location");
+  requireMatch(
+    "/tracker/unique-objects",
+    responseJson("/tracker/unique-objects").uniqueObjects,
+    (entry) => entry.globalId === "vss-oracle-global" && entry.matched.some((match) => match.sensorId === sensor),
+    "global tracked object",
+  );
+  requireMatch(
+    "/tracker/behavior-locations",
+    responseJson("/tracker/behavior-locations").behaviors,
+    (entry) => entry.id === "vss-oracle-video-analytics #-# 1" && entry.locations?.coordinates?.length === 2,
+    "matched behavior locations",
+  );
+  const lastRecord = responseJson("/tracker/last-record").lastRecord;
+  assert(lastRecord?.place === place && lastRecord.objectCounts?.some((entry) => entry.type === "Person" && entry.count === 3), `/tracker/last-record omitted the RTLS record: ${JSON.stringify(responseJson("/tracker/last-record"))}`);
+
+  requireMatch("/frames", responseJson("/frames").frames, (entry) => entry.id === "150" && entry.sensorId === sensor, "raw frame");
+  requireMatch("/frames/enhanced", responseJson("/frames/enhanced").enhancedFrames, (entry) => entry.id === "150" && entry.fov?.some((fov) => fov.type === "Person" && fov.count === 3), "enhanced frame");
+  requireMatch("/frames/bev", responseJson("/frames/bev").bevFrames, (entry) => entry.id === "bev-150" && entry.objects?.some((object) => object.id === "bev-object-1"), "BEV frame");
+  requireMatch("/frames/alerts", responseJson("/frames/alerts").alerts, (entry) => entry.sensorId === sensor && entry.proximity?.clusters?.some((cluster) => cluster.id === "vss-oracle-proximity-cluster-1") && entry.restrictedArea?.some((roi) => roi.roiId === "vss-oracle-roi-1"), "frame-level proximity and restricted-area alert");
+  requireMatch("/frames/high-confidence-objects", responseJson("/frames/high-confidence-objects").objects, (entry) => entry.objectId === "raw-object-1" && entry.confidence === 0.97, "high-confidence object");
+  const proximity = responseJson("/frames/proximity-detection");
+  assert(proximity.id === "150" && proximity.clusters?.some((entry) => entry.id === "vss-oracle-proximity-cluster-1"), `/frames/proximity-detection omitted the fixture cluster: ${JSON.stringify(proximity)}`);
+  requireMatch("/behavior", responseJson("/behavior").behaviors, (entry) => entry.Id === "vss-oracle-behavior-1" && entry.speed === 4, "behavior record");
+
+  requireMatch("/alerts", responseJson("/alerts").alerts, (entry) => entry.Id === "vss-oracle-alert-1", "alert record");
+  requireMatch("/alerts/severe", responseJson("/alerts/severe").severeAlerts?.sensors, (entry) => entry === sensor, "severe-alert sensor");
+  requireMatch("/incidents", responseJson("/incidents").incidents, (entry) => entry.Id === "vss-oracle-incident-1" && entry.category === "Collision Detection", "incident record");
+  requireMatch("/incidents/severe", responseJson("/incidents/severe").severeIncidents?.sensors, (entry) => entry === sensor, "severe-incident sensor");
+  requireMatch("/events/tripwire", responseJson("/events/tripwire").tripwireEvents, (entry) => entry.Id === "vss-oracle-tripwire-event-1" && entry.event?.id === "vss-oracle-tripwire-1", "tripwire event");
+  requireMatch("/events/amr", responseJson("/events/amr").amrEvents, (entry) => entry.events?.some((event) => event.objectId === "amr-1" && event.eventType === "route-change"), "AMR route-change event");
+  requireMatch("/events/roi", responseJson("/events/roi").roiEvents, (entry) => entry.Id === "vss-oracle-roi-event-1" && entry.event?.id === "vss-oracle-roi-1", "ROI event");
+
+  const updateStatus = responseJson("/config/update/status/{docType}/{referenceId}");
+  assert(updateStatus.status === "success", `Dynamic configuration status was not success: ${JSON.stringify(updateStatus)}`);
+  assert(typeof responseJson("/config/calibration/last-modified-timestamp").timestamp === "string", "Calibration last-modified timestamp was absent");
+  requireMatch("/sensor/lookup", responseJson("/sensor/lookup").sensorIds, (entry) => entry === sensor, "coordinate-matched sensor");
+
   receipt.operations.get = {
     expected: 48,
     exercised: 48,
@@ -739,6 +939,20 @@ async function runAllGetOperations(referenceId) {
       usd_scene: true,
       calibration_image_exact_bytes: true,
       cluster_label: "thor-qualified",
+      non_empty_data_endpoints: 40,
+      analytics_metrics: {
+        average_speed: true,
+        flowrate: true,
+        travel_time: true,
+        tripwire: true,
+        occupancy: true,
+        space_utilization: true,
+        road_segment_speed: true,
+      },
+      tracker_and_events: true,
+      raw_enhanced_bev_frames: true,
+      alerts_and_incidents: true,
+      sensor_lookup: true,
     },
   };
 }

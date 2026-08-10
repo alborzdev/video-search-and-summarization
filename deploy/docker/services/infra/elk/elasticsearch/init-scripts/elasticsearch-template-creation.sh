@@ -332,6 +332,8 @@ setup_elasticsearch_templates(){
           },
           "mappings": {
             "properties": {
+              "objectCounts": { "type": "nested" },
+              "locationsOfObjects": { "enabled": false },
               "objects": {
                 "type": "nested",
                 "properties": {

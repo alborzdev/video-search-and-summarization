@@ -1,0 +1,328 @@
+{
+  "documents": [
+    {
+      "index": "mdx-behavior-vss-oracle-runtime",
+      "id": "vss-oracle-road-behavior-1",
+      "source": {
+        "Id": "vss-oracle-road-behavior-1",
+        "id": "vss-oracle-road-sensor #-# 9",
+        "type": "mdx-behavior",
+        "timestamp": "2026-08-10T06:00:01.000Z",
+        "end": "2026-08-10T06:00:09.000Z",
+        "timeInterval": 8,
+        "length": 2,
+        "distance": 48,
+        "speed": 6,
+        "direction": "N",
+        "speedOverTime": [6],
+        "edges": ["vss-oracle-segment-1"],
+        "sensor": {
+          "id": "vss-oracle-road-sensor"
+        },
+        "place": {
+          "name": "city=VSSOracle/intersection=Thor"
+        },
+        "object": {
+          "id": "9",
+          "type": "Vehicle"
+        }
+      }
+    },
+    {
+      "index": "mdx-raw-vss-oracle-runtime",
+      "id": "vss-oracle-raw-frame-1",
+      "source": {
+        "version": "4.0",
+        "id": "150",
+        "timestamp": "2026-08-10T06:00:05.000Z",
+        "sensorId": "vss-oracle-video-analytics",
+        "type": "mdx-raw",
+        "objects": [
+          {
+            "id": "raw-object-1",
+            "type": "Person",
+            "confidence": 0.97,
+            "bbox": {
+              "leftX": 10,
+              "topY": 20,
+              "rightX": 30,
+              "bottomY": 60
+            }
+          }
+        ]
+      }
+    },
+    {
+      "index": "mdx-frames-vss-oracle-runtime",
+      "id": "vss-oracle-enhanced-frame-1",
+      "source": {
+        "version": "4.0",
+        "id": "150",
+        "timestamp": "2026-08-10T06:00:05.000Z",
+        "sensorId": "vss-oracle-video-analytics",
+        "type": "mdx-frames",
+        "fov": [
+          {
+            "id": "",
+            "type": "Person",
+            "count": 3,
+            "objectIds": ["frame-object-1", "frame-object-2", "frame-object-3"],
+            "coordinates": [],
+            "info": {}
+          }
+        ],
+        "rois": [
+          {
+            "id": "vss-oracle-roi-1",
+            "type": "Person",
+            "count": 2,
+            "objectIds": ["frame-object-1", "frame-object-2"],
+            "coordinates": [
+              {"x": 1, "y": 1, "z": 0},
+              {"x": 2, "y": 2, "z": 0}
+            ],
+            "info": {
+              "restrictedAreaViolation": "true"
+            }
+          }
+        ],
+        "objects": [
+          {
+            "id": "frame-object-1",
+            "type": "Person",
+            "confidence": 0.98,
+            "coordinate": {"x": 1, "y": 1, "z": 0}
+          },
+          {
+            "id": "frame-object-2",
+            "type": "Person",
+            "confidence": 0.96,
+            "coordinate": {"x": 2, "y": 2, "z": 0}
+          }
+        ],
+        "socialDistancing": {
+          "threshold": 1.8,
+          "clusters": [
+            {
+              "id": "vss-oracle-proximity-cluster-1",
+              "objectIds": ["frame-object-1", "frame-object-2"]
+            }
+          ],
+          "proximityDetections": 1,
+          "info": {
+            "proximityViolation": "true",
+            "proximityViolationObjects": "frame-object-1,frame-object-2"
+          }
+        },
+        "info": {
+          "place": "city=VSSOracle/building=Thor",
+          "confinedAreaViolation": "false"
+        }
+      }
+    },
+    {
+      "index": "mdx-bev-vss-oracle-runtime",
+      "id": "vss-oracle-bev-frame-1",
+      "source": {
+        "version": "4.0",
+        "id": "bev-150",
+        "timestamp": "2026-08-10T06:00:05.000Z",
+        "sensorId": "vss-oracle-video-analytics",
+        "type": "mdx-bev",
+        "objects": [
+          {
+            "id": "bev-object-1",
+            "type": "Person",
+            "confidence": 0.95,
+            "coordinate": {"x": 3, "y": 4, "z": 0}
+          }
+        ],
+        "info": {
+          "place": "city=VSSOracle/building=Thor"
+        }
+      }
+    },
+    {
+      "index": "mdx-events-vss-oracle-runtime",
+      "id": "vss-oracle-tripwire-event-1",
+      "source": {
+        "Id": "vss-oracle-tripwire-event-1",
+        "id": "vss-oracle-video-analytics #-# tripwire-object-1",
+        "type": "mdx-events",
+        "timestamp": "2026-08-10T06:00:04.000Z",
+        "end": "2026-08-10T06:00:04.100Z",
+        "sensor": {"id": "vss-oracle-video-analytics"},
+        "place": {"name": "city=VSSOracle/building=Thor"},
+        "object": {"id": "tripwire-object-1", "type": "Person"},
+        "event": {
+          "id": "vss-oracle-tripwire-1",
+          "type": "IN",
+          "info": {"class": "tripwire"}
+        }
+      }
+    },
+    {
+      "index": "mdx-events-vss-oracle-runtime",
+      "id": "vss-oracle-roi-event-1",
+      "source": {
+        "Id": "vss-oracle-roi-event-1",
+        "id": "vss-oracle-video-analytics #-# roi-object-1",
+        "type": "mdx-events",
+        "timestamp": "2026-08-10T06:00:04.200Z",
+        "end": "2026-08-10T06:00:04.300Z",
+        "sensor": {"id": "vss-oracle-video-analytics"},
+        "place": {"name": "city=VSSOracle/building=Thor"},
+        "object": {"id": "roi-object-1", "type": "Person"},
+        "event": {
+          "id": "vss-oracle-roi-1",
+          "type": "ENTRY",
+          "info": {"class": "roi"}
+        }
+      }
+    },
+    {
+      "index": "mdx-alerts-vss-oracle-runtime",
+      "id": "vss-oracle-alert-1",
+      "source": {
+        "Id": "vss-oracle-alert-1",
+        "id": "vss-oracle-video-analytics #-# alert-object-1",
+        "type": "mdx-alerts",
+        "timestamp": "2026-08-10T06:00:04.000Z",
+        "end": "2026-08-10T06:00:06.000Z",
+        "sensor": {"id": "vss-oracle-video-analytics"},
+        "place": {"name": "city=VSSOracle/building=Thor"},
+        "object": {"id": "alert-object-1", "type": "Person"},
+        "analyticsModule": {
+          "id": "vss-oracle-alert-module",
+          "description": "Abnormal Movement - Thor qualification"
+        },
+        "info": {}
+      }
+    },
+    {
+      "index": "mdx-incidents-vss-oracle-runtime",
+      "id": "vss-oracle-incident-1",
+      "source": {
+        "Id": "vss-oracle-incident-1",
+        "type": "mdx-incidents",
+        "timestamp": "2026-08-10T06:00:04.000Z",
+        "end": "2026-08-10T06:00:06.000Z",
+        "sensorId": "vss-oracle-video-analytics",
+        "place": {"name": "city=VSSOracle/building=Thor"},
+        "objectIds": ["incident-object-1"],
+        "frameIds": ["150"],
+        "category": "Collision Detection",
+        "analyticsModule": {
+          "id": "Collision Detection",
+          "description": "Thor qualification collision"
+        },
+        "isAnomaly": true,
+        "info": {"isComplete": "true"}
+      }
+    },
+    {
+      "index": "mdx-mtmc-vss-oracle-runtime",
+      "id": "vss-oracle-mtmc-1",
+      "source": {
+        "Id": "vss-oracle-mtmc-1",
+        "type": "mdx-mtmc",
+        "globalId": "vss-oracle-global",
+        "timestamp": "2026-08-10T06:00:04.950Z",
+        "end": "2026-08-10T06:00:05.050Z",
+        "matched": [
+          {
+            "id": "vss-oracle-video-analytics #-# 1",
+            "sensorId": "vss-oracle-video-analytics",
+            "objectId": "1",
+            "place": "city=VSSOracle/building=Thor",
+            "timestamp": "2026-08-10T06:00:04.950Z",
+            "end": "2026-08-10T06:00:05.050Z"
+          }
+        ]
+      }
+    },
+    {
+      "index": "mdx-sensor-lookup",
+      "id": "vss-oracle-sensor-lookup-1",
+      "source": {
+        "id": "0|0|0",
+        "place": "city=VSSOracle/building=Thor",
+        "sensorIds": [
+          "vss-oracle-video-analytics"
+        ]
+      }
+    },
+    {
+      "index": "mdx-rtls-vss-oracle-runtime",
+      "id": "vss-oracle-rtls-1",
+      "source": {
+        "Id": "vss-oracle-rtls-1",
+        "type": "mdx-rtls",
+        "timestamp": "2026-08-10T06:00:05.000Z",
+        "place": "city=VSSOracle/building=Thor",
+        "objectCounts": [
+          {"type": "Person", "count": 3}
+        ],
+        "locationsOfObjects": [
+          {"id": "rtls-object-1", "type": "Person", "locations": [[1, 2, 0]]}
+        ]
+      }
+    },
+    {
+      "index": "mdx-amr-locations-vss-oracle-runtime",
+      "id": "vss-oracle-amr-location-1",
+      "source": {
+        "Id": "vss-oracle-amr-location-1",
+        "type": "mdx-amr-locations",
+        "timestamp": "2026-08-10T06:00:05.000Z",
+        "place": "city=VSSOracle/building=Thor",
+        "objectCounts": [
+          {"type": "AMR", "count": 1}
+        ],
+        "locationsOfObjects": [
+          {"id": "amr-1", "type": "AMR", "locations": [[5, 6, 0]]}
+        ]
+      }
+    },
+    {
+      "index": "mdx-amr-events-vss-oracle-runtime",
+      "id": "vss-oracle-amr-event-1",
+      "source": {
+        "Id": "vss-oracle-amr-event-1",
+        "type": "mdx-amr-events",
+        "timestamp": "2026-08-10T06:00:05.000Z",
+        "place": "city=VSSOracle/building=Thor",
+        "events": [
+          {
+            "objectId": "amr-1",
+            "objectType": "AMR",
+            "eventType": "route-change",
+            "currentRoute": ["A", "B"],
+            "newRoute": ["A", "C"]
+          }
+        ]
+      }
+    },
+    {
+      "index": "mdx-space-utilization-vss-oracle-runtime",
+      "id": "vss-oracle-space-utilization-1",
+      "source": {
+        "Id": "vss-oracle-space-utilization-1",
+        "id": "vss-oracle-space-1",
+        "type": "mdx-space-utilization",
+        "timestamp": "2026-08-10T06:00:05.000Z",
+        "metrics": {
+          "totalSpace": 100,
+          "spaceUtilization": 0.4,
+          "spaceOccupied": 40,
+          "freeSpace": 60,
+          "numExtraPallets": 3,
+          "utilizableFreeSpace": 50,
+          "freeSpaceQuality": 0.83,
+          "isUnsafe": false
+        },
+        "layouts": {}
+      }
+    }
+  ]
+}

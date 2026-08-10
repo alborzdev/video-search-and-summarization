@@ -3,12 +3,14 @@
 ## Result
 
 PASS. The live Thor Video Analytics API exercised the exact 56-operation
-OpenAPI surface with the released NVIDIA containers, including successful
+OpenAPI surface with the released NVIDIA containers, including non-empty
+value-level semantics for every data-bearing query family, successful
 write/read workflows, adjacent-negative validation, Kafka-backed dynamic
 configuration and calibration, and exact cleanup/restoration.
 
-The retained successful run started at `2026-08-10T09:50:20.607Z` and finished
-at `2026-08-10T09:50:37.415Z`.
+The retained successful run started at `2026-08-10T10:17:27.299Z` and finished
+at `2026-08-10T10:18:02.710Z`. Its JSON receipt had SHA-256
+`43b01ddcf15e2cc9b839d834187b2029d8c75ace5c7c989367c8c27362309dbe`.
 
 ## Runtime identity
 
@@ -35,6 +37,22 @@ The operation set was exactly 48 GET and 8 POST operations.
 - all 48 unique GET operations returned HTTP 200
 - all 8 unique POST operations completed a positive HTTP 201 workflow
 - all 8 unique POST operations rejected an adjacent invalid request
+- 14 namespaced semantic documents populated 13 isolated indices
+- all 40 data-bearing GET endpoints passed non-empty, value-level assertions
+- average speed, flowrate, combined speed/flow, and corridor travel time were
+  positive for the seeded northbound behavior
+- tripwire counts/histograms, reset-aware occupancy, FOV/ROI occupancy and
+  histograms, mutually-exclusive ROI occupancy, RTLS/AMR tracker occupancy,
+  and space utilization matched exact fixture values
+- last-processed timestamp and road-segment speed matched the seeded frame and
+  road behavior
+- MTMC unique count, global object, RTLS/AMR locations, matched behavior path,
+  and last record all returned the expected identities
+- raw, enhanced, and BEV frames; frame proximity/restricted-area alerts; and
+  the high-confidence object matched their fixture IDs and values
+- behavior, severe/non-severe alert and incident, tripwire, ROI, and AMR event
+  results matched their fixture identities
+- coordinate sensor lookup returned the expected fixture camera
 - behavior PTS readback: start 1000 ms, end 2000 ms
 - frame PTS readback: 1000 ms
 - calibration sensor readback matched the namespaced fixture
@@ -51,7 +69,7 @@ The operation set was exactly 48 GET and 8 POST operations.
 - dynamic calibration upload, upsert, and delete produced at least three
   behavior-analytics calibration checkpoints
 
-## Mapping defect and correction
+## Mapping defects and corrections
 
 The official API image stores road-network and USD documents below
 `roadNetwork` and `usdAssets` wrappers, but its packaged template definitions
@@ -72,11 +90,24 @@ Both live templates were asserted field-by-field before mutation. Calibration,
 road-network, and USD uploads subsequently returned HTTP 201, and their GET
 readbacks returned the expected semantic identities.
 
+The released RTLS template also omitted the `objectCounts` nested mapping even
+though the tracker-occupancy histogram implementation performs a nested
+aggregation on that field. Direct tracker reads worked, but RTLS histogram
+counts were silently absent while AMR counts remained. The checked-in primary
+bootstrap and behavior-analytics integration bootstrap now define:
+
+- `mdx_rtls_template`, priority 507: `objectCounts` as `nested`, with
+  `locationsOfObjects` mapping-disabled while remaining available in `_source`.
+
+The live template was updated idempotently before the retained run. The
+qualifier asserts the nested mapping before mutation, and the resulting
+histogram returned both Person=3 and AMR=1 fixture counts.
+
 ## Cleanup and restoration
 
 The successful receipt proved:
 
-- all ten qualifier-owned indices absent;
+- the complete fixed qualifier-owned index allowlist absent;
 - both qualifier-created calibration templates absent;
 - the upload directory exactly matched its empty pre-run snapshot;
 - the disposable behavior container absent;
@@ -103,9 +134,8 @@ was retained.
 
 ## Scope boundary
 
-This pass qualifies the exact HTTP route set, validation behavior, core
-write/read semantics, and Kafka update plumbing. Empty-but-schema-valid results
-for unseeded metric, tracker, frame, alert, incident, and event queries are not
-treated as proof of their full non-empty business semantics. Those deeper
-fixture correlations and Kafka-absent behavior remain open in the parity
-ledger rather than being overstated here.
+This pass qualifies the exact HTTP route set, validation behavior, populated
+query semantics, write/read semantics, and Kafka update plumbing. The one
+remaining Video Analytics API scenario is intentional Kafka-absent error
+behavior; it requires temporarily stopping the shared broker and is tracked as
+a separate reversible runtime qualification rather than being inferred here.

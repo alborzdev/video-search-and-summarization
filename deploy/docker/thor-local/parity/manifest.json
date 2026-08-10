@@ -555,7 +555,7 @@
         "Video Analytics optional Kafka failure behavior"
       ],
       "category": "api",
-      "gap": "The exact 56-operation HTTP surface, positive and adjacent-negative POST workflows, core semantic readbacks, and Kafka-backed config/calibration updates now pass on Thor. Remaining work is non-empty hand-computed correlation for every metric/tracker/frame/incident/event family plus Kafka-absent error behavior; VA-MCP has separate current runtime evidence.",
+      "gap": "The exact 56-operation HTTP surface, all 40 data-bearing non-empty semantic query families, positive and adjacent-negative POST workflows, RTLS/road/USD mapping contracts, and Kafka-backed config/calibration updates now pass on Thor. Only the separately reversible Kafka-absent error behavior remains; VA-MCP has separate current runtime evidence.",
       "id": "video-analytics-api",
       "official_capability_ids": [
         "runtime.video-analytics.query-and-library-contract",
