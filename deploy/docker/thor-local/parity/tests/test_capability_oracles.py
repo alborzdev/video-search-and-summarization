@@ -63,6 +63,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current NvStreamer file/RTSP/WebRTC runtime receipt
             + 1  # current NvStreamer synchronized-playback runtime receipt
             + 1  # current NvStreamer complete-configuration runtime receipt
+            + 1  # current VIOS native WebRTC replay runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -88,6 +89,45 @@ class CapabilityOracleTests(unittest.TestCase):
             + "\n"
         )
         self.assertEqual(verifier.ORACLES.read_text(encoding="utf-8"), rendered)
+
+    def test_vios_webrtc_replay_is_exact_executor_ready_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.VIOS_WEBRTC_REPLAY_FIXTURE["path"],
+                "generator": verifier.VIOS_WEBRTC_REPLAY_EXECUTOR,
+                "sha256": verifier.VIOS_WEBRTC_REPLAY_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.VIOS_WEBRTC_REPLAY_WORKLOAD,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.VIOS_WEBRTC_REPLAY_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.VIOS_WEBRTC_REPLAY_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["cleanup"]["targets"], [verifier.VIOS_WEBRTC_REPLAY_NAMESPACE]
+        )
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(
+            oracle["protocol_case_binding"]["negative_vector_ids"],
+            ["vios-replay-bad-seek-action"],
+        )
+        self.assertEqual(oracle["evidence"], [])
 
     def test_synthetic_data_oracles_are_exact_executor_ready_rows(self) -> None:
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
@@ -718,6 +758,14 @@ class CapabilityOracleTests(unittest.TestCase):
                         cleanup["targets"],
                         [verifier.NVSTREAMER_FULL_CONFIG_NAMESPACE],
                     )
+                elif (
+                    item["capability_id"]
+                    == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID
+                ):
+                    self.assertEqual(
+                        cleanup["targets"],
+                        [verifier.VIOS_WEBRTC_REPLAY_NAMESPACE],
+                    )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
                 self.assertEqual(cleanup["allowlist"], cleanup["targets"])
@@ -854,6 +902,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     == verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID
+                )
+                else verifier.VIOS_WEBRTC_REPLAY_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID
                 )
                 else override[2]
                 if override is not None

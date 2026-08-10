@@ -58,7 +58,11 @@ bool SchemaValidator::validateWebSocketRequest(const std::string &apiPath, const
     return validateRequest("/" + webSocketApi, websocketData);
 }
 
-bool SchemaValidator::validateRequest(const std::string &apiPath, const Json::Value &jsonData, const std::string &queryString)
+bool SchemaValidator::validateRequest(
+    const std::string &apiPath,
+    const Json::Value &jsonData,
+    const std::string &queryString,
+    RequestValidationScope scope)
 {
     MEASURE_FUNCTION_EXECUTION_TIME
     // Starting validation request for path
@@ -117,7 +121,7 @@ bool SchemaValidator::validateRequest(const std::string &apiPath, const Json::Va
                 }
             }
 
-            if (validate(mergedData, spec))
+            if (validate(mergedData, spec, scope))
             {
                 return true;
             }
@@ -129,20 +133,24 @@ bool SchemaValidator::validateRequest(const std::string &apiPath, const Json::Va
     return false;
 }
 
-bool SchemaValidator::validate(const Json::Value &data, const ApiSpec &spec)
+bool SchemaValidator::validate(const Json::Value &data, const ApiSpec &spec, RequestValidationScope scope)
 {
-    // Validation for spec.api_path
-    for (const auto &field : spec.fields)
+    // Body rules and query rules are intentionally separate. In particular,
+    // GET endpoints that share a path with a POST endpoint must not inherit
+    // the POST body's required fields.
+    if (scope == RequestValidationScope::BodyAndQuery)
     {
-        // Validate each field
-        if (!checkField(data, field))
+        for (const auto &field : spec.fields)
         {
-            LOG(error) << "Validation failed for API path: " << spec.api_path << ", field: " << field.json_path << endl;
-            return false;
+            if (!checkField(data, field))
+            {
+                LOG(error) << "Validation failed for API path: " << spec.api_path << ", field: " << field.json_path << endl;
+                return false;
+            }
+            LOG(verbose2) << "Field validation passed: " << field.json_path << endl;
         }
-        LOG(verbose2) << "Field validation passed: " << field.json_path << endl;
     }
-    
+
     // Validate query parameters if defined
     for (const auto &queryParam : spec.queryParams)
     {

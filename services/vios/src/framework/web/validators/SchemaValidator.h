@@ -65,17 +65,27 @@ struct ApiSpec
     std::vector<FieldRule> queryParams;  // Query parameter validation rules
 };
 
+enum class RequestValidationScope
+{
+    BodyAndQuery,
+    QueryOnly,
+};
+
 class SchemaValidator
 {
 public:
     SchemaValidator() = delete;
-    static bool validateRequest(const std::string &apiPath, const Json::Value &jsonData, const std::string &queryString = "");
+    static bool validateRequest(
+        const std::string &apiPath,
+        const Json::Value &jsonData,
+        const std::string &queryString = "",
+        RequestValidationScope scope = RequestValidationScope::BodyAndQuery);
     static bool validateWebSocketRequest(const std::string &apiPath, const Json::Value &jsonData);
 
 private:
     static const std::vector<ApiSpec> API_SPEC;
 
-    static bool validate(const Json::Value &data, const ApiSpec &spec);
+    static bool validate(const Json::Value &data, const ApiSpec &spec, RequestValidationScope scope);
     static bool checkJsonType(const Json::Value &val, JsonType type);
     static bool checkField(const Json::Value &node, const FieldRule &rule);
     static bool matchApiPath(const std::string &requestPath,

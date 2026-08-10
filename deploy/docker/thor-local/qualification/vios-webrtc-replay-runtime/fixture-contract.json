@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "qualification_id": "thor-vss-3.2.1-vios-webrtc-replay-runtime",
+  "capability_id": "protocol.vios.webrtc-replay",
+  "oracle_id": "oracle.protocol.vios.webrtc-replay",
+  "default_execution_enabled": false,
+  "acknowledgement": "I_ACK_VIOS_WEBRTC_REPLAY_EPHEMERAL_RUNTIME",
+  "contract": {
+    "mode": "replay",
+    "protocol": "webrtc"
+  },
+  "target": {
+    "product_version": "3.2.1",
+    "service_version": "2.1.0-26.05.4",
+    "upstream_main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57"
+  },
+  "fixture": {
+    "id": "fixture.protocol.vios.webrtc-replay.pit-pov",
+    "kind": "retained_local_media",
+    "sensor_name": "pit-POV",
+    "media": {
+      "path": "deploy/docker/data-dir/data_log/vst/clip_storage/pit-POV.mp4",
+      "bytes": 16393475,
+      "sha256": "e5b69d273716e6a261480470fc4372daf3909c69905b6a0e2ac952791af78df5",
+      "duration_seconds": 19.209,
+      "video": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "frame_rate": "60/1",
+        "b_frames": 0
+      },
+      "audio": {
+        "codec": "aac"
+      }
+    },
+    "persistent_mutation": false,
+    "warehouse_sample_bundle": false
+  },
+  "bounds": {
+    "max_duration_seconds": 180,
+    "max_requests": 64,
+    "max_actions": 32,
+    "network_scope": "numeric-loopback-only",
+    "browser_cdp": "http://127.0.0.1:9223",
+    "vios_ui": "http://127.0.0.1:7777/vst/#/recorded-streams",
+    "docker_lifecycle_allowed": false,
+    "persistent_mutation_allowed": false,
+    "service_configuration_mutation_allowed": false,
+    "warehouse_sample_bundle": "excluded",
+    "rt_cv_stream_add": "forbidden",
+    "agent_generate": "forbidden"
+  },
+  "workflow": [
+    "capture exact Docker, service, fixture, timeline, and replay-session pre-state",
+    "select the retained pit-POV recording in the native VIOS Recorded Streams UI",
+    "complete replay WebSocket configuration, SDP, and ICE negotiation in Chromium",
+    "observe a live unmuted 1280x720 video track and advancing decoded frames",
+    "POST one relative seekForward with a string value and observe further frames",
+    "GET the opaque seek position without a client-supplied action query parameter",
+    "reject seekSideways with HTTP 501 VMSNotSupportedError and continue playback",
+    "invoke the native UI seek-forward control and observe further frames",
+    "close the player, observe stream/stop and WebSocket close, and verify the peer is absent",
+    "verify exact fixture, timeline, container, and running-set restoration"
+  ],
+  "privacy": {
+    "retain_peer_ids": false,
+    "retain_media_session_ids": false,
+    "retain_sdp": false,
+    "retain_ice_candidates": false
+  },
+  "cleanup": {
+    "mutation": "ephemeral_session_only",
+    "executor": "native UI stream/stop",
+    "postconditions": [
+      "the executor-owned replay peer is rejected as absent",
+      "aggregate replay status is null",
+      "the replay WebSocket is closed",
+      "the video element is removed",
+      "fixture sensor, streams, timeline, Docker inventory, and running set equal pre-state"
+    ]
+  },
+  "source_locks": [
+    {
+      "path": "services/vios/doc/api/vst_replay_stream_ms/swagger.yaml",
+      "sha256": "db7060eef77799b0992123f99749e84f6cf2b48c0e747d3917ce880a8642b6e0"
+    },
+    {
+      "path": "services/vios/src/modules/webrtc_replay/ReplayPeerConnection.cpp",
+      "sha256": "6b9e9cf81cf176631e7f094de99bfe473b1d967a883b6f0593ad17be30d7301e"
+    },
+    {
+      "path": "services/vios/src/framework/web/validators/SchemaValidator.h",
+      "sha256": "618df0028bdc78270b22c21876f9fd91939042708fdf8f792e7b237bdb282175"
+    },
+    {
+      "path": "services/vios/src/framework/web/validators/SchemaValidator.cpp",
+      "sha256": "28de367eb2a92827c57875a593f698268a7b266dedf1efaea62dac8833bfae0c"
+    },
+    {
+      "path": "services/vios/src/framework/web/http_server/HttpServerRequestHandler.cpp",
+      "sha256": "33c0726cd8dbc487428914ce2b3965f5d6fd9fb186d991a10c15de1fcfca6f88"
+    },
+    {
+      "path": "services/vios/src/framework/web/api_spec/services/replay_stream_spec.h",
+      "sha256": "26e883712eb1bb65042682d54e9c2e672d369040e1e05713940732e2572f44ac"
+    },
+    {
+      "path": "deploy/docker/services/vios/configs/nginx-vst-direct.conf",
+      "sha256": "b504f79f4b44b5e4671f6c58b16663779d3aadd5917e2b8ec6b4de915cac9591"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/pages/vst/ReplayStream.tsx",
+      "sha256": "343411ed0d6937138e84bba7c95bfffc8188315178e50c27117063037bb2327c"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/VideoPlayer.tsx",
+      "sha256": "744010401465ac1ad569a92c972ffabd6a05da4a005238ab368f0bd28686a867"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/videoPlayerUtils/trickModesAPIs.ts",
+      "sha256": "34b72fbb7a2f32933df416e844ba353292521f7b643fcfdf8ce1f41a99395af1"
+    },
+    {
+      "path": "services/vios/ui/vios-ui/src/components/videoPlayer/videoPlayerUtils/websocketEndpoint.ts",
+      "sha256": "4ca13fd18459acec73ded240f8fecf7b7602bf39394d1bc60c05a6393593cd22"
+    },
+    {
+      "path": "services/vios/ui/streaming-lib/src/websocket/WebSocket.ts",
+      "sha256": "6b6d784b32911f94eadbe1f75ffbd22c9049bb2a1d473cfb397f567f806b81f4"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+      "sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-webrtc-replay-runtime/harness.mjs",
+      "sha256": "f5abfa9d883e0e87cf0db8cdac20dea0b059e2adb813ca2af4a69d1488f1d1ba"
+    }
+  ]
+}

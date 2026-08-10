@@ -1,0 +1,145 @@
+{
+  "assertions": [
+    {
+      "expected": "replay",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/mode",
+      "observed": "replay",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "webrtc",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/protocol",
+      "observed": "webrtc",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "wire_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "protocol.vios.webrtc-replay",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-protocol-vios-webrtc-replay"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-protocol-vios-webrtc-replay"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.protocol.vios.webrtc-replay",
+    "path": "deploy/docker/thor-local/qualification/vios-webrtc-replay-runtime/fixture-contract.json",
+    "sha256": "0cdf3e7196e191f0a0f68c24c7b93eb06b223991372ec625443c40f7c19aeebd"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "mode": "replay",
+          "protocol": "webrtc"
+        },
+        "fixture_media_sha256": "e5b69d273716e6a261480470fc4372daf3909c69905b6a0e2ac952791af78df5",
+        "receipt_sha256": "77f99ba9d383838e53e39ce6c9e38f2e2df89d7ae1632014a29a017afe581adf",
+        "service_version": "2.1.0-26.05.4"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "decoded_frames_after_seek": 50,
+        "decoded_frames_before_seek": 2,
+        "height": 720,
+        "live_unmuted_video_track": true,
+        "ready_state": 4,
+        "width": 1280
+      }
+    },
+    {
+      "id": "wire_contract",
+      "result": "pass",
+      "value": {
+        "get_position_without_client_action_status": 200,
+        "invalid_action_error_code": "VMSNotSupportedError",
+        "invalid_action_status": 501,
+        "positive_seek_status": 200,
+        "positive_seek_value_type": "string",
+        "signaling_complete": true,
+        "stop_frame_observed": true,
+        "ui_seek_status": 200,
+        "websocket_closed": true,
+        "websocket_path": "/vst/api/v1/replay/ws"
+      }
+    }
+  ],
+  "oracle_id": "oracle.protocol.vios.webrtc-replay",
+  "oracle_sha256": "44890e277752ed50faabd548d2423aea19c8e4af87fa16a6ae3eecdb2b89495b",
+  "protocol_case": {
+    "case_id": "protocol-case.vios.webrtc-replay",
+    "case_sha256": "f3fabfe340e4a307e6075efef541484fa32eb3b40ccf8a9480cadc5093ad5ef5",
+    "cleanup_result": "pass",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "negative_vector_ids": [
+      "vios-replay-bad-seek-action"
+    ],
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "positive_vector_id": "vios-replay-one-seek",
+    "source_hashes": [
+      {
+        "content_sha256": "db7060eef77799b0992123f99749e84f6cf2b48c0e747d3917ce880a8642b6e0",
+        "git_blob_oid": "c0cb2a5e2d40b5b3016b3cfa8ec63e65203b8810",
+        "path": "services/vios/doc/api/vst_replay_stream_ms/swagger.yaml"
+      },
+      {
+        "content_sha256": "6b9e9cf81cf176631e7f094de99bfe473b1d967a883b6f0593ad17be30d7301e",
+        "git_blob_oid": "1c72de30030b302c28988f4120005c21c49e88e3",
+        "path": "services/vios/src/modules/webrtc_replay/ReplayPeerConnection.cpp"
+      }
+    ],
+    "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc"
+  },
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.protocol.vios.webrtc-replay"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

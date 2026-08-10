@@ -260,7 +260,12 @@ class RequestHandler : public CivetHandler
             }
             // For GET and other methods, validate query parameters only  
             else if (isNonBodyContentMethod(method) && 
-                     !queryString.empty() && !SchemaValidator::validateRequest(schemaValidationUri.c_str(), Json::objectValue, queryString))
+                     !queryString.empty() &&
+                     !SchemaValidator::validateRequest(
+                         schemaValidationUri.c_str(),
+                         Json::objectValue,
+                         queryString,
+                         RequestValidationScope::QueryOnly))
             {
                 LOG(error) << "Query parameter validation failed for " << method << " request to " << uri << endl;
                 LOG(warning) << "Query parameters may contain security violations or exceed limits" << endl;

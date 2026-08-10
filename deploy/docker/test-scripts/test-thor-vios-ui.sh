@@ -94,6 +94,35 @@ nginx = (docker_dir / "services/vios/configs/nginx-vst.conf").read_text(encoding
 for route in ("location /vst/", "alias /vst-ui/", "location /vst/api/v1/", "location /vst/storage/"):
     assert route in nginx
 
+direct_nginx = (docker_dir / "services/vios/configs/nginx-vst-direct.conf").read_text(
+    encoding="utf-8"
+)
+assert "location = /vst/api/v1/replay/stream/seek" in direct_nginx
+assert 'if ($request_method = GET)' in direct_nginx
+assert 'set $args "${args}&action=seekForward";' in direct_nginx
+
+schema_header = (
+    root / "services/vios/src/framework/web/validators/SchemaValidator.h"
+).read_text(encoding="utf-8")
+schema_source = (
+    root / "services/vios/src/framework/web/validators/SchemaValidator.cpp"
+).read_text(encoding="utf-8")
+http_handler = (
+    root / "services/vios/src/framework/web/http_server/HttpServerRequestHandler.cpp"
+).read_text(encoding="utf-8")
+replay_spec = (
+    root / "services/vios/src/framework/web/api_spec/services/replay_stream_spec.h"
+).read_text(encoding="utf-8")
+assert "enum class RequestValidationScope" in schema_header
+assert "RequestValidationScope::QueryOnly" in http_handler
+assert "scope == RequestValidationScope::BodyAndQuery" in schema_source
+seek_spec = replay_spec.split('{"/api/v1/replay/stream/seek",', 1)[1].split(
+    '{"/api/v1/replay/stream/status"}', 1
+)[0]
+assert seek_spec.count('{"mediaSessionId", JsonType::String, true, Format::NOT_EMPTY}') == 2
+assert seek_spec.count('{"peerId", JsonType::String, true, Format::NOT_EMPTY}') == 2
+assert seek_spec.count('{"action", JsonType::String, true}') == 1
+
 haproxy = (docker_dir / "services/infra/haproxy/haproxy.cfg.template").read_text(encoding="utf-8")
 assert "acl p_vst path /vst" in haproxy
 assert "use_backend bk_vst_ingress if h_main p_vst" in haproxy

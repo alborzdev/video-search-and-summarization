@@ -121,7 +121,9 @@ const std::vector<ApiSpec> REPLAY_API_SPEC = {
      {{"mediaSessionId", JsonType::String, true, Format::NOT_EMPTY},
       {"peerId", JsonType::String, true, Format::NOT_EMPTY},
       {"action", JsonType::String, true},
-      {"value", JsonType::StringOrNumber, false}}},
+      {"value", JsonType::StringOrNumber, false}},
+     {{"mediaSessionId", JsonType::String, true, Format::NOT_EMPTY},
+      {"peerId", JsonType::String, true, Format::NOT_EMPTY}}},
 
     {"/api/v1/replay/stream/status"},
 
