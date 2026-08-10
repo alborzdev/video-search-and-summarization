@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-event-transports-runtime",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "capability_ids": [
+    "protocol.kafka.nvschema",
+    "protocol.redis.events"
+  ],
+  "network_scope": "loopback_only",
+  "warehouse_sample_bundle": false,
+  "max_duration_seconds": 180,
+  "max_semantic_actions": 4,
+  "broker_contract": {
+    "path": "deploy/docker/thor-local/parity/candidates/wave3/systems/evidence/broker-topic-contracts.json",
+    "sha256": "21d6fd0724ce292ab0e09098485d3d12c8f3e357e81253c2e72ffdc07960b5ef",
+    "kafka_topic_count": 18,
+    "redis_stream_count": 16,
+    "equivalent_topic_sets": false
+  },
+  "protocol_cases": [
+    {
+      "case_id": "protocol-case.kafka.nvschema",
+      "sha256": "3031127b14f0c9cf51d530e5c4c636e154845da4963a20542f112ccb10239826",
+      "positive_vector_id": "kafka-one-nvschema-behavior",
+      "negative_vector_id": "kafka-invalid-protobuf"
+    },
+    {
+      "case_id": "protocol-case.redis.events",
+      "sha256": "2ace0702fb6e8737e3f34487730627944f34a3f4d902bf491e9ca18558f1a133",
+      "positive_vector_id": "redis-one-events-envelope",
+      "negative_vector_id": "redis-malformed-headers"
+    }
+  ],
+  "source_locks": [
+    {
+      "path": "services/alert/alert-agent-web/app/core/alert_service.py",
+      "sha256": "b2cbe05f5fce3c50b4e4b0ed1e336ed88019d92e7958a266392f97a6d6a74a24"
+    },
+    {
+      "path": "services/alert/mdx/anomaly/protobuf/ext_pb2.py",
+      "sha256": "a51bbe015b433d61e8bcad654f1e1e081fd75be30283b85eec7a57bfd6b14536"
+    },
+    {
+      "path": "services/alert/mdx/anomaly/protobuf/schema_pb2.py",
+      "sha256": "ed41100ece8a86cb606727f701fcf2bce2f4f2b274cd4cfa29a09c8261000e37"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_redis_stream.py",
+      "sha256": "6166976af25c8ee37fcc6ec80875289840f44b5dc8752cfbab780c126609589e"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_redis_stream.py",
+      "sha256": "aa492dc6a84be49025564759d04280291548017d37ca2872a4bd4c0180531a44"
+    },
+    {
+      "path": "deploy/docker/services/analytics/behavior-analytics/configs/vss-behavior-analytics-config.json",
+      "sha256": "efb28dd9c1129f6c3fe2e12c22f4f2a7ed208885a9e57e8e2cfd03312cf6983d"
+    }
+  ],
+  "runtime_images": {
+    "kafka_runner": {
+      "reference": "cti-vss-alert-bridge:thor-local",
+      "image_id": "sha256:74879bdea9efaaf5786f0570fcec2dbb193f3a7df6b0f72b609984e33da881fb",
+      "architecture": "arm64"
+    },
+    "redis_runner": {
+      "reference": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+      "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+      "architecture": "arm64"
+    },
+    "kafka_broker": {
+      "container": "kafka",
+      "reference": "confluentinc/cp-kafka:8.2.0",
+      "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436"
+    },
+    "redis_broker": {
+      "container": "redis",
+      "reference": "redis:8.6.2-alpine",
+      "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17"
+    }
+  },
+  "owned_resources": {
+    "kafka_topic": "vss-protocol-case-kafka-nvschema",
+    "kafka_group": "vss-protocol-case-kafka-nvschema-group",
+    "kafka_runner_container": "vss-oracle-protocol-kafka-nvschema",
+    "redis_stream": "vss-protocol-case-redis-events",
+    "redis_group_base": "vss-protocol-case-redis-group",
+    "redis_effective_group": "vss-protocol-case-redis-group - vss-protocol-case-redis-events",
+    "redis_runner_container": "vss-oracle-protocol-redis-events"
+  },
+  "cleanup": {
+    "mutation": "namespaced_and_reversible",
+    "precondition": "all fixed qualifier-owned resources are absent",
+    "allowlist": [
+      "vss-protocol-case-kafka-nvschema",
+      "vss-protocol-case-kafka-nvschema-group",
+      "vss-oracle-protocol-kafka-nvschema",
+      "vss-protocol-case-redis-events",
+      "vss-protocol-case-redis-group",
+      "vss-protocol-case-redis-group - vss-protocol-case-redis-events",
+      "vss-oracle-protocol-redis-events"
+    ],
+    "postconditions": [
+      "all fixed qualifier-owned resources are absent",
+      "non-owned Kafka topic names match pre-state",
+      "non-owned Redis key names match pre-state",
+      "both broker containers remain healthy"
+    ]
+  },
+  "forbidden_actions": [
+    "VSS Agent /generate",
+    "main VIOS sensor or stream mutation",
+    "RT-CV sample stream mutation",
+    "warehouse sample bundle access",
+    "non-owned Kafka topic/group deletion",
+    "non-owned Redis key/group deletion"
+  ]
+}

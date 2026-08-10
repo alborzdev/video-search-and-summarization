@@ -1,0 +1,207 @@
+{
+  "assertions": [
+    {
+      "expected": "redis-stream",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/protocol",
+      "observed": "redis-stream",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 16,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/stream_count",
+      "observed": 16,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "evidence/broker-topic-contracts.json",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/topic_fixture",
+      "observed": "evidence/broker-topic-contracts.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "package": "systems",
+          "planning_requirement_ids": []
+        }
+      ],
+      "id": "contract-04",
+      "observation": "contract_identity/contract/wave3_acceptance/contributions",
+      "observed": [
+        {
+          "package": "systems",
+          "planning_requirement_ids": []
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "wire_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "protocol.redis.events",
+  "cleanup": {
+    "allowlist": [
+      "vss-protocol-case-redis-events",
+      "vss-protocol-case-redis-group",
+      "vss-oracle-protocol-redis-events"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-protocol-case-redis-events",
+      "vss-protocol-case-redis-group",
+      "vss-oracle-protocol-redis-events"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.protocol.redis.events",
+    "path": "deploy/docker/thor-local/qualification/event-transports-runtime/contract.json",
+    "sha256": "2229e2ff89a22fe0454bab8028d5d3764d5d21908fc2e9c742e6e208a29ef043"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "protocol": "redis-stream",
+          "stream_count": 16,
+          "topic_fixture": "evidence/broker-topic-contracts.json",
+          "wave3_acceptance": {
+            "contributions": [
+              {
+                "package": "systems",
+                "planning_requirement_ids": []
+              }
+            ],
+            "executor_ready": false,
+            "materialized": false
+          }
+        },
+        "receipt_sha256": "d941aa26df52b5f4e0c3a5505ef92ef319785d060d19267db54fdd221c3000d7"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "headers_match": true,
+        "key_match": true,
+        "message_count": 1,
+        "pending_after_xack": 0,
+        "positive_vector_id": "redis-one-events-envelope",
+        "production_classes": [
+          "SinkRedisStream",
+          "SourceRedisStream"
+        ],
+        "timestamp_from_entry_id": true,
+        "value_match": true
+      }
+    },
+    {
+      "id": "wire_contract",
+      "result": "pass",
+      "value": {
+        "broker_healthy_after": true,
+        "effective_group_derived_by_source": true,
+        "negative_pending_before_cleanup": 1,
+        "negative_rejection": "JSONDecodeError",
+        "negative_vector_id": "redis-malformed-headers",
+        "nonowned_key_set_exact": true,
+        "owned_stream_absent_after": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.protocol.redis.events",
+  "oracle_sha256": "a04de14c719c715e5593628de16a4eaf6370341430d31b1a854352e661a901e0",
+  "protocol_case": {
+    "case_id": "protocol-case.redis.events",
+    "case_sha256": "2ace0702fb6e8737e3f34487730627944f34a3f4d902bf491e9ca18558f1a133",
+    "cleanup_result": "pass",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "negative_vector_ids": [
+      "redis-malformed-headers"
+    ],
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "positive_vector_id": "redis-one-events-envelope",
+    "source_hashes": [
+      {
+        "content_sha256": "6166976af25c8ee37fcc6ec80875289840f44b5dc8752cfbab780c126609589e",
+        "git_blob_oid": "de04c9ec26b4114afb141ce8f45634b979c15c90",
+        "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_redis_stream.py"
+      },
+      {
+        "content_sha256": "aa492dc6a84be49025564759d04280291548017d37ca2872a4bd4c0180531a44",
+        "git_blob_oid": "e1b28e7b9eea7e3b89e5c3febd06bcc535937092",
+        "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_redis_stream.py"
+      },
+      {
+        "content_sha256": "efb28dd9c1129f6c3fe2e12c22f4f2a7ed208885a9e57e8e2cfd03312cf6983d",
+        "git_blob_oid": "6abf9d58bfd039bdc802bfff0c9647d50b34ef55",
+        "path": "deploy/docker/services/analytics/behavior-analytics/configs/vss-behavior-analytics-config.json"
+      }
+    ],
+    "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc"
+  },
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.protocol.redis.events"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

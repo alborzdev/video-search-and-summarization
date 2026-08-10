@@ -1,0 +1,140 @@
+{
+  "blockers": [],
+  "captured_at": "2026-08-10T16:31:24.622479Z",
+  "cleanup": {
+    "attempted": true,
+    "failures": [],
+    "kafka_health_after": "healthy",
+    "kafka_nonowned_topic_set_exact": true,
+    "owned_kafka_group_absent": true,
+    "owned_kafka_topic_absent": true,
+    "owned_redis_stream_absent": true,
+    "redis_health_after": "healthy",
+    "redis_nonowned_key_set_exact": true
+  },
+  "completed_at": "2026-08-10T16:31:51.222323Z",
+  "contract_sha256": "2229e2ff89a22fe0454bab8028d5d3764d5d21908fc2e9c742e6e208a29ef043",
+  "duration_ms": 26600,
+  "failure": null,
+  "forbidden_actions_observed": [],
+  "network_scope": "loopback_only",
+  "pre_state": {
+    "kafka_nonowned_group_count": 13,
+    "kafka_nonowned_topic_count": 22,
+    "kafka_nonowned_topic_names_sha256": "34bc28ffa064709fa6bdbf3ccde73146e346eb8fa18504c682f38d51a16ee256",
+    "owned_resources_absent": true,
+    "redis_nonowned_key_count": 8,
+    "redis_nonowned_key_names_sha256": "cbe432745e39686386333be9420cb4ca66e4dd443d55dbca212f90c92cfc4087"
+  },
+  "runtime": {
+    "kafka": {
+      "duration_ms": 5520,
+      "negative": {
+        "error_code": "invalid_payload",
+        "http_semantic_status": 400,
+        "record_published": false,
+        "vector_id": "kafka-invalid-protobuf"
+      },
+      "positive": {
+        "accepted_id_match": true,
+        "http_semantic_status": 202,
+        "key_match": true,
+        "payload_sha256": "660bff25a27dd8260807f8b68a0b1bc71415d744b998dd50fbb2365793090c3e",
+        "protobuf_decoded": true,
+        "record_count": 1,
+        "semantic_fields_match": true,
+        "vector_id": "kafka-one-nvschema-behavior"
+      },
+      "producer_factory": "KafkaMessageBroker.get_producer",
+      "production_method": "AlertSubmissionService.submit_nvschema_alert_protobuf",
+      "source_sha256": "b2cbe05f5fce3c50b4e4b0ed1e336ed88019d92e7958a266392f97a6d6a74a24",
+      "status": "passed",
+      "topic_created": true
+    },
+    "redis": {
+      "duration_ms": 12,
+      "effective_group_derived_by_source": true,
+      "negative": {
+        "entry_id_observed": true,
+        "entry_pending_before_cleanup": 1,
+        "rejection": "JSONDecodeError",
+        "vector_id": "redis-malformed-headers"
+      },
+      "positive": {
+        "headers_match": true,
+        "key_match": true,
+        "message_count": 1,
+        "payload_sha256": "b1ea3900a67c5ed5b34f3e752ce5be4ee74ffee2baf5b233dbdd574140eb6b0b",
+        "pending_after_xack": 0,
+        "timestamp_from_entry_id": true,
+        "value_match": true,
+        "vector_id": "redis-one-events-envelope"
+      },
+      "production_classes": [
+        "SinkRedisStream",
+        "SourceRedisStream"
+      ],
+      "source_sha256": {
+        "sink": "6166976af25c8ee37fcc6ec80875289840f44b5dc8752cfbab780c126609589e",
+        "source": "aa492dc6a84be49025564759d04280291548017d37ca2872a4bd4c0180531a44"
+      },
+      "status": "passed"
+    }
+  },
+  "runtime_identity": {
+    "kafka_broker": {
+      "architecture": "arm64",
+      "container": "kafka",
+      "health": "healthy",
+      "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436",
+      "network_mode": "host",
+      "reference": "confluentinc/cp-kafka:8.2.0"
+    },
+    "kafka_runner": {
+      "architecture": "arm64",
+      "image_id": "sha256:74879bdea9efaaf5786f0570fcec2dbb193f3a7df6b0f72b609984e33da881fb",
+      "reference": "cti-vss-alert-bridge:thor-local"
+    },
+    "redis_broker": {
+      "architecture": "arm64",
+      "container": "redis",
+      "health": "healthy",
+      "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17",
+      "network_mode": "host",
+      "reference": "redis:8.6.2-alpine"
+    },
+    "redis_runner": {
+      "architecture": "arm64",
+      "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+      "reference": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"
+    }
+  },
+  "schema_version": 1,
+  "semantic_action_count": 4,
+  "static_contract": {
+    "broker_contract": {
+      "kafka_topic_count": 18,
+      "redis_stream_count": 16,
+      "sha256": "21d6fd0724ce292ab0e09098485d3d12c8f3e357e81253c2e72ffdc07960b5ef",
+      "topic_sets_distinct": true
+    },
+    "protocol_case_hashes": {
+      "protocol-case.kafka.nvschema": "3031127b14f0c9cf51d530e5c4c636e154845da4963a20542f112ccb10239826",
+      "protocol-case.redis.events": "2ace0702fb6e8737e3f34487730627944f34a3f4d902bf491e9ca18558f1a133"
+    },
+    "source_hashes": {
+      "deploy/docker/services/analytics/behavior-analytics/configs/vss-behavior-analytics-config.json": "efb28dd9c1129f6c3fe2e12c22f4f2a7ed208885a9e57e8e2cfd03312cf6983d",
+      "services/alert/alert-agent-web/app/core/alert_service.py": "b2cbe05f5fce3c50b4e4b0ed1e336ed88019d92e7958a266392f97a6d6a74a24",
+      "services/alert/mdx/anomaly/protobuf/ext_pb2.py": "a51bbe015b433d61e8bcad654f1e1e081fd75be30283b85eec7a57bfd6b14536",
+      "services/alert/mdx/anomaly/protobuf/schema_pb2.py": "ed41100ece8a86cb606727f701fcf2bce2f4f2b274cd4cfa29a09c8261000e37",
+      "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_redis_stream.py": "6166976af25c8ee37fcc6ec80875289840f44b5dc8752cfbab780c126609589e",
+      "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_redis_stream.py": "aa492dc6a84be49025564759d04280291548017d37ca2872a4bd4c0180531a44"
+    }
+  },
+  "status": "passed",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "target_release": "VSS 3.2.1",
+  "tool_id": "thor-event-transports-runtime",
+  "warehouse_sample_bundle": false,
+  "writes_or_lifecycle_actions": true
+}

@@ -1,0 +1,210 @@
+{
+  "assertions": [
+    {
+      "expected": "kafka",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/protocol",
+      "observed": "kafka",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "NvSchema",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/schema",
+      "observed": "NvSchema",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 18,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/topic_count",
+      "observed": 18,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "evidence/broker-topic-contracts.json",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/topic_fixture",
+      "observed": "evidence/broker-topic-contracts.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "package": "systems",
+          "planning_requirement_ids": []
+        }
+      ],
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/contributions",
+      "observed": [
+        {
+          "package": "systems",
+          "planning_requirement_ids": []
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "wire_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "protocol.kafka.nvschema",
+  "cleanup": {
+    "allowlist": [
+      "vss-protocol-case-kafka-nvschema",
+      "vss-protocol-case-kafka-nvschema-group",
+      "vss-oracle-protocol-kafka-nvschema"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-protocol-case-kafka-nvschema",
+      "vss-protocol-case-kafka-nvschema-group",
+      "vss-oracle-protocol-kafka-nvschema"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.protocol.kafka.nvschema",
+    "path": "deploy/docker/thor-local/qualification/event-transports-runtime/contract.json",
+    "sha256": "2229e2ff89a22fe0454bab8028d5d3764d5d21908fc2e9c742e6e208a29ef043"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "protocol": "kafka",
+          "schema": "NvSchema",
+          "topic_count": 18,
+          "topic_fixture": "evidence/broker-topic-contracts.json",
+          "wave3_acceptance": {
+            "contributions": [
+              {
+                "package": "systems",
+                "planning_requirement_ids": []
+              }
+            ],
+            "executor_ready": false,
+            "materialized": false
+          }
+        },
+        "receipt_sha256": "d941aa26df52b5f4e0c3a5505ef92ef319785d060d19267db54fdd221c3000d7"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "accepted_status": 202,
+        "key_match": true,
+        "positive_vector_id": "kafka-one-nvschema-behavior",
+        "producer_factory": "KafkaMessageBroker.get_producer",
+        "production_method": "AlertSubmissionService.submit_nvschema_alert_protobuf",
+        "protobuf_decoded": true,
+        "record_count": 1,
+        "semantic_fields_match": true
+      }
+    },
+    {
+      "id": "wire_contract",
+      "result": "pass",
+      "value": {
+        "broker_healthy_after": true,
+        "negative_error_code": "invalid_payload",
+        "negative_record_published": false,
+        "negative_status": 400,
+        "negative_vector_id": "kafka-invalid-protobuf",
+        "nonowned_topic_set_exact": true,
+        "owned_group_absent_after": true,
+        "owned_topic_absent_after": true,
+        "topic_created": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.protocol.kafka.nvschema",
+  "oracle_sha256": "8aeb8570676e3a8affe79638ac83fdd32eeaf6cb3bf9c89f94f55093c0a25d08",
+  "protocol_case": {
+    "case_id": "protocol-case.kafka.nvschema",
+    "case_sha256": "3031127b14f0c9cf51d530e5c4c636e154845da4963a20542f112ccb10239826",
+    "cleanup_result": "pass",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "negative_vector_ids": [
+      "kafka-invalid-protobuf"
+    ],
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "positive_vector_id": "kafka-one-nvschema-behavior",
+    "source_hashes": [
+      {
+        "content_sha256": "b2cbe05f5fce3c50b4e4b0ed1e336ed88019d92e7958a266392f97a6d6a74a24",
+        "git_blob_oid": "091e4f714c1d8d401e8fa288b9c3150523937b17",
+        "path": "services/alert/alert-agent-web/app/core/alert_service.py"
+      },
+      {
+        "content_sha256": "a51bbe015b433d61e8bcad654f1e1e081fd75be30283b85eec7a57bfd6b14536",
+        "git_blob_oid": "c06235bc885881b1aece49f5e993cdc316dabd65",
+        "path": "services/alert/mdx/anomaly/protobuf/ext_pb2.py"
+      }
+    ],
+    "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc"
+  },
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.protocol.kafka.nvschema"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

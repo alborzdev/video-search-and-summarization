@@ -470,6 +470,68 @@ VIDEO_ANALYTICS_RUNTIME_WORKLOAD = {
     ],
 }
 VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS = 96
+EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS = (
+    "protocol.kafka.nvschema",
+    "protocol.redis.events",
+)
+EVENT_TRANSPORT_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/event-transports-runtime/execute.py"
+)
+EVENT_TRANSPORT_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/event-transports-runtime/"
+        "contract.json"
+    ),
+    "sha256": "2229e2ff89a22fe0454bab8028d5d3764d5d21908fc2e9c742e6e208a29ef043",
+}
+EVENT_TRANSPORT_RUNTIME_EVIDENCE = {
+    "protocol.kafka.nvschema": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/event-transports-runtime/"
+                "official-runtime-evidence-kafka.json"
+            ),
+            "sha256": "c17aa7a3747f60498e3f5ede7897fae415ddabec2fe1cfa377c1e572cb41f192",
+        }
+    ],
+    "protocol.redis.events": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/event-transports-runtime/"
+                "official-runtime-evidence-redis.json"
+            ),
+            "sha256": "ddd6ee935c5a8da3d231d226d9695091ba90d28e9e094335e82137ced124a2e6",
+        }
+    ],
+}
+EVENT_TRANSPORT_RUNTIME_NAMESPACES = {
+    "protocol.kafka.nvschema": [
+        "vss-protocol-case-kafka-nvschema",
+        "vss-protocol-case-kafka-nvschema-group",
+        "vss-oracle-protocol-kafka-nvschema",
+    ],
+    "protocol.redis.events": [
+        "vss-protocol-case-redis-events",
+        "vss-protocol-case-redis-group",
+        "vss-oracle-protocol-redis-events",
+    ],
+}
+EVENT_TRANSPORT_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 4,
+    "overhead_requests": 0,
+    "calculated_max_requests": 4,
+    "phases": [
+        "pre_state",
+        "kafka_positive",
+        "kafka_adjacent_negative",
+        "redis_positive",
+        "redis_adjacent_negative",
+        "cleanup",
+        "postcondition",
+    ],
+}
+EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS = 16
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -529,6 +591,16 @@ def _is_current_video_analytics_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == VIDEO_ANALYTICS_RUNTIME_EVIDENCE[capability_id]
+    )
+
+
+def _is_current_event_transport_runtime(capability: dict[str, Any]) -> bool:
+    capability_id = capability.get("id")
+    return (
+        capability_id in EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == EVENT_TRANSPORT_RUNTIME_EVIDENCE[capability_id]
     )
 
 
@@ -1238,6 +1310,8 @@ def _workload(
         return copy.deepcopy(VIOS_WEBRTC_LIVE_WORKLOAD)
     if live_integration and _is_current_video_analytics_runtime(capability):
         return copy.deepcopy(VIDEO_ANALYTICS_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_event_transport_runtime(capability):
+        return copy.deepcopy(EVENT_TRANSPORT_RUNTIME_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1303,6 +1377,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return VIOS_WEBRTC_LIVE_MAX_ACTIONS
     if _is_current_video_analytics_runtime(capability):
         return VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
+    if _is_current_event_transport_runtime(capability):
+        return EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2477,6 +2553,32 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_event_transport_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": EVENT_TRANSPORT_RUNTIME_FIXTURE["path"],
+                "generator": EVENT_TRANSPORT_RUNTIME_EXECUTOR,
+                "sha256": EVENT_TRANSPORT_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = (
+                EVENT_TRANSPORT_RUNTIME_EXECUTOR
+            )
+            oracle["execution_bounds"]["collectors"] = [
+                EVENT_TRANSPORT_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                EVENT_TRANSPORT_RUNTIME_NAMESPACES[capability_id]
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                EVENT_TRANSPORT_RUNTIME_NAMESPACES[capability_id]
+            )
+            oracle["cleanup"]["executor"] = EVENT_TRANSPORT_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                EVENT_TRANSPORT_RUNTIME_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -2683,6 +2785,8 @@ def validate(
             expected_actions = VIOS_WEBRTC_LIVE_MAX_ACTIONS
         elif _is_current_video_analytics_runtime(ledger_by_id[capability_id]):
             expected_actions = VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
+        elif _is_current_event_transport_runtime(ledger_by_id[capability_id]):
+            expected_actions = EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

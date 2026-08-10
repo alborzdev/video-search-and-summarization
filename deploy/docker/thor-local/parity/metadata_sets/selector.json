@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-video-analytics-api-runtime-289.json",
-      "descriptor_raw_sha256": "d3b06bf5b17edc5cc733e5c342bd58306b40232cb3c553ede7d2ee4f4b62cbd9",
-      "set_id": "thor-vss-3.2.1-current-video-analytics-api-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-event-transports-runtime-289.json",
+      "descriptor_raw_sha256": "42521ef0e3940a41325c58e835ac647676417592d846b94481108053d5296954",
+      "set_id": "thor-vss-3.2.1-current-event-transports-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-video-analytics-api-runtime-500.json",
-      "descriptor_raw_sha256": "1097588dda5ecb660fdf10de055d7a90359e6d82aee45e512abc53785bfb0f42",
-      "set_id": "thor-vss-3.2.1-current-video-analytics-api-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-event-transports-runtime-500.json",
+      "descriptor_raw_sha256": "215442376c9de43ce15fef367529cb9af84c3009977ce758ed3f88debcf255df",
+      "set_id": "thor-vss-3.2.1-current-event-transports-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-video-analytics-api-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-event-transports-runtime-500"
 }

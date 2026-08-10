@@ -66,6 +66,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current VIOS native WebRTC replay runtime receipt
             + 1  # current VIOS native WebRTC live runtime receipt
             + 2  # current Video Analytics query and optional-Kafka receipts
+            + 2  # current Kafka NvSchema and Redis event transport receipts
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -199,6 +200,40 @@ class CapabilityOracleTests(unittest.TestCase):
             self.assertEqual(
                 oracle["cleanup"]["targets"],
                 [verifier.VIDEO_ANALYTICS_RUNTIME_NAMESPACE],
+            )
+            self.assertEqual(
+                oracle["acceptance_readiness"],
+                {"classification": "executor_ready", "blockers": []},
+            )
+            self.assertEqual(oracle["evidence"], [])
+
+    def test_event_transport_oracles_are_exact_executor_ready_rows(self) -> None:
+        by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
+        for capability_id in verifier.EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS:
+            oracle = by_id[capability_id]
+            self.assertEqual(
+                oracle["fixture"]["materialization"],
+                {
+                    "path": verifier.EVENT_TRANSPORT_RUNTIME_FIXTURE["path"],
+                    "generator": verifier.EVENT_TRANSPORT_RUNTIME_EXECUTOR,
+                    "sha256": verifier.EVENT_TRANSPORT_RUNTIME_FIXTURE["sha256"],
+                },
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["workload"],
+                verifier.EVENT_TRANSPORT_RUNTIME_WORKLOAD,
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["max_actions"],
+                verifier.EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS,
+            )
+            self.assertEqual(
+                oracle["execution_bounds"]["executor"],
+                verifier.EVENT_TRANSPORT_RUNTIME_EXECUTOR,
+            )
+            self.assertEqual(
+                oracle["cleanup"]["targets"],
+                verifier.EVENT_TRANSPORT_RUNTIME_NAMESPACES[capability_id],
             )
             self.assertEqual(
                 oracle["acceptance_readiness"],
@@ -810,7 +845,14 @@ class CapabilityOracleTests(unittest.TestCase):
                 self.assertEqual(cleanup["targets"], [])
             else:
                 expected_target_count = (
-                    len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
+                    len(
+                        verifier.EVENT_TRANSPORT_RUNTIME_NAMESPACES[
+                            item["capability_id"]
+                        ]
+                    )
+                    if item["capability_id"]
+                    in verifier.EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS
+                    else len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
                     if item["capability_id"]
                     == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
                     else 1
@@ -855,6 +897,16 @@ class CapabilityOracleTests(unittest.TestCase):
                 ):
                     self.assertEqual(
                         cleanup["targets"], verifier.VIOS_WEBRTC_LIVE_NAMESPACES
+                    )
+                elif (
+                    item["capability_id"]
+                    in verifier.EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS
+                ):
+                    self.assertEqual(
+                        cleanup["targets"],
+                        verifier.EVENT_TRANSPORT_RUNTIME_NAMESPACES[
+                            item["capability_id"]
+                        ],
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
@@ -1007,6 +1059,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     in verifier.VIDEO_ANALYTICS_RUNTIME_CAPABILITY_IDS
+                )
+                else verifier.EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    in verifier.EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS
                 )
                 else override[2]
                 if override is not None

@@ -1,0 +1,3008 @@
+{
+  "$defs": {
+    "candidate_assertion": {
+      "additionalProperties": false,
+      "properties": {
+        "expected": {
+          "const": true
+        },
+        "id": {
+          "pattern": "^assertion\\.(required-observation|adjacent-negative)-[0-9]{2}$",
+          "type": "string"
+        },
+        "observation_id": {
+          "pattern": "^(required-observation|adjacent-negative)-[0-9]{2}$",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "recorded_pass",
+            "recorded_absent"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "observation_id",
+        "operator",
+        "expected"
+      ],
+      "type": "object"
+    },
+    "candidate_candidateContract": {
+      "additionalProperties": false,
+      "properties": {
+        "advertised_literal": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "dependency_capability_ids": {
+          "items": {
+            "minLength": 3,
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "implementation_surfaces": {
+          "items": {
+            "minLength": 2,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "manifest_pointer": {
+          "pattern": "^/features/[0-9]+/advertised/[0-9]+$",
+          "type": "string"
+        },
+        "required_semantics": {
+          "items": {
+            "minLength": 3,
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "warehouse_sample_bundle": {
+          "const": "excluded"
+        }
+      },
+      "required": [
+        "manifest_pointer",
+        "advertised_literal",
+        "implementation_surfaces",
+        "required_semantics",
+        "dependency_capability_ids",
+        "warehouse_sample_bundle"
+      ],
+      "type": "object"
+    },
+    "candidate_candidateLedgerBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_class": {
+          "enum": [
+            "required_local",
+            "alternate_local_lane",
+            "external_optional"
+          ]
+        },
+        "contract": {
+          "$ref": "#/$defs/candidate_candidateContract"
+        },
+        "feature_id": {
+          "$ref": "#/$defs/candidate_plainId"
+        },
+        "gap": {
+          "minLength": 24,
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "api",
+            "calibration",
+            "configuration",
+            "deployment",
+            "evaluation",
+            "model",
+            "model_customization",
+            "performance",
+            "protocol",
+            "runtime_behavior",
+            "security",
+            "tooling"
+          ]
+        },
+        "runtime_state": {
+          "enum": [
+            "not_qualified",
+            "not_applicable"
+          ]
+        },
+        "source_claims": {
+          "items": {
+            "$ref": "#/$defs/candidate_sourceClaim"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "thor_state": {
+          "enum": [
+            "wired",
+            "partial"
+          ]
+        },
+        "title": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "feature_id",
+        "kind",
+        "title",
+        "source_claims",
+        "acceptance_class",
+        "thor_state",
+        "runtime_state",
+        "contract",
+        "gap"
+      ],
+      "type": "object"
+    },
+    "candidate_candidateOraclePlan": {
+      "additionalProperties": false,
+      "properties": {
+        "adjacent_negative": {
+          "items": {
+            "minLength": 4,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "authoritative_gap_requirement": {
+          "$ref": "#/$defs/candidate_gapRequirement"
+        },
+        "cleanup_boundary": {
+          "minLength": 12,
+          "type": "string"
+        },
+        "execution_boundary": {
+          "enum": [
+            "local",
+            "alternate_local",
+            "external"
+          ]
+        },
+        "fixture_strategy": {
+          "minLength": 12,
+          "type": "string"
+        },
+        "required_observations": {
+          "items": {
+            "minLength": 4,
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "fixture_strategy",
+        "required_observations",
+        "adjacent_negative",
+        "execution_boundary",
+        "cleanup_boundary"
+      ],
+      "type": "object"
+    },
+    "candidate_candidateProtocolBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_supported": {
+          "const": false
+        },
+        "binding_sha256": {
+          "$ref": "#/$defs/candidate_sha256"
+        },
+        "boundary": {
+          "enum": [
+            "local",
+            "alternate_local",
+            "external"
+          ]
+        },
+        "capability_id": {
+          "pattern": "^manifest-entry\\.",
+          "type": "string"
+        },
+        "case_id": {
+          "pattern": "^protocol-v2-case\\.",
+          "type": "string"
+        },
+        "case_payload_sha256": {
+          "$ref": "#/$defs/candidate_sha256"
+        },
+        "readiness": {
+          "const": "planning_only"
+        },
+        "source_hashes": {
+          "items": {
+            "$ref": "#/$defs/candidate_protocolSourceHash"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "transport_components": {
+          "items": {
+            "pattern": "^[a-z0-9][a-z0-9-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "vector_projection": {
+          "additionalProperties": false,
+          "properties": {
+            "contract": {
+              "$ref": "#/$defs/candidate_candidateOraclePlan"
+            },
+            "kind": {
+              "const": "planning_only"
+            }
+          },
+          "required": [
+            "kind",
+            "contract"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "capability_id",
+        "case_id",
+        "case_payload_sha256",
+        "binding_sha256",
+        "transport_components",
+        "boundary",
+        "readiness",
+        "activation_supported",
+        "vector_projection",
+        "source_hashes"
+      ],
+      "type": "object"
+    },
+    "candidate_candidateSuccessorOracle": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "candidate_oracle_plan": {
+                "not": {
+                  "required": [
+                    "authoritative_gap_requirement"
+                  ]
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "prior_mapping_class": {
+                "const": "explicit_missing_entry_gap"
+              }
+            },
+            "required": [
+              "prior_mapping_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "candidate_oracle_plan": {
+                "required": [
+                  "authoritative_gap_requirement"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "binding_integrity": {
+                "properties": {
+                  "protocol_v2_binding_canonical_sha256": {
+                    "type": "null"
+                  }
+                }
+              },
+              "protocol_v2_binding": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "ledger_binding": {
+                "properties": {
+                  "kind": {
+                    "const": "protocol"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            },
+            "required": [
+              "ledger_binding"
+            ]
+          },
+          "then": {
+            "properties": {
+              "binding_integrity": {
+                "properties": {
+                  "protocol_v2_binding_canonical_sha256": {
+                    "$ref": "#/$defs/candidate_sha256"
+                  },
+                  "workload_binding_canonical_sha256": {
+                    "type": "null"
+                  }
+                }
+              },
+              "protocol_v2_binding": {
+                "$ref": "#/$defs/candidate_candidateProtocolBinding"
+              },
+              "workload_binding": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "binding_integrity": {
+                "properties": {
+                  "workload_binding_canonical_sha256": {
+                    "type": "null"
+                  }
+                }
+              },
+              "workload_binding": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "ledger_binding": {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "api",
+                      "deployment"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            },
+            "required": [
+              "ledger_binding"
+            ]
+          },
+          "then": {
+            "properties": {
+              "binding_integrity": {
+                "properties": {
+                  "workload_binding_canonical_sha256": {
+                    "$ref": "#/$defs/candidate_sha256"
+                  }
+                }
+              },
+              "workload_binding": {
+                "$ref": "#/$defs/candidate_candidateWorkload"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "ledger_binding": {
+                "properties": {
+                  "kind": {
+                    "const": "api"
+                  }
+                }
+              }
+            },
+            "required": [
+              "ledger_binding"
+            ]
+          },
+          "then": {
+            "properties": {
+              "workload_binding": {
+                "properties": {
+                  "workload_type": {
+                    "const": "api"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "ledger_binding": {
+                "properties": {
+                  "kind": {
+                    "const": "deployment"
+                  }
+                }
+              }
+            },
+            "required": [
+              "ledger_binding"
+            ]
+          },
+          "then": {
+            "properties": {
+              "workload_binding": {
+                "properties": {
+                  "workload_type": {
+                    "const": "deployment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "acceptance_class": {
+          "enum": [
+            "required_local",
+            "alternate_local_lane",
+            "external_optional"
+          ]
+        },
+        "adjacent_negative_observations": {
+          "items": {
+            "$ref": "#/$defs/candidate_observation"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "admission_gates": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/candidate_plainId"
+              },
+              "requirement": {
+                "minLength": 12,
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "satisfied_static",
+                  "unmet"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "requirement",
+              "status"
+            ],
+            "type": "object"
+          },
+          "maxItems": 5,
+          "minItems": 5,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "advertised": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "assertions": {
+          "items": {
+            "$ref": "#/$defs/candidate_assertion"
+          },
+          "minItems": 3,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "binding_integrity": {
+          "additionalProperties": false,
+          "properties": {
+            "adapter_record_canonical_sha256": {
+              "$ref": "#/$defs/candidate_sha256"
+            },
+            "protocol_v2_binding_canonical_sha256": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/candidate_sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "workload_binding_canonical_sha256": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/candidate_sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "adapter_record_canonical_sha256",
+            "protocol_v2_binding_canonical_sha256",
+            "workload_binding_canonical_sha256"
+          ],
+          "type": "object"
+        },
+        "can_promote_runtime_state": {
+          "const": false
+        },
+        "candidate_entry_sha256": {
+          "$ref": "#/$defs/candidate_sha256"
+        },
+        "candidate_oracle_plan": {
+          "$ref": "#/$defs/candidate_candidateOraclePlan"
+        },
+        "capability_id": {
+          "pattern": "^manifest-entry\\.[a-z0-9.-]+$",
+          "type": "string"
+        },
+        "cleanup": {
+          "additionalProperties": false,
+          "properties": {
+            "allowlist": {
+              "type": "null"
+            },
+            "executor": {
+              "type": "null"
+            },
+            "intent": {
+              "minLength": 12,
+              "type": "string"
+            },
+            "ownership_boundary": {
+              "const": "candidate_owned_resources_only"
+            },
+            "postcondition_collectors": {
+              "type": "null"
+            },
+            "pre_state_required": {
+              "const": true
+            },
+            "targets": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "intent",
+            "ownership_boundary",
+            "pre_state_required",
+            "targets",
+            "allowlist",
+            "executor",
+            "postcondition_collectors"
+          ],
+          "type": "object"
+        },
+        "current_state": {
+          "enum": [
+            "open_unexecuted",
+            "external_boundary_unexecuted"
+          ]
+        },
+        "evidence": {
+          "const": []
+        },
+        "execution_boundary": {
+          "enum": [
+            "local",
+            "alternate_local",
+            "external"
+          ]
+        },
+        "execution_bounds": {
+          "additionalProperties": false,
+          "properties": {
+            "acceptance_class": {
+              "enum": [
+                "required_local",
+                "alternate_local_lane",
+                "external_optional"
+              ]
+            },
+            "collectors": {
+              "type": "null"
+            },
+            "execution_boundary": {
+              "enum": [
+                "local",
+                "alternate_local",
+                "external"
+              ]
+            },
+            "executor": {
+              "type": "null"
+            },
+            "max_actions": {
+              "type": "null"
+            },
+            "max_duration_seconds": {
+              "type": "null"
+            },
+            "max_requests": {
+              "type": "null"
+            },
+            "namespace": {
+              "pattern": "^vss-candidate-[0-9a-f]{20}$",
+              "type": "string"
+            },
+            "network_scope": {
+              "enum": [
+                "loopback_or_compose_internal",
+                "operator_selected_local_alternate",
+                "operator_approved_external_only"
+              ]
+            }
+          },
+          "required": [
+            "acceptance_class",
+            "execution_boundary",
+            "namespace",
+            "network_scope",
+            "max_duration_seconds",
+            "max_requests",
+            "max_actions",
+            "executor",
+            "collectors"
+          ],
+          "type": "object"
+        },
+        "expected_observations": {
+          "items": {
+            "$ref": "#/$defs/candidate_observation"
+          },
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "feature_id": {
+          "$ref": "#/$defs/candidate_plainId"
+        },
+        "fixture": {
+          "additionalProperties": false,
+          "properties": {
+            "availability": {
+              "const": "not_staged"
+            },
+            "id": {
+              "pattern": "^fixture\\.manifest-entry\\.",
+              "type": "string"
+            },
+            "input_contract": {
+              "$ref": "#/$defs/candidate_fixtureInputContract"
+            },
+            "kind": {
+              "const": "candidate_generated_bounded"
+            },
+            "materialization": {
+              "type": "null"
+            },
+            "namespace": {
+              "pattern": "^vss-candidate-[0-9a-f]{20}$",
+              "type": "string"
+            },
+            "strategy": {
+              "minLength": 12,
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "availability",
+            "strategy",
+            "namespace",
+            "materialization",
+            "input_contract"
+          ],
+          "type": "object"
+        },
+        "implementation_surfaces": {
+          "items": {
+            "minLength": 2,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "ledger_binding": {
+          "$ref": "#/$defs/candidate_candidateLedgerBinding"
+        },
+        "manifest_pointer": {
+          "pattern": "^/features/[0-9]+/advertised/[0-9]+$",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "static",
+            "config",
+            "runtime",
+            "api",
+            "protocol",
+            "model",
+            "deploy"
+          ]
+        },
+        "mode_seed": {
+          "enum": [
+            "static",
+            "config",
+            "runtime",
+            "api",
+            "protocol",
+            "model",
+            "deploy"
+          ]
+        },
+        "oracle_id": {
+          "pattern": "^oracle\\.manifest-entry\\.",
+          "type": "string"
+        },
+        "origin": {
+          "const": "candidate_successor_planning_only"
+        },
+        "prior_mapping_class": {
+          "enum": [
+            "explicit_missing_entry_gap",
+            "family_only_unreviewed"
+          ]
+        },
+        "profile": {
+          "$ref": "#/$defs/candidate_plainId"
+        },
+        "profile_seed": {
+          "$ref": "#/$defs/candidate_plainId"
+        },
+        "protocol_v2_binding": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/candidate_candidateProtocolBinding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "readiness": {
+          "const": {
+            "blockers": [
+              "fixture_not_materialized",
+              "executor_not_implemented",
+              "collectors_not_implemented",
+              "operator_approval_absent"
+            ],
+            "classification": "planning_index_only",
+            "executor_ready": false,
+            "fixture_materialized": false
+          }
+        },
+        "reviewed_scenario_ids": {
+          "items": {
+            "minLength": 2,
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "runtime_state": {
+          "enum": [
+            "not_qualified",
+            "not_applicable"
+          ]
+        },
+        "source_claims": {
+          "items": {
+            "$ref": "#/$defs/candidate_sourceClaim"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "successor_row_payload_sha256": {
+          "$ref": "#/$defs/candidate_sha256"
+        },
+        "successor_schema_version": {
+          "const": 1
+        },
+        "workload_binding": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/candidate_candidateWorkload"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "successor_schema_version",
+        "origin",
+        "capability_id",
+        "oracle_id",
+        "profile_seed",
+        "mode_seed",
+        "profile",
+        "mode",
+        "candidate_entry_sha256",
+        "manifest_pointer",
+        "feature_id",
+        "advertised",
+        "prior_mapping_class",
+        "acceptance_class",
+        "execution_boundary",
+        "source_claims",
+        "implementation_surfaces",
+        "ledger_binding",
+        "reviewed_scenario_ids",
+        "candidate_oracle_plan",
+        "fixture",
+        "expected_observations",
+        "adjacent_negative_observations",
+        "assertions",
+        "admission_gates",
+        "cleanup",
+        "execution_bounds",
+        "readiness",
+        "current_state",
+        "runtime_state",
+        "evidence",
+        "can_promote_runtime_state",
+        "protocol_v2_binding",
+        "workload_binding",
+        "binding_integrity",
+        "successor_row_payload_sha256"
+      ],
+      "type": "object"
+    },
+    "candidate_candidateWorkload": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_class": {
+          "enum": [
+            "required_local",
+            "alternate_local_lane",
+            "external_optional"
+          ]
+        },
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/candidate_deploymentAction"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "activation": {
+          "enum": [
+            "candidate_owned_local",
+            "planning_only_local",
+            "external_non_activating"
+          ]
+        },
+        "adjacent_negative": {
+          "minLength": 12,
+          "type": "string"
+        },
+        "advertised": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "calculated_max_requests": {
+          "maximum": 128,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "candidate_id": {
+          "pattern": "^manifest-entry\\.",
+          "type": "string"
+        },
+        "cleanup": {
+          "minLength": 12,
+          "type": "string"
+        },
+        "literal_facets": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "manifest_pointer": {
+          "pattern": "^/features/[0-9]+/advertised/[0-9]+$",
+          "type": "string"
+        },
+        "max_actions": {
+          "maximum": 64,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "operation_units": {
+          "items": {
+            "$ref": "#/$defs/candidate_operationUnit"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "overhead_requests": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "phases": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 4,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "preconditions": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "readiness_observations": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "requests_per_action": {
+          "items": {
+            "$ref": "#/$defs/candidate_requestPerAction"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "requests_per_unit": {
+          "items": {
+            "$ref": "#/$defs/candidate_requestPerUnit"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "source_surfaces": {
+          "items": {
+            "minLength": 2,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "total_request_budget": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "unit_count": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "workload_type": {
+          "enum": [
+            "api",
+            "deployment"
+          ]
+        }
+      },
+      "required": [
+        "manifest_pointer",
+        "candidate_id",
+        "advertised",
+        "acceptance_class",
+        "workload_type",
+        "activation",
+        "source_surfaces",
+        "calculated_max_requests",
+        "max_actions"
+      ],
+      "type": "object"
+    },
+    "candidate_deploymentAction": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "minLength": 8,
+          "type": "string"
+        },
+        "action_id": {
+          "pattern": "^[a-z0-9-]+$",
+          "type": "string"
+        },
+        "max_attempts": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "max_requests": {
+          "maximum": 4,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mode": {
+          "enum": [
+            "planning_only",
+            "static_non_activating"
+          ]
+        },
+        "sequence": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence",
+        "action_id",
+        "action",
+        "mode",
+        "max_attempts",
+        "max_requests"
+      ],
+      "type": "object"
+    },
+    "candidate_fixtureInputContract": {
+      "additionalProperties": false,
+      "properties": {
+        "advertised_literal": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "capability_id": {
+          "pattern": "^manifest-entry\\.",
+          "type": "string"
+        },
+        "dependency_capability_ids": {
+          "items": {
+            "minLength": 3,
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "implementation_surfaces": {
+          "items": {
+            "minLength": 2,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "manifest_pointer": {
+          "pattern": "^/features/[0-9]+/advertised/[0-9]+$",
+          "type": "string"
+        },
+        "required_semantics": {
+          "items": {
+            "minLength": 3,
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "source_claims": {
+          "items": {
+            "$ref": "#/$defs/candidate_sourceClaim"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "capability_id",
+        "manifest_pointer",
+        "advertised_literal",
+        "dependency_capability_ids",
+        "implementation_surfaces",
+        "required_semantics",
+        "source_claims"
+      ],
+      "type": "object"
+    },
+    "candidate_gapRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "cleanup_policy": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "executor_class": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "literal_success_condition": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "required_evidence": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "runtime_evidence": {
+          "const": []
+        },
+        "setup_requirements": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "status": {
+          "const": "open_unexecuted"
+        },
+        "type": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "cleanup_policy",
+        "executor_class",
+        "id",
+        "literal_success_condition",
+        "required_evidence",
+        "runtime_evidence",
+        "setup_requirements",
+        "status",
+        "type"
+      ],
+      "type": "object"
+    },
+    "candidate_observation": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 4,
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^(required-observation|adjacent-negative)-[0-9]{2}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "description"
+      ],
+      "type": "object"
+    },
+    "candidate_operationUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "activation": {
+          "enum": [
+            "candidate_owned_local",
+            "external_non_activating"
+          ]
+        },
+        "adjacent_negative": {
+          "minLength": 20,
+          "type": "string"
+        },
+        "cleanup": {
+          "minLength": 12,
+          "type": "string"
+        },
+        "covers": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "max_requests": {
+          "maximum": 8,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mutation": {
+          "type": "boolean"
+        },
+        "phase": {
+          "const": "operation_exercise"
+        },
+        "request_shape": {
+          "minLength": 20,
+          "type": "string"
+        },
+        "required_observations": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "transport": {
+          "enum": [
+            "http_or_ui_api",
+            "mcp",
+            "external_http"
+          ]
+        },
+        "unit_id": {
+          "pattern": "^[a-z0-9_-]+$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unit_id",
+        "covers",
+        "transport",
+        "activation",
+        "mutation",
+        "max_requests",
+        "phase",
+        "request_shape",
+        "required_observations",
+        "adjacent_negative",
+        "cleanup"
+      ],
+      "type": "object"
+    },
+    "candidate_plainId": {
+      "pattern": "^[a-z0-9][a-z0-9._-]+$",
+      "type": "string"
+    },
+    "candidate_preservedLiveOracle": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_readiness": {
+          "type": "object"
+        },
+        "admission_prerequisites": {
+          "minItems": 3,
+          "type": "array"
+        },
+        "assertions": {
+          "minItems": 2,
+          "type": "array"
+        },
+        "capability_id": {
+          "$ref": "#/$defs/candidate_plainId"
+        },
+        "cleanup": {
+          "type": "object"
+        },
+        "current_state": {
+          "enum": [
+            "open_unexecuted",
+            "external_boundary_unexecuted"
+          ]
+        },
+        "evidence": {
+          "const": []
+        },
+        "execution_bounds": {
+          "type": "object"
+        },
+        "expected_observations": {
+          "minItems": 3,
+          "type": "array"
+        },
+        "fixture": {
+          "type": "object"
+        },
+        "ledger_binding": {
+          "minProperties": 9,
+          "type": "object"
+        },
+        "mode": {
+          "enum": [
+            "static",
+            "config",
+            "runtime",
+            "api",
+            "protocol",
+            "model",
+            "deploy"
+          ]
+        },
+        "offline_tool_observation_bindings": {
+          "maxItems": 1,
+          "minItems": 1,
+          "type": "array"
+        },
+        "oracle_id": {
+          "$ref": "#/$defs/candidate_plainId"
+        },
+        "planning_executor_bindings": {
+          "minItems": 1,
+          "type": "array"
+        },
+        "profile": {
+          "$ref": "#/$defs/candidate_plainId"
+        },
+        "protocol_case_binding": {
+          "type": "object"
+        },
+        "reviewed_scenario_ids": {
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "successor_schema_version": false
+      },
+      "required": [
+        "capability_id",
+        "oracle_id",
+        "profile",
+        "mode",
+        "ledger_binding",
+        "reviewed_scenario_ids",
+        "fixture",
+        "expected_observations",
+        "assertions",
+        "admission_prerequisites",
+        "execution_bounds",
+        "cleanup",
+        "acceptance_readiness",
+        "current_state",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "candidate_protocolSourceHash": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/candidate_sha256"
+        }
+      },
+      "required": [
+        "path",
+        "raw_sha256"
+      ],
+      "type": "object"
+    },
+    "candidate_requestPerAction": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string"
+        },
+        "max_requests": {
+          "maximum": 4,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "action_id",
+        "max_requests"
+      ],
+      "type": "object"
+    },
+    "candidate_requestPerUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "max_requests": {
+          "maximum": 8,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "unit_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "unit_id",
+        "max_requests"
+      ],
+      "type": "object"
+    },
+    "candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "candidate_sourceClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "locator": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "locator"
+      ],
+      "type": "object"
+    },
+    "candidate_sourceLock": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "pattern": "^deploy/docker/thor-local/",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/candidate_sha256"
+        }
+      },
+      "required": [
+        "path",
+        "raw_sha256"
+      ],
+      "type": "object"
+    },
+    "live_calibrationSchemaPlanningExecutorBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "can_advance_capability": {
+          "const": false
+        },
+        "can_mark_passed_current": {
+          "const": false
+        },
+        "case": {
+          "$ref": "#/$defs/live_calibrationSchemaStaticCase"
+        },
+        "executor": {
+          "$ref": "#/$defs/live_calibrationSchemaStaticExecutor"
+        },
+        "materialization": {
+          "$ref": "#/$defs/live_calibrationSchemaStaticMaterialization"
+        },
+        "planning_requirement_id": {
+          "const": "calibration-schema-static"
+        },
+        "result": {
+          "$ref": "#/$defs/live_calibrationSchemaStaticResult"
+        },
+        "runtime_evidence": {
+          "maxItems": 0,
+          "type": "array"
+        },
+        "scope": {
+          "const": "bounded_static_assertion_subset_only"
+        }
+      },
+      "required": [
+        "planning_requirement_id",
+        "scope",
+        "materialization",
+        "executor",
+        "case",
+        "result",
+        "can_advance_capability",
+        "can_mark_passed_current",
+        "runtime_evidence"
+      ],
+      "type": "object"
+    },
+    "live_calibrationSchemaStaticCase": {
+      "additionalProperties": false,
+      "properties": {
+        "applicable_record_ids": {
+          "const": [
+            "calibration.camera-positioning.installation-contract",
+            "calibration.schema.vss-json",
+            "behavior.auto-calibration.failure-recovery",
+            "behavior.auto-calibration.result-verification",
+            "calibration.auto.alignment-schema",
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.known-limitations"
+          ]
+        },
+        "capability_id": {
+          "const": "calibration.schema.vss-json"
+        },
+        "case_id": {
+          "const": "calibration-schema-static.vss-json"
+        },
+        "planning_owner_id": {
+          "const": "calibration-schema-static"
+        },
+        "planning_owner_type": {
+          "const": "global_acceptance_vector"
+        },
+        "planning_payload_sha256": {
+          "const": "3e54d36b3e1895ad69fda05e458d3c80809507e31e975c210fdab56f446ce791"
+        },
+        "planning_requirement_id": {
+          "const": "calibration-schema-static"
+        },
+        "uncovered_applicable_record_ids": {
+          "const": [
+            "calibration.camera-positioning.installation-contract",
+            "behavior.auto-calibration.failure-recovery",
+            "behavior.auto-calibration.result-verification",
+            "calibration.auto.alignment-schema",
+            "calibration.auto.workflow-six-step",
+            "behavior.auto-calibration.known-limitations"
+          ]
+        }
+      },
+      "required": [
+        "case_id",
+        "planning_requirement_id",
+        "capability_id",
+        "planning_payload_sha256",
+        "planning_owner_type",
+        "planning_owner_id",
+        "applicable_record_ids",
+        "uncovered_applicable_record_ids"
+      ],
+      "type": "object"
+    },
+    "live_calibrationSchemaStaticExecutor": {
+      "additionalProperties": false,
+      "properties": {
+        "inventory_canonical_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "inventory_path": {
+          "const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.json"
+        },
+        "inventory_raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "inventory_schema_path": {
+          "const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.schema.json"
+        },
+        "inventory_schema_raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "invocation": {
+          "const": [
+            "python3",
+            "deploy/docker/thor-local/qualification/calibration-schema-static-executor/executor.py",
+            "--json"
+          ]
+        },
+        "path": {
+          "const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/executor.py"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        }
+      },
+      "required": [
+        "path",
+        "raw_sha256",
+        "inventory_path",
+        "inventory_raw_sha256",
+        "inventory_canonical_sha256",
+        "inventory_schema_path",
+        "inventory_schema_raw_sha256",
+        "invocation"
+      ],
+      "type": "object"
+    },
+    "live_calibrationSchemaStaticMaterialization": {
+      "additionalProperties": false,
+      "properties": {
+        "case_canonical_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "case_json_pointer": {
+          "const": "/binding"
+        },
+        "inventory_path": {
+          "const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/contract.json"
+        },
+        "scope": {
+          "const": "live_planning_requirement_static_contract"
+        }
+      },
+      "required": [
+        "scope",
+        "inventory_path",
+        "case_json_pointer",
+        "case_canonical_sha256"
+      ],
+      "type": "object"
+    },
+    "live_calibrationSchemaStaticResult": {
+      "additionalProperties": false,
+      "properties": {
+        "can_advance_capability": {
+          "const": false
+        },
+        "can_mark_passed_current": {
+          "const": false
+        },
+        "evidence_class": {
+          "const": "deterministic_file_static_evidence_not_runtime"
+        },
+        "execution_receipt_canonical_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "execution_receipt_path": {
+          "const": "deploy/docker/thor-local/qualification/calibration-schema-static-integration/execution-receipt.json"
+        },
+        "execution_receipt_raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "expected_outcome": {
+          "const": "observed_match"
+        },
+        "runtime_evidence": {
+          "maxItems": 0,
+          "type": "array"
+        },
+        "schema_path": {
+          "const": "deploy/docker/thor-local/qualification/calibration-schema-static-executor/result.schema.json"
+        },
+        "schema_raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        }
+      },
+      "required": [
+        "schema_path",
+        "schema_raw_sha256",
+        "execution_receipt_path",
+        "execution_receipt_raw_sha256",
+        "execution_receipt_canonical_sha256",
+        "expected_outcome",
+        "evidence_class",
+        "can_advance_capability",
+        "can_mark_passed_current",
+        "runtime_evidence"
+      ],
+      "type": "object"
+    },
+    "live_genericPlanningExecutorBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "can_advance_capability": {
+          "const": false
+        },
+        "can_mark_passed_current": {
+          "const": false
+        },
+        "case": {
+          "$ref": "#/$defs/live_staticCase"
+        },
+        "executor": {
+          "$ref": "#/$defs/live_staticExecutor"
+        },
+        "materialization": {
+          "$ref": "#/$defs/live_staticMaterialization"
+        },
+        "planning_requirement_id": {
+          "$ref": "#/$defs/live_plainId"
+        },
+        "result": {
+          "$ref": "#/$defs/live_staticResult"
+        },
+        "runtime_evidence": {
+          "maxItems": 0,
+          "type": "array"
+        },
+        "scope": {
+          "const": "bounded_static_assertion_subset_only"
+        }
+      },
+      "required": [
+        "planning_requirement_id",
+        "scope",
+        "materialization",
+        "executor",
+        "case",
+        "result",
+        "can_advance_capability",
+        "can_mark_passed_current",
+        "runtime_evidence"
+      ],
+      "type": "object"
+    },
+    "live_offlineToolObservationBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "can_advance_capability": {
+          "const": false
+        },
+        "can_mark_passed_current": {
+          "const": false
+        },
+        "contract": {
+          "$ref": "#/$defs/live_reviewedFile"
+        },
+        "dependency_observation": {
+          "additionalProperties": false,
+          "properties": {
+            "declared_requirements": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            },
+            "declared_versions_match_observed_distributions": {
+              "const": false
+            },
+            "mismatches": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "declared": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "distribution": {
+                    "enum": [
+                      "numpy",
+                      "opencv-python",
+                      "PyYAML",
+                      "tqdm"
+                    ]
+                  },
+                  "observed": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "distribution",
+                  "declared",
+                  "observed"
+                ],
+                "type": "object"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            },
+            "normative_for_declared_requirements": {
+              "const": false
+            },
+            "note": {
+              "const": "candidate execution records local versions; it does not claim they equal the reviewed pins"
+            },
+            "observed_distribution_versions": {
+              "additionalProperties": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minProperties": 4,
+              "type": "object"
+            },
+            "observed_module_versions": {
+              "additionalProperties": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minProperties": 4,
+              "type": "object"
+            },
+            "observed_versions_sha256": {
+              "$ref": "#/$defs/live_sha256"
+            },
+            "requirements_path": {
+              "const": "tools/rtvi-cv-mv3dt-utils/requirements.txt"
+            },
+            "requirements_sha256": {
+              "$ref": "#/$defs/live_sha256"
+            }
+          },
+          "required": [
+            "requirements_path",
+            "requirements_sha256",
+            "declared_requirements",
+            "observed_distribution_versions",
+            "observed_module_versions",
+            "observed_versions_sha256",
+            "note",
+            "declared_versions_match_observed_distributions",
+            "normative_for_declared_requirements",
+            "mismatches"
+          ],
+          "type": "object"
+        },
+        "execution_receipt": {
+          "$ref": "#/$defs/live_reviewedFile"
+        },
+        "executor": {
+          "additionalProperties": false,
+          "properties": {
+            "invocation": {
+              "const": [
+                "python3",
+                "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py",
+                "--check"
+              ]
+            },
+            "path": {
+              "const": "deploy/docker/thor-local/qualification/offline-mv3dt-tools/executor.py"
+            },
+            "raw_sha256": {
+              "$ref": "#/$defs/live_sha256"
+            }
+          },
+          "required": [
+            "path",
+            "raw_sha256",
+            "invocation"
+          ],
+          "type": "object"
+        },
+        "fixture": {
+          "$ref": "#/$defs/live_reviewedFile"
+        },
+        "oracle_coverage": {
+          "additionalProperties": false,
+          "properties": {
+            "covered_assertion_ids": {
+              "items": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "covered_observation_ids": {
+              "items": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "uncovered_assertion_ids": {
+              "items": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "uncovered_observation_ids": {
+              "items": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "covered_observation_ids",
+            "uncovered_observation_ids",
+            "covered_assertion_ids",
+            "uncovered_assertion_ids"
+          ],
+          "type": "object"
+        },
+        "qualification_package": {
+          "const": "deploy/docker/thor-local/qualification/offline-mv3dt-tools"
+        },
+        "result": {
+          "additionalProperties": false,
+          "properties": {
+            "docker_used": {
+              "const": false
+            },
+            "lifecycle_used": {
+              "const": false
+            },
+            "network_used": {
+              "const": false
+            },
+            "observation": {
+              "const": "observed_match_candidate_only"
+            },
+            "official_capability_effect": {
+              "const": "none_candidate_only"
+            },
+            "run_count": {
+              "const": 2
+            },
+            "subprocess_used": {
+              "const": false
+            },
+            "warehouse_sample_bundle_used": {
+              "const": false
+            }
+          },
+          "required": [
+            "observation",
+            "run_count",
+            "official_capability_effect",
+            "warehouse_sample_bundle_used",
+            "network_used",
+            "docker_used",
+            "subprocess_used",
+            "lifecycle_used"
+          ],
+          "type": "object"
+        },
+        "result_schema": {
+          "$ref": "#/$defs/live_reviewedFile"
+        },
+        "runtime_evidence": {
+          "maxItems": 0,
+          "type": "array"
+        },
+        "scope": {
+          "const": "bounded_static_tool_observation_subset_only"
+        },
+        "selected_output_locks": {
+          "additionalProperties": {
+            "$ref": "#/$defs/live_sha256"
+          },
+          "maxProperties": 1,
+          "minProperties": 1,
+          "type": "object"
+        },
+        "selected_semantic": {
+          "maxProperties": 1,
+          "minProperties": 1,
+          "type": "object"
+        },
+        "source_locks": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "sha256": {
+                "$ref": "#/$defs/live_sha256"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "type": "object"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        }
+      },
+      "required": [
+        "scope",
+        "qualification_package",
+        "contract",
+        "executor",
+        "result_schema",
+        "fixture",
+        "execution_receipt",
+        "source_locks",
+        "dependency_observation",
+        "selected_output_locks",
+        "selected_semantic",
+        "oracle_coverage",
+        "result",
+        "can_advance_capability",
+        "can_mark_passed_current",
+        "runtime_evidence"
+      ],
+      "type": "object"
+    },
+    "live_oracle": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "capability_id": {
+                "const": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+              }
+            },
+            "required": [
+              "capability_id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "acceptance_readiness": {
+                "properties": {
+                  "classification": {
+                    "const": "planning_index_only"
+                  }
+                }
+              },
+              "cleanup": {
+                "properties": {
+                  "executor": {
+                    "const": null
+                  },
+                  "postcondition_collectors": {
+                    "const": []
+                  }
+                }
+              },
+              "current_state": {
+                "const": "open_unexecuted"
+              },
+              "evidence": {
+                "const": []
+              },
+              "execution_bounds": {
+                "properties": {
+                  "collectors": {
+                    "const": []
+                  },
+                  "executor": {
+                    "const": null
+                  },
+                  "max_actions": {
+                    "const": 2
+                  },
+                  "max_requests": {
+                    "const": 2
+                  }
+                }
+              },
+              "fixture": {
+                "properties": {
+                  "kind": {
+                    "const": "generated_custom_media"
+                  },
+                  "warehouse_sample_bundle": {
+                    "const": false
+                  }
+                }
+              },
+              "ledger_binding": {
+                "properties": {
+                  "acceptance_class": {
+                    "const": "required_local"
+                  },
+                  "contract": {
+                    "required": [
+                      "selectors",
+                      "branch_selection",
+                      "software_elements",
+                      "hardware_default_elements",
+                      "offline_bundle",
+                      "immutable_derivatives",
+                      "source_controls"
+                    ]
+                  },
+                  "feature_id": {
+                    "const": "vios-codecs-audio"
+                  },
+                  "kind": {
+                    "const": "runtime_behavior"
+                  },
+                  "runtime_state": {
+                    "enum": [
+                      "not_qualified",
+                      "passed_current"
+                    ]
+                  },
+                  "thor_state": {
+                    "const": "wired"
+                  },
+                  "title": {
+                    "const": "CPU multimedia support"
+                  }
+                }
+              },
+              "mode": {
+                "const": "runtime"
+              },
+              "oracle_id": {
+                "const": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+              },
+              "profile": {
+                "const": "behavior-manifest-entry-vios-codecs-audio-05-cpu-multimedia-support"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "acceptance_readiness": {
+          "additionalProperties": false,
+          "properties": {
+            "blockers": {
+              "items": {
+                "minLength": 12,
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "classification": {
+              "enum": [
+                "planning_index_only",
+                "executor_ready"
+              ]
+            }
+          },
+          "required": [
+            "classification",
+            "blockers"
+          ],
+          "type": "object"
+        },
+        "admission_prerequisites": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "bounded": {
+                "const": true
+              },
+              "condition": {
+                "minLength": 12,
+                "type": "string"
+              },
+              "id": {
+                "$ref": "#/$defs/live_plainId"
+              }
+            },
+            "required": [
+              "id",
+              "condition",
+              "bounded"
+            ],
+            "type": "object"
+          },
+          "minItems": 3,
+          "type": "array"
+        },
+        "assertions": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "expected": {},
+              "id": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "observation": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "operator": {
+                "enum": [
+                  "equals",
+                  "recorded_pass"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "observation",
+              "operator",
+              "expected"
+            ],
+            "type": "object"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "capability_id": {
+          "$ref": "#/$defs/live_plainId"
+        },
+        "cleanup": {
+          "additionalProperties": false,
+          "properties": {
+            "allowlist": {
+              "items": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "executor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mutation": {
+              "enum": [
+                "none_by_default",
+                "read_only",
+                "temporary_files_only",
+                "namespaced_and_reversible"
+              ]
+            },
+            "postcondition_collectors": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "postconditions": {
+              "items": {
+                "minLength": 12,
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "pre_state": {
+              "minLength": 12,
+              "type": "string"
+            },
+            "restore": {
+              "minLength": 12,
+              "type": "string"
+            },
+            "targets": {
+              "items": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "type": "array",
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "mutation",
+            "targets",
+            "allowlist",
+            "pre_state",
+            "restore",
+            "executor",
+            "postcondition_collectors",
+            "postconditions"
+          ],
+          "type": "object"
+        },
+        "current_state": {
+          "enum": [
+            "open_unexecuted",
+            "external_boundary_unexecuted"
+          ]
+        },
+        "evidence": {
+          "maxItems": 0,
+          "type": "array"
+        },
+        "execution_bounds": {
+          "additionalProperties": false,
+          "properties": {
+            "collectors": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            "executor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_actions": {
+              "maximum": 10000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "max_duration_seconds": {
+              "maximum": 1800,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "max_requests": {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "model_staging": {
+              "const": "prerequisite_only"
+            },
+            "network_scope": {
+              "enum": [
+                "loopback-or-compose-internal",
+                "operator-approved external endpoint"
+              ]
+            },
+            "warehouse_sample_bundle": {
+              "const": "excluded"
+            },
+            "workload": {
+              "additionalProperties": false,
+              "properties": {
+                "calculated_max_requests": {
+                  "maximum": 10000,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "overhead_requests": {
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "phases": {
+                  "items": {
+                    "$ref": "#/$defs/live_plainId"
+                  },
+                  "minItems": 1,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "requests_per_unit": {
+                  "maximum": 100,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "units": {
+                  "maximum": 10000,
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "units",
+                "requests_per_unit",
+                "overhead_requests",
+                "calculated_max_requests",
+                "phases"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "executor",
+            "collectors",
+            "network_scope",
+            "max_duration_seconds",
+            "max_requests",
+            "max_actions",
+            "workload",
+            "model_staging",
+            "warehouse_sample_bundle"
+          ],
+          "type": "object"
+        },
+        "expected_observations": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "minLength": 12,
+                "type": "string"
+              },
+              "id": {
+                "$ref": "#/$defs/live_plainId"
+              }
+            },
+            "required": [
+              "id",
+              "description"
+            ],
+            "type": "object"
+          },
+          "minItems": 3,
+          "type": "array"
+        },
+        "fixture": {
+          "additionalProperties": false,
+          "properties": {
+            "availability": {
+              "enum": [
+                "not_staged",
+                "operator_required"
+              ]
+            },
+            "id": {
+              "$ref": "#/$defs/live_plainId"
+            },
+            "input": {
+              "additionalProperties": false,
+              "properties": {
+                "action": {
+                  "minLength": 12,
+                  "type": "string"
+                },
+                "capability_id": {
+                  "$ref": "#/$defs/live_plainId"
+                },
+                "contract": {
+                  "minProperties": 1,
+                  "type": "object"
+                },
+                "namespace": {
+                  "$ref": "#/$defs/live_plainId"
+                }
+              },
+              "required": [
+                "capability_id",
+                "contract",
+                "namespace",
+                "action"
+              ],
+              "type": "object"
+            },
+            "kind": {
+              "enum": [
+                "generated_custom_media",
+                "generated_minimal_contract",
+                "operator_external_contract"
+              ]
+            },
+            "materialization": {
+              "additionalProperties": false,
+              "properties": {
+                "generator": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "path": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sha256": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "path",
+                "generator",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "source": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "warehouse_sample_bundle": {
+              "const": false
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "availability",
+            "source",
+            "warehouse_sample_bundle",
+            "materialization",
+            "input"
+          ],
+          "type": "object"
+        },
+        "ledger_binding": {
+          "additionalProperties": false,
+          "properties": {
+            "acceptance_class": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "contract": {
+              "minProperties": 1,
+              "type": "object"
+            },
+            "feature_id": {
+              "$ref": "#/$defs/live_plainId"
+            },
+            "gap": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "kind": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "runtime_state": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "source_claims": {
+              "items": {
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "thor_state": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "feature_id",
+            "kind",
+            "title",
+            "source_claims",
+            "acceptance_class",
+            "thor_state",
+            "runtime_state",
+            "contract",
+            "gap"
+          ],
+          "type": "object"
+        },
+        "mode": {
+          "enum": [
+            "static",
+            "config",
+            "runtime",
+            "api",
+            "protocol",
+            "model",
+            "deploy"
+          ]
+        },
+        "offline_tool_observation_bindings": {
+          "items": {
+            "$ref": "#/$defs/live_offlineToolObservationBinding"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "type": "array"
+        },
+        "oracle_id": {
+          "$ref": "#/$defs/live_plainId"
+        },
+        "planning_executor_bindings": {
+          "items": {
+            "$ref": "#/$defs/live_planningExecutorBinding"
+          },
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "profile": {
+          "$ref": "#/$defs/live_plainId"
+        },
+        "protocol_case_binding": {
+          "additionalProperties": false,
+          "properties": {
+            "case_id": {
+              "$ref": "#/$defs/live_plainId"
+            },
+            "case_sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "contract_set_sha256": {
+              "const": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21"
+            },
+            "file_sha256": {
+              "const": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6"
+            },
+            "negative_vector_ids": {
+              "items": {
+                "$ref": "#/$defs/live_plainId"
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "path": {
+              "const": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json"
+            },
+            "positive_vector_id": {
+              "$ref": "#/$defs/live_plainId"
+            },
+            "source_hashes": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "content_sha256": {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "git_blob_oid": {
+                    "pattern": "^[0-9a-f]{40}$",
+                    "type": "string"
+                  },
+                  "path": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "path",
+                  "git_blob_oid",
+                  "content_sha256"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "target_commit": {
+              "pattern": "^[0-9a-f]{40}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "file_sha256",
+            "contract_set_sha256",
+            "target_commit",
+            "case_id",
+            "case_sha256",
+            "positive_vector_id",
+            "negative_vector_ids",
+            "source_hashes"
+          ],
+          "type": "object"
+        },
+        "reviewed_scenario_ids": {
+          "items": {
+            "$ref": "#/$defs/live_plainId"
+          },
+          "minItems": 2,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "capability_id",
+        "oracle_id",
+        "profile",
+        "mode",
+        "ledger_binding",
+        "reviewed_scenario_ids",
+        "fixture",
+        "expected_observations",
+        "assertions",
+        "admission_prerequisites",
+        "execution_bounds",
+        "cleanup",
+        "acceptance_readiness",
+        "current_state",
+        "evidence"
+      ],
+      "type": "object"
+    },
+    "live_plainId": {
+      "pattern": "^[a-z0-9][a-z0-9._-]+$",
+      "type": "string"
+    },
+    "live_planningExecutorBinding": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/live_genericPlanningExecutorBinding"
+        },
+        {
+          "$ref": "#/$defs/live_calibrationSchemaPlanningExecutorBinding"
+        }
+      ]
+    },
+    "live_reviewedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "pattern": "^deploy/docker/thor-local/qualification/offline-mv3dt-tools/",
+          "type": "string"
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        }
+      },
+      "required": [
+        "path",
+        "raw_sha256"
+      ],
+      "type": "object"
+    },
+    "live_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "live_staticCase": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "$ref": "#/$defs/live_plainId"
+        },
+        "case_id": {
+          "$ref": "#/$defs/live_plainId"
+        },
+        "planning_payload_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "planning_requirement_id": {
+          "$ref": "#/$defs/live_plainId"
+        }
+      },
+      "required": [
+        "case_id",
+        "planning_requirement_id",
+        "capability_id",
+        "planning_payload_sha256"
+      ],
+      "type": "object"
+    },
+    "live_staticExecutor": {
+      "additionalProperties": false,
+      "properties": {
+        "inventory_canonical_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "inventory_path": {
+          "enum": [
+            "deploy/docker/thor-local/qualification/executor-cases/inventory.json",
+            "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json"
+          ]
+        },
+        "inventory_raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "inventory_schema_path": {
+          "enum": [
+            "deploy/docker/thor-local/qualification/executor-cases/inventory.schema.json",
+            "deploy/docker/thor-local/qualification/source-contract-cases/inventory.schema.json"
+          ]
+        },
+        "inventory_schema_raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "invocation": {
+          "items": false,
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "const": "python3"
+            },
+            {
+              "enum": [
+                "deploy/docker/thor-local/qualification/executor-cases/executor.py",
+                "deploy/docker/thor-local/qualification/source-contract-cases/executor.py"
+              ]
+            },
+            {
+              "const": "run"
+            },
+            {
+              "$ref": "#/$defs/live_plainId"
+            }
+          ],
+          "type": "array"
+        },
+        "path": {
+          "enum": [
+            "deploy/docker/thor-local/qualification/executor-cases/executor.py",
+            "deploy/docker/thor-local/qualification/source-contract-cases/executor.py"
+          ]
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        }
+      },
+      "required": [
+        "path",
+        "raw_sha256",
+        "inventory_path",
+        "inventory_raw_sha256",
+        "inventory_canonical_sha256",
+        "inventory_schema_path",
+        "inventory_schema_raw_sha256",
+        "invocation"
+      ],
+      "type": "object"
+    },
+    "live_staticMaterialization": {
+      "additionalProperties": false,
+      "properties": {
+        "case_canonical_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        },
+        "case_json_pointer": {
+          "pattern": "^/cases/[0-9]+$",
+          "type": "string"
+        },
+        "inventory_path": {
+          "enum": [
+            "deploy/docker/thor-local/qualification/executor-cases/inventory.json",
+            "deploy/docker/thor-local/qualification/source-contract-cases/inventory.json"
+          ]
+        },
+        "scope": {
+          "const": "live_planning_requirement_static_contract"
+        }
+      },
+      "required": [
+        "scope",
+        "inventory_path",
+        "case_json_pointer",
+        "case_canonical_sha256"
+      ],
+      "type": "object"
+    },
+    "live_staticResult": {
+      "additionalProperties": false,
+      "properties": {
+        "can_advance_capability": {
+          "const": false
+        },
+        "can_mark_passed_current": {
+          "const": false
+        },
+        "evidence_class": {
+          "const": "deterministic_file_static_evidence_not_runtime"
+        },
+        "expected_outcome": {
+          "enum": [
+            "observed_match",
+            "observed_mismatch"
+          ]
+        },
+        "runtime_evidence": {
+          "maxItems": 0,
+          "type": "array"
+        },
+        "schema_path": {
+          "enum": [
+            "deploy/docker/thor-local/qualification/executor-cases/result.schema.json",
+            "deploy/docker/thor-local/qualification/source-contract-cases/result.schema.json"
+          ]
+        },
+        "schema_raw_sha256": {
+          "$ref": "#/$defs/live_sha256"
+        }
+      },
+      "required": [
+        "schema_path",
+        "schema_raw_sha256",
+        "expected_outcome",
+        "evidence_class",
+        "can_advance_capability",
+        "can_mark_passed_current",
+        "runtime_evidence"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://developer.nvidia.com/vss/thor-local/live-capability-oracles-v2.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "oracles": {
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/live_oracle"
+          },
+          {
+            "$ref": "#/$defs/candidate_candidateSuccessorOracle"
+          }
+        ]
+      },
+      "maxItems": 500,
+      "minItems": 500,
+      "type": "array"
+    },
+    "policy": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_scope": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "generic_oracle_prohibited": {
+          "const": true
+        },
+        "pass_rule": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "warehouse_sample_bundle": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_scope",
+        "pass_rule",
+        "generic_oracle_prohibited",
+        "warehouse_sample_bundle"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 2
+    },
+    "target": {
+      "additionalProperties": false,
+      "properties": {
+        "captured_on": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "type": "string"
+        },
+        "main_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "type": "string"
+        },
+        "product_version": {
+          "const": "3.2.1"
+        }
+      },
+      "required": [
+        "product_version",
+        "main_commit",
+        "captured_on"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "target",
+    "policy",
+    "oracles"
+  ],
+  "title": "Strict VSS live v2 capability oracle registry",
+  "type": "object"
+}
