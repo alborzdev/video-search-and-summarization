@@ -98,6 +98,7 @@ describe('SearchHeader', () => {
   it('renders Source Type selector', () => {
     render(<SearchHeader {...defaultProps} />);
     expect(screen.getByText('Source Type:')).toBeInTheDocument();
+    expect(screen.getByText('Video File')).toBeInTheDocument();
   });
 
   it('renders Filter button', () => {

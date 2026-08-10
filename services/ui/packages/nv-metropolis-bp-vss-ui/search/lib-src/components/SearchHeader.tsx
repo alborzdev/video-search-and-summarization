@@ -27,7 +27,7 @@ interface SearchHeaderProps {
   }
 
 const SOURCE_TYPE_OPTIONS = [
-    { label: 'Video', value: 'video_file' },
+    { label: 'Video File', value: 'video_file' },
     { label: 'RTSP', value: 'rtsp' }
 ];
 
