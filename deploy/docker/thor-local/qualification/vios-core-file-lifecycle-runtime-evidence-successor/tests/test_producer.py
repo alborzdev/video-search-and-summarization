@@ -45,8 +45,25 @@ def test_plan_is_inert_and_nonpromotable() -> None:
         )
     )
     assert len(plan["cases"]) == 6
-    assert all(case["bound_satisfiable"] is False for case in plan["cases"])
+    bound_by_id = {
+        case["capability_id"]: case["bound_satisfiable"] for case in plan["cases"]
+    }
+    assert bound_by_id["behavior.vios.byte-identical-download"] is True
+    assert all(
+        satisfiable is False
+        for capability_id, satisfiable in bound_by_id.items()
+        if capability_id != "behavior.vios.byte-identical-download"
+    )
     assert all(case["runtime_evidence"] is False for case in plan["cases"])
+
+
+def test_current_runtime_bindings_are_exact_and_not_repromoted() -> None:
+    plan = producer.compile_plan()
+    assert plan["eligible_capability_ids"] == []
+    assert any(
+        "byte-identical download and CPU multimedia" in blocker
+        for blocker in plan["blockers"]
+    )
 
 
 def test_product_fix_and_full_future_surfaces_are_explicit() -> None:

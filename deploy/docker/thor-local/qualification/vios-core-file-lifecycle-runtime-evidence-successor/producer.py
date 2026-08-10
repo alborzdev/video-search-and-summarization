@@ -34,6 +34,16 @@ EXPECTED_IDS = [
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
 ]
 CPU_MULTIMEDIA_ID = "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+BYTE_DOWNLOAD_ID = "behavior.vios.byte-identical-download"
+BYTE_DOWNLOAD_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "vios-file-lifecycle-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "05d397fc57414b0cf404ce6e990f8759444597d7ce3901e6c467fbf0ca7ecdf7",
+    }
+]
 CPU_MULTIMEDIA_RUNTIME_EVIDENCE = [
     {
         "capability_id": CPU_MULTIMEDIA_ID,
@@ -235,16 +245,22 @@ def _verify_canonical_bindings(
             != "excluded"
         ):
             raise ProducerError(f"unexpected runtime evidence state: {capability_id}")
+        current_runtime_evidence = {
+            BYTE_DOWNLOAD_ID: BYTE_DOWNLOAD_RUNTIME_EVIDENCE,
+            CPU_MULTIMEDIA_ID: CPU_MULTIMEDIA_RUNTIME_EVIDENCE,
+        }
         expected_runtime_state = (
-            "passed_current" if capability_id == CPU_MULTIMEDIA_ID else "not_qualified"
+            "passed_current"
+            if capability_id in current_runtime_evidence
+            else "not_qualified"
         )
         if (
             official.get("acceptance_class") != "required_local"
             or official.get("runtime_state") != expected_runtime_state
         ):
             raise ProducerError(f"unexpected acceptance state: {capability_id}")
-        if capability_id == CPU_MULTIMEDIA_ID:
-            if official.get("runtime_evidence") != CPU_MULTIMEDIA_RUNTIME_EVIDENCE:
+        if capability_id in current_runtime_evidence:
+            if official.get("runtime_evidence") != current_runtime_evidence[capability_id]:
                 raise ProducerError(
                     f"unexpected current runtime evidence: {capability_id}"
                 )
@@ -483,11 +499,11 @@ def compile_plan(contract_path: Path = CONTRACT_PATH) -> dict[str, Any]:
             "no VIOS or NvStreamer product/service response was observed",
             "cached image records contain no sensor-service digest or live service identity readback",
             "no media fixture was materialized, uploaded, streamed, played, downloaded, or removed",
-            "five canonical two-request bounds are insufficient for their full contract plus ownership-safe restoration",
+            "four remaining open canonical two-request bounds are insufficient for their full contract plus ownership-safe restoration",
             "NvStreamer qualification requires upload, UI, and local-mount inputs plus RTSP, actual WebRTC, and removal",
             "VPN transport behavior is not proven by a local B-frame remediation run",
             "the corrected upload content-length gate has no Thor runtime response or asymmetric-limit evidence",
-            "CPU multimedia is independently current-qualified by the source-locked codec runtime receipt; this inert VIOS-core producer neither duplicates nor supersedes that evidence",
+            "byte-identical download and CPU multimedia are independently current-qualified by exact runtime-evidence bindings; this inert VIOS-core producer neither duplicates nor supersedes that evidence",
             "a separately authorized service run and reviewed execution bounds are required before promotion",
         ],
     }

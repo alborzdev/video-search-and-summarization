@@ -1,0 +1,190 @@
+{
+  "bounds": {
+    "agent_generate_called": false,
+    "endpoint": "http://127.0.0.1:30888/vst/api/v1",
+    "existing_sensor_count": 11,
+    "fixture": {
+      "bytes": 40394,
+      "sha256": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "has_b_frames": 0,
+          "height": 120,
+          "r_frame_rate": "10/1",
+          "width": 160
+        },
+        {
+          "channels": 1,
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0",
+          "sample_rate": "48000"
+        }
+      ]
+    },
+    "loopback_only": true,
+    "rtsp_sensor_added": false,
+    "warehouse_sample_bundle_used": false
+  },
+  "capability_results": {
+    "behavior.vios.byte-identical-download": "passed_current",
+    "vios_namespaced_file_lifecycle": "passed_current"
+  },
+  "captured_at": "2026-08-10T13:01:57.392211Z",
+  "cleanup": {
+    "attempts": [
+      {
+        "operation": "stream-range-delete",
+        "result": "passed",
+        "status": 200
+      }
+    ],
+    "exact_file_list_restored": true,
+    "exact_sensor_list_restored": true,
+    "owned_file_absent": true,
+    "owned_sensor_absent": true,
+    "result": "passed",
+    "temporary_fixture_removed_by_context": true
+  },
+  "observations": {
+    "duplicate_v2_upload_status": 409,
+    "full_download_bytes": 40394,
+    "full_download_sha256": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2",
+    "post_file_list_sha256": "2fe793a73a44a281c431ba17262cf395cb7717557371d0341808f8c23778caca",
+    "post_sensor_list_sha256": "337b6951335a1f21387bebeb45a7e7ef151cb9c651125626680ba25f1c005e56",
+    "pre_file_list_sha256": "2fe793a73a44a281c431ba17262cf395cb7717557371d0341808f8c23778caca",
+    "pre_sensor_list_sha256": "337b6951335a1f21387bebeb45a7e7ef151cb9c651125626680ba25f1c005e56",
+    "registration_readbacks": [
+      "stream_timeline",
+      "sensor_file_list",
+      "file_path_and_metadata",
+      "media_info",
+      "full_file"
+    ],
+    "timeline": {
+      "endTime": "2025-01-01T00:00:02.000Z",
+      "startTime": "2025-01-01T00:00:00.000Z"
+    },
+    "upload_file_id": "9cfa415d-cec0-44ee-bbf5-3c52804ed4b7",
+    "upload_filename": "vss_qual_vios_lifecycle_bb012f668a2c4dbd84e62bbf852b6fac.mp4",
+    "upload_response_bytes": 40394,
+    "upload_sensor_id": "3f849bc1-c290-4efc-ad78-e5b13dd81364",
+    "upload_stream_id": "3f849bc1-c290-4efc-ad78-e5b13dd81364"
+  },
+  "qualification_id": "thor-vss-3.2.1-vios-file-lifecycle-runtime",
+  "requests": [
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/list",
+      "response_bytes": 4160,
+      "response_sha256": "ae99bac4d536eee03561d1b5f57f4ea8d960c515995d82f1618a63325990e07e",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/file/list",
+      "response_bytes": 40190,
+      "response_sha256": "c43f80dae768fe7ea10d44fcaf30f888338ac71c25009f33527565cd8cec69c0",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "PUT",
+      "path": "/storage/file/vss_qual_vios_lifecycle_bb012f668a2c4dbd84e62bbf852b6fac.mp4?timestamp=2025-01-01T00%3A00%3A00.000Z",
+      "response_bytes": 451,
+      "response_sha256": "9b584095f8a0395865b45fa7d4f1f8457410c7e75bd410b62c74a424bf8246c6",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "PUT",
+      "path": "/storage/file/vss_qual_vios_lifecycle_bb012f668a2c4dbd84e62bbf852b6fac.mp4?timestamp=2025-01-01T00%3A00%3A00.000Z",
+      "response_bytes": 147,
+      "response_sha256": "3ad1986f9223328db7188d27946ea188ba988ef939c6c015e056d5bb987c6c7c",
+      "status": 409
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/3f849bc1-c290-4efc-ad78-e5b13dd81364/timelines",
+      "response_bytes": 94,
+      "response_sha256": "4e3baa2bf2c653af82cb33c3ffa2a24448d3ff45706cc33cd0cd627a64e381c4",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/file/3f849bc1-c290-4efc-ad78-e5b13dd81364/list",
+      "response_bytes": 581,
+      "response_sha256": "b7ff47340bad00cb11dab2375f07ddda2ed7517e535d38699b3f3f8d7f4b5810",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/file/path?id=9cfa415d-cec0-44ee-bbf5-3c52804ed4b7&metadata=true",
+      "response_bytes": 523,
+      "response_sha256": "2b3f96fe65d08133039fd47f698d06b6674fb7bb05d75e4dd79f69f66c2f85f3",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/file/mediainfo?id=9cfa415d-cec0-44ee-bbf5-3c52804ed4b7",
+      "response_bytes": 489,
+      "response_sha256": "4b6843a42d3cbc76993193b66e78f29be409b8efdd5b4acba5b5c91e924d05d3",
+      "status": 200
+    },
+    {
+      "content_type": "video/mp4",
+      "method": "GET",
+      "path": "/storage/file?id=9cfa415d-cec0-44ee-bbf5-3c52804ed4b7",
+      "response_bytes": 40394,
+      "response_sha256": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "DELETE",
+      "path": "/storage/file/3f849bc1-c290-4efc-ad78-e5b13dd81364?startTime=2025-01-01T00%3A00%3A00.000Z&endTime=2025-01-01T00%3A00%3A02.000Z",
+      "response_bytes": 21,
+      "response_sha256": "1d3ddb0589c146cb0677f60f9801a535cc81ea5388d2ff162a0ddbfbe63fc16c",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/file/list",
+      "response_bytes": 40190,
+      "response_sha256": "c43f80dae768fe7ea10d44fcaf30f888338ac71c25009f33527565cd8cec69c0",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/list",
+      "response_bytes": 4160,
+      "response_sha256": "ae99bac4d536eee03561d1b5f57f4ea8d960c515995d82f1618a63325990e07e",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/file/list",
+      "response_bytes": 40190,
+      "response_sha256": "c43f80dae768fe7ea10d44fcaf30f888338ac71c25009f33527565cd8cec69c0",
+      "status": 200
+    }
+  ],
+  "runtime_evidence": true,
+  "schema_version": 1,
+  "status": "passed",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

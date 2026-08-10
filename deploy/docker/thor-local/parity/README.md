@@ -66,7 +66,8 @@ discrepancies with zero aggregate or acceptance gaps. The live 289-row files,
 live oracle migration, and candidate runtime qualification remain separate.
 
 `metadata_sets/` now resolves the complete metadata plane as one immutable,
-hash-bound snapshot. The selector defaults to the current VIOS-codec 500 set:
+hash-bound snapshot. The selector defaults to the current VIOS file-lifecycle
+500 set:
 the exact current, runtime-evidence-bearing 289-row prefix plus the unchanged
 211-row candidate suffix under the strict v2 oracle schema. The matching
 current 289 set remains explicitly resolvable. Prior activation, Stage-1, and
@@ -79,7 +80,7 @@ Validate either atomic set through the authoritative dispatcher:
 ```bash
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py --json
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py \
-  --set thor-vss-3.2.1-current-vios-codecs-runtime-289 --json
+  --set thor-vss-3.2.1-current-vios-file-lifecycle-runtime-289 --json
 ```
 
 That direct-index denominator is also not the final documentation graph. A

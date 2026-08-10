@@ -5,17 +5,19 @@ This directory provides the static, fail-closed metadata selector.
 binds a complete metadata plane: manifest, official ledger and schema,
 capability-oracle registry and schema, and acceptance inventory.
 
-The selected `thor-vss-3.2.1-current-vios-codecs-runtime-500` set contains the
+The selected `thor-vss-3.2.1-current-vios-file-lifecycle-runtime-500` set
+contains the
 exact current 289-row Thor prefix plus the unchanged 211-row candidate suffix.
 The current prefix includes all later runtime promotions, including the exact
-63-package CPU multimedia receipt; the suffix remains evidence-empty and
-non-promoting. Its four non-CPU codec planning rows remain open until their
-existing raw runtime results receive separate canonical bindings, and
-main-VIOS AAC recording remains approval-gated. The registered
-`thor-vss-3.2.1-current-vios-codecs-runtime-289` set exposes the same canonical
-current prefix explicitly. The predecessor agent-evaluation, SpatialAI
-Stage-1, and older descriptors remain checked in as immutable historical
-provenance but are deliberately not registered as current.
+63-package CPU multimedia receipt and bounded VIOS byte-identical full-file
+download receipt; the suffix remains evidence-empty and non-promoting. The
+remaining four VIOS core contracts and four non-CPU codec planning rows remain
+open until separately qualified or evidence-bound, and main-VIOS AAC recording
+remains approval-gated. The registered
+`thor-vss-3.2.1-current-vios-file-lifecycle-runtime-289` set exposes the same
+canonical current prefix explicitly. The predecessor codec-runtime,
+agent-evaluation, SpatialAI Stage-1, and older descriptors remain checked in as
+immutable historical provenance but are deliberately not registered as current.
 
 The current pair also corrects `evaluation.agent.report`: its judge settings
 are repository-bound `llms.eval_llm_judge` profile configuration (`4096`,
@@ -46,7 +48,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-current-vios-codecs-runtime-289 --json
+  --set thor-vss-3.2.1-current-vios-file-lifecycle-runtime-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

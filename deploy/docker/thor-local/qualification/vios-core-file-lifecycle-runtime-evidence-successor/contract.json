@@ -14,7 +14,7 @@
   ],
   "oracle_bindings": [
     {"capability_id": "behavior.vios.upload-playback-remediation", "oracle_id": "oracle.behavior.vios.upload-playback-remediation", "index": 233, "oracle_canonical_sha256": "0cb15f81aab662400194aef74710dad1c9be2a5ab428309d600be1d369ccb396", "official_index": 233, "official_canonical_sha256": "47b79094ceabe072254f480e9db08143791c94ec01b6d602ff6940f57ba7da87"},
-    {"capability_id": "behavior.vios.byte-identical-download", "oracle_id": "oracle.behavior.vios.byte-identical-download", "index": 74, "oracle_canonical_sha256": "44328ee239a686ad85c4bf7163b316055882da91c195b12de686017a97604d6f", "official_index": 74, "official_canonical_sha256": "ce5d9503f52e3df14f6f1654c90220129f32b03c85c368b9206ade578f11be55"},
+    {"capability_id": "behavior.vios.byte-identical-download", "oracle_id": "oracle.behavior.vios.byte-identical-download", "index": 74, "oracle_canonical_sha256": "36399ecf6a8b4c5292f9518957172c33ef7938147dbb9c65fc2e006321ebcaed", "official_index": 74, "official_canonical_sha256": "46768ccbe3c2f79fcdb46c5a2c87156d5be372d10f64bfe0540c93435f506ab9"},
     {"capability_id": "behavior.vios.sensor-add-conflicts", "oracle_id": "oracle.behavior.vios.sensor-add-conflicts", "index": 73, "oracle_canonical_sha256": "835a0df55617d33fccddb2281687abc654402b74e8dd6ce53585f08939c191af", "official_index": 73, "official_canonical_sha256": "4d4ca58a80ea9c4c4c2547138a8b0ed023bca4aa6247b7c1e3d6cc54b7b5482b"},
     {"capability_id": "configuration.vios.upload-effective-limit", "oracle_id": "oracle.configuration.vios.upload-effective-limit", "index": 232, "oracle_canonical_sha256": "10c593976d78bd0edea7db192c2def01bfd2603250a7d693cffa1e9bf1a5250b", "official_index": 232, "official_canonical_sha256": "f6177cf33ae1f83e453146966abfe1ed841178f4fba3a01492c75b96ffe57ff8"},
     {"capability_id": "runtime.nvstreamer.file-streaming", "oracle_id": "oracle.runtime.nvstreamer.file-streaming", "index": 219, "oracle_canonical_sha256": "5032a0352f53f21e4489166ad80470514d4f081b9c664a398121b16508ae61f6", "official_index": 219, "official_canonical_sha256": "4f694523e90fd2653615288ff282517d6e6d17ea82cff4d6a50cbe19febc7ad2"},
@@ -57,14 +57,14 @@
     },
     {
       "capability_id": "behavior.vios.byte-identical-download",
-      "max_actions": 2,
-      "max_requests": 2,
-      "bound_satisfiable": false,
-      "proposed_future_bounds": {"max_actions": 10, "max_requests": 7, "max_duration_seconds": 300},
+      "max_actions": 13,
+      "max_requests": 13,
+      "bound_satisfiable": true,
+      "proposed_future_bounds": {"max_actions": 13, "max_requests": 13, "max_duration_seconds": 900},
       "fixture_ids": ["tiny-identity-mp4-v1"],
-      "planned_steps": ["capture-target-absence-and-fixture-digest", "upload-direct-vios-file", "capture-at-rest-identity", "download-full-file-twice", "compare-two-download-sha256-values", "distinguish-upload-hash-from-at-rest-hash", "delete-exact-owned-upload", "verify-postconditions"],
-      "adjacent_negatives": ["range or clip download is not a full-file identity oracle", "a remuxed or transcoded result must fail SHA-256 equality"],
-      "blockers": ["the two-request canonical bound cannot include upload, download, ownership-safe cleanup, and postcondition readback", "no media bytes or VIOS response was observed"]
+      "planned_steps": ["capture-exact-prestate-and-fixture-digest", "upload-direct-vios-file", "reject-duplicate-filename", "read-timeline-file-path-metadata-and-mediainfo", "download-full-file", "compare-upload-and-download-length-and-sha256", "delete-exact-owned-upload", "verify-exact-inventories-and-namespace-absence"],
+      "adjacent_negatives": ["duplicate-name upload must return HTTP 409 without replacing the owned file", "range or clip download is not a full-file identity oracle", "a remuxed or transcoded result must fail SHA-256 equality"],
+      "blockers": ["the byte-identical download capability is independently current-qualified by the exact loopback-only runtime receipt", "this inert future-regression producer does not duplicate or supersede the separate runtime evidence and remains nonpromotable"]
     },
     {
       "capability_id": "behavior.vios.sensor-add-conflicts",
@@ -112,8 +112,8 @@
     }
   ],
   "source_locks": [
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "85e97991643450987e924b0f060bc4e76aedbcb17daa7bad387e150d6bf3d277"},
-    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "36313c572a197fd885ef36d5184113405befb7f9e0418aff5cb5954c9a99d69a"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "f974f505c3cd33f1723d79afe281f03a7e8017f84b9ad9a7dcbf00e3de91e04b"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "804ccc009dff74f303151e2e3763b849a8ccc4274268eac93fa9cfd9a19d7814"},
     {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
     {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave10/inventory.json", "sha256": "e9c81d33ea07018c3dc0e7d0ea9794e09d5fae962b959175cd65c73e2f136a35"},

@@ -59,6 +59,7 @@ class CapabilityOracleTests(unittest.TestCase):
             len(verifier.SYNTHETIC_RUNTIME_FIXTURES)
             + len(verifier.MV3DT_RUNTIME_FIXTURES)
             + len(verifier.SPATIAL_AI_IDS[:7])
+            + 1  # current VIOS byte-identical full-file runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -672,6 +673,13 @@ class CapabilityOracleTests(unittest.TestCase):
                         cleanup["targets"], [item["fixture"]["input"]["namespace"]]
                     )
                     self.assertTrue(cleanup["targets"][0].startswith("spatial-ai-"))
+                elif (
+                    item["capability_id"]
+                    == verifier.VIOS_BYTE_DOWNLOAD_CAPABILITY_ID
+                ):
+                    self.assertEqual(
+                        cleanup["targets"], [verifier.VIOS_BYTE_DOWNLOAD_NAMESPACE]
+                    )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
                 self.assertEqual(cleanup["allowlist"], cleanup["targets"])

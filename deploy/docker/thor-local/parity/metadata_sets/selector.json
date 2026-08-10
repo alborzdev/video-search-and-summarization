@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-codecs-runtime-289.json",
-      "descriptor_raw_sha256": "238be7ea44a8593b946dfbd905d83e4f0b35726417ffda37f2353d394c5d6387",
-      "set_id": "thor-vss-3.2.1-current-vios-codecs-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-file-lifecycle-runtime-289.json",
+      "descriptor_raw_sha256": "057efa7dad054d326048c0b42653d1e712ed1604999add67e88a262ba31b671b",
+      "set_id": "thor-vss-3.2.1-current-vios-file-lifecycle-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-codecs-runtime-500.json",
-      "descriptor_raw_sha256": "bc1e96c382f751c6389349bd6173b91d34090781c351199ab39aa3ad716c7edc",
-      "set_id": "thor-vss-3.2.1-current-vios-codecs-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-file-lifecycle-runtime-500.json",
+      "descriptor_raw_sha256": "29640fc80749275f1f6d1b7bc6066efd5c2de6e17f7451df7ad7966c0846c466",
+      "set_id": "thor-vss-3.2.1-current-vios-file-lifecycle-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-vios-codecs-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-vios-file-lifecycle-runtime-500"
 }

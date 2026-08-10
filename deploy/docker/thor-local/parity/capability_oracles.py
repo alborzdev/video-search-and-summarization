@@ -197,6 +197,44 @@ PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 CPU_MULTIMEDIA_CAPABILITY_ID = (
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
 )
+VIOS_BYTE_DOWNLOAD_CAPABILITY_ID = "behavior.vios.byte-identical-download"
+VIOS_BYTE_DOWNLOAD_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "vios-file-lifecycle-runtime/execute.py"
+)
+VIOS_BYTE_DOWNLOAD_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "vios-file-lifecycle-runtime/fixture-contract.json"
+    ),
+    "sha256": "297821477baaea974ad9c91736cf6a40871958528ccc7c41c6012fb7b3c85b61",
+}
+VIOS_BYTE_DOWNLOAD_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "vios-file-lifecycle-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "05d397fc57414b0cf404ce6e990f8759444597d7ce3901e6c467fbf0ca7ecdf7",
+    }
+]
+VIOS_BYTE_DOWNLOAD_NAMESPACE = "vss_qual_vios_lifecycle"
+VIOS_BYTE_DOWNLOAD_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 2,
+    "overhead_requests": 11,
+    "calculated_max_requests": 13,
+    "phases": ["positive", "adjacent_negative", "cleanup"],
+}
+
+
+def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == VIOS_BYTE_DOWNLOAD_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == VIOS_BYTE_DOWNLOAD_RUNTIME_EVIDENCE
+    )
 
 # capability_id: (planning_requirement_id, minimum requests, maximum actions)
 # Derived by qualification/runtime-execution-bounds-audit.  Exact IDs prevent
@@ -890,6 +928,8 @@ def _workload(
 ) -> dict[str, Any]:
     capability_id = capability["id"]
     contract = capability["contract"]
+    if live_integration and _is_current_vios_byte_download(capability):
+        return copy.deepcopy(VIOS_BYTE_DOWNLOAD_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1981,6 +2021,26 @@ def compile_plan(
             oracle["execution_bounds"]["collectors"] = [SYNTHETIC_RUNTIME_EXECUTOR]
             oracle["cleanup"]["executor"] = SYNTHETIC_RUNTIME_EXECUTOR
             oracle["cleanup"]["postcondition_collectors"] = [SYNTHETIC_RUNTIME_EXECUTOR]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
+        if _is_current_vios_byte_download(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": VIOS_BYTE_DOWNLOAD_FIXTURE["path"],
+                "generator": VIOS_BYTE_DOWNLOAD_EXECUTOR,
+                "sha256": VIOS_BYTE_DOWNLOAD_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = VIOS_BYTE_DOWNLOAD_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                VIOS_BYTE_DOWNLOAD_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = [VIOS_BYTE_DOWNLOAD_NAMESPACE]
+            oracle["cleanup"]["allowlist"] = [VIOS_BYTE_DOWNLOAD_NAMESPACE]
+            oracle["cleanup"]["executor"] = VIOS_BYTE_DOWNLOAD_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                VIOS_BYTE_DOWNLOAD_EXECUTOR
+            ]
             oracle["acceptance_readiness"] = {
                 "classification": "executor_ready",
                 "blockers": [],

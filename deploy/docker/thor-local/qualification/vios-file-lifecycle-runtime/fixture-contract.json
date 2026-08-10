@@ -1,0 +1,22 @@
+{
+  "audio": {
+    "channels": 1,
+    "codec": "aac",
+    "sample_rate": 48000
+  },
+  "container": "mp4",
+  "duration_seconds": 2,
+  "expected_bytes": 40394,
+  "expected_media_sha256": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2",
+  "generator": "deploy/docker/thor-local/qualification/vios-file-lifecycle-runtime/execute.py#_fixture",
+  "schema_version": 1,
+  "video": {
+    "b_frames": 0,
+    "codec": "h264",
+    "frame_rate": "10/1",
+    "height": 120,
+    "profile": "baseline",
+    "width": 160
+  },
+  "warehouse_sample_bundle": "excluded"
+}
