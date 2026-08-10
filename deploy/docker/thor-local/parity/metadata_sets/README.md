@@ -5,17 +5,17 @@ This directory provides the static, fail-closed metadata selector.
 binds a complete metadata plane: manifest, official ledger and schema,
 capability-oracle registry and schema, and acceptance inventory.
 
-The selected `thor-vss-3.2.1-current-event-transports-runtime-500` set
+The selected `thor-vss-3.2.1-current-alert-websocket-runtime-500` set
 contains the exact current 289-row Thor prefix plus the unchanged 211-row
 candidate suffix. The current prefix includes every prior runtime promotion and
-the oracle-bound Kafka NvSchema, Redis event-stream, Video Analytics API, VIOS
-live, and VIOS replay receipts; the
+the oracle-bound Alert Bridge WebSocket, Kafka NvSchema, Redis event-stream,
+Video Analytics API, VIOS live, and VIOS replay receipts; the
 suffix remains evidence-empty and non-promoting. The registered
-`thor-vss-3.2.1-current-event-transports-runtime-289` set exposes the same
+`thor-vss-3.2.1-current-alert-websocket-runtime-289` set exposes the same
 canonical current prefix explicitly. Previous VIOS WebRTC, NvStreamer, VIOS
-lifecycle, codec-runtime, agent-evaluation, SpatialAI, and older descriptors remain
-checked in as immutable historical provenance but are deliberately not
-registered as current.
+lifecycle, codec-runtime, event-transport, agent-evaluation, SpatialAI, and
+older descriptors remain checked in as immutable historical provenance but are
+deliberately not registered as current.
 
 The current pair also corrects `evaluation.agent.report`: its judge settings
 are repository-bound `llms.eval_llm_judge` profile configuration (`4096`,
@@ -46,7 +46,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-current-event-transports-runtime-289 --json
+  --set thor-vss-3.2.1-current-alert-websocket-runtime-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

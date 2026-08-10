@@ -1,0 +1,92 @@
+{
+  "blockers": [],
+  "captured_at": "2026-08-10T16:47:06.091880Z",
+  "cleanup": {
+    "attempted": true,
+    "failures": [],
+    "isolated_container_absent": true,
+    "isolated_listener_absent": true,
+    "normal_service_state_exact": true,
+    "owned_enhanced_stream_absent": true,
+    "owned_input_stream_absent": true,
+    "redis_health_after": "healthy",
+    "redis_nonowned_key_set_exact": true
+  },
+  "completed_at": "2026-08-10T16:47:09.368236Z",
+  "contract_sha256": "bb96e55fe28f1c480175086e4f6cfc1dc1b0216d72a825fb73eb6c9f2722953f",
+  "duration_ms": 3276,
+  "failure": null,
+  "forbidden_actions_observed": [],
+  "isolated_service": {
+    "consumer_running": true,
+    "health_status": "healthy",
+    "owned_streams_exact": true,
+    "source_mount_read_only": true
+  },
+  "network_scope": "loopback_only",
+  "pre_state": {
+    "normal_active_connections": 0,
+    "normal_service_healthy": true,
+    "owned_resources_absent": true,
+    "redis_nonowned_key_count": 8,
+    "redis_nonowned_key_names_sha256": "cbe432745e39686386333be9420cb4ca66e4dd443d55dbca212f90c92cfc4087"
+  },
+  "runtime": {
+    "connection_cleanup": {
+      "active_connections_after_close": 0,
+      "connection_removed": true
+    },
+    "negative": {
+      "application_response_observed": false,
+      "frame": "non-json",
+      "socket_remained_open": true,
+      "vector_id": "alert-ws-non-json"
+    },
+    "positive": {
+      "alert_frame_count": 1,
+      "alert_type": "original",
+      "frames": [
+        "pong",
+        "alert",
+        "status"
+      ],
+      "handshake": "HTTP Upgrade to WebSocket",
+      "message_id_match": true,
+      "pending_after_callback": 0,
+      "pong_observed": true,
+      "redis_fields_preserved": true,
+      "status_connections": 1,
+      "vector_id": "alert-ws-one-owned-entry"
+    },
+    "status": "passed"
+  },
+  "runtime_identity": {
+    "architecture": "arm64",
+    "image": "cti-vss-alert-bridge:thor-local",
+    "image_id": "sha256:74879bdea9efaaf5786f0570fcec2dbb193f3a7df6b0f72b609984e33da881fb",
+    "main_service_running": true,
+    "redis_health": "healthy",
+    "redis_image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17"
+  },
+  "schema_version": 1,
+  "semantic_action_count": 2,
+  "static_contract": {
+    "fixture_hashes": {
+      "deploy/docker/thor-local/qualification/alert-websocket-runtime/fixture-config.yaml": "733a98a88856731b3921c6f8db1dae4e60b61b90b3388e5d94a3189643462314",
+      "deploy/docker/thor-local/qualification/alert-websocket-runtime/server.py": "8f65606048cbfcf4972f985c667176460e7242e87784f46ef625145594eb4263"
+    },
+    "protocol_case_sha256": "81edbe73d91038ff9be18514e3a47fc0a7f6ee7107e53a23bd980b6ca0e50eb7",
+    "source_hashes": {
+      "services/alert/alert-agent-web/app/websocket/connection_manager.py": "4b4d771f91c1b984ce21c5fb751f00fbaf515f4929e839284338a6a60234f766",
+      "services/alert/alert-agent-web/app/websocket/redis_consumer.py": "67c4ce4bee7a00285bc04251677c801932942386af405cf68a0123cc239b8d87",
+      "services/alert/alert-agent-web/app/websocket/websocket_routes.py": "a1da545e448d76ed4f6c1586f21169329a7d2ac6dc5d542f0abb5bf844cf4068",
+      "services/alert/alert-agent-web/app/websocket/websocket_service.py": "2bbe15986ba12b751bbc95d31ce7dc93c1e81bee0f29cd6e1bac7912bb9b8309"
+    }
+  },
+  "status": "passed",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "target_release": "VSS 3.2.1",
+  "tool_id": "thor-alert-websocket-runtime",
+  "warehouse_sample_bundle": false,
+  "writes_or_lifecycle_actions": true
+}

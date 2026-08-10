@@ -532,6 +532,49 @@ EVENT_TRANSPORT_RUNTIME_WORKLOAD = {
     ],
 }
 EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS = 16
+ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID = "protocol.alert.websocket"
+ALERT_WEBSOCKET_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/alert-websocket-runtime/execute.py"
+)
+ALERT_WEBSOCKET_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/alert-websocket-runtime/"
+        "contract.json"
+    ),
+    "sha256": "bb96e55fe28f1c480175086e4f6cfc1dc1b0216d72a825fb73eb6c9f2722953f",
+}
+ALERT_WEBSOCKET_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/alert-websocket-runtime/"
+            "official-runtime-evidence.json"
+        ),
+        "sha256": "66ed95ec555d38d32a745c14e6ff8a1af4af0e56c6874f0fb1c6d2975444b44a",
+    }
+]
+ALERT_WEBSOCKET_RUNTIME_NAMESPACES = [
+    "vss-oracle-protocol-alert-websocket",
+    "vss-protocol-case-alert-input",
+    "vss-protocol-case-alert-enhanced",
+    "vss-protocol-case-alert-group",
+]
+ALERT_WEBSOCKET_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 2,
+    "overhead_requests": 0,
+    "calculated_max_requests": 2,
+    "phases": [
+        "pre_state",
+        "handshake",
+        "positive",
+        "adjacent_negative",
+        "acknowledgement",
+        "disconnect",
+        "cleanup",
+        "postcondition",
+    ],
+}
+ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS = 12
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -601,6 +644,15 @@ def _is_current_event_transport_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == EVENT_TRANSPORT_RUNTIME_EVIDENCE[capability_id]
+    )
+
+
+def _is_current_alert_websocket_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == ALERT_WEBSOCKET_RUNTIME_EVIDENCE
     )
 
 
@@ -1312,6 +1364,8 @@ def _workload(
         return copy.deepcopy(VIDEO_ANALYTICS_RUNTIME_WORKLOAD)
     if live_integration and _is_current_event_transport_runtime(capability):
         return copy.deepcopy(EVENT_TRANSPORT_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_alert_websocket_runtime(capability):
+        return copy.deepcopy(ALERT_WEBSOCKET_RUNTIME_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1379,6 +1433,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
     if _is_current_event_transport_runtime(capability):
         return EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS
+    if _is_current_alert_websocket_runtime(capability):
+        return ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2579,6 +2635,32 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_alert_websocket_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": ALERT_WEBSOCKET_RUNTIME_FIXTURE["path"],
+                "generator": ALERT_WEBSOCKET_RUNTIME_EXECUTOR,
+                "sha256": ALERT_WEBSOCKET_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = (
+                ALERT_WEBSOCKET_RUNTIME_EXECUTOR
+            )
+            oracle["execution_bounds"]["collectors"] = [
+                ALERT_WEBSOCKET_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                ALERT_WEBSOCKET_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                ALERT_WEBSOCKET_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["executor"] = ALERT_WEBSOCKET_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                ALERT_WEBSOCKET_RUNTIME_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -2787,6 +2869,8 @@ def validate(
             expected_actions = VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
         elif _is_current_event_transport_runtime(ledger_by_id[capability_id]):
             expected_actions = EVENT_TRANSPORT_RUNTIME_MAX_ACTIONS
+        elif _is_current_alert_websocket_runtime(ledger_by_id[capability_id]):
+            expected_actions = ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

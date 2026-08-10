@@ -67,6 +67,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current VIOS native WebRTC live runtime receipt
             + 2  # current Video Analytics query and optional-Kafka receipts
             + 2  # current Kafka NvSchema and Redis event transport receipts
+            + 1  # current Alert Bridge WebSocket runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -240,6 +241,47 @@ class CapabilityOracleTests(unittest.TestCase):
                 {"classification": "executor_ready", "blockers": []},
             )
             self.assertEqual(oracle["evidence"], [])
+
+    def test_alert_websocket_oracle_is_exact_executor_ready_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"]
+            == verifier.ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.ALERT_WEBSOCKET_RUNTIME_FIXTURE["path"],
+                "generator": verifier.ALERT_WEBSOCKET_RUNTIME_EXECUTOR,
+                "sha256": verifier.ALERT_WEBSOCKET_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.ALERT_WEBSOCKET_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.ALERT_WEBSOCKET_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["cleanup"]["targets"],
+            verifier.ALERT_WEBSOCKET_RUNTIME_NAMESPACES,
+        )
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(
+            oracle["protocol_case_binding"]["negative_vector_ids"],
+            ["alert-ws-non-json"],
+        )
+        self.assertEqual(oracle["evidence"], [])
 
     def test_synthetic_data_oracles_are_exact_executor_ready_rows(self) -> None:
         by_id = {item["capability_id"]: item for item in self.plan["oracles"]}
@@ -852,6 +894,9 @@ class CapabilityOracleTests(unittest.TestCase):
                     )
                     if item["capability_id"]
                     in verifier.EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS
+                    else len(verifier.ALERT_WEBSOCKET_RUNTIME_NAMESPACES)
+                    if item["capability_id"]
+                    == verifier.ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
                     else len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
                     if item["capability_id"]
                     == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
@@ -907,6 +952,14 @@ class CapabilityOracleTests(unittest.TestCase):
                         verifier.EVENT_TRANSPORT_RUNTIME_NAMESPACES[
                             item["capability_id"]
                         ],
+                    )
+                elif (
+                    item["capability_id"]
+                    == verifier.ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
+                ):
+                    self.assertEqual(
+                        cleanup["targets"],
+                        verifier.ALERT_WEBSOCKET_RUNTIME_NAMESPACES,
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
@@ -1064,6 +1117,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     in verifier.EVENT_TRANSPORT_RUNTIME_CAPABILITY_IDS
+                )
+                else verifier.ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
                 )
                 else override[2]
                 if override is not None

@@ -240,7 +240,7 @@ def metadata_repo(tmp_path: Path) -> Path:
 def test_checked_in_500_set_resolves_as_selected_snapshot() -> None:
     snapshot = resolver.resolve_metadata_set()
     assert snapshot.set_id == (
-        "thor-vss-3.2.1-current-event-transports-runtime-500"
+        "thor-vss-3.2.1-current-alert-websocket-runtime-500"
     )
     assert dict(snapshot.expected_counts) == {
         "capabilities": 500,
@@ -254,10 +254,10 @@ def test_checked_in_500_set_resolves_as_selected_snapshot() -> None:
 
 def test_checked_in_current_289_set_is_explicitly_resolvable() -> None:
     snapshot = resolver.resolve_metadata_set(
-        "thor-vss-3.2.1-current-event-transports-runtime-289"
+        "thor-vss-3.2.1-current-alert-websocket-runtime-289"
     )
     assert snapshot.set_id == (
-        "thor-vss-3.2.1-current-event-transports-runtime-289"
+        "thor-vss-3.2.1-current-alert-websocket-runtime-289"
     )
     assert dict(snapshot.expected_counts) == {
         "capabilities": 289,
@@ -267,7 +267,7 @@ def test_checked_in_current_289_set_is_explicitly_resolvable() -> None:
     assert snapshot.document("capability_oracles")["schema_version"] == 1
     selected = resolver.resolve_metadata_set()
     assert selected.set_id == (
-        "thor-vss-3.2.1-current-event-transports-runtime-500"
+        "thor-vss-3.2.1-current-alert-websocket-runtime-500"
     )
 
 
@@ -303,6 +303,8 @@ def test_stale_historical_descriptors_are_not_registered_as_current() -> None:
         "thor-vss-3.2.1-current-vios-webrtc-live-runtime-500",
         "thor-vss-3.2.1-current-video-analytics-api-runtime-289",
         "thor-vss-3.2.1-current-video-analytics-api-runtime-500",
+        "thor-vss-3.2.1-current-event-transports-runtime-289",
+        "thor-vss-3.2.1-current-event-transports-runtime-500",
     ):
         with pytest.raises(resolver.MetadataSetError, match="unknown metadata set"):
             resolver.resolve_metadata_set(historical)

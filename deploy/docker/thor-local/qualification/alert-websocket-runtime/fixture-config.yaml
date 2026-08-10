@@ -1,0 +1,17 @@
+event_bridge:
+  redis_source:
+    host: localhost
+    port: 6379
+    db: 0
+    streams:
+      anomaly_stream: vss-protocol-case-alert-input
+  redis_sink:
+    streams:
+      enhanced_anomaly_stream: vss-protocol-case-alert-enhanced
+websocket:
+  enabled: true
+  consumer_group_prefix: vss-protocol-case-alert-group
+  redis_consumer:
+    block_time: 100
+    count: 1
+    reconnect_delay: 1

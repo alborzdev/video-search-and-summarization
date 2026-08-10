@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-event-transports-runtime-289.json",
-      "descriptor_raw_sha256": "42521ef0e3940a41325c58e835ac647676417592d846b94481108053d5296954",
-      "set_id": "thor-vss-3.2.1-current-event-transports-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-alert-websocket-runtime-289.json",
+      "descriptor_raw_sha256": "75fe586a15cccd9157f8f883b6f570b5aafa5d8b632967d28b0f149f86f640f2",
+      "set_id": "thor-vss-3.2.1-current-alert-websocket-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-event-transports-runtime-500.json",
-      "descriptor_raw_sha256": "215442376c9de43ce15fef367529cb9af84c3009977ce758ed3f88debcf255df",
-      "set_id": "thor-vss-3.2.1-current-event-transports-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-alert-websocket-runtime-500.json",
+      "descriptor_raw_sha256": "4a4ca23917426dbe351b4474b0a90b848e05e0f4511ac3bdf380e3609fd19153",
+      "set_id": "thor-vss-3.2.1-current-alert-websocket-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-event-transports-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-alert-websocket-runtime-500"
 }

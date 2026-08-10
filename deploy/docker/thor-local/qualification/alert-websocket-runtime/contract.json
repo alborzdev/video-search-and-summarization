@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-alert-websocket-runtime",
+  "capability_id": "protocol.alert.websocket",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "network_scope": "loopback_only",
+  "warehouse_sample_bundle": false,
+  "max_duration_seconds": 120,
+  "max_semantic_actions": 2,
+  "protocol_case": {
+    "path": "deploy/docker/thor-local/qualification/protocol-cases/protocol-cases.json",
+    "file_sha256": "28cbcabef1bf1f3ed41ebf398de3e2387548b2ec6de72b5a51d8c5f30a59a7a6",
+    "contract_set_sha256": "3089ca096b4f86bbe54cce37027acf1769adff8bd1b4adf8a2018983c72ddb21",
+    "case_id": "protocol-case.alert.websocket",
+    "case_sha256": "81edbe73d91038ff9be18514e3a47fc0a7f6ee7107e53a23bd980b6ca0e50eb7",
+    "positive_vector_id": "alert-ws-one-owned-entry",
+    "negative_vector_id": "alert-ws-non-json"
+  },
+  "source_locks": [
+    {
+      "path": "services/alert/alert-agent-web/app/websocket/websocket_routes.py",
+      "sha256": "a1da545e448d76ed4f6c1586f21169329a7d2ac6dc5d542f0abb5bf844cf4068"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/websocket/redis_consumer.py",
+      "sha256": "67c4ce4bee7a00285bc04251677c801932942386af405cf68a0123cc239b8d87"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/websocket/connection_manager.py",
+      "sha256": "4b4d771f91c1b984ce21c5fb751f00fbaf515f4929e839284338a6a60234f766"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/websocket/websocket_service.py",
+      "sha256": "2bbe15986ba12b751bbc95d31ce7dc93c1e81bee0f29cd6e1bac7912bb9b8309"
+    }
+  ],
+  "fixture": {
+    "config_path": "deploy/docker/thor-local/qualification/alert-websocket-runtime/fixture-config.yaml",
+    "config_sha256": "733a98a88856731b3921c6f8db1dae4e60b61b90b3388e5d94a3189643462314",
+    "server_path": "deploy/docker/thor-local/qualification/alert-websocket-runtime/server.py",
+    "server_sha256": "8f65606048cbfcf4972f985c667176460e7242e87784f46ef625145594eb4263"
+  },
+  "runtime": {
+    "image": "cti-vss-alert-bridge:thor-local",
+    "image_id": "sha256:74879bdea9efaaf5786f0570fcec2dbb193f3a7df6b0f72b609984e33da881fb",
+    "architecture": "arm64",
+    "container": "vss-oracle-protocol-alert-websocket",
+    "host": "127.0.0.1",
+    "port": 19080,
+    "path": "/ws/alerts",
+    "main_service": {
+      "container": "vss-alert-bridge",
+      "health_url": "http://127.0.0.1:9080/ws/health"
+    },
+    "redis": {
+      "container": "redis",
+      "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17"
+    }
+  },
+  "owned_resources": {
+    "namespace": "vss-oracle-protocol-alert-websocket",
+    "input_stream": "vss-protocol-case-alert-input",
+    "enhanced_stream": "vss-protocol-case-alert-enhanced",
+    "consumer_group_prefix": "vss-protocol-case-alert-group"
+  },
+  "positive": {
+    "client_frame": {
+      "type": "ping"
+    },
+    "redis_fields": {
+      "case_id": "vss-protocol-case-alert-001",
+      "value": "one"
+    },
+    "expected_frames": [
+      "pong",
+      "alert",
+      "status"
+    ],
+    "deadline_seconds": 15
+  },
+  "adjacent_negative": {
+    "client_frame": "not-json",
+    "expected_application_frames": 0,
+    "observation_seconds": 1
+  },
+  "cleanup": {
+    "mutation": "namespaced_and_reversible",
+    "allowlist": [
+      "vss-oracle-protocol-alert-websocket",
+      "vss-protocol-case-alert-input",
+      "vss-protocol-case-alert-enhanced",
+      "vss-protocol-case-alert-group"
+    ],
+    "postconditions": [
+      "isolated container and loopback listener are absent",
+      "both qualifier-owned Redis streams and their derived groups are absent",
+      "non-owned Redis key names match pre-state",
+      "the normal alert WebSocket service state matches pre-state",
+      "the Redis broker remains healthy"
+    ]
+  },
+  "forbidden_actions": [
+    "VSS Agent /generate",
+    "normal alert stream mutation",
+    "normal alert container restart or configuration mutation",
+    "main VIOS sensor or stream mutation",
+    "RT-CV sample stream mutation",
+    "warehouse sample bundle access",
+    "external network request"
+  ]
+}
