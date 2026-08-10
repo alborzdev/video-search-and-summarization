@@ -31,10 +31,18 @@ class CodecSourceTests(unittest.TestCase):
         packages = codec_bundle.source_packages()
         self.assertEqual(59, len(packages))
         self.assertEqual(59, len(set(packages)))
-        self.assertEqual(codec_bundle.PACKAGE_SET_SHA256, codec_bundle.package_set_digest(packages))
+        self.assertEqual(
+            codec_bundle.UPSTREAM_PACKAGE_SET_SHA256,
+            codec_bundle.package_set_digest(packages),
+        )
         self.assertIn("gstreamer1.0-libav", packages)
         self.assertIn("libavcodec60", packages)
         self.assertIn("libmp3lame0", packages)
+
+        bundle_packages = codec_bundle.bundle_packages()
+        self.assertEqual(63, len(bundle_packages))
+        self.assertEqual(codec_bundle.PACKAGE_SET_SHA256, codec_bundle.package_set_digest(bundle_packages))
+        self.assertTrue(set(codec_bundle.THOR_RUNTIME_DEPENDENCIES).issubset(bundle_packages))
 
 
 class CodecFrozenManifestTests(unittest.TestCase):
@@ -63,6 +71,7 @@ class CodecFrozenManifestTests(unittest.TestCase):
             "architecture": "arm64",
             "package_count": len(entries),
             "packages": entries,
+            "thor_runtime_dependencies": list(codec_bundle.THOR_RUNTIME_DEPENDENCIES),
         }
 
     def contract(self):
@@ -73,11 +82,12 @@ class CodecFrozenManifestTests(unittest.TestCase):
                 "PACKAGE_SET_SHA256",
                 codec_bundle.package_set_digest(list(self.packages)),
             ),
+            mock.patch.object(codec_bundle, "THOR_RUNTIME_DEPENDENCIES", ()),
         )
 
     def test_manifest_rejects_duplicate_and_traversing_archive_names(self):
-        count_patch, digest_patch = self.contract()
-        with count_patch, digest_patch:
+        count_patch, digest_patch, runtime_patch = self.contract()
+        with count_patch, digest_patch, runtime_patch:
             duplicate = self.manifest()
             duplicate["packages"][1]["filename"] = duplicate["packages"][0]["filename"]
             duplicate["packages"][1]["package"] = duplicate["packages"][0]["package"]
@@ -90,8 +100,8 @@ class CodecFrozenManifestTests(unittest.TestCase):
                 codec_bundle.validate_manifest(traversal)
 
     def test_frozen_verifier_requires_exact_regular_file_inventory(self):
-        count_patch, digest_patch = self.contract()
-        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch:
+        count_patch, digest_patch, runtime_patch = self.contract()
+        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch, runtime_patch:
             bundle = Path(directory)
             document = self.manifest()
             payload = json.dumps(document, sort_keys=True) + "\n"
@@ -117,8 +127,8 @@ class CodecFrozenManifestTests(unittest.TestCase):
                     codec_bundle.verify_bundle(bundle, frozen=True, lock_path=lock_path)
 
     def test_frozen_verifier_rejects_linked_or_directory_entries(self):
-        count_patch, digest_patch = self.contract()
-        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch:
+        count_patch, digest_patch, runtime_patch = self.contract()
+        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch, runtime_patch:
             bundle = Path(directory)
             document = self.manifest()
             payload = json.dumps(document, sort_keys=True) + "\n"
@@ -132,8 +142,8 @@ class CodecFrozenManifestTests(unittest.TestCase):
                 codec_bundle.verify_bundle(bundle, frozen=True, lock_path=lock_path)
 
     def test_frozen_verifier_rejects_manifest_not_equal_to_canonical_lock(self):
-        count_patch, digest_patch = self.contract()
-        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch:
+        count_patch, digest_patch, runtime_patch = self.contract()
+        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch, runtime_patch:
             root = Path(directory)
             bundle = root / "bundle"
             bundle.mkdir()
@@ -151,8 +161,8 @@ class CodecFrozenManifestTests(unittest.TestCase):
                 codec_bundle.verify_bundle(bundle, frozen=True, lock_path=lock_path)
 
     def test_stage_refuses_automatic_canonical_lock_refresh(self):
-        count_patch, digest_patch = self.contract()
-        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch:
+        count_patch, digest_patch, runtime_patch = self.contract()
+        with tempfile.TemporaryDirectory() as directory, count_patch, digest_patch, runtime_patch:
             root = Path(directory)
             canonical = self.manifest()
             lock_path = root / "codec-bundle.lock.json"
@@ -160,7 +170,7 @@ class CodecFrozenManifestTests(unittest.TestCase):
             drifted = json.loads(json.dumps(canonical))
             drifted["packages"][0]["version"] = "1.1"
             with (
-                mock.patch.object(codec_bundle, "source_packages", return_value=list(self.packages)),
+                mock.patch.object(codec_bundle, "bundle_packages", return_value=list(self.packages)),
                 mock.patch.object(
                     codec_bundle,
                     "resolve_and_download",

@@ -66,7 +66,7 @@ def _oracle_counts() -> dict[str, int]:
 
 def test_default_selected_500_set_is_authoritatively_validated() -> None:
     report = verifier.verify_metadata_set()
-    assert report["set_id"] == "thor-vss-3.2.1-current-agent-evaluation-contract-500"
+    assert report["set_id"] == "thor-vss-3.2.1-current-vios-codecs-runtime-500"
     assert report["oracle_schema_version"] == 2
     assert report["oracle_validator"] == "capability_oracles_v2"
     assert report["counts"] == {
@@ -79,9 +79,9 @@ def test_default_selected_500_set_is_authoritatively_validated() -> None:
 
 def test_explicit_current_289_set_is_authoritatively_validated() -> None:
     report = verifier.verify_metadata_set(
-        "thor-vss-3.2.1-current-agent-evaluation-contract-289"
+        "thor-vss-3.2.1-current-vios-codecs-runtime-289"
     )
-    assert report["set_id"] == "thor-vss-3.2.1-current-agent-evaluation-contract-289"
+    assert report["set_id"] == "thor-vss-3.2.1-current-vios-codecs-runtime-289"
     assert report["oracle_schema_version"] == 1
     assert report["oracle_validator"] == "capability_oracles.v1"
     assert report["counts"] == {

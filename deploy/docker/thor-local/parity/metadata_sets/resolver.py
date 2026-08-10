@@ -500,6 +500,30 @@ def _validate_bundle_semantics(
         if not family:
             continue
         derived = _derived_family_status(family)
+        unqualified_advertised = feature.get("unqualified_advertised", [])
+        if unqualified_advertised:
+            advertised = feature.get("advertised")
+            passed_titles = {
+                item.get("title")
+                for item in family
+                if item.get("runtime_state") == "passed_current"
+            }
+            if (
+                not isinstance(unqualified_advertised, list)
+                or not isinstance(advertised, list)
+                or any(
+                    not isinstance(item, str) or not item
+                    for item in unqualified_advertised
+                )
+                or len(unqualified_advertised) != len(set(unqualified_advertised))
+                or not set(unqualified_advertised) <= set(advertised)
+                or set(unqualified_advertised) & passed_titles
+                or derived["acceptance_class"] == "external_optional"
+            ):
+                raise MetadataSetError(
+                    f"invalid unqualified advertised boundary: {feature['id']}"
+                )
+            derived["runtime_state"] = "not_qualified"
         if any(feature.get(field) != value for field, value in derived.items()):
             raise MetadataSetError(
                 f"manifest aggregate differs from ledger: {feature['id']}"

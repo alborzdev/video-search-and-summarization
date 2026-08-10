@@ -238,7 +238,7 @@
                   "title": {"const": "CPU multimedia support"},
                   "acceptance_class": {"const": "required_local"},
                   "thor_state": {"const": "wired"},
-                  "runtime_state": {"const": "not_qualified"},
+                  "runtime_state": {"enum": ["not_qualified", "passed_current"]},
                   "contract": {
                     "required": ["selectors", "branch_selection", "software_elements", "hardware_default_elements", "offline_bundle", "immutable_derivatives", "source_controls"]
                   }

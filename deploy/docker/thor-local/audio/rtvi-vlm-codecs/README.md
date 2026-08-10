@@ -2,7 +2,8 @@
 
 This directory intentionally contains no Debian packages in Git. The exact
 ARM64 package identities come from the source-locked VSS 3.2.1 RT-Embed
-installer, and match the later open-source RT-VLM installer's 59-package set.
+installer, and extend the later open-source RT-VLM installer's 59-package set
+with the four runtime libraries required to load every retained GStreamer plugin.
 The staging tool resolves current security versions through signed Ubuntu
 Noble metadata over HTTPS, validates all packages as ARM64 Debian archives,
 and writes hashes plus control metadata to

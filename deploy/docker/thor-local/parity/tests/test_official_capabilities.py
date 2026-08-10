@@ -601,7 +601,7 @@ class OfficialCapabilityTests(unittest.TestCase):
                         ],
                     )
 
-    def test_cpu_multimedia_entry_is_exactly_wired_but_unqualified(self) -> None:
+    def test_cpu_multimedia_entry_is_runtime_qualified_with_family_gate(self) -> None:
         capability = next(
             item
             for item in self.ledger["capabilities"]
@@ -618,8 +618,13 @@ class OfficialCapabilityTests(unittest.TestCase):
         )
         self.assertEqual(capability["kind"], "runtime_behavior")
         self.assertEqual(capability["thor_state"], "wired")
-        self.assertEqual(capability["runtime_state"], "not_qualified")
-        self.assertNotIn("runtime_evidence", capability)
+        self.assertEqual(capability["runtime_state"], "passed_current")
+        self.assertEqual(
+            capability["runtime_evidence"],
+            [verifier.CPU_MULTIMEDIA_RUNTIME_EVIDENCE],
+        )
+        self.assertEqual(feature["runtime_state"], "not_qualified")
+        self.assertEqual(feature["unqualified_advertised"], ["audio recording"])
         contract = capability["contract"]
         self.assertEqual(
             contract["selectors"],
@@ -659,6 +664,17 @@ class OfficialCapabilityTests(unittest.TestCase):
         self.assertEqual(
             {item["path"]: item["sha256"] for item in contract["source_controls"]},
             verifier.CPU_MULTIMEDIA_SOURCE_CONTROLS,
+        )
+        self.assertEqual(
+            contract["offline_bundle"],
+            {
+                "architecture": "arm64",
+                "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+                "package_count": 63,
+                "package_set_sha256": (
+                    "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4"
+                ),
+            },
         )
 
     def test_cpu_multimedia_selector_or_source_control_drift_fails_closed(self) -> None:

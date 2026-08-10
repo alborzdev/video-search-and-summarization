@@ -5,18 +5,16 @@ This directory provides the static, fail-closed metadata selector.
 binds a complete metadata plane: manifest, official ledger and schema,
 capability-oracle registry and schema, and acceptance inventory.
 
-The selected
-`thor-vss-3.2.1-current-agent-evaluation-contract-500` set contains the exact
-current 289-row Thor prefix plus the unchanged 211-row candidate suffix. Its
-prefix has 13 executor-ready rows: four Synthetic Data, two MV3DT
-configuration-tool, and all seven provider-free SpatialAI rows. The SpatialAI
-oracles remain open and evidence-empty while their ledger rows bind reviewed
-runtime evidence; entry 07 remains an external optional boundary and the family
-therefore remains `partial/not_qualified`. All 211 candidate rows remain
-evidence-empty and non-promoting. The registered
-`thor-vss-3.2.1-current-agent-evaluation-contract-289` set exposes the same
-canonical current prefix explicitly. The predecessor SpatialAI Stage-1
-descriptors and all older descriptors remain checked in as immutable historical
+The selected `thor-vss-3.2.1-current-vios-codecs-runtime-500` set contains the
+exact current 289-row Thor prefix plus the unchanged 211-row candidate suffix.
+The current prefix includes all later runtime promotions, including the exact
+63-package CPU multimedia receipt; the suffix remains evidence-empty and
+non-promoting. Its four non-CPU codec planning rows remain open until their
+existing raw runtime results receive separate canonical bindings, and
+main-VIOS AAC recording remains approval-gated. The registered
+`thor-vss-3.2.1-current-vios-codecs-runtime-289` set exposes the same canonical
+current prefix explicitly. The predecessor agent-evaluation, SpatialAI
+Stage-1, and older descriptors remain checked in as immutable historical
 provenance but are deliberately not registered as current.
 
 The current pair also corrects `evaluation.agent.report`: its judge settings
@@ -48,7 +46,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-current-agent-evaluation-contract-289 --json
+  --set thor-vss-3.2.1-current-vios-codecs-runtime-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py

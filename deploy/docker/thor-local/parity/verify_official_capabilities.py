@@ -35,12 +35,35 @@ PLAIN_ID = re.compile(r"^[a-z0-9][a-z0-9._-]+$")
 CPU_MULTIMEDIA_CAPABILITY_ID = (
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
 )
+CPU_MULTIMEDIA_RUNTIME_EVIDENCE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/vios-codecs-runtime/"
+        "official-runtime-evidence.json"
+    ),
+    "sha256": "a4bfd3a6562f95214624f7f84f8115162031285dc231b3f2e168ecb7233addab",
+    "capability_id": CPU_MULTIMEDIA_CAPABILITY_ID,
+    "json_pointer": "/capability_results/0",
+}
+CPU_MULTIMEDIA_RAW_RECEIPT = {
+    "path": (
+        "deploy/docker/thor-local/qualification/vios-codecs-runtime/"
+        "runtime-receipt.json"
+    ),
+    "sha256": "c850adad8fe65bfe4a40741fa24f86de3abbc80baf8de54cf903c034bfe6f93c",
+}
 CPU_MULTIMEDIA_SOURCE_CONTROLS = {
     "services/vios/src/framework/media/media_utils/gst_utils.cpp": "08400fd8679288b2ccb4e2d89d7edbaee6e118ea14345626544339718b3e84a9",
     "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp": "044efd0c133c17277119e065f035d63fc300c9965fea8c2058c5e606c5b2d787",
     "services/vios/src/framework/utilities/config.cpp": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92",
     "services/vios/src/framework/platform_specific/nvhwdetection.h": "49c65717f6afa4da93e9b0206cde0664eb2ae51d2ed4a46d15156886c687e7e0",
     "deploy/docker/thor-local/vios/vst_config.json": "0c8e101229e37abb5369386a1185116e8be59a3915bcdb4b7d42a2af2c472399",
+    "deploy/docker/thor-local/audio/codec-bundle.lock.json": "e15b1ec7a68ca4087669a395148a1dea1e9d18288dcd072a259a43bcfe67f197",
+    "deploy/docker/thor-local/Dockerfile.vios-streamprocessing": "e968fd9fdcd800f59a56a13e069e020be68487b1f429f2662d34a166cc495c67",
+    "deploy/docker/thor-local/Dockerfile.vios-nvstreamer": "ce1a8d18cb55aa6273f4fb4094683170b6dff4de63b8f02ba388bb5cf12f4904",
+    "deploy/docker/thor-local/vios-codecs/vios_media.py": "004716c98815ec910c03a8fd86cb10b29e52b66ad21ebf24aada9a817c15298d",
+}
+CPU_MULTIMEDIA_HISTORICAL_SOURCE_CONTROLS = {
+    **CPU_MULTIMEDIA_SOURCE_CONTROLS,
     "deploy/docker/thor-local/audio/codec-bundle.lock.json": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78",
     "deploy/docker/thor-local/Dockerfile.vios-streamprocessing": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285",
     "deploy/docker/thor-local/Dockerfile.vios-nvstreamer": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0",
@@ -156,23 +179,29 @@ def _aggregate_family_status(capabilities: list[dict[str, Any]]) -> dict[str, st
 
 
 def _validate_cpu_multimedia_contract(
-    capability: dict[str, Any], repo_root: Path
+    capability: dict[str, Any], repo_root: Path, *, allow_historical: bool = False
 ) -> None:
     capability_id = capability["id"]
+    historical = allow_historical and capability.get("runtime_state") == "not_qualified"
     expected_identity = {
         "feature_id": "vios-codecs-audio",
         "kind": "runtime_behavior",
         "title": "CPU multimedia support",
         "acceptance_class": "required_local",
         "thor_state": "wired",
-        "runtime_state": "not_qualified",
+        "runtime_state": "not_qualified" if historical else "passed_current",
         "scenario_ids": ["analytics-vios-workflows"],
     }
     if any(capability.get(key) != value for key, value in expected_identity.items()):
         raise CapabilityContractError(f"{capability_id}: canonical identity drift")
-    if "runtime_evidence" in capability:
+    if historical:
+        if "runtime_evidence" in capability:
+            raise CapabilityContractError(
+                f"{capability_id}: historical CPU projection contains runtime evidence"
+            )
+    elif capability.get("runtime_evidence") != [CPU_MULTIMEDIA_RUNTIME_EVIDENCE]:
         raise CapabilityContractError(
-            f"{capability_id}: unqualified capability cannot contain runtime evidence"
+            f"{capability_id}: current runtime evidence binding differs"
         )
 
     contract = capability["contract"]
@@ -224,12 +253,21 @@ def _validate_cpu_multimedia_contract(
             "h265": "nvv4l2h265enc",
         },
     }
-    expected_bundle = {
-        "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
-        "architecture": "arm64",
-        "package_count": 59,
-        "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f",
-    }
+    expected_bundle = (
+        {
+            "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+            "architecture": "arm64",
+            "package_count": 59,
+            "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f",
+        }
+        if historical
+        else {
+            "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+            "architecture": "arm64",
+            "package_count": 63,
+            "package_set_sha256": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+        }
+    )
     expected_derivatives = {
         "runtime_network_install": "disabled",
         "entrypoint": "/usr/local/bin/vios-offline-entrypoint",
@@ -256,11 +294,18 @@ def _validate_cpu_multimedia_contract(
         for item in source_controls
         if isinstance(item, dict)
     }
+    expected_controls = (
+        CPU_MULTIMEDIA_HISTORICAL_SOURCE_CONTROLS
+        if historical
+        else CPU_MULTIMEDIA_SOURCE_CONTROLS
+    )
     if (
         len(observed_controls) != len(source_controls)
-        or observed_controls != CPU_MULTIMEDIA_SOURCE_CONTROLS
+        or observed_controls != expected_controls
     ):
         raise CapabilityContractError(f"{capability_id}: source control set drift")
+    if historical:
+        return
     resolved_controls: dict[str, Path] = {}
     for relative, expected_digest in observed_controls.items():
         required_prefix = (
@@ -294,6 +339,14 @@ def _validate_cpu_multimedia_contract(
         for key in ("architecture", "package_count", "package_set_sha256")
     ):
         raise CapabilityContractError(f"{capability_id}: offline bundle identity drift")
+    if (
+        lock.get("schema_version") != 2
+        or lock.get("thor_runtime_dependencies")
+        != ["libbs2b0", "libcdio19t64", "libsbc1", "libsidplay1v5"]
+    ):
+        raise CapabilityContractError(
+            f"{capability_id}: Thor runtime dependency closure drift"
+        )
 
     required_fragments = {
         "services/vios/src/framework/media/media_utils/gst_utils.cpp": [
@@ -2230,6 +2283,168 @@ def _validate_aggregate_runtime_evidence(
     target: dict[str, Any],
     repo_root: Path,
 ) -> dict[str, Any]:
+    if aggregate.get("package_id") == "thor-vios-codecs-runtime-evidence-v1":
+        capability_id = capability["id"]
+        if capability_id != CPU_MULTIMEDIA_CAPABILITY_ID:
+            raise CapabilityContractError(
+                f"{capability_id}: VIOS codec evidence is bound to the wrong capability"
+            )
+        if reference != CPU_MULTIMEDIA_RUNTIME_EVIDENCE:
+            raise CapabilityContractError(
+                f"{capability_id}: VIOS codec evidence selector differs"
+            )
+        if set(aggregate) != {
+            "schema_version",
+            "package_id",
+            "target",
+            "warehouse_sample_bundle",
+            "raw_receipt",
+            "capability_results",
+            "cleanup",
+        }:
+            raise CapabilityContractError("VIOS codec evidence fields are not exact")
+        if (
+            aggregate.get("schema_version") != 1
+            or aggregate.get("target") != target
+            or aggregate.get("warehouse_sample_bundle") != "excluded"
+            or aggregate.get("raw_receipt") != CPU_MULTIMEDIA_RAW_RECEIPT
+        ):
+            raise CapabilityContractError("VIOS codec evidence identity differs")
+        selected = _select_aggregate_capability(aggregate, reference)
+        if selected != {
+            "capability_id": CPU_MULTIMEDIA_CAPABILITY_ID,
+            "raw_receipt_pointer": "/capability_results/cpu_multimedia_support",
+            "result": "passed_current",
+        }:
+            raise CapabilityContractError("VIOS codec capability result differs")
+        expected_stream_ids = [
+            "50f3f804-0b8e-42df-b2a6-637b057dd0d5",
+            "56f7d6fa-4c9f-49bd-9cdd-f33a338dd8a2",
+            "5858732a-f384-4b24-bda9-f80cba193ea0",
+            "ad3c7cd4-a764-435b-a8ed-21aa81f60a88",
+            "qual_sw_h264_1200k",
+            "qual_sw_h265_1200k",
+        ]
+        if aggregate.get("cleanup") != {
+            "api_deleted_stream_ids": expected_stream_ids,
+            "container_absent": "vss-codec-qualifier-nvstreamer-software",
+            "isolated_sensor_list_before_shutdown": [],
+            "main_vios_configuration_changed": False,
+            "result": "passed",
+            "temporary_paths_absent": [
+                "/tmp/vss-codec-qualifier.hrHz6o",
+                "/tmp/vss-codec-runtime-deps.tkmXOp",
+            ],
+        }:
+            raise CapabilityContractError("VIOS codec cleanup evidence differs")
+
+        raw_path = _resolve_repo_file(
+            repo_root,
+            CPU_MULTIMEDIA_RAW_RECEIPT["path"],
+            label=f"{capability_id}.raw_runtime_receipt",
+            required_prefix=(
+                "deploy/docker/thor-local/qualification/vios-codecs-runtime/"
+            ),
+        )
+        if (
+            hashlib.sha256(raw_path.read_bytes()).hexdigest()
+            != CPU_MULTIMEDIA_RAW_RECEIPT["sha256"]
+        ):
+            raise CapabilityContractError("VIOS codec raw receipt digest differs")
+        raw = _load(raw_path)
+        bundle = raw.get("bundle", {})
+        bounds = raw.get("qualification_bounds", {})
+        results = raw.get("capability_results", {})
+        if (
+            raw.get("schema_version") != 1
+            or raw.get("qualification_id")
+            != "thor-vss-3.2.1-vios-codecs-runtime-2026-08-10"
+            or raw.get("status") != "passed_with_evidenced_limitation"
+            or raw.get("runtime_evidence") is not True
+            or bundle
+            != {
+                "lock_sha256": "e15b1ec7a68ca4087669a395148a1dea1e9d18288dcd072a259a43bcfe67f197",
+                "package_count": 63,
+                "package_set_sha256": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+                "thor_runtime_dependencies": [
+                    "libbs2b0",
+                    "libcdio19t64",
+                    "libsbc1",
+                    "libsidplay1v5",
+                ],
+                "upstream_package_count": 59,
+            }
+            or bounds.get("warehouse_sample_bundle_used") is not False
+            or bounds.get("main_vios_configuration_changed") is not False
+            or bounds.get("main_vios_sensor_added") is not False
+            or bounds.get("host_library_mounts") is not False
+            or bounds.get("gstreamer_missing_dependencies") != []
+            or results.get("cpu_multimedia_support") != "passed_current"
+        ):
+            raise CapabilityContractError("VIOS codec raw receipt contract differs")
+        image = raw.get("image", {})
+        if (
+            image.get("tag") != "vss-vios-nvstreamer:3.2.1-thor-local"
+            or image.get("id")
+            != "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563"
+            or image.get("architecture") != "arm64"
+            or image.get("codec_package_set")
+            != "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4"
+            or image.get("runtime_network_install") != "disabled"
+        ):
+            raise CapabilityContractError("VIOS codec image evidence differs")
+        fixture = raw.get("fixtures", {})
+        bframe_streams = fixture.get("h264_two_bframes_aac", [])
+        bframe_video = [
+            item
+            for item in bframe_streams
+            if isinstance(item, dict) and item.get("codec_type") == "video"
+        ]
+        if (
+            len(bframe_video) != 1
+            or bframe_video[0].get("codec_name") != "h264"
+            or bframe_video[0].get("has_b_frames") != 2
+            or fixture.get("h265_slice_counts")
+            != {"pictures": 120, "continuation_slices": 360, "slices_per_picture": 4}
+            or raw.get("hardware_path", {}).get("decoded_frames")
+            != {"h264_b2_aac": 120, "h265_s4_aac": 120}
+        ):
+            raise CapabilityContractError("VIOS hardware-path fixture evidence differs")
+        software = raw.get("software_path", {})
+        transcodes = software.get("transcodes", {})
+        if software.get("config_use_software_path") is not True or set(transcodes) != {
+            "h264_aac",
+            "h265_aac",
+        }:
+            raise CapabilityContractError("VIOS software-path evidence differs")
+        for name, expected_codec in (("h264_aac", "h264"), ("h265_aac", "h265")):
+            result = transcodes[name]
+            streams = result.get("rtsp_streams", [])
+            video = [item for item in streams if item.get("codec_type") == "video"]
+            audio = [item for item in streams if item.get("codec_type") == "audio"]
+            if (
+                result.get("codec") != expected_codec
+                or result.get("framerate") != 12.0
+                or result.get("bitrate_bps", 0) <= 1_000_000
+                or len(video) != 1
+                or video[0].get("has_b_frames") != 0
+                or len(audio) != 1
+                or audio[0].get("codec_name") != "aac"
+                or audio[0].get("sample_rate") != "48000"
+            ):
+                raise CapabilityContractError(
+                    f"VIOS {name} software-transcode evidence differs"
+                )
+        oracle = oracles_by_id.get(capability_id)
+        if (
+            oracle is None
+            or oracle.get("ledger_binding", {}).get("runtime_state")
+            != "passed_current"
+            or oracle.get("ledger_binding", {}).get("contract")
+            != capability.get("contract")
+        ):
+            raise CapabilityContractError("VIOS CPU oracle binding differs")
+        return selected
     if (
         aggregate.get("package_id")
         == "thor-spatial-ai-utils-runtime-evidence-successor-v1"
@@ -2502,7 +2717,9 @@ def validate(
             )
         contract = capability["contract"]
         if capability_id == CPU_MULTIMEDIA_CAPABILITY_ID:
-            _validate_cpu_multimedia_contract(capability, repo_root)
+            _validate_cpu_multimedia_contract(
+                capability, repo_root, allow_historical=injected_oracle_plan
+            )
         if "expected_manifest" in contract:
             expected_manifest = _resolve_repo_file(
                 repo_root,
@@ -2707,6 +2924,24 @@ def validate(
                 f"{feature_id}: family thor_state does not aggregate capability states"
             )
         expected_runtime = expected_status["runtime_state"]
+        unqualified_advertised = feature.get("unqualified_advertised", [])
+        if unqualified_advertised:
+            passed_titles = {
+                item["title"]
+                for item in group
+                if item["runtime_state"] == "passed_current"
+            }
+            if (
+                not isinstance(unqualified_advertised, list)
+                or len(unqualified_advertised) != len(set(unqualified_advertised))
+                or not set(unqualified_advertised) <= set(feature["advertised"])
+                or set(unqualified_advertised) & passed_titles
+                or feature["acceptance_class"] == "external_optional"
+            ):
+                raise CapabilityContractError(
+                    f"{feature_id}: unqualified advertised boundary is invalid"
+                )
+            expected_runtime = "not_qualified"
         if feature.get("runtime_state") != expected_runtime:
             raise CapabilityContractError(
                 f"{feature_id}: family runtime_state does not aggregate capability states"

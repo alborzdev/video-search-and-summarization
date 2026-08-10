@@ -65,13 +65,13 @@ class CodecInstallerAdversarialTests(unittest.TestCase):
             shutil.copy2(source, extra)
             result = self.run_verifier(bundle)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("expected 59 ARM64 archives, found 60", result.stderr)
+            self.assertIn("expected 63 ARM64 archives, found 64", result.stderr)
             extra.unlink()
 
             source.unlink()
             result = self.run_verifier(bundle)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("expected 59 ARM64 archives, found 58", result.stderr)
+            self.assertIn("expected 63 ARM64 archives, found 62", result.stderr)
 
             tampered_lock = root / "codec-bundle.lock.json"
             tampered_lock.write_text(LOCK.read_text() + "\n")

@@ -25,13 +25,16 @@ before runtime qualification.
 
 Other blockers remain explicit: all three NvStreamer input surfaces plus RTSP,
 actual WebRTC, and removal; three BDD-enumerated sensor conflicts; two-download
-at-rest identity rather than upload-byte identity; 30fps remediation evidence;
-and H.264/H.265/AAC hardware-versus-software element selection. Recorded image
-digests do not include the sensor service and are not live identity readbacks.
+at-rest identity rather than upload-byte identity; and 30fps remediation
+evidence. Recorded image digests do not include the sensor service and are not
+live identity readbacks. CPU multimedia is independently current-qualified by
+the source-locked codec runtime receipt; this inert future-regression plan does
+not duplicate or supersede that evidence.
 
 The source locks cover the sensor-conflict and full-file implementations,
 NvStreamer uploader/UI/RTSP/WebRTC controls, the Thor Compose topology, and the
-CPU multimedia branch controls—not only their planning metadata.
+CPU multimedia branch controls—not only their planning metadata—and validates
+the exact independent runtime-evidence binding for that already-passed row.
 
 Run focused tests with:
 

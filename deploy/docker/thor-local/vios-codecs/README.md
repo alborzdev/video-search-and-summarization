@@ -27,7 +27,8 @@ upstream change fails closed rather than silently weakening the evidence.
 ## Connected staging (one time)
 
 The VIOS lane deliberately shares the RT-VLM lane's tracked
-`audio/codec-bundle.lock.json`, which fixes the exact 59 versions, filenames,
+`audio/codec-bundle.lock.json`, which fixes the exact 59 upstream versions plus
+four Thor runtime-closure packages, including every filename,
 sizes, SHA-256 values, and credential-free allowlisted source URLs. VIOS keeps
 its own ignored local bundle directory. The stager resolves through signed
 Ubuntu Noble metadata over HTTPS but refuses any result that differs from the
@@ -56,7 +57,7 @@ python3 deploy/docker/thor-local/vios-codecs/vios_media.py build-command
 ```
 
 Both use `docker build --network=none`. The Dockerfiles first require
-`manifest.json` to equal the trusted shared lock, then verify all 59 archive
+`manifest.json` to equal the trusted shared lock, then verify all 63 archive
 checksums, validate ARM64 Debian metadata, extract them,
 remove unsupported/QSV plugins, assert libav + MP4 + x264 + x265 files, and
 embed the manifest. They contain no `apt`, `curl`, `wget`, or `pip` operation.

@@ -1,0 +1,40 @@
+{
+  "capability_results": [
+    {
+      "capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
+      "raw_receipt_pointer": "/capability_results/cpu_multimedia_support",
+      "result": "passed_current"
+    }
+  ],
+  "cleanup": {
+    "api_deleted_stream_ids": [
+      "50f3f804-0b8e-42df-b2a6-637b057dd0d5",
+      "56f7d6fa-4c9f-49bd-9cdd-f33a338dd8a2",
+      "5858732a-f384-4b24-bda9-f80cba193ea0",
+      "ad3c7cd4-a764-435b-a8ed-21aa81f60a88",
+      "qual_sw_h264_1200k",
+      "qual_sw_h265_1200k"
+    ],
+    "container_absent": "vss-codec-qualifier-nvstreamer-software",
+    "isolated_sensor_list_before_shutdown": [],
+    "main_vios_configuration_changed": false,
+    "result": "passed",
+    "temporary_paths_absent": [
+      "/tmp/vss-codec-qualifier.hrHz6o",
+      "/tmp/vss-codec-runtime-deps.tkmXOp"
+    ]
+  },
+  "package_id": "thor-vios-codecs-runtime-evidence-v1",
+  "raw_receipt": {
+    "path": "deploy/docker/thor-local/qualification/vios-codecs-runtime/runtime-receipt.json",
+    "sha256": "c850adad8fe65bfe4a40741fa24f86de3abbc80baf8de54cf903c034bfe6f93c"
+  },
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  },
+  "warehouse_sample_bundle": "excluded"
+}

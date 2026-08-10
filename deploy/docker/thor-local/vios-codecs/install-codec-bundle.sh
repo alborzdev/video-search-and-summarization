@@ -10,9 +10,9 @@ mode=${3:-install}
 manifest="${bundle}/manifest.json"
 lock=${4:-/tmp/vios-codec-lock.json}
 expected_source=20f1c024c11405ed88192ed9e26a2841348249b8c4238bccd5cce355f7051238
-expected_set=c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f
-expected_lock=97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78
-expected_count=59
+expected_set=ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4
+expected_lock=e15b1ec7a68ca4087669a395148a1dea1e9d18288dcd072a259a43bcfe67f197
+expected_count=63
 
 [[ "${target}" == / ]] || { echo "VIOS codecs may only be installed into an image root" >&2; exit 2; }
 [[ "${mode}" == install || "${mode}" == verify-only ]] || {
@@ -114,7 +114,7 @@ lib_dir=/usr/lib/aarch64-linux-gnu
 gst_dir=${lib_dir}/gstreamer-1.0
 
 # Match NVIDIA's non-root codec overlay: plugins whose dependency closure is
-# intentionally outside this 59-package set must not poison GStreamer scans.
+# intentionally outside this 63-package set must not poison GStreamer scans.
 for plugin in libgstspandsp libgstopenh264 libgstvoaacenc libgstfaad libgstdtsdec \
               libgstdvdread libgstmpeg2enc libgstmplex libgstresindvd libgstladspa \
               libgstzxing libgstneonhttpsrc libgstfluidsynthmidi libgstdirectfb \
@@ -136,6 +136,10 @@ rm -rf "${lib_dir}/mfx" /root/.cache/gstreamer-1.0
 [[ -e "${lib_dir}/libx265.so.199" ]] || { echo "CPU H.265 library missing" >&2; exit 2; }
 [[ -e "${gst_dir}/libgstlibav.so" ]] || { echo "GStreamer libav plugin missing" >&2; exit 2; }
 [[ -e "${gst_dir}/libgstisomp4.so" ]] || { echo "GStreamer ISO MP4 plugin missing" >&2; exit 2; }
+[[ -e "${lib_dir}/libbs2b.so.0" ]] || { echo "libav filter dependency libbs2b.so.0 missing" >&2; exit 2; }
+[[ -e "${lib_dir}/libsbc.so.1" ]] || { echo "GStreamer SBC dependency missing" >&2; exit 2; }
+[[ -e "${lib_dir}/libcdio.so.19" ]] || { echo "GStreamer CDIO dependency missing" >&2; exit 2; }
+[[ -e "${lib_dir}/libsidplay.so.1" ]] || { echo "GStreamer SID dependency missing" >&2; exit 2; }
 
 install -d -m 0555 /usr/share/vss-thor/vios-codecs
 install -m 0444 "${lock}" /usr/share/vss-thor/vios-codecs/manifest.json

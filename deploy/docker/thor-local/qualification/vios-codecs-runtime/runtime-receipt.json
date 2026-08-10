@@ -1,0 +1,265 @@
+{
+  "artifact_hashes": {
+    "h264_b2_aac-hardware-repaired-decode-progress.txt": {
+      "bytes": 2772,
+      "sha256": "c1adb97d9dd5bfcba3504af62806c5cfd0eb366e0270e50324436e8e85cfecda"
+    },
+    "h264_b2_aac-input-probe.json": {
+      "bytes": 555,
+      "sha256": "61b7927e4a94093b58ccc7ae1b92ea9bd5ffaddf7da81ecfe94687162b053a55"
+    },
+    "h264_b2_aac.mp4": {
+      "bytes": 653126,
+      "sha256": "a84d9864ec70418688e7c1241e21dc262bbbb0303ad3651c83c643be745528a7"
+    },
+    "h265_s4_aac-hardware-repaired-decode-progress.txt": {
+      "bytes": 2771,
+      "sha256": "8ded9edf2c8c69794c52825989f4a93e67b51d2fbcc8ff97945d0a95bd490fc6"
+    },
+    "h265_s4_aac-trace-headers.txt": {
+      "bytes": 2024275,
+      "sha256": "577d13f8972b561eac932fe262d9e35c6ed8a7be170dca481259e6ee3dbab66a"
+    },
+    "h265_s4_aac.mp4": {
+      "bytes": 1037021,
+      "sha256": "808c504bc0d30d7e2428f2bd9b09c8d54ea3617ca13d60635af4adae5439eba3"
+    },
+    "qual_sw_h264_1200k-mediainfo.json": {
+      "bytes": 439,
+      "sha256": "727e02cc7b4efe391ac1d06647bbc8f181bce77fe54b658ef6c5aca72126163f"
+    },
+    "qual_sw_h265_1200k-mediainfo.json": {
+      "bytes": 439,
+      "sha256": "af93ee9f05c6f8482724a26c5c39b2e00b1793ac698913b36598b562b09f38c8"
+    },
+    "software-element-selection.log": {
+      "bytes": 1453,
+      "sha256": "00ef0a09770cc0e6f783fb0e39299509c3c236983ff8d4d8204a832d686e49f3"
+    }
+  },
+  "bundle": {
+    "lock_sha256": "e15b1ec7a68ca4087669a395148a1dea1e9d18288dcd072a259a43bcfe67f197",
+    "package_count": 63,
+    "package_set_sha256": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+    "thor_runtime_dependencies": [
+      "libbs2b0",
+      "libcdio19t64",
+      "libsbc1",
+      "libsidplay1v5"
+    ],
+    "upstream_package_count": 59
+  },
+  "capability_results": {
+    "audio_rtsp_republish": "passed_current_for_non_bframe_h264_and_h265",
+    "b_frame_handling": "passed_current",
+    "cpu_multimedia_support": "passed_current",
+    "h264_h265": "passed_current",
+    "hevc_multislice_rfc7798": "passed_current",
+    "vios_audio_recording_from_nvstreamer": "not_executed_requires_stream_add_approval"
+  },
+  "captured_at": "2026-08-10T12:05:58.709929Z",
+  "fixtures": {
+    "h264_two_bframes_aac": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "has_b_frames": 2,
+        "height": 360,
+        "r_frame_rate": "15/1",
+        "width": 640
+      },
+      {
+        "channels": 1,
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0",
+        "sample_rate": "48000"
+      }
+    ],
+    "h265_slice_counts": {
+      "continuation_slices": 360,
+      "pictures": 120,
+      "slices_per_picture": 4
+    }
+  },
+  "hardware_path": {
+    "decoded_frames": {
+      "h264_b2_aac": 120,
+      "h265_s4_aac": 120
+    },
+    "rtsp_streams": {
+      "h264_non_bframe_aac": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "has_b_frames": 0,
+          "height": 360,
+          "r_frame_rate": "15/1",
+          "width": 640
+        },
+        {
+          "channels": 2,
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0",
+          "sample_rate": "48000"
+        }
+      ],
+      "h264_two_bframes": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "has_b_frames": 0,
+          "height": 360,
+          "r_frame_rate": "15/1",
+          "width": 640
+        }
+      ],
+      "h265_four_slice_aac": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "has_b_frames": 0,
+          "height": 360,
+          "r_frame_rate": "15/1",
+          "width": 640
+        },
+        {
+          "channels": 1,
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0",
+          "sample_rate": "48000"
+        }
+      ]
+    },
+    "snapshots": {
+      "h264_b0_aac": {
+        "bytes": 15505,
+        "codec_name": "mjpeg",
+        "height": 360,
+        "sha256": "2b4976f66fc96d30bcad0d5155ef95783ffe6d0ea697e32a5fa76fc38f778437",
+        "width": 640
+      },
+      "h264_b2_aac": {
+        "bytes": 15045,
+        "codec_name": "mjpeg",
+        "height": 360,
+        "sha256": "45e94aaaa94a48d04f2beb52f4f2165170469339bb4204f8d5d573e9def532a7",
+        "width": 640
+      },
+      "h265_s4_aac": {
+        "bytes": 15650,
+        "codec_name": "mjpeg",
+        "height": 360,
+        "sha256": "34420686d06cb770511106c1e7e8039cda6e82a22f3ba112a48abbfb50a7773d",
+        "width": 640
+      }
+    }
+  },
+  "image": {
+    "architecture": "arm64",
+    "codec_package_set": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+    "id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+    "runtime_network_install": "disabled",
+    "size_bytes": 3456921334,
+    "tag": "vss-vios-nvstreamer:3.2.1-thor-local"
+  },
+  "limitations": [
+    {
+      "id": "nvstreamer-h264-bframes-aac-direct-republish",
+      "observed": "The direct H.264 two-B-frame file exposed video but no audio track over RTSP even with includeAudio=true.",
+      "scope": "H.264+B-frames+AAC direct NvStreamer republish only",
+      "working_local_substitute": "Software transcode removes B-frames and retains AAC before republish."
+    },
+    {
+      "gate": "approve RT-CV sample stream add",
+      "id": "vios-nvstreamer-recording-handoff-approval",
+      "observed": "No NvStreamer URL was registered into the main VIOS instance during this run.",
+      "scope": "VIOS recording/clip verification for NvStreamer RTSP sources"
+    }
+  ],
+  "qualification_bounds": {
+    "container": "vss-codec-qualifier-nvstreamer-software",
+    "gstreamer_missing_dependencies": [],
+    "host_library_mounts": false,
+    "loopback_http_port": 31000,
+    "main_vios_configuration_changed": false,
+    "main_vios_sensor_added": false,
+    "warehouse_sample_bundle_used": false
+  },
+  "qualification_id": "thor-vss-3.2.1-vios-codecs-runtime-2026-08-10",
+  "runtime_evidence": true,
+  "schema_version": 1,
+  "software_path": {
+    "config_use_software_path": true,
+    "element_selection_log_sha256": "00ef0a09770cc0e6f783fb0e39299509c3c236983ff8d4d8204a832d686e49f3",
+    "snapshots": {
+      "h264_b0_aac": {
+        "bytes": 19835,
+        "codec_name": "mjpeg",
+        "height": 360,
+        "sha256": "ab3ef50fc327ef6ea3af856e08e0c8ea6aa27a6d3cca0a935939d3c7e69b830b",
+        "width": 640
+      },
+      "h265_s4_aac": {
+        "bytes": 20598,
+        "codec_name": "mjpeg",
+        "height": 360,
+        "sha256": "3aeece7a303b0707bcd8ddadf6967e83bdf86e5c0301fc51b7cb86df1b91dd6a",
+        "width": 640
+      }
+    },
+    "transcodes": {
+      "h264_aac": {
+        "audio_codec": "AAC (Advanced Audio Coding)",
+        "bitrate_bps": 1046083,
+        "codec": "h264",
+        "framerate": 12.0,
+        "rtsp_streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "has_b_frames": 0,
+            "height": 360,
+            "r_frame_rate": "12/1",
+            "width": 640
+          },
+          {
+            "channels": 1,
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0",
+            "sample_rate": "48000"
+          }
+        ],
+        "stream_id": "qual_sw_h264_1200k"
+      },
+      "h265_aac": {
+        "audio_codec": "AAC (Advanced Audio Coding)",
+        "bitrate_bps": 1228692,
+        "codec": "h265",
+        "framerate": 12.0,
+        "rtsp_streams": [
+          {
+            "codec_name": "hevc",
+            "codec_type": "video",
+            "has_b_frames": 0,
+            "height": 360,
+            "r_frame_rate": "12/1",
+            "width": 640
+          },
+          {
+            "channels": 1,
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0",
+            "sample_rate": "48000"
+          }
+        ],
+        "stream_id": "qual_sw_h265_1200k"
+      }
+    }
+  },
+  "status": "passed_with_evidenced_limitation"
+}

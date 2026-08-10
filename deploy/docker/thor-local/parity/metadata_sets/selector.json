@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-agent-evaluation-contract-289.json",
-      "descriptor_raw_sha256": "d3c505e2b0335a6e695ab2497d0a85c65e7c9dca3a8e7f0596b33805c83dff4e",
-      "set_id": "thor-vss-3.2.1-current-agent-evaluation-contract-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-codecs-runtime-289.json",
+      "descriptor_raw_sha256": "238be7ea44a8593b946dfbd905d83e4f0b35726417ffda37f2353d394c5d6387",
+      "set_id": "thor-vss-3.2.1-current-vios-codecs-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-agent-evaluation-contract-500.json",
-      "descriptor_raw_sha256": "22b5b66242d015ce325825ee21d0f799c81cea7e0c816e4fb15b29c1d77f9c65",
-      "set_id": "thor-vss-3.2.1-current-agent-evaluation-contract-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-vios-codecs-runtime-500.json",
+      "descriptor_raw_sha256": "bc1e96c382f751c6389349bd6173b91d34090781c351199ab39aa3ad716c7edc",
+      "set_id": "thor-vss-3.2.1-current-vios-codecs-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-agent-evaluation-contract-500"
+  "selected_set": "thor-vss-3.2.1-current-vios-codecs-runtime-500"
 }

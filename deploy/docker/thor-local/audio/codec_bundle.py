@@ -26,10 +26,18 @@ import urllib.parse
 from pathlib import Path
 
 
-SCHEMA_VERSION = 1
-PACKAGE_COUNT = 59
+SCHEMA_VERSION = 2
+UPSTREAM_PACKAGE_COUNT = 59
+PACKAGE_COUNT = 63
 SOURCE_INSTALLER_SHA256 = "20f1c024c11405ed88192ed9e26a2841348249b8c4238bccd5cce355f7051238"
-PACKAGE_SET_SHA256 = "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+UPSTREAM_PACKAGE_SET_SHA256 = "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+PACKAGE_SET_SHA256 = "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4"
+THOR_RUNTIME_DEPENDENCIES = (
+    "libbs2b0",
+    "libcdio19t64",
+    "libsbc1",
+    "libsidplay1v5",
+)
 SCRIPT_PATH = Path(__file__).resolve()
 REPO_ROOT = SCRIPT_PATH.parents[4]
 SOURCE_INSTALLER = REPO_ROOT / "services/rtvi/rt-embed/src/scripts/install_codecs_nonroot.sh"
@@ -44,6 +52,7 @@ MANIFEST_KEYS = {
     "architecture",
     "package_count",
     "packages",
+    "thor_runtime_dependencies",
 }
 PACKAGE_KEYS = {
     "architecture",
@@ -86,8 +95,10 @@ def source_packages() -> list[str]:
     if not match:
         raise BundleError("cannot find DEB_URLS_arm64 in the pinned VSS codec source")
     urls = re.findall(r"'([^']+)'", match.group("body"))
-    if len(urls) != PACKAGE_COUNT or len(set(urls)) != PACKAGE_COUNT:
-        raise BundleError(f"expected {PACKAGE_COUNT} unique ARM64 packages, found {len(urls)}")
+    if len(urls) != UPSTREAM_PACKAGE_COUNT or len(set(urls)) != UPSTREAM_PACKAGE_COUNT:
+        raise BundleError(
+            f"expected {UPSTREAM_PACKAGE_COUNT} unique upstream ARM64 packages, found {len(urls)}"
+        )
     packages: list[str] = []
     for url in urls:
         parsed = urllib.parse.urlsplit(url)
@@ -95,11 +106,22 @@ def source_packages() -> list[str]:
         if not name.endswith("_arm64.deb") or "/ubuntu-ports/pool/" not in parsed.path:
             raise BundleError(f"codec URL is not a pinned Ubuntu Noble ARM64 package: {url}")
         packages.append(name.split("_", 1)[0])
-    if len(set(packages)) != PACKAGE_COUNT:
+    if len(set(packages)) != UPSTREAM_PACKAGE_COUNT:
         raise BundleError("VSS 3.2.1 codec source contains duplicate package identities")
-    if package_set_digest(packages) != PACKAGE_SET_SHA256:
+    if package_set_digest(packages) != UPSTREAM_PACKAGE_SET_SHA256:
         raise BundleError("VSS 3.2.1 codec package identity digest changed")
     return sorted(packages)
+
+
+def bundle_packages() -> list[str]:
+    """Return the exact upstream set plus Thor runtime dependency closure."""
+    upstream = source_packages()
+    combined = sorted([*upstream, *THOR_RUNTIME_DEPENDENCIES])
+    if len(combined) != PACKAGE_COUNT or len(set(combined)) != PACKAGE_COUNT:
+        raise BundleError("Thor codec runtime dependency identities overlap or are incomplete")
+    if package_set_digest(combined) != PACKAGE_SET_SHA256:
+        raise BundleError("Thor codec package identity digest changed")
+    return combined
 
 
 def deb_fields(path: Path) -> dict[str, str]:
@@ -240,6 +262,7 @@ def build_manifest(bundle: Path, urls: list[str], expected_packages: list[str]) 
         "architecture": "arm64",
         "package_count": len(entries),
         "packages": entries,
+        "thor_runtime_dependencies": list(THOR_RUNTIME_DEPENDENCIES),
     }
 
 
@@ -253,6 +276,8 @@ def validate_manifest(document: object) -> tuple[list[dict[str, object]], set[st
         raise BundleError("codec bundle manifest has an unexpected source identity")
     if document.get("source_installer_sha256") != SOURCE_INSTALLER_SHA256:
         raise BundleError("codec bundle manifest is not anchored to the VSS 3.2.1 source digest")
+    if document.get("thor_runtime_dependencies") != list(THOR_RUNTIME_DEPENDENCIES):
+        raise BundleError("codec bundle manifest has the wrong Thor runtime dependency closure")
     if document.get("package_set_sha256") != PACKAGE_SET_SHA256:
         raise BundleError("codec bundle manifest has the wrong VSS 3.2.1 package identity digest")
     if document.get("architecture") != "arm64" or document.get("package_count") != PACKAGE_COUNT:
@@ -324,7 +349,7 @@ def stage_bundle(
     *,
     lock_path: Path = DEFAULT_LOCK,
 ) -> dict[str, object]:
-    packages = source_packages()
+    packages = bundle_packages()
     canonical = load_canonical_lock(lock_path)
     if destination.exists() or destination.is_symlink():
         raise BundleError(f"refusing to overwrite existing bundle: {destination}")
@@ -383,8 +408,11 @@ def verify_bundle(
             f"extra={sorted(actual_entries - expected_entries)}"
         )
     expected_packages = sorted(manifest_packages)
-    if not frozen and expected_packages != source_packages():
-        raise BundleError("canonical codec lock package identities differ from VSS 3.2.1 source")
+    if not frozen and expected_packages != bundle_packages():
+        raise BundleError(
+            "canonical codec lock package identities differ from the VSS 3.2.1 source "
+            "plus Thor runtime dependency closure"
+        )
     actual = build_manifest(bundle, urls, expected_packages)
     if actual != expected:
         raise BundleError("codec bundle bytes or package metadata do not match manifest.json")
@@ -413,11 +441,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
     try:
         if args.command == "source-audit":
-            packages = source_packages()
+            upstream = source_packages()
+            packages = bundle_packages()
             canonical = load_canonical_lock()
             print(
-                f"verified VSS 3.2.1 source digest, {len(packages)} ARM64 codec package "
-                f"identities, and {canonical['package_count']}-entry canonical lock"
+                f"verified VSS 3.2.1 source digest, {len(upstream)} upstream ARM64 codec "
+                f"identities, {len(packages) - len(upstream)} Thor runtime dependencies, "
+                f"and {canonical['package_count']}-entry canonical lock"
             )
         elif args.command == "stage":
             if args.retries < 1 or args.timeout < 1:

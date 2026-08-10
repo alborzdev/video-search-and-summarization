@@ -66,20 +66,20 @@ discrepancies with zero aggregate or acceptance gaps. The live 289-row files,
 live oracle migration, and candidate runtime qualification remain separate.
 
 `metadata_sets/` now resolves the complete metadata plane as one immutable,
-hash-bound snapshot. The selector defaults to the current full SpatialAI
-500 set: the exact current 289-row prefix plus the unchanged 211-row
-candidate suffix under the strict v2 oracle schema. The matching SpatialAI 289
-set remains explicitly resolvable. Prior activation and Stage-1 descriptors
-remain immutable historical provenance but are not registered as current.
-Neither metadata selection nor `live_ready` promotes any capability runtime
-state.
+hash-bound snapshot. The selector defaults to the current VIOS-codec 500 set:
+the exact current, runtime-evidence-bearing 289-row prefix plus the unchanged
+211-row candidate suffix under the strict v2 oracle schema. The matching
+current 289 set remains explicitly resolvable. Prior activation, Stage-1, and
+agent-evaluation descriptors remain immutable historical provenance but are
+not registered as current. Metadata selection itself does not promote a
+capability runtime state.
 
 Validate either atomic set through the authoritative dispatcher:
 
 ```bash
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py --json
 python3 deploy/docker/thor-local/parity/verify_metadata_set.py \
-  --set thor-vss-3.2.1-current-agent-evaluation-contract-289 --json
+  --set thor-vss-3.2.1-current-vios-codecs-runtime-289 --json
 ```
 
 That direct-index denominator is also not the final documentation graph. A
@@ -147,13 +147,24 @@ cases; and `remaining-entry-workloads/` defines exact bounded workloads for the
 claims Thor runtime qualification.
 
 A first current-ledger successor added the exact CPU multimedia advertised entry
-as capability 277. The tooling-entry successor then added eight exact Spatial
+as the then-277th capability. The tooling-entry successor then added eight exact Spatial
 AI utility entries and four exact Synthetic Data tool entries as capabilities
 278 through 289. The four Synthetic Data entries have exact current target-bound
 offline receipts. Two MV3DT configuration utilities and all seven provider-free
 SpatialAI utilities now have exact executor-ready bindings and reviewed runtime
 evidence. SpatialAI entry 07 remains external-optional. The Warehouse sample
 bundle remains excluded.
+
+CPU multimedia capability
+`manifest-entry.vios-codecs-audio.05-cpu-multimedia-support` is now
+`wired/passed_current`. Its aggregate
+runtime binding locks the isolated Thor hardware-default and
+`use_software_path=true` H.264/H.265/AAC receipt, the 63-package dependency
+closure, immutable image identity, and exact cleanup. The broader
+`vios-codecs-audio` family intentionally remains `not_qualified` through an
+explicit `unqualified_advertised` boundary for NvStreamer-to-main-VIOS audio
+recording; the direct H.264+B-frame+AAC republish limitation has a qualified
+software-transcode substitute and is not generalized to other AAC paths.
 
 Every source must back at least one precise claim. Core API/MCP claims also bind
 the checked-in operation manifests by repository path, exact SHA-256, and

@@ -1,0 +1,53 @@
+{
+  "documents": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "cc055d0824bc48e2642166f01ded6f3c0e4c37f6fe53fbe2d694c9cda7d5b136",
+      "schema_version": 1
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "85e97991643450987e924b0f060bc4e76aedbcb17daa7bad387e150d6bf3d277",
+      "schema_id": "capability_oracles_schema",
+      "schema_version": 1
+    },
+    "manifest": {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "5df1039570110e9e08556a9f2e6bfc75e2609c5f413a202f37c67601d3a30213",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "36313c572a197fd885ef36d5184113405befb7f9e0418aff5cb5954c9a99d69a",
+      "schema_id": "official_capabilities_schema",
+      "schema_version": 1
+    }
+  },
+  "expected_counts": {
+    "capabilities": 289,
+    "feature_families": 55,
+    "oracles": 289
+  },
+  "lifecycle": "live_ready",
+  "mode": "immutable_static_metadata_set",
+  "schema_version": 1,
+  "schemas": {
+    "capability_oracles_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://nvidia.com/vss/thor/capability-oracles.schema.json",
+      "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+      "raw_sha256": "2d9c2127bce3a8280105f7bc78af96c13db3d59da67f928fa9df9e0d42965801"
+    },
+    "official_capabilities_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "6644cffdd6b58f68891d8de27707beb421fb8cc5cd904b1925884c42c9333902"
+    }
+  },
+  "set_id": "thor-vss-3.2.1-current-vios-codecs-runtime-289",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

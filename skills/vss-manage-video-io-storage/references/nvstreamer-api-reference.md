@@ -157,7 +157,7 @@ Response: `{id, filename, bytes, sensorId, streamId, filePath, created_at}`. **P
 | `nvstreamer-file-name` | Override the multipart filename | Optional for single-chunk POST (form's `filename=` is used if omitted). Required for chunked uploads. Whitespace rejected. |
 | `nvstreamer-enable-transcode` | `true` / `false` — transcode on ingest | When `true`, the server re-encodes the upload using the framerate / bitrate / keyframe-interval below. |
 | `nvstreamer-transcode-framerate` (or `transcode-framerate`) | Target framerate (int) | Only honored when `nvstreamer-enable-transcode: true`. Default 30. |
-| `nvstreamer-transcode-bitrate` (or `transcode-bitrate`) | Target bitrate in kbps (int) | Only honored when `nvstreamer-enable-transcode: true`. |
+| `nvstreamer-transcode-bitrate` (or `transcode-bitrate`) | Target bitrate in bits per second (int) | Only honored when `nvstreamer-enable-transcode: true`; VIOS converts this value to kbps for the software x264/x265 encoder properties. |
 | `nvstreamer-transcode-keyframe-interval` (or `transcode-keyframe-interval`) | Target keyframe (GOP) interval (int) | Only honored when `nvstreamer-enable-transcode: true`. |
 | `nvstreamer-chunk-number` | Current chunk index | **Chunked uploads only — do not set for single-chunk POST.** |
 | `nvstreamer-total-chunks` | Total chunk count | Chunked uploads only. |

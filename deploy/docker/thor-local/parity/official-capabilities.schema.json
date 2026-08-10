@@ -57,14 +57,13 @@
               }
             },
             "then": {
-              "not": {"required": ["runtime_evidence"]},
               "properties": {
                 "feature_id": {"const": "vios-codecs-audio"},
                 "kind": {"const": "runtime_behavior"},
                 "title": {"const": "CPU multimedia support"},
                 "acceptance_class": {"const": "required_local"},
                 "thor_state": {"const": "wired"},
-                "runtime_state": {"const": "not_qualified"},
+                "runtime_state": {"enum": ["not_qualified", "passed_current"]},
                 "scenario_ids": {"const": ["analytics-vios-workflows"]},
                 "contract": {
                   "type": "object",
@@ -122,12 +121,20 @@
                       }
                     },
                     "offline_bundle": {
-                      "const": {
-                        "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
-                        "architecture": "arm64",
-                        "package_count": 59,
-                        "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
-                      }
+                      "enum": [
+                        {
+                          "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+                          "architecture": "arm64",
+                          "package_count": 59,
+                          "package_set_sha256": "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+                        },
+                        {
+                          "lock_path": "deploy/docker/thor-local/audio/codec-bundle.lock.json",
+                          "architecture": "arm64",
+                          "package_count": 63,
+                          "package_set_sha256": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4"
+                        }
+                      ]
                     },
                     "immutable_derivatives": {
                       "const": {

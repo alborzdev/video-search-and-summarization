@@ -23,8 +23,8 @@ while IFS= read -r -d '' package; do
   package_count=$((package_count + 1))
 done < <(find "${bundle}" -maxdepth 1 -type f -name '*_arm64.deb' -print0 | sort -z)
 
-[[ ${package_count} -eq 59 ]] || {
-  echo "expected 59 staged ARM64 packages, extracted ${package_count}" >&2
+[[ ${package_count} -eq 63 ]] || {
+  echo "expected 63 staged ARM64 packages, extracted ${package_count}" >&2
   exit 2
 }
 
@@ -49,6 +49,7 @@ done
 [[ -e "${lib_dir}/libavcodec.so.60" ]] || { echo "codec pack lacks libavcodec.so.60" >&2; exit 2; }
 [[ -e "${gst_plugin_dir}/libgstlibav.so" ]] || { echo "codec pack lacks GStreamer libav" >&2; exit 2; }
 [[ -e "${gst_plugin_dir}/libgstisomp4.so" ]] || { echo "codec pack lacks the ISO MP4 demuxer" >&2; exit 2; }
+[[ -e "${lib_dir}/libbs2b.so.0" ]] || { echo "codec pack lacks libav's bs2b dependency" >&2; exit 2; }
 
 cat > "${install_dir}/codec_env.sh" <<'EOF'
 export GST_PLUGIN_PATH=/opt/nvidia/rtvi/thor-codecs/usr/lib/aarch64-linux-gnu/gstreamer-1.0${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}

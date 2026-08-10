@@ -19,7 +19,7 @@ RUN /usr/local/libexec/vss-thor/install-vios-codecs \
     && rm -f /usr/local/libexec/vss-thor/install-vios-codecs
 
 LABEL com.nvidia.vss.thor.vios-codecs="ubuntu-noble-arm64-offline" \
-      com.nvidia.vss.thor.vios-codec-package-set="c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f" \
+      com.nvidia.vss.thor.vios-codec-package-set="ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4" \
       com.nvidia.vss.thor.vios-runtime-network-install="disabled"
 
 ENTRYPOINT ["/usr/local/bin/vios-offline-entrypoint"]

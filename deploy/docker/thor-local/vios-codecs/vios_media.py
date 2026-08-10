@@ -26,7 +26,7 @@ SCRIPT = Path(__file__).resolve()
 REPO = SCRIPT.parents[4]
 DEFAULT_BUNDLE = SCRIPT.parent / "bundle"
 AUDIO_STAGER = REPO / "deploy/docker/thor-local/audio/codec_bundle.py"
-PACKAGE_SET = "c34db3c88287c8c049190bafdc0096d91f70bdf14a3b0ffdcc30c01fbc11f44f"
+PACKAGE_SET = "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4"
 EXPECTED_LABELS = {
     "com.nvidia.vss.thor.vios-codecs": "ubuntu-noble-arm64-offline",
     "com.nvidia.vss.thor.vios-codec-package-set": PACKAGE_SET,
@@ -129,10 +129,14 @@ def source_audit() -> None:
         raise ContractError("Thor default must retain HW path with explicit CPU fallback in source")
 
     module = codec_module()
-    module.source_packages()
+    upstream_packages = module.source_packages()
+    bundle_packages = module.bundle_packages()
     module.load_canonical_lock()
     print("PASS source: B-frame, HEVC multislice/RTP, H.264/H.265, audio, and CPU paths pinned")
-    print("PASS source: exact 59-package ARM64 VSS codec identity and byte lock pinned")
+    print(
+        f"PASS source: exact {len(upstream_packages)}-package ARM64 VSS source plus "
+        f"{len(bundle_packages) - len(upstream_packages)}-package Thor runtime closure pinned"
+    )
 
 
 def stage(bundle: Path, retries: int, timeout: int) -> None:

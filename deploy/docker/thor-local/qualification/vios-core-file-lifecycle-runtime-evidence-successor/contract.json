@@ -18,7 +18,7 @@
     {"capability_id": "behavior.vios.sensor-add-conflicts", "oracle_id": "oracle.behavior.vios.sensor-add-conflicts", "index": 73, "oracle_canonical_sha256": "835a0df55617d33fccddb2281687abc654402b74e8dd6ce53585f08939c191af", "official_index": 73, "official_canonical_sha256": "4d4ca58a80ea9c4c4c2547138a8b0ed023bca4aa6247b7c1e3d6cc54b7b5482b"},
     {"capability_id": "configuration.vios.upload-effective-limit", "oracle_id": "oracle.configuration.vios.upload-effective-limit", "index": 232, "oracle_canonical_sha256": "10c593976d78bd0edea7db192c2def01bfd2603250a7d693cffa1e9bf1a5250b", "official_index": 232, "official_canonical_sha256": "f6177cf33ae1f83e453146966abfe1ed841178f4fba3a01492c75b96ffe57ff8"},
     {"capability_id": "runtime.nvstreamer.file-streaming", "oracle_id": "oracle.runtime.nvstreamer.file-streaming", "index": 219, "oracle_canonical_sha256": "5032a0352f53f21e4489166ad80470514d4f081b9c664a398121b16508ae61f6", "official_index": 219, "official_canonical_sha256": "4f694523e90fd2653615288ff282517d6e6d17ea82cff4d6a50cbe19febc7ad2"},
-    {"capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support", "oracle_id": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support", "index": 288, "oracle_canonical_sha256": "f073172312cdd5ee9258f035eb725e413d7fc5fe19f3db140a7504b73993ef37", "official_index": 288, "official_canonical_sha256": "1923e6b68bd32e8b6e737335a2e6b861f0a894821689234263d9422a19ac7d0f"}
+    {"capability_id": "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support", "oracle_id": "oracle.manifest-entry.vios-codecs-audio.05-cpu-multimedia-support", "index": 288, "oracle_canonical_sha256": "cae6fc533b07955a227a8a8850e3d7e5eaef17451c95097aaf004b13241c422b", "official_index": 288, "official_canonical_sha256": "459dc6ea41710912984aebd4859e3e890ac82badb13e6d94459be34b0ebf6aff"}
   ],
   "constraints": {
     "network_allowed": false,
@@ -108,17 +108,17 @@
       "fixture_ids": ["tiny-identity-mp4-v1", "tiny-identity-h265-mp4-v1"],
       "planned_steps": ["capture-false-default-selector", "exercise-hardware-default-h264-h265", "set-use-software-path-true", "exercise-cpu-h264-h265-aac", "prove-distinct-selected-elements", "restore-false-default", "verify-postconditions"],
       "adjacent_negatives": ["use_software_encoder=true does not prove use_software_path=true", "static element availability does not prove selected runtime branches", "H.264-only execution does not prove the H.265/AAC matrix"],
-      "blockers": ["the two-request canonical bound cannot cover both media matrices, selector mutation, restore, and postconditions", "cached image identity and static source controls are not runtime branch-selection evidence"]
+      "blockers": ["the CPU multimedia capability is independently current-qualified by the source-locked codec runtime receipt", "this inert future-regression plan does not duplicate or supersede the separate runtime evidence and remains nonpromotable"]
     }
   ],
   "source_locks": [
-    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "d7db6de39585e7a1e9a62cc76ae4251648e017422dfc4cd1493bd00723a0df40"},
-    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "c43296924169efa0904979b18aa36a963f1e2196cc5eb37ec660a9b1a9f210cb"},
+    {"path": "deploy/docker/thor-local/parity/capability-oracles.json", "sha256": "85e97991643450987e924b0f060bc4e76aedbcb17daa7bad387e150d6bf3d277"},
+    {"path": "deploy/docker/thor-local/parity/official-capabilities.json", "sha256": "36313c572a197fd885ef36d5184113405befb7f9e0418aff5cb5954c9a99d69a"},
     {"path": "deploy/docker/thor-local/parity/candidates/wave3/systems/candidate.json", "sha256": "0abc81c383a9db122d2ad74c4dbb6c85cc00caf032abd94c4e7d632ce97ff539"},
     {"path": "deploy/docker/thor-local/qualification/executor-cases/inventory.json", "sha256": "3bafdeebb363503a416f3dd22d3277c11dfabbe55724b77a45fc7b534c93ed35"},
     {"path": "deploy/docker/thor-local/qualification/planning-requirement-executors-wave10/inventory.json", "sha256": "e9c81d33ea07018c3dc0e7d0ea9794e09d5fae962b959175cd65c73e2f136a35"},
     {"path": "skills/vss-manage-video-io-storage/references/api-reference.md", "sha256": "50bd8d01aee65731ecb9237755eb141a238c9c2a493df79266f448f0a0082c26"},
-    {"path": "skills/vss-manage-video-io-storage/references/nvstreamer-api-reference.md", "sha256": "520d6982d854d336309f76ed0558c3695020e84cbd54607d87822cbbb9c6d216"},
+    {"path": "skills/vss-manage-video-io-storage/references/nvstreamer-api-reference.md", "sha256": "498408b3e44d2e28ad442f85416815ea03f389475ee00882e1acb880d3d090d8"},
     {"path": "deploy/docker/thor-local/parity/evidence/2026-07-31-industry-staging.md", "sha256": "f044bbff36952e3924390579c62a62fdb776fcf59b24dd24ac2f63c908b1de7e"},
     {"path": "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-media-offline.md", "sha256": "df28ce48b67962932009eb072b2800c848bb75d76b1be1dac9363e25fbaee4b6"},
     {"path": "deploy/docker/thor-local/parity/evidence/2026-07-31-vios-ui-audit.md", "sha256": "feaca0dd50b1032736eee4009ed913697e4941f11cc22a83bf095b50eacf478f"},
@@ -150,9 +150,9 @@
     {"path": "services/vios/test/bdd_tests/tests/file_upload/test_upload_lifecycle.py", "sha256": "71cbccfda4b2f276da0c5a3ddec1550b5f860e7378f434c7c12857e44db59b04"},
     {"path": "services/vios/test/bdd_tests/features/file_upload/put_bframe_upload.feature", "sha256": "a2428ae1bc709ecb005ff6cdd24a6cb1d5e367e98ef671900013b0d63cc82f17"},
     {"path": "services/vios/test/bdd_tests/tests/file_upload/test_bframe_put_upload.py", "sha256": "20416f2d842a464ab5a775869aefe2638793b5cb0a20dcc56871226549ec9a4e"},
-    {"path": "deploy/docker/thor-local/audio/codec-bundle.lock.json", "sha256": "97701cf9abc00fdb3fec331abd13228b0d45ce347951a96456b9946882557c78"},
-    {"path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing", "sha256": "e71de2ba4a3c74b405e93d17f18f624944e8c8741a430ce5a286096762730285"},
-    {"path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer", "sha256": "78117c6a700c7217e9bdcfdf082bbb4eb4f9fead811cdb97072993ec1e9b23d0"},
-    {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "8f850b69fe85b87be9ba7fcd52fbf8802dc73e42f665ec12d5fc7afd8a0c543b"}
+    {"path": "deploy/docker/thor-local/audio/codec-bundle.lock.json", "sha256": "e15b1ec7a68ca4087669a395148a1dea1e9d18288dcd072a259a43bcfe67f197"},
+    {"path": "deploy/docker/thor-local/Dockerfile.vios-streamprocessing", "sha256": "e968fd9fdcd800f59a56a13e069e020be68487b1f429f2662d34a166cc495c67"},
+    {"path": "deploy/docker/thor-local/Dockerfile.vios-nvstreamer", "sha256": "ce1a8d18cb55aa6273f4fb4094683170b6dff4de63b8f02ba388bb5cf12f4904"},
+    {"path": "deploy/docker/thor-local/vios-codecs/vios_media.py", "sha256": "004716c98815ec910c03a8fd86cb10b29e52b66ad21ebf24aada9a817c15298d"}
   ]
 }

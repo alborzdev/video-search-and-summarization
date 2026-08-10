@@ -10,7 +10,8 @@ image-only and unchanged.
 Multimedia codec support and audio understanding are not the same feature.
 
 - The codec derivative adds the 59 ARM64 Ubuntu Noble package identities named
-  by the VSS 3.2.1 non-root installer. The tracked
+  by the VSS 3.2.1 non-root installer plus four Thor runtime dependencies that
+  make the shipped libav, SBC, CDIO, and SID GStreamer plugins loadable. The tracked
   `codec-bundle.lock.json` fixes every version, filename, size, SHA-256, and
   credential-free `ports.ubuntu.com` source URL. Connected staging resolves
   through signed metadata but succeeds only when every result equals that lock.
@@ -75,7 +76,7 @@ python3 deploy/docker/thor-local/audio/codec_bundle.py stage
 
 `stage` never updates the lock. A future Noble update therefore fails closed
 with an explicit lock-drift error. Refreshing the tracked lock is intentionally
-a maintainer-reviewed code change: review all 59 signed resolutions, update the
+a maintainer-reviewed code change: review all 63 signed resolutions, update the
 single shared lock and the VIOS installer's expected lock digest together, then
 rerun the adversarial codec suites. There is no automatic lock-refresh command.
 

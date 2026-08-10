@@ -33,6 +33,18 @@ EXPECTED_IDS = [
     "runtime.nvstreamer.file-streaming",
     "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support",
 ]
+CPU_MULTIMEDIA_ID = "manifest-entry.vios-codecs-audio.05-cpu-multimedia-support"
+CPU_MULTIMEDIA_RUNTIME_EVIDENCE = [
+    {
+        "capability_id": CPU_MULTIMEDIA_ID,
+        "json_pointer": "/capability_results/0",
+        "path": (
+            "deploy/docker/thor-local/qualification/vios-codecs-runtime/"
+            "official-runtime-evidence.json"
+        ),
+        "sha256": "a4bfd3a6562f95214624f7f84f8115162031285dc231b3f2e168ecb7233addab",
+    }
+]
 ORACLES_PATH = "deploy/docker/thor-local/parity/capability-oracles.json"
 OFFICIAL_PATH = "deploy/docker/thor-local/parity/official-capabilities.json"
 IMAGE_EVIDENCE_PATHS = {
@@ -223,11 +235,21 @@ def _verify_canonical_bindings(
             != "excluded"
         ):
             raise ProducerError(f"unexpected runtime evidence state: {capability_id}")
+        expected_runtime_state = (
+            "passed_current" if capability_id == CPU_MULTIMEDIA_ID else "not_qualified"
+        )
         if (
             official.get("acceptance_class") != "required_local"
-            or official.get("runtime_state") != "not_qualified"
+            or official.get("runtime_state") != expected_runtime_state
         ):
             raise ProducerError(f"unexpected acceptance state: {capability_id}")
+        if capability_id == CPU_MULTIMEDIA_ID:
+            if official.get("runtime_evidence") != CPU_MULTIMEDIA_RUNTIME_EVIDENCE:
+                raise ProducerError(
+                    f"unexpected current runtime evidence: {capability_id}"
+                )
+        elif official.get("runtime_evidence"):
+            raise ProducerError(f"unexpected open runtime evidence: {capability_id}")
         oracle_by_id[capability_id] = oracle
         official_by_id[capability_id] = official
     if set(oracle_by_id) != set(EXPECTED_IDS):
@@ -465,7 +487,7 @@ def compile_plan(contract_path: Path = CONTRACT_PATH) -> dict[str, Any]:
             "NvStreamer qualification requires upload, UI, and local-mount inputs plus RTSP, actual WebRTC, and removal",
             "VPN transport behavior is not proven by a local B-frame remediation run",
             "the corrected upload content-length gate has no Thor runtime response or asymmetric-limit evidence",
-            "CPU multimedia qualification requires H.264/H.265 hardware-default versus software-path selection and AAC runtime evidence",
+            "CPU multimedia is independently current-qualified by the source-locked codec runtime receipt; this inert VIOS-core producer neither duplicates nor supersedes that evidence",
             "a separately authorized service run and reviewed execution bounds are required before promotion",
         ],
     }
