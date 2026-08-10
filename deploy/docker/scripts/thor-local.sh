@@ -24,6 +24,11 @@ domain_pack_tool="${domain_pack_dir}/domain_pack.py"
 qualification_tool="${deployment_dir}/thor-local/qualification/qualify.py"
 runtime_qualification_tool="${deployment_dir}/thor-local/qualification/runtime.py"
 stateful_acceptance_tool="${deployment_dir}/thor-local/qualification/acceptance.py"
+official_edge_dir="${deployment_dir}/thor-local/official-edge"
+official_edge_llm_endpoint="http://127.0.0.1:30081"
+official_edge_vlm_endpoint="http://127.0.0.1:8018"
+official_edge_llm_model="nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8"
+official_edge_vlm_model="nim_nvidia_cosmos3-nano-reasoner_bf16-final"
 local_model_provisioner="${deployment_dir}/thor-local/provision-local-models.sh"
 model_artifact_verifier="${deployment_dir}/thor-local/models/verify_artifacts.py"
 model_artifact_lock="${deployment_dir}/thor-local/models/artifacts.lock.json"
@@ -334,6 +339,30 @@ raise SystemExit(0 if sys.argv[1] in served else 1)
 ' "${expected_model}" <<< "${response}"
 }
 
+official_edge_demo_lane_is_deployed() {
+  local config_files
+  config_files="$(docker container inspect --format \
+    '{{index .Config.Labels "com.docker.compose.project.config_files"}}' \
+    vss-agent 2>/dev/null)" || return 1
+  [[ "${config_files}" == *"${official_edge_dir}/compose.yml"* ]] &&
+    [[ "${config_files}" == *"${official_edge_dir}/compose.thor-demo-memory.yml"* ]]
+}
+
+container_mount_source() {
+  local container_name="$1"
+  local destination="$2"
+  docker container inspect --format \
+    "{{range .Mounts}}{{if eq .Destination \"${destination}\"}}{{.Source}}{{end}}{{end}}" \
+    "${container_name}" 2>/dev/null
+}
+
+require_official_edge_demo_models() {
+  model_is_served "${official_edge_llm_endpoint}" "${official_edge_llm_model}" ||
+    die "Official Thor LLM ${official_edge_llm_model} is not available at ${official_edge_llm_endpoint}/v1/models"
+  model_is_served "${official_edge_vlm_endpoint}" "${official_edge_vlm_model}" ||
+    die "Official Thor VLM ${official_edge_vlm_model} is not available at ${official_edge_vlm_endpoint}/v1/models"
+}
+
 openai_chat_contract() {
   local role="$1"
   local endpoint="$2"
@@ -428,17 +457,28 @@ PY
 }
 
 check_local_model_contracts() {
+  local llm_endpoint="${LLM_ENDPOINT_URL}"
+  local vlm_endpoint="${VLM_ENDPOINT_URL}"
+  local llm_model="${THOR_LOCAL_LLM_MODEL}"
+  local vlm_model="${THOR_LOCAL_VLM_MODEL}"
   require_command curl
   require_command python3
   validate_thor_full_contract
-  model_is_served "${LLM_ENDPOINT_URL}" "${THOR_LOCAL_LLM_MODEL}" ||
-    die "LLM ${THOR_LOCAL_LLM_MODEL} is not advertised at ${LLM_ENDPOINT_URL}/v1/models"
-  model_is_served "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" ||
-    die "VLM ${THOR_LOCAL_VLM_MODEL} is not advertised at ${VLM_ENDPOINT_URL}/v1/models"
-  openai_chat_contract LLM "${LLM_ENDPOINT_URL}" "${THOR_LOCAL_LLM_MODEL}" 0 ||
+  if official_edge_demo_lane_is_deployed; then
+    llm_endpoint="${official_edge_llm_endpoint}"
+    vlm_endpoint="${official_edge_vlm_endpoint}"
+    llm_model="${official_edge_llm_model}"
+    vlm_model="${official_edge_vlm_model}"
+    echo "[INFO] Active exact-model Thor demo lane detected."
+  fi
+  model_is_served "${llm_endpoint}" "${llm_model}" ||
+    die "LLM ${llm_model} is not advertised at ${llm_endpoint}/v1/models"
+  model_is_served "${vlm_endpoint}" "${vlm_model}" ||
+    die "VLM ${vlm_model} is not advertised at ${vlm_endpoint}/v1/models"
+  openai_chat_contract LLM "${llm_endpoint}" "${llm_model}" 0 ||
     die "LLM provider contract failed"
   echo "[OK] LLM implements OpenAI-compatible /v1/models and /v1/chat/completions."
-  openai_chat_contract VLM "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" \
+  openai_chat_contract VLM "${vlm_endpoint}" "${vlm_model}" \
     "${VLM_MAX_FRAMES_PER_REQUEST}" || die "VLM multi-image provider contract failed"
   echo "[OK] VLM accepted ${VLM_MAX_FRAMES_PER_REQUEST} ordered images through OpenAI-compatible chat completions."
 }
@@ -483,6 +523,9 @@ ensure_local_models_are_running() {
   require_command docker
   require_command pgrep
   require_edge_cache_cleaner
+  if official_edge_demo_lane_is_deployed; then
+    die "The exact-model Thor demo lane is deployed. Generic up/restart would replace its Nemotron 3 Nano + Cosmos3 consumer wiring; use ${official_edge_dir}/thor_demo.py for this deployment."
+  fi
   # Sequential startup is intentional on unified memory: simultaneous vLLM
   # initialization makes each server measure the other's temporary allocation
   # as available capacity and can overcommit the Thor.
@@ -492,7 +535,16 @@ ensure_local_models_are_running() {
 
 expected_container_running() {
   local container_name="$1"
-  [[ "$(docker inspect --format '{{.State.Running}}' "${container_name}" 2>/dev/null || true)" == "true" ]]
+  if [[ "$(docker inspect --format '{{.State.Running}}' "${container_name}" 2>/dev/null || true)" == "true" ]]; then
+    return 0
+  fi
+  # Services without an explicit container_name use Compose-generated names
+  # such as mdx-node-exporter-1. Match only the active mdx project/service
+  # labels so an unrelated similarly named container cannot claim the port.
+  [[ -n "$(docker ps --quiet \
+    --filter 'label=com.docker.compose.project=mdx' \
+    --filter "label=com.docker.compose.service=${container_name}" \
+    --filter status=running 2>/dev/null)" ]]
 }
 
 require_available_port() {
@@ -1209,10 +1261,14 @@ preflight() {
   fi
   require_edge_cache_cleaner
 
-  model_is_served "${LLM_ENDPOINT_URL}" "${THOR_LOCAL_LLM_MODEL}" ||
-    die "LLM ${THOR_LOCAL_LLM_MODEL} is not available at ${LLM_ENDPOINT_URL}/v1/models"
-  model_is_served "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" ||
-    die "VLM ${THOR_LOCAL_VLM_MODEL} is not available at ${VLM_ENDPOINT_URL}/v1/models"
+  if official_edge_demo_lane_is_deployed; then
+    require_official_edge_demo_models
+  else
+    model_is_served "${LLM_ENDPOINT_URL}" "${THOR_LOCAL_LLM_MODEL}" ||
+      die "LLM ${THOR_LOCAL_LLM_MODEL} is not available at ${LLM_ENDPOINT_URL}/v1/models"
+    model_is_served "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" ||
+      die "VLM ${THOR_LOCAL_VLM_MODEL} is not available at ${VLM_ENDPOINT_URL}/v1/models"
+  fi
   # Discovery alone is insufficient: image-only caption/query servers can
   # advertise a model but cannot run the multi-frame VSS workflows.
   check_local_model_contracts
@@ -2235,15 +2291,30 @@ doctor_json_contract() {
 }
 
 doctor_check_endpoints() {
-  if model_is_served "${LLM_ENDPOINT_URL}" "${THOR_LOCAL_LLM_MODEL}" 2>/dev/null; then
-    doctor_pass "Local LLM ${THOR_LOCAL_LLM_MODEL} is served at ${LLM_ENDPOINT_URL}."
-  else
-    doctor_fail "Local LLM ${THOR_LOCAL_LLM_MODEL} is unavailable; run: docker start ${THOR_LOCAL_LLM_CONTAINER}"
+  local llm_endpoint="${LLM_ENDPOINT_URL}"
+  local vlm_endpoint="${VLM_ENDPOINT_URL}"
+  local llm_model="${THOR_LOCAL_LLM_MODEL}"
+  local vlm_model="${THOR_LOCAL_VLM_MODEL}"
+  local llm_recovery="docker start ${THOR_LOCAL_LLM_CONTAINER}"
+  local vlm_recovery="docker start ${THOR_LOCAL_VLM_CONTAINER}"
+  if official_edge_demo_lane_is_deployed; then
+    llm_endpoint="${official_edge_llm_endpoint}"
+    vlm_endpoint="${official_edge_vlm_endpoint}"
+    llm_model="${official_edge_llm_model}"
+    vlm_model="${official_edge_vlm_model}"
+    llm_recovery="${official_edge_dir}/thor_demo.py"
+    vlm_recovery="${official_edge_dir}/thor_demo.py"
+    doctor_pass "Exact-model Thor demo lane is the active Compose deployment."
   fi
-  if model_is_served "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" 2>/dev/null; then
-    doctor_pass "Local VLM ${THOR_LOCAL_VLM_MODEL} is served at ${VLM_ENDPOINT_URL}."
+  if model_is_served "${llm_endpoint}" "${llm_model}" 2>/dev/null; then
+    doctor_pass "Local LLM ${llm_model} is served at ${llm_endpoint}."
   else
-    doctor_fail "Local VLM ${THOR_LOCAL_VLM_MODEL} is unavailable; run: docker start ${THOR_LOCAL_VLM_CONTAINER}"
+    doctor_fail "Local LLM ${llm_model} is unavailable; recover with ${llm_recovery}"
+  fi
+  if model_is_served "${vlm_endpoint}" "${vlm_model}" 2>/dev/null; then
+    doctor_pass "Local VLM ${vlm_model} is served at ${vlm_endpoint}."
+  else
+    doctor_fail "Local VLM ${vlm_model} is unavailable; recover with ${vlm_recovery}"
   fi
 
   if [[ "${doctor_stack_state}" == "down" ]]; then
@@ -2296,7 +2367,24 @@ doctor_check_endpoints() {
 doctor_finish() {
   printf '\nThor doctor summary: %d PASS, %d WARN, %d FAIL\n' \
     "${doctor_passes}" "${doctor_warnings}" "${doctor_failures}"
-  cat <<EOF
+  if official_edge_demo_lane_is_deployed; then
+    local edge_snapshot cosmos_cache_root cosmos_cache
+    edge_snapshot="$(container_mount_source vss-nemotron-edge-4b /models/edge4b)"
+    cosmos_cache_root="$(container_mount_source vss-rtvi-vlm /opt/nvidia/rtvi/.rtvi/ngc_model_cache)"
+    cosmos_cache="${cosmos_cache_root}/${official_edge_vlm_model}"
+    cat <<EOF
+Recovery commands (exact-model Thor demo lane; offline-safe):
+  Verify identity: python3 ${official_edge_dir}/thor_demo.py --edge4b-snapshot ${edge_snapshot} --cosmos3-cache ${cosmos_cache} readiness
+  Render recovery: python3 ${official_edge_dir}/thor_demo.py --edge4b-snapshot ${edge_snapshot} --cosmos3-cache ${cosmos_cache} render-command
+  Re-check:        ${script_dir}/thor-local.sh doctor
+  Service status:  ${script_dir}/thor-local.sh status
+  Service logs:    docker logs --tail 150 <container-name>
+
+Run the single pull-free command printed by "Render recovery"; generic
+thor-local.sh up/restart is intentionally blocked for this active model lane.
+EOF
+  else
+    cat <<EOF
 Recovery commands (offline-safe):
   Start/recover: ${script_dir}/thor-local.sh restart
   Wait for ready: ${script_dir}/thor-local.sh ready
@@ -2304,6 +2392,7 @@ Recovery commands (offline-safe):
   Service status: ${script_dir}/thor-local.sh status
   Service logs:   docker logs --tail 150 <container-name>
 EOF
+  fi
   if (( doctor_failures > 0 )); then
     return 1
   fi
@@ -2477,10 +2566,17 @@ case "${command_name}" in
     else
       echo "VSS stack has not been bootstrapped (generated.env is absent)."
     fi
-    curl --connect-timeout 2 --max-time 5 --fail --silent "${LLM_ENDPOINT_URL}/v1/models" >/dev/null &&
-      echo "LLM endpoint: ready" || echo "LLM endpoint: unavailable"
-    curl --connect-timeout 2 --max-time 5 --fail --silent "${VLM_ENDPOINT_URL}/v1/models" >/dev/null &&
-      echo "VLM endpoint: ready" || echo "VLM endpoint: unavailable"
+    if official_edge_demo_lane_is_deployed; then
+      model_is_served "${official_edge_llm_endpoint}" "${official_edge_llm_model}" &&
+        echo "Official Nemotron 3 LLM endpoint: ready" || echo "Official Nemotron 3 LLM endpoint: unavailable"
+      model_is_served "${official_edge_vlm_endpoint}" "${official_edge_vlm_model}" &&
+        echo "Official Cosmos3 VLM endpoint: ready" || echo "Official Cosmos3 VLM endpoint: unavailable"
+    else
+      model_is_served "${LLM_ENDPOINT_URL}" "${THOR_LOCAL_LLM_MODEL}" &&
+        echo "LLM endpoint: ready" || echo "LLM endpoint: unavailable"
+      model_is_served "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" &&
+        echo "VLM endpoint: ready" || echo "VLM endpoint: unavailable"
+    fi
     edge_cache_cleaner_is_running &&
       echo "Thor cache cleaner: ready" || echo "Thor cache cleaner: unavailable"
     ;;

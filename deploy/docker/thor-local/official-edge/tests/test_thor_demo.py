@@ -16,6 +16,25 @@ from test_official_edge import make_edge_cache  # noqa: E402
 
 
 class ThorDemoStaticTests(unittest.TestCase):
+    def test_thor_operator_wrapper_detects_and_protects_demo_lane(self) -> None:
+        wrapper = (oe.DEPLOY_DOCKER / "scripts/thor-local.sh").read_text(
+            encoding="utf-8"
+        )
+        for token in (
+            'official_edge_llm_endpoint="http://127.0.0.1:30081"',
+            'official_edge_vlm_endpoint="http://127.0.0.1:8018"',
+            'official_edge_llm_model="nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8"',
+            'official_edge_vlm_model="nim_nvidia_cosmos3-nano-reasoner_bf16-final"',
+            "official_edge_demo_lane_is_deployed()",
+            'com.docker.compose.project.config_files',
+            'compose.thor-demo-memory.yml',
+            "Active exact-model Thor demo lane detected.",
+            "Generic up/restart would replace its Nemotron 3 Nano + Cosmos3 consumer wiring",
+            "Official Nemotron 3 LLM endpoint: ready",
+            "Official Cosmos3 VLM endpoint: ready",
+        ):
+            self.assertIn(token, wrapper)
+
     def test_overlay_is_exact_and_official_defaults_remain_unchanged(self) -> None:
         contract = td.verify_static()
         self.assertEqual(contract["unified_memory"]["llm_fraction"], "0.25")
