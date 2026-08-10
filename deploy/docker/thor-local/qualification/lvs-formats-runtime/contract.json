@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-lvs-formats-runtime",
+  "capability_id": "runtime.lvs.supported-formats",
+  "acknowledgement": "I_ACK_LVS_FIVE_FORMAT_SUMMARIZATION_AND_EXACT_CLEANUP",
+  "default_execution_enabled": false,
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "endpoints": {
+    "lvs_origin": "http://127.0.0.1:38111",
+    "rt_vlm_origin": "http://127.0.0.1:8018"
+  },
+  "model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+  "service_contract": {
+    "lvs_metadata_version": "3.0.0",
+    "lvs_metadata_sub_version": "d16a216",
+    "lvs_metadata_port": "38111",
+    "lvs_model_count": 1
+  },
+  "autonomous_hitl_defaults": {
+    "scenario": "activity monitoring",
+    "events": [
+      "notable activity"
+    ]
+  },
+  "source_fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "duration_seconds": 10.0,
+    "warehouse_sample_bundle": false
+  },
+  "tools": {
+    "ffmpeg": {
+      "path": "/usr/bin/ffmpeg",
+      "sha256": "dbb8cc21c4b4e0e9bbb750cf74f7af6b023199e1b311eb2f6aec31c9722ceb88",
+      "version_prefix": "ffmpeg version 6.1.1-3ubuntu5"
+    },
+    "ffprobe": {
+      "path": "/usr/bin/ffprobe",
+      "sha256": "94aeaba8eb9cd72e48310674718fef2a71d0c57c1f592612e90e252c515d9d6c",
+      "version_prefix": "ffprobe version 6.1.1-3ubuntu5"
+    }
+  },
+  "derivation": {
+    "normalized_mp4": [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      "<source>",
+      "-vf",
+      "scale=640:-2,fps=5",
+      "-an",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "ultrafast",
+      "-crf",
+      "28",
+      "-pix_fmt",
+      "yuv420p",
+      "<mp4>"
+    ],
+    "avi": [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      "<mp4>",
+      "-an",
+      "-c:v",
+      "mpeg4",
+      "-q:v",
+      "8",
+      "<avi>"
+    ],
+    "mov": [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      "<mp4>",
+      "-c",
+      "copy",
+      "<mov>"
+    ],
+    "mkv": [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      "<mp4>",
+      "-c",
+      "copy",
+      "<mkv>"
+    ],
+    "webm": [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      "<mp4>",
+      "-an",
+      "-c:v",
+      "libvpx",
+      "-deadline",
+      "realtime",
+      "-cpu-used",
+      "8",
+      "-b:v",
+      "500k",
+      "<webm>"
+    ]
+  },
+  "containers": {
+    "lvs": {
+      "name": "vss-lvs",
+      "image": "cti-vss-video-summarization:thor-local",
+      "image_id": "sha256:1037a857158cfbc9c2be87bea92838c60cc1d528357ec5c3d9feea483bd9aefd"
+    },
+    "rt_vlm": {
+      "name": "vss-rtvi-vlm",
+      "image": "nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+      "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+    }
+  },
+  "formats": [
+    {
+      "name": "MP4",
+      "extension": "mp4",
+      "mime_type": "video/mp4",
+      "asset_id": "00000000-0000-4000-8000-000000000021",
+      "codec": "h264",
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "expected_bytes": 251674,
+      "raw_hash_policy": "deterministic_exact",
+      "expected_sha256": "bcd1187ab962147762bc832495472fb89c8d047dff52da9d61d4eaeefe71ac6c"
+    },
+    {
+      "name": "AVI",
+      "extension": "avi",
+      "mime_type": "video/x-msvideo",
+      "asset_id": "00000000-0000-4000-8000-000000000022",
+      "codec": "mpeg4",
+      "format_name": "avi",
+      "expected_bytes": 171966,
+      "raw_hash_policy": "deterministic_exact",
+      "expected_sha256": "c1c0bb16de3e7cbab28d36bdcac069cf8b2a6741fac4e188b448cb96852bdc74"
+    },
+    {
+      "name": "MOV",
+      "extension": "mov",
+      "mime_type": "video/quicktime",
+      "asset_id": "00000000-0000-4000-8000-000000000023",
+      "codec": "h264",
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "expected_bytes": 251621,
+      "raw_hash_policy": "deterministic_exact",
+      "expected_sha256": "c2bf6de00e36f0c69fadbd86f029f4fa373a285294764bff79148733fd40edb7"
+    },
+    {
+      "name": "MKV",
+      "extension": "mkv",
+      "mime_type": "video/x-matroska",
+      "asset_id": "00000000-0000-4000-8000-000000000024",
+      "codec": "h264",
+      "format_name": "matroska,webm",
+      "expected_bytes": 251793,
+      "raw_hash_policy": "runtime_mux_uid",
+      "expected_sha256": null
+    },
+    {
+      "name": "WebM",
+      "extension": "webm",
+      "mime_type": "video/webm",
+      "asset_id": "00000000-0000-4000-8000-000000000025",
+      "codec": "vp8",
+      "format_name": "matroska,webm",
+      "expected_bytes": 456534,
+      "raw_hash_policy": "runtime_mux_uid",
+      "expected_sha256": null
+    }
+  ],
+  "adjacent_negative": {
+    "asset_id": "00000000-0000-4000-8000-000000000026",
+    "filename": "vss-lvs-invalid.mp4",
+    "payload_sha256": "3b73878fc46d17d46fed2a8fa14607b6ee5811011933a4975b17530734979180",
+    "expected_http_status": 400,
+    "expected_error_code": "InvalidFile"
+  },
+  "media_semantics": {
+    "width": 640,
+    "height": 360,
+    "frame_rate": "5/1",
+    "duration_seconds": 10.0,
+    "video_stream_count": 1,
+    "audio_stream_count": 0
+  },
+  "summarization": {
+    "chunk_duration": 10,
+    "fixed_frames_per_chunk": 8,
+    "use_fps_for_chunking": false,
+    "seed": 1,
+    "max_tokens": 256,
+    "expected_chunks_processed": 1
+  },
+  "execution_bounds": {
+    "max_duration_seconds": 900,
+    "max_http_requests": 37,
+    "max_semantic_actions": 9,
+    "min_free_bytes": 10737418240,
+    "network_scope": "numeric-loopback-only",
+    "model_staging": "forbidden",
+    "service_lifecycle": "forbidden",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "transport": {
+    "max_request_bytes": 4194304,
+    "max_response_bytes": 16777216,
+    "short_timeout_seconds": 15,
+    "summarize_timeout_seconds": 180,
+    "tool_timeout_seconds": 120
+  },
+  "cleanup": {
+    "mutation": "upload and exact-delete five fixed qualifier-owned files; reject one invalid file before creation",
+    "logical_namespace": "vss-oracle-runtime-lvs-supported-formats",
+    "target_ids": [
+      "00000000-0000-4000-8000-000000000021",
+      "00000000-0000-4000-8000-000000000022",
+      "00000000-0000-4000-8000-000000000023",
+      "00000000-0000-4000-8000-000000000024",
+      "00000000-0000-4000-8000-000000000025",
+      "00000000-0000-4000-8000-000000000026"
+    ],
+    "postconditions": [
+      "all six fixed qualifier-owned IDs are absent",
+      "the complete non-owned LVS file-list digest matches pre-state",
+      "RT-VLM asset statistics match pre-state",
+      "LVS and RT-VLM identity, health, restart count, and OOM state match pre-state"
+    ]
+  }
+}

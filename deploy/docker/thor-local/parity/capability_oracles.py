@@ -671,6 +671,50 @@ RT_VLM_SSE_RUNTIME_WORKLOAD = {
     ],
 }
 RT_VLM_SSE_RUNTIME_MAX_ACTIONS = 8
+LVS_FORMATS_RUNTIME_CAPABILITY_ID = "runtime.lvs.supported-formats"
+LVS_FORMATS_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/lvs-formats-runtime/execute.py"
+)
+LVS_FORMATS_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/lvs-formats-runtime/contract.json"
+    ),
+    "sha256": "28030f32ef10d0fe240b11671511a75b5b308041732206a258f9e1f333bf20d7",
+}
+LVS_FORMATS_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/lvs-formats-runtime/"
+            "official-runtime-evidence.json"
+        ),
+        "sha256": "bedea1ec8ad2f7f10796a8aa6d8fe06bae0fd58912064c081abdcabc4b774574",
+    }
+]
+LVS_FORMATS_RUNTIME_NAMESPACES = [
+    "vss-oracle-runtime-lvs-supported-formats",
+    "00000000-0000-4000-8000-000000000021",
+    "00000000-0000-4000-8000-000000000022",
+    "00000000-0000-4000-8000-000000000023",
+    "00000000-0000-4000-8000-000000000024",
+    "00000000-0000-4000-8000-000000000025",
+    "00000000-0000-4000-8000-000000000026",
+]
+LVS_FORMATS_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 37,
+    "overhead_requests": 0,
+    "calculated_max_requests": 37,
+    "phases": [
+        "static_and_runtime_identity",
+        "pre_state",
+        "five_format_derivation_and_media_probe",
+        "five_format_upload_readback_summarize_delete",
+        "invalid_media_adjacent_negative",
+        "exact_cleanup",
+        "postcondition",
+    ],
+}
+LVS_FORMATS_RUNTIME_MAX_ACTIONS = 9
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
@@ -759,6 +803,14 @@ def _is_current_rt_vlm_sse_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == RT_VLM_SSE_RUNTIME_EVIDENCE[capability_id]
+    )
+
+
+def _is_current_lvs_formats_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == LVS_FORMATS_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == LVS_FORMATS_RUNTIME_EVIDENCE
     )
 
 
@@ -1474,6 +1526,8 @@ def _workload(
         return copy.deepcopy(ALERT_WEBSOCKET_RUNTIME_WORKLOAD)
     if live_integration and _is_current_rt_vlm_sse_runtime(capability):
         return copy.deepcopy(RT_VLM_SSE_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_lvs_formats_runtime(capability):
+        return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1545,6 +1599,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
     if _is_current_rt_vlm_sse_runtime(capability):
         return RT_VLM_SSE_RUNTIME_MAX_ACTIONS
+    if _is_current_lvs_formats_runtime(capability):
+        return LVS_FORMATS_RUNTIME_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2795,6 +2851,30 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_lvs_formats_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": LVS_FORMATS_RUNTIME_FIXTURE["path"],
+                "generator": LVS_FORMATS_RUNTIME_EXECUTOR,
+                "sha256": LVS_FORMATS_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = LVS_FORMATS_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                LVS_FORMATS_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                LVS_FORMATS_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                LVS_FORMATS_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["executor"] = LVS_FORMATS_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                LVS_FORMATS_RUNTIME_EXECUTOR
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if capability_id in mv3dt_runtime_ready_ids:
             fixture = MV3DT_RUNTIME_FIXTURES[capability_id]
             executor = MV3DT_RUNTIME_EXECUTOR["path"]
@@ -3007,6 +3087,8 @@ def validate(
             expected_actions = ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
         elif _is_current_rt_vlm_sse_runtime(ledger_by_id[capability_id]):
             expected_actions = RT_VLM_SSE_RUNTIME_MAX_ACTIONS
+        elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):
+            expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"

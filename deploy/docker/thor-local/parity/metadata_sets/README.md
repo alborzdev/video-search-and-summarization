@@ -5,14 +5,15 @@ This directory provides the static, fail-closed metadata selector.
 binds a complete metadata plane: manifest, official ledger and schema,
 capability-oracle registry and schema, and acceptance inventory.
 
-The selected `thor-vss-3.2.1-current-rt-vlm-sse-runtime-500` set
+The selected `thor-vss-3.2.1-current-lvs-formats-runtime-500` set
 contains the exact current 289-row Thor prefix plus the unchanged 211-row
 candidate suffix. The current prefix includes every prior runtime promotion and
-the six oracle-bound RT-VLM model, caption SSE, request-limit, and endpoint-
-rename proofs, along with the prior Alert Bridge WebSocket, Kafka NvSchema,
-Redis event-stream, Video Analytics API, VIOS live, and VIOS replay receipts; the
-suffix remains evidence-empty and non-promoting. The registered
-`thor-vss-3.2.1-current-rt-vlm-sse-runtime-289` set exposes the same
+the oracle-bound LVS MP4, AVI, MOV, MKV, and WebM proof; the six RT-VLM model,
+caption SSE, request-limit, and endpoint-rename proofs; and the prior Alert
+Bridge WebSocket, Kafka NvSchema, Redis event-stream, Video Analytics API, VIOS
+live, and VIOS replay receipts. The suffix remains evidence-empty and
+non-promoting. The registered
+`thor-vss-3.2.1-current-lvs-formats-runtime-289` set exposes the same
 canonical current prefix explicitly. Previous VIOS WebRTC, NvStreamer, VIOS
 lifecycle, codec-runtime, event-transport, agent-evaluation, SpatialAI, and
 older descriptors remain checked in as immutable historical provenance but are
@@ -47,7 +48,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 
 PYTHONDONTWRITEBYTECODE=1 python3 \
   deploy/docker/thor-local/parity/metadata_sets/resolver.py \
-  --set thor-vss-3.2.1-current-rt-vlm-sse-runtime-289 --json
+  --set thor-vss-3.2.1-current-lvs-formats-runtime-289 --json
 
 PYTHONDONTWRITEBYTECODE=1 pytest -q -p no:cacheprovider \
   deploy/docker/thor-local/parity/metadata_sets/tests/test_resolver.py
