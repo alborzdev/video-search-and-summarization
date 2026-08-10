@@ -285,13 +285,37 @@ services:
   vss-va-mcp:
     environment:
       PYTHONPATH: /vss-agent/thor-local-src
+      # VA-MCP has no authentication layer. The Thor Agent is co-resident on
+      # the host network, so neither the physical interface nor 0.0.0.0 is
+      # needed for this control plane.
+      VSS_AGENT_HOST: 127.0.0.1
     volumes:
       - ${VSS_REPO_ROOT}/services/agent/src:/vss-agent/thor-local-src:ro
+    command: !override
+      - mcp
+      - serve
+      - --config_file
+      - ${VSS_VA_MCP_CONFIG_FILE}
+      - --host
+      - 127.0.0.1
+      - --port
+      - ${VSS_VA_MCP_PORT}
+    healthcheck:
+      test: !override
+        - CMD
+        - /usr/local/bin/python3
+        - -c
+        - >-
+          import urllib.request; import sys;
+          sys.exit(0 if urllib.request.urlopen(
+          'http://127.0.0.1:${VSS_VA_MCP_PORT}/health',
+          timeout=5).status == 200 else 1)
 
   vss-agent:
     environment:
       PYTHONPATH: /vss-agent/thor-local-src
       PHOENIX_ENDPOINT: http://127.0.0.1:${PHOENIX_PORT:-6006}
+      VIDEO_ANALYSIS_MCP_URL: http://127.0.0.1:${VSS_VA_MCP_PORT:-9901}
     volumes:
       - ${VSS_REPO_ROOT}/services/agent/src:/vss-agent/thor-local-src:ro
       - ${VSS_DATA_DIR}/agent-reports:/vss-agent/agent_reports:rw

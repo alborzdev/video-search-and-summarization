@@ -1149,9 +1149,9 @@ if grep -q -- '- VIA_DEV_API=${VIA_DEV_API:-false}' "${_lvs_compose}" &&
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
    grep -q 'COPY services/video-summarization/src/lvs_mcp_sse.py' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
-   grep -q '5a645cf111ed329f4619f2629a3f15d9aabd7adc2ea09d600d31467b51ecb64f' \
+   grep -Fq 'assert version("mcp") == "1.28.1"' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
-   grep -q 'UV_OFFLINE=1 /usr/local/bin/uv pip install --system --no-index --no-deps --reinstall' \
+   grep -Fq 'CallToolResult(content=[], isError=True).isError is True' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
    grep -Fxq 'lvs_mcp_sse.py' \
      "${REPO_ROOT}/services/video-summarization/docker/package_file_list.txt" &&
@@ -1165,6 +1165,20 @@ else
 fi
 
 _thor_overlay="${REPO_ROOT}/deploy/docker/thor-local/compose.yml"
+_thor_va_mcp_block="$(sed -n '/^  vss-va-mcp:$/,/^  vss-agent:$/p' "${_thor_overlay}")"
+_thor_agent_block="$(sed -n '/^  vss-agent:$/,/^  rtvi-embed:$/p' "${_thor_overlay}")"
+if grep -Fq 'VSS_AGENT_HOST: 127.0.0.1' <<<"${_thor_va_mcp_block}" &&
+   grep -Fq 'command: !override' <<<"${_thor_va_mcp_block}" &&
+   grep -Fq -- '- 127.0.0.1' <<<"${_thor_va_mcp_block}" &&
+   grep -Fq "'http://127.0.0.1:\${VSS_VA_MCP_PORT}/health'" <<<"${_thor_va_mcp_block}" &&
+   grep -Fq 'VIDEO_ANALYSIS_MCP_URL: http://127.0.0.1:${VSS_VA_MCP_PORT:-9901}' <<<"${_thor_agent_block}"; then
+  echo "PASS: Thor confines unauthenticated Video Analytics MCP to loopback"
+  ((TESTS_PASSED++)) || true
+else
+  echo "FAIL: Thor Video Analytics MCP server and Agent client must use loopback"
+  ((TESTS_FAILED++)) || true
+fi
+
 if awk '
   /^  rtvi-embed:$/ { in_service = 1; next }
   in_service && /^  [[:alnum:]_-]+:$/ { in_service = 0 }
