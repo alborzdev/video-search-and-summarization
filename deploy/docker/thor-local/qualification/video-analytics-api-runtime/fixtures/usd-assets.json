@@ -1,0 +1,22 @@
+{
+  "sceneUrl": "local://vss-video-analytics-oracle/scene.usd",
+  "assets": [
+    {
+      "usdPath": "/VSSOracle/Thor",
+      "primType": "Xform",
+      "properties": [
+        {
+          "name": "displayName",
+          "value": "Thor runtime qualification fixture"
+        }
+      ],
+      "bbox": {
+        "dimension": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    }
+  ]
+}

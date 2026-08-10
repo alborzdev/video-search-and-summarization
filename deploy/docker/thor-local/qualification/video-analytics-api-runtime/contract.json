@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-video-analytics-api-runtime",
+  "release_context": {
+    "vss_release": "3.2.1",
+    "video_analytics_api_image": "nvcr.io/nvidia/vss-core/vss-video-analytics-api:3.2.0",
+    "behavior_analytics_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"
+  },
+  "openapi": {
+    "version": "3.2.0",
+    "sha256": "0ff2b2f412446e29149a4998e00a3c6b00c17402befa5f24d8b5b454fb625d37",
+    "operation_count": 56,
+    "get_count": 48,
+    "post_count": 8
+  },
+  "required_assertions": [
+    "checked-in and running-container OpenAPI bytes match exactly",
+    "all 48 GET operations return HTTP 200 with contract-valid parameters",
+    "all 8 unique POST operations have a successful HTTP 201 workflow",
+    "all 8 unique POST operations reject an adjacent invalid request without HTTP 5xx",
+    "road-network and USD wrapper-qualified numeric mappings are live",
+    "dynamic configuration receives a successful behavior-analytics ACK",
+    "dynamic calibration upload, upsert, and delete checkpoints are observed",
+    "semantic fixture readbacks match expected values and bytes",
+    "qualifier-owned state is absent and original behavior consumers are restored"
+  ],
+  "cleanup": {
+    "indices": "only the fixed qualifier-owned index allowlist",
+    "templates": "only qualifier-created calibration templates",
+    "files": "only files absent from the pre-run upload-directory snapshot",
+    "containers": "only vss-video-analytics-runtime-oracle",
+    "restore": "restart only normal behavior containers stopped by this run"
+  },
+  "non_claims": [
+    "non-empty hand-computed semantics for every metric, tracker, frame, incident, and event query",
+    "Kafka-absent error behavior",
+    "VSS Agent /generate behavior"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "images": [
+    {
+      "sensorId": "vss-oracle-video-analytics",
+      "fileName": "calibration-image.svg",
+      "view": "camera-view"
+    }
+  ]
+}

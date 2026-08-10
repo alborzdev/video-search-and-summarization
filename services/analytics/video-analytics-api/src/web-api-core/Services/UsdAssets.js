@@ -36,9 +36,9 @@ class UsdAssets {
         const esClient = elasticDb.getClient();
         const mappings = {
             properties: {
-                "assets.bbox.dimension.x": { "type": "double" },
-                "assets.bbox.dimension.y": { "type": "double" },
-                "assets.bbox.dimension.z": { "type": "double" }
+                "usdAssets.assets.bbox.dimension.x": { "type": "double" },
+                "usdAssets.assets.bbox.dimension.y": { "type": "double" },
+                "usdAssets.assets.bbox.dimension.z": { "type": "double" }
             }
         };
         let indexExist = await esClient.indices.existsIndexTemplate({name:`${index}-template`});

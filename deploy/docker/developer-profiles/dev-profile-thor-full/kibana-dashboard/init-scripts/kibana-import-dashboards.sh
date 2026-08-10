@@ -54,6 +54,35 @@ ensure_dashboard_index() {
     return 1
   fi
 
+  # The Video Analytics high-confidence-object query sorts on
+  # objects.confidence and aggregates objects.id.keyword. Those fields are
+  # normally created dynamically by the first raw event, but this deliberately
+  # empty dashboard index must also support a valid no-data query. Repair an
+  # index retained across restarts as well as relying on the source template
+  # for newly created indices.
+  if [[ "${index}" == mdx-raw-* ]]; then
+    curl --fail --silent --show-error \
+      --request PUT \
+      "${elasticsearch_url}/${index}/_mapping" \
+      --header "Content-Type: application/json" \
+      --data '{"properties":{"sensorId":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"objects":{"type":"nested","properties":{"id":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"confidence":{"type":"float"}}}}}' \
+      >/dev/null
+
+    mapping="$(curl --fail --silent --show-error \
+      "${elasticsearch_url}/${index}/_mapping/field/objects.confidence")"
+    if ! grep -Eq '"type"[[:space:]]*:[[:space:]]*"float"' <<<"${mapping}"; then
+      echo "Dashboard bootstrap index ${index} does not expose objects.confidence as a float" >&2
+      return 1
+    fi
+
+    mapping="$(curl --fail --silent --show-error \
+      "${elasticsearch_url}/${index}/_mapping/field/objects.id.keyword")"
+    if ! grep -Eq '"type"[[:space:]]*:[[:space:]]*"keyword"' <<<"${mapping}"; then
+      echo "Dashboard bootstrap index ${index} does not expose objects.id.keyword as a keyword" >&2
+      return 1
+    fi
+  fi
+
   mapping="$(curl --fail --silent --show-error \
     "${elasticsearch_url}/${index}/_mapping/field/timestamp")"
   if ! grep -Eq '"type"[[:space:]]*:[[:space:]]*"date"' <<<"${mapping}"; then

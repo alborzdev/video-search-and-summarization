@@ -1,0 +1,104 @@
+{
+  "version": "1.0",
+  "osmURL": "local://vss-video-analytics-oracle",
+  "calibrationType": "cartesian",
+  "sensors": [
+    {
+      "type": "camera",
+      "id": "vss-oracle-video-analytics",
+      "origin": {
+        "lat": 0,
+        "lng": 0
+      },
+      "geoLocation": {
+        "lat": 0,
+        "lng": 0
+      },
+      "coordinates": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scaleFactor": 1,
+      "attributes": [
+        {
+          "name": "source",
+          "value": "nvstreamer"
+        },
+        {
+          "name": "fps",
+          "value": "30"
+        }
+      ],
+      "place": [
+        {
+          "name": "city",
+          "value": "VSSOracle"
+        },
+        {
+          "name": "building",
+          "value": "Thor"
+        }
+      ],
+      "imageCoordinates": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 10,
+          "y": 0
+        },
+        {
+          "x": 10,
+          "y": 10
+        },
+        {
+          "x": 0,
+          "y": 10
+        }
+      ],
+      "globalCoordinates": [
+        {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "x": 10,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "x": 10,
+          "y": 10,
+          "z": 0
+        },
+        {
+          "x": 0,
+          "y": 10,
+          "z": 0
+        }
+      ],
+      "homography": [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+      ],
+      "rois": [],
+      "tripwires": []
+    }
+  ],
+  "corridors": [
+    {
+      "name": "city=VSSOracle/corridor=Thor",
+      "sensors": [
+        "vss-oracle-video-analytics"
+      ],
+      "directions": [
+        "N"
+      ],
+      "length": 10
+    }
+  ]
+}

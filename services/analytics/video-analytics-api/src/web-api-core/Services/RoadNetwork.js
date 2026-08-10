@@ -66,13 +66,13 @@ class RoadNetwork {
         const esClient = elasticDb.getClient();
         const mappings = {
             properties: {
-                "intersections.segments.start.lat": { "type": "float" },
-                "intersections.segments.start.lng": { "type": "float" },
-                "intersections.segments.end.lat": { "type": "float" },
-                "intersections.segments.end.lng": { "type": "float" },
-                "intersections.segments.points.lat": { "type": "float" },
-                "intersections.segments.points.lng": { "type": "float" },
-                "intersections.segments.points.alt": { "type": "float" }
+                "roadNetwork.intersections.segments.start.lat": { "type": "float" },
+                "roadNetwork.intersections.segments.start.lng": { "type": "float" },
+                "roadNetwork.intersections.segments.end.lat": { "type": "float" },
+                "roadNetwork.intersections.segments.end.lng": { "type": "float" },
+                "roadNetwork.intersections.segments.points.lat": { "type": "float" },
+                "roadNetwork.intersections.segments.points.lng": { "type": "float" },
+                "roadNetwork.intersections.segments.points.alt": { "type": "float" }
             }
         };
         let indexExist = await esClient.indices.existsIndexTemplate({name:`${index}-template`});

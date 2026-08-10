@@ -1,0 +1,92 @@
+{
+  "Id": "vss-oracle-behavior-1",
+  "id": "vss-oracle-video-analytics #-# 1",
+  "type": "mdx-behavior",
+  "timestamp": "2026-08-10T06:00:00.000Z",
+  "end": "2026-08-10T06:00:10.000Z",
+  "timeInterval": 10,
+  "length": 2,
+  "distance": 40,
+  "speed": 4,
+  "direction": "N",
+  "bearing": 0,
+  "videoPath": "local://vss-video-analytics-oracle",
+  "sensor": {
+    "id": "vss-oracle-video-analytics",
+    "type": "camera",
+    "description": "Thor runtime qualification fixture",
+    "info": {}
+  },
+  "place": {
+    "id": "vss-oracle-place",
+    "type": "building",
+    "name": "city=VSSOracle/building=Thor",
+    "info": {}
+  },
+  "object": {
+    "id": "1",
+    "type": "Person",
+    "confidence": 0.99,
+    "coordinate": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "location": {
+      "lat": 0,
+      "lon": 0,
+      "alt": 0
+    },
+    "embedding": {
+      "vector": [],
+      "info": {}
+    },
+    "bbox": {
+      "leftX": 0,
+      "topY": 0,
+      "rightX": 10,
+      "bottomY": 10,
+      "confidence": 0.99,
+      "embeddings": [],
+      "info": {}
+    },
+    "bbox3d": {
+      "coordinates": [],
+      "confidence": 0,
+      "info": {}
+    },
+    "dir": [],
+    "speed": 4,
+    "info": {}
+  },
+  "locations": {
+    "type": "linestring",
+    "coordinates": [
+      [0, 0, 0],
+      [0, 0.0001, 0]
+    ]
+  },
+  "smoothLocations": {
+    "type": "linestring",
+    "coordinates": [
+      [0, 0, 0],
+      [0, 0.0001, 0]
+    ]
+  },
+  "speedOverTime": [4],
+  "gazes": [],
+  "poses": [],
+  "lipActivities": [],
+  "edges": [],
+  "analyticsModule": {
+    "id": "vss-oracle",
+    "description": "Thor runtime qualification fixture",
+    "version": "1",
+    "source": "qualification",
+    "info": {}
+  },
+  "info": {
+    "cluster.index": "7",
+    "cluster.modelVersion": "vss-oracle-model-1"
+  }
+}

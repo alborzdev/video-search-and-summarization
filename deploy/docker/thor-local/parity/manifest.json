@@ -555,7 +555,7 @@
         "Video Analytics optional Kafka failure behavior"
       ],
       "category": "api",
-      "gap": "All 56 HTTP operations and seven VA-MCP tools pass the offline contract tier against NVIDIA's intentional 3.2.0 API image; exercise them against the running Thor service. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "gap": "The exact 56-operation HTTP surface, positive and adjacent-negative POST workflows, core semantic readbacks, and Kafka-backed config/calibration updates now pass on Thor. Remaining work is non-empty hand-computed correlation for every metric/tracker/frame/incident/event family plus Kafka-absent error behavior; VA-MCP has separate current runtime evidence.",
       "id": "video-analytics-api",
       "official_capability_ids": [
         "runtime.video-analytics.query-and-library-contract",
@@ -563,12 +563,17 @@
       ],
       "runtime_state": "not_qualified",
       "source_evidence": [
-        "services/analytics/video-analytics-api/src/app/specification/openapi.json"
+        "services/analytics/video-analytics-api/src/app/specification/openapi.json",
+        "services/analytics/video-analytics-api/src/web-api-core/Services/RoadNetwork.js",
+        "services/analytics/video-analytics-api/src/web-api-core/Services/UsdAssets.js"
       ],
       "thor_evidence": [
         "deploy/docker/services/analytics/video-analytics-api/compose.yml",
         "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml",
-        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json",
+        "deploy/docker/thor-local/qualification/video-analytics-api-runtime/EVIDENCE.md",
+        "deploy/docker/thor-local/qualification/video-analytics-api-runtime/contract.json",
+        "deploy/docker/services/infra/elk/elasticsearch/init-scripts/elasticsearch-template-creation.sh"
       ],
       "thor_state": "partial"
     },

@@ -131,7 +131,44 @@ assert "ensure_dashboard_index mdx-raw-thor-bootstrap" in kibana_init
 assert "ensure_dashboard_index mdx-behavior-thor-bootstrap" in kibana_init
 assert '\"timestamp\":{\"type\":\"date\"}' in kibana_init
 assert '\"end\":{\"type\":\"date\"}' in kibana_init
+assert 'objects.confidence' in kibana_init
+assert 'objects.id.keyword' in kibana_init
+assert '\"confidence\":{\"type\":\"float\"}' in kibana_init
 assert '\"number_of_shards\":1' in kibana_init
+
+template_creation = (
+    docker_dir
+    / "services/infra/elk/elasticsearch/init-scripts/elasticsearch-template-creation.sh"
+).read_text(encoding="utf-8")
+assert template_creation.count('\"confidence\": { \"type\": \"float\" }') == 2
+assert template_creation.count('\"keyword\": { \"type\": \"keyword\", \"ignore_above\": 256 }') >= 4
+assert 'create_index_template "mdx-road-network-template"' in template_creation
+assert 'create_index_template "mdx-usd-assets-template"' in template_creation
+for field in (
+    "roadNetwork.intersections.segments.start.lat",
+    "roadNetwork.intersections.segments.end.lng",
+    "roadNetwork.intersections.segments.points.alt",
+):
+    assert field in template_creation
+for field in (
+    "usdAssets.assets.bbox.dimension.x",
+    "usdAssets.assets.bbox.dimension.y",
+    "usdAssets.assets.bbox.dimension.z",
+):
+    assert field in template_creation
+
+road_network_service = (
+    root
+    / "services/analytics/video-analytics-api/src/web-api-core/Services/RoadNetwork.js"
+).read_text(encoding="utf-8")
+usd_assets_service = (
+    root
+    / "services/analytics/video-analytics-api/src/web-api-core/Services/UsdAssets.js"
+).read_text(encoding="utf-8")
+assert road_network_service.count('"roadNetwork.intersections.segments.') == 7
+assert '"intersections.segments.start.lat"' not in road_network_service
+assert usd_assets_service.count('"usdAssets.assets.bbox.dimension.') == 3
+assert '"assets.bbox.dimension.x"' not in usd_assets_service
 environment = os.environ.copy()
 environment.update(
     {

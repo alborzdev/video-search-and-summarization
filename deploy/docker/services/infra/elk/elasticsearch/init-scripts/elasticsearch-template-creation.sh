@@ -445,6 +445,41 @@ setup_elasticsearch_templates(){
         }
       }'
 
+    # The video-analytics-api stores these documents below roadNetwork/usdAssets
+    # wrappers. Pre-create the exact templates so the packaged 3.2.0 service does
+    # not install its older unwrapped mappings and infer integer coordinates.
+    create_index_template "mdx-road-network-template" '{
+        "index_patterns": ["mdx-road-network"],
+        "priority": 553,
+        "template": {
+          "mappings": {
+            "properties": {
+              "roadNetwork.intersections.segments.start.lat": { "type": "float" },
+              "roadNetwork.intersections.segments.start.lng": { "type": "float" },
+              "roadNetwork.intersections.segments.end.lat": { "type": "float" },
+              "roadNetwork.intersections.segments.end.lng": { "type": "float" },
+              "roadNetwork.intersections.segments.points.lat": { "type": "float" },
+              "roadNetwork.intersections.segments.points.lng": { "type": "float" },
+              "roadNetwork.intersections.segments.points.alt": { "type": "float" }
+            }
+          }
+        }
+      }'
+
+    create_index_template "mdx-usd-assets-template" '{
+        "index_patterns": ["mdx-usd-assets"],
+        "priority": 552,
+        "template": {
+          "mappings": {
+            "properties": {
+              "usdAssets.assets.bbox.dimension.x": { "type": "double" },
+              "usdAssets.assets.bbox.dimension.y": { "type": "double" },
+              "usdAssets.assets.bbox.dimension.z": { "type": "double" }
+            }
+          }
+        }
+      }'
+
 #   if rawDataSchema is in json format then comment the following template
     if [[ "${BP_PROFILE:-}" == "bp_developer_search" || "${BP_PROFILE:-}" == "bp_developer_thor_full" ]]; then
       create_index_template "mdx_raw_template" '{
@@ -457,9 +492,22 @@ setup_elasticsearch_templates(){
             },
             "mappings": {
               "properties": {
+                "sensorId": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": { "type": "keyword", "ignore_above": 256 }
+                  }
+                },
                 "objects": {
                   "type": "nested",
                   "properties": {
+                    "id": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": { "type": "keyword", "ignore_above": 256 }
+                      }
+                    },
+                    "confidence": { "type": "float" },
                     "bbox": { "enabled": false },
                     "bbox3d": { "enabled": false },
                     "coordinate": { "enabled": false },
@@ -490,9 +538,22 @@ setup_elasticsearch_templates(){
           },
           "mappings": {
             "properties": {
+              "sensorId": {
+                "type": "text",
+                "fields": {
+                  "keyword": { "type": "keyword", "ignore_above": 256 }
+                }
+              },
               "objects": {
                 "type": "nested",
                 "properties": {
+                  "id": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": { "type": "keyword", "ignore_above": 256 }
+                    }
+                  },
+                  "confidence": { "type": "float" },
                   "bbox": { "enabled": false },
                   "bbox3d": { "enabled": false },
                   "coordinate": { "enabled": false },

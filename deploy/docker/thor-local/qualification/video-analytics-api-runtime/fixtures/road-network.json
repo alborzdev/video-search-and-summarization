@@ -1,0 +1,37 @@
+{
+  "city": "VSSOracle",
+  "docType": "roadNetwork",
+  "intersections": [
+    {
+      "name": "Thor",
+      "segments": [
+        {
+          "id": "vss-oracle-segment-1",
+          "direction": "N",
+          "start": {
+            "lat": 0,
+            "lon": 0,
+            "alt": 0
+          },
+          "end": {
+            "lat": 0.0001,
+            "lon": 0,
+            "alt": 0
+          },
+          "points": [
+            {
+              "lat": 0,
+              "lon": 0,
+              "alt": 0
+            },
+            {
+              "lat": 0.0001,
+              "lon": 0,
+              "alt": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
