@@ -50,7 +50,7 @@
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/contract.json", "sha256": "1dcbf0fd3e9e6bea9b1799b2774df42ee9f7cc28c47a7318c3942863a5c1ae46"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/executor.py", "sha256": "3ddc4e08f2013e1f512254dc1309020ef63d88b8fce203f6c2a34537f1d57df4"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-evidence/receipt.schema.json", "sha256": "6f6f24ac6bdb26ac54d7130415055726d2736b41193f6f89b18a0bf2340c94db"},
-    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "65532030b46a1330fa0792a66f9409e6ac69298bce4284516f24bdbd830c4ab8"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/contract.json", "sha256": "401e9be44dcd531108af157c58d4f82b12d57b404a4eae9c9de0c4b03d6e5a51"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/executor.py", "sha256": "42bfdeeef88d947fdb6e5138b86d0c248620f4b65754a71b70b936c71d064ca7"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/manifest.schema.json", "sha256": "a392548df538dd177613e7aea53f4167694ce9a02f629b8663a5a3d797677bb3"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-http-successor/receipt.schema.json", "sha256": "5f4a0022bd42f77f5f2552c87b084c664fc8dec8dce271ad605e4bc2f1aa0d18"},

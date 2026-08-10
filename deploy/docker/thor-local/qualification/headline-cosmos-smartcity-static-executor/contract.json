@@ -16,8 +16,8 @@
       "capability_id": "model.rt-vlm.default-cosmos3-nano-bf16",
       "oracle_id": "oracle.model.rt-vlm.default-cosmos3-nano-bf16",
       "expected_acceptance_class": "required_local",
-      "expected_thor_state": "partial",
-      "expected_runtime_state": "not_qualified",
+      "expected_thor_state": "wired",
+      "expected_runtime_state": "passed_prior",
       "static_outcome": "exact_identity_and_default_wiring_verified",
       "runtime_outcome": "open"
     },
@@ -25,8 +25,8 @@
       "capability_id": "model.edge.cosmos3-nano-served-id",
       "oracle_id": "oracle.model.edge.cosmos3-nano-served-id",
       "expected_acceptance_class": "required_local",
-      "expected_thor_state": "partial",
-      "expected_runtime_state": "not_qualified",
+      "expected_thor_state": "wired",
+      "expected_runtime_state": "passed_prior",
       "static_outcome": "exact_served_identity_wiring_verified",
       "runtime_outcome": "open"
     },
@@ -73,7 +73,7 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/compose.yml",
-      "sha256": "3718e01ae5c91d29da442bad6f07e70fefbc15c92c6e9c650b1c77cb1257fdd2"
+      "sha256": "c3e63f2574f5776c039b32129e4b45dfd453c9443e78f1310255ef2afe50738f"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/config_edge.yml",
@@ -81,7 +81,7 @@
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official_edge.py",
-      "sha256": "0709d85cee2dd5a32e1c4adf97eb4e60d6929b6363ba73ac174bbf51ffb6ecfc"
+      "sha256": "2bfd17b5cca9878d212dd0516536aee56fea0a237d270a6c8028bfbab763a708"
     },
     {
       "path": "deploy/docker/thor-local/parity/candidates/wave3/agent-smartcity/candidate.json",

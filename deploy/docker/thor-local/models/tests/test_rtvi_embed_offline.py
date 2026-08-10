@@ -23,10 +23,30 @@ def test_thor_rtvi_embed_is_source_overlaid_and_offline() -> None:
         'NGC_API_KEY: ""',
         'NVIDIA_API_KEY: ""',
         'HF_TOKEN: ""',
+        'THOR_LOCAL_RTVI_EMBED_BIND_ADDRESS:-127.0.0.1',
     ):
         assert fragment in section
 
     assert "MODEL_PATH:" not in section
+
+
+def test_thor_rtvi_embed_uses_loopback_for_host_and_agent() -> None:
+    compose = (REPO_ROOT / "deploy/docker/thor-local/compose.yml").read_text()
+    section = compose.split("\n  rtvi-embed:\n", 1)[1].split(
+        "\n  rtvi-vlm:\n", 1
+    )[0]
+    config = (
+        REPO_ROOT
+        / "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml"
+    ).read_text()
+
+    assert "ports: !override" in section
+    assert (
+        '"${THOR_LOCAL_RTVI_EMBED_BIND_ADDRESS:-127.0.0.1}:${RTVI_EMBED_PORT?}:8000"'
+        in section
+    )
+    assert "rtvi_embed_base_url: ${COSMOS_EMBED_ENDPOINT}" in config
+    assert "rtvi_embed_base_url: http://${HOST_IP}:${RTVI_EMBED_PORT}" not in config
 
 
 def test_embedding_cache_uses_base_image_as_artifact_provenance() -> None:

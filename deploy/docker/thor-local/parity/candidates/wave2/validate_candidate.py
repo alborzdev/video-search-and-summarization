@@ -36,6 +36,33 @@ EXPECTED_COUNTS = {
     "discrepancies_and_boundaries": 14,
 }
 
+ALLOWED_LIVE_THOR_TRANSITIONS = {
+    "source_only": {"source_only", "partial", "wired"},
+    "partial": {"partial", "wired"},
+    "wired": {"wired"},
+    "external_optional": {"external_optional"},
+    "blocked_upstream": {"blocked_upstream"},
+}
+ALLOWED_LIVE_RUNTIME_TRANSITIONS = {
+    "blocked": {
+        "blocked",
+        "not_qualified",
+        "static_only",
+        "passed_prior",
+        "passed_current",
+    },
+    "not_qualified": {
+        "not_qualified",
+        "static_only",
+        "passed_prior",
+        "passed_current",
+    },
+    "static_only": {"static_only", "passed_prior", "passed_current"},
+    "passed_prior": {"passed_prior", "passed_current"},
+    "passed_current": {"passed_current"},
+    "not_applicable": {"not_applicable"},
+}
+
 
 class CandidateContractError(ValueError):
     """The candidate package or its live merge is inconsistent."""
@@ -336,11 +363,24 @@ def validate(
         }
         for proposed in package["new_capabilities"]:
             live = live_capability_by_id[proposed["id"]]
-            for key in ("acceptance_class", "thor_state", "runtime_state"):
-                if live.get(key) != proposed["status"][key]:
-                    raise CandidateContractError(
-                        f"{proposed['id']}: merged live {key} drift"
-                    )
+            if live.get("acceptance_class") != proposed["status"]["acceptance_class"]:
+                raise CandidateContractError(
+                    f"{proposed['id']}: merged live acceptance_class drift"
+                )
+            candidate_thor = proposed["status"]["thor_state"]
+            if live.get("thor_state") not in ALLOWED_LIVE_THOR_TRANSITIONS[
+                candidate_thor
+            ]:
+                raise CandidateContractError(
+                    f"{proposed['id']}: merged live thor_state regression"
+                )
+            candidate_runtime = proposed["status"]["runtime_state"]
+            if live.get("runtime_state") not in ALLOWED_LIVE_RUNTIME_TRANSITIONS[
+                candidate_runtime
+            ]:
+                raise CandidateContractError(
+                    f"{proposed['id']}: merged live runtime_state regression"
+                )
             if not _is_subset(proposed["contract"], live.get("contract")):
                 raise CandidateContractError(
                     f"{proposed['id']}: merged live contract drift"

@@ -19,14 +19,14 @@
           "oracle_id": "oracle.model.rt-vlm.default-cosmos3-nano-bf16",
           "static_outcome": "exact_identity_and_default_wiring_verified",
           "runtime_outcome": "open",
-          "runtime_state": "not_qualified"
+          "runtime_state": "passed_prior"
         },
         {
           "capability_id": "model.edge.cosmos3-nano-served-id",
           "oracle_id": "oracle.model.edge.cosmos3-nano-served-id",
           "static_outcome": "exact_served_identity_wiring_verified",
           "runtime_outcome": "open",
-          "runtime_state": "not_qualified"
+          "runtime_state": "passed_prior"
         },
         {
           "capability_id": "boundary.smart-city.version-skew",

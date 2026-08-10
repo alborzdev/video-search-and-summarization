@@ -8,6 +8,9 @@ excluded warehouse sample bundle.
 The lane does not start or stop containers. It validates inputs, inventories
 local artifacts, renders a hardened Compose overlay, and performs GET-only
 runtime qualification after an operator has separately authorized deployment.
+The base AMC workflow was subsequently exercised end to end on Thor with the
+small official four-camera fixture; retained results are in
+`../parity/evidence/2026-08-09-auto-calibration-runtime.md`.
 
 ## Current exact artifact state
 
@@ -15,9 +18,10 @@ runtime qualification after an operator has separately authorized deployment.
 
 - UI: ARM64 and locally staged at
   `nvcr.io/nvidia/vss-core/vss-auto-calibration-ui@sha256:e86c16ac9e88241dabd35e6f44c2d5086a77551a3e3654b4905e51bbf4cdf6a4`.
-- Backend: official 3.2.1 source tag is known, but the image is not staged and
-  its immutable ARM64 digest/image ID have not been captured. This is a hard
-  unavailable state, not a wildcard.
+- Backend: the official 3.2.1 Linux/ARM64 image is staged and locked as both
+  immutable repository digest and local image ID
+  `sha256:6ed911d45d500424301c4de74ca68aa66d9e88a6efc1ddd06dca8b40fb536982`
+  (15,107,897,381 inspected bytes).
 - Official AMC fixture: staged outside the repository at
   `~/.cache/vss/auto-calibration/official/0cfd2b790fd77598b0543340a65c2a0e1d192327/sdg_08_2_sample_data_010926.zip`.
   Its exact size is 160,499,115 bytes and its SHA-256 is
@@ -74,12 +78,11 @@ deploy/docker/scripts/thor-auto-calibration.sh \
   verify-official-fixture
 ```
 
-The backend tag reportedly represents about 14.07 GB of compressed layers.
-This lane never pulls it. After the user authorizes staging with a credential
-that can access `vss-core`, capture both the ARM64 `RepoDigest` and local image
-ID, then replace the two null backend lock fields. Do the same for VGGT with
-`sha256sum` after its separate commercial license is accepted and its download
-is authorized. A null digest always blocks preflight.
+The backend staging was separately operator-authorized and is now immutable in
+`artifact-inventory.json`; this qualification lane itself remains pull-free.
+Do the same for VGGT with `sha256sum` only after its separate commercial
+license is accepted and its download is authorized. A null digest always
+blocks the optional VGGT refinement preflight, but not base AMC.
 
 ## Custom synchronized MP4 path
 
@@ -210,3 +213,12 @@ Exit status is `0` for passed checks, `1` for a reachable contract failure, and
 `2` when required artifacts or endpoints are unavailable. Runtime completion,
 overlay review, and optional accuracy metrics still require a real calibration
 project driven through the `vss-generate-video-calibration` skill.
+
+The official fixture completed on Thor in 1,640 seconds with average L2
+distance 0.11 m and average reprojection error 1.62 px. The result returned
+three overlays and a valid MV3DT export. The proprietary backend writes
+`projects/state.json` during graceful application shutdown; use a graceful
+container stop/restart after a completed project before any planned host
+maintenance. A hard host crash interrupts active calibration and can leave
+project files without an API state entry. The retained runtime evidence records
+both this boundary and a successful state-file reload after graceful restart.

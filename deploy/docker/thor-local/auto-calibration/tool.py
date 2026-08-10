@@ -53,7 +53,7 @@ REQUIRED_OPENAPI: dict[str, str] = {
     "/v1/get_project_info/{project_id}": "get",
     "/v1/result/{project_id}/evaluation_statistics": "get",
     "/v1/result/{project_id}/overlay_image": "get",
-    "/v1/amc/calibrate/{project_id}/log": "get",
+    "/v1/{type}/calibrate/{project_id}/log": "get",
     "/v1/calibrate/{project_id}/log/{type}/stream": "get",
     "/v1/vggt/calibrate/{project_id}": "post",
     "/v1/vggt_results/{project_id}/evaluation_statistics": "get",
@@ -1084,7 +1084,7 @@ def qualify_runtime(
     if ready_status != 200 or not isinstance(ready, dict) or ready.get("code") != 0:
         raise ValidationError("AMC readiness contract did not return code 0")
     openapi_status, openapi = _get_json(
-        f"{backend_origin}/openapi.json", "AMC OpenAPI endpoint", timeout
+        f"{backend_origin}/openapi.yaml", "AMC OpenAPI endpoint", timeout
     )
     if (
         openapi_status != 200

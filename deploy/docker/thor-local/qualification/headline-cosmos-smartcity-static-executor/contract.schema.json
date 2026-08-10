@@ -37,8 +37,8 @@
           "capability_id": "model.rt-vlm.default-cosmos3-nano-bf16",
           "oracle_id": "oracle.model.rt-vlm.default-cosmos3-nano-bf16",
           "expected_acceptance_class": "required_local",
-          "expected_thor_state": "partial",
-          "expected_runtime_state": "not_qualified",
+          "expected_thor_state": "wired",
+          "expected_runtime_state": "passed_prior",
           "static_outcome": "exact_identity_and_default_wiring_verified",
           "runtime_outcome": "open"
         },
@@ -46,8 +46,8 @@
           "capability_id": "model.edge.cosmos3-nano-served-id",
           "oracle_id": "oracle.model.edge.cosmos3-nano-served-id",
           "expected_acceptance_class": "required_local",
-          "expected_thor_state": "partial",
-          "expected_runtime_state": "not_qualified",
+          "expected_thor_state": "wired",
+          "expected_runtime_state": "passed_prior",
           "static_outcome": "exact_served_identity_wiring_verified",
           "runtime_outcome": "open"
         },

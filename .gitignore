@@ -24,6 +24,7 @@ deploy/docker/thor-local/.domain-pack-state.json
 deploy/docker/resolved.yml
 deploy/docker/rag-secret.override.yml
 deploy/docker/data-dir/
+deploy/docker/services/auto-calibration/projects/
 /assets/sdg_08_2_sample_data_010926.zip
 /assets/.cache/sdg_08_2_sample_data_010926/
 /.cache/vss-openclaw-*/

@@ -86,6 +86,9 @@ services:
     volumes:
       - ${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache
       - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py:/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py:ro
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py:/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py:ro
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py:/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py:ro
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py:/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py:ro
 
   vss-agent:
     environment:
@@ -115,3 +118,37 @@ services:
         condition: service_healthy
       rtvi-vlm:
         condition: service_healthy
+
+  # Consumers of the loopback-only local model must not inherit operator or
+  # placeholder credentials from generated.env. Keep this fail-closed even
+  # when Compose is invoked directly instead of through the command renderer.
+  lvs-server:
+    environment:
+      NVIDIA_API_KEY: ""
+      OPENAI_API_KEY: ""
+      LVS_LLM_API_KEY: ""
+      LVS_LLM_MODEL_NAME: nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8
+      LVS_LLM_BASE_URL: http://127.0.0.1:30081/v1
+      LVS_LLM_MODEL_TYPE: vllm
+      VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
+      RTVI_VLM_URL: http://127.0.0.1:8018
+      VIA_VLM_ENDPOINT: http://127.0.0.1:8018/v1/
+
+  vss-va-mcp:
+    environment:
+      NVIDIA_API_KEY: ""
+      OPENAI_API_KEY: ""
+      HF_TOKEN: ""
+      LLM_MODEL_TYPE: vllm
+      LLM_NAME: nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8
+      LLM_BASE_URL: http://127.0.0.1:30081
+
+  alert-bridge:
+    environment:
+      NVIDIA_API_KEY: ""
+      OPENAI_API_KEY: ""
+      HF_TOKEN: ""
+      VLM_MODE: local_shared
+      VLM_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
+      VLM_BASE_URL: http://127.0.0.1:8018
+      RTVI_VLM_BASE_URL: http://127.0.0.1:8018

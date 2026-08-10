@@ -40,7 +40,7 @@ class ExtendedApiSurfaceContractTests(unittest.TestCase):
     def test_canonical_hash_is_stable(self) -> None:
         self.assertEqual(
             self.document["contract_set_sha256"],
-            "72e500a620f2b07411a5c7668b533aa1974ac456dc7b63e8af35446774dbc82d",
+            "0d18908b7fc5eca0c7fb61de241a111a72799ca9db3014c8213c7db6f753ba61",
         )
         self.assertEqual(
             VALIDATOR.canonical_contract_hash(self.document),

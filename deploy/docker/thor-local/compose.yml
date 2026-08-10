@@ -5,6 +5,15 @@
 # supplies the runtime, while PYTHONPATH selects the checked-out source so local
 # fixes can be qualified before a new immutable image is built.
 services:
+  # The upstream production broker reserves a fixed 6 GiB JVM heap. A
+  # single-node Thor demo carries only the local VSS topics, so keep the
+  # broker's steady-state and restart footprint bounded while retaining an
+  # explicit override for larger operator workloads. This headroom is also
+  # required to admit the exact 0.35 Cosmos3 RT-VLM allocation after reboot.
+  kafka:
+    environment:
+      KAFKA_HEAP_OPTS: "${THOR_LOCAL_KAFKA_HEAP_OPTS:--Xms1G -Xmx1G}"
+
   # Elasticsearch's percentage watermarks mark a 1 TB Thor disk red despite
   # tens of GiB remaining. Absolute free-space thresholds retain a 10 GiB
   # flood-stage guard while allowing the single-node demo indices to allocate.
@@ -294,6 +303,11 @@ services:
       args:
         BASE_IMAGE: ${RTVI_EMBED_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1}
     runtime: nvidia
+    # The local embedding API has no Bearer-token gate. Keep its host
+    # publication on loopback; the host-network Agent uses the matching
+    # COSMOS_EMBED_ENDPOINT instead of the physical HOST_IP.
+    ports: !override
+      - "${THOR_LOCAL_RTVI_EMBED_BIND_ADDRESS:-127.0.0.1}:${RTVI_EMBED_PORT?}:8000"
     # The upstream auto-size selects 64 and allocates roughly 20 GiB of
     # activation memory. This profile has one stream and co-resident local
     # LLM/VLM endpoints, so batch 8 preserves throughput headroom without
@@ -321,6 +335,12 @@ services:
       dockerfile: docker/Dockerfile
       args:
         BASE_IMAGE: ${RTVI_VLM_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1}
+    # RT-VLM has no application-level authentication when the local exact
+    # model lane blanks API credentials. Keep the host publication local;
+    # host-network VSS consumers use 127.0.0.1 and bridge consumers use the
+    # Compose service name on port 8000.
+    ports: !override
+      - "${THOR_LOCAL_RTVI_VLM_BIND_ADDRESS:-127.0.0.1}:${RTVI_VLM_PORT?}:8000"
     environment:
       VLM_BATCH_SIZE: "${RTVI_VLM_BATCH_SIZE:-1}"
       NUM_VLM_PROCS: "${RTVI_VLM_NUM_VLM_PROCS:-1}"

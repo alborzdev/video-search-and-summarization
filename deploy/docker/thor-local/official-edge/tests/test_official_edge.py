@@ -559,6 +559,13 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
             rtvlm_container = {
                 "Image": oe.RTVLM_IMAGE_ID,
                 "State": {"Running": True},
+                "HostConfig": {
+                    "PortBindings": {
+                        "8000/tcp": [
+                            {"HostIp": "127.0.0.1", "HostPort": "8018"}
+                        ]
+                    }
+                },
                 "Config": {
                     "Image": oe.RTVLM_IMAGE,
                     "Cmd": None,
@@ -580,12 +587,17 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                         "Destination": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
                         "RW": True,
                     },
-                    {
-                        "Type": "bind",
-                        "Source": str(oe.RTVLM_SERVER_OVERLAY.resolve()),
-                        "Destination": oe.RTVLM_SERVER_CONTAINER,
-                        "RW": False,
-                    }
+                    *[
+                        {
+                            "Type": "bind",
+                            "Source": str(source.resolve()),
+                            "Destination": destination,
+                            "RW": False,
+                        }
+                        for destination, (source, _expected_sha256) in (
+                            oe.RTVLM_REQUEST_CANCELLATION_OVERLAYS.items()
+                        )
+                    ],
                 ],
             }
 

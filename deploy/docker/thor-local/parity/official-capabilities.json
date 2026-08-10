@@ -23,10 +23,10 @@
         }
       },
       "feature_id": "official-agent-models",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "The exact Cosmos3 Nano BF16 artifact and served identity passed current file captioning, caption SSE with usage, file-backed video chat, exact cancellation, cleanup, and exact-model readiness. The retained result is narrative passed-prior rather than a capability-oracle-bound receipt.",
       "id": "model.rt-vlm.default-cosmos3-nano-bf16",
       "kind": "model",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -40,7 +40,7 @@
           "source_id": "release-notes-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "RT-VLM and agent default Cosmos3 Nano BF16"
     },
     {
@@ -229,7 +229,7 @@
         }
       },
       "feature_id": "official-agent-models",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "The exact Cosmos3 Nano model is selected by the local Agent and passed direct RT-VLM inference, but the excluded Warehouse sample/custom-data video-analysis, incident-understanding, and report-generation functions have not been exercised as one Agent workflow.",
       "id": "model.agent-vlm.cosmos3-nano",
       "kind": "model",
       "runtime_state": "not_qualified",
@@ -251,7 +251,7 @@
           "source_id": "warehouse-release-notes-doc-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "Agent VLM Cosmos3 Nano Reasoner"
     },
     {
@@ -333,10 +333,10 @@
         "placement": "local-vllm"
       },
       "feature_id": "official-agent-models",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "The exact pinned NVIDIA-Nemotron-3-Nano-4B-FP8 model served locally through vLLM, returned the exact THOR_EDGE_OK sentinel with thinking disabled, and passed the exact-model Thor runtime identity/readiness gate; retained evidence is narrative passed-prior.",
       "id": "model.edge.nemotron-3-nano-4b-fp8",
       "kind": "model",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -346,7 +346,7 @@
           "source_id": "edge-doc-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "Thor Edge Nemotron 3 Nano 4B FP8 LLM"
     },
     {
@@ -356,10 +356,10 @@
         "served_model_id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
       },
       "feature_id": "official-agent-models",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "The locked NGC artifact served the exact nim_nvidia_cosmos3-nano-reasoner_bf16-final identity and passed captioning, SSE, video chat, cancellation, cleanup, and the exact-model Thor readiness gate; retained evidence is narrative passed-prior.",
       "id": "model.edge.cosmos3-nano-served-id",
       "kind": "model",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -369,7 +369,7 @@
           "source_id": "edge-doc-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "Thor Edge Cosmos3 Nano served VLM identity"
     },
     {
@@ -1549,7 +1549,7 @@
         }
       },
       "feature_id": "performance-envelopes",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "A bounded 10-second H.264 run observed two five-second chunks, six-to-seven-second request completion, exact token usage, and successful cancellation drain, but one tiny fixture is not an advertised-scale Thor performance envelope.",
       "id": "performance.rt-vlm",
       "kind": "performance",
       "runtime_state": "not_qualified",
@@ -1593,7 +1593,7 @@
         }
       },
       "feature_id": "performance-envelopes",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "A bounded 10-second H.264 run observed three chunks, finite 768-dimensional vectors, and per-chunk latency, but one tiny fixture is not an advertised-scale Thor performance envelope.",
       "id": "performance.rt-embed",
       "kind": "performance",
       "runtime_state": "not_qualified",
@@ -1844,10 +1844,10 @@
         "surface": "auto-calibration"
       },
       "feature_id": "extended-api-surfaces",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "All 26 operations were present in the live NVIDIA OpenAPI contract and the major upload-to-export lifecycle passed, but the retained run is narrative evidence rather than a capability-oracle-bound receipt.",
       "id": "api.auto-calibration.operations",
       "kind": "api",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -1857,7 +1857,7 @@
           "source_id": "tagged-repository-3.2.1"
         }
       ],
-      "thor_state": "source_only",
+      "thor_state": "wired",
       "title": "Auto-calibration REST operation surface"
     },
     {
@@ -1936,10 +1936,10 @@
         "role": "streaming-response"
       },
       "feature_id": "non-rest-protocols",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "Current caption SSE returned timed non-empty chunks, optional usage, and data: [DONE]; prior current-stack evidence also exercised text/chat SSE. The retained result is narrative passed-prior rather than a capability-oracle-bound receipt.",
       "id": "protocol.rt-vlm.sse",
       "kind": "protocol",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -1949,7 +1949,7 @@
           "source_id": "rt-vlm-doc-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "RT-VLM token and caption SSE streams"
     },
     {
@@ -2201,10 +2201,10 @@
         "environment": "VLM_MAX_GENERATION_TOKENS"
       },
       "feature_id": "release-behavior-contracts",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "A live request above the 16,384-token generation maximum failed schema validation with HTTP 422 while bounded caption requests succeeded; retained evidence is narrative passed-prior.",
       "id": "behavior.rt-vlm.generation-token-cap",
       "kind": "runtime_behavior",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -2214,7 +2214,7 @@
           "source_id": "release-notes-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "RT-VLM generation token cap"
     },
     {
@@ -2224,10 +2224,10 @@
         "environment": "VLM_PROMPT_MAX_LENGTH"
       },
       "feature_id": "release-behavior-contracts",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "A 10,241-character live user prompt failed schema validation with HTTP 422 while bounded prompts succeeded; retained evidence is narrative passed-prior.",
       "id": "behavior.rt-vlm.user-prompt-cap",
       "kind": "runtime_behavior",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -2237,7 +2237,7 @@
           "source_id": "release-notes-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "RT-VLM user-prompt character cap"
     },
     {
@@ -2247,10 +2247,10 @@
         "environment": "VLM_SYSTEM_PROMPT_MAX_LENGTH"
       },
       "feature_id": "release-behavior-contracts",
-      "gap": "The exact advertised contract is inventoried but has no current Thor runtime qualification evidence.",
+      "gap": "A 10,241-character live system prompt failed schema validation with HTTP 422 while bounded prompts succeeded; retained evidence is narrative passed-prior.",
       "id": "behavior.rt-vlm.system-prompt-cap",
       "kind": "runtime_behavior",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -2260,7 +2260,7 @@
           "source_id": "release-notes-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "RT-VLM system-prompt character cap"
     },
     {
@@ -2849,10 +2849,10 @@
         "removed_legacy": "/v1/generate_captions_alerts"
       },
       "feature_id": "release-behavior-contracts",
-      "gap": "Static route inventory matches the rename, but no current API runtime evidence is recorded.",
+      "gap": "Live POST /v1/generate_captions passed non-streaming and SSE inference, and the removed /v1/generate_captions_alerts route is absent from the 28-operation OpenAPI document; retained evidence is narrative passed-prior.",
       "id": "behavior.rt-vlm.generate-captions-endpoint-rename",
       "kind": "api",
-      "runtime_state": "static_only",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -2874,10 +2874,10 @@
         "standard": "RFC 2397"
       },
       "feature_id": "release-behavior-contracts",
-      "gap": "Inline media embedding has no bounded current Thor runtime evidence.",
+      "gap": "A tracked 10-second H.264 fixture passed RFC 2397 data-URI embedding with three finite 768-dimensional vectors; the retained run is narrative evidence rather than a capability-oracle-bound receipt.",
       "id": "behavior.rt-embed.base64-data-url",
       "kind": "api",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -2887,7 +2887,7 @@
           "source_id": "release-notes-3.2.1"
         }
       ],
-      "thor_state": "source_only",
+      "thor_state": "wired",
       "title": "RT-Embed accepts RFC 2397 base64 data URLs for video embeddings"
     },
     {
@@ -3033,10 +3033,10 @@
         "unset_behavior": "reject_file_url"
       },
       "feature_id": "release-behavior-contracts",
-      "gap": "Allow/deny path and traversal cases have no current Thor evidence.",
+      "gap": "With no FILE_URL_ALLOWED_DIRS configured, a live file:///etc/hosts request failed closed with HTTP 403 and created no asset; positive narrow-directory and traversal cases remain unqualified.",
       "id": "behavior.rt-embed.file-url-allowlist",
       "kind": "security",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts"
       ],
@@ -3046,7 +3046,7 @@
           "source_id": "release-notes-3.2.1"
         }
       ],
-      "thor_state": "source_only",
+      "thor_state": "wired",
       "title": "RT-Embed file URL ingestion is denied without an absolute-directory allowlist"
     },
     {
@@ -3360,10 +3360,10 @@
         }
       },
       "feature_id": "official-platform-prerequisites",
-      "gap": "This Thor currently reports Docker CgroupDriver=systemd; changing it requires operator-approved privileged daemon restart.",
+      "gap": "The operator-approved transactional remediation completed and Docker now reports CgroupDriver=cgroupfs. It restored the exact prior container inventory/running set, and the current VSS runtime passed its exact-model readiness gate; retained evidence is narrative passed-prior.",
       "id": "prereq.platform.docker-cgroupfs",
       "kind": "configuration",
-      "runtime_state": "blocked",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts",
         "industry-profile-workflows"
@@ -3378,7 +3378,7 @@
           "source_id": "warehouse-prerequisites-doc-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "VSS requires Docker native.cgroupdriver=cgroupfs"
     },
     {
@@ -3608,7 +3608,7 @@
         ]
       },
       "feature_id": "core-api-operation-contracts",
-      "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval.",
+      "gap": "The live OpenAPI exposes all 27 documented methods plus the exact-request DELETE extension. Health/model/metadata/metrics/assets, complete file lifecycle, captioning, caption SSE, file-backed chat, legacy-completion negative behavior, schema caps, empty stream inventories, and exact cancellation passed. RTSP add/remove/delete and same-stream multi-job semantics remain unqualified because no operator RTSP_SAMPLE_URL was supplied.",
       "id": "api.core.rt-vlm-27",
       "kind": "api",
       "runtime_state": "static_only",
@@ -3635,7 +3635,7 @@
         "swagger": "/docs"
       },
       "feature_id": "core-api-operation-contracts",
-      "gap": "All operations are statically enumerated but remain blocked from execution pending classification and runtime approval.",
+      "gap": "Eighteen of 24 live operations passed for health, metadata, files, text/video/data-URI/SSE embedding, and empty stream inventories; six RTSP mutation/control operations remain unqualified because no operator stream URL was supplied.",
       "id": "api.core.rt-embed-24",
       "kind": "api",
       "runtime_state": "static_only",
@@ -4943,7 +4943,7 @@
         "training": "lora"
       },
       "feature_id": "rt-embed",
-      "gap": "The exact artifact passed prior offline verification, but current runtime media and embedding semantics need requalification.",
+      "gap": "The exact artifact passed current text, uploaded-file, data-URI, synchronous, and SSE embedding semantics with finite 768-dimensional vectors; retained evidence is narrative passed-prior rather than capability-oracle-bound, and RTSP/custom-model variants remain open.",
       "id": "model.rt-embed.cosmos-embed1-448p-anomaly",
       "kind": "model",
       "runtime_state": "passed_prior",
@@ -5055,10 +5055,10 @@
         }
       },
       "feature_id": "auto-calibration",
-      "gap": "The backend image is absent and no calibration project has completed on Thor.",
+      "gap": "Base AMC completed the official four-camera workflow and produced evaluated overlays plus MV3DT export; optional licensed VGGT refinement remains unavailable.",
       "id": "calibration.auto.workflow-six-step",
       "kind": "calibration",
-      "runtime_state": "blocked",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts",
         "auto-calibration-workflows"
@@ -5077,7 +5077,7 @@
           "source_id": "autocalib-troubleshooting-doc-3.2.1"
         }
       ],
-      "thor_state": "partial",
+      "thor_state": "wired",
       "title": "Auto Calibration six-step project workflow"
     },
     {
@@ -5125,10 +5125,10 @@
         }
       },
       "feature_id": "auto-calibration",
-      "gap": "Strict launch contracts exist, but no operator custom dataset has completed calibration.",
+      "gap": "The locked official file fixture passed upload, verification, calibration, and export; custom synchronized operator media and the mutating RTSP-capture lane remain unqualified.",
       "id": "calibration.auto.input-contract",
       "kind": "calibration",
-      "runtime_state": "blocked",
+      "runtime_state": "not_qualified",
       "scenario_ids": [
         "official-capability-contracts",
         "auto-calibration-workflows"
@@ -5184,10 +5184,10 @@
         }
       },
       "feature_id": "auto-calibration",
-      "gap": "The exact alignment schema is documented but lacks a Thor artifact oracle.",
+      "gap": "The official four-camera alignment file was content-verified and accepted by a completed calibration, but it has three points per camera and does not close the documented four-plus-point custom-data recommendation.",
       "id": "calibration.auto.alignment-schema",
       "kind": "calibration",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts",
         "auto-calibration-workflows"
@@ -5202,7 +5202,7 @@
           "source_id": "autocalib-troubleshooting-doc-3.2.1"
         }
       ],
-      "thor_state": "source_only",
+      "thor_state": "partial",
       "title": "Auto Calibration alignment-data schema"
     },
     {
@@ -5232,10 +5232,10 @@
         ]
       },
       "feature_id": "auto-calibration",
-      "gap": "No ground-truth ZIP has been evaluated on the Thor lane.",
+      "gap": "The locked GT.zip schema and both members were verified and evaluated by the completed Thor project; the retained result is not yet a capability-oracle-bound receipt.",
       "id": "calibration.auto.ground-truth-schema",
       "kind": "calibration",
-      "runtime_state": "not_qualified",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "official-capability-contracts",
         "auto-calibration-workflows"
@@ -5246,7 +5246,7 @@
           "source_id": "autocalib-custom-data-doc-3.2.1"
         }
       ],
-      "thor_state": "source_only",
+      "thor_state": "wired",
       "title": "Auto Calibration ground-truth evaluation schema"
     },
     {
@@ -5714,7 +5714,7 @@
         "trusted_isolated_network_required": true
       },
       "feature_id": "offline-security",
-      "gap": "Loopback ingress is wired; trusted-CIDR and physical-interface enforcement need runtime proof.",
+      "gap": "RT-Embed was proved reachable without authentication on the physical interface, corrected to a loopback-only publication, and then negatively re-tested; the broader multi-service trusted-CIDR/firewall boundary still needs runtime proof.",
       "id": "security.trusted-network-boundary",
       "kind": "security",
       "runtime_state": "not_qualified",
@@ -9814,10 +9814,10 @@
         }
       },
       "feature_id": "auto-calibration",
-      "gap": "The backend image is absent and no recovery path has runtime evidence.",
+      "gap": "Graceful restart persistence and the hard-crash non-persistence boundary were both observed; RTSP capture/session recovery remains unqualified.",
       "id": "behavior.auto-calibration.failure-recovery",
       "kind": "runtime_behavior",
-      "runtime_state": "blocked",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "auto-calibration-workflows"
       ],
@@ -9852,10 +9852,10 @@
         }
       },
       "feature_id": "auto-calibration",
-      "gap": "Neither AMC nor VGGT has completed locally on Thor.",
+      "gap": "AMC accuracy statistics, three overlays, the REST overlay, and MV3DT export passed; separately licensed VGGT refinement was unavailable and not invoked.",
       "id": "behavior.auto-calibration.result-verification",
       "kind": "runtime_behavior",
-      "runtime_state": "blocked",
+      "runtime_state": "passed_prior",
       "scenario_ids": [
         "auto-calibration-workflows"
       ],

@@ -392,11 +392,17 @@ def _verify_packages() -> None:
         lvs_multi,
         lvs_focus,
         search,
-        search_executor,
         search_rtsp,
         ui,
     ):
         _verify_nested_locks(package)
+
+    # search_executor is the frozen pre-readiness Search snapshot. Its exact
+    # contract, schemas, and executor are locked by this package, while the
+    # current Search readiness successor separately verifies that immutable
+    # predecessor by identity. Replaying the snapshot's nested live-source
+    # locks would incorrectly make an unrelated current Agent config change
+    # mutate historical evidence.
 
     if (
         base.get("package_id") != "base-semantic-owned-fixture-successor"

@@ -464,6 +464,7 @@ class RuntimeContractTests(unittest.TestCase):
         required = {
             ("/v1/upload_alignment/{project_id}", "post"),
             ("/v1/upload_layout/{project_id}", "post"),
+            ("/v1/{type}/calibrate/{project_id}/log", "get"),
             ("/v1/rtsp/capture/{project_id}/{session_id}", "get"),
             ("/v1/rtsp/capture/{project_id}/{session_id}/ingest", "post"),
             ("/v1/rtsp/capture/{project_id}/{session_id}/stop", "post"),
@@ -487,12 +488,19 @@ class RuntimeContractTests(unittest.TestCase):
                 TOOL,
                 "_get_json",
                 side_effect=[(200, {"code": 0}), (200, {"paths": paths})],
-            ),
+            ) as get_json,
             mock.patch.object(TOOL, "_get_status", return_value=200),
         ):
             result = TOOL.qualify_runtime(
                 "http://127.0.0.1:8010/v1", "http://127.0.0.1:5000", None, 0.1
             )
+        self.assertEqual(
+            [call.args[0] for call in get_json.call_args_list],
+            [
+                "http://127.0.0.1:8010/v1/ready",
+                "http://127.0.0.1:8010/openapi.yaml",
+            ],
+        )
         self.assertEqual(result["method"], "GET-only")
         self.assertEqual(
             result["openapi_required_operations"], len(TOOL.REQUIRED_OPENAPI)

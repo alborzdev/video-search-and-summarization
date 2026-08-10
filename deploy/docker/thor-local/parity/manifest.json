@@ -269,7 +269,7 @@
         "audio transcript"
       ],
       "category": "service",
-      "gap": "The local OpenAI-compatible image path and opt-in native-audio Omni source lane are wired. Stage the Omni assets and exercise every file/URL/data/RTSP media variant, dense captions, incidents/categories/reasoning, and audio at runtime.",
+      "gap": "The exact Cosmos3 lane passed uploaded-file dense captions, caption SSE with usage, file-backed video chat, exact cancellation, and cleanup. HTTP/S, S3, allowlisted file URI, inline data URI, RTSP mutation, incident/category/reasoning options, and the artifact-blocked native-audio Omni lane remain individually unqualified.",
       "id": "rt-vlm-media",
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -283,7 +283,8 @@
         "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json",
         "deploy/docker/thor-local/qualification/acceptance_executor.py",
         "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md",
-        "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md"
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "partial"
     },
@@ -300,7 +301,7 @@
         "health/metadata/models/metrics"
       ],
       "category": "api",
-      "gap": "Export live OpenAPI/route metadata and exercise every operation through the supported local ingress or a documented loopback-only service port.",
+      "gap": "The live loopback-only API exposed all 27 documented methods plus exact-request DELETE. Health/model/metadata/metrics/assets, complete file lifecycle, captioning, caption SSE, file-backed chat, legacy completion negative behavior, schema caps, empty stream inventories, and exact cancellation passed. RTSP mutation and same-stream multi-job semantics remain unqualified without an operator stream URL.",
       "id": "rt-vlm-api",
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -310,7 +311,8 @@
         "deploy/docker/services/rtvi/rtvi-vlm/rtvi-vlm-docker-compose.yml",
         "deploy/docker/thor-local/qualification/acceptance_phase1_inventory.json",
         "deploy/docker/thor-local/qualification/acceptance_executor.py",
-        "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md"
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-phase1-rtvi-file-lifecycle.md",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "wired"
     },
@@ -324,7 +326,7 @@
         "remote OpenAI-compatible endpoint"
       ],
       "category": "model",
-      "gap": "The exact 11-variant advertised matrix is source-anchored and keeps every missing exact artifact unqualified. Existing official CR2 8B/2B snapshots are byte/semantic locked, and the inactive CR2 plus Omni overlays keep model trees read-only with corrected memory admission. The 8B Hugging Face revision is not claimed equivalent to NGC hf-0303, 2B is non-advertised, and current memory blocks launch; runtime-qualify each staged lane and obtain/lock the remaining exact advertised artifacts before claiming full model parity.",
+      "gap": "The exact default Cosmos3 Nano BF16 lane passed local captioning, SSE, chat, cancellation, cleanup, and readiness. The broader 11-variant advertised matrix remains source-anchored: CR2 8B/2B and inactive overlays are locked but not current-runtime qualified, the 8B Hugging Face revision is not claimed equivalent to NGC hf-0303, 2B is non-advertised, Omni is artifact/capacity blocked, and the remaining exact variants are absent.",
       "id": "rt-vlm-models",
       "runtime_state": "not_qualified",
       "source_evidence": [
@@ -345,7 +347,8 @@
         "deploy/docker/thor-local/parity/evidence/2026-07-31-offline-staging.md",
         "deploy/docker/thor-local/parity/evidence/2026-07-31-exact-model-artifact-locks.md",
         "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-audio-codec-lane.md",
-        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-model-matrix.md"
+        "deploy/docker/thor-local/parity/evidence/2026-07-31-rt-vlm-model-matrix.md",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "partial"
     },
@@ -391,7 +394,7 @@
         "RT-Embed custom model-source and Triton repository paths"
       ],
       "category": "service",
-      "gap": "The 3.2.1 image, exact Cosmos revision/model tree, and Thor batch-8 Triton configs/engines pass semantic offline verification; exercise all media/API variants in the current runtime. Batch-64 files are integrity-locked but not runtime-qualified. Model-default claims remain scoped: 448p is the base-service default and 448p-anomaly is the search-workflow default. Exact identity, dimensions, custom model-source integration, and reindex semantics remain unqualified.",
+      "gap": "The 3.2.1 Thor derivative and exact 448p-anomaly model passed current text, uploaded-file, data-URI, synchronous, and SSE embedding with finite 768-dimensional vectors, exact file lifecycle cleanup, and 18/24 live API operations. The retained run is narrative passed-prior rather than a capability-oracle-bound receipt. Six RTSP mutation/control operations, the 448p/336p/224p alternatives, batch-64 runtime, custom model-source integration, reindex semantics, and a real performance envelope remain unqualified. The unauthenticated API is now loopback-only.",
       "id": "rt-embed",
       "official_capability_ids": [
         "model.rt-embed.cosmos-embed1-448p",
@@ -588,7 +591,7 @@
         "AMC and VGGT result verification semantics"
       ],
       "category": "calibration",
-      "gap": "The warehouse-bundle-free lane has strict MP4/RTSP contracts, loopback-only Compose, GET-only coverage of all 26 skill-advertised operations, and the official 160,499,115-byte AMC fixture staged under an exact archive/content lock. The backend image is absent and unlocked, VGGT is absent (optional for base AMC but required for refinement), and no calibration job has run; stage the backend, qualify the official fixture or operator data, then separately qualify refinement if VGGT is provided. Official Auto Calibration remains x86_64/Ubuntu 24.04/driver 590 only; the Thor lane is a custom unsupported extension and must not claim official Thor support. The Warehouse sample is not required; qualify custom data. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "gap": "The warehouse-bundle-free Thor lane now has locked ARM64 backend/UI images, strict MP4/RTSP contracts, loopback-only Compose, GET-only live coverage of all 26 advertised operations, and a completed/evaluated official four-camera base-AMC project with overlays and MV3DT export. The retained run is narrative passed-prior evidence rather than a capability-oracle-bound receipt. Custom synchronized operator media and mutating RTSP capture remain unqualified; separately licensed VGGT is absent and refinement was not invoked. Official Auto Calibration remains x86_64/Ubuntu 24.04/driver 590 only, so this is a custom unsupported Thor extension and does not claim official platform support.",
       "id": "auto-calibration",
       "official_capability_ids": [
         "calibration.auto.workflow-six-step",
@@ -1284,7 +1287,7 @@
         "Docker bridge firewall boundary"
       ],
       "category": "platform",
-      "gap": "The protected runtime, all 29 selected image locks, host assets, exact embedding/model trees, local provider snapshots/containers, and active cache cleaner pass offline verification. Current pull-free restart proof still requires enough memory to start the VLM/stack plus the physical-interface firewall. Network isolation and external edge controls are mitigations only: they must not be represented as remediation of missing internal TLS, message integrity, consistent authentication, or complete limits/timeouts. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "gap": "The protected runtime, all 29 selected image locks, host assets, exact embedding/model trees, local provider snapshots/containers, and active cache cleaner pass offline verification. RT-Embed's unauthenticated physical-interface publication was reproduced, corrected to loopback-only, and negatively re-tested while Agent retained loopback access. The broader physical-interface firewall and pull-free whole-stack restart proof remain open. Network isolation and external edge controls are mitigations only: they do not remediate missing internal TLS, message integrity, consistent authentication, or complete limits/timeouts.",
       "id": "offline-security",
       "official_capability_ids": [
         "security.trusted-network-boundary",
@@ -1327,7 +1330,7 @@
         "Alert verification VLM backends"
       ],
       "category": "model",
-      "gap": "The official agent and Edge model set is now exact and fail-closed, but Thor currently selects alternate Qwen providers. Stage, content-lock, memory-admit, and runtime-qualify each exact model before claiming model parity. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "gap": "Thor now runs the exact Edge Nemotron 3 Nano 4B FP8 and Cosmos3 Nano BF16 pair: direct Edge4B inference and exact-model readiness passed, and Cosmos3 passed captions, SSE, chat, cancellation, and cleanup. The 9B default, alternate Agent LLM/VLM list, Cosmos3 Super, custom weights, and Warehouse Agent function bundle remain individually unqualified; the aggregate feature therefore remains partial.",
       "id": "official-agent-models",
       "official_capability_ids": [
         "model.rt-vlm.default-cosmos3-nano-bf16",
@@ -1356,7 +1359,8 @@
         "deploy/docker/developer-profiles/dev-profile-thor-full/.env",
         "deploy/docker/thor-local/models/artifacts.lock.json",
         "deploy/docker/thor-local/parity/official-capabilities.json",
-        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "partial"
     },
@@ -1655,7 +1659,7 @@
         "Legacy calibration UI/server API surface"
       ],
       "category": "api",
-      "gap": "These five official surfaces are now explicitly outside the scoped 17-surface route ledger. Export exact schemas/operations and add loopback-safe acceptance before increasing API totals.",
+      "gap": "Auto-calibration now exposes and passed prior qualification of its complete 26-operation live contract on loopback. VSS Configurator, SDRC, DeepStream Configurator, and legacy calibration remain outside the scoped 17-surface route ledger and still need exact local acceptance before aggregate API totals increase.",
       "id": "extended-api-surfaces",
       "official_capability_ids": [
         "api.vss-configurator.sensor",
@@ -1675,7 +1679,7 @@
       "thor_evidence": [
         "deploy/docker/thor-local/parity/official-capabilities.json"
       ],
-      "thor_state": "source_only"
+      "thor_state": "partial"
     },
     {
       "acceptance_class": "required_local",
@@ -1695,7 +1699,7 @@
         "Logstash Kafka and Redis ingestion"
       ],
       "category": "api",
-      "gap": "Protocol support is wired or source-present, but exact WebSocket, SSE, Kafka/NvSchema, Redis, and WebRTC event/handshake oracles have not been exercised on the current Thor runtime. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "gap": "RT-VLM caption SSE passed timed chunks, optional usage, cancellation closure, and terminal framing; prior current-stack evidence also passed chat SSE and Alert WebSocket ping/pong. Agent WebSocket, Kafka/NvSchema publication semantics, Redis events, VIOS WebRTC, and remaining broker format cases still lack complete current-runtime oracles.",
       "id": "non-rest-protocols",
       "official_capability_ids": [
         "protocol.agent.websocket",
@@ -1721,7 +1725,8 @@
       ],
       "thor_evidence": [
         "deploy/docker/thor-local/parity/official-capabilities.json",
-        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "partial"
     },
@@ -1773,7 +1778,7 @@
         "Docker 29.5 NGC pull recovery"
       ],
       "category": "service",
-      "gap": "The 3.2.1 request limits, error statuses, optimization defaults, URL security controls, and VIOS behavioral contracts are source-present but lack individual current Thor runtime oracles. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "gap": "RT-VLM now has bounded narrative runtime evidence for generation/user/system caps, the generate-captions rename, and exact cancellation; RT-Embed has evidence for RFC 2397 data URLs, multipart exclusivity, and fail-closed disabled file URLs. Remaining URL/TLS/header/redirect/size/age/queue, RTSP concurrency/deletion, MoE, CV, VIOS, LVS, and other release behaviors still lack individual current Thor receipts.",
       "id": "release-behavior-contracts",
       "official_capability_ids": [
         "behavior.rt-embed.duplicate-id-409",
@@ -1829,7 +1834,8 @@
       ],
       "thor_evidence": [
         "deploy/docker/thor-local/parity/official-capabilities.json",
-        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "partial"
     },
@@ -1847,7 +1853,7 @@
         "Shared GPU layout memory boundary"
       ],
       "category": "platform",
-      "gap": "Most host contracts are statically checked, but Docker still uses the unsupported systemd cgroup driver and the documented 1 TB storage minimum is not met. Wave 3 adds reviewed planning-only contracts from the complete candidate registry; no new runtime pass evidence is implied.",
+      "gap": "Docker now uses the required cgroupfs driver after an operator-approved transactional restart with exact workload restoration, and the current exact-model runtime passes. The 936 GiB filesystem remains below the documentation's nominal 1 TB capacity figure, while Smart City x86 reference sizing and other non-Thor platform envelopes remain non-applicable or unqualified.",
       "id": "official-platform-prerequisites",
       "official_capability_ids": [
         "prereq.platform.validated-gpus",
@@ -1868,7 +1874,8 @@
       "thor_evidence": [
         "deploy/docker/scripts/thor-local.sh",
         "deploy/docker/thor-local/parity/official-capabilities.json",
-        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json"
+        "deploy/docker/thor-local/parity/candidates/wave3/bundle/merge-receipt.json",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "partial"
     },
@@ -1916,7 +1923,7 @@
         "Video Summarization MCP documentation 13-tool versus repository 9-tool discrepancy"
       ],
       "category": "api",
-      "gap": "Operation manifests are exact and digest-bound, including the four Thor-local LVS file-management adapters. Execution remains plan-only, and the pinned upstream LVS repositories still expose only nine of the 13 documented MCP tools.",
+      "gap": "Operation manifests are exact and digest-bound. RT-VLM has narrative live evidence for health/model/metadata/metrics/assets, file lifecycle, captioning/SSE/chat, validation negatives, empty inventories, and exact cancellation; RTSP mutations remain open. RT-Embed has evidence for 18/24 operations with six RTSP controls open. Other surfaces remain mixed, and the pinned upstream LVS repositories still expose only nine of the 13 documented MCP tools.",
       "id": "core-api-operation-contracts",
       "official_capability_ids": [
         "api.core.rt-vlm-27",
@@ -1946,7 +1953,8 @@
       "thor_evidence": [
         "deploy/docker/thor-local/qualification/api_inventory.json",
         "deploy/docker/thor-local/qualification/expected",
-        "deploy/docker/thor-local/parity/official-capabilities.json"
+        "deploy/docker/thor-local/parity/official-capabilities.json",
+        "deploy/docker/thor-local/parity/evidence/2026-08-10-rt-vlm-runtime.md"
       ],
       "thor_state": "partial"
     },

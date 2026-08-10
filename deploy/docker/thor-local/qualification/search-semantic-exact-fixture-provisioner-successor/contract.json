@@ -80,7 +80,7 @@
     {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
     {"path": "services/agent/src/vss_agents/tools/embed_search.py", "sha256": "64ce96a76e46738a37e3bb77740d937accfa507c8018c0f49753f749dbf6f95c"},
     {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "09701f84f6f7786a053eb05201c0679a5606591721d9307735e1be6a40fbcaa4"},
-    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/contract.json", "sha256": "7fad91d1b858ecbbf5b6e36303241512ba9b387439f21b9cff1efe5f35ae6ffc"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/contract.json", "sha256": "70fc6f2da7ae03998b6390eaf2e7d6850e4a6c2927dff51dd4b98c0dfe5f1cf2"},
     {"path": "deploy/docker/thor-local/qualification/search-semantic-runtime-evidence-successor/executor.py", "sha256": "ae8d669faa819e9a07ef4bd0903f33ada98f0cb0cc1236c8a03f1f12528d1946"},

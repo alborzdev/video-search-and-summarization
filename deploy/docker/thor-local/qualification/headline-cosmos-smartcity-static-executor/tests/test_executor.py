@@ -39,7 +39,8 @@ def test_default_execution_passes_without_runtime_promotion() -> None:
     assert result["runtime_state_promoted"] is False
     assert result["warehouse_sample_required"] is False
     assert {item["runtime_state"] for item in result["results"]} == {
-        "not_qualified"
+        "not_qualified",
+        "passed_prior",
     }
 
 

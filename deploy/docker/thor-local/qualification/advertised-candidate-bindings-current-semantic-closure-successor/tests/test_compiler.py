@@ -196,6 +196,26 @@ def test_source_package_boundary_drift_fails_closed(
         compiler.compile_overlay()
 
 
+def test_frozen_search_predecessor_is_identity_locked_not_nested_replayed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    original = compiler._json
+
+    def changed(path: Path) -> dict:
+        value = original(path)
+        if path.as_posix().endswith(
+            "search-semantic-runtime-evidence-successor/contract.json"
+        ):
+            value = copy.deepcopy(value)
+            value["source_locks"][0]["sha256"] = "0" * 64
+        return value
+
+    monkeypatch.setattr(compiler, "_json", changed)
+    assert compiler.compile_overlay() == json.loads(
+        (PACKAGE / "binding-overlay.json").read_text(encoding="utf-8")
+    )
+
+
 def test_ui_irreversible_warning_boundary_drift_fails_closed(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

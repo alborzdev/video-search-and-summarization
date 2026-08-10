@@ -32,7 +32,7 @@ general:
       vst_streamprocessor_url: ${STREAM_PROCESSOR_MODULE_ENDPOINT:-}
       delete_vst_storage_on_stream_remove: false
       rtvi_vlm_base_url: ${RTVI_VLM_BASE_URL}
-      rtvi_embed_base_url: http://${HOST_IP}:${RTVI_EMBED_PORT}
+      rtvi_embed_base_url: ${COSMOS_EMBED_ENDPOINT}
       rtvi_embed_model: ${RTVI_EMBED_MODEL:-cosmos-embed1-448p}
       rtvi_embed_chunk_duration: 5
       rtvi_cv_base_url: http://${HOST_IP}:${RTVI_CV_PORT}

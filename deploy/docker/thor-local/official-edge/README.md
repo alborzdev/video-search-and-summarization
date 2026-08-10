@@ -9,7 +9,7 @@ The exact contract is:
 | Role | Runtime contract |
 |---|---|
 | LLM | Local standalone `nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8` on `127.0.0.1:30081`; VSS calls it through `LLM_MODE=remote` because the service is outside NVIDIA's released Compose graph. |
-| VLM | RT-VLM 3.2.1 loads `ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final` in-process with selector `cosmos-reason3` and advertises `nim_nvidia_cosmos3-nano-reasoner_bf16-final` on port `8018`. |
+| VLM | RT-VLM 3.2.1 loads `ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final` in-process with selector `cosmos-reason3` and advertises `nim_nvidia_cosmos3-nano-reasoner_bf16-final` on loopback-only port `127.0.0.1:8018`. |
 | Agent | The complete Thor-full feature graph remains the base config. Only the two Edge 4B planning/response prompt fields are inherited exactly from NVIDIA's `dev-profile-base/.../config_edge.yml`. |
 | Official memory lane | Edge 4B `0.25` + Cosmos3 `0.35` + required UMA reserve `0.20`; launch admission therefore requires `MemAvailable / MemTotal >= 0.80`. |
 | Thor demo memory lane | The exact same artifacts and images with Edge 4B KV allocation `0.12`, Cosmos3 at its required `0.35`, and a `0.23` admission reserve; launch admission requires `MemAvailable / MemTotal >= 0.70`. |

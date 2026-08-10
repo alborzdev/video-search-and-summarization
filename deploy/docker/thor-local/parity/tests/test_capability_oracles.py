@@ -707,8 +707,18 @@ class CapabilityOracleTests(unittest.TestCase):
                 locator="different locator"
             ),
             "gap": lambda item: item.update(gap="different reviewed gap"),
-            "thor state": lambda item: item.update(thor_state="wired"),
-            "runtime state": lambda item: item.update(runtime_state="static_only"),
+            "thor state": lambda item: item.update(
+                thor_state=(
+                    "partial" if item.get("thor_state") == "wired" else "wired"
+                )
+            ),
+            "runtime state": lambda item: item.update(
+                runtime_state=(
+                    "not_qualified"
+                    if item.get("runtime_state") == "static_only"
+                    else "static_only"
+                )
+            ),
         }
         for label, mutate in mutations.items():
             with self.subTest(label=label):

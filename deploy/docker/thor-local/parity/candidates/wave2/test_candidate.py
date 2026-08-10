@@ -87,6 +87,42 @@ class Wave2CandidateTests(unittest.TestCase):
         ):
             self._validate(package)
 
+    def test_live_merge_allows_later_monotonic_qualification(self) -> None:
+        live_ledger = copy.deepcopy(self.live_ledger)
+        capability = next(
+            item
+            for item in live_ledger["capabilities"]
+            if item["id"] == "calibration.auto.alignment-schema"
+        )
+        capability["thor_state"] = "wired"
+        capability["runtime_state"] = "passed_current"
+        validator.validate(
+            copy.deepcopy(self.package),
+            live_ledger=live_ledger,
+            live_manifest=copy.deepcopy(self.live_manifest),
+            live_acceptance=copy.deepcopy(self.live_acceptance),
+        )
+
+    def test_live_merge_rejects_status_regression(self) -> None:
+        live_ledger = copy.deepcopy(self.live_ledger)
+        capability = next(
+            item
+            for item in live_ledger["capabilities"]
+            if item["id"] == "calibration.auto.workflow-six-step"
+        )
+        capability["thor_state"] = "source_only"
+        capability["runtime_state"] = "not_applicable"
+        with self.assertRaisesRegex(
+            validator.CandidateContractError,
+            "thor_state regression|runtime_state regression",
+        ):
+            validator.validate(
+                copy.deepcopy(self.package),
+                live_ledger=live_ledger,
+                live_manifest=copy.deepcopy(self.live_manifest),
+                live_acceptance=copy.deepcopy(self.live_acceptance),
+            )
+
     def test_source_claim_hash_drift_is_rejected(self) -> None:
         package = copy.deepcopy(self.package)
         package["new_capabilities"][0]["contract"]["drift"] = True

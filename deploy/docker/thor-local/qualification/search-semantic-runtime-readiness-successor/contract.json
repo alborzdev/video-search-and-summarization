@@ -62,7 +62,7 @@
     {"path": "deploy/docker/thor-local/qualification/search-documents-bboxes-runtime-evidence/collector.py", "sha256": "8cf1ee4efd9b51b314b0d86acfbcdda2aa7f7179426b3ece6034e82291747aeb"},
     {"path": "deploy/docker/thor-local/qualification/local20-fixture-pack/fixtures/search-documents-bboxes.json", "sha256": "ddeffaa3ddf8360244d17c5ed265ae637a5f228eb1adae46ee780d78dde2e517"},
     {"path": "deploy/docker/developer-profiles/dev-profile-search/vss-agent/configs/config.yml", "sha256": "09701f84f6f7786a053eb05201c0679a5606591721d9307735e1be6a40fbcaa4"},
-    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "cc00b900acc10973b331d47bea2ce86642d7f35b5265f1ee9818e0b99526d6a5"},
+    {"path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml", "sha256": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6"},
     {"path": "services/agent/src/vss_agents/tools/search.py", "sha256": "93d36d84da685c1e78f520d6503a58359e992a7a5b89d877c9a84e3dcb7dc078"},
     {"path": "services/agent/src/vss_agents/tools/attribute_search.py", "sha256": "a5bf8bb92989370dbe4b511cb001e34817fa495d3bbd5781d7998d2c5a78109c"},
     {"path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts", "sha256": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f"},

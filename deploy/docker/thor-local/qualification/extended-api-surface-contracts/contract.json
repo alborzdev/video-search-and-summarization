@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "target_commit": "862bdcc46db9c81d920703d1ba14c9a4dfa21377",
-  "contract_set_sha256": "72e500a620f2b07411a5c7668b533aa1974ac456dc7b63e8af35446774dbc82d",
+  "contract_set_sha256": "0d18908b7fc5eca0c7fb61de241a111a72799ca9db3014c8213c7db6f753ba61",
   "scope": {
     "advertised_claim_family_count": 5,
     "addressable_surface_count": 7,
@@ -199,7 +199,7 @@
         {"method": "GET", "path": "/v1/get_project_info/{project_id}", "evidence": "checked_in_catalog", "mutation": "read_only"},
         {"method": "GET", "path": "/v1/result/{project_id}/evaluation_statistics", "evidence": "checked_in_catalog", "mutation": "read_only"},
         {"method": "GET", "path": "/v1/result/{project_id}/overlay_image", "evidence": "checked_in_catalog", "mutation": "read_only"},
-        {"method": "GET", "path": "/v1/amc/calibrate/{project_id}/log", "evidence": "checked_in_catalog", "mutation": "read_only"},
+        {"method": "GET", "path": "/v1/{type}/calibrate/{project_id}/log", "evidence": "checked_in_catalog", "mutation": "read_only"},
         {"method": "GET", "path": "/v1/calibrate/{project_id}/log/{type}/stream", "evidence": "checked_in_catalog", "mutation": "read_only"},
         {"method": "POST", "path": "/v1/vggt/calibrate/{project_id}", "evidence": "checked_in_catalog", "mutation": "mutating"},
         {"method": "GET", "path": "/v1/vggt_results/{project_id}/evaluation_statistics", "evidence": "checked_in_catalog", "mutation": "read_only"},
@@ -324,7 +324,7 @@
       "type": "checked_in_source_snapshot",
       "extraction_method": "The REQUIRED_OPENAPI dictionary was parsed statically from the checked-in Thor qualifier; no backend process or image was required",
       "files": [
-        {"path": "deploy/docker/thor-local/auto-calibration/tool.py", "content_sha256": "94664fc3a18b37f45f436ad6e0f74bed49d78d31b26dd809a489fef2f912b6c8", "git_blob_oid": "b7ed18a1cf091b52e943eba40a4b026bbb7e7bf6", "role": "exact 26-operation REQUIRED_OPENAPI catalog"}
+        {"path": "deploy/docker/thor-local/auto-calibration/tool.py", "content_sha256": "4e7a9833cec48582286873e5d0e107cc165435d4ae73d63b6effebbf49a309bf", "git_blob_oid": "ea5092c6065ad9f4a21cc90ab40634a0ffc0da15", "role": "exact 26-operation REQUIRED_OPENAPI catalog"}
       ]
     },
     {

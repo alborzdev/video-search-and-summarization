@@ -139,6 +139,31 @@ checked-in admission policy requires 80 GiB available memory. Native semantic
 audio therefore remains blocked by a specific absent artifact and current
 capacity, not by missing VSS wiring or codecs.
 
+## AutoMagicCalib
+
+The standalone AutoMagicCalib backend and UI were staged and exercised with
+the content-locked official small four-camera fixture, not the excluded
+Warehouse bundle. Project `20260809_190004_6638` completed base AMC in 1,640
+seconds. Ground-truth evaluation returned average L2 distance 0.11 m and
+average reprojection error 1.62 px. Three overlay images, the REST overlay, and
+the seven-member MV3DT export all validated. A graceful backend restart wrote
+and reloaded `projects/state.json`, preserving the completed project. The
+optional commercial VGGT checkpoint is absent and refinement was not invoked.
+Exact hashes, the hard-reboot boundary, and resource-isolation evidence are in
+`2026-08-09-auto-calibration-runtime.md`.
+
+The backend and UI were subsequently recreated through the immutable,
+loopback-only Thor overlay. The completed project survived recreation, and the
+GET-only qualifier passed readiness, UI, VIOS reachability, and all 26 declared
+OpenAPI operations. The full inference stack was restored after calibration.
+The exact-model Thor runtime verifier passed after Kafka was right-sized from
+the upstream 6 GiB production heap to an overridable 1 GiB single-node Thor
+heap and local credential placeholders were forced empty in LVS and VA-MCP.
+Because every optional lane co-resident left less than 5 GiB available memory,
+the already-qualified calibration, dashboard-collector, and idle RT-CV lanes
+were returned to a safe on-demand stopped state; the core VSS stack retained
+about 11 GiB available memory with no swap.
+
 ## Browser UI and dashboard repair
 
 A real headless Chromium session at `http://127.0.0.1:3001` exercised Search,
@@ -168,4 +193,13 @@ with no visualization error. No synthetic analytics documents were inserted.
   one optional Video Analytics OpenAPI probe skipped, and zero failed or
   unavailable.
 - `deploy/docker/test-scripts/test-thor-static-parity-milestone.sh` finished
-  with `PASS: unified static-only Thor parity milestone`.
+  with `PASS: unified static-only Thor parity milestone`. The final post-reboot
+  rerun used the current AutoMagicCalib API/tool lock, Thor Kafka heap override,
+  empty local official-edge credential projection, regenerated 289-capability
+  ledger/oracles, and the selected immutable 500-capability metadata set; all
+  derived source-lock and metadata verification groups passed.
+
+Subsequent direct RT-Embed runtime evidence, including file/text/data-URI/SSE
+embedding and the correction of its unauthenticated physical-interface port
+publication, is retained separately in
+`2026-08-10-rt-embed-runtime.md`.

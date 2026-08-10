@@ -7,18 +7,18 @@
     },
     "capability_oracles": {
       "path": "deploy/docker/thor-local/parity/capability-oracles.json",
-      "raw_sha256": "27f0ded305c0d29013d6946c1fe83faf910dcf8b92ebbfa0cc9eb3e10e821b29",
+      "raw_sha256": "d7db6de39585e7a1e9a62cc76ae4251648e017422dfc4cd1493bd00723a0df40",
       "schema_id": "capability_oracles_schema",
       "schema_version": 1
     },
     "manifest": {
       "path": "deploy/docker/thor-local/parity/manifest.json",
-      "raw_sha256": "1040ba9806ead7050accec09e4be32cd3fb223c804782b49c81683cebbe89c62",
+      "raw_sha256": "e7dfed52799e1d880e42d5cc16481dc0135e06f342d4821ffa9da9fefff579a9",
       "schema_version": 1
     },
     "official_capabilities": {
       "path": "deploy/docker/thor-local/parity/official-capabilities.json",
-      "raw_sha256": "72ddb66c7877cc54c196a0a1236247aee8d3d2c88edda0155cc6bc0b83c1d8d4",
+      "raw_sha256": "c43296924169efa0904979b18aa36a963f1e2196cc5eb37ec660a9b1a9f210cb",
       "schema_id": "official_capabilities_schema",
       "schema_version": 1
     }

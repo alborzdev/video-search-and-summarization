@@ -78,6 +78,47 @@ RTVLM_SERVER_OVERLAY_SHA256 = (
     "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
 )
 RTVLM_SERVER_CONTAINER = "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py"
+RTVLM_STREAM_HANDLER_OVERLAY = (
+    REPO_ROOT / "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py"
+)
+RTVLM_STREAM_HANDLER_OVERLAY_SHA256 = (
+    "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+)
+RTVLM_STREAM_HANDLER_CONTAINER = (
+    "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py"
+)
+RTVLM_PIPELINE_OVERLAY = (
+    REPO_ROOT / "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py"
+)
+RTVLM_PIPELINE_OVERLAY_SHA256 = (
+    "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
+)
+RTVLM_PIPELINE_CONTAINER = "/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py"
+RTVLM_PROCESS_BASE_OVERLAY = (
+    REPO_ROOT / "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py"
+)
+RTVLM_PROCESS_BASE_OVERLAY_SHA256 = (
+    "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"
+)
+RTVLM_PROCESS_BASE_CONTAINER = "/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py"
+RTVLM_REQUEST_CANCELLATION_OVERLAYS = {
+    RTVLM_SERVER_CONTAINER: (
+        RTVLM_SERVER_OVERLAY,
+        RTVLM_SERVER_OVERLAY_SHA256,
+    ),
+    RTVLM_STREAM_HANDLER_CONTAINER: (
+        RTVLM_STREAM_HANDLER_OVERLAY,
+        RTVLM_STREAM_HANDLER_OVERLAY_SHA256,
+    ),
+    RTVLM_PIPELINE_CONTAINER: (
+        RTVLM_PIPELINE_OVERLAY,
+        RTVLM_PIPELINE_OVERLAY_SHA256,
+    ),
+    RTVLM_PROCESS_BASE_CONTAINER: (
+        RTVLM_PROCESS_BASE_OVERLAY,
+        RTVLM_PROCESS_BASE_OVERLAY_SHA256,
+    ),
+}
 AGENT_CONFIG_CONTAINER = (
     "/vss-agent/deploy/docker/thor-local/official-edge/config_edge.yml"
 )
@@ -475,22 +516,41 @@ def _command_contains(command: Any, required: list[str], context: str) -> None:
 
 
 def verify_compose_contract() -> None:
-    if _sha256_file(RTVLM_SERVER_OVERLAY) != RTVLM_SERVER_OVERLAY_SHA256:
-        raise ContractError("RT-VLM request-cancellation overlay source drifted")
+    for destination, (source, expected_sha256) in (
+        RTVLM_REQUEST_CANCELLATION_OVERLAYS.items()
+    ):
+        if _sha256_file(source) != expected_sha256:
+            raise ContractError(
+                "RT-VLM request-cancellation overlay source drifted: "
+                f"{destination}"
+            )
     compose = _load_yaml(OFFICIAL_COMPOSE)
     services = compose.get("services")
     if not isinstance(services, dict):
         raise ContractError("official-edge compose must define services")
-    if set(services) != {"nemotron-edge", "rtvi-vlm", "vss-agent"}:
+    if set(services) != {
+        "nemotron-edge",
+        "rtvi-vlm",
+        "vss-agent",
+        "lvs-server",
+        "vss-va-mcp",
+        "alert-bridge",
+    }:
         raise ContractError("official-edge compose service set drifted")
 
     edge = services["nemotron-edge"]
     rtvlm = services["rtvi-vlm"]
     agent = services["vss-agent"]
+    lvs = services["lvs-server"]
+    va_mcp = services["vss-va-mcp"]
+    alert_bridge = services["alert-bridge"]
     for name, value in (
         ("nemotron-edge", edge),
         ("rtvi-vlm", rtvlm),
         ("vss-agent", agent),
+        ("lvs-server", lvs),
+        ("vss-va-mcp", va_mcp),
+        ("alert-bridge", alert_bridge),
     ):
         if not isinstance(value, dict):
             raise ContractError(f"compose service {name} must be an object")
@@ -550,9 +610,43 @@ def verify_compose_contract() -> None:
         raise ContractError(
             "compose RT-VLM environment differs from exact Cosmos3 lane"
         )
+    if lvs.get("environment") != {
+        "NVIDIA_API_KEY": "",
+        "OPENAI_API_KEY": "",
+        "LVS_LLM_API_KEY": "",
+        "LVS_LLM_MODEL_NAME": EDGE_MODEL_ID,
+        "LVS_LLM_BASE_URL": f"{EDGE_BASE_URL}/v1",
+        "LVS_LLM_MODEL_TYPE": "vllm",
+        "VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME": COSMOS_MODEL_ID,
+        "RTVI_VLM_URL": COSMOS_BASE_URL,
+        "VIA_VLM_ENDPOINT": f"{COSMOS_BASE_URL}/v1/",
+    }:
+        raise ContractError("compose LVS credential environment differs")
+    if va_mcp.get("environment") != {
+        "NVIDIA_API_KEY": "",
+        "OPENAI_API_KEY": "",
+        "HF_TOKEN": "",
+        "LLM_MODEL_TYPE": "vllm",
+        "LLM_NAME": EDGE_MODEL_ID,
+        "LLM_BASE_URL": EDGE_BASE_URL,
+    }:
+        raise ContractError("compose VA-MCP credential environment differs")
+    if alert_bridge.get("environment") != {
+        "NVIDIA_API_KEY": "",
+        "OPENAI_API_KEY": "",
+        "HF_TOKEN": "",
+        "VLM_MODE": "local_shared",
+        "VLM_NAME": COSMOS_MODEL_ID,
+        "VLM_BASE_URL": COSMOS_BASE_URL,
+        "RTVI_VLM_BASE_URL": COSMOS_BASE_URL,
+    }:
+        raise ContractError("compose Alert Bridge model environment differs")
     if rtvlm.get("volumes") != [
         "${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
         "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py:/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py:ro",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py:/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py:ro",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py:/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py:ro",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py:/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py:ro",
     ]:
         raise ContractError(
             "compose RT-VLM cache-root or request-cancellation overlay mount differs from exact Cosmos3 lane"
@@ -1358,22 +1452,58 @@ def verify_resolved_compose(
         raise ContractError("resolved LVS retained a non-Edge4B model ID")
     if lvs_env.get("LVS_LLM_BASE_URL") != f"{EDGE_BASE_URL}/v1":
         raise ContractError("resolved LVS retained a non-Edge4B endpoint")
+    va_mcp_env = _environment_list_to_map(
+        services["vss-va-mcp"].get("environment"), "resolved vss-va-mcp"
+    )
+    expected_va_mcp = {
+        "LLM_MODEL_TYPE": "vllm",
+        "LLM_NAME": EDGE_MODEL_ID,
+        "LLM_BASE_URL": EDGE_BASE_URL,
+    }
+    for key, expected in expected_va_mcp.items():
+        if va_mcp_env.get(key) != expected:
+            raise ContractError(f"resolved VA-MCP {key} differs from {expected!r}")
+    alert_env = _environment_list_to_map(
+        services["alert-bridge"].get("environment"), "resolved alert-bridge"
+    )
+    expected_alert = {
+        "VLM_MODE": "local_shared",
+        "VLM_NAME": COSMOS_MODEL_ID,
+        "VLM_BASE_URL": COSMOS_BASE_URL,
+        "RTVI_VLM_BASE_URL": COSMOS_BASE_URL,
+    }
+    for key, expected in expected_alert.items():
+        if alert_env.get(key) != expected:
+            raise ContractError(
+                f"resolved Alert Bridge {key} differs from {expected!r}"
+            )
     edge_mounts = services["nemotron-edge"].get("volumes")
     rtvlm_mounts = services["rtvi-vlm"].get("volumes")
+    rtvlm_ports = services["rtvi-vlm"].get("ports")
     expected_edge_source = str(edge_snapshot.resolve())
     expected_edge_blobs_source = str(
         (_edge_repository(edge_snapshot) / "blobs").resolve()
     )
     expected_cosmos_source = str(_cosmos_cache_root(cosmos_cache).resolve())
+    if rtvlm_ports != [
+        {
+            "mode": "ingress",
+            "host_ip": "127.0.0.1",
+            "target": 8000,
+            "published": "8018",
+            "protocol": "tcp",
+        }
+    ]:
+        raise ContractError(
+            "resolved RT-VLM port publication is not exact loopback-only 8018"
+        )
     _reject_mount_overlays(
         edge_mounts, {"/models/edge4b", "/blobs"}, "resolved nemotron-edge"
     )
     _reject_mount_overlays(
         rtvlm_mounts,
-        {
-            "/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
-            RTVLM_SERVER_CONTAINER,
-        },
+        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache"}
+        | set(RTVLM_REQUEST_CANCELLATION_OVERLAYS),
         "resolved rtvi-vlm",
     )
     if not isinstance(edge_mounts, list) or not any(
@@ -1405,17 +1535,21 @@ def verify_resolved_compose(
         raise ContractError(
             "resolved Cosmos3 cache is not the exact dedicated writable bind"
         )
-    if not any(
-        isinstance(mount, dict)
-        and mount.get("type") == "bind"
-        and mount.get("source") == str(RTVLM_SERVER_OVERLAY.resolve())
-        and mount.get("target") == RTVLM_SERVER_CONTAINER
-        and mount.get("read_only") is True
-        for mount in rtvlm_mounts
+    for destination, (source, _expected_sha256) in (
+        RTVLM_REQUEST_CANCELLATION_OVERLAYS.items()
     ):
-        raise ContractError(
-            "resolved RT-VLM lacks exact read-only request-cancellation overlay"
-        )
+        if not any(
+            isinstance(mount, dict)
+            and mount.get("type") == "bind"
+            and mount.get("source") == str(source.resolve())
+            and mount.get("target") == destination
+            and mount.get("read_only") is True
+            for mount in rtvlm_mounts
+        ):
+            raise ContractError(
+                "resolved RT-VLM lacks exact read-only request-cancellation "
+                f"overlay: {destination}"
+            )
     for forbidden in ("qwen3-vl-8b-instruct", "qwen3-vl-8b-instruct-shared-gpu"):
         if forbidden in services:
             raise ContractError(
@@ -1513,6 +1647,7 @@ def _verify_running_container(
     expected_env: dict[str, str],
     expected_mounts: dict[str, Path] | None = None,
     writable_mount_destinations: set[str] | None = None,
+    expected_port_bindings: dict[str, list[dict[str, str]]] | None = None,
 ) -> None:
     container = _docker_container(name)
     state = container.get("State")
@@ -1550,6 +1685,14 @@ def _verify_running_container(
         raise ContractError(
             f"container {name} exposes non-empty credential environment: {leaked}"
         )
+    if expected_port_bindings is not None:
+        host_config = container.get("HostConfig")
+        if not isinstance(host_config, dict):
+            raise ContractError(f"container {name} has no inspectable host config")
+        if host_config.get("PortBindings") != expected_port_bindings:
+            raise ContractError(
+                f"container {name} port publication differs from exact contract"
+            )
     if expected_mounts:
         writable = writable_mount_destinations or set()
         if not writable.issubset(expected_mounts):
@@ -1704,9 +1847,15 @@ def verify_readiness(
         },
         {
             "/opt/nvidia/rtvi/.rtvi/ngc_model_cache": _cosmos_cache_root(cosmos_cache),
-            RTVLM_SERVER_CONTAINER: RTVLM_SERVER_OVERLAY,
+            **{
+                destination: source
+                for destination, (source, _expected_sha256) in (
+                    RTVLM_REQUEST_CANCELLATION_OVERLAYS.items()
+                )
+            },
         },
         {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache"},
+        {"8000/tcp": [{"HostIp": "127.0.0.1", "HostPort": "8018"}]},
     )
     _verify_running_environment(
         "vss-agent",

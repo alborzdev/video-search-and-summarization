@@ -5,11 +5,11 @@
   "images": {
     "backend": {
       "source_ref": "nvcr.io/nvidia/vss-core/vss-auto-calibration:3.2.1",
-      "immutable_ref": null,
-      "expected_image_id": null,
+      "immutable_ref": "nvcr.io/nvidia/vss-core/vss-auto-calibration@sha256:6ed911d45d500424301c4de74ca68aa66d9e88a6efc1ddd06dca8b40fb536982",
+      "expected_image_id": "sha256:6ed911d45d500424301c4de74ca68aa66d9e88a6efc1ddd06dca8b40fb536982",
       "required": true,
-      "status": "blocked_pending_authorized_staging_and_digest_capture",
-      "compressed_size_gb_reported_approximate": 14.07
+      "status": "locked",
+      "size_bytes_inspected": 15107897381
     },
     "ui": {
       "source_ref": "nvcr.io/nvidia/vss-core/vss-auto-calibration-ui:3.2.1",
@@ -208,7 +208,7 @@
   },
   "notes": [
     "A null immutable_ref or expected_sha256 is a hard unavailable state, never a wildcard.",
-    "The backend image is intentionally not pulled by Thor qualification tooling.",
+    "The backend was operator-authorized, pulled from NGC, and locked to the inspected linux/arm64 image on 2026-08-09; Thor qualification tooling remains pull-free.",
     "VGGT is optional for base AMC and must not block base calibration.",
     "The official AMC fixture is content-locked in an external cache and is independent of the excluded warehouse sample bundle."
   ]

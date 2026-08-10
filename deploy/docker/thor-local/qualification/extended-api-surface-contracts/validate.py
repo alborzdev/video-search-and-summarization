@@ -127,7 +127,7 @@ EXPECTED_OPERATIONS: dict[str, list[tuple[str, str]]] = {
         ("GET", "/v1/get_project_info/{project_id}"),
         ("GET", "/v1/result/{project_id}/evaluation_statistics"),
         ("GET", "/v1/result/{project_id}/overlay_image"),
-        ("GET", "/v1/amc/calibrate/{project_id}/log"),
+        ("GET", "/v1/{type}/calibrate/{project_id}/log"),
         ("GET", "/v1/calibrate/{project_id}/log/{type}/stream"),
         ("POST", "/v1/vggt/calibrate/{project_id}"),
         ("GET", "/v1/vggt_results/{project_id}/evaluation_statistics"),

@@ -57,4 +57,10 @@ canonicalization is implemented by `source_claim_hashes()` in the validator.
 Any locator or contract change therefore requires intentional source-hash
 review.
 
+The candidate's extracted status is an immutable floor rather than a permanent
+ceiling. The validator permits only explicit monotonic live promotion from that
+floor (for example, `source_only` to `partial`/`wired`, or `not_qualified` to a
+passed state), while rejecting regressions and preserving acceptance-class,
+external-optional, and not-applicable boundaries exactly.
+
 See [MERGE_PLAN.md](MERGE_PLAN.md) for the ordered procedure that was applied.

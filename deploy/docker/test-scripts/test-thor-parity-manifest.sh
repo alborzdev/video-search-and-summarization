@@ -19,7 +19,7 @@ python3 "${official_tests}"
 
 report="$(python3 "${verifier}" --report)"
 grep -q "Ledger: 55 families, 500 advertised capabilities, 16 skills" <<<"${report}"
-grep -q "Thor state: external_optional=8, partial=38, source_only=2, wired=7" <<<"${report}"
+grep -q "Thor state: external_optional=8, partial=39, source_only=1, wired=7" <<<"${report}"
 grep -q "Runtime: blocked=1, not_applicable=8, not_qualified=43, passed_current=2, static_only=1" <<<"${report}"
 grep -q "Completion: 2/47 local families passed current" <<<"${report}"
 grep -q "smart-city: partial/not_qualified" <<<"${report}"

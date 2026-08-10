@@ -64,7 +64,7 @@ EXPECTED_SOURCE_LOCKS = {
         "d5427164ccbd33529ddc2678c969601b09bb67776df332e230910702281766ae"
     ),
     "deploy/docker/thor-local/qualification/official-edge-readiness/staging-plan.json": (
-        "353bb686b59a9375ac95f2be0133c5bbf3b49ad102930388da13e5db5795f01a"
+        "8e0ee9abd6329a7a8d8a06a131732ecb9e916ee3bed1bb1a6d879628468f3971"
     ),
 }
 RUNTIME_COLLECTOR_DIR = (
@@ -72,7 +72,7 @@ RUNTIME_COLLECTOR_DIR = (
     / "deploy/docker/thor-local/qualification/official-edge-semantic-runtime-evidence-successor"
 )
 APPROVED_RUNTIME_COLLECTOR_LOCKS = {
-    "contract.json": "867e0596d1662b1c61c87054e686453d1481d0e72ba78e66bb79451440066da4",
+    "contract.json": "6707db98f4a524a04cd9e86badaec1b0ad474d2fb79a11bfb08a303e03e236b0",
     "contract.schema.json": (
         "207aab65cb37cd18fa56a98539222604d8f32287d3beceb82201a6bc70b10dc9"
     ),
