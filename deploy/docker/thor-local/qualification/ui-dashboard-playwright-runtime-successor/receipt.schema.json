@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "status",
+    "captured_at",
+    "target_commit",
+    "contract_sha256",
+    "fixture_sha256",
+    "harness_sha256",
+    "identity",
+    "bounds",
+    "checks",
+    "dashboard",
+    "render",
+    "adjacent_negative",
+    "diagnostics",
+    "cleanup",
+    "browser_plugin",
+    "warehouse_sample_bundle"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-ui-dashboard-playwright-runtime-successor-v1"},
+    "status": {"const": "passed_current_candidate"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "target_commit": {"$ref": "#/$defs/commit"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "fixture_sha256": {"$ref": "#/$defs/sha256"},
+    "harness_sha256": {"$ref": "#/$defs/sha256"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_sha256", "playwright_entry_sha256", "ui", "kibana", "source_locks"],
+      "properties": {
+        "node_sha256": {"$ref": "#/$defs/sha256"},
+        "playwright_entry_sha256": {"$ref": "#/$defs/sha256"},
+        "ui": {"$ref": "#/$defs/container"},
+        "kibana": {"$ref": "#/$defs/container"},
+        "source_locks": {
+          "type": "array",
+          "minItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"$ref": "#/$defs/sha256"}
+            }
+          }
+        }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "browser_actions", "direct_api_requests", "loopback_browser_responses", "max_duration_ms", "max_browser_actions", "max_direct_api_requests", "max_loopback_browser_responses"],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 120000},
+        "browser_actions": {"type": "integer", "minimum": 6, "maximum": 12},
+        "direct_api_requests": {"const": 4},
+        "loopback_browser_responses": {"type": "integer", "minimum": 1, "maximum": 500},
+        "max_duration_ms": {"const": 120000},
+        "max_browser_actions": {"const": 12},
+        "max_direct_api_requests": {"const": 4},
+        "max_loopback_browser_responses": {"const": 500}
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_identity", "not_blank", "no_framework_overlay", "console_health_explained", "interaction_proof", "iframe_embedded", "saved_object_present", "desktop_render", "mobile_render", "mobile_no_horizontal_overflow", "adjacent_negative"],
+      "properties": {
+        "page_identity": {"const": true},
+        "not_blank": {"const": true},
+        "no_framework_overlay": {"const": true},
+        "console_health_explained": {"const": true},
+        "interaction_proof": {"const": true},
+        "iframe_embedded": {"const": true},
+        "saved_object_present": {"const": true},
+        "desktop_render": {"const": true},
+        "mobile_render": {"const": true},
+        "mobile_no_horizontal_overflow": {"const": true},
+        "adjacent_negative": {"const": true}
+      }
+    },
+    "dashboard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "description", "saved_object_sha256", "find_projection_sha256", "dashboard_count", "required_panel_titles", "minimum_no_result_panels"],
+      "properties": {
+        "id": {"const": "thor-vss-overview"},
+        "title": {"const": "Thor VSS Overview"},
+        "description": {"const": "Single-device Thor video analytics health overview"},
+        "saved_object_sha256": {"$ref": "#/$defs/sha256"},
+        "find_projection_sha256": {"$ref": "#/$defs/sha256"},
+        "dashboard_count": {"type": "integer", "minimum": 1},
+        "required_panel_titles": {"const": ["Detected Objects", "Behavior Events"]},
+        "minimum_no_result_panels": {"const": 2}
+      }
+    },
+    "render": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["iframe_title", "iframe_path", "iframe_hash_prefix", "iframe_sandbox_tokens", "frame_body_sha256", "frame_body_bytes", "desktop", "mobile"],
+      "properties": {
+        "iframe_title": {"const": "Kibana Dashboard"},
+        "iframe_path": {"const": "/kibana/app/dashboards"},
+        "iframe_hash_prefix": {"const": "#/view/thor-vss-overview?embed=true"},
+        "iframe_sandbox_tokens": {"const": ["allow-downloads", "allow-forms", "allow-popups", "allow-same-origin", "allow-scripts"]},
+        "frame_body_sha256": {"$ref": "#/$defs/sha256"},
+        "frame_body_bytes": {"type": "integer", "minimum": 1},
+        "desktop": {"$ref": "#/$defs/renderViewport"},
+        "mobile": {"$ref": "#/$defs/renderViewport"}
+      }
+    },
+    "adjacent_negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "body_sha256", "body_bytes"],
+      "properties": {
+        "status": {"const": 404},
+        "body_sha256": {"$ref": "#/$defs/sha256"},
+        "body_bytes": {"type": "integer", "minimum": 1, "maximum": 65536}
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["response_status_counts", "known_security_profile_404_count", "unknown_404_paths", "console_warning_count", "console_error_count", "page_error_count", "diagnostic_hashes", "classification", "local_security_gap_open"],
+      "properties": {
+        "response_status_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "known_security_profile_404_count": {"type": "integer", "minimum": 0},
+        "unknown_404_paths": {"const": []},
+        "console_warning_count": {"type": "integer", "minimum": 0},
+        "console_error_count": {"type": "integer", "minimum": 0},
+        "page_error_count": {"type": "integer", "minimum": 0},
+        "diagnostic_hashes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+        "classification": {"const": "known_local_security_gap_not_dashboard_render_failure"},
+        "local_security_gap_open": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mutation", "persistent_resources_created", "persistent_resources_deleted", "persistent_state_unchanged", "temporary_screenshots_only"],
+      "properties": {
+        "mutation": {"const": "none_read_only"},
+        "persistent_resources_created": {"const": 0},
+        "persistent_resources_deleted": {"const": 0},
+        "persistent_state_unchanged": {"const": true},
+        "temporary_screenshots_only": {"const": true}
+      }
+    },
+    "browser_plugin": {"const": "absent_regular_playwright_fallback"},
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "container": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "configured_image", "image_id", "running", "healthy"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "configured_image": {"type": "string", "minLength": 1},
+        "image_id": {"$ref": "#/$defs/sha256Image"},
+        "running": {"const": true},
+        "healthy": {"const": true}
+      }
+    },
+    "sha256Image": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "renderViewport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["viewport_width", "viewport_height", "iframe_width", "iframe_height", "screenshot_sha256", "screenshot_bytes"],
+      "properties": {
+        "viewport_width": {"type": "integer", "minimum": 1},
+        "viewport_height": {"type": "integer", "minimum": 1},
+        "iframe_width": {"type": "number", "exclusiveMinimum": 0},
+        "iframe_height": {"type": "number", "exclusiveMinimum": 0},
+        "screenshot_sha256": {"$ref": "#/$defs/sha256"},
+        "screenshot_bytes": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

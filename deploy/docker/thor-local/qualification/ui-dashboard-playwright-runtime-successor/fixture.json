@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "fixture_id": "thor-ui-dashboard-runtime-v1",
+  "capability_id": "runtime.ui.dashboard-tab",
+  "ui_title": "THOR LOCAL VSS",
+  "dashboard": {
+    "id": "thor-vss-overview",
+    "title": "Thor VSS Overview",
+    "description": "Single-device Thor video analytics health overview",
+    "required_panel_titles": [
+      "Detected Objects",
+      "Behavior Events"
+    ],
+    "minimum_no_result_panels": 2
+  },
+  "iframe": {
+    "title": "Kibana Dashboard",
+    "path": "/kibana/app/dashboards",
+    "hash_prefix": "#/view/thor-vss-overview?embed=true",
+    "required_sandbox_tokens": [
+      "allow-downloads",
+      "allow-forms",
+      "allow-popups",
+      "allow-same-origin",
+      "allow-scripts"
+    ]
+  },
+  "adjacent_negative": {
+    "dashboard_id": "vss-oracle-runtime-ui-dashboard-tab-missing",
+    "expected_status": 404
+  },
+  "viewports": {
+    "desktop": {
+      "width": 1440,
+      "height": 900,
+      "minimum_iframe_width": 700,
+      "minimum_iframe_height": 600
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "minimum_iframe_width": 380,
+      "minimum_iframe_height": 600
+    }
+  },
+  "expected_security_disabled_diagnostics": {
+    "browser_404_path": "/kibana/internal/security/user_profile",
+    "classification": "known_local_security_gap_not_dashboard_render_failure"
+  }
+}

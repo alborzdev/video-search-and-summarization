@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-dashboard-playwright-runtime-successor-v1",
+  "capability_id": "runtime.ui.dashboard-tab",
+  "oracle_id": "oracle.runtime.ui.dashboard-tab",
+  "mode": "read-only-preexisting-cdp-playwright-runtime",
+  "default_execution_enabled": false,
+  "authorization": {
+    "acknowledgement": "I_ACK_UI_DASHBOARD_READ_ONLY_RUNTIME"
+  },
+  "browser_availability": {
+    "codex_browser_plugin": "absent",
+    "fallback": "regular Playwright connectOverCDP to an operator-preexisting numeric-loopback browser",
+    "browser_launch_allowed": false,
+    "browser_install_allowed": false
+  },
+  "bounds": {
+    "max_duration_ms": 120000,
+    "max_browser_actions": 12,
+    "max_direct_api_requests": 4,
+    "max_loopback_browser_responses": 500,
+    "max_response_bytes": 2097152
+  },
+  "runtime_boundary": {
+    "numeric_loopback_only": true,
+    "ambient_proxies_allowed": false,
+    "redirects_allowed": false,
+    "preexisting_ui_required": true,
+    "preexisting_kibana_required": true,
+    "preexisting_browser_required": true,
+    "starts_or_stops_processes": false,
+    "persistent_mutation": false,
+    "temporary_screenshots_outside_repository": true,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "containers": {
+    "ui": {
+      "name": "vss-agent-ui",
+      "configured_image": "vss-agent-ui:thor-local"
+    },
+    "kibana": {
+      "name": "kibana",
+      "configured_image": "docker.elastic.co/kibana/kibana:9.3.3",
+      "version": "9.3.3"
+    }
+  },
+  "fixture": {
+    "path": "deploy/docker/thor-local/qualification/ui-dashboard-playwright-runtime-successor/fixture.json",
+    "sha256": "a075c331224b71f7675d561db85708abf62a895696c0f0510175e7725d33645c"
+  },
+  "source_locks": [
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/server.ts",
+      "sha256": "c0b4d63e07150ff6c31eb4f03ec9db0f855cf98f953d6bda3bc10bfb69b27064"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/DashboardComponent.tsx",
+      "sha256": "a35ba4966bbe175cebaaf5edf4ce95e390a1762e7d51e97481629fcf38687e43"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/init-scripts/kibana-import-dashboards.sh",
+      "sha256": "c508c5931c0e955a294deddaf533ce5b9c65c5c55e3b069284de00e814273e30"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/thor-vss-overview.ndjson",
+      "sha256": "4205101c605f239c0adef3e018ee1ce14857e7afebb5387f2afb1db20c8737ec"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+      "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+    }
+  ]
+}

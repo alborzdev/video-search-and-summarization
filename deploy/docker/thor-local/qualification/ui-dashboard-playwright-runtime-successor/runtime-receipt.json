@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-dashboard-playwright-runtime-successor-v1",
+  "status": "passed_current_candidate",
+  "captured_at": "2026-08-10T07:01:43.378Z",
+  "target_commit": "afef8a4a28291db768b1f1795758094302b70de7",
+  "contract_sha256": "4d4619c2cc04a831366fcacccfee1ae2db4b95daffabf7aef970f75bf0684a62",
+  "fixture_sha256": "a075c331224b71f7675d561db85708abf62a895696c0f0510175e7725d33645c",
+  "harness_sha256": "8e43662ecbfb6e90a7840c70119398b05fb575e680c2451d70d6d76d9089e56f",
+  "identity": {
+    "node_sha256": "d8fa08f79c8198c5a5ccc9faa5a69803052703fc9513f99e7200e0ab42e1d799",
+    "playwright_entry_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+    "ui": {
+      "name": "vss-agent-ui",
+      "configured_image": "vss-agent-ui:thor-local",
+      "image_id": "sha256:89988e7abf8bb22e9251dca84d188722629b549a8e9f0ece2a7bea03bbd94eb4",
+      "running": true,
+      "healthy": true
+    },
+    "kibana": {
+      "name": "kibana",
+      "configured_image": "docker.elastic.co/kibana/kibana:9.3.3",
+      "image_id": "sha256:36301dc49650e47484b23803d60f78e0ac763ab4d7edab6c75c1f54a186d5f9d",
+      "running": true,
+      "healthy": true
+    },
+    "source_locks": [
+      {
+        "path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/server.ts",
+        "sha256": "c0b4d63e07150ff6c31eb4f03ec9db0f855cf98f953d6bda3bc10bfb69b27064"
+      },
+      {
+        "path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/DashboardComponent.tsx",
+        "sha256": "a35ba4966bbe175cebaaf5edf4ce95e390a1762e7d51e97481629fcf38687e43"
+      },
+      {
+        "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/init-scripts/kibana-import-dashboards.sh",
+        "sha256": "c508c5931c0e955a294deddaf533ce5b9c65c5c55e3b069284de00e814273e30"
+      },
+      {
+        "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/thor-vss-overview.ndjson",
+        "sha256": "4205101c605f239c0adef3e018ee1ce14857e7afebb5387f2afb1db20c8737ec"
+      },
+      {
+        "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+        "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+      }
+    ]
+  },
+  "bounds": {
+    "duration_ms": 9406,
+    "browser_actions": 7,
+    "direct_api_requests": 4,
+    "loopback_browser_responses": 338,
+    "max_duration_ms": 120000,
+    "max_browser_actions": 12,
+    "max_direct_api_requests": 4,
+    "max_loopback_browser_responses": 500
+  },
+  "checks": {
+    "page_identity": true,
+    "not_blank": true,
+    "no_framework_overlay": true,
+    "console_health_explained": true,
+    "interaction_proof": true,
+    "iframe_embedded": true,
+    "saved_object_present": true,
+    "desktop_render": true,
+    "mobile_render": true,
+    "mobile_no_horizontal_overflow": true,
+    "adjacent_negative": true
+  },
+  "dashboard": {
+    "id": "thor-vss-overview",
+    "title": "Thor VSS Overview",
+    "description": "Single-device Thor video analytics health overview",
+    "saved_object_sha256": "1d39188c7e2a36805d310331342efb9e46712f7ac8bc02a0e51cd2253c96911b",
+    "find_projection_sha256": "ea36d12411394b3d26062498aa4dc89cad1d524dd7f9c002d8b8389e8a05a0a5",
+    "dashboard_count": 2,
+    "required_panel_titles": [
+      "Detected Objects",
+      "Behavior Events"
+    ],
+    "minimum_no_result_panels": 2
+  },
+  "render": {
+    "iframe_title": "Kibana Dashboard",
+    "iframe_path": "/kibana/app/dashboards",
+    "iframe_hash_prefix": "#/view/thor-vss-overview?embed=true",
+    "iframe_sandbox_tokens": [
+      "allow-downloads",
+      "allow-forms",
+      "allow-popups",
+      "allow-same-origin",
+      "allow-scripts"
+    ],
+    "frame_body_sha256": "5c12097ff4daa6a7caab1a92adc8e7d4595b431b715d3fbaede1a31d0fb7b3d0",
+    "frame_body_bytes": 251,
+    "desktop": {
+      "viewport_width": 1440,
+      "viewport_height": 900,
+      "iframe_width": 786.671875,
+      "iframe_height": 760,
+      "screenshot_sha256": "66c564576517619cab3f865625094793fd9da4612121804575eb4b26f42916d3",
+      "screenshot_bytes": 80057
+    },
+    "mobile": {
+      "viewport_width": 390,
+      "viewport_height": 844,
+      "iframe_width": 390,
+      "iframe_height": 704,
+      "screenshot_sha256": "494a9ae815f78ed4bc34adbdff7ef0b55e82c2bdb599daf91e89b2acfc9b73c0",
+      "screenshot_bytes": 33803
+    }
+  },
+  "adjacent_negative": {
+    "status": 404,
+    "body_sha256": "fa8797e84bc2cb5097e5ac16270557489d3c8a1a0289d7f0a3b2807327de3203",
+    "body_bytes": 129
+  },
+  "diagnostics": {
+    "response_status_counts": {
+      "200": 333,
+      "204": 1,
+      "206": 1,
+      "404": 3
+    },
+    "known_security_profile_404_count": 3,
+    "unknown_404_paths": [],
+    "console_warning_count": 3,
+    "console_error_count": 4,
+    "page_error_count": 2,
+    "diagnostic_hashes": [
+      "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5",
+      "2020cfc9c066dd59c740da8400fddd57bde83479c95a71b4c6f77339a6bf648a",
+      "2093ecb6ad27fc3e308fa460b180047d9c384ba1fd2ba2661d9e50431a5c4a01",
+      "30d328134ed1072a08c5fe14a8521fdd96bdf60efd3c0dd539f4add5bcad168d",
+      "377ab8b4b5e86078109682c970bd4bbb24606becc5d12a775b80b84e922bbad6",
+      "5993de68ba93b1842b2f26a8c870f68e83abb65cde92f08f06e38b9689420602",
+      "f7df77a34251abba0a43f5bc8ad7917e7e0503c68beb74255ac92ee373981fa6"
+    ],
+    "classification": "known_local_security_gap_not_dashboard_render_failure",
+    "local_security_gap_open": true
+  },
+  "cleanup": {
+    "mutation": "none_read_only",
+    "persistent_resources_created": 0,
+    "persistent_resources_deleted": 0,
+    "persistent_state_unchanged": true,
+    "temporary_screenshots_only": true
+  },
+  "browser_plugin": "absent_regular_playwright_fallback",
+  "warehouse_sample_bundle": "excluded"
+}
