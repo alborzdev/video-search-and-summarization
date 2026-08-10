@@ -1,0 +1,503 @@
+{
+  "assertions": [
+    {
+      "expected": [
+        "+ Chat",
+        "Generate Report"
+      ],
+      "id": "contract-01",
+      "observation": "contract_identity/contract/context_actions",
+      "observed": [
+        "+ Chat",
+        "Generate Report"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/history_folders",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/legacy_and_global_chat_coexist",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/profile_controlled_tabs",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "http_url",
+        "websocket_url",
+        "websocket_schema",
+        "intermediate_steps"
+      ],
+      "id": "contract-05",
+      "observation": "contract_identity/contract/settings",
+      "observed": [
+        "http_url",
+        "websocket_url",
+        "websocket_schema",
+        "intermediate_steps"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/sidebar/collapsible",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        0.333333,
+        0.666667
+      ],
+      "id": "contract-07",
+      "observation": "contract_identity/contract/sidebar/resizable_fraction",
+      "observed": [
+        0.333333,
+        0.666667
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "dark",
+        "light"
+      ],
+      "id": "contract-08",
+      "observation": "contract_identity/contract/themes",
+      "observed": [
+        "dark",
+        "light"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-09",
+      "observation": "contract_identity/contract/unseen_indicator",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "MP4",
+        "MKV"
+      ],
+      "id": "contract-10",
+      "observation": "contract_identity/contract/uploads",
+      "observed": [
+        "MP4",
+        "MKV"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-11",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-12",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "agent-smartcity",
+      "id": "contract-13",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "agent-smartcity",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "ui-chat-state"
+      ],
+      "id": "contract-14",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "ui-chat-state"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "runtime.ui.global-chat-sidebar",
+  "cleanup": {
+    "allowlist": [],
+    "mutation": "read_only",
+    "postconditions": [
+      {
+        "description": "all three isolated browser contexts and the browser are closed",
+        "result": "pass"
+      },
+      {
+        "description": "all temporary screenshots are deleted after hashing",
+        "result": "pass"
+      },
+      {
+        "description": "the one-key runtime environment override and two-row report fixture are discarded",
+        "result": "pass"
+      },
+      {
+        "description": "the compiled Generate Report WebSocket frame is captured in memory and never transported",
+        "result": "pass"
+      },
+      {
+        "description": "the UI, gateway, and VIOS ingress identities, start times, health, restart counts, and OOM states match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "no server-side file, sensor, stream, report, alert rule, incident, container, image, or volume is created, changed, or removed",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": []
+  },
+  "fixture": {
+    "id": "fixture.runtime.ui.global-chat-sidebar",
+    "path": "deploy/docker/thor-local/qualification/ui-global-chat-sidebar-runtime-successor/contract.json",
+    "sha256": "a049b6596436e09dd7e9c9be0da76534c3b17b9d545d4af5c4c7ae062d37e632"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "context_actions": [
+            "+ Chat",
+            "Generate Report"
+          ],
+          "history_folders": true,
+          "legacy_and_global_chat_coexist": true,
+          "profile_controlled_tabs": true,
+          "settings": [
+            "http_url",
+            "websocket_url",
+            "websocket_schema",
+            "intermediate_steps"
+          ],
+          "sidebar": {
+            "collapsible": true,
+            "resizable_fraction": [
+              0.333333,
+              0.666667
+            ]
+          },
+          "themes": [
+            "dark",
+            "light"
+          ],
+          "unseen_indicator": true,
+          "uploads": [
+            "MP4",
+            "MKV"
+          ],
+          "wave3_acceptance": {
+            "executor_ready": false,
+            "materialized": false,
+            "package": "agent-smartcity",
+            "planning_requirement_ids": [
+              "ui-chat-state"
+            ]
+          }
+        },
+        "contract_sha256": "a049b6596436e09dd7e9c9be0da76534c3b17b9d545d4af5c4c7ae062d37e632",
+        "receipt_sha256": "6a431d7a3b9c025ff158db9817265a96332cdcff7298d37ca0173a7ad673a743",
+        "runtime": {
+          "vss-agent-ui": {
+            "configured_image": "vss-agent-ui:thor-local",
+            "container_id_sha256": "1cca8e89ecac9c0729d811ee4e09acc13cb6ad33a9f4db0bbe082288c16b588f",
+            "health": "none",
+            "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594",
+            "oom_killed": false,
+            "restart_count": 0,
+            "running": true,
+            "started_at_sha256": "6433a4ffc15ef21eb7a6d6808081c8335ff7a47198e29d9b6e0e0bac84afb047"
+          },
+          "vss-haproxy-ingress": {
+            "configured_image": "haproxy:3.0-alpine",
+            "container_id_sha256": "865ea38262631163b9519c7ede546acc5fa062496bfa9ce1a90e7a38183858f7",
+            "health": "none",
+            "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+            "oom_killed": false,
+            "restart_count": 0,
+            "running": true,
+            "started_at_sha256": "e568d4a62c11b428b6364e5154181fc0eb9cfe35c465831ff5a28e3165bf89a0"
+          },
+          "vss-vios-ingress": {
+            "configured_image": "cti-vss-vios-ingress:3.2.1-thor-local",
+            "container_id_sha256": "330950b30bc1daa2014c88aa187182bbd905baec38172a7f0c632e543087e3ea",
+            "health": "healthy",
+            "image_id": "sha256:ea2b5c14d12753d1f319d0e808f95d6be3127edcea9674b96c3a9b759bdf1ea4",
+            "oom_killed": false,
+            "restart_count": 0,
+            "running": true,
+            "started_at_sha256": "8089d48d76fcb9b082397937635e1c4590caeb8daddafbb8d366155ffa847eae"
+          }
+        },
+        "runtime_environment": {
+          "bytes": 4888,
+          "required_flags_match": true,
+          "sha256": "b61526358d96f0b5fd174be8c05da2f22de5112398e430ecadd655affa713f8b"
+        },
+        "settings_endpoints": {
+          "http": {
+            "bytes": 33,
+            "protocol": "http",
+            "scope": "numeric_loopback",
+            "sha256": "b388a714430c2e234cf009ac8961fd30af9dcb4920a521f52bcbf11193845934"
+          },
+          "websocket": {
+            "bytes": 29,
+            "protocol": "ws",
+            "scope": "numeric_loopback",
+            "sha256": "282d1f0683693be34060eba8593868f39b53555feb407ca1eee1e6088da16070"
+          }
+        },
+        "source_hashes": {
+          "deploy/docker/services/ui/compose.yml": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3",
+          "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f",
+          "services/ui/apps/nv-metropolis-bp-vss-ui/components/TabWithChatSidebarLayout.tsx": "39b71ad1b46a591aab04a3ba9cfe2f353de7cfe91ddd951eb461d1fcbb701511",
+          "services/ui/apps/nv-metropolis-bp-vss-ui/hooks/useAppChatSidebar.ts": "054ecd149969a9f0b1f98e12f471f494de3442050866c5d643668fd5f1356465",
+          "services/ui/apps/nv-metropolis-bp-vss-ui/utils/tabChatSidebarConfig.ts": "8545ea1e5f4d943acd2dd3aff6aaa20dbf0641b4fa6062b0cba15ca20d1c07c3",
+          "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/ChatFileUpload.tsx": "7e149e72e573e649da31273a05f62879b580de08a274d7fdad7767bd1ca401a1",
+          "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/ChatInput.tsx": "22ff74f3afefb8e72e2313a7c9633e0766221bde2b8aaa2d70637a18d597c040",
+          "services/ui/packages/nemo-agent-toolkit-ui/components/Chatbar/Chatbar.tsx": "2079c4043f9e7407f2cdf181d53b4e60c25b956703bde646fbfc6b206c13174b",
+          "services/ui/packages/nemo-agent-toolkit-ui/components/Chatbar/components/ChatbarSettings.tsx": "ac2862956df56d10e7f72f67378c6ab0888a1f9c9213168e3c7401be35dad313",
+          "services/ui/packages/nemo-agent-toolkit-ui/components/Settings/SettingDialog.tsx": "d48cb918a7b91a3502e7724369818b999f9f921f18d034a898f1e2bc9e4b452e",
+          "services/ui/packages/nemo-agent-toolkit-ui/pages/api/home/home.state.tsx": "6a458c4f2187cc2eaf3567212a91081f1d0c7d8a86e7634d3f17d86354c77a55",
+          "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/AlertsTable.tsx": "6667e3fd0bd42ad60249318ba5593e9ec995840b8a58634ec5ae3674a19ad470",
+          "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/MetadataSection.tsx": "b784f587b6232beff181a95562da36cf910d4ea002c3f0e5ff346b8d30cc8eac",
+          "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/StreamCard.tsx": "90e2c53cae08bc0828f0cd447bd69e744a47ee45998b08280a93f786513308a6"
+        },
+        "target_commit": "d16797d05490c169fd600bd653084f7e7968da0f"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "bounds": {
+          "browser_actions": 24,
+          "browser_contexts": 3,
+          "duration_ms": 11156,
+          "loopback_browser_responses": 114,
+          "max_browser_actions": 40,
+          "max_duration_ms": 180000,
+          "max_loopback_browser_responses": 1200
+        },
+        "context_action": {
+          "added_state_count": 1,
+          "chip_count": 1,
+          "chip_count_after_remove": 0,
+          "highlight_cleared_after_open": true,
+          "highlighted_when_collapsed": true,
+          "visible_plus_chat_count": 3
+        },
+        "history": {
+          "folder_control_visible": true,
+          "folder_persisted_count": 1,
+          "new_chat_visible": true,
+          "new_folder_count": 1
+        },
+        "profile_boundary": {
+          "changed_keys": [
+            "NEXT_PUBLIC_ENABLE_CHAT_TAB"
+          ],
+          "legacy_and_global_coexist": true,
+          "on_chat": {
+            "floating_close_visible": false,
+            "floating_open_visible": false,
+            "main_chat_visible": true
+          },
+          "on_search": {
+            "floating_sidebar_visible": true,
+            "sidebar_chat_visible": true
+          },
+          "profile_controlled_chat_transition": true,
+          "sidebar_remained_enabled": true,
+          "tabs": [
+            "sidebar-tab-chat",
+            "sidebar-tab-search",
+            "sidebar-tab-alerts",
+            "sidebar-tab-dashboard",
+            "sidebar-tab-video-management"
+          ]
+        },
+        "report": {
+          "adjacent_generate_report_suppressed": true,
+          "row_count": 2,
+          "sent_state_visible": true,
+          "transport": {
+            "actual_send_count": 0,
+            "captured_send_count": 1,
+            "send_suppressed": true
+          },
+          "valid_generate_report_count": 1,
+          "wire": {
+            "contains_sensor_marker": true,
+            "contains_valid_incident_marker": true,
+            "conversation_id_present_not_retained": true,
+            "id_present_not_retained": true,
+            "message_count": 1,
+            "roles": [
+              "user"
+            ],
+            "schema_type": "chat_stream",
+            "text_bytes": 143,
+            "text_sha256": "f16027724b2167cc3afb3e369611656a7e5b7886cd68c7c4b275f620cd92e117",
+            "type": "user_message"
+          }
+        },
+        "settings": {
+          "intermediate_disabled": true,
+          "intermediate_initially_enabled": true,
+          "intermediate_restored": true,
+          "required_labels_present": true,
+          "schema_options": [
+            "chat_stream",
+            "chat",
+            "generate_stream",
+            "generate"
+          ],
+          "selected_schema": "chat_stream"
+        },
+        "sidebar": {
+          "collapsed_storage_false": true,
+          "initial": {
+            "outer_width": 1180,
+            "panel_width": 393.328125,
+            "panel_x": 1046.671875,
+            "ratio": 0.33332891949152543
+          },
+          "maximum": {
+            "outer_width": 1180,
+            "panel_width": 786.65625,
+            "panel_x": 653.34375,
+            "ratio": 0.6666578389830509
+          },
+          "minimum": {
+            "outer_width": 1180,
+            "panel_width": 393.328125,
+            "panel_x": 1046.671875,
+            "ratio": 0.33332891949152543
+          },
+          "opened_storage_true": true,
+          "stored_width": 393.3333333333333
+        },
+        "tabs": {
+          "legacy_chat_absent": true,
+          "map_absent": true,
+          "visible": [
+            "sidebar-tab-search",
+            "sidebar-tab-alerts",
+            "sidebar-tab-dashboard",
+            "sidebar-tab-video-management"
+          ]
+        },
+        "theme": {
+          "dark_restored": true,
+          "initial_dark": true,
+          "light_rendered": true,
+          "switch_to_dark_title": true,
+          "switch_to_light_title": true
+        },
+        "uploads": {
+          "accept_values": [
+            ".mp4,.mkv",
+            ".mp4,.mkv,video/mp4,video/x-matroska"
+          ],
+          "adjacent_avi_absent": true,
+          "drop_zone_text_visible": true,
+          "input_count": 4,
+          "mime_aliases_present": true,
+          "mkv": true,
+          "mp4": true
+        }
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "adjacent_context_chip_removed": true,
+        "adjacent_fallback_generate_report_suppressed": true,
+        "live_context_page_errors_absent": true,
+        "non_loopback_responses_absent": true,
+        "only_profile_flag_changed": true,
+        "positive_context_chip_added_once": true,
+        "positive_generate_report_available_once": true,
+        "positive_plus_chat_added_once": true,
+        "related_runtime_state_unchanged": true,
+        "report_transport_send_suppressed": true,
+        "server_resources_changed": 0,
+        "server_resources_created": 0,
+        "server_resources_deleted": 0
+      }
+    }
+  ],
+  "oracle_id": "oracle.runtime.ui.global-chat-sidebar",
+  "oracle_sha256": "c78210466c5089cbd4c818ea360ba91c14eee9037f2422547902ab74fee11687",
+  "result": "passed_current",
+  "scenario_ids": [
+    "ui-workflows",
+    "core-agent-workflows",
+    "oracle.runtime.ui.global-chat-sidebar"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

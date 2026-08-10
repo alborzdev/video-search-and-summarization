@@ -1,0 +1,439 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "status",
+    "captured_at",
+    "target_commit",
+    "contract_sha256",
+    "harness_sha256",
+    "identity",
+    "pre_state",
+    "bounds",
+    "current_profile",
+    "profile_boundary",
+    "report_boundary",
+    "post_state",
+    "cleanup",
+    "warehouse_sample_bundle"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-ui-global-chat-sidebar-runtime-successor-v1"},
+    "status": {"const": "passed_current_candidate"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "target_commit": {"$ref": "#/$defs/commit"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "harness_sha256": {"$ref": "#/$defs/sha256"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_sha256",
+        "playwright_entry_sha256",
+        "browser_executable_sha256",
+        "browser_version_sha256",
+        "ui_origin_sha256",
+        "source_hashes"
+      ],
+      "properties": {
+        "node_sha256": {"$ref": "#/$defs/sha256"},
+        "playwright_entry_sha256": {"$ref": "#/$defs/sha256"},
+        "browser_executable_sha256": {"$ref": "#/$defs/sha256"},
+        "browser_version_sha256": {"$ref": "#/$defs/sha256"},
+        "ui_origin_sha256": {"$ref": "#/$defs/sha256"},
+        "source_hashes": {
+          "type": "object",
+          "minProperties": 14,
+          "additionalProperties": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "pre_state": {"$ref": "#/$defs/runtimeSnapshot"},
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "duration_ms",
+        "browser_actions",
+        "loopback_browser_responses",
+        "max_duration_ms",
+        "max_browser_actions",
+        "max_loopback_browser_responses",
+        "browser_contexts"
+      ],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 180000},
+        "browser_actions": {"const": 24},
+        "loopback_browser_responses": {"type": "integer", "minimum": 1, "maximum": 1200},
+        "max_duration_ms": {"const": 180000},
+        "max_browser_actions": {"const": 40},
+        "max_loopback_browser_responses": {"const": 1200},
+        "browser_contexts": {"const": 3}
+      }
+    },
+    "current_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actions", "runtime_env", "tabs", "theme", "sidebar", "uploads",
+        "history", "settings", "context_action", "screenshot", "diagnostics"
+      ],
+      "properties": {
+        "actions": {"const": 19},
+        "runtime_env": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sha256", "bytes", "required_flags_match", "flag_count"],
+          "properties": {
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "bytes": {"type": "integer", "minimum": 1, "maximum": 65536},
+            "required_flags_match": {"const": true},
+            "flag_count": {"type": "integer", "minimum": 9}
+          }
+        },
+        "tabs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["visible", "legacy_chat_absent", "map_absent"],
+          "properties": {
+            "visible": {"const": ["sidebar-tab-search", "sidebar-tab-alerts", "sidebar-tab-dashboard", "sidebar-tab-video-management"]},
+            "legacy_chat_absent": {"const": true},
+            "map_absent": {"const": true}
+          }
+        },
+        "theme": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["initial_dark", "switch_to_light_title", "light_rendered", "switch_to_dark_title", "dark_restored"],
+          "properties": {
+            "initial_dark": {"const": true},
+            "switch_to_light_title": {"const": true},
+            "light_rendered": {"const": true},
+            "switch_to_dark_title": {"const": true},
+            "dark_restored": {"const": true}
+          }
+        },
+        "sidebar": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["initial", "maximum", "minimum", "stored_width", "collapsed_storage_false", "opened_storage_true"],
+          "properties": {
+            "initial": {"$ref": "#/$defs/sidebarMeasure"},
+            "maximum": {"$ref": "#/$defs/sidebarMeasure"},
+            "minimum": {"$ref": "#/$defs/sidebarMeasure"},
+            "stored_width": {"type": "number", "exclusiveMinimum": 0},
+            "collapsed_storage_false": {"const": true},
+            "opened_storage_true": {"const": true}
+          }
+        },
+        "uploads": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input_count", "accept_values", "mp4", "mkv", "mime_aliases_present", "adjacent_avi_absent", "drop_zone_text_visible"],
+          "properties": {
+            "input_count": {"type": "integer", "minimum": 1, "maximum": 8},
+            "accept_values": {"const": [".mp4,.mkv", ".mp4,.mkv,video/mp4,video/x-matroska"]},
+            "mp4": {"const": true},
+            "mkv": {"const": true},
+            "mime_aliases_present": {"const": true},
+            "adjacent_avi_absent": {"const": true},
+            "drop_zone_text_visible": {"const": true}
+          }
+        },
+        "history": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["new_chat_visible", "folder_control_visible", "new_folder_count", "folder_persisted_count"],
+          "properties": {
+            "new_chat_visible": {"const": true},
+            "folder_control_visible": {"const": true},
+            "new_folder_count": {"const": 1},
+            "folder_persisted_count": {"const": 1}
+          }
+        },
+        "settings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_labels_present", "http_endpoint", "websocket_endpoint",
+            "schema_options", "selected_schema", "intermediate_initially_enabled",
+            "intermediate_disabled", "intermediate_restored"
+          ],
+          "properties": {
+            "required_labels_present": {"const": true},
+            "http_endpoint": {"$ref": "#/$defs/httpEndpoint"},
+            "websocket_endpoint": {"$ref": "#/$defs/websocketEndpoint"},
+            "schema_options": {"const": ["chat_stream", "chat", "generate_stream", "generate"]},
+            "selected_schema": {"const": "chat_stream"},
+            "intermediate_initially_enabled": {"const": true},
+            "intermediate_disabled": {"const": true},
+            "intermediate_restored": {"const": true}
+          }
+        },
+        "context_action": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "visible_plus_chat_count", "added_state_count", "highlighted_when_collapsed",
+            "chip_count", "chip_count_after_remove", "highlight_cleared_after_open"
+          ],
+          "properties": {
+            "visible_plus_chat_count": {"type": "integer", "minimum": 1},
+            "added_state_count": {"const": 1},
+            "highlighted_when_collapsed": {"const": true},
+            "chip_count": {"const": 1},
+            "chip_count_after_remove": {"const": 0},
+            "highlight_cleared_after_open": {"const": true}
+          }
+        },
+        "screenshot": {"$ref": "#/$defs/screenshot"},
+        "diagnostics": {"$ref": "#/$defs/liveDiagnostics"}
+      }
+    },
+    "profile_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actions", "runtime_env", "tabs", "profile_controlled_chat_transition", "legacy_and_global_coexist", "on_chat", "on_search", "screenshot", "diagnostics"],
+      "properties": {
+        "actions": {"const": 2},
+        "runtime_env": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["before_sha256", "after_sha256", "before_bytes", "after_bytes", "changed_keys", "sidebar_remained_enabled"],
+          "properties": {
+            "before_sha256": {"$ref": "#/$defs/sha256"},
+            "after_sha256": {"$ref": "#/$defs/sha256"},
+            "before_bytes": {"type": "integer", "minimum": 1, "maximum": 65536},
+            "after_bytes": {"type": "integer", "minimum": 1, "maximum": 65536},
+            "changed_keys": {"const": ["NEXT_PUBLIC_ENABLE_CHAT_TAB"]},
+            "sidebar_remained_enabled": {"const": true}
+          }
+        },
+        "tabs": {"const": ["sidebar-tab-chat", "sidebar-tab-search", "sidebar-tab-alerts", "sidebar-tab-dashboard", "sidebar-tab-video-management"]},
+        "profile_controlled_chat_transition": {"const": true},
+        "legacy_and_global_coexist": {"const": true},
+        "on_chat": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["main_chat_visible", "floating_open_visible", "floating_close_visible"],
+          "properties": {
+            "main_chat_visible": {"const": true},
+            "floating_open_visible": {"const": false},
+            "floating_close_visible": {"const": false}
+          }
+        },
+        "on_search": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["floating_sidebar_visible", "sidebar_chat_visible"],
+          "properties": {
+            "floating_sidebar_visible": {"const": true},
+            "sidebar_chat_visible": {"const": true}
+          }
+        },
+        "screenshot": {"$ref": "#/$defs/screenshot"},
+        "diagnostics": {"$ref": "#/$defs/profileDiagnostics"}
+      }
+    },
+    "report_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actions", "fixture_contract_sha256", "fixture_response_count", "row_count", "valid_generate_report_count", "adjacent_generate_report_suppressed", "sent_state_visible", "transport", "wire", "screenshot", "diagnostics"],
+      "properties": {
+        "actions": {"const": 3},
+        "fixture_contract_sha256": {"$ref": "#/$defs/sha256"},
+        "fixture_response_count": {"type": "integer", "minimum": 1, "maximum": 8},
+        "row_count": {"const": 2},
+        "valid_generate_report_count": {"const": 1},
+        "adjacent_generate_report_suppressed": {"const": true},
+        "sent_state_visible": {"const": true},
+        "transport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["captured_send_count", "actual_send_count", "send_suppressed"],
+          "properties": {
+            "captured_send_count": {"const": 1},
+            "actual_send_count": {"const": 0},
+            "send_suppressed": {"const": true}
+          }
+        },
+        "wire": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "schema_type", "message_count", "roles", "text_sha256", "text_bytes", "contains_valid_incident_marker", "contains_sensor_marker", "id_present_not_retained", "conversation_id_present_not_retained"],
+          "properties": {
+            "type": {"const": "user_message"},
+            "schema_type": {"const": "chat_stream"},
+            "message_count": {"const": 1},
+            "roles": {"const": ["user"]},
+            "text_sha256": {"$ref": "#/$defs/sha256"},
+            "text_bytes": {"type": "integer", "minimum": 1, "maximum": 4096},
+            "contains_valid_incident_marker": {"const": true},
+            "contains_sensor_marker": {"const": true},
+            "id_present_not_retained": {"const": true},
+            "conversation_id_present_not_retained": {"const": true}
+          }
+        },
+        "screenshot": {"$ref": "#/$defs/screenshot"},
+        "diagnostics": {"$ref": "#/$defs/liveDiagnostics"}
+      }
+    },
+    "post_state": {"$ref": "#/$defs/runtimeSnapshot"},
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mutation", "isolated_contexts_closed", "browser_closed",
+        "temporary_screenshots_deleted_after_hashing", "server_resources_created",
+        "server_resources_changed", "server_resources_deleted",
+        "runtime_environment_override_discarded", "report_fixture_discarded",
+        "report_transport_send_suppressed", "related_runtime_state_unchanged"
+      ],
+      "properties": {
+        "mutation": {"const": "browser_session_only"},
+        "isolated_contexts_closed": {"const": 3},
+        "browser_closed": {"const": true},
+        "temporary_screenshots_deleted_after_hashing": {"const": true},
+        "server_resources_created": {"const": 0},
+        "server_resources_changed": {"const": 0},
+        "server_resources_deleted": {"const": 0},
+        "runtime_environment_override_discarded": {"const": true},
+        "report_fixture_discarded": {"const": true},
+        "report_transport_send_suppressed": {"const": true},
+        "related_runtime_state_unchanged": {"const": true}
+      }
+    },
+    "warehouse_sample_bundle": {"const": "excluded"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256Image": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "containerState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["container_id_sha256", "image_id", "configured_image", "running", "health", "started_at_sha256", "restart_count", "oom_killed"],
+      "properties": {
+        "container_id_sha256": {"$ref": "#/$defs/sha256"},
+        "image_id": {"$ref": "#/$defs/sha256Image"},
+        "configured_image": {"type": "string", "minLength": 1},
+        "running": {"const": true},
+        "health": {"enum": ["healthy", "none"]},
+        "started_at_sha256": {"$ref": "#/$defs/sha256"},
+        "restart_count": {"const": 0},
+        "oom_killed": {"const": false}
+      }
+    },
+    "runtimeSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["related_runtime"],
+      "properties": {
+        "related_runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["vss-agent-ui", "vss-haproxy-ingress", "vss-vios-ingress"],
+          "properties": {
+            "vss-agent-ui": {"$ref": "#/$defs/containerState"},
+            "vss-haproxy-ingress": {"$ref": "#/$defs/containerState"},
+            "vss-vios-ingress": {"$ref": "#/$defs/containerState"}
+          }
+        }
+      }
+    },
+    "sidebarMeasure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["panel_width", "outer_width", "ratio", "panel_x"],
+      "properties": {
+        "panel_width": {"type": "number", "exclusiveMinimum": 0},
+        "outer_width": {"type": "number", "exclusiveMinimum": 0},
+        "ratio": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "panel_x": {"type": "number", "minimum": 0}
+      }
+    },
+    "screenshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "bytes"],
+      "properties": {
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "httpEndpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "protocol", "sha256", "bytes"],
+      "properties": {
+        "scope": {"const": "numeric_loopback"},
+        "protocol": {"const": "http"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1, "maximum": 2048}
+      }
+    },
+    "websocketEndpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "protocol", "sha256", "bytes"],
+      "properties": {
+        "scope": {"const": "numeric_loopback"},
+        "protocol": {"const": "ws"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1, "maximum": 2048}
+      }
+    },
+    "diagnosticBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["console_hashes", "page_error_hashes", "synthetic_profile_hydration_recovery_counts", "response_status_counts", "failing_response_hashes", "non_loopback_response_count", "loopback_response_count"],
+      "properties": {
+        "console_hashes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+        "page_error_hashes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+        "synthetic_profile_hydration_recovery_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "418": {"type": "integer", "minimum": 1},
+            "423": {"type": "integer", "minimum": 1}
+          }
+        },
+        "response_status_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "failing_response_hashes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+        "non_loopback_response_count": {"type": "integer", "minimum": 0},
+        "loopback_response_count": {"type": "integer", "minimum": 1, "maximum": 1200}
+      }
+    },
+    "liveDiagnostics": {
+      "allOf": [
+        {"$ref": "#/$defs/diagnosticBase"},
+        {
+          "properties": {
+            "console_hashes": {"const": []},
+            "page_error_hashes": {"const": []},
+            "synthetic_profile_hydration_recovery_counts": {"const": {}},
+            "failing_response_hashes": {"const": []},
+            "non_loopback_response_count": {"const": 0}
+          }
+        }
+      ]
+    },
+    "profileDiagnostics": {
+      "allOf": [
+        {"$ref": "#/$defs/diagnosticBase"},
+        {
+          "properties": {
+            "console_hashes": {"const": []},
+            "page_error_hashes": {"const": []},
+            "failing_response_hashes": {"const": []},
+            "non_loopback_response_count": {"const": 0}
+          }
+        }
+      ]
+    }
+  }
+}

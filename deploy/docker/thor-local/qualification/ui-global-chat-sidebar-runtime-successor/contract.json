@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-global-chat-sidebar-runtime-successor-v1",
+  "capability_id": "runtime.ui.global-chat-sidebar",
+  "oracle_id": "oracle.runtime.ui.global-chat-sidebar",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "d16797d05490c169fd600bd653084f7e7968da0f",
+  "mode": "authorization-gated-isolated-playwright-numeric-loopback-runtime",
+  "default_execution_enabled": false,
+  "authorization": {
+    "acknowledgement": "I_ACK_UI_GLOBAL_CHAT_SIDEBAR_RUNTIME"
+  },
+  "capability_contract": {
+    "context_actions": [
+      "+ Chat",
+      "Generate Report"
+    ],
+    "history_folders": true,
+    "legacy_and_global_chat_coexist": true,
+    "profile_controlled_tabs": true,
+    "settings": [
+      "http_url",
+      "websocket_url",
+      "websocket_schema",
+      "intermediate_steps"
+    ],
+    "sidebar": {
+      "collapsible": true,
+      "resizable_fraction": [
+        0.333333,
+        0.666667
+      ]
+    },
+    "themes": [
+      "dark",
+      "light"
+    ],
+    "unseen_indicator": true,
+    "uploads": [
+      "MP4",
+      "MKV"
+    ],
+    "wave3_acceptance": {
+      "executor_ready": false,
+      "materialized": false,
+      "package": "agent-smartcity",
+      "planning_requirement_ids": [
+        "ui-chat-state"
+      ]
+    }
+  },
+  "bounds": {
+    "max_duration_ms": 180000,
+    "max_browser_actions": 40,
+    "max_loopback_browser_responses": 1200,
+    "max_runtime_env_bytes": 65536,
+    "browser_contexts": 3
+  },
+  "runtime_boundary": {
+    "numeric_loopback_only": true,
+    "ambient_proxies_allowed": false,
+    "redirects_outside_numeric_loopback_allowed": false,
+    "isolated_browser_launch_allowed": true,
+    "browser_install_allowed": false,
+    "service_lifecycle_allowed": false,
+    "server_side_persistent_mutation": false,
+    "browser_storage_isolated_and_discarded": true,
+    "report_transport_send_suppressed": true,
+    "synthetic_profile_override_expected_react_hydration_recovery_codes": [
+      "418",
+      "423"
+    ],
+    "temporary_screenshots_outside_repository": true,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "ui": {
+      "container": "vss-agent-ui",
+      "configured_image": "vss-agent-ui:thor-local",
+      "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594"
+    },
+    "gateway": {
+      "container": "vss-haproxy-ingress",
+      "configured_image": "haproxy:3.0-alpine",
+      "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f"
+    },
+    "video_io": {
+      "container": "vss-vios-ingress",
+      "configured_image": "cti-vss-vios-ingress:3.2.1-thor-local",
+      "image_id": "sha256:ea2b5c14d12753d1f319d0e808f95d6be3127edcea9674b96c3a9b759bdf1ea4"
+    }
+  },
+  "fixture": {
+    "namespace": "vss-oracle-runtime-ui-global-chat-sidebar",
+    "kind": "browser_only_current_shape_boundary_pair",
+    "positive": "one fixed valid incident exercises Generate Report",
+    "adjacent_negative": "one fixed fallback incident id suppresses Generate Report",
+    "transport": "the compiled UI WebSocket send method is captured and suppressed before any payload reaches the Agent",
+    "persistent_resource": false
+  },
+  "source_locks": [
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx",
+      "sha256": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/TabWithChatSidebarLayout.tsx",
+      "sha256": "39b71ad1b46a591aab04a3ba9cfe2f353de7cfe91ddd951eb461d1fcbb701511"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/hooks/useAppChatSidebar.ts",
+      "sha256": "054ecd149969a9f0b1f98e12f471f494de3442050866c5d643668fd5f1356465"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/utils/tabChatSidebarConfig.ts",
+      "sha256": "8545ea1e5f4d943acd2dd3aff6aaa20dbf0641b4fa6062b0cba15ca20d1c07c3"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/components/Chatbar/Chatbar.tsx",
+      "sha256": "2079c4043f9e7407f2cdf181d53b4e60c25b956703bde646fbfc6b206c13174b"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/components/Chatbar/components/ChatbarSettings.tsx",
+      "sha256": "ac2862956df56d10e7f72f67378c6ab0888a1f9c9213168e3c7401be35dad313"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/components/Settings/SettingDialog.tsx",
+      "sha256": "d48cb918a7b91a3502e7724369818b999f9f921f18d034a898f1e2bc9e4b452e"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/ChatFileUpload.tsx",
+      "sha256": "7e149e72e573e649da31273a05f62879b580de08a274d7fdad7767bd1ca401a1"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/ChatInput.tsx",
+      "sha256": "22ff74f3afefb8e72e2313a7c9633e0766221bde2b8aaa2d70637a18d597c040"
+    },
+    {
+      "path": "services/ui/packages/nemo-agent-toolkit-ui/pages/api/home/home.state.tsx",
+      "sha256": "6a458c4f2187cc2eaf3567212a91081f1d0c7d8a86e7634d3f17d86354c77a55"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/MetadataSection.tsx",
+      "sha256": "b784f587b6232beff181a95562da36cf910d4ea002c3f0e5ff346b8d30cc8eac"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/AlertsTable.tsx",
+      "sha256": "6667e3fd0bd42ad60249318ba5593e9ec995840b8a58634ec5ae3674a19ad470"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/StreamCard.tsx",
+      "sha256": "90e2c53cae08bc0828f0cd447bd69e744a47ee45998b08280a93f786513308a6"
+    },
+    {
+      "path": "deploy/docker/services/ui/compose.yml",
+      "sha256": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3"
+    }
+  ],
+  "cleanup": {
+    "mutation": "browser_session_only",
+    "targets": [],
+    "allowlist": [],
+    "postconditions": [
+      "all three isolated browser contexts and the browser are closed",
+      "all temporary screenshots are deleted after hashing",
+      "the runtime environment override exists only in an isolated intercepted response",
+      "the report fixture exists only in an isolated intercepted response",
+      "the report WebSocket payload is captured in memory and never transported",
+      "related container identities, start times, health, restart counts, and OOM states match pre-state",
+      "no server-side file, sensor, stream, report, alert rule, incident, container, image, or volume is created, changed, or removed"
+    ]
+  },
+  "forbidden_actions": [
+    "VSS Agent /generate",
+    "VSS service lifecycle mutation",
+    "main VIOS sensor or stream mutation",
+    "RT-CV sample stream mutation",
+    "warehouse sample bundle access",
+    "external network request",
+    "real report transport send",
+    "raw runtime environment retention",
+    "raw endpoint retention",
+    "raw prompt or semantic output retention",
+    "raw request, conversation, session, sensor, or stream identifier retention"
+  ]
+}

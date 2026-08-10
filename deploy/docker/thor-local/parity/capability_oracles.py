@@ -889,6 +889,44 @@ UI_DASHBOARD_RUNTIME_WORKLOAD = {
     ],
 }
 UI_DASHBOARD_RUNTIME_MAX_ACTIONS = 12
+UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID = "runtime.ui.global-chat-sidebar"
+UI_GLOBAL_CHAT_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "ui-global-chat-sidebar-runtime-successor/harness.mjs"
+)
+UI_GLOBAL_CHAT_RUNTIME_VERIFIER = (
+    "deploy/docker/thor-local/qualification/"
+    "ui-global-chat-sidebar-runtime-successor/verify.py"
+)
+UI_GLOBAL_CHAT_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "ui-global-chat-sidebar-runtime-successor/contract.json"
+    ),
+    "sha256": "a049b6596436e09dd7e9c9be0da76534c3b17b9d545d4af5c4c7ae062d37e632",
+}
+UI_GLOBAL_CHAT_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "ui-global-chat-sidebar-runtime-successor/official-runtime-evidence.json"
+        ),
+        "sha256": "cdda66a198192335c1bbc9e59cdb907a8084e3ff9590c62388c1926e23e3357f",
+    }
+]
+UI_GLOBAL_CHAT_RUNTIME_WORKLOAD = {
+    "units": 12,
+    "requests_per_unit": 100,
+    "overhead_requests": 0,
+    "calculated_max_requests": 1200,
+    "phases": [
+        "current_profile_state_model",
+        "profile_controlled_legacy_and_global_chat_boundary",
+        "generate_report_positive_and_adjacent_negative",
+        "browser_diagnostics_and_runtime_postcondition",
+    ],
+}
+UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS = 40
 LVS_FORMATS_RUNTIME_CAPABILITY_ID = "runtime.lvs.supported-formats"
 LVS_FORMATS_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/lvs-formats-runtime/execute.py"
@@ -1137,6 +1175,14 @@ def _is_current_ui_dashboard_runtime(capability: dict[str, Any]) -> bool:
         capability.get("id") == UI_DASHBOARD_RUNTIME_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence") == UI_DASHBOARD_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_ui_global_chat_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == UI_GLOBAL_CHAT_RUNTIME_EVIDENCE
     )
 
 
@@ -1887,6 +1933,8 @@ def _workload(
         return copy.deepcopy(RT_EMBED_CURRENT_RUNTIME_WORKLOAD)
     if live_integration and _is_current_ui_dashboard_runtime(capability):
         return copy.deepcopy(UI_DASHBOARD_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_ui_global_chat_runtime(capability):
+        return copy.deepcopy(UI_GLOBAL_CHAT_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_formats_runtime(capability):
         return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_single_request_runtime(capability):
@@ -1972,6 +2020,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
     if _is_current_ui_dashboard_runtime(capability):
         return UI_DASHBOARD_RUNTIME_MAX_ACTIONS
+    if _is_current_ui_global_chat_runtime(capability):
+        return UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_formats_runtime(capability):
         return LVS_FORMATS_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_single_request_runtime(capability):
@@ -3350,6 +3400,47 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_ui_global_chat_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": UI_GLOBAL_CHAT_RUNTIME_FIXTURE["path"],
+                "generator": UI_GLOBAL_CHAT_RUNTIME_EXECUTOR,
+                "sha256": UI_GLOBAL_CHAT_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = (
+                UI_GLOBAL_CHAT_RUNTIME_EXECUTOR
+            )
+            oracle["execution_bounds"]["collectors"] = [
+                UI_GLOBAL_CHAT_RUNTIME_VERIFIER
+            ]
+            oracle["execution_bounds"]["max_duration_seconds"] = 180
+            oracle["cleanup"]["mutation"] = "read_only"
+            oracle["cleanup"]["targets"] = []
+            oracle["cleanup"]["allowlist"] = []
+            oracle["cleanup"]["pre_state"] = (
+                "the UI, gateway, and VIOS ingress identities, source locks, "
+                "runtime flags, and numeric-loopback endpoint hashes must match "
+                "the reviewed contract"
+            )
+            oracle["cleanup"]["restore"] = (
+                "no server restore action: all changes are isolated to discarded "
+                "browser contexts and report transport is suppressed"
+            )
+            oracle["cleanup"]["executor"] = UI_GLOBAL_CHAT_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                UI_GLOBAL_CHAT_RUNTIME_VERIFIER
+            ]
+            oracle["cleanup"]["postconditions"] = [
+                "all three isolated browser contexts and the browser are closed",
+                "all temporary screenshots are deleted after hashing",
+                "the one-key runtime environment override and two-row report fixture are discarded",
+                "the compiled Generate Report WebSocket frame is captured in memory and never transported",
+                "the UI, gateway, and VIOS ingress identities, start times, health, restart counts, and OOM states match pre-state exactly",
+                "no server-side file, sensor, stream, report, alert rule, incident, container, image, or volume is created, changed, or removed",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if _is_current_lvs_formats_runtime(capability):
             oracle["fixture"]["materialization"] = {
                 "path": LVS_FORMATS_RUNTIME_FIXTURE["path"],
@@ -3640,6 +3731,8 @@ def validate(
             expected_actions = RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
         elif _is_current_ui_dashboard_runtime(ledger_by_id[capability_id]):
             expected_actions = UI_DASHBOARD_RUNTIME_MAX_ACTIONS
+        elif _is_current_ui_global_chat_runtime(ledger_by_id[capability_id]):
+            expected_actions = UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_single_request_runtime(ledger_by_id[capability_id]):

@@ -1,0 +1,333 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-global-chat-sidebar-runtime-successor-v1",
+  "status": "passed_current_candidate",
+  "captured_at": "2026-08-10T23:05:58.734Z",
+  "target_commit": "d16797d05490c169fd600bd653084f7e7968da0f",
+  "contract_sha256": "a049b6596436e09dd7e9c9be0da76534c3b17b9d545d4af5c4c7ae062d37e632",
+  "harness_sha256": "7b1ec751e80975a9e938d3311013fc41fb60d46dd114f445c1238f4646f7752c",
+  "identity": {
+    "node_sha256": "d8fa08f79c8198c5a5ccc9faa5a69803052703fc9513f99e7200e0ab42e1d799",
+    "playwright_entry_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+    "browser_executable_sha256": "187b178dc80a432fbe99ecf7e293f39a7fcd2224aef1395472525afcfbf70984",
+    "browser_version_sha256": "08582aa65552ab5710023eb71f08d991b30c9dd710da10949512a0fb20294866",
+    "ui_origin_sha256": "db604082b8b63636b4ce557eaadc9c91e5c4d9166a79d5c0d7a7969762521bfa",
+    "source_hashes": {
+      "services/ui/apps/nv-metropolis-bp-vss-ui/components/Home.tsx": "a3aab436ca457bacad89bd13a61a0b815e3d472603c4f465891e7da4fd7fa12f",
+      "services/ui/apps/nv-metropolis-bp-vss-ui/components/TabWithChatSidebarLayout.tsx": "39b71ad1b46a591aab04a3ba9cfe2f353de7cfe91ddd951eb461d1fcbb701511",
+      "services/ui/apps/nv-metropolis-bp-vss-ui/hooks/useAppChatSidebar.ts": "054ecd149969a9f0b1f98e12f471f494de3442050866c5d643668fd5f1356465",
+      "services/ui/apps/nv-metropolis-bp-vss-ui/utils/tabChatSidebarConfig.ts": "8545ea1e5f4d943acd2dd3aff6aaa20dbf0641b4fa6062b0cba15ca20d1c07c3",
+      "services/ui/packages/nemo-agent-toolkit-ui/components/Chatbar/Chatbar.tsx": "2079c4043f9e7407f2cdf181d53b4e60c25b956703bde646fbfc6b206c13174b",
+      "services/ui/packages/nemo-agent-toolkit-ui/components/Chatbar/components/ChatbarSettings.tsx": "ac2862956df56d10e7f72f67378c6ab0888a1f9c9213168e3c7401be35dad313",
+      "services/ui/packages/nemo-agent-toolkit-ui/components/Settings/SettingDialog.tsx": "d48cb918a7b91a3502e7724369818b999f9f921f18d034a898f1e2bc9e4b452e",
+      "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/ChatFileUpload.tsx": "7e149e72e573e649da31273a05f62879b580de08a274d7fdad7767bd1ca401a1",
+      "services/ui/packages/nemo-agent-toolkit-ui/components/Chat/ChatInput.tsx": "22ff74f3afefb8e72e2313a7c9633e0766221bde2b8aaa2d70637a18d597c040",
+      "services/ui/packages/nemo-agent-toolkit-ui/pages/api/home/home.state.tsx": "6a458c4f2187cc2eaf3567212a91081f1d0c7d8a86e7634d3f17d86354c77a55",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/MetadataSection.tsx": "b784f587b6232beff181a95562da36cf910d4ea002c3f0e5ff346b8d30cc8eac",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/components/AlertsTable.tsx": "6667e3fd0bd42ad60249318ba5593e9ec995840b8a58634ec5ae3674a19ad470",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/video-management/lib-src/components/StreamCard.tsx": "90e2c53cae08bc0828f0cd447bd69e744a47ee45998b08280a93f786513308a6",
+      "deploy/docker/services/ui/compose.yml": "ffc59312717d2c62abb298b15461bbfabc20e68e9fca15e760c93038b194d0e3"
+    }
+  },
+  "pre_state": {
+    "related_runtime": {
+      "vss-agent-ui": {
+        "container_id_sha256": "1cca8e89ecac9c0729d811ee4e09acc13cb6ad33a9f4db0bbe082288c16b588f",
+        "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594",
+        "configured_image": "vss-agent-ui:thor-local",
+        "running": true,
+        "health": "none",
+        "started_at_sha256": "6433a4ffc15ef21eb7a6d6808081c8335ff7a47198e29d9b6e0e0bac84afb047",
+        "restart_count": 0,
+        "oom_killed": false
+      },
+      "vss-haproxy-ingress": {
+        "container_id_sha256": "865ea38262631163b9519c7ede546acc5fa062496bfa9ce1a90e7a38183858f7",
+        "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+        "configured_image": "haproxy:3.0-alpine",
+        "running": true,
+        "health": "none",
+        "started_at_sha256": "e568d4a62c11b428b6364e5154181fc0eb9cfe35c465831ff5a28e3165bf89a0",
+        "restart_count": 0,
+        "oom_killed": false
+      },
+      "vss-vios-ingress": {
+        "container_id_sha256": "330950b30bc1daa2014c88aa187182bbd905baec38172a7f0c632e543087e3ea",
+        "image_id": "sha256:ea2b5c14d12753d1f319d0e808f95d6be3127edcea9674b96c3a9b759bdf1ea4",
+        "configured_image": "cti-vss-vios-ingress:3.2.1-thor-local",
+        "running": true,
+        "health": "healthy",
+        "started_at_sha256": "8089d48d76fcb9b082397937635e1c4590caeb8daddafbb8d366155ffa847eae",
+        "restart_count": 0,
+        "oom_killed": false
+      }
+    }
+  },
+  "bounds": {
+    "duration_ms": 11156,
+    "browser_actions": 24,
+    "loopback_browser_responses": 114,
+    "max_duration_ms": 180000,
+    "max_browser_actions": 40,
+    "max_loopback_browser_responses": 1200,
+    "browser_contexts": 3
+  },
+  "current_profile": {
+    "actions": 19,
+    "runtime_env": {
+      "sha256": "b61526358d96f0b5fd174be8c05da2f22de5112398e430ecadd655affa713f8b",
+      "bytes": 4888,
+      "required_flags_match": true,
+      "flag_count": 67
+    },
+    "tabs": {
+      "visible": [
+        "sidebar-tab-search",
+        "sidebar-tab-alerts",
+        "sidebar-tab-dashboard",
+        "sidebar-tab-video-management"
+      ],
+      "legacy_chat_absent": true,
+      "map_absent": true
+    },
+    "theme": {
+      "initial_dark": true,
+      "switch_to_light_title": true,
+      "light_rendered": true,
+      "switch_to_dark_title": true,
+      "dark_restored": true
+    },
+    "sidebar": {
+      "initial": {
+        "panel_width": 393.328125,
+        "outer_width": 1180,
+        "ratio": 0.33332891949152543,
+        "panel_x": 1046.671875
+      },
+      "maximum": {
+        "panel_width": 786.65625,
+        "outer_width": 1180,
+        "ratio": 0.6666578389830509,
+        "panel_x": 653.34375
+      },
+      "minimum": {
+        "panel_width": 393.328125,
+        "outer_width": 1180,
+        "ratio": 0.33332891949152543,
+        "panel_x": 1046.671875
+      },
+      "stored_width": 393.3333333333333,
+      "collapsed_storage_false": true,
+      "opened_storage_true": true
+    },
+    "uploads": {
+      "input_count": 4,
+      "accept_values": [
+        ".mp4,.mkv",
+        ".mp4,.mkv,video/mp4,video/x-matroska"
+      ],
+      "mp4": true,
+      "mkv": true,
+      "mime_aliases_present": true,
+      "adjacent_avi_absent": true,
+      "drop_zone_text_visible": true
+    },
+    "history": {
+      "new_chat_visible": true,
+      "folder_control_visible": true,
+      "new_folder_count": 1,
+      "folder_persisted_count": 1
+    },
+    "settings": {
+      "required_labels_present": true,
+      "http_endpoint": {
+        "scope": "numeric_loopback",
+        "protocol": "http",
+        "sha256": "b388a714430c2e234cf009ac8961fd30af9dcb4920a521f52bcbf11193845934",
+        "bytes": 33
+      },
+      "websocket_endpoint": {
+        "scope": "numeric_loopback",
+        "protocol": "ws",
+        "sha256": "282d1f0683693be34060eba8593868f39b53555feb407ca1eee1e6088da16070",
+        "bytes": 29
+      },
+      "schema_options": [
+        "chat_stream",
+        "chat",
+        "generate_stream",
+        "generate"
+      ],
+      "selected_schema": "chat_stream",
+      "intermediate_initially_enabled": true,
+      "intermediate_disabled": true,
+      "intermediate_restored": true
+    },
+    "context_action": {
+      "visible_plus_chat_count": 3,
+      "added_state_count": 1,
+      "highlighted_when_collapsed": true,
+      "chip_count": 1,
+      "chip_count_after_remove": 0,
+      "highlight_cleared_after_open": true
+    },
+    "screenshot": {
+      "sha256": "8490416c77aa0ba901488a0a2f7b656785667f41ff5b086634c00f589c641138",
+      "bytes": 460240
+    },
+    "diagnostics": {
+      "console_hashes": [],
+      "page_error_hashes": [],
+      "synthetic_profile_hydration_recovery_counts": {},
+      "response_status_counts": {
+        "200": 37,
+        "206": 1
+      },
+      "failing_response_hashes": [],
+      "non_loopback_response_count": 0,
+      "loopback_response_count": 38
+    }
+  },
+  "profile_boundary": {
+    "actions": 2,
+    "runtime_env": {
+      "before_sha256": "b61526358d96f0b5fd174be8c05da2f22de5112398e430ecadd655affa713f8b",
+      "after_sha256": "f7be5d0f4e8640886da87f35afcc216ff54acc5dabbda2224991b898ffaf6538",
+      "before_bytes": 4888,
+      "after_bytes": 4887,
+      "changed_keys": [
+        "NEXT_PUBLIC_ENABLE_CHAT_TAB"
+      ],
+      "sidebar_remained_enabled": true
+    },
+    "tabs": [
+      "sidebar-tab-chat",
+      "sidebar-tab-search",
+      "sidebar-tab-alerts",
+      "sidebar-tab-dashboard",
+      "sidebar-tab-video-management"
+    ],
+    "profile_controlled_chat_transition": true,
+    "legacy_and_global_coexist": true,
+    "on_chat": {
+      "main_chat_visible": true,
+      "floating_open_visible": false,
+      "floating_close_visible": false
+    },
+    "on_search": {
+      "floating_sidebar_visible": true,
+      "sidebar_chat_visible": true
+    },
+    "screenshot": {
+      "sha256": "908956d188ff8368fc4dad0986cb59ff3c8642e4410aedf2bde120fa14efc614",
+      "bytes": 71873
+    },
+    "diagnostics": {
+      "console_hashes": [],
+      "page_error_hashes": [],
+      "synthetic_profile_hydration_recovery_counts": {
+        "418": 9,
+        "423": 1
+      },
+      "response_status_counts": {
+        "200": 38,
+        "206": 3
+      },
+      "failing_response_hashes": [],
+      "non_loopback_response_count": 0,
+      "loopback_response_count": 41
+    }
+  },
+  "report_boundary": {
+    "actions": 3,
+    "fixture_contract_sha256": "64796be70011bec78d074429bf82b00fe819cb5c6029921c9d5f8c007b830819",
+    "fixture_response_count": 3,
+    "row_count": 2,
+    "valid_generate_report_count": 1,
+    "adjacent_generate_report_suppressed": true,
+    "sent_state_visible": true,
+    "transport": {
+      "captured_send_count": 1,
+      "actual_send_count": 0,
+      "send_suppressed": true
+    },
+    "wire": {
+      "type": "user_message",
+      "schema_type": "chat_stream",
+      "message_count": 1,
+      "roles": [
+        "user"
+      ],
+      "text_sha256": "f16027724b2167cc3afb3e369611656a7e5b7886cd68c7c4b275f620cd92e117",
+      "text_bytes": 143,
+      "contains_valid_incident_marker": true,
+      "contains_sensor_marker": true,
+      "id_present_not_retained": true,
+      "conversation_id_present_not_retained": true
+    },
+    "screenshot": {
+      "sha256": "581385330b5171597460681b355a13b73d55c3593fe608e734f5da8cd95aba22",
+      "bytes": 140947
+    },
+    "diagnostics": {
+      "console_hashes": [],
+      "page_error_hashes": [],
+      "synthetic_profile_hydration_recovery_counts": {},
+      "response_status_counts": {
+        "200": 34,
+        "206": 1
+      },
+      "failing_response_hashes": [],
+      "non_loopback_response_count": 0,
+      "loopback_response_count": 35
+    }
+  },
+  "post_state": {
+    "related_runtime": {
+      "vss-agent-ui": {
+        "container_id_sha256": "1cca8e89ecac9c0729d811ee4e09acc13cb6ad33a9f4db0bbe082288c16b588f",
+        "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594",
+        "configured_image": "vss-agent-ui:thor-local",
+        "running": true,
+        "health": "none",
+        "started_at_sha256": "6433a4ffc15ef21eb7a6d6808081c8335ff7a47198e29d9b6e0e0bac84afb047",
+        "restart_count": 0,
+        "oom_killed": false
+      },
+      "vss-haproxy-ingress": {
+        "container_id_sha256": "865ea38262631163b9519c7ede546acc5fa062496bfa9ce1a90e7a38183858f7",
+        "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+        "configured_image": "haproxy:3.0-alpine",
+        "running": true,
+        "health": "none",
+        "started_at_sha256": "e568d4a62c11b428b6364e5154181fc0eb9cfe35c465831ff5a28e3165bf89a0",
+        "restart_count": 0,
+        "oom_killed": false
+      },
+      "vss-vios-ingress": {
+        "container_id_sha256": "330950b30bc1daa2014c88aa187182bbd905baec38172a7f0c632e543087e3ea",
+        "image_id": "sha256:ea2b5c14d12753d1f319d0e808f95d6be3127edcea9674b96c3a9b759bdf1ea4",
+        "configured_image": "cti-vss-vios-ingress:3.2.1-thor-local",
+        "running": true,
+        "health": "healthy",
+        "started_at_sha256": "8089d48d76fcb9b082397937635e1c4590caeb8daddafbb8d366155ffa847eae",
+        "restart_count": 0,
+        "oom_killed": false
+      }
+    }
+  },
+  "cleanup": {
+    "mutation": "browser_session_only",
+    "isolated_contexts_closed": 3,
+    "browser_closed": true,
+    "temporary_screenshots_deleted_after_hashing": true,
+    "server_resources_created": 0,
+    "server_resources_changed": 0,
+    "server_resources_deleted": 0,
+    "runtime_environment_override_discarded": true,
+    "report_fixture_discarded": true,
+    "report_transport_send_suppressed": true,
+    "related_runtime_state_unchanged": true
+  },
+  "warehouse_sample_bundle": "excluded"
+}

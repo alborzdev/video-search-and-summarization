@@ -76,6 +76,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 2  # exact official Thor Nemotron and Cosmos3 model runtime receipt
             + 4  # current RT-Embed model, data URL, duplicate-ID, and API receipt
             + 1  # current rendered Dashboard desktop/mobile runtime receipt
+            + 1  # current rendered Global Chat sidebar runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -406,6 +407,47 @@ class CapabilityOracleTests(unittest.TestCase):
         )
         self.assertEqual(oracle["cleanup"]["mutation"], "read_only")
         self.assertEqual(oracle["cleanup"]["targets"], [])
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(oracle["evidence"], [])
+
+    def test_ui_global_chat_runtime_oracle_is_exact_read_only_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"]
+            == verifier.UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.UI_GLOBAL_CHAT_RUNTIME_FIXTURE["path"],
+                "generator": verifier.UI_GLOBAL_CHAT_RUNTIME_EXECUTOR,
+                "sha256": verifier.UI_GLOBAL_CHAT_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.UI_GLOBAL_CHAT_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(oracle["execution_bounds"]["max_duration_seconds"], 180)
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.UI_GLOBAL_CHAT_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["collectors"],
+            [verifier.UI_GLOBAL_CHAT_RUNTIME_VERIFIER],
+        )
+        self.assertEqual(oracle["cleanup"]["mutation"], "read_only")
+        self.assertEqual(oracle["cleanup"]["targets"], [])
+        self.assertEqual(oracle["cleanup"]["allowlist"], [])
         self.assertEqual(
             oracle["acceptance_readiness"],
             {"classification": "executor_ready", "blockers": []},
@@ -1348,6 +1390,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     == verifier.UI_DASHBOARD_RUNTIME_CAPABILITY_ID
+                )
+                else verifier.UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID
                 )
                 else verifier.LVS_FORMATS_RUNTIME_MAX_ACTIONS
                 if (
