@@ -2,9 +2,9 @@
   "schema_version": 1,
   "package_id": "thor-ui-dashboard-playwright-runtime-successor-v1",
   "status": "passed_current_candidate",
-  "captured_at": "2026-08-10T07:01:43.378Z",
-  "target_commit": "afef8a4a28291db768b1f1795758094302b70de7",
-  "contract_sha256": "4d4619c2cc04a831366fcacccfee1ae2db4b95daffabf7aef970f75bf0684a62",
+  "captured_at": "2026-08-10T20:48:29.521Z",
+  "target_commit": "e96af9bbdc947e2c460ee34dec8ace129b1a86ab",
+  "contract_sha256": "21a6f9a7d70489d4bde567cfe6aa6fca2d4f18381a8052757e5b474b4384add2",
   "fixture_sha256": "a075c331224b71f7675d561db85708abf62a895696c0f0510175e7725d33645c",
   "harness_sha256": "8e43662ecbfb6e90a7840c70119398b05fb575e680c2451d70d6d76d9089e56f",
   "identity": {
@@ -13,7 +13,7 @@
     "ui": {
       "name": "vss-agent-ui",
       "configured_image": "vss-agent-ui:thor-local",
-      "image_id": "sha256:89988e7abf8bb22e9251dca84d188722629b549a8e9f0ece2a7bea03bbd94eb4",
+      "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594",
       "running": true,
       "healthy": true
     },
@@ -35,7 +35,7 @@
       },
       {
         "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/init-scripts/kibana-import-dashboards.sh",
-        "sha256": "c508c5931c0e955a294deddaf533ce5b9c65c5c55e3b069284de00e814273e30"
+        "sha256": "a4b761233f090447d8e1e98bf2f5e06caf732a6f7e047516cf4c6132fdfb4d62"
       },
       {
         "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/thor-vss-overview.ndjson",
@@ -44,14 +44,18 @@
       {
         "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
         "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+      },
+      {
+        "path": "deploy/docker/services/infra/elk/kibana/configs/kibana.yml",
+        "sha256": "a087c236c6eac5cf8f7740898e40f06961af0826333a64454351649d893f375e"
       }
     ]
   },
   "bounds": {
-    "duration_ms": 9406,
+    "duration_ms": 10285,
     "browser_actions": 7,
     "direct_api_requests": 4,
-    "loopback_browser_responses": 338,
+    "loopback_browser_responses": 336,
     "max_duration_ms": 120000,
     "max_browser_actions": 12,
     "max_direct_api_requests": 4,
@@ -94,23 +98,23 @@
       "allow-same-origin",
       "allow-scripts"
     ],
-    "frame_body_sha256": "5c12097ff4daa6a7caab1a92adc8e7d4595b431b715d3fbaede1a31d0fb7b3d0",
-    "frame_body_bytes": 251,
+    "frame_body_sha256": "926523c9c3463b035f2b266c4412ae3c46c2e8820eb5100760495db397fd9a0a",
+    "frame_body_bytes": 100,
     "desktop": {
       "viewport_width": 1440,
       "viewport_height": 900,
       "iframe_width": 786.671875,
       "iframe_height": 760,
-      "screenshot_sha256": "66c564576517619cab3f865625094793fd9da4612121804575eb4b26f42916d3",
-      "screenshot_bytes": 80057
+      "screenshot_sha256": "0573c961fbbaf2da64acfcbf233f6fc201b9607f4ae9ada553a18b3389f614b3",
+      "screenshot_bytes": 64470
     },
     "mobile": {
       "viewport_width": 390,
       "viewport_height": 844,
       "iframe_width": 390,
       "iframe_height": 704,
-      "screenshot_sha256": "494a9ae815f78ed4bc34adbdff7ef0b55e82c2bdb599daf91e89b2acfc9b73c0",
-      "screenshot_bytes": 33803
+      "screenshot_sha256": "36b8cbd48cf78a5642c9922edbf4d81de933c664ba91e2f911b31515b4dd2d18",
+      "screenshot_bytes": 22059
     }
   },
   "adjacent_negative": {
@@ -120,7 +124,7 @@
   },
   "diagnostics": {
     "response_status_counts": {
-      "200": 333,
+      "200": 331,
       "204": 1,
       "206": 1,
       "404": 3

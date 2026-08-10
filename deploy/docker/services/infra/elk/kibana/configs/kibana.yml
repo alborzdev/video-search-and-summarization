@@ -18,6 +18,11 @@ monitoring.ui.container.elasticsearch.enabled: true
 xpack.intercepts.enabled: false
 xpack.product_intercept.enabled: false
 
+# Authentication remains a separately tracked deployment-boundary decision.
+# Do not obscure the embedded VSS dashboard with Kibana's security upsell when
+# this local appliance is intentionally protected by its host firewall policy.
+xpack.security.showInsecureClusterWarning: false
+
 # The VSS dashboards are local operational surfaces. Kibana 9.3.3 defaults
 # usage telemetry and its remote newsfeed on, so make the air-gapped contract
 # explicit rather than relying on failed outbound requests.

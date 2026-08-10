@@ -812,6 +812,44 @@ RT_EMBED_CURRENT_RUNTIME_WORKLOAD = {
     ],
 }
 RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS = 4
+UI_DASHBOARD_RUNTIME_CAPABILITY_ID = "runtime.ui.dashboard-tab"
+UI_DASHBOARD_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "ui-dashboard-playwright-runtime-successor/harness.mjs"
+)
+UI_DASHBOARD_RUNTIME_VERIFIER = (
+    "deploy/docker/thor-local/qualification/"
+    "ui-dashboard-playwright-runtime-successor/verify.py"
+)
+UI_DASHBOARD_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "ui-dashboard-playwright-runtime-successor/contract.json"
+    ),
+    "sha256": "21a6f9a7d70489d4bde567cfe6aa6fca2d4f18381a8052757e5b474b4384add2",
+}
+UI_DASHBOARD_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "ui-dashboard-playwright-runtime-successor/official-runtime-evidence.json"
+        ),
+        "sha256": "436f55119607c83a1fbbf29cbd29d2fe18c40cfe1134d8f82bdb0370cd334e08",
+    }
+]
+UI_DASHBOARD_RUNTIME_WORKLOAD = {
+    "units": 5,
+    "requests_per_unit": 100,
+    "overhead_requests": 4,
+    "calculated_max_requests": 504,
+    "phases": [
+        "saved_object_identity_and_adjacent_negative",
+        "desktop_render_and_interaction",
+        "mobile_render_and_overflow",
+        "browser_diagnostics_and_read_only_postcondition",
+    ],
+}
+UI_DASHBOARD_RUNTIME_MAX_ACTIONS = 12
 LVS_FORMATS_RUNTIME_CAPABILITY_ID = "runtime.lvs.supported-formats"
 LVS_FORMATS_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/lvs-formats-runtime/execute.py"
@@ -1044,6 +1082,14 @@ def _is_current_rt_embed_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == RT_EMBED_CURRENT_RUNTIME_EVIDENCE[capability_id]
+    )
+
+
+def _is_current_ui_dashboard_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == UI_DASHBOARD_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == UI_DASHBOARD_RUNTIME_EVIDENCE
     )
 
 
@@ -1790,6 +1836,8 @@ def _workload(
         return copy.deepcopy(OFFICIAL_EDGE_MODEL_RUNTIME_WORKLOAD)
     if live_integration and _is_current_rt_embed_runtime(capability):
         return copy.deepcopy(RT_EMBED_CURRENT_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_ui_dashboard_runtime(capability):
+        return copy.deepcopy(UI_DASHBOARD_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_formats_runtime(capability):
         return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_single_request_runtime(capability):
@@ -1871,6 +1919,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
     if _is_current_rt_embed_runtime(capability):
         return RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
+    if _is_current_ui_dashboard_runtime(capability):
+        return UI_DASHBOARD_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_formats_runtime(capability):
         return LVS_FORMATS_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_single_request_runtime(capability):
@@ -3188,6 +3238,41 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_ui_dashboard_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": UI_DASHBOARD_RUNTIME_FIXTURE["path"],
+                "generator": UI_DASHBOARD_RUNTIME_EXECUTOR,
+                "sha256": UI_DASHBOARD_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = UI_DASHBOARD_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                UI_DASHBOARD_RUNTIME_VERIFIER
+            ]
+            oracle["execution_bounds"]["max_duration_seconds"] = 120
+            oracle["cleanup"]["mutation"] = "read_only"
+            oracle["cleanup"]["targets"] = []
+            oracle["cleanup"]["allowlist"] = []
+            oracle["cleanup"]["pre_state"] = (
+                "the UI and Kibana image identities, source locks, saved-object "
+                "identity, and loopback health must match the reviewed contract"
+            )
+            oracle["cleanup"]["restore"] = (
+                "no restore action: the rendered-browser executor is read-only"
+            )
+            oracle["cleanup"]["executor"] = UI_DASHBOARD_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                UI_DASHBOARD_RUNTIME_VERIFIER
+            ]
+            oracle["cleanup"]["postconditions"] = [
+                "no persistent resource or configuration is created, changed, or deleted by the runtime executor",
+                "only bounded screenshots outside the repository are created",
+                "the embedded dashboard and adjacent missing saved object remain distinguishable",
+                "all unknown browser diagnostics and unknown 404 paths remain absent",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if _is_current_lvs_formats_runtime(capability):
             oracle["fixture"]["materialization"] = {
                 "path": LVS_FORMATS_RUNTIME_FIXTURE["path"],
@@ -3474,6 +3559,8 @@ def validate(
             expected_actions = OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
         elif _is_current_rt_embed_runtime(ledger_by_id[capability_id]):
             expected_actions = RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
+        elif _is_current_ui_dashboard_runtime(ledger_by_id[capability_id]):
+            expected_actions = UI_DASHBOARD_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_single_request_runtime(ledger_by_id[capability_id]):

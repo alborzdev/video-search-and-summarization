@@ -59,7 +59,7 @@
     },
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/init-scripts/kibana-import-dashboards.sh",
-      "sha256": "c508c5931c0e955a294deddaf533ce5b9c65c5c55e3b069284de00e814273e30"
+      "sha256": "a4b761233f090447d8e1e98bf2f5e06caf732a6f7e047516cf4c6132fdfb4d62"
     },
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/thor-vss-overview.ndjson",
@@ -68,6 +68,10 @@
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
       "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+    },
+    {
+      "path": "deploy/docker/services/infra/elk/kibana/configs/kibana.yml",
+      "sha256": "a087c236c6eac5cf8f7740898e40f06961af0826333a64454351649d893f375e"
     }
   ]
 }

@@ -1,0 +1,260 @@
+{
+  "assertions": [
+    {
+      "expected": "kibana",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/backend",
+      "observed": "kibana",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/blueprint_preconfigured",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/embedded",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "agent-smartcity",
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "agent-smartcity",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "kibana-availability"
+      ],
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "kibana-availability"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "runtime.ui.dashboard-tab",
+  "cleanup": {
+    "allowlist": [],
+    "mutation": "read_only",
+    "postconditions": [
+      {
+        "description": "no persistent resource or configuration is created, changed, or deleted by the runtime executor",
+        "result": "pass"
+      },
+      {
+        "description": "only bounded screenshots outside the repository are created",
+        "result": "pass"
+      },
+      {
+        "description": "the embedded dashboard and adjacent missing saved object remain distinguishable",
+        "result": "pass"
+      },
+      {
+        "description": "all unknown browser diagnostics and unknown 404 paths remain absent",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": []
+  },
+  "fixture": {
+    "id": "fixture.runtime.ui.dashboard-tab",
+    "path": "deploy/docker/thor-local/qualification/ui-dashboard-playwright-runtime-successor/contract.json",
+    "sha256": "21a6f9a7d70489d4bde567cfe6aa6fca2d4f18381a8052757e5b474b4384add2"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "backend": "kibana",
+          "blueprint_preconfigured": true,
+          "embedded": true,
+          "wave3_acceptance": {
+            "executor_ready": false,
+            "materialized": false,
+            "package": "agent-smartcity",
+            "planning_requirement_ids": [
+              "kibana-availability"
+            ]
+          }
+        },
+        "contract_sha256": "21a6f9a7d70489d4bde567cfe6aa6fca2d4f18381a8052757e5b474b4384add2",
+        "fixture_sha256": "a075c331224b71f7675d561db85708abf62a895696c0f0510175e7725d33645c",
+        "kibana": {
+          "configured_image": "docker.elastic.co/kibana/kibana:9.3.3",
+          "healthy": true,
+          "image_id": "sha256:36301dc49650e47484b23803d60f78e0ac763ab4d7edab6c75c1f54a186d5f9d"
+        },
+        "receipt_sha256": "800d5f9d0f821a4be971c3b63dc1be79d6fe9b37cfc8270627ba8404e0f5104a",
+        "source_locks": [
+          {
+            "path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/server.ts",
+            "sha256": "c0b4d63e07150ff6c31eb4f03ec9db0f855cf98f953d6bda3bc10bfb69b27064"
+          },
+          {
+            "path": "services/ui/packages/nv-metropolis-bp-vss-ui/dashboard/lib-src/DashboardComponent.tsx",
+            "sha256": "a35ba4966bbe175cebaaf5edf4ce95e390a1762e7d51e97481629fcf38687e43"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/init-scripts/kibana-import-dashboards.sh",
+            "sha256": "a4b761233f090447d8e1e98bf2f5e06caf732a6f7e047516cf4c6132fdfb4d62"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/dev-profile-thor-full/kibana-dashboard/thor-vss-overview.ndjson",
+            "sha256": "4205101c605f239c0adef3e018ee1ce14857e7afebb5387f2afb1db20c8737ec"
+          },
+          {
+            "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+            "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+          },
+          {
+            "path": "deploy/docker/services/infra/elk/kibana/configs/kibana.yml",
+            "sha256": "a087c236c6eac5cf8f7740898e40f06961af0826333a64454351649d893f375e"
+          }
+        ],
+        "target_commit": "e96af9bbdc947e2c460ee34dec8ace129b1a86ab",
+        "ui": {
+          "configured_image": "vss-agent-ui:thor-local",
+          "healthy": true,
+          "image_id": "sha256:2b28982cf9a39017840132fb242766ff890c547a3abdb2f1e14de06818b3a594"
+        }
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "browser_actions": 7,
+        "checks": {
+          "adjacent_negative": true,
+          "console_health_explained": true,
+          "desktop_render": true,
+          "iframe_embedded": true,
+          "interaction_proof": true,
+          "mobile_no_horizontal_overflow": true,
+          "mobile_render": true,
+          "no_framework_overlay": true,
+          "not_blank": true,
+          "page_identity": true,
+          "saved_object_present": true
+        },
+        "dashboard_count": 2,
+        "dashboard_id": "thor-vss-overview",
+        "dashboard_title": "Thor VSS Overview",
+        "desktop": {
+          "iframe_height": 760,
+          "iframe_width": 786.671875,
+          "screenshot_bytes": 64470,
+          "screenshot_sha256": "0573c961fbbaf2da64acfcbf233f6fc201b9607f4ae9ada553a18b3389f614b3",
+          "viewport_height": 900,
+          "viewport_width": 1440
+        },
+        "direct_api_requests": 4,
+        "duration_ms": 10285,
+        "frame_body_sha256": "926523c9c3463b035f2b266c4412ae3c46c2e8820eb5100760495db397fd9a0a",
+        "iframe_hash_prefix": "#/view/thor-vss-overview?embed=true",
+        "iframe_path": "/kibana/app/dashboards",
+        "iframe_sandbox_tokens": [
+          "allow-downloads",
+          "allow-forms",
+          "allow-popups",
+          "allow-same-origin",
+          "allow-scripts"
+        ],
+        "iframe_title": "Kibana Dashboard",
+        "loopback_browser_responses": 336,
+        "mobile": {
+          "iframe_height": 704,
+          "iframe_width": 390,
+          "screenshot_bytes": 22059,
+          "screenshot_sha256": "36b8cbd48cf78a5642c9922edbf4d81de933c664ba91e2f911b31515b4dd2d18",
+          "viewport_height": 844,
+          "viewport_width": 390
+        },
+        "required_panel_titles": [
+          "Detected Objects",
+          "Behavior Events"
+        ],
+        "saved_object_sha256": "1d39188c7e2a36805d310331342efb9e46712f7ac8bc02a0e51cd2253c96911b"
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "adjacent_missing_object_sha256": "fa8797e84bc2cb5097e5ac16270557489d3c8a1a0289d7f0a3b2807327de3203",
+        "adjacent_missing_object_status": 404,
+        "diagnostic_classification": "known_local_security_gap_not_dashboard_render_failure",
+        "known_security_profile_404_count": 3,
+        "local_security_gap_open": true,
+        "persistent_state_unchanged": true,
+        "positive_desktop_render": true,
+        "positive_mobile_render": true,
+        "positive_saved_object_present": true,
+        "unknown_404_paths": []
+      }
+    }
+  ],
+  "oracle_id": "oracle.runtime.ui.dashboard-tab",
+  "oracle_sha256": "13865cb24a2bb95b2f69b7b57da27717d6409ae47a8302b9ed425ad616a7cb63",
+  "result": "passed_current",
+  "scenario_ids": [
+    "ui-workflows",
+    "oracle.runtime.ui.dashboard-tab"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

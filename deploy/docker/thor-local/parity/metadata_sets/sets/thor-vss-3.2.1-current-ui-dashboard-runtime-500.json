@@ -1,0 +1,53 @@
+{
+  "documents": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/live-metadata-500-migration-rebase-successor/post-state-acceptance-inventory.json",
+      "raw_sha256": "69dc4aca160ae236880f9afe7b873c0b3b423f8981c5d934e4ed647043cd8cb0",
+      "schema_version": 1
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-ui-dashboard-runtime-successor/post-state-capability-oracles.json",
+      "raw_sha256": "ef393ca2d7ad322b8fa147827a1ba7c03755c949272d1da238db0dcee231db9e",
+      "schema_id": "capability_oracles_schema",
+      "schema_version": 2
+    },
+    "manifest": {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-ui-dashboard-runtime-successor/post-state-manifest.json",
+      "raw_sha256": "08a1db5dd259ff0531334fa6e96a0baa0487025af19244ff44c6f71b2d7b36bb",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-ui-dashboard-runtime-successor/post-state-official-capabilities.json",
+      "raw_sha256": "27621ce0a9224582a5eb9b6f15addefa159799e0bcba7097ca347a53e0973635",
+      "schema_id": "official_capabilities_schema",
+      "schema_version": 1
+    }
+  },
+  "expected_counts": {
+    "capabilities": 500,
+    "feature_families": 55,
+    "oracles": 500
+  },
+  "lifecycle": "live_ready",
+  "mode": "immutable_static_metadata_set",
+  "schema_version": 1,
+  "schemas": {
+    "capability_oracles_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/live-capability-oracles-v2.schema.json",
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-ui-dashboard-runtime-successor/post-state-capability-oracles.schema.json",
+      "raw_sha256": "33e2a151e983469394d5acb86496c7b9a291fcf4fd13e0589bf150d5a8f7eb25"
+    },
+    "official_capabilities_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "6644cffdd6b58f68891d8de27707beb421fb8cc5cd904b1925884c42c9333902"
+    }
+  },
+  "set_id": "thor-vss-3.2.1-current-ui-dashboard-runtime-500",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

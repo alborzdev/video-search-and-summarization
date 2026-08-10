@@ -74,6 +74,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current LVS custom-model and custom-prompt runtime receipt
             + 2  # exact official Thor Nemotron and Cosmos3 model runtime receipt
             + 4  # current RT-Embed model, data URL, duplicate-ID, and API receipt
+            + 1  # current rendered Dashboard desktop/mobile runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -328,6 +329,46 @@ class CapabilityOracleTests(unittest.TestCase):
             ],
             ["rt-vlm-sse-blank-prompt"],
         )
+
+    def test_ui_dashboard_runtime_oracle_is_exact_read_only_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"]
+            == verifier.UI_DASHBOARD_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.UI_DASHBOARD_RUNTIME_FIXTURE["path"],
+                "generator": verifier.UI_DASHBOARD_RUNTIME_EXECUTOR,
+                "sha256": verifier.UI_DASHBOARD_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.UI_DASHBOARD_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(oracle["execution_bounds"]["max_duration_seconds"], 120)
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.UI_DASHBOARD_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.UI_DASHBOARD_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["collectors"],
+            [verifier.UI_DASHBOARD_RUNTIME_VERIFIER],
+        )
+        self.assertEqual(oracle["cleanup"]["mutation"], "read_only")
+        self.assertEqual(oracle["cleanup"]["targets"], [])
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(oracle["evidence"], [])
 
     def test_lvs_formats_runtime_oracle_is_exact_executor_ready_row(self) -> None:
         oracle = next(
@@ -1261,6 +1302,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 else verifier.RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
                 if item["capability_id"]
                 in verifier.RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS
+                else verifier.UI_DASHBOARD_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.UI_DASHBOARD_RUNTIME_CAPABILITY_ID
+                )
                 else verifier.LVS_FORMATS_RUNTIME_MAX_ACTIONS
                 if (
                     item["capability_id"]

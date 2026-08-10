@@ -13,6 +13,11 @@ screenshots outside the repository, and proves the mobile layout has no
 horizontal overflow. The adjacent negative reads a nonexistent saved-object ID
 and requires HTTP 404.
 
+The source lock also binds the local Kibana configuration that disables
+Kibana's insecure-cluster upsell overlay. That setting is presentation-only:
+the package continues to report the unauthenticated local-security condition,
+and the deployment firewall remains a separate acceptance boundary.
+
 The run is read-only: it does not start or stop a service, create or delete a
 saved object, add a stream, upload media, change configuration, or use the
 Warehouse sample bundle. The retained receipt contains hashes and dimensions,
@@ -21,6 +26,7 @@ not raw page content or URLs.
 ```bash
 node deploy/docker/thor-local/qualification/ui-dashboard-playwright-runtime-successor/harness.mjs plan
 python3 deploy/docker/thor-local/qualification/ui-dashboard-playwright-runtime-successor/verify.py
+python3 deploy/docker/thor-local/qualification/ui-dashboard-playwright-runtime-successor/build_official_evidence.py
 pytest -q deploy/docker/thor-local/qualification/ui-dashboard-playwright-runtime-successor/tests
 ```
 
@@ -29,7 +35,8 @@ numeric-loopback UI, Kibana, CDP origins and the already-installed Playwright
 entry module. The harness writes only temporary screenshots under `/tmp` and
 prints the sanitized receipt to stdout.
 
-The retained result is a current candidate for the capability ledger. It does
-not silently overwrite the canonical ledger: promotion still requires updating
-the canonical oracle's unrealistic two-request planning bound to the reviewed
-rendered-browser envelope.
+`runtime-receipt.json` is the complete sanitized browser-run receipt.
+`official-runtime-evidence.json` is its smaller, deterministic projection bound
+to the exact canonical capability oracle. The current capability ledger uses
+the latter; the projector fails closed if the receipt, source locks, target
+commit, oracle, or read-only postconditions drift.
