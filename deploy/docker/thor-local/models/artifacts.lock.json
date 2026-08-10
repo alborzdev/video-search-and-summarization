@@ -658,7 +658,7 @@
             "type": "file"
           },
           {
-            "mode": 493,
+            "mode": 436,
             "path": "text_embeddings/config.pbtxt",
             "sha256": "d37a0e6e5e71f1bab92f4dba42c2fa66e0aa869ffb63cf57b08c30c8a6a2ba08",
             "size": 1173,
@@ -693,7 +693,7 @@
             "type": "file"
           },
           {
-            "mode": 493,
+            "mode": 436,
             "path": "video_embeddings/config.pbtxt",
             "sha256": "9af13ee939837a4430d6ff5d518d9e382635e6df97d804e2736e9b9aefae26a2",
             "size": 1103,

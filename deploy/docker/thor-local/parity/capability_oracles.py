@@ -479,8 +479,7 @@ EVENT_TRANSPORT_RUNTIME_EXECUTOR = (
 )
 EVENT_TRANSPORT_RUNTIME_FIXTURE = {
     "path": (
-        "deploy/docker/thor-local/qualification/event-transports-runtime/"
-        "contract.json"
+        "deploy/docker/thor-local/qualification/event-transports-runtime/contract.json"
     ),
     "sha256": "2229e2ff89a22fe0454bab8028d5d3764d5d21908fc2e9c742e6e208a29ef043",
 }
@@ -538,8 +537,7 @@ ALERT_WEBSOCKET_RUNTIME_EXECUTOR = (
 )
 ALERT_WEBSOCKET_RUNTIME_FIXTURE = {
     "path": (
-        "deploy/docker/thor-local/qualification/alert-websocket-runtime/"
-        "contract.json"
+        "deploy/docker/thor-local/qualification/alert-websocket-runtime/contract.json"
     ),
     "sha256": "bb96e55fe28f1c480175086e4f6cfc1dc1b0216d72a825fb73eb6c9f2722953f",
 }
@@ -587,9 +585,7 @@ RT_VLM_SSE_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/execute.py"
 )
 RT_VLM_SSE_RUNTIME_FIXTURE = {
-    "path": (
-        "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json"
-    ),
+    "path": ("deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json"),
     "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc",
 }
 RT_VLM_SSE_RUNTIME_EVIDENCE = {
@@ -726,6 +722,96 @@ OFFICIAL_EDGE_MODEL_RUNTIME_WORKLOAD = {
     ],
 }
 OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS = 2
+RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS = {
+    "model.rt-embed.cosmos-embed1-448p-anomaly",
+    "behavior.rt-embed.base64-data-url",
+    "behavior.rt-embed.duplicate-id-409",
+    "api.core.rt-embed-24",
+}
+RT_EMBED_CURRENT_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/rt-embed-current-runtime/execute.py"
+)
+RT_EMBED_CURRENT_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/rt-embed-current-runtime/contract.json"
+    ),
+    "sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
+}
+RT_EMBED_CURRENT_RUNTIME_EVIDENCE = {
+    "model.rt-embed.cosmos-embed1-448p-anomaly": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-embed-current-runtime/"
+                "official-runtime-evidence-model.json"
+            ),
+            "sha256": "38e367d7d35e18d7e80cf9b0a20ec324e68750e2767a4ce3f0abf289e35dbe99",
+        }
+    ],
+    "behavior.rt-embed.base64-data-url": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-embed-current-runtime/"
+                "official-runtime-evidence-data-url.json"
+            ),
+            "sha256": "f9cd87923a4d66c2f89641bd52a70f3cbfb1b950f6c0725960415d0d0d6beeb6",
+        }
+    ],
+    "behavior.rt-embed.duplicate-id-409": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-embed-current-runtime/"
+                "official-runtime-evidence-duplicate-id.json"
+            ),
+            "sha256": "4fd5ce16811e73041b935398b49729d0499dcdd20c8adb49ea3f03878b855b89",
+        }
+    ],
+    "api.core.rt-embed-24": [
+        {
+            "path": (
+                "deploy/docker/thor-local/qualification/rt-embed-current-runtime/"
+                "official-runtime-evidence-api.json"
+            ),
+            "sha256": "033cdb49311c8b5c443aaa5f921d682c5c03a3abd0147d6e278e2c6043497586",
+        }
+    ],
+}
+RT_EMBED_CURRENT_RUNTIME_NAMESPACES = [
+    "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+    "vss-oracle-behavior-rt-embed-base64-data-url",
+    "vss-oracle-behavior-rt-embed-duplicate-id-409",
+    "vss-oracle-api-core-rt-embed-24",
+    "00000000-0000-4000-8000-000000000061",
+    "00000000-0000-4000-8000-000000000062",
+    "00000000-0000-4000-8000-000000000063",
+    "00000000-0000-4000-8000-000000000064",
+    "00000000-0000-4000-8000-000000000065",
+    "00000000-0000-4000-8000-000000000066",
+    "vss-oracle-rt-embed-camera",
+    "vss-oracle-rt-embed-runtime",
+    "vss-oracle-rt-embed-mediamtx",
+    "vss-oracle-rt-embed-artifact-model",
+    "vss-oracle-rt-embed-artifact-triton",
+]
+RT_EMBED_CURRENT_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 43,
+    "overhead_requests": 0,
+    "calculated_max_requests": 43,
+    "phases": [
+        "exact_artifact_verification",
+        "api_and_runtime_identity",
+        "complete_pre_state",
+        "local_rtsp_helper_and_publisher",
+        "upload_file_and_readback",
+        "text_file_and_data_url_semantics",
+        "file_url_negative",
+        "duplicate_camera_and_stream_boundaries",
+        "live_rtsp_sse_and_control",
+        "batch_stream_cleanup",
+        "complete_postcondition",
+    ],
+}
+RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS = 4
 LVS_FORMATS_RUNTIME_CAPABILITY_ID = "runtime.lvs.supported-formats"
 LVS_FORMATS_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/lvs-formats-runtime/execute.py"
@@ -772,8 +858,7 @@ LVS_FORMATS_RUNTIME_WORKLOAD = {
 LVS_FORMATS_RUNTIME_MAX_ACTIONS = 9
 LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID = "runtime.lvs.single-request-queue"
 LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR = (
-    "deploy/docker/thor-local/qualification/"
-    "lvs-single-request-queue-runtime/execute.py"
+    "deploy/docker/thor-local/qualification/lvs-single-request-queue-runtime/execute.py"
 )
 LVS_SINGLE_REQUEST_RUNTIME_FIXTURE = {
     "path": (
@@ -813,12 +898,9 @@ LVS_SINGLE_REQUEST_RUNTIME_WORKLOAD = {
     ],
 }
 LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS = 2
-LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID = (
-    "configuration.lvs.custom-model-prompt"
-)
+LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID = "configuration.lvs.custom-model-prompt"
 LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR = (
-    "deploy/docker/thor-local/qualification/"
-    "lvs-custom-model-prompt-runtime/execute.py"
+    "deploy/docker/thor-local/qualification/lvs-custom-model-prompt-runtime/execute.py"
 )
 LVS_CUSTOM_MODEL_PROMPT_RUNTIME_FIXTURE = {
     "path": (
@@ -895,8 +977,7 @@ def _is_current_vios_webrtc_replay(capability: dict[str, Any]) -> bool:
     return (
         capability.get("id") == VIOS_WEBRTC_REPLAY_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
-        and capability.get("runtime_evidence")
-        == VIOS_WEBRTC_REPLAY_RUNTIME_EVIDENCE
+        and capability.get("runtime_evidence") == VIOS_WEBRTC_REPLAY_RUNTIME_EVIDENCE
     )
 
 
@@ -932,8 +1013,7 @@ def _is_current_alert_websocket_runtime(capability: dict[str, Any]) -> bool:
     return (
         capability.get("id") == ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
-        and capability.get("runtime_evidence")
-        == ALERT_WEBSOCKET_RUNTIME_EVIDENCE
+        and capability.get("runtime_evidence") == ALERT_WEBSOCKET_RUNTIME_EVIDENCE
     )
 
 
@@ -957,6 +1037,16 @@ def _is_current_official_edge_model_runtime(capability: dict[str, Any]) -> bool:
     )
 
 
+def _is_current_rt_embed_runtime(capability: dict[str, Any]) -> bool:
+    capability_id = capability.get("id")
+    return (
+        capability_id in RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == RT_EMBED_CURRENT_RUNTIME_EVIDENCE[capability_id]
+    )
+
+
 def _is_current_lvs_formats_runtime(capability: dict[str, Any]) -> bool:
     return (
         capability.get("id") == LVS_FORMATS_RUNTIME_CAPABILITY_ID
@@ -969,8 +1059,7 @@ def _is_current_lvs_single_request_runtime(capability: dict[str, Any]) -> bool:
     return (
         capability.get("id") == LVS_SINGLE_REQUEST_RUNTIME_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
-        and capability.get("runtime_evidence")
-        == LVS_SINGLE_REQUEST_RUNTIME_EVIDENCE
+        and capability.get("runtime_evidence") == LVS_SINGLE_REQUEST_RUNTIME_EVIDENCE
     )
 
 
@@ -1699,6 +1788,8 @@ def _workload(
         return copy.deepcopy(RT_VLM_SSE_RUNTIME_WORKLOAD)
     if live_integration and _is_current_official_edge_model_runtime(capability):
         return copy.deepcopy(OFFICIAL_EDGE_MODEL_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_rt_embed_runtime(capability):
+        return copy.deepcopy(RT_EMBED_CURRENT_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_formats_runtime(capability):
         return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_single_request_runtime(capability):
@@ -1778,6 +1869,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return RT_VLM_SSE_RUNTIME_MAX_ACTIONS
     if _is_current_official_edge_model_runtime(capability):
         return OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
+    if _is_current_rt_embed_runtime(capability):
+        return RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_formats_runtime(capability):
         return LVS_FORMATS_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_single_request_runtime(capability):
@@ -2899,9 +2992,7 @@ def compile_plan(
                 "sha256": VIOS_WEBRTC_REPLAY_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = VIOS_WEBRTC_REPLAY_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                VIOS_WEBRTC_REPLAY_EXECUTOR
-            ]
+            oracle["execution_bounds"]["collectors"] = [VIOS_WEBRTC_REPLAY_EXECUTOR]
             oracle["cleanup"]["targets"] = [VIOS_WEBRTC_REPLAY_NAMESPACE]
             oracle["cleanup"]["allowlist"] = [VIOS_WEBRTC_REPLAY_NAMESPACE]
             oracle["cleanup"]["executor"] = VIOS_WEBRTC_REPLAY_EXECUTOR
@@ -2919,19 +3010,11 @@ def compile_plan(
                 "sha256": VIOS_WEBRTC_LIVE_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = VIOS_WEBRTC_LIVE_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                VIOS_WEBRTC_LIVE_EXECUTOR
-            ]
-            oracle["cleanup"]["targets"] = copy.deepcopy(
-                VIOS_WEBRTC_LIVE_NAMESPACES
-            )
-            oracle["cleanup"]["allowlist"] = copy.deepcopy(
-                VIOS_WEBRTC_LIVE_NAMESPACES
-            )
+            oracle["execution_bounds"]["collectors"] = [VIOS_WEBRTC_LIVE_EXECUTOR]
+            oracle["cleanup"]["targets"] = copy.deepcopy(VIOS_WEBRTC_LIVE_NAMESPACES)
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(VIOS_WEBRTC_LIVE_NAMESPACES)
             oracle["cleanup"]["executor"] = VIOS_WEBRTC_LIVE_EXECUTOR
-            oracle["cleanup"]["postcondition_collectors"] = [
-                VIOS_WEBRTC_LIVE_EXECUTOR
-            ]
+            oracle["cleanup"]["postcondition_collectors"] = [VIOS_WEBRTC_LIVE_EXECUTOR]
             oracle["acceptance_readiness"] = {
                 "classification": "executor_ready",
                 "blockers": [],
@@ -2942,9 +3025,7 @@ def compile_plan(
                 "generator": VIDEO_ANALYTICS_RUNTIME_EXECUTOR,
                 "sha256": VIDEO_ANALYTICS_RUNTIME_FIXTURE["sha256"],
             }
-            oracle["execution_bounds"]["executor"] = (
-                VIDEO_ANALYTICS_RUNTIME_EXECUTOR
-            )
+            oracle["execution_bounds"]["executor"] = VIDEO_ANALYTICS_RUNTIME_EXECUTOR
             oracle["execution_bounds"]["collectors"] = [
                 VIDEO_ANALYTICS_RUNTIME_EXECUTOR
             ]
@@ -2964,9 +3045,7 @@ def compile_plan(
                 "generator": EVENT_TRANSPORT_RUNTIME_EXECUTOR,
                 "sha256": EVENT_TRANSPORT_RUNTIME_FIXTURE["sha256"],
             }
-            oracle["execution_bounds"]["executor"] = (
-                EVENT_TRANSPORT_RUNTIME_EXECUTOR
-            )
+            oracle["execution_bounds"]["executor"] = EVENT_TRANSPORT_RUNTIME_EXECUTOR
             oracle["execution_bounds"]["collectors"] = [
                 EVENT_TRANSPORT_RUNTIME_EXECUTOR
             ]
@@ -2990,9 +3069,7 @@ def compile_plan(
                 "generator": ALERT_WEBSOCKET_RUNTIME_EXECUTOR,
                 "sha256": ALERT_WEBSOCKET_RUNTIME_FIXTURE["sha256"],
             }
-            oracle["execution_bounds"]["executor"] = (
-                ALERT_WEBSOCKET_RUNTIME_EXECUTOR
-            )
+            oracle["execution_bounds"]["executor"] = ALERT_WEBSOCKET_RUNTIME_EXECUTOR
             oracle["execution_bounds"]["collectors"] = [
                 ALERT_WEBSOCKET_RUNTIME_EXECUTOR
             ]
@@ -3017,12 +3094,8 @@ def compile_plan(
                 "sha256": RT_VLM_SSE_RUNTIME_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = RT_VLM_SSE_RUNTIME_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                RT_VLM_SSE_RUNTIME_EXECUTOR
-            ]
-            oracle["cleanup"]["targets"] = copy.deepcopy(
-                RT_VLM_SSE_RUNTIME_NAMESPACES
-            )
+            oracle["execution_bounds"]["collectors"] = [RT_VLM_SSE_RUNTIME_EXECUTOR]
+            oracle["cleanup"]["targets"] = copy.deepcopy(RT_VLM_SSE_RUNTIME_NAMESPACES)
             oracle["cleanup"]["allowlist"] = copy.deepcopy(
                 RT_VLM_SSE_RUNTIME_NAMESPACES
             )
@@ -3073,6 +3146,48 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_rt_embed_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": RT_EMBED_CURRENT_RUNTIME_FIXTURE["path"],
+                "generator": RT_EMBED_CURRENT_RUNTIME_EXECUTOR,
+                "sha256": RT_EMBED_CURRENT_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = RT_EMBED_CURRENT_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [
+                RT_EMBED_CURRENT_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                RT_EMBED_CURRENT_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                RT_EMBED_CURRENT_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["pre_state"] = (
+                "complete file, batch-stream, single-stream, asset-statistics, "
+                "RT-Embed container, helper, and operator-paused workload state "
+                "must be captured before mutation"
+            )
+            oracle["cleanup"]["restore"] = (
+                "stop inference and delete only fixed oracle-owned file, stream, "
+                "camera, publisher, and helper resources"
+            )
+            oracle["cleanup"]["executor"] = RT_EMBED_CURRENT_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                RT_EMBED_CURRENT_RUNTIME_EXECUTOR
+            ]
+            oracle["cleanup"]["postconditions"] = [
+                "all six fixed UUID resources and the fixed camera ID are absent",
+                "complete file and both stream inventories match pre-state exactly",
+                "asset statistics match pre-state exactly",
+                "the ephemeral RTSP path again returns RTSP 404",
+                "the publisher and all three exact helper containers are absent",
+                "the RT-Embed container identity, start time, health, restart count, OOM state, mounts, and safe model environment match pre-state exactly",
+                "the three operator-paused unrelated workloads remain stopped",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if _is_current_lvs_formats_runtime(capability):
             oracle["fixture"]["materialization"] = {
                 "path": LVS_FORMATS_RUNTIME_FIXTURE["path"],
@@ -3080,12 +3195,8 @@ def compile_plan(
                 "sha256": LVS_FORMATS_RUNTIME_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = LVS_FORMATS_RUNTIME_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                LVS_FORMATS_RUNTIME_EXECUTOR
-            ]
-            oracle["cleanup"]["targets"] = copy.deepcopy(
-                LVS_FORMATS_RUNTIME_NAMESPACES
-            )
+            oracle["execution_bounds"]["collectors"] = [LVS_FORMATS_RUNTIME_EXECUTOR]
+            oracle["cleanup"]["targets"] = copy.deepcopy(LVS_FORMATS_RUNTIME_NAMESPACES)
             oracle["cleanup"]["allowlist"] = copy.deepcopy(
                 LVS_FORMATS_RUNTIME_NAMESPACES
             )
@@ -3103,9 +3214,7 @@ def compile_plan(
                 "generator": LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR,
                 "sha256": LVS_SINGLE_REQUEST_RUNTIME_FIXTURE["sha256"],
             }
-            oracle["execution_bounds"]["executor"] = (
-                LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR
-            )
+            oracle["execution_bounds"]["executor"] = LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR
             oracle["execution_bounds"]["collectors"] = [
                 LVS_SINGLE_REQUEST_RUNTIME_EXECUTOR
             ]
@@ -3141,9 +3250,7 @@ def compile_plan(
             oracle["cleanup"]["allowlist"] = copy.deepcopy(
                 LVS_CUSTOM_MODEL_PROMPT_RUNTIME_NAMESPACES
             )
-            oracle["cleanup"]["executor"] = (
-                LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
-            )
+            oracle["cleanup"]["executor"] = LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
             oracle["cleanup"]["postcondition_collectors"] = [
                 LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
             ]
@@ -3363,17 +3470,15 @@ def validate(
             expected_actions = ALERT_WEBSOCKET_RUNTIME_MAX_ACTIONS
         elif _is_current_rt_vlm_sse_runtime(ledger_by_id[capability_id]):
             expected_actions = RT_VLM_SSE_RUNTIME_MAX_ACTIONS
-        elif _is_current_official_edge_model_runtime(
-            ledger_by_id[capability_id]
-        ):
+        elif _is_current_official_edge_model_runtime(ledger_by_id[capability_id]):
             expected_actions = OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
+        elif _is_current_rt_embed_runtime(ledger_by_id[capability_id]):
+            expected_actions = RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_single_request_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS
-        elif _is_current_lvs_custom_model_prompt_runtime(
-            ledger_by_id[capability_id]
-        ):
+        elif _is_current_lvs_custom_model_prompt_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_CUSTOM_MODEL_PROMPT_RUNTIME_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]

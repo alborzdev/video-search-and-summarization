@@ -1,0 +1,174 @@
+{
+  "assertions": [
+    {
+      "expected": [
+        "DuplicateCameraId",
+        "DuplicateStreamId"
+      ],
+      "id": "contract-01",
+      "observation": "contract_identity/contract/errors",
+      "observed": [
+        "DuplicateCameraId",
+        "DuplicateStreamId"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 409,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/status",
+      "observed": 409,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "behavior.rt-embed.duplicate-id-409",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "all six fixed UUID resources and the fixed camera ID are absent",
+        "result": "pass"
+      },
+      {
+        "description": "complete file and both stream inventories match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "asset statistics match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the ephemeral RTSP path again returns RTSP 404",
+        "result": "pass"
+      },
+      {
+        "description": "the publisher and all three exact helper containers are absent",
+        "result": "pass"
+      },
+      {
+        "description": "the RT-Embed container identity, start time, health, restart count, OOM state, mounts, and safe model environment match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the three operator-paused unrelated workloads remain stopped",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.behavior.rt-embed.duplicate-id-409",
+    "path": "deploy/docker/thor-local/qualification/rt-embed-current-runtime/contract.json",
+    "sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "artifact_lock_sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad",
+        "contract": {
+          "errors": [
+            "DuplicateCameraId",
+            "DuplicateStreamId"
+          ],
+          "status": 409
+        },
+        "contract_sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
+        "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+        "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+        "receipt_sha256": "56da7bf867628791152cdb9c3cdf788801ab77aa3e4dedb374ba130bf9849934"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "both_existing_resources_preserved_until_owned_cleanup": true,
+        "camera_error_code": "DuplicateCameraId",
+        "camera_transport_status": 409,
+        "stream_batch_transport_status": 200,
+        "stream_error_code": "DuplicateStreamId",
+        "stream_error_status": 409
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "camera_resource_absent_after": true,
+        "camera_transport_status": 409,
+        "stream_batch_transport_status": 200,
+        "stream_nested_error_status": 409,
+        "stream_resources_absent_after": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.behavior.rt-embed.duplicate-id-409",
+  "oracle_sha256": "264f74135902bd5d5d8a7841d92c01aa96d8a0224fc482dd5da197525066a12b",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.behavior.rt-embed.duplicate-id-409"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

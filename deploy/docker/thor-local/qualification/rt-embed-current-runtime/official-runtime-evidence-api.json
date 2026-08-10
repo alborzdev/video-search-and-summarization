@@ -1,0 +1,207 @@
+{
+  "assertions": [
+    {
+      "expected": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/expected_manifest",
+      "observed": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/expected_manifest_sha256",
+      "observed": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "/openapi.json",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/openapi",
+      "observed": "/openapi.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 24,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/operation_count",
+      "observed": 24,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "/v1",
+      "id": "contract-05",
+      "observation": "contract_identity/contract/prefix",
+      "observed": "/v1",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "/docs",
+      "id": "contract-06",
+      "observation": "contract_identity/contract/swagger",
+      "observed": "/docs",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "api_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "api.core.rt-embed-24",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "all six fixed UUID resources and the fixed camera ID are absent",
+        "result": "pass"
+      },
+      {
+        "description": "complete file and both stream inventories match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "asset statistics match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the ephemeral RTSP path again returns RTSP 404",
+        "result": "pass"
+      },
+      {
+        "description": "the publisher and all three exact helper containers are absent",
+        "result": "pass"
+      },
+      {
+        "description": "the RT-Embed container identity, start time, health, restart count, OOM state, mounts, and safe model environment match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the three operator-paused unrelated workloads remain stopped",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.api.core.rt-embed-24",
+    "path": "deploy/docker/thor-local/qualification/rt-embed-current-runtime/contract.json",
+    "sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "artifact_lock_sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad",
+        "contract": {
+          "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+          "expected_manifest_sha256": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0",
+          "openapi": "/openapi.json",
+          "operation_count": 24,
+          "prefix": "/v1",
+          "swagger": "/docs"
+        },
+        "contract_sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
+        "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+        "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+        "receipt_sha256": "56da7bf867628791152cdb9c3cdf788801ab77aa3e4dedb374ba130bf9849934"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "data_url_chunks": 3,
+        "duplicate_camera_status": 409,
+        "duplicate_stream_status": 409,
+        "live_rtsp_chunks": 1,
+        "local_rtsp_gateway_only": true,
+        "text_embedding_count": 2,
+        "uploaded_file_chunks": 3
+      }
+    },
+    {
+      "id": "api_contract",
+      "result": "pass",
+      "value": {
+        "all_operations_exercised": true,
+        "complete_cleanup_exact": true,
+        "covered_operation_count": 24,
+        "http_request_count": 43,
+        "openapi_sha256": "1396989dd1b77a26615f8769470b0f298af48b39674a0679efd74e18c9c37b52",
+        "operation_count": 24,
+        "operation_set_sha256": "b1e52b885c80cd98879685572312cb0bdd8f8b48485b55d5fc583a69a84b5feb",
+        "path_count": 22,
+        "retained_observation_count": 41,
+        "swagger_reachable": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.api.core.rt-embed-24",
+  "oracle_sha256": "5eec9567bca3543a1452215ad88becfc53ea00aaf03ec45fc647affebbadf66a",
+  "result": "passed_current",
+  "scenario_ids": [
+    "rest-api-operation-matrix",
+    "oracle.api.core.rt-embed-24"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

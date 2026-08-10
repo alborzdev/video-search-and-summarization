@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "tool_id": "thor-rt-embed-current-runtime",
+  "capability_ids": [
+    "model.rt-embed.cosmos-embed1-448p-anomaly",
+    "behavior.rt-embed.base64-data-url",
+    "behavior.rt-embed.duplicate-id-409",
+    "api.core.rt-embed-24"
+  ],
+  "acknowledgement": "I_ACK_RT_EMBED_CURRENT_RUNTIME_AND_EXACT_REVERSIBLE_CLEANUP",
+  "default_execution_enabled": false,
+  "target": {
+    "product_version": "3.2.1",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "captured_on": "2026-07-31"
+  },
+  "service": {
+    "container": "vss-rtvi-embed",
+    "origin": "http://127.0.0.1:8017",
+    "image_reference": "cti-vss-rt-embed:thor-local",
+    "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+    "release": "3.2.1",
+    "api_version": "3.1.0",
+    "model_id": "cosmos-embed1-448p-anomaly-detection",
+    "model_source": "git:https://huggingface.co/nvidia/Cosmos-Embed1-448p-anomaly-detection",
+    "embedding_dimension": 768,
+    "batch_size": 8,
+    "loopback_publish": "127.0.0.1:8017"
+  },
+  "artifact_contract": {
+    "lock_path": "deploy/docker/thor-local/models/artifacts.lock.json",
+    "lock_sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad",
+    "verifier_path": "deploy/docker/thor-local/models/verify_artifacts.py",
+    "verifier_sha256": "fa8cbb9aeff45da151ae40990cf3c67be08014c464dcec17c952fac5d8b0ca53",
+    "service_image": "nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1",
+    "runtime_helper_image": "cti-vss-rt-embed:thor-local",
+    "source_spec": "git:https://huggingface.co/nvidia/Cosmos-Embed1-448p-anomaly-detection",
+    "repository": "nvidia/Cosmos-Embed1-448p-anomaly-detection",
+    "revision": "3b1455ed97c7b1d5419c0c3129b7199ca4cd9382",
+    "model": {
+      "artifact": "cosmos_embed_model",
+      "volume": "mdx_rtvi-ngc-model-cache",
+      "archive_root": "Cosmos-Embed1-448p-anomaly-detection",
+      "container_path": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/Cosmos-Embed1-448p-anomaly-detection",
+      "file_count": 76,
+      "directory_count": 3,
+      "bytes": 4793036482
+    },
+    "triton": {
+      "artifact": "cosmos_embed_triton",
+      "volume": "mdx_rtvi-triton-model-repo",
+      "archive_root": "cosmos-embed1-448p-anomaly-detection",
+      "container_path": "/tmp/triton_model_repo/cosmos-embed1-448p-anomaly-detection",
+      "file_count": 10,
+      "directory_count": 4,
+      "bytes": 9661728403,
+      "precision": "fp16",
+      "target_hardware": "NVIDIA Jetson AGX Thor"
+    }
+  },
+  "api_contract": {
+    "expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+    "expected_manifest_sha256": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0",
+    "openapi_path": "/openapi.json",
+    "swagger_path": "/docs",
+    "path_count": 22,
+    "operation_count": 24
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "mime_type": "video/mp4",
+    "codec": "h264",
+    "duration_seconds": 10,
+    "creation_time": "2025-01-01T00:00:00.000Z"
+  },
+  "owned_resources": {
+    "file_id": "00000000-0000-4000-8000-000000000061",
+    "data_url_id": "00000000-0000-4000-8000-000000000062",
+    "denied_file_url_id": "00000000-0000-4000-8000-000000000063",
+    "single_stream_id": "00000000-0000-4000-8000-000000000064",
+    "batch_stream_ids": [
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066"
+    ],
+    "camera_id": "vss-oracle-rt-embed-camera",
+    "rtsp_path": "vss-oracle-rt-embed-runtime",
+    "rtsp_port": 18554,
+    "mediamtx_container": "vss-oracle-rt-embed-mediamtx",
+    "artifact_helper_containers": [
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ]
+  },
+  "rtsp_helper": {
+    "image_reference": "bluenviron/mediamtx@sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "image_id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "network_mode": "host",
+    "bind_scope": "rt-embed-docker-bridge-gateway-only",
+    "transport": "tcp",
+    "read_only_rootfs": true,
+    "pull": "forbidden"
+  },
+  "semantic_contract": {
+    "text_input_count": 2,
+    "file_chunk_duration": 5,
+    "file_chunk_overlap_duration": 1,
+    "expected_file_chunk_count": 3,
+    "live_chunk_duration": 2,
+    "minimum_live_chunk_count": 1,
+    "duplicate_errors": [
+      "DuplicateCameraId",
+      "DuplicateStreamId"
+    ],
+    "duplicate_status": 409,
+    "file_url_unset_status": 403,
+    "file_url_unset_code": "Forbidden"
+  },
+  "source_anchors": [
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+      "bytes": 3509,
+      "sha256": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0"
+    },
+    {
+      "path": "deploy/docker/thor-local/models/artifacts.lock.json",
+      "bytes": 56524,
+      "sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad"
+    },
+    {
+      "path": "deploy/docker/thor-local/models/verify_artifacts.py",
+      "bytes": 37992,
+      "sha256": "fa8cbb9aeff45da151ae40990cf3c67be08014c464dcec17c952fac5d8b0ca53"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "bytes": 94075,
+      "sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/utils/asset_manager.py",
+      "bytes": 62173,
+      "sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/api_models/embeddings.py",
+      "bytes": 20184,
+      "sha256": "b77a9042c13705802b95502e9c35959beb21673371a085e27408d371c7003ee9"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/api_models/live_stream.py",
+      "bytes": 26435,
+      "sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "bytes": 25396,
+      "sha256": "a36ecd65c49636cab8db6b57c85564bdec18189d2d6e3f819f6f22dee894f1cc"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "bytes": 2575454,
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    }
+  ],
+  "execution_bounds": {
+    "max_duration_seconds": 900,
+    "max_http_requests": 50,
+    "max_semantic_actions": 4,
+    "max_request_bytes": 4194304,
+    "max_response_bytes": 4194304,
+    "request_timeout_seconds": 90,
+    "min_free_bytes": 10737418240,
+    "network_scope": "numeric-loopback-http-and-local-docker-bridge-rtsp-only",
+    "external_network": "forbidden",
+    "image_pull": "forbidden",
+    "image_build": "forbidden",
+    "model_staging": "forbidden",
+    "service_lifecycle": "forbidden",
+    "disposable_helper_containers": 3,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "cleanup": {
+    "mutation": "namespaced_and_reversible",
+    "targets": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24"
+    ],
+    "postconditions": [
+      "all six fixed UUID resources and the fixed camera ID are absent",
+      "complete file and both stream inventories match pre-state exactly",
+      "asset statistics match pre-state exactly",
+      "the ephemeral RTSP path again returns RTSP 404",
+      "the publisher and all three exact helper containers are absent",
+      "the RT-Embed container identity, start time, health, restart count, OOM state, mounts, and safe model environment match pre-state exactly",
+      "the three operator-paused unrelated workloads remain stopped"
+    ]
+  }
+}

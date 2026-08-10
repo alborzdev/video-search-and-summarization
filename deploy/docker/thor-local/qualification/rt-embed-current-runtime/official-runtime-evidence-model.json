@@ -1,0 +1,270 @@
+{
+  "assertions": [
+    {
+      "expected": "search_workflow",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/default_scope",
+      "observed": "search_workflow",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 768,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/embedding_dimension",
+      "observed": 768,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/exact_artifact_lock_required",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 8,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/frames",
+      "observed": 8,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+      "id": "contract-05",
+      "observation": "contract_identity/contract/related_expected_manifest",
+      "observed": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "The API manifest does not prove the loaded model revision.",
+      "id": "contract-06",
+      "observation": "contract_identity/contract/related_expected_manifest_reason",
+      "observed": "The API manifest does not prove the loaded model revision.",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/related_expected_manifest_semantic_coverage",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "nvidia/Cosmos-Embed1-448p-anomaly-detection",
+      "id": "contract-08",
+      "observation": "contract_identity/contract/repository",
+      "observed": "nvidia/Cosmos-Embed1-448p-anomaly-detection",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        448,
+        448
+      ],
+      "id": "contract-09",
+      "observation": "contract_identity/contract/resolution",
+      "observed": [
+        448,
+        448
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "lora",
+      "id": "contract-10",
+      "observation": "contract_identity/contract/training",
+      "observed": "lora",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "model_response",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "model.rt-embed.cosmos-embed1-448p-anomaly",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "all six fixed UUID resources and the fixed camera ID are absent",
+        "result": "pass"
+      },
+      {
+        "description": "complete file and both stream inventories match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "asset statistics match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the ephemeral RTSP path again returns RTSP 404",
+        "result": "pass"
+      },
+      {
+        "description": "the publisher and all three exact helper containers are absent",
+        "result": "pass"
+      },
+      {
+        "description": "the RT-Embed container identity, start time, health, restart count, OOM state, mounts, and safe model environment match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the three operator-paused unrelated workloads remain stopped",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.model.rt-embed.cosmos-embed1-448p-anomaly",
+    "path": "deploy/docker/thor-local/qualification/rt-embed-current-runtime/contract.json",
+    "sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "artifact_lock_sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad",
+        "contract": {
+          "default_scope": "search_workflow",
+          "embedding_dimension": 768,
+          "exact_artifact_lock_required": true,
+          "frames": 8,
+          "related_expected_manifest": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+          "related_expected_manifest_reason": "The API manifest does not prove the loaded model revision.",
+          "related_expected_manifest_semantic_coverage": false,
+          "repository": "nvidia/Cosmos-Embed1-448p-anomaly-detection",
+          "resolution": [
+            448,
+            448
+          ],
+          "training": "lora"
+        },
+        "contract_sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
+        "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+        "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+        "receipt_sha256": "56da7bf867628791152cdb9c3cdf788801ab77aa3e4dedb374ba130bf9849934"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "all_vectors_finite": true,
+        "data_url_dimensions": [
+          768,
+          768,
+          768
+        ],
+        "file_dimensions": [
+          768,
+          768,
+          768
+        ],
+        "live_dimensions": [
+          768
+        ],
+        "model_tree_exact": true,
+        "precision": "fp16",
+        "repository": "nvidia/Cosmos-Embed1-448p-anomaly-detection",
+        "revision": "3b1455ed97c7b1d5419c0c3129b7199ca4cd9382",
+        "semantic_action_count": 4,
+        "target_hardware": "NVIDIA Jetson AGX Thor",
+        "text_dimensions": [
+          768,
+          768
+        ],
+        "triton_tree_exact": true
+      }
+    },
+    {
+      "id": "model_response",
+      "result": "pass",
+      "value": {
+        "complete_cleanup_exact": true,
+        "container_healthy": true,
+        "container_oom_killed": false,
+        "container_restart_count": 0,
+        "loopback_publish_exact": true,
+        "model_identity_exact": true,
+        "no_fallback_observed": true,
+        "runtime": "nvidia",
+        "served_model_id": "cosmos-embed1-448p-anomaly-detection"
+      }
+    }
+  ],
+  "oracle_id": "oracle.model.rt-embed.cosmos-embed1-448p-anomaly",
+  "oracle_sha256": "3454e6b38fe07cedc0c7ad161eb08454577aae0c72768b5ede6f21731674a5b8",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "model-alternate-workflows",
+    "oracle.model.rt-embed.cosmos-embed1-448p-anomaly"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

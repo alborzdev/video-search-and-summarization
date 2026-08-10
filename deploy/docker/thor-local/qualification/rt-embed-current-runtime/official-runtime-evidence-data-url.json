@@ -1,0 +1,189 @@
+{
+  "assertions": [
+    {
+      "expected": "url",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/field",
+      "observed": "url",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "POST /v1/generate_video_embeddings",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/operation",
+      "observed": "POST /v1/generate_video_embeddings",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "data:",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/scheme",
+      "observed": "data:",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "RFC 2397",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/standard",
+      "observed": "RFC 2397",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "api_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "behavior.rt-embed.base64-data-url",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "all six fixed UUID resources and the fixed camera ID are absent",
+        "result": "pass"
+      },
+      {
+        "description": "complete file and both stream inventories match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "asset statistics match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the ephemeral RTSP path again returns RTSP 404",
+        "result": "pass"
+      },
+      {
+        "description": "the publisher and all three exact helper containers are absent",
+        "result": "pass"
+      },
+      {
+        "description": "the RT-Embed container identity, start time, health, restart count, OOM state, mounts, and safe model environment match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the three operator-paused unrelated workloads remain stopped",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-model-rt-embed-cosmos-embed1-448p-anomaly",
+      "vss-oracle-behavior-rt-embed-base64-data-url",
+      "vss-oracle-behavior-rt-embed-duplicate-id-409",
+      "vss-oracle-api-core-rt-embed-24",
+      "00000000-0000-4000-8000-000000000061",
+      "00000000-0000-4000-8000-000000000062",
+      "00000000-0000-4000-8000-000000000063",
+      "00000000-0000-4000-8000-000000000064",
+      "00000000-0000-4000-8000-000000000065",
+      "00000000-0000-4000-8000-000000000066",
+      "vss-oracle-rt-embed-camera",
+      "vss-oracle-rt-embed-runtime",
+      "vss-oracle-rt-embed-mediamtx",
+      "vss-oracle-rt-embed-artifact-model",
+      "vss-oracle-rt-embed-artifact-triton"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.behavior.rt-embed.base64-data-url",
+    "path": "deploy/docker/thor-local/qualification/rt-embed-current-runtime/contract.json",
+    "sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "artifact_lock_sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad",
+        "contract": {
+          "field": "url",
+          "operation": "POST /v1/generate_video_embeddings",
+          "scheme": "data:",
+          "standard": "RFC 2397"
+        },
+        "contract_sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
+        "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+        "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+        "receipt_sha256": "56da7bf867628791152cdb9c3cdf788801ab77aa3e4dedb374ba130bf9849934"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "data_url_chunk_count": 3,
+        "decoded_fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+        "dimensions": [
+          768,
+          768,
+          768
+        ],
+        "minimum_pairwise_cosine": 1.0,
+        "serialized_bytes": 3433962,
+        "shape_and_ranges_exact": true,
+        "uploaded_file_chunk_count": 3,
+        "vector_sha256_exact": true,
+        "vectors_finite": true
+      }
+    },
+    {
+      "id": "api_contract",
+      "result": "pass",
+      "value": {
+        "asset_statistics_exact": true,
+        "complete_inventory_exact": true,
+        "rfc2397_scheme": true,
+        "transient_asset_removed": true
+      }
+    }
+  ],
+  "oracle_id": "oracle.behavior.rt-embed.base64-data-url",
+  "oracle_sha256": "e0daf993d9f121b25e4d7b7154da2fb24599cf029dcdded4c45c48c156461530",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.behavior.rt-embed.base64-data-url"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

@@ -50,7 +50,7 @@ valid after `compose down`, when no service container exists, and leaves no
 helper behind.
 
 The lock itself currently has SHA-256
-`5b0030ba13fb1ccee5950e3c4b78d334d8dd0c30a2a45ce90e6166a57fe31d09`.
+`74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad`.
 That digest is informational; the version-controlled lock and reviewer trust
 boundary are authoritative.
 

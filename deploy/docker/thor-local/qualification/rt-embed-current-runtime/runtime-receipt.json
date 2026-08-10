@@ -1,0 +1,791 @@
+{
+  "api_surface": {
+    "all_operations_exercised": true,
+    "covered_operation_count": 24,
+    "expected_manifest_sha256": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0",
+    "openapi_sha256": "1396989dd1b77a26615f8769470b0f298af48b39674a0679efd74e18c9c37b52",
+    "operation_count": 24,
+    "operation_set_sha256": "b1e52b885c80cd98879685572312cb0bdd8f8b48485b55d5fc583a69a84b5feb",
+    "path_count": 22,
+    "swagger_reachable": true
+  },
+  "artifact_proof": {
+    "batch_size": 8,
+    "lock_sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad",
+    "model": {
+      "archive_root": "Cosmos-Embed1-448p-anomaly-detection",
+      "artifact": "cosmos_embed_model",
+      "bytes": 4793036482,
+      "directory_count": 3,
+      "exact_locked_tree": true,
+      "file_count": 76,
+      "helper_removed": true,
+      "verifier_stdout_sha256": "93b6f7be6d2b476394726ffab152b6f869eba980a32471900da21292eb41d691"
+    },
+    "precision": "fp16",
+    "repository": "nvidia/Cosmos-Embed1-448p-anomaly-detection",
+    "revision": "3b1455ed97c7b1d5419c0c3129b7199ca4cd9382",
+    "source_spec_exact": true,
+    "target_hardware": "NVIDIA Jetson AGX Thor",
+    "triton": {
+      "archive_root": "cosmos-embed1-448p-anomaly-detection",
+      "artifact": "cosmos_embed_triton",
+      "bytes": 9661728403,
+      "directory_count": 4,
+      "exact_locked_tree": true,
+      "file_count": 10,
+      "helper_removed": true,
+      "verifier_stdout_sha256": "6580fe99ee0f8a955e1697c00ff24f9278415b811f448fcb81eef8576a07a4b7"
+    }
+  },
+  "blockers": [],
+  "bridge_scope": {
+    "gateway_private_ipv4": true,
+    "network_name_sha256": "ffed6e40f13c63177d6ddcbb96b6fbdfa219d317b2d3c4e891ed5cdb974fe491",
+    "rtsp_listener_gateway_only": true
+  },
+  "capability_ids": [
+    "model.rt-embed.cosmos-embed1-448p-anomaly",
+    "behavior.rt-embed.base64-data-url",
+    "behavior.rt-embed.duplicate-id-409",
+    "api.core.rt-embed-24"
+  ],
+  "cleanup": {
+    "asset_statistics_exact": true,
+    "complete_inventory_exact": true,
+    "container_identity_exact": true,
+    "failures": [],
+    "helper_containers_absent": true,
+    "model_identity_exact": true,
+    "owned_camera_absent": true,
+    "owned_uuid_count": 6,
+    "owned_uuid_resources_absent": true,
+    "paused_workloads_exact": true,
+    "publisher_absent": true,
+    "rtsp_absence_response_sha256": "83b55151bfa91b9fa5c7f519c4a9a4612e60f086f530ddc1e7398fda641dbf9b",
+    "rtsp_path_absent": true
+  },
+  "contract_sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
+  "disk": {
+    "free_bytes_after": 26535161856,
+    "free_bytes_before": 26524098560,
+    "minimum_free_bytes": 10737418240
+  },
+  "disposable_helper_container_count": 3,
+  "duplicate_ids": {
+    "both_existing_resources_preserved_until_owned_cleanup": true,
+    "camera_error_code": "DuplicateCameraId",
+    "camera_transport_status": 409,
+    "stream_batch_transport_status": 200,
+    "stream_error_code": "DuplicateStreamId",
+    "stream_error_status": 409
+  },
+  "duration_seconds": 89.791,
+  "external_network_requests": 0,
+  "failure": null,
+  "file_url_negative": {
+    "allowlist_unset": true,
+    "asset_created": false,
+    "error_code": "Forbidden",
+    "http_status": 403
+  },
+  "http_request_count": 43,
+  "image_builds": 0,
+  "image_pulls": 0,
+  "mode": "execute",
+  "model_staging_actions": 0,
+  "network_scope": "numeric-loopback-http-and-local-docker-bridge-rtsp-only",
+  "observations": [
+    {
+      "action_id": "discover-openapi",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/openapi.json",
+      "order": 1,
+      "response_bytes": 74132,
+      "response_sha256": "1396989dd1b77a26615f8769470b0f298af48b39674a0679efd74e18c9c37b52"
+    },
+    {
+      "action_id": "discover-swagger",
+      "content_type": "text/html",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/docs",
+      "order": 2,
+      "response_bytes": 951,
+      "response_sha256": "e133663d9b740c6e9f5b75d17e2f6556faad0d282c37f2e2b27323ff36e105b8"
+    },
+    {
+      "action_id": "read-metrics",
+      "content_type": "text/plain",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/metrics",
+      "order": 3,
+      "response_bytes": 10688,
+      "response_sha256": "8389129d1466cd96428d5b77f50ad8fcee97a93298742a6fea864c5148475fd7"
+    },
+    {
+      "action_id": "read-readiness",
+      "content_type": "",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/ready",
+      "order": 4,
+      "response_bytes": 18,
+      "response_sha256": "18712fee93ce015bd1b6d5eb96a21644d674954a3c22c77fc1768690170040ad"
+    },
+    {
+      "action_id": "read-liveness",
+      "content_type": "",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/live",
+      "order": 5,
+      "response_bytes": 18,
+      "response_sha256": "18712fee93ce015bd1b6d5eb96a21644d674954a3c22c77fc1768690170040ad"
+    },
+    {
+      "action_id": "read-startup",
+      "content_type": "",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/startup",
+      "order": 6,
+      "response_bytes": 35,
+      "response_sha256": "5dcfff5241aea69efd56959a7dfaabc641b40ac3d5a37a6053def58d7fc0bd4a"
+    },
+    {
+      "action_id": "read-metadata",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/metadata",
+      "order": 7,
+      "response_bytes": 19,
+      "response_sha256": "a8ed5e3d5727ef5802355f1929b98aed8157a129f68f4fcaba70eee341f88b10"
+    },
+    {
+      "action_id": "read-version",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/version",
+      "order": 8,
+      "response_bytes": 33,
+      "response_sha256": "0f1285328c22614815b6204a671c8b950674a52300add1d41993c8fcf65900e8"
+    },
+    {
+      "action_id": "read-manifest",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/manifest",
+      "order": 9,
+      "response_bytes": 66,
+      "response_sha256": "74dd52b69c6b70de61fe889d3030ae50d82153168c43cba9bf3395e4106c32c5"
+    },
+    {
+      "action_id": "read-models-pre",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/models",
+      "order": 10,
+      "response_bytes": 172,
+      "response_sha256": "f8f24fd3f3248e059158d40cbf77e5982188cf477e9b0a85d2aada0bb2a3ccd9"
+    },
+    {
+      "action_id": "read-files-pre",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/files",
+      "order": 11,
+      "response_bytes": 27,
+      "response_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac"
+    },
+    {
+      "action_id": "read-streams-pre",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/streams/get-stream-info",
+      "order": 12,
+      "response_bytes": 2,
+      "response_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "action_id": "read-cv-streams-pre",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/stream/get-stream-info",
+      "order": 13,
+      "response_bytes": 49,
+      "response_sha256": "1940111b24357bdff85a3cf7c68b51872a05aebc31f4e5a4a2d189216d56743a"
+    },
+    {
+      "action_id": "read-assets-pre",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/assets/stats",
+      "order": 14,
+      "response_bytes": 149,
+      "response_sha256": "ae34d5142ad5963d2082f09bb841c1327e9ae7ffc9fe8502948429e156fa4b80"
+    },
+    {
+      "action_id": "upload-owned-file",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/files",
+      "order": 15,
+      "response_bytes": 226,
+      "response_sha256": "1800786864744ceb728e103a0cf464ef9ed5944261013171f297a912fa9caa0b"
+    },
+    {
+      "action_id": "read-files-owned",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/files",
+      "order": 16,
+      "response_bytes": 253,
+      "response_sha256": "5d1ac47094bff2c689e77360602c7d454c0ab1da576442aa71de87c6de793f43"
+    },
+    {
+      "action_id": "read-owned-file-info",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/files/{file_id}",
+      "order": 17,
+      "response_bytes": 205,
+      "response_sha256": "b09377953f29bcc2e4f313e113e7f59593e4d572af87c724045c8dda4be72909"
+    },
+    {
+      "action_id": "read-owned-file-content",
+      "content_type": "video/mp4",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/files/{file_id}/content",
+      "order": 18,
+      "response_bytes": 2575454,
+      "response_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    },
+    {
+      "action_id": "generate-text-embeddings",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/generate_text_embeddings",
+      "order": 19,
+      "response_bytes": 28951,
+      "response_sha256": "0f1eeb8d8826afdb2cd95b2e4e98c563996623b6237b4c5cbb0a40ef9a3bf0fb"
+    },
+    {
+      "action_id": "generate-uploaded-file-embeddings",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/generate_video_embeddings",
+      "order": 20,
+      "response_bytes": 44105,
+      "response_sha256": "42b2823af0d8e3b8da10cc428489e3c8928750dee60e892e6ab0b4343729b818"
+    },
+    {
+      "action_id": "generate-rfc2397-embeddings",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/generate_video_embeddings",
+      "order": 21,
+      "response_bytes": 44104,
+      "response_sha256": "50090dc6a3f5fc4a1ada1c064b7e9937e54ac47937927f608d6e98bcda42c10a"
+    },
+    {
+      "action_id": "reject-file-url-without-allowlist",
+      "content_type": "application/json",
+      "http_status": 403,
+      "method": "POST",
+      "operation_path": "/v1/generate_video_embeddings",
+      "order": 22,
+      "response_bytes": 96,
+      "response_sha256": "d59f7e918bfae990584c315d6a0cffff865142bf5f6744afebebfc0a02e1e780"
+    },
+    {
+      "action_id": "delete-owned-file",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "DELETE",
+      "operation_path": "/v1/files/{file_id}",
+      "order": 23,
+      "response_bytes": 76,
+      "response_sha256": "6730b878327376fd33726180b1cab5cf3fdbebc24ff9fd4ff44fbc468c9af973"
+    },
+    {
+      "action_id": "add-cv-camera",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/stream/add",
+      "order": 24,
+      "response_bytes": 127,
+      "response_sha256": "9697e5c92d83b81d6d38af6913cca896a66164e30a7d71d4a58ddaf1a88a75ed"
+    },
+    {
+      "action_id": "read-cv-camera-owned",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/stream/get-stream-info",
+      "order": 25,
+      "response_bytes": 356,
+      "response_sha256": "159971cfb1eb1229a72dfd0a03d5bd354991beb42f03d7bae35d3b7fa429b063"
+    },
+    {
+      "action_id": "reject-duplicate-camera-id",
+      "content_type": "application/json",
+      "http_status": 409,
+      "method": "POST",
+      "operation_path": "/v1/stream/add",
+      "order": 26,
+      "response_bytes": 111,
+      "response_sha256": "f3c9b8996e5ca80cc67196ac3991c1c7ba7ee18f18f9cfba14b04f424fdbab52"
+    },
+    {
+      "action_id": "remove-cv-camera",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/stream/remove",
+      "order": 27,
+      "response_bytes": 111,
+      "response_sha256": "5345f9678040aca36eaf94c6f917c62f746f831fd0a37593118fd00cfc5334fc"
+    },
+    {
+      "action_id": "add-single-live-stream",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/streams/add",
+      "order": 28,
+      "response_bytes": 71,
+      "response_sha256": "9fa0829c66dd3846cab4829e19645997096541b70ef276be0f2d57581a16a1e1"
+    },
+    {
+      "action_id": "read-single-live-stream",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/streams/get-stream-info",
+      "order": 29,
+      "response_bytes": 352,
+      "response_sha256": "c58ec8bd351f965ec51433bb2f204fade6a258ffe5e7ba13a47946935be7b109"
+    },
+    {
+      "action_id": "reject-duplicate-stream-id",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/streams/add",
+      "order": 30,
+      "response_bytes": 239,
+      "response_sha256": "6bf6bcd78f1e70e56cc0037077a5d64aa2d2860c882ab6b6314b0c2dd739cea7"
+    },
+    {
+      "action_id": "generate-live-video-embedding",
+      "content_type": "text/event-stream",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/generate_video_embeddings",
+      "order": 31,
+      "response_bytes": 16332,
+      "response_sha256": "c2d811b25e945c73529f7c7e274b340f4014b5e41e45756793bbaacc35b7838a"
+    },
+    {
+      "action_id": "stop-live-video-embedding",
+      "content_type": "",
+      "http_status": 200,
+      "method": "DELETE",
+      "operation_path": "/v1/generate_video_embeddings/{stream_id}",
+      "order": 32,
+      "response_bytes": 0,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "action_id": "delete-single-live-stream",
+      "content_type": "",
+      "http_status": 200,
+      "method": "DELETE",
+      "operation_path": "/v1/streams/delete/{stream_id}",
+      "order": 33,
+      "response_bytes": 0,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "action_id": "add-batch-live-streams",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "POST",
+      "operation_path": "/v1/streams/add",
+      "order": 34,
+      "response_bytes": 117,
+      "response_sha256": "7ed03a45bddf7f4960960dc0cd638a1419580eaf8cfcb689ce440a8a6372eb1b"
+    },
+    {
+      "action_id": "delete-batch-live-streams",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "DELETE",
+      "operation_path": "/v1/streams/delete-batch",
+      "order": 35,
+      "response_bytes": 103,
+      "response_sha256": "9d44f848a15064595865979672eed7649658b645137e7d56ef56085438577cd4"
+    },
+    {
+      "action_id": "read-files-post",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/files",
+      "order": 36,
+      "response_bytes": 27,
+      "response_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac"
+    },
+    {
+      "action_id": "read-streams-post",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/streams/get-stream-info",
+      "order": 37,
+      "response_bytes": 2,
+      "response_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "action_id": "read-cv-streams-post",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/stream/get-stream-info",
+      "order": 38,
+      "response_bytes": 49,
+      "response_sha256": "1940111b24357bdff85a3cf7c68b51872a05aebc31f4e5a4a2d189216d56743a"
+    },
+    {
+      "action_id": "read-assets-post",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/assets/stats",
+      "order": 39,
+      "response_bytes": 149,
+      "response_sha256": "ae34d5142ad5963d2082f09bb841c1327e9ae7ffc9fe8502948429e156fa4b80"
+    },
+    {
+      "action_id": "read-models-post",
+      "content_type": "application/json",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/models",
+      "order": 40,
+      "response_bytes": 172,
+      "response_sha256": "f8f24fd3f3248e059158d40cbf77e5982188cf477e9b0a85d2aada0bb2a3ccd9"
+    },
+    {
+      "action_id": "read-readiness-post",
+      "content_type": "",
+      "http_status": 200,
+      "method": "GET",
+      "operation_path": "/v1/ready",
+      "order": 41,
+      "response_bytes": 18,
+      "response_sha256": "18712fee93ce015bd1b6d5eb96a21644d674954a3c22c77fc1768690170040ad"
+    }
+  ],
+  "post_state": {
+    "asset_statistics": {
+      "aged_out_count": 0,
+      "asset_count": 0,
+      "asset_count_with_storage": 0,
+      "max_asset_age_hours": null,
+      "max_storage_usage_gb": null,
+      "oldest_asset_age_hours": 0.0
+    },
+    "asset_statistics_sha256": "9d9f43bfff885fd2d9f14112db219e9abbe7e276781d893dcaaf04aea4019f9b",
+    "camera_count": 0,
+    "camera_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "file_count": 0,
+    "file_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "stream_count": 0,
+    "stream_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "pre_state": {
+    "asset_statistics": {
+      "aged_out_count": 0,
+      "asset_count": 0,
+      "asset_count_with_storage": 0,
+      "max_asset_age_hours": null,
+      "max_storage_usage_gb": null,
+      "oldest_asset_age_hours": 0.0
+    },
+    "asset_statistics_sha256": "9d9f43bfff885fd2d9f14112db219e9abbe7e276781d893dcaaf04aea4019f9b",
+    "camera_count": 0,
+    "camera_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "file_count": 0,
+    "file_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "stream_count": 0,
+    "stream_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "publisher": {
+    "bridge_gateway_only": true,
+    "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "namespace_sha256": "2c5e9bcb975d5f1bf99fc77e6f76148578b6caee1890f2d040b03f442e703041",
+    "rtsp_describe_status": 200,
+    "source_codec": "h264",
+    "transport": "tcp"
+  },
+  "retained_observation_count": 41,
+  "rtsp_helper": {
+    "bridge_gateway_only": true,
+    "capabilities_dropped": true,
+    "image_id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "network_mode": "host",
+    "pull_disabled": true,
+    "read_only_rootfs": true,
+    "tcp_only": true
+  },
+  "runtime_identity": {
+    "container": "vss-rtvi-embed",
+    "credential_values_blank": true,
+    "health": "healthy",
+    "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+    "image_reference": "cti-vss-rt-embed:thor-local",
+    "loopback_publish_exact": true,
+    "model_mounts": [
+      {
+        "destination": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
+        "name": "mdx_rtvi-ngc-model-cache",
+        "rw": true,
+        "type": "volume"
+      },
+      {
+        "destination": "/tmp/triton_model_repo",
+        "name": "mdx_rtvi-triton-model-repo",
+        "rw": true,
+        "type": "volume"
+      }
+    ],
+    "oom_killed": false,
+    "restart_count": 0,
+    "runtime": "nvidia",
+    "safe_environment": {
+      "HF_HUB_OFFLINE": "1",
+      "MODEL_PATH": "git:https://huggingface.co/nvidia/Cosmos-Embed1-448p-anomaly-detection",
+      "RTVI_OFFLINE": "true",
+      "TRANSFORMERS_OFFLINE": "1",
+      "VLM_BATCH_SIZE": "8"
+    },
+    "started_at": "2026-08-10T04:07:13.164903432Z",
+    "status": "running"
+  },
+  "sanitization": {
+    "credential_values_included": false,
+    "dynamic_identifiers_included": false,
+    "local_paths_included": false,
+    "raw_embedding_vectors_included": false,
+    "raw_prompts_included": false,
+    "response_bodies_included": false,
+    "rtsp_urls_included": false
+  },
+  "schema_version": 1,
+  "semantic_action_count": 4,
+  "service_lifecycle_actions": 0,
+  "source_anchors": [
+    {
+      "bytes": 3509,
+      "path": "deploy/docker/thor-local/qualification/expected/rt-embed.json",
+      "sha256": "7679e50db250cedafa323a7e754b2b05c9869bdaeca30cbe3294d4d5b715f6d0"
+    },
+    {
+      "bytes": 56524,
+      "path": "deploy/docker/thor-local/models/artifacts.lock.json",
+      "sha256": "74fd2b6d8058a5780c4bd34259d56055d47fa8a91784dd8a75060dc1b9b492ad"
+    },
+    {
+      "bytes": 37992,
+      "path": "deploy/docker/thor-local/models/verify_artifacts.py",
+      "sha256": "fa8cbb9aeff45da151ae40990cf3c67be08014c464dcec17c952fac5d8b0ca53"
+    },
+    {
+      "bytes": 94075,
+      "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    },
+    {
+      "bytes": 62173,
+      "path": "services/rtvi/rt-embed/src/utils/asset_manager.py",
+      "sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "bytes": 20184,
+      "path": "services/rtvi/rt-embed/src/api_models/embeddings.py",
+      "sha256": "b77a9042c13705802b95502e9c35959beb21673371a085e27408d371c7003ee9"
+    },
+    {
+      "bytes": 26435,
+      "path": "services/rtvi/rt-embed/src/api_models/live_stream.py",
+      "sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+    },
+    {
+      "bytes": 25396,
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "a36ecd65c49636cab8db6b57c85564bdec18189d2d6e3f819f6f22dee894f1cc"
+    },
+    {
+      "bytes": 2575454,
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    }
+  ],
+  "status": "passed",
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  },
+  "text_embeddings": {
+    "dimensions": [
+      768,
+      768
+    ],
+    "input_count": 2,
+    "input_projection_sha256": "979a7ac255f42198688c9c15efe773767a1c55e55a41da0e3f7e3479dddf7023",
+    "model_exact": true,
+    "vector_sha256": [
+      "0a65383a73e7277713d0984b53cc6c8fe328b8af91a8a9913244b1efb34a0bdd",
+      "13de7e2e09941af6872c25829ff6845975d3600d8af13e903514e480691bfd7e"
+    ],
+    "vectors_finite": true
+  },
+  "tool_id": "thor-rt-embed-current-runtime",
+  "video_embeddings": {
+    "live_rtsp": {
+      "chunk_count": 1,
+      "dimensions": [
+        768
+      ],
+      "model_exact": true,
+      "vector_sha256": [
+        "4da06af960cff8a16b67c42915dac4d43d658b358744203d3fd04f91c90fe5c4"
+      ],
+      "vectors_finite": true
+    },
+    "rfc2397": {
+      "data_url": {
+        "chunk_count": 3,
+        "dimensions": [
+          768,
+          768,
+          768
+        ],
+        "model_exact": true,
+        "ranges": [
+          {
+            "end_time": "2025-01-01T00:00:05.000Z",
+            "start_time": "2025-01-01T00:00:00.000Z"
+          },
+          {
+            "end_time": "2025-01-01T00:00:09.000Z",
+            "start_time": "2025-01-01T00:00:04.000Z"
+          },
+          {
+            "end_time": "2025-01-01T00:00:10.000Z",
+            "start_time": "2025-01-01T00:00:08.000Z"
+          }
+        ],
+        "usage_chunk_count": 3,
+        "vector_sha256": [
+          "3cdfa4c44375976bf72e3bb65df02b510f63a3807fa189c08a5ae05b5e8420c5",
+          "434303958e676baf39f6e92c4ad183c05a53e0185f32d6c9fca77db22af18f58",
+          "5d549fafd652f58754d2ecd9ee23fb0aa0c50f0b259490fa64c4d3e5773b83f9"
+        ],
+        "vectors_finite": true
+      },
+      "decoded_fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+      "minimum_pairwise_cosine": 1.0,
+      "rfc2397_scheme": true,
+      "serialized_bytes": 3433962,
+      "shape_and_ranges_exact": true,
+      "transient_asset_removed": true,
+      "uploaded_file": {
+        "chunk_count": 3,
+        "dimensions": [
+          768,
+          768,
+          768
+        ],
+        "model_exact": true,
+        "ranges": [
+          {
+            "end_time": "2025-01-01T00:00:05.000Z",
+            "start_time": "2025-01-01T00:00:00.000Z"
+          },
+          {
+            "end_time": "2025-01-01T00:00:09.000Z",
+            "start_time": "2025-01-01T00:00:04.000Z"
+          },
+          {
+            "end_time": "2025-01-01T00:00:10.000Z",
+            "start_time": "2025-01-01T00:00:08.000Z"
+          }
+        ],
+        "usage_chunk_count": 3,
+        "vector_sha256": [
+          "3cdfa4c44375976bf72e3bb65df02b510f63a3807fa189c08a5ae05b5e8420c5",
+          "434303958e676baf39f6e92c4ad183c05a53e0185f32d6c9fca77db22af18f58",
+          "5d549fafd652f58754d2ecd9ee23fb0aa0c50f0b259490fa64c4d3e5773b83f9"
+        ],
+        "vectors_finite": true
+      },
+      "vector_sha256_exact": true
+    },
+    "uploaded_file": {
+      "chunk_count": 3,
+      "dimensions": [
+        768,
+        768,
+        768
+      ],
+      "model_exact": true,
+      "ranges": [
+        {
+          "end_time": "2025-01-01T00:00:05.000Z",
+          "start_time": "2025-01-01T00:00:00.000Z"
+        },
+        {
+          "end_time": "2025-01-01T00:00:09.000Z",
+          "start_time": "2025-01-01T00:00:04.000Z"
+        },
+        {
+          "end_time": "2025-01-01T00:00:10.000Z",
+          "start_time": "2025-01-01T00:00:08.000Z"
+        }
+      ],
+      "usage_chunk_count": 3,
+      "vector_sha256": [
+        "3cdfa4c44375976bf72e3bb65df02b510f63a3807fa189c08a5ae05b5e8420c5",
+        "434303958e676baf39f6e92c4ad183c05a53e0185f32d6c9fca77db22af18f58",
+        "5d549fafd652f58754d2ecd9ee23fb0aa0c50f0b259490fa64c4d3e5773b83f9"
+      ],
+      "vectors_finite": true
+    }
+  },
+  "warehouse_sample_bundle": false,
+  "writes_or_lifecycle_actions": true
+}

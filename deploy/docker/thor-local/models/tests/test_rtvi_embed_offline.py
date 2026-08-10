@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Static contract for Thor's cache-only RT-Embed derivative."""
 
+import json
+
 from pathlib import Path
 
 
@@ -23,7 +25,7 @@ def test_thor_rtvi_embed_is_source_overlaid_and_offline() -> None:
         'NGC_API_KEY: ""',
         'NVIDIA_API_KEY: ""',
         'HF_TOKEN: ""',
-        'THOR_LOCAL_RTVI_EMBED_BIND_ADDRESS:-127.0.0.1',
+        "THOR_LOCAL_RTVI_EMBED_BIND_ADDRESS:-127.0.0.1",
     ):
         assert fragment in section
 
@@ -32,9 +34,7 @@ def test_thor_rtvi_embed_is_source_overlaid_and_offline() -> None:
 
 def test_thor_rtvi_embed_uses_loopback_for_host_and_agent() -> None:
     compose = (REPO_ROOT / "deploy/docker/thor-local/compose.yml").read_text()
-    section = compose.split("\n  rtvi-embed:\n", 1)[1].split(
-        "\n  rtvi-vlm:\n", 1
-    )[0]
+    section = compose.split("\n  rtvi-embed:\n", 1)[1].split("\n  rtvi-vlm:\n", 1)[0]
     config = (
         REPO_ROOT
         / "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml"
@@ -63,3 +63,25 @@ def test_embedding_cache_uses_base_image_as_artifact_provenance() -> None:
     assert 'docker image inspect "${embed_image}"' in verifier
     assert '--image "${provenance_image}"' in verifier
     assert '--image "${embed_image}"' not in verifier
+
+
+def test_cosmos_embed_triton_config_modes_match_shipped_templates() -> None:
+    lock = json.loads(
+        (REPO_ROOT / "deploy/docker/thor-local/models/artifacts.lock.json").read_text()
+    )
+    files = {
+        row["path"]: row
+        for row in lock["artifacts"]["cosmos_embed_triton"]["tree"]["files"]
+    }
+    template_root = (
+        REPO_ROOT
+        / "services/rtvi/rt-embed/src/models/custom/samples/cosmos-embed1/triton_model_repo"
+    )
+    for relative in (
+        "text_embeddings/config.pbtxt",
+        "video_embeddings/config.pbtxt",
+    ):
+        template = template_root / relative
+        assert template.stat().st_mode & 0o777 == 0o664
+        assert files[relative]["mode"] == 0o664
+        assert files[relative]["type"] == "file"

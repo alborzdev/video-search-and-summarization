@@ -73,6 +73,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current LVS one-video-at-a-time runtime receipt
             + 1  # current LVS custom-model and custom-prompt runtime receipt
             + 2  # exact official Thor Nemotron and Cosmos3 model runtime receipt
+            + 4  # current RT-Embed model, data URL, duplicate-ID, and API receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -1009,6 +1010,9 @@ class CapabilityOracleTests(unittest.TestCase):
                     else len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
                     if item["capability_id"]
                     == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
+                    else len(verifier.RT_EMBED_CURRENT_RUNTIME_NAMESPACES)
+                    if item["capability_id"]
+                    in verifier.RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS
                     else 1
                 )
                 self.assertEqual(len(cleanup["targets"]), expected_target_count)
@@ -1077,6 +1081,14 @@ class CapabilityOracleTests(unittest.TestCase):
                     self.assertEqual(
                         cleanup["targets"],
                         verifier.RT_VLM_SSE_RUNTIME_NAMESPACES,
+                    )
+                elif (
+                    item["capability_id"]
+                    in verifier.RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS
+                ):
+                    self.assertEqual(
+                        cleanup["targets"],
+                        verifier.RT_EMBED_CURRENT_RUNTIME_NAMESPACES,
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
@@ -1246,6 +1258,9 @@ class CapabilityOracleTests(unittest.TestCase):
                 else verifier.OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
                 if item["capability_id"]
                 in verifier.OFFICIAL_EDGE_MODEL_RUNTIME_CAPABILITY_IDS
+                else verifier.RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
+                if item["capability_id"]
+                in verifier.RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS
                 else verifier.LVS_FORMATS_RUNTIME_MAX_ACTIONS
                 if (
                     item["capability_id"]
