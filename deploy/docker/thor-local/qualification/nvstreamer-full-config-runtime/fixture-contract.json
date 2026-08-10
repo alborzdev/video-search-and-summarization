@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "capability_id": "configuration.nvstreamer.full-contract",
+  "official_source": {
+    "url": "https://docs.nvidia.com/vss/3.2.1/vios-nvstreamer.html",
+    "version": "3.2.1",
+    "page_last_updated": "2026-07-16",
+    "captured_at": "2026-08-10",
+    "html_sha256": "deb69d176c1dc4e76f56030da28a50aeba96f8727e13534deeb8299c79dc7261",
+    "normalized_table_sha256": "3c3378c651eaf97c00d451b46877a5643ca63166d78b06877a90e026111315af",
+    "parameter_count": 151,
+    "section_count": 7
+  },
+  "sections": {
+    "network": [
+      "server_domain_name", "stunurl_list", "static_turnurl_list",
+      "coturn_turnurl_list_with_secret", "use_coturn_auth_secret",
+      "use_twilio_stun_turn", "twilio_account_sid", "rx_socket_buffer_size",
+      "tx_socket_buffer_size", "twilio_auth_token", "ntp_servers",
+      "use_sensor_ntp_time", "max_webrtc_out_connections",
+      "max_webrtc_in_connections", "webservice_access_control_list",
+      "use_reverse_proxy", "reverse_proxy_server_address", "rtsp_server_port",
+      "rtsp_server_instances_count", "rtsp_server_use_socket_poll",
+      "rtsp_preferred_network_iface", "rtcp_rtp_port_multiplex",
+      "rtsp_streaming_over_tcp", "rtsp_server_reclamation_client_timeout_sec",
+      "stream_monitor_interval_secs", "rtp_udp_port_range", "udp_latency_ms",
+      "udp_drop_on_latency", "webrtc_latency_ms", "enable_frame_drop",
+      "webrtc_video_quality_tunning", "webrtc_peer_conn_timeout_sec",
+      "enable_grpc", "grpc_server_port", "webrtc_in_audio_sender_max_bitrate",
+      "webrtc_in_video_degradation_preference",
+      "webrtc_in_video_sender_max_framerate", "remote_vst_address",
+      "webrtc_port_range", "enable_websocket_pingpong",
+      "websocket_keep_alive_ms"
+    ],
+    "onvif": [
+      "device_discovery_timeout_secs", "onvif_request_timeout_secs",
+      "device_discovery_freq_secs", "device_discovery_interfaces",
+      "max_devices_supported", "default_bitrate_kbps", "default_framerate",
+      "default_resolution", "default_gov_length"
+    ],
+    "data": [
+      "storage_config_file", "storage_threshold_percentage",
+      "storage_monitoring_frequency_secs", "nv_streamer_directory_path",
+      "nv_streamer_loop_playback", "nv_streamer_seekable",
+      "nv_streamer_sync_playback", "nv_streamer_sync_file_count",
+      "nv_streamer_max_upload_file_size_MB",
+      "nv_streamer_media_container_supported",
+      "nv_streamer_rtsp_server_output_buffer_size_kb",
+      "nv_streamer_metadata_container_supported", "supported_video_codecs",
+      "supported_audio_codecs", "enable_aging_policy",
+      "max_video_download_size_MB", "always_recording", "event_recording",
+      "event_record_length_secs", "record_buffer_length_secs",
+      "use_software_path", "use_webrtc_inbuilt_encoder",
+      "webrtc_in_fixed_resolution", "webrtc_in_max_framerate",
+      "webrtc_in_video_bitrate_thresold_percentage", "webrtc_in_passthrough",
+      "webrtc_sender_quality", "enable_rtsp_server_sei_metadata",
+      "enable_proxy_server_sei_metadata", "gpu_indices",
+      "webrtc_out_enable_insert_sps_pps", "webrtc_out_set_iframe_interval",
+      "webrtc_out_set_idr_interval", "webrtc_out_min_drc_interval",
+      "webrtc_out_encode_fallback_option", "webrtc_out_default_resolution",
+      "webrtc_out_enc_quality_tuning", "webrtc_out_enc_preset", "enable_drc",
+      "device_name", "device_location", "enable_dec_low_latency_mode",
+      "enable_avsync_udp_input", "use_standalone_udp_input",
+      "enable_silent_audio_in_udp_input", "enable_udp_input_dump",
+      "use_webrtc_hw_dec", "recorder_enable_frame_drop",
+      "recorder_max_frame_queue_size_bytes", "use_centralize_local_db",
+      "enable_mega_simulation", "mega_simulation_delay_min_ms",
+      "mega_simulation_delay_max_ms", "mega_simulation_base_time"
+    ],
+    "notifications": [
+      "enable_notification", "use_message_broker", "message_broker_topic",
+      "enable_notification_consumer", "use_message_broker_consumer",
+      "message_broker_topic_consumer", "message_broker_payload_key",
+      "redis_server_env_var", "kafka_server_address"
+    ],
+    "debug": [
+      "enable_perf_logging", "enable_qos_monitoring", "qos_logfile_path",
+      "qos_data_capture_interval_sec", "qos_data_publish_interval_sec",
+      "enable_gst_debug_probes", "enable_prometheus", "prometheus_port",
+      "enable_highlighting_logs", "enable_debug_apis",
+      "dump_webrtc_input_stats", "enable_frameid_in_webrtc_stream",
+      "enable_network_bandwidth_notification", "enable_latency_logging",
+      "update_record_details_in_sec"
+    ],
+    "overlay": [
+      "video_metadata_server", "video_metadata_query_batch_size_num_frames",
+      "use_video_metadata_protobuf", "enable_gem_drawing",
+      "calibration_file_path", "calibration_mode", "use_camera_groups",
+      "enable_recentering", "floor_map_file_path", "3d_overlay_sensor_name",
+      "bbox_tolerance_ms", "analytic_server_address", "overlay_color_code",
+      "overlay_text_font_type"
+    ],
+    "security": [
+      "use_https", "use_rtsp_authentication",
+      "use_http_digest_authentication", "use_multi_user",
+      "enable_user_cleanup", "session_max_age_sec", "multi_user_extra_options",
+      "nv_org_id", "nv_ngc_key"
+    ]
+  },
+  "section_parameter_counts": {
+    "network": 41,
+    "onvif": 9,
+    "data": 54,
+    "notifications": 9,
+    "debug": 15,
+    "overlay": 14,
+    "security": 9
+  },
+  "runtime_fixture": {
+    "base_config": "services/vios/deployment/stream-processing/docker-compose/nvstreamer/configs/vst_config.json",
+    "missing_documented_keys_added": [
+      "data.enable_aging_policy",
+      "data.use_centralize_local_db",
+      "debug.update_record_details_in_sec"
+    ],
+    "loopback_http": "http://127.0.0.1:31012",
+    "loopback_rtsp": "rtsp://127.0.0.1:31656",
+    "external_services_disabled": true,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

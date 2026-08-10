@@ -1,0 +1,345 @@
+{
+  "assertions": [
+    {
+      "expected": "evidence/nvstreamer-config-contract.json",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/fixture_required",
+      "observed": "evidence/nvstreamer-config-contract.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/key_defaults/https_enabled",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 9092,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/key_defaults/kafka_port",
+      "observed": 9092,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 10000,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/key_defaults/max_upload_mb",
+      "observed": 10000,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "vst.event",
+      "id": "contract-05",
+      "observation": "contract_identity/contract/key_defaults/notification_topic",
+      "observed": "vst.event",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-06",
+      "observation": "contract_identity/contract/key_defaults/prometheus_enabled",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 8080,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/key_defaults/prometheus_port",
+      "observed": 8080,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 6379,
+      "id": "contract-08",
+      "observation": "contract_identity/contract/key_defaults/redis_port",
+      "observed": 6379,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 8,
+      "id": "contract-09",
+      "observation": "contract_identity/contract/key_defaults/rtsp_instances",
+      "observed": 8,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 8554,
+      "id": "contract-10",
+      "observation": "contract_identity/contract/key_defaults/rtsp_port",
+      "observed": 8554,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 2592000,
+      "id": "contract-11",
+      "observation": "contract_identity/contract/key_defaults/session_age_seconds",
+      "observed": 2592000,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "31000-31200",
+      "id": "contract-12",
+      "observation": "contract_identity/contract/key_defaults/udp_range",
+      "observed": "31000-31200",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "30001-30100",
+      "id": "contract-13",
+      "observation": "contract_identity/contract/key_defaults/webrtc_range",
+      "observed": "30001-30100",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "network",
+        "onvif",
+        "data",
+        "notifications",
+        "debug",
+        "overlay",
+        "security"
+      ],
+      "id": "contract-14",
+      "observation": "contract_identity/contract/sections",
+      "observed": [
+        "network",
+        "onvif",
+        "data",
+        "notifications",
+        "debug",
+        "overlay",
+        "security"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "configuration-control-plane",
+      "id": "contract-15",
+      "observation": "contract_identity/contract/wave3_acceptance/candidate_family",
+      "observed": "configuration-control-plane",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-16",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-17",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "systems",
+      "id": "contract-18",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "systems",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "systems-nvstreamer-full-config"
+      ],
+      "id": "contract-19",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "systems-nvstreamer-full-config"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "round_trip",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "configuration.nvstreamer.full-contract",
+  "cleanup": {
+    "allowlist": [
+      "vss-qual-nvstreamer-full-config"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "every allowlisted oracle-owned resource is absent",
+        "result": "pass"
+      },
+      {
+        "description": "captured service/config state and non-owned resource digests match pre-state",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-qual-nvstreamer-full-config"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.configuration.nvstreamer.full-contract",
+    "path": "deploy/docker/thor-local/qualification/nvstreamer-full-config-runtime/fixture-contract.json",
+    "sha256": "7eb3789fcb182afe4259fd4c00e80d29ddbf68d929e648a2f06bac19b34db3b9"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "base_config_sha256": "8682d3d9c80e0647d4ec2b89e7f547e62520872bbb94f2c99675ff3fbad744af",
+        "contract": {
+          "fixture_required": "evidence/nvstreamer-config-contract.json",
+          "key_defaults": {
+            "https_enabled": true,
+            "kafka_port": 9092,
+            "max_upload_mb": 10000,
+            "notification_topic": "vst.event",
+            "prometheus_enabled": false,
+            "prometheus_port": 8080,
+            "redis_port": 6379,
+            "rtsp_instances": 8,
+            "rtsp_port": 8554,
+            "session_age_seconds": 2592000,
+            "udp_range": "31000-31200",
+            "webrtc_range": "30001-30100"
+          },
+          "sections": [
+            "network",
+            "onvif",
+            "data",
+            "notifications",
+            "debug",
+            "overlay",
+            "security"
+          ],
+          "wave3_acceptance": {
+            "candidate_family": "configuration-control-plane",
+            "executor_ready": false,
+            "materialized": false,
+            "package": "systems",
+            "planning_requirement_ids": [
+              "systems-nvstreamer-full-config"
+            ]
+          }
+        },
+        "derived_config_canonical_sha256": "2dd99129e8c5c40c68ba3447d3f9202837cde8f1dc88b1229b39ca7a8c36a5cd",
+        "derived_config_sha256": "1d0ed639d80b96e6f09f898c269061be35361911c13e7024373e2fc3ea676d7b",
+        "executor_sha256": "5b76bb4d6580c697271703239317de6526fa6157731ef2fc3a202eccdf3e82ff",
+        "fixture_contract_sha256": "7eb3789fcb182afe4259fd4c00e80d29ddbf68d929e648a2f06bac19b34db3b9",
+        "image_architecture": "arm64",
+        "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+        "mounted_config_sha256": "1d0ed639d80b96e6f09f898c269061be35361911c13e7024373e2fc3ea676d7b",
+        "overrides_sha256": "aab69792af6087ba7352a1337352b12ec1e8bc9f17d23cd21b29be8770cf1c09",
+        "parser_source_sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92",
+        "raw_receipt_sha256": "53363105ec52afada6f12238be7b80f0037d678ccec806829c47014119ce07a8",
+        "service_version": "2.1.0-26.05.4"
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "documented_parameter_count": 151,
+        "explicit_runtime_parameter_count": 151,
+        "http_failure_count": 0,
+        "http_response_count": 10,
+        "missing_parser_keys": [],
+        "missing_runtime_parameters": [],
+        "parser_match_count": 151,
+        "readback_assertion_count": 21,
+        "readback_service_field_counts": {
+          "live": 51,
+          "proxy": 31,
+          "replay": 48,
+          "sensor": 41,
+          "storage": 20
+        },
+        "readback_service_statuses": {
+          "live": 200,
+          "proxy": 200,
+          "replay": 200,
+          "sensor": 200,
+          "storage": 200
+        },
+        "reversible_round_trip_apply_status": 200,
+        "reversible_round_trip_restore_status": 200,
+        "reversible_round_trip_status": "passed",
+        "section_parameter_counts": {
+          "data": 54,
+          "debug": 15,
+          "network": 41,
+          "notifications": 9,
+          "onvif": 9,
+          "overlay": 14,
+          "security": 9
+        },
+        "startup_config_marker_count": 12
+      }
+    },
+    {
+      "id": "round_trip",
+      "result": "pass",
+      "value": {
+        "agent_generate_called": false,
+        "all_reserved_ports_released": true,
+        "exact_container_inventory_restored": true,
+        "exact_running_set_restored": true,
+        "external_downloads": false,
+        "external_services_contacted": false,
+        "main_vios_sensor_added": false,
+        "rt_cv_stream_added": false,
+        "runtime_package_installs": false,
+        "warehouse_sample_bundle_used": false
+      }
+    }
+  ],
+  "oracle_id": "oracle.configuration.nvstreamer.full-contract",
+  "oracle_sha256": "c1433eab90e0d997983b9cb5a292f79f4e6a71115fca182a8b68fa696886fd7a",
+  "result": "passed_current",
+  "scenario_ids": [
+    "official-capability-contracts",
+    "oracle.configuration.nvstreamer.full-contract"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

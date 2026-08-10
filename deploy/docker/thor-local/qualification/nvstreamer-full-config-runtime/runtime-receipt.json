@@ -1,0 +1,452 @@
+{
+  "bounds": {
+    "agent_generate_called": false,
+    "existing_container_count": 51,
+    "existing_running_container_count": 37,
+    "external_downloads": false,
+    "external_services_contacted": false,
+    "http_endpoint": "http://127.0.0.1:31012/vst/api/v1",
+    "http_loopback_only": true,
+    "main_vios_sensor_added": false,
+    "rt_cv_stream_added": false,
+    "rtsp_endpoint": "rtsp://127.0.0.1:31656",
+    "rtsp_loopback_only": true,
+    "runtime_package_installs": false,
+    "warehouse_sample_bundle_used": false
+  },
+  "capability_results": {
+    "configuration.nvstreamer.full-contract": "passed_current"
+  },
+  "captured_at": "2026-08-10T14:33:05.329367Z",
+  "cleanup": {
+    "all_reserved_ports_released": true,
+    "attempts": [
+      {
+        "operation": "container-stop",
+        "status": 0
+      },
+      {
+        "operation": "container-remove",
+        "status": 0
+      }
+    ],
+    "exact_container_inventory_restored": true,
+    "exact_running_set_restored": true,
+    "result": "passed",
+    "temporary_tree_removed_by_context": true
+  },
+  "identity": {
+    "base_config_sha256": "8682d3d9c80e0647d4ec2b89e7f547e62520872bbb94f2c99675ff3fbad744af",
+    "contract_sha256": "7eb3789fcb182afe4259fd4c00e80d29ddbf68d929e648a2f06bac19b34db3b9",
+    "derived_config_canonical_sha256": "2dd99129e8c5c40c68ba3447d3f9202837cde8f1dc88b1229b39ca7a8c36a5cd",
+    "derived_config_sha256": "1d0ed639d80b96e6f09f898c269061be35361911c13e7024373e2fc3ea676d7b",
+    "executor_sha256": "5b76bb4d6580c697271703239317de6526fa6157731ef2fc3a202eccdf3e82ff",
+    "image": {
+      "codec_package_set": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4",
+      "container_id": "b3c7564190894ec78c4cb9964c811eef869ae7e730a6193fa9a610335f7468f8",
+      "image_architecture": "arm64",
+      "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+      "image_repo_digests": [
+        "vss-vios-nvstreamer@sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563"
+      ],
+      "image_size_bytes": 3456921334,
+      "offline_runtime_install": "disabled"
+    },
+    "mounted_config_sha256": "1d0ed639d80b96e6f09f898c269061be35361911c13e7024373e2fc3ea676d7b",
+    "overrides_sha256": "aab69792af6087ba7352a1337352b12ec1e8bc9f17d23cd21b29be8770cf1c09",
+    "service_version": {
+      "type": "streamer",
+      "version": "2.1.0-26.05.4"
+    },
+    "storage_config_sha256": "e8c718d1f9288965692fcb3ac88d43b927eac0d8f598f462a6eca9a328daa8f6"
+  },
+  "observations": {
+    "configuration_readback": {
+      "assertions": [
+        {
+          "config_path": "network.http_port",
+          "expected": "31012",
+          "field": "httpPort",
+          "observed": "31012",
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "network.stunurl_list",
+          "expected": [
+            "127.0.0.1:3478"
+          ],
+          "field": "stunUrlList",
+          "observed": [
+            "127.0.0.1:3478"
+          ],
+          "service": "live",
+          "status": "passed"
+        },
+        {
+          "config_path": "network.rtsp_server_port",
+          "expected": 31656,
+          "field": "rtspServerPort",
+          "observed": 31656,
+          "service": "proxy",
+          "status": "passed"
+        },
+        {
+          "config_path": "network.rtsp_server_instances_count",
+          "expected": 1,
+          "field": "rtsp_server_instances_count",
+          "observed": 1,
+          "service": "proxy",
+          "status": "passed"
+        },
+        {
+          "config_path": "onvif.device_discovery_timeout_secs",
+          "expected": 10,
+          "field": "deviceDiscoveryTimeoutSeconds",
+          "observed": 10,
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "onvif.default_resolution",
+          "expected": "1920x1080",
+          "field": "defaultResolution",
+          "observed": "1920x1080",
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "data.enable_aging_policy",
+          "expected": true,
+          "field": "enableAgingPolicy",
+          "observed": true,
+          "service": "storage",
+          "status": "passed"
+        },
+        {
+          "config_path": "data.max_video_download_size_MB",
+          "expected": 1000,
+          "field": "maxVideoDownloadSizeMB",
+          "observed": 1000,
+          "service": "storage",
+          "status": "passed"
+        },
+        {
+          "config_path": "data.enable_dec_low_latency_mode",
+          "expected": true,
+          "field": "enableDecLowLatencyMode",
+          "observed": true,
+          "service": "live",
+          "status": "passed"
+        },
+        {
+          "config_path": "notifications.enable_notification",
+          "expected": false,
+          "field": "enableNotification",
+          "observed": false,
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "notifications.use_message_broker",
+          "expected": "redis",
+          "field": "useMessageBroker",
+          "observed": "redis",
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "notifications.message_broker_topic",
+          "expected": "vst_events",
+          "field": "messageBrokerTopic",
+          "observed": "vst_events",
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "debug.enable_qos_monitoring",
+          "expected": true,
+          "field": "enableQosMonitoring",
+          "observed": true,
+          "service": "proxy",
+          "status": "passed"
+        },
+        {
+          "config_path": "debug.enable_prometheus",
+          "expected": false,
+          "field": "enablePrometheus",
+          "observed": false,
+          "service": "proxy",
+          "status": "passed"
+        },
+        {
+          "config_path": "overlay.video_metadata_server",
+          "expected": "",
+          "field": "videoMetadataServer",
+          "observed": "",
+          "service": "live",
+          "status": "passed"
+        },
+        {
+          "config_path": "overlay.calibration_mode",
+          "expected": "synthetic",
+          "field": "calibrationMode",
+          "observed": "synthetic",
+          "service": "live",
+          "status": "passed"
+        },
+        {
+          "config_path": "overlay.use_camera_groups",
+          "expected": true,
+          "field": "useCameraGroups",
+          "observed": true,
+          "service": "live",
+          "status": "passed"
+        },
+        {
+          "config_path": "security.use_https",
+          "expected": false,
+          "field": "useHttps",
+          "observed": false,
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "security.use_rtsp_authentication",
+          "expected": false,
+          "field": "useRtspAuthentication",
+          "observed": false,
+          "service": "proxy",
+          "status": "passed"
+        },
+        {
+          "config_path": "security.use_http_digest_authentication",
+          "expected": false,
+          "field": "useHttpDigestAuthentication",
+          "observed": false,
+          "service": "sensor",
+          "status": "passed"
+        },
+        {
+          "config_path": "security.session_max_age_sec",
+          "expected": 2592000,
+          "field": "sessionMaxAgeSec",
+          "observed": 2592000,
+          "service": "proxy",
+          "status": "passed"
+        }
+      ],
+      "services": {
+        "live": {
+          "canonical_sha256": "2e7f37c7a49acd9fdfa3cf2908da9cd52e41d4cb24906b123cb59617215119d7",
+          "field_count": 51,
+          "status": 200
+        },
+        "proxy": {
+          "canonical_sha256": "33ef80d0ea172cbd989e3903d500e173f261d896415e5e92a6e9357fc53cbbf2",
+          "field_count": 31,
+          "status": 200
+        },
+        "replay": {
+          "canonical_sha256": "053a4a2bf3dc46f29ba3df104b3d4323f6f9b68a8ce238b3578ef9a07a6d540e",
+          "field_count": 48,
+          "status": 200
+        },
+        "sensor": {
+          "canonical_sha256": "33efd8bc3e359e931b4b6784a0be04a87551f0fe5fbb70c5b8959ecef8794c39",
+          "field_count": 41,
+          "status": 200
+        },
+        "storage": {
+          "canonical_sha256": "b75e30c466f23b1ba36863d4a5898e9543ead7a988b94bd1016d25970d1b7dc6",
+          "field_count": 20,
+          "status": 200
+        }
+      }
+    },
+    "request_accounting": {
+      "http_failure_count": 0,
+      "http_response_count": 10
+    },
+    "reversible_round_trip": {
+      "alternate": [
+        "127.0.0.2:3478"
+      ],
+      "apply_status": 200,
+      "changed_readback": [
+        "127.0.0.2:3478"
+      ],
+      "field": "stunUrlList",
+      "initial": [
+        "127.0.0.1:3478"
+      ],
+      "restore_status": 200,
+      "restored_readback": [
+        "127.0.0.1:3478"
+      ],
+      "status": "passed"
+    },
+    "startup_config_readback": {
+      "bytes": 21957,
+      "marker_count": 12,
+      "marker_sha256s": {
+        "Calibration Mode: synthetic": "9de8c2ae1f64837ee42655f0ec400dd848ab0a63ccdd57cd8fc3265de0cfd188",
+        "Enable MEGA Simulation: 0": "f739b67b9b11e4f01420018666ba35a76f344e51360b492fe4fef44fbb1882dd",
+        "Enable QoS Monitoring: 1": "1bc585b8df2eab67b7e017ab9045363e03784213f1f15c41f38f137234853adf",
+        "Host HTTP port: 31012": "7949900cc45986004afc98609dd9a31bddc5ef76c776dedd6b113d34c0f4d83a",
+        "Message Broker used: redis": "93ded744997cfb7c3c4a565401f4936aef717bf1fd5a13a9aeb38849fae10251",
+        "NV Streamer Sync File Count: 0": "f874d2e5a6e7f9de0f310115e757f151f76c7c37d7605272d9e4601054347454",
+        "NV Streamer max upload file size: 10000": "b37c9e9d1defc02da590e5bdf113fd57275b99099cf8ae0c57485c7c942ded07",
+        "RTSP server port: 31656": "8e67b94afd2acd349f5a1d36820a735611c5dfc29806e6480327cfe859994d19",
+        "Sensor Discovery Timeout(secs): 10": "3d79c2f64902e717fc4aec3beee1cdbfb9eb25d183672ee7880a19f75afc2640",
+        "Update Record Details in sec: 10": "9f329eb8cc818dc6066d286ea049b9ead92076bf05b3d1ce966d9956b463a084",
+        "Use HTTPS authentication: 0": "6e54fe8a92633e3c9b1f78cb53bec88bb302cf864c6a3d51ad47afa875985e1c",
+        "enable aging policy: 1": "055dc6739aaed87f19f4c801bc2062dc98fbe4af1ccab8c250ca06e6609ccf3a"
+      },
+      "missing_markers": [],
+      "raw_sha256": "02743e74689c114ae5d8a6fb145b28c48855e399a04b9722f8ef269e05397a3a"
+    }
+  },
+  "official_contract": {
+    "captured_at": "2026-08-10",
+    "explicit_runtime_parameter_count": 151,
+    "html_sha256": "deb69d176c1dc4e76f56030da28a50aeba96f8727e13534deeb8299c79dc7261",
+    "missing_runtime_parameters": [],
+    "normalized_table_sha256": "3c3378c651eaf97c00d451b46877a5643ca63166d78b06877a90e026111315af",
+    "page_last_updated": "2026-07-16",
+    "parameter_count": 151,
+    "section_count": 7,
+    "section_parameter_counts": {
+      "data": 54,
+      "debug": 15,
+      "network": 41,
+      "notifications": 9,
+      "onvif": 9,
+      "overlay": 14,
+      "security": 9
+    },
+    "sections": [
+      "network",
+      "onvif",
+      "data",
+      "notifications",
+      "debug",
+      "overlay",
+      "security"
+    ],
+    "shipped_config_missing_keys_added": [
+      "data.enable_aging_policy",
+      "data.use_centralize_local_db",
+      "debug.update_record_details_in_sec"
+    ],
+    "url": "https://docs.nvidia.com/vss/3.2.1/vios-nvstreamer.html",
+    "version": "3.2.1"
+  },
+  "qualification_id": "thor-vss-3.2.1-nvstreamer-full-config-runtime",
+  "requests": [
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/version",
+      "request_sha256": null,
+      "response_bytes": 54,
+      "response_sha256": "0e2788a95c9416d75aa9e4d9c7b431b830fa65900a1d02f63cb882541a001e48",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/sensor/configuration",
+      "request_sha256": null,
+      "response_bytes": 1343,
+      "response_sha256": "f71c976a9fac594f0595312469bc3e7922e39265ab3ad6adc0fb65adcbbb8c8a",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/storage/configuration",
+      "request_sha256": null,
+      "response_bytes": 729,
+      "response_sha256": "18b15edefa7e6ed407e572c577379f55853ccc2ed46ee492c98d0957cec0f8b8",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/live/configuration",
+      "request_sha256": null,
+      "response_bytes": 3965,
+      "response_sha256": "551b239a1830bdd42a2754c5f2890c383ff51d508ee62c2252e677051d4f5f1b",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/replay/configuration",
+      "request_sha256": null,
+      "response_bytes": 3824,
+      "response_sha256": "f0265237974a2a5519ee0f5eb5a90dd01cc8cea3efb022d0c8fbf72903ad2b2b",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/proxy/configuration",
+      "request_sha256": null,
+      "response_bytes": 1059,
+      "response_sha256": "48f66ca8978eeacfff946da768338f24994d0a421c6c820d71b6c79155bb4215",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "POST",
+      "path": "/live/configuration",
+      "request_sha256": "b9ba098af176178e78e3da22c45eef4c63b202f531abf83a3546d143f09a174f",
+      "response_bytes": 4,
+      "response_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/live/configuration",
+      "request_sha256": null,
+      "response_bytes": 3965,
+      "response_sha256": "ca831227b07d6847c3c8685c84fada8717d0f9b37c3ccedd004606f8a81ac7f2",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "POST",
+      "path": "/live/configuration",
+      "request_sha256": "7d0f6bc81fef27cf1380afd076501e71c567df8c8d1f5fde89bae83bb8c1475f",
+      "response_bytes": 4,
+      "response_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "status": 200
+    },
+    {
+      "content_type": "text/plain",
+      "method": "GET",
+      "path": "/live/configuration",
+      "request_sha256": null,
+      "response_bytes": 3965,
+      "response_sha256": "551b239a1830bdd42a2754c5f2890c383ff51d508ee62c2252e677051d4f5f1b",
+      "status": 200
+    }
+  ],
+  "runtime_evidence": true,
+  "schema_version": 1,
+  "source_parser_coverage": {
+    "documented_parameter_count": 151,
+    "missing_parser_keys": [],
+    "parser_match_count": 151,
+    "parser_source_sha256": "b455d17eade9eea5c4502ed5a99f961849467d10e1b3b733737c55eca1640c92",
+    "runtime_print_source_sha256": "9c41813cd0a749878a40215ceff75e4e971c332a2c809ba95b8b0a1fd18e4482"
+  },
+  "status": "passed",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

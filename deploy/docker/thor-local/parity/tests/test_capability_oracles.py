@@ -62,6 +62,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current VIOS byte-identical full-file runtime receipt
             + 1  # current NvStreamer file/RTSP/WebRTC runtime receipt
             + 1  # current NvStreamer synchronized-playback runtime receipt
+            + 1  # current NvStreamer complete-configuration runtime receipt
         )
         self.assertEqual(
             counts["planning_index_only"], capability_count - executor_ready
@@ -402,14 +403,36 @@ class CapabilityOracleTests(unittest.TestCase):
             sum(len(item["planning_executor_bindings"]) for item in bound), 27
         )
         for item in bound:
-            self.assertEqual(
-                item["acceptance_readiness"]["classification"],
-                "planning_index_only",
-            )
-            self.assertIsNone(item["execution_bounds"]["executor"])
-            self.assertEqual(item["execution_bounds"]["collectors"], [])
-            self.assertIsNone(item["cleanup"]["executor"])
-            self.assertEqual(item["cleanup"]["postcondition_collectors"], [])
+            if item["capability_id"] == verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID:
+                self.assertEqual(
+                    item["acceptance_readiness"]["classification"],
+                    "executor_ready",
+                )
+                self.assertEqual(
+                    item["execution_bounds"]["executor"],
+                    verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR,
+                )
+                self.assertEqual(
+                    item["execution_bounds"]["collectors"],
+                    [verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR],
+                )
+                self.assertEqual(
+                    item["cleanup"]["executor"],
+                    verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR,
+                )
+                self.assertEqual(
+                    item["cleanup"]["postcondition_collectors"],
+                    [verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR],
+                )
+            else:
+                self.assertEqual(
+                    item["acceptance_readiness"]["classification"],
+                    "planning_index_only",
+                )
+                self.assertIsNone(item["execution_bounds"]["executor"])
+                self.assertEqual(item["execution_bounds"]["collectors"], [])
+                self.assertIsNone(item["cleanup"]["executor"])
+                self.assertEqual(item["cleanup"]["postcondition_collectors"], [])
             self.assertEqual(item["evidence"], [])
             for binding in item["planning_executor_bindings"]:
                 self.assertIs(binding["can_advance_capability"], False)
@@ -675,10 +698,7 @@ class CapabilityOracleTests(unittest.TestCase):
                         cleanup["targets"], [item["fixture"]["input"]["namespace"]]
                     )
                     self.assertTrue(cleanup["targets"][0].startswith("spatial-ai-"))
-                elif (
-                    item["capability_id"]
-                    == verifier.VIOS_BYTE_DOWNLOAD_CAPABILITY_ID
-                ):
+                elif item["capability_id"] == verifier.VIOS_BYTE_DOWNLOAD_CAPABILITY_ID:
                     self.assertEqual(
                         cleanup["targets"], [verifier.VIOS_BYTE_DOWNLOAD_NAMESPACE]
                     )
@@ -689,6 +709,14 @@ class CapabilityOracleTests(unittest.TestCase):
                 elif item["capability_id"] == verifier.NVSTREAMER_SYNC_CAPABILITY_ID:
                     self.assertEqual(
                         cleanup["targets"], [verifier.NVSTREAMER_SYNC_NAMESPACE]
+                    )
+                elif (
+                    item["capability_id"]
+                    == verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID
+                ):
+                    self.assertEqual(
+                        cleanup["targets"],
+                        [verifier.NVSTREAMER_FULL_CONFIG_NAMESPACE],
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
@@ -726,9 +754,7 @@ class CapabilityOracleTests(unittest.TestCase):
             ),
             "gap": lambda item: item.update(gap="different reviewed gap"),
             "thor state": lambda item: item.update(
-                thor_state=(
-                    "partial" if item.get("thor_state") == "wired" else "wired"
-                )
+                thor_state=("partial" if item.get("thor_state") == "wired" else "wired")
             ),
             "runtime state": lambda item: item.update(
                 runtime_state=(
@@ -824,6 +850,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if mv3dt_runtime is not None
                 else verifier.NVSTREAMER_SYNC_MAX_ACTIONS
                 if item["capability_id"] == verifier.NVSTREAMER_SYNC_CAPABILITY_ID
+                else verifier.NVSTREAMER_FULL_CONFIG_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID
+                )
                 else override[2]
                 if override is not None
                 else expected

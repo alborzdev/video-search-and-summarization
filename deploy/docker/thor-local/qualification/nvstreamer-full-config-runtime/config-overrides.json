@@ -1,0 +1,32 @@
+{
+  "network": {
+    "http_port": "31012",
+    "server_domain_name": "127.0.0.1",
+    "stunurl_list": ["127.0.0.1:3478"],
+    "rtsp_server_port": 31656,
+    "rtsp_server_instances_count": 1,
+    "rtp_udp_port_range": "31657-31756",
+    "webrtc_port_range": {"min": 32300, "max": 32320}
+  },
+  "data": {
+    "enable_aging_policy": true,
+    "use_centralize_local_db": false
+  },
+  "notifications": {
+    "enable_notification": false,
+    "enable_notification_consumer": false,
+    "redis_server_env_var": "127.0.0.1:6379",
+    "kafka_server_address": "127.0.0.1:9092"
+  },
+  "debug": {
+    "enable_prometheus": false,
+    "update_record_details_in_sec": 10
+  },
+  "security": {
+    "use_https": false,
+    "use_rtsp_authentication": false,
+    "use_http_digest_authentication": false,
+    "nv_org_id": "",
+    "nv_ngc_key": ""
+  }
+}

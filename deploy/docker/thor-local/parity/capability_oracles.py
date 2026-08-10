@@ -199,8 +199,7 @@ CPU_MULTIMEDIA_CAPABILITY_ID = (
 )
 VIOS_BYTE_DOWNLOAD_CAPABILITY_ID = "behavior.vios.byte-identical-download"
 VIOS_BYTE_DOWNLOAD_EXECUTOR = (
-    "deploy/docker/thor-local/qualification/"
-    "vios-file-lifecycle-runtime/execute.py"
+    "deploy/docker/thor-local/qualification/vios-file-lifecycle-runtime/execute.py"
 )
 VIOS_BYTE_DOWNLOAD_FIXTURE = {
     "path": (
@@ -228,8 +227,7 @@ VIOS_BYTE_DOWNLOAD_WORKLOAD = {
 }
 NVSTREAMER_FILE_CAPABILITY_ID = "runtime.nvstreamer.file-streaming"
 NVSTREAMER_FILE_EXECUTOR = (
-    "deploy/docker/thor-local/qualification/"
-    "nvstreamer-file-workflow-runtime/execute.py"
+    "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/execute.py"
 )
 NVSTREAMER_FILE_FIXTURE = {
     "path": (
@@ -267,8 +265,7 @@ NVSTREAMER_FILE_WORKLOAD = {
 }
 NVSTREAMER_SYNC_CAPABILITY_ID = "configuration.nvstreamer.sync"
 NVSTREAMER_SYNC_EXECUTOR = (
-    "deploy/docker/thor-local/qualification/"
-    "nvstreamer-sync-playback-runtime/execute.py"
+    "deploy/docker/thor-local/qualification/nvstreamer-sync-playback-runtime/execute.py"
 )
 NVSTREAMER_SYNC_FIXTURE = {
     "path": (
@@ -302,14 +299,50 @@ NVSTREAMER_SYNC_WORKLOAD = {
     ],
 }
 NVSTREAMER_SYNC_MAX_ACTIONS = 24
+NVSTREAMER_FULL_CONFIG_CAPABILITY_ID = "configuration.nvstreamer.full-contract"
+NVSTREAMER_FULL_CONFIG_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/nvstreamer-full-config-runtime/execute.py"
+)
+NVSTREAMER_FULL_CONFIG_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "nvstreamer-full-config-runtime/fixture-contract.json"
+    ),
+    "sha256": "7eb3789fcb182afe4259fd4c00e80d29ddbf68d929e648a2f06bac19b34db3b9",
+}
+NVSTREAMER_FULL_CONFIG_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "nvstreamer-full-config-runtime/official-runtime-evidence.json"
+        ),
+        "sha256": "59aa9c7c46bb8ea49398e20a7a9d109597b4115fbd33cb843a9d11bccee695e7",
+    }
+]
+NVSTREAMER_FULL_CONFIG_NAMESPACE = "vss-qual-nvstreamer-full-config"
+NVSTREAMER_FULL_CONFIG_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 5,
+    "overhead_requests": 5,
+    "calculated_max_requests": 10,
+    "phases": [
+        "pre_state",
+        "config_apply",
+        "five_service_readback",
+        "writable_round_trip",
+        "startup_readback",
+        "cleanup",
+        "postcondition",
+    ],
+}
+NVSTREAMER_FULL_CONFIG_MAX_ACTIONS = 16
 
 
 def _is_current_vios_byte_download(capability: dict[str, Any]) -> bool:
     return (
         capability.get("id") == VIOS_BYTE_DOWNLOAD_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
-        and capability.get("runtime_evidence")
-        == VIOS_BYTE_DOWNLOAD_RUNTIME_EVIDENCE
+        and capability.get("runtime_evidence") == VIOS_BYTE_DOWNLOAD_RUNTIME_EVIDENCE
     )
 
 
@@ -327,6 +360,16 @@ def _is_current_nvstreamer_sync(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence") == NVSTREAMER_SYNC_RUNTIME_EVIDENCE
     )
+
+
+def _is_current_nvstreamer_full_config(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == NVSTREAMER_FULL_CONFIG_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence")
+        == NVSTREAMER_FULL_CONFIG_RUNTIME_EVIDENCE
+    )
+
 
 # capability_id: (planning_requirement_id, minimum requests, maximum actions)
 # Derived by qualification/runtime-execution-bounds-audit.  Exact IDs prevent
@@ -1026,6 +1069,8 @@ def _workload(
         return copy.deepcopy(NVSTREAMER_FILE_WORKLOAD)
     if live_integration and _is_current_nvstreamer_sync(capability):
         return copy.deepcopy(NVSTREAMER_SYNC_WORKLOAD)
+    if live_integration and _is_current_nvstreamer_full_config(capability):
+        return copy.deepcopy(NVSTREAMER_FULL_CONFIG_WORKLOAD)
     if live_integration and capability_id in LOCAL_RUNTIME_WORKLOAD_OVERRIDES:
         _, request_budget, _ = LOCAL_RUNTIME_WORKLOAD_OVERRIDES[capability_id]
         units = 1
@@ -1083,6 +1128,8 @@ def _workload(
 def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
     if _is_current_nvstreamer_sync(capability):
         return NVSTREAMER_SYNC_MAX_ACTIONS
+    if _is_current_nvstreamer_full_config(capability):
+        return NVSTREAMER_FULL_CONFIG_MAX_ACTIONS
     override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability["id"])
     return override[2] if override is not None else workload["calculated_max_requests"]
 
@@ -2130,9 +2177,7 @@ def compile_plan(
                 "sha256": VIOS_BYTE_DOWNLOAD_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = VIOS_BYTE_DOWNLOAD_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                VIOS_BYTE_DOWNLOAD_EXECUTOR
-            ]
+            oracle["execution_bounds"]["collectors"] = [VIOS_BYTE_DOWNLOAD_EXECUTOR]
             oracle["cleanup"]["targets"] = [VIOS_BYTE_DOWNLOAD_NAMESPACE]
             oracle["cleanup"]["allowlist"] = [VIOS_BYTE_DOWNLOAD_NAMESPACE]
             oracle["cleanup"]["executor"] = VIOS_BYTE_DOWNLOAD_EXECUTOR
@@ -2150,15 +2195,11 @@ def compile_plan(
                 "sha256": NVSTREAMER_FILE_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = NVSTREAMER_FILE_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                NVSTREAMER_FILE_EXECUTOR
-            ]
+            oracle["execution_bounds"]["collectors"] = [NVSTREAMER_FILE_EXECUTOR]
             oracle["cleanup"]["targets"] = [NVSTREAMER_FILE_NAMESPACE]
             oracle["cleanup"]["allowlist"] = [NVSTREAMER_FILE_NAMESPACE]
             oracle["cleanup"]["executor"] = NVSTREAMER_FILE_EXECUTOR
-            oracle["cleanup"]["postcondition_collectors"] = [
-                NVSTREAMER_FILE_EXECUTOR
-            ]
+            oracle["cleanup"]["postcondition_collectors"] = [NVSTREAMER_FILE_EXECUTOR]
             oracle["acceptance_readiness"] = {
                 "classification": "executor_ready",
                 "blockers": [],
@@ -2170,14 +2211,28 @@ def compile_plan(
                 "sha256": NVSTREAMER_SYNC_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = NVSTREAMER_SYNC_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                NVSTREAMER_SYNC_EXECUTOR
-            ]
+            oracle["execution_bounds"]["collectors"] = [NVSTREAMER_SYNC_EXECUTOR]
             oracle["cleanup"]["targets"] = [NVSTREAMER_SYNC_NAMESPACE]
             oracle["cleanup"]["allowlist"] = [NVSTREAMER_SYNC_NAMESPACE]
             oracle["cleanup"]["executor"] = NVSTREAMER_SYNC_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [NVSTREAMER_SYNC_EXECUTOR]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
+        if _is_current_nvstreamer_full_config(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": NVSTREAMER_FULL_CONFIG_FIXTURE["path"],
+                "generator": NVSTREAMER_FULL_CONFIG_EXECUTOR,
+                "sha256": NVSTREAMER_FULL_CONFIG_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = NVSTREAMER_FULL_CONFIG_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [NVSTREAMER_FULL_CONFIG_EXECUTOR]
+            oracle["cleanup"]["targets"] = [NVSTREAMER_FULL_CONFIG_NAMESPACE]
+            oracle["cleanup"]["allowlist"] = [NVSTREAMER_FULL_CONFIG_NAMESPACE]
+            oracle["cleanup"]["executor"] = NVSTREAMER_FULL_CONFIG_EXECUTOR
             oracle["cleanup"]["postcondition_collectors"] = [
-                NVSTREAMER_SYNC_EXECUTOR
+                NVSTREAMER_FULL_CONFIG_EXECUTOR
             ]
             oracle["acceptance_readiness"] = {
                 "classification": "executor_ready",
@@ -2381,6 +2436,8 @@ def validate(
             expected_actions = 7
         elif _is_current_nvstreamer_sync(ledger_by_id[capability_id]):
             expected_actions = NVSTREAMER_SYNC_MAX_ACTIONS
+        elif _is_current_nvstreamer_full_config(ledger_by_id[capability_id]):
+            expected_actions = NVSTREAMER_FULL_CONFIG_MAX_ACTIONS
         elif (
             capability_id in SPATIAL_AI_IDS[:7]
             and item["ledger_binding"]["thor_state"] == "wired"
