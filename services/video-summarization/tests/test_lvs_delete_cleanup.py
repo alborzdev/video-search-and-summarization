@@ -46,11 +46,69 @@ sys.modules.setdefault("sse_starlette", sse_starlette_module)
 sys.modules.setdefault("sse_starlette.sse", sse_module)
 
 from rtvi_vlm_client import RtviError  # noqa: E402
+from rag_adapter import RagAdapter  # noqa: E402
 from via_exception import ViaException  # noqa: E402
 from via_server import API_PREFIX, ViaServer  # noqa: E402
 from via_stream_handler import RequestInfo, ViaStreamHandler  # noqa: E402
+from vss_api_models import StreamSummarizeRequest  # noqa: E402
 
 FILE_ID = "a1b2c3d4-e5f6-4890-abcd-ef1234567890"
+
+
+def test_rag_adapter_normalizes_released_none_drop_result():
+    context_manager = MagicMock()
+    context_manager.drop_collection.return_value = None
+
+    result = RagAdapter(context_manager).drop_collection()
+
+    assert result == {"acknowledged": True}
+
+
+def test_rag_adapter_normalizes_released_empty_drop_result():
+    context_manager = MagicMock()
+    context_manager.drop_collection.return_value = {}
+
+    result = RagAdapter(context_manager).drop_collection()
+
+    assert result == {"acknowledged": True}
+
+
+def test_rag_adapter_normalizes_context_manager_success_receipt():
+    context_manager = MagicMock()
+    context_manager.drop_collection.return_value = {
+        "success": "true",
+        "dropped": ["elasticsearch/elasticsearch_db"],
+    }
+
+    result = RagAdapter(context_manager).drop_collection()
+
+    assert result == {"acknowledged": True}
+
+
+def test_rag_adapter_preserves_unacknowledged_drop_result():
+    context_manager = MagicMock()
+    context_manager.drop_collection.return_value = {"acknowledged": False}
+
+    result = RagAdapter(context_manager).drop_collection()
+
+    assert result == {"acknowledged": False}
+
+
+def test_rag_adapter_returns_successful_reset_result():
+    context_manager = MagicMock()
+    context_manager.reset.return_value = [None]
+
+    result = RagAdapter(context_manager).reset({"ingestion_function": {"uuid": FILE_ID}})
+
+    assert result == [None]
+
+
+def test_rag_adapter_surfaces_released_reset_error_payload():
+    context_manager = MagicMock()
+    context_manager.reset.return_value = {"error": "graph unavailable"}
+
+    with pytest.raises(ViaException, match="graph unavailable"):
+        RagAdapter(context_manager).reset({"ingestion_function": {"uuid": FILE_ID}})
 
 
 @pytest.fixture
@@ -64,6 +122,9 @@ def via_server(monkeypatch):
         "id": FILE_ID,
         "object": "file",
         "deleted": True,
+    }
+    server._stream_handler.reset_qa_graph_for_asset.return_value = {
+        "acknowledged": True
     }
     yield server
     server._async_executor.shutdown(wait=True)
@@ -87,8 +148,13 @@ class TestDeleteVideoFileCleanup:
             calls.append(("delete_file", file_id))
             return {"id": file_id, "object": "file", "deleted": True}
 
+        def reset_qa_graph(file_id):
+            calls.append(("reset_qa_graph", file_id))
+            return {"acknowledged": True}
+
         via_server._stream_handler.drop_collection_for_asset.side_effect = drop_collection
         via_server._stream_handler._vlm_pipeline.delete_file.side_effect = delete_file
+        via_server._stream_handler.reset_qa_graph_for_asset.side_effect = reset_qa_graph
 
         response = client.delete(f"{API_PREFIX}/files/{FILE_ID}")
 
@@ -101,7 +167,43 @@ class TestDeleteVideoFileCleanup:
         assert calls == [
             ("delete_file", FILE_ID),
             ("drop_collection", FILE_ID),
+            ("reset_qa_graph", FILE_ID),
         ]
+
+    @pytest.mark.parametrize(
+        "graph_result",
+        [
+            None,
+            {"error": "connection refused"},
+            {"acknowledged": False},
+        ],
+    )
+    def test_unacknowledged_qa_graph_cleanup_is_truthful(
+        self, via_server, client, graph_result
+    ):
+        via_server._stream_handler.drop_collection_for_asset.return_value = {
+            "acknowledged": True
+        }
+        via_server._stream_handler.reset_qa_graph_for_asset.return_value = graph_result
+
+        response = client.delete(f"{API_PREFIX}/files/{FILE_ID}")
+
+        assert response.status_code == 503
+        assert response.json()["code"] == "DependencyError"
+        via_server._stream_handler.reset_qa_graph_for_asset.assert_called_once_with(FILE_ID)
+
+    def test_qa_graph_cleanup_exception_is_truthful(self, via_server, client):
+        via_server._stream_handler.drop_collection_for_asset.return_value = {
+            "acknowledged": True
+        }
+        via_server._stream_handler.reset_qa_graph_for_asset.side_effect = RuntimeError(
+            "graph unavailable"
+        )
+
+        response = client.delete(f"{API_PREFIX}/files/{FILE_ID}")
+
+        assert response.status_code == 503
+        assert response.json()["code"] == "DependencyError"
 
     @pytest.mark.parametrize(
         "drop_result",
@@ -270,6 +372,25 @@ def _stream_handler_with_context_manager(ctx_mgr):
     return handler
 
 
+def _stream_handler_with_qa_context_manager(ctx_mgr):
+    handler = ViaStreamHandler.__new__(ViaStreamHandler)
+    handler._args = argparse.Namespace(disable_ca_rag=False)
+    handler._lock = RLock()
+    handler._ca_rag_config = {
+        "context_manager": {
+            "functions": ["ingestion_function", "retriever_function"]
+        },
+        "functions": {
+            "ingestion_function": {"tools": {"db": "graph_db"}},
+            "retriever_function": {"tools": {"db": "graph_db"}},
+        },
+        "tools": {"graph_db": {"type": "neo4j"}},
+    }
+    handler._qa_ctx_mgr_pool = [ctx_mgr]
+    handler._create_qa_ctx_mgr_pool = MagicMock()
+    return handler
+
+
 class TestDropCollectionForAsset:
     @pytest.mark.parametrize(
         ("kafka_enabled", "disable_ca_rag", "reason"),
@@ -348,6 +469,50 @@ class TestDropCollectionForAsset:
         assert exc_info.value.status_code == 503
 
 
+class TestResetQaGraphForAsset:
+    def test_success_resets_uuid_and_restores_qa_manager(self):
+        ctx_mgr = MagicMock()
+        handler = _stream_handler_with_qa_context_manager(ctx_mgr)
+
+        result = handler.reset_qa_graph_for_asset(FILE_ID)
+
+        assert result == {"acknowledged": True}
+        configured = ctx_mgr.configure.call_args.kwargs["config"]
+        assert configured["context_manager"] == {
+            "functions": ["ingestion_function"],
+            "uuid": FILE_ID,
+        }
+        assert set(configured["functions"]) == {"ingestion_function"}
+        assert set(configured["tools"]) == {"graph_db"}
+        ctx_mgr.reset.assert_called_once_with(
+            {"ingestion_function": {"uuid": FILE_ID}}
+        )
+        assert handler._qa_ctx_mgr_pool == [ctx_mgr]
+
+    def test_reset_failure_is_observable_and_restores_qa_manager(self):
+        ctx_mgr = MagicMock()
+        ctx_mgr.reset.side_effect = ViaException(
+            "RAG reset failed: graph unavailable", "RagAdapterError", 500
+        )
+        handler = _stream_handler_with_qa_context_manager(ctx_mgr)
+
+        with pytest.raises(ViaException) as exc_info:
+            handler.reset_qa_graph_for_asset(FILE_ID)
+
+        assert exc_info.value.code == "DependencyError"
+        assert exc_info.value.status_code == 503
+        assert handler._qa_ctx_mgr_pool == [ctx_mgr]
+
+    def test_missing_qa_configuration_is_an_exact_non_owning_skip(self):
+        handler = _stream_handler_with_qa_context_manager(MagicMock())
+        handler._ca_rag_config["functions"].pop("ingestion_function")
+
+        assert handler.reset_qa_graph_for_asset(FILE_ID) == {
+            "skipped": True,
+            "reason": "qa graph not configured",
+        }
+
+
 def test_failed_file_request_reaches_terminal_cleanup_gate():
     handler = ViaStreamHandler.__new__(ViaStreamHandler)
     handler._lock = RLock()
@@ -376,3 +541,44 @@ def test_failed_file_request_reaches_terminal_cleanup_gate():
     assert request.status_event.is_set()
     handler.check_status_remove_req_id(request.request_id)
     assert request.request_id not in handler._request_info_map
+
+
+def test_successful_stream_summary_publishes_terminal_and_quiescent_state(monkeypatch):
+    handler = ViaStreamHandler.__new__(ViaStreamHandler)
+    handler._lock = RLock()
+    handler._request_info_map = {}
+    handler._kafka_enabled = True
+    handler._metrics = MagicMock()
+    handler._ctx_mgr_pool = [MagicMock()]
+    handler._qa_ctx_mgr_pool = []
+    handler._ca_rag_config = {
+        "context_manager": {"functions": ["summarization_online"]},
+        "functions": {"summarization_online": {"params": {}}},
+        "tools": {},
+    }
+    handler._create_ctx_mgr_pool = MagicMock()
+    handler._configure_ctx_mgr = MagicMock()
+    handler._call_aggregation_with_empty_guard = MagicMock(
+        return_value={
+            "summarization_online": {
+                "result": '{"events": [], "video_summary": "visible motion"}',
+                "metadata": {},
+            }
+        }
+    )
+    handler._convert_event_timestamps_to_iso = lambda value: value
+    handler._publish_aggregate_to_kafka = MagicMock()
+    monkeypatch.setenv("LVS_DISABLE_DB_RESET_ON_REQUEST_DONE", "true")
+
+    request_id = handler.summarize_stream(
+        StreamSummarizeRequest(id=FILE_ID, model="local-model")
+    )
+
+    request = handler._request_info_map[request_id]
+    assert request.status is RequestInfo.Status.SUCCESSFUL
+    assert request.progress == 100
+    assert request.status_event.is_set()
+    assert request.terminal_event.is_set()
+    assert request.quiescent_event.is_set()
+    assert handler.wait_for_request_terminal(request_id, timeout=0)
+    assert handler.wait_for_request_quiescent(request_id, timeout=0)

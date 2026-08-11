@@ -128,9 +128,17 @@ class RagAdapter:
         try:
             if hasattr(self._ctx_mgr, "reset"):
                 if expr is not None:
-                    self._ctx_mgr.reset(expr)
+                    result = self._ctx_mgr.reset(expr)
                 else:
-                    self._ctx_mgr.reset()
+                    result = self._ctx_mgr.reset()
+                # Released CA-RAG returns subprocess failures as a result
+                # payload instead of raising them in the parent process.
+                # Treat that shape as a real failure so lifecycle APIs cannot
+                # claim that dependent storage was removed when it was not.
+                if isinstance(result, dict) and result.get("error"):
+                    raise RuntimeError(result["error"])
+                return result
+            return None
         except Exception as exc:
             raise ViaException(f"RAG reset failed: {exc}", "RagAdapterError", 500) from exc
 
@@ -147,7 +155,18 @@ class RagAdapter:
             ViaException: If the underlying ContextManager raises any exception.
         """
         try:
-            return self._ctx_mgr.drop_collection()
+            result = self._ctx_mgr.drop_collection()
+            # CA-RAG versions report successful drops either with no payload
+            # or with the process receipt {"success": "true", "dropped": [...]}
+            # (including an idempotent 404). Normalize those explicit success
+            # shapes to the acknowledgement contract consumed by the API.
+            if result is None or result == {}:
+                return {"acknowledged": True}
+            if isinstance(result, dict) and result.get("success") in {True, "true"}:
+                return {"acknowledged": True}
+            if isinstance(result, dict) and result.get("acknowledged") is True:
+                return {"acknowledged": True}
+            return result
         except Exception as exc:
             raise ViaException(
                 f"RAG drop_collection failed: {exc}", "RagAdapterError", 500

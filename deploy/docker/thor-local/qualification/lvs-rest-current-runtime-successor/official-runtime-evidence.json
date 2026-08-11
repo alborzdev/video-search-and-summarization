@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "capability_id": "api.core.lvs-17",
+  "status": "passed_current",
+  "promotion_eligible": true,
+  "target_commit": "694dd179f740639d3f0bc6d89a1a16d2aca4e3fd",
+  "contract_sha256": "d482b6b23ed579a3798355b9aec0260df8bc2db848b235043df1a39b9fb95262",
+  "runtime_receipt_sha256": "aa80bd8b013ca08241b058b401f77893d612ec737f2b1135614d5fbe8d3aa694",
+  "operation_count": 18,
+  "positive_operations": 18,
+  "adjacent_negatives": 6,
+  "requests": 41,
+  "actions": 4,
+  "duration_seconds": 58.737,
+  "recorded_video": {
+    "captions": true,
+    "v1_summary": true,
+    "summary_alias": true,
+    "graph_qa": true,
+    "exact_delete": true
+  },
+  "live_video": {
+    "private_rtsp_readiness": true,
+    "caption_delivery": true,
+    "stream_summary": true,
+    "exact_cleanup": true
+  },
+  "auth": {
+    "declared": "bearer",
+    "enforced_by_lvs": false,
+    "boundary": "trusted-loopback-local-development"
+  },
+  "cleanup": "exact",
+  "warehouse_sample_bundle": "excluded",
+  "agent_generate_calls": 0,
+  "vios_or_rt_cv_stream_mutations": 0
+}

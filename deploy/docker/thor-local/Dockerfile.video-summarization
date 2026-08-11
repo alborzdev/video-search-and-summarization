@@ -8,12 +8,18 @@ COPY deploy/docker/thor-local/patches/patch_lvs_llm_provider.py /tmp/patch_lvs_l
 COPY deploy/docker/thor-local/patches/patch_lvs_files_purpose.py /tmp/patch_lvs_files_purpose.py
 COPY deploy/docker/thor-local/patches/patch_lvs_file_management.py /tmp/patch_lvs_file_management.py
 COPY deploy/docker/thor-local/patches/patch_lvs_vlm_caption_prompt.py /tmp/patch_lvs_vlm_caption_prompt.py
+COPY deploy/docker/thor-local/patches/patch_lvs_neo4j_uuid_cleanup.py /tmp/patch_lvs_neo4j_uuid_cleanup.py
 RUN /usr/local/bin/python3 /tmp/patch_lvs_llm_provider.py && \
     /usr/local/bin/python3 /tmp/patch_lvs_files_purpose.py && \
     /usr/local/bin/python3 /tmp/patch_lvs_file_management.py && \
-    /usr/local/bin/python3 /tmp/patch_lvs_vlm_caption_prompt.py
-COPY services/video-summarization/src/lvs_mcp.py /opt/nvidia/via/via-engine/lvs_mcp.py
-COPY services/video-summarization/src/lvs_mcp_sse.py /opt/nvidia/via/via-engine/lvs_mcp_sse.py
+    /usr/local/bin/python3 /tmp/patch_lvs_vlm_caption_prompt.py && \
+    /usr/local/bin/python3 /tmp/patch_lvs_neo4j_uuid_cleanup.py
+# The released 3.2.1 image is the dependency/runtime base. Install the complete
+# current repository implementation so Thor runs the fixes and API behavior we
+# qualify here rather than a mixture of current MCP files and older core code.
+COPY services/video-summarization/src/*.py /opt/nvidia/via/via-engine/
+COPY services/video-summarization/src/protos/*.py /opt/nvidia/via/via-engine/protos/
+COPY services/video-summarization/src/vlm_pipeline/*.py /opt/nvidia/via/via-engine/vlm_pipeline/
 RUN /usr/local/bin/python3 -c 'from importlib.metadata import version; from mcp.server.sse import SseServerTransport; from mcp.types import CallToolResult; assert version("mcp") == "1.28.1"; transport = SseServerTransport("/messages"); assert isinstance(transport._read_stream_writers, dict); assert callable(transport.connect_sse); assert callable(transport.handle_post_message); assert CallToolResult(content=[], isError=True).isError is True'
 
 USER lvsuser

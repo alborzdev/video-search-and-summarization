@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-mcp-runtime-289.json",
-      "descriptor_raw_sha256": "ab2bfbefdb01ea6e02cbb91c883884be6c09c253df66011a53007e9116f8d85d",
-      "set_id": "thor-vss-3.2.1-current-lvs-mcp-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-rest-runtime-289.json",
+      "descriptor_raw_sha256": "dd6072ac6b92713e83baf0e4efd737dd171c13866b4c3b80805975258dc6736e",
+      "set_id": "thor-vss-3.2.1-current-lvs-rest-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-mcp-runtime-500.json",
-      "descriptor_raw_sha256": "8a5ec9d7fed63ce1970f5308f5ea1275ee2ec071bbc36f911b98ca22661c7552",
-      "set_id": "thor-vss-3.2.1-current-lvs-mcp-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-lvs-rest-runtime-500.json",
+      "descriptor_raw_sha256": "91e4775f0e4b43fa006df941ec97337196c2bc32ede16ad0501e1a50f64ece39",
+      "set_id": "thor-vss-3.2.1-current-lvs-rest-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-lvs-mcp-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-lvs-rest-runtime-500"
 }

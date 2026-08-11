@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thor LVS REST current-runtime receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "capability_id", "oracle_id",
+    "target_commit", "contract_sha256", "source_hashes", "result",
+    "promotion_eligible", "duration_seconds", "warehouse_sample_bundle",
+    "runtime", "discovery", "auth", "fixture", "operations", "negatives",
+    "file_lifecycle", "live", "cleanup", "counts", "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-lvs-rest-current-runtime-successor-v1"},
+    "capability_id": {"const": "api.core.lvs-17"},
+    "oracle_id": {"const": "oracle.api.core.lvs-17"},
+    "target_commit": {"pattern": "^[0-9a-f]{40}$"},
+    "contract_sha256": {"$ref": "#/$defs/hex64"},
+    "source_hashes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/hex64"}
+    },
+    "result": {"const": "passed"},
+    "promotion_eligible": {"const": true},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 900},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pre", "post", "unchanged"],
+      "properties": {
+        "pre": {"$ref": "#/$defs/runtimeSet"},
+        "post": {"$ref": "#/$defs/runtimeSet"},
+        "unchanged": {"const": true}
+      }
+    },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation_count", "operation_set_sha256", "expected_manifest_sha256", "exact"],
+      "properties": {
+        "operation_count": {"const": 18},
+        "operation_set_sha256": {"$ref": "#/$defs/hex64"},
+        "expected_manifest_sha256": {"$ref": "#/$defs/hex64"},
+        "exact": {"const": true}
+      }
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared", "missing_authorization_status", "fake_bearer_status", "enforced_by_lvs", "boundary"],
+      "properties": {
+        "declared": {"const": "bearer"},
+        "missing_authorization_status": {"const": 200},
+        "fake_bearer_status": {"const": 200},
+        "enforced_by_lvs": {"const": false},
+        "boundary": {"const": "trusted-loopback-local-development"}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bytes", "sha256", "filename_sha256", "sensor_name_sha256", "file_id_sha256", "camera_id_sha256", "live_asset_id_sha256"],
+      "properties": {
+        "bytes": {"type": "integer", "minimum": 1000, "maximum": 2000000},
+        "sha256": {"$ref": "#/$defs/hex64"},
+        "filename_sha256": {"$ref": "#/$defs/hex64"},
+        "sensor_name_sha256": {"$ref": "#/$defs/hex64"},
+        "file_id_sha256": {"$ref": "#/$defs/hex64"},
+        "camera_id_sha256": {"$ref": "#/$defs/hex64"},
+        "live_asset_id_sha256": {"$ref": "#/$defs/hex64"}
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 18,
+      "maxItems": 18,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["method", "path", "status", "response_bytes", "semantic_pass"],
+        "properties": {
+          "method": {"enum": ["DELETE", "GET", "POST"]},
+          "path": {"type": "string", "minLength": 1, "maxLength": 128},
+          "status": {"const": 200},
+          "response_bytes": {"type": "integer", "minimum": 0, "maximum": 8388608},
+          "semantic_pass": {"const": true}
+        }
+      }
+    },
+    "negatives": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case", "status", "passed"],
+        "properties": {
+          "case": {"type": "string", "minLength": 1, "maxLength": 64},
+          "status": {"enum": [400, 422]},
+          "passed": {"const": true}
+        }
+      }
+    },
+    "file_lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["catalog_before", "catalog_restored", "graph_before", "graph_mid", "graph_asset_mid_count", "graph_restored", "owned_graph_absent", "file_deleted"],
+      "properties": {
+        "catalog_before": {"$ref": "#/$defs/projection"},
+        "catalog_restored": {"const": true},
+        "graph_before": {"$ref": "#/$defs/graphCount"},
+        "graph_mid": {"$ref": "#/$defs/graphCount"},
+        "graph_asset_mid_count": {"type": "integer", "minimum": 1},
+        "graph_restored": {"const": true},
+        "owned_graph_absent": {"const": true},
+        "file_deleted": {"const": true}
+      }
+    },
+    "live": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["private_stream_readiness", "caption_documents", "caption_stopped", "camera_removed", "owned_index_absent", "relay_absent"],
+      "properties": {
+        "private_stream_readiness": {"const": true},
+        "caption_documents": {"type": "integer", "minimum": 1},
+        "caption_stopped": {"const": true},
+        "camera_removed": {"const": true},
+        "owned_index_absent": {"const": true},
+        "relay_absent": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "minProperties": 9,
+      "maxProperties": 9,
+      "additionalProperties": {"const": true}
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requests", "actions"],
+      "properties": {
+        "requests": {"type": "integer", "minimum": 1, "maximum": 69},
+        "actions": {"type": "integer", "minimum": 1, "maximum": 69}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["warehouse_sample_bundle", "agent_generate_calls", "vios_or_rt_cv_stream_mutations", "retain_raw_ids", "retain_raw_prompts", "retain_raw_semantic_output", "auth_boundary"],
+      "properties": {
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "agent_generate_calls": {"const": 0},
+        "vios_or_rt_cv_stream_mutations": {"const": 0},
+        "retain_raw_ids": {"const": false},
+        "retain_raw_prompts": {"const": false},
+        "retain_raw_semantic_output": {"const": false},
+        "auth_boundary": {"const": "trusted-loopback-local-development"}
+      }
+    }
+  },
+  "$defs": {
+    "hex64": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "sha256"],
+      "properties": {
+        "count": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/hex64"}
+      }
+    },
+    "graphCount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes", "relationships"],
+      "properties": {
+        "nodes": {"type": "integer", "minimum": 0},
+        "relationships": {"type": "integer", "minimum": 0}
+      }
+    },
+    "runtimeRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["container_id_sha256", "image", "image_id_sha256", "started_at_sha256", "restart_count", "health", "network_mode"],
+      "properties": {
+        "container_id_sha256": {"$ref": "#/$defs/hex64"},
+        "image": {"type": "string", "minLength": 1, "maxLength": 512},
+        "image_id_sha256": {"$ref": "#/$defs/hex64"},
+        "started_at_sha256": {"$ref": "#/$defs/hex64"},
+        "restart_count": {"const": 0},
+        "health": {"const": "healthy"},
+        "network_mode": {"type": "string", "minLength": 1, "maxLength": 128}
+      }
+    },
+    "runtimeSet": {
+      "type": "object",
+      "minProperties": 6,
+      "maxProperties": 6,
+      "additionalProperties": {"$ref": "#/$defs/runtimeRow"}
+    }
+  }
+}

@@ -24,6 +24,9 @@ def _client():
     client._active_caption_requests = {}
     client._active_caption_requests_lock = Lock()
     client._cancelled_caption_owners = OrderedDict()
+    client._live_stream_threads = {}
+    client._live_stream_stop_events = {}
+    client._rtvi_stream_id_map = {}
     return client
 
 
@@ -139,3 +142,39 @@ def test_stale_finally_cannot_remove_or_close_replacement_response() -> None:
 
     assert client._active_caption_requests["owner"] is replacement
     replacement.response.close.assert_not_called()
+
+
+def test_start_captions_retains_one_sse_owner_until_upstream_done() -> None:
+    client = _client()
+    entered = Event()
+    release = Event()
+    response = _response(request_id="rtvi-live-request")
+
+    def blocking_lines(decode_unicode=True):
+        assert decode_unicode is True
+        entered.set()
+        release.wait(timeout=2)
+        yield "data: [DONE]"
+
+    response.iter_lines.side_effect = blocking_lines
+    client._session.post.return_value = response
+
+    client.start_captions(file_id="asset-live", prompt="describe")
+
+    assert entered.wait(timeout=1)
+    owner_id = "live:asset-live"
+    worker = client._live_stream_threads[owner_id]
+    assert worker.is_alive()
+    assert owner_id in client._active_caption_requests
+    response.close.assert_not_called()
+
+    # A duplicate kickoff is an exact no-op while this client owns the SSE.
+    client.start_captions(file_id="asset-live", prompt="describe")
+    client._session.post.assert_called_once()
+
+    release.set()
+    worker.join(timeout=2)
+    assert not worker.is_alive()
+    assert client._active_caption_requests == {}
+    assert client._live_stream_threads == {}
+    response.close.assert_called_once()

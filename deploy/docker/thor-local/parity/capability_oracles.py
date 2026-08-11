@@ -1057,6 +1057,46 @@ UI_GLOBAL_CHAT_RUNTIME_WORKLOAD = {
     ],
 }
 UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS = 40
+LVS_REST_RUNTIME_CAPABILITY_ID = "api.core.lvs-17"
+LVS_REST_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "lvs-rest-current-runtime-successor/executor.py"
+)
+LVS_REST_RUNTIME_VERIFIER = (
+    "deploy/docker/thor-local/qualification/"
+    "lvs-rest-current-runtime-successor/verify.py"
+)
+LVS_REST_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "lvs-rest-current-runtime-successor/contract.json"
+    ),
+    "sha256": "d482b6b23ed579a3798355b9aec0260df8bc2db848b235043df1a39b9fb95262",
+}
+LVS_REST_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "lvs-rest-current-runtime-successor/canonical-runtime-evidence.json"
+        ),
+        "sha256": "841d065e8e3d58d22cdf2e769c77eab61e2c8d01086c87bcdd57fc7e4bfbeec0",
+    }
+]
+LVS_REST_RUNTIME_NAMESPACES = ["vss-oracle-api-core-lvs-17-"]
+LVS_REST_RUNTIME_WORKLOAD = {
+    "units": 18,
+    "requests_per_unit": 3,
+    "overhead_requests": 15,
+    "calculated_max_requests": 69,
+    "phases": [
+        "source_runtime_and_openapi_identity",
+        "recorded_file_caption_summary_and_graph_qa",
+        "private_rtsp_live_caption_and_stream_summary",
+        "all_18_positive_operations_and_adjacent_negatives",
+        "exact_catalog_graph_index_relay_and_runtime_cleanup",
+    ],
+}
+LVS_REST_RUNTIME_MAX_ACTIONS = 4
 LVS_MCP_RUNTIME_CAPABILITY_ID = "api.core.lvs-mcp-doc-13-repo-9"
 LVS_MCP_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/"
@@ -1385,6 +1425,14 @@ def _is_current_lvs_formats_runtime(capability: dict[str, Any]) -> bool:
         capability.get("id") == LVS_FORMATS_RUNTIME_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence") == LVS_FORMATS_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_lvs_rest_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == LVS_REST_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == LVS_REST_RUNTIME_EVIDENCE
     )
 
 
@@ -2143,6 +2191,8 @@ def _workload(
         return copy.deepcopy(UI_DASHBOARD_RUNTIME_WORKLOAD)
     if live_integration and _is_current_ui_global_chat_runtime(capability):
         return copy.deepcopy(UI_GLOBAL_CHAT_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_lvs_rest_runtime(capability):
+        return copy.deepcopy(LVS_REST_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_mcp_runtime(capability):
         return copy.deepcopy(LVS_MCP_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_formats_runtime(capability):
@@ -2238,6 +2288,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return UI_DASHBOARD_RUNTIME_MAX_ACTIONS
     if _is_current_ui_global_chat_runtime(capability):
         return UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
+    if _is_current_lvs_rest_runtime(capability):
+        return LVS_REST_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_mcp_runtime(capability):
         return LVS_MCP_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_formats_runtime(capability):
@@ -3768,6 +3820,48 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_lvs_rest_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": LVS_REST_RUNTIME_FIXTURE["path"],
+                "generator": LVS_REST_RUNTIME_EXECUTOR,
+                "sha256": LVS_REST_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = LVS_REST_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [LVS_REST_RUNTIME_VERIFIER]
+            oracle["execution_bounds"]["max_duration_seconds"] = 900
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                LVS_REST_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                LVS_REST_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["pre_state"] = (
+                "exact source locks, six runtime identities, the complete LVS file "
+                "catalog, graph counts, oracle graph-asset absence, and owned live "
+                "index/relay absence must be captured before mutation"
+            )
+            oracle["cleanup"]["restore"] = (
+                "delete only the exact oracle-owned file and graph asset, stop only "
+                "the exact oracle-owned caption request and private relay, remove "
+                "only the exact oracle-owned camera and live index, and preserve all "
+                "non-owned runtime state"
+            )
+            oracle["cleanup"]["executor"] = LVS_REST_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                LVS_REST_RUNTIME_VERIFIER
+            ]
+            oracle["cleanup"]["postconditions"] = [
+                "the complete LVS file catalog matches pre-state exactly",
+                "Neo4j node and relationship counts match pre-state and the owned graph asset is absent",
+                "the exact owned camera, live caption request, Elasticsearch index, relay, and fixture are absent",
+                "all six runtime identities, start times, health states, restart counts, and network modes match pre-state exactly",
+                "all 18 deployed operations and six adjacent-negative contracts passed semantically",
+                "no Agent generate call, VIOS or RT-CV stream mutation, Warehouse sample action, or retained raw semantic content occurred",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if _is_current_lvs_mcp_runtime(capability):
             oracle["fixture"]["materialization"] = {
                 "path": LVS_MCP_RUNTIME_FIXTURE["path"],
@@ -4105,6 +4199,8 @@ def validate(
             expected_actions = UI_DASHBOARD_RUNTIME_MAX_ACTIONS
         elif _is_current_ui_global_chat_runtime(ledger_by_id[capability_id]):
             expected_actions = UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
+        elif _is_current_lvs_rest_runtime(ledger_by_id[capability_id]):
+            expected_actions = LVS_REST_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_mcp_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_MCP_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):

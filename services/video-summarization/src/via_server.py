@@ -250,6 +250,30 @@ def _require_collection_drop_success(file_id: str, result: object) -> None:
     )
 
 
+def _require_qa_graph_reset_success(file_id: str, result: object) -> None:
+    """Require positive proof that the file's Q&A graph was removed."""
+    if result in (
+        {"acknowledged": True},
+        {"skipped": True, "reason": "ca-rag disabled"},
+        {"skipped": True, "reason": "qa graph not configured"},
+    ):
+        return
+    detail = result.get("error") if isinstance(result, dict) else None
+    if not detail:
+        detail = "Q&A graph deletion was not acknowledged"
+    logger.error(
+        "Q&A graph deletion was not acknowledged for file %s: %s",
+        file_id,
+        detail,
+    )
+    raise ViaException(
+        "Service temporarily unavailable: Q&A graph deletion was not acknowledged. "
+        "See server logs for details.",
+        "DependencyError",
+        503,
+    )
+
+
 class ViaServer:
     def __init__(self, args) -> None:
         self._args = args
@@ -769,7 +793,7 @@ class ViaServer:
             summary="Delete a file (proxied to RTVI-VLM)",
             description=(
                 "Deletes the file from the RTVI-VLM backend, then deletes its associated "
-                "Elasticsearch collection."
+                "Elasticsearch collection and graph-Q&A knowledge."
             ),
             responses={
                 200: {"description": "Successful Response."},
@@ -830,6 +854,21 @@ class ViaServer:
                     "DependencyError",
                     http_status,
                 ) from e
+
+            try:
+                graph_result = self._stream_handler.reset_qa_graph_for_asset(file_id)
+                _require_qa_graph_reset_success(file_id, graph_result)
+                logger.debug("Q&A graph reset result for %s: %s", file_id, graph_result)
+            except ViaException:
+                raise
+            except Exception as e:
+                logger.error("Q&A graph cleanup failed for file %s: %s", file_id, e)
+                raise ViaException(
+                    "Service temporarily unavailable: Q&A graph deletion failed. "
+                    "See server logs for details.",
+                    "DependencyError",
+                    503,
+                ) from e
             return {"id": file_id, "object": "file", "deleted": True}
 
         @self._app.get(
@@ -886,13 +925,17 @@ class ViaServer:
         ) -> VlmCaptionsCompletionResponse:
 
             # ---- Build RequestSource ----
-            if not query.url:
+            client_id = str(query.id_list[0]) if query.id else None
+            # URL input remains supported, but local/offline callers can first
+            # upload through /files and invoke captioning by the resulting ID.
+            # RTVI's generate_captions API natively supports that id-only path
+            # and it avoids weakening its HTTP URL SSRF protections.
+            if not query.url and not client_id:
                 raise ViaException(
-                    "url is required for file-based captions",
+                    "url or id is required for file-based captions",
                     "InvalidParameters",
                     422,
                 )
-            client_id = str(query.id_list[0]) if query.id else None
             source = RequestSource.for_file(query.url, query.camera_id)
             if client_id:
                 source.source_id = client_id

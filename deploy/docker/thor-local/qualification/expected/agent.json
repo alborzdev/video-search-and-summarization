@@ -431,7 +431,7 @@
     },
     {
       "path": "services/agent/src/vss_agents/api/video_search_ingest.py",
-      "sha256": "1d6ce176bbc6032dfffba8c4c99c4b1df89dbfe471057ce8462de237de00922c"
+      "sha256": "52672d25c1d78fa1d9e3ae665c5d27dd1ad2912bfee59fea25df1d41313652ee"
     },
     {
       "path": "services/agent/uv.lock",

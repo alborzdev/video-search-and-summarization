@@ -561,7 +561,49 @@ services:
       # upstream keeps direct-media parsing in freestyle mode by default.
       ALERT_DIRECT_MEDIA_USE_VERDICT: "true"
 
-  # Add a tiny provider-aware patch on top of NVIDIA's released LVS image.
+  # Stored-caption Q&A uses the graph backend selected by NVIDIA's LVS 3.2.1
+  # config. Keep the authenticated Community instance strictly on loopback;
+  # neither Bolt nor its browser/API listener is reachable from the LAN. The
+  # shared password is generated only in gitignored generated.env (mode 0600).
+  graph-db:
+    image: ${THOR_LOCAL_NEO4J_IMAGE:-neo4j:5.26-community@sha256:d9dd3dc7d1c78fa959191ff02dbdcbefadceaf83eee23428fb92a58cac8ad3fe}
+    container_name: vss-graph-db
+    profiles: ["bp_developer_lvs_2d", "bp_developer_thor_full_2d"]
+    network_mode: host
+    ports: !override []
+    environment:
+      NEO4J_AUTH: neo4j/${GRAPH_DB_PASSWORD:?GRAPH_DB_PASSWORD is required; run thor-local.sh refresh-runtime}
+      NEO4J_server_default__listen__address: 127.0.0.1
+      NEO4J_server_bolt_listen__address: 127.0.0.1:7687
+      NEO4J_server_http_listen__address: 127.0.0.1:7474
+      NEO4J_server_https_enabled: "false"
+      # CA-RAG's released GraphRAG implementation uses APOC Core procedures
+      # such as apoc.meta.data and apoc.coll.toSet. The pinned Neo4j image
+      # already carries the matching jar under /var/lib/neo4j/labs; this
+      # enables that local copy without downloading a plugin at runtime.
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_allowlist: apoc.*
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_server_memory_heap_initial__size: 256m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 256m
+    volumes:
+      - ${VSS_DATA_DIR}/neo4j/data:/data
+      - ${VSS_DATA_DIR}/neo4j/logs:/logs
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://127.0.0.1:7474/"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: always
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Add a provider-aware derivative on top of NVIDIA's released LVS image.
   # Generic OpenAI/NIM requests remain unchanged; local vLLM can explicitly
   # disable Qwen thinking so a one-event summary cannot consume 10k tokens.
   lvs-server:
@@ -583,8 +625,19 @@ services:
       LVS_MCP_SSE_TIMEOUT_SECONDS: ${LVS_MCP_SSE_TIMEOUT_SECONDS:-600}
       VIA_FILE_API_LOOPBACK_ONLY: "true"
       VIA_FILE_API_ALLOW_FILENAME: "false"
+      LVS_QA_DATABASE_BACKEND: graph_db
+      LVS_INGESTION_FUNCTION: graph_ingestion
+      LVS_RETRIEVER_FUNCTION: graph_retrieval
+      GRAPH_DB_HOST: 127.0.0.1
+      GRAPH_DB_HTTP_PORT: "7474"
+      GRAPH_DB_BOLT_PORT: "7687"
+      GRAPH_DB_USERNAME: neo4j
+      GRAPH_DB_PASSWORD: ${GRAPH_DB_PASSWORD:?GRAPH_DB_PASSWORD is required; run thor-local.sh refresh-runtime}
     volumes:
       - ${VSS_DATA_DIR}/videos:/opt/nvidia/via/mcp-media:ro
+    depends_on:
+      graph-db:
+        condition: service_healthy
 
   vss-ui:
     image: vss-agent-ui:thor-local

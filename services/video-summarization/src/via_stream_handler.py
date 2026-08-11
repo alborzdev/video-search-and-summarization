@@ -34,6 +34,7 @@ from threading import Condition, Event, RLock, Thread
 import json_repair
 import prometheus_client as prom
 import requests.exceptions
+from ca_rag_config import prune_inactive_ca_rag_entries
 from chunk_info import ChunkInfo, RequestSource, get_timestamp_str
 from lvs_errors import classify_es_error
 from otel_helper import (
@@ -94,7 +95,6 @@ MAX_MILVUS_STRING_LEN = 65535
 # response, which surfaces to the caller as HTTP 200 with total_events=0 and
 # video_summary="". Override with LVS_AGGREGATION_EMPTY_RETRIES; 0 disables.
 DEFAULT_AGGREGATION_EMPTY_RETRIES = 2
-
 
 @dataclass
 class _DeferredSourceCleanup:
@@ -583,6 +583,8 @@ class ViaStreamHandler:
     def _create_ctx_mgr_pool(self, config):
         from vss_ctx_rag.context_manager import ContextManager
 
+        config = prune_inactive_ca_rag_entries(config)
+
         with self._lock:
             # Create ctx mgr pool only if the pool is empty
             if len(self._ctx_mgr_pool) > 0:
@@ -620,6 +622,7 @@ class ViaStreamHandler:
             for fn in ("ingestion_function", "retriever_function"):
                 if fn in qa_config.get("functions", {}):
                     qa_config["context_manager"]["functions"].append(fn)
+            qa_config = prune_inactive_ca_rag_entries(qa_config)
 
             logger.info(
                 "QA Context Manager Pool is empty, adding new processes from index %d",
@@ -633,6 +636,12 @@ class ViaStreamHandler:
                 self.num_qa_ctx_mgr += 1
                 if self.num_qa_ctx_mgr >= self.MAX_STREAMS:
                     return
+
+    @staticmethod
+    def _configure_ctx_mgr(ctx_mgr, config):
+        """Configure a manager without initializing unrelated storage tools."""
+
+        return ctx_mgr.configure(config=prune_inactive_ca_rag_entries(config))
 
     @staticmethod
     def _remove_think_tags(text: str) -> tuple[str, str]:
@@ -1515,7 +1524,7 @@ class ViaStreamHandler:
         if req_info._ctx_mgr:
             ca_rag_config = self.update_ca_rag_config(req_info)
             logger.debug("Updating Context Manager with config for RTVI query")
-            req_info._ctx_mgr.configure(config=ca_rag_config)
+            self._configure_ctx_mgr(req_info._ctx_mgr, ca_rag_config)
 
         # Determine whether to use url or id for RTVI
         source_url = req_info.source_url if hasattr(req_info, "source_url") else None
@@ -1947,7 +1956,7 @@ class ViaStreamHandler:
 
             config = deepcopy(self._ca_rag_config)
             config["context_manager"]["uuid"] = asset_id
-            ctx_mgr.configure(config=config)
+            self._configure_ctx_mgr(ctx_mgr, config)
 
             events_text = json.dumps({"events": events_list}, ensure_ascii=False)
             ctx_mgr.add_doc(
@@ -2097,7 +2106,7 @@ class ViaStreamHandler:
 
             config = deepcopy(self._ca_rag_config)
             config["context_manager"]["uuid"] = req_info.source_id
-            ctx_mgr.configure(config=config)
+            self._configure_ctx_mgr(ctx_mgr, config)
 
             sub_state: dict = {"uuids": [req_info.source_id]}
             if req_info.start_timestamp is not None:
@@ -2172,7 +2181,7 @@ class ViaStreamHandler:
                                     qa_cfg["functions"][fn]["params"] = {}
                                 qa_cfg["functions"][fn]["params"]["uuid"] = req_info.source_id
                             qa_cfg["functions"].pop("retriever_function", None)
-                            qa_ctx.configure(config=qa_cfg)
+                            self._configure_ctx_mgr(qa_ctx, qa_cfg)
                             logger.info(
                                 "summarize_stream: running ingestion on QA ctx_mgr: %s",
                                 req_info.source_id,
@@ -2226,7 +2235,11 @@ class ViaStreamHandler:
         req_info.progress = 100
         self._metrics.queries_processed.inc()
         self._metrics.queries_pending.dec()
-        req_info.status_event.set()
+        # The HTTP route waits on terminal_event, not the legacy status_event.
+        # File requests reach this gate through _process_output; live stream
+        # summarization completes synchronously here and must publish the same
+        # terminal/quiescent ownership state before returning its request ID.
+        self._mark_request_terminal(req_info, req_info.status)
 
         return req_info.request_id
 
@@ -2287,7 +2300,7 @@ class ViaStreamHandler:
                 qa_config["context_manager"]["functions"].append(fn)
                 qa_config["functions"][fn]["params"]["uuid"] = asset_id
             qa_config["functions"].pop("ingestion_function", None)
-            qa_ctx.configure(config=qa_config)
+            self._configure_ctx_mgr(qa_ctx, qa_config)
 
             with TimeMeasure("Chat Completion - Retriever Function"):
                 result = qa_ctx.call(
@@ -2533,7 +2546,7 @@ class ViaStreamHandler:
 
             config = deepcopy(self._ca_rag_config)
             config["context_manager"]["uuid"] = asset_id
-            ctx_mgr.configure(config=config)
+            self._configure_ctx_mgr(ctx_mgr, config)
             result = ctx_mgr.drop_collection()
             if result != {"acknowledged": True}:
                 detail = result.get("error") if isinstance(result, dict) else None
@@ -2561,6 +2574,66 @@ class ViaStreamHandler:
                 with self._lock:
                     if all(existing is not ctx_mgr for existing in self._ctx_mgr_pool):
                         self._ctx_mgr_pool.append(ctx_mgr)
+
+    def reset_qa_graph_for_asset(self, asset_id: str) -> dict:
+        """Delete the graph-Q&A subgraph owned by ``asset_id``.
+
+        Neo4j's CA-RAG storage tool intentionally exposes UUID-scoped
+        ``reset`` rather than vector-store ``drop_collection``. File deletion
+        therefore has to borrow a dedicated QA manager and dispatch the
+        ingestion function's reset explicitly; using the summarization manager
+        only deletes Elasticsearch and leaves Q&A knowledge behind.
+        """
+        if self._args.disable_ca_rag:
+            return {"skipped": True, "reason": "ca-rag disabled"}
+        if "ingestion_function" not in self._ca_rag_config.get("functions", {}):
+            return {"skipped": True, "reason": "qa graph not configured"}
+
+        qa_ctx_mgr = None
+        try:
+            self._create_qa_ctx_mgr_pool(self._ca_rag_config)
+            with self._lock:
+                if not self._qa_ctx_mgr_pool:
+                    raise ViaException(
+                        "No Q&A context manager available to delete the asset graph",
+                        "DependencyUnavailable",
+                        503,
+                    )
+                qa_ctx_mgr = self._qa_ctx_mgr_pool.pop()
+
+            config = deepcopy(self._ca_rag_config)
+            config["context_manager"]["uuid"] = asset_id
+            config["context_manager"]["functions"] = ["ingestion_function"]
+            config["functions"].pop("retriever_function", None)
+            self._configure_ctx_mgr(qa_ctx_mgr, config)
+            qa_ctx_mgr.reset({"ingestion_function": {"uuid": asset_id}})
+            logger.info("reset Q&A graph for asset_id=%s", asset_id)
+            return {"acknowledged": True}
+        except ViaException as ex:
+            logger.warning("reset_qa_graph_for_asset failed for %s: %s", asset_id, ex)
+            if ex.code in {"DependencyError", "DependencyUnavailable"}:
+                raise
+            raise ViaException(
+                "Service temporarily unavailable: Q&A graph deletion failed. "
+                "See server logs for details.",
+                "DependencyError",
+                503,
+            ) from ex
+        except Exception as ex:
+            logger.warning("reset_qa_graph_for_asset failed for %s: %s", asset_id, ex)
+            raise ViaException(
+                "Service temporarily unavailable: Q&A graph deletion failed. "
+                "See server logs for details.",
+                "DependencyError",
+                503,
+            ) from ex
+        finally:
+            if qa_ctx_mgr is not None:
+                with self._lock:
+                    if all(
+                        existing is not qa_ctx_mgr for existing in self._qa_ctx_mgr_pool
+                    ):
+                        self._qa_ctx_mgr_pool.append(qa_ctx_mgr)
 
     def get_ctx_mgr(
         self, source_id: str, exclude_request_id: str | None = None
@@ -2614,7 +2687,7 @@ class ViaStreamHandler:
             "VSS_DISABLE_DB_RESET_ON_INIT", "false"
         ).lower() in ["true", "1"]
         if reset_disabled:
-            ctx_mgr.configure(config=config)
+            self._configure_ctx_mgr(ctx_mgr, config)
             return
 
         with self._initial_db_reset_condition:
@@ -2632,11 +2705,11 @@ class ViaStreamHandler:
                 reset_winner = True
 
         if not reset_winner:
-            ctx_mgr.configure(config=config)
+            self._configure_ctx_mgr(ctx_mgr, config)
             return
 
         try:
-            ctx_mgr.configure(config=config)
+            self._configure_ctx_mgr(ctx_mgr, config)
             ctx_mgr.reset({"summarization": {"erase_db": True}})
         except BaseException as ex:
             with self._initial_db_reset_condition:
@@ -3039,7 +3112,7 @@ class ViaStreamHandler:
                             qa_config["functions"][fn]["params"] = {}
                         qa_config["functions"][fn]["params"]["uuid"] = req_info.source_id
                     qa_config["functions"].pop("retriever_function", None)
-                    req_info._qa_ctx_mgr.configure(config=qa_config)
+                    self._configure_ctx_mgr(req_info._qa_ctx_mgr, qa_config)
                     logger.info("Borrowed QA ctx_mgr for source_id=%s", req_info.source_id)
                 except ViaException:
                     raise
@@ -4562,7 +4635,7 @@ This is very important and you must follow this strictly.
             req_info.delete_external_collection,
         )
 
-        return ca_rag_config
+        return prune_inactive_ca_rag_entries(ca_rag_config)
 
     def _get_request_fps(self, req_info: RequestInfo) -> float:
         """Get current FPS for a request."""

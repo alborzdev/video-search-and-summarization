@@ -73,6 +73,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current LVS five-format local summarization receipt
             + 1  # current LVS one-video-at-a-time runtime receipt
             + 1  # current LVS custom-model and custom-prompt runtime receipt
+            + 1  # current complete 18-operation LVS REST runtime receipt
             + 1  # current exact 13-tool LVS MCP discovery and file lifecycle receipt
             + 2  # exact official Thor Nemotron and Cosmos3 model runtime receipt
             + 4  # current RT-Embed model, data URL, duplicate-ID, and API receipt
@@ -657,6 +658,49 @@ class CapabilityOracleTests(unittest.TestCase):
         )
         self.assertEqual(
             oracle["cleanup"]["allowlist"], verifier.LVS_MCP_RUNTIME_NAMESPACES
+        )
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(oracle["evidence"], [])
+
+    def test_lvs_rest_runtime_oracle_is_exact_cleanup_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == verifier.LVS_REST_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.LVS_REST_RUNTIME_FIXTURE["path"],
+                "generator": verifier.LVS_REST_RUNTIME_EXECUTOR,
+                "sha256": verifier.LVS_REST_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.LVS_REST_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(oracle["execution_bounds"]["max_duration_seconds"], 900)
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.LVS_REST_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.LVS_REST_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["collectors"],
+            [verifier.LVS_REST_RUNTIME_VERIFIER],
+        )
+        self.assertEqual(
+            oracle["cleanup"]["targets"], verifier.LVS_REST_RUNTIME_NAMESPACES
+        )
+        self.assertEqual(
+            oracle["cleanup"]["allowlist"], verifier.LVS_REST_RUNTIME_NAMESPACES
         )
         self.assertEqual(
             oracle["acceptance_readiness"],
@@ -1600,6 +1644,8 @@ class CapabilityOracleTests(unittest.TestCase):
                     item["capability_id"]
                     == verifier.UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID
                 )
+                else verifier.LVS_REST_RUNTIME_MAX_ACTIONS
+                if item["capability_id"] == verifier.LVS_REST_RUNTIME_CAPABILITY_ID
                 else verifier.LVS_MCP_RUNTIME_MAX_ACTIONS
                 if item["capability_id"] == verifier.LVS_MCP_RUNTIME_CAPABILITY_ID
                 else verifier.LVS_FORMATS_RUNTIME_MAX_ACTIONS

@@ -102,6 +102,27 @@ functions:
       db: !ENV ${LVS_DATABASE_BACKEND:elasticsearch_db}
       llm: summarization_llm
 
+  # Experimental stored-caption Q&A. These functions are selected only for
+  # the dedicated QA context-manager pool; Thor's runtime selector removes
+  # them from Elasticsearch summarization workers and removes summarization
+  # functions from Neo4j workers before CA-RAG validation/initialization.
+  ingestion_function:
+    type: !ENV ${LVS_INGESTION_FUNCTION:graph_ingestion}
+    params:
+      batch_size: 1
+    tools:
+      llm: summarization_llm
+      db: !ENV ${LVS_QA_DATABASE_BACKEND:graph_db}
+
+  retriever_function:
+    type: !ENV ${LVS_RETRIEVER_FUNCTION:graph_retrieval}
+    params:
+      image: false
+      top_k: 5
+    tools:
+      llm: summarization_llm
+      db: !ENV ${LVS_QA_DATABASE_BACKEND:graph_db}
+
 context_manager:
   functions:
     - summarization

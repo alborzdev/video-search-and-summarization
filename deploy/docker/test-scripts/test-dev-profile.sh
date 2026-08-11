@@ -1145,9 +1145,7 @@ if grep -q -- '- VIA_DEV_API=${VIA_DEV_API:-false}' "${_lvs_compose}" &&
    grep -Fq 'VIA_FILE_API_LOOPBACK_ONLY: "true"' <<<"${_thor_lvs_block}" &&
    grep -Fq 'VIA_FILE_API_ALLOW_FILENAME: "false"' <<<"${_thor_lvs_block}" &&
    grep -Fq -- '- ${VSS_DATA_DIR}/videos:/opt/nvidia/via/mcp-media:ro' <<<"${_thor_lvs_block}" &&
-   grep -q 'COPY services/video-summarization/src/lvs_mcp.py' \
-     "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
-   grep -q 'COPY services/video-summarization/src/lvs_mcp_sse.py' \
+   grep -Fq 'COPY services/video-summarization/src/*.py /opt/nvidia/via/via-engine/' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&
    grep -Fq 'assert version("mcp") == "1.28.1"' \
      "${REPO_ROOT}/deploy/docker/thor-local/Dockerfile.video-summarization" &&

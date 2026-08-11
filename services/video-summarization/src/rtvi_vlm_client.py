@@ -26,7 +26,7 @@ import os
 import time
 from collections import OrderedDict
 from dataclasses import dataclass, field
-from threading import Event, Lock
+from threading import Event, Lock, Thread, current_thread
 from typing import Optional
 
 import requests
@@ -585,12 +585,13 @@ class RtviVlmClient:
         return self.abort_request(request_id)
 
     def start_captions(self, **kwargs):
-        """Fire-and-forget kickoff for RTVI live-stream captioning.
+        """Start RTVI live captioning and retain its SSE ownership in background.
 
-        Opens the SSE stream by POSTing to /v1/generate_captions, validates
-        the HTTP status, then immediately closes the connection. RTVI keeps
-        captioning in the background and publishes raw_events to Kafka
-        regardless of SSE consumer state.
+        Current RTVI cancels an inference request when its sole SSE client
+        disconnects.  LVS still returns a fire-and-forget HTTP acknowledgement,
+        but this client must keep the upstream response open and drain it on a
+        daemon thread for the lifetime of the caption request.  Kafka remains
+        the data plane; SSE content is intentionally discarded here.
 
         Status codes accepted as success:
           * 200 OK       - fresh start OR RTVI reconnect to an existing
@@ -602,39 +603,121 @@ class RtviVlmClient:
                            is already running for this stream_id; the
                            duplicate trigger is a no-op on the data plane.
 
-        Any other status raises RtviError.
+        Any other status raises RtviError. A repeated start for a stream that
+        this client already owns is an exact no-op.
         """
         req = self._build_generate_captions_request(**kwargs)
         payload = req.model_dump(exclude_none=True)
+        owner_id = f"live:{req.id}"
 
         logger.info(
-            "RTVI start_captions (fire-and-forget): id=%s, model=%s, " "chunk_duration=%d",
+            "RTVI start_captions (retained SSE): id=%s, model=%s, " "chunk_duration=%d",
             req.id,
             req.model,
             req.chunk_duration,
         )
         logger.info("RTVI start_captions: x-stream-id=%s", req.id)
 
-        resp = self._session.post(
-            f"{self._base_url}/v1/generate_captions",
-            json=payload,
-            stream=True,
-            timeout=(5, 30),
-            headers={"x-stream-id": str(req.id)},
-        )
-        try:
-            if resp.status_code in (200, 409):
-                if resp.status_code == 409:
-                    logger.info(
-                        "RTVI start_captions: 409 Conflict for stream_id=%s "
-                        "- captioning already running, treating as no-op",
-                        req.id,
-                    )
+        with self._active_caption_requests_lock:
+            if owner_id in self._active_caption_requests:
+                logger.info(
+                    "RTVI start_captions: stream_id=%s already owned; treating as no-op",
+                    req.id,
+                )
                 return
-            error_text = resp.text
-            self._raise_rtvi_error("start_captions", resp, error_text=error_text)
-        finally:
+        try:
+            lease = self._begin_caption_request(owner_id, str(req.id))
+        except ValueError:
+            logger.info(
+                "RTVI start_captions: stream_id=%s won by a concurrent starter; "
+                "treating as no-op",
+                req.id,
+            )
+            return
+
+        try:
+            resp = self._session.post(
+                f"{self._base_url}/v1/generate_captions",
+                json=payload,
+                stream=True,
+                timeout=(5, 30),
+                headers={"x-stream-id": str(req.id)},
+            )
+        except BaseException:
+            self._finish_caption_request(lease)
+            raise
+
+        if resp.status_code == 409:
+            logger.info(
+                "RTVI start_captions: 409 Conflict for stream_id=%s "
+                "- captioning already running, treating as no-op",
+                req.id,
+            )
             resp.close()
+            self._finish_caption_request(lease)
+            return
+        if resp.status_code != 200:
+            try:
+                self._raise_rtvi_error("start_captions", resp, error_text=resp.text)
+            finally:
+                resp.close()
+                self._finish_caption_request(lease)
+
+        request_id = resp.headers.get("x-request-id")
+        if not request_id:
+            resp.close()
+            self._finish_caption_request(lease)
+            raise RtviError(
+                502,
+                "MissingRequestId",
+                "RTVI streaming response did not identify its exact request",
+            )
+        if self._register_caption_response(lease, str(request_id), resp):
+            self._abort_caption_request(lease)
+            self._finish_caption_request(lease)
+            return
+
+        worker = Thread(
+            target=self._drain_live_caption_response,
+            args=(owner_id, lease, resp),
+            name="rtvi-live-caption-sse",
+            daemon=True,
+        )
+        with self._active_caption_requests_lock:
+            self._live_stream_threads[owner_id] = worker
+        try:
+            worker.start()
+        except BaseException:
+            with self._active_caption_requests_lock:
+                if self._live_stream_threads.get(owner_id) is worker:
+                    self._live_stream_threads.pop(owner_id, None)
+            self._abort_caption_request(lease)
+            self._finish_caption_request(lease)
+            raise
+
+    def _drain_live_caption_response(self, owner_id, lease, response) -> None:
+        """Keep one live SSE response connected without retaining its content."""
+
+        try:
+            for line in response.iter_lines(decode_unicode=True):
+                if not line:
+                    continue
+                if line.startswith("data:"):
+                    data = line[len("data:") :].strip()
+                    if data == "[DONE]":
+                        break
+        except Exception as ex:
+            logger.warning(
+                "RTVI retained live-caption SSE ended for owner=%s: %s",
+                owner_id,
+                ex,
+            )
+        finally:
+            self._finish_caption_request(lease)
+            with self._active_caption_requests_lock:
+                worker = self._live_stream_threads.get(owner_id)
+                if worker is current_thread():
+                    self._live_stream_threads.pop(owner_id, None)
 
     def abort_chunks(self, source_id):
         pass
@@ -643,8 +726,10 @@ class RtviVlmClient:
         pass
 
     def remove_live_stream(self, source_id):
-        """No-op — RTVI manages stream lifecycle internally."""
-        logger.info("remove_live_stream called for %s (no-op in RTVI mode)", source_id)
+        """Release the exact retained SSE request owned by this live stream."""
+        owner_id = f"live:{source_id}"
+        released = self.abort_request(owner_id)
+        logger.info("remove_live_stream called for %s; released=%s", source_id, released)
 
     def stop(self, force=False):
         with self._active_caption_requests_lock:

@@ -1,0 +1,388 @@
+{
+  "assertions": [
+    {
+      "expected": "bearer",
+      "id": "contract-01",
+      "observation": "contract_identity/contract/auth",
+      "observed": "bearer",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "/v1",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/conditional_prefix",
+      "observed": "/v1",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "deploy/docker/thor-local/qualification/expected/lvs.json",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/expected_manifest",
+      "observed": "deploy/docker/thor-local/qualification/expected/lvs.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "44d1f9fc689d3c37152e13204e1359200b78f26b78a14c31c6065d76d1da03ed",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/expected_manifest_sha256",
+      "observed": "44d1f9fc689d3c37152e13204e1359200b78f26b78a14c31c6065d76d1da03ed",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 18,
+      "id": "contract-05",
+      "observation": "contract_identity/contract/implementation_operation_count",
+      "observed": 18,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "http://<host>:38112",
+      "id": "contract-06",
+      "observation": "contract_identity/contract/mcp_base",
+      "observed": "http://<host>:38112",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 17,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/operation_count",
+      "observed": 17,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "http://<host>:38111",
+      "id": "contract-08",
+      "observation": "contract_identity/contract/rest_base",
+      "observed": "http://<host>:38111",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        {
+          "method": "GET",
+          "path": "/files/{file_id}"
+        }
+      ],
+      "id": "contract-09",
+      "observation": "contract_identity/contract/thor_local_extensions",
+      "observed": [
+        {
+          "method": "GET",
+          "path": "/files/{file_id}"
+        }
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "api_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "api.core.lvs-17",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-api-core-lvs-17-"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "the complete LVS file catalog matches pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "Neo4j node and relationship counts match pre-state and the owned graph asset is absent",
+        "result": "pass"
+      },
+      {
+        "description": "the exact owned camera, live caption request, Elasticsearch index, relay, and fixture are absent",
+        "result": "pass"
+      },
+      {
+        "description": "all six runtime identities, start times, health states, restart counts, and network modes match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "all 18 deployed operations and six adjacent-negative contracts passed semantically",
+        "result": "pass"
+      },
+      {
+        "description": "no Agent generate call, VIOS or RT-CV stream mutation, Warehouse sample action, or retained raw semantic content occurred",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-api-core-lvs-17-"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.api.core.lvs-17",
+    "path": "deploy/docker/thor-local/qualification/lvs-rest-current-runtime-successor/contract.json",
+    "sha256": "d482b6b23ed579a3798355b9aec0260df8bc2db848b235043df1a39b9fb95262"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "auth": "bearer",
+          "conditional_prefix": "/v1",
+          "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs.json",
+          "expected_manifest_sha256": "44d1f9fc689d3c37152e13204e1359200b78f26b78a14c31c6065d76d1da03ed",
+          "implementation_operation_count": 18,
+          "mcp_base": "http://<host>:38112",
+          "operation_count": 17,
+          "rest_base": "http://<host>:38111",
+          "thor_local_extensions": [
+            {
+              "method": "GET",
+              "path": "/files/{file_id}"
+            }
+          ]
+        },
+        "contract_sha256": "d482b6b23ed579a3798355b9aec0260df8bc2db848b235043df1a39b9fb95262",
+        "qualification_summary_sha256": "329efacfaa3c0dcd76bf207267ab96322bce3211393f3f2e3bdbad6b2ac91273",
+        "receipt_sha256": "aa80bd8b013ca08241b058b401f77893d612ec737f2b1135614d5fbe8d3aa694",
+        "runtime_identity_unchanged": true,
+        "source_lock_count": 10,
+        "source_locks_match": true
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "adjacent_negatives": [
+          {
+            "case": "recommended_config_schema",
+            "passed": true,
+            "status": 422
+          },
+          {
+            "case": "file_info_uuid_schema",
+            "passed": true,
+            "status": 422
+          },
+          {
+            "case": "caption_model_identity",
+            "passed": true,
+            "status": 400
+          },
+          {
+            "case": "chat_required_messages",
+            "passed": true,
+            "status": 422
+          },
+          {
+            "case": "live_caption_uuid_schema",
+            "passed": true,
+            "status": 422
+          },
+          {
+            "case": "file_delete_uuid_schema",
+            "passed": true,
+            "status": 422
+          }
+        ],
+        "all_positive_semantic_pass": true,
+        "live_video": {
+          "caption_delivery": true,
+          "exact_cleanup": true,
+          "private_rtsp_readiness": true,
+          "stream_summary": true
+        },
+        "operation_count": 18,
+        "operation_set_exact": true,
+        "operation_set_sha256": "85211fd185b5634e81e6d1dc6f9dc6997a2df25941f39bf0991ca940db617095",
+        "operations": [
+          {
+            "method": "DELETE",
+            "path": "/files/{file_id}",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/files",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/files/{file_id}",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/metrics",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/models",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/v1/healthz",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/v1/live",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/v1/metadata",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/v1/ready",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/v1/startup",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/files",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/generate_vlm_captions",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/recommended_config",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/summarize",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/v1/chat/completions",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/v1/generate_captions",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/v1/stream_summarize",
+            "semantic_pass": true,
+            "status": 200
+          },
+          {
+            "method": "POST",
+            "path": "/v1/summarize",
+            "semantic_pass": true,
+            "status": 200
+          }
+        ],
+        "recorded_video": {
+          "captions": true,
+          "exact_delete": true,
+          "graph_qa": true,
+          "summary_alias": true,
+          "v1_summary": true
+        }
+      }
+    },
+    {
+      "id": "api_contract",
+      "result": "pass",
+      "value": {
+        "actions": 4,
+        "agent_generate_calls": 0,
+        "auth": {
+          "boundary": "trusted-loopback-local-development",
+          "declared": "bearer",
+          "enforced_by_lvs": false,
+          "fake_bearer_status": 200,
+          "missing_authorization_status": 200
+        },
+        "cleanup": {
+          "camera_removed": true,
+          "caption_stopped": true,
+          "catalog_restored": true,
+          "file_deleted": true,
+          "fixture_absent": true,
+          "graph_restored": true,
+          "live_index_absent": true,
+          "owned_graph_absent": true,
+          "relay_absent": true
+        },
+        "file_catalog_restored": true,
+        "file_deleted": true,
+        "graph_restored": true,
+        "live_caption_documents": 1,
+        "owned_graph_absent": true,
+        "requests": 41,
+        "vios_or_rt_cv_stream_mutations": 0,
+        "warehouse_sample_bundle": "excluded"
+      }
+    }
+  ],
+  "oracle_id": "oracle.api.core.lvs-17",
+  "oracle_sha256": "1c505768cb03e2512b3a0d1115322109028b04f86e96c16c980792f4f39cac10",
+  "result": "passed_current",
+  "scenario_ids": [
+    "rest-api-operation-matrix",
+    "oracle.api.core.lvs-17"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

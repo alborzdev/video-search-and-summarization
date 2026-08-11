@@ -130,7 +130,7 @@
     },
     {
       "path": "services/video-summarization/src/via_server.py",
-      "sha256": "6007322ec3ee00c00e29807cc65bbf257c57123ba18e091f592e3e030fd12fe1"
+      "sha256": "f9017fa89f7d00d811f1fccb624b6c1e6af9ab1bf1068a544d3451766da8e29e"
     }
   ],
   "surface": "lvs"

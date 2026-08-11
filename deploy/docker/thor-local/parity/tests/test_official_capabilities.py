@@ -287,6 +287,17 @@ class OfficialCapabilityTests(unittest.TestCase):
                 if row["capability_id"] == capability_id
             )
             oracles["oracles"][projected_oracle] = copy.deepcopy(current_oracle)
+        projected_feature = next(
+            index
+            for index, row in enumerate(manifest["features"])
+            if row["id"] == "core-api-operation-contracts"
+        )
+        current_feature = next(
+            row
+            for row in self.manifest["features"]
+            if row["id"] == "core-api-operation-contracts"
+        )
+        manifest["features"][projected_feature] = copy.deepcopy(current_feature)
         return ledger, manifest, oracles
 
     def _validate_mv3dt_aggregate(
@@ -871,6 +882,34 @@ class OfficialCapabilityTests(unittest.TestCase):
         )
         self.assertIn("pinned upstream repository", discrepancy["resolution"])
         self.assertIn("four inference/stream tools", discrepancy["must_not_claim"])
+
+    def test_complete_lvs_rest_surface_has_current_runtime_evidence(self) -> None:
+        capability = next(
+            item
+            for item in self.ledger["capabilities"]
+            if item["id"] == "api.core.lvs-17"
+        )
+        self.assertEqual(capability["contract"]["operation_count"], 17)
+        self.assertEqual(capability["contract"]["implementation_operation_count"], 18)
+        self.assertEqual(capability["thor_state"], "wired")
+        self.assertEqual(capability["runtime_state"], "passed_current")
+        self.assertEqual(
+            capability["runtime_evidence"],
+            [
+                {
+                    "path": (
+                        "deploy/docker/thor-local/qualification/"
+                        "lvs-rest-current-runtime-successor/"
+                        "canonical-runtime-evidence.json"
+                    ),
+                    "sha256": (
+                        "841d065e8e3d58d22cdf2e769c77eab61e2c8d01086c87bcdd57fc7e4bfbeec0"
+                    ),
+                }
+            ],
+        )
+        self.assertIn("all 18 deployed operations", capability["gap"])
+        self.assertIn("does not enforce bearer", capability["gap"])
 
     def test_thor_support_boundary_does_not_claim_official_all_local(self) -> None:
         custom = next(

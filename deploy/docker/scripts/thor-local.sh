@@ -990,6 +990,23 @@ runtime_env_value() {
   ' "${generated_env}"
 }
 
+runtime_graph_db_password() {
+  local password=""
+  if [[ -f "${generated_env}" ]]; then
+    password="$(runtime_env_value GRAPH_DB_PASSWORD)"
+  fi
+
+  # The checked-in NVIDIA profile intentionally carries no database secret.
+  # Generate one only in the owner-only, gitignored Thor runtime environment,
+  # and retain it across refreshes so an initialized Neo4j store remains
+  # usable after an offline restart. URL-safe tokens also avoid Neo4j's `/`
+  # delimiter in NEO4J_AUTH and dotenv metacharacter ambiguity.
+  if [[ ${#password} -lt 16 ]] || [[ "${password}" == *'/'* ]]; then
+    password="$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
+  fi
+  printf '%s\n' "${password}"
+}
+
 require_runtime_env() {
   [[ -f "${generated_env}" ]] || die "Missing ${generated_env}; run the connected bootstrap first"
   [[ "$(stat -c '%a' "${generated_env}")" == "600" ]] || die "${generated_env} must have mode 0600"
@@ -1001,6 +1018,11 @@ require_runtime_env() {
     [[ "${actual}" == "${expected}" ]] ||
       die "Protected runtime environment does not match the Thor-local contract for ${key}; run a connected bootstrap to refresh it"
   done < <(print_runtime_contract)
+
+  local graph_db_password
+  graph_db_password="$(runtime_env_value GRAPH_DB_PASSWORD)"
+  [[ ${#graph_db_password} -ge 16 && "${graph_db_password}" != *'/'* ]] ||
+    die "Protected runtime environment has no valid local graph database password; run 'thor-local.sh refresh-runtime'"
 }
 
 ensure_operator_runtime_directories() {
@@ -1166,7 +1188,8 @@ stage_runtime_env() {
   [[ -f "${profile_generated_env}" ]] ||
     die "Bootstrap completed without producing ${profile_generated_env}"
 
-  local runtime_dir runtime_tmp
+  local runtime_dir runtime_tmp graph_db_password
+  graph_db_password="$(runtime_graph_db_password)"
   runtime_dir="$(dirname -- "${generated_env}")"
   mkdir -p "${runtime_dir}"
   runtime_tmp="$(mktemp "${runtime_dir}/.generated.env.tmp.XXXXXX")"
@@ -1182,6 +1205,7 @@ stage_runtime_env() {
   while IFS='=' read -r key value; do
     set_env_file_value "${runtime_tmp}" "${key}" "${value}"
   done < <(print_runtime_contract)
+  set_env_file_value "${runtime_tmp}" GRAPH_DB_PASSWORD "${graph_db_password}"
 
   chmod 600 "${runtime_tmp}"
   mv -f "${runtime_tmp}" "${generated_env}"
@@ -1200,7 +1224,8 @@ refresh_runtime_env() {
     [[ "$(stat -c '%u' "${generated_env}")" == "$(id -u)" ]] || die "${generated_env} must be owned by the current user"
   fi
 
-  local runtime_tmp key value
+  local runtime_tmp key value graph_db_password
+  graph_db_password="$(runtime_graph_db_password)"
   mkdir -p "$(dirname -- "${generated_env}")"
   runtime_tmp="$(mktemp "$(dirname -- "${generated_env}")/.generated.env.tmp.XXXXXX")"
   chmod 600 "${runtime_tmp}"
@@ -1210,6 +1235,7 @@ refresh_runtime_env() {
   while IFS='=' read -r key value; do
     set_env_file_value "${runtime_tmp}" "${key}" "${value}"
   done < <(print_runtime_contract)
+  set_env_file_value "${runtime_tmp}" GRAPH_DB_PASSWORD "${graph_db_password}"
   chmod 600 "${runtime_tmp}"
   mv -f "${runtime_tmp}" "${generated_env}"
   require_runtime_env
