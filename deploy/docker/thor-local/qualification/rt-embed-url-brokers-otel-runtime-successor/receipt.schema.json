@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_ids",
+    "official_indices",
+    "status",
+    "contract_sha256",
+    "duration_seconds",
+    "budget",
+    "runtime_identity",
+    "url_and_inline_base64",
+    "kafka",
+    "redis",
+    "opentelemetry",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-embed-url-brokers-otel-runtime-successor"},
+    "capability_ids": {
+      "const": [
+        "manifest-entry.rt-embed.02-url-and-inline-base64-video",
+        "manifest-entry.rt-embed.04-kafka-redis-opentelemetry"
+      ]
+    },
+    "official_indices": {"const": [370, 372]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "duration_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 360
+    },
+    "budget": {
+      "const": {
+        "docker_commands": 8,
+        "http_requests": 13,
+        "max_docker_commands": 8,
+        "max_http_requests": 13,
+        "max_model_requests": 2,
+        "max_support_processes": 2,
+        "model_requests": 2,
+        "support_processes_peak": 2
+      }
+    },
+    "runtime_identity": {
+      "const": {
+        "credentials_blank": true,
+        "integration_environment_exact": true,
+        "kafka_healthy": true,
+        "kafka_host_network": true,
+        "kafka_image_exact": true,
+        "operator_paused_workloads_preserved": true,
+        "production_sources_exact": true,
+        "redis_healthy": true,
+        "redis_host_network": true,
+        "redis_image_exact": true,
+        "rt_embed_healthy": true,
+        "rt_embed_image_exact": true,
+        "rt_embed_loopback_exact": true,
+        "rt_embed_oom_killed": false,
+        "rt_embed_restart_count": 0
+      }
+    },
+    "url_and_inline_base64": {
+      "const": {
+        "chunk_count_each": 2,
+        "distinct_transport_provenance": true,
+        "embedding_dimension": 768,
+        "fixture_codec_h264": true,
+        "fixture_duration_seconds": 10,
+        "inline_base64_http_status": 200,
+        "maximum_absolute_difference_at_most_1e_9": true,
+        "minimum_cosine_at_least_0_999999": true,
+        "same_fixture_bytes": true,
+        "url_helper_request_count": 1,
+        "url_http_status": 200,
+        "vectors_finite_nonzero": true
+      }
+    },
+    "kafka": {
+      "const": {
+        "consumer_group_created": false,
+        "embedding_dimension": 768,
+        "enabled": true,
+        "local_peer_healthy": true,
+        "message_type_header_exact": true,
+        "payload_request_present": true,
+        "protobuf_vision_llm_parsed": true,
+        "record_key_request_chunk_correlated": true,
+        "result_message_count": 2,
+        "topic_configuration_mutations": 0,
+        "topic_preexisting": true,
+        "unique_chunk_count": 2,
+        "vectors_finite": true
+      }
+    },
+    "redis": {
+      "const": {
+        "enabled": true,
+        "error_http_status": 500,
+        "error_message_count": 1,
+        "event_exact": true,
+        "local_peer_healthy": true,
+        "persistent_key_count_preserved": true,
+        "sanitized_api_error_exact": true,
+        "schema_exact": true,
+        "source_exact": true,
+        "stream_correlated": true,
+        "subscriber_detached": true,
+        "timestamp_utc_parseable": true,
+        "type_exact": true
+      }
+    },
+    "opentelemetry": {
+      "const": {
+        "api_ingress_span_count": 3,
+        "broker_acknowledgements_present": true,
+        "configured_service_name_exact": true,
+        "kafka_parent_trace_correlated": true,
+        "kafka_publish_span_count": 2,
+        "pipeline_e2e_span_count": 1,
+        "redis_parent_trace_correlated": true,
+        "redis_publish_span_count": 1,
+        "request_attributes_correlated": true,
+        "success_and_error_statuses_exact": true
+      }
+    },
+    "cleanup": {
+      "const": {
+        "asset_statistics_restored_exactly": true,
+        "file_catalog_restored_exactly": true,
+        "model_catalog_preserved": true,
+        "operator_paused_workloads_preserved": true,
+        "owned_http_helper_stopped": true,
+        "owned_kafka_consumer_stopped": true,
+        "owned_redis_subscriber_stopped": true,
+        "runtime_identity_preserved": true,
+        "stream_catalog_restored_exactly": true
+      }
+    },
+    "policy": {
+      "const": {
+        "agent_generate_calls": 0,
+        "credentials_retained": false,
+        "external_network_requests": 0,
+        "image_builds": 0,
+        "image_pulls": 0,
+        "network_scope": "numeric-loopback-and-owned-docker-host-gateway-only",
+        "raw_embeddings_retained": false,
+        "raw_request_ids_retained": false,
+        "raw_resource_ids_retained": false,
+        "raw_trace_ids_retained": false,
+        "raw_urls_retained": false,
+        "rt_cv_or_vios_stream_mutations": 0,
+        "service_lifecycle_actions": 0,
+        "warehouse_sample_bundle": "excluded"
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

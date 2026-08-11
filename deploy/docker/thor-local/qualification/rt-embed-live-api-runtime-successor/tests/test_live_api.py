@@ -43,10 +43,10 @@ def _module() -> Any:
 
 
 def test_retained_artifact_hashes_and_schema() -> None:
-    assert _sha(CONTRACT) == "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c"
-    assert _sha(EXECUTOR) == "dac5a99b62666f1f82cb3b6c79f4cd3cd14498b226ffc0de4561a843fba37614"
+    assert _sha(CONTRACT) == "d296142aac0e4283c2ad20cd61f31f17234c4c91f38508571738c02949dbcee8"
+    assert _sha(EXECUTOR) == "d6eeaedc1da8208d2bed0faf69c05e9c31bcdbe206996c586c827f5f72aef5d3"
     assert _sha(SCHEMA) == "962d788c5aef6c2852c9177624ba3d1ae00f4bee667297c5bc648789ebe37248"
-    assert _sha(RECEIPT) == "0c9732edb1aa2242c0bb3ad1bbc8fd513cf86c1f424be623fd7c4a0a472c7ba6"
+    assert _sha(RECEIPT) == "9304dd220f927207f920265c9be35f4a2a5c01193674e1be25121c971831cfa8"
     schema = _load(SCHEMA)
     receipt = _load(RECEIPT)
     Draft202012Validator.check_schema(schema)
@@ -68,17 +68,18 @@ def test_default_is_inert_and_wrong_ack_is_rejected() -> None:
     assert json.loads(denied.stdout)["status"] == "failed"
 
 
-def test_only_current_compose_and_capture_date_are_overlaid() -> None:
+def test_current_source_image_and_capture_date_are_overlaid() -> None:
     contract = _load(CONTRACT)
     adapted, _raw = _module()._verify_static(contract)
     base = _load(REPO / contract["reused_qualifier"]["contract_path"])
     base["target"]["captured_on"] = contract["captured_on"]
-    overlay = contract["reused_qualifier"]["allowed_overlay"]
-    row = next(
-        row for row in base["source_anchors"] if row["path"] == overlay["compose_path"]
-    )
-    row["bytes"] = overlay["compose_bytes"]
-    row["sha256"] = overlay["compose_sha256"]
+    for overlay in contract["reused_qualifier"]["allowed_overlays"]:
+        row = next(
+            row for row in base["source_anchors"] if row["path"] == overlay["path"]
+        )
+        row["bytes"] = overlay["bytes"]
+        row["sha256"] = overlay["sha256"]
+    base["service"]["image_id"] = contract["runtime"]["image_id"]
     assert adapted == base
 
 

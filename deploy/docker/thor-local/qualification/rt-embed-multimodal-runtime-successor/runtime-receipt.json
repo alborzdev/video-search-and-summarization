@@ -21,8 +21,8 @@
     "owned_video_deleted": true,
     "runtime_identity_preserved": true
   },
-  "contract_sha256": "9579b84b2d88816bf0ece6bc9f19fbbade902d76e424b9419778fe1c8c68f4a7",
-  "duration_seconds": 1.939396,
+  "contract_sha256": "8911b51587a7bf0b008b15c48843f7057ce0fe63f964072ee55456f3d61099de",
+  "duration_seconds": 1.758971,
   "image_embedding": {
     "inference": {
       "chunk_count": 1,

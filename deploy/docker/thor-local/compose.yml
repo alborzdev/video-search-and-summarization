@@ -493,6 +493,22 @@ services:
       NGC_API_KEY: ""
       NVIDIA_API_KEY: ""
       HF_TOKEN: ""
+      # URL ingestion keeps private-network SSRF blocking by default. Permit
+      # only Docker's exact local host-gateway name so an owned, gateway-bound
+      # media fixture can exercise HTTP URL ingestion without allowing CIDRs,
+      # IP literals, suffixes, wildcards, or redirect targets.
+      ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS: "${THOR_LOCAL_RTVI_EMBED_ALLOWED_PRIVATE_HOSTS:-host.docker.internal}"
+      # Kafka is already enabled by the full profile. Thor's Redis is
+      # host-networked, so expose its optional error bus through the private
+      # host gateway and keep it enabled for the complete local integration.
+      ENABLE_REDIS_ERROR_MESSAGES: "${THOR_LOCAL_RTVI_EMBED_REDIS_ERRORS_ENABLED:-true}"
+      REDIS_HOST: "${THOR_LOCAL_RTVI_REDIS_HOST:-host.docker.internal}"
+      # Use the local console exporter by default: it exercises real OTel spans
+      # without requiring an external collector, and keeps telemetry on Thor.
+      ENABLE_OTEL_MONITORING: "${THOR_LOCAL_RTVI_EMBED_OTEL_ENABLED:-true}"
+      OTEL_TRACES_EXPORTER: "${THOR_LOCAL_RTVI_EMBED_OTEL_TRACES_EXPORTER:-console}"
+      OTEL_METRICS_EXPORTER: "${THOR_LOCAL_RTVI_EMBED_OTEL_METRICS_EXPORTER:-none}"
+      OTEL_SERVICE_NAME: "vss-rtvi-embed-thor-local"
 
   # The local OpenAI-compatible Qwen endpoint accepts one sequence at a time.
   # Pin RTVI to the same concurrency contract: the released launcher otherwise

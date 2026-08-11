@@ -16,6 +16,7 @@
 
 import ipaddress
 import os
+import re
 from datetime import datetime
 from typing import Annotated, Literal, Optional
 
@@ -129,6 +130,10 @@ AWS_S3_URL_PATTERN = r"^s3://(?P<bucket>[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\
 BLOCKED_IP_RANGES = [
     ipaddress.ip_network("127.0.0.0/8"),  # Loopback
     ipaddress.ip_network("::1/128"),  # IPv6 loopback
+    ipaddress.ip_network("10.0.0.0/8"),  # RFC 1918 private
+    ipaddress.ip_network("172.16.0.0/12"),  # RFC 1918 private
+    ipaddress.ip_network("192.168.0.0/16"),  # RFC 1918 private
+    ipaddress.ip_network("100.64.0.0/10"),  # Carrier-grade NAT
     ipaddress.ip_network("169.254.0.0/16"),  # Link-local (AWS metadata)
     ipaddress.ip_network("fe80::/10"),  # IPv6 link-local
     ipaddress.ip_network("fc00::/7"),  # IPv6 unique local
@@ -136,6 +141,43 @@ BLOCKED_IP_RANGES = [
     ipaddress.ip_network("224.0.0.0/4"),  # Multicast
     ipaddress.ip_network("240.0.0.0/4"),  # Reserved
 ]
+
+ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS_ENV = "ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS"
+_DNS_HOSTNAME_PATTERN = re.compile(
+    r"^(?=.{1,253}$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)*"
+    r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$"
+)
+
+
+def is_asset_download_private_host_allowed(hostname: str) -> bool:
+    """Return whether an exact DNS hostname is operator-approved for private access.
+
+    The allowlist is intentionally hostname-only and exact-match. IP literals,
+    CIDRs, suffixes, and wildcards stay unsupported so enabling one local media
+    origin cannot silently widen SSRF access to a subnet or metadata endpoint.
+    """
+    candidate = (hostname or "").strip().rstrip(".").lower()
+    if not candidate or not _DNS_HOSTNAME_PATTERN.fullmatch(candidate):
+        return False
+    try:
+        ipaddress.ip_address(candidate)
+        return False
+    except ValueError:
+        pass
+
+    configured = os.environ.get(ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS_ENV, "")
+    allowed: set[str] = set()
+    for raw_entry in configured.split(","):
+        entry = raw_entry.strip().rstrip(".").lower()
+        if not entry or not _DNS_HOSTNAME_PATTERN.fullmatch(entry):
+            continue
+        try:
+            ipaddress.ip_address(entry)
+            continue
+        except ValueError:
+            pass
+        allowed.add(entry)
+    return candidate in allowed
 
 
 # Common models

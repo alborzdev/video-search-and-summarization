@@ -116,6 +116,12 @@ curl -fsS -X POST "$BASE_URL/v1/generate_video_embeddings" \
 
 Supported `url` schemes per the spec: `http://`, `https://`, `s3://`, `file://`, and `data:` URIs.
 
+HTTP/S URL downloads reject loopback, link-local, and private destinations by
+default. A trusted local media origin may be enabled with the exact-host
+`ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS` allowlist. It accepts DNS hostnames only
+and does not support IP literals, CIDRs, suffixes, or wildcards; every redirect
+target is validated independently.
+
 > **Security warning — `file://`**: this scheme causes the embedding server
 > to read **arbitrary local files** from its own filesystem. It is gated by
 > the `FILE_URL_ALLOWED_DIRS` env var and MUST stay restricted to a

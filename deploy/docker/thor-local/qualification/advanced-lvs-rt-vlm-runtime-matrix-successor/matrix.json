@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-12",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-13",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -504,12 +504,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/contract.json",
-        "contract_sha256": "9579b84b2d88816bf0ece6bc9f19fbbade902d76e424b9419778fe1c8c68f4a7",
+        "contract_sha256": "8911b51587a7bf0b008b15c48843f7057ce0fe63f964072ee55456f3d61099de",
         "package_id": "rt-embed-multimodal-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "cbc2627e0858db3789c070e86dcc6230f33219a2b6574c7472b78a1068b09987",
-        "receipt_sha256": "33e7dd3be73b5eaf33b06059842ee4d46459e7cd57daa3a2e46f3927182b5737",
+        "receipt_sha256": "eb47ae80abd926f585c1b16b5ebac2fdce981d71e69b3ea50d490a47adbd30d5",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -526,12 +526,34 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/contract.json",
-        "contract_sha256": "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c",
+        "contract_sha256": "d296142aac0e4283c2ad20cd61f31f17234c4c91f38508571738c02949dbcee8",
         "package_id": "rt-embed-live-api-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "962d788c5aef6c2852c9177624ba3d1ae00f4bee667297c5bc648789ebe37248",
-        "receipt_sha256": "0c9732edb1aa2242c0bb3ad1bbc8fd513cf86c1f424be623fd7c4a0a472c7ba6",
+        "receipt_sha256": "9304dd220f927207f920265c9be35f4a2a5c01193674e1be25121c971831cfa8",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "URL and inline base64 video",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-embed.02-url-and-inline-base64-video",
+      "feature_id": "rt-embed",
+      "official_index": 370,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-embed-url-brokers-otel-runtime-successor/contract.json",
+        "contract_sha256": "48cd0651af7b1e17255d783d4f7ce32bfe1020d558c11533e1bdafc497bae6bc",
+        "package_id": "rt-embed-url-brokers-otel-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-url-brokers-otel-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-url-brokers-otel-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "87b5acd644b1088b93a7391542213d1e075ea094c55a69a874d36d570fbbb24c",
+        "receipt_sha256": "ebd8c38a7b1c8b189b2311614f6fa353750dcc372d13376e30a4b71d5b4ee9c6",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -548,12 +570,34 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/contract.json",
-        "contract_sha256": "9579b84b2d88816bf0ece6bc9f19fbbade902d76e424b9419778fe1c8c68f4a7",
+        "contract_sha256": "8911b51587a7bf0b008b15c48843f7057ce0fe63f964072ee55456f3d61099de",
         "package_id": "rt-embed-multimodal-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "cbc2627e0858db3789c070e86dcc6230f33219a2b6574c7472b78a1068b09987",
-        "receipt_sha256": "33e7dd3be73b5eaf33b06059842ee4d46459e7cd57daa3a2e46f3927182b5737",
+        "receipt_sha256": "eb47ae80abd926f585c1b16b5ebac2fdce981d71e69b3ea50d490a47adbd30d5",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Kafka/Redis/OpenTelemetry",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-embed.04-kafka-redis-opentelemetry",
+      "feature_id": "rt-embed",
+      "official_index": 372,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-embed-url-brokers-otel-runtime-successor/contract.json",
+        "contract_sha256": "48cd0651af7b1e17255d783d4f7ce32bfe1020d558c11533e1bdafc497bae6bc",
+        "package_id": "rt-embed-url-brokers-otel-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-url-brokers-otel-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-url-brokers-otel-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "87b5acd644b1088b93a7391542213d1e075ea094c55a69a874d36d570fbbb24c",
+        "receipt_sha256": "ebd8c38a7b1c8b189b2311614f6fa353750dcc372d13376e30a4b71d5b4ee9c6",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -570,12 +614,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/contract.json",
-        "contract_sha256": "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c",
+        "contract_sha256": "d296142aac0e4283c2ad20cd61f31f17234c4c91f38508571738c02949dbcee8",
         "package_id": "rt-embed-live-api-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "962d788c5aef6c2852c9177624ba3d1ae00f4bee667297c5bc648789ebe37248",
-        "receipt_sha256": "0c9732edb1aa2242c0bb3ad1bbc8fd513cf86c1f424be623fd7c4a0a472c7ba6",
+        "receipt_sha256": "9304dd220f927207f920265c9be35f4a2a5c01193674e1be25121c971831cfa8",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -592,12 +636,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/contract.json",
-        "contract_sha256": "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c",
+        "contract_sha256": "d296142aac0e4283c2ad20cd61f31f17234c4c91f38508571738c02949dbcee8",
         "package_id": "rt-embed-live-api-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "962d788c5aef6c2852c9177624ba3d1ae00f4bee667297c5bc648789ebe37248",
-        "receipt_sha256": "0c9732edb1aa2242c0bb3ad1bbc8fd513cf86c1f424be623fd7c4a0a472c7ba6",
+        "receipt_sha256": "9304dd220f927207f920265c9be35f4a2a5c01193674e1be25121c971831cfa8",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -610,8 +654,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 27,
-    "row_count": 27,
+    "passed_current_thor": 29,
+    "row_count": 29,
     "warehouse_sample_bundle": "excluded"
   }
 }

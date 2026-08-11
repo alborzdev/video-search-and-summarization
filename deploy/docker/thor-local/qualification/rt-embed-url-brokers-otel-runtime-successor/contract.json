@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-embed-url-brokers-otel-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-embed.02-url-and-inline-base64-video",
+    "manifest-entry.rt-embed.04-kafka-redis-opentelemetry"
+  ],
+  "official_indices": [370, 372],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "runtime": {
+    "container": "vss-rtvi-embed",
+    "image_id": "sha256:bf12a86dbd61c48cd34773008a960611ed0ad4afa50f329d3f1ca65615a713bc",
+    "origin": "http://127.0.0.1:8017",
+    "release": "3.2.1",
+    "model_id": "cosmos-embed1-448p-anomaly-detection",
+    "model_source": "git:https://huggingface.co/nvidia/Cosmos-Embed1-448p-anomaly-detection",
+    "embedding_dimension": 768,
+    "batch_size": 8,
+    "allowed_private_host": "host.docker.internal",
+    "kafka_topic": "mdx-embed",
+    "redis_error_channel": "vision-embed-errors",
+    "otel_service_name": "vss-rtvi-embed-thor-local"
+  },
+  "peers": {
+    "kafka": {
+      "container": "kafka",
+      "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436",
+      "image": "confluentinc/cp-kafka:8.2.0",
+      "network_mode": "host"
+    },
+    "redis": {
+      "container": "redis",
+      "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17",
+      "image": "redis:8.6.2-alpine",
+      "network_mode": "host",
+      "port": 6379
+    }
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_embed_server.py",
+      "bytes": 96138,
+      "sha256": "36069c0d8b164d4d5c61c1aebaeed6250473c87a128ccad0cbb993390372a1cf"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py",
+      "bytes": 147018,
+      "sha256": "838fc8e3a1f5d48b2fc295065d3f1ea6b119c4378a34fa23322d6166a6173148"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/utils/asset_manager.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/utils/asset_manager.py",
+      "bytes": 62363,
+      "sha256": "23c1e7eac30f1eb674d50f37ccac530cb5ae3d2f89a1ebf2a96ef62d71fc91ff"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/utils/otel_helper.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/utils/otel_helper.py",
+      "bytes": 13939,
+      "sha256": "baa4eac54e4a16dcae4d85ff6c4c36ce763a9b7e2f4eaa7d3032f83c74949a46"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/api_models/common.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/common.py",
+      "bytes": 13574,
+      "sha256": "a40975e52cea9b651790a3b03d09a3e64061639f33ed01fad0f7550cfad15d55"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/api_models/embeddings.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/embeddings.py",
+      "bytes": 20310,
+      "sha256": "cf438d1408a7d6f35b6a6ef0e919f03645b8f53547b80c102021389d6109ea60"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "bytes": 29373,
+      "sha256": "774839ecd097bc5acb40184049dbd53386be0a224bbc49aa02bdf7b7b8fc47ee"
+    },
+    {
+      "path": "deploy/docker/services/rtvi/rtvi-embed/rtvi-embed-docker-compose.yml",
+      "bytes": 4875,
+      "sha256": "c6955e241ad1fbc88aecd70dc567d30aaa8d33d386f488b9c8318ffabd666655"
+    },
+    {
+      "path": "skills/vss-deploy-video-embedding/references/environment.md",
+      "bytes": 6879,
+      "sha256": "91dcf6e66ccf4d32b665948c64b3a6a7009a71d1fb3eda981ba2f95815f09318"
+    },
+    {
+      "path": "skills/vss-deploy-video-embedding/references/integrate-vss-deploy-video-embedding.md",
+      "bytes": 17044,
+      "sha256": "dcf350d589a150cd1b1dea5ddba7b88f56612d9b903c0735aacf819b92c4099f"
+    },
+    {
+      "path": "skills/vss-deploy-video-embedding/references/rest-api.md",
+      "bytes": 13242,
+      "sha256": "2576f9c3c0f7304e0a9bbd17b9af9d90adb275eb7c845bdf2334eba925355efb"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+      "bytes": 818454,
+      "sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4"
+    }
+  ],
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "mime_type": "video/mp4",
+    "media_type": "video",
+    "codec": "h264",
+    "duration_seconds": 10,
+    "chunk_duration_seconds": 5,
+    "expected_chunk_count": 2
+  },
+  "execution": {
+    "max_duration_seconds": 360,
+    "max_http_requests": 13,
+    "max_model_requests": 2,
+    "max_docker_commands": 8,
+    "max_request_bytes": 4194304,
+    "max_response_bytes": 4194304,
+    "min_free_bytes": 10737418240,
+    "otel_flush_wait_seconds": 7,
+    "acknowledgement": "I_ACK_TWO_LOCAL_EMBEDDINGS_ONE_LOCAL_ERROR_AND_BROKER_OBSERVATION"
+  },
+  "policy": {
+    "network_scope": "numeric-loopback-and-owned-docker-host-gateway-only",
+    "external_network_requests": 0,
+    "agent_generate_calls": 0,
+    "rt_cv_or_vios_stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "image_pulls": 0,
+    "image_builds": 0,
+    "raw_embeddings_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_urls_retained": false,
+    "raw_trace_ids_retained": false,
+    "raw_request_ids_retained": false,
+    "credentials_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

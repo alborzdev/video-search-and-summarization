@@ -12,7 +12,7 @@
   "captured_on": "2026-08-11",
   "runtime": {
     "container": "vss-rtvi-embed",
-    "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+    "image_id": "sha256:bf12a86dbd61c48cd34773008a960611ed0ad4afa50f329d3f1ca65615a713bc",
     "origin": "http://127.0.0.1:8017",
     "model_id": "cosmos-embed1-448p-anomaly-detection",
     "embedding_dimension": 768
@@ -22,13 +22,51 @@
     "contract_sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
     "executor_path": "deploy/docker/thor-local/qualification/rt-embed-current-runtime/execute.py",
     "executor_sha256": "f96902ebc0bc6e3ab9973e60cbd196c556a4886fb7f9f4ac95617ca44e99400d",
-    "allowed_overlay": {
-      "compose_path": "deploy/docker/thor-local/compose.yml",
-      "compose_bytes": 28120,
-      "compose_sha256": "e4b21e864ab179f86a59864208d778bfc432ccd55b289f4dd3d5ec8880fb8282",
-      "captured_on": "2026-08-11"
-    }
+    "allowed_overlays": [
+      {
+        "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+        "bytes": 96138,
+        "sha256": "36069c0d8b164d4d5c61c1aebaeed6250473c87a128ccad0cbb993390372a1cf"
+      },
+      {
+        "path": "services/rtvi/rt-embed/src/utils/asset_manager.py",
+        "bytes": 62363,
+        "sha256": "23c1e7eac30f1eb674d50f37ccac530cb5ae3d2f89a1ebf2a96ef62d71fc91ff"
+      },
+      {
+        "path": "services/rtvi/rt-embed/src/api_models/embeddings.py",
+        "bytes": 20310,
+        "sha256": "cf438d1408a7d6f35b6a6ef0e919f03645b8f53547b80c102021389d6109ea60"
+      },
+      {
+        "path": "deploy/docker/thor-local/compose.yml",
+        "bytes": 29373,
+        "sha256": "774839ecd097bc5acb40184049dbd53386be0a224bbc49aa02bdf7b7b8fc47ee"
+      }
+    ]
   },
+  "additional_source_locks": [
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "bytes": 147018,
+      "sha256": "838fc8e3a1f5d48b2fc295065d3f1ea6b119c4378a34fa23322d6166a6173148"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/api_models/common.py",
+      "bytes": 13574,
+      "sha256": "a40975e52cea9b651790a3b03d09a3e64061639f33ed01fad0f7550cfad15d55"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/utils/otel_helper.py",
+      "bytes": 13939,
+      "sha256": "baa4eac54e4a16dcae4d85ff6c4c36ce763a9b7e2f4eaa7d3032f83c74949a46"
+    },
+    {
+      "path": "deploy/docker/services/rtvi/rtvi-embed/rtvi-embed-docker-compose.yml",
+      "bytes": 4875,
+      "sha256": "c6955e241ad1fbc88aecd70dc567d30aaa8d33d386f488b9c8318ffabd666655"
+    }
+  ],
   "ledger": {
     "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
     "bytes": 818454,

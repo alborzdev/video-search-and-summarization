@@ -1697,53 +1697,95 @@ class RTVIServer:
                 if re.match(AWS_S3_URL_PATTERN, query.url) or re.match(
                     AWS_S3_OBJECT_URL_PATTERN, query.url
                 ):
-                    # File from AWS S3
-                    video_id = await self._asset_manager.download_file_from_s3(
-                        query.url,
-                        "input_file.mp4",
-                        "vision",
-                        query.media_type,
-                        query.creation_time,
-                        asset_id,
-                    )
-                elif query.url and (
-                    query.url.startswith("http://") or query.url.startswith("https://")
-                ):
-                    # file added as url
-                    video_id = await self._asset_manager.download_file(
-                        query.url,
-                        "input_file.mp4",
-                        "vision",
-                        query.media_type,
-                        query.creation_time,
-                        asset_id,
-                        url_headers=query.url_headers,
-                    )
-                elif query.url and query.url.startswith("data:"):
-                    # RFC 2397 data: URI — inline base64-encoded video/image
-                    video_id = await self._asset_manager.save_from_base64(
-                        query.url,
-                        query.media_type,
-                        query.creation_time,
-                        asset_id,
-                    )
-                elif query.url and query.url.startswith("file://"):
-                    # Local file path — resolve with allowlist + traversal protection
-                    local_path = self._resolve_file_url(query.url)
-                    video_id = self._asset_manager.add_file(
-                        local_path,
-                        "vision",
-                        query.media_type,
-                        creation_time=query.creation_time,
-                        file_id=asset_id,
-                    )
+                    input_transport = "s3"
+                elif query.url.startswith(("http://", "https://")):
+                    input_transport = "http"
+                elif query.url.startswith("data:"):
+                    input_transport = "data"
+                elif query.url.startswith("file://"):
+                    input_transport = "file"
                 else:
-                    raise ServiceException(
-                        f"Invalid URL format: {query.url}. "
-                        "Must be a valid HTTP/HTTPS, AWS S3, file://, or data: URI.",
-                        "InvalidParameters",
-                        422,
+                    input_transport = "unsupported"
+
+                ingress_req_info = self._stream_handler._start_api_request_context(
+                    asset_id, input_transport
+                )
+                try:
+                    if input_transport == "s3":
+                        # File from AWS S3
+                        video_id = await self._asset_manager.download_file_from_s3(
+                            query.url,
+                            "input_file.mp4",
+                            "vision",
+                            query.media_type,
+                            query.creation_time,
+                            asset_id,
+                        )
+                    elif input_transport == "http":
+                        # File added as an HTTP(S) URL.
+                        video_id = await self._asset_manager.download_file(
+                            query.url,
+                            "input_file.mp4",
+                            "vision",
+                            query.media_type,
+                            query.creation_time,
+                            asset_id,
+                            url_headers=query.url_headers,
+                        )
+                    elif input_transport == "data":
+                        # RFC 2397 data: URI — inline base64-encoded video/image
+                        video_id = await self._asset_manager.save_from_base64(
+                            query.url,
+                            query.media_type,
+                            query.creation_time,
+                            asset_id,
+                        )
+                    elif input_transport == "file":
+                        # Local file path — resolve with allowlist + traversal protection
+                        local_path = self._resolve_file_url(query.url)
+                        video_id = self._asset_manager.add_file(
+                            local_path,
+                            "vision",
+                            query.media_type,
+                            creation_time=query.creation_time,
+                            file_id=asset_id,
+                        )
+                    else:
+                        raise ServiceException(
+                            f"Invalid URL format: {query.url}. "
+                            "Must be a valid HTTP/HTTPS, AWS S3, file://, or data: URI.",
+                            "InvalidParameters",
+                            422,
+                        )
+                except ServiceException as exc:
+                    self._stream_handler._send_error_message_to_kafka(
+                        "Failed to acquire video input.",
+                        asset_id,
+                        "functional",
+                        req_info=ingress_req_info,
                     )
+                    self._stream_handler._finish_api_request_context(
+                        ingress_req_info, exception=exc
+                    )
+                    raise
+                except Exception as exc:
+                    self._stream_handler._send_error_message_to_kafka(
+                        "Failed to acquire video input.",
+                        asset_id,
+                        "functional",
+                        req_info=ingress_req_info,
+                    )
+                    self._stream_handler._finish_api_request_context(
+                        ingress_req_info, exception=exc
+                    )
+                    logger.error("Failed to acquire video input.", exc_info=True)
+                    raise ServiceException(
+                        "Failed to acquire video input.",
+                        "AssetAcquisitionError",
+                        500,
+                    ) from exc
+                else:
+                    self._stream_handler._finish_api_request_context(ingress_req_info)
 
                 videoIdList = [video_id]
 

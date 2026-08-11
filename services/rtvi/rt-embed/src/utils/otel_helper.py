@@ -38,6 +38,16 @@ _meter_provider = None
 _prometheus_reader = None
 
 
+def _service_resource_attributes(
+    service_name: str, service_version: str
+) -> dict[str, str]:
+    """Return resource attributes while honoring the standard service-name override."""
+    return {
+        "service.name": os.getenv("OTEL_SERVICE_NAME") or service_name,
+        "service.version": service_version,
+    }
+
+
 def init_otel(service_name: str = "rtvi", service_version: str = "1.0.0", metric_views=None):
     """Initialize OpenTelemetry if enabled and available.
 
@@ -76,10 +86,7 @@ def init_otel(service_name: str = "rtvi", service_version: str = "1.0.0", metric
         try:
             # Create resource for metrics
             resource = Resource.create(
-                {
-                    "service.name": service_name,
-                    "service.version": service_version,
-                }
+                _service_resource_attributes(service_name, service_version)
             )
 
             # Setup metrics with only Prometheus reader (no OTLP exporters)
@@ -93,10 +100,7 @@ def init_otel(service_name: str = "rtvi", service_version: str = "1.0.0", metric
 
         # Create resource - automatically reads OTEL_SERVICE_NAME and OTEL_RESOURCE_ATTRIBUTES
         resource = Resource.create(
-            {
-                "service.name": service_name,
-                "service.version": service_version,
-            }
+            _service_resource_attributes(service_name, service_version)
         )
 
         # Setup tracing

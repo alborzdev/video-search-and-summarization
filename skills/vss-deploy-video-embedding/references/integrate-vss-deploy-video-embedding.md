@@ -103,6 +103,7 @@ Example: register and embed a live RTSP stream. Live-stream requests **require**
 | `REDIS_PASSWORD` | Redis password. | (empty) | Yes when the Redis instance requires auth |
 | `ASSET_DOWNLOAD_TOTAL_TIMEOUT` | Maximum seconds for a URL asset download. | `300` | No |
 | `ASSET_DOWNLOAD_CONNECT_TIMEOUT` | Connection timeout (seconds) for asset downloads. | `10` | No |
+| `ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS` | Exact comma-separated DNS hostnames permitted to resolve to private addresses for trusted local media origins. Redirects are revalidated; IP literals, CIDRs, suffixes, and wildcards are unsupported. | (empty) | No |
 | `ENABLE_REQUEST_PROFILING` | Per-request profiling. | `false` | No |
 | `NGC_MODEL_CACHE` | Optional bind/named volume override for the NGC model cache. | Named volume `rtvi-ngc-model-cache` | No |
 | `RTVI_EMBED_HF_CACHE` | Optional bind/named volume override for the Hugging Face cache. | Named volume `rtvi-hf-cache` | No |

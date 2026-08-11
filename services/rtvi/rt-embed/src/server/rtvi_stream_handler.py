@@ -33,6 +33,7 @@ import nvtx
 from google.protobuf.timestamp_pb2 import Timestamp
 from opentelemetry import metrics, trace
 from opentelemetry.metrics import Meter
+from opentelemetry.trace import Status, StatusCode
 
 import redis
 from api_models.captions import VlmQuery
@@ -1600,6 +1601,85 @@ class RTVIStreamHandler:
 
         return vision_llm, incident
 
+    @staticmethod
+    def _start_broker_publish_span(
+        span_name: str,
+        *,
+        broker: str,
+        destination: str,
+        request_id: str = "",
+        stream_id: str = "",
+        chunk_idx: int | None = None,
+        message_type: str = "",
+        parent_span=None,
+    ):
+        """Start a request-correlated OpenTelemetry broker publication span."""
+        tracer = get_tracer()
+        if not tracer:
+            return None
+        context = trace.set_span_in_context(parent_span) if parent_span is not None else None
+        span = tracer.start_span(span_name, context=context)
+        span.set_attribute("messaging.system", broker)
+        span.set_attribute("messaging.operation.name", "publish")
+        span.set_attribute("messaging.destination.name", destination)
+        if request_id:
+            span.set_attribute("request_id", request_id)
+        if stream_id:
+            span.set_attribute("stream_id", stream_id)
+        if chunk_idx is not None:
+            span.set_attribute("chunk_idx", chunk_idx)
+        if message_type:
+            span.set_attribute("message_type", message_type)
+        return span
+
+    @staticmethod
+    def _finish_broker_publish_span(span, exception: Exception | None = None, **attributes):
+        """Finish a broker span after its asynchronous publication resolves."""
+        if span is None:
+            return
+        for key, value in attributes.items():
+            if value is not None:
+                span.set_attribute(key, value)
+        if exception is not None:
+            span.record_exception(exception)
+            span.set_status(Status(StatusCode.ERROR, str(exception)))
+        else:
+            span.set_status(Status(StatusCode.OK))
+        span.end()
+
+    @staticmethod
+    def _start_api_request_context(stream_id: str, transport: str) -> RequestInfo:
+        """Create an API-ingress request context before an asset reaches the pipeline.
+
+        URL and inline-data acquisition happens before ``generate_vlm_captions`` creates
+        its normal ``RequestInfo``.  Keeping a short ingress span here lets brokered
+        acquisition errors remain correlated to the originating API request without
+        changing the pipeline request lifecycle.
+        """
+        req_info = RequestInfo()
+        tracer = get_tracer()
+        if tracer:
+            req_info._e2e_span = tracer.start_span("Video Embeddings API Request")
+            req_info._e2e_span.set_attribute("request_id", req_info.request_id)
+            req_info._e2e_span.set_attribute("stream_id", stream_id)
+            req_info._e2e_span.set_attribute("input_transport", transport)
+        return req_info
+
+    @staticmethod
+    def _finish_api_request_context(
+        req_info: RequestInfo, exception: Exception | None = None
+    ) -> None:
+        """Finish an API-ingress request context after acquisition succeeds or fails."""
+        span = req_info._e2e_span
+        if span is None:
+            return
+        if exception is not None:
+            span.record_exception(exception)
+            span.set_status(Status(StatusCode.ERROR, str(exception)))
+        else:
+            span.set_status(Status(StatusCode.OK))
+        span.end()
+
     def _start_kafka_sender(self) -> bool:
         """Start a bounded background sender for Kafka producer.send calls."""
         with self._lock:
@@ -1729,6 +1809,16 @@ class RTVIStreamHandler:
             bootstrap_servers_str = ", ".join(bootstrap_servers)
 
         def send_to_kafka() -> None:
+            publish_span = self._start_broker_publish_span(
+                "Kafka Publish",
+                broker="kafka",
+                destination=topic,
+                request_id=request_id,
+                stream_id=req_info.stream_id,
+                chunk_idx=chunk_idx,
+                message_type=message_type,
+                parent_span=req_info._e2e_span,
+            )
             try:
                 future = kafka_producer.send(
                     topic,
@@ -1738,6 +1828,13 @@ class RTVIStreamHandler:
                 )
 
                 def on_send_success(record_metadata):
+                    self._finish_broker_publish_span(
+                        publish_span,
+                        **{
+                            "messaging.kafka.destination.partition": record_metadata.partition,
+                            "messaging.kafka.message.offset": record_metadata.offset,
+                        },
+                    )
                     logger.debug(
                         "Kafka message sent successfully. Topic: %s, Partition: %s, Offset: %s, "
                         "Request: %s, Chunk: %s",
@@ -1749,6 +1846,7 @@ class RTVIStreamHandler:
                     )
 
                 def on_send_error(excp):
+                    self._finish_broker_publish_span(publish_span, exception=excp)
                     error_msg = str(excp)
                     if "KafkaTimeoutError" in error_msg or "Failed to update metadata" in error_msg:
                         logger.error(
@@ -1780,6 +1878,7 @@ class RTVIStreamHandler:
                 future.add_callback(on_send_success)
                 future.add_errback(on_send_error)
             except KafkaError as e:
+                self._finish_broker_publish_span(publish_span, exception=e)
                 logger.error(
                     "Kafka error sending message for request %s, chunk %s: %s",
                     request_id,
@@ -1788,6 +1887,7 @@ class RTVIStreamHandler:
                     exc_info=True,
                 )
             except Exception as e:
+                self._finish_broker_publish_span(publish_span, exception=e)
                 logger.error(
                     "Unexpected error sending Kafka message for request %s, chunk %s: %s",
                     request_id,
@@ -1802,13 +1902,22 @@ class RTVIStreamHandler:
         )
 
     def _send_error_message_to_kafka(
-        self, error_message: str, uuid_or_stream_id: str = "", type: str = "functional"
+        self,
+        error_message: str,
+        uuid_or_stream_id: str = "",
+        type: str = "functional",
+        req_info: RequestInfo | None = None,
     ):
         """Send error message to Kafka topic or Redis channel based on ENABLE_REDIS_ERROR_MESSAGES."""
 
         # Switch between Redis and Kafka based on environment variable
         if self._use_redis_error_bus:
-            self._send_error_message_to_redis(error_message, uuid_or_stream_id, type)
+            self._send_error_message_to_redis(
+                error_message,
+                uuid_or_stream_id,
+                type,
+                req_info=req_info,
+            )
             return
 
         if not self._kafka_enabled:
@@ -1841,8 +1950,19 @@ class RTVIStreamHandler:
         }
         serialized_error_message = json.dumps(kafka_error_message).encode("utf-8")
         headers = [("message_type", "error".encode("utf-8"))]
+        request_id = req_info.request_id if req_info is not None else ""
+        parent_span = req_info._e2e_span if req_info is not None else None
 
         def send_to_kafka() -> None:
+            publish_span = self._start_broker_publish_span(
+                "Kafka Error Publish",
+                broker="kafka",
+                destination=kafka_topic,
+                request_id=request_id,
+                stream_id=stream_id,
+                message_type="error",
+                parent_span=parent_span,
+            )
             try:
                 future = kafka_producer.send(
                     kafka_topic,
@@ -1850,13 +1970,21 @@ class RTVIStreamHandler:
                     headers=headers,
                 )
 
-                def on_send_success(_):
+                def on_send_success(record_metadata):
+                    self._finish_broker_publish_span(
+                        publish_span,
+                        **{
+                            "messaging.kafka.destination.partition": record_metadata.partition,
+                            "messaging.kafka.message.offset": record_metadata.offset,
+                        },
+                    )
                     logger.info(
                         "Kafka error message sent successfully for stream %s",
                         stream_id,
                     )
 
-                def on_send_error(_):
+                def on_send_error(excp):
+                    self._finish_broker_publish_span(publish_span, exception=excp)
                     logger.error(
                         "Kafka error sending error message for stream %s",
                         stream_id,
@@ -1866,6 +1994,7 @@ class RTVIStreamHandler:
                 future.add_callback(on_send_success)
                 future.add_errback(on_send_error)
             except Exception as e:
+                self._finish_broker_publish_span(publish_span, exception=e)
                 logger.error(
                     "Error sending Kafka error message for stream %s: %s",
                     stream_id,
@@ -1962,7 +2091,11 @@ class RTVIStreamHandler:
                 return False
 
     def _send_error_message_to_redis(
-        self, error_message: str, uuid_or_stream_id: str = "", type: str = "functional"
+        self,
+        error_message: str,
+        uuid_or_stream_id: str = "",
+        type: str = "functional",
+        req_info: RequestInfo | None = None,
     ):
         """Send error message to Redis channel."""
 
@@ -1991,10 +2124,25 @@ class RTVIStreamHandler:
             "event": error_message,
         }
         serialized_error_message = json.dumps(redis_error_message).encode("utf-8")
+        request_id = req_info.request_id if req_info is not None else ""
+        parent_span = req_info._e2e_span if req_info is not None else None
 
         def publish_to_redis() -> None:
+            publish_span = self._start_broker_publish_span(
+                "Redis Error Publish",
+                broker="redis",
+                destination=redis_channel,
+                request_id=request_id,
+                stream_id=stream_id,
+                message_type="error",
+                parent_span=parent_span,
+            )
             try:
-                redis_client.publish(redis_channel, serialized_error_message)
+                subscriber_count = redis_client.publish(redis_channel, serialized_error_message)
+                self._finish_broker_publish_span(
+                    publish_span,
+                    **{"messaging.redis.subscriber_count": subscriber_count},
+                )
 
                 logger.info(
                     "Redis error message sent successfully for stream %s on channel %s",
@@ -2002,6 +2150,7 @@ class RTVIStreamHandler:
                     redis_channel,
                 )
             except Exception as e:
+                self._finish_broker_publish_span(publish_span, exception=e)
                 logger.error(
                     "Error sending Redis error message for stream %s: %s",
                     stream_id,
@@ -2028,7 +2177,9 @@ class RTVIStreamHandler:
                 getattr(chunk_result.chunk, "chunkIdx", "unknown"),
                 exc,
             )
-            self._send_error_message_to_kafka(error_message, req_info.stream_id)
+            self._send_error_message_to_kafka(
+                error_message, req_info.stream_id, req_info=req_info
+            )
             logger.error(error_message, exc_info=True)
 
         if vision_llm_message:
@@ -2047,7 +2198,9 @@ class RTVIStreamHandler:
                     getattr(chunk_result.chunk, "chunkIdx", "unknown"),
                     exc,
                 )
-                self._send_error_message_to_kafka(error_message, req_info.stream_id)
+                self._send_error_message_to_kafka(
+                    error_message, req_info.stream_id, req_info=req_info
+                )
                 logger.error(error_message)
 
         if incident_message:
@@ -2067,7 +2220,9 @@ class RTVIStreamHandler:
                     getattr(chunk_result.chunk, "chunkIdx", "unknown"),
                     exc,
                 )
-                self._send_error_message_to_kafka(error_message, req_info.stream_id)
+                self._send_error_message_to_kafka(
+                    error_message, req_info.stream_id, req_info=req_info
+                )
                 logger.error(error_message)
 
         if chunk_result.decode_retry_count:
@@ -2216,7 +2371,9 @@ class RTVIStreamHandler:
                 self._vlm_pipeline.abort_chunks(req_info.assets[0].asset_id)
                 req_info.status_event.set()
 
-            self._send_error_message_to_kafka(chunk_result.error, req_info.stream_id)
+            self._send_error_message_to_kafka(
+                chunk_result.error, req_info.stream_id, req_info=req_info
+            )
             logger.error(
                 "Encountered error while processing chunk %r of query %s - %s",
                 chunk_result.chunk,
@@ -2233,6 +2390,7 @@ class RTVIStreamHandler:
                     chunk_result.stream_error_message,
                     live_stream_id,
                     type="stream_reconnection",
+                    req_info=req_info,
                 )
                 logger.warning(
                     "Stream reconnection error for live-stream %s (attempt %d): %s",
@@ -2349,7 +2507,9 @@ class RTVIStreamHandler:
                 logger.debug("Opened vlm_testdata_file at %s", vlm_testdata_file_path)
             except Exception as e:
                 error_message = "Failed to open vlm_testdata_file: %s" % e
-                self._send_error_message_to_kafka(error_message, req_info.stream_id)
+                self._send_error_message_to_kafka(
+                    error_message, req_info.stream_id, req_info=req_info
+                )
                 logger.warning(error_message)
                 req_info.vlm_testdata_file_handle = None
 
@@ -3088,7 +3248,9 @@ class RTVIStreamHandler:
             req_info.status = RequestInfo.Status.FAILED
             req_info.error_message = chunk_result.error
             req_info.error_status_code = chunk_result.error_status_code
-            self._send_error_message_to_kafka(chunk_result.error, req_info.stream_id)
+            self._send_error_message_to_kafka(
+                chunk_result.error, req_info.stream_id, req_info=req_info
+            )
             req_info.status_event.set()
             return
 
@@ -3122,7 +3284,9 @@ class RTVIStreamHandler:
                     getattr(chunk_result.chunk, "chunkIdx", "unknown"),
                     exc,
                 )
-                self._send_error_message_to_kafka(error_message, req_info.stream_id)
+                self._send_error_message_to_kafka(
+                    error_message, req_info.stream_id, req_info=req_info
+                )
                 logger.debug(
                     error_message,
                     exc_info=True,
@@ -3144,7 +3308,9 @@ class RTVIStreamHandler:
                         getattr(chunk_result.chunk, "chunkIdx", "unknown"),
                         exc,
                     )
-                    self._send_error_message_to_kafka(error_message, req_info.stream_id)
+                    self._send_error_message_to_kafka(
+                        error_message, req_info.stream_id, req_info=req_info
+                    )
                     logger.debug(error_message)
 
         if len(req_info.processed_chunk_list) == len(req_info.text_query.text_input_list):

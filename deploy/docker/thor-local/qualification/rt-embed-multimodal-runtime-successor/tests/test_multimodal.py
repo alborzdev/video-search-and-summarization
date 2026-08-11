@@ -43,10 +43,10 @@ def _module() -> Any:
 
 
 def test_retained_artifact_hashes_and_schema() -> None:
-    assert _sha(CONTRACT) == "9579b84b2d88816bf0ece6bc9f19fbbade902d76e424b9419778fe1c8c68f4a7"
+    assert _sha(CONTRACT) == "8911b51587a7bf0b008b15c48843f7057ce0fe63f964072ee55456f3d61099de"
     assert _sha(EXECUTOR) == "10959f5850058beb659839b3a3acc99ef7c7210a0fe893909e155b4b25d27aed"
     assert _sha(SCHEMA) == "cbc2627e0858db3789c070e86dcc6230f33219a2b6574c7472b78a1068b09987"
-    assert _sha(RECEIPT) == "33e7dd3be73b5eaf33b06059842ee4d46459e7cd57daa3a2e46f3927182b5737"
+    assert _sha(RECEIPT) == "eb47ae80abd926f585c1b16b5ebac2fdce981d71e69b3ea50d490a47adbd30d5"
     schema = _load(SCHEMA)
     receipt = _load(RECEIPT)
     Draft202012Validator.check_schema(schema)

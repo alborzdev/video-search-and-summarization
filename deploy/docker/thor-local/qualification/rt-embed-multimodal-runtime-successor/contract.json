@@ -10,7 +10,7 @@
   "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
   "runtime": {
     "container": "vss-rtvi-embed",
-    "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+    "image_id": "sha256:bf12a86dbd61c48cd34773008a960611ed0ad4afa50f329d3f1ca65615a713bc",
     "origin": "http://127.0.0.1:8017",
     "host_binding": "127.0.0.1:8017",
     "release": "3.2.1",
@@ -23,14 +23,14 @@
     {
       "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
       "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_embed_server.py",
-      "bytes": 94075,
-      "sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+      "bytes": 96138,
+      "sha256": "36069c0d8b164d4d5c61c1aebaeed6250473c87a128ccad0cbb993390372a1cf"
     },
     {
       "path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
       "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py",
-      "bytes": 140286,
-      "sha256": "9fc4bbe627f460358ac87e261b0219ef20165ce30e9fb915574564467731d70e"
+      "bytes": 147018,
+      "sha256": "838fc8e3a1f5d48b2fc295065d3f1ea6b119c4378a34fa23322d6166a6173148"
     },
     {
       "path": "services/rtvi/rt-embed/src/models/custom/samples/cosmos-embed1/inference.py",
@@ -40,8 +40,8 @@
     },
     {
       "path": "deploy/docker/thor-local/compose.yml",
-      "bytes": 28120,
-      "sha256": "e4b21e864ab179f86a59864208d778bfc432ccd55b289f4dd3d5ec8880fb8282"
+      "bytes": 29373,
+      "sha256": "774839ecd097bc5acb40184049dbd53386be0a224bbc49aa02bdf7b7b8fc47ee"
     },
     {
       "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",

@@ -77,14 +77,15 @@ def _adapt_legacy_contract(
 ) -> tuple[dict[str, Any], bytes]:
     adapted = copy.deepcopy(base)
     adapted["target"]["captured_on"] = contract["captured_on"]
-    overlay = contract["reused_qualifier"]["allowed_overlay"]
-    matches = [
-        row for row in adapted["source_anchors"] if row["path"] == overlay["compose_path"]
-    ]
-    if len(matches) != 1:
-        raise QualificationError("legacy Compose source anchor denominator drifted")
-    matches[0]["bytes"] = overlay["compose_bytes"]
-    matches[0]["sha256"] = overlay["compose_sha256"]
+    for overlay in contract["reused_qualifier"]["allowed_overlays"]:
+        matches = [
+            row for row in adapted["source_anchors"] if row["path"] == overlay["path"]
+        ]
+        if len(matches) != 1:
+            raise QualificationError("legacy source anchor denominator drifted")
+        matches[0]["bytes"] = overlay["bytes"]
+        matches[0]["sha256"] = overlay["sha256"]
+    adapted["service"]["image_id"] = contract["runtime"]["image_id"]
     raw = (json.dumps(adapted, indent=2, sort_keys=True) + "\n").encode()
     return adapted, raw
 
@@ -97,12 +98,12 @@ def _verify_static(contract: dict[str, Any]) -> tuple[dict[str, Any], bytes]:
         REPO / reused["contract_path"], reused["contract_sha256"]
     )
     _verify_file(REPO / reused["executor_path"], reused["executor_sha256"])
-    overlay = reused["allowed_overlay"]
-    _verify_file(
-        REPO / overlay["compose_path"],
-        overlay["compose_sha256"],
-        overlay["compose_bytes"],
-    )
+    for overlay in reused["allowed_overlays"]:
+        _verify_file(
+            REPO / overlay["path"], overlay["sha256"], overlay["bytes"]
+        )
+    for lock in contract["additional_source_locks"]:
+        _verify_file(REPO / lock["path"], lock["sha256"], lock["bytes"])
     ledger_lock = contract["ledger"]
     _verify_file(
         REPO / ledger_lock["path"], ledger_lock["sha256"], ledger_lock["bytes"]

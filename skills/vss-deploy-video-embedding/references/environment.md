@@ -61,6 +61,7 @@ Several host-side variables map to differently named container variables. The Co
 | `REDIS_PASSWORD` | Redis password. | (empty) |
 | `ASSET_DOWNLOAD_TOTAL_TIMEOUT` | Maximum seconds for a URL asset download. | `300` |
 | `ASSET_DOWNLOAD_CONNECT_TIMEOUT` | Connection timeout for asset downloads. | `10` |
+| `ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS` | Exact comma-separated DNS hostnames allowed to resolve to private addresses for trusted local media origins. IP literals, CIDRs, suffixes, and wildcards are rejected; redirects are independently revalidated. | (empty) |
 | `ENABLE_REQUEST_PROFILING` | Per-request profiling. | `false` |
 | `KAFKA_BOOTSTRAP_SERVERS` | Kafka broker list (constructed by Compose as `${HOST_IP}:9092`). | derived |
 
@@ -85,4 +86,4 @@ The following are credentials. Set them through `.env`, a secrets manager, or yo
 
 ## OpenTelemetry Defaults
 
-When `RTVI_EMBED_ENABLE_OTEL_MONITORING=true` is set on the host (Compose injects this as `ENABLE_OTEL_MONITORING` inside the container), the service exports OTLP traces and metrics to the endpoint named by `RTVI_EMBED_OTEL_EXPORTER_OTLP_ENDPOINT` (injected as `OTEL_EXPORTER_OTLP_ENDPOINT`; default `http://otel-collector:4318`). The default `RTVI_EMBED_OTEL_METRIC_EXPORT_INTERVAL=60000` (injected as `OTEL_METRIC_EXPORT_INTERVAL`) is in milliseconds. Set `RTVI_EMBED_OTEL_RESOURCE_ATTRIBUTES` on the host (injected as `OTEL_RESOURCE_ATTRIBUTES`) to tag traces with deployment-specific labels. Setting any of the container-side names (`ENABLE_OTEL_MONITORING`, `OTEL_*`) directly on the host has no effect.
+When `RTVI_EMBED_ENABLE_OTEL_MONITORING=true` is set on the host (Compose injects this as `ENABLE_OTEL_MONITORING` inside the container), the service exports OTLP traces and metrics to the endpoint named by `RTVI_EMBED_OTEL_EXPORTER_OTLP_ENDPOINT` (injected as `OTEL_EXPORTER_OTLP_ENDPOINT`; default `http://otel-collector:4318`). The default `RTVI_EMBED_OTEL_METRIC_EXPORT_INTERVAL=60000` (injected as `OTEL_METRIC_EXPORT_INTERVAL`) is in milliseconds. Set `RTVI_EMBED_OTEL_RESOURCE_ATTRIBUTES` on the host (injected as `OTEL_RESOURCE_ATTRIBUTES`) to tag traces with deployment-specific labels. A deployment overlay may set the container-side standard `OTEL_SERVICE_NAME`; RT-Embed honors that value as the exported `service.name` instead of replacing it with the call-site default. Setting other container-side names (`ENABLE_OTEL_MONITORING`, `OTEL_*`) directly on the host has no effect unless a Compose overlay maps them.

@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_twenty_seven_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_twenty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 371, 373, 374
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -204,6 +204,23 @@ def test_rt_embed_live_api_receipt_is_bound_to_three_exact_rows() -> None:
     assert receipt["live_rtsp"]["embedding_dimension"] == 768
     assert receipt["stream_apis"]["complete_operation_count"] == 24
     assert receipt["health_metadata_models_metrics"]["metrics_http_200_and_prometheus"] is True
+
+
+def test_rt_embed_url_brokers_otel_receipt_is_bound_to_two_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-embed-url-brokers-otel-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [370, 372]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+    assert receipt["url_and_inline_base64"]["same_fixture_bytes"] is True
+    assert receipt["kafka"]["result_message_count"] == 2
+    assert receipt["redis"]["error_message_count"] == 1
+    assert receipt["opentelemetry"]["configured_service_name_exact"] is True
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

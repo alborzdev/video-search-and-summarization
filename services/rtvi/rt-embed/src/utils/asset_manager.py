@@ -37,6 +37,7 @@ from api_models.common import (
     AWS_S3_OBJECT_URL_PATTERN,
     AWS_S3_URL_PATTERN,
     BLOCKED_IP_RANGES,
+    is_asset_download_private_host_allowed,
 )
 from common.logger import TimeMeasure, logger
 from common.service_exception import ServiceException
@@ -95,6 +96,9 @@ def validate_url_ssrf_runtime(url: str) -> None:
     hostname = parsed.hostname
     if not hostname:
         raise ServiceException("Invalid URL: missing hostname", "InvalidParameters", 422)
+
+    if is_asset_download_private_host_allowed(hostname):
+        return
 
     # Perform DNS resolution and check resolved IPs
     try:
@@ -162,6 +166,9 @@ async def validate_url_ssrf_runtime_async(url: str) -> None:
     hostname = parsed.hostname
     if not hostname:
         raise ServiceException("Invalid URL: missing hostname", "InvalidParameters", 422)
+
+    if is_asset_download_private_host_allowed(hostname):
+        return
 
     # Perform async DNS resolution and check resolved IPs
     try:

@@ -40,6 +40,7 @@ from .common import (
     MediaInfoOffset,
     MediaInfoTimeStamp,
     StreamOptions,
+    is_asset_download_private_host_allowed,
 )
 from .file import MediaType
 
@@ -119,6 +120,8 @@ def validate_url_against_ssrf(url: str) -> None:
                 f"Access to '{hostname}' is not allowed for security reasons (SSRF protection)"
             )
 
+    private_host_allowed = is_asset_download_private_host_allowed(hostname)
+
     # Check if hostname is an IP address
     is_ip = False
     try:
@@ -132,6 +135,11 @@ def validate_url_against_ssrf(url: str) -> None:
         _validate_ip_against_blocked_ranges(ip, "Access to IP address")
         return
 
+    if private_host_allowed:
+        # Exact operator-approved DNS name. Runtime validation performs the
+        # same exact-host check again, including for every redirect target.
+        return
+
     # Not a valid IP address, it's a hostname — resolve via DNS
     try:
         addr_info = socket.getaddrinfo(hostname, None, socket.AF_UNSPEC, socket.SOCK_STREAM)
@@ -143,15 +151,12 @@ def validate_url_against_ssrf(url: str) -> None:
 
             try:
                 resolved_ip = ipaddress.ip_address(ip_str)
-                _validate_ip_against_blocked_ranges(
-                    resolved_ip, f"Hostname '{hostname}' resolves to"
-                )
             except (ValueError, ipaddress.AddressValueError) as parse_err:
-                # ValueError from ip_address() on malformed IPs;
-                # AddressValueError on some Python versions
                 logger.warning("Could not parse resolved IP %s: %s", ip_str, parse_err)
                 continue
-            # Let ValueError from validation propagate
+            _validate_ip_against_blocked_ranges(
+                resolved_ip, f"Hostname '{hostname}' resolves to"
+            )
 
     except socket.gaierror as e:
         raise ValueError(f"Cannot resolve hostname '{hostname}': {e}") from e
