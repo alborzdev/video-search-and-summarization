@@ -163,8 +163,8 @@ enable-padding=0
 nvbuf-memory-type=0
 attach-sys-ts-as-ntp=0
 drop-pipeline-eos=1
-extract-sei-sim-time=1
-drop-backward-sei=1
+extract-sei-sim-time=0
+drop-backward-sei=0
 
 [primary-gie]
 enable=1

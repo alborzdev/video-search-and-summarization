@@ -21,13 +21,31 @@ docker compose -f compose.yaml up
 | `DS_MODEL_FAMILY`   | `rtdetr-warehouse`                      | Model family: `rtdetr-warehouse` (aliases `cnn`), `rtdetr-gdino` (alias `rtdetr`), `sparse4d-warehouse` (alias `sparse4d`) |
 | `DS_MODE_FLAG`      | `1`                                     | DeepStream `-m` parameter                                                                                                  |
 | `DS_MESSAGE_RATE`   | `1`                                     | `--message-rate` parameter                                                                                                 |
-| `DS_TRACKER_REID`   | `false`                                 | Enable `--tracker-reid` (warehouse path)                                                                                   |
+| `DS_TRACKER_REID`   | `false`                                 | `true` stages/enables tracker ReID; `false` sets `reidType: 0` and avoids an unrelated ReID engine build                  |
 | `DS_SHOW_SENSOR_ID` | `false`                                 | Enable `--show-sensor-id`                                                                                                  |
 | `DS_CONFIG_FILE`    | `run_config-api-rtdetr-protobuf700.txt` | Config file (RT-DETR+GDINO path)                                                                                           |
 | `MODEL_TYPE`        | `cnn`                                   | Model type for the perception app                                                                                          |
 | `STREAM_TYPE`       | `kafka`                                 | Message broker: `kafka` or `redis`                                                                                         |
 | `NUM_SENSORS`       | `30`                                    | Batch size (RT-DETR/GDINO)                                                                                                 |
 | `MODEL_NAME_2D`     | —                                       | Set to `GDINO` for GDINO model                                                                                             |
+
+### Thor RT-DETR engine cache
+
+TensorRT 10 may reject the legacy explicit FP16 builder flag for the Smart
+City FP16 ONNX and retry in strongly typed mode. On `AGX-THOR`, that fallback
+serializes the generated engine beside the ONNX model. The entrypoint therefore
+sets `model-engine-file` to
+`/opt/storage/rtdetr-its/model_epoch_035.fp16.onnx_b<NUM_SENSORS>_gpu0_fp16.engine`.
+Mount `/opt/storage/rtdetr-its` read-write to retain the first build; keeping
+only `/opt/engines` writable is insufficient for this model on Thor.
+
+The HTTP service can report ready before a first engine build has completed,
+and the pipeline instance that performed the build may not accept a useful
+finite source afterward. For deterministic first deployment, use one isolated
+instance to trigger the engine build, wait for the cache file, then replace it
+with a fresh instance before adding production streams. Removing an
+already-ended source is not idempotent and returns a pipeline error.
+Subsequent launches reuse the cache and do not need this build phase.
 
 ## Blueprint Integration
 

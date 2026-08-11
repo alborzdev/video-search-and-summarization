@@ -1,6 +1,6 @@
 # Evidence
 
-The retained Thor run passed in 134.028764 seconds with Docker using the
+The retained Thor run passed in 129.599092 seconds with Docker using the
 required `cgroupfs` driver. The isolated RT-CV container used the exact cached
 VSS 3.2.1 arm64 image and the effective runtime configuration reported:
 
@@ -13,9 +13,9 @@ VSS 3.2.1 arm64 image and the effective runtime configuration reported:
 - `vpiBackend4DcfTracker=2`.
 
 The finite local-file lane decoded eight qualifier-only protobuf frames with
-38 detections, including `Person` and `Pallet`, six repeated track identities,
+39 detections, including `Person` and `Pallet`, seven repeated track identities,
 and finite 1,152-dimensional embeddings. The loopback RTSP lane decoded eight
-frames with 42 detections, the same class coverage, seven repeated track
+frames with 51 detections, the same class coverage, eight repeated track
 identities, and finite 1,152-dimensional embeddings. Both lanes reported one
 active stream with positive FPS/frame counters and finite latency, then passed
 their exact add/remove lifecycle and returned to zero streams.
@@ -35,7 +35,7 @@ camera identity, raw URL, or raw vector was used or retained.
 
 Artifact locks:
 
-- contract: `abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8`
+- contract: `e6959a5733b55a3e47c2adc575455719b6e88166ba897a1b1f74608c72fa0b1e`
 - receipt schema: `f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4`
-- runtime receipt: `53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882`
+- runtime receipt: `c3739e024b56f0a9d6166c3a92b9e138e330b885a4a531d80b92c3937885b164`
 - executor: `c9bbf58b566b32861e5bfc8ad3507ed2091ffb70e8c95f42fb57a3dc5e44b8cd`

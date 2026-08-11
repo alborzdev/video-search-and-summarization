@@ -11,12 +11,12 @@
     "temporary_directory_removed": true
   },
   "container": {
-    "isolated_log_sha256": "03fc7a7d7314af3a18cf78542ba051061455349fd8ff8ba825778f5d0afd6044",
+    "isolated_log_sha256": "2dae7546df188309058d3d9e3e521e9b441e8d74cc9e0fefe28028f546f77707",
     "oom_killed": false,
     "restart_count": 0,
     "running_during_proof": true
   },
-  "contract_sha256": "06d737dbe886b13bbd0aaf955144c5b67245e1b7d37f6f8b6d426386af32c23a",
+  "contract_sha256": "75e1bb3092dd0f80e6c04f7b2d05c4b7eb579a9d1520b9df046ad66b686ec9b0",
   "fixtures": {
     "contrast_sha256": "99deb259a836d7054ae04b516a5196d59c5865090ee8c7da2501a20be1ff0d49",
     "different_content": true,
@@ -70,7 +70,7 @@
       "object_exact": true,
       "request_id_nonempty": true,
       "request_sha256": "c91103274f2530ed05adedad5821618403eaed2a5588ae7b9e5c3cb784a209a6",
-      "response_sha256": "737670d6da89949c6e68220f79c5e4da1ca637329b558fe0d8efc180ebd3f971",
+      "response_sha256": "29638d2559b4d5df2547b872d0d1a6736d88174c91e2b25711b2c0b21f320a03",
       "vector_sha256": "9dd588ef285ff3e4cabf04a17c715c6289cf856bbe664fd23bccc7fcf1c252c2"
     },
     "different_image_cosine": 0.8704016749813162,
@@ -91,7 +91,7 @@
       "object_exact": true,
       "request_id_nonempty": true,
       "request_sha256": "f595f0ec3c88254d9788ac9b3295806f36f0cfaa227c2d0809e97cbbc4eb401a",
-      "response_sha256": "036c4581a47aeded0a319ee5e7253112d8adbf8bac22cc1696fef5fc92f1cf1d",
+      "response_sha256": "2bef67996406b58852504a005e00f1ce1e011ae177f020807421316b4bab5656",
       "vector_sha256": "7335eb090db6e1164c30ec519a7cb6ecb2cd2736415a4e29b2fa6aacd0eaa53b"
     },
     "primary_repeat": {
@@ -106,7 +106,7 @@
       "object_exact": true,
       "request_id_nonempty": true,
       "request_sha256": "f595f0ec3c88254d9788ac9b3295806f36f0cfaa227c2d0809e97cbbc4eb401a",
-      "response_sha256": "036c4581a47aeded0a319ee5e7253112d8adbf8bac22cc1696fef5fc92f1cf1d",
+      "response_sha256": "2bef67996406b58852504a005e00f1ce1e011ae177f020807421316b4bab5656",
       "vector_sha256": "7335eb090db6e1164c30ec519a7cb6ecb2cd2736415a4e29b2fa6aacd0eaa53b"
     },
     "raw_image_paths_retained": false,
@@ -130,9 +130,9 @@
   "runtime": {
     "docker_cgroup_driver": "cgroupfs",
     "docker_commands": 19,
-    "duration_seconds": 26.592039035982452,
-    "free_bytes_after": 23879438336,
-    "http_requests": 20
+    "duration_seconds": 28.6061091410229,
+    "free_bytes_after": 23174975488,
+    "http_requests": 21
   },
   "schema_version": 1,
   "status": "passed"

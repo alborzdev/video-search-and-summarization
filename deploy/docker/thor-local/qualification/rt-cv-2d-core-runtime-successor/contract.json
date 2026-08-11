@@ -9,11 +9,11 @@
   ],
   "official_indices": [375, 380, 381, 382],
   "target_release": "VSS 3.2.1",
-  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "target_commit": "3f364f5dbfa915fdbb1e077ad359fc73708a74fb",
   "source_locks": [
     {
       "path": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
-      "sha256": "86be1e1cd96e0eebc0dabae5e64f7f4bb415322b44559d9aa38c441a90c66f22"
+      "sha256": "83b4cf5836d876a97bbb54a553845e3daaec8908e57440b09fd8154a519abe62"
     },
     {
       "path": "deploy/docker/thor-local/compose.yml",

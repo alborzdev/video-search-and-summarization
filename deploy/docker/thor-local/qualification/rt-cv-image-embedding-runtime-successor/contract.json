@@ -6,7 +6,7 @@
   ],
   "official_indices": [379],
   "target_release": "VSS 3.2.1",
-  "target_commit": "9d213beda11793712e4a9350c646bf7b3d8c0382",
+  "target_commit": "3f364f5dbfa915fdbb1e077ad359fc73708a74fb",
   "images": {
     "rt_cv": {
       "ref": "nvcr.io/nvidia/vss-core/vss-rt-cv:3.2.1",
@@ -32,11 +32,11 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
-      "sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8"
+      "sha256": "e6959a5733b55a3e47c2adc575455719b6e88166ba897a1b1f74608c72fa0b1e"
     },
     {
       "path": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
-      "sha256": "86be1e1cd96e0eebc0dabae5e64f7f4bb415322b44559d9aa38c441a90c66f22"
+      "sha256": "83b4cf5836d876a97bbb54a553845e3daaec8908e57440b09fd8154a519abe62"
     },
     {
       "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/scripts/ds-search-start.sh",
@@ -80,7 +80,7 @@
     "minimum_free_bytes": 10737418240,
     "max_duration_seconds": 180,
     "max_docker_commands": 40,
-    "max_http_requests": 20
+    "max_http_requests": 30
   },
   "policy": {
     "agent_generate_calls": 0,

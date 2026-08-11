@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_thirty_four_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_thirty_five_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 379, 380, 381, 382
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 379, 380, 381, 382
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -238,6 +238,23 @@ def test_rt_cv_2d_core_receipt_is_bound_to_four_exact_rows() -> None:
     assert receipt["rtsp_detection_tracking"]["detection_tracking"]["frames"] == 8
     assert receipt["dynamic_stream_lifecycle"]["final_stream_count"] == 0
     assert receipt["thor_vpi_tracker"]["vpi_error_count_after_clean_start"] == 0
+
+
+def test_rt_cv_model_variants_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-cv-model-variants-runtime-successor"
+    )
+    assert entry["official_index"] == 376
+    receipt = compiler._validate_receipt(entry)
+    assert receipt["warehouse_rtdetr"]["class_map_person_and_pallet"] is True
+    assert receipt["smart_city_rtdetr"]["configuration"]["detector_backend"] == "nvinfer"
+    assert receipt["smart_city_rtdetr"]["detection_tracking"]["frames"] == 8
+    assert receipt["smart_city_gdino"]["configuration"]["detector_backend"] == "triton"
+    assert receipt["smart_city_gdino"]["configuration"]["prompt_class"] == "person"
+    assert receipt["smart_city_gdino"]["detection_tracking"]["frames"] == 8
 
 
 def test_rt_cv_image_embedding_receipt_is_bound_to_exact_row() -> None:

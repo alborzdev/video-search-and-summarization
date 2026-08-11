@@ -1,7 +1,7 @@
 {
   "budget": {
     "docker_commands": 70,
-    "http_requests": 121,
+    "http_requests": 116,
     "max_docker_commands": 120,
     "max_http_requests": 160,
     "stream_mutations": 4,
@@ -35,8 +35,8 @@
     "visual_tracker_type": 2,
     "vpi_backend_4dcf_tracker": 2
   },
-  "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
-  "duration_seconds": 134.028764,
+  "contract_sha256": "e6959a5733b55a3e47c2adc575455719b6e88166ba897a1b1f74608c72fa0b1e",
+  "duration_seconds": 129.599092,
   "dynamic_stream_lifecycle": {
     "active_state_observed_for_each": true,
     "file_add_http_status": 200,
@@ -69,16 +69,16 @@
       "finite_embeddings": true,
       "frames": 8,
       "maximum_objects_per_frame": 6,
-      "minimum_objects_per_frame": 4,
-      "objects": 38,
-      "repeated_track_ids": 6,
+      "minimum_objects_per_frame": 3,
+      "objects": 39,
+      "repeated_track_ids": 7,
       "sensor_value_present": true,
       "single_sensor_value": true,
       "types": [
         "Pallet",
         "Person"
       ],
-      "unique_track_ids": 6
+      "unique_track_ids": 7
     },
     "input_type": "finite_local_file",
     "remove": {
@@ -118,7 +118,7 @@
     "live_http_status": 200,
     "metadata_http_status": 200,
     "prometheus": {
-      "body_sha256": "a5cbd6dcb637c2de1caea6b982a2ed79f0c5342740fb1dfda7b99f94265d8468",
+      "body_sha256": "7238d334e50da9cebdc50af0e0824cca3510a4754295f16d11243f1dfcc84fc3",
       "http_status": 200,
       "metric_families": [
         "fps_metrics",
@@ -174,17 +174,17 @@
       "finite_confidences": true,
       "finite_embeddings": true,
       "frames": 8,
-      "maximum_objects_per_frame": 6,
+      "maximum_objects_per_frame": 8,
       "minimum_objects_per_frame": 4,
-      "objects": 42,
-      "repeated_track_ids": 7,
+      "objects": 51,
+      "repeated_track_ids": 8,
       "sensor_value_present": true,
       "single_sensor_value": true,
       "types": [
         "Pallet",
         "Person"
       ],
-      "unique_track_ids": 7
+      "unique_track_ids": 8
     },
     "input_type": "loopback_rtsp",
     "media_probe": {
@@ -226,7 +226,7 @@
   "status": "passed",
   "thor_vpi_tracker": {
     "effective_configuration_exact": true,
-    "isolated_log_sha256": "8eac15f5d330b79de02c70b3bf00e1499d054ec9b024b1f74ed1235c42ce4bfb",
+    "isolated_log_sha256": "6c79f92b27557164969cf4468320f7d9d728126f3f1513b6c5c9a7a7ea209fbb",
     "oom_killed": false,
     "restart_count": 0,
     "stable_tracks_file": true,

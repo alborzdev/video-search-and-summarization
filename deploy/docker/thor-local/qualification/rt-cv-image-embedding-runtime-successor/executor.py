@@ -172,15 +172,20 @@ def _embedding_call(
 ) -> tuple[list[float], dict[str, Any]]:
     execution = contract["execution"]
     body = _canonical({"image_path": image_path, "model": execution["model_name"]})
-    status, raw = core._http(
-        execution["endpoint"],
-        "/api/v1/generate_image_embeddings",
-        http_requests,
-        method="POST",
-        body=body,
-        timeout=120,
-    )
-    value = core._json_response(status, raw, "image embedding")
+    deadline = time.monotonic() + 30
+    while True:
+        status, raw = core._http(
+            execution["endpoint"],
+            "/api/v1/generate_image_embeddings",
+            http_requests,
+            method="POST",
+            body=body,
+            timeout=120,
+        )
+        value = core._json_response(status, raw, "image embedding")
+        if status == 200 or status != 500 or time.monotonic() >= deadline:
+            break
+        time.sleep(1)
     if status != 200:
         raise QualificationError(f"image embedding returned HTTP {status}")
     data = value.get("data")

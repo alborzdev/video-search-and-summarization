@@ -76,6 +76,36 @@ apply_thor_tracker_tuning()
     echo "##### Thor VPI capacity: ${max_sources} sources x ${max_targets_per_stream} targets <= 512. #####"
 }
 
+apply_tracker_reid_mode()
+{
+    local tracker_config="$1"
+
+    if [[ ! -f "$tracker_config" ]]; then
+        echo "ERROR: Tracker config not found at $tracker_config"
+        return 1
+    fi
+
+    case "$DS_TRACKER_REID" in
+        true)
+            cp models/rtdetr-its/resnet50_market1501.etlt \
+               /opt/nvidia/deepstream/deepstream/samples/models/Tracker/resnet50_market1501.etlt
+            echo "##### Tracker ReID enabled. #####"
+            ;;
+        false)
+            sed -i '/^ReID:/,/^[A-Z][a-zA-Z]*:/ {s/^[[:space:]]*reidType:.*/  reidType: 0/; s/^[[:space:]]*outputReidTensor:.*/  outputReidTensor: 0/;}' "$tracker_config"
+            if ! sed -n '/^ReID:/,/^[A-Z][a-zA-Z]*:/p' "$tracker_config" | grep -Eq '^[[:space:]]*reidType:[[:space:]]*0([[:space:]]|$)'; then
+                echo "ERROR: Failed to disable tracker ReID in $tracker_config"
+                return 1
+            fi
+            echo "##### Tracker ReID disabled; no ReID engine will be built. #####"
+            ;;
+        *)
+            echo "ERROR: DS_TRACKER_REID must be true or false (got: $DS_TRACKER_REID)"
+            return 1
+            ;;
+    esac
+}
+
 # ---------------------------------------------------------------------------
 # CNN family (warehouse-2d, search)
 # ---------------------------------------------------------------------------
@@ -120,9 +150,6 @@ start_rtdetr_gdino()
     mkdir -p "${ENGINES_DIR}/gdino" "${ENGINES_DIR}/rtdetr-its"
     GDINO_TRT_PLAN="${ENGINES_DIR}/gdino/model_gdino_trt.plan"
 
-    cp models/rtdetr-its/resnet50_market1501.etlt \
-       /opt/nvidia/deepstream/deepstream/samples/models/Tracker/resnet50_market1501.etlt
-
     if [[ "${MODEL_NAME_2D:-}" == "GDINO" ]]; then
 
         if [[ ! -f "$GDINO_TRT_PLAN" ]]; then
@@ -154,9 +181,16 @@ start_rtdetr_gdino()
         DS_MODE_FLAG=7
         echo "##### RT-DETR model being used... #####"
         # RT-DETR nvinfer config: engine filename uses b<NUM_SENSORS> (e.g. b4, b8, b30)
+        # TensorRT 10's strongly-typed fallback serializes beside the ONNX
+        # model on Thor. Point the configured cache there as well so the
+        # generated engine is reusable instead of rebuilding on every start.
+        RTDETR_ENGINE_DIR="${ENGINES_DIR}/rtdetr-its"
+        if is_thor_profile; then
+            RTDETR_ENGINE_DIR="/opt/storage/rtdetr-its"
+        fi
         RTDETR_INFER_CONFIG="/opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app/configs/rtdetr-960x544.txt"
         if [[ -f "$RTDETR_INFER_CONFIG" ]]; then
-            sed -i "/^\[property\]/,/^\[/{s|^model-engine-file=.*|model-engine-file=${ENGINES_DIR}/rtdetr-its/model_epoch_035.fp16.onnx_b${NUM_SENSORS}_gpu0_fp16.engine|;}" "$RTDETR_INFER_CONFIG"
+            sed -i "/^\[property\]/,/^\[/{s|^model-engine-file=.*|model-engine-file=${RTDETR_ENGINE_DIR}/model_epoch_035.fp16.onnx_b${NUM_SENSORS}_gpu0_fp16.engine|;}" "$RTDETR_INFER_CONFIG"
             sed -i "/^\[property\]/,/^\[/{s/^batch-size=.*/batch-size=${NUM_SENSORS}/;}" "$RTDETR_INFER_CONFIG"
         fi
         echo "##### RT-DETR nvinfer config updated successfully... #####"
@@ -187,6 +221,7 @@ start_rtdetr_gdino()
     fi
 
     TRACKER_CONFIG="/opt/nvidia/deepstream/deepstream/samples/configs/deepstream-app/config_tracker_NvDCF_accuracy.yml"
+    apply_tracker_reid_mode "$TRACKER_CONFIG"
     apply_thor_tracker_tuning "$config_file" "$TRACKER_CONFIG"
     echo "##### Updating minTrackerConfidence in $TRACKER_CONFIG... #####"
     if [[ -f "$TRACKER_CONFIG" ]]; then

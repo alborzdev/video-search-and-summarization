@@ -1,6 +1,6 @@
 # Evidence
 
-The isolated Thor run passed in 26.592039 seconds with Docker using the
+The isolated Thor run passed in 28.606109 seconds with Docker using the
 required `cgroupfs` driver. It used the exact cached VSS 3.2.1 arm64 RT-CV
 image and exact cached SigLIP2 ONNX and TensorRT plan. The effective runtime
 configuration selected `siglip2-onnx`, the TensorRT vision backend, the
@@ -29,7 +29,7 @@ compatibility defect.
 
 Artifact locks:
 
-- contract: `06d737dbe886b13bbd0aaf955144c5b67245e1b7d37f6f8b6d426386af32c23a`
-- receipt schema: `a22f77c54d16e5046515af27ba702914df6173acc6341b92f079424fa244dee8`
-- runtime receipt: `f985c66989368cca35ea6c006a00ddfeb49af9153ed2ba4ab146a58e0396ead6`
-- executor: `7c7ba8ec08fc9154808a21033bfd0cf76041962cdde87e294f40cc525864743a`
+- contract: `75e1bb3092dd0f80e6c04f7b2d05c4b7eb579a9d1520b9df046ad66b686ec9b0`
+- receipt schema: `1641923e6ca7e8b545c25013d416e76431ff40e7f0a4fb1a1fe028823e624df2`
+- runtime receipt: `3cf8e74aff606ed35b126892a5a8e1db0ce69c5591a6ee7e56d44055406b3ffc`
+- executor: `c1895987895b5ef676c3c56101fe9c3bf9f204db8af8631b7aeec059578b571b`

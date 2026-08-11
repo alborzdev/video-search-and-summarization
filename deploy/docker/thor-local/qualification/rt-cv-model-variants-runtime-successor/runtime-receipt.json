@@ -1,0 +1,246 @@
+{
+  "capability_ids": [
+    "manifest-entry.rt-cv-2d.01-warehouse-and-smart-city-rt-detr-gdino"
+  ],
+  "cleanup": {
+    "consumer_groups_delete_attempted": true,
+    "engine_cache_retained_for_local_reuse": true,
+    "failures": [],
+    "main_rt_cv_preserved_exactly": true,
+    "main_rt_cv_stream_count": 0,
+    "owned_containers_absent": true,
+    "owned_topic_absent": true,
+    "paused_workloads_preserved_exactly": true,
+    "rtsp_publisher_terminated": true,
+    "temporary_directory_removed": true
+  },
+  "contract_sha256": "ac080b146981a0456216a9dd1f2a176ffe91d57199cb72e3f6673ae5e55fe187",
+  "fixture": {
+    "byte_count": 15448559,
+    "codec_h264": true,
+    "content_sha256": "3976bead22c1384c09a3efe6c9e77831ac59e5d259f0ca769ab24abea04f2588",
+    "duration_seconds": 60,
+    "fps": 10,
+    "generation_method_exact": true,
+    "height": 1080,
+    "loopback_dynamic_source_host_network": true,
+    "loopback_dynamic_source_server_ports_exact": true,
+    "loopback_dynamic_source_udp_rtcp_listener": true,
+    "loopback_dynamic_source_udp_rtp_listener": true,
+    "loopback_rtsp_codec_h264": true,
+    "loopback_rtsp_publisher_running_during_inference": true,
+    "loopback_rtsp_source_is_locked_fixture": true,
+    "loopback_rtsp_tcp_probe_passed": true,
+    "source_repetitions": 6,
+    "tcp_probe_passed": false,
+    "warehouse_sample_bundle": "excluded",
+    "width": 1920
+  },
+  "images": {
+    "consumer": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "mediamtx": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "rt_cv": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    }
+  },
+  "model_family_separation": {
+    "separate_class_map_semantics_recorded": true,
+    "smart_city_rtdetr_not_substituted_for_gdino": true,
+    "three_distinct_detector_identities": true,
+    "warehouse_rtdetr_not_substituted_for_smart_city": true
+  },
+  "official_indices": [
+    376
+  ],
+  "package_id": "rt-cv-model-variants-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "custom_fixture_only": true,
+    "engine_cache_retained_for_local_reuse": true,
+    "main_rt_cv_stream_mutations": 0,
+    "main_vios_stream_mutations": 0,
+    "network_downloads": 0,
+    "raw_broker_messages_retained": false,
+    "raw_camera_ids_retained": false,
+    "raw_stream_urls_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "docker_cgroup_driver": "cgroupfs",
+    "docker_commands": 79,
+    "duration_seconds": 84.30910902799224,
+    "free_bytes_after": 23182381056,
+    "http_requests": 57
+  },
+  "schema_version": 1,
+  "smart_city_gdino": {
+    "active_metrics": {
+      "fps_positive": true,
+      "frame_number_positive": true,
+      "latency_finite": true,
+      "stream_count": 1
+    },
+    "add": {
+      "http_status": 200,
+      "request_sha256": "a29c1f00cb72362db47cd1a082340c131f61be71d25ae26f275a13d91d1b5968",
+      "response_sha256": "42d87d839ef1d8c93c02436b58ef7319a67b0e2af44675dbe59074c8df28640a"
+    },
+    "add_attempt_count": 1,
+    "build_trigger_add": null,
+    "configuration": {
+      "coco_classmap_sha256": "972cffce38c6a6e9f3b61a636a1225808a8b8444f7daf509d9bbc22d5b21e87f",
+      "detector_backend": "triton",
+      "detector_config_sha256": "4da0de90ac31c99119392883113972c4ec4478466170e9e429c3018a052af456",
+      "effective_configuration_exact": true,
+      "http_port": 19004,
+      "main_config_sha256": "202322a2068736feae9d8515a82358512c1a4bc3688b44b148be3201d9b18b0a",
+      "mode": 4,
+      "model_onnx_sha256": "46331941ef96b9045687b523c044a92a8597ed8cca45ba026037dbf1e9e9dfca",
+      "primary_batch_size": 1,
+      "primary_interval": 1,
+      "prompt_class": "person",
+      "prompt_exact": true,
+      "prompt_threshold": 0.5,
+      "rtdetr_labels_sha256": "0e241f0e948dfa7e56fc4dbf7bede9a1188f9ee8ff7ec05af58a4bacc4b499eb",
+      "source_batch_size": 1,
+      "source_low_latency_mode": 0,
+      "streammux_batch_size": 1,
+      "streammux_drop_backward_sei": 0,
+      "streammux_extract_sei_sim_time": 0,
+      "topic_exact": true,
+      "tracker_compute_hw": 2,
+      "tracker_config_sha256": "a7d848b88d5426ff3263857be7c74795d87d82088ae71252a1f19a9f7a502618",
+      "tracker_reid_type": 0,
+      "variant": "smart_city_gdino"
+    },
+    "container_launch_count": 1,
+    "detection_tracking": {
+      "finite_bboxes": true,
+      "finite_confidences": true,
+      "frames": 8,
+      "maximum_objects_per_frame": 1,
+      "minimum_objects_per_frame": 1,
+      "objects": 8,
+      "person_class_correlated": true,
+      "repeated_track_ids": 1,
+      "sensor_value_present": true,
+      "single_sensor_value": true,
+      "types": [
+        "person"
+      ],
+      "unique_track_ids": 1
+    },
+    "engine": {
+      "byte_count": 375220204,
+      "retained_for_local_reuse": true,
+      "sha256": "3b9d6359dd112a58b320c9152f4c13f9303fb1a941c069487dc6b858f3f3f2ab"
+    },
+    "final_stream_count": 0,
+    "first_build_container_replaced": false,
+    "first_build_runtime_log_sha256": null,
+    "oom_killed": false,
+    "remove": {
+      "http_status": 200,
+      "request_sha256": "cda305faf7b52ddb1d6999fadfec94b100b8a8ae047577228365c1e7a6e5a35a",
+      "response_sha256": "1a839da2e13d67c1fe0b991952160dcf0e05d06ab4c46ec89f2396f38562287b"
+    },
+    "restart_count": 0,
+    "runtime_log_sha256": "8020fd9ee3b23421a0852bb2bb44090f8f574dc6489fb34b6b781296a07efac7"
+  },
+  "smart_city_rtdetr": {
+    "active_metrics": {
+      "fps_positive": true,
+      "frame_number_positive": true,
+      "latency_finite": true,
+      "stream_count": 1
+    },
+    "add": {
+      "http_status": 200,
+      "request_sha256": "0e1fa68bee90e6483fdacacc71ab2baffa74390482b1d0fd9d870c631a3940a9",
+      "response_sha256": "42d87d839ef1d8c93c02436b58ef7319a67b0e2af44675dbe59074c8df28640a"
+    },
+    "add_attempt_count": 1,
+    "build_trigger_add": null,
+    "configuration": {
+      "coco_classmap_sha256": "972cffce38c6a6e9f3b61a636a1225808a8b8444f7daf509d9bbc22d5b21e87f",
+      "declared_class_count": 5,
+      "declared_person_class": true,
+      "detector_backend": "nvinfer",
+      "detector_config_sha256": "5f63df9f908d1922918621ff991216847eebf9b3752299914b37e12d48ec8de0",
+      "effective_configuration_exact": true,
+      "http_port": 19004,
+      "main_config_sha256": "d9c54de66ea87bdb07cef59b3fa1516995827940bf5548aadf33cc24e3db8c04",
+      "mode": 7,
+      "model_onnx_sha256": "545a447b913d54eee476381436ebea4ad2aa876cfbe0a6d9f3b0302f08a7415d",
+      "primary_batch_size": 1,
+      "primary_interval": 1,
+      "rtdetr_labels_sha256": "0e241f0e948dfa7e56fc4dbf7bede9a1188f9ee8ff7ec05af58a4bacc4b499eb",
+      "source_batch_size": 1,
+      "source_low_latency_mode": 0,
+      "streammux_batch_size": 1,
+      "streammux_drop_backward_sei": 0,
+      "streammux_extract_sei_sim_time": 0,
+      "topic_exact": true,
+      "tracker_compute_hw": 2,
+      "tracker_config_sha256": "a7d848b88d5426ff3263857be7c74795d87d82088ae71252a1f19a9f7a502618",
+      "tracker_reid_type": 0,
+      "variant": "smart_city_rtdetr"
+    },
+    "container_launch_count": 1,
+    "detection_tracking": {
+      "finite_bboxes": true,
+      "finite_confidences": true,
+      "frames": 8,
+      "maximum_objects_per_frame": 3,
+      "minimum_objects_per_frame": 2,
+      "objects": 21,
+      "person_class_correlated": true,
+      "repeated_track_ids": 3,
+      "sensor_value_present": true,
+      "single_sensor_value": true,
+      "types": [
+        "car",
+        "person"
+      ],
+      "unique_track_ids": 3
+    },
+    "engine": {
+      "byte_count": 95010612,
+      "retained_for_local_reuse": true,
+      "sha256": "b31731f50a2667df360286ce4b880dc2343084757f82d9f92ef5aab0758d714a"
+    },
+    "final_stream_count": 0,
+    "first_build_container_replaced": false,
+    "first_build_runtime_log_sha256": null,
+    "oom_killed": false,
+    "remove": {
+      "http_status": 200,
+      "request_sha256": "8e5e94832ace209de3e72b684971f8878b26b1f12668ae70aedf4eeadd18175f",
+      "response_sha256": "1a839da2e13d67c1fe0b991952160dcf0e05d06ab4c46ec89f2396f38562287b"
+    },
+    "restart_count": 0,
+    "runtime_log_sha256": "2afeb17fb3ca7f3d3195eab95609bbee53f966865f84b3aaea54b0bc829c6e34"
+  },
+  "status": "passed",
+  "warehouse_rtdetr": {
+    "class_map_person_and_pallet": true,
+    "custom_fixture_only": true,
+    "detector_engine_sha256": "13bd7a67da81b1a9d59a7a1b5cd577d8208ef1a77b5568f5b02f00590d484e69",
+    "detector_onnx_sha256": "0a22264542514149bead6e8582499d9758d51e3fde2892d9d2cc378a60426267",
+    "file_frames": 8,
+    "file_objects": 39,
+    "finite_bboxes_and_confidences": true,
+    "rtsp_frames": 8,
+    "rtsp_objects": 51,
+    "source_package_id": "rt-cv-2d-core-runtime-successor",
+    "source_receipt_sha256": "c3739e024b56f0a9d6166c3a92b9e138e330b885a4a531d80b92c3937885b164"
+  }
+}

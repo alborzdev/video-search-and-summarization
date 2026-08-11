@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-15",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-16",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -658,12 +658,34 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
-        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "contract_sha256": "e6959a5733b55a3e47c2adc575455719b6e88166ba897a1b1f74608c72fa0b1e",
         "package_id": "rt-cv-2d-core-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
-        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_sha256": "c3739e024b56f0a9d6166c3a92b9e138e330b885a4a531d80b92c3937885b164",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "warehouse and Smart City RT-DETR/GDINO",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-cv-2d.01-warehouse-and-smart-city-rt-detr-gdino",
+      "feature_id": "rt-cv-2d",
+      "official_index": 376,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-model-variants-runtime-successor/contract.json",
+        "contract_sha256": "ac080b146981a0456216a9dd1f2a176ffe91d57199cb72e3f6673ae5e55fe187",
+        "package_id": "rt-cv-model-variants-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-model-variants-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-model-variants-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "1b18d3f564f9dfa660d93599ef62aeaec30678cd54118449efbbf3528c16e49d",
+        "receipt_sha256": "db43ea19a539ae5f060dd82edc48220d65d5a1b21cdc03786d299f02f89b135b",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -680,12 +702,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/contract.json",
-        "contract_sha256": "06d737dbe886b13bbd0aaf955144c5b67245e1b7d37f6f8b6d426386af32c23a",
+        "contract_sha256": "75e1bb3092dd0f80e6c04f7b2d05c4b7eb579a9d1520b9df046ad66b686ec9b0",
         "package_id": "rt-cv-image-embedding-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "a22f77c54d16e5046515af27ba702914df6173acc6341b92f079424fa244dee8",
-        "receipt_sha256": "f985c66989368cca35ea6c006a00ddfeb49af9153ed2ba4ab146a58e0396ead6",
+        "receipt_schema_sha256": "1641923e6ca7e8b545c25013d416e76431ff40e7f0a4fb1a1fe028823e624df2",
+        "receipt_sha256": "3cf8e74aff606ed35b126892a5a8e1db0ce69c5591a6ee7e56d44055406b3ffc",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -702,12 +724,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
-        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "contract_sha256": "e6959a5733b55a3e47c2adc575455719b6e88166ba897a1b1f74608c72fa0b1e",
         "package_id": "rt-cv-2d-core-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
-        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_sha256": "c3739e024b56f0a9d6166c3a92b9e138e330b885a4a531d80b92c3937885b164",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -724,12 +746,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
-        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "contract_sha256": "e6959a5733b55a3e47c2adc575455719b6e88166ba897a1b1f74608c72fa0b1e",
         "package_id": "rt-cv-2d-core-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
-        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_sha256": "c3739e024b56f0a9d6166c3a92b9e138e330b885a4a531d80b92c3937885b164",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -746,12 +768,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
-        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "contract_sha256": "e6959a5733b55a3e47c2adc575455719b6e88166ba897a1b1f74608c72fa0b1e",
         "package_id": "rt-cv-2d-core-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
-        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_sha256": "c3739e024b56f0a9d6166c3a92b9e138e330b885a4a531d80b92c3937885b164",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -764,8 +786,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 34,
-    "row_count": 34,
+    "passed_current_thor": 35,
+    "row_count": 35,
     "warehouse_sample_bundle": "excluded"
   }
 }
