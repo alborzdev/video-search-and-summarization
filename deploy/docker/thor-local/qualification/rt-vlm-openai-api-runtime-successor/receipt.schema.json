@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "capability_ids", "status", "contract_sha256",
+    "duration_seconds", "budget", "openai_compatibility", "text_only_chat", "token_sse",
+    "file_api", "multimodal_multi_turn", "health_metadata_models_metrics", "cleanup", "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-openai-api-runtime-successor"},
+    "capability_ids": {
+      "const": [
+        "manifest-entry.rt-vlm-api.00-openai-compatible-chat-completions",
+        "manifest-entry.rt-vlm-api.01-text-only-chat",
+        "manifest-entry.rt-vlm-api.02-multimodal-multi-turn-chat",
+        "manifest-entry.rt-vlm-api.03-token-sse",
+        "manifest-entry.rt-vlm-api.06-file-api",
+        "manifest-entry.rt-vlm-api.07-health-metadata-models-metrics"
+      ]
+    },
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 300},
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_requests", "max_http_requests", "model_requests", "max_model_requests"],
+      "properties": {
+        "http_requests": {"const": 25}, "max_http_requests": {"const": 25},
+        "model_requests": {"const": 4}, "max_model_requests": {"const": 4}
+      }
+    },
+    "openai_compatibility": {"$ref": "#/$defs/proven_object"},
+    "text_only_chat": {"$ref": "#/$defs/proven_object"},
+    "token_sse": {"$ref": "#/$defs/proven_object"},
+    "file_api": {"$ref": "#/$defs/proven_object"},
+    "multimodal_multi_turn": {"$ref": "#/$defs/proven_object"},
+    "health_metadata_models_metrics": {"$ref": "#/$defs/proven_object"},
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "catalog_before_count", "catalog_after_count", "catalog_restored_exactly",
+        "asset_statistics_restored_exactly", "owned_file_exact_deleted",
+        "deleted_file_unavailable", "temporary_fixture_root_absent"
+      ],
+      "properties": {
+        "catalog_before_count": {"type": "integer", "minimum": 0},
+        "catalog_after_count": {"type": "integer", "minimum": 0},
+        "catalog_restored_exactly": {"const": true},
+        "asset_statistics_restored_exactly": {"const": true},
+        "owned_file_exact_deleted": {"const": true},
+        "deleted_file_unavailable": {"const": true},
+        "temporary_fixture_root_absent": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "agent_generate_calls", "raw_prompt_retained", "raw_semantic_output_retained",
+        "raw_resource_ids_retained", "service_lifecycle_actions", "stream_mutations",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "raw_prompt_retained": {"const": false},
+        "raw_semantic_output_retained": {"const": false},
+        "raw_resource_ids_retained": {"const": false},
+        "service_lifecycle_actions": {"const": 0},
+        "stream_mutations": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "proven_object": {"type": "object", "minProperties": 1}
+  }
+}

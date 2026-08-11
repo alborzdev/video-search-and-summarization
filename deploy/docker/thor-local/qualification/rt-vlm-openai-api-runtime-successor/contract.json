@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-openai-api-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-api.00-openai-compatible-chat-completions",
+    "manifest-entry.rt-vlm-api.01-text-only-chat",
+    "manifest-entry.rt-vlm-api.02-multimodal-multi-turn-chat",
+    "manifest-entry.rt-vlm-api.03-token-sse",
+    "manifest-entry.rt-vlm-api.06-file-api",
+    "manifest-entry.rt-vlm-api.07-health-metadata-models-metrics"
+  ],
+  "official_indices": [347, 348, 349, 350, 353, 354],
+  "execution": {
+    "default_mode": "plan",
+    "acknowledgement": "I_AUTHORIZE_BOUNDED_RT_VLM_OPENAI_API_RUNTIME",
+    "endpoint": "http://127.0.0.1:8018",
+    "network_scope": "loopback_only",
+    "max_http_requests": 25,
+    "max_model_requests": 4,
+    "max_duration_seconds": 300,
+    "agent_generate_calls": 0,
+    "stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "model": {
+    "id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "release": "3.2.1"
+  },
+  "fixture": {
+    "duration_seconds": 9,
+    "bytes": 75449,
+    "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "creation_time": "2026-08-11T12:00:00.000Z",
+    "primary_markers": ["blue", "green", "red"]
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/execute.py", "sha256": "5091f5cdf3ab27666d0f8ca3615cbac93270a6733d622a8e46326ceb2b9e6b22"},
+    {"path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/execute.py", "sha256": "62093f4a35520e7f5f687203d714d7db810a9d2800ddb2cf9c8cbfc4d56e1288"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py", "sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/file.py", "sha256": "e403a7437b77a2d60e45255b3fc46c503d0e12673a2fa7babec38c0880a3f6f3"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/models.py", "sha256": "4d3a580570673ee3af8d3c1e3fb76da464a211e7f1a717f6ce9f7a5ba712a1ba"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"},
+    {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"}
+  ]
+}

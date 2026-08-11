@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-2",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-3",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -142,6 +142,134 @@
         "/oracle/reasoning_signal_present_for_all_cases": true,
         "/policy/agent_generate_calls": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 347,
+      "capability_id": "manifest-entry.rt-vlm-api.00-openai-compatible-chat-completions",
+      "advertised_literal": "OpenAI-compatible chat/completions",
+      "package_id": "rt-vlm-openai-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/contract.json",
+      "contract_sha256": "720e0864cd64e780ebb8e81331026a73d43be44307032a48d2dae8dd416f3e2e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "aae460f720165cc19d542b89a3515b4919797bff9178561c1e11f364aacebaa8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f3d3192e8ae5d05babe3467e8b255a6d5879dd0fbcdc0828b03de1ee0aff9c5c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/openai_compatibility/required_paths_present": true,
+        "/openai_compatibility/schema_error_structured": true,
+        "/openai_compatibility/roles_preserved": true,
+        "/openai_compatibility/model_identity_preserved": true,
+        "/openai_compatibility/finish_condition_preserved": true,
+        "/openai_compatibility/usage_present": true,
+        "/cleanup/catalog_restored_exactly": true,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 348,
+      "capability_id": "manifest-entry.rt-vlm-api.01-text-only-chat",
+      "advertised_literal": "text-only chat",
+      "package_id": "rt-vlm-openai-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/contract.json",
+      "contract_sha256": "720e0864cd64e780ebb8e81331026a73d43be44307032a48d2dae8dd416f3e2e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "aae460f720165cc19d542b89a3515b4919797bff9178561c1e11f364aacebaa8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f3d3192e8ae5d05babe3467e8b255a6d5879dd0fbcdc0828b03de1ee0aff9c5c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/text_only_chat/expected_marker_exact": true,
+        "/text_only_chat/media_fetches": 0,
+        "/text_only_chat/message_role_order": ["system", "user"],
+        "/text_only_chat/model_exact": true,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 349,
+      "capability_id": "manifest-entry.rt-vlm-api.02-multimodal-multi-turn-chat",
+      "advertised_literal": "multimodal multi-turn chat",
+      "package_id": "rt-vlm-openai-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/contract.json",
+      "contract_sha256": "720e0864cd64e780ebb8e81331026a73d43be44307032a48d2dae8dd416f3e2e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "aae460f720165cc19d542b89a3515b4919797bff9178561c1e11f364aacebaa8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f3d3192e8ae5d05babe3467e8b255a6d5879dd0fbcdc0828b03de1ee0aff9c5c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/multimodal_multi_turn/turn_1/all_primary_markers_present": true,
+        "/multimodal_multi_turn/turn_1/markers_in_chronological_order": true,
+        "/multimodal_multi_turn/turn_2/middle_marker_correct": true,
+        "/multimodal_multi_turn/ordered_role_sequence": ["system", "user", "assistant", "user"],
+        "/multimodal_multi_turn/same_media_identity": true,
+        "/cleanup/owned_file_exact_deleted": true
+      }
+    },
+    {
+      "official_index": 350,
+      "capability_id": "manifest-entry.rt-vlm-api.03-token-sse",
+      "advertised_literal": "token SSE",
+      "package_id": "rt-vlm-openai-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/contract.json",
+      "contract_sha256": "720e0864cd64e780ebb8e81331026a73d43be44307032a48d2dae8dd416f3e2e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "aae460f720165cc19d542b89a3515b4919797bff9178561c1e11f364aacebaa8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f3d3192e8ae5d05babe3467e8b255a6d5879dd0fbcdc0828b03de1ee0aff9c5c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/token_sse/content_type_sse": true,
+        "/token_sse/matches_non_stream_exactly": true,
+        "/token_sse/terminal_done_count": 1,
+        "/token_sse/finish_reason_stop_once": true,
+        "/token_sse/identity_stable": true,
+        "/token_sse/errors": 0
+      }
+    },
+    {
+      "official_index": 353,
+      "capability_id": "manifest-entry.rt-vlm-api.06-file-api",
+      "advertised_literal": "file API",
+      "package_id": "rt-vlm-openai-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/contract.json",
+      "contract_sha256": "720e0864cd64e780ebb8e81331026a73d43be44307032a48d2dae8dd416f3e2e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "aae460f720165cc19d542b89a3515b4919797bff9178561c1e11f364aacebaa8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f3d3192e8ae5d05babe3467e8b255a6d5879dd0fbcdc0828b03de1ee0aff9c5c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/file_api/content_readback_exact": true,
+        "/file_api/catalog_single_owned_entry": true,
+        "/file_api/exact_delete": true,
+        "/file_api/deleted_get_structured_unavailable": true,
+        "/cleanup/catalog_restored_exactly": true,
+        "/cleanup/deleted_file_unavailable": true
+      }
+    },
+    {
+      "official_index": 354,
+      "capability_id": "manifest-entry.rt-vlm-api.07-health-metadata-models-metrics",
+      "advertised_literal": "health/metadata/models/metrics",
+      "package_id": "rt-vlm-openai-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/contract.json",
+      "contract_sha256": "720e0864cd64e780ebb8e81331026a73d43be44307032a48d2dae8dd416f3e2e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "aae460f720165cc19d542b89a3515b4919797bff9178561c1e11f364aacebaa8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f3d3192e8ae5d05babe3467e8b255a6d5879dd0fbcdc0828b03de1ee0aff9c5c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/health_metadata_models_metrics/health/live/http_status": 200,
+        "/health_metadata_models_metrics/health/ready/http_status": 200,
+        "/health_metadata_models_metrics/release_exact": "3.2.1",
+        "/health_metadata_models_metrics/manifest_model_exact": true,
+        "/health_metadata_models_metrics/models_unchanged": true,
+        "/health_metadata_models_metrics/metrics_parseable": true,
+        "/health_metadata_models_metrics/video_file_queries_processed_delta": 2.0
       }
     },
     {
