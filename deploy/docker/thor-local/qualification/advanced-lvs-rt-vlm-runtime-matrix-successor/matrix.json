@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-7",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-8",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -407,6 +407,28 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "asset limits and expiry",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry",
+      "feature_id": "rt-vlm-performance-observability",
+      "official_index": 364,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-asset-limits-expiry-runtime-successor/contract.json",
+        "contract_sha256": "a44b25ce563ba4dfda57550efa5fe659cc640eec718947da545fbc306c056628",
+        "package_id": "rt-vlm-asset-limits-expiry-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-asset-limits-expiry-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-asset-limits-expiry-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "c5b16e10974539b5a85ba258fef2d0016e1a8b68dcedaf8962694d3710afe821",
+        "receipt_sha256": "90dccd8ef4151d2a495e58403052267bcb53d194e1c348a8bbf9b88102efd2a8",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "absolute timestamp metadata",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -434,8 +456,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 19,
-    "row_count": 19,
+    "passed_current_thor": 20,
+    "row_count": 20,
     "warehouse_sample_bundle": "excluded"
   }
 }

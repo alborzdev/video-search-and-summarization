@@ -968,28 +968,41 @@ class AssetManager:
         except Exception as err:
             raise ServiceException("Could not create directory for asset") from err
 
-        current_storage_size = await self._get_storage_usage()
+        # Establish an uncached baseline before the upload starts. The regular
+        # storage cache is useful for monitoring, but it must not be used to
+        # enforce a hard capacity limit while this method is actively adding
+        # bytes to the asset directory.
+        current_storage_size = await self._get_storage_usage(use_cache=False)
         current_file_size = 0
 
         # Write the uploaded file to assets directory
         async with aiofiles.open(os.path.join(asset_dir, file_name), "wb") as f:
             while chunk := await file.read(1024 * 1024 * 10):
-                current_file_size += len(chunk)
+                chunk_size_gb = len(chunk) / (1024.0**3)
+                projected_storage_size = (
+                    current_storage_size
+                    + current_file_size / (1024.0**3)
+                    + chunk_size_gb
+                )
 
                 # Check if writing the current chunk will cross threshold
                 if self._max_storage_usage_gb and (
-                    current_storage_size + current_file_size / (1024.0**3)
-                    > AGE_OUT_THRESHOLD * self._max_storage_usage_gb
+                    projected_storage_size > AGE_OUT_THRESHOLD * self._max_storage_usage_gb
                 ):
-                    # Try to clean assets
+                    # Include chunks already written by this upload when the
+                    # age-out policy measures the directory. Without this
+                    # invalidation, the two-second monitoring cache can let a
+                    # fast chunked upload bypass both the threshold and the
+                    # hard capacity check.
+                    self._storage_usage_cache = None
                     await self._age_out_assets()
-                    current_storage_size = await self._get_storage_usage()
+                    current_storage_size = await self._get_storage_usage(use_cache=False)
                     current_file_size = 0
+                    projected_storage_size = current_storage_size + chunk_size_gb
 
                 # Check if writing the current chunk will cross max size
                 if self._max_storage_usage_gb and (
-                    current_storage_size + current_file_size / (1024.0**3)
-                    > self._max_storage_usage_gb
+                    projected_storage_size > self._max_storage_usage_gb
                 ):
                     await f.close()
                     try:
@@ -997,6 +1010,7 @@ class AssetManager:
                         await loop.run_in_executor(None, shutil.rmtree, asset_dir)
                     except Exception:
                         pass
+                    self._storage_usage_cache = None
                     raise ServiceException(
                         "Asset storage full. Could not remove existing older assets"
                         " because they are in use",
@@ -1004,6 +1018,7 @@ class AssetManager:
                         503,
                     )
                 await f.write(chunk)
+                current_file_size += len(chunk)
 
         asset = Asset(
             asset_id=asset_id,

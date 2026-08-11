@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_ids",
+    "official_indices",
+    "status",
+    "contract_sha256",
+    "duration_seconds",
+    "budget",
+    "runtime_identity",
+    "main_runtime",
+    "storage_limit",
+    "ttl_expiry",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-asset-limits-expiry-runtime-successor"},
+    "capability_ids": {
+      "const": ["manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry"]
+    },
+    "official_indices": {"const": [364]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 30},
+    "budget": {
+      "const": {
+        "docker_commands": 5,
+        "http_requests": 4,
+        "max_docker_commands": 5,
+        "max_http_requests": 4,
+        "max_model_requests": 0,
+        "max_support_processes": 1,
+        "model_requests": 0,
+        "support_processes_peak": 1
+      }
+    },
+    "runtime_identity": {
+      "const": {
+        "asset_manager_overlay_exact": true,
+        "asset_manager_overlay_read_only": true,
+        "healthy": true,
+        "image_exact": true,
+        "oom_killed": false,
+        "restart_count": 0
+      }
+    },
+    "main_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_catalog_pristine",
+        "asset_limits_disabled_in_main_runtime",
+        "asset_stats_sha256",
+        "model_inventory_sha256",
+        "model_inventory_unchanged"
+      ],
+      "properties": {
+        "asset_catalog_pristine": {"const": true},
+        "asset_limits_disabled_in_main_runtime": {"const": true},
+        "asset_stats_sha256": {"$ref": "#/$defs/hash"},
+        "model_inventory_sha256": {"$ref": "#/$defs/hash"},
+        "model_inventory_unchanged": {"const": true}
+      }
+    },
+    "storage_limit": {
+      "const": {
+        "cleanup": {"asset_count": 0, "root_entry_count": 0},
+        "hard_limit": {
+          "blocked_asset_absent": true,
+          "busy_asset_preserved": true,
+          "error": {"code": "ServerBusy", "status_code": 503}
+        },
+        "pressure_eviction": {
+          "aged_out_count": 1,
+          "callback_count": 1,
+          "configured_max_storage_gb": 0.0009765625,
+          "newest_preserved": true,
+          "oldest_evicted": true
+        },
+        "temporary_root_absent": true
+      }
+    },
+    "ttl_expiry": {
+      "const": {
+        "cleanup": {"asset_count": 0, "root_entry_count": 0},
+        "temporary_root_absent": true,
+        "ttl": {
+          "aged_out_count": 1,
+          "busy_expired_asset_preserved": true,
+          "callback_count": 1,
+          "configured_max_age_hours": 0.001,
+          "fresh_asset_preserved": true,
+          "old_expired": true
+        }
+      }
+    },
+    "cleanup": {
+      "const": {
+        "isolated_storage_catalog_empty": true,
+        "isolated_temporary_roots_absent": true,
+        "isolated_ttl_catalog_empty": true,
+        "main_asset_statistics_restored_exactly": true,
+        "main_model_inventory_restored_exactly": true,
+        "runtime_identity_restored_exactly": true
+      }
+    },
+    "policy": {
+      "const": {
+        "agent_generate_calls": 0,
+        "core_service_lifecycle_actions": 0,
+        "credentials_retained": false,
+        "main_asset_catalog_mutations": 0,
+        "raw_resource_ids_retained": false,
+        "stream_mutations": 0,
+        "warehouse_sample_bundle": "excluded"
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

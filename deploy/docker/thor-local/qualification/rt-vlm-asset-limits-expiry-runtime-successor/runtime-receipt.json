@@ -1,0 +1,92 @@
+{
+  "budget": {
+    "docker_commands": 5,
+    "http_requests": 4,
+    "max_docker_commands": 5,
+    "max_http_requests": 4,
+    "max_model_requests": 0,
+    "max_support_processes": 1,
+    "model_requests": 0,
+    "support_processes_peak": 1
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry"
+  ],
+  "cleanup": {
+    "isolated_storage_catalog_empty": true,
+    "isolated_temporary_roots_absent": true,
+    "isolated_ttl_catalog_empty": true,
+    "main_asset_statistics_restored_exactly": true,
+    "main_model_inventory_restored_exactly": true,
+    "runtime_identity_restored_exactly": true
+  },
+  "contract_sha256": "a44b25ce563ba4dfda57550efa5fe659cc640eec718947da545fbc306c056628",
+  "duration_seconds": 1.858648,
+  "main_runtime": {
+    "asset_catalog_pristine": true,
+    "asset_limits_disabled_in_main_runtime": true,
+    "asset_stats_sha256": "ae34d5142ad5963d2082f09bb841c1327e9ae7ffc9fe8502948429e156fa4b80",
+    "model_inventory_sha256": "75f6fc7f5070b0a414f77aaec8b13ea517654c3b640b3271eee1e174d54550e8",
+    "model_inventory_unchanged": true
+  },
+  "official_indices": [
+    364
+  ],
+  "package_id": "rt-vlm-asset-limits-expiry-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "main_asset_catalog_mutations": 0,
+    "raw_resource_ids_retained": false,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime_identity": {
+    "asset_manager_overlay_exact": true,
+    "asset_manager_overlay_read_only": true,
+    "healthy": true,
+    "image_exact": true,
+    "oom_killed": false,
+    "restart_count": 0
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "storage_limit": {
+    "cleanup": {
+      "asset_count": 0,
+      "root_entry_count": 0
+    },
+    "hard_limit": {
+      "blocked_asset_absent": true,
+      "busy_asset_preserved": true,
+      "error": {
+        "code": "ServerBusy",
+        "status_code": 503
+      }
+    },
+    "pressure_eviction": {
+      "aged_out_count": 1,
+      "callback_count": 1,
+      "configured_max_storage_gb": 0.0009765625,
+      "newest_preserved": true,
+      "oldest_evicted": true
+    },
+    "temporary_root_absent": true
+  },
+  "ttl_expiry": {
+    "cleanup": {
+      "asset_count": 0,
+      "root_entry_count": 0
+    },
+    "temporary_root_absent": true,
+    "ttl": {
+      "aged_out_count": 1,
+      "busy_expired_asset_preserved": true,
+      "callback_count": 1,
+      "configured_max_age_hours": 0.001,
+      "fresh_asset_preserved": true,
+      "old_expired": true
+    }
+  }
+}

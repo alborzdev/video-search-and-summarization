@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_nineteen_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_twenty_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 367
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 367
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -130,6 +130,19 @@ def test_incident_category_receipt_is_bound_to_both_exact_rows() -> None:
         assert entry["capability_id"] in receipt["capability_ids"]
     assert receipt["kafka_incident"]["owned_matching_records"] == 1
     assert receipt["cleanup"]["append_only_kafka_record_count"] == 1
+
+
+def test_asset_limits_expiry_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-vlm-asset-limits-expiry-runtime-successor"
+    )
+    assert entry["official_index"] == 364
+    receipt = compiler._validate_receipt(entry)
+    assert receipt["storage_limit"]["hard_limit"]["error"]["status_code"] == 503
+    assert receipt["ttl_expiry"]["ttl"]["busy_expired_asset_preserved"] is True
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

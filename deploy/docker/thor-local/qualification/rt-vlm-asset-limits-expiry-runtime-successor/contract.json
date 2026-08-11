@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-asset-limits-expiry-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry"
+  ],
+  "official_indices": [364],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "model": {
+    "id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/utils/asset_manager.py",
+      "sha256": "cebaf1899697976b8797f7d08664e932b93304054472e3053213efa55999ce1b"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.yml",
+      "sha256": "5e094c8e6eb3c7c2b19ce1c59053ebdb1ff0bfdf716ab885001a3e420ade5a5c"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+      "sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4"
+    }
+  ],
+  "storage_fixture": {
+    "max_storage_gb": 0.0009765625,
+    "old_asset_bytes": 614400,
+    "kept_asset_bytes": 524288,
+    "blocked_asset_bytes": 2097152,
+    "chunk_bytes": 131072,
+    "expected_error_code": "ServerBusy",
+    "expected_http_status": 503
+  },
+  "ttl_fixture": {
+    "max_age_hours": 0.001,
+    "expired_age_seconds": 10,
+    "asset_bytes": 2048
+  },
+  "execution": {
+    "endpoint": "http://127.0.0.1:8018",
+    "container": "vss-rtvi-vlm",
+    "max_duration_seconds": 30,
+    "max_http_requests": 4,
+    "max_model_requests": 0,
+    "max_docker_commands": 5,
+    "max_support_processes": 1,
+    "acknowledgement": "I_ACK_ISOLATED_RT_VLM_ASSET_LIMIT_AND_TTL_RUNTIME_PROOF"
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "main_asset_catalog_mutations": 0,
+    "stream_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "isolated_temporary_asset_bytes_max": 3145728,
+    "raw_resource_ids_retained": false,
+    "credentials_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-7",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-8",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -412,6 +412,30 @@
         "/health_metadata_models_metrics/models_unchanged": true,
         "/health_metadata_models_metrics/metrics_parseable": true,
         "/health_metadata_models_metrics/video_file_queries_processed_delta": 2.0
+      }
+    },
+    {
+      "official_index": 364,
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.04-asset-limits-and-expiry",
+      "advertised_literal": "asset limits and expiry",
+      "package_id": "rt-vlm-asset-limits-expiry-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-asset-limits-expiry-runtime-successor/contract.json",
+      "contract_sha256": "a44b25ce563ba4dfda57550efa5fe659cc640eec718947da545fbc306c056628",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-asset-limits-expiry-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "90dccd8ef4151d2a495e58403052267bcb53d194e1c348a8bbf9b88102efd2a8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-asset-limits-expiry-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "c5b16e10974539b5a85ba258fef2d0016e1a8b68dcedaf8962694d3710afe821",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/storage_limit/pressure_eviction/oldest_evicted": true,
+        "/storage_limit/hard_limit/busy_asset_preserved": true,
+        "/storage_limit/hard_limit/blocked_asset_absent": true,
+        "/storage_limit/hard_limit/error/status_code": 503,
+        "/ttl_expiry/ttl/old_expired": true,
+        "/ttl_expiry/ttl/busy_expired_asset_preserved": true,
+        "/ttl_expiry/ttl/fresh_asset_preserved": true,
+        "/cleanup/main_asset_statistics_restored_exactly": true,
+        "/policy/agent_generate_calls": 0
       }
     },
     {

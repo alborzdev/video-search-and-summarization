@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds nineteen advertised capability rows to current-Thor live receipts. Overlay 7 adds RT-VLM incident generation and exact category propagation through a decoded local Kafka protobuf to the seventeen previously proven advanced LVS and RT-VLM rows. The one qualification incident is explicitly retained under Kafka's append-only record boundary; all temporary file and observer state is cleaned.
+This read-only successor binds twenty advertised capability rows to current-Thor live receipts. Overlay 8 adds production RT-VLM asset pressure eviction, hard-cap enforcement, in-use protection, and TTL expiry to the nineteen previously proven advanced LVS and RT-VLM rows. The bounded proof uses isolated temporary catalogs inside the healthy RT-VLM container and leaves the main catalog unchanged.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 
