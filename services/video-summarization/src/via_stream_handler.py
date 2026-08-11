@@ -932,6 +932,95 @@ class ViaStreamHandler:
         except Exception:
             return 0.0
 
+    @staticmethod
+    def _normalize_rtvi_file_chunk_offsets(
+        req_info: RequestInfo, start_sec: float, end_sec: float
+    ) -> tuple[float, float]:
+        """Preserve original-file time for partial-offset RTVI responses.
+
+        Current RT-VLM releases decode the requested ``media_info`` window but
+        return per-chunk times relative to the start of that window.  LVS uses
+        those values as CA-RAG time metadata, which previously changed a 3-6s
+        source interval into 0-3s events.  Some backends may already return
+        original-file offsets, so rebase only when the pair is clearly within
+        the selected window's relative duration.  Live timestamps are never
+        changed.
+        """
+
+        if getattr(req_info, "is_live", False):
+            return start_sec, end_sec
+        requested_start = getattr(req_info, "start_timestamp", None)
+        requested_end = getattr(req_info, "end_timestamp", None)
+        if requested_start is None:
+            return start_sec, end_sec
+        try:
+            window_start = float(requested_start)
+            window_end = (
+                float(requested_end) if requested_end is not None else None
+            )
+        except (TypeError, ValueError):
+            return start_sec, end_sec
+        if window_start <= 0 or not 0 <= start_sec < end_sec:
+            return start_sec, end_sec
+
+        tolerance = 1e-3
+        already_absolute = start_sec >= window_start - tolerance and (
+            window_end is None or end_sec <= window_end + tolerance
+        )
+        if already_absolute:
+            return start_sec, end_sec
+        relative_duration = (
+            window_end - window_start if window_end is not None else None
+        )
+        clearly_relative = start_sec >= -tolerance and (
+            relative_duration is None or end_sec <= relative_duration + tolerance
+        )
+        if clearly_relative:
+            return start_sec + window_start, end_sec + window_start
+        return start_sec, end_sec
+
+    @classmethod
+    def _normalize_partial_aggregation_timestamps(
+        cls, req_info: RequestInfo, aggregation: str
+    ) -> str:
+        """Rebase relative event timestamps in a partial-file aggregation.
+
+        Thor's database-backed LVS path reads the Kafka caption copy, whose
+        RT-VLM timestamps are relative to the selected media window.  Keep the
+        normal UUID-backed summarizer and adjust only numeric event bounds that
+        are unambiguously relative.  Non-JSON/custom responses and already
+        absolute event times pass through unchanged.
+        """
+
+        if not isinstance(aggregation, str) or not aggregation.strip():
+            return aggregation
+        if getattr(req_info, "is_live", False) or getattr(
+            req_info, "start_timestamp", None
+        ) is None:
+            return aggregation
+        try:
+            parsed = json.loads(aggregation)
+        except (json.JSONDecodeError, TypeError, ValueError):
+            return aggregation
+        if not isinstance(parsed, dict) or not isinstance(parsed.get("events"), list):
+            return aggregation
+        changed = False
+        for event in parsed["events"]:
+            if not isinstance(event, dict):
+                continue
+            start = event.get("start_time")
+            end = event.get("end_time")
+            if type(start) not in {int, float} or type(end) not in {int, float}:
+                continue
+            normalized_start, normalized_end = cls._normalize_rtvi_file_chunk_offsets(
+                req_info, float(start), float(end)
+            )
+            if normalized_start != float(start) or normalized_end != float(end):
+                event["start_time"] = normalized_start
+                event["end_time"] = normalized_end
+                changed = True
+        return json.dumps(parsed, ensure_ascii=False) if changed else aggregation
+
     def _on_vlm_chunk_response(self, response: VlmChunkResponse, req_info: RequestInfo):
         """Gather chunks processed by the pipeline and run any further post-processing"""
         if not self._running or req_info.cancel_event.is_set():
@@ -1619,6 +1708,9 @@ class ViaStreamHandler:
                         break
                     start_sec = self._parse_rtvi_time(cr.get("start_time", 0))
                     end_sec = self._parse_rtvi_time(cr.get("end_time", 0))
+                    start_sec, end_sec = self._normalize_rtvi_file_chunk_offsets(
+                        req_info, start_sec, end_sec
+                    )
 
                     chunk_info = ChunkInfo(
                         sourceId=req_info.source_id,
@@ -4292,6 +4384,9 @@ This is very important and you must follow this strictly.
                                 "metadata", {}
                             )
                             agg_response = agg_response.get("summarization", {}).get("result", "")
+                            agg_response = self._normalize_partial_aggregation_timestamps(
+                                req_info, agg_response
+                            )
                             req_info.usage = RequestInfo.Usage(**result_metadata)
                             # File-path Kafka mode: mirror the live-stream
                             # summarize_stream extraction and publish
@@ -4733,8 +4828,10 @@ This is very important and you must follow this strictly.
         schema mode instead selects CA-RAG's ``structured_inference``
         function, whose call contract is strictly ``start_index/end_index``.
         Captions have already been added to the request's context manager, so
-        keep schema requests on that supported in-process range while leaving
-        the normal DB-backed path unchanged.
+        keep custom-schema requests on that supported in-process range while
+        leaving the normal DB-backed path unchanged. Partial-window DB event
+        times are rebased after aggregation by
+        ``_normalize_partial_aggregation_timestamps``.
         """
 
         return bool(

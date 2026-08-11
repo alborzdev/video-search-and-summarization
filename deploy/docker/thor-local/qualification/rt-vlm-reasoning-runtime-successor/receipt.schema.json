@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_id",
+    "status",
+    "contract_sha256",
+    "duration_seconds",
+    "budget",
+    "runtime",
+    "cases",
+    "oracle",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-reasoning-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.rt-vlm-media.09-reasoning"},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 600},
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_requests", "max_http_requests", "model_requests", "max_model_requests"],
+      "properties": {
+        "http_requests": {"const": 4},
+        "max_http_requests": {"const": 4},
+        "model_requests": {"const": 2},
+        "max_model_requests": {"const": 2}
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endpoint_sha256", "model_id_sha256", "models_before_sha256", "models_after_sha256", "models_unchanged", "models_pre_response_sha256", "models_post_response_sha256"],
+      "properties": {
+        "endpoint_sha256": {"$ref": "#/$defs/sha256"},
+        "model_id_sha256": {"$ref": "#/$defs/sha256"},
+        "models_before_sha256": {"$ref": "#/$defs/sha256"},
+        "models_after_sha256": {"$ref": "#/$defs/sha256"},
+        "models_unchanged": {"const": true},
+        "models_pre_response_sha256": {"$ref": "#/$defs/sha256"},
+        "models_post_response_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/case"}, {"properties": {"case_id": {"const": "target"}}}]},
+        {"allOf": [{"$ref": "#/$defs/case"}, {"properties": {"case_id": {"const": "adjacent_negative"}}}]}
+      ],
+      "items": false
+    },
+    "oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["same_question", "opposite_correct_conclusions", "reasoning_enabled_for_all_cases", "reasoning_signal_present_for_all_cases", "hidden_reasoning_excluded_from_all_semantic_oracles"],
+      "properties": {
+        "same_question": {"const": true},
+        "opposite_correct_conclusions": {"const": true},
+        "reasoning_enabled_for_all_cases": {"const": true},
+        "reasoning_signal_present_for_all_cases": {"const": true},
+        "hidden_reasoning_excluded_from_all_semantic_oracles": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["temporary_fixture_root_absent", "persistent_resources_created", "persistent_resources_deleted"],
+      "properties": {
+        "temporary_fixture_root_absent": {"const": true},
+        "persistent_resources_created": {"const": 0},
+        "persistent_resources_deleted": {"const": 0}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_generate_calls", "stream_mutations", "service_lifecycle_actions", "raw_prompt_retained", "raw_response_retained", "reasoning_text_retained", "raw_response_ids_retained", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "stream_mutations": {"const": 0},
+        "service_lifecycle_actions": {"const": 0},
+        "raw_prompt_retained": {"const": false},
+        "raw_response_retained": {"const": false},
+        "reasoning_text_retained": {"const": false},
+        "raw_response_ids_retained": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "fixture_bytes", "fixture_sha256", "http_status", "request_sha256", "response_sha256", "correct_final_conclusion", "expected_answer_sha256", "final_answer_sha256", "hidden_reasoning_excluded_from_semantic_oracle", "reasoning_signal_present", "response_id_sha256", "response_model_exact"],
+      "properties": {
+        "case_id": {"type": "string"},
+        "fixture_bytes": {"type": "integer", "minimum": 1},
+        "fixture_sha256": {"$ref": "#/$defs/sha256"},
+        "http_status": {"const": 200},
+        "request_sha256": {"$ref": "#/$defs/sha256"},
+        "response_sha256": {"$ref": "#/$defs/sha256"},
+        "correct_final_conclusion": {"const": true},
+        "expected_answer_sha256": {"$ref": "#/$defs/sha256"},
+        "final_answer_sha256": {"$ref": "#/$defs/sha256"},
+        "hidden_reasoning_excluded_from_semantic_oracle": {"const": true},
+        "reasoning_signal_present": {"const": true},
+        "response_id_sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "response_model_exact": {"const": true}
+      }
+    }
+  }
+}

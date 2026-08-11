@@ -7,8 +7,8 @@
     "owned_deleted": true,
     "ready_after": true
   },
-  "contract_sha256": "de38fe5c05954e9be07e1f1c05fbb3267b8caffddc88517f7ffbd270705b52e5",
-  "duration_seconds": 11.441193,
+  "contract_sha256": "6aedf87117bf9a287ba9a873a691d9c3b72f30f97a53ffed06e8d87c7c72ac26",
+  "duration_seconds": 12.877898,
   "fixture": {
     "bytes": 60555,
     "owned_id_sha256": "5189f9bdb8fe4a3ac2c0cdd82d76b78c2fbf8bb6b59d68b84a2bd8c59326a27d",
@@ -32,19 +32,19 @@
   },
   "positive": {
     "chunks_processed": 1,
-    "content_sha256": "d787c30d1bf6dc9e4dd9b37d87299ee25b6ce4ea4366d0fff0d4b600dd65c083",
+    "content_sha256": "b158829d9209acd3f6321c887944463b1f2f9f53a10be6439f55c291a455aa1e",
     "event_count": 1,
     "event_keys_exact": true,
     "fixture_grounded": true,
     "http_status": 200,
-    "response_sha256": "b5bb61c584f829a01ddb6a96ebcf3dfd8ada65e27e7d6f938293cf133664d3f2",
+    "response_sha256": "0233a5968fbbcfca2d494d235278d5aefc2e6cde44a5120f8c09742af69c438b",
     "schema_markers_exact": true,
     "timestamps_valid": true,
     "types_exact": true
   },
   "runtime": {
-    "after_sha256": "447aab41c96c8d295a617be2c079643374c66642df84aae33d0da06f642b9b36",
-    "before_sha256": "447aab41c96c8d295a617be2c079643374c66642df84aae33d0da06f642b9b36",
+    "after_sha256": "045e3c269544a0313b3594b4fa474d9a70c833baf9694ff8587a7ac5d6bc3641",
+    "before_sha256": "045e3c269544a0313b3594b4fa474d9a70c833baf9694ff8587a7ac5d6bc3641",
     "healthy": true,
     "unchanged": true
   },

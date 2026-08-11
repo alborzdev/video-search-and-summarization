@@ -195,3 +195,125 @@ class TestCaptionAggregationRoute:
         assert not handler._use_db_caption_aggregation(
             _make_ri(enable_vlm_structured_output=False)
         )
+
+    def test_partial_offset_summary_keeps_uuid_database_route(self):
+        handler = _make_handler()
+        handler._kafka_enabled = True
+        handler._caption_source = "db"
+        handler._ca_rag_config["functions"]["summarization"]["params"] = {
+            "kafka_enabled": True
+        }
+        ri = _make_ri(enable_vlm_structured_output=True)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        assert handler._use_db_caption_aggregation(ri)
+
+
+class TestRtviPartialOffsetNormalization:
+    """Partial-file chunks must retain their original source timeline."""
+
+    def test_relative_chunk_is_rebased_to_requested_window(self):
+        handler = _make_handler()
+        ri = _make_ri(is_live=False)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        assert handler._normalize_rtvi_file_chunk_offsets(ri, 0.0, 3.0) == (
+            3.0,
+            6.0,
+        )
+
+    def test_already_absolute_chunk_is_not_double_shifted(self):
+        handler = _make_handler()
+        ri = _make_ri(is_live=False)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        assert handler._normalize_rtvi_file_chunk_offsets(ri, 3.0, 6.0) == (
+            3.0,
+            6.0,
+        )
+
+    def test_full_file_chunk_is_unchanged(self):
+        handler = _make_handler()
+        ri = _make_ri(is_live=False)
+        ri.start_timestamp = None
+        ri.end_timestamp = None
+        assert handler._normalize_rtvi_file_chunk_offsets(ri, 0.0, 3.0) == (
+            0.0,
+            3.0,
+        )
+
+    def test_live_timestamp_is_unchanged(self):
+        handler = _make_handler()
+        ri = _make_ri(is_live=True)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        assert handler._normalize_rtvi_file_chunk_offsets(ri, 0.0, 3.0) == (
+            0.0,
+            3.0,
+        )
+
+    def test_out_of_contract_pair_is_not_silently_rebased(self):
+        handler = _make_handler()
+        ri = _make_ri(is_live=False)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        assert handler._normalize_rtvi_file_chunk_offsets(ri, 1.0, 4.0) == (
+            1.0,
+            4.0,
+        )
+
+    def test_relative_aggregation_events_are_rebased(self):
+        import json
+
+        handler = _make_handler()
+        ri = _make_ri(is_live=False)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        raw = json.dumps(
+            {
+                "events": [
+                    {
+                        "start_time": 0,
+                        "end_time": 3,
+                        "type": "movement",
+                        "description": "movement",
+                    }
+                ],
+                "video_summary": "movement",
+            }
+        )
+        parsed = json.loads(handler._normalize_partial_aggregation_timestamps(ri, raw))
+        assert parsed["events"][0]["start_time"] == 3.0
+        assert parsed["events"][0]["end_time"] == 6.0
+
+    def test_absolute_aggregation_events_are_unchanged(self):
+        import json
+
+        handler = _make_handler()
+        ri = _make_ri(is_live=False)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        raw = json.dumps(
+            {
+                "events": [
+                    {
+                        "start_time": 3,
+                        "end_time": 6,
+                        "type": "movement",
+                        "description": "movement",
+                    }
+                ]
+            },
+            sort_keys=True,
+        )
+        assert handler._normalize_partial_aggregation_timestamps(ri, raw) == raw
+
+    def test_non_json_aggregation_is_unchanged(self):
+        handler = _make_handler()
+        ri = _make_ri(is_live=False)
+        ri.start_timestamp = 3
+        ri.end_timestamp = 6
+        assert (
+            handler._normalize_partial_aggregation_timestamps(ri, "plain summary")
+            == "plain summary"
+        )

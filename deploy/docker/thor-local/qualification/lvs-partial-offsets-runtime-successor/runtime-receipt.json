@@ -1,0 +1,56 @@
+{
+  "actions": 10,
+  "capability_id": "manifest-entry.video-summarization-file.06-partial-video-offsets",
+  "cleanup": {
+    "catalog_restored": true,
+    "owned_absent": true,
+    "owned_deleted": true,
+    "ready_after": true
+  },
+  "contract_sha256": "f98a76004ade39fb005c82f65f1c8ef0dc563aa23aae0c8df1cc46b23fe84d0f",
+  "duration_seconds": 13.840828,
+  "fixture": {
+    "bytes": 75449,
+    "owned_id_sha256": "4188426e89e36f39e018cdccf9e9b42b33f9c4e2e227daa0a9a546ce37a0ef38",
+    "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"
+  },
+  "negative": {
+    "http_status": 422,
+    "json_parseable": true,
+    "response_sha256": "eca0c87ec8f93752f7433a20da03ff05b0d00f838db276ea0926275be17a34d8",
+    "reversed_range_rejected": true,
+    "validation_error_envelope": true
+  },
+  "package_id": "lvs-partial-offsets-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "raw_ids_retained": false,
+    "raw_prompts_retained": false,
+    "raw_semantic_output_retained": false,
+    "rt_cv_or_vios_stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "positive": {
+    "chunks_processed": 1,
+    "content_sha256": "0d2d77523e7ceed37ffaf3fecfb6670e76cb2b75d97490c2672a8a249d94f796",
+    "event_count": 1,
+    "http_status": 200,
+    "in_range_marker_present": true,
+    "maximum_event_end": 5.75,
+    "media_info_exact": true,
+    "minimum_event_start": 3.0,
+    "original_timeline_timestamps": true,
+    "out_of_range_markers_absent": true,
+    "response_sha256": "75bbfa072782146acc2d2696699c14732c6f4f4e51ff2a552a16fb5f836aca6b",
+    "source_identity_correlated": true
+  },
+  "runtime": {
+    "after_sha256": "42574b948831829d755a7185c3555828d5b5b7b00f90172bf0e6e78df167cade",
+    "before_sha256": "42574b948831829d755a7185c3555828d5b5b7b00f90172bf0e6e78df167cade",
+    "healthy": true,
+    "unchanged": true
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_id", "status", "contract_sha256", "duration_seconds", "actions", "fixture", "runtime", "positive", "negative", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "lvs-partial-offsets-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.video-summarization-file.06-partial-video-offsets"},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 900},
+    "actions": {"const": 10},
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bytes", "sha256", "owned_id_sha256"],
+      "properties": {"bytes": {"const": 75449}, "sha256": {"$ref": "#/$defs/sha"}, "owned_id_sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["before_sha256", "after_sha256", "unchanged", "healthy"],
+      "properties": {"before_sha256": {"$ref": "#/$defs/sha"}, "after_sha256": {"$ref": "#/$defs/sha"}, "unchanged": {"const": true}, "healthy": {"const": true}}
+    },
+    "positive": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "response_sha256", "content_sha256", "event_count", "in_range_marker_present", "out_of_range_markers_absent", "original_timeline_timestamps", "minimum_event_start", "maximum_event_end", "media_info_exact", "source_identity_correlated", "chunks_processed"],
+      "properties": {
+        "http_status": {"const": 200}, "response_sha256": {"$ref": "#/$defs/sha"}, "content_sha256": {"$ref": "#/$defs/sha"},
+        "event_count": {"type": "integer", "minimum": 1}, "in_range_marker_present": {"const": true}, "out_of_range_markers_absent": {"const": true},
+        "original_timeline_timestamps": {"const": true}, "minimum_event_start": {"type": "number", "minimum": 3, "maximum": 6},
+        "maximum_event_end": {"type": "number", "exclusiveMinimum": 3, "maximum": 6.5}, "media_info_exact": {"const": true},
+        "source_identity_correlated": {"const": true}, "chunks_processed": {"type": "integer", "minimum": 1}
+      }
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "response_sha256", "json_parseable", "validation_error_envelope", "reversed_range_rejected"],
+      "properties": {"http_status": {"const": 422}, "response_sha256": {"$ref": "#/$defs/sha"}, "json_parseable": {"const": true}, "validation_error_envelope": {"const": true}, "reversed_range_rejected": {"const": true}}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owned_deleted", "owned_absent", "catalog_restored", "ready_after"],
+      "properties": {"owned_deleted": {"const": true}, "owned_absent": {"const": true}, "catalog_restored": {"const": true}, "ready_after": {"const": true}}
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "rt_cv_or_vios_stream_mutations", "service_lifecycle_actions", "raw_ids_retained", "raw_prompts_retained", "raw_semantic_output_retained", "warehouse_sample_bundle"],
+      "properties": {"agent_generate_calls": {"const": 0}, "rt_cv_or_vios_stream_mutations": {"const": 0}, "service_lifecycle_actions": {"const": 0}, "raw_ids_retained": {"const": false}, "raw_prompts_retained": {"const": false}, "raw_semantic_output_retained": {"const": false}, "warehouse_sample_bundle": {"const": "excluded"}}
+    }
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

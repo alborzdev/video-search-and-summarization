@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-reasoning-runtime-successor",
+  "capability_id": "manifest-entry.rt-vlm-media.09-reasoning",
+  "advertised_literal": "reasoning",
+  "execution": {
+    "default_mode": "plan",
+    "acknowledgement": "I_AUTHORIZE_BOUNDED_RT_VLM_REASONING_RUNTIME",
+    "endpoint": "http://127.0.0.1:8018",
+    "network_scope": "loopback_only",
+    "max_http_requests": 4,
+    "max_model_requests": 2,
+    "max_duration_seconds": 600,
+    "agent_generate_calls": 0,
+    "stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "model": {
+    "id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "require_exact_models_member": true,
+    "require_exact_response_model": true
+  },
+  "fixture": {
+    "generator": "ffmpeg-lavfi",
+    "duration_seconds": 6,
+    "width": 640,
+    "height": 360,
+    "fps": 4,
+    "target_sha256": "c9845ca7e8f5fc9dfc54db9db262f6c7b57a2259757bfde9bf3f976bf224aaf7",
+    "adjacent_negative_sha256": "06ac8d77b4d9a329d9b95230c23b53256ebd7aac096f2eac5d8786902f0f8f20"
+  },
+  "oracle": {
+    "question_class": "temporal_media_comparison",
+    "same_question_for_both_fixtures": true,
+    "target_expected_answer": "blue",
+    "adjacent_negative_expected_answer": "red",
+    "enable_reasoning": true,
+    "require_reasoning_signal": true,
+    "strip_reasoning_before_semantic_assertion": true,
+    "require_opposite_correct_conclusions": true,
+    "retain_raw_prompt": false,
+    "retain_raw_response": false,
+    "retain_reasoning_text": false,
+    "retain_response_id": false
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-vlm/README.md",
+      "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",
+      "sha256": "c770c77c6b3ff8788efe57bd5469dd598d5a7fc965bf8fce5e20c11c460cfe10"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py",
+      "sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json",
+      "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"
+    }
+  ]
+}

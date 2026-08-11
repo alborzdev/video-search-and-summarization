@@ -76,7 +76,7 @@
     },
     {
       "path": "services/video-summarization/src/via_stream_handler.py",
-      "sha256": "75120b7881724057f60d7af4e31eddab9f9ddd18ef779039831adff313cac6a6"
+      "sha256": "d128b7271d34b41045e535276af96790976f96e6fbd024471c7fdbf9a4f92542"
     },
     {
       "path": "services/video-summarization/src/vss_api_models.py",

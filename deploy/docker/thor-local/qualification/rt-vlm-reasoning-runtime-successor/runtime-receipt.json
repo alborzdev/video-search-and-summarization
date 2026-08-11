@@ -1,0 +1,77 @@
+{
+  "budget": {
+    "http_requests": 4,
+    "max_http_requests": 4,
+    "max_model_requests": 2,
+    "model_requests": 2
+  },
+  "capability_id": "manifest-entry.rt-vlm-media.09-reasoning",
+  "cases": [
+    {
+      "case_id": "target",
+      "correct_final_conclusion": true,
+      "expected_answer_sha256": "16477688c0e00699c6cfa4497a3612d7e83c532062b64b250fed8908128ed548",
+      "final_answer_sha256": "16477688c0e00699c6cfa4497a3612d7e83c532062b64b250fed8908128ed548",
+      "fixture_bytes": 2907,
+      "fixture_sha256": "c9845ca7e8f5fc9dfc54db9db262f6c7b57a2259757bfde9bf3f976bf224aaf7",
+      "hidden_reasoning_excluded_from_semantic_oracle": true,
+      "http_status": 200,
+      "reasoning_signal_present": true,
+      "request_sha256": "80e4fcb3f0c379e68df1c2ab7bd8913f4c67030a511eebad0e93a53df2980098",
+      "response_id_sha256": "8e03c18565564e0f39992d58e98c73437c6c2b0466771b3c216c937b75d3828b",
+      "response_model_exact": true,
+      "response_sha256": "b26a36b32a698d89da10712002b1c5b7b178a63778f6b5846d69c4d701e0791f"
+    },
+    {
+      "case_id": "adjacent_negative",
+      "correct_final_conclusion": true,
+      "expected_answer_sha256": "b1f51a511f1da0cd348b8f8598db32e61cb963e5fc69e2b41485bf99590ed75a",
+      "final_answer_sha256": "b1f51a511f1da0cd348b8f8598db32e61cb963e5fc69e2b41485bf99590ed75a",
+      "fixture_bytes": 2839,
+      "fixture_sha256": "06ac8d77b4d9a329d9b95230c23b53256ebd7aac096f2eac5d8786902f0f8f20",
+      "hidden_reasoning_excluded_from_semantic_oracle": true,
+      "http_status": 200,
+      "reasoning_signal_present": true,
+      "request_sha256": "f72371da85ecef47cd8965064b22f3b93feb1c0eeabd31731f9c7975d3f9f18b",
+      "response_id_sha256": "2bbaff91ba54a27cbd44e2ff271925932a873a4975072ef685723672fe5a8b9b",
+      "response_model_exact": true,
+      "response_sha256": "01e03ba44eee8589f071f0d1c0e78781552184062d34bfe566955818bac5e2b7"
+    }
+  ],
+  "cleanup": {
+    "persistent_resources_created": 0,
+    "persistent_resources_deleted": 0,
+    "temporary_fixture_root_absent": true
+  },
+  "contract_sha256": "a6054f3ef77f1be0dd3d1bd975cf78fb4adac9ea02ce65e6a817e3a26ec10e90",
+  "duration_seconds": 34.870417,
+  "oracle": {
+    "hidden_reasoning_excluded_from_all_semantic_oracles": true,
+    "opposite_correct_conclusions": true,
+    "reasoning_enabled_for_all_cases": true,
+    "reasoning_signal_present_for_all_cases": true,
+    "same_question": true
+  },
+  "package_id": "rt-vlm-reasoning-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "raw_prompt_retained": false,
+    "raw_response_ids_retained": false,
+    "raw_response_retained": false,
+    "reasoning_text_retained": false,
+    "service_lifecycle_actions": 0,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "endpoint_sha256": "fc2acbd58118c812e3a09da75af02336fe4ade4305f30c1863bf0808546c8de1",
+    "model_id_sha256": "0e8a26c59c5f67a47d4c2fafa065c8524243bfac33810fe4c93ea12d20f4bfe6",
+    "models_after_sha256": "4b112881badb988172b4b5cbd8be253b5464fa874036b39764bf0d9dca76d9a4",
+    "models_before_sha256": "4b112881badb988172b4b5cbd8be253b5464fa874036b39764bf0d9dca76d9a4",
+    "models_post_response_sha256": "2969b6a745c7560bb3c1717c3dc6f9c3a8aced40cfb5415bf968adc90eaae97b",
+    "models_pre_response_sha256": "2969b6a745c7560bb3c1717c3dc6f9c3a8aced40cfb5415bf968adc90eaae97b",
+    "models_unchanged": true
+  },
+  "schema_version": 1,
+  "status": "passed"
+}
