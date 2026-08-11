@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-4",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-5",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -92,6 +92,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "066ee13115f4aaefcbf87932033474675255272756a31b1a4b367d4ebed02b74",
         "receipt_sha256": "f5f54a32c06231082930d1c7dbd05b1bc9cc05b578264422adc5f79e840d943d",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "HTTP/S",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-media.01-http-s",
+      "feature_id": "rt-vlm-media",
+      "official_index": 337,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-http-s-runtime-successor/contract.json",
+        "contract_sha256": "575b553962a2bd7f1386d6308f9ce1b5e6a066d2c5ef35441f21a3af6b91f7af",
+        "package_id": "rt-vlm-http-s-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-http-s-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-http-s-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "466c851fe84b50ba55bc35c7785e8f99c6078d219ce175c92391b708ade2971b",
+        "receipt_sha256": "70939dab6695c5e93e091c68ed1c30840555faf2450c39c3abd8fc3309a90d92",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -346,8 +368,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 15,
-    "row_count": 15,
+    "passed_current_thor": 16,
+    "row_count": 16,
     "warehouse_sample_bundle": "excluded"
   }
 }

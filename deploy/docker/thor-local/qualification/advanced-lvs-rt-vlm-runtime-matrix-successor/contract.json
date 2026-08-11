@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-4",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-5",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -101,6 +101,31 @@
         "/file_upload/stable_file_identity_returned": true,
         "/policy/agent_generate_calls": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 337,
+      "capability_id": "manifest-entry.rt-vlm-media.01-http-s",
+      "advertised_literal": "HTTP/S",
+      "package_id": "rt-vlm-http-s-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-http-s-runtime-successor/contract.json",
+      "contract_sha256": "575b553962a2bd7f1386d6308f9ce1b5e6a066d2c5ef35441f21a3af6b91f7af",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-http-s-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "70939dab6695c5e93e091c68ed1c30840555faf2450c39c3abd8fc3309a90d92",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-http-s-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "466c851fe84b50ba55bc35c7785e8f99c6078d219ce175c92391b708ade2971b",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/plain_http/transport_plain_http": true,
+        "/plain_http/markers_in_chronological_order": true,
+        "/https/transport_https": true,
+        "/https/animation_classification_positive": true,
+        "/https_fixture/tls_verification_enabled": true,
+        "/adjacent_negatives/loopback_ssrf/http_status": 422,
+        "/adjacent_negatives/redirect_disabled/http_status": 422,
+        "/cleanup/catalog_restored_exactly": true,
+        "/cleanup/local_fixture_server_stopped": true,
+        "/policy/agent_generate_calls": 0
       }
     },
     {

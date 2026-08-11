@@ -1,0 +1,122 @@
+{
+  "adjacent_negatives": {
+    "loopback_ssrf": {
+      "code_exact": true,
+      "http_status": 422,
+      "model_invoked": false,
+      "request_sha256": "435274a0f23e23602de792c787518377a629548ef34ac93252a38823f3712d57",
+      "response_sha256": "ae4bf732bbef5698041fbbfd88f366f3c9afb5cb7cb533454621af17e8ab1925",
+      "structured": true
+    },
+    "redirect_disabled": {
+      "code_exact": true,
+      "http_status": 422,
+      "model_invoked": false,
+      "request_sha256": "44c85e7e8649bd1b47aa58adaf866abf366480c7507af35e9c3bd1742a91cae6",
+      "response_sha256": "561145c16e9c01460f8fa1f0c207793df71de51d24f15b6ddb284ac7a2e5dc28",
+      "structured": true
+    }
+  },
+  "budget": {
+    "container_commands": 3,
+    "external_fixture_verification_fetches": 1,
+    "local_fixture_requests": 2,
+    "max_container_commands": 3,
+    "max_external_fixture_verification_fetches": 1,
+    "max_local_fixture_requests": 2,
+    "max_model_requests": 2,
+    "max_rt_vlm_http_requests": 10,
+    "model_requests": 2,
+    "rt_vlm_http_requests": 10
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.01-http-s"
+  ],
+  "cleanup": {
+    "asset_statistics_restored_exactly": true,
+    "catalog_after_count": 0,
+    "catalog_before_count": 0,
+    "catalog_restored_exactly": true,
+    "local_fixture_server_stopped": true,
+    "model_inventory_restored_exactly": true,
+    "owned_assets_absent": true,
+    "temporary_fixture_root_absent": true
+  },
+  "contract_sha256": "575b553962a2bd7f1386d6308f9ce1b5e6a066d2c5ef35441f21a3af6b91f7af",
+  "duration_seconds": 4.819772,
+  "http_fixture": {
+    "byte_count": 75449,
+    "content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "duration_seconds": 9,
+    "primary_markers": [
+      "blue",
+      "green",
+      "red"
+    ]
+  },
+  "https": {
+    "animation_classification_positive": true,
+    "fixture_byte_count": 4372373,
+    "fixture_content_sha256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+    "http_status": 200,
+    "model_exact": true,
+    "request_sha256": "078c06860430760dab6d60d403b8b3f673718328a4acd8fe5dcb90375156579e",
+    "response_sha256": "2190af1bf80dc206c20144e55aeb0b0994cca8a563b542b9a2184d537525c2f6",
+    "semantic_output_sha256": "6c3567715f6fd917fec91f0e81d48900b17fb0ae455578c0d4e3a93af4701731",
+    "tls_verification_default": true,
+    "transport_https": true
+  },
+  "https_fixture": {
+    "byte_count": 4372373,
+    "content_sha256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+    "content_type_exact": true,
+    "host_exact": true,
+    "http_status": 200,
+    "tls_verification_enabled": true
+  },
+  "official_indices": [
+    337
+  ],
+  "package_id": "rt-vlm-http-s-runtime-successor",
+  "plain_http": {
+    "all_primary_markers_present": true,
+    "downloaded_byte_count": 75449,
+    "downloaded_content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "http_status": 200,
+    "markers_in_chronological_order": true,
+    "model_exact": true,
+    "request_sha256": "5e8e9c2425f7f2d097e46cf0a656df9a99daecda73e59e9a1718f388a8fbc122",
+    "response_sha256": "66e0f56063101eeaa7ff5ca52f2bfe62148f302dc064c655a7968bf790487e7a",
+    "semantic_output_sha256": "cd1cdda0829be443e3fd6950fad1c1f115996d280c212cff83cd85788d1ebe7b",
+    "served_from_existing_docker_bridge": true,
+    "transport_plain_http": true
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_semantic_output_retained": false,
+    "service_lifecycle_actions": 0,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime_identity": {
+    "asset_manager_source_sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169",
+    "audio_support": false,
+    "bridge_gateway_exact": true,
+    "bridge_network_exact": true,
+    "container_name_exact": true,
+    "endpoint_loopback_exact": true,
+    "healthy": true,
+    "image_id_exact": true,
+    "live_sources_match_locks": true,
+    "model_exact": true,
+    "oom_killed": false,
+    "release_exact": "cosmos3-nano-reasoner:bf16-final",
+    "restart_count": 0,
+    "server_source_sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-http-s-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.01-http-s"
+  ],
+  "official_indices": [337],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "model": {
+    "id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "release": "cosmos3-nano-reasoner:bf16-final",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/execute.py",
+      "sha256": "5091f5cdf3ab27666d0f8ca3615cbac93270a6733d622a8e46326ceb2b9e6b22"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/asset_manager.py",
+      "sha256": "e956323c6143d6d4ffb800ab43d6e95083f9a41c0997911d297b84f422088169"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/nim_compat.py",
+      "sha256": "895a2c199ecafdb1ba050c600e694cb15a3630bae4e251b1822edc2c483402fe"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "918aa37f9cfad7198845b8efa0bb221ac9c183d0dac58534cab5c972c69ab5c5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json",
+      "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"
+    }
+  ],
+  "http_fixture": {
+    "bridge_network": "mdx_default",
+    "bridge_gateway": "172.18.0.1",
+    "port": 18089,
+    "path": "/timeline.mp4",
+    "bytes": 75449,
+    "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "duration_seconds": 9,
+    "primary_markers": ["blue", "green", "red"]
+  },
+  "https_fixture": {
+    "url": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+    "host": "media.w3.org",
+    "bytes": 4372373,
+    "sha256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+    "content_type": "video/mp4",
+    "duration_seconds": 52.208333,
+    "required_classifications": ["animation=yes"]
+  },
+  "execution": {
+    "endpoint": "http://127.0.0.1:8018",
+    "container": "vss-rtvi-vlm",
+    "max_duration_seconds": 180,
+    "max_rt_vlm_http_requests": 10,
+    "max_model_requests": 2,
+    "max_external_fixture_fetches": 1,
+    "max_local_fixture_requests": 2,
+    "max_container_commands": 3,
+    "acknowledgement": "I_ACK_RT_VLM_BOUNDED_HTTP_S_MEDIA_AND_EXACT_CLEANUP"
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded",
+    "raw_prompts_retained": false,
+    "raw_semantic_output_retained": false,
+    "credentials_retained": false
+  }
+}

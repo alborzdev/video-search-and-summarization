@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_ids",
+    "official_indices",
+    "status",
+    "contract_sha256",
+    "duration_seconds",
+    "budget",
+    "runtime_identity",
+    "http_fixture",
+    "https_fixture",
+    "plain_http",
+    "https",
+    "adjacent_negatives",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-http-s-runtime-successor"},
+    "capability_ids": {
+      "const": ["manifest-entry.rt-vlm-media.01-http-s"]
+    },
+    "official_indices": {"const": [337]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rt_vlm_http_requests",
+        "max_rt_vlm_http_requests",
+        "model_requests",
+        "max_model_requests",
+        "external_fixture_verification_fetches",
+        "max_external_fixture_verification_fetches",
+        "local_fixture_requests",
+        "max_local_fixture_requests",
+        "container_commands",
+        "max_container_commands"
+      ],
+      "properties": {
+        "rt_vlm_http_requests": {"const": 10},
+        "max_rt_vlm_http_requests": {"const": 10},
+        "model_requests": {"const": 2},
+        "max_model_requests": {"const": 2},
+        "external_fixture_verification_fetches": {"const": 1},
+        "max_external_fixture_verification_fetches": {"const": 1},
+        "local_fixture_requests": {"const": 2},
+        "max_local_fixture_requests": {"const": 2},
+        "container_commands": {"const": 3},
+        "max_container_commands": {"const": 3}
+      }
+    },
+    "runtime_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_name_exact",
+        "image_id_exact",
+        "healthy",
+        "restart_count",
+        "oom_killed",
+        "bridge_network_exact",
+        "bridge_gateway_exact",
+        "server_source_sha256",
+        "asset_manager_source_sha256",
+        "live_sources_match_locks",
+        "endpoint_loopback_exact",
+        "model_exact",
+        "release_exact",
+        "audio_support"
+      ],
+      "properties": {
+        "container_name_exact": {"const": true},
+        "image_id_exact": {"const": true},
+        "healthy": {"const": true},
+        "restart_count": {"const": 0},
+        "oom_killed": {"const": false},
+        "bridge_network_exact": {"const": true},
+        "bridge_gateway_exact": {"const": true},
+        "server_source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "asset_manager_source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "live_sources_match_locks": {"const": true},
+        "endpoint_loopback_exact": {"const": true},
+        "model_exact": {"const": true},
+        "release_exact": {"const": "cosmos3-nano-reasoner:bf16-final"},
+        "audio_support": {"const": false}
+      }
+    },
+    "http_fixture": {"$ref": "#/$defs/httpFixture"},
+    "https_fixture": {"$ref": "#/$defs/httpsFixture"},
+    "plain_http": {"$ref": "#/$defs/plainHttp"},
+    "https": {"$ref": "#/$defs/httpsResult"},
+    "adjacent_negatives": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loopback_ssrf", "redirect_disabled"],
+      "properties": {
+        "loopback_ssrf": {"$ref": "#/$defs/negative"},
+        "redirect_disabled": {"$ref": "#/$defs/negative"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_before_count",
+        "catalog_after_count",
+        "catalog_restored_exactly",
+        "asset_statistics_restored_exactly",
+        "model_inventory_restored_exactly",
+        "local_fixture_server_stopped",
+        "temporary_fixture_root_absent",
+        "owned_assets_absent"
+      ],
+      "properties": {
+        "catalog_before_count": {"type": "integer", "minimum": 0},
+        "catalog_after_count": {"type": "integer", "minimum": 0},
+        "catalog_restored_exactly": {"const": true},
+        "asset_statistics_restored_exactly": {"const": true},
+        "model_inventory_restored_exactly": {"const": true},
+        "local_fixture_server_stopped": {"const": true},
+        "temporary_fixture_root_absent": {"const": true},
+        "owned_assets_absent": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_generate_calls",
+        "raw_prompt_retained",
+        "raw_semantic_output_retained",
+        "raw_resource_ids_retained",
+        "credentials_retained",
+        "service_lifecycle_actions",
+        "stream_mutations",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "raw_prompt_retained": {"const": false},
+        "raw_semantic_output_retained": {"const": false},
+        "raw_resource_ids_retained": {"const": false},
+        "credentials_retained": {"const": false},
+        "service_lifecycle_actions": {"const": 0},
+        "stream_mutations": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "httpFixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_seconds", "byte_count", "content_sha256", "primary_markers"],
+      "properties": {
+        "duration_seconds": {"const": 9},
+        "byte_count": {"const": 75449},
+        "content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"},
+        "primary_markers": {"const": ["blue", "green", "red"]}
+      }
+    },
+    "httpsFixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host_exact",
+        "tls_verification_enabled",
+        "http_status",
+        "content_type_exact",
+        "byte_count",
+        "content_sha256"
+      ],
+      "properties": {
+        "host_exact": {"const": true},
+        "tls_verification_enabled": {"const": true},
+        "http_status": {"const": 200},
+        "content_type_exact": {"const": true},
+        "byte_count": {"const": 4372373},
+        "content_sha256": {"const": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254"}
+      }
+    },
+    "plainHttp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_status",
+        "model_exact",
+        "all_primary_markers_present",
+        "markers_in_chronological_order",
+        "response_sha256",
+        "semantic_output_sha256",
+        "request_sha256",
+        "transport_plain_http",
+        "served_from_existing_docker_bridge",
+        "downloaded_content_sha256",
+        "downloaded_byte_count"
+      ],
+      "properties": {
+        "http_status": {"const": 200},
+        "model_exact": {"const": true},
+        "all_primary_markers_present": {"const": true},
+        "markers_in_chronological_order": {"const": true},
+        "response_sha256": {"$ref": "#/$defs/hash"},
+        "semantic_output_sha256": {"$ref": "#/$defs/hash"},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "transport_plain_http": {"const": true},
+        "served_from_existing_docker_bridge": {"const": true},
+        "downloaded_content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"},
+        "downloaded_byte_count": {"const": 75449}
+      }
+    },
+    "httpsResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_status",
+        "model_exact",
+        "animation_classification_positive",
+        "response_sha256",
+        "semantic_output_sha256",
+        "request_sha256",
+        "transport_https",
+        "tls_verification_default",
+        "fixture_content_sha256",
+        "fixture_byte_count"
+      ],
+      "properties": {
+        "http_status": {"const": 200},
+        "model_exact": {"const": true},
+        "animation_classification_positive": {"const": true},
+        "response_sha256": {"$ref": "#/$defs/hash"},
+        "semantic_output_sha256": {"$ref": "#/$defs/hash"},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "transport_https": {"const": true},
+        "tls_verification_default": {"const": true},
+        "fixture_content_sha256": {"const": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254"},
+        "fixture_byte_count": {"const": 4372373}
+      }
+    },
+    "negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_status",
+        "structured",
+        "code_exact",
+        "request_sha256",
+        "response_sha256",
+        "model_invoked"
+      ],
+      "properties": {
+        "http_status": {"const": 422},
+        "structured": {"const": true},
+        "code_exact": {"const": true},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "response_sha256": {"$ref": "#/$defs/hash"},
+        "model_invoked": {"const": false}
+      }
+    }
+  }
+}
