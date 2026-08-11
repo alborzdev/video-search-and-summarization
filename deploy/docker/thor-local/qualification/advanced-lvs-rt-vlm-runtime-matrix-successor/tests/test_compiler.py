@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_seventy_one_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_seventy_five_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        60, 61, 62, 63, 69, 70, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -43,6 +43,23 @@ def test_overlay_does_not_falsify_canonical_admission() -> None:
     assert matrix["matrix_semantics"]["canonical_admission_claimed"] is False
     assert all(row["canonical_runtime_state"] == "not_qualified" for row in matrix["rows"])
     assert all(row["canonical_state_advanced"] is False for row in matrix["rows"])
+
+
+def test_rt_vlm_url_security_receipt_is_bound_to_four_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-vlm-url-security-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [60, 61, 62, 63]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+    assert receipt["authentication"]["cross_host_redirect_authorization_stripped"] is True
+    assert receipt["redirects"]["above_max"]["effective_limit"] == 10
+    assert receipt["download_size"]["over_limit_status_code"] == 413
+    assert receipt["tls"]["unlisted_domain"]["verification_retained"] is True
 
 
 def test_behavior_dynamic_control_receipt_is_bound_to_both_exact_rows() -> None:

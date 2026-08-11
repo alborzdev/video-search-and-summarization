@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-34",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-35",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -21,6 +21,103 @@
     "warehouse_sample_bundle": "excluded"
   },
   "entries": [
+    {
+      "official_index": 60,
+      "capability_id": "behavior.rt-vlm.url-auth",
+      "advertised_literal": "RT-VLM per-domain URL authentication headers",
+      "package_id": "rt-vlm-url-security-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+      "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/live_api/ready": true,
+        "/live_api/url_headers_present": true,
+        "/authentication/request_headers/authorization_delivered": true,
+        "/authentication/request_headers/disallowed_host_blocked": true,
+        "/authentication/environment_auth/authorization_delivered": true,
+        "/authentication/environment_auth/unmatched_domain_authorization_stripped": true,
+        "/authentication/plain_http_authorization_stripped": true,
+        "/authentication/same_host_redirect_authorization_retained": true,
+        "/authentication/cross_host_redirect_authorization_stripped": true,
+        "/cleanup/main_container_exact": true,
+        "/policy/external_requests": 0
+      }
+    },
+    {
+      "official_index": 61,
+      "capability_id": "behavior.rt-vlm.url-redirect-limit",
+      "advertised_literal": "RT-VLM bounded URL redirects",
+      "package_id": "rt-vlm-url-security-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+      "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/redirects/zero/status_code": 422,
+        "/redirects/one/status_code": 422,
+        "/redirects/two/downloaded": true,
+        "/redirects/two/ssrf_validation_calls": 3,
+        "/redirects/negative/effective_limit": 0,
+        "/redirects/above_max/effective_limit": 10,
+        "/redirects/above_max/requests": 11,
+        "/cleanup/probe_container_absent": true,
+        "/policy/external_requests": 0
+      }
+    },
+    {
+      "official_index": 62,
+      "capability_id": "behavior.rt-vlm.url-size-limit",
+      "advertised_literal": "RT-VLM bounded URL download size",
+      "package_id": "rt-vlm-url-security-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+      "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/download_size/default_limit_bytes": 8589934592,
+        "/download_size/configured_limit_bytes": 64,
+        "/download_size/below_limit_saved": true,
+        "/download_size/over_limit_code": "FileTooLarge",
+        "/download_size/over_limit_status_code": 413,
+        "/download_size/over_limit_not_saved": true,
+        "/cleanup/main_asset_state_exact": true,
+        "/policy/main_rt_vlm_asset_mutations": 0
+      }
+    },
+    {
+      "official_index": 63,
+      "capability_id": "behavior.rt-vlm.url-tls-exception",
+      "advertised_literal": "RT-VLM domain-scoped TLS verification exceptions",
+      "package_id": "rt-vlm-url-security-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+      "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/tls/default_verification/verified": true,
+        "/tls/default_verification/self_signed_rejected": true,
+        "/tls/listed_domain/verification_skipped": true,
+        "/tls/listed_domain/downloaded": true,
+        "/tls/unlisted_domain/verification_retained": true,
+        "/tls/unlisted_domain/self_signed_rejected": true,
+        "/fixture_boundary/network": "loopback-only",
+        "/fixture_boundary/raw_credentials_retained": false,
+        "/policy/external_requests": 0
+      }
+    },
     {
       "official_index": 69,
       "capability_id": "behavior.rt-cv.smart-infer",

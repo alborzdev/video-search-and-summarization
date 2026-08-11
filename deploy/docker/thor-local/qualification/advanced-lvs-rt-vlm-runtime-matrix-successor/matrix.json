@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-34",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-35",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -8,6 +8,94 @@
   },
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
   "rows": [
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "RT-VLM per-domain URL authentication headers",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "behavior.rt-vlm.url-auth",
+      "feature_id": "release-behavior-contracts",
+      "official_index": 60,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+        "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+        "package_id": "rt-vlm-url-security-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+        "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "RT-VLM bounded URL redirects",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "behavior.rt-vlm.url-redirect-limit",
+      "feature_id": "release-behavior-contracts",
+      "official_index": 61,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+        "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+        "package_id": "rt-vlm-url-security-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+        "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "RT-VLM bounded URL download size",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "behavior.rt-vlm.url-size-limit",
+      "feature_id": "release-behavior-contracts",
+      "official_index": 62,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+        "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+        "package_id": "rt-vlm-url-security-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+        "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "RT-VLM domain-scoped TLS verification exceptions",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "behavior.rt-vlm.url-tls-exception",
+      "feature_id": "release-behavior-contracts",
+      "official_index": 63,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/contract.json",
+        "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+        "package_id": "rt-vlm-url-security-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "78b0b6f80baea4db56ca78e793203655f9fda57fdbdf2836acddaab49259dd8a",
+        "receipt_sha256": "7376f42d170c2f81a2b599694c66e7d46178a5050d6c54bf9c426481fd3f2865",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
@@ -1578,8 +1666,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 71,
-    "row_count": 71,
+    "passed_current_thor": 75,
+    "row_count": 75,
     "warehouse_sample_bundle": "excluded"
   }
 }

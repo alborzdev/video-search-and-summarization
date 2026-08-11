@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-url-security-runtime-successor",
+  "contract_sha256": "8f74b365099502101787afc5800a52001c5e2ba2c7fa09b3ec37a1a0840ac706",
+  "capability_ids": [
+    "behavior.rt-vlm.url-auth",
+    "behavior.rt-vlm.url-redirect-limit",
+    "behavior.rt-vlm.url-size-limit",
+    "behavior.rt-vlm.url-tls-exception"
+  ],
+  "official_indices": [60, 61, 62, 63],
+  "status": "passed",
+  "captured_at": "2026-08-11T22:06:32Z",
+  "runtime": {
+    "image": "nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "asset_manager_sha256": "cebaf1899697976b8797f7d08664e932b93304054472e3053213efa55999ce1b",
+    "main_container": {"running": true, "oom_killed": false, "restart_count": 0},
+    "probe_container": {"exit_code": 0, "oom_killed": false, "restart_count": 0},
+    "probe_log_sha256": "e6d1c86c3ee4548874225abccf6121090e02000da0f9f0fa6688686e619abc46"
+  },
+  "live_api": {
+    "ready": true,
+    "request_path": "/v1/generate_captions",
+    "request_schema": "VlmQuery",
+    "url_present": true,
+    "url_headers_present": true,
+    "request_headers_override_documented": true,
+    "required_fields": ["id", "prompt", "model"],
+    "loopback_ssrf_status_code": 422,
+    "loopback_rejected_before_download": true,
+    "error_shape": ["code", "message"]
+  },
+  "authentication": {
+    "request_headers": {
+      "authorization_delivered": true,
+      "disallowed_host_blocked": true,
+      "disallowed_forwarded_for_blocked": true,
+      "disallowed_transfer_encoding_blocked": true
+    },
+    "environment_auth": {
+      "matched_domain": "auth.vss.test",
+      "authorization_delivered": true,
+      "unmatched_domain_authorization_stripped": true
+    },
+    "plain_http_authorization_stripped": true,
+    "same_host_redirect_authorization_retained": true,
+    "cross_host_redirect_authorization_stripped": true
+  },
+  "redirects": {
+    "zero": {"status_code": 422, "code": "RedirectNotAllowed", "requests": 1},
+    "one": {"status_code": 422, "code": "RedirectNotAllowed", "requests": 2},
+    "two": {"downloaded": true, "requests": 3, "ssrf_validation_calls": 3},
+    "negative": {"configured_limit": -1, "effective_limit": 0, "status_code": 422},
+    "above_max": {"configured_limit": 20, "effective_limit": 10, "status_code": 422, "requests": 11, "terminal_request_path": "/chain-1.mp4"}
+  },
+  "download_size": {
+    "default_limit_bytes": 8589934592,
+    "configured_limit_bytes": 64,
+    "below_limit_bytes": 30,
+    "below_limit_saved": true,
+    "over_limit_response_bytes": 96,
+    "over_limit_code": "FileTooLarge",
+    "over_limit_status_code": 413,
+    "over_limit_not_saved": true
+  },
+  "tls": {
+    "default_verification": {"verified": true, "self_signed_rejected": true, "error_type": "ClientConnectorCertificateError", "application_requests": 0},
+    "listed_domain": {"domain": "auth.vss.test", "verification_skipped": true, "downloaded": true, "bytes": 30},
+    "unlisted_domain": {"domain": "target.vss.test", "verification_retained": true, "self_signed_rejected": true, "error_type": "ClientConnectorCertificateError"}
+  },
+  "fixture_boundary": {
+    "owned_hosts": ["auth.vss.test", "target.vss.test"],
+    "network": "loopback-only",
+    "ssrf_guard_bypass": "bounded_fixture_hosts_only",
+    "payload_sha256": "69b3213afa30aaa439608cdfe71c3cc11b33f4f0d1190546751099a678cdc243",
+    "raw_credentials_retained": false
+  },
+  "cleanup": {
+    "probe_container_absent": true,
+    "main_container_exact": true,
+    "main_asset_state_exact": true,
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_vlm_lifecycle_mutations": 0,
+    "main_rt_vlm_asset_mutations": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-url-security-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "behavior.rt-vlm.url-auth",
+    "behavior.rt-vlm.url-redirect-limit",
+    "behavior.rt-vlm.url-size-limit",
+    "behavior.rt-vlm.url-tls-exception"
+  ],
+  "official_indices": [60, 61, 62, 63],
+  "advertised_contracts": {
+    "behavior.rt-vlm.url-auth": {"environment": "ASSET_DOWNLOAD_AUTH_TOKENS"},
+    "behavior.rt-vlm.url-redirect-limit": {"environment": "ASSET_DOWNLOAD_MAX_REDIRECTS", "range": [0, 10]},
+    "behavior.rt-vlm.url-size-limit": {"environment": "ASSET_DOWNLOAD_MAX_FILE_SIZE_GB", "default_gb": 8},
+    "behavior.rt-vlm.url-tls-exception": {"environment": "ASSET_DOWNLOAD_SSL_SKIP_VERIFY_DOMAINS"}
+  },
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/in_container_probe.py", "sha256": "c244cc4b429515f57ee76f82b4451c7d9e2e43de330ab6160de987c2b534907f"},
+    {"path": "deploy/docker/thor-local/qualification/rt-vlm-url-security-runtime-successor/run_probe.py", "sha256": "662f185541144e056cc2ea3e8af2a01b1d6e9a2722a628da0b47bee66078ac22"},
+    {"path": "services/rtvi/rt-vlm/src/utils/asset_manager.py", "sha256": "cebaf1899697976b8797f7d08664e932b93304054472e3053213efa55999ce1b"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/captions.py", "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/common.py", "sha256": "81d3dc303983e8c0f999f48585cd0c9ffe28c86d0b6105bdc219deae407d42ae"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/embeddings.py", "sha256": "b77a9042c13705802b95502e9c35959beb21673371a085e27408d371c7003ee9"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"},
+    {"path": "services/rtvi/rt-vlm/docker/compose.yaml", "sha256": "f24039c42eaaf548c3832a1f654ad2638edffc0b4c923bfb2ab13d60d9d5014e"},
+    {"path": "services/rtvi/rt-vlm/tests/rtvi_vlm/test_url_download_config.py", "sha256": "cc1ed586f5569698efeb984c4991041bd5c326f705623801cd3bf47d0cb9ffe9"},
+    {"path": "deploy/docker/thor-local/official-edge/compose.yml", "sha256": "5e094c8e6eb3c7c2b19ce1c59053ebdb1ff0bfdf716ab885001a3e420ade5a5c"}
+  ],
+  "required_assertions": {
+    "live_api": {
+      "ready": true,
+      "generate_captions_url_and_headers_schema": true,
+      "loopback_ssrf_status": 422
+    },
+    "authentication": {
+      "request_header_allowlist": true,
+      "environment_domain_match": true,
+      "unmatched_domain_stripped": true,
+      "plain_http_stripped": true,
+      "same_host_redirect_retained": true,
+      "cross_host_redirect_stripped": true
+    },
+    "redirects": {
+      "zero_rejected": true,
+      "one_hop_limit_enforced": true,
+      "two_hops_succeeded": true,
+      "negative_clamped_to_zero": true,
+      "above_max_clamped_to_ten": true,
+      "each_followed_hop_ssrf_validated": true
+    },
+    "download_size": {
+      "default_bytes": 8589934592,
+      "configured_boundary_exercised": true,
+      "over_limit_status": 413,
+      "over_limit_not_saved": true
+    },
+    "tls": {
+      "verified_by_default": true,
+      "listed_domain_skipped": true,
+      "unlisted_domain_verified": true
+    }
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_vlm_lifecycle_mutations": 0,
+    "main_rt_vlm_asset_mutations": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "external production certificate-authority or identity-provider integration",
+    "production download throughput",
+    "S3 URL authentication",
+    "100 GB Warehouse sample bundle"
+  ]
+}

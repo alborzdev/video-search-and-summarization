@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "contract_sha256", "capability_ids", "official_indices", "status", "captured_at", "runtime", "live_api", "authentication", "redirects", "download_size", "tls", "fixture_boundary", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-url-security-runtime-successor"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "capability_ids": {"const": ["behavior.rt-vlm.url-auth", "behavior.rt-vlm.url-redirect-limit", "behavior.rt-vlm.url-size-limit", "behavior.rt-vlm.url-tls-exception"]},
+    "official_indices": {"const": [60, 61, 62, 63]},
+    "status": {"const": "passed"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["image", "image_id", "asset_manager_sha256", "main_container", "probe_container", "probe_log_sha256"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1"},
+        "image_id": {"$ref": "#/$defs/image_id"},
+        "asset_manager_sha256": {"$ref": "#/$defs/sha256"},
+        "main_container": {"$ref": "#/$defs/running_container"},
+        "probe_container": {"$ref": "#/$defs/exited_container"},
+        "probe_log_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "live_api": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ready", "request_path", "request_schema", "url_present", "url_headers_present", "request_headers_override_documented", "required_fields", "loopback_ssrf_status_code", "loopback_rejected_before_download", "error_shape"],
+      "properties": {
+        "ready": {"const": true}, "request_path": {"const": "/v1/generate_captions"},
+        "request_schema": {"const": "VlmQuery"}, "url_present": {"const": true},
+        "url_headers_present": {"const": true}, "request_headers_override_documented": {"const": true},
+        "required_fields": {"const": ["id", "prompt", "model"]},
+        "loopback_ssrf_status_code": {"const": 422}, "loopback_rejected_before_download": {"const": true},
+        "error_shape": {"const": ["code", "message"]}
+      }
+    },
+    "authentication": {
+      "type": "object", "additionalProperties": false,
+      "required": ["request_headers", "environment_auth", "plain_http_authorization_stripped", "same_host_redirect_authorization_retained", "cross_host_redirect_authorization_stripped"],
+      "properties": {
+        "request_headers": {
+          "type": "object", "additionalProperties": false,
+          "required": ["authorization_delivered", "disallowed_host_blocked", "disallowed_forwarded_for_blocked", "disallowed_transfer_encoding_blocked"],
+          "properties": {
+            "authorization_delivered": {"const": true}, "disallowed_host_blocked": {"const": true},
+            "disallowed_forwarded_for_blocked": {"const": true}, "disallowed_transfer_encoding_blocked": {"const": true}
+          }
+        },
+        "environment_auth": {
+          "type": "object", "additionalProperties": false,
+          "required": ["matched_domain", "authorization_delivered", "unmatched_domain_authorization_stripped"],
+          "properties": {
+            "matched_domain": {"const": "auth.vss.test"}, "authorization_delivered": {"const": true},
+            "unmatched_domain_authorization_stripped": {"const": true}
+          }
+        },
+        "plain_http_authorization_stripped": {"const": true},
+        "same_host_redirect_authorization_retained": {"const": true},
+        "cross_host_redirect_authorization_stripped": {"const": true}
+      }
+    },
+    "redirects": {
+      "type": "object", "additionalProperties": false,
+      "required": ["zero", "one", "two", "negative", "above_max"],
+      "properties": {
+        "zero": {"$ref": "#/$defs/redirect_rejection_zero"},
+        "one": {"$ref": "#/$defs/redirect_rejection_one"},
+        "two": {
+          "type": "object", "additionalProperties": false,
+          "required": ["downloaded", "requests", "ssrf_validation_calls"],
+          "properties": {"downloaded": {"const": true}, "requests": {"const": 3}, "ssrf_validation_calls": {"const": 3}}
+        },
+        "negative": {
+          "type": "object", "additionalProperties": false,
+          "required": ["configured_limit", "effective_limit", "status_code"],
+          "properties": {"configured_limit": {"const": -1}, "effective_limit": {"const": 0}, "status_code": {"const": 422}}
+        },
+        "above_max": {
+          "type": "object", "additionalProperties": false,
+          "required": ["configured_limit", "effective_limit", "status_code", "requests", "terminal_request_path"],
+          "properties": {
+            "configured_limit": {"const": 20}, "effective_limit": {"const": 10}, "status_code": {"const": 422},
+            "requests": {"const": 11}, "terminal_request_path": {"const": "/chain-1.mp4"}
+          }
+        }
+      }
+    },
+    "download_size": {
+      "type": "object", "additionalProperties": false,
+      "required": ["default_limit_bytes", "configured_limit_bytes", "below_limit_bytes", "below_limit_saved", "over_limit_response_bytes", "over_limit_code", "over_limit_status_code", "over_limit_not_saved"],
+      "properties": {
+        "default_limit_bytes": {"const": 8589934592}, "configured_limit_bytes": {"const": 64},
+        "below_limit_bytes": {"const": 30}, "below_limit_saved": {"const": true},
+        "over_limit_response_bytes": {"const": 96}, "over_limit_code": {"const": "FileTooLarge"},
+        "over_limit_status_code": {"const": 413}, "over_limit_not_saved": {"const": true}
+      }
+    },
+    "tls": {
+      "type": "object", "additionalProperties": false,
+      "required": ["default_verification", "listed_domain", "unlisted_domain"],
+      "properties": {
+        "default_verification": {
+          "type": "object", "additionalProperties": false,
+          "required": ["verified", "self_signed_rejected", "error_type", "application_requests"],
+          "properties": {"verified": {"const": true}, "self_signed_rejected": {"const": true}, "error_type": {"const": "ClientConnectorCertificateError"}, "application_requests": {"const": 0}}
+        },
+        "listed_domain": {
+          "type": "object", "additionalProperties": false,
+          "required": ["domain", "verification_skipped", "downloaded", "bytes"],
+          "properties": {"domain": {"const": "auth.vss.test"}, "verification_skipped": {"const": true}, "downloaded": {"const": true}, "bytes": {"const": 30}}
+        },
+        "unlisted_domain": {
+          "type": "object", "additionalProperties": false,
+          "required": ["domain", "verification_retained", "self_signed_rejected", "error_type"],
+          "properties": {"domain": {"const": "target.vss.test"}, "verification_retained": {"const": true}, "self_signed_rejected": {"const": true}, "error_type": {"const": "ClientConnectorCertificateError"}}
+        }
+      }
+    },
+    "fixture_boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owned_hosts", "network", "ssrf_guard_bypass", "payload_sha256", "raw_credentials_retained"],
+      "properties": {
+        "owned_hosts": {"const": ["auth.vss.test", "target.vss.test"]}, "network": {"const": "loopback-only"},
+        "ssrf_guard_bypass": {"const": "bounded_fixture_hosts_only"}, "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_credentials_retained": {"const": false}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["probe_container_absent", "main_container_exact", "main_asset_state_exact", "failures"],
+      "properties": {
+        "probe_container_absent": {"const": true}, "main_container_exact": {"const": true},
+        "main_asset_state_exact": {"const": true}, "failures": {"type": "array", "maxItems": 0}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "external_requests", "main_rt_vlm_lifecycle_mutations", "main_rt_vlm_asset_mutations", "main_rt_cv_mutations", "main_vios_mutations", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "external_requests": {"const": 0},
+        "main_rt_vlm_lifecycle_mutations": {"const": 0}, "main_rt_vlm_asset_mutations": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0}, "main_vios_mutations": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "running_container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["running", "oom_killed", "restart_count"],
+      "properties": {"running": {"const": true}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}
+    },
+    "exited_container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exit_code", "oom_killed", "restart_count"],
+      "properties": {"exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}
+    },
+    "redirect_rejection_zero": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status_code", "code", "requests"],
+      "properties": {"status_code": {"const": 422}, "code": {"const": "RedirectNotAllowed"}, "requests": {"const": 1}}
+    },
+    "redirect_rejection_one": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status_code", "code", "requests"],
+      "properties": {"status_code": {"const": 422}, "code": {"const": "RedirectNotAllowed"}, "requests": {"const": 2}}
+    }
+  }
+}

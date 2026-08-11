@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds seventy-one advertised candidate rows to current-Thor live receipts. Overlay 34 adds the exact Behavior Analytics broker-sink row: the released image routed all seven advertised output families through each real Kafka, Redis Streams, and MQTT sink, for 21 observed and decoded broker records. Overlay 33's complete pipeline proof and all earlier rows retain their exact evidence. External Slack and audio recording remain explicitly unclaimed.
+This read-only successor binds seventy-five advertised candidate rows to current-Thor live receipts. Overlay 35 adds the four RT-VLM URL-ingestion security rows: exact-domain authentication, bounded and per-hop-validated redirects, the configurable 8 GiB-default size limit, and domain-scoped TLS exceptions. The live API boundary and exact released-image implementation were exercised with loopback-only fixtures while preserving the running service and asset catalog. Overlay 34's complete broker-sink matrix and all earlier rows retain their exact evidence. External Slack and audio recording remain explicitly unclaimed.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 
