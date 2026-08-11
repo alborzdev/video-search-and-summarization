@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-23",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-24",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -122,6 +122,31 @@
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 333,
+      "capability_id": "manifest-entry.realtime-alerts.05-websocket-delivery",
+      "advertised_literal": "WebSocket delivery",
+      "package_id": "alert-websocket-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/alert-websocket-manifest-runtime-successor/contract.json",
+      "contract_sha256": "42783e5281f0055a35d3fa58a140069a38a035c6396a61e07eab2594d4d267b2",
+      "receipt_path": "deploy/docker/thor-local/qualification/alert-websocket-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "a2195a4f62fbf0b440775400d8403fadb29b3d7af4261edeafa52a127868238c",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/alert-websocket-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "9480df34a1ee182026a5f852bd40ce21c0009d22474941bfdddd735b2da990f9",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/delivery/handshake": "HTTP Upgrade to WebSocket",
+        "/delivery/frames": ["pong", "alert", "status"],
+        "/delivery/redis_fields_preserved": true,
+        "/delivery/message_id_match": true,
+        "/delivery/pending_after_callback": 0,
+        "/cleanup/owned_streams_absent": true,
+        "/cleanup/redis_nonowned_key_set_exact": true,
+        "/cleanup/normal_service_state_exact": true,
+        "/cleanup/redis_healthy_after": true,
+        "/policy/external_requests": 0
       }
     },
     {

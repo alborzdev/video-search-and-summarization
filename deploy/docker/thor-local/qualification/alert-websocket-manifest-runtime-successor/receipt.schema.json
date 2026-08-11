@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "source_identity", "runtime", "delivery", "negative", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "alert-websocket-manifest-runtime-successor"},
+    "capability_ids": {"const": ["protocol.alert.websocket", "manifest-entry.realtime-alerts.05-websocket-delivery"]},
+    "official_indices": {"const": [53, 333]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "source_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["raw_receipt_sha256", "official_wrapper_sha256", "fixture_contract_sha256"],
+      "properties": {
+        "raw_receipt_sha256": {"const": "356960435b16060d3ff879aeff1ace27988379993833f43ccb8989a5346dcb0d"},
+        "official_wrapper_sha256": {"const": "66ed95ec555d38d32a745c14e6ff8a1af4af0e56c6874f0fb1c6d2975444b44a"},
+        "fixture_contract_sha256": {"const": "bb96e55fe28f1c480175086e4f6cfc1dc1b0216d72a825fb73eb6c9f2722953f"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["product_version", "captured_at", "architecture", "network_scope", "main_service_running", "redis_healthy"],
+      "properties": {
+        "product_version": {"const": "3.2.1"}, "captured_at": {"type": "string", "minLength": 20},
+        "architecture": {"const": "arm64"}, "network_scope": {"const": "loopback_only"},
+        "main_service_running": {"const": true}, "redis_healthy": {"const": true}
+      }
+    },
+    "delivery": {
+      "type": "object", "additionalProperties": false,
+      "required": ["handshake", "frames", "pong_observed", "alert_frame_count", "status_connections", "redis_fields_preserved", "message_id_match", "pending_after_callback"],
+      "properties": {
+        "handshake": {"const": "HTTP Upgrade to WebSocket"}, "frames": {"const": ["pong", "alert", "status"]},
+        "pong_observed": {"const": true}, "alert_frame_count": {"const": 1},
+        "status_connections": {"const": 1}, "redis_fields_preserved": {"const": true},
+        "message_id_match": {"const": true}, "pending_after_callback": {"const": 0}
+      }
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frame", "application_response_observed", "socket_remained_open"],
+      "properties": {
+        "frame": {"const": "non-json"}, "application_response_observed": {"const": false},
+        "socket_remained_open": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["connection_removed", "active_connections_after_close", "isolated_container_absent", "isolated_listener_absent", "owned_streams_absent", "redis_nonowned_key_set_exact", "normal_service_state_exact", "redis_healthy_after"],
+      "properties": {
+        "connection_removed": {"const": true}, "active_connections_after_close": {"const": 0},
+        "isolated_container_absent": {"const": true}, "isolated_listener_absent": {"const": true},
+        "owned_streams_absent": {"const": true}, "redis_nonowned_key_set_exact": {"const": true},
+        "normal_service_state_exact": {"const": true}, "redis_healthy_after": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "warehouse_sample_bundle", "normal_alert_stream_mutations", "main_vios_mutations", "main_rt_cv_mutations", "external_requests", "slack_dependency"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"},
+        "normal_alert_stream_mutations": {"const": 0}, "main_vios_mutations": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0}, "external_requests": {"const": 0},
+        "slack_dependency": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

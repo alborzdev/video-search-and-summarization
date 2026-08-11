@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_forty_eight_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_forty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 413, 415, 416, 417, 420, 421, 422, 424
+        69, 70, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 413, 415, 416, 417, 420, 421, 422, 424
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -401,6 +401,26 @@ def test_vios_codec_receipt_is_bound_to_four_exact_rows() -> None:
     assert receipt["hevc_multislice_rfc7798"]["slices_per_picture"] == 4
     assert receipt["audio_rtsp_republish"]["working_transcode_substitute"] is True
     assert receipt["policy"]["audio_recording_claimed"] is False
+
+
+def test_alert_websocket_receipt_is_bound_to_exact_candidate_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "alert-websocket-manifest-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [333]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+        assert receipt["delivery"]["alert_frame_count"] == 1
+        assert receipt["delivery"]["pending_after_callback"] == 0
+        assert receipt["cleanup"]["owned_streams_absent"] is True
+    receipt = compiler._validate_receipt(entries[0])
+    assert "protocol.alert.websocket" in receipt["capability_ids"]
+    assert receipt["negative"]["socket_remained_open"] is True
+    assert receipt["policy"]["slack_dependency"] == "excluded"
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

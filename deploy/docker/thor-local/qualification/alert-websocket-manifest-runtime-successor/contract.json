@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "package_id": "alert-websocket-manifest-runtime-successor",
+  "capability_ids": [
+    "protocol.alert.websocket",
+    "manifest-entry.realtime-alerts.05-websocket-delivery"
+  ],
+  "official_indices": [53, 333],
+  "target_release": "VSS 3.2.1",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/alert-websocket-runtime/runtime-receipt.json",
+      "sha256": "356960435b16060d3ff879aeff1ace27988379993833f43ccb8989a5346dcb0d"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/alert-websocket-runtime/official-runtime-evidence.json",
+      "sha256": "66ed95ec555d38d32a745c14e6ff8a1af4af0e56c6874f0fb1c6d2975444b44a"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/alert-websocket-runtime/contract.json",
+      "sha256": "bb96e55fe28f1c480175086e4f6cfc1dc1b0216d72a825fb73eb6c9f2722953f"
+    }
+  ],
+  "policy": {
+    "agent_generate_calls": 0,
+    "warehouse_sample_bundle": "excluded",
+    "normal_alert_stream_mutations": 0,
+    "main_vios_mutations": 0,
+    "main_rt_cv_mutations": 0,
+    "external_requests": 0,
+    "slack_dependency": "excluded"
+  }
+}
