@@ -1,0 +1,139 @@
+{
+  "capability_ids": [
+    "manifest-entry.rt-cv-2d.04-on-demand-image-embedding"
+  ],
+  "cleanup": {
+    "cleanup_failures": [],
+    "main_rt_cv_preserved_exactly": true,
+    "main_rt_cv_stream_count": 0,
+    "owned_container_absent": true,
+    "paused_workloads_preserved_exactly": true,
+    "temporary_directory_removed": true
+  },
+  "container": {
+    "isolated_log_sha256": "03fc7a7d7314af3a18cf78542ba051061455349fd8ff8ba825778f5d0afd6044",
+    "oom_killed": false,
+    "restart_count": 0,
+    "running_during_proof": true
+  },
+  "contract_sha256": "06d737dbe886b13bbd0aaf955144c5b67245e1b7d37f6f8b6d426386af32c23a",
+  "fixtures": {
+    "contrast_sha256": "99deb259a836d7054ae04b516a5196d59c5865090ee8c7da2501a20be1ff0d49",
+    "different_content": true,
+    "format": "P6_PPM",
+    "height": 256,
+    "primary_sha256": "0cc7af29347fe8109755f43a013d920293d5d6f3452b678472562c85365262e4",
+    "width": 256
+  },
+  "image": {
+    "architecture": "arm64",
+    "image_id_exact": true
+  },
+  "model": {
+    "configuration": {
+      "effective_configuration_exact": true,
+      "http_port": 19003,
+      "main_config_sha256": "95636ac2a3557f0727b5140fd68609182d910e242a9eadf0343faf5548975a71",
+      "sink_enabled": 0,
+      "text_model_name": "siglip2-onnx",
+      "text_onnx": "/opt/storage/siglip_v2_v1.1.onnx",
+      "text_tokenizer": "/opt/storage/siglip_v2_v1.1_tokenizer/",
+      "vision_backend": "tensorrt",
+      "vision_engine": "/opt/storage/siglip_v2_v1.1.onnx_batch16.plan",
+      "vision_onnx": "/opt/storage/siglip_v2_v1.1.onnx"
+    },
+    "embedding_dimension": 1152,
+    "engine_sha256": "9950c674b3fa4ca48efe5dd433c0236b8c2ae64dcbbdf5d0f6f1b0cc889e5630",
+    "name": "siglip2-onnx",
+    "onnx_sha256": "425134cfd151d19e15da5cddb2a90d557991964c251f99d874e5f5f7a39a3927"
+  },
+  "negative_path_validation": {
+    "error_exact": true,
+    "http_status": 500,
+    "no_embedding_returned": true
+  },
+  "official_indices": [
+    379
+  ],
+  "on_demand_image_embedding": {
+    "active_streams_after": 0,
+    "active_streams_before": 0,
+    "contrast": {
+      "created_positive": true,
+      "dimension": 1152,
+      "finite": true,
+      "http_status": 200,
+      "index": 0,
+      "l2_norm": 0.9997976685651033,
+      "model_exact": true,
+      "nonzero": true,
+      "object_exact": true,
+      "request_id_nonempty": true,
+      "request_sha256": "c91103274f2530ed05adedad5821618403eaed2a5588ae7b9e5c3cb784a209a6",
+      "response_sha256": "737670d6da89949c6e68220f79c5e4da1ca637329b558fe0d8efc180ebd3f971",
+      "vector_sha256": "9dd588ef285ff3e4cabf04a17c715c6289cf856bbe664fd23bccc7fcf1c252c2"
+    },
+    "different_image_cosine": 0.8704016749813162,
+    "different_image_cosine_below_limit": true,
+    "different_image_vector_distinct": true,
+    "different_image_vector_sha_distinct": true,
+    "endpoint_http_status": 200,
+    "independent_of_continuous_streaming": true,
+    "primary_first": {
+      "created_positive": true,
+      "dimension": 1152,
+      "finite": true,
+      "http_status": 200,
+      "index": 0,
+      "l2_norm": 1.0001919959048393,
+      "model_exact": true,
+      "nonzero": true,
+      "object_exact": true,
+      "request_id_nonempty": true,
+      "request_sha256": "f595f0ec3c88254d9788ac9b3295806f36f0cfaa227c2d0809e97cbbc4eb401a",
+      "response_sha256": "036c4581a47aeded0a319ee5e7253112d8adbf8bac22cc1696fef5fc92f1cf1d",
+      "vector_sha256": "7335eb090db6e1164c30ec519a7cb6ecb2cd2736415a4e29b2fa6aacd0eaa53b"
+    },
+    "primary_repeat": {
+      "created_positive": true,
+      "dimension": 1152,
+      "finite": true,
+      "http_status": 200,
+      "index": 0,
+      "l2_norm": 1.0001919959048393,
+      "model_exact": true,
+      "nonzero": true,
+      "object_exact": true,
+      "request_id_nonempty": true,
+      "request_sha256": "f595f0ec3c88254d9788ac9b3295806f36f0cfaa227c2d0809e97cbbc4eb401a",
+      "response_sha256": "036c4581a47aeded0a319ee5e7253112d8adbf8bac22cc1696fef5fc92f1cf1d",
+      "vector_sha256": "7335eb090db6e1164c30ec519a7cb6ecb2cd2736415a4e29b2fa6aacd0eaa53b"
+    },
+    "raw_image_paths_retained": false,
+    "raw_request_ids_retained": false,
+    "raw_vectors_retained": false,
+    "same_image_vector_exact": true,
+    "same_image_vector_sha_equal": true
+  },
+  "package_id": "rt-cv-image-embedding-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "main_rt_cv_stream_mutations": 0,
+    "main_vios_stream_mutations": 0,
+    "network_downloads": 0,
+    "raw_embeddings_retained": false,
+    "raw_image_paths_retained": false,
+    "raw_request_ids_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "docker_cgroup_driver": "cgroupfs",
+    "docker_commands": 19,
+    "duration_seconds": 26.592039035982452,
+    "free_bytes_after": 23879438336,
+    "http_requests": 20
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

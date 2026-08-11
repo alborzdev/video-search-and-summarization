@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-14",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-15",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -671,6 +671,28 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "on-demand image embedding",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-cv-2d.04-on-demand-image-embedding",
+      "feature_id": "rt-cv-2d",
+      "official_index": 379,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/contract.json",
+        "contract_sha256": "06d737dbe886b13bbd0aaf955144c5b67245e1b7d37f6f8b6d426386af32c23a",
+        "package_id": "rt-cv-image-embedding-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "a22f77c54d16e5046515af27ba702914df6173acc6341b92f079424fa244dee8",
+        "receipt_sha256": "f985c66989368cca35ea6c006a00ddfeb49af9153ed2ba4ab146a58e0396ead6",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "dynamic stream lifecycle",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -742,8 +764,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 33,
-    "row_count": 33,
+    "passed_current_thor": 34,
+    "row_count": 34,
     "warehouse_sample_bundle": "excluded"
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-14",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-15",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -713,6 +713,37 @@
         "/thor_vpi_tracker/stable_tracks_file": true,
         "/thor_vpi_tracker/stable_tracks_rtsp": true,
         "/cleanup/owned_containers_absent": true,
+        "/policy/main_rt_cv_stream_mutations": 0,
+        "/policy/main_vios_stream_mutations": 0
+      }
+    },
+    {
+      "official_index": 379,
+      "capability_id": "manifest-entry.rt-cv-2d.04-on-demand-image-embedding",
+      "advertised_literal": "on-demand image embedding",
+      "package_id": "rt-cv-image-embedding-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/contract.json",
+      "contract_sha256": "06d737dbe886b13bbd0aaf955144c5b67245e1b7d37f6f8b6d426386af32c23a",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "f985c66989368cca35ea6c006a00ddfeb49af9153ed2ba4ab146a58e0396ead6",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-image-embedding-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "a22f77c54d16e5046515af27ba702914df6173acc6341b92f079424fa244dee8",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/fixtures/format": "P6_PPM",
+        "/model/name": "siglip2-onnx",
+        "/model/embedding_dimension": 1152,
+        "/model/configuration/effective_configuration_exact": true,
+        "/on_demand_image_embedding/endpoint_http_status": 200,
+        "/on_demand_image_embedding/active_streams_before": 0,
+        "/on_demand_image_embedding/active_streams_after": 0,
+        "/on_demand_image_embedding/independent_of_continuous_streaming": true,
+        "/on_demand_image_embedding/same_image_vector_exact": true,
+        "/on_demand_image_embedding/different_image_vector_distinct": true,
+        "/on_demand_image_embedding/different_image_cosine_below_limit": true,
+        "/negative_path_validation/error_exact": true,
+        "/cleanup/owned_container_absent": true,
+        "/cleanup/main_rt_cv_preserved_exactly": true,
         "/policy/main_rt_cv_stream_mutations": 0,
         "/policy/main_vios_stream_mutations": 0
       }

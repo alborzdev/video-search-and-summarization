@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_ids",
+    "official_indices",
+    "status",
+    "contract_sha256",
+    "runtime",
+    "image",
+    "model",
+    "fixtures",
+    "on_demand_image_embedding",
+    "negative_path_validation",
+    "container",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-cv-image-embedding-runtime-successor"},
+    "capability_ids": {
+      "const": ["manifest-entry.rt-cv-2d.04-on-demand-image-embedding"]
+    },
+    "official_indices": {"const": [379]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "duration_seconds",
+        "docker_cgroup_driver",
+        "docker_commands",
+        "http_requests",
+        "free_bytes_after"
+      ],
+      "properties": {
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
+        "docker_cgroup_driver": {"const": "cgroupfs"},
+        "docker_commands": {"type": "integer", "minimum": 12, "maximum": 40},
+        "http_requests": {"type": "integer", "minimum": 9, "maximum": 20},
+        "free_bytes_after": {"type": "integer", "minimum": 10737418240}
+      }
+    },
+    "image": {"$ref": "#/$defs/imageIdentity"},
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "embedding_dimension",
+        "onnx_sha256",
+        "engine_sha256",
+        "configuration"
+      ],
+      "properties": {
+        "name": {"const": "siglip2-onnx"},
+        "embedding_dimension": {"const": 1152},
+        "onnx_sha256": {"const": "425134cfd151d19e15da5cddb2a90d557991964c251f99d874e5f5f7a39a3927"},
+        "engine_sha256": {"const": "9950c674b3fa4ca48efe5dd433c0236b8c2ae64dcbbdf5d0f6f1b0cc889e5630"},
+        "configuration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text_model_name",
+            "text_onnx",
+            "text_tokenizer",
+            "vision_backend",
+            "vision_engine",
+            "vision_onnx",
+            "http_port",
+            "sink_enabled",
+            "main_config_sha256",
+            "effective_configuration_exact"
+          ],
+          "properties": {
+            "text_model_name": {"const": "siglip2-onnx"},
+            "text_onnx": {"const": "/opt/storage/siglip_v2_v1.1.onnx"},
+            "text_tokenizer": {"const": "/opt/storage/siglip_v2_v1.1_tokenizer/"},
+            "vision_backend": {"const": "tensorrt"},
+            "vision_engine": {"const": "/opt/storage/siglip_v2_v1.1.onnx_batch16.plan"},
+            "vision_onnx": {"const": "/opt/storage/siglip_v2_v1.1.onnx"},
+            "http_port": {"const": 19003},
+            "sink_enabled": {"const": 0},
+            "main_config_sha256": {"$ref": "#/$defs/hash"},
+            "effective_configuration_exact": {"const": true}
+          }
+        }
+      }
+    },
+    "fixtures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "width",
+        "height",
+        "primary_sha256",
+        "contrast_sha256",
+        "different_content"
+      ],
+      "properties": {
+        "format": {"const": "P6_PPM"},
+        "width": {"const": 256},
+        "height": {"const": 256},
+        "primary_sha256": {"$ref": "#/$defs/hash"},
+        "contrast_sha256": {"$ref": "#/$defs/hash"},
+        "different_content": {"const": true}
+      }
+    },
+    "on_demand_image_embedding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endpoint_http_status",
+        "active_streams_before",
+        "active_streams_after",
+        "independent_of_continuous_streaming",
+        "primary_first",
+        "primary_repeat",
+        "contrast",
+        "same_image_vector_exact",
+        "same_image_vector_sha_equal",
+        "different_image_vector_distinct",
+        "different_image_vector_sha_distinct",
+        "different_image_cosine",
+        "different_image_cosine_below_limit",
+        "raw_vectors_retained",
+        "raw_request_ids_retained",
+        "raw_image_paths_retained"
+      ],
+      "properties": {
+        "endpoint_http_status": {"const": 200},
+        "active_streams_before": {"const": 0},
+        "active_streams_after": {"const": 0},
+        "independent_of_continuous_streaming": {"const": true},
+        "primary_first": {"$ref": "#/$defs/embeddingProof"},
+        "primary_repeat": {"$ref": "#/$defs/embeddingProof"},
+        "contrast": {"$ref": "#/$defs/embeddingProof"},
+        "same_image_vector_exact": {"const": true},
+        "same_image_vector_sha_equal": {"const": true},
+        "different_image_vector_distinct": {"const": true},
+        "different_image_vector_sha_distinct": {"const": true},
+        "different_image_cosine": {
+          "type": "number",
+          "minimum": -1,
+          "exclusiveMaximum": 0.99
+        },
+        "different_image_cosine_below_limit": {"const": true},
+        "raw_vectors_retained": {"const": false},
+        "raw_request_ids_retained": {"const": false},
+        "raw_image_paths_retained": {"const": false}
+      }
+    },
+    "negative_path_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_status", "error_exact", "no_embedding_returned"],
+      "properties": {
+        "http_status": {"const": 500},
+        "error_exact": {"const": true},
+        "no_embedding_returned": {"const": true}
+      }
+    },
+    "container": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "running_during_proof",
+        "oom_killed",
+        "restart_count",
+        "isolated_log_sha256"
+      ],
+      "properties": {
+        "running_during_proof": {"const": true},
+        "oom_killed": {"const": false},
+        "restart_count": {"const": 0},
+        "isolated_log_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owned_container_absent",
+        "main_rt_cv_preserved_exactly",
+        "main_rt_cv_stream_count",
+        "paused_workloads_preserved_exactly",
+        "temporary_directory_removed",
+        "cleanup_failures"
+      ],
+      "properties": {
+        "owned_container_absent": {"const": true},
+        "main_rt_cv_preserved_exactly": {"const": true},
+        "main_rt_cv_stream_count": {"const": 0},
+        "paused_workloads_preserved_exactly": {"const": true},
+        "temporary_directory_removed": {"const": true},
+        "cleanup_failures": {"const": []}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_generate_calls",
+        "main_rt_cv_stream_mutations",
+        "main_vios_stream_mutations",
+        "warehouse_sample_bundle",
+        "network_downloads",
+        "raw_request_ids_retained",
+        "raw_image_paths_retained",
+        "raw_embeddings_retained",
+        "credentials_retained"
+      ],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "main_rt_cv_stream_mutations": {"const": 0},
+        "main_vios_stream_mutations": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "network_downloads": {"const": 0},
+        "raw_request_ids_retained": {"const": false},
+        "raw_image_paths_retained": {"const": false},
+        "raw_embeddings_retained": {"const": false},
+        "credentials_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "imageIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image_id_exact", "architecture"],
+      "properties": {
+        "image_id_exact": {"const": true},
+        "architecture": {"const": "arm64"}
+      }
+    },
+    "embeddingProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_status",
+        "model_exact",
+        "request_id_nonempty",
+        "created_positive",
+        "object_exact",
+        "index",
+        "dimension",
+        "finite",
+        "nonzero",
+        "l2_norm",
+        "vector_sha256",
+        "request_sha256",
+        "response_sha256"
+      ],
+      "properties": {
+        "http_status": {"const": 200},
+        "model_exact": {"const": true},
+        "request_id_nonempty": {"const": true},
+        "created_positive": {"const": true},
+        "object_exact": {"const": true},
+        "index": {"const": 0},
+        "dimension": {"const": 1152},
+        "finite": {"const": true},
+        "nonzero": {"const": true},
+        "l2_norm": {"type": "number", "exclusiveMinimum": 0, "maximum": 10},
+        "vector_sha256": {"$ref": "#/$defs/hash"},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "response_sha256": {"$ref": "#/$defs/hash"}
+      }
+    }
+  }
+}

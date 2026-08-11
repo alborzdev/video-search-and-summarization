@@ -6,7 +6,7 @@
   "properties": {
     "schema_version": {"const": 1},
     "package_id": {"const": "advanced-lvs-rt-vlm-runtime-matrix-successor"},
-    "matrix_id": {"const": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-14"},
+    "matrix_id": {"const": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-15"},
     "selected_metadata_set": {"const": "thor-vss-3.2.1-current-lvs-rest-runtime-500"},
     "selected_ledger_path": {"type": "string", "minLength": 1},
     "selected_ledger_sha256": {"$ref": "#/$defs/sha256"},
@@ -22,12 +22,12 @@
       "type": "object", "additionalProperties": false,
       "required": ["row_count", "passed_current_thor", "canonical_promotions", "agent_generate_calls", "warehouse_sample_bundle"],
       "properties": {
-        "row_count": {"const": 33}, "passed_current_thor": {"const": 33}, "canonical_promotions": {"const": 0},
+        "row_count": {"const": 34}, "passed_current_thor": {"const": 34}, "canonical_promotions": {"const": 0},
         "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
       }
     },
     "rows": {
-      "type": "array", "minItems": 33, "maxItems": 33,
+      "type": "array", "minItems": 34, "maxItems": 34,
       "items": {"$ref": "#/$defs/row"}
     }
   },
