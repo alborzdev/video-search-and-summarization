@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds forty-seven advertised capability rows to current-Thor live receipts. Overlay 22 adds four bounded VIOS codec rows: B-frame handling, HEVC multislice/RFC7798, H.264/H.265, and audio RTSP republish. The retained isolated Thor run decoded B-frame H.264 and four-slice HEVC through RTSP, exercised hardware and software H.264/H.265 paths, and republished AAC on the supported H.264/HEVC paths with a proven transcode substitute for the bounded direct B-frame+AAC limitation. Audio recording remains explicitly unclaimed. Overlay 21's WebRTC row and the prior 42 rows retain their exact evidence.
+This read-only successor binds forty-eight advertised capability rows to current-Thor live receipts. Overlay 23 adds VIOS file-to-RTSP republish row 413. The retained isolated NvStreamer run accepted API, shipped-UI, and local-mount file inputs; produced H.264/AAC RTSP; decoded a live snapshot and advancing WebRTC frame; rejected invalid media; and removed all owned streams. Overlay 22's four codec rows and the prior 43 rows retain their exact evidence. Audio recording remains explicitly unclaimed.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 

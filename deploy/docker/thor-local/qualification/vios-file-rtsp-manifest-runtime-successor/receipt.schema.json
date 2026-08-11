@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "source_identity", "runtime", "republish", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "vios-file-rtsp-manifest-runtime-successor"},
+    "capability_ids": {"const": ["manifest-entry.vios-core.02-file-to-rtsp-republish"]},
+    "official_indices": {"const": [413]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "source_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["raw_receipt_sha256", "official_wrapper_sha256", "fixture_contract_sha256"],
+      "properties": {
+        "raw_receipt_sha256": {"const": "2ab858671747ea315634d846e12c4c8d87abd690a52a8381a0a614fdbe2ef8a1"},
+        "official_wrapper_sha256": {"const": "a4daa8ba496146cfb09feba89131c103efa7211734cc60cd655a29ae812ac7b2"},
+        "fixture_contract_sha256": {"const": "f7706aeb2a76e06945a080d258057ce25d23435f2cd1412f35975e515baafe00"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["product_version", "service_version", "captured_at", "image_id", "image_architecture"],
+      "properties": {
+        "product_version": {"const": "3.2.1"}, "service_version": {"const": "2.1.0-26.05.4"},
+        "captured_at": {"type": "string", "minLength": 20},
+        "image_id": {"const": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563"},
+        "image_architecture": {"const": "arm64"}
+      }
+    },
+    "republish": {
+      "type": "object", "additionalProperties": false,
+      "required": ["input_modes", "automatic_output", "source_codec", "source_width", "source_height", "rtsp_video_codec", "rtsp_audio_codec", "rtsp_audio_sample_rate_hz", "live_snapshot_decoded", "webrtc_first_frame_observed", "webrtc_clock_advanced", "invalid_media_status"],
+      "properties": {
+        "input_modes": {"const": ["upload", "ui", "local-mount"]},
+        "automatic_output": {"const": "RTSP"}, "source_codec": {"const": "h264"},
+        "source_width": {"const": 320}, "source_height": {"const": 180},
+        "rtsp_video_codec": {"const": "h264"}, "rtsp_audio_codec": {"const": "aac"},
+        "rtsp_audio_sample_rate_hz": {"const": 48000}, "live_snapshot_decoded": {"const": true},
+        "webrtc_first_frame_observed": {"const": true}, "webrtc_clock_advanced": {"const": true},
+        "invalid_media_status": {"const": 400}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["three_owned_streams_deleted", "owned_media_absent", "owned_sensors_absent", "exact_container_inventory_restored", "exact_running_set_restored", "all_reserved_ports_released"],
+      "properties": {
+        "three_owned_streams_deleted": {"const": true}, "owned_media_absent": {"const": true},
+        "owned_sensors_absent": {"const": true}, "exact_container_inventory_restored": {"const": true},
+        "exact_running_set_restored": {"const": true}, "all_reserved_ports_released": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "warehouse_sample_bundle", "main_vios_sensor_additions", "main_rt_cv_stream_additions", "raw_stream_identifiers_retained"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"},
+        "main_vios_sensor_additions": {"const": 0}, "main_rt_cv_stream_additions": {"const": 0},
+        "raw_stream_identifiers_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

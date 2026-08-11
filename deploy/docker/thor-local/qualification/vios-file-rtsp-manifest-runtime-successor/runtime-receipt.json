@@ -1,0 +1,57 @@
+{
+  "capability_ids": [
+    "manifest-entry.vios-core.02-file-to-rtsp-republish"
+  ],
+  "cleanup": {
+    "all_reserved_ports_released": true,
+    "exact_container_inventory_restored": true,
+    "exact_running_set_restored": true,
+    "owned_media_absent": true,
+    "owned_sensors_absent": true,
+    "three_owned_streams_deleted": true
+  },
+  "contract_sha256": "aa7ef364bcfb0af1634e49373262b39fe2bb72f90de9aebe609769c4d04a50f5",
+  "official_indices": [
+    413
+  ],
+  "package_id": "vios-file-rtsp-manifest-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "main_rt_cv_stream_additions": 0,
+    "main_vios_sensor_additions": 0,
+    "raw_stream_identifiers_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "republish": {
+    "automatic_output": "RTSP",
+    "input_modes": [
+      "upload",
+      "ui",
+      "local-mount"
+    ],
+    "invalid_media_status": 400,
+    "live_snapshot_decoded": true,
+    "rtsp_audio_codec": "aac",
+    "rtsp_audio_sample_rate_hz": 48000,
+    "rtsp_video_codec": "h264",
+    "source_codec": "h264",
+    "source_height": 180,
+    "source_width": 320,
+    "webrtc_clock_advanced": true,
+    "webrtc_first_frame_observed": true
+  },
+  "runtime": {
+    "captured_at": "2026-08-10T13:49:16.559362Z",
+    "image_architecture": "arm64",
+    "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+    "product_version": "3.2.1",
+    "service_version": "2.1.0-26.05.4"
+  },
+  "schema_version": 1,
+  "source_identity": {
+    "fixture_contract_sha256": "f7706aeb2a76e06945a080d258057ce25d23435f2cd1412f35975e515baafe00",
+    "official_wrapper_sha256": "a4daa8ba496146cfb09feba89131c103efa7211734cc60cd655a29ae812ac7b2",
+    "raw_receipt_sha256": "2ab858671747ea315634d846e12c4c8d87abd690a52a8381a0a614fdbe2ef8a1"
+  },
+  "status": "passed"
+}

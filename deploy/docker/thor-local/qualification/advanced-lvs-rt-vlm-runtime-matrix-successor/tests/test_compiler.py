@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_forty_seven_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_forty_eight_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 415, 416, 417, 420, 421, 422, 424
+        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 413, 415, 416, 417, 420, 421, 422, 424
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -346,6 +346,22 @@ def test_vios_file_lifecycle_receipt_is_bound_to_three_exact_rows() -> None:
     receipt = compiler._validate_receipt(entries[0])
     assert receipt["downloads"]["clip"]["distinct_from_full_file"] is True
     assert receipt["snapshot"]["visual_marker_correlated"] is True
+
+
+def test_vios_file_rtsp_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "vios-file-rtsp-manifest-runtime-successor"
+    )
+    assert entry["official_index"] == 413
+    receipt = compiler._validate_receipt(entry)
+    assert entry["capability_id"] in receipt["capability_ids"]
+    assert receipt["republish"]["automatic_output"] == "RTSP"
+    assert receipt["republish"]["rtsp_video_codec"] == "h264"
+    assert receipt["republish"]["webrtc_clock_advanced"] is True
+    assert all(receipt["cleanup"].values())
 
 
 def test_vios_live_replay_receipt_is_bound_to_exact_row() -> None:

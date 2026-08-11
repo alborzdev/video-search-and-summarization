@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-22",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-23",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -981,6 +981,35 @@
         "/cleanup/exact_file_list_restored": true,
         "/cleanup/exact_sensor_list_restored": true,
         "/policy/agent_generate_calls": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 413,
+      "capability_id": "manifest-entry.vios-core.02-file-to-rtsp-republish",
+      "advertised_literal": "file-to-RTSP republish",
+      "package_id": "vios-file-rtsp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/vios-file-rtsp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "aa7ef364bcfb0af1634e49373262b39fe2bb72f90de9aebe609769c4d04a50f5",
+      "receipt_path": "deploy/docker/thor-local/qualification/vios-file-rtsp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "be51bda9bfdc159836420d12e593e5d86e83d2c6f19318f06b93d9e83d829766",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-file-rtsp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "70839a566a82f65adea80918803cc4bed861708292720473e9707eaf288f8d3f",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/republish/input_modes": ["upload", "ui", "local-mount"],
+        "/republish/automatic_output": "RTSP",
+        "/republish/source_codec": "h264",
+        "/republish/rtsp_video_codec": "h264",
+        "/republish/rtsp_audio_codec": "aac",
+        "/republish/rtsp_audio_sample_rate_hz": 48000,
+        "/republish/live_snapshot_decoded": true,
+        "/republish/webrtc_first_frame_observed": true,
+        "/republish/webrtc_clock_advanced": true,
+        "/republish/invalid_media_status": 400,
+        "/cleanup/three_owned_streams_deleted": true,
+        "/cleanup/owned_media_absent": true,
+        "/cleanup/owned_sensors_absent": true,
         "/policy/warehouse_sample_bundle": "excluded"
       }
     },

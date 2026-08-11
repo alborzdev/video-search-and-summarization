@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-22",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-23",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -891,6 +891,28 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "file-to-RTSP republish",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-core.02-file-to-rtsp-republish",
+      "feature_id": "vios-core",
+      "official_index": 413,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-file-rtsp-manifest-runtime-successor/contract.json",
+        "contract_sha256": "aa7ef364bcfb0af1634e49373262b39fe2bb72f90de9aebe609769c4d04a50f5",
+        "package_id": "vios-file-rtsp-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-file-rtsp-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-file-rtsp-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "70839a566a82f65adea80918803cc4bed861708292720473e9707eaf288f8d3f",
+        "receipt_sha256": "be51bda9bfdc159836420d12e593e5d86e83d2c6f19318f06b93d9e83d829766",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "clip and raw/full-file download",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -1050,8 +1072,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 47,
-    "row_count": 47,
+    "passed_current_thor": 48,
+    "row_count": 48,
     "warehouse_sample_bundle": "excluded"
   }
 }

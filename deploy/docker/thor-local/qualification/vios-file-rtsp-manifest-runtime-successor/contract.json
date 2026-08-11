@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "package_id": "vios-file-rtsp-manifest-runtime-successor",
+  "capability_ids": ["manifest-entry.vios-core.02-file-to-rtsp-republish"],
+  "official_indices": [413],
+  "target_release": "VSS 3.2.1",
+  "service_version": "2.1.0-26.05.4",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/runtime-receipt.json",
+      "sha256": "2ab858671747ea315634d846e12c4c8d87abd690a52a8381a0a614fdbe2ef8a1"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/official-runtime-evidence.json",
+      "sha256": "a4daa8ba496146cfb09feba89131c103efa7211734cc60cd655a29ae812ac7b2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/nvstreamer-file-workflow-runtime/fixture-contract.json",
+      "sha256": "f7706aeb2a76e06945a080d258057ce25d23435f2cd1412f35975e515baafe00"
+    }
+  ],
+  "policy": {
+    "agent_generate_calls": 0,
+    "warehouse_sample_bundle": "excluded",
+    "main_vios_sensor_additions": 0,
+    "main_rt_cv_stream_additions": 0,
+    "raw_stream_identifiers_retained": false
+  }
+}
