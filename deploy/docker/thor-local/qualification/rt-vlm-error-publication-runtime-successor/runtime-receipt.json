@@ -1,0 +1,81 @@
+{
+  "budget": {
+    "docker_commands": 4,
+    "http_requests": 0,
+    "kafka_topic_mutations": 2,
+    "max_docker_commands": 4,
+    "max_http_requests": 0,
+    "max_kafka_topic_mutations": 2,
+    "max_model_requests": 0,
+    "max_redis_persistent_mutations": 0,
+    "max_support_processes": 1,
+    "model_requests": 0,
+    "redis_persistent_mutations": 0,
+    "support_processes_peak": 1
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication"
+  ],
+  "cleanup": {
+    "kafka_topic_absent": true,
+    "redis_persistent_key_absent": true,
+    "redis_subscriber_count": 0,
+    "sender_threads_stopped": true
+  },
+  "contract_sha256": "d99880e8500c1b53c9a856d1f319770f1d6170ff6c87e0a46ce6687b83dfd796",
+  "duration_seconds": 10.810167,
+  "kafka": {
+    "event_exact": true,
+    "message_type_header_exact": true,
+    "record_count": 1,
+    "schema_exact": true,
+    "source_exact": true,
+    "stream_exact": true,
+    "timestamp_utc_parseable": true,
+    "type_exact": true
+  },
+  "official_indices": [
+    365
+  ],
+  "package_id": "rt-vlm-error-publication-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "asset_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "raw_channel_names_retained": false,
+    "raw_message_payloads_retained": false,
+    "raw_topic_names_retained": false,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "redis": {
+    "backend_switch_routed_to_redis": true,
+    "event_exact": true,
+    "message_count": 1,
+    "persistent_keys_created": 0,
+    "schema_exact": true,
+    "source_exact": true,
+    "stream_exact": true,
+    "timestamp_utc_parseable": true,
+    "type_exact": true
+  },
+  "runtime_identity": {
+    "kafka_healthy": true,
+    "kafka_image_exact": true,
+    "kafka_oom_killed": false,
+    "kafka_restart_count": 0,
+    "redis_healthy": true,
+    "redis_host_gateway_exact": true,
+    "redis_image_exact": true,
+    "redis_oom_killed": false,
+    "redis_restart_count": 0,
+    "rt_vlm_healthy": true,
+    "rt_vlm_image_exact": true,
+    "rt_vlm_oom_killed": false,
+    "rt_vlm_restart_count": 0
+  },
+  "schema_equal_between_backends": true,
+  "schema_version": 1,
+  "status": "passed"
+}

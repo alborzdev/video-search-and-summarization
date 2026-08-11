@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_twenty_one_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_twenty_two_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 366, 367
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -156,6 +156,21 @@ def test_prometheus_otel_receipt_is_bound_to_exact_row() -> None:
     receipt = compiler._validate_receipt(entry)
     assert receipt["prometheus_query"]["up_value"] == 1
     assert receipt["opentelemetry"]["console_span_export_present"] is True
+
+
+def test_error_publication_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-vlm-error-publication-runtime-successor"
+    )
+    assert entry["official_index"] == 365
+    receipt = compiler._validate_receipt(entry)
+    assert receipt["kafka"]["message_type_header_exact"] is True
+    assert receipt["redis"]["backend_switch_routed_to_redis"] is True
+    assert receipt["schema_equal_between_backends"] is True
+    assert receipt["cleanup"]["kafka_topic_absent"] is True
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

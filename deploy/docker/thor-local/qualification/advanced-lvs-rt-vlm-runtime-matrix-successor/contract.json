@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-9",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-10",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -435,6 +435,32 @@
         "/ttl_expiry/ttl/busy_expired_asset_preserved": true,
         "/ttl_expiry/ttl/fresh_asset_preserved": true,
         "/cleanup/main_asset_statistics_restored_exactly": true,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 365,
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+      "advertised_literal": "Kafka/Redis error publication",
+      "package_id": "rt-vlm-error-publication-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-error-publication-runtime-successor/contract.json",
+      "contract_sha256": "d99880e8500c1b53c9a856d1f319770f1d6170ff6c87e0a46ce6687b83dfd796",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-error-publication-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "49b1b9af485bc7ff33b243d18dec617d14def6ca8932c2ffcf3c8462910b750d",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-error-publication-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "eaf129ca1afd33a2cebd64e23295560fe5273e0b33921967e69c5eb2140490a9",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/kafka/record_count": 1,
+        "/kafka/schema_exact": true,
+        "/kafka/message_type_header_exact": true,
+        "/redis/message_count": 1,
+        "/redis/schema_exact": true,
+        "/redis/backend_switch_routed_to_redis": true,
+        "/schema_equal_between_backends": true,
+        "/cleanup/kafka_topic_absent": true,
+        "/cleanup/redis_persistent_key_absent": true,
+        "/cleanup/redis_subscriber_count": 0,
         "/policy/agent_generate_calls": 0
       }
     },

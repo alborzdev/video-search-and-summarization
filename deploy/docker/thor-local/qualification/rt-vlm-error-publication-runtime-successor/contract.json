@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-error-publication-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication"
+  ],
+  "official_indices": [365],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "runtime": {
+    "rt_vlm_container": "vss-rtvi-vlm",
+    "rt_vlm_image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "kafka_container": "kafka",
+    "kafka_image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436",
+    "redis_container": "redis",
+    "redis_image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17",
+    "broker_architecture": "arm64",
+    "redis_host": "host.docker.internal"
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py",
+      "sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "e4b21e864ab179f86a59864208d778bfc432ccd55b289f4dd3d5ec8880fb8282"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+      "sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4"
+    }
+  ],
+  "fixture": {
+    "topic_prefix": "vss-rt-vlm-error-qual-365-",
+    "channel_prefix": "vss-rt-vlm-error-qual-365-",
+    "stream_marker": "thor-local-qualifier",
+    "event_marker": "thor-local-error-publication-proof",
+    "type": "operational",
+    "source": "rt-vlm-qualification"
+  },
+  "execution": {
+    "max_duration_seconds": 30,
+    "max_http_requests": 0,
+    "max_model_requests": 0,
+    "max_docker_commands": 4,
+    "max_support_processes": 1,
+    "max_kafka_topic_mutations": 2,
+    "max_redis_persistent_mutations": 0,
+    "acknowledgement": "I_ACK_ONE_OWNED_KAFKA_TOPIC_AND_EPHEMERAL_REDIS_ERROR_PROOF"
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "asset_mutations": 0,
+    "stream_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "owned_kafka_topic_cleanup_required": true,
+    "redis_pubsub_ephemeral": true,
+    "raw_topic_names_retained": false,
+    "raw_channel_names_retained": false,
+    "raw_message_payloads_retained": false,
+    "credentials_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

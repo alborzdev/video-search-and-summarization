@@ -523,6 +523,11 @@ services:
       # RTVI_VLM_MODEL_PATH can name a checkpoint below this root without a
       # Thor-specific path translation.
       MODEL_ROOT_DIR: "${MODEL_ROOT_DIR:-/tmp/model_cache}"
+      # Redis is host-networked and bound to Docker's private host-gateway
+      # address in this profile; the upstream bridge-local name `redis` is not
+      # resolvable from RT-VLM. This keeps the optional Redis error bus local
+      # while making ENABLE_REDIS_ERROR_MESSAGES=true functional on Thor.
+      REDIS_HOST: "${THOR_LOCAL_RTVI_REDIS_HOST:-host.docker.internal}"
     volumes:
       - "${MODEL_ROOT_DIR:-/tmp/model_cache}:${MODEL_ROOT_DIR:-/tmp/model_cache}:ro"
 

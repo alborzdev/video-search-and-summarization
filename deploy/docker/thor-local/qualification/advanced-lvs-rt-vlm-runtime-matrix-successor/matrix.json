@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-9",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-10",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -429,6 +429,28 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Kafka/Redis error publication",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.05-kafka-redis-error-publication",
+      "feature_id": "rt-vlm-performance-observability",
+      "official_index": 365,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-error-publication-runtime-successor/contract.json",
+        "contract_sha256": "d99880e8500c1b53c9a856d1f319770f1d6170ff6c87e0a46ce6687b83dfd796",
+        "package_id": "rt-vlm-error-publication-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-error-publication-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-error-publication-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "eaf129ca1afd33a2cebd64e23295560fe5273e0b33921967e69c5eb2140490a9",
+        "receipt_sha256": "49b1b9af485bc7ff33b243d18dec617d14def6ca8932c2ffcf3c8462910b750d",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "Prometheus and OpenTelemetry",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -478,8 +500,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 21,
-    "row_count": 21,
+    "passed_current_thor": 22,
+    "row_count": 22,
     "warehouse_sample_bundle": "excluded"
   }
 }
