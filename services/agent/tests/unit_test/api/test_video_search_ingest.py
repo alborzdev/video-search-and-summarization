@@ -130,7 +130,7 @@ class TestUploadVideoToVstHeaderValidation:
         assert exc.value.status_code == 400
 
     @pytest.mark.asyncio
-    async def test_unsupported_content_type_415(self):
+    async def test_unsupported_content_type_400(self):
         from fastapi import HTTPException
 
         route = self._route()
@@ -139,7 +139,7 @@ class TestUploadVideoToVstHeaderValidation:
                 filename="clip.avi",
                 request=self._request({"content-type": "video/avi", "content-length": "10"}),
             )
-        assert exc.value.status_code == 415
+        assert exc.value.status_code == 400
 
     @pytest.mark.asyncio
     async def test_missing_content_length_400(self):

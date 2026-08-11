@@ -13,7 +13,7 @@
     },
   {
     "path": "deploy/docker/thor-local/official-edge/compose.yml",
-    "sha256": "c3e63f2574f5776c039b32129e4b45dfd453c9443e78f1310255ef2afe50738f"
+      "sha256": "8ce9b8eade977f523422ec9f19279686d6267a6009f038caca3ed1bad8c4a5c6"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/official-edge.env",
@@ -21,7 +21,7 @@
     },
   {
     "path": "deploy/docker/thor-local/official-edge/official_edge.py",
-    "sha256": "2bfd17b5cca9878d212dd0516536aee56fea0a237d270a6c8028bfbab763a708"
+      "sha256": "3ed5c97f7fa26226093231b24d66e7a6b9bb9a5733d0856984daf288bcf8610b"
     },
     {
       "path": "deploy/docker/thor-local/official-edge/config_edge.yml",

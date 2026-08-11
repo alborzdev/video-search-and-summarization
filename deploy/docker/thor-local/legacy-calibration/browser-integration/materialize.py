@@ -23,6 +23,7 @@ ACKNOWLEDGEMENT = "I_ACCEPT_MATERIALIZE_THOR_CALIBRATION_UI_SOURCE"
 MAX_SOURCE_FILE_BYTES = 5_000_000
 MAX_TREE_FILES = 5_000
 MAX_TREE_BYTES = 50_000_000
+EXCLUDED_SOURCE_DIRECTORIES = frozenset({"node_modules"})
 EXPECTED_SOURCE_ROOT = "services/vios/ui/vios-ui"
 EXPECTED_OVERLAY_ID = "thor-local-vios-calibration-browser-v1"
 TOP_LEVEL_KEYS = {"schema_version", "overlay_id", "source_root", "policy", "files"}
@@ -226,6 +227,10 @@ def _reject_symlinks(root: Path) -> None:
     file_count = 0
     total_bytes = 0
     for current, directories, files in os.walk(root, followlinks=False):
+        directories[:] = [
+            name for name in directories if name not in EXCLUDED_SOURCE_DIRECTORIES
+        ]
+        files[:] = [name for name in files if name not in EXCLUDED_SOURCE_DIRECTORIES]
         current_path = Path(current)
         for name in [*directories, *files]:
             candidate = current_path / name
@@ -256,7 +261,11 @@ def materialize(
     if source_ui_root == output_root or source_ui_root in output_root.parents:
         raise OverlayError("output root must not be within the source tree")
     _reject_symlinks(source_ui_root)
-    shutil.copytree(source_ui_root, output_root)
+    shutil.copytree(
+        source_ui_root,
+        output_root,
+        ignore=shutil.ignore_patterns(*EXCLUDED_SOURCE_DIRECTORIES),
+    )
     ui_root = output_root / "vios-ui"
     results = []
     for contract in overlay.get("files", []):

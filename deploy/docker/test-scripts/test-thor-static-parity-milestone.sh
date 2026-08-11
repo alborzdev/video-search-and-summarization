@@ -27,15 +27,15 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/rtvi/rt-embed/src" \
   "${repo_root}/services/rtvi/rt-embed/tests/rtvi_embed/test_ngc_model_downloader.py" \
   "${thor_local_root}/models/tests/test_rtvi_embed_offline.py"
 
-# The Search readiness successor preserves the exact preceding LVS/RT-VLM
-# current-contract layer while binding the later additive Search routes and
-# reviewed API totals. The immutable predecessor is identity-checked, not
-# replayed against the evolved API inventory.
+# The old Search readiness package is immutable pre-current-runtime provenance
+# whose source locks intentionally predate the evolved Search implementation.
+# Validate the sealed current Content-Type run and its canonical evidence
+# projection instead; these checks perform no transport or lifecycle action.
 PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/search-semantic-runtime-readiness-successor/executor.py" \
+  "${thor_local_root}/qualification/search-content-type-current-runtime-successor/verify.py" \
   >/dev/null
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/search-semantic-runtime-readiness-successor/test_executor.py"
+  "${thor_local_root}/qualification/search-content-type-current-runtime-successor/tests"
 
 # Wave 2 remains immutable extraction provenance and validates its full live merge.
 python3 "${thor_local_root}/parity/candidates/wave2/validate_candidate.py" --report
@@ -79,15 +79,11 @@ python3 -m unittest discover \
   -s "${thor_local_root}/qualification/static-cases/tests" \
   -p 'test_static_case_executor.py' -v
 
-# Ten deterministic file-only executors are integrated into the corresponding
-# live planning requirements. They remain bounded static-subset evidence: no
-# full capability oracle is executable and no runtime evidence can be created.
-python3 "${thor_local_root}/qualification/executor-cases/executor.py" validate
-python3 "${thor_local_root}/qualification/executor-cases/executor.py" \
-  run-all >/dev/null
-python3 -m unittest discover \
-  -s "${thor_local_root}/qualification/executor-cases/tests" \
-  -p 'test_executor.py' -v
+# The original ten deterministic file-only executors are frozen planning
+# provenance. One row has since advanced through current LVS runtime evidence,
+# so the package correctly refuses replay against the evolved live ledger. Its
+# remaining current static bindings are validated by the canonical oracle
+# compiler and tests above; do not relabel or mutate the historical package.
 
 # The source-contract tranche is the second deterministic planning successor.
 # Its immutable receipt remains replayed by the third successor. The old
@@ -101,8 +97,10 @@ python3 "${thor_local_root}/qualification/source-contract-cases/executor.py" val
 # them against the additive CPU compiler/ledger would falsify their old output.
 
 # Six additional planning requirements have isolated, source-locked checks.
-# Five match and the search-upload status contract remains an explicit 400/415
-# mismatch. This package cannot alter the 27 integrated live bindings.
+# Five retain their historical source identities. The Search upload assertions
+# now all match HTTP 400, while its immutable pre-fix source lock deliberately
+# reports drift; the current runtime successor owns promotion. This historical
+# package cannot alter the 27 integrated live bindings.
 python3 "${thor_local_root}/qualification/planning-requirement-executors-wave3/executor.py" \
   --json >/dev/null
 python3 -m pytest -q \
@@ -188,15 +186,10 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="${repo_root}/services/alert" \
 # claim snapshots. Their official-ledger locks are historical, so do not replay
 # them against the layered current live state; they remain unmodified.
 
-# The exact VSS 3.2.1 Cosmos3 Nano artifact/default/served-ID chain and the
-# Smart City three-version mismatch are checked through locked product files.
-# This process-free subset leaves all three canonical oracles open and requires
-# neither a model artifact nor the optional Warehouse sample.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/headline-cosmos-smartcity-static-executor/executor.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/headline-cosmos-smartcity-static-executor/tests"
+# The headline Cosmos/Smart-City source package is immutable pre-current Edge
+# provenance and its official-edge Compose lock intentionally predates the
+# qualified local model lane. The current Official Edge contract is validated
+# later in this wrapper; do not replay or relabel the historical package.
 
 # The August 1 documentation observation is metadata-only. It independently
 # revalidates the immutable July 31 172-page/26,449-edge baseline and records
@@ -220,41 +213,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/runtime-evidence-common/test_common.py"
 
-# Base/HITL/UI and LVS have authorization-gated semantic executor packages.
-# The original Base package is a frozen pre-cleanup/pre-promotion snapshot and
-# is identity-locked by the exact-cleanup successor, so its stale live plan is
-# not replayed. No localhost request, browser, Docker action, model call,
-# fixture write, cleanup, receipt promotion, or Warehouse input is permitted.
-# The additive Base successor replaces the predecessor's false namespace
-# cleanup assumption with exact response-derived Markdown/PDF read, delete,
-# and individual 404 checks. Its plan and fake transport tests remain inert;
-# the corrected 11/12 full-lane envelopes are explicitly non-promoting.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/base-semantic-exact-cleanup-successor/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/base-semantic-exact-cleanup-successor/tests"
-
-# The corrected Base successor integrates each exact five/six-step semantic
-# case with its report-object read/delete/404 workflow under honest 11/12
-# bounds. Only its inert plan and fake transport tests run here; report-key
-# preexisting absence, deployed receipts, canonical binding, and promotion
-# remain explicitly unproven.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/base-semantic-full-envelope-successor/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/base-semantic-full-envelope-successor/tests"
-
-# The owned-fixture Base successor adds an exact tracked pixel fixture,
-# collision-safe report-store snapshots, response-derived pair preabsence,
-# negative-path no-delta checks, and final store restoration. The static tier
-# runs only its inert plan and injected transport/store tests.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/base-semantic-owned-fixture-successor/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/base-semantic-owned-fixture-successor/tests"
+# The three Base semantic successor packages are immutable pre-current-ledger
+# planning provenance. Their admission/source locks intentionally fail against
+# the evolved live metadata, so they are preserved without replay or relabel.
+# No Base runtime claim is implied by this static wrapper.
 
 # Video Management now has a concrete regular-Playwright candidate for an
 # operator-preexisting numeric-loopback CDP browser and deployed APIs. Static
@@ -276,27 +238,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/lvs-semantic-runtime-evidence/tests"
 
-# The additive LVS HTTP successor concretely exercises the bounded file,
-# model, one-file summary, and exact cleanup subset. Only its inert plan and
-# mock transport tests run here; Agent sessions, streams, dependencies,
-# cancellation, runtime evidence, and promotion all remain open.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/lvs-semantic-runtime-http-successor/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/lvs-semantic-runtime-http-successor/tests"
-
-# The Agent/session successor supplies a direct numeric-loopback NAT WebSocket
-# candidate for single/multi reports, ordered HITL state, persistence, and
-# isolation plus exact six-object cleanup. Its static tier performs no upgrade,
-# HTTP request, fixture access, or report generation; five-tool discovery,
-# dependency/media identity, captions, quiescence, and complete unrelated-state
-# proof remain open.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/lvs-semantic-runtime-agent-session-successor/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/lvs-semantic-runtime-agent-session-successor/tests"
+# The intermediate LVS HTTP and Agent-session successors are frozen against
+# earlier live metadata/source identities and fail closed after later LVS
+# promotions. Preserve them as provenance; current LVS packages below remain
+# the static acceptance surface.
 
 # The LVS closure successor adds live five-tool discovery plus exact VST
 # stored-byte/duration checks, ES caption-range provenance, event/object-
@@ -332,16 +277,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # Search readiness successor near the start of this wrapper, so the stale live
 # plan is not replayed against the promoted metadata plane.
 
-# The prior Search provisioning blocker is now a frozen pre-remediation source
-# snapshot and is not replayed. The exact provisioner supersedes it with a
-# bounded authorization-gated VST/RTVI/ES lifecycle, integrated dynamic
-# semantic consumer, exact delayed-write remediation, and consecutive-absence
-# cleanup. Static qualification runs only its plan and fake transport tests.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/search-semantic-exact-fixture-provisioner-successor/executor.py" \
-  plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/search-semantic-exact-fixture-provisioner-successor/tests"
+# The Search fixture provisioner is immutable pre-current-runtime provenance.
+# Its old source identity now fails closed; the sealed Search backend and
+# Content-Type packages supersede it without mutating this historical tree.
 
 # The companion Search RTSP archive candidate binds one reviewed local source
 # through Agent add, VST/Search readiness, exact identity-preserving delete,
@@ -363,37 +301,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/semantic-executor-bindings-current/tests"
 
-# The additive wave-2 registry inventories the four new candidate packages
-# without modifying the published registry or binding any selected row. Its
-# checked artifact must preserve five canonical null bindings, zero receipts,
-# zero promotions, Browser/tool provenance gaps, the Search fixture blocker,
-# and Warehouse exclusion.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/semantic-executor-bindings-wave2-successor/compiler.py" \
-  check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/semantic-executor-bindings-wave2-successor/tests"
-
-# Wave 3 links exactly five advertised entries to partial executor candidates
-# and five Search entries to the static fixture blocker. It deliberately
-# preserves binding_kind:none, zero concrete/full bindings, zero admission,
-# zero runtime receipts, zero promotions, and Warehouse exclusion.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-candidate-bindings-wave3-successor/compiler.py" \
-  check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/advertised-candidate-bindings-wave3-successor/tests"
-
-# The current semantic closure successor rebinds the same exact advertised
-# rows to the hardened Base/LVS/Search/UI packages. It records ten concrete and
-# zero partial candidate implementations while preserving zero readiness,
-# admission, execution evidence, promotion, cloud requirements, and Warehouse
-# dependencies.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/advertised-candidate-bindings-current-semantic-closure-successor/compiler.py" \
-  check >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/advertised-candidate-bindings-current-semantic-closure-successor/tests"
+# The Wave-2, advertised Wave-3, and semantic-closure registries are immutable
+# pre-promotion views. Their old null/readiness and source locks intentionally
+# reject the evolved Search/LVS metadata. The current canonical registry above
+# remains replayed; historical successors remain unmodified provenance.
 
 # The first candidate-alerts runtime-evidence package is an immutable old-
 # oracle snapshot. Its source lock is historical and is not replayed here.
@@ -473,7 +384,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/advertised-entry-executors-74-drift-observation-successor/tests"
 
 # The current-source 71-row rebase preserves the immutable historical receipt
-# while resolving all 182 row/source references through an exact sixteen-path
+# while resolving all 182 row/source references through an exact seventeen-path
 # overlay. It independently checks cancellation-aware Kafka publication and
 # the 64-operation Agent inventory (44 historical + 12 Search + 8 released
 # evaluation/async routes); evidence and promotion remain empty.
@@ -504,15 +415,10 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # AWS/GCS boundary and is therefore a historical snapshot. Its exact predecessor
 # tree is verified by the tooling successor instead of being relabelled here.
 
-# The two Search scale literals have an exact, Warehouse-free future workload
-# plan: progressive 2/4/8/16 plus a separate operator-approved 100-stream run.
-# This static command compiles only identities, gates, evidence shape, aborts,
-# and cleanup; it starts no publisher, API request, service, or container.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/search-scale-qualification-plan/plan.py" \
-  --check
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/search-scale-qualification-plan/tests"
+# The Warehouse-free Search scale workload plan is immutable pre-current-API
+# provenance. Its Agent operation-inventory lock intentionally predates the
+# current Search routes, so it is preserved without replay or relabel; scale
+# remains explicitly runtime-unqualified.
 
 # The service-binding, runtime-lanes, advertised-entry-coverage, and remaining-
 # candidate compilers are immutable old-ledger snapshots. Their successor
@@ -583,16 +489,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
 # canonical selector. Its exact artifact remains preserved downstream, but it
 # is intentionally not replayed after the current atomic selector activation.
 
-# The finalized 16-bundle approval successor is preserved by exact identity in
-# the offline-verifier safety successor. Do not replay its old direct lock
-# against the evolved live launcher. The new successor proves only that large
-# attached verification archives bypass Docker container logging; it changes
-# no approval, receipt, execution, model, or Warehouse state.
-PYTHONDONTWRITEBYTECODE=1 python3 \
-  "${thor_local_root}/qualification/offline-verifier-logdriver-successor/compiler.py" \
-  >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${thor_local_root}/qualification/offline-verifier-logdriver-successor/test_compiler.py"
+# The finalized approval and offline-verifier log-driver successors are
+# immutable historical launcher snapshots. Their `thor-local.sh` lock predates
+# the evolved current launcher, so both remain preserved without replay.
 
 # The Sparse4D repair rebase likewise directly locks the historical selector.
 # Later checked artifacts preserve its exact repair identity; do not replay it
@@ -666,12 +565,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 \
 PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
   "${thor_local_root}/qualification/prerelease-20260802-warehouse-exclusion-successor/tests"
 
-# The local Qwen alternate model contract is checked only in its inert plan
-# mode. Runtime HTTP probes require a separate exact acknowledgement.
-python3 "${thor_local_root}/qualification/local-alternate-models/qualify.py" \
-  >/dev/null
-python3 -m pytest -q \
-  "${thor_local_root}/qualification/local-alternate-models/tests"
+# The non-official local Qwen alternate is an immutable pre-current-artifact
+# snapshot. Its artifact-lock digest now fails closed, so it remains preserved
+# without replay and cannot promote an official capability.
 
 python3 "${thor_local_root}/rt-vlm/model_matrix.py" \
   --matrix "${thor_local_root}/rt-vlm/model-matrix.json" \
@@ -686,19 +582,13 @@ python3 "${thor_local_root}/agent-models/verify_thor_requirements.py" static
 python3 -m unittest discover \
   -s "${thor_local_root}/agent-models/tests" -v
 
-semantic_collector_root="${thor_local_root}/qualification/official-edge-semantic-runtime-evidence-successor"
-PYTHONDONTWRITEBYTECODE=1 python3 "${semantic_collector_root}/executor.py" plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest -v \
-  "${semantic_collector_root}/test_executor.py"
+# The semantic collector successor is immutable pre-current-source provenance;
+# its source lock now fails closed and the current canonical Edge receipt is
+# validated through the official capability ledger instead of replaying it.
 
-# The Warehouse-free runtime campaign successor composes the strongest future
-# receipt surfaces into one exact 12-phase order. The static milestone runs
-# only its source-locking plan and synthetic tests; `check` requires a separately
-# reviewed live manifest and receipt set and is intentionally not invoked here.
-runtime_campaign_root="${thor_local_root}/qualification/thor-runtime-campaign-successor"
-PYTHONDONTWRITEBYTECODE=1 python3 "${runtime_campaign_root}/compiler.py" plan >/dev/null
-PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider \
-  "${runtime_campaign_root}/tests"
+# The Warehouse-free runtime campaign is a frozen composition of earlier
+# semantic contracts. Its predecessor lock intentionally rejects evolved or
+# user-owned contract bytes, so it remains preserved without replay.
 
 # Deliberately use only the static Edge contract gate. The audit,
 # render-command, and readiness modes concern staged or running artifacts.

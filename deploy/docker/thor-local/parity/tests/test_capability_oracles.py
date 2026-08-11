@@ -76,6 +76,7 @@ class CapabilityOracleTests(unittest.TestCase):
             + 2  # exact official Thor Nemotron and Cosmos3 model runtime receipt
             + 4  # current RT-Embed model, data URL, duplicate-ID, and API receipt
             + 1  # current Search backend semantic-route runtime receipt
+            + 1  # current Search upload Content-Type runtime receipt
             + 1  # current complete rendered Search UI runtime receipt
             + 1  # current rendered Dashboard desktop/mobile runtime receipt
             + 1  # current rendered Global Chat sidebar runtime receipt
@@ -497,6 +498,52 @@ class CapabilityOracleTests(unittest.TestCase):
         )
         self.assertEqual(oracle["evidence"], [])
 
+    def test_search_content_type_runtime_oracle_is_exact_cleanup_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"]
+            == verifier.SEARCH_CONTENT_TYPE_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.SEARCH_CONTENT_TYPE_RUNTIME_FIXTURE["path"],
+                "generator": verifier.SEARCH_CONTENT_TYPE_RUNTIME_EXECUTOR,
+                "sha256": verifier.SEARCH_CONTENT_TYPE_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.SEARCH_CONTENT_TYPE_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(oracle["execution_bounds"]["max_duration_seconds"], 300)
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.SEARCH_CONTENT_TYPE_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.SEARCH_CONTENT_TYPE_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["collectors"],
+            [verifier.SEARCH_CONTENT_TYPE_RUNTIME_VERIFIER],
+        )
+        self.assertEqual(
+            oracle["cleanup"]["targets"],
+            verifier.SEARCH_CONTENT_TYPE_RUNTIME_NAMESPACES,
+        )
+        self.assertEqual(
+            oracle["cleanup"]["allowlist"],
+            verifier.SEARCH_CONTENT_TYPE_RUNTIME_NAMESPACES,
+        )
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(oracle["evidence"], [])
+
     def test_ui_global_chat_runtime_oracle_is_exact_read_only_row(self) -> None:
         oracle = next(
             item
@@ -889,14 +936,22 @@ class CapabilityOracleTests(unittest.TestCase):
         for item in bound:
             runtime_bound = {
                 verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID: (
-                    verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR
+                    verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR,
+                    [verifier.NVSTREAMER_FULL_CONFIG_EXECUTOR],
                 ),
                 verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID: (
-                    verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR
+                    verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR,
+                    [verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_EXECUTOR],
+                ),
+                verifier.SEARCH_CONTENT_TYPE_RUNTIME_CAPABILITY_ID: (
+                    verifier.SEARCH_CONTENT_TYPE_RUNTIME_EXECUTOR,
+                    [verifier.SEARCH_CONTENT_TYPE_RUNTIME_VERIFIER],
                 ),
             }
             if item["capability_id"] in runtime_bound:
-                expected_executor = runtime_bound[item["capability_id"]]
+                expected_executor, expected_collectors = runtime_bound[
+                    item["capability_id"]
+                ]
                 self.assertEqual(
                     item["acceptance_readiness"]["classification"],
                     "executor_ready",
@@ -907,7 +962,7 @@ class CapabilityOracleTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     item["execution_bounds"]["collectors"],
-                    [expected_executor],
+                    expected_collectors,
                 )
                 self.assertEqual(
                     item["cleanup"]["executor"],
@@ -915,7 +970,7 @@ class CapabilityOracleTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     item["cleanup"]["postcondition_collectors"],
-                    [expected_executor],
+                    expected_collectors,
                 )
             else:
                 self.assertEqual(
@@ -1225,6 +1280,11 @@ class CapabilityOracleTests(unittest.TestCase):
                         item["capability_id"]
                         == verifier.SEARCH_BACKEND_RUNTIME_CAPABILITY_ID
                     )
+                    else len(verifier.SEARCH_CONTENT_TYPE_RUNTIME_NAMESPACES)
+                    if (
+                        item["capability_id"]
+                        == verifier.SEARCH_CONTENT_TYPE_RUNTIME_CAPABILITY_ID
+                    )
                     else 1
                 )
                 self.assertEqual(len(cleanup["targets"]), expected_target_count)
@@ -1302,6 +1362,14 @@ class CapabilityOracleTests(unittest.TestCase):
                     self.assertEqual(
                         cleanup["targets"],
                         verifier.SEARCH_BACKEND_RUNTIME_NAMESPACES,
+                    )
+                elif (
+                    item["capability_id"]
+                    == verifier.SEARCH_CONTENT_TYPE_RUNTIME_CAPABILITY_ID
+                ):
+                    self.assertEqual(
+                        cleanup["targets"],
+                        verifier.SEARCH_CONTENT_TYPE_RUNTIME_NAMESPACES,
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
@@ -1471,6 +1539,11 @@ class CapabilityOracleTests(unittest.TestCase):
                 if (
                     item["capability_id"]
                     == verifier.SEARCH_BACKEND_RUNTIME_CAPABILITY_ID
+                )
+                else verifier.SEARCH_CONTENT_TYPE_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"]
+                    == verifier.SEARCH_CONTENT_TYPE_RUNTIME_CAPABILITY_ID
                 )
                 else verifier.SEARCH_UI_RUNTIME_MAX_ACTIONS
                 if item["capability_id"] == verifier.SEARCH_UI_RUNTIME_CAPABILITY_ID

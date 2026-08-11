@@ -31,8 +31,8 @@ class CurrentSourceRebaseTest(unittest.TestCase):
 
     def test_exact_71_row_partition(self) -> None:
         self.assertEqual(self.result["retained_candidate_rows"], 71)
-        self.assertEqual(self.result["unchanged_rows"], 39)
-        self.assertEqual(self.result["rebased_rows"], 32)
+        self.assertEqual(self.result["unchanged_rows"], 34)
+        self.assertEqual(self.result["rebased_rows"], 37)
         self.assertEqual(
             set(self.result["rebased_entry_ids"]), VALIDATOR.EXPECTED_REBASED_IDS
         )
@@ -41,8 +41,8 @@ class CurrentSourceRebaseTest(unittest.TestCase):
             self.result["rebased_entry_ids"],
         )
 
-    def test_exact_sixteen_path_overlay_is_current(self) -> None:
-        self.assertEqual(self.result["current_source_overlay_paths"], 16)
+    def test_exact_seventeen_path_overlay_is_current(self) -> None:
+        self.assertEqual(self.result["current_source_overlay_paths"], 17)
         self.assertEqual(
             set(self.result["overlay_reference_counts"]),
             set(VALIDATOR.EXPECTED_OVERLAY),
@@ -52,6 +52,12 @@ class CurrentSourceRebaseTest(unittest.TestCase):
                 "services/agent/src/vss_agents/tools/video_report_gen.py"
             ],
             3,
+        )
+        self.assertEqual(
+            self.result["overlay_reference_counts"][
+                "deploy/docker/thor-local/vios-codecs/vios_media.py"
+            ],
+            5,
         )
         for path, digest in VALIDATOR.EXPECTED_OVERLAY.items():
             with self.subTest(path=path):

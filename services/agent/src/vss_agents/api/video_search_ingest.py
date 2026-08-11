@@ -121,7 +121,10 @@ def create_video_search_ingest_router(
             )
         if content_type not in _ALLOWED_VIDEO_TYPES:
             raise HTTPException(
-                status_code=415,
+                # VSS 3.2.1 documents malformed or unsupported Search upload
+                # Content-Type values as HTTP 400.  Keep the deprecated
+                # compatibility route aligned with that public contract.
+                status_code=400,
                 detail=(
                     f"Unsupported video format: {content_type}. Supported: {', '.join(sorted(_ALLOWED_VIDEO_TYPES))}."
                 ),

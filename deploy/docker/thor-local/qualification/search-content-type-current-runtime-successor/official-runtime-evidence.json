@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "evidence_id": "thor-search-content-type-current-runtime-20260811",
+  "package_id": "thor-search-content-type-current-runtime-successor-v1",
+  "capability_id": "behavior.search-upload.content-type",
+  "oracle_id": "oracle.behavior.search-upload.content-type",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "4993a6ac0b399aa3d5ca185f2d256db92cd81e40",
+  "captured_at": "2026-08-11T02:37:36Z",
+  "status": "passed_current",
+  "promotion_eligible": true,
+  "artifact_digests": {
+    "contract_sha256": "5dc1b70063cb6c9df1c4c15b6694f83bbd41ae80dc32138239bb5d68ba354a53",
+    "executor_sha256": "6dfda2eb12f8ff7591ad203045f3c810426d87ba1955b95fb52e0ed74c7b4f87",
+    "receipt_schema_sha256": "0d297d9bbdd8748b4b5c81d24f57a323476e2e0cb88ff4dd6e65394c724c0684",
+    "runtime_receipt_sha256": "ec61b998395746dc6cc59a969188ac8de181d2939c82530463f5309db5db4d6d",
+    "verifier_sha256": "4624416bdaffc72966db09aa6d22e49f09cf39a38aaea426de6e1334021c89e9"
+  },
+  "qualification": {
+    "route": "PUT /api/v1/videos-for-search/{filename}",
+    "accepted_media_types": [
+      "video/mp4",
+      "video/x-matroska"
+    ],
+    "positive_statuses": [
+      200,
+      200
+    ],
+    "positive_chunks_processed": [
+      1,
+      1
+    ],
+    "positive_embed_document_counts": [
+      1,
+      1
+    ],
+    "missing_content_type_status": 400,
+    "unsupported_content_type": "application/octet-stream",
+    "unsupported_content_type_status": 400,
+    "http_requests": 40,
+    "persistent_mutations": 4,
+    "service_lifecycle_mutations": 0
+  },
+  "cleanup": {
+    "exact_owned_resources_only": true,
+    "owned_video_deletions": 2,
+    "owned_sensor_names_absent": true,
+    "owned_embed_behavior_raw_documents_absent": true,
+    "sensor_and_file_inventory_restored": true,
+    "runtime_identity_and_restart_state_unchanged": true
+  },
+  "retention": {
+    "raw_media": false,
+    "raw_sensor_ids": false,
+    "raw_sensor_names": false,
+    "raw_paths": false,
+    "raw_responses": false,
+    "raw_prompts": false
+  },
+  "warehouse_sample_bundle": "excluded"
+}

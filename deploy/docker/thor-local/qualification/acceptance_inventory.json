@@ -435,7 +435,7 @@
           "external-slack-required"
         ],
         "capabilities_sha256": "08ce4d50b7bbc38b1102e33612d2c78191b2560e341311802b2a63bc9de07d8d",
-        "disposition": "external-optional",
+        "disposition": "planned",
         "expected_capability_count": 1,
         "feature_id": "alert-notifications-slack",
         "scenario_ids": [
@@ -858,7 +858,7 @@
           "external-enterprise-rag-required"
         ],
         "capabilities_sha256": "958f73abead050d3f382ccffddbb7df97754510dab7429acffda683fd151588f",
-        "disposition": "external-optional",
+        "disposition": "planned",
         "expected_capability_count": 2,
         "feature_id": "enterprise-rag",
         "scenario_ids": [

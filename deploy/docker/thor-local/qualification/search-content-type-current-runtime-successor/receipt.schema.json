@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/search-content-type-current-runtime-successor/receipt.schema.json",
+  "title": "Thor Search Content-Type current-runtime receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_id",
+    "oracle_id",
+    "target_commit",
+    "contract_sha256",
+    "result",
+    "promotion_eligible",
+    "warehouse_sample_bundle",
+    "source_hashes",
+    "runtime",
+    "fixture",
+    "negative_cases",
+    "observations",
+    "cleanup",
+    "counts",
+    "tooling"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-search-content-type-current-runtime-successor-v1"},
+    "capability_id": {"const": "behavior.search-upload.content-type"},
+    "oracle_id": {"const": "oracle.behavior.search-upload.content-type"},
+    "target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "contract_sha256": {"$ref": "#/$defs/hex64"},
+    "result": {"const": "passed"},
+    "promotion_eligible": {"const": true},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "source_hashes": {
+      "type": "object",
+      "minProperties": 3,
+      "additionalProperties": {"$ref": "#/$defs/hex64"}
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pre", "post", "unchanged"],
+      "properties": {
+        "pre": {"$ref": "#/$defs/runtimeSnapshot"},
+        "post": {"$ref": "#/$defs/runtimeSnapshot"},
+        "unchanged": {"const": true}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generator", "namespace_sha256", "cases"],
+      "properties": {
+        "generator": {"const": "ffmpeg-lavfi-testsrc2"},
+        "namespace_sha256": {"$ref": "#/$defs/hex64"},
+        "cases": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {"$ref": "#/$defs/mp4Case"},
+            {"$ref": "#/$defs/mkvCase"}
+          ],
+          "items": false
+        }
+      }
+    },
+    "negative_cases": {
+      "const": [
+        {"case": "missing", "status": 400},
+        {"case": "unsupported", "media_type": "application/octet-stream", "status": 400}
+      ]
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 48,
+      "items": {"$ref": "#/$defs/observation"}
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delete_results",
+        "exact_owned_resources_only",
+        "exact_sensor_and_file_inventory_restored",
+        "namespace_absent",
+        "service_lifecycle_mutations"
+      ],
+      "properties": {
+        "delete_results": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sensor_id_sha256", "status", "result"],
+            "properties": {
+              "sensor_id_sha256": {"$ref": "#/$defs/hex64"},
+              "status": {"const": 200},
+              "result": {"const": "success"}
+            }
+          }
+        },
+        "exact_owned_resources_only": {"const": true},
+        "exact_sensor_and_file_inventory_restored": {"const": true},
+        "namespace_absent": {"const": true},
+        "service_lifecycle_mutations": {"const": 0}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_requests", "persistent_mutations", "positive_cases", "negative_cases"],
+      "properties": {
+        "http_requests": {"type": "integer", "minimum": 1, "maximum": 48},
+        "persistent_mutations": {"const": 4},
+        "positive_cases": {"const": 2},
+        "negative_cases": {"const": 2}
+      }
+    },
+    "tooling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ffmpeg_version_sha256", "ffprobe_version_sha256"],
+      "properties": {
+        "ffmpeg_version_sha256": {"$ref": "#/$defs/hex64"},
+        "ffprobe_version_sha256": {"$ref": "#/$defs/hex64"}
+      }
+    }
+  },
+  "$defs": {
+    "hex64": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "runtimeSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["containers"],
+      "properties": {
+        "containers": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "image", "container_id_sha256", "restart_count", "health"],
+            "properties": {
+              "name": {
+                "enum": ["vss-agent", "vss-rtvi-cv", "vss-rtvi-embed", "vss-vios-sensor"]
+              },
+              "image": {"type": "string", "minLength": 1},
+              "container_id_sha256": {"$ref": "#/$defs/hex64"},
+              "restart_count": {"type": "integer", "minimum": 0},
+              "health": {"const": "healthy"}
+            }
+          }
+        }
+      }
+    },
+    "baseCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "media_type",
+        "extension",
+        "bytes",
+        "sha256",
+        "codec",
+        "width",
+        "height",
+        "frames_per_second",
+        "duration_seconds",
+        "status",
+        "chunks_processed",
+        "embed_document_count",
+        "sensor_name_sha256",
+        "sensor_id_sha256"
+      ],
+      "properties": {
+        "media_type": {"enum": ["video/mp4", "video/x-matroska"]},
+        "extension": {"enum": ["mp4", "mkv"]},
+        "bytes": {"type": "integer", "minimum": 1000, "maximum": 1000000},
+        "sha256": {"$ref": "#/$defs/hex64"},
+        "codec": {"const": "h264"},
+        "width": {"const": 160},
+        "height": {"const": 120},
+        "frames_per_second": {"const": 10},
+        "duration_seconds": {"const": 2},
+        "status": {"const": 200},
+        "chunks_processed": {"type": "integer", "minimum": 1},
+        "embed_document_count": {"type": "integer", "minimum": 1},
+        "sensor_name_sha256": {"$ref": "#/$defs/hex64"},
+        "sensor_id_sha256": {"$ref": "#/$defs/hex64"}
+      }
+    },
+    "mp4Case": {
+      "allOf": [
+        {"$ref": "#/$defs/baseCase"},
+        {"properties": {"media_type": {"const": "video/mp4"}, "extension": {"const": "mp4"}}}
+      ]
+    },
+    "mkvCase": {
+      "allOf": [
+        {"$ref": "#/$defs/baseCase"},
+        {
+          "properties": {
+            "media_type": {"const": "video/x-matroska"},
+            "extension": {"const": "mkv"}
+          }
+        }
+      ]
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "operation",
+        "target",
+        "method",
+        "path_sha256",
+        "request_bytes",
+        "request_sha256",
+        "status",
+        "response_bytes",
+        "response_sha256",
+        "mutation"
+      ],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1, "maximum": 48},
+        "operation": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "target": {"enum": ["agent", "vios", "elasticsearch"]},
+        "method": {"enum": ["DELETE", "GET", "POST", "PUT"]},
+        "path_sha256": {"$ref": "#/$defs/hex64"},
+        "request_bytes": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "request_sha256": {
+          "oneOf": [{"type": "null"}, {"$ref": "#/$defs/hex64"}]
+        },
+        "status": {"type": "integer", "minimum": 200, "maximum": 599},
+        "response_bytes": {"type": "integer", "minimum": 0, "maximum": 4194304},
+        "response_sha256": {"$ref": "#/$defs/hex64"},
+        "mutation": {"type": "boolean"}
+      }
+    }
+  }
+}

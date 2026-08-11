@@ -48,12 +48,13 @@ python3 deploy/docker/thor-local/legacy-calibration/browser-integration/material
   --acknowledgement I_ACCEPT_MATERIALIZE_THOR_CALIBRATION_UI_SOURCE
 ```
 
-The output contains unchanged `streaming-lib` and a patched `vios-ui`. Build
-that output with the checked-in Node package manifests, stage its `dist` into
-the standard VIOS ingress build context, and tag the resulting local image.
-Dependency acquisition, image build, and service lifecycle are deliberately
-not performed by this package. If Node dependencies are absent, inventory the
-exact package/download size and obtain operator approval before fetching them.
+The output contains unchanged `streaming-lib` and a patched `vios-ui`, excluding
+all local `node_modules` dependency trees. Build that output with the checked-in
+Node package manifests, stage its `dist` into the standard VIOS ingress build
+context, and tag the resulting local image. Dependency acquisition, image build,
+and service lifecycle are deliberately not performed by this package. If Node
+dependencies are absent, inventory the exact package/download size and obtain
+operator approval before fetching them.
 
 The opt-in `compose.yml` requires
 `THOR_CALIBRATION_VIOS_INGRESS_IMAGE` rather than falling back to the released

@@ -1,0 +1,219 @@
+{
+  "assertions": [
+    {
+      "expected": [
+        "video/mp4",
+        "video/x-matroska"
+      ],
+      "id": "contract-01",
+      "observation": "contract_identity/contract/accepted",
+      "observed": [
+        "video/mp4",
+        "video/x-matroska"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 400,
+      "id": "contract-02",
+      "observation": "contract_identity/contract/missing_or_unsupported_status",
+      "observed": 400,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "search-archive-workflows",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/wave3_acceptance/candidate_family",
+      "observed": "search-archive-workflows",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-05",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "systems",
+      "id": "contract-06",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "systems",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "systems-search-content-type"
+      ],
+      "id": "contract-07",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "systems-search-content-type"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "behavior.search-upload.content-type",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-search-content-type-"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "both exact generated sensor names are absent",
+        "result": "pass"
+      },
+      {
+        "description": "all exact owned embed, behavior, and raw documents are absent",
+        "result": "pass"
+      },
+      {
+        "description": "complete sensor identity and file inventories match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "all four related container identities, health states, and restart counts match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "no service lifecycle or Warehouse sample mutation occurred",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-search-content-type-"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.behavior.search-upload.content-type",
+    "path": "deploy/docker/thor-local/qualification/search-content-type-current-runtime-successor/contract.json",
+    "sha256": "5dc1b70063cb6c9df1c4c15b6694f83bbd41ae80dc32138239bb5d68ba354a53"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "accepted": [
+            "video/mp4",
+            "video/x-matroska"
+          ],
+          "missing_or_unsupported_status": 400,
+          "wave3_acceptance": {
+            "candidate_family": "search-archive-workflows",
+            "executor_ready": false,
+            "materialized": false,
+            "package": "systems",
+            "planning_requirement_ids": [
+              "systems-search-content-type"
+            ]
+          }
+        },
+        "contract_sha256": "5dc1b70063cb6c9df1c4c15b6694f83bbd41ae80dc32138239bb5d68ba354a53",
+        "qualification_summary_sha256": "39992c51a2b9a004557554270e15d53499b6f2b5ff4c6a6b09d17fe6e51390f6",
+        "receipt_sha256": "ec61b998395746dc6cc59a969188ac8de181d2939c82530463f5309db5db4d6d",
+        "source_lock_count": 3
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "accepted_media_types": [
+          "video/mp4",
+          "video/x-matroska"
+        ],
+        "chunks_processed": [
+          1,
+          1
+        ],
+        "embed_document_counts": [
+          1,
+          1
+        ],
+        "http_requests": 40,
+        "negative_cases": [
+          {
+            "case": "missing",
+            "status": 400
+          },
+          {
+            "case": "unsupported",
+            "media_type": "application/octet-stream",
+            "status": 400
+          }
+        ],
+        "persistent_mutations": 4,
+        "positive_statuses": [
+          200,
+          200
+        ]
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "exact_owned_resources_only": true,
+        "inventory_restored": true,
+        "missing_status": 400,
+        "namespace_absent": true,
+        "positive_media_types": [
+          "video/mp4",
+          "video/x-matroska"
+        ],
+        "runtime_unchanged": true,
+        "service_lifecycle_mutations": 0,
+        "unsupported_status": 400
+      }
+    }
+  ],
+  "oracle_id": "oracle.behavior.search-upload.content-type",
+  "oracle_sha256": "b252b93987d370ef6e22065011fdd8218b399ddd518076794ac6515dff3b239a",
+  "result": "passed_current",
+  "scenario_ids": [
+    "search-archive-workflows",
+    "oracle.behavior.search-upload.content-type"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

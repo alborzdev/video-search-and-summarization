@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-search-content-type-current-runtime-successor-v1",
+  "capability_id": "behavior.search-upload.content-type",
+  "oracle_id": "oracle.behavior.search-upload.content-type",
+  "target_commit": "4993a6ac0b399aa3d5ca185f2d256db92cd81e40",
+  "authorization": {
+    "acknowledgement": "I_AUTHORIZE_SEARCH_CONTENT_TYPE_RUNTIME_AND_EXACT_CLEANUP",
+    "scope": "Two generated tiny file ingests through the loopback Agent compatibility route followed by exact owned-video cleanup"
+  },
+  "contract": {
+    "accepted": [
+      "video/mp4",
+      "video/x-matroska"
+    ],
+    "missing_or_unsupported_status": 400,
+    "positive_semantics": [
+      "VST sensor materialized",
+      "at least one embedding chunk processed",
+      "at least one exact sensor-id embedding document observed"
+    ],
+    "negative_semantics": [
+      "missing Content-Type rejected before upload",
+      "application/octet-stream rejected before upload"
+    ]
+  },
+  "fixture": {
+    "generator": "ffmpeg",
+    "source": "lavfi testsrc2=size=160x120:rate=10",
+    "duration_seconds": 2,
+    "video_codec": "h264",
+    "profile": "baseline",
+    "pixel_format": "yuv420p",
+    "b_frames": 0,
+    "maximum_bytes_per_file": 1000000,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "targets": {
+    "agent": "http://127.0.0.1:8100",
+    "vios": "http://127.0.0.1:7777",
+    "elasticsearch": "http://127.0.0.1:9200"
+  },
+  "runtime": {
+    "containers": [
+      "vss-agent",
+      "vss-vios-sensor",
+      "vss-rtvi-embed",
+      "vss-rtvi-cv"
+    ],
+    "images": {
+      "vss-agent": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+      "vss-vios-sensor": "nvcr.io/nvidia/vss-core/vss-vios-sensor:3.2.1",
+      "vss-rtvi-embed": "cti-vss-rt-embed:thor-local",
+      "vss-rtvi-cv": "nvcr.io/nvidia/vss-core/vss-rt-cv:3.2.1"
+    },
+    "required_health": "healthy",
+    "service_lifecycle_mutations": 0
+  },
+  "bounds": {
+    "max_duration_seconds": 300,
+    "max_http_requests": 48,
+    "max_persistent_mutations": 6,
+    "max_response_bytes": 4194304,
+    "network_scope": "loopback-only"
+  },
+  "cleanup": {
+    "allowlist_prefix": "vss-oracle-search-content-type-",
+    "delete_endpoint": "/api/v1/videos/{sensor_id}",
+    "postconditions": [
+      "every exact oracle-owned sensor is absent",
+      "every exact oracle-owned embed, behavior, and raw document is absent",
+      "sensor identity inventory matches pre-state",
+      "file inventory matches pre-state",
+      "container identities, health, and restart counts match pre-state"
+    ]
+  },
+  "source_locks": [
+    {
+      "path": "services/agent/src/vss_agents/api/video_search_ingest.py",
+      "sha256": "52672d25c1d78fa1d9e3ae665c5d27dd1ad2912bfee59fea25df1d41313652ee"
+    },
+    {
+      "path": "services/agent/tests/unit_test/api/test_video_search_ingest.py",
+      "sha256": "0abdab60ddb5300f12b610674a12512ac77ae72d2f4f5ed9d1f6268acc13991b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/search-content-type-current-runtime-successor/executor.py",
+      "sha256": "6dfda2eb12f8ff7591ad203045f3c810426d87ba1955b95fb52e0ed74c7b4f87"
+    }
+  ]
+}

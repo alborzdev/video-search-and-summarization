@@ -103,9 +103,7 @@ def test_materialized_browser_route_navigation_and_same_origin_endpoint() -> Non
     routes = outputs["src/layout/routes/Routes.tsx"]
     nav = outputs["src/layout/nav/ListItems.tsx"]
     config = outputs["src/config.tsx"]
-    json_manager = outputs[
-        "src/pages/vst/calibration-steps/CalibrationJsonManager.tsx"
-    ]
+    json_manager = outputs["src/pages/vst/calibration-steps/CalibrationJsonManager.tsx"]
     mms_configuration = outputs[
         "src/pages/vst/calibration-steps/MmsURLConfiguration.tsx"
     ]
@@ -119,15 +117,12 @@ def test_materialized_browser_route_navigation_and_same_origin_endpoint() -> Non
     assert "analyticsUIServerEndpoint: '/vst/calibration-api'" in config
     assert "8003" not in config
     assert "8013" not in config
-    assert "window.location.hostname" not in re.search(
-        r"analyticsUIServerEndpoint: ([^,]+)", config
-    ).group(1)
+    endpoint = re.search(r"analyticsUIServerEndpoint: ([^,]+)", config)
+    assert endpoint is not None
+    assert "window.location.hostname" not in endpoint.group(1)
     assert "import config from '../../../config';" in json_manager
     assert "fetch(`/api/projects/" not in json_manager
-    assert (
-        "fetch(`${config.analyticsUIServerEndpoint}/api/projects/"
-        in json_manager
-    )
+    assert "fetch(`${config.analyticsUIServerEndpoint}/api/projects/" in json_manager
     assert "method: 'POST'" in mms_configuration
     assert "'Content-Type': 'application/json'" in mms_configuration
     assert "JSON.stringify({ action: 'import-staged' })" in mms_configuration
@@ -145,6 +140,24 @@ def test_materialize_copies_to_new_root_only(tmp_path: Path) -> None:
     )
     assert "'/vst/calibration-api'" in derived
     assert "analyticsUIServerDefaultPort = '8003'" in upstream
+    assert not (output / "streaming-lib/node_modules").exists()
+    assert not (output / "vios-ui/node_modules").exists()
+
+
+def test_source_scan_excludes_dependencies_but_rejects_other_symlinks(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "source"
+    dependencies = source / "node_modules"
+    dependencies.mkdir(parents=True)
+    (dependencies / ".bin").symlink_to(tmp_path)
+    materialize._reject_symlinks(source)
+
+    tracked = source / "src"
+    tracked.mkdir()
+    (tracked / "escape").symlink_to(tmp_path)
+    with pytest.raises(materialize.OverlayError, match="contains a symlink"):
+        materialize._reject_symlinks(source)
 
 
 def test_digest_and_replacement_tampering_fail_closed() -> None:

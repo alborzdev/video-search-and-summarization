@@ -4,8 +4,8 @@ This additive package rebases the retained 71 advertised-entry candidates onto
 the current checkout without changing or relabeling the immutable
 `advertised-entry-executors-74-successor` inventory or execution receipt.
 
-The exact partition is 39 rows whose complete historical source-lock sets still
-match and 32 rows affected by an exact sixteen-path current-source overlay. All 182
+The exact partition is 34 rows whose complete historical source-lock sets still
+match and 37 rows affected by an exact seventeen-path current-source overlay. All 182
 retained row/source references resolve against either their immutable historical
 digest or the overlay digest. The historical dispatcher is never imported or
 replayed.
@@ -19,6 +19,10 @@ audio rows. Its three retained references add
 rebased ID set; the stream-report and audio-aware summarization rows were already
 rebased by other overlay paths.
 
+The current Thor VIOS media implementation is also locked by the overlay. Its
+five retained references move the complete VIOS codec/audio group into the
+rebased partition without changing their candidate-only status.
+
 The validator additionally proves two semantics that changed with those files:
 
 - Kafka chunk publication follows `_on_vlm_chunk_response` →
@@ -26,10 +30,10 @@ The validator additionally proves two semantics that changed with those files:
   publisher holds the handler lock, checks `abort_requested` or `finalized`
   first, and contains both protobuf send sites. The response callback has two
   pre-publication terminal checks and no direct protobuf-send bypass.
-- The current NAT/agent inventory has exactly 56 unique operations: the former
-  44-operation denominator plus 12 exact Search attribute/fusion/image routes.
-  The eight generate/chat routes required by the immutable Wave 6 executor are
-  all still present.
+- The current NAT/agent inventory has exactly 64 unique operations: the former
+  44-operation denominator plus 12 exact Search attribute/fusion/image routes
+  and eight released agent routes. The eight generate/chat routes required by
+  the immutable Wave 6 executor are all still present.
 
 This is static, candidate-only current-source provenance. Runtime evidence is
 empty, promotion remains false, official capability state is unchanged, and

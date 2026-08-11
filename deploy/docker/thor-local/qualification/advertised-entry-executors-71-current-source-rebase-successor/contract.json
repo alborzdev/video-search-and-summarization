@@ -9,8 +9,8 @@
   },
   "partition": {
     "retained_candidate_rows": 71,
-    "unchanged_rows": 39,
-    "rebased_rows": 32,
+    "unchanged_rows": 34,
+    "rebased_rows": 37,
     "rebased_entry_ids": [
       "manifest-gap.agent-and-mcp-apis.00-nat-generate-chat",
       "manifest-gap.agent-and-mcp-apis.01-health",
@@ -38,6 +38,11 @@
       "manifest-gap.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
       "manifest-gap.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
       "manifest-gap.search-scale.00-configuration-up-to-100-streams",
+      "manifest-gap.vios-codecs-audio.00-b-frame-handling",
+      "manifest-gap.vios-codecs-audio.01-hevc-multislice-rfc7798",
+      "manifest-gap.vios-codecs-audio.02-h-264-h-265",
+      "manifest-gap.vios-codecs-audio.03-audio-recording",
+      "manifest-gap.vios-codecs-audio.04-audio-rtsp-republish",
       "manifest-gap.video-summarization-live.00-live-captions",
       "manifest-gap.video-summarization-live.01-live-stream-summaries",
       "manifest-gap.video-summarization-live.02-stream-reports",
@@ -76,8 +81,12 @@
       "sha256": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74"
     },
     {
+      "path": "deploy/docker/thor-local/vios-codecs/vios_media.py",
+      "sha256": "004716c98815ec910c03a8fd86cb10b29e52b66ad21ebf24aada9a817c15298d"
+    },
+    {
       "path": "deploy/docker/thor-local/qualification/expected/agent.json",
-      "sha256": "ea4f92b9e331b585170d4bd8e1b618c92d5b83db16372ee6e6193458f15391ca"
+      "sha256": "2747c145c5dc2bc1858bff06e5f0d930684a5bb336d0cce73a7e3501cc502d9d"
     },
     {
       "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",

@@ -46,6 +46,11 @@ EXPECTED_REBASED_IDS = {
     "manifest-gap.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
     "manifest-gap.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
     "manifest-gap.search-scale.00-configuration-up-to-100-streams",
+    "manifest-gap.vios-codecs-audio.00-b-frame-handling",
+    "manifest-gap.vios-codecs-audio.01-hevc-multislice-rfc7798",
+    "manifest-gap.vios-codecs-audio.02-h-264-h-265",
+    "manifest-gap.vios-codecs-audio.03-audio-recording",
+    "manifest-gap.vios-codecs-audio.04-audio-rtsp-republish",
     "manifest-gap.video-summarization-live.00-live-captions",
     "manifest-gap.video-summarization-live.01-live-stream-summaries",
     "manifest-gap.video-summarization-live.02-stream-reports",
@@ -62,7 +67,8 @@ EXPECTED_OVERLAY = {
     "services/agent/src/vss_agents/api/rtsp_delete.py": "d90e887b26f518a15a628224a33577e3469c4f3f29b66d84dae0470fe75285cb",
     "services/agent/src/vss_agents/tools/video_report_gen.py": "00fcea30078a11c188d094d082b0a0ecc7c1d991b1721ed1469a68ec963982ab",
     "deploy/docker/services/video-summarization/compose.yml": "6bf986735bb6971c03df50ec1cfa15fe2024ba213574f08ed767517e85b18e74",
-    "deploy/docker/thor-local/qualification/expected/agent.json": "ea4f92b9e331b585170d4bd8e1b618c92d5b83db16372ee6e6193458f15391ca",
+    "deploy/docker/thor-local/vios-codecs/vios_media.py": "004716c98815ec910c03a8fd86cb10b29e52b66ad21ebf24aada9a817c15298d",
+    "deploy/docker/thor-local/qualification/expected/agent.json": "2747c145c5dc2bc1858bff06e5f0d930684a5bb336d0cce73a7e3501cc502d9d",
     "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
     "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d",
     "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44",
@@ -465,7 +471,7 @@ def validate() -> dict[str, Any]:
         if isinstance(row, dict)
     }
     if overlay != EXPECTED_OVERLAY or len(overlay_rows) != len(overlay):
-        raise RebaseError("exact sixteen-path overlay drift")
+        raise RebaseError("exact seventeen-path overlay drift")
     for path, digest in overlay.items():
         if _sha(_read(path)) != digest:
             raise RebaseError(f"current overlay source drift: {path}")
@@ -532,17 +538,17 @@ def validate() -> dict[str, Any]:
         raise RebaseError("partition contract missing")
     if (
         partition.get("retained_candidate_rows") != 71
-        or partition.get("unchanged_rows") != 39
-        or partition.get("rebased_rows") != 32
+        or partition.get("unchanged_rows") != 34
+        or partition.get("rebased_rows") != 37
         or rebased != EXPECTED_REBASED_IDS
         or set(partition.get("rebased_entry_ids", [])) != EXPECTED_REBASED_IDS
         or len(partition.get("rebased_entry_ids", [])) != len(EXPECTED_REBASED_IDS)
-        or len(unchanged) != 39
-        or len(rebased) != 32
+        or len(unchanged) != 34
+        or len(rebased) != 37
         or unchanged & rebased
         or unchanged | rebased != {row["entry_id"] for row in candidate_rows}
     ):
-        raise RebaseError("exact 39 unchanged + 32 rebased partition drift")
+        raise RebaseError("exact 34 unchanged + 37 rebased partition drift")
     if set(overlay_usage) != set(EXPECTED_OVERLAY):
         raise RebaseError("one or more overlay paths are not used by retained rows")
     if current_lock_references != 182:
@@ -567,9 +573,9 @@ def validate() -> dict[str, Any]:
         "schema_version": 1,
         "status": "pass_current_source_rebase_static_only",
         "retained_candidate_rows": 71,
-        "unchanged_rows": 39,
-        "rebased_rows": 32,
-        "current_source_overlay_paths": 16,
+        "unchanged_rows": 34,
+        "rebased_rows": 37,
+        "current_source_overlay_paths": 17,
         "current_source_lock_references": 182,
         "overlay_reference_counts": dict(sorted(overlay_usage.items())),
         "rebased_entry_ids": sorted(rebased),
@@ -607,8 +613,8 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, indent=2, sort_keys=True))
     else:
         print(
-            "PASS: 71 retained rows = 39 unchanged + 32 current-source rebased; "
-            "sixteen locks; Kafka abort gate; NAT 64 = 44 + 12 + 8; no promotion"
+            "PASS: 71 retained rows = 34 unchanged + 37 current-source rebased; "
+            "seventeen locks; Kafka abort gate; NAT 64 = 44 + 12 + 8; no promotion"
         )
     return 0
 

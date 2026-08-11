@@ -14,7 +14,9 @@ REPO_ROOT = HERE.parents[4]
 
 
 def _module():
-    spec = importlib.util.spec_from_file_location("wave3_source_executor", HERE / "executor.py")
+    spec = importlib.util.spec_from_file_location(
+        "wave3_source_executor", HERE / "executor.py"
+    )
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -29,8 +31,12 @@ def test_inventory_and_result_validate_against_schemas():
     module = _module()
     inventory = json.loads((HERE / "inventory.json").read_text())
     result = module.build_result()
-    jsonschema.Draft202012Validator(json.loads((HERE / "inventory.schema.json").read_text())).validate(inventory)
-    jsonschema.Draft202012Validator(json.loads((HERE / "result.schema.json").read_text())).validate(result)
+    jsonschema.Draft202012Validator(
+        json.loads((HERE / "inventory.schema.json").read_text())
+    ).validate(inventory)
+    jsonschema.Draft202012Validator(
+        json.loads((HERE / "result.schema.json").read_text())
+    ).validate(result)
 
 
 def test_exact_six_nonoverlapping_open_requirements_and_expected_outcomes():
@@ -47,10 +53,25 @@ def test_exact_six_nonoverlapping_open_requirements_and_expected_outcomes():
         "open_requirements_unselected": 77,
     }
     assert len({item["planning_requirement_id"] for item in result["results"]}) == 6
-    mismatch = [item for item in result["results"] if item["outcome"] == "observed_mismatch"]
-    assert [item["case_id"] for item in mismatch] == ["wave3-source-case.search-upload-content-type"]
+    mismatch = [
+        item for item in result["results"] if item["outcome"] == "observed_mismatch"
+    ]
+    assert [item["case_id"] for item in mismatch] == [
+        "wave3-source-case.search-upload-content-type"
+    ]
     failed = [item for item in mismatch[0]["assertions"] if not item["passed"]]
-    assert failed == [{"assertion_id": "unsupported-content-type-contract-is-400", "passed": False, "detail": "observed='415'"}]
+    assert failed == []
+    assert mismatch[0]["source_checks"] == [
+        {
+            "path": "services/agent/src/vss_agents/api/video_search_ingest.py",
+            "sha256_match": False,
+        }
+    ]
+    assert mismatch[0]["assertions"][-1] == {
+        "assertion_id": "unsupported-content-type-contract-is-400",
+        "passed": True,
+        "detail": "observed='400'",
+    }
 
 
 def test_no_overlap_with_prior_twenty_six_cases():
@@ -100,7 +121,9 @@ def test_tampered_planning_payload_fails_result_contract(tmp_path, monkeypatch):
     path = tmp_path / "inventory.json"
     path.write_text(json.dumps(inventory))
     monkeypatch.setattr(module, "INVENTORY_PATH", path)
-    with pytest.raises(module.QualificationError, match="result schema validation failed"):
+    with pytest.raises(
+        module.QualificationError, match="result schema validation failed"
+    ):
         module.build_result()
 
 
@@ -111,7 +134,9 @@ def test_tampered_source_lock_fails_result_contract(tmp_path, monkeypatch):
     path = tmp_path / "inventory.json"
     path.write_text(json.dumps(inventory))
     monkeypatch.setattr(module, "INVENTORY_PATH", path)
-    with pytest.raises(module.QualificationError, match="result schema validation failed"):
+    with pytest.raises(
+        module.QualificationError, match="result schema validation failed"
+    ):
         module.build_result()
 
 
@@ -177,13 +202,26 @@ def test_executor_imports_no_network_subprocess_or_credential_modules():
             imported.update(alias.name.split(".")[0] for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module:
             imported.add(node.module.split(".")[0])
-    assert imported.isdisjoint({"subprocess", "socket", "requests", "httpx", "urllib", "aiohttp", "docker", "boto3"})
+    assert imported.isdisjoint(
+        {
+            "subprocess",
+            "socket",
+            "requests",
+            "httpx",
+            "urllib",
+            "aiohttp",
+            "docker",
+            "boto3",
+        }
+    )
 
 
 def test_executor_has_no_file_write_calls():
     tree = ast.parse((HERE / "executor.py").read_text())
     attrs = {node.attr for node in ast.walk(tree) if isinstance(node, ast.Attribute)}
-    assert attrs.isdisjoint({"write_text", "write_bytes", "unlink", "rename", "replace", "mkdir", "rmdir"})
+    assert attrs.isdisjoint(
+        {"write_text", "write_bytes", "unlink", "rename", "replace", "mkdir", "rmdir"}
+    )
 
 
 def test_result_schema_rejects_runtime_evidence_and_live_promotion():
@@ -221,4 +259,6 @@ def test_machine_audit_classifies_every_open_requirement_exactly_once():
     assert len(rows) == 83
     assert len({row["planning_requirement_id"] for row in rows}) == 83
     assert sum(row["classification"] == "selected_source_executor" for row in rows) == 6
-    assert sum(row["classification"] != "selected_source_executor" for row in rows) == 77
+    assert (
+        sum(row["classification"] != "selected_source_executor" for row in rows) == 77
+    )
