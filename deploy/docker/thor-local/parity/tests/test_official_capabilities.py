@@ -33,8 +33,7 @@ class OfficialCapabilityTests(unittest.TestCase):
         planning_ids = {
             oracle["capability_id"]
             for oracle in self.oracles["oracles"]
-            if oracle["acceptance_readiness"]["classification"]
-            == "planning_index_only"
+            if oracle["acceptance_readiness"]["classification"] == "planning_index_only"
         }
         return next(
             capability
@@ -274,9 +273,7 @@ class OfficialCapabilityTests(unittest.TestCase):
                 for index, row in enumerate(ledger[key])
                 if row["id"] == identifier
             )
-            current = next(
-                row for row in self.ledger[key] if row["id"] == identifier
-            )
+            current = next(row for row in self.ledger[key] if row["id"] == identifier)
             ledger[key][projected] = copy.deepcopy(current)
         for capability_id in ("api.core.lvs-17", "api.core.alerts-19"):
             projected_oracle = next(
@@ -851,14 +848,29 @@ class OfficialCapabilityTests(unittest.TestCase):
             ["add_file", "list_files", "get_file_info", "delete_file"],
         )
         self.assertEqual(capability["thor_state"], "wired")
-        self.assertEqual(capability["runtime_state"], "static_only")
+        self.assertEqual(capability["runtime_state"], "passed_current")
+        self.assertEqual(
+            capability["runtime_evidence"],
+            [
+                {
+                    "path": (
+                        "deploy/docker/thor-local/qualification/"
+                        "lvs-mcp-current-runtime-successor/"
+                        "canonical-runtime-evidence.json"
+                    ),
+                    "sha256": (
+                        "0e206430f68a32cbbf4bb1cb0bfc353632a89057ac158362163e7468eb92a63e"
+                    ),
+                }
+            ],
+        )
         discrepancy = next(
             item
             for item in self.ledger["source_discrepancies"]
             if item["id"] == "lvs-mcp-doc-13-vs-repository-9"
         )
         self.assertIn("pinned upstream repository", discrepancy["resolution"])
-        self.assertIn("passed a live file lifecycle", discrepancy["must_not_claim"])
+        self.assertIn("four inference/stream tools", discrepancy["must_not_claim"])
 
     def test_thor_support_boundary_does_not_claim_official_all_local(self) -> None:
         custom = next(

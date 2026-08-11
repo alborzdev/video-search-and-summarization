@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "evidence_id": "thor-lvs-mcp-current-runtime-20260811",
+  "package_id": "thor-lvs-mcp-current-runtime-successor-v1",
+  "capability_id": "api.core.lvs-mcp-doc-13-repo-9",
+  "oracle_id": "oracle.api.core.lvs-mcp-doc-13-repo-9",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "20d8c6c6241c0aa88a6ad03d2787b7aca2f295ad",
+  "captured_at": "2026-08-11T03:51:39Z",
+  "status": "passed_current",
+  "promotion_eligible": true,
+  "artifact_digests": {
+    "contract_sha256": "e3056541c684aa2cc0144637d68a8698db19a0530feab44923b46f92a04e583d",
+    "executor_sha256": "25f5e793040a35aee4a9df8c65d9aaaa463b45f97760f1377c609ed42fd0e24b",
+    "receipt_schema_sha256": "c390606f99fb9458f5c8e0e02f1c6c07fff82a52e5860e547d7df81d788756e0",
+    "runtime_receipt_sha256": "28e92071fe66a32c9632d76b36dc35490342577c8af0c1414e5f88b3405cc271",
+    "verifier_sha256": "8f48f9b1655cfff153e7e0f74b6708e48d653a518a6ad9bdf0b47f73f0c0faf2"
+  },
+  "qualification": {
+    "transport": "MCP SSE over numeric loopback",
+    "protocol_version": "2025-11-25",
+    "server_name": "lvs-engine",
+    "server_version": "1.28.1",
+    "discovered_tool_count": 13,
+    "all_tools_have_schemas": true,
+    "successful_tool_calls": 11,
+    "expected_error_tool_calls": 2,
+    "inference_tool_calls": 0,
+    "stream_mutations": 0,
+    "persistent_mutations": 4,
+    "fixture_bytes": 15496,
+    "duration_milliseconds": 1484
+  },
+  "file_lifecycle": {
+    "add_list_info_delete_passed": true,
+    "list_after_add_exact": true,
+    "get_info_exact": true,
+    "delete_confirmation_exact": true,
+    "traversal_rejection_sanitized": true,
+    "mismatched_confirmation_rejection_sanitized": true
+  },
+  "cleanup": {
+    "complete_mcp_catalog_restored": true,
+    "complete_rest_catalog_restored": true,
+    "complete_media_root_restored": true,
+    "owned_resource_absent": true,
+    "fallback_deletes": 0,
+    "runtime_identity_and_restart_state_unchanged": true,
+    "service_lifecycle_mutations": 0
+  },
+  "semantic_boundary": {
+    "exact_13_tool_discovery_proven": true,
+    "four_thor_adapter_file_tools_exercised": true,
+    "source_shipped_non_inference_tools_exercised": true,
+    "inference_and_stream_tools_exercised_by_this_receipt": false,
+    "inference_and_stream_tools_owned_by_separate_capabilities": true
+  },
+  "retention": {
+    "raw_media": false,
+    "raw_file_ids": false,
+    "raw_file_names": false,
+    "raw_paths": false,
+    "raw_responses": false,
+    "raw_sessions": false,
+    "credentials": false
+  },
+  "warehouse_sample_bundle": "excluded"
+}

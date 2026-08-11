@@ -1057,6 +1057,46 @@ UI_GLOBAL_CHAT_RUNTIME_WORKLOAD = {
     ],
 }
 UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS = 40
+LVS_MCP_RUNTIME_CAPABILITY_ID = "api.core.lvs-mcp-doc-13-repo-9"
+LVS_MCP_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "lvs-mcp-current-runtime-successor/executor.py"
+)
+LVS_MCP_RUNTIME_VERIFIER = (
+    "deploy/docker/thor-local/qualification/lvs-mcp-current-runtime-successor/verify.py"
+)
+LVS_MCP_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "lvs-mcp-current-runtime-successor/contract.json"
+    ),
+    "sha256": "e3056541c684aa2cc0144637d68a8698db19a0530feab44923b46f92a04e583d",
+}
+LVS_MCP_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "lvs-mcp-current-runtime-successor/canonical-runtime-evidence.json"
+        ),
+        "sha256": "0e206430f68a32cbbf4bb1cb0bfc353632a89057ac158362163e7468eb92a63e",
+    }
+]
+LVS_MCP_RUNTIME_NAMESPACES = ["vss-oracle-lvs-mcp-"]
+LVS_MCP_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 20,
+    "overhead_requests": 0,
+    "calculated_max_requests": 20,
+    "phases": [
+        "source_and_runtime_identity",
+        "complete_catalog_and_media_pre_state",
+        "exact_13_tool_discovery",
+        "non_inference_read_only_calls",
+        "adapter_file_lifecycle_and_adjacent_negatives",
+        "exact_cleanup_and_postcondition",
+    ],
+}
+LVS_MCP_RUNTIME_MAX_ACTIONS = 4
 LVS_FORMATS_RUNTIME_CAPABILITY_ID = "runtime.lvs.supported-formats"
 LVS_FORMATS_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/lvs-formats-runtime/execute.py"
@@ -1345,6 +1385,14 @@ def _is_current_lvs_formats_runtime(capability: dict[str, Any]) -> bool:
         capability.get("id") == LVS_FORMATS_RUNTIME_CAPABILITY_ID
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence") == LVS_FORMATS_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_lvs_mcp_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == LVS_MCP_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == LVS_MCP_RUNTIME_EVIDENCE
     )
 
 
@@ -2095,6 +2143,8 @@ def _workload(
         return copy.deepcopy(UI_DASHBOARD_RUNTIME_WORKLOAD)
     if live_integration and _is_current_ui_global_chat_runtime(capability):
         return copy.deepcopy(UI_GLOBAL_CHAT_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_lvs_mcp_runtime(capability):
+        return copy.deepcopy(LVS_MCP_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_formats_runtime(capability):
         return copy.deepcopy(LVS_FORMATS_RUNTIME_WORKLOAD)
     if live_integration and _is_current_lvs_single_request_runtime(capability):
@@ -2188,6 +2238,8 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return UI_DASHBOARD_RUNTIME_MAX_ACTIONS
     if _is_current_ui_global_chat_runtime(capability):
         return UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
+    if _is_current_lvs_mcp_runtime(capability):
+        return LVS_MCP_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_formats_runtime(capability):
         return LVS_FORMATS_RUNTIME_MAX_ACTIONS
     if _is_current_lvs_single_request_runtime(capability):
@@ -3716,6 +3768,39 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_lvs_mcp_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": LVS_MCP_RUNTIME_FIXTURE["path"],
+                "generator": LVS_MCP_RUNTIME_EXECUTOR,
+                "sha256": LVS_MCP_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = LVS_MCP_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [LVS_MCP_RUNTIME_VERIFIER]
+            oracle["execution_bounds"]["max_duration_seconds"] = 180
+            oracle["cleanup"]["targets"] = copy.deepcopy(LVS_MCP_RUNTIME_NAMESPACES)
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(LVS_MCP_RUNTIME_NAMESPACES)
+            oracle["cleanup"]["pre_state"] = (
+                "exact source locks, the LVS container identity, complete LVS REST "
+                "and MCP file catalogs, and the complete MCP media-root inventory "
+                "must be captured before mutation"
+            )
+            oracle["cleanup"]["restore"] = (
+                "delete only the exact recorded oracle-owned LVS file asset and "
+                "remove only the exact generated media fixture"
+            )
+            oracle["cleanup"]["executor"] = LVS_MCP_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [LVS_MCP_RUNTIME_VERIFIER]
+            oracle["cleanup"]["postconditions"] = [
+                "the exact owned LVS asset is absent from MCP and REST catalogs",
+                "the complete LVS REST and MCP file catalogs match pre-state exactly",
+                "the complete MCP media-root inventory matches pre-state exactly",
+                "the LVS container identity, health, start time, and restart count match pre-state exactly",
+                "no inference, stream, service-lifecycle, or Warehouse sample action occurred",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if _is_current_lvs_formats_runtime(capability):
             oracle["fixture"]["materialization"] = {
                 "path": LVS_FORMATS_RUNTIME_FIXTURE["path"],
@@ -4020,6 +4105,8 @@ def validate(
             expected_actions = UI_DASHBOARD_RUNTIME_MAX_ACTIONS
         elif _is_current_ui_global_chat_runtime(ledger_by_id[capability_id]):
             expected_actions = UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
+        elif _is_current_lvs_mcp_runtime(ledger_by_id[capability_id]):
+            expected_actions = LVS_MCP_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_formats_runtime(ledger_by_id[capability_id]):
             expected_actions = LVS_FORMATS_RUNTIME_MAX_ACTIONS
         elif _is_current_lvs_single_request_runtime(ledger_by_id[capability_id]):

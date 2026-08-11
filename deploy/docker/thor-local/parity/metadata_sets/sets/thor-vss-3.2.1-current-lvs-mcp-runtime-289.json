@@ -1,0 +1,53 @@
+{
+  "documents": {
+    "acceptance_inventory": {
+      "path": "deploy/docker/thor-local/qualification/acceptance_inventory.json",
+      "raw_sha256": "ec84bd7aefd191a65f6d1f97c6ee38bb8ff6561b500c67c6227fce4afeb0d89b",
+      "schema_version": 1
+    },
+    "capability_oracles": {
+      "path": "deploy/docker/thor-local/parity/capability-oracles.json",
+      "raw_sha256": "096bebe2859d8cce876c7f3205c860193543551e0bc007ee225eeee29b70c9f0",
+      "schema_id": "capability_oracles_schema",
+      "schema_version": 1
+    },
+    "manifest": {
+      "path": "deploy/docker/thor-local/parity/manifest.json",
+      "raw_sha256": "73e848e48bb3869c25f62171614aa5c48e5136a79dd06088ac987e2db823591e",
+      "schema_version": 1
+    },
+    "official_capabilities": {
+      "path": "deploy/docker/thor-local/parity/official-capabilities.json",
+      "raw_sha256": "8ae2f6443d10ed69db98d52225fcee5006ad1f8b65463468673b6cc2560ec829",
+      "schema_id": "official_capabilities_schema",
+      "schema_version": 1
+    }
+  },
+  "expected_counts": {
+    "capabilities": 289,
+    "feature_families": 55,
+    "oracles": 289
+  },
+  "lifecycle": "live_ready",
+  "mode": "immutable_static_metadata_set",
+  "schema_version": 1,
+  "schemas": {
+    "capability_oracles_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://nvidia.com/vss/thor/capability-oracles.schema.json",
+      "path": "deploy/docker/thor-local/parity/capability-oracles.schema.json",
+      "raw_sha256": "2d9c2127bce3a8280105f7bc78af96c13db3d59da67f928fa9df9e0d42965801"
+    },
+    "official_capabilities_schema": {
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "document_id": "https://developer.nvidia.com/vss/thor-local/official-capabilities.schema.json",
+      "path": "deploy/docker/thor-local/parity/official-capabilities.schema.json",
+      "raw_sha256": "6644cffdd6b58f68891d8de27707beb421fb8cc5cd904b1925884c42c9333902"
+    }
+  },
+  "set_id": "thor-vss-3.2.1-current-lvs-mcp-runtime-289",
+  "target": {
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

@@ -1,0 +1,324 @@
+{
+  "assertions": [
+    {
+      "expected": 13,
+      "id": "contract-01",
+      "observation": "contract_identity/contract/docs_tool_count",
+      "observed": 13,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/expected_manifest",
+      "observed": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a",
+      "id": "contract-03",
+      "observation": "contract_identity/contract/expected_manifest_sha256",
+      "observed": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 13,
+      "id": "contract-04",
+      "observation": "contract_identity/contract/repository_tool_count",
+      "observed": 13,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "add_file",
+        "delete_file",
+        "generate_captions",
+        "generate_vlm_captions",
+        "get_file_info",
+        "get_metrics",
+        "get_recommended_config",
+        "health_live",
+        "health_ready",
+        "list_files",
+        "list_models",
+        "stream_summarize",
+        "summarize_video"
+      ],
+      "id": "contract-05",
+      "observation": "contract_identity/contract/repository_tools",
+      "observed": [
+        "add_file",
+        "delete_file",
+        "generate_captions",
+        "generate_vlm_captions",
+        "get_file_info",
+        "get_metrics",
+        "get_recommended_config",
+        "health_live",
+        "health_ready",
+        "list_files",
+        "list_models",
+        "stream_summarize",
+        "summarize_video"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "add_file",
+        "list_files",
+        "get_file_info",
+        "delete_file"
+      ],
+      "id": "contract-06",
+      "observation": "contract_identity/contract/thor_local_adapter_tools",
+      "observed": [
+        "add_file",
+        "list_files",
+        "get_file_info",
+        "delete_file"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "add_file",
+        "list_files",
+        "get_file_info",
+        "delete_file"
+      ],
+      "id": "contract-07",
+      "observation": "contract_identity/contract/upstream_missing_tools",
+      "observed": [
+        "add_file",
+        "list_files",
+        "get_file_info",
+        "delete_file"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 9,
+      "id": "contract-08",
+      "observation": "contract_identity/contract/upstream_repository_tool_count",
+      "observed": 9,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "health_ready",
+        "health_live",
+        "get_metrics",
+        "list_models",
+        "summarize_video",
+        "generate_captions",
+        "stream_summarize",
+        "generate_vlm_captions",
+        "get_recommended_config"
+      ],
+      "id": "contract-09",
+      "observation": "contract_identity/contract/upstream_repository_tools",
+      "observed": [
+        "health_ready",
+        "health_live",
+        "get_metrics",
+        "list_models",
+        "summarize_video",
+        "generate_captions",
+        "stream_summarize",
+        "generate_vlm_captions",
+        "get_recommended_config"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "api_contract",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "api.core.lvs-mcp-doc-13-repo-9",
+  "cleanup": {
+    "allowlist": [
+      "vss-oracle-lvs-mcp-"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "the exact owned LVS asset is absent from MCP and REST catalogs",
+        "result": "pass"
+      },
+      {
+        "description": "the complete LVS REST and MCP file catalogs match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the complete MCP media-root inventory matches pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the LVS container identity, health, start time, and restart count match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "no inference, stream, service-lifecycle, or Warehouse sample action occurred",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "vss-oracle-lvs-mcp-"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.api.core.lvs-mcp-doc-13-repo-9",
+    "path": "deploy/docker/thor-local/qualification/lvs-mcp-current-runtime-successor/contract.json",
+    "sha256": "e3056541c684aa2cc0144637d68a8698db19a0530feab44923b46f92a04e583d"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "docs_tool_count": 13,
+          "expected_manifest": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+          "expected_manifest_sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a",
+          "repository_tool_count": 13,
+          "repository_tools": [
+            "add_file",
+            "delete_file",
+            "generate_captions",
+            "generate_vlm_captions",
+            "get_file_info",
+            "get_metrics",
+            "get_recommended_config",
+            "health_live",
+            "health_ready",
+            "list_files",
+            "list_models",
+            "stream_summarize",
+            "summarize_video"
+          ],
+          "thor_local_adapter_tools": [
+            "add_file",
+            "list_files",
+            "get_file_info",
+            "delete_file"
+          ],
+          "upstream_missing_tools": [
+            "add_file",
+            "list_files",
+            "get_file_info",
+            "delete_file"
+          ],
+          "upstream_repository_tool_count": 9,
+          "upstream_repository_tools": [
+            "health_ready",
+            "health_live",
+            "get_metrics",
+            "list_models",
+            "summarize_video",
+            "generate_captions",
+            "stream_summarize",
+            "generate_vlm_captions",
+            "get_recommended_config"
+          ]
+        },
+        "contract_sha256": "e3056541c684aa2cc0144637d68a8698db19a0530feab44923b46f92a04e583d",
+        "qualification_summary_sha256": "a1e38f88eef0dc7d6175efe34cbd701ec58371e8ef22a2cd03ed812016a37178",
+        "receipt_sha256": "28e92071fe66a32c9632d76b36dc35490342577c8af0c1414e5f88b3405cc271",
+        "runtime_identity_unchanged": true,
+        "source_lock_count": 6
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "all_tools_have_schemas": true,
+        "expected_error_call_names": [
+          "add_file",
+          "delete_file"
+        ],
+        "expected_error_tool_calls": 2,
+        "inference_tool_calls": 0,
+        "protocol_version": "2025-11-25",
+        "server_name": "lvs-engine",
+        "server_version": "1.28.1",
+        "stream_mutations": 0,
+        "successful_call_names": [
+          "health_ready",
+          "health_live",
+          "list_models",
+          "get_recommended_config",
+          "get_metrics",
+          "list_files",
+          "add_file",
+          "list_files",
+          "get_file_info",
+          "delete_file",
+          "list_files"
+        ],
+        "successful_tool_calls": 11,
+        "tool_catalog_sha256": "631919a3fff2daf470e7922bbedd3751e08324118f015318d8597352f53c8442",
+        "tool_count": 13
+      }
+    },
+    {
+      "id": "api_contract",
+      "result": "pass",
+      "value": {
+        "delete_confirmation_exact": true,
+        "fallback_deletes": 0,
+        "get_info_exact": true,
+        "list_after_add_exact": true,
+        "mcp_catalog_restored": true,
+        "media_root_restored": true,
+        "negative_confirmation_sanitized": true,
+        "negative_traversal_sanitized": true,
+        "owned_resource_absent": true,
+        "persistent_mutations": 4,
+        "rest_catalog_restored": true,
+        "service_lifecycle_mutations": 0,
+        "transport_scope": "numeric-loopback-only",
+        "warehouse_sample_bundle": "excluded"
+      }
+    }
+  ],
+  "oracle_id": "oracle.api.core.lvs-mcp-doc-13-repo-9",
+  "oracle_sha256": "471248f983ca99d793ca70d241e963f6afaf3f0bb0af67d6a0a36245ad6a3af7",
+  "result": "passed_current",
+  "scenario_ids": [
+    "mcp-tool-operation-matrix",
+    "oracle.api.core.lvs-mcp-doc-13-repo-9"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

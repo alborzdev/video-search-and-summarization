@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.nvidia.com/vss/thor-local/lvs-mcp-current-runtime-successor/receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "capability_id", "oracle_id", "target_commit",
+    "contract_sha256", "result", "promotion_eligible", "warehouse_sample_bundle",
+    "source_hashes", "runtime", "transport", "tool_calls", "non_inference",
+    "fixture", "lifecycle", "cleanup", "counts", "duration_milliseconds"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-lvs-mcp-current-runtime-successor-v1"},
+    "capability_id": {"const": "api.core.lvs-mcp-doc-13-repo-9"},
+    "oracle_id": {"const": "oracle.api.core.lvs-mcp-doc-13-repo-9"},
+    "target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "contract_sha256": {"$ref": "#/$defs/hex64"},
+    "result": {"const": "passed"},
+    "promotion_eligible": {"const": true},
+    "warehouse_sample_bundle": {"const": "excluded"},
+    "source_hashes": {"type": "object", "minProperties": 6, "additionalProperties": {"$ref": "#/$defs/hex64"}},
+    "runtime": {
+      "type": "object", "additionalProperties": false, "required": ["pre", "post", "unchanged"],
+      "properties": {"pre": {"$ref": "#/$defs/runtime"}, "post": {"$ref": "#/$defs/runtime"}, "unchanged": {"const": true}}
+    },
+    "transport": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scope", "protocol_version", "server_name", "server_version", "tool_count", "all_tools_have_schemas", "tool_catalog_sha256"],
+      "properties": {
+        "scope": {"const": "numeric-loopback-only"},
+        "protocol_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "server_name": {"const": "lvs-engine"},
+        "server_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "tool_count": {"const": 13},
+        "all_tools_have_schemas": {"const": true},
+        "tool_catalog_sha256": {"$ref": "#/$defs/hex64"}
+      }
+    },
+    "tool_calls": {"type": "array", "minItems": 13, "maxItems": 13, "items": {"$ref": "#/$defs/toolCall"}},
+    "non_inference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["models_response_sha256", "recommended_response_sha256", "metrics_bytes", "metrics_sha256"],
+      "properties": {
+        "models_response_sha256": {"$ref": "#/$defs/hex64"},
+        "recommended_response_sha256": {"$ref": "#/$defs/hex64"},
+        "metrics_bytes": {"type": "integer", "minimum": 1, "maximum": 4194304},
+        "metrics_sha256": {"$ref": "#/$defs/hex64"}
+      }
+    },
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["generator", "bytes", "sha256", "filename_sha256", "sensor_name_sha256", "file_id_sha256"],
+      "properties": {
+        "generator": {"const": "ffmpeg-lavfi-testsrc2"},
+        "bytes": {"type": "integer", "minimum": 1000, "maximum": 1000000},
+        "sha256": {"$ref": "#/$defs/hex64"},
+        "filename_sha256": {"$ref": "#/$defs/hex64"},
+        "sensor_name_sha256": {"$ref": "#/$defs/hex64"},
+        "file_id_sha256": {"$ref": "#/$defs/hex64"}
+      }
+    },
+    "lifecycle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["catalog_before", "catalog_after", "list_after_add_exact", "get_info_exact", "delete_confirmation_exact", "negative_traversal_sanitized", "negative_confirmation_sanitized"],
+      "properties": {
+        "catalog_before": {"$ref": "#/$defs/projection"},
+        "catalog_after": {"$ref": "#/$defs/projection"},
+        "list_after_add_exact": {"const": true},
+        "get_info_exact": {"const": true},
+        "delete_confirmation_exact": {"const": true},
+        "negative_traversal_sanitized": {"const": true},
+        "negative_confirmation_sanitized": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rest_catalog_before", "rest_catalog_after", "media_root_before", "media_root_after", "fallback_deletes", "owned_resource_absent", "complete_catalog_restored", "complete_media_root_restored", "service_lifecycle_mutations"],
+      "properties": {
+        "rest_catalog_before": {"$ref": "#/$defs/projection"},
+        "rest_catalog_after": {"$ref": "#/$defs/projection"},
+        "media_root_before": {"$ref": "#/$defs/mediaProjection"},
+        "media_root_after": {"$ref": "#/$defs/mediaProjection"},
+        "fallback_deletes": {"const": 0},
+        "owned_resource_absent": {"const": true},
+        "complete_catalog_restored": {"const": true},
+        "complete_media_root_restored": {"const": true},
+        "service_lifecycle_mutations": {"const": 0}
+      }
+    },
+    "counts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tool_calls", "successful_tool_calls", "expected_error_tool_calls", "rest_validation_requests", "persistent_mutations", "inference_tool_calls", "stream_mutations"],
+      "properties": {
+        "tool_calls": {"const": 13},
+        "successful_tool_calls": {"const": 11},
+        "expected_error_tool_calls": {"const": 2},
+        "rest_validation_requests": {"type": "integer", "minimum": 3, "maximum": 4},
+        "persistent_mutations": {"const": 4},
+        "inference_tool_calls": {"const": 0},
+        "stream_mutations": {"const": 0}
+      }
+    },
+    "duration_milliseconds": {"type": "integer", "minimum": 1, "maximum": 180000}
+  },
+  "$defs": {
+    "hex64": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "image", "container_id_sha256", "image_id_sha256", "started_at_sha256", "restart_count", "health", "network_mode"],
+      "properties": {
+        "name": {"const": "vss-lvs"}, "image": {"const": "cti-vss-video-summarization:thor-local"},
+        "container_id_sha256": {"$ref": "#/$defs/hex64"}, "image_id_sha256": {"$ref": "#/$defs/hex64"},
+        "started_at_sha256": {"$ref": "#/$defs/hex64"}, "restart_count": {"type": "integer", "minimum": 0},
+        "health": {"const": "healthy"}, "network_mode": {"const": "host"}
+      }
+    },
+    "toolCall": {
+      "type": "object", "additionalProperties": false, "required": ["name", "result"],
+      "properties": {"name": {"type": "string", "minLength": 1, "maxLength": 64}, "result": {"enum": ["passed", "expected_error"]}}
+    },
+    "projection": {
+      "type": "object", "additionalProperties": false, "required": ["count", "sha256"],
+      "properties": {"count": {"type": "integer", "minimum": 0, "maximum": 1000}, "sha256": {"$ref": "#/$defs/hex64"}}
+    },
+    "mediaProjection": {
+      "type": "object", "additionalProperties": false, "required": ["regular_file_count", "projection_sha256"],
+      "properties": {"regular_file_count": {"type": "integer", "minimum": 0, "maximum": 1000}, "projection_sha256": {"$ref": "#/$defs/hex64"}}
+    }
+  }
+}

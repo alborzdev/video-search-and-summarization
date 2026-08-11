@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-lvs-mcp-current-runtime-successor-v1",
+  "capability_id": "api.core.lvs-mcp-doc-13-repo-9",
+  "oracle_id": "oracle.api.core.lvs-mcp-doc-13-repo-9",
+  "target_commit": "20d8c6c6241c0aa88a6ad03d2787b7aca2f295ad",
+  "acknowledgement": "I_AUTHORIZE_LVS_MCP_DISPOSABLE_FILE_LIFECYCLE_AND_EXACT_CLEANUP",
+  "expected_tools": [
+    "add_file",
+    "delete_file",
+    "generate_captions",
+    "generate_vlm_captions",
+    "get_file_info",
+    "get_metrics",
+    "get_recommended_config",
+    "health_live",
+    "health_ready",
+    "list_files",
+    "list_models",
+    "stream_summarize",
+    "summarize_video"
+  ],
+  "expected_success_calls": [
+    "health_ready",
+    "health_live",
+    "list_models",
+    "get_recommended_config",
+    "get_metrics",
+    "list_files",
+    "add_file",
+    "list_files",
+    "get_file_info",
+    "delete_file",
+    "list_files"
+  ],
+  "expected_error_calls": [
+    "add_file",
+    "delete_file"
+  ],
+  "fixture": {
+    "host_media_root": "deploy/docker/data-dir/videos",
+    "container_media_root": "/opt/nvidia/via/mcp-media",
+    "owned_prefix": "vss-oracle-lvs-mcp-",
+    "generator": "ffmpeg-lavfi-testsrc2",
+    "maximum_bytes": 1000000
+  },
+  "runtime": {
+    "container": "vss-lvs",
+    "image": "cti-vss-video-summarization:thor-local",
+    "network_mode": "host",
+    "required_health": "healthy",
+    "mcp_url": "http://127.0.0.1:38112/sse",
+    "rest_origin": "http://127.0.0.1:38111",
+    "service_lifecycle_mutations": 0
+  },
+  "bounds": {
+    "max_duration_seconds": 180,
+    "max_tool_calls": 16,
+    "expected_success_tool_calls": 11,
+    "expected_error_tool_calls": 2,
+    "max_rest_validation_requests": 4,
+    "max_subprocess_output_bytes": 1048576,
+    "max_rest_response_bytes": 4194304,
+    "max_catalog_items": 1000,
+    "max_persistent_mutations": 4,
+    "network_scope": "numeric-loopback-only"
+  },
+  "source_locks": [
+    {
+      "path": "services/video-summarization/src/lvs_mcp.py",
+      "sha256": "c31da08ff5847051732f08ab62344fbc898f40598bc69375910892bd35cdab2a"
+    },
+    {
+      "path": "services/video-summarization/src/lvs_mcp_sse.py",
+      "sha256": "94306d18703a598982fbfe3515dcb3ed7cad31dfb106cb0d5b5c4ef92e6806f8"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/expected/lvs-mcp.json",
+      "sha256": "6979727420bd3a6d0a58c4edd5ca07566fcbf3423f7a66198e12847bdd3d4d8a"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "a36ecd65c49636cab8db6b57c85564bdec18189d2d6e3f819f6f22dee894f1cc"
+    },
+    {
+      "path": "deploy/docker/thor-local/patches/patch_lvs_file_management.py",
+      "sha256": "9e70decc9aed827ba56f98c5b1abed9bbefcf73f0fb028596f6e2b615cd6f4e3"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-mcp-current-runtime-successor/executor.py",
+      "sha256": "25f5e793040a35aee4a9df8c65d9aaaa463b45f97760f1377c609ed42fd0e24b"
+    }
+  ],
+  "policy": {
+    "warehouse_sample_bundle": "excluded",
+    "inference_tool_calls": 0,
+    "stream_mutations": 0,
+    "service_lifecycle_mutations": 0,
+    "retain_raw_ids": false,
+    "retain_raw_paths": false,
+    "retain_raw_responses": false
+  }
+}
