@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_id", "status", "contract_sha256", "duration_seconds", "budget", "runtime", "fixture", "negative", "positive", "oracle", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-absolute-timestamps-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata"},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 300},
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_requests", "max_http_requests", "model_requests", "max_model_requests"],
+      "properties": {
+        "http_requests": {"const": 9}, "max_http_requests": {"const": 9},
+        "model_requests": {"const": 1}, "max_model_requests": {"const": 1}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["endpoint_sha256", "model_id_sha256", "models_before_sha256", "models_after_sha256", "models_unchanged", "models_pre_response_sha256", "models_post_response_sha256"],
+      "properties": {
+        "endpoint_sha256": {"$ref": "#/$defs/sha256"}, "model_id_sha256": {"$ref": "#/$defs/sha256"},
+        "models_before_sha256": {"$ref": "#/$defs/sha256"}, "models_after_sha256": {"$ref": "#/$defs/sha256"},
+        "models_unchanged": {"const": true}, "models_pre_response_sha256": {"$ref": "#/$defs/sha256"},
+        "models_post_response_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bytes", "sha256", "creation_time", "timestamp_burned_into_pixels"],
+      "properties": {
+        "bytes": {"const": 11319}, "sha256": {"const": "ce401bbfba3e1e2c7381f06579c798c23f82deeedff109a6b9f3cff31eb81235"},
+        "creation_time": {"const": "2026-08-11T12:00:00.000Z"}, "timestamp_burned_into_pixels": {"const": true}
+      }
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "structured_error", "error_code_sha256", "error_message_sha256", "request_sha256", "response_sha256", "catalog_resource_created"],
+      "properties": {
+        "http_status": {"const": 422}, "structured_error": {"const": true},
+        "error_code_sha256": {"$ref": "#/$defs/sha256"}, "error_message_sha256": {"$ref": "#/$defs/sha256"},
+        "request_sha256": {"$ref": "#/$defs/sha256"}, "response_sha256": {"$ref": "#/$defs/sha256"},
+        "catalog_resource_created": {"const": false}
+      }
+    },
+    "positive": {
+      "type": "object", "additionalProperties": false,
+      "required": ["upload_http_status", "upload_request_sha256", "upload_response_sha256", "readback_http_status", "readback_response_sha256", "request_sha256", "response_sha256", "http_status", "media_info", "chunk_count", "chunk_windows", "frame_counts", "metrics", "all_inference_content_nonempty", "semantic_response_sha256", "response_model_exact"],
+      "properties": {
+        "upload_http_status": {"const": 200}, "upload_request_sha256": {"$ref": "#/$defs/sha256"}, "upload_response_sha256": {"$ref": "#/$defs/sha256"},
+        "readback_http_status": {"const": 200}, "readback_response_sha256": {"$ref": "#/$defs/sha256"},
+        "request_sha256": {"$ref": "#/$defs/sha256"}, "response_sha256": {"$ref": "#/$defs/sha256"}, "http_status": {"const": 200},
+        "media_info": {"const": {"type": "timestamp", "start_timestamp": "2026-08-11T12:00:02.000Z", "end_timestamp": "2026-08-11T12:00:06.000Z"}},
+        "chunk_count": {"const": 2},
+        "chunk_windows": {"const": [["2026-08-11T12:00:02.000Z", "2026-08-11T12:00:04.000Z"], ["2026-08-11T12:00:04.000Z", "2026-08-11T12:00:06.000Z"]]},
+        "frame_counts": {"const": [2, 2]},
+        "metrics": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/metrics"}},
+        "all_inference_content_nonempty": {"const": true}, "semantic_response_sha256": {"$ref": "#/$defs/sha256"}, "response_model_exact": {"const": true}
+      }
+    },
+    "oracle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_timestamp_preserved_on_upload_and_readback", "source_instant_normalized_to_utc", "bounded_interval_preserved_as_absolute_media_info", "chunk_metadata_aligned_with_known_frame_times", "inference_executed", "malformed_absolute_timestamp_rejected_before_asset_creation"],
+      "properties": {
+        "source_timestamp_preserved_on_upload_and_readback": {"const": true}, "source_instant_normalized_to_utc": {"const": true},
+        "bounded_interval_preserved_as_absolute_media_info": {"const": true}, "chunk_metadata_aligned_with_known_frame_times": {"const": true},
+        "inference_executed": {"const": true}, "malformed_absolute_timestamp_rejected_before_asset_creation": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owned_asset_exact_deleted", "temporary_fixture_root_absent", "catalog_before_count", "catalog_after_count", "catalog_before_sha256", "catalog_after_sha256", "catalog_restored_exactly", "delete_response_sha256"],
+      "properties": {
+        "owned_asset_exact_deleted": {"const": true}, "temporary_fixture_root_absent": {"const": true},
+        "catalog_before_count": {"type": "integer", "minimum": 0}, "catalog_after_count": {"type": "integer", "minimum": 0},
+        "catalog_before_sha256": {"$ref": "#/$defs/sha256"}, "catalog_after_sha256": {"$ref": "#/$defs/sha256"},
+        "catalog_restored_exactly": {"const": true}, "delete_response_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "stream_mutations", "service_lifecycle_actions", "raw_prompt_retained", "raw_response_retained", "raw_resource_ids_retained", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "stream_mutations": {"const": 0}, "service_lifecycle_actions": {"const": 0},
+        "raw_prompt_retained": {"const": false}, "raw_response_retained": {"const": false}, "raw_resource_ids_retained": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decode_latency_ms", "vlm_latency_ms", "chunk_latency_ms", "queue_time_s", "processing_latency_s"],
+      "properties": {
+        "decode_latency_ms": {"type": "number", "minimum": 0}, "vlm_latency_ms": {"type": "number", "minimum": 0},
+        "chunk_latency_ms": {"type": "number", "minimum": 0}, "queue_time_s": {"type": "number", "minimum": 0},
+        "processing_latency_s": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

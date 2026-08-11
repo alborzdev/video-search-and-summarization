@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-1",
+  "selected_metadata": {
+    "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
+    "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
+    "selected_set": "thor-vss-3.2.1-current-lvs-rest-runtime-500",
+    "ledger_path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "canonical_candidate_runtime_state": "not_qualified"
+  },
+  "policy": {
+    "overlay_only": true,
+    "canonical_admission_claimed": false,
+    "canonical_state_advanced": false,
+    "runtime_evidence_required": true,
+    "receipt_schema_validation_required": true,
+    "exact_cleanup_required": true,
+    "agent_generate_calls": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "entries": [
+    {
+      "official_index": 299,
+      "capability_id": "manifest-entry.video-summarization-file.03-structured-output",
+      "advertised_literal": "structured output",
+      "package_id": "lvs-custom-schema-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/lvs-custom-schema-runtime-successor/contract.json",
+      "contract_sha256": "6aedf87117bf9a287ba9a873a691d9c3b72f30f97a53ffed06e8d87c7c72ac26",
+      "receipt_path": "deploy/docker/thor-local/qualification/lvs-custom-schema-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "440050d9335c0eb9b2420eeb239bf2a874127e6c686aaf15470b709ce86a888f",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-custom-schema-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "60fb7b008ffdaa30c5f8b09016eea9ba14b631479e23ae7c964052d0c249cf54",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/cleanup/catalog_restored": true,
+        "/cleanup/owned_absent": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/rt_cv_or_vios_stream_mutations": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 300,
+      "capability_id": "manifest-entry.video-summarization-file.04-object-event-scenario-focus",
+      "advertised_literal": "object/event/scenario focus",
+      "package_id": "lvs-focus-semantic-matrix-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/lvs-focus-semantic-matrix-successor/contract.json",
+      "contract_sha256": "031eea335caaad8a851b189a64f0eb12be29f2ffdab227e3619b73ca528ffb4e",
+      "receipt_path": "deploy/docker/thor-local/qualification/lvs-focus-semantic-matrix-successor/runtime-receipt.json",
+      "receipt_sha256": "e3d638f0af4fce7a9a3f3dff7a98f37a1a2856a4c79cdf58f181552b6e798f37",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-focus-semantic-matrix-successor/receipt.schema.json",
+      "receipt_schema_sha256": "0999cc28d9a66d3dc925957dd9c85fbcd014e73eb429ba40de04318054ebf96c",
+      "receipt_status": "candidate_focus_matrix_pass_non_promoting",
+      "required_assertions": {
+        "/cleanup/exact_delete_confirmation": true,
+        "/cleanup/owned_absent": true,
+        "/cleanup/unrelated_state_restored": true,
+        "/canonical_state_advanced": false,
+        "/promotion_eligible": false,
+        "/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 302,
+      "capability_id": "manifest-entry.video-summarization-file.06-partial-video-offsets",
+      "advertised_literal": "partial-video offsets",
+      "package_id": "lvs-partial-offsets-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/contract.json",
+      "contract_sha256": "f98a76004ade39fb005c82f65f1c8ef0dc563aa23aae0c8df1cc46b23fe84d0f",
+      "receipt_path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "3c5ed18630c465a95a5f4c55561d59d0b5bfed3176089465c7b99db8388a7340",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "43fedafac31e6a94791c27551834ff50e144f63cb73535c5d3bebddce6762860",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/cleanup/catalog_restored": true,
+        "/cleanup/owned_absent": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/rt_cv_or_vios_stream_mutations": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 345,
+      "capability_id": "manifest-entry.rt-vlm-media.09-reasoning",
+      "advertised_literal": "reasoning",
+      "package_id": "rt-vlm-reasoning-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-reasoning-runtime-successor/contract.json",
+      "contract_sha256": "a6054f3ef77f1be0dd3d1bd975cf78fb4adac9ea02ce65e6a817e3a26ec10e90",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-reasoning-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "104e2d72e187f8da18d8dc8ac0daea0c21066fffcc6934783f7b3de7523ad6ee",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-reasoning-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "5dd613410709168b4ad03d5791f0decfa9e5f3bd81e76b074ff879ac325929e2",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/cleanup/temporary_fixture_root_absent": true,
+        "/oracle/opposite_correct_conclusions": true,
+        "/oracle/reasoning_signal_present_for_all_cases": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 367,
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
+      "advertised_literal": "absolute timestamp metadata",
+      "package_id": "rt-vlm-absolute-timestamps-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-absolute-timestamps-runtime-successor/contract.json",
+      "contract_sha256": "215a7ce210ee1b01e0db8bb615d3b6968d8e6a3706184f633bd290d1499c0c44",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-absolute-timestamps-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "7ee211cf16d9407957001785c5d8ded42f9391d1f17b7c58b7d019c475c09bb0",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-absolute-timestamps-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "ede57914e0d36b61e9215ce8f9b58291e4e87df92b9df7197ac1a3796b3d3c59",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/cleanup/catalog_restored_exactly": true,
+        "/cleanup/owned_asset_exact_deleted": true,
+        "/oracle/chunk_metadata_aligned_with_known_frame_times": true,
+        "/oracle/malformed_absolute_timestamp_rejected_before_asset_creation": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "matrix_id", "selected_metadata_set", "selected_ledger_path", "selected_ledger_sha256", "matrix_semantics", "summary", "rows"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "advanced-lvs-rt-vlm-runtime-matrix-successor"},
+    "matrix_id": {"const": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-1"},
+    "selected_metadata_set": {"const": "thor-vss-3.2.1-current-lvs-rest-runtime-500"},
+    "selected_ledger_path": {"type": "string", "minLength": 1},
+    "selected_ledger_sha256": {"$ref": "#/$defs/sha256"},
+    "matrix_semantics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["overlay_only", "canonical_admission_claimed", "canonical_state_advanced", "meaning"],
+      "properties": {
+        "overlay_only": {"const": true}, "canonical_admission_claimed": {"const": false},
+        "canonical_state_advanced": {"const": false}, "meaning": {"type": "string", "minLength": 40}
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["row_count", "passed_current_thor", "canonical_promotions", "agent_generate_calls", "warehouse_sample_bundle"],
+      "properties": {
+        "row_count": {"const": 5}, "passed_current_thor": {"const": 5}, "canonical_promotions": {"const": 0},
+        "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "rows": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"$ref": "#/$defs/row"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["package_id", "contract_path", "contract_sha256", "receipt_path", "receipt_sha256", "receipt_schema_path", "receipt_schema_sha256", "receipt_status"],
+      "properties": {
+        "package_id": {"type": "string", "minLength": 1}, "contract_path": {"type": "string", "minLength": 1},
+        "contract_sha256": {"$ref": "#/$defs/sha256"}, "receipt_path": {"type": "string", "minLength": 1},
+        "receipt_sha256": {"$ref": "#/$defs/sha256"}, "receipt_schema_path": {"type": "string", "minLength": 1},
+        "receipt_schema_sha256": {"$ref": "#/$defs/sha256"}, "receipt_status": {"type": "string", "minLength": 1}
+      }
+    },
+    "row": {
+      "type": "object", "additionalProperties": false,
+      "required": ["official_index", "capability_id", "feature_id", "advertised_literal", "acceptance_class", "canonical_runtime_state", "overlay_runtime_state", "admission_state", "canonical_state_advanced", "runtime_evidence", "warehouse_sample_bundle"],
+      "properties": {
+        "official_index": {"type": "integer", "minimum": 289, "maximum": 499},
+        "capability_id": {"type": "string", "pattern": "^manifest-entry\\."}, "feature_id": {"type": "string", "minLength": 1},
+        "advertised_literal": {"type": "string", "minLength": 1}, "acceptance_class": {"const": "required_local"},
+        "canonical_runtime_state": {"const": "not_qualified"}, "overlay_runtime_state": {"const": "passed_current_thor"},
+        "admission_state": {"const": "runtime_evidence_available_not_canonically_admitted"}, "canonical_state_advanced": {"const": false},
+        "runtime_evidence": {"$ref": "#/$defs/evidence"}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  }
+}

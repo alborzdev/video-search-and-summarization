@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-absolute-timestamps-runtime-successor",
+  "capability_id": "manifest-entry.rt-vlm-performance-observability.07-absolute-timestamp-metadata",
+  "advertised_literal": "absolute timestamp metadata",
+  "execution": {
+    "default_mode": "plan",
+    "acknowledgement": "I_AUTHORIZE_BOUNDED_RT_VLM_ABSOLUTE_TIMESTAMP_RUNTIME",
+    "endpoint": "http://127.0.0.1:8018",
+    "network_scope": "loopback_only",
+    "max_http_requests": 9,
+    "max_model_requests": 1,
+    "max_duration_seconds": 300,
+    "agent_generate_calls": 0,
+    "stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "model": {
+    "id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "require_exact_models_member": true,
+    "require_exact_response_model": true
+  },
+  "fixture": {
+    "generator": "ffmpeg-lavfi-drawtext",
+    "duration_seconds": 8,
+    "width": 320,
+    "height": 240,
+    "fps": 4,
+    "bytes": 11319,
+    "sha256": "ce401bbfba3e1e2c7381f06579c798c23f82deeedff109a6b9f3cff31eb81235",
+    "creation_time": "2026-08-11T12:00:00.000Z",
+    "malformed_creation_time": "2026-08-11T12:00:00.000+00:00"
+  },
+  "selection": {
+    "start_offset": 2,
+    "end_offset": 6,
+    "chunk_duration": 2,
+    "expected_media_start": "2026-08-11T12:00:02.000Z",
+    "expected_media_end": "2026-08-11T12:00:06.000Z",
+    "expected_chunk_windows": [
+      ["2026-08-11T12:00:02.000Z", "2026-08-11T12:00:04.000Z"],
+      ["2026-08-11T12:00:04.000Z", "2026-08-11T12:00:06.000Z"]
+    ],
+    "expected_frame_count_per_chunk": 2
+  },
+  "oracle": {
+    "require_upload_readback_source_timestamp": true,
+    "require_timestamp_media_info": true,
+    "require_exact_absolute_chunk_windows": true,
+    "require_nonempty_inference_content": true,
+    "require_chunk_metrics": true,
+    "malformed_timestamp_must_return": 422,
+    "retain_raw_prompt": false,
+    "retain_raw_response": false,
+    "retain_resource_id": false
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-vlm/README.md",
+      "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/file.py",
+      "sha256": "e403a7437b77a2d60e45255b3fc46c503d0e12673a2fa7babec38c0880a3f6f3"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/captions.py",
+      "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json",
+      "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"
+    }
+  ]
+}
