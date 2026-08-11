@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-always-on-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.03-always-on-lifecycle",
+  "contract_sha256": "96fd008a2a7fd26eae43de7bf936c45be440fb1a39ced30663c272cbe0e0b174",
+  "status": "passed",
+  "run": {
+    "duration_ms": 23134,
+    "fixture_bytes": 2575454,
+    "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "numeric_local_endpoints_only": true,
+    "agent_generate_request_count": 0
+  },
+  "always_on": {
+    "feature_flag_enabled": true,
+    "declared_rule_count": 1,
+    "declared_rule_exact": true,
+    "initial_start_success": true,
+    "duplicate_before_restart_idempotent": true,
+    "alert_bridge_restart_performed": true,
+    "restart_replay_success": true,
+    "restart_replaced_worker_exactly_once": true,
+    "duplicate_after_restart_idempotent": true,
+    "process_scoped_rule_identity_rotated": true,
+    "rule_identity_sha256": [
+      "d98f66e4740941147ddf99faefcfaf73896edf0020135967ee56395e652ffbe1",
+      "644ba1d941f73149af0ca9eedced1e4f1f782982f7155e2cc1c096779f46071a"
+    ],
+    "stream_identity_sha256": "8ede1d848a833cc1ae299ebff910c0c2065dd9327d27ea05e06fa4ac5813d78d",
+    "worker_created_counts": [
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    "worker_removed_counts": [
+      0,
+      0,
+      1,
+      1,
+      2
+    ],
+    "one_caption_worker_after_each_start": true,
+    "camera_remove_success": true,
+    "lifecycle_stream_removed": true,
+    "mutation_sequence": [
+      "POST /v1/streams/add",
+      "POST /api/v1/realtime/always-on camera_streaming",
+      "POST /api/v1/realtime/always-on duplicate",
+      "docker restart vss-alert-bridge",
+      "POST /api/v1/realtime/always-on restart replay",
+      "POST /api/v1/realtime/always-on duplicate after restart",
+      "POST /api/v1/realtime/always-on camera_remove"
+    ]
+  },
+  "cleanup": {
+    "exact_unrelated_state_restored": true,
+    "before_sha256": {
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rtvlm_streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "after_sha256": {
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rtvlm_streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "owned_artifacts_absent": true,
+    "publisher_stopped": true,
+    "running_container_set_preserved": true,
+    "running_container_count": 38,
+    "final_worker_created_count": 2,
+    "final_worker_removed_count": 2,
+    "final_caption_worker_count": 0
+  }
+}

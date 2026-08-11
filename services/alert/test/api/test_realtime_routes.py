@@ -18,7 +18,7 @@
 import asyncio
 import json
 import sys
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import yaml
@@ -29,6 +29,7 @@ from fastapi.testclient import TestClient
 def mocks():
     """Create mock services for dependency injection."""
     mock_realtime_svc = AsyncMock()
+    mock_realtime_svc.register_rule_removed_callback = MagicMock()
     mock_incident_svc = AsyncMock()
 
     mock_realtime_svc.start_alert.return_value = (
@@ -43,6 +44,7 @@ def mocks():
         {"status": "success", "id": "rule-1", "message": "deleted"},
         200,
     )
+    mock_realtime_svc.reset_existing_sensor_captions.return_value = False
     mock_incident_svc.list_incidents.return_value = (
         {"status": "success", "incidents": [], "count": 0, "total": 0, "timestamp": "2025-01-01T00:00:00Z"},
         200,
@@ -1922,6 +1924,44 @@ class TestAlwaysOnDedupe:
         assert resp.status_code == 200
         assert resp.json()["reason"] == "STREAM_ADD_SUCCESS"
         assert mocks["realtime"].start_alert.await_count == 2
+        assert mocks["realtime"].reset_existing_sensor_captions.await_count == 2
+
+    def test_process_restart_reconciles_surviving_workers_once(
+        self, client, mocks, always_on, always_on_service
+    ):
+        """A replayed camera event after process-state loss replaces the old
+        RT-VLM worker set before recreating the configured rules."""
+        always_on([_sample_rule("r1")])
+        mocks["realtime"].start_alert.side_effect = [
+            ({"status": "success", "id": "before-restart", "created_at": "T", "message": "ok"}, 201),
+            ({"status": "success", "id": "after-restart", "created_at": "T", "message": "ok"}, 201),
+        ]
+
+        first = client.post("/api/v1/realtime/always-on", json=_streaming_event())
+        always_on_service.reset()  # model an Alert Bridge process restart
+        second = client.post("/api/v1/realtime/always-on", json=_streaming_event())
+
+        assert first.json()["reason"] == "STREAM_ADD_SUCCESS"
+        assert second.json()["reason"] == "STREAM_ADD_SUCCESS"
+        assert mocks["realtime"].reset_existing_sensor_captions.await_count == 2
+        assert mocks["realtime"].start_alert.await_count == 2
+
+    def test_reconciliation_failure_fails_closed_without_starting_rules(
+        self, client, mocks, always_on
+    ):
+        always_on([_sample_rule("r1")])
+        mocks["realtime"].reset_existing_sensor_captions.side_effect = RuntimeError(
+            "RT-VLM unavailable"
+        )
+
+        response = client.post(
+            "/api/v1/realtime/always-on", json=_streaming_event()
+        )
+
+        assert response.status_code == 502
+        assert response.json()["reason"] == "STREAM_ADD_FAILED"
+        assert response.json()["details"][0]["rule_id"] == "__stream_reconciliation__"
+        mocks["realtime"].start_alert.assert_not_awaited()
 
 
 class TestAlwaysOnFeatureFlag:

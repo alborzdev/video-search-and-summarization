@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-37",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-38",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -422,6 +422,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-rule-replay-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "34513ea8bb939b5bbeeb889aa4e3ec77349f90b91a522cf23924b3205e8e428f",
         "receipt_sha256": "b7216af88c66f006593f3ea3de4217b495c536a5f73dca9b1d2e4e4a9ce76511",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "always-on lifecycle",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.realtime-alerts.03-always-on-lifecycle",
+      "feature_id": "realtime-alerts",
+      "official_index": 331,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/contract.json",
+        "contract_sha256": "96fd008a2a7fd26eae43de7bf936c45be440fb1a39ced30663c272cbe0e0b174",
+        "package_id": "realtime-alert-always-on-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "80b03ba183a400d0d8cbfb9c5ccebafefb3631a89c52a74285798f21aeb8eea7",
+        "receipt_sha256": "9076e6c1c4990541c1dc46c71b12937b1f39595739f61bc4529e124008eb5db5",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1710,8 +1732,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 77,
-    "row_count": 77,
+    "passed_current_thor": 78,
+    "row_count": 78,
     "warehouse_sample_bundle": "excluded"
   }
 }

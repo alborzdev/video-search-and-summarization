@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thor realtime alert always-on lifecycle receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_id", "contract_sha256", "status", "run", "always_on", "cleanup"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "realtime-alert-always-on-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.realtime-alerts.03-always-on-lifecycle"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "status": {"const": "passed"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "fixture_bytes", "fixture_sha256", "numeric_local_endpoints_only", "agent_generate_request_count"],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 240000},
+        "fixture_bytes": {"const": 2575454},
+        "fixture_sha256": {"const": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"},
+        "numeric_local_endpoints_only": {"const": true},
+        "agent_generate_request_count": {"const": 0}
+      }
+    },
+    "always_on": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_flag_enabled", "declared_rule_count", "declared_rule_exact",
+        "initial_start_success", "duplicate_before_restart_idempotent",
+        "alert_bridge_restart_performed", "restart_replay_success",
+        "restart_replaced_worker_exactly_once", "duplicate_after_restart_idempotent",
+        "process_scoped_rule_identity_rotated", "rule_identity_sha256",
+        "stream_identity_sha256", "worker_created_counts", "worker_removed_counts",
+        "one_caption_worker_after_each_start", "camera_remove_success",
+        "lifecycle_stream_removed", "mutation_sequence"
+      ],
+      "properties": {
+        "feature_flag_enabled": {"const": true},
+        "declared_rule_count": {"const": 1},
+        "declared_rule_exact": {"const": true},
+        "initial_start_success": {"const": true},
+        "duplicate_before_restart_idempotent": {"const": true},
+        "alert_bridge_restart_performed": {"const": true},
+        "restart_replay_success": {"const": true},
+        "restart_replaced_worker_exactly_once": {"const": true},
+        "duplicate_after_restart_idempotent": {"const": true},
+        "process_scoped_rule_identity_rotated": {"const": true},
+        "rule_identity_sha256": {
+          "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true,
+          "items": {"$ref": "#/$defs/sha256"}
+        },
+        "stream_identity_sha256": {"$ref": "#/$defs/sha256"},
+        "worker_created_counts": {"const": [1, 1, 2, 2, 2]},
+        "worker_removed_counts": {"const": [0, 0, 1, 1, 2]},
+        "one_caption_worker_after_each_start": {"const": true},
+        "camera_remove_success": {"const": true},
+        "lifecycle_stream_removed": {"const": true},
+        "mutation_sequence": {
+          "const": [
+            "POST /v1/streams/add",
+            "POST /api/v1/realtime/always-on camera_streaming",
+            "POST /api/v1/realtime/always-on duplicate",
+            "docker restart vss-alert-bridge",
+            "POST /api/v1/realtime/always-on restart replay",
+            "POST /api/v1/realtime/always-on duplicate after restart",
+            "POST /api/v1/realtime/always-on camera_remove"
+          ]
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exact_unrelated_state_restored", "before_sha256", "after_sha256",
+        "owned_artifacts_absent", "publisher_stopped", "running_container_set_preserved",
+        "running_container_count", "final_worker_created_count",
+        "final_worker_removed_count", "final_caption_worker_count"
+      ],
+      "properties": {
+        "exact_unrelated_state_restored": {"const": true},
+        "before_sha256": {"$ref": "#/$defs/stateDigests"},
+        "after_sha256": {"$ref": "#/$defs/stateDigests"},
+        "owned_artifacts_absent": {"const": true},
+        "publisher_stopped": {"const": true},
+        "running_container_set_preserved": {"const": true},
+        "running_container_count": {"type": "integer", "minimum": 1},
+        "final_worker_created_count": {"const": 2},
+        "final_worker_removed_count": {"const": 2},
+        "final_caption_worker_count": {"const": 0}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "stateDigests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rules", "persisted_rules", "rtvlm_streams"],
+      "properties": {
+        "rules": {"$ref": "#/$defs/sha256"},
+        "persisted_rules": {"$ref": "#/$defs/sha256"},
+        "rtvlm_streams": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

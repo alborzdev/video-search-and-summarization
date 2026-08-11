@@ -127,8 +127,10 @@ class AlwaysOnService:
         "removed".
 
     State is intentionally *not* persisted across process restarts — on
-    a pod restart SDR will replay ``camera_streaming`` events and the
-    fan-out will converge again.
+    a pod restart SDR will replay ``camera_streaming`` events.  The first
+    event for each camera reconciles any RT-VLM caption workers that survived
+    the Alert Bridge process, then the fan-out recreates exactly the declared
+    rule set.
     """
 
     def __init__(
@@ -151,6 +153,12 @@ class AlwaysOnService:
         # being deduped at the camera level. The inner value is the
         # service-assigned UUID used by ``RealtimeAlertService.stop_alert``.
         self._camera_rules: Dict[str, Dict[str, str]] = {}
+
+        # Cameras whose pre-existing RT-VLM caption workers have been
+        # reconciled during this process lifetime. The first replayed event
+        # after an Alert Bridge restart must stop the orphaned workers once;
+        # subsequent partial retries must not stop successful sibling rules.
+        self._reconciled_cameras: Set[str] = set()
 
         # Camera IDs currently being processed by a ``camera_streaming``
         # handler. Used to (1) short-circuit a concurrent
@@ -190,6 +198,7 @@ class AlwaysOnService:
         starts from scratch.
         """
         self._camera_rules.clear()
+        self._reconciled_cameras.clear()
         self._in_flight.clear()
         self._flight_done.clear()
         self._rules_cache = None
@@ -449,6 +458,38 @@ class AlwaysOnService:
             self._flight_done[camera_id] = asyncio.Event()
 
         try:
+            if camera_id not in self._reconciled_cameras:
+                try:
+                    await self._realtime.reset_existing_sensor_captions(
+                        sensor_id=camera_id,
+                        live_stream_url=camera_url,
+                    )
+                except Exception as exc:
+                    logger.warning(
+                        "camera_streaming for camera_id=%s: RT-VLM caption "
+                        "reconciliation failed (%s)",
+                        camera_id,
+                        type(exc).__name__,
+                    )
+                    return AlwaysOnResult(
+                        status_code=502,
+                        reason=AlwaysOnReason.ADD_FAILED,
+                        details=[{
+                            "rule_id": "__stream_reconciliation__",
+                            "alert_type": "system",
+                            "status": 502,
+                            "result": "error",
+                            "error": {
+                                "message": (
+                                    "Failed to reconcile existing RT-VLM "
+                                    "caption workers"
+                                ),
+                            },
+                        }],
+                    )
+                async with self._lock:
+                    self._reconciled_cameras.add(camera_id)
+
             return await self._fan_out_add(
                 camera_id=camera_id,
                 camera_url=camera_url,
@@ -562,6 +603,8 @@ class AlwaysOnService:
                     inner.pop(rule_id, None)
                 if not inner:
                     self._camera_rules.pop(camera_id, None)
+            if camera_id not in self._camera_rules:
+                self._reconciled_cameras.discard(camera_id)
 
         failed = [e for e in remove_details if e["result"] == "error"]
         if failed:

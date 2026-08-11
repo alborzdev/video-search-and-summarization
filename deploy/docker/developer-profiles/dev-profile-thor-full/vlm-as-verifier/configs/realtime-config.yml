@@ -1,9 +1,35 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-# The unified Thor profile creates real-time rules through the UI or agent.
-# Keep the always-on collection explicit and empty so Alert Bridge never needs
-# a placeholder host path and does not silently activate an unrequested rule.
-# Alert Bridge only validates a non-empty list when `alert_agent.always_on` is
-# explicitly enabled; the unified profile leaves that feature disabled.
-always_on_rules: []
+# Thor-local always-on rule set. Nothing runs merely because this file exists:
+# Alert Bridge activates these rules only after VST (or an operator) posts a
+# `camera_streaming` lifecycle event to POST /api/v1/realtime/always-on, and a
+# matching `camera_remove` event tears the rules down again.
+#
+# Keep this default domain-neutral so it is useful for customer demos without
+# the excluded warehouse sample. Domain packs can supply more specialized
+# safety rules later. The model id matches the official local Cosmos 3 NIM
+# deployed by the Thor official-edge profile.
+always_on_rules:
+  - rule_id: thor_notable_activity
+    description: "General edge-demo activity monitor"
+    alert_type: "Notable Activity"
+    always_on_params:
+      system_prompt: >-
+        You monitor a live camera for an edge AI demonstration. Answer Yes only
+        when a person, vehicle, animal, or other clearly moving foreground
+        subject is visible; otherwise answer No. Be concise and do not guess.
+      prompt: >-
+        Is there a clearly visible person, vehicle, animal, or other moving
+        foreground subject in this video segment? Answer Yes or No and briefly
+        identify the subject when the answer is Yes.
+      model: "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+      chunk_duration: 10
+      chunk_overlap_duration: 2
+      num_frames_per_second_or_fixed_frames_chunk: 4
+      use_fps_for_chunking: false
+      vlm_input_width: 512
+      vlm_input_height: 512
+      enable_reasoning: false
+      enable_audio: false
+      max_tokens: 64

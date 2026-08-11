@@ -20,12 +20,144 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
+import yaml
 
 from realtime.config import ErrorCode, ResponseStatus, RuleStatus
 from realtime.schemas import AlertRuleConfig
+from realtime.services.always_on_service import AlwaysOnReason, AlwaysOnService
 from realtime.services.realtime_service import RealtimeAlertService
 
 from .conftest import SAMPLE_RTSP_URL, make_config
+
+
+class TestAlwaysOnStreamReconciliation:
+    """Restart recovery must replace, not stack, RT-VLM caption workers."""
+
+    @pytest.mark.asyncio
+    async def test_matching_stream_captions_are_stopped(
+        self, realtime_service, mock_rtvi_client
+    ):
+        mock_rtvi_client.get_stream_info.return_value = [{
+            "id": "camera-1",
+            "liveStreamUrl": SAMPLE_RTSP_URL,
+        }]
+
+        found = await realtime_service.reset_existing_sensor_captions(
+            "camera-1", SAMPLE_RTSP_URL
+        )
+
+        assert found is True
+        mock_rtvi_client.stop_captions.assert_awaited_once_with("camera-1")
+
+    @pytest.mark.asyncio
+    async def test_absent_stream_is_clean_noop(
+        self, realtime_service, mock_rtvi_client
+    ):
+        mock_rtvi_client.get_stream_info.return_value = []
+
+        found = await realtime_service.reset_existing_sensor_captions(
+            "camera-1", SAMPLE_RTSP_URL
+        )
+
+        assert found is False
+        mock_rtvi_client.stop_captions.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_url_mismatch_refuses_to_stop_unrelated_camera(
+        self, realtime_service, mock_rtvi_client
+    ):
+        mock_rtvi_client.get_stream_info.return_value = [{
+            "id": "camera-1",
+            "liveStreamUrl": "rtsp://other-camera/live",
+        }]
+
+        with pytest.raises(
+            Exception,
+            match="sensor_id is already registered with a different stream URL",
+        ):
+            await realtime_service.reset_existing_sensor_captions(
+                "camera-1", SAMPLE_RTSP_URL
+            )
+
+        mock_rtvi_client.stop_captions.assert_not_awaited()
+
+
+class TestAlwaysOnRestartRecovery:
+    """The in-memory always-on sidecar must recover without duplication."""
+
+    @staticmethod
+    def _service(tmp_path, monkeypatch):
+        realtime = MagicMock()
+        realtime.register_rule_removed_callback = MagicMock()
+        realtime.reset_existing_sensor_captions = AsyncMock(return_value=False)
+        realtime.start_alert = AsyncMock(return_value=(
+            {
+                "status": "success",
+                "id": "owned-rule",
+                "created_at": "T",
+                "message": "ok",
+            },
+            201,
+        ))
+        realtime.stop_alert = AsyncMock(return_value=(
+            {"status": "success", "id": "owned-rule", "message": "ok"},
+            200,
+        ))
+        rules_path = tmp_path / "always-on-rules.yml"
+        rules_path.write_text(yaml.safe_dump({
+            "always_on_rules": [{
+                "rule_id": "activity",
+                "alert_type": "activity",
+                "always_on_params": {
+                    "prompt": "Describe notable activity.",
+                    "system_prompt": "Answer concisely.",
+                    "model": "test-model",
+                },
+            }],
+        }))
+        monkeypatch.setenv("ALWAYS_ON_RULES_CONFIG", str(rules_path))
+        return AlwaysOnService(realtime), realtime
+
+    @pytest.mark.asyncio
+    async def test_process_restart_reconciles_once_before_recreating_rules(
+        self, tmp_path, monkeypatch
+    ):
+        service, realtime = self._service(tmp_path, monkeypatch)
+
+        first = await service.start_camera(
+            "camera-1", SAMPLE_RTSP_URL, "Camera 1"
+        )
+        service.reset()  # process-local state is lost on Alert Bridge restart
+        second = await service.start_camera(
+            "camera-1", SAMPLE_RTSP_URL, "Camera 1"
+        )
+
+        assert first.reason == second.reason == AlwaysOnReason.ADD_SUCCESS
+        assert realtime.reset_existing_sensor_captions.await_count == 2
+        assert realtime.start_alert.await_count == 2
+
+    @pytest.mark.asyncio
+    async def test_reconciliation_failure_fails_closed_and_is_retryable(
+        self, tmp_path, monkeypatch
+    ):
+        service, realtime = self._service(tmp_path, monkeypatch)
+        realtime.reset_existing_sensor_captions.side_effect = [
+            RuntimeError("RT-VLM unavailable"),
+            False,
+        ]
+
+        failed = await service.start_camera(
+            "camera-1", SAMPLE_RTSP_URL, "Camera 1"
+        )
+        retried = await service.start_camera(
+            "camera-1", SAMPLE_RTSP_URL, "Camera 1"
+        )
+
+        assert failed.status_code == 502
+        assert failed.reason == AlwaysOnReason.ADD_FAILED
+        assert failed.details[0]["rule_id"] == "__stream_reconciliation__"
+        assert retried.reason == AlwaysOnReason.ADD_SUCCESS
+        realtime.start_alert.assert_awaited_once()
 
 
 # ---------------------------------------------------------------------------

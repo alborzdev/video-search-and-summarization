@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-37",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-38",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -514,6 +514,37 @@
         "/cleanup/exact_unrelated_state_restored": true,
         "/cleanup/repeated_delete_explicit_not_found": true,
         "/cleanup/owned_incident_artifacts_absent": true,
+        "/cleanup/final_caption_worker_count": 0
+      }
+    },
+    {
+      "official_index": 331,
+      "capability_id": "manifest-entry.realtime-alerts.03-always-on-lifecycle",
+      "advertised_literal": "always-on lifecycle",
+      "package_id": "realtime-alert-always-on-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/contract.json",
+      "contract_sha256": "96fd008a2a7fd26eae43de7bf936c45be440fb1a39ced30663c272cbe0e0b174",
+      "receipt_path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "9076e6c1c4990541c1dc46c71b12937b1f39595739f61bc4529e124008eb5db5",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "80b03ba183a400d0d8cbfb9c5ccebafefb3631a89c52a74285798f21aeb8eea7",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/run/agent_generate_request_count": 0,
+        "/always_on/feature_flag_enabled": true,
+        "/always_on/declared_rule_count": 1,
+        "/always_on/initial_start_success": true,
+        "/always_on/duplicate_before_restart_idempotent": true,
+        "/always_on/alert_bridge_restart_performed": true,
+        "/always_on/restart_replay_success": true,
+        "/always_on/restart_replaced_worker_exactly_once": true,
+        "/always_on/duplicate_after_restart_idempotent": true,
+        "/always_on/one_caption_worker_after_each_start": true,
+        "/always_on/camera_remove_success": true,
+        "/always_on/lifecycle_stream_removed": true,
+        "/cleanup/exact_unrelated_state_restored": true,
+        "/cleanup/owned_artifacts_absent": true,
+        "/cleanup/running_container_set_preserved": true,
         "/cleanup/final_caption_worker_count": 0
       }
     },

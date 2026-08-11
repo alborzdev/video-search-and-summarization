@@ -1,5 +1,12 @@
 # Evidence
 
+Overlay 38 adds official row 331, `always-on lifecycle`, using the retained
+`realtime-alert-always-on-runtime-successor` receipt. One declared local rule
+started exactly once; duplicates before and after an Alert Bridge restart were
+inert. Restart replay stopped the surviving RT-VLM worker and created one
+replacement, while camera removal left zero workers and removed the owned
+stream. Exact unrelated runtime and running-container state were restored.
+
 Overlay 37 adds official row 330, `rule replay`, using the retained
 `realtime-alert-rule-replay-runtime-successor` receipt. A live local RTSP rule
 was persisted and replayed twice. Both replays preserved rule identity,
@@ -8,7 +15,7 @@ public API, Elasticsearch, and RT-VLM each exposed exactly one matching
 object. Exact unrelated state was restored and no Agent `/generate` call was
 made.
 
-`matrix.json` binds seventy-seven exact VSS 3.2.1 advertised candidate rows in the selected Metadata500 ledger to schema-valid live Thor receipts. Overlay 37 adds index 330: two successful replay cycles preserved one rule's identity, configuration, creation time, and single RT-VLM stream. Overlay 36 added index 169: the deployed Alerts View/Manage surface and a complete create, persist, render, and delete rule lifecycle using one UI-created temporary RTSP sensor. The browser submitted the canonical VIOS sensor-stream URL already registered in RT-VLM despite a different live-catalog proxy URL, produced no console error or Agent generation call, and removed all owned rule, sensor, incident, temporary-media, and stream state. Overlay 35's indices 60–63 and all earlier receipts remain unchanged.
+`matrix.json` binds seventy-eight exact VSS 3.2.1 advertised candidate rows in the selected Metadata500 ledger to schema-valid live Thor receipts. Overlay 38 adds index 331: the configured always-on rule converged to one RT-VLM worker across duplicate events and Alert Bridge restart recovery, then cleanly stopped. Overlay 37 adds index 330: two successful replay cycles preserved one rule's identity, configuration, creation time, and single RT-VLM stream. Overlay 36 added index 169: the deployed Alerts View/Manage surface and a complete create, persist, render, and delete rule lifecycle using one UI-created temporary RTSP sensor. The browser submitted the canonical VIOS sensor-stream URL already registered in RT-VLM despite a different live-catalog proxy URL, produced no console error or Agent generation call, and removed all owned rule, sensor, incident, temporary-media, and stream state. Overlay 35's indices 60–63 and all earlier receipts remain unchanged.
 
 Overlay 34 adds index 208. The released Behavior Analytics image instantiated `SinkKafka`, `SinkRedisStream`, and `SinkMQTT` through the real factory and routed frames, behaviors, events, incidents, anomalies, cluster, and space-utilization through each backend. All 21 records were observed at their exact destination, keys and headers were retained, payload bytes matched across backends, and all protobufs decoded to the expected identities. Namespaced records and disposable containers were removed while normal services remained running.
 

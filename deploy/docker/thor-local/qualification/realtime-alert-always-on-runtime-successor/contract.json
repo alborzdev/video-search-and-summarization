@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-always-on-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.03-always-on-lifecycle",
+  "official_indices": [331],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "86b2da830cbddea3b2a3624d3407f60bbd5600e16ce075cea3a74c601728205f"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_REALTIME_ALWAYS_ON_AND_ALERT_BRIDGE_RESTART",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_local_endpoints_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "preexisting_rules_allowed": false,
+    "alert_bridge_restart_allowed": true,
+    "exact_cleanup_required": true,
+    "maximum_duration_ms": 240000
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "required_runtime_proof": [
+    "start exactly one declared always-on rule for one owned local RTSP camera event",
+    "deduplicate a repeated camera_streaming event without another caption worker",
+    "restart only Alert Bridge and replay the event, replacing the surviving RT-VLM worker exactly once",
+    "deduplicate another repeated event after restart",
+    "camera_remove tears down the declared rule, caption worker, and owned stream",
+    "restore exact unrelated runtime and running-container state"
+  ],
+  "source_locks": [
+    {
+      "path": "services/alert/realtime/services/realtime_service.py",
+      "sha256": "0974d5f4ad88521b3265e7814ace664b43c60a3709ca4ec2ac2d1ec2cebe2d70"
+    },
+    {
+      "path": "services/alert/realtime/services/always_on_service.py",
+      "sha256": "5a42ff7d38e842431a7144062a6c4d18f58b619365b14e38362ebf1a267f3b33"
+    },
+    {
+      "path": "services/alert/test/api/test_realtime_service.py",
+      "sha256": "73013b4c95c23a6eaaf9301811a30e51d7986d2f97aaa12b2fba14d077f70f5e"
+    },
+    {
+      "path": "services/alert/test/api/test_realtime_routes.py",
+      "sha256": "25c49728170c5c1282833220cffcad0253b2f73413ecc506bcffb59fe0ddf8b8"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
+      "sha256": "17dbcdf1d21f0c8d9af530eafee20cb168db522060c471b3a7c15b20c8fccce0"
+    },
+    {
+      "path": "deploy/docker/scripts/thor-local.sh",
+      "sha256": "466675469007a016af821927060669b9b4c22abc33dcf2a2eecf3ce9d8484ec1"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vlm-as-verifier/configs/realtime-config.yml",
+      "sha256": "7499c37a1aeb30a32d5e8898bb587f978edc5a8c347e856ab2eb89a83b039290"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/harness.py",
+      "sha256": "975c2ae3c80abeb900517272ad76f63519c3810fde22a049726a736425ef4307"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    }
+  ]
+}

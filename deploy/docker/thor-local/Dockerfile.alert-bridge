@@ -14,6 +14,7 @@ COPY services/alert/realtime/defaults.py /app/realtime/defaults.py
 COPY services/alert/realtime/schemas/alert_config.py /app/realtime/schemas/alert_config.py
 COPY services/alert/realtime/services/rtvi_client.py /app/realtime/services/rtvi_client.py
 COPY services/alert/realtime/services/realtime_service.py /app/realtime/services/realtime_service.py
+COPY services/alert/realtime/services/always_on_service.py /app/realtime/services/always_on_service.py
 COPY services/alert/alert-agent-web/app/api/realtime_schemas.py /app/alert-agent-web/app/api/realtime_schemas.py
 COPY services/alert/alert-agent-web/app/api/alert_config_schemas.py /app/alert-agent-web/app/api/alert_config_schemas.py
 COPY services/alert/enhance_alert_with_vlm.py /app/enhance_alert_with_vlm.py

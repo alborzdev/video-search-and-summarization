@@ -311,6 +311,89 @@ class RealtimeAlertService:
         """
         self._rule_removed_callbacks.append(callback)
 
+    async def reset_existing_sensor_captions(
+        self,
+        sensor_id: str,
+        live_stream_url: str,
+    ) -> bool:
+        """Stop orphaned caption workers before always-on restart recovery.
+
+        ``AlwaysOnService`` deliberately keeps its rule registry in memory.
+        After Alert Bridge restarts, RT-VLM can therefore still have the old
+        caption workers even though the sidecar is empty.  Replaying the VST
+        ``camera_streaming`` event without first stopping those workers would
+        stack another declared rule set on the same stream.
+
+        The lookup and stop run under the same per-sensor lock used by stream
+        creation.  A stream-id match is accepted only when its registered URL
+        also matches the replayed camera URL; this prevents a stale or hostile
+        event from stopping captions on an unrelated camera that happens to
+        reuse the id.  ``False`` means no stream was registered, while
+        ``True`` means the matching stream was reconciled (including the
+        already-stopped/404 case).
+        """
+        if not sensor_id:
+            raise ValueError("sensor_id is required for caption reconciliation")
+
+        async with self._get_sensor_lock(sensor_id):
+            streams = await self._client.get_stream_info()
+            existing = next(
+                (stream for stream in streams if stream.get("id") == sensor_id),
+                None,
+            )
+            if existing is None:
+                logger.info(
+                    "Always-on reconciliation: no existing RT-VLM stream",
+                    extra={
+                        "sensor_id": sensor_id,
+                        "stage": "always_on_reconcile",
+                        "outcome": "stream_absent",
+                    },
+                )
+                return False
+
+            existing_url = (existing.get("liveStreamUrl") or "").strip()
+            requested_url = (live_stream_url or "").strip()
+            if existing_url and requested_url and existing_url != requested_url:
+                logger.warning(
+                    "Always-on reconciliation refused an RT-VLM stream URL mismatch",
+                    extra={
+                        "sensor_id": sensor_id,
+                        "stage": "always_on_reconcile",
+                        "outcome": "stream_identity_conflict",
+                    },
+                )
+                raise _StreamIdentityConflict(
+                    sensor_id=sensor_id,
+                    requested_url=requested_url,
+                    existing_url=existing_url,
+                )
+
+            try:
+                await self._client.stop_captions(sensor_id)
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code != 404:
+                    raise
+                logger.info(
+                    "Always-on reconciliation: captions already absent",
+                    extra={
+                        "sensor_id": sensor_id,
+                        "stage": "always_on_reconcile",
+                        "outcome": "captions_absent",
+                    },
+                )
+                return True
+
+            logger.info(
+                "Always-on reconciliation: stopped existing caption workers",
+                extra={
+                    "sensor_id": sensor_id,
+                    "stage": "always_on_reconcile",
+                    "outcome": "captions_stopped",
+                },
+            )
+            return True
+
     # ------------------------------------------------------------------
     # Re-onboard (shared by replay)
     # ------------------------------------------------------------------
