@@ -1,0 +1,46 @@
+{
+  "kafka": {
+    "brokers": "localhost:9092",
+    "group": "vss-oracle-ba-space-group",
+    "consumer": {
+      "autoOffsetReset": "earliest",
+      "enableAutoCommit": false,
+      "maxPollIntervalMs": 900000,
+      "maxPartitionFetchBytes": 10485760,
+      "fetchMaxBytes": 104857600,
+      "maxPollRecords": 30,
+      "timeout": 0.01
+    },
+    "producer": {"lingerMs": 0},
+    "topics": [
+      {"name": "raw", "value": "vss-oracle-ba-space-raw"},
+      {"name": "behavior", "value": "vss-oracle-ba-space-behavior"},
+      {"name": "frames", "value": "vss-oracle-ba-space-frames"},
+      {"name": "notification", "value": "vss-oracle-ba-space-notification"},
+      {"name": "spaceUtilization", "value": "vss-oracle-ba-space-output"},
+      {"name": "events", "value": "vss-oracle-ba-space-events"},
+      {"name": "incidents", "value": "vss-oracle-ba-space-incidents"}
+    ]
+  },
+  "sensors": [{"id": "default", "configs": []}],
+  "app": [
+    {"name": "spaceAnalyticsIntervalSec", "value": "1.0"},
+    {"name": "spaceAnalyticsCalibSensorsOnly", "value": "false"},
+    {"name": "spaceAnalyticsGridSize", "value": "0.2"},
+    {"name": "spaceAnalyticsUnsafeSize", "value": "0.5"},
+    {"name": "spaceAnalyticsTargetClasses", "value": "[\"Pallet\"]"},
+    {"name": "spaceAnalyticsUseGA", "value": "false"},
+    {"name": "behaviorStateTimeout", "value": "20"},
+    {"name": "behaviorWatermarkSec", "value": "30"},
+    {"name": "behaviorMaxPoints", "value": "30"},
+    {"name": "in3dMode", "value": "true"},
+    {"name": "compactFrame", "value": "true"},
+    {"name": "stateManagementFilter", "value": "[\"Person\",\"Pallet\"]"},
+    {"name": "coordinateSystem", "value": "euclidean"},
+    {"name": "sourceType", "value": "kafka"},
+    {"name": "sinkType", "value": "kafka"},
+    {"name": "numWorkersForBehaviorCreation", "value": "1"},
+    {"name": "numWorkersForFrameEnhancement", "value": "1"},
+    {"name": "numWorkersForSpaceEstimation", "value": "1"}
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "contract_sha256", "capability_ids", "official_indices", "status", "runtime", "input", "outputs", "container", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-space-utilization-runtime-successor"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "capability_ids": {"const": ["runtime.behavior.space-utilization"]},
+    "official_indices": {"const": [209]},
+    "status": {"const": "passed"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["image", "image_id", "application", "calibration_implementation", "input_protocol", "log_sha256"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "image_id": {"$ref": "#/$defs/image_id"},
+        "application": {"const": "Analytics3DApp"},
+        "calibration_implementation": {"const": "CalibrationE"},
+        "input_protocol": {"const": "Kafka nv.Frame protobuf"},
+        "log_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["published", "pallet_frames", "legacy_embedding_key_migrated_frames", "source_sensors", "synthetic_pallet_coordinates", "config_sha256", "calibration_sha256", "fixture_sha256"],
+      "properties": {
+        "published": {"const": 90},
+        "pallet_frames": {"const": 89},
+        "legacy_embedding_key_migrated_frames": {"const": 89},
+        "source_sensors": {"const": ["bev-sensor-1"]},
+        "synthetic_pallet_coordinates": {"type": "array", "minItems": 12, "maxItems": 12, "items": {"type": "number"}},
+        "config_sha256": {"$ref": "#/$defs/sha256"},
+        "calibration_sha256": {"$ref": "#/$defs/sha256"},
+        "fixture_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "outputs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["output_count", "zone_ids", "positive_records", "ranges", "free_plus_occupied_max_error", "ratio_max_error", "free_layout_records", "utilizable_layout_records"],
+      "properties": {
+        "output_count": {"const": 9},
+        "zone_ids": {"const": ["buffer_zone_1", "buffer_zone_2", "buffer_zone_3"]},
+        "positive_records": {
+          "type": "object", "additionalProperties": false,
+          "required": ["occupied", "free", "total", "ratio", "extra_pallets", "utilizable_free_space"],
+          "properties": {
+            "occupied": {"type": "integer", "minimum": 1},
+            "free": {"type": "integer", "minimum": 1},
+            "total": {"type": "integer", "minimum": 1},
+            "ratio": {"type": "integer", "minimum": 1},
+            "extra_pallets": {"type": "integer", "minimum": 1},
+            "utilizable_free_space": {"type": "integer", "minimum": 1}
+          }
+        },
+        "ranges": {
+          "type": "object", "additionalProperties": false,
+          "required": ["occupied", "free", "total", "ratio", "extra_pallets", "utilizable_free_space"],
+          "properties": {
+            "occupied": {"$ref": "#/$defs/range"},
+            "free": {"$ref": "#/$defs/range"},
+            "total": {"$ref": "#/$defs/range"},
+            "ratio": {"$ref": "#/$defs/range"},
+            "extra_pallets": {"$ref": "#/$defs/range"},
+            "utilizable_free_space": {"$ref": "#/$defs/range"}
+          }
+        },
+        "free_plus_occupied_max_error": {"type": "number", "minimum": 0, "maximum": 0.02},
+        "ratio_max_error": {"type": "number", "minimum": 0, "maximum": 0.02},
+        "free_layout_records": {"type": "integer", "minimum": 1},
+        "utilizable_layout_records": {"type": "integer", "minimum": 1}
+      }
+    },
+    "container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exit_code", "oom_killed", "restart_count"],
+      "properties": {"exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["disposable_container_absent", "qualification_topics_absent", "normal_behavior_containers_running", "failures"],
+      "properties": {
+        "disposable_container_absent": {"const": true},
+        "qualification_topics_absent": {"const": true},
+        "normal_behavior_containers_running": {"const": true},
+        "failures": {"type": "array", "maxItems": 0}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "external_requests", "main_rt_cv_mutations", "main_vios_mutations", "normal_behavior_consumers_stopped", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "external_requests": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0}, "main_vios_mutations": {"const": 0},
+        "normal_behavior_consumers_stopped": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}
+  }
+}

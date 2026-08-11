@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-space-utilization-runtime-successor",
+  "contract_sha256": "9fbf9feb13939054842fc9d42f5caa04ad3db017d92e03a77c3240547e5ff63f",
+  "capability_ids": ["runtime.behavior.space-utilization"],
+  "official_indices": [209],
+  "status": "passed",
+  "runtime": {
+    "image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "application": "Analytics3DApp",
+    "calibration_implementation": "CalibrationE",
+    "input_protocol": "Kafka nv.Frame protobuf",
+    "log_sha256": "6a497b222d9c9205df5dd96e0719d385bda11c9b252492ab9763ae92813fa368"
+  },
+  "input": {
+    "published": 90,
+    "pallet_frames": 89,
+    "legacy_embedding_key_migrated_frames": 89,
+    "source_sensors": ["bev-sensor-1"],
+    "synthetic_pallet_coordinates": [
+      -2.474609375, -12.3828125, 0.11590576171875,
+      1.2077035903930664, 0.9993621706962585, 0.20879419147968292,
+      0.0, 0.0, 0.009953939355909824,
+      0.0007638931274414062, -0.0012664794921875, 0.0024356842041015625
+    ],
+    "config_sha256": "91b45cf6963374806d55fae7fc91f7c768a5545bcfa8822da3902e18b289ea44",
+    "calibration_sha256": "e331c22d4685d18bd3d876ed2492e88fa39932c55275875ca7d6bde68047165e",
+    "fixture_sha256": "618ec09c64cf79899bc47e4b25c9d054ca6d2060bb21a674094bedb3bc67defd"
+  },
+  "outputs": {
+    "output_count": 9,
+    "zone_ids": ["buffer_zone_1", "buffer_zone_2", "buffer_zone_3"],
+    "positive_records": {
+      "occupied": 3,
+      "free": 9,
+      "total": 9,
+      "ratio": 3,
+      "extra_pallets": 9,
+      "utilizable_free_space": 9
+    },
+    "ranges": {
+      "occupied": [0.0, 1.21],
+      "free": [10.38, 13.49],
+      "total": [10.38, 13.49],
+      "ratio": [0.0, 0.09],
+      "extra_pallets": [5, 12],
+      "utilizable_free_space": [5.0, 12.0]
+    },
+    "free_plus_occupied_max_error": 0.00999999999999801,
+    "ratio_max_error": 0.00010401188707281905,
+    "free_layout_records": 9,
+    "utilizable_layout_records": 9
+  },
+  "container": {
+    "exit_code": 0,
+    "oom_killed": false,
+    "restart_count": 0
+  },
+  "cleanup": {
+    "disposable_container_absent": true,
+    "qualification_topics_absent": true,
+    "normal_behavior_containers_running": true,
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

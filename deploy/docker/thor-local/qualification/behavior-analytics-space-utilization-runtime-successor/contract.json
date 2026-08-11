@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-space-utilization-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "runtime.behavior.space-utilization"
+  ],
+  "official_indices": [209],
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-space-utilization-runtime-successor/oracle-config.json", "sha256": "91b45cf6963374806d55fae7fc91f7c768a5545bcfa8822da3902e18b289ea44"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-space-utilization-runtime-successor/run_space_probe.py", "sha256": "f7799dba9f2f4fd86e7ceefae68eb5f015f48003a155042cc23a7c9e3f42d494"},
+    {"path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps/warehouse_3d/calibration.json", "sha256": "e331c22d4685d18bd3d876ed2492e88fa39932c55275875ca7d6bde68047165e"},
+    {"path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps_data/playback/warehouse_3d_playback_data.txt", "sha256": "618ec09c64cf79899bc47e4b25c9d054ca6d2060bb21a674094bedb3bc67defd"},
+    {"path": "services/analytics/behavior-analytics/configs/sample_data/social_distancing_sample_data.txt", "sha256": "07373db0a0bdb29bb015bb11dfeda14435c7101a126561bc85743d569795bf58"},
+    {"path": "services/analytics/behavior-analytics/apps/analytics/main_analytics_3d_app.py", "sha256": "cf997b73ea106fd22fc86128ae317c2f148cc87ce81246f0ac1d02a23ec2ef37"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/space_utilization.py", "sha256": "2a90568c1ecf4f084d2e892e4d50ec9a5709426a5ba85dc4c43e021111a69736"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py", "sha256": "99fad8777a0138e22d01fa7051301669e43c652ba53ee12dc8e540132bd1effc"}
+  ],
+  "required_assertions": {
+    "application": "Analytics3DApp",
+    "calibration": "cartesian CalibrationE",
+    "input_protocol": "Kafka nv.Frame protobuf",
+    "metrics": ["occupied", "free", "total", "ratio", "extra-pallets", "utilizable-free-space"],
+    "all_metrics_positive_in_bounded_scene": true,
+    "three_calibrated_buffer_zones": true,
+    "free_and_utilizable_layouts": true,
+    "metric_arithmetic_consistent": true
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "100 GB Warehouse sample bundle",
+    "physical multi-camera scene",
+    "3D detector or MV3DT runtime",
+    "space-utilization performance envelope"
+  ]
+}

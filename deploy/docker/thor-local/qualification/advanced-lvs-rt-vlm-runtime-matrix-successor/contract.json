@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-29",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-30",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -140,6 +140,33 @@
         "/cleanup/disposable_containers_absent": true,
         "/cleanup/qualification_topics_absent": true,
         "/policy/normal_behavior_consumers_stopped": 0
+      }
+    },
+    {
+      "official_index": 209,
+      "capability_id": "runtime.behavior.space-utilization",
+      "advertised_literal": "Behavior space utilization",
+      "package_id": "behavior-analytics-space-utilization-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-space-utilization-runtime-successor/contract.json",
+      "contract_sha256": "9fbf9feb13939054842fc9d42f5caa04ad3db017d92e03a77c3240547e5ff63f",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-space-utilization-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "a81c1cbd71db07a61cfab94c3f4579243b1803d4d00e14d615d554862071fdb6",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-space-utilization-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "51cb07d00bb4a7c8066c15e4088130510d9bf27aa77ba5ad76efb71c09a09c38",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/outputs/output_count": 9,
+        "/outputs/zone_ids": ["buffer_zone_1", "buffer_zone_2", "buffer_zone_3"],
+        "/outputs/positive_records/occupied": 3,
+        "/outputs/positive_records/free": 9,
+        "/outputs/positive_records/total": 9,
+        "/outputs/positive_records/ratio": 3,
+        "/outputs/positive_records/extra_pallets": 9,
+        "/outputs/positive_records/utilizable_free_space": 9,
+        "/outputs/free_layout_records": 9,
+        "/outputs/utilizable_layout_records": 9,
+        "/cleanup/qualification_topics_absent": true,
+        "/policy/warehouse_sample_bundle": "excluded"
       }
     },
     {

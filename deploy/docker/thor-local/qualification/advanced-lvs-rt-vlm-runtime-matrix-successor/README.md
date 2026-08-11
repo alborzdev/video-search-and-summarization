@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds sixty-six advertised candidate rows to current-Thor live receipts. Overlay 29 adds the exact Behavior Analytics embedding-downsampling row. The released Fusion Search application consumed real Kafka `nv.VisionLLM` protobufs through both advertised algorithms: sliding-window retained 4 of 13 samples and SDT retained 3 of 13, with both preserving the first sample and an orthogonal final transition. Overlay 28's three-broker control evidence and all earlier rows retain their exact evidence. External Slack and audio recording remain explicitly unclaimed.
+This read-only successor binds sixty-seven advertised candidate rows to current-Thor live receipts. Overlay 30 adds the exact Behavior Analytics space-utilization row. The released three-worker `Analytics3DApp` emitted nine records across three calibrated zones with positive occupied, free, total, utilization-ratio, extra-pallet, and utilizable-free-space observations plus both layout families and consistent arithmetic. Overlay 29's two embedding-downsampling algorithms and all earlier rows retain their exact evidence. External Slack and audio recording remain explicitly unclaimed.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 
